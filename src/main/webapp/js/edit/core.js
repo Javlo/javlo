@@ -631,7 +631,7 @@ reloadPage = function() {
 function showHelpButton() {
 	jQuery(".notebutton")
 			.append(
-					'<li class="note"><a class="help"><span class="wrap"><span class="thicon helpicon">&nbsp;</span></span></a></li>');
+					'<li class="note"><a class="help"><span class="wrap"><i class="fa fa-life-ring" aria-hidden="true"></i></span></a></li>');
 	jQuery(".note .help").click(function() {
 		showHelp();
 	});

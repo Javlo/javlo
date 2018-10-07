@@ -632,14 +632,23 @@ if (!String.prototype.startsWith) {
 						editPreview.ajaxPreviewRequest(ajaxURL, null, null);
 					} else if (event.dataTransfer.files.length > 0) {						
 						var previewId = subComp.attr("id").substring(3);
+						if (PREVIEWLOG) {
+							console.log("previewId = "+previewId);
+						}
 						var ajaxURL = editPreview.addParam(currentURL,"webaction=data.upload&content=true&previous=" + previewId+"&area="+area);
 						if (editPreview.searchPageId(subComp) != null) {
+							if (PREVIEWLOG) {
+								console.log("editPreview.searchPageId(subComp) = "+editPreview.searchPageId(subComp));
+							}
 							ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
 						}
 						var fd=new FormData();
 						var fieldName = pjq(this).data("fieldname");
 						if (fieldName == null) {
 							fieldName = "files";
+						}
+						if (PREVIEWLOG) {
+							console.log("fieldName = "+fieldName);
 						}
 						var i = 0;
 						var sameName = false;
@@ -667,7 +676,7 @@ if (!String.prototype.startsWith) {
 								pjq("#preview-modal-question").modal("hide");
 							});
 						} else {
-							editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
+							editPreview.ajaxPreviewRequest(ajaxURL, editPreview.updateArea(area), fd);
 						}	
 					}
 					return false;

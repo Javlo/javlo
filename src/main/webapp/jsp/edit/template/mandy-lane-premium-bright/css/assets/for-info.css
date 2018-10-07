@@ -1,0 +1,105 @@
+/* FOR-INFO */
+
+
+
+/* ----- For-Info ----- */
+.for-info {
+	position:fixed;
+	left:0;
+	right:0;
+	bottom:0;
+	margin-top:-24px;
+	background:#fff;
+	box-shadow:0 0 10px rgba(0,0,0, .3);
+	z-index:1001;
+	border-top:5px solid #128bf3;
+}
+.for-info.open {
+	box-shadow:0 0 15px rgba(0,0,0, .5);
+}
+.for-info .container { 
+	padding-top:24px;
+}
+
+/* ----- Info-Close ----- */
+.for-info .info-close {
+	position:absolute;
+	right:-20px;
+	top:-20px;
+	height:40px;
+	width:40px;
+	line-height:40px;
+	border-radius:50%;
+	background:#128bf3 url(../../img/bg/icon-info.png) no-repeat right top;
+	text-align:center;
+	color:#fff;
+	cursor:pointer;
+}
+.for-info .info-close:hover {
+	background:#007ce7 url(../../img/bg/icon-info.png) no-repeat right top;
+}
+
+/* ----- For-Info (Open) ----- */
+.for-info .info-close.open {
+	background:#128bf3 url(../../img/bg/icon-info.png) no-repeat left top;
+}
+.for-info .info-close.open:hover {
+	background:#007ce7 url(../../img/bg/icon-info.png) no-repeat left top;
+	
+}
+
+
+
+
+
+/* ----- Info ----- */
+#info {
+	padding:20px 0 44px 0;
+	display:none;
+}
+#info .thumb {
+	display:block;
+	float:none;
+	width:100%;
+	padding:0;
+	margin:0;
+	height:auto;
+}
+#info .thumb-wrap {
+	display:block;
+	margin:0;
+	padding:0 100px;
+}
+#info .thumb .th-image {
+	display:block;
+	float:left;
+	width:25%;
+	margin:0;
+}
+#info .thumb .th-description {
+	display:block;
+	float:right;
+	width:75%;
+	padding:5px 0 0 25px;
+}
+#info .thumb h3 {
+	font-size:1.75em;
+	margin-bottom:10px;
+}
+#info .thumb h3 a {
+	color:#3b3b3b;
+}
+#info .thumb p {
+	display:block;
+	font-size:1em;
+	color:#3b3b3b;
+}
+
+
+
+
+/* ----- Flexslider (Info) ----- */
+#info .flexslider {
+	display:none;
+}
+

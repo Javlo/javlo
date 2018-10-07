@@ -386,6 +386,7 @@ public class Module {
 	private final Locale locale;
 	private final String modulePath;
 	private final String URIPrefix;
+	private String font;
 
 	private String description = "?";
 
@@ -425,6 +426,10 @@ public class Module {
 		breadcrumb = StringHelper.isTrue(config.get("breadcrumb"));
 		search = StringHelper.isTrue(config.get("search"));
 		setParent(config.get("parent"));
+		font = config.get("font");
+		if (font == null) {
+			font = "cog";
+		}
 
 		order = Integer.parseInt(StringHelper.neverNull(config.get("order"), "100"));
 
@@ -1103,6 +1108,14 @@ public class Module {
 	
 	public String getJspPath(String jsp) {
 		return URLHelper.mergePath("/", getModuleFolder(), getName(), jsp);
+	}
+
+	public String getFont() {
+		return font;
+	}
+
+	public void setFont(String font) {
+		this.font = font;
 	}
 
 }

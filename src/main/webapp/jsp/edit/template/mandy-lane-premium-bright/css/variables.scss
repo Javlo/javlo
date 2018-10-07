@@ -1,0 +1,21 @@
+/* colors */
+$main-bg:       #f6f6f6;
+$content-bg:	darken($main-bg, 3%);
+$bg-dark:       darken($main-bg, 6%);
+$bg-darker:    darken($main-bg, 10%);
+$bg-darkest:    darken($main-bg, 30%);
+$bg-light:      lighten($main-bg, 10%);
+$bg-lighter:   lighten($main-bg, 20%);
+$bg-lightest:   lighten($main-bg, 40%);
+
+$border: rgba(24,28,33,0.06);
+$border-dark: rgba(24,28,33,0.1);
+$border-active: #00B4FF;
+$unactive: #dddddd;
+$javlo: #FF404B;
+$important: $javlo;
+
+$link: #333333;
+$text: #404040;
+
+$shadow: 3px 3px 16px #ccc;

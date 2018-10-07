@@ -1,0 +1,57 @@
+/* BG-IMAGE */
+
+
+
+/* ----- Bg-Image ----- */
+body.login-page  {}
+#bg-image {
+	position:fixed;
+	left:0;
+	top:0;
+	width:100%;
+	height:100%;
+	z-index:0;
+}
+
+
+
+
+
+/* ----- Bg-Image (Flexslider-Images) ----- */
+#bg-image .flexslider ul.slides li.slide-1 { background:url(../../img/bg-image/slide-1.jpg) no-repeat center center;}
+#bg-image .flexslider ul.slides li.slide-2 { background:url(../../img/bg-image/slide-2.jpg) no-repeat center center;}
+#bg-image .flexslider ul.slides li.slide-3 { background:url(../../img/bg-image/slide-3.jpg) no-repeat center center;}
+#bg-image .flexslider ul.slides li.slide-4 { background:url(../../img/bg-image/slide-4.jpg) no-repeat center center;}
+#bg-image .flexslider ul.slides li.slide-5 { background:url(../../img/bg-image/slide-5.jpg) no-repeat center center;}
+
+#bg-image .flexslider ul.slides li { background-size:cover !important;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

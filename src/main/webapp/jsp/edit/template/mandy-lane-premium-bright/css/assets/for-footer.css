@@ -1,0 +1,99 @@
+/* FOR-FOOTER */
+
+
+
+/* ----- For-Footer ----- */
+.for-footer {
+	position:fixed;
+	bottom:0;
+	left:0;
+	right:0;
+	background:#e3e3e3;
+	z-index:3001;
+}
+
+.for-footer:after,
+.for-footer:before {
+	display:block;
+	position:absolute;
+	left:0;
+	right:0;
+	top:-5px;
+	height:5px;
+	content:"";
+	background:rgba(0,0,0, .03);
+}
+.for-footer:after {
+	display:none;
+}
+.for-footer:before {
+	top:-1px;
+	height:1px;
+	background:rgba(0,0,0, .1);
+}
+
+.for-footer > .container {}
+
+
+
+
+/* ----- Footer ----- */
+#footer {
+	padding:10px 0;
+	overflow:hidden;
+}
+#footer p {
+	margin:0;
+	padding:0;
+	font-size:.9em;
+}
+
+#footer #foot-left {
+	display:block;
+	float:left;
+	width:50%;
+	text-align:left;
+}
+#footer #foot-right {
+	display:block;
+	float:right;
+	width:50%;
+	text-align:right;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

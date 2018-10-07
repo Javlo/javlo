@@ -1,0 +1,337 @@
+/* TABLE-SORTER */
+
+
+
+/* ----- Table-Sorter ----- */
+.table-sorter {
+	background:white;
+	box-shadow:1px 2px 3px rgba(0,0,0, .1);
+}
+
+.table-sorter table {
+	display:table;
+	width:100%;
+	position:relative;
+	margin-bottom:20px;
+	clear:both;
+}
+.table-sorter table:after {
+	display:block;
+	position:absolute;
+	left:0;
+	bottom:-10px;
+	height:10px;
+	width:100%;
+	content:"";
+	background:url(../../img/bg/ombre-table-sorter.png) repeat-x top;
+}
+
+
+
+
+.table-sorter table tr {}
+.table-sorter table tr th,
+.table-sorter table tr td {
+	padding:10px 10px;
+	text-align:left;
+}
+.table-sorter table tr td {
+	border-bottom:1px solid rgba(0,0,0, .1);
+	color:#999b98;
+}
+.table-sorter table tr:nth-child(even) td {
+    background:#f9f9f9;
+} 
+.table-sorter table tr:hover td {
+	background:#eee;
+	color:#3b3b3b;
+}
+
+
+/* ----- Table-THead ----- */
+.table-sorter table thead {
+	background:#3b3b3b;
+	color:#fff;
+}
+.table-sorter table thead tr th {
+	border-right:1px solid rgba(255,255,255, .1);
+	outline:none !important;
+	cursor:pointer;
+}
+.table-sorter table thead tr th:first-child {
+	background-image:none !important;
+}
+.table-sorter table thead tr th:last-child {
+	border:0;
+}
+.table-sorter table thead tr th.sorting {
+	padding-left:20px;
+	background:url(../../img/bg/icon-sorting.png) no-repeat 0 0;
+}
+.table-sorter table thead tr th.sorting_asc {
+	padding-left:20px;
+	background:url(../../img/bg/icon-sorting.png) no-repeat 0 -40px;
+}
+.table-sorter table thead tr th.sorting_desc {
+	padding-left:20px;
+	background:url(../../img/bg/icon-sorting.png) no-repeat 0 -80px;
+}
+
+
+/* ----- Table-TBody ----- */
+.table-sorter table {}
+
+
+/* ----- Table-Sorter (Sorting) ----- */
+.table-sorter table tr td.sorting_1 {
+	color:#202020;
+	font-weight:700;
+}
+
+
+
+
+
+/* ----- Td-Status ----- */
+.table-sorter table tr th.col-status,
+.table-sorter table tr td.col-status {
+	width:50px !important;
+	text-align:center;
+}
+.table-sorter table tr td.col-status span {
+	display:inline-block;
+	width:25px;
+	height:25px;
+	line-height:25px;
+	overflow:hidden;
+	text-indent:-99px;
+	margin-bottom:-4px;
+	background:url(../../img/bg/icon-table-sorter.png) no-repeat 0 -25px;
+}
+.table-sorter table tr td.col-status.sent span {
+	background-position:0 0;
+}
+
+
+.table-sorter table tr:hover td.col-status span {
+	background-position:-25px -25px;
+}
+.table-sorter table tr:hover td.col-status.sent span {
+	background-position:-25px 0;
+}
+
+
+
+
+
+/* ----- Td-Class ----- */
+.table-sorter table tr th.col-date {
+	width:120px !important;
+}
+.table-sorter table tr td.col-date {
+	width:120px !important;
+	border-left:1px solid rgba(0,0,0, .05);
+	border-right:1px solid rgba(0,0,0, .05);
+}
+.table-sorter table tr td.col-folder {}
+.table-sorter table tr td.col-title {}
+.table-sorter table tr td.col-author {}
+.table-sorter table tr td.col-type {}
+.table-sorter table tr td.col-actions {
+	width:170px !important;
+	text-align:right;
+}
+
+.table-sorter table tr td.dataTables_empty {
+	text-align:center;
+	padding:90px 10px 40px 10px;
+	background-image:url(../../img/bg/icon-alert.png);
+	background-repeat:no-repeat;
+	background-position:center 40px;
+}
+
+
+
+
+/* ----- Table-Sorter (Btn-Edit) ----- */
+.table-sorter table tr td .btn-edit {
+	background:#c4c4c6;
+}
+.table-sorter table tr:hover td .btn-edit {
+	background:#128bf3;
+}
+.table-sorter table tr:hover td .btn-edit:hover,
+.table-sorter table tr:hover td .btn-edit:focus {
+	background:#007ce7;
+}
+
+
+.table-sorter table tr td .btn {
+	font-weight:400 !important;
+	margin:0 !important;
+}
+
+
+/* ----- Table-Sorter (Bottom) ----- */
+.table-sorter .dataTables_info {
+	position:relative;
+	display:block;
+	width:50%;
+	margin:0 auto;
+	text-align:center;
+}
+.dataTables_paginate {
+	position:relative;
+	display:block;
+	width:100%;
+	margin:0 auto;
+	text-align:center;
+	padding:10px 20px 20px 20px;
+	overflow:hidden;
+}
+
+/* ----- Table-Sorter (Bottom-Button) ----- */
+.paginate_button {
+	display:inline-block;
+	position:relative;
+	margin:0;
+	padding:6px 12px;
+	font-family:inherit;
+	font-size:1em;
+	line-height:1em;
+	background:#c4c4c6;
+	color:#fff;
+	border:0;
+	border-bottom:2px solid rgba(0,0,0, .1);
+	border-radius:2px;
+	cursor:pointer;
+}
+.paginate_button:before {
+	display:inline-block;
+	vertical-align:middle;
+	margin:-4px 5px -2px 0;
+	width:16px;
+	height:16px;
+	content:"";
+	display:none;
+}
+.paginate_button:after {
+	display:inline-block;
+	vertical-align:middle;
+	margin:-4px 0 -2px 5px;
+	width:16px;
+	height:16px;
+	content:"";
+	display:none;
+}
+.paginate_button:hover,
+.paginate_button:focus {
+	background:#b5b5b7;
+	border-bottom:2px solid rgba(0,0,0, .3);
+	text-decoration:none;
+	color:#fff;
+}
+.paginate_button.previous {
+	float:left;
+}
+.paginate_button.previous:before {
+	display:inline-block;
+	background:url(../../img/bg/icon-btn.png) no-repeat -32px -60px;
+}
+.paginate_button.next {
+	float:right;
+}
+.paginate_button.next:after {
+	display:inline-block;
+	background:url(../../img/bg/icon-btn.png) no-repeat -48px -60px;
+}
+.paginate_button.disabled {
+	opacity:.3;
+	cursor:default;
+} 
+
+
+/* ----- Table-Sorter (Bottom-Pagination) ----- */
+span .paginate_button {
+	margin:0 2px;
+}
+span .paginate_button.current {
+	background:#128bf3;
+}
+span .paginate_button.current:hover,
+span .paginate_button.current:focus {
+	background:#007ce7;
+}
+
+
+
+
+
+
+
+/* ----- Table-Sorter (Top) ----- */
+.dataTables_length,
+.dataTables_filter {
+	display:block;
+	float:left;
+	width:50%;
+	height:75px;
+	padding:25px;
+	background:#f9f9f9;
+}
+
+/* ----- Table-Sorter (Top-Lenght) ----- */
+.dataTables_length {}
+.dataTables_length label {}
+.dataTables_length select {
+	margin:0 10px;
+}
+
+
+/* ----- Table-Sorter (Top-Search) ----- */
+.dataTables_filter {
+	text-align:right;
+}
+.dataTables_filter input {
+	margin:0 10px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
