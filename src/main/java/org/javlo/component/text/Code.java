@@ -50,5 +50,10 @@ public class Code extends AbstractVisualComponent {
 	protected boolean getColumnableDefaultValue() {
 		return true;
 	}
+	
+	@Override
+	public boolean isRealContent(ContentContext ctx) {
+		return!StringHelper.isEmpty(getValue());
+	}
 
 }

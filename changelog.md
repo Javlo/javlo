@@ -702,6 +702,7 @@ Security in case of vulnerabilities.
 - static files in www folder
 - events list by user (MyEvents)
 - forms result backup thread
+- bright interface
 ### Fixed
 - edit index.html of template, load CodeMirror
 - reset navigation if navigation renderer change
