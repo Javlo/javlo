@@ -261,7 +261,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
-		
+
 	}
 
 	public void process(HttpServletRequest request, HttpServletResponse response, boolean post) throws ServletException {
@@ -270,6 +270,37 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		logger.fine("uri : " + request.getRequestURI());
 
 		StaticConfig staticConfig = StaticConfig.getInstance(getServletContext());
+		if (!staticConfig.isFoundFile()) {		
+			try {
+				boolean install = StringHelper.isTrue(request.getParameter("install"));
+				if (install) {
+					logger.info("install javlo");
+					try {
+						if (!staticConfig.install(request.getParameter("config"), request.getParameter("data"), request.getParameter("admin"))) {
+							request.setAttribute("error", "error on install, check log and try again.");
+							install = false;
+							logger.severe("error on install.");
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+						request.setAttribute("error", e.getMessage());
+						install = false;
+						logger.severe("exception on install.");
+					}
+				}
+				if (!install) {
+					try {
+						request.setAttribute("remoteinfo", NetHelper.readPageGet(new URL("http://help.javlo.org/_install?version=" + IVersion.VERSION)));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					getServletContext().getRequestDispatcher("/jsp/install.jsp").include(request, response);
+				}
+			} catch (IOException e) {
+				throw new ServletException(e);
+			}
+			return;
+		}
 
 		/** init log **/
 		long startTime = System.currentTimeMillis();
@@ -312,9 +343,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 			if (!ctx.isAsViewMode()) {
 				SecurityHelper.checkUserAccess(ctx);
-				AdminUserSecurity userSec = AdminUserSecurity.getInstance();				
+				AdminUserSecurity userSec = AdminUserSecurity.getInstance();
 				if (ctx.getCurrentEditUser() == null || !userSec.canRole(ctx.getCurrentEditUser(), "content") && !ctx.getCurrentPage().isPublic(ctx)) {
-					logger.warning("unauthorized access : "+request.getRequestURL());
+					logger.warning("unauthorized access : " + request.getRequestURL());
 					response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 				}
 			}
@@ -345,7 +376,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			}
 
 			if (!staticConfig.isContentExtensionValid(ctx.getFormat())) {
-				logger.warning("extension not found : "+ctx.getFormat()+ " url="+request.getRequestURL());
+				logger.warning("extension not found : " + ctx.getFormat() + " url=" + request.getRequestURL());
 				ctx.setFormat(staticConfig.getDefaultContentExtension());
 				ctx.setContentFound(false);
 			}
@@ -860,7 +891,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								while (parent != null) {
 									parent = parent.getParent();
 								}
-								logger.warning("no acces to : "+ctx.getCurrentPage().getName()+" (public:"+ctx.getCurrentPage().isPublic(ctx)+")");
+								logger.warning("no acces to : " + ctx.getCurrentPage().getName() + " (public:" + ctx.getCurrentPage().isPublic(ctx) + ")");
 								response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 								return;
 							}

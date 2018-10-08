@@ -557,6 +557,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					newInstance.contextFile.getParentFile().mkdirs();
 					newInstance.creation = true;
 				}
+				logger.info("create new context file : "+newInstance.contextFile);
 				newInstance.contextFile.createNewFile();
 
 				synchronized (newInstance.properties) {

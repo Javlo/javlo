@@ -51,6 +51,8 @@ import org.javlo.user.UserInfo;
 import org.javlo.utils.ConfigurationProperties;
 import org.javlo.ztatic.FileCache;
 
+import fr.opensagres.xdocreport.document.web.WEBURIResolver;
+
 public class StaticConfig extends Observable {
 
 	public static String WEB_PLATFORM = "web";
@@ -65,6 +67,8 @@ public class StaticConfig extends Observable {
 	Map<String, User> editUsers = new HashMap<String, User>();
 
 	public static final String WEBAPP_CONFIG_FILE = "/WEB-INF/config/webapp_config.properties";
+	
+	public static final String WEBAPP_CONFIG_INSTALL = "/WEB-INF/config/static-config-install.properties";
 
 	static final String EDIT_USERS_KEY = "edit.users";
 	static final String DEFAULT_CREDENTIALS = "admin,0DPiKuNIrrVmD8IUCuw1hQxNqZc="; // admin,admin;
@@ -93,6 +97,8 @@ public class StaticConfig extends Observable {
 	private Boolean redirectSecondaryURL = null;
 
 	private List<String> ipMaskList = null;
+	
+	private boolean foundFile = false;
 
 	private static class FolderBean {
 		String thread = null;
@@ -231,15 +237,20 @@ public class StaticConfig extends Observable {
 				staticConfigLocalisation = replaceFolderVariable(staticConfigLocalisation);
 
 				if (staticConfigLocalisation != null) {
+					LocalLogger.log("staticConfigLocalisation="+staticConfigLocalisation);
 					File file = new File(staticConfigLocalisation);
 					logger.info("load static config : " + file);
 					if (!file.exists()) {
-						if (!file.getParentFile().exists()) {
-							file.getParentFile().mkdirs();
-						}
-						file.createNewFile();
+//						if (!file.getParentFile().exists()) {
+//							file.getParentFile().mkdirs();
+//						}
+//						file.createNewFile();
+						foundFile = false;
+					} else {
+						foundFile = true;
+						properties.setFile(file);
 					}
-					properties.setFile(file);
+					
 				}
 
 				/** LOAD GOD USERS * */
@@ -262,8 +273,6 @@ public class StaticConfig extends Observable {
 							String token = StringHelper.getRandomIdBase64()+StringHelper.getRandomIdBase64();
 							ui.setToken(token);
 							user.setUserInfo(ui);
-							LocalLogger.log("token >> "+token);
-							LocalLogger.log("login >> "+user.getLogin());
 							
 							logger.info("add edit user : " + user.getName());
 
@@ -1429,7 +1438,8 @@ public class StaticConfig extends Observable {
 	public void reload() {
 		synchronized (FILE_NAME) {
 			properties.clear();
-			folderBean = null;
+			foundFile = properties.getFile().exists();
+			folderBean = new FolderBean();
 			try {
 				properties.load();
 			} catch (IOException e) {
@@ -1982,6 +1992,34 @@ public class StaticConfig extends Observable {
 		} else {
 			return Integer.parseInt(backupCount);
 		}
+	}
+
+	public boolean isFoundFile() {
+		return foundFile;
+	}
+
+	public void setFoundFile(boolean foundFile) {
+		this.foundFile = foundFile;
+	}
+	
+	public boolean install(String inConfigFolder, String idDataFolder, String adminPassword) throws IOException {
+		inConfigFolder = URLHelper.cleanPath(replaceFolderVariable(inConfigFolder), true);
+		idDataFolder = URLHelper.cleanPath(idDataFolder, true);
+		File configFile = new File(URLHelper.mergePath(inConfigFolder, FILE_NAME));
+		Properties webappProps = ResourceHelper.loadProperties(new File(application.getRealPath(WEBAPP_CONFIG_FILE)));
+		webappProps.setProperty(STATIC_CONFIG_KEY, inConfigFolder);
+		ResourceHelper.writePropertiesToFile(webappProps, new File(application.getRealPath(WEBAPP_CONFIG_FILE)), "config (install done)");
+		if (!configFile.exists()) {
+			configFile.getParentFile().mkdirs();
+			String configBase = ResourceHelper.loadStringFromFile(new File(application.getRealPath(WEBAPP_CONFIG_INSTALL)));
+			configBase = configBase.replace("#DATA#", idDataFolder);
+			configBase = configBase.replace("#PASSWORD#", SecurityHelper.encryptPassword(adminPassword));
+			configBase = configBase.replace("#SYNCHRO#", StringHelper.getRandomString(32));
+			ResourceHelper.writeStringToFile(configFile, configBase);
+		}
+		properties.setFile(configFile);
+		reload();
+		return true;
 	}
 
 }

@@ -415,7 +415,7 @@ public class TemplateFactory {
 				File templateFolder = new File(URLHelper.mergePath(StaticConfig.getInstance(application).getTemplateFolder(), template.getName()));
 				if (!templateFolder.exists()) {
 					templateFolder.getParentFile().mkdirs();
-					logger.info("import default template : " + template.getName());
+					logger.info("import default template : " + template.getName()+" (templateFolder:"+templateFolder+")");
 					try {
 						FileUtils.copyDirectory(template, templateFolder);
 					} catch (IOException e) {
