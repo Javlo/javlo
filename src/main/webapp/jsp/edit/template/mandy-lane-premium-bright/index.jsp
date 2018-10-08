@@ -142,7 +142,7 @@
 							</a></li>
 						</c:if>
 					</ul>
-					<a href="${info.currentViewURL}"><h1>${info.globalTitle}</h1></a>
+					<h1><a href="${info.currentViewURL}">${info.globalTitle}</a></h1>
 				</div>
 				<!-- topheader -->
 

@@ -91,6 +91,8 @@ public class StringHelper {
 	public static final String NUMERIC = "0123456789";
 
 	public static final String BASIC_CHAR = ALPHABET.toLowerCase() + ALPHABET.toUpperCase() + NUMERIC + "_-+= ,.;:*|&\"'";
+	
+	public static final String URLOK_CHAR = ALPHABET.toLowerCase() + ALPHABET.toUpperCase() + NUMERIC;
 
 	public static final String ALPHANUM = ALPHABET + NUMERIC;
 
@@ -1226,7 +1228,7 @@ public class StringHelper {
 	public static String getRandomString(int lenght) {
 		StringBuffer res = new StringBuffer();
 		for (int i = 0; i < lenght; i++) {
-			char newChar = BASIC_CHAR.charAt((int) Math.round(Math.random() * (BASIC_CHAR.length() - 1)));
+			char newChar = URLOK_CHAR.charAt((int) Math.round(Math.random() * (URLOK_CHAR.length() - 1)));
 			res.append(newChar);
 		}
 		return res.toString();

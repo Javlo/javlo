@@ -531,15 +531,18 @@ ul,li {
 }
 
 .tabmenu ul li.module .subname {
-	float: right;
-	padding: 0;
-	margin: -18px 15px 0 15px;
-	text-transform: none;
-	font-size: 0.9em;
-	height: 18px;
-	overflow: hidden;
-	text-align: right;
-	white-space: nowrap;
+    position: absolute;
+    padding-right: 9px;
+    text-transform: none;
+    font-size: 0.8em;
+    height: 18px;
+    overflow: hidden;
+    text-align: right;
+    white-space: nowrap;
+    width: 100%;
+    top: 21px;
+    right: 0;
+    display: inline-block;
 }
 
 .tabmenu ul li.module a .title {
@@ -1589,7 +1592,4 @@ select#taxonomy {
 
 body .ui-tabs-panel {
 	border: 0 none;
-	textarea {
-		border: 0 none;
-	}	
 }

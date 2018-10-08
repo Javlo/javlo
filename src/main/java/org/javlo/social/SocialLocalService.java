@@ -130,7 +130,7 @@ public class SocialLocalService {
 		}
 		if (!StringHelper.isEmpty(socialFilter.getAuthor())) {
 			String qr = socialFilter.getAuthor().replace("'", "''");
-			filterSQL = filterSQL + sep + "UPPER(author) like UPPER('%" + qr + "%') or mainpost.id in (select mainpost from post where mainpost=mainpost.id and author='" + qr + "')";
+			filterSQL = filterSQL + sep + "UPPER(author) like UPPER('%" + qr + "%') or mainpost.id in (select mainpost from post where mainpost=mainpost.id and UPPER(author)=UPPER('" + qr + "'))";
 			sep = " and ";
 		}
 		if (!StringHelper.isEmpty(socialFilter.getTitle())) {

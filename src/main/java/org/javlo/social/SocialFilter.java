@@ -50,7 +50,7 @@ public class SocialFilter {
 	public void reset() {
 		query = null;
 		title = null;
-		title = null;
+		author = null;
 		onlyMine = false;
 		notValided = false;
 	}

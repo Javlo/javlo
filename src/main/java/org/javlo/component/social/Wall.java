@@ -29,7 +29,7 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 	
 	private static final String POST_DELETABLE = "post_deletable";
 
-	private static final List<String> FIELDS = new LinkedList<String>(Arrays.asList(new String[] { "name", "title", "roles", "noaccess", "labelAddReply", "labelCreateOn", "labelLatestMsg","labelReplyAt", "labelToBottom", "labelToTop", "labelWaitValidation", UNVALIDED_NOT_VISIBLE+"#checkbox", POST_DELETABLE+"#checkbox" }));
+	private static final List<String> FIELDS = new LinkedList<String>(Arrays.asList(new String[] { "name", "title", "roles", "labelAddReply", "labelCreateOn", "labelLatestMsg","labelReplyAt", "labelToBottom", "labelToTop", "labelWaitValidation", UNVALIDED_NOT_VISIBLE+"#checkbox", POST_DELETABLE+"#checkbox" }));
 
 	@Override
 	public String getType() {
@@ -174,7 +174,7 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 	
 	public static String performUpdatefilter(ContentContext ctx, RequestService rs) throws Exception {
 		SocialFilter socialFilter = SocialFilter.getInstance(ctx.getRequest().getSession());
-		if (StringHelper.isTrue(rs.getParameter("reset"))) {
+		if (rs.getParameter("reset") != null) {
 			socialFilter.reset();
 		} else {			
 			socialFilter.setAuthor(rs.getParameter("text-author",null));
