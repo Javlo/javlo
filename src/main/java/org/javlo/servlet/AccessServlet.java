@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.javlo.bean.InstallBean;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.config.StaticConfig;
@@ -270,37 +271,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		logger.fine("uri : " + request.getRequestURI());
 
 		StaticConfig staticConfig = StaticConfig.getInstance(getServletContext());
-		if (!staticConfig.isFoundFile()) {		
-			try {
-				boolean install = StringHelper.isTrue(request.getParameter("install"));
-				if (install) {
-					logger.info("install javlo");
-					try {
-						if (!staticConfig.install(request.getParameter("config"), request.getParameter("data"), request.getParameter("admin"))) {
-							request.setAttribute("error", "error on install, check log and try again.");
-							install = false;
-							logger.severe("error on install.");
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-						request.setAttribute("error", e.getMessage());
-						install = false;
-						logger.severe("exception on install.");
-					}
-				}
-				if (!install) {
-					try {
-						request.setAttribute("remoteinfo", NetHelper.readPageGet(new URL("http://help.javlo.org/_install?version=" + IVersion.VERSION)));
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					getServletContext().getRequestDispatcher("/jsp/install.jsp").include(request, response);
-				}
-			} catch (IOException e) {
-				throw new ServletException(e);
-			}
-			return;
-		}
 
 		/** init log **/
 		long startTime = System.currentTimeMillis();
@@ -326,6 +296,43 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		ContentContext ctx = null;
 		try {
 			ctx = ContentContext.getContentContext(request, response);
+			
+			if (!staticConfig.isFoundFile()) {		
+				try {
+					boolean install = StringHelper.isTrue(request.getParameter("install"));
+					if (install) {
+						logger.info("install javlo");
+						try {
+							InstallBean installBean = staticConfig.install(ctx, request.getParameter("config"), request.getParameter("data"), request.getParameter("admin"), request.getParameter("import-template") != null, request.getParameter("import-demo") != null);
+							request.setAttribute("install", installBean);
+							if (installBean.getConfigStatus() == InstallBean.ERROR) {
+								request.setAttribute("error", "error on install, check log and try again.");
+								install = false;
+								logger.severe("error on install.");
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+							request.setAttribute("error", e.getMessage());
+							install = false;
+							logger.severe("exception on install.");
+						}
+					}
+					if (!install) {
+						try {
+							request.setAttribute("remoteinfo", NetHelper.readPageGet(new URL("http://help.javlo.org/_install?version=" + IVersion.VERSION)));
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						getServletContext().getRequestDispatcher("/jsp/install.jsp").include(request, response);
+					} else {
+						getServletContext().getRequestDispatcher("/jsp/install.jsp?done=true").include(request, response);
+					}
+				} catch (IOException e) {
+					throw new ServletException(e);
+				}
+				return;
+			}
+			
 			ctx.getDevice().correctWithTemplate(ctx.getCurrentTemplate());
 			if (ctx.getDevice().isMobileDevice()) {
 				EditContext.getInstance(globalContext, request.getSession()).setPreviewEditionMode(false);

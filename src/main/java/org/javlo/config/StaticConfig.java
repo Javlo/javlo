@@ -31,6 +31,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.openxml4j.opc.internal.ZipHelper;
+import org.javlo.bean.InstallBean;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.source.TestDataSource;
@@ -43,7 +45,10 @@ import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.macro.core.IMacro;
+import org.javlo.service.ContentService;
 import org.javlo.servlet.AccessServlet;
+import org.javlo.servlet.zip.ZipManagement;
+import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
@@ -51,15 +56,12 @@ import org.javlo.user.UserInfo;
 import org.javlo.utils.ConfigurationProperties;
 import org.javlo.ztatic.FileCache;
 
-import fr.opensagres.xdocreport.document.web.WEBURIResolver;
-
 public class StaticConfig extends Observable {
 
 	public static String WEB_PLATFORM = "web";
 	public static String MAILING_PLATFORM = "mailing";
 	public static String OPEN_PLATFORM = "open";
-	private static final List<String> PLATFORMS = new LinkedList<String>(
-			Arrays.asList(new String[] { WEB_PLATFORM, MAILING_PLATFORM }));
+	private static final List<String> PLATFORMS = new LinkedList<String>(Arrays.asList(new String[] { WEB_PLATFORM, MAILING_PLATFORM }));
 
 	protected static Logger logger = Logger.getLogger(StaticConfig.class.getName());
 
@@ -67,7 +69,7 @@ public class StaticConfig extends Observable {
 	Map<String, User> editUsers = new HashMap<String, User>();
 
 	public static final String WEBAPP_CONFIG_FILE = "/WEB-INF/config/webapp_config.properties";
-	
+
 	public static final String WEBAPP_CONFIG_INSTALL = "/WEB-INF/config/static-config-install.properties";
 
 	static final String EDIT_USERS_KEY = "edit.users";
@@ -88,6 +90,8 @@ public class StaticConfig extends Observable {
 
 	private static final String HOME = System.getProperty("user.home");
 
+	public static final String DEMO_SITE = "demo";
+
 	private static String javloHome = null;
 
 	private Set<String> excludeContextDomain = null;
@@ -97,7 +101,7 @@ public class StaticConfig extends Observable {
 	private Boolean redirectSecondaryURL = null;
 
 	private List<String> ipMaskList = null;
-	
+
 	private boolean foundFile = false;
 
 	private static class FolderBean {
@@ -219,17 +223,13 @@ public class StaticConfig extends Observable {
 					staticConfigLocalisation = webappProps.getProperty(STATIC_CONFIG_KEY);
 				}
 				if (application != null) {
-					if (staticConfigLocalisation == null || staticConfigLocalisation.trim().length() == 0
-							|| staticConfigLocalisation.contains("${")) {
-						staticConfigLocalisation = ResourceHelper.getRealPath(application,
-								DEFAULT_CONFIG_DIR + "/" + FILE_NAME);
+					if (staticConfigLocalisation == null || staticConfigLocalisation.trim().length() == 0 || staticConfigLocalisation.contains("${")) {
+						staticConfigLocalisation = ResourceHelper.getRealPath(application, DEFAULT_CONFIG_DIR + "/" + FILE_NAME);
 					} else {
 						staticConfigLocalisation = ElementaryURLHelper.mergePath(staticConfigLocalisation, FILE_NAME);
-						boolean staticConfigRelative = Boolean
-								.parseBoolean(webappProps.getProperty(STATIC_CONFIG_RELATIVE_KEY));
+						boolean staticConfigRelative = Boolean.parseBoolean(webappProps.getProperty(STATIC_CONFIG_RELATIVE_KEY));
 						if (staticConfigRelative && !staticConfigLocalisation.contains("$")) {
-							staticConfigLocalisation = ResourceHelper.getRealPath(application,
-									staticConfigLocalisation);
+							staticConfigLocalisation = ResourceHelper.getRealPath(application, staticConfigLocalisation);
 						}
 					}
 				}
@@ -237,20 +237,20 @@ public class StaticConfig extends Observable {
 				staticConfigLocalisation = replaceFolderVariable(staticConfigLocalisation);
 
 				if (staticConfigLocalisation != null) {
-					LocalLogger.log("staticConfigLocalisation="+staticConfigLocalisation);
+					LocalLogger.log("staticConfigLocalisation=" + staticConfigLocalisation);
 					File file = new File(staticConfigLocalisation);
 					logger.info("load static config : " + file);
 					if (!file.exists()) {
-//						if (!file.getParentFile().exists()) {
-//							file.getParentFile().mkdirs();
-//						}
-//						file.createNewFile();
+						// if (!file.getParentFile().exists()) {
+						// file.getParentFile().mkdirs();
+						// }
+						// file.createNewFile();
 						foundFile = false;
 					} else {
 						foundFile = true;
 						properties.setFile(file);
 					}
-					
+
 				}
 
 				/** LOAD GOD USERS * */
@@ -270,10 +270,10 @@ public class StaticConfig extends Observable {
 							UserInfo ui = new UserInfo();
 							ui.setLogin(user.getLogin());
 							ui.setPassword(user.getPassword());
-							String token = StringHelper.getRandomIdBase64()+StringHelper.getRandomIdBase64();
+							String token = StringHelper.getRandomIdBase64() + StringHelper.getRandomIdBase64();
 							ui.setToken(token);
 							user.setUserInfo(ui);
-							
+
 							logger.info("add edit user : " + user.getName());
 
 							editUsers.put(user.getName(), user);
@@ -308,8 +308,7 @@ public class StaticConfig extends Observable {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.log(Level.WARNING, "static config file location not found (" + staticConfigLocalisation
-					+ "), using default location inside webapp", e);
+			logger.log(Level.WARNING, "static config file location not found (" + staticConfigLocalisation + "), using default location inside webapp", e);
 		}
 
 	}
@@ -345,9 +344,7 @@ public class StaticConfig extends Observable {
 
 	}
 
-	public AdminUserFactory getAdminUserFactory(GlobalContext globalContext, HttpSession session)
-			throws SecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException,
-			InstantiationException, IllegalAccessException, InvocationTargetException {
+	public AdminUserFactory getAdminUserFactory(GlobalContext globalContext, HttpSession session) throws SecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		if (admimUserFactory == null) {
 			Constructor<IUserFactory> construct = getAdminUserFactoryClass().getConstructor();
 			admimUserFactory = (AdminUserFactory) construct.newInstance();
@@ -366,8 +363,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getAdminUserFactoryClassName() {
-		String userFactoryClass = properties.getString("adminuserfactory.class", "org.javlo.user.AdminUserFactory")
-				.trim();
+		String userFactoryClass = properties.getString("adminuserfactory.class", "org.javlo.user.AdminUserFactory").trim();
 		return userFactoryClass;
 	}
 
@@ -399,8 +395,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getExternalComponentFolder() {
-		return URLHelper.mergePath(getAllDataFolder(),
-				properties.getString("external-components-folder", "external-components"));
+		return URLHelper.mergePath(getAllDataFolder(), properties.getString("external-components-folder", "external-components"));
 	}
 
 	public Level getAllLogLevel() {
@@ -521,15 +516,15 @@ public class StaticConfig extends Observable {
 	public String getDBLogin() {
 		return properties.getString("db.login", null);
 	}
-	
+
 	public String getDBPassword() {
 		return properties.getString("db.password", null);
 	}
-	
+
 	public String getDBInternalLogin() {
 		return properties.getString("db.internal.login", "sa");
 	}
-	
+
 	public String getDBInternalPassword() {
 		return properties.getString("db.internal.password", "");
 	}
@@ -666,7 +661,7 @@ public class StaticConfig extends Observable {
 	public boolean isImageMetaEdition() {
 		return properties.getBoolean("image.meta", true);
 	}
-	
+
 	public boolean isEditRepeatComponent() {
 		return properties.getBoolean("content.edit-repeat", true);
 	}
@@ -740,8 +735,7 @@ public class StaticConfig extends Observable {
 	/* config values */
 
 	public String getI18nSpecificEditFile() {
-		String file = replaceFolderVariable(
-				properties.getString("i18n.file.specific-edit", "/WEB-INF/i18n/specific_edit_"));
+		String file = replaceFolderVariable(properties.getString("i18n.file.specific-edit", "/WEB-INF/i18n/specific_edit_"));
 		if (isI18nFileRelative() && application != null) {
 			file = ResourceHelper.getRealPath(application, file);
 		}
@@ -749,8 +743,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getI18nSpecificViewFile() {
-		String file = replaceFolderVariable(
-				properties.getString("i18n.file.specific-view", "/WEB-INF/i18n/specific_view_"));
+		String file = replaceFolderVariable(properties.getString("i18n.file.specific-view", "/WEB-INF/i18n/specific_view_"));
 		if (isI18nFileRelative() && application != null) {
 			file = ResourceHelper.getRealPath(application, file);
 		}
@@ -822,18 +815,19 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getLDAPSecurityPrincipal() {
-		return properties.getString("ldap.security.principal",null);
+		return properties.getString("ldap.security.principal", null);
 	}
-	
+
 	/**
 	 * use #login# in place of login
+	 * 
 	 * @return
 	 */
 	public String getLDAPSecurityLogin(String login) {
 		if (StringHelper.isEmpty(login)) {
 			return null;
 		}
-		return properties.getString("ldap.security.login","").replace("#login#", login);
+		return properties.getString("ldap.security.login", "").replace("#login#", login);
 	}
 
 	public String getLocalMailingFolder() {
@@ -1056,7 +1050,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public int getMaxErrorLoginByHour() {
-		return properties.getInt("security.login.max-error-hour", isHighSecure()?10:100);
+		return properties.getInt("security.login.max-error-hour", isHighSecure() ? 10 : 100);
 	}
 
 	public String getRealPath(String path) {
@@ -1089,7 +1083,7 @@ public class StaticConfig extends Observable {
 	public String getSharedPixaBayAPIKey() {
 		return properties.getString("shared.pixabay.key", null);
 	}
-	
+
 	public String getSharedStockvaultAPIKey() {
 		return properties.getString("shared.stockvault.key", null);
 	}
@@ -1134,7 +1128,7 @@ public class StaticConfig extends Observable {
 	public String getStaticConfigLocalisation() {
 		return staticConfigLocalisation;
 	}
-	
+
 	public String getExternComponentFolder() {
 		return properties.getString("exter-component-folder", "components");
 	}
@@ -1163,10 +1157,10 @@ public class StaticConfig extends Observable {
 	public String getTeaserFolder() {
 		return ElementaryURLHelper.mergePath(getStaticFolder(), properties.getString("teaser-folder", "teasers"));
 	}
-	
+
 	public File getWebTempDir() {
-		String path = properties.getString("temp-web-folder", "/web-tmp");			
-		return new File(ResourceHelper.getRealPath(application, path));		
+		String path = properties.getString("temp-web-folder", "/web-tmp");
+		return new File(ResourceHelper.getRealPath(application, path));
 	}
 
 	public String getTempDir() {
@@ -1240,17 +1234,17 @@ public class StaticConfig extends Observable {
 		}
 		return path;
 	}
-	
+
 	public String getUserFolder() {
 		return "users";
 	}
 
 	public String getUserInfoFile() {
-		return properties.getString("userinfo-file", "/"+getUserFolder()+"/view/users-list.csv");
+		return properties.getString("userinfo-file", "/" + getUserFolder() + "/view/users-list.csv");
 	}
-	
+
 	public String getAdminUserInfoFile() {
-		return properties.getString("adminuserinfo-file", "/"+getUserFolder()+"/admin/edit-users-list.csv");
+		return properties.getString("adminuserinfo-file", "/" + getUserFolder() + "/admin/edit-users-list.csv");
 	}
 
 	public String getVFSFolder() {
@@ -1680,8 +1674,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getSearchEngineLucenePattern() {
-		return properties.getString("searchengine.lucene.pattern", "level3:{QUERY}^3 level2:{QUERY}^2 level1:{QUERY}^1")
-				.trim();
+		return properties.getString("searchengine.lucene.pattern", "level3:{QUERY}^3 level2:{QUERY}^2 level1:{QUERY}^1").trim();
 	}
 
 	public String getDropboxAppKey() {
@@ -1714,7 +1707,7 @@ public class StaticConfig extends Observable {
 	public String getJSPreview() {
 		return properties.getString("preview.js", "/jsp/preview/js/bootstrap/preview.js");
 	}
-	
+
 	public String getHTML2Canvas() {
 		return properties.getString("html2Canvas.js", "/jsp/preview/js/lib/html2canvas.min.js");
 	}
@@ -1724,7 +1717,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getStaticResourceCacheTime() {
-		return properties.getString("resources.cache-time", ""+(60*60*24));
+		return properties.getString("resources.cache-time", "" + (60 * 60 * 24));
 	}
 
 	public boolean isContentExtensionValid(String ext) {
@@ -1861,10 +1854,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public List<String> getDocumentExtension() {
-		return StringHelper.stringToCollection(properties.getString("content.document-format", getImageFormat() + ','
-				+ properties.getString("content.document-format", "mp3,wav,m4a,aif,aiff,aifc")
-				+ ",doc,docx,svg,odf,xls,xlsx,pdf,xml,zip,ppt,pptx,pub,eml,osd,odt,vcard,ppsx,sdw,mp4,mp3,avi,wpt,odm,mov,url,ept,stw,sdd,sds,odc,fax,vdx,wpa,ppv,sgf,wp5,xtd,psd,rar,html,htm"),
-				",");
+		return StringHelper.stringToCollection(properties.getString("content.document-format", getImageFormat() + ',' + properties.getString("content.document-format", "mp3,wav,m4a,aif,aiff,aifc") + ",doc,docx,svg,odf,xls,xlsx,pdf,xml,zip,ppt,pptx,pub,eml,osd,odt,vcard,ppsx,sdw,mp4,mp3,avi,wpt,odm,mov,url,ept,stw,sdd,sds,odc,fax,vdx,wpa,ppv,sgf,wp5,xtd,psd,rar,html,htm"), ",");
 	}
 
 	public List<String> getSoundExtension() {
@@ -1914,32 +1904,32 @@ public class StaticConfig extends Observable {
 	public boolean isRestServer() {
 		return properties.getBoolean("security.rest-server", false);
 	}
-	
+
 	public boolean isAnonymisedTracking() {
 		return properties.getBoolean("security.tracking.anonymised", false);
 	}
-	
+
 	public boolean isCompressJsp() {
-		return properties.getBoolean("deploy.compress-jsp", false); 
+		return properties.getBoolean("deploy.compress-jsp", false);
 	}
-	
+
 	public boolean isMobilePreview() {
 		return properties.getBoolean("mobile.preview", true);
 	}
-	
+
 	public List<String> getPreviewLayout() {
 		return StringHelper.stringToCollection(properties.getString("preview.layout", "light,lightsm,dark"), ",");
 	}
-	
+
 	public int getBackupInterval() {
 		String interval = properties.getProperty("backup.interval");
 		if (!StringHelper.isDigit(interval)) {
-			return 60*60*24;
+			return 60 * 60 * 24;
 		} else {
 			return Integer.parseInt(interval);
 		}
 	}
-	
+
 	public int getDbBackupCount() {
 		String backupCount = properties.getProperty("backup.count.db");
 		if (!StringHelper.isDigit(backupCount)) {
@@ -1948,7 +1938,7 @@ public class StaticConfig extends Observable {
 			return Integer.parseInt(backupCount);
 		}
 	}
-	
+
 	public int getDbBackupInterval() {
 		String backupCount = properties.getProperty("backup.interval.db");
 		if (!StringHelper.isDigit(backupCount)) {
@@ -1957,7 +1947,7 @@ public class StaticConfig extends Observable {
 			return Integer.parseInt(backupCount);
 		}
 	}
-	
+
 	public int getUsersBackupCount() {
 		String backupCount = properties.getProperty("backup.count.users");
 		if (!StringHelper.isDigit(backupCount)) {
@@ -1966,16 +1956,16 @@ public class StaticConfig extends Observable {
 			return Integer.parseInt(backupCount);
 		}
 	}
-		
+
 	public int getUsersBackupInterval() {
 		String backupCount = properties.getProperty("backup.interval.users");
 		if (!StringHelper.isDigit(backupCount)) {
-			return 60*60*2;
+			return 60 * 60 * 2;
 		} else {
 			return Integer.parseInt(backupCount);
 		}
 	}
-	
+
 	public int getFormsBackupCount() {
 		String backupCount = properties.getProperty("backup.count.forms");
 		if (!StringHelper.isDigit(backupCount)) {
@@ -1984,11 +1974,11 @@ public class StaticConfig extends Observable {
 			return Integer.parseInt(backupCount);
 		}
 	}
-	
+
 	public int getFormsBackupInterval() {
 		String backupCount = properties.getProperty("backup.interval.forms");
 		if (!StringHelper.isDigit(backupCount)) {
-			return 60*60*24;
+			return 60 * 60 * 24;
 		} else {
 			return Integer.parseInt(backupCount);
 		}
@@ -2001,25 +1991,105 @@ public class StaticConfig extends Observable {
 	public void setFoundFile(boolean foundFile) {
 		this.foundFile = foundFile;
 	}
-	
-	public boolean install(String inConfigFolder, String idDataFolder, String adminPassword) throws IOException {
-		inConfigFolder = URLHelper.cleanPath(replaceFolderVariable(inConfigFolder), true);
-		idDataFolder = URLHelper.cleanPath(idDataFolder, true);
-		File configFile = new File(URLHelper.mergePath(inConfigFolder, FILE_NAME));
-		Properties webappProps = ResourceHelper.loadProperties(new File(application.getRealPath(WEBAPP_CONFIG_FILE)));
-		webappProps.setProperty(STATIC_CONFIG_KEY, inConfigFolder);
-		ResourceHelper.writePropertiesToFile(webappProps, new File(application.getRealPath(WEBAPP_CONFIG_FILE)), "config (install done)");
-		if (!configFile.exists()) {
-			configFile.getParentFile().mkdirs();
-			String configBase = ResourceHelper.loadStringFromFile(new File(application.getRealPath(WEBAPP_CONFIG_INSTALL)));
-			configBase = configBase.replace("#DATA#", idDataFolder);
-			configBase = configBase.replace("#PASSWORD#", SecurityHelper.encryptPassword(adminPassword));
-			configBase = configBase.replace("#SYNCHRO#", StringHelper.getRandomString(32));
-			ResourceHelper.writeStringToFile(configFile, configBase);
+
+	/**
+	 * download data form javlo.org
+	 * 
+	 * @param ctx
+	 * @param importTemplate
+	 * @param importDemo
+	 * @return a ctx to new demo site, null if no demo site imported
+	 * @throws Exception
+	 */
+	public static ContentContext download(ContentContext ctx, InstallBean installBean, boolean importTemplate, boolean importDemo) {
+		Properties p = new Properties();
+		try {
+		InputStream in = new URL("https://javlo.org/resource/static/install/install_info.properties").openStream();
+		try {
+			p.load(in);
+		} finally {
+			ResourceHelper.closeResource(in);
 		}
-		properties.setFile(configFile);
-		reload();
-		return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			installBean.setDemoStatus(InstallBean.ERROR);
+			installBean.setTemplateStatus(InstallBean.ERROR);
+			return null;
+		}
+		if (importTemplate) {
+			try {
+				String prefix = p.getProperty("template.url.prefix", null);
+				String suffix = p.getProperty("template.url.suffix", null);
+				for (String template : StringHelper.stringToCollection(p.getProperty("templates"), ",")) {
+					String templateURL = prefix + template + suffix;
+					InputStream tplIn = new URL(templateURL).openStream();
+					try {
+						ZipManagement.uploadZipTemplate(ctx.getGlobalContext().getStaticConfig().getTemplateFolder(), tplIn, template);
+					} finally {
+						ResourceHelper.closeResource(tplIn);
+					}
+				}
+				installBean.setTemplateStatus(InstallBean.SUCCESS);
+			} catch (Exception e) {
+				e.printStackTrace();
+				installBean.setTemplateStatus(InstallBean.ERROR);
+			}
+		}
+		if (importDemo) {
+			try {
+				if (!GlobalContext.isExist(ctx.getRequest(), DEMO_SITE)) {
+					String contentUrl = p.getProperty("content.url", null);
+					GlobalContext demoContext = GlobalContext.getInstance(ctx.getRequest().getSession(), DEMO_SITE);
+					demoContext.setDefaultLanguages("en");
+					demoContext.setRAWLanguages("en");
+					demoContext.setRAWContentLanguages("en");
+					ContentContext demoCtx = new ContentContext(ctx);
+					demoCtx.setForceGlobalContext(demoContext);
+					InputStream inContent = new URL(contentUrl).openStream();
+					try {
+						ZipManagement.uploadZipFile(demoCtx, inContent);
+					} finally {
+						ResourceHelper.closeResource(inContent);
+					}
+					installBean.setDemoStatus(InstallBean.SUCCESS);
+					return demoCtx;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				installBean.setDemoStatus(InstallBean.ERROR);
+			}
+		}
+		return null;
+	}
+
+	public InstallBean install(ContentContext ctx, String inConfigFolder, String idDataFolder, String adminPassword, boolean importTemplate, boolean importDemo) {
+		InstallBean outBean = new InstallBean();
+		try {
+			outBean = new InstallBean();
+			inConfigFolder = URLHelper.cleanPath(replaceFolderVariable(inConfigFolder), true);
+			idDataFolder = URLHelper.cleanPath(idDataFolder, true);
+			File configFile = new File(URLHelper.mergePath(inConfigFolder, FILE_NAME));
+			Properties webappProps = ResourceHelper.loadProperties(new File(application.getRealPath(WEBAPP_CONFIG_FILE)));
+			webappProps.setProperty(STATIC_CONFIG_KEY, inConfigFolder);
+			ResourceHelper.writePropertiesToFile(webappProps, new File(application.getRealPath(WEBAPP_CONFIG_FILE)), "config (install done)");
+			if (!configFile.exists()) {
+				configFile.getParentFile().mkdirs();
+				String configBase = ResourceHelper.loadStringFromFile(new File(application.getRealPath(WEBAPP_CONFIG_INSTALL)));
+				configBase = configBase.replace("#DATA#", idDataFolder);
+				configBase = configBase.replace("#PASSWORD#", SecurityHelper.encryptPassword(adminPassword));
+				configBase = configBase.replace("#SYNCHRO#", StringHelper.getRandomString(32));
+				ResourceHelper.writeStringToFile(configFile, configBase);
+			}
+			properties.setFile(configFile);
+			reload();
+			TemplateFactory.copyDefaultTemplate(ctx.getRequest().getSession().getServletContext());
+			ContentService.clearAllContextCache(ctx);
+			download(ctx, outBean, importTemplate || importDemo, importDemo);
+		} catch (Exception e) {
+			e.printStackTrace();
+			outBean.setConfigStatus(InstallBean.ERROR);
+		}
+		return outBean;
 	}
 
 }

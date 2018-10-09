@@ -894,7 +894,7 @@ public class AdminAction extends AbstractModuleAction {
 		ListService.getInstance(ctx).clear();
 		return msg;
 	}
-
+	
 	public static final String clearCache(ContentContext ctx) throws Exception {
 		User user = ctx.getCurrentEditUser();
 		if (!AdminUserSecurity.getInstance().isAdmin(user)) {

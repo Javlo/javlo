@@ -41,17 +41,13 @@ public class ZipManagement {
 	/**
 	 * create a static logger.
 	 */
-	protected static Logger logger = Logger.getLogger(ZipManagement.class
-			.getName());
+	protected static Logger logger = Logger.getLogger(ZipManagement.class.getName());
 
-	public static void zipDirectory(ZipOutputStream out, String targetDir,
-			String sourceDir, HttpServletRequest request) throws IOException {
+	public static void zipDirectory(ZipOutputStream out, String targetDir, String sourceDir, HttpServletRequest request) throws IOException {
 		zipDirectory(out, targetDir, sourceDir, request, null, null);
 	}
 
-	public static void zipDirectory(ZipOutputStream out, String targetDir,
-			String sourceDir, HttpServletRequest request, Set<String> excludes,
-			Set<String> includes) throws IOException {
+	public static void zipDirectory(ZipOutputStream out, String targetDir, String sourceDir, HttpServletRequest request, Set<String> excludes, Set<String> includes) throws IOException {
 		if (targetDir == null) {
 			targetDir = "";
 		} else {
@@ -66,11 +62,9 @@ public class ZipManagement {
 				continue;
 			}
 			if (file2.isDirectory()) {
-				zipDirectory(out, name, sourceDir + '/' + file2.getName(),
-						request, excludes, includes);
+				zipDirectory(out, name, sourceDir + '/' + file2.getName(), request, excludes, includes);
 			} else {
-				if (includes != null
-						&& !URLHelper.contains(includes, name, true)) {
+				if (includes != null && !URLHelper.contains(includes, name, true)) {
 					continue;
 				}
 				try {
@@ -79,8 +73,7 @@ public class ZipManagement {
 					FileInputStream file = new FileInputStream(file2);
 
 					try {
-						int size = ResourceHelper
-								.writeStreamToStream(file, out);
+						int size = ResourceHelper.writeStreamToStream(file, out);
 						entry.setSize(size);
 					} finally {
 						ResourceHelper.closeResource(file);
@@ -98,8 +91,7 @@ public class ZipManagement {
 		zipFile(zipFile, inFile, inFile.getParentFile());
 	}
 
-	public static void zipFile(File zipFile, File inFile, File refDir)
-			throws IOException {
+	public static void zipFile(File zipFile, File inFile, File refDir) throws IOException {
 		if (!zipFile.exists()) {
 			zipFile.createNewFile();
 		}
@@ -112,8 +104,7 @@ public class ZipManagement {
 		out.close();
 	}
 
-	public static void gzipFile(File outFilename, File inFile)
-			throws IOException {
+	public static void gzipFile(File outFilename, File inFile) throws IOException {
 		FileOutputStream fos = new FileOutputStream(outFilename);
 		GZIPOutputStream gzos = new GZIPOutputStream(fos);
 		FileInputStream fin = new FileInputStream(inFile);
@@ -133,8 +124,7 @@ public class ZipManagement {
 		}
 	}
 
-	public static void zipFile(ZipOutputStream out, File inFile, File refDir)
-			throws IOException {
+	public static void zipFile(ZipOutputStream out, File inFile, File refDir) throws IOException {
 		if (inFile.isDirectory()) {
 			File[] files = inFile.listFiles();
 			for (File file : files) {
@@ -145,11 +135,9 @@ public class ZipManagement {
 			String refPath = refDir.getAbsolutePath().replace('\\', '/');
 
 			String relativePath = inPath.replaceFirst(refPath, "").trim();
-			if (StringHelper.isCharset(relativePath.getBytes(),
-					ContentContext.CHARACTER_ENCODING)) {
+			if (StringHelper.isCharset(relativePath.getBytes(), ContentContext.CHARACTER_ENCODING)) {
 				if (relativePath.startsWith("/")) {
-					relativePath = relativePath.substring(1,
-							relativePath.length());
+					relativePath = relativePath.substring(1, relativePath.length());
 				}
 
 				try {
@@ -161,8 +149,7 @@ public class ZipManagement {
 					entry.setSize(size);
 					file.close();
 				} catch (Throwable t) { // don't stop the for
-					logger.warning("bad file name : " + inFile + " ("
-							+ t.getMessage() + ')');
+					logger.warning("bad file name : " + inFile + " (" + t.getMessage() + ')');
 					// t.printStackTrace();
 				}
 				out.closeEntry();
@@ -170,8 +157,7 @@ public class ZipManagement {
 		}
 	}
 
-	public static void addFileInZip(ZipOutputStream out, String fileName,
-			InputStream in) throws IOException {
+	public static void addFileInZip(ZipOutputStream out, String fileName, InputStream in) throws IOException {
 		ZipEntry entry = new ZipEntry(fileName);
 		out.putNextEntry(entry);
 		int read = in.read();
@@ -185,8 +171,7 @@ public class ZipManagement {
 		out.closeEntry();
 	}
 
-	public static File saveFile(ServletContext serveltContext, String dir,
-			String fileName, InputStream in) throws IOException {
+	public static File saveFile(ServletContext serveltContext, String dir, String fileName, InputStream in) throws IOException {
 		String fullPath = dir + '/' + fileName;
 		File file = new File(fullPath);
 		if (fileName.endsWith("/") || fileName.endsWith("\\")) {
@@ -207,9 +192,10 @@ public class ZipManagement {
 		return file;
 	}
 
-	public static void uploadZipFile(HttpServletRequest request, HttpServletResponse response, InputStream in) throws Exception {
-		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
-		GlobalContext globalContext = GlobalContext.getInstance(request);
+	public static void uploadZipFile(ContentContext ctx, InputStream in) throws Exception {
+		GlobalContext globalContext = ctx.getGlobalContext();
+		StaticConfig staticConfig = globalContext.getStaticConfig();
+		
 		String dataFolder = globalContext.getDataFolder();
 		if (staticConfig.isDownloadCleanDataFolder()) {
 			ResourceHelper.moveToGlobalTrash(staticConfig, dataFolder);
@@ -218,46 +204,29 @@ public class ZipManagement {
 		ZipEntry entry = zipIn.getNextEntry();
 		while (entry != null) {
 			try {
-				saveFile(request.getSession().getServletContext(), dataFolder, entry.getName(), zipIn);
-			} catch (Exception e){
-				logger.warning("Error on file : "+entry.getName()+" ("+e.getMessage()+')');
+				saveFile(ctx.getRequest().getSession().getServletContext(), dataFolder, entry.getName(), zipIn);
+			} catch (Exception e) {
+				logger.warning("Error on file : " + entry.getName() + " (" + e.getMessage() + ')');
 			}
 			entry = zipIn.getNextEntry();
 		}
 		zipIn.close();
 
-		ContentService.getInstance(request).releaseAll(ContentContext.getContentContext(request, response), globalContext);
+		ContentService.getInstance(ctx.getRequest()).releaseAll(ctx, globalContext);
 	}
-
-	public static void uploadZipTemplate(ContentContext ctx, InputStream in,
-			String templateId) throws Exception {
-		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-		MessageRepository msgRepo = MessageRepository.getInstance(ctx);
-
+	
+	public static void uploadZipTemplate(String templateFolder, InputStream in, String templateId) throws Exception {
 		ZipInputStream zipIn = new ZipInputStream(in);
 		ZipEntry entry = zipIn.getNextEntry();
-		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest()
-				.getSession());
-		String templateFolder;
-		templateFolder = URLHelper.mergePath(staticConfig.getTemplateFolder(),
-				templateId);
+		templateFolder = URLHelper.mergePath(templateFolder, templateId);
+		System.out.println(">>>>>>>>> ZipManagement.uploadZipTemplate : templateFolder = "+templateFolder); //TODO: remove debug trace
 
-		boolean foundIndex = false;
-		boolean foundConfig = false;
 		while (entry != null) {
-			File file = new File(URLHelper.mergePath(templateFolder,
-					entry.getName()));
-			if ((!file.getAbsolutePath().contains("/CVS"))
-					&& (!file.getAbsolutePath().contains("\\CVS"))) {
+			File file = new File(URLHelper.mergePath(templateFolder, entry.getName()));
+			if ((!file.getAbsolutePath().contains("/CVS")) && (!file.getAbsolutePath().contains("\\CVS"))) {
 				if (!entry.isDirectory()) {
 					file.getParentFile().mkdirs();
 					try {
-						if (file.getName().endsWith("index.html")) {
-							foundIndex = true;
-						}
-						if (file.getName().endsWith("config.properties")) {
-							foundConfig = true;
-						}
 						file.createNewFile();
 					} catch (Throwable t) {
 						t.printStackTrace();
@@ -269,17 +238,7 @@ public class ZipManagement {
 			}
 
 			entry = zipIn.getNextEntry();
-		}
-		if (!foundIndex && foundConfig) {
-			msgRepo.setGlobalMessage(new GenericMessage(i18nAccess
-					.getText("command.admin.template.html-not-found"),
-					GenericMessage.ALERT));
-		}
-		if (!foundConfig) {
-			msgRepo.setGlobalMessage(new GenericMessage(i18nAccess
-					.getText("command.admin.template.config-not-found"),
-					GenericMessage.ERROR));
-		}
+		}		
 		zipIn.close();
 	}
 }

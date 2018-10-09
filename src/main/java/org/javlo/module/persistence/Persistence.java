@@ -142,7 +142,7 @@ public class Persistence extends AbstractModuleAction {
 			URL url = new URL(urlParam);
 			InputStream in = url.openStream();
 			try {
-				ZipManagement.uploadZipFile(request, response, in);
+				ZipManagement.uploadZipFile(ctx, in);
 			} finally {
 				ResourceHelper.closeResource(in);
 			}
@@ -157,7 +157,7 @@ public class Persistence extends AbstractModuleAction {
 				if (StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("zip")) {
 					InputStream in = item.getInputStream();
 					try {
-						ZipManagement.uploadZipFile(request, response, in);
+						ZipManagement.uploadZipFile(ctx, in);
 					} finally {
 						ResourceHelper.closeResource(in);
 					}

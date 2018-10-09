@@ -438,7 +438,7 @@ public class TemplateAction extends AbstractModuleAction {
 			try {
 				URL zipURL = new URL(template.getDownloadURL());
 				in = zipURL.openConnection().getInputStream();
-				ZipManagement.uploadZipTemplate(ctx, in, newTemplate.getId());
+				ZipManagement.uploadZipTemplate(ctx.getGlobalContext().getStaticConfig().getTemplateFolder(), in, newTemplate.getId());
 				in.close();
 
 				URL imageURL = new URL(template.getImageURL());
@@ -758,7 +758,7 @@ public class TemplateAction extends AbstractModuleAction {
 		if (!StringHelper.getFileExtension(file.getName()).toLowerCase().equals("zip")) {
 			return false;
 		} else {
-			ZipManagement.uploadZipTemplate(ctx, in, StringHelper.getFileNameWithoutExtension(file.getName()));
+			ZipManagement.uploadZipTemplate(ctx.getGlobalContext().getStaticConfig().getTemplateFolder(), in, StringHelper.getFileNameWithoutExtension(file.getName()));
 			return true;
 		}
 	}
