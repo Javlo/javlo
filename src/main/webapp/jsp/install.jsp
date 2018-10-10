@@ -71,7 +71,7 @@ h2 {
 								<p class="card-text">The installation is almost complete.
 									Thank you for giving the latest information needed.</p>
 								<form method="post" ${param.install?'was-validated':''}>
-									<input type="hidden" name="install" value="true" />
+									<input type="text" name="install" value="true" />
 									<div class="form-group row">
 										<label for="config" class="col-sm-3 col-form-label">Config
 											folder*</label>

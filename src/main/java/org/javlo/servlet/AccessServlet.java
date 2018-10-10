@@ -300,6 +300,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			if (!staticConfig.isFoundFile()) {		
 				try {
 					boolean install = StringHelper.isTrue(request.getParameter("install"));
+					System.out.println(">>>>>>>>> AccessServlet.process : request.getParameter(\"install\") = "+request.getParameter("install")); //TODO: remove debug trace
+					System.out.println(">>>>>>>>> AccessServlet.process : install = "+install); //TODO: remove debug trace
 					if (install) {
 						logger.info("install javlo");
 						try {
