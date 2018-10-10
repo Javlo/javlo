@@ -426,6 +426,7 @@ public class SmartPageBean {
 	}
 
 	public String getSubTitle() {
+		display();
 		try {
 			return page.getSubTitle(lgCtx);
 		} catch (Exception e) {
@@ -474,6 +475,7 @@ public class SmartPageBean {
 
 	public String getTitle() {
 		try {
+			display();
 			return page.getTitle(lgCtx);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -482,6 +484,7 @@ public class SmartPageBean {
 	}
 
 	public String getTitleForAttribute() {
+		display();
 		try {
 			return Encode.forHtmlAttribute(page.getTitle(lgCtx));
 		} catch (Exception e) {
@@ -491,6 +494,7 @@ public class SmartPageBean {
 	}
 
 	public String getContentTitle() {
+		display();
 		try {
 			return page.getContentTitle(lgCtx);
 		} catch (Exception e) {
@@ -950,5 +954,15 @@ public class SmartPageBean {
 			}
 		}
 		return outData;
+	}
+	
+	public void display() {
+		final String KEY = "comp-displayed-"+getId();
+		ctx.getRequest().setAttribute(KEY, true);
+	}
+	
+	public boolean isAlreadyDisplayed() {
+		final String KEY = "comp-displayed-"+getId();
+		return ctx.getRequest().getAttribute(KEY) != null;
 	}
 }

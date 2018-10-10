@@ -54,7 +54,6 @@ if (areaWrapper && area != null) {
 	%><div id="<%=area%>" class="<%=layoutClass%>"><%
 }
 
-
 boolean pageEmpty = true;
 boolean editPage = !StringHelper.isTrue(request.getParameter(PageMirrorComponent.NOT_EDIT_PREVIEW_PARAM_NAME));
 IContentVisualComponent specificComp = (IContentVisualComponent)request.getAttribute("specific-comp");
@@ -66,8 +65,6 @@ if (specificComp == null && request.getParameter("_only_component") != null) {
 if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly() && specificComp == null && editPage) {
 	%><div id="one-component-edit"></div><%
 }
-
-
 
 if (area != null) {
 	ctx.setArea(area);

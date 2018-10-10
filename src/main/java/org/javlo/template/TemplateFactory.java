@@ -22,6 +22,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.filter.VisibleDirectoryFilter;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -410,6 +411,9 @@ public class TemplateFactory {
 
 	public static void copyDefaultTemplate(ServletContext application) {
 		File defaultTemplateFolder = new File(ResourceHelper.getRealPath(application,"/WEB-INF/template/"));
+		if (defaultTemplateFolder.listFiles().length == 0) {
+			throw new RuntimeException("default template not found.");
+		}
 		for (File template : defaultTemplateFolder.listFiles()) {
 			if (template.isDirectory()) {
 				File templateFolder = new File(URLHelper.mergePath(StaticConfig.getInstance(application).getTemplateFolder(), template.getName()));

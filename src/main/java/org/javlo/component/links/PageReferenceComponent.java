@@ -64,7 +64,6 @@ import org.javlo.navigation.PageBean;
 import org.javlo.navigation.ReactionMenuElementComparator;
 import org.javlo.navigation.ReactionSmartPageBeanComparator;
 import org.javlo.service.ContentService;
-import org.javlo.service.NavigationService;
 import org.javlo.service.RequestService;
 
 /**
@@ -1259,6 +1258,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			}
 		}
 	}
+	
+	protected boolean isRedisplay(ContentContext ctx) {
+		return StringHelper.isTrue(getConfig(ctx).getProperty("redisplay", null), false);
+	}
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
@@ -1397,9 +1400,16 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 												allMonthsKeys.add(key);
 											}
 											if (monthFilter == null || TimeHelper.betweenInDay(page.getContentDateNeverNull(lgCtx), startDate.getTime(), endDate.getTime())) {
-												countPage++;
+												SmartPageBean pageBean = SmartPageBean.getInstance(ctx, lgCtx, page, this);
+												boolean isRedisplay = isRedisplay(ctx);
+												boolean isAlreadyDisplayed = pageBean.isAlreadyDisplayed();
+												if (isRedisplay || !isAlreadyDisplayed) {
+													countPage++;
+												}
 												if (countPage >= firstPageNumber && countPage <= lastPageNumber) {
-													pageBeans.add(SmartPageBean.getInstance(ctx, lgCtx, page, this));
+													if (isRedisplay || !isAlreadyDisplayed) {
+														pageBeans.add(pageBean);
+													}
 												}
 											}
 										}
@@ -1874,6 +1884,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	@Override
 	protected boolean getColumnableDefaultValue() {
 		return true;
+	}
+	
+	@Override
+	public boolean isDisplayable(ContentContext ctx) throws Exception {
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		MenuElement menu = content.getNavigation(ctx);
+		List<MenuElement> allChildren = menu.getAllChildrenList();
+		return getSelectedPages(ctx, allChildren).size()>1;
 	}
 
 }
