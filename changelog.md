@@ -703,6 +703,7 @@ Security in case of vulnerabilities.
 - events list by user (MyEvents)
 - forms result backup thread
 - bright interface
+- page reference no rediplay item
 ### Fixed
 - edit index.html of template, load CodeMirror
 - reset navigation if navigation renderer change
