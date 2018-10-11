@@ -184,7 +184,7 @@ public class SocialLocalService {
 	public long getPostListSize(String group) throws Exception {
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		try {
-			String sql = "select count(id) from post where groupName='" + group + "'";
+			String sql = "select count(id) from post where groupName='" + group + "'";			
 			ResultSet rs = conn.createStatement().executeQuery(sql);
 			if (rs.next()) {
 				return rs.getLong(1);
@@ -289,11 +289,7 @@ public class SocialLocalService {
 			if (admin) {
 				notAdminQuery = "";
 			}
-			String filter = "";
-			if (socialFilter != null && socialFilter.isNotValided()) {
-				filter = " and adminCheck=false";
-			}
-			ResultSet rs = conn.createStatement().executeQuery("select * from post where mainPost='" + mainPost + "' " + notAdminQuery + filter + " order by time asc");
+			ResultSet rs = conn.createStatement().executeQuery("select * from post where mainPost='" + mainPost + "' " + notAdminQuery + " order by time asc");
 			while (rs.next()) {
 				workList.add(rsToPost(conn, rs, username, admin, needCheck));
 			}

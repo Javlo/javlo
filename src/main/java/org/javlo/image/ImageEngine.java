@@ -19,7 +19,6 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URL;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.logging.Logger;
@@ -30,9 +29,9 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 
-import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 
+import com.jhlabs.image.GainFilter;
 import com.jhlabs.image.RGBAdjustFilter;
 
 public class ImageEngine {
@@ -1761,26 +1760,45 @@ public class ImageEngine {
 		}
 		return outImage;
 	}
+	
+	
+	
+	public static double getColorLight(BufferedImage image) {
+		double red=0;
+		double green=0;
+		double blue=0;
+		for (int y = 0; y < image.getHeight(); y += 1) {
+			for (int x = 0; x < image.getWidth(); x += 1) {
+				red = red + ((double)((image.getRGB(x, y)& 0x00ff0000)>>16)/255);
+				green = green + ((double)((image.getRGB(x, y)& 0x0000ff00)>>8)/255);
+				blue = blue + ((double)((image.getRGB(x, y)& 0x000000ff))/255);
+			}
+		}
+		return (red+green+blue)/(image.getWidth()*image.getHeight()*3);
+	}
 
 	public static void main(String[] args) throws Exception {
-//		System.out.println("***** ImageEngine.main : START"); // TODO: remove
-//		File imageBack = new File("c:/trans/work/test7.jpg");
-//		Color bg = new Color(255, 255, 255, 200);
-//		BufferedImage targetImg = ImageEngine.addTransparanceBorder(ImageIO.read(imageBack), bg, 30, 50, 3);
-//		System.out.println(">>>>>>>>> ImageEngine.main : DARK ? = " + isDark(targetImg)); // TODO: remove debug trace
-//		ImageIO.write(targetImg, "png", new File("c:/trans/work/target.jpg"));
-//		System.out.println("***** ImageEngine.main : END"); // TODO: remove
-															// debug trace
+		System.out.println("***** ImageEngine.main : START"); // TODO: remove
+		File catFile = new File("c:/trans/catherine.JPG");
+		BufferedImage cat = ImageIO.read(catFile);
+		File anneFile = new File("c:/trans/anne.JPG");
+		BufferedImage anne = ImageIO.read(anneFile);
+		File blackFile = new File("c:/trans/black.JPG");
+		BufferedImage black = ImageIO.read(blackFile);
+		File whileFile = new File("c:/trans/white.JPG");
+		BufferedImage white = ImageIO.read(whileFile);
 		
-//		File src = new File("c:/trans/test.jpg");
-//		BufferedImage img = ImageIO.read(src);
-//		img = ImageEngine.resizeWidth(img, 512, true);
-//		storeImage(img,  new File("c:/trans/test2.jpg"));
+		GainFilter filter = new GainFilter();
+		filter.setGain(0.8f);
+		filter.setBias(0.8f);
+		anne = filter.filter(anne, null);
+		ImageIO.write (anne, "jpg", new File("c:/trans/anne_out.jpg"));
+				
 		
-		
-		URL url = new URL("https://www.perwezensemble.be/img/facebook/home_1.jpg");
-		File outImage = new File("c:/trans/facebook.jpg");
-		ResourceHelper.writeStreamToFile(url.openStream(), outImage);
+		System.out.println(">>>>>>>>> ImageEngine.main : anne = "+getColorLight(anne)); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> ImageEngine.main : catherine = "+getColorLight(cat)); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> ImageEngine.main : black = "+getColorLight(black)); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> ImageEngine.main : white = "+getColorLight(white)); //TODO: remove debug trace
 	}
 
 	public static BufferedImage convertRGBAToIndexed(BufferedImage src) {
