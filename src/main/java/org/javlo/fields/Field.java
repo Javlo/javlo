@@ -554,6 +554,10 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	public List<String> getDefaultLanguages() {
 		return Arrays.asList(properties.getProperty("component.default-languages", "").split(","));
 	}
+	
+	protected String getCssClass() {
+		return getPropertyValue("css", "");
+	}
 
 	/**
 	 * return the value "displayable"

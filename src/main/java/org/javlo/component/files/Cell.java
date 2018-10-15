@@ -123,6 +123,13 @@ public class Cell {
 		if (v==null) {
 			return null;
 		}
+		if (v.contains("%")) {
+			String percentVal = v.replaceAll("%", "").trim();
+			percentVal  = percentVal.replace(',', '.');
+			if (StringHelper.isDigit(percentVal)) {
+				return Double.parseDouble(percentVal)/100; 
+			}
+		}
 		v = v.replace(',', '.');
 		try {
 			return Double.parseDouble(v);

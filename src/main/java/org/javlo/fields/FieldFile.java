@@ -378,9 +378,7 @@ public class FieldFile extends Field implements IStaticContainer {
 		if (ctx.getGlobalContext().isOpenFileAsPopup()) {
 			target = "target=\"_blank\"";
 		}
-		out.println("<div class=\"" + getType() + "\">");
-		out.println("<a " + target + " href=\"" + fileURL + "\">" + getViewLabel() + "</a>");
-		out.println("</div>");
+		out.println("<a class=\"" + getCssClass() + ' ' + getType() + "\"" + target + " href=\"" + fileURL + "\">" + getViewLabel() + "</a>");
 
 		out.close();
 		return writer.toString();

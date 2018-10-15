@@ -255,6 +255,22 @@ public class DataAction implements IAction {
 		}
 		return null;
 	}
+	
+	public static void updateAreaAjax(ContentContext ctx, String area) throws Exception {
+		if (area == null) {
+			return;
+		}
+		Collection<String> areas = new LinkedList<String>();
+		Map<String, String> areaMap = ctx.getCurrentTemplate().getAreasMap();
+		for (Map.Entry<String, String> areaId : areaMap.entrySet()) {
+			if (area == null || areaId.getValue().equals(area)) {
+				areas.add(areaId.getKey());
+			}
+		}
+		for (String areaKey : areas) {
+			ctx.getAjaxInsideZone().put(areaMap.get(areaKey), ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey));
+		}
+	}
 
 	public static String performUpdateArea(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 
@@ -316,7 +332,9 @@ public class DataAction implements IAction {
 		if (!rename) {
 			ctx.setNeedRefresh(true);
 		}
-		return uploadContent(rs, ctx, gc, cs, user, messageRepository, i18nAccess, new ImportConfigBean(ctx), rename);
+		String msg = uploadContent(rs, ctx, gc, cs, user, messageRepository, i18nAccess, new ImportConfigBean(ctx), rename);
+		updateAreaAjax(ctx, rs.getParameter("area"));
+		return msg;
 	}
 
 	public static String performUploadShared(RequestService rs, ContentContext ctx, GlobalContext gc, ContentService cs, User user, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {

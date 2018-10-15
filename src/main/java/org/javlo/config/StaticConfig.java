@@ -1924,7 +1924,7 @@ public class StaticConfig extends Observable {
 	public int getBackupInterval() {
 		String interval = properties.getProperty("backup.interval");
 		if (!StringHelper.isDigit(interval)) {
-			return 60 * 60 * 24;
+			return 0;
 		} else {
 			return Integer.parseInt(interval);
 		}

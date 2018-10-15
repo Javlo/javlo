@@ -58,7 +58,7 @@ h2 {
 	<div class="container main-container row align-items-center">
 		<h1>Javlo</h1>
 		<div class="col-12" id="install-bloc">
-			<div class="card">
+			<div class="card shadow-lg">
 				<div class="card-header">Javlo : Install</div>
 				<div class="card-body">
 					<c:if test="${not empty error}">
@@ -71,7 +71,7 @@ h2 {
 								<p class="card-text">The installation is almost complete.
 									Thank you for giving the latest information needed.</p>
 								<form method="post" ${param.install?'was-validated':''}>
-									<input type="text" name="install" value="true" />
+									<input type="hidden" name="install" value="true" />
 									<div class="form-group row">
 										<label for="config" class="col-sm-3 col-form-label">Config
 											folder*</label>
@@ -194,13 +194,13 @@ h2 {
 						</div>
 					</div>
 				</div>
-				<div class="card-footer text-muted text-right">
-					<a href="//javlo.org#install" target="_blanck">javlo.org</a>
+				<div class="card-footer text-muted">
+					<div class="justify-content-between row">
+					<div class="col-6">v <%=IVersion.VERSION%></div>
+					<a class="col-6 text-right" href="//javlo.org#install" target="_blanck">javlo.org</a>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-
-
 </body>
 </html>

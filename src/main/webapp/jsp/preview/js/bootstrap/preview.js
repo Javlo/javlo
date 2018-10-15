@@ -791,8 +791,7 @@ if (!String.prototype.startsWith) {
 						var ajaxURL = editPreview.addParam(currentURL,"previewEdit=true&webaction=edit.moveComponent&comp-id=" + compId + "&previous=0&area=" + area+ "&render-mode=3&init=true");
 						if (editPreview.searchPageId(this) != null) {
 							ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(this);
-						}
-						console.log(">>>>>>>>>>>>>>> 3 editPreview.searchPageId(this) = "+editPreview.searchPageId(this));
+						}						
 						editPreview.ajaxPreviewRequest(ajaxURL, null, null);
 					} else if (event.dataTransfer.files.length > 0) {
 						var ajaxURL = editPreview.addParam(currentURL,"webaction=data.upload&content=true&previous=0&area=" + area);
@@ -1384,8 +1383,12 @@ if (!String.prototype.startsWith) {
 	/** IM * */
 	/** ** * */
 
-	var IM_QUERY_UNREAD_COUNT_TIME_INTERVAL = 10000;
-	var IM_QUERY_NEW_MESSAGES_TIME_INTERVAL = 2000;
+	var IM_QUERY_UNREAD_COUNT_TIME_INTERVAL = 12000;
+	var IM_QUERY_NEW_MESSAGES_TIME_INTERVAL = 8000;
+	if (PREVIEWLOG) { // debug
+		var IM_QUERY_UNREAD_COUNT_TIME_INTERVAL = 1200000;
+		var IM_QUERY_NEW_MESSAGES_TIME_INTERVAL = 800000;
+	}
 	var MAX_SCROLL_HEIGHT = 99999999;
 	var imInProgress = false;
 	var imTimeout = null;
@@ -1478,7 +1481,9 @@ if (!String.prototype.startsWith) {
 					receiver.val(receiverValue);					
 				}
 				imInProgress = false;
-				imTimeout = setTimeout(editPreview.queryIM, (form.length == 0 ? IM_QUERY_UNREAD_COUNT_TIME_INTERVAL : IM_QUERY_NEW_MESSAGES_TIME_INTERVAL));
+				if (pjq(".im-messages").length > 0) {
+					imTimeout = setTimeout(editPreview.queryIM, (form.length == 0 ? IM_QUERY_UNREAD_COUNT_TIME_INTERVAL : IM_QUERY_NEW_MESSAGES_TIME_INTERVAL));
+				}
 			}
 		});
 	}
