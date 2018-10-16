@@ -533,7 +533,7 @@ public class XMLManipulationHelper {
 					String renderBodyAsDiv = tags[i].renderOpen();
 
 					String openBodyCode = "<c:if test=\"${not contentContext.pageAssociation}\">" + renderBodyAsBody + "</c:if><c:if test=\"${contentContext.pageAssociation}\">" + renderBodyAsDiv + "</c:if>";
-					String closeBodyCode = "<c:if test=\"${not contentContext.pageAssociation}\">" + getGoogleAnalyticsCode() + "</body></c:if><c:if test=\"${contentContext.pageAssociation}\"></" + tag + "></c:if>";
+					String closeBodyCode = StringHelper.neverNull(fontIncluding) + "<c:if test=\"${not contentContext.pageAssociation}\">" + getGoogleAnalyticsCode() + "</body></c:if><c:if test=\"${contentContext.pageAssociation}\"></" + tag + "></c:if>";
 					remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, "</c:if>" + openBodyCode + openPageCode);
 					remplacement.addReplacement(tags[i].getCloseStart(), tags[i].getCloseEnd() + 1, closePageCode + closeBodyCode + "<c:if test=\"${not contentContext.pageAssociation}\">");
 
@@ -719,7 +719,7 @@ public class XMLManipulationHelper {
 					out.print("<%=currentPage.getMetaHead(ctx)%>");
 					out.println("<%}%>");
 					out.close();
-					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart(), StringHelper.neverNull(fontIncluding) + getHTMLSufixHead(globalContext.getStaticConfig(), template) + new String(outStream.toByteArray()));
+					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart(), getHTMLSufixHead(globalContext.getStaticConfig(), template) + new String(outStream.toByteArray()));
 				}
 
 				/* title */
