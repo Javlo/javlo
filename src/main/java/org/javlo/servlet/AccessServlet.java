@@ -296,16 +296,13 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		ContentContext ctx = null;
 		try {
 			ctx = ContentContext.getContentContext(request, response);
-			
 			if (!staticConfig.isFoundFile()) {		
 				try {
 					boolean install = StringHelper.isTrue(request.getParameter("install"));
-					System.out.println(">>>>>>>>> AccessServlet.process : request.getParameter(\"install\") = "+request.getParameter("install")); //TODO: remove debug trace
-					System.out.println(">>>>>>>>> AccessServlet.process : install = "+install); //TODO: remove debug trace
 					if (install) {
 						logger.info("install javlo");
 						try {
-							InstallBean installBean = staticConfig.install(ctx, request.getParameter("config"), request.getParameter("data"), request.getParameter("admin"), request.getParameter("import-template") != null, request.getParameter("import-demo") != null);
+							InstallBean installBean = staticConfig.install(ctx, request.getParameter("config"), request.getParameter("data"), request.getParameter("admin"), request.getParameter("import-template") != null, request.getParameter("import-demo") != null, request.getParameter("email"));
 							request.setAttribute("install", installBean);
 							if (installBean.getConfigStatus() == InstallBean.ERROR) {
 								request.setAttribute("error", "error on install, check log and try again.");

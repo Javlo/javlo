@@ -1,6 +1,6 @@
-/* preview.js V 2.0.0.3 */
+/* preview.js V 2.0.0.4 */
 
-var PREVIEWLOG = true;
+var PREVIEWLOG = false;
 
 var previewScrollPos;
 var previewHeight;

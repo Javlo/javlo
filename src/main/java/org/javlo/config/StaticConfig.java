@@ -31,7 +31,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 import org.javlo.bean.InstallBean;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -197,8 +196,12 @@ public class StaticConfig extends Observable {
 			return javloHome;
 		}
 	}
-
+	
 	private StaticConfig(ServletContext application) {
+		init(application);
+	}
+	
+	private void init(ServletContext application) {
 		this.application = application;
 		try {
 			synchronized (FILE_NAME) {
@@ -206,7 +209,11 @@ public class StaticConfig extends Observable {
 				if (application != null) {
 					InputStream in = application.getResourceAsStream(StaticConfig.WEBAPP_CONFIG_FILE);
 					try {
-						webappProps.load(in);
+						if (in != null) {
+							webappProps.load(in);
+						} else {
+							logger.severe(StaticConfig.WEBAPP_CONFIG_FILE+" not found.");
+						}
 					} catch (Exception e) {
 						logger.severe("error on read : " + StaticConfig.WEBAPP_CONFIG_FILE);
 						throw e;
@@ -218,6 +225,7 @@ public class StaticConfig extends Observable {
 				/** LOAD STATIC CONFIG FILE LOCATION * */
 				String JAVLO_HOME = getJavloHome();
 				if (JAVLO_HOME != null) {
+					logger.info("JAVLO_HOME = "+JAVLO_HOME);
 					staticConfigLocalisation = JAVLO_HOME;
 				} else {
 					staticConfigLocalisation = webappProps.getProperty(STATIC_CONFIG_KEY);
@@ -235,11 +243,11 @@ public class StaticConfig extends Observable {
 				}
 
 				staticConfigLocalisation = replaceFolderVariable(staticConfigLocalisation);
-
+				
 				if (staticConfigLocalisation != null) {
 					LocalLogger.log("staticConfigLocalisation=" + staticConfigLocalisation);
 					File file = new File(staticConfigLocalisation);
-					logger.info("load static config : " + file);
+					logger.info("load static config : " + file +" (exist? "+file.exists()+")");
 					if (!file.exists()) {
 						// if (!file.getParentFile().exists()) {
 						// file.getParentFile().mkdirs();
@@ -1765,7 +1773,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public boolean isSharedImportDocument() {
-		return StringHelper.isTrue(properties.getString("shared.import-document", null), true);
+		return StringHelper.isTrue(properties.getString("shared.import-document", null), false);
 	}
 
 	public boolean isIntegrityCheck() {
@@ -2001,7 +2009,7 @@ public class StaticConfig extends Observable {
 	 * @return a ctx to new demo site, null if no demo site imported
 	 * @throws Exception
 	 */
-	public static ContentContext download(ContentContext ctx, InstallBean installBean, boolean importTemplate, boolean importDemo) {
+	public static ContentContext download(ContentContext ctx, InstallBean installBean, boolean importTemplate, boolean importDemo, String email) {
 		Properties p = new Properties();
 		try {
 		InputStream in = new URL("https://javlo.org/resource/static/install/install_info.properties").openStream();
@@ -2010,6 +2018,17 @@ public class StaticConfig extends Observable {
 		} finally {
 			ResourceHelper.closeResource(in);
 		}
+		
+		if (StringHelper.isMail(email)) {
+			try {
+				String url = p.getProperty("register.url");
+				url = url.replace("#EMAIL#", email);
+				NetHelper.readPage(new URL(url));
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
+		}
+		
 		} catch (Exception e) {
 			e.printStackTrace();
 			installBean.setDemoStatus(InstallBean.ERROR);
@@ -2039,10 +2058,21 @@ public class StaticConfig extends Observable {
 			try {
 				if (!GlobalContext.isExist(ctx.getRequest(), DEMO_SITE)) {
 					String contentUrl = p.getProperty("content.url", null);
+					String contextUrl = p.getProperty("content.context", null);
+					String propertiesRaw = null;
+					try {
+						propertiesRaw = NetHelper.readPageGet(new URL(contextUrl));
+					} catch (Exception e) {
+						logger.warning(e.getMessage());
+					}
 					GlobalContext demoContext = GlobalContext.getInstance(ctx.getRequest().getSession(), DEMO_SITE);
-					demoContext.setDefaultLanguages("en");
-					demoContext.setRAWLanguages("en");
-					demoContext.setRAWContentLanguages("en");
+					if (propertiesRaw != null) {
+						demoContext.loadExternalProperties(propertiesRaw);
+					} else {
+						demoContext.setDefaultLanguages("en");
+						demoContext.setRAWLanguages("en");
+						demoContext.setRAWContentLanguages("en");
+					}
 					ContentContext demoCtx = new ContentContext(ctx);
 					demoCtx.setForceGlobalContext(demoContext);
 					InputStream inContent = new URL(contentUrl).openStream();
@@ -2062,15 +2092,19 @@ public class StaticConfig extends Observable {
 		return null;
 	}
 
-	public InstallBean install(ContentContext ctx, String inConfigFolder, String idDataFolder, String adminPassword, boolean importTemplate, boolean importDemo) {
+	public InstallBean install(ContentContext ctx, String inConfigFolder, String idDataFolder, String adminPassword, boolean importTemplate, boolean importDemo, String email) {
+		
 		InstallBean outBean = new InstallBean();
 		try {
 			outBean = new InstallBean();
-			inConfigFolder = URLHelper.cleanPath(replaceFolderVariable(inConfigFolder), true);
 			idDataFolder = URLHelper.cleanPath(idDataFolder, true);
-			File configFile = new File(URLHelper.mergePath(inConfigFolder, FILE_NAME));
+			
 			Properties webappProps = ResourceHelper.loadProperties(new File(application.getRealPath(WEBAPP_CONFIG_FILE)));
 			webappProps.setProperty(STATIC_CONFIG_KEY, inConfigFolder);
+			webappProps.setProperty("static-config.relative", "false");
+			webappProps.setProperty("edit.users", "admin,"+SecurityHelper.encryptPassword(adminPassword));
+			inConfigFolder = replaceFolderVariable(inConfigFolder);
+			File configFile = new File(URLHelper.mergePath(inConfigFolder, FILE_NAME));
 			ResourceHelper.writePropertiesToFile(webappProps, new File(application.getRealPath(WEBAPP_CONFIG_FILE)), "config (install done)");
 			if (!configFile.exists()) {
 				configFile.getParentFile().mkdirs();
@@ -2084,12 +2118,21 @@ public class StaticConfig extends Observable {
 			reload();
 			TemplateFactory.copyDefaultTemplate(ctx.getRequest().getSession().getServletContext());
 			ContentService.clearAllContextCache(ctx);
-			download(ctx, outBean, importTemplate || importDemo, importDemo);
+			if (!GlobalContext.isExist(ctx.getRequest(), getMasterContext())) {
+				GlobalContext.getInstance(ctx.getRequest().getSession(), getMasterContext());
+			}
+			download(ctx, outBean, importTemplate || importDemo, importDemo, email);
 		} catch (Exception e) {
 			e.printStackTrace();
 			outBean.setConfigStatus(InstallBean.ERROR);
 		}
+		init(ctx.getRequest().getSession().getServletContext());
 		return outBean;
+	}
+	
+	
+	public static void main(String[] args) {
+		System.out.println(">>>>>>>>> StaticConfig.main : getJavloHome = "+getJavloHome()); //TODO: remove debug trace
 	}
 
 }

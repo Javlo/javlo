@@ -14,6 +14,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Serializable;
+import java.io.StringReader;
 import java.io.Writer;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
@@ -64,7 +65,6 @@ import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.ElementaryURLHelper.Code;
 import org.javlo.helper.LangHelper;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
@@ -1581,11 +1581,12 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public boolean isCookies() {
-		return properties.getBoolean("security.cookies", true);
+		return properties.getBoolean("security.cookies", false);
 	}
 
 	public void setCookies(boolean cook) {
 		properties.setProperty("security.cookies", cook);
+		save();
 	}
 
 	public String getCookiesPolicyUrl() {
@@ -1594,6 +1595,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public void setCookiesPolicyUrl(String url) {
 		properties.setProperty("security.cookies.url", url);
+		save();
 	}
 
 	public void setComponentsFiltered(boolean filtered) {
@@ -2356,6 +2358,13 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void loadExternalProperties(String raw) throws IOException {
+		properties.clear();
+		properties.load(new StringReader(raw));
+		save();
+		reload();
 	}
 
 	public void removeTag(String tag) {

@@ -111,22 +111,16 @@ h2 {
 
 									</div>
 									<div class="form-group form-check">
-										<input type="checkbox" class="form-check-input"
+										<input type="checkbox" checked="checked" class="form-check-input"
 											id="import-template" name="import-template"> <label
 											class="form-check-label" for="import-template">Import
 											default template from javlo.org.</label>
 									</div>
 									<div class="form-group form-check">
-										<input type="checkbox" class="form-check-input"
+										<input checked="checked" type="checkbox" class="form-check-input"
 											id="import-demo" name="import-demo"> <label
 											class="form-check-label" for="import-demo">Import
 											demo content from javlo.org.</label>
-									</div>
-									<div class="form-group form-check">
-										<input type="checkbox" class="form-check-input"
-											id="import-demo" name="import-template" checked="checked">
-										<label class="form-check-label" for="import-demo">Notifying
-											javlo.org of my installation anomynically.</label>
 									</div>
 									<div class="form-group">
 										<label for="email">Email address (for newsletter and
@@ -159,7 +153,6 @@ h2 {
 							<c:if test="${install.demoStatus==1}">
 								<c:url var="demoURL" value="/demo" />
 								<a href="${demoURL}" class="btn btn-secondary btn-block btn-sm mt-3">go on demo web site</a>
-								</div>
 							</c:if>
 							
 							<c:url var="adminURL" value="/admin/edit" />

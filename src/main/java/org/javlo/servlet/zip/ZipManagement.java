@@ -19,7 +19,6 @@ import java.util.zip.ZipOutputStream;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.javlo.config.StaticConfig;
@@ -28,9 +27,6 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
-import org.javlo.i18n.I18nAccess;
-import org.javlo.message.GenericMessage;
-import org.javlo.message.MessageRepository;
 import org.javlo.service.ContentService;
 
 /**
@@ -219,7 +215,6 @@ public class ZipManagement {
 		ZipInputStream zipIn = new ZipInputStream(in);
 		ZipEntry entry = zipIn.getNextEntry();
 		templateFolder = URLHelper.mergePath(templateFolder, templateId);
-		System.out.println(">>>>>>>>> ZipManagement.uploadZipTemplate : templateFolder = "+templateFolder); //TODO: remove debug trace
 
 		while (entry != null) {
 			File file = new File(URLHelper.mergePath(templateFolder, entry.getName()));

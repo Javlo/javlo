@@ -646,7 +646,11 @@ public class URLHelper extends ElementaryURLHelper {
 
 	public static String createURL(ContentContext ctx) {
 		try {
-			return createURL(ctx, ctx.getCurrentPage());
+			if (ctx.getCurrentPage() != null) {
+				return createURL(ctx, ctx.getCurrentPage());	
+			} else {
+				return createURL(ctx, ctx.getPath());
+			}			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
