@@ -338,7 +338,7 @@ if (!String.prototype.startsWith) {
 
 	editPreview.searchArea = function(item) {
 		var parent = pjq(item);
-		while (pjq(parent).get(0).tagName.toLowerCase() != "body" && !parent.hasClass("_area")) {
+		while (pjq(parent).length > 0 && pjq(parent).get(0).tagName.toLowerCase() != "body" && !parent.hasClass("_area")) {
 			parent = parent.parent();
 		}
 		if (parent.hasClass("_area")) {
