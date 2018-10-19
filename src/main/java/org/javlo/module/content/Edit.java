@@ -2165,21 +2165,16 @@ public class Edit extends AbstractModuleAction {
 			if (mode != null) {
 				ctx.setRenderMode(Integer.parseInt(mode));
 			}
-			System.out.println(">>>>>>>>> Edit.performMoveComponent : selecterPrefix = "+selecterPrefix); //TODO: remove debug trace
-			System.out.println(">>>>>>>>> Edit.performMoveComponent : areaId = "+areaId); //TODO: remove debug trace
 			ctx.getAjaxInsideZone().put(selecterPrefix + areaMap.get(areaId), ComponentHelper.renderArea(ctx, areaId));
 			ctx.getAjaxInsideZone().put(selecterPrefix + areaMap.get(fromArea), ComponentHelper.renderArea(ctx, fromArea));
 
 			ctx.setCurrentPageCached(fromPage);
 			String fromPageSelector = "";
-			System.out.println(">>>>>>>>> Edit.performMoveComponent : parentPage.isChildrenAssociation() = "+parentPage.isChildrenAssociation()); //TODO: remove debug trace
 			if (parentPage.isChildrenAssociation()) {
 				fromPageSelector = "#page_" + fromPage.getId() + " #";
 				ctx.setCurrentPageCached(fromPage);
 			}
-			System.out.println(">>>>>>>>> Edit.performMoveComponent : fromPageSelector = "+fromPageSelector); //TODO: remove debug trace
 			String fromAreaId = TemplateFactory.getTemplate(ctx, fromPage).getAreasMap().get(fromArea);
-			System.out.println(">>>>>>>>> Edit.performMoveComponent : fromAreaId = "+fromAreaId); //TODO: remove debug trace
 			ctx.getAjaxInsideZone().put(fromPageSelector + fromAreaId, ComponentHelper.renderArea(ctx, fromArea));
 
 			ctx.setCurrentPageCached(parentPage);
