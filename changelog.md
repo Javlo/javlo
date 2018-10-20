@@ -704,6 +704,8 @@ Security in case of vulnerabilities.
 - forms result backup thread
 - bright interface
 - page reference no rediplay item
+### Modified
+- track cache by days in place of month
 ### Fixed
 - edit index.html of template, load CodeMirror
 - reset navigation if navigation renderer change
