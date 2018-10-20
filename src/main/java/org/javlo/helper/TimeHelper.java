@@ -131,6 +131,12 @@ public class TimeHelper {
 	public static boolean betweenInDay(Date date, Date start, Date end) {
 		return isAfterOrEqualForDay(date, start) && isBeforeOrEqualForDay(date, end);
 	}
+	
+	public static Calendar getCalendar(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		return cal;
+	}
 
 	public static Calendar convertRemoveAfterMinutes(Calendar cal) {
 		Calendar outCal = Calendar.getInstance();

@@ -69,6 +69,7 @@ import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.servlet.zip.ZipManagement;
+import org.javlo.tracking.DayInfo;
 import org.javlo.tracking.Track;
 import org.javlo.utils.TimeTracker;
 import org.javlo.xml.NodeXML;
@@ -469,7 +470,7 @@ public class PersistenceService {
 		return URLHelper.mergePath(globalContext.getDataFolder(), _DIRECTORY);
 	}
 
-	private String getTrackingDirectory() {
+	public String getTrackingDirectory() {
 		return URLHelper.mergePath(globalContext.getDataFolder(), _TRACKING_DIRECTORY);
 	}
 
@@ -489,6 +490,68 @@ public class PersistenceService {
 		logger.fine("create track reader : " + file);
 		Reader outReader = new FileReader(file);
 		return outReader;
+	}
+	
+	/**
+	 * get list of track access to a resource.
+	 * 
+	 * @return a list of track.
+	 */
+	public synchronized Track[] getAllTrack(Date day) {
+		Calendar from = Calendar.getInstance();
+		from.setTime(day);
+		from = TimeHelper.convertRemoveAfterDay(from);
+		Calendar to = Calendar.getInstance();
+		to.setTime(day);
+		to.add(Calendar.DAY_OF_YEAR, 1);
+		to = TimeHelper.convertRemoveAfterDay(to);
+		Track[] tracks = loadTracks(from.getTime(), to.getTime(), false, false);
+		return tracks;
+	}
+
+	
+	public DayInfo getTrackDayInfo(Calendar cal) throws IOException {
+		int year = cal.get(Calendar.YEAR);
+		int mount = cal.get(Calendar.MONTH);
+		int day = cal.get(Calendar.DAY_OF_MONTH);
+		File csvFile = new File(getTrackingDirectory() + '/' + year + '/' + mount + "/tracks-" + day + ".csv");
+		File propFile = new File(getTrackingDirectory() + '/' + year + '/' + mount + "/tracks-" + day + ".properties");
+		if (!csvFile.exists() && !propFile.exists()) {
+			return null;
+		}
+		if (csvFile.exists() && (!propFile.exists() || csvFile.lastModified() > propFile.lastModified())) { 
+			DayInfo dayInfo = new DayInfo();
+			Set<String> sessions = new HashSet<String>();
+			Set<String> sessions2Clicks = new HashSet<String>(); 
+			for (Track track : getAllTrack(cal.getTime())) {
+				if (!NetHelper.isRobot(track.getUserAgent())) {
+					dayInfo.pagesCount++;
+					boolean mobile = NetHelper.isMobile(track.getUserAgent());
+					if (mobile) {
+						dayInfo.pagesCountMobile++;
+					}
+					if (!sessions.contains(track.getSessionId())) {
+						sessions.add(track.getSessionId());
+						dayInfo.sessionCount++;
+						if (mobile) {
+							dayInfo.sessionCountMobile++;
+						}
+						if (!sessions2Clicks.contains(track.getSessionId())) {
+							dayInfo.session2ClickCount++;
+							if (mobile) {
+								dayInfo.session2ClickCountMobile++;
+							}
+							sessions2Clicks.add(track.getSessionId());
+						}
+					}
+				}
+			}
+			dayInfo.store(propFile);
+			return dayInfo;
+		} else {
+			return new DayInfo(propFile);
+		}
+		
 	}
 
 	public synchronized Properties getTrackCache() {

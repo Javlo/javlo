@@ -38,6 +38,7 @@ import org.javlo.macro.DeletePageFromSpecificUser;
 import org.javlo.macro.DeleteSameComponent;
 import org.javlo.macro.DeleteSmartExternalLinkMacro;
 import org.javlo.macro.DeleteTestPage;
+import org.javlo.macro.DeleteTrackerCache;
 import org.javlo.macro.DetectAllComponentsType;
 import org.javlo.macro.DownDateMacro;
 import org.javlo.macro.DuplicateChildren;
@@ -194,6 +195,7 @@ public class MacroFactory {
 		macros.add(new ImportMysqlDataBase());
 		macros.add(new CommitTemplate());
 		macros.add(new CleanStaticInfoPersistence());
+		macros.add(new DeleteTrackerCache());
 	}
 
 	public IMacro getMacro(String name) {

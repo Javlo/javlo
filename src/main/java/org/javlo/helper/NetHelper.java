@@ -67,7 +67,6 @@ import org.javlo.servlet.IVersion;
 import org.javlo.template.Template;
 import org.javlo.user.IUserFactory;
 import org.javlo.utils.MapCollectionWrapper;
-import org.javlo.utils.TimeMap;
 import org.javlo.ztatic.FileCache;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -77,19 +76,12 @@ import org.jsoup.select.Elements;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
-import net.sf.uadetector.ReadableUserAgent;
-import net.sf.uadetector.UserAgentStringParser;
-import net.sf.uadetector.UserAgentType;
-import net.sf.uadetector.service.UADetectorServiceFactory;
-
 public class NetHelper {
 
 	public static final String JAVLO_USER_AGENT = "Mozilla/5.0 bot Javlo/" + IVersion.VERSION;
 
 	private static boolean INIT_HTTPS = false;
 
-	private static final Map<String, Boolean> UserAgentCache = Collections
-			.synchronizedMap(new TimeMap<String, Boolean>(60 * 60 * 24 * 30, 100000));
 
 	/**
 	 * create a static logger.
@@ -1465,38 +1457,11 @@ public class NetHelper {
 	}
 
 	public static boolean isRobot(String userAgent) {
-		String cacheKey = userAgent + "-robot";
-		Boolean outVal = UserAgentCache.get(cacheKey);
-		if (outVal == null) {
-			UserAgentStringParser parser = UADetectorServiceFactory.getResourceModuleParser();
-			ReadableUserAgent agent = parser.parse(userAgent);
-			outVal = agent.getType() == UserAgentType.ROBOT;
-			UserAgentCache.put(cacheKey, outVal);
-		}
-		return outVal;
-		// if (userAgent == null) {
-		// return false;
-		// } else {
-		// userAgent = userAgent.toLowerCase();
-		// return userAgent.contains("bot") || userAgent.contains("robot");
-		// }
+		return userAgent.toLowerCase().contains("bot");
 	}
-
+	
 	public static boolean isMobile(String userAgent) {
-		String cacheKey = userAgent + "-mobile";
-		Boolean outVal = UserAgentCache.get(cacheKey);
-		if (outVal == null) {
-			UserAgentStringParser parser = UADetectorServiceFactory.getResourceModuleParser();
-			ReadableUserAgent agent = parser.parse(userAgent);
-			outVal = agent.getType() == UserAgentType.MOBILE_BROWSER;
-			UserAgentCache.put(cacheKey, outVal);
-		}
-		return outVal;
-
-		/*
-		 * if (userAgent == null) { return false; } else { userAgent =
-		 * userAgent.toLowerCase(); return userAgent.contains("mobile"); }
-		 */
+		return userAgent.toLowerCase().contains("mobile");
 	}
 
 	/**

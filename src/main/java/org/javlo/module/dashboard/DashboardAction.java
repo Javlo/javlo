@@ -232,13 +232,13 @@ public class DashboardAction extends AbstractModuleAction {
 			cal.set(Calendar.MINUTE, 0);
 			cal.set(Calendar.SECOND, 0);
 			statCtx.setFrom(cal.getTime());
-			Map<Integer, Integer[]> map = tracker.getSession2ClickByMonth(statCtx, globalContext);
+			Map<Integer, Integer[]> map = tracker.getSession2ClickByMonth(statCtx);
 			ObjectBuilder ajaxMap = LangHelper.object();
 			ListBuilder datas = ajaxMap.list("datas");
 			ListBuilder[] desktopAndMobile = new ListBuilder[] {datas.addList(), datas.addList()};
 			for (Map.Entry<Integer, Integer[]> input : map.entrySet()) {
 				desktopAndMobile[0].add(input.getValue()[0]);
-				desktopAndMobile[1].add(input.getValue()[1]);				
+				desktopAndMobile[1].add(input.getValue()[1]);
 			}
 			ctx.setAjaxMap(ajaxMap.getMap());
 

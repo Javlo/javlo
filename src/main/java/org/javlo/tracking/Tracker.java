@@ -3,6 +3,7 @@
  */
 package org.javlo.tracking;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -389,15 +390,7 @@ public class Tracker {
 	 * @return a list of track.
 	 */
 	public synchronized Track[] getAllTrack(Date day) {
-		Calendar from = Calendar.getInstance();
-		from.setTime(day);
-		from = TimeHelper.convertRemoveAfterDay(from);
-		Calendar to = Calendar.getInstance();
-		to.setTime(day);
-		to.add(Calendar.DAY_OF_YEAR, 1);
-		to = TimeHelper.convertRemoveAfterDay(to);
-		Track[] tracks = persistenceService.loadTracks(from.getTime(), to.getTime(), false, false);
-		return tracks;
+		return persistenceService.getAllTrack(day);
 	}
 
 	public Track[] getResourceTracks(Date from, Date to) {
@@ -525,7 +518,7 @@ public class Tracker {
 			} else {				
 				statCtx.setFrom(from.getTime());
 				statCtx.setTo(localTo.getTime());
-				Map<Integer, Integer[]> data = getSession2ClickByMoment(statCtx, Calendar.MONTH);
+				Map<Integer, Integer[]> data = getSession2ClickByMonth(statCtx, globalContext);
 				if (data.size() == 1) {
 					Integer[] click = data.entrySet().iterator().next().getValue();
 					if (cache != null && localTo.before(now)) {
@@ -595,11 +588,29 @@ public class Tracker {
 			return true;
 		}
 	}
+	
+	public Map<Integer, Integer[]> getSession2ClickByMonth(StatContext statCtx) throws IOException {
+		Calendar from = TimeHelper.convertRemoveAfterDay(TimeHelper.getCalendar(statCtx.getFrom()));
+		Calendar to = TimeHelper.convertRemoveAfterDay(TimeHelper.getCalendar(statCtx.getTo()));
+		Map<Integer, Integer[]> data = new HashMap<Integer, Integer[]>();
+		for (int i=0; i<12; i++) {
+			data.put(i, new Integer[] {0,0});
+		}
+		while (from.getTimeInMillis() <= to.getTimeInMillis()) {
+			DayInfo dayInfo = persistenceService.getTrackDayInfo(from);
+			if (dayInfo != null) {
+				data.get(from.get(Calendar.MONTH))[0] += dayInfo.getSession2ClickCount()-dayInfo.getSession2ClickCountMobile();
+				data.get(from.get(Calendar.MONTH))[1] += dayInfo.getSession2ClickCountMobile();
+			}
+			from.add(Calendar.DAY_OF_MONTH, 1);			
+		}
+		return data;
+	}
 
 	/**
 	 * return session open by a moment define by constant in Calendar object
 	 * (sp. Calendar.DAY_OF_WEEK ).
-	 * 
+	 * 2
 	 * @param statCtx
 	 *            statistic context
 	 * @param moment
@@ -718,6 +729,13 @@ public class Tracker {
 	public Track[] getViewClickTracks(Date from, Date to, String path) {
 		// TODO: make this method
 		return getViewClickTracks(from, to);
+	}
+	
+	public static void main(String[] args) {
+		Calendar cal = Calendar.getInstance();
+		System.out.println(">>>>>>>>> Tracker.main : date = "+StringHelper.renderTime(cal.getTime())); //TODO: remove debug trace
+		cal.add(Calendar.DAY_OF_MONTH, 1);
+		System.out.println(">>>>>>>>> Tracker.main : date = "+StringHelper.renderTime(cal.getTime())); //TODO: remove debug trace
 	}
 
 }
