@@ -549,6 +549,7 @@ public class PersistenceService {
 					}
 				}
 			}
+			logger.info("store dayInfo for : "+StringHelper.renderDate(cal.getTime()));
 			dayInfo.store(propFile);
 			return dayInfo;
 		} else
