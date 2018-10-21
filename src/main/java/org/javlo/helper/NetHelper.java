@@ -1468,9 +1468,13 @@ public class NetHelper {
 		String cacheKey = userAgent + "-robot";
 		Boolean outVal = UserAgentCache.get(cacheKey);
 		if (outVal == null) {
-			UserAgentStringParser parser = UADetectorServiceFactory.getResourceModuleParser();
-			ReadableUserAgent agent = parser.parse(userAgent);
-			outVal = agent.getType() == UserAgentType.ROBOT;
+			if (userAgent.toLowerCase().contains("uptimerobot")) {
+				outVal = true;
+			} else {
+				UserAgentStringParser parser = UADetectorServiceFactory.getResourceModuleParser();
+				ReadableUserAgent agent = parser.parse(userAgent);
+				outVal = agent.getType() == UserAgentType.ROBOT;
+			}
 			UserAgentCache.put(cacheKey, outVal);
 		}
 		return outVal;
