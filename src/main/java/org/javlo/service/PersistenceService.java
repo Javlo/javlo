@@ -239,15 +239,20 @@ public class PersistenceService {
 	}
 
 	public static final PersistenceService getInstance(GlobalContext globalContext) throws ServiceException {
-		PersistenceService instance = (PersistenceService) globalContext.getAttribute(getKey(globalContext));
+		PersistenceService instance = null;
+		if (globalContext != null) {
+			instance = (PersistenceService) globalContext.getAttribute(getKey(globalContext));
+		}
 		if (instance == null) {
 			instance = new PersistenceService();
-			globalContext.setAttribute(getKey(globalContext), instance);
-			instance.globalContext = globalContext;
-			File dir = new File(instance.getDirectory());
-			dir.mkdirs();
-			dir = new File(instance.getTrackingDirectory());
-			dir.mkdirs();
+			if (globalContext != null) {
+				globalContext.setAttribute(getKey(globalContext), instance);
+				instance.globalContext = globalContext;
+				File dir = new File(instance.getDirectory());
+				dir.mkdirs();
+				dir = new File(instance.getTrackingDirectory());
+				dir.mkdirs();
+			}
 		}
 		return instance;
 	}
@@ -342,9 +347,8 @@ public class PersistenceService {
 			propFile.delete();
 		}
 		/*
-		 * while (workVersion > 0) { workVersion--; if (file.exists()) {
-		 * file.delete(); workVersion=0; } if (propFile.exists()) {
-		 * propFile.delete(); } file = new
+		 * while (workVersion > 0) { workVersion--; if (file.exists()) { file.delete();
+		 * workVersion=0; } if (propFile.exists()) { propFile.delete(); } file = new
 		 * File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' +
 		 * workVersion + ".xml"); propFile = new
 		 * File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' +
@@ -471,6 +475,9 @@ public class PersistenceService {
 	}
 
 	public String getTrackingDirectory() {
+		// /*********** DEBUG *////////////
+		// return "C:/Users/user/data/javlo/data-ctx/data-sexy/persitence/tracking";
+
 		return URLHelper.mergePath(globalContext.getDataFolder(), _TRACKING_DIRECTORY);
 	}
 
@@ -491,7 +498,7 @@ public class PersistenceService {
 		Reader outReader = new FileReader(file);
 		return outReader;
 	}
-	
+
 	/**
 	 * get list of track access to a resource.
 	 * 
@@ -509,8 +516,7 @@ public class PersistenceService {
 		return tracks;
 	}
 
-	
-	public DayInfo getTrackDayInfo(Calendar cal, Map<String,Object> cache) throws IOException {
+	public DayInfo getTrackDayInfo(Calendar cal, Map<String, Object> cache) throws IOException {
 		int year = cal.get(Calendar.YEAR);
 		int mount = cal.get(Calendar.MONTH);
 		int day = cal.get(Calendar.DAY_OF_MONTH);
@@ -519,37 +525,38 @@ public class PersistenceService {
 		if (!csvFile.exists() && !propFile.exists()) {
 			return null;
 		}
-		if (csvFile.exists() && (!propFile.exists() || csvFile.lastModified() > propFile.lastModified())) { 
+		if (csvFile.exists() && (!propFile.exists() || csvFile.lastModified() > propFile.lastModified())) {
 			DayInfo dayInfo = new DayInfo();
 			for (Track track : getAllTrack(cal.getTime())) {
-				if (!NetHelper.isRobot(track.getUserAgent()) && !track.getPath().contains(".php")) {
+				if (!track.getPath().contains(".php")) {
 					dayInfo.pagesCount++;
 					boolean mobile = NetHelper.isMobile(track.getUserAgent());
 					if (mobile) {
 						dayInfo.pagesCountMobile++;
 					}
-					if (cache.get("session-"+track.getSessionId()) == null) {
-						cache.put("session-"+track.getSessionId(), 1);
+					if (cache.get("session-" + track.getSessionId()) == null) {
+						cache.put("session-" + track.getSessionId(), track.getPath());
 						dayInfo.sessionCount++;
 						if (mobile) {
 							dayInfo.sessionCountMobile++;
 						}
-						if (cache.get("session2Click-"+track.getSessionId()) == null) {
-							dayInfo.session2ClickCount++;
-							if (mobile) {
-								dayInfo.session2ClickCountMobile++;
-							}
-							cache.put("session2Click-"+track.getSessionId(), 1);
+					} else if (cache.get("session2Click-" + track.getSessionId()) == null && !track.getPath().equals(cache.get("session-" + track.getSessionId()))) {
+						cache.put("session2Click-" + track.getSessionId(), 1);
+						dayInfo.session2ClickCount++;
+						if (mobile) {
+							dayInfo.session2ClickCountMobile++;
 						}
 					}
 				}
 			}
 			dayInfo.store(propFile);
 			return dayInfo;
-		} else {
+		} else
+
+		{
 			return new DayInfo(propFile);
 		}
-		
+
 	}
 
 	public synchronized Properties getTrackCache() {
@@ -714,8 +721,8 @@ public class PersistenceService {
 			bean.setList(StringHelper.isTrue(inlist));
 			bean.setHidden(StringHelper.isTrue(contentNode.getAttributeValue("hidden")));
 			bean.setArea(contentNode.getAttributeValue("area", ComponentBean.DEFAULT_AREA));
-			if (contentNode.getAttributeValue("colSize",null) != null) {
-				bean.setColumnSize(Integer.parseInt(contentNode.getAttributeValue("colSize",null)));
+			if (contentNode.getAttributeValue("colSize", null) != null) {
+				bean.setColumnSize(Integer.parseInt(contentNode.getAttributeValue("colSize", null)));
 			}
 			bean.setBackgroundColor(contentNode.getAttributeValue("bgcol", null));
 			bean.setManualCssClass(contentNode.getAttributeValue("css", null));
@@ -762,12 +769,12 @@ public class PersistenceService {
 		String finalPageName = null;
 		try {
 			finalPageName = URLDecoder.decode(name);
-		} catch (Exception e1) {			
-			finalPageName = "error_name_"+StringHelper.getRandomId();
+		} catch (Exception e1) {
+			finalPageName = "error_name_" + StringHelper.getRandomId();
 			name = finalPageName;
-			logger.warning("error : "+e1.getMessage());
-			logger.warning("parent : "+parent.getName());
-			logger.warning("new name generated : "+finalPageName);
+			logger.warning("error : " + e1.getMessage());
+			logger.warning("parent : " + parent.getName());
+			logger.warning("new name generated : " + finalPageName);
 			e1.printStackTrace();
 		}
 
@@ -1274,9 +1281,8 @@ public class PersistenceService {
 					root.setPriority(1);
 					root.setId("0");
 					/*
-					 * file.createNewFile(); BufferedWriter out = new
-					 * BufferedWriter(new FileWriter(file)); out.write(
-					 * "<content version=\"" + version +
+					 * file.createNewFile(); BufferedWriter out = new BufferedWriter(new
+					 * FileWriter(file)); out.write( "<content version=\"" + version +
 					 * "\"><page id=\"0\" name=\"root\" priority=\"1\" visible=\"true\" userRoles=\"\" /></content>"
 					 * ); out.close();
 					 */
@@ -1302,9 +1308,8 @@ public class PersistenceService {
 
 					/** load linked content **/
 					/*
-					 * MenuElement[] children = root.getAllChilds();
-					 * root.updateLinkedData(ctx); for (MenuElement page :
-					 * children) { page.updateLinkedData(ctx); }
+					 * MenuElement[] children = root.getAllChilds(); root.updateLinkedData(ctx); for
+					 * (MenuElement page : children) { page.updateLinkedData(ctx); }
 					 */
 				}
 
@@ -1349,12 +1354,12 @@ public class PersistenceService {
 	 * @throws IOException
 	 */
 	/*
-	 * public synchronized int loadVersion() throws IOException { File propFile
-	 * = new File(getDirectory() + '/' + stateFile); if (propFile.exists()) {
+	 * public synchronized int loadVersion() throws IOException { File propFile =
+	 * new File(getDirectory() + '/' + stateFile); if (propFile.exists()) {
 	 * Properties prop = new Properties(); InputStream in = new
 	 * FileInputStream(propFile); prop.load(in); in.close(); version =
-	 * Integer.parseInt(prop.getProperty("version", "1")); } else { // set
-	 * default value version = 1; } return version; }
+	 * Integer.parseInt(prop.getProperty("version", "1")); } else { // set default
+	 * value version = 1; } return version; }
 	 */
 
 	public Track[] loadTracks(Date from, Date to, boolean onlyViewClick, boolean onlyResource) {
@@ -1445,15 +1450,17 @@ public class PersistenceService {
 											countTrack++;
 										}
 									} else {
-										if ((track.getAction() == null) || (track.getAction().equals(Track.UNDEFINED_ACTION))) {
-											if (track.getPath() != null && track.getPath().contains("/view")) {
-												track.setPath(StringHelper.getFileNameWithoutExtension(track.getPath()));
-												Calendar trackCal = Calendar.getInstance();
-												trackCal.setTimeInMillis(track.getTime());
-												if (calFrom.before(trackCal) && calTo.after(trackCal)) {
-													outCol.add(track);
-													countTrack++;
-												}
+										String ext = StringHelper.getFileExtension(track.getPath());
+										if (StringHelper.isEmpty(ext) || ext.equalsIgnoreCase("htm")) {
+											ext = "html"; // default rendering
+										}
+										if (track.getPath() != null && ext.equals("html") && !track.getPath().contains("/edit") && !track.getPath().contains("/preview") && !track.getPath().contains("/time") && !track.getPath().contains("/ajax")) {
+											track.setPath(StringHelper.getFileNameWithoutExtension(track.getPath()));
+											Calendar trackCal = Calendar.getInstance();
+											trackCal.setTimeInMillis(track.getTime());
+											if (calFrom.before(trackCal) && calTo.after(trackCal)) {
+												outCol.add(track);
+												countTrack++;
 											}
 										}
 									}
@@ -1515,8 +1522,7 @@ public class PersistenceService {
 	 * 
 	 * @param version
 	 *            a content version
-	 * @return true if version has changed and false if this version doens'nt
-	 *         exist.
+	 * @return true if version has changed and false if this version doens'nt exist.
 	 */
 	public boolean setVersion(int version) {
 		if (versionExist(version)) {
@@ -1731,15 +1737,14 @@ public class PersistenceService {
 	 * );
 	 * 
 	 * int read; try { InputStream in = new FileInputStream(file); StringBuffer
-	 * outFile = new StringBuffer(); read = in.read(); int pos = 0; boolean
-	 * error = false; while (read >= 0) { if (read == 0) { error = true; } else
-	 * { outFile.append((char) read); } Character character = new
-	 * Character((char) read); Charset charset =
-	 * Charset.forName(ContentContext.CHARACTER_ENCODING); ByteBuffer buf =
-	 * ByteBuffer.allocate(4); buf.put(("" + character).getBytes());
-	 * charset.decode(buf); pos++; read = in.read(); } if (error) {
-	 * FileUtils.writeStringToFile(file, outFile.toString()); } in.close(); }
-	 * catch (IOException e) { // TODO Auto-generated catch block
+	 * outFile = new StringBuffer(); read = in.read(); int pos = 0; boolean error =
+	 * false; while (read >= 0) { if (read == 0) { error = true; } else {
+	 * outFile.append((char) read); } Character character = new Character((char)
+	 * read); Charset charset = Charset.forName(ContentContext.CHARACTER_ENCODING);
+	 * ByteBuffer buf = ByteBuffer.allocate(4); buf.put(("" +
+	 * character).getBytes()); charset.decode(buf); pos++; read = in.read(); } if
+	 * (error) { FileUtils.writeStringToFile(file, outFile.toString()); }
+	 * in.close(); } catch (IOException e) { // TODO Auto-generated catch block
 	 * e.printStackTrace(); } System.out.println("end."); }
 	 */
 
@@ -1782,8 +1787,13 @@ public class PersistenceService {
 	}
 
 	public static void main(String[] args) throws Exception {
-		System.out.println("##### PersistenceService.main : URLDecoder.decode(P&P global) = "+StringHelper.toXMLAttribute("P&P global\n\"coucou\"--")); //TODO: remove debug trace
-
+		PersistenceService persistenceService = PersistenceService.getInstance(null);
+		Calendar cal = Calendar.getInstance();
+		Track[] tracks = persistenceService.getAllTrack(new Date());
+		System.out.println("#tracks = " + tracks.length);
+		for (Track track : tracks) {
+			System.out.println("user agent = " + track.getUserAgent());
+		}
 	}
 
 	public boolean isLoaded() {

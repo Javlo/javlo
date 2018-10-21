@@ -25,5 +25,10 @@ public class NetHelperTest extends TestCase {
 		assertFalse(NetHelper.ipInRange("193.168.1.1", "192.168.0.0/8"));
 		assertFalse(NetHelper.ipInRange("192.168.1.1", "192.12.0.0/16"));
 	}
+	
+	public void testIsMobile() {
+		assertTrue(NetHelper.isMobile("Mozilla/5.0 (Android 8.0.0; Mobile; rv:62.0) Gecko/62.0 Firefox/62.0"));
+		assertFalse(NetHelper.isMobile("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML like Gecko) Chrome/70.0.3538.67 Safari/537.36"));
+	}
 
 }

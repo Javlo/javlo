@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.javlo.helper.ResourceHelper;
+import org.javlo.utils.StructuredProperties;
 
 public class DayInfo {
 	
@@ -28,7 +29,7 @@ public class DayInfo {
 	}
 	
 	public void store(File file) throws IOException {
-		Properties prop = new Properties();
+		Properties prop = new StructuredProperties();
 		prop.setProperty("session.count", ""+sessionCount);
 		prop.setProperty("pages.count", ""+pagesCount);
 		prop.setProperty("session.mobile.count", ""+pagesCountMobile);

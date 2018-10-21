@@ -711,3 +711,4 @@ Security in case of vulnerabilities.
 - reset navigation if navigation renderer change
 - don't delete meta data of source when copy resources
 - paste element in edit mode, null pointer corrected
+- tracker take only view url

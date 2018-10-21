@@ -5,8 +5,6 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -1468,7 +1466,7 @@ public class NetHelper {
 		String cacheKey = userAgent + "-robot";
 		Boolean outVal = UserAgentCache.get(cacheKey);
 		if (outVal == null) {
-			if (userAgent.toLowerCase().contains("uptimerobot")) {
+			if (userAgent.toLowerCase().contains("bot")) {
 				outVal = true;
 			} else {
 				UserAgentStringParser parser = UADetectorServiceFactory.getResourceModuleParser();
@@ -1490,9 +1488,13 @@ public class NetHelper {
 		String cacheKey = userAgent + "-mobile";
 		Boolean outVal = UserAgentCache.get(cacheKey);
 		if (outVal == null) {
-			UserAgentStringParser parser = UADetectorServiceFactory.getResourceModuleParser();
-			ReadableUserAgent agent = parser.parse(userAgent);
-			outVal = agent.getType() == UserAgentType.MOBILE_BROWSER;
+			if (userAgent.toLowerCase().contains("mobile")) {
+				outVal = true;
+			} else {
+				UserAgentStringParser parser = UADetectorServiceFactory.getResourceModuleParser();
+				ReadableUserAgent agent = parser.parse(userAgent);
+				outVal = agent.getType() == UserAgentType.MOBILE_BROWSER;
+			}
 			UserAgentCache.put(cacheKey, outVal);
 		}
 		return outVal;
@@ -1685,14 +1687,7 @@ public class NetHelper {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		URL url = new URL("https://img.youtube.com/vi/PxNYvk_0Onw/0.jpg");
-		File file = new File("c:/trans/youtube.jpg");
-		FileOutputStream out = new FileOutputStream(file);
-		try {
-			NetHelper.readPage(url, out);
-		} finally {
-			ResourceHelper.closeResource(out);
-		}
+		System.out.println(">>>>>>>>> NetHelper.main : mobile : "+isMobile("Mozilla/5.0 (Android 8.0.0; Mobile; rv:62.0) Gecko/62.0 Firefox/62.0")); //TODO: remove debug trace
 	}
 
 }
