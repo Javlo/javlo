@@ -596,8 +596,9 @@ public class Tracker {
 		for (int i=0; i<12; i++) {
 			data.put(i, new Integer[] {0,0});
 		}
+		Map<String,Object> cache = new HashMap<String,Object>();
 		while (from.getTimeInMillis() <= to.getTimeInMillis()) {
-			DayInfo dayInfo = persistenceService.getTrackDayInfo(from);
+			DayInfo dayInfo = persistenceService.getTrackDayInfo(from, cache);
 			if (dayInfo != null) {
 				data.get(from.get(Calendar.MONTH))[0] += dayInfo.getSession2ClickCount()-dayInfo.getSession2ClickCountMobile();
 				data.get(from.get(Calendar.MONTH))[1] += dayInfo.getSession2ClickCountMobile();

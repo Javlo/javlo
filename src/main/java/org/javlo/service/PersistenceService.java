@@ -505,12 +505,12 @@ public class PersistenceService {
 		to.setTime(day);
 		to.add(Calendar.DAY_OF_YEAR, 1);
 		to = TimeHelper.convertRemoveAfterDay(to);
-		Track[] tracks = loadTracks(from.getTime(), to.getTime(), false, false);
+		Track[] tracks = loadTracks(from.getTime(), to.getTime(), true, false);
 		return tracks;
 	}
 
 	
-	public DayInfo getTrackDayInfo(Calendar cal) throws IOException {
+	public DayInfo getTrackDayInfo(Calendar cal, Map<String,Object> cache) throws IOException {
 		int year = cal.get(Calendar.YEAR);
 		int mount = cal.get(Calendar.MONTH);
 		int day = cal.get(Calendar.DAY_OF_MONTH);
@@ -521,27 +521,25 @@ public class PersistenceService {
 		}
 		if (csvFile.exists() && (!propFile.exists() || csvFile.lastModified() > propFile.lastModified())) { 
 			DayInfo dayInfo = new DayInfo();
-			Set<String> sessions = new HashSet<String>();
-			Set<String> sessions2Clicks = new HashSet<String>(); 
 			for (Track track : getAllTrack(cal.getTime())) {
-				if (!NetHelper.isRobot(track.getUserAgent())) {
+				if (!NetHelper.isRobot(track.getUserAgent()) && !track.getPath().contains(".php")) {
 					dayInfo.pagesCount++;
 					boolean mobile = NetHelper.isMobile(track.getUserAgent());
 					if (mobile) {
 						dayInfo.pagesCountMobile++;
 					}
-					if (!sessions.contains(track.getSessionId())) {
-						sessions.add(track.getSessionId());
+					if (cache.get("session-"+track.getSessionId()) == null) {
+						cache.put("session-"+track.getSessionId(), 1);
 						dayInfo.sessionCount++;
 						if (mobile) {
 							dayInfo.sessionCountMobile++;
 						}
-						if (!sessions2Clicks.contains(track.getSessionId())) {
+						if (cache.get("session2Click-"+track.getSessionId()) == null) {
 							dayInfo.session2ClickCount++;
 							if (mobile) {
 								dayInfo.session2ClickCountMobile++;
 							}
-							sessions2Clicks.add(track.getSessionId());
+							cache.put("session2Click-"+track.getSessionId(), 1);
 						}
 					}
 				}
