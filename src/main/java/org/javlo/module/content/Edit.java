@@ -102,21 +102,21 @@ public class Edit extends AbstractModuleAction {
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		ClipBoard clipBoard = ClipBoard.getInstance(ctx.getRequest());
 
-		ctx = ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE);
+		ContentContext editCtx = ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE);
 
-		IContentVisualComponent currentTypeComponent = ComponentFactory.getComponentWithType(ctx, editContext.getActiveType());
+		IContentVisualComponent currentTypeComponent = ComponentFactory.getComponentWithType(editCtx, editContext.getActiveType());
 
-		String typeName = StringHelper.getFirstNotNull(currentTypeComponent.getComponentLabel(ctx, globalContext.getEditLanguage(ctx.getRequest().getSession())), i18nAccess.getText("content." + currentTypeComponent.getType()));
+		String typeName = StringHelper.getFirstNotNull(currentTypeComponent.getComponentLabel(editCtx, globalContext.getEditLanguage(ctx.getRequest().getSession())), i18nAccess.getText("content." + currentTypeComponent.getType()));
 		String insertHere = i18nAccess.getText("content.insert-here", new String[][] { { "type", typeName } });
 
 		String pastePageHere = null;
-		if (editContext.getContextForCopy(ctx) != null) {
-			pastePageHere = i18nAccess.getText("content.paste-here", new String[][] { { "page", editContext.getContextForCopy(ctx).getCurrentPage().getName() } });
+		if (editContext.getContextForCopy(editCtx) != null) {
+			pastePageHere = i18nAccess.getText("content.paste-here", new String[][] { { "page", editContext.getContextForCopy(editCtx).getCurrentPage().getName() } });
 		}
 
 		String pasteHere = null;
-		if (clipBoard.getCopiedComponent(ctx) != null) {
-			pasteHere = i18nAccess.getText("content.paste-comp", new String[][] { { "type", clipBoard.getCopiedComponent(ctx).getType() } });
+		if (clipBoard.getCopiedComponent(editCtx) != null) {
+			pasteHere = i18nAccess.getText("content.paste-comp", new String[][] { { "type", clipBoard.getCopiedComponent(editCtx).getType() } });
 		}
 
 		String previewParam = "";
@@ -124,26 +124,26 @@ public class Edit extends AbstractModuleAction {
 			previewParam = ContentContext.PREVIEW_EDIT_PARAM + "=true&";
 		}
 
-		String insertXHTML = "<a class=\"btn btn-default ajax btn-xs\" href=\"" + URLHelper.createURL(ctx) + "?" + previewParam + "webaction=insert&previous=0&type=" + currentTypeComponent.getType() + "\">" + insertHere + "</a>";
+		String insertXHTML = "<a class=\"btn btn-default ajax btn-xs\" href=\"" + URLHelper.createURL(editCtx) + "?" + previewParam + "webaction=insert&previous=0&type=" + currentTypeComponent.getType() + "\">" + insertHere + "</a>";
 		if (pastePageHere != null) {
-			insertXHTML = insertXHTML + "<a class=\"btn btn-default btn-xs\" href=\"" + URLHelper.createURL(ctx) + "?" + previewParam + "webaction=pastePage&previous=0\">" + pastePageHere + "</a>";
+			insertXHTML = insertXHTML + "<a class=\"btn btn-default btn-xs\" href=\"" + URLHelper.createURL(editCtx) + "?" + previewParam + "webaction=pastePage&previous=0\">" + pastePageHere + "</a>";
 		}
 		if (pasteHere != null) {
-			insertXHTML = insertXHTML + "<a class=\"btn btn-default btn-xs ajax\" href=\"" + URLHelper.createURL(ctx) + "?" + previewParam + "webaction=pasteComp&previous=0\">" + pasteHere + "</a>";
+			insertXHTML = insertXHTML + "<a class=\"btn btn-default btn-xs ajax\" href=\"" + URLHelper.createURL(editCtx) + "?" + previewParam + "webaction=pasteComp&previous=0\">" + pasteHere + "</a>";
 		}
 		ctx.addAjaxInsideZone("insert-line-0", insertXHTML);
 
-		ContentContext areaCtx = ctx.getContextWithArea(null);
+		ContentContext areaCtx = editCtx.getContextWithArea(null);
 
 		IContentComponentsList elems = ctx.getCurrentPage().getContent(areaCtx);
 		while (elems.hasNext(areaCtx)) {
 			IContentVisualComponent comp = elems.next(areaCtx);
-			insertXHTML = "<a class=\"btn btn-default btn-xs ajax\" href=\"" + URLHelper.createURL(ctx) + "?" + previewParam + "webaction=insert&previous=" + comp.getId() + "&type=" + currentTypeComponent.getType() + "\">" + insertHere + "</a>";
+			insertXHTML = "<a class=\"btn btn-default btn-xs ajax\" href=\"" + URLHelper.createURL(editCtx) + "?" + previewParam + "webaction=insert&previous=" + comp.getId() + "&type=" + currentTypeComponent.getType() + "\">" + insertHere + "</a>";
 			if (pastePageHere != null) {
-				insertXHTML = insertXHTML + "<a class=\"btn btn-default btn-xs\" href=\"" + URLHelper.createURL(ctx) + "?" + previewParam + "webaction=pastePage&previous=" + comp.getId() + "\">" + pastePageHere + "</a>";
+				insertXHTML = insertXHTML + "<a class=\"btn btn-default btn-xs\" href=\"" + URLHelper.createURL(editCtx) + "?" + previewParam + "webaction=pastePage&previous=" + comp.getId() + "\">" + pastePageHere + "</a>";
 			}
 			if (pasteHere != null) {
-				insertXHTML = insertXHTML + "<a class=\"btn btn-default btn-xs ajax\" href=\"" + URLHelper.createURL(ctx) + "?" + previewParam + "webaction=pasteComp&previous=" + comp.getId() + "\">" + pasteHere + "</a>";
+				insertXHTML = insertXHTML + "<a class=\"btn btn-default btn-xs ajax\" href=\"" + URLHelper.createURL(editCtx) + "?" + previewParam + "webaction=pasteComp&previous=" + comp.getId() + "\">" + pasteHere + "</a>";
 			}
 			ctx.addAjaxInsideZone("insert-line-" + comp.getId(), insertXHTML);
 		}
