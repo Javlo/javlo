@@ -4,11 +4,13 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.component.image.ImageBean;
@@ -62,6 +64,7 @@ public class PageBean implements Serializable {
 	private final MenuElement page;
 	private ContentContext ctx;
 	private boolean portail = false;
+	private Map<String,String> types = null;
 
 	public PageDescription getInfo() {
 		try {
@@ -742,6 +745,18 @@ public class PageBean implements Serializable {
 		}
 		Locale lg = new Locale(ctx.getRequestContentLanguage());
 		return lg.getDisplayName(locale);
+	}
+	
+	public Map<String,String> getTypes() {
+		if (types == null) {
+			types = new HashMap<String, String>();
+			for (ComponentBean bean : page.getContent()) {
+				if (!types.containsKey(bean.getType())) {
+					types.put(bean.getType(), bean.getType());
+				}
+			}
+		}
+		return types;
 	}
 
 }

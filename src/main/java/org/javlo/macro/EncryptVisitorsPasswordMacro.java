@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.StringHelper;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.UserFactory;
@@ -29,7 +30,7 @@ public class EncryptVisitorsPasswordMacro extends AbstractMacro {
 		Collection<IUserInfo> allUserInfo = userFactory.getUserInfoList();
 		for (IUserInfo iUserInfo : allUserInfo) {
 			if (iUserInfo.getPassword() != null && iUserInfo.getPassword().trim().length() > 0) {
-				iUserInfo.setPassword(iUserInfo.getPassword());
+				iUserInfo.setPassword(StringHelper.encryptPassword(iUserInfo.getPassword()));
 			}
 		}
 		userFactory.store();
