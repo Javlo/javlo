@@ -9,7 +9,7 @@ public class Cell {
 	private Cell[][] array;
 	private int x;
 	private int y;
-	ColInfo info = new ColInfo();
+	public ColInfo info = new ColInfo();
 	
 	public static class ColInfo {
 		public Double total = null;

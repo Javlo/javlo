@@ -1333,10 +1333,11 @@ public class StringHelper {
 	 * @return
 	 */
 	public static boolean isDigit(String str) {
-		if (str == null || str.length() == 0) {
-			return false;
-		} else {
+		if (str != null) {
 			str = str.trim();
+			if (str.length() == 0) {
+				return false;
+			}
 			if (str.charAt(0) == '-') {
 				str = str.substring(1);
 			}
@@ -1347,6 +1348,7 @@ public class StringHelper {
 			}
 			return true;
 		}
+		return false;
 	}
 
 	/**

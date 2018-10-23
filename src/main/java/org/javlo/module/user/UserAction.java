@@ -3,6 +3,7 @@ package org.javlo.module.user;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -27,11 +28,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.javlo.actions.AbstractModuleAction;
+import org.javlo.component.files.Cell;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.ArrayHelper;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.JavaHelper;
 import org.javlo.helper.LangHelper;
@@ -106,21 +110,21 @@ public class UserAction extends AbstractModuleAction {
 		} else {
 			User user = null;
 			boolean userSet = false;
-			String userName = requestService.getParameter("user", null); 
-			if (userName  != null) {
-				userSet=true;
+			String userName = requestService.getParameter("user", null);
+			if (userName != null) {
+				userSet = true;
 				if (userName.contains("<")) {
 					try {
 						InternetAddress internetAddress = new InternetAddress(userName);
-						userName = internetAddress.getAddress();					
+						userName = internetAddress.getAddress();
 					} catch (AddressException e) {
 					}
-				}	
+				}
 				user = userFactory.getUser(userName);
 			} else if (requestService.getParameter("cuser", null) != null) {
-				userSet=true;
+				userSet = true;
 				String cuser = requestService.getParameter("cuser", null);
-				for (IUserInfo userInfo : userContext.getUserFactory(ctx).getUserInfoList()) {					
+				for (IUserInfo userInfo : userContext.getUserFactory(ctx).getUserInfoList()) {
 					if (userInfo.getEncryptLogin().equals(cuser)) {
 						user = userFactory.getUser(userInfo.getLogin());
 					}
@@ -276,7 +280,7 @@ public class UserAction extends AbstractModuleAction {
 				}
 
 				userFactory.updateUserInfo(userInfo);
-				userFactory.store();				
+				userFactory.store();
 			} catch (Exception e) {
 				e.printStackTrace();
 				return e.getMessage();
@@ -296,7 +300,7 @@ public class UserAction extends AbstractModuleAction {
 		if (requestService.getParameter("back", null) == null) {
 			UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
 			IUserFactory userFactory = userContext.getUserFactory(ctx);
-			String userName = requestService.getParameter("user", null);				
+			String userName = requestService.getParameter("user", null);
 			User user = userFactory.getUser(userName);
 			if (user == null) {
 				return "user not found (update)  : " + userName;
@@ -326,7 +330,7 @@ public class UserAction extends AbstractModuleAction {
 					if (newRoles.size() > 0) {
 						messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("global.message.noright"), GenericMessage.ERROR));
 					}
-				}				
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				return e.getMessage();
@@ -360,7 +364,7 @@ public class UserAction extends AbstractModuleAction {
 		} else if (requestService.getParameter("type", "").equals("edit")) {
 			userFactory = AdminUserFactory.createUserFactory(ctx.getRequest());
 		}
-		
+
 		IUserInfo newUserInfo = userFactory.createUserInfos();
 		if (newUser.contains("<")) {
 			try {
@@ -368,13 +372,13 @@ public class UserAction extends AbstractModuleAction {
 				newUser = internetAddress.getAddress();
 				String personal = StringHelper.neverNull(internetAddress.getPersonal()).trim();
 				if (personal.contains(" ")) {
-					newUserInfo.setLastName(personal.substring(personal.indexOf(' ')+1));
-					personal = personal.substring(0,personal.indexOf(' '));
+					newUserInfo.setLastName(personal.substring(personal.indexOf(' ') + 1));
+					personal = personal.substring(0, personal.indexOf(' '));
 				}
 				newUserInfo.setFirstName(personal);
 			} catch (AddressException e) {
 			}
-		}		
+		}
 		newUserInfo.setId(newUser);
 		newUserInfo.setLogin(newUser);
 		if (StringHelper.isMail(newUser)) {
@@ -519,9 +523,9 @@ public class UserAction extends AbstractModuleAction {
 						user = userFactory.getUserByEmail(userName);
 					}
 					if (user == null) {
-						return "user not found : "+userName;
+						return "user not found : " + userName;
 					}
-					logger.info("change password of : "+user.getLogin());
+					logger.info("change password of : " + user.getLogin());
 					IUserInfo ui = user.getUserInfo();
 					ui.setPassword(SecurityHelper.encryptPassword(pwd1));
 					userFactory.updateUserInfo(ui);
@@ -619,7 +623,29 @@ public class UserAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performUpload(RequestService rs, HttpSession session, User user, ContentContext ctx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+	private static Integer getFieldPos(Cell[] cells, String field) {
+		if (field != null) {
+			int p = 0;
+			int maxRowSpan = 1;
+			for (Cell title : cells) {
+				if (maxRowSpan < title.getRowSpan()) {
+					maxRowSpan = title.getRowSpan();
+				}
+					
+			}
+			for (Cell title : cells) {
+				Cell finalTitle = title;
+				
+				if (title != null && title.getValue() != null && title.getValue().toLowerCase().contains(field.toLowerCase())) {
+					return p;
+				}
+				p++;
+			}
+		}
+		return null;
+	}
+
+	public static String performUpload(RequestService rs, HttpSession session, User user, ContentContext ctx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 
 		if (!AdminUserSecurity.getInstance().canRole(user, AdminUserSecurity.USER_ROLE)) {
 			return "security error.";
@@ -627,6 +653,9 @@ public class UserAction extends AbstractModuleAction {
 
 		boolean admin = StringHelper.isTrue(rs.getParameter("admin", null));
 		boolean merge = StringHelper.isTrue(rs.getParameter("merge", null));
+		
+		UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
+		
 		IUserFactory userFact;
 		if (admin) {
 			userFact = AdminUserFactory.createUserFactory(globalContext, session);
@@ -637,63 +666,113 @@ public class UserAction extends AbstractModuleAction {
 		String msg = null;
 		for (FileItem item : fileItems) {
 			InputStream in = item.getInputStream();
-
 			if (item.getFieldName().trim().length() > 1 && item.getSize() > 0 && in != null) {
-
-				Charset charset = Charset.forName(ContentContext.CHARACTER_ENCODING);
-				if (StringHelper.getFileExtension(item.getName()).equals("txt")) { // hack
-					charset = Charset.forName("utf-16");
-				}
-
-				CSVFactory csvFact;
-				try {
-					csvFact = new CSVFactory(in, null, charset);
-				} finally {
+				List<IUserInfo> newUserInfo = new LinkedList<IUserInfo>();
+				if (StringHelper.getFileExtension(item.getName()).equals("xlsx")) {
+					XSSFWorkbook excel = ArrayHelper.loadWorkBook(in);
 					ResourceHelper.closeResource(in);
-				}
-				String[][] usersArrays = csvFact.getArray();
-				if (usersArrays == null || usersArrays.length < 1) {
-					msg = i18nAccess.getText("global.message.file-format-error");
-					MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
-					return null;
+					for (int sheet = 0; sheet < excel.getNumberOfSheets(); sheet++) {
+						Cell[][] cells = ArrayHelper.getXLSXArray(ctx, excel, sheet);
+						for (int i = 1; i < cells.length; i++) {
+							IUserInfo userInfo = userFact.createUserInfos();
+							for (String label : userInfo.getAllLabels()) {
+								Integer labelPos = getFieldPos(cells[0], label);
+								if (labelPos != null && cells[i][labelPos] != null) {
+									userInfo.setValue(label, cells[i][labelPos].getValue());
+								}
+							}
+							if (userInfo.getEmail() != null && !StringHelper.isMail(userInfo.getEmail())) {
+								Collection<String> emails = StringHelper.searchEmail(userInfo.getEmail());
+								if (emails.size() > 0) {
+									userInfo.setEmail(emails.iterator().next());
+								} else {
+									userInfo.setEmail("");
+								}
+							}
+							if (StringHelper.isEmpty(userInfo.getLogin()) && StringHelper.isMail(userInfo.getEmail())) {
+								userInfo.setLogin(userInfo.getEmail());
+							}
+							if (!StringHelper.isEmpty(userInfo.getLogin())) {
+								Collection<String> emails = StringHelper.searchEmail(userInfo.getLogin());
+								if (emails.size() > 0) {
+									userInfo.setLogin(emails.iterator().next());
+								}
+								if (!StringHelper.isEmpty(userContext.getCurrentRole())) {
+									userInfo.addRoles(new HashSet(Arrays.asList(new String[] {userContext.getCurrentRole()})));
+								}
+								if (!StringHelper.isEmpty(userInfo.getPassword())) {
+									userInfo.setPassword(StringHelper.encryptPassword(userInfo.getPassword()));
+								}
+								newUserInfo.add(userInfo);
+							}
+						}
+						if (newUserInfo.size() == 0) {
+							return "error : no valid users found in excel file.";
+						} else {
+							if (!merge) {
+								userFact.releaseUserInfoList();
+							}
+							for (IUserInfo userInfo : newUserInfo) {
+								userFact.mergeUserInfo(userInfo);
+							}
+						}
+					}
 				} else {
-					if (usersArrays[0].length < 5) {
+
+					Charset charset = Charset.forName(ContentContext.CHARACTER_ENCODING);
+					if (StringHelper.getFileExtension(item.getName()).equals("txt")) { // hack
+						charset = Charset.forName("utf-16");
+					}
+
+					CSVFactory csvFact;
+					try {
+						csvFact = new CSVFactory(in, null, charset);
+					} finally {
+						ResourceHelper.closeResource(in);
+					}
+					String[][] usersArrays = csvFact.getArray();
+					if (usersArrays == null || usersArrays.length < 1) {
 						msg = i18nAccess.getText("global.message.file-format-error");
 						MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
 						return null;
+					} else {
+						if (usersArrays[0].length < 5) {
+							msg = i18nAccess.getText("global.message.file-format-error");
+							MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
+							return null;
+						}
 					}
-				}
 
-				Collection<IUserInfo> userInfoList = new LinkedList<IUserInfo>();
-				for (int i = 1; i < usersArrays.length; i++) {
-					IUserInfo userInfo = userFact.createUserInfos();
-					String[] labels = usersArrays[0];
-					try {
-						BeanHelper.copy(JavaHelper.createMap(labels, usersArrays[i]), userInfo);
-						userInfoList.add(userInfo);
-					} catch (Exception e) {
-						logger.warning("error on : " + userInfo.getLogin() + " : " + e.getMessage());
+					Collection<IUserInfo> userInfoList = new LinkedList<IUserInfo>();
+					for (int i = 1; i < usersArrays.length; i++) {
+						IUserInfo userInfo = userFact.createUserInfos();
+						String[] labels = usersArrays[0];
+						try {
+							BeanHelper.copy(JavaHelper.createMap(labels, usersArrays[i]), userInfo);
+							userInfoList.add(userInfo);
+						} catch (Exception e) {
+							logger.warning("error on : " + userInfo.getLogin() + " : " + e.getMessage());
+						}
 					}
-				}
 
-				// if (userInfoList.size() > 0) {
-				if (!merge) {
-					userFact.clearUserInfoList();
-				}
-				for (Object element2 : userInfoList) {
-					IUserInfo element = (IUserInfo) element2;
-					try {
-						userFact.addUserInfo(element);
-					} catch (UserAllreadyExistException e) {
-						logger.warning("error on : " + element.getLogin() + " : " + e.getMessage());
+					// if (userInfoList.size() > 0) {
+					if (!merge) {
+						userFact.clearUserInfoList();
 					}
+					for (Object element2 : userInfoList) {
+						IUserInfo element = (IUserInfo) element2;
+						try {
+							userFact.addUserInfo(element);
+						} catch (UserAllreadyExistException e) {
+							logger.warning("error on : " + element.getLogin() + " : " + e.getMessage());
+						}
+					}
+					userFact.store();
+					// }
 				}
-				userFact.store();
-				// }
-
 			}
 		}
-
+		userFact.store();
 		/** vrac import **/
 		String vrac = rs.getParameter("vrac", "");
 		int countUserInsered = 0;
@@ -788,7 +867,7 @@ public class UserAction extends AbstractModuleAction {
 		} else {
 			users = userContext.getUserFactory(ctx).getUserInfoList();
 		}
-		
+
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 
@@ -796,7 +875,7 @@ public class UserAction extends AbstractModuleAction {
 		int displayStart = Integer.parseInt(rs.getParameter("iDisplayStart", "0"));
 		int sortingCol = Integer.parseInt(rs.getParameter("iSortCol_0", "0"));
 		boolean ascSorting = rs.getParameter("sSortDir_0", "asc").equals("asc");
-		
+
 		switch (sortingCol) {
 		case 1:
 			Collections.sort(users, new UserInfoSorting(UserInfoSorting.LOGIN, ascSorting));
@@ -876,12 +955,31 @@ public class UserAction extends AbstractModuleAction {
 		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("global.delete-file", "file deleted."), GenericMessage.INFO));
 		return null;
 	}
-	
-	public static void main(String[] args) {
-		String name="Patrick Vandermaesen";
-		String lastName = name.substring(name.indexOf(' ')+1);
-		String firstName = name.substring(0,name.indexOf(' '));
-		System.out.println("##### UserAction.main : lastName = '"+lastName+"'"); //TODO: remove debug trace
-		System.out.println("##### UserAction.main : firstName = '"+firstName+"'"); //TODO: remove debug trace
+
+	public static void main(String[] args) throws Exception {
+		List<IUserInfo> newUserInfo = new LinkedList<IUserInfo>();
+		InputStream in = new FileInputStream(new File("c:/trans/bdf.xlsx"));
+		XSSFWorkbook excel = ArrayHelper.loadWorkBook(in);
+		in.close();
+		for (int sheet = 0; sheet < excel.getNumberOfSheets(); sheet++) {
+			System.out.println(">>>>>>>>> UserAction.performUpload : EXCEL FILE - " + sheet); // TODO: remove debug trace
+			Cell[][] cells = ArrayHelper.getXLSXArray(null, excel, sheet);
+			
+			System.out.println("titles : "+ArrayHelper.getTitles(cells));
+			
+			System.out.println(">>>>>>>>> UserAction.performUpload : #cells : " + cells.length); // TODO: remove debug trace
+			System.out.println(">>>>>>>>> UserAction.performUpload : #cells[0] : " + cells[0].length); // TODO: remove debug trace
+			for (int i = 1; i < cells.length; i++) {
+				String label = "rolesRaw";
+				Integer labelPos = getFieldPos(cells[0], label);
+				System.out.println(">>>>>>>>> UserAction.main : labelPos = "+labelPos); //TODO: remove debug trace
+				if (labelPos != null && cells[i][labelPos] != null) {
+					System.out.println(">>>>>>>>> UserAction.performUpload : add : label=" + label + "   value=" + cells[i][labelPos].getValue()); // TODO: remove debug trace
+				}
+			}
+			if (newUserInfo.size() == 0) {
+				System.out.println("error : no valid users found in excel file.");
+			}
+		}
 	}
 }

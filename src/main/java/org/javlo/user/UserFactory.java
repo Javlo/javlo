@@ -90,11 +90,9 @@ public class UserFactory implements IUserFactory, Serializable {
 	}
 
 	/**
-	 * @deprecated use createUserFactory(GlobalContext, HttpSession)
 	 * @param request
 	 * @return
 	 */
-	@Deprecated
 	public static final IUserFactory createUserFactory(HttpServletRequest request) {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		return createUserFactory(globalContext, request.getSession());
@@ -568,7 +566,7 @@ public class UserFactory implements IUserFactory, Serializable {
 				Set<String> newRoles = new HashSet<String>();
 				newRoles.addAll(rolesList);
 				userInfo.setRoles(newRoles);
-				updateUserInfo(userInfo);
+				updateUserInfoNoStore(userInfo);
 			}
 		}
 	}
@@ -699,6 +697,24 @@ public class UserFactory implements IUserFactory, Serializable {
 						BeanHelper.copy(userInfo, currentUserInfo);
 					}
 					unlockStore();
+				} catch (Exception e) {
+//					LocalLogger.log(e);
+				}
+			}
+		}
+
+	}
+	
+	private void updateUserInfoNoStore(IUserInfo userInfo) throws IOException {
+		synchronized (lock) {
+			userInfo.setModificationDate(new Date());
+			User user = getUser(userInfo.getLogin());
+			if (user != null) {
+				IUserInfo currentUserInfo = user.getUserInfo();
+				try {
+					if (currentUserInfo != null) {
+						BeanHelper.copy(userInfo, currentUserInfo);
+					}
 				} catch (Exception e) {
 //					LocalLogger.log(e);
 				}

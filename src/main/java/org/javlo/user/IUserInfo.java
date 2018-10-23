@@ -1,5 +1,6 @@
 package org.javlo.user;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
@@ -81,6 +82,8 @@ public interface IUserInfo {
 	public void setModificationDate(Date modificationDate);
 
 	public Date getModificationDate();
+	
+	public void setValue(String field, String value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException;
 
 	public String[] getAllLabels();
 

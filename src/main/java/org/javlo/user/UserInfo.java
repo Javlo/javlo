@@ -4,6 +4,7 @@
 package org.javlo.user;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.util.Arrays;
@@ -16,6 +17,7 @@ import java.util.Set;
 
 import javax.mail.internet.InternetAddress;
 
+import org.apache.commons.lang.StringUtils;
 import org.javlo.helper.LocalLogger;
 import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
@@ -257,6 +259,18 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 		if (rolesRaw != null) {
 			if (rolesRaw.trim().length() > 0) {
 				roles = new HashSet<String>(StringHelper.stringToCollectionTrim(rolesRaw, "" + ROLES_SEPARATOR));
+			}
+		}
+	}
+	
+	@Override
+	public void setValue(String field, String value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Method[] methods = this.getClass().getMethods();
+		for (Method method : methods) {
+			if (method.getName().equals("set"+StringUtils.capitalise(field))) {
+				if (method.getParameterCount() == 1 && method.getParameters()[0].getType().equals(String.class)) {
+					method.invoke(this, value);
+				}
 			}
 		}
 	}

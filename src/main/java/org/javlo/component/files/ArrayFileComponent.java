@@ -420,8 +420,9 @@ public class ArrayFileComponent extends GenericFile {
 
 	protected Cell[][] getXLSXArray(ContentContext ctx, File xslxFile) throws Exception {
 		InputStream in = new FileInputStream(xslxFile);
+		XSSFWorkbook workbook = null;
 		try {
-			XSSFWorkbook workbook = new XSSFWorkbook(in);
+			workbook = new XSSFWorkbook(in);
 			XSSFSheet sheet = workbook.getSheetAt(0);
 			Iterator<Row> rowIterator = sheet.iterator();
 			int w = 0;
@@ -465,6 +466,7 @@ public class ArrayFileComponent extends GenericFile {
 
 			return outArray;
 		} finally {
+			ResourceHelper.closeResource(workbook);
 			ResourceHelper.closeResource(in);
 		}
 	}
