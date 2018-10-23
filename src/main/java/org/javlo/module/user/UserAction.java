@@ -631,11 +631,11 @@ public class UserAction extends AbstractModuleAction {
 				if (maxRowSpan < title.getRowSpan()) {
 					maxRowSpan = title.getRowSpan();
 				}
-					
+
 			}
 			for (Cell title : cells) {
 				Cell finalTitle = title;
-				
+
 				if (title != null && title.getValue() != null && title.getValue().toLowerCase().contains(field.toLowerCase())) {
 					return p;
 				}
@@ -653,9 +653,9 @@ public class UserAction extends AbstractModuleAction {
 
 		boolean admin = StringHelper.isTrue(rs.getParameter("admin", null));
 		boolean merge = StringHelper.isTrue(rs.getParameter("merge", null));
-		
+
 		UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
-		
+
 		IUserFactory userFact;
 		if (admin) {
 			userFact = AdminUserFactory.createUserFactory(globalContext, session);
@@ -671,50 +671,48 @@ public class UserAction extends AbstractModuleAction {
 				if (StringHelper.getFileExtension(item.getName()).equals("xlsx")) {
 					XSSFWorkbook excel = ArrayHelper.loadWorkBook(in);
 					ResourceHelper.closeResource(in);
-					for (int sheet = 0; sheet < excel.getNumberOfSheets(); sheet++) {
-						Cell[][] cells = ArrayHelper.getXLSXArray(ctx, excel, sheet);
-						for (int i = 1; i < cells.length; i++) {
-							IUserInfo userInfo = userFact.createUserInfos();
-							for (String label : userInfo.getAllLabels()) {
-								Integer labelPos = getFieldPos(cells[0], label);
-								if (labelPos != null && cells[i][labelPos] != null) {
-									userInfo.setValue(label, cells[i][labelPos].getValue());
-								}
-							}
-							if (userInfo.getEmail() != null && !StringHelper.isMail(userInfo.getEmail())) {
-								Collection<String> emails = StringHelper.searchEmail(userInfo.getEmail());
-								if (emails.size() > 0) {
-									userInfo.setEmail(emails.iterator().next());
-								} else {
-									userInfo.setEmail("");
-								}
-							}
-							if (StringHelper.isEmpty(userInfo.getLogin()) && StringHelper.isMail(userInfo.getEmail())) {
-								userInfo.setLogin(userInfo.getEmail());
-							}
-							if (!StringHelper.isEmpty(userInfo.getLogin())) {
-								Collection<String> emails = StringHelper.searchEmail(userInfo.getLogin());
-								if (emails.size() > 0) {
-									userInfo.setLogin(emails.iterator().next());
-								}
-								if (!StringHelper.isEmpty(userContext.getCurrentRole())) {
-									userInfo.addRoles(new HashSet(Arrays.asList(new String[] {userContext.getCurrentRole()})));
-								}
-								if (!StringHelper.isEmpty(userInfo.getPassword())) {
-									userInfo.setPassword(StringHelper.encryptPassword(userInfo.getPassword()));
-								}
-								newUserInfo.add(userInfo);
+					Cell[][] cells = ArrayHelper.getXLSXArray(ctx, excel, excel.getActiveSheetIndex());
+					for (int i = 1; i < cells.length; i++) {
+						IUserInfo userInfo = userFact.createUserInfos();
+						for (String label : userInfo.getAllLabels()) {
+							Integer labelPos = getFieldPos(cells[0], label);
+							if (labelPos != null && cells[i][labelPos] != null) {
+								userInfo.setValue(label, cells[i][labelPos].getValue());
 							}
 						}
-						if (newUserInfo.size() == 0) {
-							return "error : no valid users found in excel file.";
-						} else {
-							if (!merge) {
-								userFact.releaseUserInfoList();
+						if (userInfo.getEmail() != null && !StringHelper.isMail(userInfo.getEmail())) {
+							Collection<String> emails = StringHelper.searchEmail(userInfo.getEmail());
+							if (emails.size() > 0) {
+								userInfo.setEmail(emails.iterator().next());
+							} else {
+								userInfo.setEmail("");
 							}
-							for (IUserInfo userInfo : newUserInfo) {
-								userFact.mergeUserInfo(userInfo);
+						}
+						if (StringHelper.isEmpty(userInfo.getLogin()) && StringHelper.isMail(userInfo.getEmail())) {
+							userInfo.setLogin(userInfo.getEmail());
+						}
+						if (!StringHelper.isEmpty(userInfo.getLogin())) {
+							Collection<String> emails = StringHelper.searchEmail(userInfo.getLogin());
+							if (emails.size() > 0) {
+								userInfo.setLogin(emails.iterator().next());
 							}
+							if (!StringHelper.isEmpty(userContext.getCurrentRole())) {
+								userInfo.addRoles(new HashSet(Arrays.asList(new String[] { userContext.getCurrentRole() })));
+							}
+							if (!StringHelper.isEmpty(userInfo.getPassword())) {
+								userInfo.setPassword(StringHelper.encryptPassword(userInfo.getPassword()));
+							}
+							newUserInfo.add(userInfo);
+						}
+					}
+					if (newUserInfo.size() == 0) {
+						return "error : no valid users found in excel file.";
+					} else {
+						if (!merge) {
+							userFact.releaseUserInfoList();
+						}
+						for (IUserInfo userInfo : newUserInfo) {
+							userFact.mergeUserInfo(userInfo);
 						}
 					}
 				} else {
@@ -964,15 +962,15 @@ public class UserAction extends AbstractModuleAction {
 		for (int sheet = 0; sheet < excel.getNumberOfSheets(); sheet++) {
 			System.out.println(">>>>>>>>> UserAction.performUpload : EXCEL FILE - " + sheet); // TODO: remove debug trace
 			Cell[][] cells = ArrayHelper.getXLSXArray(null, excel, sheet);
-			
-			System.out.println("titles : "+ArrayHelper.getTitles(cells));
-			
+
+			System.out.println("titles : " + ArrayHelper.getTitles(cells));
+
 			System.out.println(">>>>>>>>> UserAction.performUpload : #cells : " + cells.length); // TODO: remove debug trace
 			System.out.println(">>>>>>>>> UserAction.performUpload : #cells[0] : " + cells[0].length); // TODO: remove debug trace
 			for (int i = 1; i < cells.length; i++) {
 				String label = "rolesRaw";
 				Integer labelPos = getFieldPos(cells[0], label);
-				System.out.println(">>>>>>>>> UserAction.main : labelPos = "+labelPos); //TODO: remove debug trace
+				System.out.println(">>>>>>>>> UserAction.main : labelPos = " + labelPos); // TODO: remove debug trace
 				if (labelPos != null && cells[i][labelPos] != null) {
 					System.out.println(">>>>>>>>> UserAction.performUpload : add : label=" + label + "   value=" + cells[i][labelPos].getValue()); // TODO: remove debug trace
 				}
