@@ -49,14 +49,14 @@ public class SocialShare implements IInteractiveMacro, IAction {
 	public String getRenderer() {
 		return "/jsp/macros/socialShare.jsp";
 	}
-	
+
 	@Override
-	public String getInfo(ContentContext ctx) {	
+	public String getInfo(ContentContext ctx) {
 		return null;
 	}
 
 	@Override
-	public String prepare(ContentContext ctx) {		
+	public String prepare(ContentContext ctx) {
 		try {
 			ctx.getRequest().setAttribute("facebookID", SocialService.getInstance(ctx).getFacebook().getClientId());
 			ctx.getRequest().setAttribute("title", Encode.forJavaScriptAttribute(Encode.forUri(ctx.getCurrentPage().getTitle(ctx))));
@@ -76,7 +76,7 @@ public class SocialShare implements IInteractiveMacro, IAction {
 
 	public static String performCreate(RequestService rs, EditContext editCtx, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		int error = 0;
-		String childrenNames = rs.getParameter("children",null);
+		String childrenNames = rs.getParameter("children", null);
 		if (childrenNames == null) {
 			return "request structure error : 'children' parameter needed.";
 		} else {
@@ -86,7 +86,7 @@ public class SocialShare implements IInteractiveMacro, IAction {
 			while (line != null) {
 				line = line.trim();
 				if (line.length() > 0) {
-					String pageName = StringHelper.removeRepeatedChar(StringHelper.createFileName(line),'-');
+					String pageName = StringHelper.removeRepeatedChar(StringHelper.createFileName(line), '-');
 					if (line.contains("=")) {
 						pageName = StringHelper.split(line, "=")[0];
 						line = StringHelper.split(line, "=")[1];
@@ -95,7 +95,7 @@ public class SocialShare implements IInteractiveMacro, IAction {
 					if (newPage == null) {
 						error++;
 					} else {
-						MacroHelper.addContent(ctx.getRequestContentLanguage(), newPage, "0", Heading.TYPE, "depth=1\ntext="+line, ctx.getCurrentEditUser());
+						MacroHelper.addContent(ctx.getRequestContentLanguage(), newPage, "0", Heading.TYPE, "depth=1\ntext=" + line, ctx.getCurrentEditUser());
 					}
 				}
 				line = reader.readLine();
@@ -113,19 +113,28 @@ public class SocialShare implements IInteractiveMacro, IAction {
 	public boolean isPreview() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean isAdd() {
 		return false;
 	}
-	
+
 	@Override
-	public boolean isInterative() {	
+	public boolean isInterative() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean haveRight(ContentContext ctx, String action) {
 		return true;
+	}
+
+	@Override
+	public boolean isActive() {
+		return true;
+	}
+
+	@Override
+	public void init(ContentContext ctx) {
 	}
 }

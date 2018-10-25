@@ -119,9 +119,15 @@ if (!String.prototype.startsWith) {
 			layer.hide();
 			layer.data("compType", null);
 			layer.data("sharedContent", null);
-			layer.attr("title", " ");			
+			layer.attr("title", " ");
+			layer.find(".btn-delete").removeClass("hidden");
+			layer.removeClass("repeated");
 		} else {
 			var comp = pjq(item);
+			if (comp.hasClass("repeated")) {
+				layer.addClass("repeated");
+				layer.find(".btn-delete").addClass("hidden");
+			}
 			if (comp.hasClass("mirror-wrapped")) {
 				layer.find(".mirror").show();
 				layer.find(".not-mirror").hide();
@@ -401,6 +407,7 @@ if (!String.prototype.startsWith) {
 				'<button class="btn-edit btn btn-primary"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span><span class="text">edit</span></button>'+
 				'<button class="btn-copy btn btn-primary"><span class="glyphicon glyphicon-copy" aria-hidden="true"></span><span class="text">copy</span></button>'+
 				'<button class="btn-delete btn btn-primary"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span><span class="text">delete</span></button>'+
+				'<div class="btn-off btn repeat-icon"><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span></div>'+
 				'</div><h4></h4><div class="main">&nbsp;</span></div>');
 			pjq("#preview-layer").css("position", "absolute");
 			pjq("#preview-layer").on('mouseleave', function (event) {

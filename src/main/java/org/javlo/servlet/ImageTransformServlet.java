@@ -1244,6 +1244,8 @@ public class ImageTransformServlet extends FileServlet {
 											image = ImageEngine.resizeWidth(image, maxWidth, true);
 											ImageEngine.storeImage(image, imageFile);
 											ExifHelper.writeMetadata(md, imageFile);
+										} catch (Exception e) {
+											logger.warning(e.getMessage());
 										} finally {
 											image.flush();
 										}										

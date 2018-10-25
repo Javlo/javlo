@@ -208,4 +208,14 @@ public class UploadGallery implements IInteractiveMacro, IAction {
 	public String getInfo(ContentContext ctx) {
 		return null;
 	}
+	
+
+	@Override
+	public boolean isActive() {
+		return true;
+	}
+
+	@Override
+	public void init(ContentContext ctx) {
+	}
 }

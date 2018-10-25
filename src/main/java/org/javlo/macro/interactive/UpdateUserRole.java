@@ -52,9 +52,9 @@ public class UpdateUserRole implements IInteractiveMacro, IAction {
 	public String getRenderer() {
 		return "/jsp/macros/update-user-role.jsp";
 	}
-	
+
 	@Override
-	public String getInfo(ContentContext ctx) {	
+	public String getInfo(ContentContext ctx) {
 		return null;
 	}
 
@@ -77,12 +77,12 @@ public class UpdateUserRole implements IInteractiveMacro, IAction {
 		Set<String> roles = new HashSet<String>();
 		roles.addAll(rs.getParameterListValues("role", Collections.EMPTY_LIST));
 		boolean add = rs.getParameter("add", null) != null;
-		
-		int count=0;
-		
-		if (ctx.getGlobalContext().isMaster()) {			
+
+		int count = 0;
+
+		if (ctx.getGlobalContext().isMaster()) {
 			for (GlobalContext site : GlobalContextFactory.getAllGlobalContext(ctx.getRequest().getSession().getServletContext())) {
-				logger.info("[M] add:" + add + "  site:"+site.getContextKey()+"  roles:" + roles);
+				logger.info("[M] add:" + add + "  site:" + site.getContextKey() + "  roles:" + roles);
 				userFactory = AdminUserFactory.createUserFactory(site, ctx.getRequest().getSession());
 				for (IUserInfo user : userFactory.getUserInfoList()) {
 					int backupRolesSize = user.getRoles().size();
@@ -95,12 +95,12 @@ public class UpdateUserRole implements IInteractiveMacro, IAction {
 						count++;
 					}
 				}
-				if (count>0) {
+				if (count > 0) {
 					userFactory.store();
 				}
 			}
 		} else {
-			logger.info("add:" + add + "  site:"+ctx.getGlobalContext().getContextKey()+"  roles:" + roles);
+			logger.info("add:" + add + "  site:" + ctx.getGlobalContext().getContextKey() + "  roles:" + roles);
 			for (IUserInfo user : userFactory.getUserInfoList()) {
 				int backupRolesSize = user.getRoles().size();
 				if (add) {
@@ -109,14 +109,14 @@ public class UpdateUserRole implements IInteractiveMacro, IAction {
 					user.removeRoles(roles);
 				}
 				if (user.getRoles().size() != backupRolesSize) {
-					count++;					
+					count++;
 				}
 			}
-			if (count>0) {
+			if (count > 0) {
 				userFactory.store();
 			}
-		}		
-		messageRepository.setGlobalMessage(new GenericMessage(count+" user(s) modified", GenericMessage.INFO));
+		}
+		messageRepository.setGlobalMessage(new GenericMessage(count + " user(s) modified", GenericMessage.INFO));
 		return null;
 	}
 
@@ -124,19 +124,28 @@ public class UpdateUserRole implements IInteractiveMacro, IAction {
 	public boolean isPreview() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean isAdd() {
 		return false;
 	}
-	
+
 	@Override
-	public boolean isInterative() {	
+	public boolean isInterative() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean haveRight(ContentContext ctx, String action) {
 		return ctx.getCurrentEditUser() != null;
+	}
+
+	@Override
+	public boolean isActive() {
+		return true;
+	}
+
+	@Override
+	public void init(ContentContext ctx) {
 	}
 }

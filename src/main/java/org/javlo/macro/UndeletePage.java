@@ -57,9 +57,9 @@ public class UndeletePage extends AbstractInteractiveMacro implements IAction {
 	public String getRenderer() {
 		return "/jsp/macros/undelete-page.jsp";
 	}
-	
+
 	@Override
-	public String getInfo(ContentContext ctx) {	
+	public String getInfo(ContentContext ctx) {
 		return null;
 	}
 
@@ -68,7 +68,7 @@ public class UndeletePage extends AbstractInteractiveMacro implements IAction {
 		try {
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			MenuElement trash = content.getTrashPage(ctx);
-			List<PageBean> pages = new LinkedList<PageBean>();			
+			List<PageBean> pages = new LinkedList<PageBean>();
 			for (MenuElement child : trash.getChildMenuElements()) {
 				if (child.isEditAccess(ctx)) {
 					pages.add(new PageBean(ctx, child));
@@ -91,7 +91,7 @@ public class UndeletePage extends AbstractInteractiveMacro implements IAction {
 		}
 		return outIds;
 	}
-	
+
 	public static String performDeleteAll(RequestService rs, EditContext editCtx, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement trash = content.getTrashPage(ctx);
@@ -115,14 +115,14 @@ public class UndeletePage extends AbstractInteractiveMacro implements IAction {
 				if (pageToRestore.isEditAccess(ctx)) {
 					MenuElement parent = ContentService.getInstance(ctx.getGlobalContext()).getNavigation(ctx).searchChildFromId(pageToRestore.getSavedParent());
 					if (parent == null) {
-						return "original parent not found : "+pageToRestore.getSavedParent();
+						return "original parent not found : " + pageToRestore.getSavedParent();
 					} else {
 						pageToRestore.getParent().removeChild(pageToRestore);
 						pageToRestore.setParent(parent);
 						parent.addChildMenuElementOnBottom(pageToRestore);
 						parent.releaseCache();
 						pageToRestore.releaseCache();
-						messageRepository.setGlobalMessage(new GenericMessage("page restored : "+pageToRestore.getHumanName(), GenericMessage.INFO));
+						messageRepository.setGlobalMessage(new GenericMessage("page restored : " + pageToRestore.getHumanName(), GenericMessage.INFO));
 						if (!pageToRestore.getChildMenuElements().isEmpty() && pageToRestore.getChildMenuElements().iterator().next().isChildrenAssociation()) {
 							ctx.setPath(pageToRestore.getChildMenuElements().iterator().next().getPath());
 						} else {
@@ -145,16 +145,16 @@ public class UndeletePage extends AbstractInteractiveMacro implements IAction {
 						String path = pageToDelete.getPath();
 						NavigationService service = NavigationService.getInstance(ctx.getGlobalContext());
 						service.removeNavigation(ctx, pageToDelete);
-						MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(i18nAccess.getText("action.remove.deleted", new String[][] { { "path", path } }), GenericMessage.INFO));			
+						MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(i18nAccess.getText("action.remove.deleted", new String[][] { { "path", path } }), GenericMessage.INFO));
 						PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 					} else {
 						return "no access.";
 					}
 				} else {
-					return "page not found : "+page;
+					return "page not found : " + page;
 				}
 			}
-			}
+		}
 		return null;
 	}
 
@@ -162,9 +162,18 @@ public class UndeletePage extends AbstractInteractiveMacro implements IAction {
 	public boolean isPreview() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean haveRight(ContentContext ctx, String action) {
 		return ctx.getCurrentEditUser() != null;
+	}
+
+	@Override
+	public boolean isActive() {
+		return true;
+	}
+
+	@Override
+	public void init(ContentContext ctx) {
 	}
 }

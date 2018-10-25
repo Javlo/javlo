@@ -1287,10 +1287,8 @@ public class StaticInfo {
 	public Date getExifDate() {
 		try {
 			return ExifHelper.readDate(getFile());
-		} catch (ImageReadException e) {
+		} catch (Exception e) {
 			logger.warning(e.getMessage());
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 
 		/*

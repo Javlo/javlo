@@ -43,6 +43,8 @@ public class UserInterfaceContext {
 
 	private String currentModule = null;
 
+	private boolean minimalInterface = false;
+
 	public static final String KEY = "userInterface";
 
 	private static final UserInterfaceContext FAKE_INSTACE = new UserInterfaceContext();
@@ -87,6 +89,7 @@ public class UserInterfaceContext {
 		}
 
 		instance.lightInterface = AdminUserSecurity.getInstance().haveRole(user, AdminUserSecurity.LIGHT_INTERFACE_ROLE);
+		instance.setMinimalInterface(instance.lightInterface && !AdminUserSecurity.getInstance().haveRole(user, AdminUserSecurity.NAVIGATION_ROLE));
 		instance.contributor = AdminUserSecurity.getInstance().haveRole(user, AdminUserSecurity.CONTRIBUTOR_ROLE);
 		instance.setModel(AdminUserSecurity.getInstance().canRole(user, AdminUserSecurity.MODEL_ROLE)); 
 
@@ -218,6 +221,14 @@ public class UserInterfaceContext {
 
 	public void setMobilePreview(boolean mobilePreview) {
 		this.mobilePreview = mobilePreview;
+	}
+
+	public boolean isMinimalInterface() {
+		return minimalInterface;
+	}
+
+	public void setMinimalInterface(boolean minimalInterface) {
+		this.minimalInterface = minimalInterface;
 	}
 	
 }

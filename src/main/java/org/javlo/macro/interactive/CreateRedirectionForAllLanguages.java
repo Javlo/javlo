@@ -15,7 +15,7 @@ import org.javlo.message.MessageRepository;
 import org.javlo.service.RequestService;
 
 public class CreateRedirectionForAllLanguages implements IInteractiveMacro, IAction {
-	
+
 	private static Logger logger = Logger.getLogger(CreateRedirectionForAllLanguages.class.getName());
 
 	@Override
@@ -47,9 +47,9 @@ public class CreateRedirectionForAllLanguages implements IInteractiveMacro, IAct
 	public String prepare(ContentContext ctx) {
 		return null;
 	}
-	
+
 	@Override
-	public String getInfo(ContentContext ctx) {	
+	public String getInfo(ContentContext ctx) {
 		return null;
 	}
 
@@ -79,19 +79,28 @@ public class CreateRedirectionForAllLanguages implements IInteractiveMacro, IAct
 	public boolean isPreview() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isAdd() {
 		return false;
 	}
-	
+
 	@Override
-	public boolean isInterative() {	
+	public boolean isInterative() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean haveRight(ContentContext ctx, String action) {
 		return ctx.getCurrentEditUser() != null;
+	}
+
+	@Override
+	public boolean isActive() {
+		return true;
+	}
+
+	@Override
+	public void init(ContentContext ctx) {
 	}
 }

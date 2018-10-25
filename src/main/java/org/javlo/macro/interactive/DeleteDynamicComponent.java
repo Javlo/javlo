@@ -53,9 +53,9 @@ public class DeleteDynamicComponent implements IInteractiveMacro, IAction {
 	public String prepare(ContentContext ctx) {
 		return null;
 	}
-	
+
 	@Override
-	public String getInfo(ContentContext ctx) {	
+	public String getInfo(ContentContext ctx) {
 		return null;
 	}
 
@@ -79,7 +79,7 @@ public class DeleteDynamicComponent implements IInteractiveMacro, IAction {
 								deleteField++;
 							} else {
 								realDeleteField++;
-								comp.getPage().removeContent(ctx, comp.getId());								
+								comp.getPage().removeContent(ctx, comp.getId());
 							}
 						}
 					}
@@ -100,19 +100,28 @@ public class DeleteDynamicComponent implements IInteractiveMacro, IAction {
 	public boolean isPreview() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean isAdd() {
 		return false;
 	}
-	
+
 	@Override
-	public boolean isInterative() {	
+	public boolean isInterative() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean haveRight(ContentContext ctx, String action) {
 		return ctx.getCurrentEditUser() != null;
+	}
+
+	@Override
+	public boolean isActive() {
+		return true;
+	}
+
+	@Override
+	public void init(ContentContext ctx) {
 	}
 }

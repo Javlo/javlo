@@ -80,8 +80,8 @@ public class InfoBean {
 	private ImageBean imageHeader = null;
 
 	private Map<String, Boolean> areas = null;
-	
-	private Map<String,String> bgAreas = null;
+
+	private Map<String, String> bgAreas = null;
 
 	private static final Map<String, String> staticData = Collections.unmodifiableMap(new HashMap<String, String>() {
 		{
@@ -143,10 +143,10 @@ public class InfoBean {
 	}
 
 	public String getCurrentAbsoluteURL() {
-		Map<String,String> params = Collections.EMPTY_MAP;
+		Map<String, String> params = Collections.EMPTY_MAP;
 		String popupPath = ctx.getRequest().getParameter(NavigationHelper.POPUP_PARAM);
 		if (popupPath != null) {
-			params = new HashMap<String,String>();
+			params = new HashMap<String, String>();
 			params.put(NavigationHelper.POPUP_PARAM, popupPath);
 		}
 		return URLHelper.createURL(ctx.getContextForAbsoluteURL(), params);
@@ -215,14 +215,18 @@ public class InfoBean {
 		return URLHelper.createURL(robotCtx);
 	}
 
+	private Map<String, String> lgURLs = null;
+
 	public Map<String, String> getLanguageURLs() throws Exception {
-		Map<String, String> urls = new HashMap<String, String>();
-		for (String lg : ctx.getGlobalContext().getContentLanguages()) {
+		if (lgURLs == null) {
+			lgURLs = new HashMap<String, String>();
 			ContentContext lgCtx = new ContentContext(ctx);
-			lgCtx.setAllLanguage(lg);
-			urls.put(lg, URLHelper.createURL(lgCtx));
+			for (String lg : ctx.getGlobalContext().getContentLanguages()) {
+				lgCtx.setAllLanguage(lg);
+				lgURLs.put(lg, URLHelper.createURL(lgCtx));
+			}
 		}
-		return urls;
+		return lgURLs;
 	}
 
 	public String getCurrentAbsoluteURLQRCode() {
@@ -456,7 +460,7 @@ public class InfoBean {
 	public String getRequestContentLanguage() {
 		return ctx.getRequestContentLanguage();
 	}
-	
+
 	public String getRequestContentLanguageName() {
 		Locale locale;
 		if (ctx.isAsModifyMode()) {
@@ -477,7 +481,7 @@ public class InfoBean {
 			String description = getCurrentPage().getMetaDescription(ctx);
 			MenuElement popupPage = NavigationHelper.getPopupPage(ctx);
 			if (popupPage != null) {
-				description =  popupPage.getMetaDescription(ctx);
+				description = popupPage.getMetaDescription(ctx);
 			}
 			final String noRecursiveRequestKey = "_pageDescritionCalled";
 			if (ctx.getRequest().getAttribute(noRecursiveRequestKey) == null) {
@@ -657,7 +661,7 @@ public class InfoBean {
 	public Collection<String> getLanguages() {
 		return globalContext.getLanguages();
 	}
-	
+
 	public Collection<PageBean> getPagesForAnyLanguages() throws Exception {
 		Collection<PageBean> pages = new LinkedList<PageBean>();
 		for (ContentContext lgCtx : ctx.getContextForAllLanguage()) {
@@ -1440,7 +1444,7 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
+
 	public PageBean getRegistrationPage() throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement regPage = content.getNavigation(ctx).searchChildFromName("register", "registered", "registration");
@@ -1638,10 +1642,10 @@ public class InfoBean {
 	public List<MacroBean> getInteractiveMacro() {
 		List<MacroBean> macros = new LinkedList<MacroBean>();
 		List<String> macroName = globalContext.getMacros();
-		MacroFactory factory = MacroFactory.getInstance(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()));
+		MacroFactory factory = MacroFactory.getInstance(ctx);
 		for (String name : macroName) {
 			IMacro macro = factory.getMacro(name);
-			if (macro instanceof IInteractiveMacro) {
+			if (macro instanceof IInteractiveMacro && macro.isActive()) {
 				macros.add(new MacroBean(macro.getName(), macro.getInfo(ctx)));
 			}
 		}
@@ -1651,10 +1655,10 @@ public class InfoBean {
 	public List<IMacro> getAddMacro() {
 		List<IMacro> macros = new LinkedList<IMacro>();
 		List<String> macroName = globalContext.getMacros();
-		MacroFactory factory = MacroFactory.getInstance(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()));
+		MacroFactory factory = MacroFactory.getInstance(ctx);
 		for (String name : macroName) {
 			IMacro macro = factory.getMacro(name);
-			if (macro != null && macro.isAdd()) {
+			if (macro != null && macro.isAdd() && macro.isActive()) {
 				macros.add(macro);
 			}
 		}
@@ -1664,11 +1668,11 @@ public class InfoBean {
 	public List<MacroBean> getMacro() {
 		List<MacroBean> macros = new LinkedList<MacroBean>();
 		List<String> macroName = globalContext.getMacros();
-		MacroFactory factory = MacroFactory.getInstance(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()));
+		MacroFactory factory = MacroFactory.getInstance(ctx);
 		for (String name : macroName) {
 			if (name.trim().length() > 0) {
 				IMacro macro = factory.getMacro(name);
-				if (!(macro instanceof IInteractiveMacro)) {
+				if (!(macro instanceof IInteractiveMacro) && macro.isActive()) {
 					macros.add(new MacroBean(macro.getName(), macro.getInfo(ctx)));
 				}
 			}
@@ -1782,14 +1786,14 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
-	public Map<String,String> getImageBackgroundForArea() throws Exception {
+
+	public Map<String, String> getImageBackgroundForArea() throws Exception {
 		if (bgAreas == null) {
 			Map<String, ImageTitleBean> bg = ctx.getCurrentPage().getImageBackgroundForArea(ctx);
-			if (bg.size()==0) {
+			if (bg.size() == 0) {
 				bgAreas = Collections.EMPTY_MAP;
 			} else {
-				bgAreas = new HashMap<String,String>();
+				bgAreas = new HashMap<String, String>();
 				for (String area : ctx.getCurrentPage().getImageBackgroundForArea(ctx).keySet()) {
 					bgAreas.put(area, URLHelper.createFileURL(ctx, bg.get(area).getResourceURL(ctx)));
 				}

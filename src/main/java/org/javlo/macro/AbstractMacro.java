@@ -9,13 +9,14 @@ import java.util.Properties;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.context.GlobalContext;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IMacro;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 
 public abstract class AbstractMacro implements IMacro {
-
+	
 	@Override
 	public String toString() {
 		return getName();
@@ -66,6 +67,15 @@ public abstract class AbstractMacro implements IMacro {
 	@Override
 	public boolean isInterative() {	
 		return false;
-	}	
+	}
+	
+	@Override
+	public boolean isActive() {
+		return true;
+	}
+	
+	@Override
+	public void init(ContentContext ctx) {
+	}
 	
 }

@@ -19,7 +19,7 @@ import org.javlo.service.RequestService;
 import org.javlo.user.User;
 
 public class SmartImport implements IInteractiveMacro, IAction {
-	
+
 	private static Logger logger = Logger.getLogger(SmartImport.class.getName());
 
 	@Override
@@ -46,9 +46,9 @@ public class SmartImport implements IInteractiveMacro, IAction {
 	public String getRenderer() {
 		return "/jsp/macros/smart_import/home.jsp";
 	}
-	
+
 	@Override
-	public String getInfo(ContentContext ctx) {	
+	public String getInfo(ContentContext ctx) {
 		return null;
 	}
 
@@ -58,10 +58,10 @@ public class SmartImport implements IInteractiveMacro, IAction {
 	}
 
 	public static String performUpload(RequestService rs, ContentContext ctx, GlobalContext gc, ContentService cs, User user, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
-		
+
 		String url = rs.getParameter("url", null).trim();
 		if (StringHelper.isURL(url)) {
-			
+
 		}
 
 		ImportConfigBean config = new ImportConfigBean(ctx);
@@ -71,17 +71,17 @@ public class SmartImport implements IInteractiveMacro, IAction {
 			config.setImagesAsImages(true);
 		}
 		config.setArea(rs.getParameter("area", ComponentBean.DEFAULT_AREA));
-		if (rs.getParameter("after", null) != null) {			
+		if (rs.getParameter("after", null) != null) {
 			config.setBeforeContent(false);
 		}
-		
+
 		DataAction.uploadContent(rs, ctx, gc, cs, user, messageRepository, i18nAccess, config, true);
-		
+
 		MacroModuleContext.getInstance(ctx.getRequest()).setActiveMacro(null);
 		if (ctx.isEditPreview()) {
-			ctx.setClosePopup(true);			
+			ctx.setClosePopup(true);
 		}
-		
+
 		return null;
 	}
 
@@ -89,19 +89,28 @@ public class SmartImport implements IInteractiveMacro, IAction {
 	public boolean isPreview() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean isAdd() {
 		return true;
 	}
-	
+
 	@Override
-	public boolean isInterative() {	
+	public boolean isInterative() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean haveRight(ContentContext ctx, String action) {
 		return ctx.getCurrentEditUser() != null;
+	}
+
+	@Override
+	public boolean isActive() {
+		return true;
+	}
+
+	@Override
+	public void init(ContentContext ctx) {
 	}
 }

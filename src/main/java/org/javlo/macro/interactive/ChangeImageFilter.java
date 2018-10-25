@@ -106,4 +106,13 @@ public class ChangeImageFilter implements IInteractiveMacro, IAction {
 	public boolean haveRight(ContentContext ctx, String action) {
 		return true;
 	}
+
+	@Override
+	public boolean isActive() {
+		return true;
+	}
+
+	@Override
+	public void init(ContentContext ctx) {
+	}
 }

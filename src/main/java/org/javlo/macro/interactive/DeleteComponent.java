@@ -57,32 +57,32 @@ public class DeleteComponent implements IInteractiveMacro, IAction {
 	public String getRenderer() {
 		return "/jsp/macros/delete-component.jsp";
 	}
-	
+
 	@Override
-	public String getInfo(ContentContext ctx) {	
+	public String getInfo(ContentContext ctx) {
 		return null;
 	}
 
 	@Override
 	public String prepare(ContentContext ctx) {
-		try {			
+		try {
 			if (AdminUserSecurity.getInstance().isGod(ctx.getCurrentEditUser())) {
 				ctx.getRequest().setAttribute("components", ComponentFactory.getComponents(ctx));
 			} else {
 				if (AdminUserSecurity.getInstance().isGod(ctx.getCurrentEditUser())) {
 					ctx.getRequest().setAttribute("components", ComponentFactory.getGlobalContextComponent(ctx, IContentVisualComponent.COMPLEXITY_ADMIN));
-				} else { 
+				} else {
 					ctx.getRequest().setAttribute("components", ComponentFactory.getGlobalContextComponent(ctx, IContentVisualComponent.COMPLEXITY_STANDARD, ctx.getCurrentTemplate()));
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}		
+		}
 		return null;
 	}
 
 	public static String performDelete(RequestService rs, ContentService content, EditContext editCtx, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException, Exception {
-		Set<String> types = new HashSet<String>(Arrays.asList(rs.getParameterValues("types", new String[0])));		
+		Set<String> types = new HashSet<String>(Arrays.asList(rs.getParameterValues("types", new String[0])));
 		List<MenuElement> pages = new LinkedList<MenuElement>();
 		String contentContains = rs.getParameter("content", "").trim();
 		if (StringHelper.isTrue(rs.getParameter("allpages", null))) {
@@ -100,7 +100,7 @@ public class DeleteComponent implements IInteractiveMacro, IAction {
 			ContentContext allAreaContent = ctx.getContextWithArea(null);
 			ContentElementList list = page.getContent(allAreaContent);
 			while (list.hasNext(allAreaContent)) {
-				IContentVisualComponent comp = list.next(allAreaContent);				
+				IContentVisualComponent comp = list.next(allAreaContent);
 				if (types.contains(comp.getType())) {
 					if (comp.getTextForSearch(allAreaContent).contains(contentContains) || contentContains.length() == 0) {
 						countDelete++;
@@ -113,15 +113,15 @@ public class DeleteComponent implements IInteractiveMacro, IAction {
 				}
 			}
 			for (String id : deleteId) {
-				page.removeContent(ctx, id);				
+				page.removeContent(ctx, id);
 			}
-		}		
+		}
 		ctx.getCurrentPage().releaseCache();
-		ctx.setClosePopup(true);		
+		ctx.setClosePopup(true);
 		if (!justHidden) {
-			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(countDelete+" components deleted", GenericMessage.INFO));
+			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(countDelete + " components deleted", GenericMessage.INFO));
 		} else {
-			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(countDelete+" components mark as hidden", GenericMessage.INFO));
+			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(countDelete + " components mark as hidden", GenericMessage.INFO));
 		}
 		return null;
 	}
@@ -130,19 +130,28 @@ public class DeleteComponent implements IInteractiveMacro, IAction {
 	public boolean isPreview() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean isAdd() {
 		return false;
 	}
-	
+
 	@Override
-	public boolean isInterative() {	
+	public boolean isInterative() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean haveRight(ContentContext ctx, String action) {
 		return ctx.getCurrentEditUser() != null;
+	}
+
+	@Override
+	public boolean isActive() {
+		return true;
+	}
+
+	@Override
+	public void init(ContentContext ctx) {
 	}
 }

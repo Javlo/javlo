@@ -292,7 +292,7 @@ public class AdminAction extends AbstractModuleAction {
 				currentModule.setBackUrl(backUrl);
 
 				/** macro **/
-				MacroFactory macroFactory = MacroFactory.getInstance(currentGlobalContext.getStaticConfig());
+				MacroFactory macroFactory = MacroFactory.getInstance(ctx);
 				Collection<MacroBean> macrosName = new LinkedList<MacroBean>();
 				for (IMacro macro : macroFactory.getMacros()) {
 					macrosName.add(new MacroBean(macro.getName(), macro.getInfo(ctx)));
@@ -431,6 +431,16 @@ public class AdminAction extends AbstractModuleAction {
 					ctx.setNeedRefresh(true);
 				}
 			}
+			/** macro **/
+			MacroFactory.getInstance(ctx).clear(ctx);
+			MacroFactory macroFactory = MacroFactory.getInstance(ctx);
+			List<String> macros = new LinkedList<String>();
+			for (IMacro macro : macroFactory.getMacros()) {
+				if (requestService.getParameter(macro.getName(), null) != null) {
+					macros.add(macro.getName());
+				}
+			}
+			ctx.getGlobalContext().setMacros(macros);
 		}
 		return null;
 	}
@@ -664,7 +674,8 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setBlockPassword(requestService.getParameter("block-password", ""));
 
 					/** macro **/
-					MacroFactory macroFactory = MacroFactory.getInstance(currentGlobalContext.getStaticConfig());
+					MacroFactory.getInstance(ctx).clear(ctx);
+					MacroFactory macroFactory = MacroFactory.getInstance(ctx);
 					List<String> macros = new LinkedList<String>();
 					for (IMacro macro : macroFactory.getMacros()) {
 						if (requestService.getParameter(macro.getName(), null) != null) {
@@ -890,8 +901,9 @@ public class AdminAction extends AbstractModuleAction {
 		StaticConfig staticConfig = globalContext.getStaticConfig();
 		TimeTracker.reset(staticConfig);
 		ResourceHelper.deleteFolder(globalContext.getStaticConfig().getWebTempDir());
-		System.gc();
 		ListService.getInstance(ctx).clear();
+		MacroFactory.getInstance(ctx).clear(ctx);
+		System.gc();
 		return msg;
 	}
 	

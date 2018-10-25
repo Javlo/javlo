@@ -7,12 +7,15 @@ import java.util.logging.Logger;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.MacroHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.PersistenceService;
 
 public class ImportAndTranslateDefaultLanguageMacro extends AbstractMacro {
 
 	private static Logger logger = Logger.getLogger(ImportAndTranslateDefaultLanguageMacro.class.getName());
+	
+	private boolean active = false;
 
 	@Override
 	public String getName() {
@@ -51,6 +54,17 @@ public class ImportAndTranslateDefaultLanguageMacro extends AbstractMacro {
 	@Override
 	public boolean isAdmin() {
 		return false;
+	}
+	
+	@Override
+	public void init(ContentContext ctx) {
+		super.init(ctx);
+		active = !StringHelper.isEmpty(ctx.getGlobalContext().getGoogleApiKey());
+	}
+	
+	@Override
+	public boolean isActive() {
+		return active;
 	}
 
 }

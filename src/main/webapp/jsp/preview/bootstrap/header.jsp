@@ -69,7 +69,7 @@
 		</div>
 		<c:if test="${not empty editUser}">
 			<div class="actions">
-				<c:if test="${fn:length(contentContext.deviceNames)>1 && !globalContext.openPlatform}">
+				<c:if test="${fn:length(contentContext.deviceNames)>1 && !globalContext.openPlatform && !userInterface.minimalInterface}">
 					<div class="select">
 						<form id="renderers_form" action="${info.currentURL}" method="post">
 							<div class="input-wrapper">							
@@ -90,7 +90,7 @@
 				</c:if>
 
 				<div class="btn-group">
-					<ul><c:if test="${!globalContext.openPlatform}">
+					<ul><c:if test="${!globalContext.openPlatform && !userInterface.minimalInterface}">
 						<li>
 							<c:set var="tooltip" value="" />
 							<c:if test="${i18n.edit['command.copy-page.tooltip'] != 'command.copy-page.tooltip'}">
@@ -270,6 +270,7 @@
 					</form>					
 					</li>
 			</c:if>
+			<c:if test="${!userInterface.minimalInterface}">
 			<li class="undo${contentContext.canUndo?'':' no-access'}"><form
 								class="${!info.page.pageLocalEmpty?'no-access':''}"
 								action="${info.currentURL}" method="get">
@@ -284,7 +285,7 @@
 									<span class="fa fa-undo" aria-hidden="true"></span>
 										<span class="text">${i18n.edit['global.undo']}</span>
 								</button>
-							</form></li>
+							</form></li></c:if>
 			<c:if test="${globalContext.previewMode}">
 			
 				<c:set var="webaction" value="edit.publish" />
@@ -311,7 +312,7 @@
 					</form></li>
 			</c:if>
 			</c:if>
-			<c:if test="${userInterface.search}">
+			<c:if test="${userInterface.search && !userInterface.minimalInterface}">
 			<li><c:url var="url" value="<%=URLHelper.createURL(editCtx)%>"
 						context="/">
 						<c:param name="module" value="search"></c:param>

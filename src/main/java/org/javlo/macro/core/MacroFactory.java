@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.javlo.config.StaticConfig;
+import org.javlo.context.ContentContext;
 import org.javlo.macro.ActiveAllChildren;
 import org.javlo.macro.AddChildMacro;
 import org.javlo.macro.CleanDuplicatedId;
@@ -90,21 +91,29 @@ import CleanResourceNameMacro.CleanResourceImageMacro;
 
 public class MacroFactory {
 
+	private static final String KEY = MacroFactory.class.getName();
+
 	private final List<IMacro> macros = new LinkedList<IMacro>();
 
-	private static MacroFactory instance = null;
-
-	public static final MacroFactory getInstance(StaticConfig staticConfig) {
+	public static final MacroFactory getInstance(ContentContext ctx) {
+		MacroFactory instance = (MacroFactory) ctx.getGlobalContext().getAttribute(KEY);
 		if (instance == null) {
 			instance = new MacroFactory();
-			if (staticConfig.getSpecialMacros().size() > 0) {
-				instance.macros.addAll(staticConfig.getSpecialMacros());
+			if (ctx.getGlobalContext().getStaticConfig().getSpecialMacros().size() > 0) {
+				instance.macros.addAll(ctx.getGlobalContext().getStaticConfig().getSpecialMacros());
+			}
+			ctx.getGlobalContext().setAttribute(KEY, instance);
+		}
+		if (ctx.getAttribute(KEY) == null) {
+			ctx.setAttribute(KEY,1);
+			for (IMacro m : instance.macros) {
+				m.init(ctx);
 			}
 		}
 		return instance;
 	}
 
-	private MacroFactory() {		
+	private MacroFactory() {
 		macros.add(new CreateFakeUsers());
 		macros.add(new CreateContentChildren());
 		macros.add(new DeleteDynamicComponent());
@@ -119,17 +128,17 @@ public class MacroFactory {
 		macros.add(new CreateAlphabeticChildrenHereMacro());
 		macros.add(new CreateArticleComposition());
 		macros.add(new ImportHTMLPageMacro());
-		//macros.add(new ImportJCRPageMacro());
+		// macros.add(new ImportJCRPageMacro());
 		macros.add(new ImportGalleryMacro());
 		macros.add(new CreateDefaultPageStructure());
-		//macros.add(new CreatePressReleaseTodayMacro());
-		//macros.add(new CreatePressReleaseHereMacro());
-		//macros.add(new CreateExternalNewsMacro());
-		//macros.add(new CreateWeekHereMacro());
-		//macros.add(new CreateMonthHereMacro());
-		//macros.add(new CreatePressReleaseTodayHereMacro());
-		//macros.add(new CreateMonthStructureMacro());
-		//macros.add(new CreateBaseStructureMacro());
+		// macros.add(new CreatePressReleaseTodayMacro());
+		// macros.add(new CreatePressReleaseHereMacro());
+		// macros.add(new CreateExternalNewsMacro());
+		// macros.add(new CreateWeekHereMacro());
+		// macros.add(new CreateMonthHereMacro());
+		// macros.add(new CreatePressReleaseTodayHereMacro());
+		// macros.add(new CreateMonthStructureMacro());
+		// macros.add(new CreateBaseStructureMacro());
 		macros.add(new CreateChildrenStructureMacro());
 		macros.add(new DeletePageFromSpecificUser());
 		macros.add(new MergeDynamicComponent());
@@ -141,8 +150,8 @@ public class MacroFactory {
 		macros.add(new CopyLanguageStructureMacro());
 		macros.add(new CopyLanguageStructureHereMacro());
 		macros.add(new ImportDefaultLanguageMacro());
-		macros.add(new ImportAndTranslateDefaultLanguageMacro());		
-		macros.add(new DeleteSmartExternalLinkMacro());		
+		macros.add(new ImportAndTranslateDefaultLanguageMacro());
+		macros.add(new DeleteSmartExternalLinkMacro());
 		macros.add(new ImageAfterDescriptionMacro());
 		macros.add(new MacroRendererCorrection());
 		macros.add(new ImageAfterDescriptionChildrenMacro());
@@ -209,6 +218,10 @@ public class MacroFactory {
 
 	public List<IMacro> getMacros() {
 		return macros;
+	}
+
+	public void clear(ContentContext ctx) {
+		ctx.getGlobalContext().setAttribute(KEY, null);
 	}
 
 }

@@ -670,7 +670,7 @@ public class MacroHelper {
 		out.println("<div class=\"macro-list\">");
 		List<String> macroName = globalContext.getMacros();
 		boolean macroFound = false;
-		MacroFactory factory = MacroFactory.getInstance(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()));
+		MacroFactory factory = MacroFactory.getInstance(ctx);
 		I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, ctx.getRequest().getSession());
 		for (String name : macroName) {
 			IMacro macro = factory.getMacro(name);
@@ -1000,7 +1000,7 @@ public class MacroHelper {
 		css = StringHelper.neverNull(css);
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		IMacro macroClass = MacroFactory.getInstance(ctx.getGlobalContext().getStaticConfig()).getMacro(macro);
+		IMacro macroClass = MacroFactory.getInstance(ctx).getMacro(macro);
 		if (macroClass instanceof IInteractiveMacro) {
 			Map<String, String> params = new HashMap<String, String>();
 			params.put("editPreview", "true");

@@ -899,6 +899,7 @@ public class Edit extends AbstractModuleAction {
 		IContentVisualComponent comp = content.getComponent(ctx, newId);
 		if (comp != null) {
 			comp.markAsNew(ctx);
+			comp.setRepeat(false);
 //			comp.setPreviousComponent(ComponentHelper.getPreviousComponent(comp, ctx));
 //			comp.setNextComponent(ComponentHelper.getNextComponent(comp, ctx));
 			ComponentHelper.updateNextAndPrevious(ctx, comp.getPage(), comp.getArea());
@@ -2017,6 +2018,10 @@ public class Edit extends AbstractModuleAction {
 		comp.setLanguage(null);
 
 		String newId = content.createContent(ctx, targetPage, comp, previous, true);
+		IContentVisualComponent newComp = content.getComponent(ctx, newId);
+		if (newComp != null) {
+			newComp.setRepeat(false);
+		}
 		if (ctx.isAjax()) {
 			ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, newId);
 			updateComponent(ctx, currentModule, newId, previous);

@@ -28,6 +28,14 @@ public interface IMacro {
 	
 	public boolean isInterative();
 	
+	/**
+	 * is macro active in current context
+	 * @return
+	 */
+	public boolean isActive();
+	
+	public void init(ContentContext ctx);
+	
 	public String getInfo(ContentContext ctx);
 
 

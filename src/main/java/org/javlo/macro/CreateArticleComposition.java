@@ -66,7 +66,7 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 	public String getRenderer() {
 		return "/jsp/macros/create-article-composition.jsp?canCreate=true";
 	}
-	
+
 	@Override
 	public String getInfo(ContentContext ctx) {
 		return null;
@@ -148,7 +148,7 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 			}
 			MenuElement rootArticle = firstArticleGroup.getParent();
 			String newPageName = StringHelper.createFileName(newgroup);
-			MenuElement newPage = MacroHelper.addPage(ctx, rootArticle, newPageName, false, false);			
+			MenuElement newPage = MacroHelper.addPage(ctx, rootArticle, newPageName, false, false);
 			if (newPage == null) {
 				return "a page with this name allready exist.";
 			}
@@ -161,7 +161,7 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 				return null;
 			}
 		}
-		
+
 		MenuElement sourcePage = null;
 		if (pageId != null) {
 			sourcePage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx).searchChildFromId(pageId);
@@ -236,7 +236,7 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 					MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, mountPage, pageName, true, false);
 					if (newPage != null) {
 						newPage.addEditorRoles(selectedRole);
-						MacroHelper.addContent(ctx.getRequestContentLanguage(), newPage, "0", ForceRealContent.TYPE, "", ctx.getCurrentEditUser());					
+						MacroHelper.addContent(ctx.getRequestContentLanguage(), newPage, "0", ForceRealContent.TYPE, "", ctx.getCurrentEditUser());
 						newPage.setVisible(visible);
 						MenuElement layoutPage = MacroHelper.addPageIfNotExist(ctx, newPage.getName(), newPage.getName() + "-composition", false);
 						if (assBean != null) {
@@ -320,14 +320,23 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 	public boolean isPreview() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean isAdd() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean haveRight(ContentContext ctx, String action) {
 		return ctx.getCurrentEditUser() != null;
+	}
+
+	@Override
+	public boolean isActive() {
+		return true;
+	}
+
+	@Override
+	public void init(ContentContext ctx) {
 	}
 }

@@ -79,7 +79,7 @@ public class ActionManager {
 			ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext()).setCurrentModuleByActionGroup(group);
 		}
 		if (outAction == null) {
-			outAction = getActionMacro(ctx.getRequest(), group);
+			outAction = getActionMacro(ctx, group);
 		}
 		return outAction;
 	}
@@ -121,9 +121,8 @@ public class ActionManager {
 		return action;
 	}
 
-	public static IAction getActionMacro(HttpServletRequest request, String group) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
-		for (IMacro macro : MacroFactory.getInstance(staticConfig).getMacros()) {
+	public static IAction getActionMacro(ContentContext ctx, String group) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+		for (IMacro macro : MacroFactory.getInstance(ctx).getMacros()) {
 			if (macro instanceof IAction) {
 				IAction action = (IAction) macro;
 				if (action.getActionGroupName().equals(group)) {

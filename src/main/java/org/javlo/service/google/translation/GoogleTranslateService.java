@@ -15,7 +15,6 @@ import org.javlo.helper.URLHelper;
 import org.javlo.service.ITranslator;
 import org.javlo.utils.JSONMap;
 import org.javlo.utils.TimeMap;
-import org.owasp.encoder.Encode;
 
 public class GoogleTranslateService implements ITranslator {
 
@@ -83,5 +82,8 @@ public class GoogleTranslateService implements ITranslator {
 			return null;
 		}
 	}
+
+
+
 
 }

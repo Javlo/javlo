@@ -343,6 +343,21 @@ body #preview_command .btn[disabled] {
 	border: 1px @layer-color solid;
 	cursor: pointer;
 	position: relative;	
+	.hidden {
+		display: none !important;
+	}
+	.repeat-icon {
+		display: none !important;
+	}
+	div.btn-off span {
+		color: #dddddd;
+	}
+}
+
+#preview-layer.repeated {
+	.repeat-icon {
+		display: inline-block !important;
+	}
 }
 
 #preview-layer.small .text {
@@ -392,7 +407,7 @@ body #preview_command .btn[disabled] {
 	color: #dddddd;
 }
 
-#preview-layer .commands .btn {	
+#preview-layer .commands .btn, #preview-layer .commands .btn-off {	
 	background-color: @layer-color;
 	border-color: @layer-color;
 	color: #ffffff !important;

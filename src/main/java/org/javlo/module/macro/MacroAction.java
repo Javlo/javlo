@@ -33,7 +33,7 @@ public class MacroAction extends AbstractModuleAction {
 
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		MacroFactory macroFactory = MacroFactory.getInstance(staticConfig);
+		MacroFactory macroFactory = MacroFactory.getInstance(ctx);
 		MacroModuleContext macroContext = MacroModuleContext.getInstance(ctx.getRequest());
 
 		List<IMacro> allMacros = new LinkedList<IMacro>();
@@ -91,7 +91,7 @@ public class MacroAction extends AbstractModuleAction {
 		if (macroName == null) {
 			return "bad request structure : need 'macro' parameter";
 		}
-		MacroFactory macroFactory = MacroFactory.getInstance(staticConfig);
+		MacroFactory macroFactory = MacroFactory.getInstance(ctx);
 		IMacro macro = macroFactory.getMacro(macroName);
 		if (macro == null) {
 			return "macro not found : " + macroName;
@@ -106,7 +106,7 @@ public class MacroAction extends AbstractModuleAction {
 		if (macroName == null) {
 			return "bad request structure : need 'macro'.";
 		}
-		IMacro macro = MacroFactory.getInstance(staticConfig).getMacro(macroName);
+		IMacro macro = MacroFactory.getInstance(ctx).getMacro(macroName);
 		if (macro == null) {
 			return "macro not found : " + macroName;
 		}

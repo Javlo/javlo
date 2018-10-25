@@ -59,7 +59,7 @@ public class LaunchMacro extends AbstractVisualComponent {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		out.println("<div class=\"line\"><select name=\""+getInputName("macro")+"\">");
-		for (IMacro macro : MacroFactory.getInstance(ctx.getGlobalContext().getStaticConfig()).getMacros()) {
+		for (IMacro macro : MacroFactory.getInstance(ctx).getMacros()) {
 			String selected = "";
 			if (macro.getName().equals(getMacro())) {
 				selected=" selected=\"selected\"";

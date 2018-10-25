@@ -97,4 +97,13 @@ public class MailingStat implements IInteractiveMacro, IAction {
 	public boolean haveRight(ContentContext ctx, String action) {
 		return ctx.getCurrentEditUser() != null;
 	}
+
+	@Override
+	public boolean isActive() {
+		return true;
+	}
+
+	@Override
+	public void init(ContentContext ctx) {
+	}
 }

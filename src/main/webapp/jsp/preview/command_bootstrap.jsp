@@ -68,6 +68,7 @@ if (StringHelper.isTrue(request.getParameter("preview-command"), true) && !ctx.i
 	<jsp:include page="bootstrap/header.jsp"></jsp:include>
 	<jsp:include page="bootstrap/mobile.jsp"></jsp:include>
 	<c:if test="${editPreview}">
+	<c:if test="${!userInterface.minimalInterface}">
 	<div class="sidebar panel panel-default">
 		<div class="panel-body">
 			<c:if test="${empty editUser}">
@@ -118,6 +119,7 @@ if (StringHelper.isTrue(request.getParameter("preview-command"), true) && !ctx.i
 			</c:if>
 		</div>
 	</div>
+	</c:if>
 	<jsp:include page="bootstrap/add.jsp"></jsp:include>
 	</c:if>	
 	<div class="modal fade fancybox-wrapper" id="preview-modal" tabindex="-1" role="dialog" aria-labelledby="previewModalTitle" aria-hidden="true">

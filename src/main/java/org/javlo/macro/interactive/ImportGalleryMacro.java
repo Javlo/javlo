@@ -49,9 +49,9 @@ public class ImportGalleryMacro implements IInteractiveMacro, IAction {
 	public String getActionGroupName() {
 		return "macro-import-gallery";
 	}
-	
+
 	@Override
-	public String getInfo(ContentContext ctx) {	
+	public String getInfo(ContentContext ctx) {
 		return null;
 	}
 
@@ -121,19 +121,28 @@ public class ImportGalleryMacro implements IInteractiveMacro, IAction {
 	public boolean isPreview() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isAdd() {
 		return true;
 	}
-	
+
 	@Override
-	public boolean isInterative() {	
+	public boolean isInterative() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean haveRight(ContentContext ctx, String action) {
 		return ctx.getCurrentEditUser() != null;
+	}
+
+	@Override
+	public boolean isActive() {
+		return true;
+	}
+
+	@Override
+	public void init(ContentContext ctx) {
 	}
 }

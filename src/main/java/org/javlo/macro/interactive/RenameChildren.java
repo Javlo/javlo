@@ -14,7 +14,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.RequestService;
 
 public class RenameChildren implements IInteractiveMacro, IAction {
-	
+
 	private static Logger logger = Logger.getLogger(RenameChildren.class.getName());
 
 	@Override
@@ -43,12 +43,12 @@ public class RenameChildren implements IInteractiveMacro, IAction {
 	}
 
 	@Override
-	public String prepare(ContentContext ctx) {		
+	public String prepare(ContentContext ctx) {
 		return null;
 	}
-	
+
 	@Override
-	public String getInfo(ContentContext ctx) {	
+	public String getInfo(ContentContext ctx) {
 		return null;
 	}
 
@@ -69,7 +69,7 @@ public class RenameChildren implements IInteractiveMacro, IAction {
 				}
 			}
 		}
-		MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage("rename page (done:"+countOkRename+") (allready exist:"+countBadRename+")", GenericMessage.INFO));
+		MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage("rename page (done:" + countOkRename + ") (allready exist:" + countBadRename + ")", GenericMessage.INFO));
 		ctx.setClosePopup(true);
 		return null;
 	}
@@ -78,19 +78,28 @@ public class RenameChildren implements IInteractiveMacro, IAction {
 	public boolean isPreview() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean isAdd() {
 		return false;
 	}
-	
+
 	@Override
-	public boolean isInterative() {	
+	public boolean isInterative() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean haveRight(ContentContext ctx, String action) {
 		return ctx.getCurrentEditUser() != null;
+	}
+
+	@Override
+	public boolean isActive() {
+		return true;
+	}
+
+	@Override
+	public void init(ContentContext ctx) {
 	}
 }
