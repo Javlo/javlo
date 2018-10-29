@@ -133,4 +133,14 @@ public class CreateChildren implements IInteractiveMacro, IAction {
 	public void init(ContentContext ctx) {
 	}
 
+	@Override
+	public String getModalSize() {
+		return DEFAULT_MAX_MODAL_SIZE;
+	}
+
+	@Override
+	public String getIcon() {
+		return "fa fa-cogs";
+	}
+
 }

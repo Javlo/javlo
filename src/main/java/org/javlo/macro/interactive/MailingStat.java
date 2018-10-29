@@ -41,9 +41,9 @@ public class MailingStat implements IInteractiveMacro, IAction {
 	public String getRenderer() {
 		return "/jsp/macros/mailing-stat.jsp";
 	}
-	
+
 	@Override
-	public String getInfo(ContentContext ctx) {	
+	public String getInfo(ContentContext ctx) {
 		return null;
 	}
 
@@ -61,11 +61,11 @@ public class MailingStat implements IInteractiveMacro, IAction {
 				public int compare(Mailing o1, Mailing o2) {
 					return -o1.getDate().compareTo(o2.getDate());
 				}
-				
+
 			});
 			Iterator<Mailing> mailingIte = mailingList.iterator();
 			while (mailingIte.hasNext()) {
-				Mailing nextMailing = mailingIte.next(); 
+				Mailing nextMailing = mailingIte.next();
 				if (nextMailing.isTest() || nextMailing.getPageId() == null || !nextMailing.getPageId().equals(pageId) || nextMailing.getReceivers().size() < 3) {
 					mailingIte.remove();
 				}
@@ -92,7 +92,7 @@ public class MailingStat implements IInteractiveMacro, IAction {
 	public boolean isInterative() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean haveRight(ContentContext ctx, String action) {
 		return ctx.getCurrentEditUser() != null;
@@ -106,4 +106,15 @@ public class MailingStat implements IInteractiveMacro, IAction {
 	@Override
 	public void init(ContentContext ctx) {
 	}
+
+	@Override
+	public String getModalSize() {
+		return DEFAULT_MAX_MODAL_SIZE;
+	}
+
+	@Override
+	public String getIcon() {
+		return "fa fa-cogs";
+	}
+
 }

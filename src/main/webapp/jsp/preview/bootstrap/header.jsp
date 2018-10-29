@@ -34,6 +34,8 @@
 		accessType = "button";
 	}
 %><c:set var="logged" value="${not empty editUser}" /><c:set var="pdf" value="${info.device.code == 'pdf'}" />
+<c:if test="${logged || !globalContext.staticConfig.addButton}">
+<c:if test="${!userInterface.minimalInterface}">
 <div class="header">	
 	<div class="logo">
 		<a target="_blank" href="<%=URLHelper.createViewURL(ctx.getPath(), ctx)%>">Javlo</a> <img class="ajax-loading" src="${info.ajaxLoaderURL}" alt="loading..." lang="en" />
@@ -418,3 +420,4 @@
 			</c:if>
 			</div>	
 </div>
+</c:if></c:if>

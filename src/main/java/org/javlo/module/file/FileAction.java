@@ -384,7 +384,6 @@ public class FileAction extends AbstractModuleAction {
 				}
 				
 				String[] taxonomy = rs.getParameterValues("taxonomy-" + fileBean.getId(), null);
-				System.out.println(">>>>>>>>> FileAction.performUpdateMeta : taxonomy = "+taxonomy); //TODO: remove debug trace
 				if (taxonomy != null) {
 					staticInfo.setTaxonomy(ctx, new HashSet<String>(Arrays.asList(taxonomy)));
 				}

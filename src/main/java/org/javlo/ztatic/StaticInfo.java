@@ -732,10 +732,8 @@ public class StaticInfo {
 	public Position getPosition(ContentContext ctx) {
 		try {
 			return ExifHelper.readPosition(getFile());
-		} catch (ImageReadException e) {
+		} catch (Exception e) {
 			logger.warning(e.getMessage());
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 
 		/*

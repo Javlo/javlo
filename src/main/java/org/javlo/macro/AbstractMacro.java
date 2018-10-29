@@ -9,7 +9,6 @@ import java.util.Properties;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
-import org.javlo.context.GlobalContext;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IMacro;
 import org.javlo.navigation.MenuElement;
@@ -76,6 +75,11 @@ public abstract class AbstractMacro implements IMacro {
 	
 	@Override
 	public void init(ContentContext ctx) {
+	}
+	
+	@Override
+	public String getIcon() {
+		return "fa fa-cogs";
 	}
 	
 }

@@ -176,4 +176,15 @@ public class UndeletePage extends AbstractInteractiveMacro implements IAction {
 	@Override
 	public void init(ContentContext ctx) {
 	}
+
+	@Override
+	public String getModalSize() {
+		return "lg";
+	}
+
+	@Override
+	public String getIcon() {
+		return "fa fa-cogs";
+	}
+
 }

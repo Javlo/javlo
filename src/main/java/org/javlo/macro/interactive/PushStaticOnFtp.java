@@ -25,25 +25,24 @@ import org.javlo.service.RequestService;
 public class PushStaticOnFtp implements IInteractiveMacro, IAction {
 
 	private static Logger logger = Logger.getLogger(PushStaticOnFtp.class.getName());
-	
-	private static final String NAME = "push-static-on-ftp";
-	
-	private static Thread thread = null;
 
+	private static final String NAME = "push-static-on-ftp";
+
+	private static Thread thread = null;
 
 	@Override
 	public String getName() {
 		return NAME;
 	}
-	
+
 	@Override
 	public String prepare(ContentContext ctx) {
-		ctx.getRequest().setAttribute("host", ctx.getGlobalContext().getData(getName()+"-host"));
-		ctx.getRequest().setAttribute("port", ctx.getGlobalContext().getData(getName()+"-port", "21"));
-		ctx.getRequest().setAttribute("username", ctx.getGlobalContext().getData(getName()+"-username"));
-		ctx.getRequest().setAttribute("password", ctx.getGlobalContext().getData(getName()+"-password"));
-		ctx.getRequest().setAttribute("path", ctx.getGlobalContext().getData(getName()+"-path"));		
-		ctx.getRequest().setAttribute("email", ctx.getGlobalContext().getData(getName()+"-email"));
+		ctx.getRequest().setAttribute("host", ctx.getGlobalContext().getData(getName() + "-host"));
+		ctx.getRequest().setAttribute("port", ctx.getGlobalContext().getData(getName() + "-port", "21"));
+		ctx.getRequest().setAttribute("username", ctx.getGlobalContext().getData(getName() + "-username"));
+		ctx.getRequest().setAttribute("password", ctx.getGlobalContext().getData(getName() + "-password"));
+		ctx.getRequest().setAttribute("path", ctx.getGlobalContext().getData(getName() + "-path"));
+		ctx.getRequest().setAttribute("email", ctx.getGlobalContext().getData(getName() + "-email"));
 		return null;
 	}
 
@@ -66,9 +65,9 @@ public class PushStaticOnFtp implements IInteractiveMacro, IAction {
 	public String getActionGroupName() {
 		return getName();
 	}
-	
+
 	@Override
-	public String getInfo(ContentContext ctx) {	
+	public String getInfo(ContentContext ctx) {
 		return null;
 	}
 
@@ -81,39 +80,39 @@ public class PushStaticOnFtp implements IInteractiveMacro, IAction {
 		String path = rs.getParameter("path", "");
 		boolean zipOnly = StringHelper.isTrue(rs.getParameter("ziponly"));
 		boolean here = StringHelper.isTrue(rs.getParameter("here"));
-		
-		ctx.getGlobalContext().setData(NAME+"-host",  host);
-		ctx.getGlobalContext().setData(NAME+"-port", "21");
-		ctx.getGlobalContext().setData(NAME+"-username", username);
-		ctx.getGlobalContext().setData(NAME+"-email", email);
+
+		ctx.getGlobalContext().setData(NAME + "-host", host);
+		ctx.getGlobalContext().setData(NAME + "-port", "21");
+		ctx.getGlobalContext().setData(NAME + "-username", username);
+		ctx.getGlobalContext().setData(NAME + "-email", email);
 		if (StringHelper.isTrue(rs.getParameter("storepassword"))) {
-			ctx.getGlobalContext().setData(NAME+"-password", password);
+			ctx.getGlobalContext().setData(NAME + "-password", password);
 		} else {
-			ctx.getGlobalContext().setData(NAME+"-password", null);
+			ctx.getGlobalContext().setData(NAME + "-password", null);
 		}
-		ctx.getGlobalContext().setData(NAME+"-path", path);
-		
+		ctx.getGlobalContext().setData(NAME + "-path", path);
+
 		MailService mailService = null;
 		if (StringHelper.isMail(email)) {
-			mailService = MailService.getInstance(new MailConfig(ctx.getGlobalContext(), ctx.getGlobalContext().getStaticConfig(), null ));
+			mailService = MailService.getInstance(new MailConfig(ctx.getGlobalContext(), ctx.getGlobalContext().getStaticConfig(), null));
 		}
-		
+
 		File folder = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), "_static_temp"));
 		String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getContextForAbsoluteURL(), "/");
 		if (here) {
 			url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getContextForAbsoluteURL(), ctx.getCurrentPage());
 		}
-		
+
 		if (zipOnly) {
-			File zipFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), "_static_export/"+StringHelper.stringToFileName(globalContext.getContextKey()+"_"+StringHelper.renderSortableTime(new Date()))+".zip"));
+			File zipFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), "_static_export/" + StringHelper.stringToFileName(globalContext.getContextKey() + "_" + StringHelper.renderSortableTime(new Date())) + ".zip"));
 			zipFile.getParentFile().mkdirs();
 			zipFile.createNewFile();
-			thread = new TransfertStaticToZip(ctx,  folder, new URL(url), zipFile, path, mailService, email);
+			thread = new TransfertStaticToZip(ctx, folder, new URL(url), zipFile, path, mailService, email);
 		} else {
 			if (StringHelper.isEmpty(host) || !StringHelper.isDigit(port)) {
 				return "bad host or port";
 			}
-			FTPClient ftp = new FTPClient();		
+			FTPClient ftp = new FTPClient();
 			ftp.connect(host, Integer.parseInt(port));
 			if (!ftp.isConnected()) {
 				return "could not connect to : " + host + ":" + port;
@@ -127,13 +126,13 @@ public class PushStaticOnFtp implements IInteractiveMacro, IAction {
 				}
 				if (thread != null && thread.isAlive()) {
 					return "Thread already lauched, please wait...";
-				}	
-				logger.info("download : "+url);
+				}
+				logger.info("download : " + url);
 				thread = new TransfertStaticToFtp(ctx, folder, new URL(url), host, Integer.parseInt(port), username, password, path, mailService, email);
 			}
 		}
 		if (thread != null) {
-			thread.start();			
+			thread.start();
 			messageRepository.setGlobalMessage(new GenericMessage("Push thread lauched.", GenericMessage.INFO));
 			ctx.setClosePopup(true);
 		}
@@ -168,4 +167,15 @@ public class PushStaticOnFtp implements IInteractiveMacro, IAction {
 	@Override
 	public void init(ContentContext ctx) {
 	}
+
+	@Override
+	public String getModalSize() {
+		return DEFAULT_MAX_MODAL_SIZE;
+	}
+
+	@Override
+	public String getIcon() {
+		return "fa fa-cogs";
+	}
+
 }

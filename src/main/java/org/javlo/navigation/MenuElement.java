@@ -1126,6 +1126,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	
 	private static final MenuElement NO_PAGE = new MenuElement();
 
+	public static final String LAYOUTS_PREFIX = "layouts-";
+
 	int priority = 10;
 
 	String name = null;
@@ -3965,6 +3967,15 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	public String getTemplateId() {
 		return templateId;
 	}
+	
+	public Collection<MenuElement> getTemplates() {
+		for (MenuElement child : getChildMenuElements()) {
+			if (child.getName().equals(LAYOUTS_PREFIX+getName())) {
+				return child.getChildMenuElements();
+			}
+		}
+		return null;
+	}
 
 	private TimeRangeComponent getTimeRangeComponent(ContentContext ctx) throws Exception {
 		ContentContext localCtx = ctx.getContextWithArea(null);
@@ -5810,13 +5821,26 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		}
 		return false;
 	}
+	
+	public boolean isLayout() {
+		MenuElement parent = getParent();
+		if (parent != null && getName().equals(LAYOUTS_PREFIX+parent.getName())) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	public int getFinalSeoWeight() {
+		if (isLayout()) {
+			return SEO_HEIGHT_NULL; 
+		}
 		if (getSeoWeight() == MenuElement.SEO_HEIGHT_INHERITED) {
-			if (getParent() == null) {
+			MenuElement parent = getParent();
+			if (parent == null) {
 				return SEO_HEIGHT_NORMAL;
 			} else {
-				return getParent().getFinalSeoWeight();
+				return parent.getFinalSeoWeight();
 			}
 		} else {
 			return getSeoWeight();

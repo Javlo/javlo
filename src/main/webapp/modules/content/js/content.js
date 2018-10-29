@@ -209,7 +209,7 @@ function smartLinkAction(item) {
 	}
 }
 
-function initSmartLink() {
+function createSmartLink() {
 	jQuery(".smart-link .link").keydown (function(event) {
 		smartLinkAction(this);		
 	});
@@ -272,10 +272,10 @@ function imageChoice(compId) {
 		item.addClass("item-"+index);		
 		var js = 'selectNextItem("'+compId+'",'+index+')';
 		js = js.replace(/"/g, "'");		
-		item.append('<a class="next" href="#" onclick="'+js+'"><span>&gt;&gt;</span></a>');
+		item.append('<a class="next tt2" href="#" onclick="'+js+'"><span><i class="fa fa-chevron-right" aria-hidden="true"></i></span></a>');
 		js = 'selectPreviousItem("'+compId+'",'+index+')';
 		js = js.replace(/"/g, "'");
-		item.prepend('<a class="previous" href="#" onclick="'+js+'"><span>&lt;&lt;</span></a>');
+		item.prepend('<a class="previous" href="#" onclick="'+js+'"><span><i class="fa fa-chevron-left" aria-hidden="true"></i></span></a>');
 		index++;
 	});
 }

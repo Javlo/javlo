@@ -1,6 +1,7 @@
 package org.javlo.component.links;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.PrintStream;
 import java.net.URL;
 import java.text.ParseException;
@@ -13,13 +14,17 @@ import javax.servlet.ServletContext;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.ComplexPropertiesLink;
 import org.javlo.component.core.ILink;
+import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.InfoBean;
+import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.PageMeta;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.Module;
@@ -27,6 +32,7 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.service.resource.VisualResource;
+import org.javlo.ztatic.FileCache;
 import org.owasp.encoder.Encode;
 
 public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
@@ -38,7 +44,7 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 	public String getURL(ContentContext ctx) throws Exception {
 		return getURL();
 	}
-	
+
 	@Override
 	public boolean isLinkValid(ContentContext ctx) throws Exception {
 		return !StringHelper.isEmpty(getURL(ctx));
@@ -89,6 +95,56 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 		properties.setProperty("date", date);
 	}
 
+	public File getFile(ContentContext ctx) throws Exception {
+		String fileName = getFileName();
+		if (fileName == null) {
+			return null;
+		} else {
+			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			String fullName = ElementaryURLHelper.mergePath(getImportFolderPath(ctx), fileName);
+			fullName = ElementaryURLHelper.mergePath(staticConfig.getImageFolder(), fullName);
+			fullName = ElementaryURLHelper.mergePath(globalContext.getDataFolder(), fullName);
+			return new File(fullName);
+		}
+	}
+
+	public String getFileName() {
+		if (StringHelper.isEmpty(getImageURL())) {
+			return null;
+		} else {
+			String fileName = StringHelper.getFileNameFromPath(getImageURL());
+			return getId() + "_" + fileName;
+		}
+	}
+	
+	public String getLocalImageURL(ContentContext ctx) throws Exception {
+		File file = getFile(ctx);
+		if (file != null) {
+			if (!file.exists()) {
+				file.getParentFile().mkdirs();
+				ResourceHelper.writeUrlToFile(new URL(getImageURL()), file);
+			}
+			return URLHelper.createTransformURL(ctx, file, "smart-link");
+		} else {
+			return null;
+		}
+		
+	}
+	
+	@Override
+	public void delete(ContentContext ctx) {
+		super.delete(ctx);
+		try {
+			File file = getFile(ctx);
+			if (file != null) {
+				file.delete();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public Date getTime() {
 		if (getDate().trim().length() > 0) {
 			Date time;
@@ -125,7 +181,7 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 	public void setImageURL(String url) {
 		properties.setProperty("image", url);
 	}
-	
+
 	@Override
 	protected boolean isAutoDeletable() {
 		return true;
@@ -145,16 +201,16 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 		out.println("<div class=\"row\">");
 		int colSize = 12;
 		if (!StringHelper.isEmpty(url)) {
-			colSize=9;
-			out.println("<div class=\"col-sm-3\"><figure><img class=\"img-responsive img-fluid\" src=\"" + getImageURL() + "\" /></figure></div>");	
-		}		
-		out.println("<div class=\"col-sm-"+colSize+"\">");	
-		String target="";
-		if (ctx.getGlobalContext().isOpenExternalLinkAsPopup()) {
-			target=" target=\"_blank\"";
+			colSize = 9;
+			out.println("<div class=\"col-sm-3\"><figure><img class=\"img-responsive img-fluid\" src=\"" + getLocalImageURL(ctx) + "\" /></figure></div>");
 		}
-		out.println("<a"+target+" class=\"" + getType() + "\" href=\"" + getURL() + "\">");
-		out.println("<h"+(ctx.getTitleDepth()+1)+">" + getTitle() + "</h"+(ctx.getTitleDepth()+1)+">");
+		out.println("<div class=\"col-sm-" + colSize + "\">");
+		String target = "";
+		if (ctx.getGlobalContext().isOpenExternalLinkAsPopup()) {
+			target = " target=\"_blank\"";
+		}
+		out.println("<a" + target + " class=\"" + getType() + "\" href=\"" + getURL() + "\">");
+		out.println("<h" + (ctx.getTitleDepth() + 1) + ">" + getTitle() + "</h" + (ctx.getTitleDepth() + 1) + ">");
 		out.println("</a>");
 		out.println("<div class=\"news-info\">");
 		if (getDate().trim().length() > 0) {
@@ -162,9 +218,9 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 			if (!StringHelper.renderTimeOnly(getTime()).equals("00:00:00")) {
 				time = "<span class=\"time\"> " + StringHelper.renderTimeOnly(getTime()) + "</span>";
 			}
-			out.println("<span class=\"date\">" + StringHelper.renderDate(getTime()) + time + "</span>");			
+			out.println("<span class=\"date\">" + StringHelper.renderDate(getTime()) + time + "</span>");
 		}
-		out.println("<span class=\"badge badge-secondary host\">"+StringHelper.extractHost(getURL())+"</span>");
+		out.println("<span class=\"badge badge-secondary host\">" + StringHelper.extractHost(getURL()) + "</span>");
 		out.println("</div>");
 		out.println("<p>" + getDescription() + "</p>");
 		out.println("</div></div>");
@@ -195,18 +251,18 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 				ctx.getRequest().setAttribute("date", getDate());
 				String xhtml = ServletHelper.executeJSP(ctx, renderer);
 				out.println(xhtml);
-			} 
+			}
 			out.println("<div class=\"waiting\" style=\"display: none;\">");
 			out.println("<div class=\"row\">");
 			out.println("<div class=\"col-sm-5\">&nbsp;</div>");
-			out.println("<div class=\"col-sm-2\"><img src=\""+InfoBean.getCurrentInfoBean(ctx).getAjaxLoaderURL()+"\" alt=\"waiting...\" /></div>");
+			out.println("<div class=\"col-sm-2\"><img src=\"" + InfoBean.getCurrentInfoBean(ctx).getAjaxLoaderURL() + "\" alt=\"waiting...\" /></div>");
 			out.println("<div class=\"col-sm-5\">&nbsp;</div>");
 			out.println("</div>");
 			out.println("</div>");
-			
+
 			out.println("</div>");
 			out.println("</div>");
-			out.println("<script type=\"text/javascript\">initSmartLink();</script>");
+			out.println("<script>document.addEventListener(\"DOMContentLoaded\", function(event) { createSmartLink(); });</script>");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -224,9 +280,9 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			SmartLink comp = (SmartLink) content.getComponent(ctx, rs.getParameter("comp_id", null));
 			if (comp != null) {
-				URL sourceURL = new URL(url);				
+				URL sourceURL = new URL(url);
 				String title;
-				String description;				
+				String description;
 				String date;
 				PageMeta pageMeta = NetHelper.getPageMeta(new URL(url));
 				Collection<VisualResource> images = new LinkedList<VisualResource>();
@@ -235,29 +291,29 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 					description = pageMeta.getDescription();
 					date = StringHelper.renderTime(pageMeta.getDate());
 					URL imageURL = pageMeta.getImage();
-					if(imageURL != null) {				 
+					if (imageURL != null) {
 						VisualResource vr = new VisualResource();
 						vr.setUri(pageMeta.getImage().toString());
-						images.add(vr);	
+						images.add(vr);
 						comp.setImageURL(imageURL.toString());
 					}
 				} else {
-					String remoteXHTML = NetHelper.readPageWithGet(sourceURL);				
-					title = Encode.forHtmlAttribute(NetHelper.getPageTitle(remoteXHTML));					
-					description = Encode.forHtmlAttribute(NetHelper.getPageDescription(remoteXHTML));					
+					String remoteXHTML = NetHelper.readPageWithGet(sourceURL);
+					title = Encode.forHtmlAttribute(NetHelper.getPageTitle(remoteXHTML));
+					description = Encode.forHtmlAttribute(NetHelper.getPageDescription(remoteXHTML));
 					images = NetHelper.extractImage(sourceURL, remoteXHTML, true);
 					int biggerImageSize = 0;
 					VisualResource biggerImage = null;
 					for (VisualResource resource : images) {
-						float prop = (float)resource.getWidth()/(float)resource.getHeight();
-						if (prop>1) {
-							prop = (float)resource.getHeight()/(float)resource.getWidth();
-						}					
-						if (prop>0.4 && biggerImageSize < resource.getWidth()*resource.getHeight()) {
-							biggerImageSize = resource.getWidth()*resource.getHeight();
+						float prop = (float) resource.getWidth() / (float) resource.getHeight();
+						if (prop > 1) {
+							prop = (float) resource.getHeight() / (float) resource.getWidth();
+						}
+						if (prop > 0.4 && biggerImageSize < resource.getWidth() * resource.getHeight()) {
+							biggerImageSize = resource.getWidth() * resource.getHeight();
 							biggerImage = resource;
 						}
-						
+
 					}
 					if (biggerImage != null) {
 						comp.setImageURL(biggerImage.getUri());
@@ -287,6 +343,7 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
+		File file = getFile(ctx);
 		String oldValue = getValue();
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		setImageURL(rs.getParameter(getImageInputName(), ""));
@@ -296,6 +353,10 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 		setURL(rs.getParameter(getURLInputName(), ""));
 		storeProperties();
 		if (oldValue.equals(getValue())) {
+			if (file != null && file.exists()) {
+				file.delete();
+			}
+			FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).deleteAllFile(ctx.getGlobalContext().getContextKey(), file.getName());
 			setModify();
 		}
 		return null;
@@ -305,8 +366,7 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 	public boolean isListable() {
 		return true;
 	}
-	
-	
+
 	@Override
 	public void setLatestValidDate(Date date) {
 		latestValidDate = date;
@@ -316,10 +376,10 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 	public Date getLatestValidDate() {
 		return latestValidDate;
 	}
-	
+
 	@Override
-	public boolean isRealContent(ContentContext ctx) {	
+	public boolean isRealContent(ContentContext ctx) {
 		return !StringHelper.isEmpty(getValue());
 	}
-	
+
 }

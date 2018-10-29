@@ -182,16 +182,28 @@ if (!String.prototype.startsWith) {
 		}
 	}
 
-	editPreview.openModal = function (title, url) {
+	editPreview.openModal = function (title, url, type) {
 		editPreview.layerOver(null);
 		pjq('#preview-modal-frame').attr("src", url);
 		pjq('#previewModalTitle').html(title);
-		pjq('#preview-modal').modal('show');
-		pjq('#preview-modal').on('hidden.bs.modal', function (e) {
+		
+		var modal = pjq('#preview-modal');
+
+		// type
+		modal.removeClass("jv-modal-xs");
+		modal.removeClass("jv-modal-sm");
+		modal.removeClass("jv-modal-md");
+		modal.removeClass("jv-modal-lg");
+		if (type != null) {
+			modal.addClass(type);
+		}
+		
+		modal.modal('show');
+		modal.on('hidden.bs.modal', function (e) {
 			pjq('#previewModalTitle').html('');
 			pjq('#preview-modal-frame').attr("src", pjq('#preview-modal-frame').data("wait"));
 		});		
-		var modalMargin = parseInt(pjq('#preview-modal .modal-dialog').css("margin-top").replace("px", ""))*2;		
+		var modalMargin = parseInt(pjq('#preview-modal .modal-dialog').css("margin-top").replace("px", ""))*2;
 		var bodyPadding = parseInt(pjq('#preview-modal .modal-body').css("padding-top").replace("px", ""))+parseInt(pjq('#preview-modal .modal-body').css("padding-bottom").replace("px", ""));
 		var viewportHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 		pjq('#preview-modal .modal-body iframe').height(viewportHeight-(pjq('#preview-modal .modal-header').outerHeight(true)+modalMargin+bodyPadding));

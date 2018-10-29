@@ -348,31 +348,31 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 			String linkTitle = i18nAccess.getText("component.link.link");
 			String imageLinkTitle = i18nAccess.getText("component.link.image");
 			
-			out.println("<div class=\"row\"><div class=\"col-sm-12\"><div class=\"form-group\">");
+			out.println("<div class=\"smart-link\"><div class=\"row\"><div class=\"col-sm-"+(link.trim().length() > 0?"11":"12")+"\"><div class=\"form-group\">");
 			out.println("<label for=\"" + getLinkName() + "\">" + linkTitle + "</label>");
-			out.print("<input class=\"form-control\"  id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\" value=\"");
+			out.print("<input class=\"form-control link\" id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\" value=\"");
 			out.print(link);
-			out.println("\"/>");
+			out.println("\"/></div></div>");
 			if (link.trim().length() > 0) {
-				out.println("&nbsp;<a href=\"" + link + "\">&gt;&gt;</a>");
+				out.println("<div class=\"col-sm-1\"><a class=\"btn btn-defaut\" href=\"" + link + "\">&gt;&gt;</a></div>");
 			}
-			out.println("</div></div></div><div class=\"row\"><div class=\"col-sm-4\"><div class=\"form-group\">");
+			out.println("</div><div class=\"row\"><div class=\"col-sm-"+(getImageURI(ctx) != null?"10":"12")+"\"><div class=\"row\"><div class=\"col-sm-6\"><div class=\"form-group\">");
 			out.print("<label for=\"" + getImageLink() + "\">" + imageLinkTitle + "</label>");
-			out.print(" : ");
 			out.println(XHTMLHelper.getTextInput(getImageLink(), imageLink, "form-control"));
-			out.println("</div></div><div class=\"col-sm-4\"><div class=\"form-group\">");
-			out.print("<label for=\"" + getTitleInputName() + "\">" + i18nAccess.getText("field.title") + "</label>");			
+			out.println("</div></div><div class=\"col-sm-6\"><div class=\"form-group\">");
+			out.print("<label for=\"" + getTitleInputName() + "\">" + i18nAccess.getText("field.title") + "</label>");
 			out.println(XHTMLHelper.getTextInput(getTitleInputName(), getTitle(ctx), "form-control"));
 			out.println("</div></div>");
+
+			out.println("</div><div class=\"form-group\">");
+			out.print("<label for=\"" + getDescriptionInputName() + "\">" + i18nAccess.getText("global.description")+"</label>");
+			out.println(XHTMLHelper.getTextArea(getDescriptionInputName(), getLinkDescription(ctx), null, "form-control")+"</div></div>");
+
 			if (getImageURI(ctx) != null) {
-				out.println("<div class=\"col-sm-4\"><span class=\"image\">");
+				out.println("<div class=\"col-sm-2\"><span class=\"image\">");
 				String imageURL = URLHelper.createTransformURL(ctx, getPage(), getImageURI(ctx), "list");
-				out.println("<img src=\"" + imageURL + "\" alt=\"" + getTitle(ctx) + "\" /></span></div></div>");
+				out.println("<img src=\"" + imageURL + "\" alt=\"" + getTitle(ctx) + "\" /></span></div>");
 			}
-			out.println("</div><div class=\"row\"><div class=\"col-sm-12\"><div class=\"form-group\">");
-			out.print("<label for=\"" + getDescriptionInputName() + "\">" + i18nAccess.getText("global.description")
-					+ "</label>");			
-			out.println(XHTMLHelper.getTextArea(getDescriptionInputName(), getLinkDescription(ctx), null, "form-control"));
 			out.println("</div></div>");
 		} catch (Exception e) {
 			e.printStackTrace();

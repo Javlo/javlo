@@ -10,8 +10,12 @@
 @import url("mobile.less");
 @import url("mobile_preview.less");
 @import url("loader.less");
-html.preview-command-visible {
+
+html.preview-command-visible.preview-standard {
 	margin-top: @header-height !important;
+}
+
+html.preview-command-visible.preview-standard.preview-command-visible {
 	margin-left: @sidebar-width !important;
 }
 
@@ -197,6 +201,24 @@ a:hover {
 
 .modal-full {
     width: 98%;
+}
+
+.jv-modal-xs .modal-full {
+	max-width: 400px;
+	iframe {
+		height: 400px !important;
+	}	
+}
+
+.jv-modal-sm .modal-full {
+	max-width: 600px;
+	iframe {
+		height: 500px !important;
+	}
+}
+
+.jv-modal-md .modal-full {
+	max-width: 960px;
 }
 
 #preview-modal, #preview-modal-question {

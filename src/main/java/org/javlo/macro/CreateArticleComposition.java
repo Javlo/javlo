@@ -339,4 +339,15 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 	@Override
 	public void init(ContentContext ctx) {
 	}
+	
+	@Override
+	public String getModalSize() {
+		return "lg";
+	}
+	
+	@Override
+	public String getIcon() {
+		return "fa fa-cogs";
+	}
+
 }

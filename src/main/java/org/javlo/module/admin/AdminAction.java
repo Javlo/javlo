@@ -295,7 +295,7 @@ public class AdminAction extends AbstractModuleAction {
 				MacroFactory macroFactory = MacroFactory.getInstance(ctx);
 				Collection<MacroBean> macrosName = new LinkedList<MacroBean>();
 				for (IMacro macro : macroFactory.getMacros()) {
-					macrosName.add(new MacroBean(macro.getName(), macro.getInfo(ctx)));
+					macrosName.add(new MacroBean(macro.getName(), macro.getInfo(ctx), null));
 				}
 				request.setAttribute("macros", macrosName);
 				Map<String, String> selectedMacros = new HashMap<String, String>();

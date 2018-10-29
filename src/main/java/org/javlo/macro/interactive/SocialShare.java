@@ -54,6 +54,11 @@ public class SocialShare implements IInteractiveMacro, IAction {
 	public String getInfo(ContentContext ctx) {
 		return null;
 	}
+	
+	@Override
+	public String getIcon() {
+		return "fa fa-share-alt";
+	}
 
 	@Override
 	public String prepare(ContentContext ctx) {
@@ -116,7 +121,7 @@ public class SocialShare implements IInteractiveMacro, IAction {
 
 	@Override
 	public boolean isAdd() {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -132,6 +137,11 @@ public class SocialShare implements IInteractiveMacro, IAction {
 	@Override
 	public boolean isActive() {
 		return true;
+	}
+	
+	@Override
+	public String getModalSize() {
+		return MIDDEL_MODAL_SIZE;
 	}
 
 	@Override

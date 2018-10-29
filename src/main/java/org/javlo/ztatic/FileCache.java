@@ -333,7 +333,6 @@ public class FileCache {
 				file.delete();
 			}
 		}
-
 	}
 
 	public void clear(String context) {

@@ -13,6 +13,7 @@
                 org.javlo.helper.XHTMLHelper,
                 org.javlo.message.MessageRepository,
                 org.javlo.user.AdminUserSecurity,
+                org.javlo.context.UserInterfaceContext,
                 org.javlo.navigation.MenuElement,
                 org.javlo.helper.XHTMLNavigationHelper,
                 org.javlo.context.GlobalContext,
@@ -27,6 +28,7 @@ MenuElement currentPage = ctx.getCurrentPage();
 InfoBean infoBean = InfoBean.getCurrentInfoBean(request);
 String currentTitle = currentPage.getPageTitle(ctx);
 String pageName = currentPage.getName();
+UserInterfaceContext userInterfaceContext = UserInterfaceContext.getInstance(session, globalContext);
 
 String globalTitle = currentPage.getGlobalTitle(ctx);if (globalTitle == null) { globalTitle = globalContext.getGlobalTitle();}
 I18nAccess i18nAccess = I18nAccess.getInstance(request);

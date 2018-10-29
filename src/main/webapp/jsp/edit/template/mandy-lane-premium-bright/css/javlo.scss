@@ -262,10 +262,6 @@ a.popup span {
 	padding: 20px 15px;
 }
 
-.mainBox .no-title .content {
-	border-top: 1px solid #ddd;
-}
-
 .maincontent_inner {
     margin-bottom: 40px;
 }
@@ -940,7 +936,7 @@ ul,li {
 
 #ajax-loader {
 	top: 12px;
-	left: 15px;
+	left: 6px;
 	position: absolute;
 	background-image: url("../images/loaders/loader3.gif");
 	background-color: #eeeeee;
@@ -1592,4 +1588,24 @@ select#taxonomy {
 
 body .ui-tabs-panel {
 	border: 0 none;
+}
+
+.flex-space-between {
+	display: flex;
+	justify-content: space-between;
+}
+
+.flex-space-around {
+	display: flex;
+	justify-content: space-around;
+}
+
+.flex-center {
+	display: flex;
+	justify-content: center;
+}
+
+.flex-space-evenly {
+	display: flex;
+	justify-content: space-evenly;
 }

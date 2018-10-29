@@ -30,6 +30,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.ContentContextBean;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.context.UserInterfaceContext;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.ElementaryURLHelper;
@@ -325,7 +326,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 
 		if (ctx.getRequest().getParameter("path") != null) {
-			String newFolder = URLHelper.removeStaticFolderPrefix(ctx, ctx.getRequest().getParameter("path"));		
+			String newFolder = URLHelper.removeStaticFolderPrefix(ctx, ctx.getRequest().getParameter("path"));
 			String imageFolder = "/" + ctx.getGlobalContext().getStaticConfig().getImageFolderName();
 			newFolder = newFolder.replaceFirst(imageFolder + '/', "");
 			if (newFolder.equals(imageFolder)) {
@@ -339,6 +340,7 @@ public class GlobalImage extends Image implements IImageFilter {
 
 		StringBuffer finalCode = new StringBuffer();
 		finalCode.append(getSpecialInputTag());
+		UserInterfaceContext userInterfaceContext = UserInterfaceContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());
 
 		finalCode.append("<div class=\"js-change-submit image row form-group\"><div class=\"col-sm-5\">");
 
@@ -423,11 +425,13 @@ public class GlobalImage extends Image implements IImageFilter {
 			finalCode.append(getNewDirLabelTitle(ctx));
 			finalCode.append(" : </label></div><div class=\"col-sm-9\"><input class=\"form-control\" id=\"new_dir_" + getId() + "\" name=\"" + getNewDirInputName() + "\" type=\"text\"/></div></div>");
 		}
-		finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\"><label for=\"" + getDirInputName() + "\">");
-		finalCode.append(getDirLabelTitle(ctx));
-		finalCode.append(" : </label></div>");
 
-		if ((getDirList(ctx, getFileDirectory(ctx)) != null) && (getDirList(ctx, getFileDirectory(ctx)).length > 0)) {
+		if (userInterfaceContext.isMinimalInterface()) {
+			finalCode.append("<input type=\"hidden\" name=\""+getDirInputName()+"\" value=\""+folder+"\" />");
+		} else if ((getDirList(ctx, getFileDirectory(ctx)) != null) && (getDirList(ctx, getFileDirectory(ctx)).length > 0)) {
+			finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\"><label for=\"" + getDirInputName() + "\">");
+			finalCode.append(getDirLabelTitle(ctx));
+			finalCode.append(" : </label></div>");
 			List<String> dirsCol = new LinkedList<String>();
 			dirsCol.add("");
 			String[] dirs = getDirList(ctx, getFileDirectory(ctx));
@@ -440,17 +444,18 @@ public class GlobalImage extends Image implements IImageFilter {
 			finalCode.append("<div class=\"col-sm-7\">");
 			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), dirsCol, folder, "form-control", getJSOnChange(ctx), true));
 			finalCode.append("</div>");
+			if (canUpload(ctx) && !ctx.getGlobalContext().isMailingPlatform()) {
+				String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
+				finalCode.append("<div class=\"col-sm-2\"><a class=\"" + EDIT_ACTION_CSS_CLASS + " btn btn-default btn-xs\" href=\"" + staticURL + "\">");
+				finalCode.append(i18nAccess.getText("content.goto-static"));
+				finalCode.append("</a></div>");
+			} else {
+				finalCode.append("<div class=\"col-sm-2\"><button type=\"submit\" name=\"active-upload\" value=\"true\" class=\"browse-link btn btn-default btn-xs\" href=\"#\">" + i18nAccess.getText("content.active-upload") + "</button></div>");
+			}
+			finalCode.append("</div>");
 		}
 
-		if (canUpload(ctx) && !ctx.getGlobalContext().isMailingPlatform()) {
-			String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
-			finalCode.append("<div class=\"col-sm-2\"><a class=\"" + EDIT_ACTION_CSS_CLASS + " btn btn-default btn-xs\" href=\"" + staticURL + "\">");
-			finalCode.append(i18nAccess.getText("content.goto-static"));
-			finalCode.append("</a></div>");
-		} else {
-			finalCode.append("<div class=\"col-sm-2\"><button type=\"submit\" name=\"active-upload\" value=\"true\" class=\"browse-link btn btn-default btn-xs\" href=\"#\">" + i18nAccess.getText("content.active-upload") + "</button></div>");
-		}
-		finalCode.append("</div>");
+		
 
 		/* filter */
 		Template currentTemplate = ctx.getCurrentTemplate();

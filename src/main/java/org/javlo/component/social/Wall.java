@@ -46,8 +46,12 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 		return "comments-o";
 	}
 	
-	private String getWallName() {
-		return getFieldValue("name");
+	private String getWallName(ContentContext ctx) throws Exception {
+		String wallName = getFieldValue("name");
+		if (StringHelper.isEmpty(wallName)) {
+			wallName=ctx.getCurrentPage().getName();
+		}
+		return wallName;
 	}
 	
 	private boolean isNeedCheck() {
@@ -64,7 +68,7 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 		} else {
 			SocialLocalService socialService = SocialLocalService.getInstance(ctx.getGlobalContext());
 			ctx.getRequest().setAttribute("pageSize", PAGE_SIZE);
-			long countResult = socialService.getPostListSize(SocialFilter.getInstance(ctx.getRequest().getSession()), ctx.getCurrentUserId(), getWallName(), AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentUser()), isNeedCheck());
+			long countResult = socialService.getPostListSize(SocialFilter.getInstance(ctx.getRequest().getSession()), ctx.getCurrentUserId(), getWallName(ctx), AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentUser()), isNeedCheck());
 			float pageCountFloat = ((float)countResult/(float)PAGE_SIZE);
 			int pageCount = Math.round(pageCountFloat);
 			if (pageCountFloat > pageCount) {
@@ -74,8 +78,8 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 			ctx.getRequest().setAttribute("countResult", countResult);
 			List<String> roles = StringHelper.stringToCollection(getFieldValue("roles"));
 			if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentUser())) {
-				ctx.getRequest().setAttribute("uncheckSize", socialService.getUnvalidedPostListSize(getWallName()));
-				ctx.getRequest().setAttribute("countMessages", socialService.getPostListSize(getWallName()));
+				ctx.getRequest().setAttribute("uncheckSize", socialService.getUnvalidedPostListSize(getWallName(ctx)));
+				ctx.getRequest().setAttribute("countMessages", socialService.getPostListSize(getWallName(ctx)));
 			}
 			if (!currentUser.validForRoles(roles)) {
 				ctx.getRequest().setAttribute("access", false);
@@ -102,7 +106,7 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 			Wall comp = (Wall)ComponentHelper.getComponentFromRequest(ctx);
 			SocialLocalService socialService = SocialLocalService.getInstance(ctx.getGlobalContext());
 			Post post = new Post();
-			post.setGroup(comp.getWallName());
+			post.setGroup(comp.getWallName(ctx));
 			post.setAuthor(ctx.getCurrentUserId());
 			post.setTitle(title);
 			post.setText(text);
@@ -164,7 +168,7 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 		Wall comp = (Wall)ComponentHelper.getComponentFromRequest(ctx);
 		if (masterPost == null) {
 			int pageNumber = Integer.parseInt(rs.getParameter("page", "1"));
-			outMap.put("posts", socialService.getPost(SocialFilter.getInstance(ctx.getRequest().getSession()), admin, comp.isNeedCheck(), ctx.getCurrentUserId(), comp.getWallName(), PAGE_SIZE, (pageNumber-1)*PAGE_SIZE));
+			outMap.put("posts", socialService.getPost(SocialFilter.getInstance(ctx.getRequest().getSession()), admin, comp.isNeedCheck(), ctx.getCurrentUserId(), comp.getWallName(ctx), PAGE_SIZE, (pageNumber-1)*PAGE_SIZE));
 		} else {
 			outMap.put("posts", socialService.getReplies(SocialFilter.getInstance(ctx.getRequest().getSession()), ctx.getCurrentUserId(), admin, comp.isNeedCheck(), Long.parseLong(masterPost)));
 		}

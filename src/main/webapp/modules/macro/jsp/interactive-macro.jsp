@@ -26,17 +26,17 @@
 <jsp:include page="${macroRenderer}"></jsp:include>
 </div>
 
-<div class="cancel">
-	<form action="${info.currentURL}" method="post">
-		<div>
-			<input type="hidden" name="webaction" value="closeMacro" />
-			<c:if test="${not empty param.previewEdit}">
-			<input type="hidden" name="previewEdit" value="true" />
-			</c:if>
-			<input class="btn btn-default" type="submit" value="${i18n.edit['global.cancel']}" />			 
-		</div>
-	</form>
-</div>
+<!-- <div class="cancel"> -->
+<%-- 	<form action="${info.currentURL}" method="post"> --%>
+<!-- 		<div> -->
+<!-- 			<input type="hidden" name="webaction" value="closeMacro" /> -->
+<%-- 			<c:if test="${not empty param.previewEdit}"> --%>
+<!-- 			<input type="hidden" name="previewEdit" value="true" /> -->
+<%-- 			</c:if> --%>
+<%-- 			<input class="btn btn-default" type="submit" value="${i18n.edit['global.cancel']}" />			  --%>
+<!-- 		</div> -->
+<!-- 	</form> -->
+<!-- </div> -->
 </c:if>
 </div>
  

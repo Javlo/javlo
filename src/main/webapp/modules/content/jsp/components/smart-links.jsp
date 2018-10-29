@@ -3,7 +3,6 @@
 %>
 <div class="smart-link-body choice-images">
 <div class="row"><div class="col-sm-3">
-<input class="image-field" type="hidden" name="${comp.imageInputName}" value="${comp.imageURL}" />
 <c:if test="${fn:length(images)>0}">	
 	
 	<ul>
@@ -30,7 +29,7 @@
 		<div class="row"><div class="col-sm-3">
 		<label for="${comp.imageInputName}">image</label>
 		</div><div class="col-sm-9">
-		<input class="form-control" type="text" name="${comp.imageInputName}" value="${comp.imageURL}" />
+		<input class="form-control image-field" type="text" name="${comp.imageInputName}" id="${comp.imageInputName}" value="${comp.imageURL}" />
 		</div></div>
 	</div>
 	<div class="form-group">

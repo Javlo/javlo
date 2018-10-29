@@ -3,7 +3,6 @@ package org.javlo.macro.core;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.macro.ActiveAllChildren;
 import org.javlo.macro.AddChildMacro;
@@ -69,6 +68,7 @@ import org.javlo.macro.UpDateMacro;
 import org.javlo.macro.ValidAllChildren;
 import org.javlo.macro.interactive.ChangeImageFilter;
 import org.javlo.macro.interactive.CreateArticle;
+import org.javlo.macro.interactive.CreateArticleWidthTemplates;
 import org.javlo.macro.interactive.CreateBusinessComponent;
 import org.javlo.macro.interactive.CreateChildren;
 import org.javlo.macro.interactive.CreateContentChildren;
@@ -125,6 +125,7 @@ public class MacroFactory {
 		macros.add(new SmartImport());
 		macros.add(new CreateAllContentSample());
 		macros.add(new CreateArticle());
+		macros.add(new CreateArticleWidthTemplates());
 		macros.add(new CreateAlphabeticChildrenHereMacro());
 		macros.add(new CreateArticleComposition());
 		macros.add(new ImportHTMLPageMacro());

@@ -57,9 +57,9 @@ public class ImportContent implements IInteractiveMacro, IAction {
 	public String prepare(ContentContext ctx) {
 		return null;
 	}
-	
+
 	@Override
-	public String getInfo(ContentContext ctx) {	
+	public String getInfo(ContentContext ctx) {
 		return null;
 	}
 
@@ -118,22 +118,21 @@ public class ImportContent implements IInteractiveMacro, IAction {
 	public boolean isPreview() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean isAdd() {
 		return true;
 	}
-	
+
 	@Override
-	public boolean isInterative() {	
+	public boolean isInterative() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean haveRight(ContentContext ctx, String action) {
 		return ctx.getCurrentEditUser() != null;
 	}
-	
 
 	@Override
 	public boolean isActive() {
@@ -143,4 +142,15 @@ public class ImportContent implements IInteractiveMacro, IAction {
 	@Override
 	public void init(ContentContext ctx) {
 	}
+
+	@Override
+	public String getModalSize() {
+		return DEFAULT_MAX_MODAL_SIZE;
+	}
+
+	@Override
+	public String getIcon() {
+		return "fa fa-cogs";
+	}
+
 }

@@ -12,5 +12,11 @@ public interface IInteractiveMacro extends IMacro {
 	public String getRenderer();
 	
 	public String prepare(ContentContext ctx);
+	
+	/**
+	 * return the popup size. default lg
+	 * @return "lg", "md", "sm", "xs"
+	 */
+	public String getModalSize();
 
 }

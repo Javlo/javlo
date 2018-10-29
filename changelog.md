@@ -705,8 +705,11 @@ Security in case of vulnerabilities.
 - bright interface
 - page reference no rediplay item
 - upload user as excel file
+- smart-link download image localy
+- minimal interface
 ### Modified
 - track cache by days in place of month
+- add button unactive by default
 ### Fixed
 - edit index.html of template, load CodeMirror
 - reset navigation if navigation renderer change

@@ -45,9 +45,9 @@ public class ChangeImageFilter implements IInteractiveMacro, IAction {
 	public String getActionGroupName() {
 		return "change-image-filter";
 	}
-	
+
 	@Override
-	public String getInfo(ContentContext ctx) {	
+	public String getInfo(ContentContext ctx) {
 		return null;
 	}
 
@@ -62,23 +62,23 @@ public class ChangeImageFilter implements IInteractiveMacro, IAction {
 		if (!StringHelper.isEmpty(filter)) {
 			while (compIte.hasNext(noAreaCtx)) {
 				IContentVisualComponent comp = compIte.next(noAreaCtx);
-				if (comp instanceof GlobalImage && ! comp.isRepeat()) {
+				if (comp instanceof GlobalImage && !comp.isRepeat()) {
 					c++;
-					((GlobalImage)comp).setFilter(filter);
-					((GlobalImage)comp).storeProperties();
-					((GlobalImage)comp).setModify();					
+					((GlobalImage) comp).setFilter(filter);
+					((GlobalImage) comp).storeProperties();
+					((GlobalImage) comp).setModify();
 				}
 			}
 		}
 		ctx.setClosePopup(true);
-		messageRepository.setGlobalMessage(new GenericMessage(c+" images updated.", GenericMessage.INFO));
+		messageRepository.setGlobalMessage(new GenericMessage(c + " images updated.", GenericMessage.INFO));
 
 		return null;
 	}
 
 	@Override
 	public String prepare(ContentContext ctx) {
-		try {			
+		try {
 			ctx.getRequest().setAttribute("filters", ctx.getCurrentTemplate().getImageFilters());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -91,17 +91,17 @@ public class ChangeImageFilter implements IInteractiveMacro, IAction {
 	public boolean isPreview() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean isAdd() {
 		return false;
 	}
-	
+
 	@Override
-	public boolean isInterative() {	
+	public boolean isInterative() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean haveRight(ContentContext ctx, String action) {
 		return true;
@@ -115,4 +115,15 @@ public class ChangeImageFilter implements IInteractiveMacro, IAction {
 	@Override
 	public void init(ContentContext ctx) {
 	}
+
+	@Override
+	public String getModalSize() {
+		return DEFAULT_MAX_MODAL_SIZE;
+	}
+
+	@Override
+	public String getIcon() {
+		return "fa fa-cogs";
+	}
+
 }

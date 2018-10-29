@@ -1906,7 +1906,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public boolean isAddButton() {
-		return properties.getBoolean("preview.add-button", true);
+		return properties.getBoolean("preview.add-button", false);
 	}
 
 	public boolean isRestServer() {

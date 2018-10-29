@@ -294,6 +294,16 @@ public class ImportJCRPageMacro implements IInteractiveMacro, IAction {
 	public void init(ContentContext ctx) {
 	}
 
+	@Override
+	public String getModalSize() {
+		return DEFAULT_MAX_MODAL_SIZE;
+	}
+
+	@Override
+	public String getIcon() {
+		return "fa fa-cogs";
+	}
+
 	public static void main(String[] args) {
 		System.out.println("***** ImportZIPPageMacro.main : locale = " + getLocalBySuffix("index_fr")); // TODO: remove debug trace
 		System.out.println("***** ImportZIPPageMacro.main : locale = " + getLocalBySuffix("index_fr_BE")); // TODO: remove debug trace

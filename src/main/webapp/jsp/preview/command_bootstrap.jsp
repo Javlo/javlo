@@ -65,6 +65,7 @@ if (StringHelper.isTrue(request.getParameter("preview-command"), true) && !ctx.i
 		<div class="alert-wrapper slow-hide"><div class="alert alert-<%=bootstrapType%>">${messages.globalMessage.message}</div></div>
 	</c:if>
 	<div id="modal-container" style="display: none;">[modal]</div>
+	
 	<jsp:include page="bootstrap/header.jsp"></jsp:include>
 	<jsp:include page="bootstrap/mobile.jsp"></jsp:include>
 	<c:if test="${editPreview}">
@@ -83,7 +84,7 @@ if (StringHelper.isTrue(request.getParameter("preview-command"), true) && !ctx.i
 		            </div><div class="form-group">
 		            	<input type="password" name="j_password" id="j_password" class="form-control" placeholder="${i18n.edit['login.password']}">
 		            </div>		            
-		            <button class="btn btn-default pull-right">Login</button>	        	        
+		            <button class="btn btn-default pull-right">Login</button>
 				</form>
 			</div>
 			</div>
@@ -99,9 +100,9 @@ if (StringHelper.isTrue(request.getParameter("preview-command"), true) && !ctx.i
 				</ul>
 				<div class="tab-content">
 				  <div role="tabpanel" class="tab-pane fade in active navigation_panel " id="_ep_navigation">
-				  <c:if test="${contentContext.currentTemplate.mailing}">							
+				  <c:if test="${contentContext.currentTemplate.mailing}">
 					<jsp:include page="bootstrap/navigation_mailing.jsp"></jsp:include>
-				  </c:if><c:if test="${!contentContext.currentTemplate.mailing}">							
+				  </c:if><c:if test="${!contentContext.currentTemplate.mailing}">
 					<jsp:include page="bootstrap/navigation.jsp"></jsp:include>
 				   </c:if>
 				  </div>
@@ -113,15 +114,15 @@ if (StringHelper.isTrue(request.getParameter("preview-command"), true) && !ctx.i
 				</div>
 				<c:set var="tabActive" value="${param._preview_tab}" />
 				<c:if test="${not empty tabActive}">
-					<script type="text/javascript">pjq(".nav-tabs a[href='#${tabActive}']").tab("show");</script>					
+					<script type="text/javascript">pjq(".nav-tabs a[href='#${tabActive}']").tab("show");</script>
 				</c:if>
 			</div>
 			</c:if>
 		</div>
 	</div>
 	</c:if>
-	<jsp:include page="bootstrap/add.jsp"></jsp:include>
-	</c:if>	
+	</c:if>
+	<jsp:include page="bootstrap/add.jsp"></jsp:include>	
 	<div class="modal fade fancybox-wrapper" id="preview-modal" tabindex="-1" role="dialog" aria-labelledby="previewModalTitle" aria-hidden="true">
 	  <div class="modal-dialog modal-full fancybox-skin">
       <div class="fancybox-outer">
@@ -134,7 +135,7 @@ if (StringHelper.isTrue(request.getParameter("preview-command"), true) && !ctx.i
             <div class="box">
       	      <div class="modal-body tabs-edit-fancy">
       	        <iframe id="preview-modal-frame" data-wait="${info.waitURL}" src="${info.waitURL}" ></iframe>
-      	      </div>      	      
+      	      </div>
             </div>
           </div>
   	    </div>
@@ -159,11 +160,9 @@ if (StringHelper.isTrue(request.getParameter("preview-command"), true) && !ctx.i
 								<button type="submit" class="btn btn-primary btn-yes">[yes]</button>
 							</div>
 						</div>
-
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	
 </div><%}%>

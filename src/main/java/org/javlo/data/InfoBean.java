@@ -1646,7 +1646,7 @@ public class InfoBean {
 		for (String name : macroName) {
 			IMacro macro = factory.getMacro(name);
 			if (macro instanceof IInteractiveMacro && macro.isActive()) {
-				macros.add(new MacroBean(macro.getName(), macro.getInfo(ctx)));
+				macros.add(new MacroBean(macro.getName(), macro.getInfo(ctx), ((IInteractiveMacro)macro).getModalSize()));
 			}
 		}
 		return macros;
@@ -1673,7 +1673,7 @@ public class InfoBean {
 			if (name.trim().length() > 0) {
 				IMacro macro = factory.getMacro(name);
 				if (!(macro instanceof IInteractiveMacro) && macro.isActive()) {
-					macros.add(new MacroBean(macro.getName(), macro.getInfo(ctx)));
+					macros.add(new MacroBean(macro.getName(), macro.getInfo(ctx), null));
 				}
 			}
 		}

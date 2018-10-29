@@ -258,8 +258,8 @@ public class MacroHelper {
 	 * @param parentName
 	 *            the name of the parent page
 	 * @param pagePrefix
-	 *            the prefix of the new page (suffix in the number). sp. :
-	 *            prefix : news- page name : news-12
+	 *            the prefix of the new page (suffix in the number). sp. : prefix :
+	 *            news- page name : news-12
 	 * @return the new page
 	 * @throws Exception
 	 */
@@ -390,8 +390,8 @@ public class MacroHelper {
 	}
 
 	/**
-	 * insert the page in the navigation if she does not exist and add not
-	 * existing parent page too.
+	 * insert the page in the navigation if she does not exist and add not existing
+	 * parent page too.
 	 * 
 	 * @param ctx
 	 * @param parentPage
@@ -467,8 +467,8 @@ public class MacroHelper {
 	}
 
 	/**
-	 * Copy all component in the current language to the otherLanguageContexts
-	 * BUT with an empty value.
+	 * Copy all component in the current language to the otherLanguageContexts BUT
+	 * with an empty value.
 	 * 
 	 * @param currentPage
 	 * @param ctx
@@ -503,8 +503,8 @@ public class MacroHelper {
 	}
 
 	/**
-	 * Copy the local content of the current language to <code>toPage</code>.
-	 * Create the page or the parent page if they don't exists.
+	 * Copy the local content of the current language to <code>toPage</code>. Create
+	 * the page or the parent page if they don't exists.
 	 * 
 	 * @param fromPage
 	 * @param fromCtx
@@ -788,8 +788,30 @@ public class MacroHelper {
 							isArticleRoot = true;
 						}
 					}
-					//if (isArticleRoot && (page.getDepth() < 4)) {
-					if (isArticleRoot){
+					// if (isArticleRoot && (page.getDepth() < 4)) {
+					if (isArticleRoot) {
+						outPages.add(page);
+					}
+				}
+			}
+		}
+		return outPages;
+	}
+
+	/**
+	 * return a list of page with only year as children.
+	 * 
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	public static List<MenuElement> searchPageWidthLayout(ContentContext ctx) throws Exception {
+		List<MenuElement> outPages = new LinkedList<MenuElement>();
+		MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);
+		for (MenuElement page : root.getAllChildrenList()) {
+			if (page.isActive() && !page.isTrash() && !page.isInTrash()) {
+				for (MenuElement child : page.getChildMenuElements()) {
+					if (child.isLayout()) {
 						outPages.add(page);
 					}
 				}
@@ -830,7 +852,7 @@ public class MacroHelper {
 						folder = folder.replace("${page.name}", page.getName());
 					}
 
-					String value = (String) componentsType.get(compName);					
+					String value = (String) componentsType.get(compName);
 					if (fakeContent) {
 						if (type.equals(Title.TYPE) || type.equals(SubTitle.TYPE)) {
 							value = LoremIpsumGenerator.getParagraph(3, false, true);
@@ -847,22 +869,22 @@ public class MacroHelper {
 					} else if (type.equals(Tags.TYPE) && tags != null) {
 						value = StringHelper.collectionToString(tags, ";");
 					}
-										
+
 					parentId = MacroHelper.addContent(lg, page, parentId, type, style, area, value, asList, ctx.getCurrentEditUser());
 					IContentVisualComponent comp = content.getComponent(ctx, parentId);
-					if (initContent) {						
+					if (initContent) {
 						comp.initContent(ctx);
 					}
 					if (comp instanceof AbstractFileComponent) {
 						((AbstractFileComponent) comp).init(comp.getComponentBean(), ctx);
-					}					
+					}
 
 					String renderer = (String) componentsType.get(compName + ".renderer");
-					if (renderer != null) {						
+					if (renderer != null) {
 						comp.setRenderer(ctx, renderer);
 					}
 
-					if (folder != null) {						
+					if (folder != null) {
 						if (comp instanceof AbstractFileComponent) {
 							((AbstractFileComponent) comp).setDirSelected(folder);
 						}
@@ -1011,7 +1033,7 @@ public class MacroHelper {
 			String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), params);
 			String actionURL = "try{jQuery.colorbox({href : '" + url + "',opacity : 0.6,iframe : true,width : '95%',	height : '95%'});} catch(err) {console.log(err)}; return false;";
 			out.println("<div class=\"macro\">");
-			out.println("<a class=\"as-modal "+css+"\" href=\"" + url + "\" onclick=\"" + actionURL + "\">" + label + "</a>");
+			out.println("<a class=\"as-modal " + css + "\" href=\"" + url + "\" onclick=\"" + actionURL + "\">" + label + "</a>");
 			out.println("</div>");
 		} else {
 			out.println("<div class=\"macro\">");
@@ -1020,7 +1042,7 @@ public class MacroHelper {
 			out.println("<input type=\"hidden\" value=\"true\" name=\"" + ContentContext.PREVIEW_EDIT_PARAM + "\">");
 			out.println("<input type=\"hidden\" value=\"macro.executeMacro\" name=\"webaction\">");
 			out.println("<input type=\"hidden\" value=\"" + macro + "\" name=\"macro\">");
-			out.println("<input class=\"action-button "+css+"\" type=\"submit\" value=\"" + label + "\">");
+			out.println("<input class=\"action-button " + css + "\" type=\"submit\" value=\"" + label + "\">");
 			out.println("</form>");
 			out.println("</div>");
 		}

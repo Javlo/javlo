@@ -39,13 +39,13 @@ import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserInfo;
 
-public class CreateArticle implements IInteractiveMacro, IAction {
+public class CreateArticleWidthTemplates implements IInteractiveMacro, IAction {
 
 	private static Logger logger = Logger.getLogger(CreateArticle.class.getName());
 
 	@Override
 	public String getName() {
-		return "create-article";
+		return "create-article-width-templates";
 	}
 
 	@Override
@@ -60,42 +60,49 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 
 	@Override
 	public String getActionGroupName() {
-		return "macro-create-article";
+		return "macro-create-article-width-templates";
 	}
 
 	@Override
 	public String getRenderer() {
-		return "/jsp/macros/create-article.jsp";
+		return "/jsp/macros/create-article-width-templates.jsp";
 	}
-	
+
 	@Override
-	public String getInfo(ContentContext ctx) {	
+	public String getInfo(ContentContext ctx) {
 		return null;
-	}
-	
-	@Override
-	public String getModalSize() {
-		return MIDDEL_MODAL_SIZE;
-	}
-	
-	@Override
-	public String getIcon() {
-		return "fa fa-file-text-o";
 	}
 
 	@Override
 	public String prepare(ContentContext ctx) {
 		Map<String, String> rootPages = new HashMap<String, String>();
+		StringBuffer js = new StringBuffer();
+		js.append("<script>var layouts = [");
 		try {
-			for (MenuElement page : MacroHelper.searchArticleRoot(ctx)) {
+			String sep = "";
+			for (MenuElement page : MacroHelper.searchPageWidthLayout(ctx)) {
 				rootPages.put(page.getName(), page.getTitle(ctx));
+				for (MenuElement layout : page.getChildMenuElements()) {
+					if (layout.isLayout()) {
+						js.append(sep + "[");
+						String subSep = "";
+						for (MenuElement child : layout.getChildMenuElements()) {
+							js.append(subSep + "['" + child.getName() + "','" + child.getTitle(ctx) + "']");
+							subSep = ",";
+						}
+						js.append("]");
+						sep = ",";
+					}
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
 		}
+		js.append("];</script>");
 		rootPages = MapHelper.sortByValue(rootPages);
 		ctx.getRequest().setAttribute("pages", rootPages);
+		ctx.getRequest().setAttribute("js", js);
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (globalContext.getTags().size() > 0) {
@@ -172,39 +179,31 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 				if (mountPage != null) {
 					newPage = MacroHelper.createArticlePageName(ctx, mountPage);
 					if (newPage != null) {
+						MenuElement page;
+						ContentService content = ContentService.getInstance(ctx.getRequest());
 						if (duplicate) {
-							ContentService content = ContentService.getInstance(ctx.getRequest());
-							MenuElement page = content.getNavigation(ctx).searchChildFromName(ctx.getRequest().getParameter("page"));
-							ContentContext noAreaCtx = ctx.getContextWithArea(null);
-							ContentElementList contentList = page.getContent(noAreaCtx);						
-							Map<String,String> parents = new HashMap<String, String>();
-							while (contentList.hasNext(noAreaCtx)) {
-								IContentVisualComponent comp = contentList.next(noAreaCtx);
-								if (!comp.isRepeat()) {
-									ComponentBean bean = new ComponentBean(comp.getComponentBean());
-									bean.setId(StringHelper.getRandomId());
-									String parent = parents.get(bean.getArea());
-									if (parent == null) {
-										parent = "0";
-									}
-									parent = content.createContent(ctx, bean, parent, false);
-									parents.put(bean.getArea(), parent);
-								}
-							}
-							ctx.getCurrentPage().releaseCache();
-						} else if (create) {
-							GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-							Collection<String> tags = null;
-							if (globalContext.getTags().size() > 0) {
-								tags = new LinkedList<String>();
-								for (String tag : globalContext.getTags()) {
-									if (rs.getParameter("tag-" + tag, null) != null) {
-										tags.add(tag);
-									}
-								}
-							}
-							MacroHelper.addContentInPage(ctxLg, newPage, rootPage.getName().toLowerCase(), articleDate, tags);
+							page = content.getNavigation(ctx).searchChildFromName(ctx.getRequest().getParameter("page"));
+						} else {
+							page = content.getNavigation(ctx).searchChildFromName(ctx.getRequest().getParameter("layout"));
 						}
+						System.out.println(">>>>>>>>> CreateArticleWidthTemplates.performCreate : page = "+page); //TODO: remove debug trace
+						ContentContext noAreaCtx = ctx.getContextWithArea(null);
+						ContentElementList contentList = page.getContent(noAreaCtx);
+						Map<String, String> parents = new HashMap<String, String>();
+						while (contentList.hasNext(noAreaCtx)) {
+							IContentVisualComponent comp = contentList.next(noAreaCtx);
+							if (!comp.isRepeat()) {
+								ComponentBean bean = new ComponentBean(comp.getComponentBean());
+								bean.setId(StringHelper.getRandomId());
+								String parent = parents.get(bean.getArea());
+								if (parent == null) {
+									parent = "0";
+								}
+								parent = content.createContent(ctx, bean, parent, false);
+								parents.put(bean.getArea(), parent);
+							}
+						}
+						ctx.getCurrentPage().releaseCache();
 						newURL = URLHelper.createURL(ctxLg.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), newPage);
 						newEditURL = URLHelper.createURL(ctxLg.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), newPage);
 
@@ -287,14 +286,14 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 				// ctx.getResponse());
 
 				/*
-				 * ctx.setClosePopup(true); if (newURL != null) {
-				 * ctx.setParentURL(newURL); }
+				 * ctx.setClosePopup(true); if (newURL != null) { ctx.setParentURL(newURL); }
 				 */
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
 		}
+		System.out.println(">>>>>>>>> CreateArticleWidthTemplates.performCreate : message = "+message); //TODO: remove debug trace
 		return message;
 	}
 
@@ -312,12 +311,11 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 	public boolean isInterative() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean haveRight(ContentContext ctx, String action) {
 		return ctx.getCurrentEditUser() != null;
 	}
-	
 
 	@Override
 	public boolean isActive() {
@@ -327,4 +325,15 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 	@Override
 	public void init(ContentContext ctx) {
 	}
+
+	@Override
+	public String getModalSize() {
+		return "md";
+	}
+
+	@Override
+	public String getIcon() {
+		return "fa fa-file-text-o";
+	}
+
 }
