@@ -1683,7 +1683,7 @@ public class StringHelper {
 		if (url == null) {
 			return false;
 		}
-		return url.contains("://") || url.startsWith("//");
+		return url.contains("://") || url.startsWith("//") || url.startsWith("tel:");
 	}
 
 	/**
