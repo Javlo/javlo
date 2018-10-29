@@ -20,6 +20,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.fields.Field;
 import org.javlo.helper.ComponentHelper;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.service.ContentService;

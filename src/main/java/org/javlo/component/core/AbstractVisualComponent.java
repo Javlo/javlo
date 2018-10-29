@@ -2277,7 +2277,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 
 			if (ctx.getRenderMode() == ContentContext.EDIT_MODE) {
-				if (isColumnable(ctx)) {
+				if (isColumnable(ctx) && !ctx.isExport()) { // no columable with exportComponent servlet 
 					return getColumn(ctx)+getEditXHTMLCode(ctx);
 				} else {
 					return getEditXHTMLCode(ctx);
