@@ -141,7 +141,7 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 					file.createNewFile();
 				}
 			}
-			if (file.length() > 0) {
+			if (file.length() > 0 && StringHelper.isImage(file.getName())) {
 				return URLHelper.createTransformURL(ctx, file, "smart-link");
 			} else {
 				return getImageURL();
