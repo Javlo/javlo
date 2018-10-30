@@ -356,7 +356,7 @@ public class NetHelper {
 		return content;
 	}
 
-	private static void nocheckCertificatHttps() throws NoSuchAlgorithmException, KeyManagementException {
+	public static void nocheckCertificatHttps() throws NoSuchAlgorithmException, KeyManagementException {
 		if (!INIT_HTTPS) {
 			TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
 				public java.security.cert.X509Certificate[] getAcceptedIssuers() {

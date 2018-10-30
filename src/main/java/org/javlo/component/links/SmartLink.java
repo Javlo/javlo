@@ -1,14 +1,18 @@
 package org.javlo.component.links;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 
+import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
 
 import org.javlo.actions.IAction;
@@ -117,21 +121,36 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 			return getId() + "_" + fileName;
 		}
 	}
-	
+
 	public String getLocalImageURL(ContentContext ctx) throws Exception {
 		File file = getFile(ctx);
 		if (file != null) {
 			if (!file.exists()) {
 				file.getParentFile().mkdirs();
-				ResourceHelper.writeUrlToFile(new URL(getImageURL()), file);
+				try {
+					ResourceHelper.writeUrlToFile(new URL(getImageURL()), file);
+					if (file.length() > 0) {
+						BufferedImage img = ImageIO.read(file);
+						if (img.getWidth() == 0) {
+							file.delete();
+							file.createNewFile();
+						}
+					}
+				} catch (Exception e) {
+					file.delete();
+					file.createNewFile();
+				}
 			}
-			return URLHelper.createTransformURL(ctx, file, "smart-link");
+			if (file.length() > 0) {
+				return URLHelper.createTransformURL(ctx, file, "smart-link");
+			} else {
+				return getImageURL();
+			}
 		} else {
 			return null;
 		}
-		
 	}
-	
+
 	@Override
 	public void delete(ContentContext ctx) {
 		super.delete(ctx);
@@ -380,6 +399,19 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
 		return !StringHelper.isEmpty(getValue());
+	}
+
+	public static void main(String[] args) {
+		try {
+			ResourceHelper.writeUrlToFile(new URL("https://d7a3x5k7.ssl.hwcdn.net/content/181023/alisa-i-the-good-girl-04.jpg"), new File("c:/trans/out.jpg"));
+			System.out.println(">>>>>>>>> SmartLink.main : done"); // TODO: remove debug trace
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

@@ -37,6 +37,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -59,6 +61,7 @@ import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.FileImageOutputStream;
+import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
@@ -1733,10 +1736,19 @@ public class ResourceHelper {
 		FileOutputStream out = null;
 		try {
 			URLConnection conn = url.openConnection();
+			// skip https validation
+			if (conn instanceof HttpsURLConnection) {
+				try {
+					NetHelper.nocheckCertificatHttps();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 			conn.setRequestProperty("User-Agent", NetHelper.JAVLO_USER_AGENT);
 			in = conn.getInputStream();
 			out = new FileOutputStream(imageFile);
 			writeStreamToStream(in, out);
+			out.flush();
 		} finally {
 			safeClose(in, out);
 		}
