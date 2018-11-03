@@ -1,6 +1,6 @@
-/* preview.js V 2.0.0.4 */
+/* preview.js V 2.0.0.5 */
 
-var PREVIEWLOG = false;
+var PREVIEWLOG = true;
 
 var previewScrollPos;
 var previewHeight;
@@ -32,13 +32,13 @@ if (!String.prototype.startsWith) {
 	}
 	
 	editPreview.updateArea = function(area) {
-		console.log("updateArea : "+area);
 		pjq.ajax({
 			url: editPreview.addParam(currentURL,"only-area="+area),
 			async: false
 		}).done(function(html) {
 			pjq('#'+area).html(html);
-			editPreview.reloadPreviewPage();
+			editPreview.initPreview();
+			//editPreview.reloadPreviewPage();
 		});
 	}
 	
@@ -418,6 +418,7 @@ if (!String.prototype.startsWith) {
 			pjq("body").append('<div id="preview-layer"><div class="commands btn-group btn-group-sm area-actions" role="group"><span class=\"btn area-name\"><span class="mirror glyphicon glyphicon-paste" aria-hidden="true"></span><span class="not-mirror glyphicon glyphicon-th-large" aria-hidden="true"></span><span id=\"area-name\"></span></span>'+
 				'<button class="btn-edit btn btn-primary"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span><span class="text">edit</span></button>'+
 				'<button class="btn-copy btn btn-primary"><span class="glyphicon glyphicon-copy" aria-hidden="true"></span><span class="text">copy</span></button>'+
+				'<button class="btn-duplicate btn btn-primary"><span class="glyphicon glyphicon-duplicate" aria-hidden="true"></span><span class="text">duplicate</span></button>'+
 				'<button class="btn-delete btn btn-primary"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span><span class="text">delete</span></button>'+
 				'<div class="btn-off btn repeat-icon"><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span></div>'+
 				'</div><h4></h4><div class="main">&nbsp;</span></div>');
@@ -442,6 +443,18 @@ if (!String.prototype.startsWith) {
 				var area = editPreview.searchArea(subComp);
 				var compId = subComp.attr("id").substring(3);
 				var ajaxURL = editPreview.addParam(currentURL,"webaction=edit.delete&previewEdit=true&id=" + compId);
+				if (editPreview.searchPageId(subComp) != null) {
+					ajaxURL = ajaxURL +'&pageCompID='+ editPreview.searchPageId(subComp);
+				}
+				editPreview.ajaxPreviewRequest(ajaxURL, function() {editPreview.layerOver(null);}, null);
+				return false;
+			});
+			pjq('#preview-layer .btn-duplicate').on('click', function (e) {
+				editPreview.layerOver(null);				
+				var subComp = pjq(this).parent().parent().data("comp");
+				var area = editPreview.searchArea(subComp);
+				var compId = subComp.attr("id").substring(3);
+				var ajaxURL = editPreview.addParam(currentURL,"webaction=edit.duplicate&previewEdit=true&id=" + compId);
 				if (editPreview.searchPageId(subComp) != null) {
 					ajaxURL = ajaxURL +'&pageCompID='+ editPreview.searchPageId(subComp);
 				}
@@ -621,7 +634,7 @@ if (!String.prototype.startsWith) {
 						if (editPreview.searchPageId(subComp) != null) {
 							ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
 						}
-						editPreview.ajaxPreviewRequest(ajaxURL, null, null);
+						editPreview.ajaxPreviewRequest(ajaxURL, editPreview.updateArea(area), null);
 					} else if (compType != null && compType.length > 0) {
 						pjq(this).removeClass("drop-selected");
 						var previewId = subComp.attr("id").substring(3);
@@ -648,7 +661,7 @@ if (!String.prototype.startsWith) {
 						if (editPreview.searchPageId(subComp) != null) {
 							ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(subComp);
 						}
-						editPreview.ajaxPreviewRequest(ajaxURL, null, null);
+						editPreview.ajaxPreviewRequest(ajaxURL, editPreview.updateArea, null);
 					} else if (event.dataTransfer.files.length > 0) {						
 						var previewId = subComp.attr("id").substring(3);
 						if (PREVIEWLOG) {
@@ -806,12 +819,15 @@ if (!String.prototype.startsWith) {
 							}, null);						
 						}
 					} else if (compId != null && event.dataTransfer.files.length == 0) { // move component
+						if (PREVIEWLOG) {
+							console.log("move component.");
+						}
 						var fromArea = editPreview.searchArea(pjq("#cp_"+compId));
 						var ajaxURL = editPreview.addParam(currentURL,"previewEdit=true&webaction=edit.moveComponent&comp-id=" + compId + "&previous=0&area=" + area+ "&render-mode=3&init=true");
 						if (editPreview.searchPageId(this) != null) {
 							ajaxURL = ajaxURL +'&pageContainerID='+ editPreview.searchPageId(this);
 						}						
-						editPreview.ajaxPreviewRequest(ajaxURL, null, null);
+						editPreview.ajaxPreviewRequest(ajaxURL, editPreview.updateArea(area), null);
 					} else if (event.dataTransfer.files.length > 0) {
 						var ajaxURL = editPreview.addParam(currentURL,"webaction=data.upload&content=true&previous=0&area=" + area);
 						if (editPreview.searchPageId(this) != null) {
@@ -846,7 +862,7 @@ if (!String.prototype.startsWith) {
 								pjq("#preview-modal-question").modal("hide");
 							});
 						} else {
-							editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
+							editPreview.ajaxPreviewRequest(ajaxURL, editPreview.updateArea(area), fd);
 						}	
 						
 						pjq(this).removeClass("_empty_area");

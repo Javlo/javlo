@@ -624,6 +624,9 @@ li.line {
 	img {
 		max-height: 200px;
 	}
+	label, .form-group, .checkbox {
+		text-align: left;
+	}
 }
 
 .multimedia {	

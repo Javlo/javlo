@@ -388,9 +388,9 @@ public class CatchAllFilter implements Filter {
 					String lg = viewURI.substring(1, 3).toLowerCase();
 					if (globalContext.getContentLanguages().contains(lg)) {
 						String newPath = "/view" + viewURI;
-						if (httpRequest.getSession().isNew()) {
-							httpRequest.getSession().setAttribute(InfoBean.NEW_SESSION_PARAM, true);
-						}
+//						if (httpRequest.getSession().isNew()) {
+//							httpRequest.getSession().setAttribute(InfoBean.NEW_SESSION_PARAM, true);
+//						}
 						httpRequest.setAttribute(MAIN_URI_KEY, URLDecoder.decode(httpRequest.getRequestURI(), ContentContext.CHARACTER_ENCODING));
 						globalContext.log("url", "forward add view : " + httpRequest.getRequestURI() + " >> " + newPath);
 						httpRequest.getRequestDispatcher(newPath).forward(httpRequest, response);
@@ -416,9 +416,9 @@ public class CatchAllFilter implements Filter {
 		}
 
 		if (forwardURI != null) {
-			if (httpRequest.getSession().isNew()) {
-				httpRequest.getSession().setAttribute(InfoBean.NEW_SESSION_PARAM, true);
-			}
+//			if (httpRequest.getSession().isNew()) {
+//				httpRequest.getSession().setAttribute(InfoBean.NEW_SESSION_PARAM, true);
+//			}
 			globalContext.log("url", "forward : " + httpRequest.getRequestURI() + " >> " + forwardURI);
 			httpRequest.getRequestDispatcher(forwardURI).forward(httpRequest, response);
 		} else {

@@ -1,19 +1,16 @@
 package org.javlo.module.admin;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -295,7 +292,7 @@ public class AdminAction extends AbstractModuleAction {
 				MacroFactory macroFactory = MacroFactory.getInstance(ctx);
 				Collection<MacroBean> macrosName = new LinkedList<MacroBean>();
 				for (IMacro macro : macroFactory.getMacros()) {
-					macrosName.add(new MacroBean(macro.getName(), macro.getInfo(ctx), null));
+					macrosName.add(new MacroBean(macro.getName(), macro.getInfo(ctx), null, macro.getPriority()));
 				}
 				request.setAttribute("macros", macrosName);
 				Map<String, String> selectedMacros = new HashMap<String, String>();

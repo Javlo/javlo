@@ -3,6 +3,9 @@
  */
 package org.javlo.component.layout;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.i18n.I18nAccess;
@@ -12,6 +15,8 @@ import org.javlo.i18n.I18nAccess;
  * @author pvandermaesen 
  */
 public class ContentSeparation extends AbstractVisualComponent {
+	
+	private final String fontSize = "6px";
 	
 	private static final String HIDDEN_SEPARATION = "hidden-separation";
 	public static final String TYPE = "separation";
@@ -39,6 +44,47 @@ public class ContentSeparation extends AbstractVisualComponent {
 	
 	public String getRadioName() {
 		return getContentName();
+	}
+	
+	@Override
+	public String getPrefixViewXHTMLCode(ContentContext ctx) {
+		try {
+			if (ctx.getCurrentTemplate().isMailing() && !getStyle().equals(HIDDEN_SEPARATION)) {
+				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+				PrintStream out = new PrintStream(outStream);
+				
+				out.println("<table "+getSpecialPreviewCssClass(ctx, "") + getSpecialPreviewCssId(ctx)+" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"font-size: "+fontSize+"; table-layout: fixed; margin: 0 auto;\"><tr><td>&nbsp;</td></tr><tr><td>");
+				out.println("<table style=\"table-layout: fixed; margin: 0 auto; background-color: "+getBackgroundColor()+"\" bgcolor=\""+getBackgroundColor()+"\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr><td style=\"font-size: "+fontSize+"\">&nbsp;");
+				if (getStyle().contains("large")) {
+					out.println("<br />&nbsp;");
+				}
+				out.close();
+				return new String(outStream.toByteArray());
+			} else {
+				return super.getPrefixViewXHTMLCode(ctx);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return super.getPrefixViewXHTMLCode(ctx);
+		}
+	}
+	
+	@Override
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+		try {
+			if (ctx.getCurrentTemplate().isMailing() && !getStyle().equals(HIDDEN_SEPARATION)) {
+				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+				PrintStream out = new PrintStream(outStream);
+				out.println("</td></tr></table></td></tr><tr><td style=\"font-size: "+fontSize+"\">&nbsp;</td></tr></table>");
+				out.close();
+				return new String(outStream.toByteArray());
+			} else {
+				return super.getSuffixViewXHTMLCode(ctx);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return super.getSuffixViewXHTMLCode(ctx);
+		}
 	}
 	
 	@Override

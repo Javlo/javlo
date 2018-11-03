@@ -1515,6 +1515,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (previousComp == null) {
 			style = style + " first-component ";
 		}
+		if (nextComp == null) {
+			style = style + " last-component ";
+		}
 		if (nextComp == null || !nextComp.getType().equals(getType())) {
 			style = style + " last ";
 		}

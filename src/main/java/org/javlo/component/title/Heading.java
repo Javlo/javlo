@@ -377,7 +377,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 			return getConfig(ctx).getProperty("prefix", null);
 		}
 		String style = contructViewStyle(ctx);		
-		return "<" + getTag(ctx) + " " + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " " + getInlineStyle(ctx) + ">";		
+		return "<" + getTag(ctx) + " " + getSpecialPreviewCssClass(ctx, style) + getSpecialPreviewCssId(ctx) + " " + getInlineStyle(ctx) + ">";		
 	}
 
 	@Override

@@ -1,17 +1,18 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><%@ taglib uri="/WEB-INF/javlo.tld" prefix="jv"%><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head> 
+<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery-1.7.2.min.js"></script>
 <script type="text/javascript">
 	function closePopup() {
 		var url = top.location.href; // close iframe and refresh parent frame
 		var anchor = "";
 		<c:if test="${not empty contentContext.parentURL}">
 		url = "${contentContext.parentURL}";
+		</c:if>
 		if (url.indexOf('#') >= 0) {
 			anchor = url.substring(url.indexOf('#'));
 			url = url.substring(0, url.indexOf('#'));
 		}
-		</c:if>
 		<c:if test="${not empty messages.rawGlobalMessage}">
 		if (url.indexOf("?") >= 0) {
 			url = url + "&${messages.parameterName}=${messages.rawGlobalMessage}";
@@ -34,8 +35,8 @@
 			if (url.indexOf("?") >= 0) {
 				sep = "&";
 			}
-			url = url + sep+"__ts="+Date.now();
-			top.location.href = url+anchor; // close iframe and refresh parent frame
+			url = url + sep + "__ts="+Date.now();
+			top.location.href = url; // close iframe and refresh parent frame
 		}
 	}	
 </script>
@@ -59,6 +60,7 @@
 	<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/bootstrap/bootstrap.css?ts=${info.ts}" />
 	<link rel="stylesheet" href="${info.editTemplateURL}/css/style.css?ts=${info.ts}" />
 	<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/javlo.css?ts=${info.ts}" />
+	<link rel="stylesheet" media="screen" type="text/css" href="<jv:url value='/css/edit/global.css' />" />
 
 	<style type="text/css">
 @font-face {
@@ -86,7 +88,6 @@
     <link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/ie7.css"/>
 <![endif]-->
 
-	<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery-1.7.2.min.js"></script>
 	<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery-ui-1.8.20.custom.min.js"></script>
 	<script type="text/javascript">
 		<jsp:include page="/jsp/edit/global/dynamic_js.jsp" />
@@ -325,7 +326,6 @@
 </c:if>
 <script type="text/javascript" src="${info.editTemplateURL}/js/custom/general.js?ts=${info.ts}"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.autosize-min.js"></script>
-
 
 <link rel="stylesheet" href="<jv:url value='/js/lib/tooltipster-master/css/tooltipster.css' />" />
 <script type="text/javascript" src="<jv:url value='/js/lib/tooltipster-master/js/jquery.tooltipster.min.js' />"></script>

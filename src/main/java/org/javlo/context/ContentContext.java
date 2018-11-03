@@ -59,6 +59,8 @@ public class ContentContext {
 	private static final String FORCE_PATH_PREFIX = "____force-path-prefix";
 
 	public static final String TAKE_SCREENSHOT = "____screenshot";
+	
+	public static final String TAKE_SCREENSHOT_PAGE_NAME = "____screenshot_page";
 
 	private static final String FORCE_SPECIAL_RENDERER = "forced-renderer";
 

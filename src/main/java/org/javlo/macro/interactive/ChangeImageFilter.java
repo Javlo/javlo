@@ -125,5 +125,15 @@ public class ChangeImageFilter implements IInteractiveMacro, IAction {
 	public String getIcon() {
 		return "fa fa-cogs";
 	}
+	
+	@Override
+	public String getUrl() {
+		return null;
+	}
+	
+	@Override
+	public int getPriority() {
+		return DEFAULT_PRIORITY;
+	}
 
 }

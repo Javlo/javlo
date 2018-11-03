@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -61,12 +62,12 @@ import org.javlo.helper.importation.ImportConfigBean;
 import org.javlo.helper.importation.TanukiImportTools;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ImageEngine;
+import org.javlo.image.ImageHelper;
 import org.javlo.macro.interactive.ImportJCRPageMacro;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.content.Edit;
 import org.javlo.module.ticket.TicketAction;
-import org.javlo.module.ticket.TicketService;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageAssociationBean;
 import org.javlo.service.ContentService;
@@ -828,16 +829,28 @@ public class DataAction implements IAction {
 
 	public static String performUploadscreenshot(RequestService rs, ContentContext ctx, GlobalContext globalContext, User user, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		if (ctx.getCurrentEditUser() != null) {
-			File imageFile = globalContext.getScreenshotFile(ctx);
+			File imageFile;
+			String pageName = rs.getParameter("page");
+			if (StringHelper.isEmpty(pageName)) {
+				imageFile = globalContext.getScreenshotFile(ctx);
+			} else {
+				imageFile = globalContext.getPageScreenshotFile(pageName);
+			}
 			imageFile.getParentFile().mkdirs();
 			imageFile.createNewFile();
 			for (FileItem item : rs.getAllFileItem()) {
 				JavaScriptBlob blob = new JavaScriptBlob(new String(item.get()));
 				ResourceHelper.writeBytesToFile(imageFile, blob.getData());
 			}
-			BufferedImage img = ImageIO.read(imageFile);
+			InputStream in = new FileInputStream(imageFile);
+			BufferedImage img;
+			try {
+				img = ImageIO.read(in);
+			} finally {
+				ResourceHelper.closeResource(in);
+			}
 			img = ImageEngine.trim(img, Color.WHITE, 1);
-			ImageIO.write(img, "png", imageFile);
+			ImageHelper.saveImage(img, imageFile);			
 			StaticInfo staticInfo = StaticInfo.getInstance(ctx, imageFile);
 			staticInfo.setFocusZoneY(ctx, 10);
 			staticInfo.setFocusZoneX(ctx, 499);

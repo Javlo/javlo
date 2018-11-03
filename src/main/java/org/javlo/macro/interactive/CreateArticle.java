@@ -327,4 +327,14 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 	@Override
 	public void init(ContentContext ctx) {
 	}
+	
+	@Override
+	public String getUrl() {
+		return null;
+	}
+	
+	@Override
+	public int getPriority() {
+		return DEFAULT_PRIORITY;
+	}
 }

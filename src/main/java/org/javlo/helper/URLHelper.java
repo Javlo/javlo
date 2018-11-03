@@ -333,7 +333,6 @@ public class URLHelper extends ElementaryURLHelper {
 		return createTransformURL(ctx, url, filter);
 	}
 
-
 	public static String createResourceURL(ContentContext ctx, File file) throws IOException {
 		GlobalContext globalContext = ctx.getGlobalContext();
 		String url = file.getCanonicalPath();
@@ -341,6 +340,15 @@ public class URLHelper extends ElementaryURLHelper {
 		url = StringUtils.removeStart(url, StringHelper.cleanPath(globalContext.getDataFolder()));
 		return createResourceURL(ctx, url);
 	}
+	
+	public static String createFileURL(ContentContext ctx, File file) throws IOException {
+		GlobalContext globalContext = ctx.getGlobalContext();
+		String url = file.getCanonicalPath();
+		url = StringHelper.cleanPath(url);				
+		url = StringUtils.removeStart(url, StringHelper.cleanPath(globalContext.getDataFolder()));
+		return createFileURL(ctx, url);
+	}
+
 
 	public static String createLocalURI(ContentContext ctx, File file) {
 		GlobalContext globalContext = ctx.getGlobalContext();

@@ -1,5 +1,6 @@
 package org.javlo.component.links;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Collection;
@@ -964,5 +965,14 @@ public class SmartPageBean {
 	public boolean isAlreadyDisplayed() {
 		final String KEY = "comp-displayed-"+getId();
 		return ctx.getRequest().getAttribute(KEY) != null;
+	}
+	
+	public String getScreenshotUrl() throws IOException {
+		File file = ctx.getGlobalContext().getPageScreenshotFile(page.getName());
+		if (file.exists()) {
+			return URLHelper.createFileURL(ctx, file);
+		} else {
+			return null;
+		}
 	}
 }

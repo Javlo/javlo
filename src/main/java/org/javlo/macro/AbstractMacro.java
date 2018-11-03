@@ -82,4 +82,14 @@ public abstract class AbstractMacro implements IMacro {
 		return "fa fa-cogs";
 	}
 	
+	@Override
+	public String getUrl() {
+		return null;
+	}
+	
+	@Override
+	public int getPriority() {
+		return DEFAULT_PRIORITY;
+	}
+	
 }

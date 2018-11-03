@@ -512,4 +512,9 @@ public class DefaultTemplate extends Template {
 	public Map<String, String> getQuietableAreaMap() {
 		return Collections.EMPTY_MAP;
 	}
+	
+	@Override
+	public boolean isRealContentFromAnyArea() {
+		return false;
+	}
 }

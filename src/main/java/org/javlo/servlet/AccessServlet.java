@@ -1151,9 +1151,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				logger.fine(requestLabel + " : all process method " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 			}
 
-			if (StringHelper.isTrue(request.getSession().getAttribute(InfoBean.NEW_SESSION_PARAM))) {
-				request.getSession().removeAttribute(InfoBean.NEW_SESSION_PARAM);
-			}
+//			if (StringHelper.isTrue(request.getSession().getAttribute(InfoBean.NEW_SESSION_PARAM))) {
+//				request.getSession().removeAttribute(InfoBean.NEW_SESSION_PARAM);
+//			}
 
 			i18nAccess.resetRequestMap();
 

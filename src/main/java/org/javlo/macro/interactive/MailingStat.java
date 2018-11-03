@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.apache.commons.imaging.formats.tiff.constants.GeoTiffTagConstants;
 import org.javlo.actions.IAction;
 import org.javlo.context.ContentContext;
 import org.javlo.macro.core.IInteractiveMacro;
@@ -85,7 +86,7 @@ public class MailingStat implements IInteractiveMacro, IAction {
 
 	@Override
 	public boolean isAdd() {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -114,7 +115,17 @@ public class MailingStat implements IInteractiveMacro, IAction {
 
 	@Override
 	public String getIcon() {
-		return "fa fa-cogs";
+		return "fa fa-bar-chart";
 	}
-
+	
+	@Override
+	public String getUrl() {
+		return null;
+	}
+	
+	@Override
+	public int getPriority() {
+		return DEFAULT_PRIORITY;
+	}
+	
 }

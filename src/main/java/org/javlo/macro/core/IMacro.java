@@ -6,11 +6,15 @@ import org.javlo.context.ContentContext;
 
 public interface IMacro {
 	
-	public static final String DEFAULT_MAX_MODAL_SIZE = "lg";
+	public static final String DEFAULT_MAX_MODAL_SIZE = "df";
+	
+	public static final String LARGE_MODAL_SIZE = "lg";
 	
 	public static final String MIDDEL_MODAL_SIZE = "md";
 	
 	public static final String SMALL_MODAL_SIZE = "sm";
+	
+	public static int DEFAULT_PRIORITY = 100;
 	
 	public String getName();
 
@@ -45,5 +49,13 @@ public interface IMacro {
 	public String getInfo(ContentContext ctx);
 	
 	public String getIcon();
+	
+	/**
+	 * force url of the macro
+	 * @return default null >> url will be generated for default macro modal
+	 */
+	public String getUrl();
+	
+	public int getPriority();
 	
 }

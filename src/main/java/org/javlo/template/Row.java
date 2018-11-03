@@ -47,7 +47,7 @@ public class Row extends TemplatePart {
 		}
 		Collections.sort(areas, new TemplatePart.SortByPriority());
 		if (areas.size() > 0) {
-			for (int i = 1; i < areas.size() - 1; i++) {
+			for (int i = 0; i < areas.size(); i++) {
 				areas.get(i).setFirst(false);
 				areas.get(i).setLast(false);
 			}

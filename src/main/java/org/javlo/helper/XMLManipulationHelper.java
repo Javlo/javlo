@@ -1090,6 +1090,10 @@ public class XMLManipulationHelper {
 		out.println("__uploadScreenshot = function(canvas) {");
 		out.println("var img    = canvas.toDataURL('image/png');");
 		out.println("var ajaxURL = server+'?webaction=data.uploadscreenshot';");
+		out.println("<c:if test='${not empty param.____screenshot_page}'>");
+		out.println("ajaxURL = ajaxURL+'&page=${param.____screenshot_page}';");
+		out.println("</c:if>");
+		out.println("document.body.innerHTML = '<div style=\"margin: 150px auto; width: 50%; padding: 30px; border-radius: 3px; background-color: #aaaaaa; color: #ffffff; font-size: 32px; text-align: center;\">upload screenshot...</div>';");
 		out.println("var fd=new FormData();");
 		out.println("var fieldName = 'screenshot';");
 		out.println("var blob = new Blob([img], {type: 'image/png'});");
@@ -1100,7 +1104,7 @@ public class XMLManipulationHelper {
 		out.println("window.close();");
 		out.println("return false;");
 		out.println("}");
-		out.println("window.onload = function() { setTimeout(function() { html2canvas(document.querySelector('body')).then(canvas => {__uploadScreenshot(canvas)})}, 3000)}");
+		out.println("window.onload = function() { setTimeout(function() { html2canvas(document.querySelector('body')).then(canvas => {__uploadScreenshot(canvas)})}, 1200)}");
 		out.println("</script><%}%>");
 		out.close();
 		return new String(outStream.toByteArray());

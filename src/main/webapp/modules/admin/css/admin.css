@@ -131,13 +131,3 @@ a.nav {
 	font-size: 1.4em;
 	padding: 0 3px 0 3px;
 }
-
-.screenshot {
-	text-align: center;
-}
-
-.screenshot img {
-	max-height: 240px;
-	max-width: 80%;
-	margin-bottom: 15px;
-}

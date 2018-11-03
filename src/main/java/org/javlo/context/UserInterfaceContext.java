@@ -48,6 +48,10 @@ public class UserInterfaceContext {
 	public static final String KEY = "userInterface";
 
 	private static final UserInterfaceContext FAKE_INSTACE = new UserInterfaceContext();
+	
+	public static final UserInterfaceContext getInstance(ContentContext ctx) {
+		return getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());
+	}
 
 	public static final UserInterfaceContext getInstance(HttpSession session, GlobalContext globalContext) {
 		UserInterfaceContext instance = (UserInterfaceContext) session.getAttribute(KEY);

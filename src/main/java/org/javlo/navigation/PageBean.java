@@ -1,5 +1,7 @@
 package org.javlo.navigation;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
@@ -757,6 +759,15 @@ public class PageBean implements Serializable {
 			}
 		}
 		return types;
+	}
+	
+	public String getScreenshotUrl() throws IOException {
+		File file = ctx.getGlobalContext().getPageScreenshotFile(page.getName());
+		if (file != null && file.exists()) {
+			return URLHelper.createFileURL(ctx, file);
+		} else {
+			return null;
+		}
 	}
 
 }

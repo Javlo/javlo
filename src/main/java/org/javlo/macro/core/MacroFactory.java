@@ -1,5 +1,7 @@
 package org.javlo.macro.core;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -66,6 +68,7 @@ import org.javlo.macro.UndeletePage;
 import org.javlo.macro.UnlinkMirrorComponent;
 import org.javlo.macro.UpDateMacro;
 import org.javlo.macro.ValidAllChildren;
+import org.javlo.macro.bean.MacroGoHome;
 import org.javlo.macro.interactive.ChangeImageFilter;
 import org.javlo.macro.interactive.CreateArticle;
 import org.javlo.macro.interactive.CreateArticleWidthTemplates;
@@ -206,6 +209,28 @@ public class MacroFactory {
 		macros.add(new CommitTemplate());
 		macros.add(new CleanStaticInfoPersistence());
 		macros.add(new DeleteTrackerCache());
+		
+		/** macro bean **/
+		initMacroBean(macros);
+		
+		sort(macros);
+	}
+	
+	public static void sort(List<IMacro> macros) {
+		Collections.sort(macros, new Comparator<IMacro>() {
+			@Override
+			public int compare(IMacro o1, IMacro o2) {
+				return o1.getPriority() - o2.getPriority();
+			}
+		});
+	}
+
+	private static void initMacroBean(List<IMacro> macros) {
+		MacroBean mailingMacro = new MacroBean("mailling", "module=mailing&previewEdit=true&wizardStep=2&box=sendwizard&webaction=mailing.wizard", "fa fa-envelope-open-o");
+		mailingMacro.setModalSize(IMacro.LARGE_MODAL_SIZE);
+		macros.add(mailingMacro);
+		MacroBean homeMacro = new MacroGoHome();
+		macros.add(homeMacro);
 	}
 
 	public IMacro getMacro(String name) {

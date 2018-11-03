@@ -1,7 +1,7 @@
 package org.javlo.macro.interactive;
 
+import java.io.File;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -87,7 +87,12 @@ public class CreateArticleWidthTemplates implements IInteractiveMacro, IAction {
 						js.append(sep + "[");
 						String subSep = "";
 						for (MenuElement child : layout.getChildMenuElements()) {
-							js.append(subSep + "['" + child.getName() + "','" + child.getTitle(ctx) + "']");
+							String screenshotUrl = "";
+							File scFile = ctx.getGlobalContext().getPageScreenshotFile(child.getName());
+							if (scFile.exists()) {
+								screenshotUrl = URLHelper.createFileURL(ctx, scFile);
+							}
+							js.append(subSep + "['" + child.getName() + "','" + child.getTitle(ctx) + "', '"+screenshotUrl+"']");
 							subSep = ",";
 						}
 						js.append("]");
@@ -176,17 +181,17 @@ public class CreateArticleWidthTemplates implements IInteractiveMacro, IAction {
 				MacroHelper.createMonthStructure(ctxLg, yearPage);
 				String mountPageName = MacroHelper.getMonthPageName(ctxLg, yearPage.getName(), articleDate);
 				MenuElement mountPage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctxLg).searchChildFromName(mountPageName);
-				if (mountPage != null) {
+				if (mountPage != null) {					
 					newPage = MacroHelper.createArticlePageName(ctx, mountPage);
 					if (newPage != null) {
-						MenuElement page;
+						MenuElement page;						
 						ContentService content = ContentService.getInstance(ctx.getRequest());
 						if (duplicate) {
 							page = content.getNavigation(ctx).searchChildFromName(ctx.getRequest().getParameter("page"));
 						} else {
 							page = content.getNavigation(ctx).searchChildFromName(ctx.getRequest().getParameter("layout"));
 						}
-						System.out.println(">>>>>>>>> CreateArticleWidthTemplates.performCreate : page = "+page); //TODO: remove debug trace
+						newPage.setTemplateId(page.getTemplateId());
 						ContentContext noAreaCtx = ctx.getContextWithArea(null);
 						ContentElementList contentList = page.getContent(noAreaCtx);
 						Map<String, String> parents = new HashMap<String, String>();
@@ -334,6 +339,16 @@ public class CreateArticleWidthTemplates implements IInteractiveMacro, IAction {
 	@Override
 	public String getIcon() {
 		return "fa fa-file-text-o";
+	}
+	
+	@Override
+	public String getUrl() {
+		return null;
+	}
+	
+	@Override
+	public int getPriority() {
+		return DEFAULT_PRIORITY;
 	}
 
 }

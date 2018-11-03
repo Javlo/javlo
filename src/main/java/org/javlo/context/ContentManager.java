@@ -154,7 +154,6 @@ public class ContentManager {
 	public static String getPath(HttpServletRequest request) {
 		String path = null;
 		String realPath = RequestService.getURI(request);
-
 		if (realPath != null) {
 			GlobalContext.getInstance(request);
 			path = getPath(realPath);

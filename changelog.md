@@ -707,9 +707,14 @@ Security in case of vulnerabilities.
 - upload user as excel file
 - smart-link download image localy
 - minimal interface
+- page screenshot generator
+- preview duplicate component
+- macro sort on priority
+- macro icon
 ### Modified
 - track cache by days in place of month
 - add button unactive by default
+- page properties layout
 ### Fixed
 - edit index.html of template, load CodeMirror
 - reset navigation if navigation renderer change

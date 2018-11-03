@@ -2984,7 +2984,7 @@ public class Template implements Comparable<Template> {
 	 */
 	public boolean isRealContentFromAnyArea() {
 		if (properties.getProperty("real-content-from-any") == null) {
-			return false;
+			return getParent().isRealContentFromAnyArea();
 		} else {
 			return properties.getBoolean("real-content-from-any", false);
 		}
@@ -3110,7 +3110,7 @@ public class Template implements Comparable<Template> {
 		List<Row> outRows = new LinkedList(rows.values());
 		Collections.sort(outRows, new TemplatePart.SortByName());
 		if (outRows.size() > 0) {
-			for (int i = 1; i < outRows.size() - 1; i++) {
+			for (int i = 0; i < outRows.size(); i++) {
 				outRows.get(i).setFirst(false);
 				outRows.get(i).setLast(false);
 			}

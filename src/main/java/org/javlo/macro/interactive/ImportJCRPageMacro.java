@@ -303,6 +303,16 @@ public class ImportJCRPageMacro implements IInteractiveMacro, IAction {
 	public String getIcon() {
 		return "fa fa-cogs";
 	}
+	
+	@Override
+	public String getUrl() {
+		return null;
+	}
+	
+	@Override
+	public int getPriority() {
+		return DEFAULT_PRIORITY;
+	}
 
 	public static void main(String[] args) {
 		System.out.println("***** ImportZIPPageMacro.main : locale = " + getLocalBySuffix("index_fr")); // TODO: remove debug trace

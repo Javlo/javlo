@@ -12,9 +12,10 @@ import java.awt.image.WritableRaster;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,7 +26,6 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
 
-import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.component.core.IImageFilter;
 import org.javlo.context.ContentContextBean;
@@ -119,8 +119,8 @@ public class ImageHelper {
 	}
 
 	/**
-	 * transform a path in a string to a key. this key can be a directory name (
-	 * sp. replace / and \ with _ ).
+	 * transform a path in a string to a key. this key can be a directory name ( sp.
+	 * replace / and \ with _ ).
 	 * 
 	 * @param path
 	 *            a path to a file
@@ -247,31 +247,29 @@ public class ImageHelper {
 
 	/*
 	 * public static void main(String[] args) throws Exception { File path = new
-	 * File("c:\\trans\\faces"); File outPath = new
-	 * File("c:\\trans\\faces\\out"); //File outPath2 = new
-	 * File("c:\\trans\\faces\\out2"); outPath.mkdirs(); //outPath2.mkdirs();
-	 * for (File image : path.listFiles()) { if
+	 * File("c:\\trans\\faces"); File outPath = new File("c:\\trans\\faces\\out");
+	 * //File outPath2 = new File("c:\\trans\\faces\\out2"); outPath.mkdirs();
+	 * //outPath2.mkdirs(); for (File image : path.listFiles()) { if
 	 * (StringHelper.isImage(image.getName())) { try { BufferedImage bufImage =
-	 * ImageIO.read(image); if (bufImage.getType() !=
-	 * BufferedImage.TYPE_INT_ARGB) { BufferedImage tmp = new
-	 * BufferedImage(bufImage.getWidth(), bufImage.getHeight(),
-	 * BufferedImage.TYPE_INT_ARGB); tmp.getGraphics().drawImage(bufImage, 0, 0,
-	 * null); bufImage = tmp; } int[] srcPixels = ((DataBufferInt)
-	 * bufImage.getRaster().getDataBuffer()).getData(); MBFImage img = new
-	 * MBFImage(srcPixels, bufImage.getWidth(), bufImage.getHeight());
+	 * ImageIO.read(image); if (bufImage.getType() != BufferedImage.TYPE_INT_ARGB) {
+	 * BufferedImage tmp = new BufferedImage(bufImage.getWidth(),
+	 * bufImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+	 * tmp.getGraphics().drawImage(bufImage, 0, 0, null); bufImage = tmp; } int[]
+	 * srcPixels = ((DataBufferInt) bufImage.getRaster().getDataBuffer()).getData();
+	 * MBFImage img = new MBFImage(srcPixels, bufImage.getWidth(),
+	 * bufImage.getHeight());
 	 * 
 	 * // A simple Haar-Cascade face detector HaarCascadeDetector det1 = new
 	 * HaarCascadeDetector(); //DetectedFace face1 =
-	 * det1.detectFaces(img.flatten()).get(0);
-	 * System.out.println(image.getName()); for (DetectedFace face :
-	 * det1.detectFaces(img.flatten())) { if (face.getConfidence() > 0) { new
-	 * SimpleDetectedFaceRenderer().drawDetectedFace(img, 10, face); } Point
-	 * point = new
-	 * Point((int)Math.round(face.getShape().minX()+(face.getShape().getWidth()/
+	 * det1.detectFaces(img.flatten()).get(0); System.out.println(image.getName());
+	 * for (DetectedFace face : det1.detectFaces(img.flatten())) { if
+	 * (face.getConfidence() > 0) { new
+	 * SimpleDetectedFaceRenderer().drawDetectedFace(img, 10, face); } Point point =
+	 * new Point((int)Math.round(face.getShape().minX()+(face.getShape().getWidth()/
 	 * 2)),
 	 * (int)Math.round(face.getShape().minY()+(face.getShape().getHeight()/2)));
-	 * System.out.println("x="+point.getX());
-	 * System.out.println("y="+point.getY()); }
+	 * System.out.println("x="+point.getX()); System.out.println("y="+point.getY());
+	 * }
 	 * 
 	 * ImageUtilities.write(img, new File(outPath.getAbsolutePath() + '/' +
 	 * image.getName()));
@@ -280,8 +278,8 @@ public class ImageHelper {
 	 * FileOutputStream(new File(outPath.getAbsolutePath() + '/' +
 	 * image.getName())); ImageOutputStream ios =
 	 * ImageIO.createImageOutputStream(out); ImageWriter writer =
-	 * ImageIO.getImageWritersByFormatName("jpeg").next(); ImageWriteParam param
-	 * = writer.getDefaultWriteParam();
+	 * ImageIO.getImageWritersByFormatName("jpeg").next(); ImageWriteParam param =
+	 * writer.getDefaultWriteParam();
 	 * param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
 	 * param.setCompressionQuality(0.99F); writer.setOutput(ios);
 	 * writer.write(bufImage); ios.close(); out.close(); } catch (Exception e) {
@@ -324,7 +322,7 @@ public class ImageHelper {
 	 */
 	public static ImageSize getExifSize(InputStream in) throws IOException {
 		Map<String, String> exifData = getExifData(in);
-		System.out.println("##### ImageHelper.getExifSize : #exifData = "+exifData.size()); //TODO: remove debug trace
+		System.out.println("##### ImageHelper.getExifSize : #exifData = " + exifData.size()); // TODO: remove debug trace
 		ImageSize imageSize = null;
 		try {
 			imageSize = new ImageSize(Integer.parseInt(exifData.get("PixelXDimension")), Integer.parseInt(exifData.get("PixelYDimension")));
@@ -371,53 +369,57 @@ public class ImageHelper {
 		} else {
 			ImageSize size = null;
 			InputStream in = null;
-			
+
 			try {
 				in = new FileInputStream(file);
-				//size = getExifSize(in);			
-				size = ExifHelper.getExifSize(in);								
+				// size = getExifSize(in);
+				size = ExifHelper.getExifSize(in);
 			} finally {
 				ResourceHelper.closeResource(in);
 			}
-			
-//			if (size == null && StringHelper.isJpeg(file.getName())) {				
-//				try {
-//					in = new FileInputStream(file);
-//					size = getJpegSize(in);					
-//				} finally {
-//					ResourceHelper.closeResource(in);
-//				}
-//			} 
+
+			// if (size == null && StringHelper.isJpeg(file.getName())) {
+			// try {
+			// in = new FileInputStream(file);
+			// size = getJpegSize(in);
+			// } finally {
+			// ResourceHelper.closeResource(in);
+			// }
+			// }
 			if (size == null) {
 				BufferedImage image = ImageIO.read(file);
 				size = new ImageSize(image.getWidth(), image.getHeight());
 			}
 			return size;
-		} 
+		}
 	}
 
-//	public static Map<String, String> getExifData(InputStream in) throws IOException {
-//		String rawData = ResourceHelper.loadStringFromStream(in, Charset.defaultCharset());
-//		Map<String, String> outData = new HashMap<String, String>();
-//		int index = 0;
-//		System.out.println(rawData);
-//		int exifIndex = rawData.indexOf("exif:", index);
-//		while (exifIndex >= 0) {
-//			String exifStr = rawData.substring(exifIndex, rawData.indexOf(' ', exifIndex + "exif:".length()));
-//			index = index + exifStr.length();
-//			String[] exifArray = StringUtils.split(exifStr, '=');
-//			if (exifArray.length == 2) {
-//				outData.put(exifArray[0].replace("exif:", ""), exifArray[1].replace("\"", ""));
-//			}
-//			exifIndex = rawData.indexOf("exif:", index);
-//		}
-//		return outData;
-//	}
-	
+	// public static Map<String, String> getExifData(InputStream in) throws
+	// IOException {
+	// String rawData = ResourceHelper.loadStringFromStream(in,
+	// Charset.defaultCharset());
+	// Map<String, String> outData = new HashMap<String, String>();
+	// int index = 0;
+	// System.out.println(rawData);
+	// int exifIndex = rawData.indexOf("exif:", index);
+	// while (exifIndex >= 0) {
+	// String exifStr = rawData.substring(exifIndex, rawData.indexOf(' ', exifIndex
+	// + "exif:".length()));
+	// index = index + exifStr.length();
+	// String[] exifArray = StringUtils.split(exifStr, '=');
+	// if (exifArray.length == 2) {
+	// outData.put(exifArray[0].replace("exif:", ""), exifArray[1].replace("\"",
+	// ""));
+	// }
+	// exifIndex = rawData.indexOf("exif:", index);
+	// }
+	// return outData;
+	// }
+
 	public static Map<String, String> getExifData(InputStream in) throws IOException {
 		String rawData = ResourceHelper.loadStringFromStream(in, Charset.defaultCharset());
 		Map<String, String> outData = new HashMap<String, String>();
-		int index = 0;	
+		int index = 0;
 		int exifIndex = rawData.indexOf("exif:", index);
 		while (exifIndex >= 0) {
 			String exifStr = rawData.substring(exifIndex, rawData.indexOf(' ', exifIndex + "exif:".length()));
@@ -503,6 +505,24 @@ public class ImageHelper {
 			}
 		}
 		return allContrast;
+	}
+
+	public static void saveImage(BufferedImage image, File file) throws IOException {
+		if (image != null) {
+			if (file.exists()) {
+				file.getParentFile().mkdirs();
+				file.createNewFile();
+			}
+			if (!StringHelper.getFileExtension(file.getName()).equals("png") && image.getType() != BufferedImage.TYPE_INT_RGB) {
+				image = ImageEngine.removeAlpha(image);
+			}
+			OutputStream out = new FileOutputStream(file);
+			try {
+				ImageIO.write(image, StringHelper.getFileExtension(file.getName()), out);
+			} finally {
+				ResourceHelper.closeResource(out);
+			}
+		}
 	}
 
 	public static int getColorCount(BufferedImage image) {

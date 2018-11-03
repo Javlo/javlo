@@ -6,6 +6,7 @@
 .colored-wrapper {	
 	margin: 15px 0;	
 	text-decoration: none;
+	line-height: 40px;
 }
 
 body {
@@ -50,6 +51,14 @@ img, figure {
 
 .first-component h1, .first-component h2, .first-component h3, .first-component h4, .first-component h5, .first-component h6 {
 	margin-top: 0;
+}
+
+.last-component {
+	margin-bottom: 0;
+}
+
+.last-component h1, .last-component h2, .last-component h3, .last-component h4, .last-component h5, .last-component h6 {
+	margin-bottom: 0;
 }
 
 .global-image {

@@ -99,7 +99,7 @@ public class ImageTransformServlet extends FileServlet {
 	public static final String COMPONENT_ID_URL_DIR_PREFIX = "/comp-";
 
 	public static final String HASH_PREFIX = "/h";
-
+	
 	private static final class ImageTransformThread implements Callable<Void> {
 
 		HttpSession session;
@@ -958,6 +958,10 @@ public class ImageTransformServlet extends FileServlet {
 		servletRun++;
 
 		COUNT_ACCESS++;
+		
+		if (DEBUG) {
+			System.out.println(">>> ProcessRequest URI = "+request.getRequestURI());
+		}
 		
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		int trackerNumber = TimeTracker.start(globalContext.getContextKey(), ImageTransformServlet.class.getName());

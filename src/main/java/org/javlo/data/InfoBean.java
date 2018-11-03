@@ -73,7 +73,7 @@ public class InfoBean {
 
 	public static final String REQUEST_KEY = "info";
 
-	public static final String NEW_SESSION_PARAM = "__new_session";
+	//public static final String NEW_SESSION_PARAM = "__new_session";
 
 	private String fakeCurrentURL = null;
 
@@ -1254,13 +1254,13 @@ public class InfoBean {
 
 	}
 
-	public boolean isNewSession() {
-		if (StringHelper.isTrue(ctx.getRequest().getSession().getAttribute(NEW_SESSION_PARAM))) {
-			return true;
-		} else {
-			return ctx.getRequest().getSession().isNew();
-		}
-	}
+//	public boolean isNewSession() {
+//		if (StringHelper.isTrue(ctx.getRequest().getSession().getAttribute(NEW_SESSION_PARAM))) {
+//			return true;
+//		} else {
+//			return ctx.getRequest().getSession().isNew();
+//		}
+//	}
 
 	/**
 	 * this method return true at the first call for current session and false afer.
@@ -1646,7 +1646,7 @@ public class InfoBean {
 		for (String name : macroName) {
 			IMacro macro = factory.getMacro(name);
 			if (macro instanceof IInteractiveMacro && macro.isActive()) {
-				macros.add(new MacroBean(macro.getName(), macro.getInfo(ctx), ((IInteractiveMacro)macro).getModalSize()));
+				macros.add(new MacroBean(macro.getName(), macro.getInfo(ctx), ((IInteractiveMacro)macro).getModalSize(), macro.getPriority()));
 			}
 		}
 		return macros;
@@ -1662,6 +1662,7 @@ public class InfoBean {
 				macros.add(macro);
 			}
 		}
+		MacroFactory.sort(macros);
 		return macros;
 	}
 
@@ -1672,11 +1673,12 @@ public class InfoBean {
 		for (String name : macroName) {
 			if (name.trim().length() > 0) {
 				IMacro macro = factory.getMacro(name);
-				if (!(macro instanceof IInteractiveMacro) && macro.isActive()) {
-					macros.add(new MacroBean(macro.getName(), macro.getInfo(ctx), null));
+				if (macro != null && !(macro instanceof IInteractiveMacro) && macro.isActive()) {
+					macros.add(new MacroBean(macro.getName(), macro.getInfo(ctx), null, macro.getPriority()));
 				}
 			}
 		}
+		MacroBean.sort(macros);
 		return macros;
 	}
 

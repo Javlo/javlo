@@ -4150,5 +4150,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			save();
 		}		
 	}
+	
+	public File getPageScreenshotFile(String pageName) {
+		return new File(URLHelper.mergePath(getStaticFolder(), "_screenshots_pages", pageName+".png"));
+	}
 
 }

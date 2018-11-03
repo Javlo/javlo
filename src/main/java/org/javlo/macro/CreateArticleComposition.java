@@ -349,5 +349,15 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 	public String getIcon() {
 		return "fa fa-cogs";
 	}
+	
+	@Override
+	public String getUrl() {
+		return null;
+	}
+	
+	@Override
+	public int getPriority() {
+		return DEFAULT_PRIORITY;
+	}
 
 }

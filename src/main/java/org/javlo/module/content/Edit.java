@@ -89,7 +89,7 @@ import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
 import org.javlo.utils.TimeTracker;
 import org.javlo.ztatic.FileCache;
-	
+
 public class Edit extends AbstractModuleAction {
 
 	public static String CONTENT_RENDERER = "/jsp/view/content_view.jsp";
@@ -168,7 +168,8 @@ public class Edit extends AbstractModuleAction {
 		String componentRenderer = URLHelper.mergePath(currentModule.getPath() + "/jsp/content.jsp");
 		String newComponentXHTML = ServletHelper.executeJSP(ctx, componentRenderer);
 		/*** DEBUG ***/
-		//ResourceHelper.writeStringToFile(new File("c:/trans/comp.html"), newComponentXHTML);
+		// ResourceHelper.writeStringToFile(new File("c:/trans/comp.html"),
+		// newComponentXHTML);
 		compCtx.clearComponents();
 		if (previousId != null) {
 			ctx.addAjaxZone("comp-child-" + previousId, newComponentXHTML);
@@ -201,32 +202,33 @@ public class Edit extends AbstractModuleAction {
 		ctx.addAjaxZone("preview_command", previewCommandsXHTML);
 	}
 
-//	/**
-//	 * update component
-//	 * 
-//	 * @param ctx
-//	 * @param currentModule
-//	 * @param newId
-//	 *            the id of the component
-//	 * @param previousId
-//	 *            the id, null for update and previous component for insert.
-//	 * @throws Exception
-//	 */
-//	private static void updatePreviewComponent(ContentContext ctx, Module currentModule, String newId, String previousId) throws Exception {
-//		ComponentContext compCtx = ComponentContext.getInstance(ctx.getRequest());
-//		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-//		ContentService content = ContentService.getInstance(globalContext);
-//		IContentVisualComponent comp = content.getComponent(ctx, newId);
-//		compCtx.addNewComponent(comp); // prepare ajax rendering
-//		ctx.getRequest().setAttribute("specific-comp", comp);
-//		String componentRenderer = "/jsp/view/content_view.jsp";
-//		int mode = ctx.getRenderMode();
-//		ctx.setRenderMode(ContentContext.PREVIEW_MODE);
-//		String newComponentXHTML = ServletHelper.executeJSP(ctx, componentRenderer);
-//		ctx.setRenderMode(mode);
-//		compCtx.clearComponents();
-//		ctx.addAjaxZone("cp_" + newId, newComponentXHTML);
-//	}
+	// /**
+	// * update component
+	// *
+	// * @param ctx
+	// * @param currentModule
+	// * @param newId
+	// * the id of the component
+	// * @param previousId
+	// * the id, null for update and previous component for insert.
+	// * @throws Exception
+	// */
+	// private static void updatePreviewComponent(ContentContext ctx, Module
+	// currentModule, String newId, String previousId) throws Exception {
+	// ComponentContext compCtx = ComponentContext.getInstance(ctx.getRequest());
+	// GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+	// ContentService content = ContentService.getInstance(globalContext);
+	// IContentVisualComponent comp = content.getComponent(ctx, newId);
+	// compCtx.addNewComponent(comp); // prepare ajax rendering
+	// ctx.getRequest().setAttribute("specific-comp", comp);
+	// String componentRenderer = "/jsp/view/content_view.jsp";
+	// int mode = ctx.getRenderMode();
+	// ctx.setRenderMode(ContentContext.PREVIEW_MODE);
+	// String newComponentXHTML = ServletHelper.executeJSP(ctx, componentRenderer);
+	// ctx.setRenderMode(mode);
+	// compCtx.clearComponents();
+	// ctx.addAjaxZone("cp_" + newId, newComponentXHTML);
+	// }
 
 	private static boolean nameExist(String name, ContentContext ctx, ContentService content) throws Exception {
 		MenuElement page = content.getNavigation(ctx);
@@ -293,11 +295,11 @@ public class Edit extends AbstractModuleAction {
 		public IContentVisualComponent getComponent() {
 			return comp;
 		}
-		
+
 		public String getFontAwesome() {
 			return comp.getFontAwesome();
 		}
-		
+
 		public String getGroup() {
 			return comp.getGroup();
 		}
@@ -424,9 +426,8 @@ public class Edit extends AbstractModuleAction {
 	private static void loadComponentList(ContentContext ctx) throws Exception {
 		Collection<Edit.ComponentWrapper> comps = ComponentFactory.getComponentForDisplay(ctx, false);
 		/*
-		 * for (IContentComponentsList iContentComponentsList : comps) {
-		 * System.out .println(
-		 * "***** Edit.loadComponentList : iContentComponentsList = "
+		 * for (IContentComponentsList iContentComponentsList : comps) { System.out
+		 * .println( "***** Edit.loadComponentList : iContentComponentsList = "
 		 * +iContentComponentsList); //TODO: remove debug trace }
 		 */
 		ctx.getRequest().setAttribute("components", comps);
@@ -588,15 +589,20 @@ public class Edit extends AbstractModuleAction {
 			ctx.getRequest().setAttribute("noinsert", "true");
 		}
 
+		Map<String, String> screenshortParam = new HashMap<String, String>();
+		screenshortParam.put(ContentContext.TAKE_SCREENSHOT, "true");
+		screenshortParam.put(ContentContext.TAKE_SCREENSHOT_PAGE_NAME, ctx.getCurrentPage().getName());
+		ctx.getRequest().setAttribute("takeSreenshotUrl", URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), screenshortParam));
+
 		/** COMPONENT LIST **/
 		loadComponentList(ctx);
 
 		/** CONTENT **/
 		/*
 		 * ComponentContext compCtx = ComponentContext.getInstance(request);
-		 * IContentComponentsList elems = ctx.getCurrentPage().getContent(ctx);
-		 * if (compCtx.getNewComponents().length == 0) { while
-		 * (elems.hasNext(ctx)) { compCtx.addNewComponent(elems.next(ctx)); } }
+		 * IContentComponentsList elems = ctx.getCurrentPage().getContent(ctx); if
+		 * (compCtx.getNewComponents().length == 0) { while (elems.hasNext(ctx)) {
+		 * compCtx.addNewComponent(elems.next(ctx)); } }
 		 */
 
 		/** page properties **/
@@ -900,8 +906,8 @@ public class Edit extends AbstractModuleAction {
 		if (comp != null) {
 			comp.markAsNew(ctx);
 			comp.setRepeat(false);
-//			comp.setPreviousComponent(ComponentHelper.getPreviousComponent(comp, ctx));
-//			comp.setNextComponent(ComponentHelper.getNextComponent(comp, ctx));
+			// comp.setPreviousComponent(ComponentHelper.getPreviousComponent(comp, ctx));
+			// comp.setNextComponent(ComponentHelper.getNextComponent(comp, ctx));
 			ComponentHelper.updateNextAndPrevious(ctx, comp.getPage(), comp.getArea());
 			if (!type.equals("clipboard") && StringHelper.isTrue(rs.getParameter("init", null))) {
 				comp.initContent(ctx);
@@ -926,7 +932,7 @@ public class Edit extends AbstractModuleAction {
 				ctx.setRenderMode(Integer.parseInt(mode));
 			}
 			ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, newId);
-			
+
 			ctx.getAjaxInsideZone().put(selecterPrefix + area, ComponentHelper.renderArea(ctx, areaKey));
 		}
 		ctx.resetCurrentPageCached();
@@ -943,8 +949,7 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static final String performDelete(ContentContext ctx, HttpServletRequest request, ContentService content, EditContext editContext, HttpServletResponse response, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
-		
-		
+
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
 			return null;
@@ -1042,7 +1047,7 @@ public class Edit extends AbstractModuleAction {
 		selecterPrefix = StringHelper.neverNull(selecterPrefix);
 		Template template = TemplateFactory.getTemplate(ctx, comp.getPage());
 		if (template != null && template.getAreasMap() != null) {
-			String areaHTMLid = template.getAreasMap().get(comp.getArea());			
+			String areaHTMLid = template.getAreasMap().get(comp.getArea());
 			ctx.getAjaxInsideZone().put(selecterPrefix + areaHTMLid, ComponentHelper.renderArea(ctx, comp.getArea()));
 		}
 	}
@@ -1069,7 +1074,7 @@ public class Edit extends AbstractModuleAction {
 		List<String> components = requestService.getParameterListValues("components", Collections.EMPTY_LIST);
 
 		// boolean needRefresh = false;
-				
+
 		for (String compId : components) {
 			IContentVisualComponent elem = content.getComponent(ctx, compId);
 			if (elem != null && StringHelper.isTrue(requestService.getParameter("id-" + elem.getId(), null))) {
@@ -1088,12 +1093,12 @@ public class Edit extends AbstractModuleAction {
 					if (ctx.isEditPreview()) {
 						componentContext.addNewComponent(elem);
 					}
-					
+
 					if (ctx.isEditPreview() && componentContext.getNewComponents() != null && componentContext.getNewComponents().size() == 1) {
 						InfoBean.getCurrentInfoBean(ctx).setTools(false);
 						ctx.getRequest().setAttribute("noinsert", "true");
 					}
-					
+
 					String rawValue = requestService.getParameter("raw_value_" + elem.getId(), null);
 					if (rawValue != null) { // if elem not modified check
 											// modification via rawvalue
@@ -1118,7 +1123,7 @@ public class Edit extends AbstractModuleAction {
 
 			if (elem.isModify()) {
 				elem.stored();
-			}			
+			}
 		}
 
 		// ctx.setNeedRefresh(needRefresh);
@@ -1146,7 +1151,7 @@ public class Edit extends AbstractModuleAction {
 				ctx.setClosePopup(true);
 			}
 		}
-		
+
 		if (ctx.isEditPreview() && componentContext.getNewComponents() != null && componentContext.getNewComponents().size() == 1) {
 			InfoBean.getCurrentInfoBean(ctx).setTools(false);
 			ctx.getRequest().setAttribute("noinsert", "true");
@@ -1407,16 +1412,16 @@ public class Edit extends AbstractModuleAction {
 
 			String path = ctx.getPath();
 			String title = requestService.getParameter("name", null);
-			
+
 			if (StringHelper.isEmpty(title)) {
 				int index = 1;
-				title = ctx.getCurrentPage().getName()+"_"+index;
+				title = ctx.getCurrentPage().getName() + "_" + index;
 				while (content.getNavigation(ctx).searchChildFromName(title) != null) {
 					index++;
-					title = ctx.getCurrentPage().getName()+"_"+index;
+					title = ctx.getCurrentPage().getName() + "_" + index;
 				}
 			}
-			
+
 			String nodeName = StringHelper.createFileName(title);
 			String parentName = requestService.getParameter("parent", null);
 
@@ -1466,7 +1471,7 @@ public class Edit extends AbstractModuleAction {
 						if (globalContext.hasComponent(Title.class)) {
 							initContent.add(new ComponentBean(title, Title.TYPE, elem.getName(), lg, false, ctx.getCurrentEditUser()));
 						} else if (globalContext.hasComponent(Heading.class)) {
-							initContent.add(new ComponentBean(title, Heading.TYPE, Heading.TEXT+'='+title, lg, false, ctx.getCurrentEditUser()));
+							initContent.add(new ComponentBean(title, Heading.TYPE, Heading.TEXT + '=' + title, lg, false, ctx.getCurrentEditUser()));
 						}
 					}
 					content.createContent(ctx, elem, initContent, "0", false);
@@ -1660,14 +1665,14 @@ public class Edit extends AbstractModuleAction {
 			// }
 
 			// trick for PortletManager to clear view data, but should be
-			// generalized in some PublishManager			
+			// generalized in some PublishManager
 
 			ReverseLinkService.getInstance(globalContext).clearCache();
 
 			globalContext.resetURLFactory();
 
 			FileCache.getInstance(application).clearPDF(ctx);
-			
+
 			AdminAction.clearCache(ctx);
 
 			TimeTracker.end(globalContext.getContextKey(), "publish", trackerNumber);
@@ -1877,6 +1882,41 @@ public class Edit extends AbstractModuleAction {
 		return null;
 	}
 
+	public static String performDuplicate(RequestService rs, ContentContext ctx, EditContext editCtx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		IContentVisualComponent comp = content.getComponent(ctx, rs.getParameter("id"));
+		
+		MenuElement targetPage = NavigationHelper.searchPage(ctx, rs.getParameter("pageCompID"));
+		if (targetPage == null) {
+			targetPage = ctx.getCurrentPage();
+		}
+		
+		if (comp == null) {
+			return "component not found : " + rs.getParameter("id");
+		} else {
+			content.createContent(ctx, comp.getComponentBean(), comp.getId(), true);
+			if (ctx.isAjax()) {
+				String id = rs.getParameter("id");
+				ctx.addAjaxZone("comp-" + id, "");
+				ctx.addAjaxZone("comp-child-" + id, "");
+				ctx.addAjaxInsideZone("insert-line-" + id, "");
+
+				String selecterPrefix = "";
+				if (ctx.getCurrentPage().isChildrenAssociation()) {
+					if (rs.getParameter("pageCompID", null) != null) {
+						selecterPrefix = "#page_" + rs.getParameter("pageCompID", "#ID_NOT_DEFINED") + " #";
+					}
+					ctx.setCurrentPageCached(targetPage);
+				}
+				updateArea(ctx, selecterPrefix, comp);
+				if (ctx.isEditPreview()) {
+					ctx.setClosePopup(true);
+				}
+			}
+			return null;
+		}
+	}
+
 	public static String performPastePage(RequestService rs, ContentContext ctx, GlobalContext globalContext, EditContext editCtx, ContentService content, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String msg = null;
 
@@ -1899,7 +1939,7 @@ public class Edit extends AbstractModuleAction {
 			ctx = ctx.getContextWithArea(null);
 		}
 		IContentVisualComponent parent = content.getComponent(ctx, parentId);
-		
+
 		int c = 0;
 		String latestArea = null;
 		while (elems.hasNext(newCtx)) {
@@ -2108,9 +2148,9 @@ public class Edit extends AbstractModuleAction {
 		if (ctx.getCurrentPage().isChildrenAssociation()) {
 			fromPage = comp.getPage();
 		}
-		
+
 		if (comp == null) {
-			return "component not found : "+compId;
+			return "component not found : " + compId;
 		}
 
 		String fromArea = comp.getArea();
@@ -2277,7 +2317,7 @@ public class Edit extends AbstractModuleAction {
 			SharedContent sharedContent = sharedContentService.getSharedContent(ctx, sharedData);
 			if (sharedContent == null) {
 				String activeProvider = StringHelper.collectionToString(sharedContentService.getAllActiveProvider(ctx));
-				String msg = "error : shared content not found : " + sharedData ;
+				String msg = "error : shared content not found : " + sharedData;
 				logger.warning(msg + " activeProvider : " + activeProvider);
 				return msg;
 			}
@@ -2332,24 +2372,33 @@ public class Edit extends AbstractModuleAction {
 				if (mode != null) {
 					ctx.setRenderMode(Integer.parseInt(mode));
 				}
-				
+
 				ctx.getAjaxInsideZone().put(selecterPrefix + area, ComponentHelper.renderArea(ctx, areaKey));
-//				
-//				String specialRenderer = ctx.getCurrentTemplate().getSpecialAreaRenderer();
-//				System.out.println(">>>>>>>>> Edit.performInsertShared : 1.specialRenderer = "+specialRenderer); //TODO: remove debug trace
-//				
-//				URLHelper.mergePath();
-//				
-//				specialRenderer = URLHelper.mergePath(ctx.getCurrentTemplate().getLocalWorkTemplateFolder(),ctx.getCurrentTemplate().getFolder(ctx.getGlobalContext()), specialRenderer);
-//				System.out.println(">>>>>>>>> Edit.performInsertShared : 2.specialRenderer = "+specialRenderer); //TODO: remove debug trace				
-//				if (specialRenderer == null) {
-//					ctx.getAjaxInsideZone().put(selecterPrefix + area, ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey));	 
-//				} else {
-//					specialRenderer = URLHelper.mergePath(ctx.getCurrentTemplate().getWorkTemplateFolder(), specialRenderer);
-//					System.out.println(">>>>>>>>> Edit.performInsertShared : 2.specialRenderer = "+specialRenderer); //TODO: remove debug trace
-//					ctx.getAjaxInsideZone().put(selecterPrefix + area, ServletHelper.executeJSP(ctx, specialRenderer+"?area=" + areaKey));
-//				}
-				logger.info("update area : " + selecterPrefix + area);				
+				//
+				// String specialRenderer = ctx.getCurrentTemplate().getSpecialAreaRenderer();
+				// System.out.println(">>>>>>>>> Edit.performInsertShared : 1.specialRenderer =
+				// "+specialRenderer); //TODO: remove debug trace
+				//
+				// URLHelper.mergePath();
+				//
+				// specialRenderer =
+				// URLHelper.mergePath(ctx.getCurrentTemplate().getLocalWorkTemplateFolder(),ctx.getCurrentTemplate().getFolder(ctx.getGlobalContext()),
+				// specialRenderer);
+				// System.out.println(">>>>>>>>> Edit.performInsertShared : 2.specialRenderer =
+				// "+specialRenderer); //TODO: remove debug trace
+				// if (specialRenderer == null) {
+				// ctx.getAjaxInsideZone().put(selecterPrefix + area,
+				// ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey));
+				// } else {
+				// specialRenderer =
+				// URLHelper.mergePath(ctx.getCurrentTemplate().getWorkTemplateFolder(),
+				// specialRenderer);
+				// System.out.println(">>>>>>>>> Edit.performInsertShared : 2.specialRenderer =
+				// "+specialRenderer); //TODO: remove debug trace
+				// ctx.getAjaxInsideZone().put(selecterPrefix + area,
+				// ServletHelper.executeJSP(ctx, specialRenderer+"?area=" + areaKey));
+				// }
+				logger.info("update area : " + selecterPrefix + area);
 			}
 		}
 		return null;

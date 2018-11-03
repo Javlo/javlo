@@ -1343,10 +1343,14 @@ public class ResourceHelper {
 			file.createNewFile();
 		}
 		OutputStream out = new FileOutputStream(file);
-		for (byte element : content) {
-			out.write(element);
+		try {
+			for (byte element : content) {
+				out.write(element);
+			}
+			out.flush();
+		} finally {
+			ResourceHelper.closeResource(out);
 		}
-		out.close();
 	}
 
 	public static final void writeStringToFile(File file, String content, String encoding) throws IOException {
