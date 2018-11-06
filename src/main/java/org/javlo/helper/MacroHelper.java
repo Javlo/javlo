@@ -42,7 +42,6 @@ import org.javlo.component.text.WysiwygParagraph;
 import org.javlo.component.title.Heading;
 import org.javlo.component.title.SubTitle;
 import org.javlo.component.title.Title;
-import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;

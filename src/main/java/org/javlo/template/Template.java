@@ -2584,12 +2584,30 @@ public class Template implements Comparable<Template> {
 			/** prepare merging of all sass component class **/			
 			if (componentFolderTarget.exists() && componentFolderTarget.isDirectory()) {
 				Iterator<File> cssFiles = FileUtils.iterateFiles(componentFolderTarget, new String[] { "css", "scss" }, true);
-				BufferedWriter outSassImport = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(URLHelper.mergePath(templateTarget.getAbsolutePath(), "_components.scss")))));
+				Collection<File> fixedFiles = new LinkedList<>();
+				while (cssFiles.hasNext()) {
+					File file = cssFiles.next();
+					fixedFiles.add(file);
+				}
+				File componentMergeFile = new File(URLHelper.mergePath(templateTarget.getAbsolutePath(), "_components.scss"));
+				List<File> componentsList = new LinkedList<File>();
+				BufferedWriter outSassImport = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(componentMergeFile)));
 				try {
-					while (cssFiles.hasNext()) {
-						File cssFile = cssFiles.next();
-						outSassImport.write("@import '"+DYNAMIC_COMPONENTS_PROPERTIES_FOLDER+"/"+cssFile.getName()+"';");
-						outSassImport.newLine();
+					for (File cssFile : fixedFiles) {
+						if (StringHelper.getFileExtension(cssFile.getName()).equalsIgnoreCase("css")) {
+							File sassFile = new File(StringHelper.getFileNameWithoutExtension(cssFile.getAbsolutePath())+".scss");
+							if (sassFile.exists()) {
+								sassFile.delete();
+							}
+							cssFile.renameTo(sassFile);
+							cssFile = sassFile;
+						}
+						if (!componentsList.contains(cssFile)) {
+							String line = "@import '"+DYNAMIC_COMPONENTS_PROPERTIES_FOLDER+"/"+cssFile.getName()+"';";
+							outSassImport.write(line);
+							outSassImport.newLine();
+							componentsList.add(cssFile);
+						}
 					}
 				} finally {
 					ResourceHelper.closeResource(outSassImport);

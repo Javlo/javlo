@@ -92,6 +92,7 @@ import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 import org.javlo.utils.MemoryBean;
 import org.javlo.ztatic.StaticInfo;
+import org.python.antlr.ast.Continue;
 
 public class DataAction implements IAction {
 
@@ -486,7 +487,15 @@ public class DataAction implements IAction {
 		}
 
 		if (!galleryFound && (config.isCreateContentOnImportImage() || content)) {
-			ComponentBean multimedia = new ComponentBean(Multimedia.TYPE, "--12,128-" + galleryRelativeFolder.replaceFirst(globalContext.getStaticConfig().getStaticFolder(), "") + "---", ctx.getRequestContentLanguage());
+			
+			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+			PrintStream out = new PrintStream(outStream);
+			out.println(Multimedia.PAGE_SIZE+"="+128);
+			out.println(Multimedia.MAX_LIST_SIZE+"="+12);
+			out.println(Multimedia.ROOT_FOLDER+"="+galleryRelativeFolder.replaceFirst(globalContext.getStaticConfig().getStaticFolder(), "") );
+			out.close();
+			ComponentBean multimedia = new ComponentBean(Multimedia.TYPE, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
+//			ComponentBean multimedia = new ComponentBean(Multimedia.TYPE, "--12,128-" + galleryRelativeFolder.replaceFirst(globalContext.getStaticConfig().getStaticFolder(), "") + "---", ctx.getRequestContentLanguage());
 			multimedia.setStyle(Multimedia.IMAGE);
 
 			Collection<IContentVisualComponent> titles = ctx.getCurrentPage().getContentByType(ctx, Title.TYPE);

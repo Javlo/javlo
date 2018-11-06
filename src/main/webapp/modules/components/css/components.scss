@@ -1,11 +1,11 @@
-.main-components {
-	margin-top: 15px;
+.maincontent .content {
 	ul {
 		clear: both;
 		overflow: hidden;
 	}
 	textarea, iframe {
-		width: 100%;
+		margin: 0 10%;
+		width: 80%;
 		height: 65vh;
 	}
 }

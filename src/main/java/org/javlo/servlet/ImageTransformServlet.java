@@ -279,7 +279,7 @@ public class ImageTransformServlet extends FileServlet {
 
 	@Override
 	public void destroy() {
-		executor.shutdownNow();
+		executor.shutdownNow(); 
 		super.destroy();
 	}
 

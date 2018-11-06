@@ -284,7 +284,14 @@ public class ImportExternalPage implements IInteractiveMacro, IAction {
 		} else {
 			parent = MacroHelper.addContentIfNotExist(ctx, ctx.getCurrentPage(), parent, Heading.TYPE, "depth=2\ntext=Gallery");
 		}
-		parent = MacroHelper.addContentIfNotExist(ctx, ctx.getCurrentPage(), parent, Multimedia.TYPE, "%%0,16%" + folder + "%%%Images");
+		
+		outStream = new ByteArrayOutputStream();
+		out = new PrintStream(outStream);
+		out.println(Multimedia.PAGE_SIZE+"=16");
+		out.println(Multimedia.MAX_LIST_SIZE+"=0");
+		out.println(Multimedia.ROOT_FOLDER+"="+folder );
+		out.close();
+		parent = MacroHelper.addContentIfNotExist(ctx, ctx.getCurrentPage(), parent, Multimedia.TYPE, new String(outStream.toByteArray()));
 		ContentService.getInstance(ctx.getGlobalContext()).getComponent(ctx, parent).setRenderer(ctx, "blocs");
 
 		ctx.setClosePopup(true);

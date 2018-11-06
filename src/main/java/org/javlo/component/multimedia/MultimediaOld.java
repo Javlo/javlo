@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.text.ParseException;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,7 +18,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
 import org.javlo.actions.IAction;
@@ -31,16 +28,14 @@ import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IVideo;
 import org.javlo.component.image.IImageTitle;
-import org.javlo.component.properties.AbstractPropertiesComponent;
+import org.javlo.component.meta.TimeRangeComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.InfoBean;
-import org.javlo.data.taxonomy.ITaxonomyContainer;
-import org.javlo.data.taxonomy.TaxonomyService;
+import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.ElementaryURLHelper;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.PaginationContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -52,7 +47,6 @@ import org.javlo.helper.filefilter.SoundFileFilter;
 import org.javlo.helper.filefilter.VideoOrURLFileFilter;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.module.file.FileAction;
-import org.javlo.module.file.FileBean;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
@@ -75,15 +69,11 @@ import org.javlo.ztatic.StaticInfoBean;
  * 
  * @author pvandermaesen
  */
-public class Multimedia extends AbstractPropertiesComponent implements IImageTitle, IStaticContainer, IAction, ITaxonomyContainer {
-	
-	public static final String ROOT_FOLDER = "root-folder";
+public class MultimediaOld extends TimeRangeComponent implements IImageTitle, IStaticContainer, IAction {
 
-	public static final String MAX_LIST_SIZE = "max-list-size";
+	private static final String MANORD_SUFFIX = "]]";
 
-	public static final String PAGE_SIZE = "page-size";
-
-	private static final String VALUE_SEPARATOR = "%";
+	private static final String MANORD_PREFIX = "MANORD[[";
 
 	public static final String TYPE = "multimedia";
 
@@ -105,12 +95,10 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 	public static final String SOUND = "sound";
 	public static final String VIDEO = "video";
 	public static final String EMBED = "embed";
-	
-	private static final String TAXONOMY = "taxonomy";
 
 	private List<File> multimediaFiles = null;
 
-	protected boolean acceptStaticInfo(ContentContext ctx, StaticInfo info) throws IOException {
+	protected boolean acceptStaticInfo(ContentContext ctx, StaticInfo info) {
 
 		Collection<String> tags = getTags();
 		if (tags.size() > 0) {
@@ -160,41 +148,8 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 				return false;
 			}
 		}
-		
-		if (ctx.getGlobalContext().getAllTaxonomy(ctx).isActive()) {
-			TaxonomyService taxonomyService = TaxonomyService.getInstance(ctx);
-			if (getTaxonomy().size() > 0) {
-				if (!taxonomyService.isMatch(this, new FileBean(ctx, info.getFile()))) {
-					return false;
-				}
-			}
-		}
 
 		return (info.isShared(ctx) || !isDisplayOnlyShared()) && afterAccept && beforeAccept;
-	}
-	
-	public Date getStartDate() {
-		String date = getFieldValue("start-date");
-		if (!StringHelper.isEmpty(date)) {
-			try {
-				return StringHelper.parseTime(date);
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-		}
-		return null;
-	}
-	
-	public Date getEndDate() {
-		String date = getFieldValue("end-date");
-		if (!StringHelper.isEmpty(date)) {
-			try {
-				return StringHelper.parseTime(date);
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-		}
-		return null;
 	}
 
 	protected boolean acceptResource(ContentContext ctx, MultimediaResource info) {
@@ -449,20 +404,30 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 	}
 
 	public String getCurrentRootFolder() {
-		return getFieldValue(ROOT_FOLDER);
+		String[] values = getValue().split(VALUE_SEPARATOR);
+		if (values.length >= 4) {
+			if (!values[3].startsWith("/")) {
+				values[3] = '/' + values[3];
+			}
+			return values[3];
+		} else {
+			return "/";
+		}
 	}
-	
+
 	public void setCurrentRootFolder(ContentContext ctx, String folder) {
-		setFieldValue(ROOT_FOLDER, folder);
+		String[] values = getValue().split(VALUE_SEPARATOR);
+		if (values.length >= 4) {
+			values[3] = folder;
+		} else {
+			values = new String[] { "", "", "", folder };
+		}
+		setValue(StringHelper.arrayToString(values, VALUE_SEPARATOR));
 		File targetFolder = new File(getFilesDirectory(ctx));
 		if (!targetFolder.exists()) {
 			targetFolder.mkdirs();
 			logger.info("create folder  : " + targetFolder);
 		}
-	}
-	
-	protected boolean isSessionTaxonomy(ContentContext ctx) {
-		return StringHelper.isTrue(getFieldValue("session-taxonomy"), false);
 	}
 
 	@Override
@@ -525,30 +490,6 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 //		} else {
 //			return null;
 //		}
-	}
-	
-	private String getTaxonomiesInputName() {
-		return "taxonomie-" + getId();
-	}
-	
-	private String getInputStartDateName() {
-		return getInputName("start-date");
-	}
-	
-	private String getInputEndDateName() {
-		return getInputName("end-date");
-	}
-	
-	public String getInputTag(String tag) {
-		return "__" + getId() + ID_SEPARATOR + tag;
-	}
-	
-	private void setTaxonomy(Collection<String> taxonomy) {
-		setFieldValue(TAXONOMY, StringHelper.collectionToString(taxonomy));
-	}
-	
-	public Set<String> getTaxonomy() {
-		return StringHelper.stringToSet(getFieldValue(TAXONOMY));
 	}
 
 	@Override
@@ -616,16 +557,6 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 		out.println(i18nAccess.getText("content.goto-static"));
 		out.println("</a>");
 		out.println("</div>");
-		
-		if (globalContext.getAllTaxonomy(ctx).isActive()) {
-			String taxoName = getTaxonomiesInputName();
-			out.println("<fieldset class=\"taxonomy\"><legend><label for=\"" + taxoName + "\">" + i18nAccess.getText("taxonomy") + "</label></legend>");
-			out.println("<div class=\"line reverse\">");
-			out.println(XHTMLHelper.getCheckbox(getInputName("taxosession"), isSessionTaxonomy(ctx)));
-			out.println("<label for=\"" + getInputName("taxosession") + "\">" + i18nAccess.getText("content.page-teaser.session-taxonomy", "session taxonomy") + "</label></div>");
-			out.println(globalContext.getAllTaxonomy(ctx).getSelectHtml(taxoName, "form-control chosen-select", getTaxonomy(), true));
-			out.println("</fieldset>");
-		}
 
 		out.println("<div class=\"row\">");
 		if (isDateRange()) {
@@ -794,7 +725,7 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 	}
 
 	public String getInputPageSizeName() {
-		return "__" + getId() + ID_SEPARATOR + PAGE_SIZE;
+		return "__" + getId() + ID_SEPARATOR + "page-size";
 	}
 
 	public String getInputTitle() {
@@ -822,37 +753,77 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 	}
 
 	public int getMaxListSize() {
-		String maxListSize = getFieldValue(MAX_LIST_SIZE);
-		if (StringHelper.isEmpty(maxListSize)) {
-			return 0;
-		} else {
-			return Integer.parseInt(maxListSize);
+		int maxListSize = 16;
+		try {
+			String maxListSizeStr = getValue().split(VALUE_SEPARATOR)[2];
+			if (maxListSizeStr.contains(",")) {
+				maxListSize = Integer.parseInt(maxListSizeStr.split(",")[1]);
+			} else {
+				maxListSize = Integer.parseInt(maxListSizeStr);
+			}
+		} catch (Throwable t) {
+			logger.warning(t.getMessage());
 		}
+		return maxListSize;
 	}
 
 	public int getPageSize() {
-		String pageSize = getFieldValue(PAGE_SIZE);
-		if (StringHelper.isEmpty(pageSize)) {
-			return 0;
-		} else {
-			return Integer.parseInt(pageSize);
+		int pageSize = 0;
+		try {
+			String pageSizeStr = getValue().split(VALUE_SEPARATOR)[2];
+			if (pageSizeStr.contains(",")) {
+				pageSize = Integer.parseInt(pageSizeStr.split(",")[0]);
+			}
+		} catch (Throwable t) {
+			logger.warning(t.getMessage());
 		}
+		return pageSize;
 	}
 
 	public List<String> getFileOrder() {
-		return StringHelper.stringToCollection(getFieldValue("files-order"), ",");
+		List<String> orderRaw = StringHelper.extractItem(getValue(), MANORD_PREFIX, MANORD_SUFFIX);
+		if (orderRaw.size() > 0) {
+			return StringHelper.stringToCollection(orderRaw.get(0), ",");
+		} else {
+			return new LinkedList<String>();
+		}
 	}
 
 	public void setFileOrder(List<String> order) {
-		setFieldValue("files-order", StringHelper.collectionToString(order, ","));
+		setValue(setFileOrder(order, getValue()));
 	}
 	
+	public String setFileOrder(List<String> order, String value) {
+		if (value.contains(MANORD_PREFIX)) {
+			value = StringHelper.replaceItem(value, StringHelper.collectionToString(order, ","), MANORD_PREFIX, MANORD_SUFFIX);
+		} else {
+			value = value + MANORD_PREFIX + StringHelper.collectionToString(order, ",") + MANORD_SUFFIX;
+		}
+		return value;
+	}
+
 	public List<String> getTags() {
-		return StringHelper.stringToCollection(getFieldValue("tags"), ",");
+		String[] data = getValue().split(VALUE_SEPARATOR);
+		if (data.length > 5) {
+			String rawTags = data[5];
+			return StringHelper.stringToCollection(rawTags);
+		} else {
+			return Collections.EMPTY_LIST;
+		}
 	}
 
 	public String getTitle() {
-		return getFieldValue("title");
+		String[] data = getValue().split(VALUE_SEPARATOR);
+		if (data.length > 6) {
+			String title = data[6];
+			int orderPos = title.indexOf(MANORD_PREFIX);
+			if (orderPos>=0) {
+				title = title.substring(0, orderPos);
+			}
+			return title;
+		} else {
+			return "";
+		}
 	}
 
 	protected String getMultimediaFilePath(ContentContext ctx, String lg, File file) {
@@ -931,6 +902,41 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 			String fileName = ResourceHelper.removeDataFolderDir(ctx.getGlobalContext(), resource.getPath());
 			resource.setURL(fileName);
 			resource.setPreviewURL(fileName);
+			return resource;
+		}
+	}
+
+	protected MultimediaResource _getFirstResource(ContentContext ctx) throws Exception {
+		Collection<File> mulFiles = getAllMultimediaFiles(ctx);
+		if (mulFiles.size() == 0) {
+			return null;
+		} else {
+			MultimediaResource resource = new MultimediaResource();
+
+			ContentContext lgCtx = ctx.getContextWithContent(getPage());
+
+			File file = mulFiles.iterator().next();
+
+			StaticInfo info = StaticInfo.getInstance(lgCtx, file);
+
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+
+			String fileName = ResourceHelper.removeDataFolderDir(globalContext, file.getAbsolutePath());
+
+			resource.setTitle(info.getTitle(lgCtx));
+			resource.setRelation(getHTMLRelation(ctx));
+			resource.setLocation(info.getLocation(ctx));
+			resource.setDescription(StringHelper.removeTag(info.getFullDescription(lgCtx)));
+			resource.setDate(info.getDate(ctx));
+			resource.setShortDate(StringHelper.renderDate(resource.getDate(), globalContext.getShortDateFormat()));
+			resource.setMediumDate(StringHelper.renderDate(resource.getDate(), globalContext.getMediumDateFormat()));
+			resource.setFullDate(StringHelper.renderDate(resource.getDate(), globalContext.getFullDateFormat()));
+
+			resource.setIndex(info.getAccessFromSomeDays(lgCtx));
+
+			resource.setURL(fileName);
+			resource.setPreviewURL(fileName);
+
 			return resource;
 		}
 	}
@@ -1149,41 +1155,19 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 		return 0;
 	}
 
+	@Override
+	protected void init() throws ResourceNotFoundException {
+		initDate = false;
+		super.init();
+	}
+
 	protected boolean isImported(ContentContext ctx) {
 		return getDirSelected().contains(ctx.getGlobalContext().getStaticConfig().getImportFolder() + '/');
 	}
 
 	@Override
-	public void init(ComponentBean bean, ContentContext ctx) throws Exception {
+	protected void init(ComponentBean bean, ContentContext ctx) throws Exception {
 		super.init(bean, ctx);
-		/**
-		 * convert old version
-		 */
-		if (getValue().contains(VALUE_SEPARATOR)) {
-			String[] values = getValue().split(VALUE_SEPARATOR);
-			if (values.length>3) {
-				setCurrentRootFolder(ctx, values[3]);
-				String maxListSizeStr = getValue().split(VALUE_SEPARATOR)[2];
-				if (maxListSizeStr.contains(",")) {
-					setFieldValue(MAX_LIST_SIZE, maxListSizeStr.split(",")[1]);
-				} else {
-					setFieldValue(MAX_LIST_SIZE, maxListSizeStr);
-				}
-				String pageSizeStr = getValue().split(VALUE_SEPARATOR)[2];
-				if (pageSizeStr.contains(",")) {
-					setFieldValue(PAGE_SIZE, pageSizeStr.split(",")[0]);
-				}
-				if (values.length > 6) {
-					String title = values[6];
-					int orderPos = title.indexOf("MANORD[[");
-					if (orderPos>=0) {
-						title = title.substring(0, orderPos);
-					}
-					setFieldValue("title", title);
-				}
-			}
-		}
-		
 		if (isImported(ctx) && getPage() != null && ctx.isAsModifyMode()) {
 			String importFolder = getImportFolderPath(ctx).replaceFirst("/" + ctx.getGlobalContext().getStaticConfig().getStaticFolder(), "");
 
@@ -1253,19 +1237,19 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 	}
 
 	public boolean isOrderByAccess(ContentContext ctx) {
-		return StringHelper.isTrue(getFieldValue(ORDER_BY_ACCESS));
+		return getValue(ctx).contains(ORDER_BY_ACCESS);
 	}
 
 	public boolean isOrderRandom(ContentContext ctx) {
-		return StringHelper.isTrue(getFieldValue(RANDOM_ORDER));
+		return getValue(ctx).contains(RANDOM_ORDER);
 	}
 
 	public boolean isReverseOrder(ContentContext ctx) {
-		return StringHelper.isTrue(getFieldValue(REVERSE_ORDER));
+		return getValue(ctx).endsWith(REVERSE_ORDER);
 	}
 
 	public boolean isNameOrder(ContentContext ctx) {
-		return StringHelper.isTrue(getFieldValue(NAME_ORDER));
+		return getValue(ctx).contains(NAME_ORDER);
 	}
 
 	protected boolean isRenderInfo(ContentContext ctx) {
@@ -1288,8 +1272,8 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 		String folder = requestService.getParameter(getInputBaseFolderName(), null);
 		String newStartDate = requestService.getParameter(getInputStartDateName(), null);
 		String newEndDate = requestService.getParameter(getInputEndDateName(), null);
+		String newListSizeDate = requestService.getParameter(getInputMaxListSizeName(), null);
 		String newPageSize = requestService.getParameter(getInputPageSizeName(), null);
-		String newListSize = requestService.getParameter(getInputMaxListSizeName(), null);
 		String newDisplayType = requestService.getParameter(getDisplayAsInputName(), null);
 		String title = requestService.getParameter(getInputTitle(), null);
 
@@ -1311,53 +1295,32 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 					selectedTags.add(tag);
 				}
 			}
-			
-			setFieldValue("start-date", StringHelper.renderTime(startDate));
-			setFieldValue("end-date", StringHelper.renderTime(endDate));
-			setFieldValue(PAGE_SIZE, newPageSize);
-			setFieldValue(MAX_LIST_SIZE, newListSize);
-			
-			// newListSizeDate ?
-			setFieldValue(ROOT_FOLDER, folder);
-			setFieldValue("tags", StringHelper.collectionToString(selectedTags, ","));
-			setFieldValue("title", title);
-			setFieldValue(NAME_ORDER, ""+isNameOrder);
-			setFieldValue(ORDER_BY_ACCESS, ""+isOrderByAcess);
-			setFieldValue(REVERSE_ORDER, ""+isReverseOrder);
-			setFieldValue(RANDOM_ORDER, ""+isRandom);
-			
-			if (ctx.getGlobalContext().getAllTaxonomy(ctx).isActive()) {
-				String[] taxonomy = requestService.getParameterValues(getTaxonomiesInputName(), null);
-				if (taxonomy != null) {
-					setTaxonomy(Arrays.asList(taxonomy));
-				} else {
-					setTaxonomy(Collections.EMPTY_SET);
-				}
+			String multimediaInfo = StringHelper.neverNull(StringHelper.renderTime(startDate)) + VALUE_SEPARATOR + StringHelper.neverNull(StringHelper.renderTime(endDate)) + VALUE_SEPARATOR + newPageSize + ',' + newListSizeDate + VALUE_SEPARATOR + folder + VALUE_SEPARATOR + newDisplayType + VALUE_SEPARATOR + StringHelper.collectionToString(selectedTags) + VALUE_SEPARATOR + title;
+			if (isNameOrder) {
+				multimediaInfo = multimediaInfo + VALUE_SEPARATOR + NAME_ORDER;
 			}
+			if (isOrderByAcess && !isNameOrder) {
+				multimediaInfo = multimediaInfo + VALUE_SEPARATOR + ORDER_BY_ACCESS;
+			}
+			if (isReverseOrder) {
+				multimediaInfo = multimediaInfo + VALUE_SEPARATOR + REVERSE_ORDER;
+			}
+			if (isRandom) {
+				multimediaInfo = multimediaInfo + VALUE_SEPARATOR + RANDOM_ORDER;
+			}
+			multimediaInfo = setFileOrder(getFileOrder(), multimediaInfo);
 			
-//			String multimediaInfo = StringHelper.neverNull(StringHelper.renderTime(startDate_OK)) + VALUE_SEPARATOR + StringHelper.neverNull(StringHelper.renderTime(endDate_OK)) + VALUE_SEPARATOR + newPageSize_OK + ',' + newListSizeDate + VALUE_SEPARATOR + folder_OK + VALUE_SEPARATOR + newDisplayType + VALUE_SEPARATOR + StringHelper.collectionToString(selectedTags) + VALUE_SEPARATOR + title;
-//			if (isNameOrder) {
-//				multimediaInfo = multimediaInfo + VALUE_SEPARATOR + NAME_ORDER;
-//			}
-//			if (isOrderByAcess && !isNameOrder) {
-//				multimediaInfo = multimediaInfo + VALUE_SEPARATOR + ORDER_BY_ACCESS;
-//			}
-//			if (isReverseOrder) {
-//				multimediaInfo = multimediaInfo + VALUE_SEPARATOR + REVERSE_ORDER;
-//			}
-//			if (isRandom)  
-//				multimediaInfo = multimediaInfo + VALUE_SEPARATOR + RANDOM_ORDER;
-//			}
-//			multimediaInfo = setFileOrder(getFileOrder(), multimediaInfo);
-			
-			storeProperties();
+			if (!multimediaInfo.equals(getValue())) {
+				setValue(multimediaInfo);
+				setModify();
+			}
 		}
 		
 		return null;
 	}
 	
 	public static String performChangegallery(ContentContext ctx, RequestService rs) throws Exception {
-		Multimedia comp = (Multimedia) ComponentHelper.getComponentFromRequest(ctx);
+		MultimediaOld comp = (MultimediaOld) ComponentHelper.getComponentFromRequest(ctx);
 		if (comp != null) {
 			String folder = rs.getParameter("folder");
 			if (!StringHelper.isEmpty(folder)) {
@@ -1369,7 +1332,7 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 	}
 
 	public static String performOrderhtml(ContentContext ctx, RequestService rs) throws Exception {
-		Multimedia comp = (Multimedia) ComponentHelper.getComponentFromRequest(ctx);
+		MultimediaOld comp = (MultimediaOld) ComponentHelper.getComponentFromRequest(ctx);
 		if (comp != null) {
 			String orderFile = rs.getParameter("file");
 			String orderPosition = rs.getParameter("position");
@@ -1554,6 +1517,11 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 	}
 
 	@Override
+	public boolean isValidDate(ContentContext ctx) {
+		return false;
+	}
+
+	@Override
 	public String getFontAwesome() {
 		return "th-large";
 	}
@@ -1612,9 +1580,10 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 		return getType();
 	}
 	
-	@Override
-	public List<String> getFields(ContentContext ctx) throws Exception {
-		return Collections.EMPTY_LIST;
+	public static void main(String[] args) {
+		String testData = "%%450,8%/galleries/test_gallerie%%%Photos%name orderMANORD[[1.jpg,2.jpg,3.jpg,4.jpg]]";
+		String value = StringHelper.replaceItem(testData, "***", MANORD_PREFIX, MANORD_SUFFIX);
+		System.out.println(">>>>>>>>> Multimedia.main : value = "+value); //TODO: remove debug trace
 	}
 
 }

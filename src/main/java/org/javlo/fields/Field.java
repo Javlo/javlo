@@ -194,13 +194,17 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		public boolean isWrapped() {
 			return Field.this.isWrapped();
 		}
-
-		public String getURL() {
+		
+		public String getUrl() {
 			if (Field.this instanceof FieldFile) {
 				return ((FieldFile) Field.this).getURL(ctx);
 			} else {
 				return null;
 			}
+		}
+
+		public String getURL() {
+			return getUrl();
 		}
 
 		public boolean isPertinent() {

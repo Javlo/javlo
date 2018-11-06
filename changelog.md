@@ -711,10 +711,12 @@ Security in case of vulnerabilities.
 - preview duplicate component
 - macro sort on priority
 - macro icon
+- multimedia taxonomy filter
 ### Modified
 - track cache by days in place of month
 - add button unactive by default
 - page properties layout
+- mutltimedia, store data as properties in place of string
 ### Fixed
 - edit index.html of template, load CodeMirror
 - reset navigation if navigation renderer change

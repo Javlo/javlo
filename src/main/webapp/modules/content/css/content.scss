@@ -629,7 +629,7 @@ li.line {
 	}
 }
 
-.multimedia {	
+.multimedia, .multimedia-properties {	
 	button:hover, a:hover {
 		text-decoration: none;
 	}
@@ -745,4 +745,8 @@ li.line {
 			}
 		}
 	}
+}
+
+.chosen-container .chosen-results {
+	max-height: 122px;
 }

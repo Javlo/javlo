@@ -2353,6 +2353,12 @@ input[type=radio],input[type=checkbox] {
 	width: 47%;
 }
 
+.content.help {
+	h2,h3 {
+		margin: 15px 0 10px 0;
+	}
+}
+
 .clear {
 	clear: both;
 	height: 15px;

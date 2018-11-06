@@ -84,7 +84,6 @@ public class ComponentsAction implements IModuleAction {
 
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext moduleContext) throws Exception {
-
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		String comp = rs.getParameter("component");
 		String cssText = null;
@@ -147,6 +146,7 @@ public class ComponentsAction implements IModuleAction {
 		comp = StringHelper.createFileName(comp);
 		File file = new File(URLHelper.mergePath(ctx.getGlobalContext().getExternComponentFolder(), comp));
 		if (!file.exists()) {
+			file.getParentFile().mkdirs();
 			file.createNewFile();
 		} else {
 			return "comp: "+comp+ " already exist.";

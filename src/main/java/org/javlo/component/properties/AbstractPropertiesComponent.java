@@ -245,7 +245,9 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 	}
 
 	protected void setFieldValue(String inField, String value) {
-		if (!properties.getProperty(inField, value + "diff").equals(value)) {
+		if (value == null) {
+			properties.remove(inField);
+		} else if (!properties.getProperty(inField, value + "diff").equals(value)) {
 			properties.setProperty(inField, value);
 			storeProperties();
 			setModify();

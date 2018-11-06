@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib
 	prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<div class="main-components">
+<div class="content">
 <c:if test="${not empty param.component}">
 <div class="tabs tabloading component ui-tabs ui-widget ui-widget-content ui-corner-all">
 <form id="tabs-form" action="${info.currentURL}" method="post">
