@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
@@ -1179,6 +1180,18 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 					}
 					setFieldValue("title", title);
 				}
+				Properties prop = new Properties();
+				for(Object key : properties.keySet()) {
+					if (!key.toString().contains(VALUE_SEPARATOR)) {
+						prop.setProperty((String)key, (String)properties.get(key));
+					}
+				}
+				properties = prop;
+				if (getTitle().length()>512) {
+					properties.remove("title");
+				}
+				storeProperties();
+				
 			}
 		}
 		
