@@ -149,6 +149,7 @@ public class CreateArticleWidthTemplates implements IInteractiveMacro, IAction {
 		if (pageName == null) {
 			return "page or date not found.";
 		}
+		
 		try {
 			Date articleDate;
 			if (date != null && date.trim().length() > 0) {
@@ -181,7 +182,7 @@ public class CreateArticleWidthTemplates implements IInteractiveMacro, IAction {
 				MacroHelper.createMonthStructure(ctxLg, yearPage);
 				String mountPageName = MacroHelper.getMonthPageName(ctxLg, yearPage.getName(), articleDate);
 				MenuElement mountPage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctxLg).searchChildFromName(mountPageName);
-				if (mountPage != null) {					
+				if (mountPage != null) {
 					newPage = MacroHelper.createArticlePageName(ctx, mountPage);
 					if (newPage != null) {
 						MenuElement page;						

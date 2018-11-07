@@ -165,7 +165,7 @@ public class ActionManager {
 
 	static public final String perform(String actionName, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
-		logger.info("perform action : " + actionName);
+		logger.fine("perform action : " + actionName);
 
 		/*
 		 * AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance(request.getSession().getServletContext()); IUserFactory userFactory = AdminUserFactory.createAdminUserFactory(globalContext, request.getSession()); if (!adminUserSecurity.haveRight(userFactory.getCurrentUser(request.getSession()), removeGroup(actionName).toLowerCase() )) { I18nAccess i18nAccess = I18nAccess.getInstance(request); ContentContext ctx = ContentContext.getContentContext(request, response); MessageRepository msgRepo = MessageRepository.getInstance(ctx); msgRepo.setGlobalMessageAndNotification(ctx,new GenericMessage(i18nAccess.getText("global.message.noright")+ " ("+actionName+')', GenericMessage.ERROR)); return null; }

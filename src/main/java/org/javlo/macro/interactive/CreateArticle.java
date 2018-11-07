@@ -75,7 +75,7 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 	
 	@Override
 	public String getModalSize() {
-		return MIDDEL_MODAL_SIZE;
+		return LARGE_MODAL_SIZE;
 	}
 	
 	@Override

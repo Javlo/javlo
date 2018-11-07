@@ -40,7 +40,6 @@ import org.javlo.data.taxonomy.ITaxonomyContainer;
 import org.javlo.data.taxonomy.TaxonomyService;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.ElementaryURLHelper;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.PaginationContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -956,7 +955,6 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 
 		Date firstDate = new Date();
 		for (File file : mulFiles) {
-
 			String cssClass = "embed";
 			if (StringHelper.isVideo(file.getName())) {
 				cssClass = "video";
@@ -1208,6 +1206,13 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 					}
 				}
 			}
+		}
+		
+		if (StringHelper.isEmpty(getValue())) {
+			String importFolder = getImportFolderPath(ctx).replaceFirst("/" + ctx.getGlobalContext().getStaticConfig().getStaticFolder(), "");
+			setCurrentRootFolder(ctx, importFolder);
+			properties.setProperty(PAGE_SIZE, "12");
+			properties.setProperty(MAX_LIST_SIZE, "99");
 		}
 	}
 
@@ -1512,8 +1517,10 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 			for (MultimediaResource mulRes : getMultimediaResources(ctx)) {
 				Resource res = new Resource();
 				res.setName(mulRes.getName());
-				String url = mulRes.getPath().replace(ctx.getGlobalContext().getDataFolder(), "");
-				res.setUri(url);
+				if (mulRes.getPath() != null) {
+					String url = mulRes.getPath().replace(ctx.getGlobalContext().getDataFolder(), "");
+					res.setUri(url);
+				}
 				res.setDescription(mulRes.getTitle());
 				res.setId(mulRes.getPath());
 				outResources.add(res);

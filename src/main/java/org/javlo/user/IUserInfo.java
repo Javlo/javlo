@@ -2,7 +2,6 @@ package org.javlo.user;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
-import java.util.Map;
 import java.util.Set;
 
 import javax.mail.internet.InternetAddress;
