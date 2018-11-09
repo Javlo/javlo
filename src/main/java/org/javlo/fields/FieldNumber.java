@@ -33,7 +33,7 @@ public class FieldNumber extends Field {
 	public boolean validate() {
 		boolean superValidation = super.validate();
 		if (superValidation) {
-			if (!StringHelper.isEmpty(getValue()) && !StringHelper.isDigit(getValue())) {
+			if (!StringHelper.isEmpty(getValue()) && !StringHelper.isFloat(getValue())) {
 				setMessage(i18nAccess.getText("global.error"));
 				setMessageType(Field.MESSAGE_ERROR);
 				return false;
@@ -71,9 +71,9 @@ public class FieldNumber extends Field {
 			RequestService rs = RequestService.getInstance(ctx.getRequest());
 			out.println("<div class=\"form-group form-inline-2 text-right\">");
 			out.println("<label for=\"" + getFromName(ctx) + "\" class=\"form-label text-left\">" + i18nAccess.getViewText("global.from") + "</label>");
-			out.println("<input type=\"number\" min=\"" + getMin(ctx) + "\" max=\"" + getMax(ctx) + "\" class=\"form-control\" id=\"" + getFromName(ctx) + "\" name=\"" + getFromName(ctx) + "\" value=\"" + rs.getParameter(getFromName(ctx), "" + getMin(ctx)) + "\">");
+			out.println("<input type=\"number\" step=\""+getStep(ctx)+"\" min=\"" + getMin(ctx) + "\" max=\"" + getMax(ctx) + "\" class=\"form-control\" id=\"" + getFromName(ctx) + "\" name=\"" + getFromName(ctx) + "\" value=\"" + rs.getParameter(getFromName(ctx), "" + getMin(ctx)) + "\">");
 			out.println("<label for=\"" + getToName(ctx) + "\" class=\"col-sm-4 col-form-label text-left\">" + i18nAccess.getViewText("global.to") + "</label>");
-			out.println("<input type=\"number\" min=\"" + getMin(ctx) + "\" max=\"" + getMax(ctx) + "\" class=\"form-control\" id=\"" + getToName(ctx) + "\" name=\"" + getToName(ctx) + "\" value=\"" + rs.getParameter(getToName(ctx), "" + getMax(ctx)) + "\">");
+			out.println("<input type=\"number\" step=\""+getStep(ctx)+"\" min=\"" + getMin(ctx) + "\" max=\"" + getMax(ctx) + "\" class=\"form-control\" id=\"" + getToName(ctx) + "\" name=\"" + getToName(ctx) + "\" value=\"" + rs.getParameter(getToName(ctx), "" + getMax(ctx)) + "\">");
 			out.println("</div>");
 			out.println("</div></div>");
 			out.close();
@@ -104,6 +104,11 @@ public class FieldNumber extends Field {
 			}
 		}
 	}
+	
+	public String getStep(ContentContext ctx) {
+		return properties.getProperty("field." + getUnicName() + ".step", "1");
+	}
+
 
 	public String getEditXHTMLCode(ContentContext ctx, boolean search) throws Exception {
 		String refCode = referenceEditCode(ctx);
@@ -120,7 +125,7 @@ public class FieldNumber extends Field {
 		if (isReadOnly()) {
 			readOnlyHTML = " readonly=\"readonly\"";
 		}
-		out.println("	<input class=\"form-control\" type=\"number\" min=\"" + getMin(ctx) + "\" max=\"" + getMax(ctx) + "\"" + readOnlyHTML + " id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\"/></div>");
+		out.println("	<input class=\"form-control\" type=\"number\" step=\"" + getStep(ctx) + "\" min=\"" + getMin(ctx) + "\" max=\"" + getMax(ctx) + "\"" + readOnlyHTML + " id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\"/></div>");
 		if (isUnity) {
 			out.println("<div class=\"" + SMALL_PART_SIZE + " unity col-form-label\">" + getUnity(ctx) + "</div>");
 		}
