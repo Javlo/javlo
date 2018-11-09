@@ -280,7 +280,15 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 			return keyValue;
 		}
 		keyValue = new LinkedHashMap<String, String>();
-
+		ListService listService = ListService.getInstance(ctx);
+		List<IListItem> items  = listService.getList(ctx, listName);
+		if (items != null && items.size() > 0) {
+			Map<String,String> outMap = new HashMap<String,String>();
+			for (IListItem item : items) {
+				outMap.put(item.getKey(), item.getValue());
+			}
+			return outMap;
+		}
 		String path = properties.getProperty("list." + listName + ".path");
 		boolean addEmpty = StringHelper.isTrue(properties.getProperty("list." + listName + ".empty", null));
 		if (path != null) {

@@ -16,16 +16,23 @@ import java.util.Set;
 import org.apache.commons.lang3.NotImplementedException;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.exception.ServiceException;
+import org.javlo.user.IUserFactory;
+import org.javlo.user.IUserInfo;
+import org.javlo.user.UserFactory;
+import org.javlo.user.UserInfo;
 
 public class ListService {
 
+	public static final String SPECIAL_LIST_VIEW_USERS = "view-users";
+
 	Map<String, List<IListItem>> localLists = new Hashtable<String, List<IListItem>>();
-	
+
 	private static final Map<String, List<IListItem>> hardNodeCache = new HashMap<String, List<IListItem>>();
-	
+
 	public static class OrderList implements Comparator<IListItem> {
 
 		@Override
@@ -64,7 +71,7 @@ public class ListService {
 		}
 
 		@Override
-		public void clear() {						
+		public void clear() {
 		}
 
 		@Override
@@ -139,8 +146,9 @@ public class ListService {
 	public static class ListItem implements IListItem {
 		String key;
 		String value;
-		
-		private ListItem(){};
+
+		private ListItem() {
+		};
 
 		public ListItem(Map.Entry mapEntry) {
 			super();
@@ -168,19 +176,22 @@ public class ListService {
 
 		public void setValue(String value) {
 			this.value = value;
-		}		
+		}
 	}
-	
+
 	public static class I18nItem extends ListItem {
-		private String lg=null;
+		private String lg = null;
 		private Map<String, String> labels;
-		public I18nItem(String key, Map<String,String> labels) {
+
+		public I18nItem(String key, Map<String, String> labels) {
 			this.key = key;
 			this.labels = labels;
 		}
+
 		public String getLabel() {
 			return labels.get(lg);
 		}
+
 		public void setLg(String lg) {
 			this.lg = lg;
 		}
@@ -198,8 +209,8 @@ public class ListService {
 		return outService;
 	}
 
-	public List<IListItem> getList(ContentContext ctx, String name) throws IOException, Exception {		
-		List<IListItem> outList = getNavigationList(ctx,name);
+	public List<IListItem> getList(ContentContext ctx, String name) throws IOException, Exception {
+		List<IListItem> outList = getNavigationList(ctx, name);
 		if (outList != null) {
 			return outList;
 		}
@@ -226,9 +237,9 @@ public class ListService {
 				int start = Integer.parseInt(numbers[0]);
 				int end = Integer.parseInt(numbers[1]);
 				List<IListItem> numberedList = new LinkedList<IListItem>();
-				if (start<end) {
-					for (int i=start; i<=end; i++) {
-						numberedList.add(new ListItem(""+i,""+i));
+				if (start < end) {
+					for (int i = start; i <= end; i++) {
+						numberedList.add(new ListItem("" + i, "" + i));
 					}
 					return numberedList;
 				}
@@ -237,33 +248,53 @@ public class ListService {
 			}
 		}
 		if (outList == null) {
-			outList = getHardCodedList(ctx, name);
+			outList = getSpecialList(ctx, name);
 		}
-		/** search taxonomy list **/		
+		/** search taxonomy list **/
 		if (outList == null) {
 			outList = ctx.getGlobalContext().getAllTaxonomy(ctx).getList(ctx, name);
 		}
 		return outList;
 	}
-	
-	private synchronized List<IListItem> getHardCodedList(ContentContext ctx, String name) throws IOException, ServiceException, Exception {		
-		String key = name+'-'+ctx.getRequestContentLanguage();
+
+	private synchronized List<IListItem> getSpecialList(ContentContext ctx, String name) throws IOException, ServiceException, Exception {
+		String key = name + '-' + ctx.getRequestContentLanguage();
 		if (hardNodeCache.get(key) != null) {
 			return hardNodeCache.get(key);
 		}
 		if (name.equals("countries")) {
 			List<IListItem> countriesList = new LinkedList<IListItem>();
 			Collection<Map.Entry<Object, Object>> entries = I18nAccess.getInstance(ctx).getCountries(ctx).entrySet();
-			for (Map.Entry entry : entries) {				
+			for (Map.Entry entry : entries) {
 				countriesList.add(new ListService.ListItem(entry));
 			}
 			Collections.sort(countriesList, new OrderList());
-			hardNodeCache.put(key, countriesList);			
+			hardNodeCache.put(key, countriesList);
 			return countriesList;
+		}
+		if (name.equals(SPECIAL_LIST_VIEW_USERS)) {
+			List<IListItem> userList = new LinkedList<IListItem>();
+			IUserFactory userFactory = UserFactory.createUserFactory(ctx.getRequest());
+			for (IUserInfo userInfo : userFactory.getUserInfoList()) {
+				if (!StringHelper.isEmpty(userInfo.getLogin())) {
+					String label = (StringHelper.neverNull(userInfo.getLastName()) + ' ' + StringHelper.neverNull(userInfo.getFirstName())).trim();
+					if (StringHelper.isEmpty(label)) {
+						label = userInfo.getLogin();
+					}
+					if (userInfo instanceof UserInfo) {
+						String organization = ((UserInfo) userInfo).getOrganization();
+						if (!StringHelper.isEmpty(organization)) {
+							label = label + " - " + organization;
+						}
+					}
+					userList.add(new ListItem(userInfo.getLogin(), label));
+				}
+			}
+			return userList;
 		}
 		return null;
 	}
-	
+
 	public List<IListItem> getNavigationList(ContentContext ctx, String name) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement page = content.getNavigation(ctx).searchChildFromName(name);
@@ -275,23 +306,23 @@ public class ListService {
 				String key = child.getName();
 				String value = child.getTitle(ctx);
 				if (value.startsWith(".")) {
-					key="";
+					key = "";
 					value = value.substring(1);
 				}
-				outList.add(new ListItem(key, value));				
-			}			
+				outList.add(new ListItem(key, value));
+			}
 			return outList;
 		}
 	}
-	
+
 	public void addList(String name, Collection<String> list) {
 		List<IListItem> finalList = new LinkedList<IListItem>();
 		for (String item : list) {
-			finalList.add(new ListItem(item,item));
+			finalList.add(new ListItem(item, item));
 		}
 		addList(name, finalList);
 	}
-	
+
 	public void addList(String name, List<IListItem> list) {
 		localLists.put(name, list);
 	}
@@ -299,7 +330,7 @@ public class ListService {
 	public Map<String, List<IListItem>> getAllList(ContentContext ctx) {
 		return new MapAllList(ctx, false);
 	}
-	
+
 	public Map<String, List<IListItem>> getAllListSorted(ContentContext ctx) {
 		return new MapAllList(ctx, true);
 	}
@@ -307,12 +338,12 @@ public class ListService {
 	public static Map<String, String> listToStringMap(List<IListItem> list) {
 		Map<String, String> outMap = new LinkedHashMap<String, String>();
 		for (IListItem item : list) {
-			outMap.put(item.getKey(), item.getValue());			
+			outMap.put(item.getKey(), item.getValue());
 		}
 		return outMap;
 	}
-	
+
 	public void clear() {
-		hardNodeCache.clear();			
+		hardNodeCache.clear();
 	}
 }

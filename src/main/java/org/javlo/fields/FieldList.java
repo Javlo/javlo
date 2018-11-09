@@ -3,8 +3,13 @@ package org.javlo.fields;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
@@ -55,7 +60,16 @@ public class FieldList extends Field {
 			out.println("		<option></option>");
 		};
 		
-		for (Map.Entry<String, String> value : values) {
+		List<Map.Entry<String,String>> datas = new LinkedList<>();
+		datas.addAll(values);
+		Collections.sort(datas, new Comparator<Map.Entry<String,String>>() {
+			@Override
+			public int compare(Entry<String, String> o1, Entry<String, String> o2) {
+				return o1.getValue().compareTo(o2.getValue());
+			}
+		});
+		
+		for (Map.Entry<String, String> value : datas) {
 			String selected = "";
 			if (getValue() != null) {
 				if (getValue().equals(value.getKey())) {
