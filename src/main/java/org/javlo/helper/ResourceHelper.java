@@ -1329,6 +1329,10 @@ public class ResourceHelper {
 
 	public static final void writeStringToFile(File file, String content) throws IOException {
 		if (!file.exists()) {
+			File dir = file.getParentFile();
+			if (dir != null && !dir.exists()) {
+				dir.mkdirs();
+			}
 			file.createNewFile();
 		}
 		OutputStream out = new FileOutputStream(file);
