@@ -83,6 +83,8 @@ import net.sf.uadetector.service.UADetectorServiceFactory;
 public class NetHelper {
 
 	public static final String JAVLO_USER_AGENT = "Mozilla/5.0 bot Javlo/" + IVersion.VERSION;
+	
+	public static final String MOZILLA_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:63.0) Gecko/20100101 Firefox/63.0";
 
 	private static boolean INIT_HTTPS = false;
 
@@ -129,7 +131,7 @@ public class NetHelper {
 		try {
 			if (conn instanceof HttpURLConnection) {
 				HttpURLConnection httpConn = (HttpURLConnection) conn;
-				httpConn.setRequestProperty("User-Agent", JAVLO_USER_AGENT);
+				httpConn.setRequestProperty("User-Agent", MOZILLA_USER_AGENT);
 				if (checkReturnCode && httpConn.getResponseCode() != HttpURLConnection.HTTP_OK) {
 					throw new NetException("Response code: " + httpConn.getResponseCode());
 				}

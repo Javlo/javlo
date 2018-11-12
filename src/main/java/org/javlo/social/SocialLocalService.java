@@ -62,6 +62,10 @@ public class SocialLocalService {
 		} catch (Exception e) {
 		}
 		try {
+			st.execute("alter table post modify adminMessage varchar(2000)");
+		} catch (Exception e) {
+		}
+		try {
 			st.execute("alter table post add updateTime TIMESTAMP");
 		} catch (Exception e) {
 		}

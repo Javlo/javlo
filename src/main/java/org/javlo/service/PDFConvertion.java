@@ -11,6 +11,9 @@ import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.javlo.context.ContentContext;
+import org.javlo.helper.NetHelper;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.w3c.dom.Document;
 import org.xhtmlrenderer.layout.LayoutContext;
@@ -57,11 +60,15 @@ public class PDFConvertion {
 		}
 
 		try {
-			java.net.HttpURLConnection con = (java.net.HttpURLConnection) url.openConnection();
+			//java.net.HttpURLConnection con = (java.net.HttpURLConnection) url.openConnection();
+			String html = NetHelper.readPageGet(url);
+			ResourceHelper.writeStringToFile(new File("c:/trans/html.html"), html);
 			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
 			builder.setEntityResolver(FSEntityResolver.instance());
-			Document doc = builder.parse(con.getInputStream());			
+			InputStream in = new ByteArrayInputStream(html.getBytes(ContentContext.CHARACTER_ENCODING));
+			Document doc = builder.parse(in);
+			in.close();
 			org.xhtmlrenderer.pdf.ITextRenderer pdfRenderer = new org.xhtmlrenderer.pdf.ITextRenderer();
 			pdfRenderer.setDocument(doc, null);
 			pdfRenderer.layout();			
@@ -121,11 +128,8 @@ public class PDFConvertion {
 	}
 
 	public static void main(String[] args) throws Exception {
-		InputStream testIn = new ByteArrayInputStream("<b>Blinkevičiūtė éèçà</b>".getBytes("utf-8"));
-		FileOutputStream out = new FileOutputStream(new File("c:/trans/test.pdf"));
-		convertXHTMLToPDF(new URL("http://localhost/javlo/document/en/data/anna/anna-18/anna-18-september/zero-dechet/zero-dechet-composition.html?nodmz=true&j_token=1Sjl1VMdpgg-&force-device-code=pdf&_clear_session=true&clean-html=true&editPreview=true&_absolute-url=true"), null,null, out);
-		out.close();
-
+		String html = NetHelper.readPageGet(new URL("http://localhost/javlo/sexy/fr/invoices/prestation-bondage-jessica-1?nodmz=true&j_token=1frhyvke26U-&force-device-code=pdf&_clear_session=true&clean-html=true&_absolute-url=true"));
+		ResourceHelper.writeStringToFile(new File("c:/trans/html2.html"), html);
 	}
 
 	/*

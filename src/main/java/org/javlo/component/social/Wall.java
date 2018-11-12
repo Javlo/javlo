@@ -1,5 +1,7 @@
 package org.javlo.component.social;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -11,6 +13,7 @@ import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.i18n.I18nAccess;
 import org.javlo.service.RequestService;
 import org.javlo.social.SocialFilter;
 import org.javlo.social.SocialLocalService;
@@ -117,7 +120,13 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 			if (rs.getParameter("main") != null) {
 				post.setMainPost(Long.parseLong(rs.getParameter("main")));
 			}
-			socialService.createPost(post);
+			String msg = validPost(ctx,post);
+			System.out.println(">>>>>>>>> Wall.performCreatepost : msg = "+msg); //TODO: remove debug trace
+			if (msg != null) {
+				return msg;
+			} else {
+				socialService.createPost(post);
+			}
 		}
 		return performGetpost(ctx, rs);
 	}
@@ -155,8 +164,36 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 		post.setAdminValided(true);
 		post.setAdminMessage(rs.getParameter("msg", ""));
 		post.setValid(StringHelper.isTrue(rs.getParameter("valid", null)));
-		socialService.updatePost(post);
+		String msg = validPost(ctx,post);
+		if (msg != null) {
+			return msg;
+		} else {
+			socialService.updatePost(post);
+		}
 		ctx.setSpecificJson(JSONMap.JSON.toJson(post));
+		return null;
+	}
+	
+	/**
+	 * valid the post
+	 * @param ctx
+	 * @param post
+	 * @return null if post ok, error message otherwise.
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
+	 */
+	private static String validPost(ContentContext ctx, Post post) throws FileNotFoundException, IOException {
+		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+		if (post.getAdminMessage() != null && post.getAdminMessage().length() > 1500) {
+			return i18nAccess.getViewText("wall.error.admin-size", "Administrators message can not exceed 1500 characters");
+		}
+		System.out.println(">>>>>>>>> Wall.validPost : post.getTitle() = "+post.getTitle()); //TODO: remove debug trace
+		if (post.getTitle() != null && post.getTitle().length() > 250) {
+			return i18nAccess.getViewText("wall.error.title-size", "Title can not exceed 250 characters");
+		}
+		if (post.getText() != null && post.getText().length() > 7000) {
+			return i18nAccess.getViewText("wall.error.text-size", "Message can not exceed 7000 characters");
+		}
 		return null;
 	}
 
