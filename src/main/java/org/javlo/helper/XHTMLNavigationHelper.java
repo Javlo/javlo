@@ -238,7 +238,7 @@ public class XHTMLNavigationHelper {
 			out.println("<button class=\"select btn btn-default\" onclick=\""+selectJSMethod+"('"+page.getId()+"'); return false;\" class=\"title\"><i class=\"fa fa-check\" aria-hidden=\"true\"></i></button>");
 		}
 		out.println("<div class=\"page-link\">");
-		out.println("<a href=\""+URLHelper.createURL(ctx, page)+"\" class=\"title\">"+page.getTitle(ctx)+"</a>");
+		out.println("<a target=\"_blank\" href=\""+URLHelper.createURL(ctx, page)+"\" class=\"title\">"+page.getTitle(ctx)+"</a>");
 		out.println("<div class=\"url\">"+URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), page)+"</div>");
 		out.println("<div class=\"description\">"+page.getDescription(ctx)+"</div>");
 		out.println("</div>");

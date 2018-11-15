@@ -230,6 +230,8 @@ public class TemplateData {
 		outData.put("largeMenu", ""+isLargeMenu());
 		outData.put("large", ""+isLarge());
 		outData.put("small", ""+isSmall());
+		outData.put("jssearch", ""+isJssearchMenu());
+		outData.put("search", ""+isSearchMenu());
 		
 		String colors = "";
 		String sep = "";
