@@ -717,6 +717,7 @@ Security in case of vulnerabilities.
 - add button unactive by default
 - page properties layout
 - mutltimedia, store data as properties in place of string
+- new internal link - ajax search + columnable
 ### Fixed
 - edit index.html of template, load CodeMirror
 - reset navigation if navigation renderer change
