@@ -382,13 +382,14 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+		String colSuffix = getColomnableSuffix(ctx);
 		if (isDisplayHidden() && ctx.isAsViewMode()) {
 			return "";
 		}
 		if (isWrapped(ctx)) {
-			return "</" + getTag(ctx) + '>';
+			return "</" + getTag(ctx) + '>'+colSuffix;
 		} else {
-			return "";
+			return colSuffix;
 		}
 	}
 
