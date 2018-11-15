@@ -1383,7 +1383,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return true;
 		}
 		boolean open = false;
-		if (ctx.getColumnableSize()<0) {
+		if (ctx.getColumnableSize()<=0) {
 			open = true;
 		}
 		if (ctx.getColumnableSize()+getColumnSize()>max || prev.getColumnSize()<=0) {
