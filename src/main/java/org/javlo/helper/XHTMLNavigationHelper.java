@@ -255,8 +255,8 @@ public class XHTMLNavigationHelper {
 			out.println("<button class=\"select btn btn-default\" onclick=\""+selectJSMethod+"('"+page.getId()+"'); return false;\" class=\"title\"><i class=\"fa fa-check\" aria-hidden=\"true\"></i></button>");
 		}
 		out.println("<div class=\"page-link\">");
-		out.println("<a href=\""+page.getUrl()+"\" class=\"title\">"+page.getTitle()+" <span class=\"relevance\">"+page.getRelevance()+"</span></a>");
-		out.println("<div class=\"url\">"+page.getUrl()+"</div>");
+		out.println("<a target=\"_blank\" href=\""+URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), page.getPath())+"\" class=\"title\">"+page.getTitle()+" <span class=\"relevance\">"+page.getRelevance()+"</span></a>");
+		out.println("<div class=\"url\">"+URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), page.getPath())+"</div>");
 		out.println("<div class=\"description\">"+page.getDescription()+"</div>");
 		out.println("</div>");
 		out.println("</div>");
