@@ -184,10 +184,9 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 	 */
 	private static String validPost(ContentContext ctx, Post post) throws FileNotFoundException, IOException {
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-		if (post.getAdminMessage() != null && post.getAdminMessage().length() > 1500) {
-			return i18nAccess.getViewText("wall.error.admin-size", "Administrators message can not exceed 1500 characters");
+		if (post.getAdminMessage() != null && post.getAdminMessage().length() > 3000) {
+			return i18nAccess.getViewText("wall.error.admin-size", "Administrators message can not exceed 3000 characters");
 		}
-		System.out.println(">>>>>>>>> Wall.validPost : post.getTitle() = "+post.getTitle()); //TODO: remove debug trace
 		if (post.getTitle() != null && post.getTitle().length() > 250) {
 			return i18nAccess.getViewText("wall.error.title-size", "Title can not exceed 250 characters");
 		}

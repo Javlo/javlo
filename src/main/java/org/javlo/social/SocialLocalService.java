@@ -62,7 +62,7 @@ public class SocialLocalService {
 		} catch (Exception e) {
 		}
 		try {
-			st.execute("alter table post modify adminMessage varchar(2000)");
+			st.execute("alter table post modify adminMessage varchar(3500)");
 		} catch (Exception e) {
 		}
 		try {
