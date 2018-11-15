@@ -438,6 +438,11 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	protected boolean isValueTranslatable() {
 		return true;
 	}
+	
+	@Override
+	protected boolean getColumnableDefaultValue() {
+		return true;
+	}
 
 }
 
