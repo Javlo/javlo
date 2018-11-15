@@ -181,7 +181,7 @@ function ajaxRequest(url, form, doneFunction) {
 //			}
 		}
 		if (doneFunction != null) {			
-			doneFunction();
+			doneFunction(jsonObj);
 		}
 	});	
 }

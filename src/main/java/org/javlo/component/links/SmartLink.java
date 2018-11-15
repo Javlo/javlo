@@ -400,6 +400,11 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 	public boolean isRealContent(ContentContext ctx) {
 		return !StringHelper.isEmpty(getValue());
 	}
+	
+	@Override
+	public int getSearchLevel() {
+		return SEARCH_LEVEL_NONE;
+	}
 
 	public static void main(String[] args) {
 		try {

@@ -39,6 +39,26 @@ function updateOrder() {
 	});
 }
 
+var searchTimeoutThread = null;
+
+function updateSearch(query, resultId, selectMethod) {
+	if (searchTimeoutThread != null) {
+		clearTimeout(searchTimeoutThread); 
+	}
+	searchTimeoutThread = setTimeout(function() {updateSearchThread(query, resultId, selectMethod)}, 500);
+}
+
+function updateSearchThread(query, resultId, selectMethod) {
+	var searchURL = currentAjaxURL;
+	searchURL = addParam(searchURL, "webaction=search.searchresulthtml");
+	searchURL = addParam(searchURL, "q="+query);
+	searchURL = addParam(searchURL, "id="+resultId);
+	searchURL = addParam(searchURL, "method="+selectMethod);
+	searchURL = addParam(searchURL, "max=50");
+	searchURL = addParam(searchURL, "sort=relevance");
+	ajaxRequest(searchURL);
+}
+
 function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysiwygCss) {
 	if (wysiwygCss == null) {
 		wysiwygCss = staticRootURL+"modules/content/js/tinymce.css";
@@ -304,3 +324,4 @@ function filterPage(url, filter, cssSelector) {
 		jQuery(cssSelector).html(html);
 	});
 }
+

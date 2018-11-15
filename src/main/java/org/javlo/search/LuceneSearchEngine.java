@@ -129,6 +129,7 @@ public class LuceneSearchEngine implements ISearchEngine {
 
 	private void addResult(List<SearchElement> result, ContentContext ctx, MenuElement page, String searchElement, String name, String title, String url, String description, int priority) {
 		SearchElement rst = new SearchElement();
+		rst.setId(page.getId());
 		rst.setName(name);
 		rst.setUrl(url);
 		rst.setTitle(title);

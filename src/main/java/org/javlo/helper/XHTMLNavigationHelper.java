@@ -12,6 +12,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
+import org.javlo.search.SearchResult.SearchElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.template.Template;
@@ -225,6 +226,52 @@ public class XHTMLNavigationHelper {
 		if (filter) {
 			out.println("</div></div>");
 		}
+		out.close();
+		return res.toString();
+	}
+	
+	public static String renderPageResult(ContentContext ctx, MenuElement page, String selectJSMethod) throws Exception {
+		StringWriter res = new StringWriter();
+		PrintWriter out = new PrintWriter(res);
+		out.println("<div class=\"result\">");
+		if (!StringHelper.isEmpty(selectJSMethod)) {
+			out.println("<button class=\"select btn btn-default\" onclick=\""+selectJSMethod+"('"+page.getId()+"'); return false;\" class=\"title\"><i class=\"fa fa-check\" aria-hidden=\"true\"></i></button>");
+		}
+		out.println("<div class=\"page-link\">");
+		out.println("<a href=\""+URLHelper.createURL(ctx, page)+"\" class=\"title\">"+page.getTitle(ctx)+"</a>");
+		out.println("<div class=\"url\">"+URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), page)+"</div>");
+		out.println("<div class=\"description\">"+page.getDescription(ctx)+"</div>");
+		out.println("</div>");
+		out.println("</div>");
+		out.close();
+		return res.toString();
+	}
+	
+	public static String renderPageResult(ContentContext ctx, SearchElement page, String selectJSMethod) throws Exception {
+		StringWriter res = new StringWriter();
+		PrintWriter out = new PrintWriter(res);
+		out.println("<div class=\"result\">");
+		if (!StringHelper.isEmpty(selectJSMethod)) {
+			out.println("<button class=\"select btn btn-default\" onclick=\""+selectJSMethod+"('"+page.getId()+"'); return false;\" class=\"title\"><i class=\"fa fa-check\" aria-hidden=\"true\"></i></button>");
+		}
+		out.println("<div class=\"page-link\">");
+		out.println("<a href=\""+page.getUrl()+"\" class=\"title\">"+page.getTitle()+" <span class=\"relevance\">"+page.getRelevance()+"</span></a>");
+		out.println("<div class=\"url\">"+page.getUrl()+"</div>");
+		out.println("<div class=\"description\">"+page.getDescription()+"</div>");
+		out.println("</div>");
+		out.println("</div>");
+		out.close();
+		return res.toString();
+	}
+	
+	public static String renderComboNavigationAjax(ContentContext ctx, MenuElement rootPage, String id, String currentValue, String selectJSMethod) throws Exception {
+		StringWriter res = new StringWriter();
+		PrintWriter out = new PrintWriter(res);
+		String resultId = "result-"+id;
+		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
+		out.println("<div class=\"filter\"><input onkeyup=\"updateSearch(this.value,'"+resultId+"', '"+selectJSMethod+"')\" type=\"text\" data-filtered=\""+id+"\" class=\"form-control filter max-width\" placeholder=\""+i18nAccess.getText("content.search")+"\" /></div>");
+		out.println("<div class=\"pages-result\"><div id=\""+resultId+"\">");
+		out.println("</div></div>");
 		out.close();
 		return res.toString();
 	}

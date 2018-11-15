@@ -750,3 +750,48 @@ li.line {
 .chosen-container .chosen-results {
 	max-height: 122px;
 }
+
+.current-page {
+	padding: 10px;
+	background-color: #eee;
+	margin-bottom: 15px;
+}
+
+.pages-result {
+	margin-top: 15px;
+	max-height: 350px;
+	overflow: auto;
+	.result {
+		margin-bottom: 15px;
+		display: flex;
+		align-items: stretch;
+		.select {
+			font-size:  16px;
+			margin-right: 5px;
+		}
+		.relevance {
+			font-size: 11px;
+			color: #777;
+		}
+		.relevance:before {
+			content: "[";
+		}
+		.relevance:after {
+			content: "]";
+		}
+	}
+}
+
+.page-link {
+	.title {
+		font-size: 16px;
+	}
+	.url {
+		color: #408b7d
+	}
+	.description {
+		max-height: 120px;
+		overflow: hidden;
+		color: #777
+	}
+}

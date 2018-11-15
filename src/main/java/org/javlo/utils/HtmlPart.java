@@ -94,9 +94,5 @@ public class HtmlPart {
 	public void setStyle(String style) {
 		this.style = style;
 	}
-	
-	
-	
-	
 
 }

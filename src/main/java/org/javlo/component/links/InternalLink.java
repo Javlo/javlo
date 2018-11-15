@@ -23,6 +23,7 @@ import org.javlo.helper.XHTMLNavigationHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.module.mailing.MailingAction;
 import org.javlo.navigation.MenuElement;
+import org.javlo.navigation.PageBean;
 import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.service.RequestService;
@@ -70,66 +71,56 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 		String label = getLabel();
 
 		String link = "/";
+		MenuElement page = null;
 		if (linkIdStr != null) {
-			// MenuElement elemChild =
-			// content.getNavigation(ctx).searchChildFromId(linkIdStr);
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			NavigationService navigationService = NavigationService.getInstance(globalContext);
-			MenuElement elemChild = navigationService.getPage(ctx, linkIdStr);
-			if (elemChild != null) {
-				link = elemChild.getPath();
+			page = navigationService.getPage(ctx, linkIdStr);
+			if (page != null) {
+				link = page.getPath();
 			}
 		}
 
 		try {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-			String linkTitle = i18nAccess.getText("component.link.link");
-			String labelTitle = i18nAccess.getText("component.link.label");
 			String reverseLinkLabel = i18nAccess.getText("component.link.reverse");
-
+			out.println("<div class=\"row\">");
 			if (isReversedLink(ctx)) {
 				String reverseLink = properties.getProperty(REVERSE_LINK_KEY, null);
 				if (reverseLink == null) {
 					reverseLink = "none";
 				}
-				out.println("<div class=\"input-group\"><label for=\"" + getReverseLinkName() + "\">" + reverseLinkLabel + " : </label>");
+				out.println("<div class=\"col-md-4\">");
+				out.println("<div class=\"form-group\"><label for=\"" + getReverseLinkName() + "\">" + reverseLinkLabel + " : </label>");
 				out.println(XHTMLHelper.getReverlinkSelectType(ctx, getReverseLinkName(), reverseLink));
 				out.println("</div>");
+				out.println("</div>");
 			}
-
-			out.println("<label for=\"" + getLinkName() + "\">");
-
-			out.println(linkTitle + " : ");
-			out.println("</label>");
-			out.println(XHTMLNavigationHelper.renderComboNavigation(ctx, content.getNavigation(ctx), getLinkName(), link, true));
-			/*out.println("<select class=\"form-control\" id=\"" + getLinkName() + "\" name=\"" + getLinkName() + "\">");
-			MenuElement elem = content.getNavigation(ctx);
-			String[] values = elem.getChildList();
-			String currentLink = null;
-			for (String value : values) {
-				if (link.equals(value)) {
-					currentLink = value;
-					out.println("<option selected=\"selected\" value=\"" + value + "\">");
-				} else {
-					out.println("<option value=\"" + value + "\">");
-				}
-				out.println(value);
-				out.println("</option>");
-			}
-			out.println("</select>");*/
-			/*if (currentLink != null) {
-				out.print("<a href=\"");
-				out.print(URLHelper.createURL(ctx, currentLink));
-				out.println("\">&nbsp;&gt;&gt;</a>");
-				setMessage(null);
-			} else {
-				setMessage(new GenericMessage(i18nAccess.getText("component.message.help.choose_link"), GenericMessage.HELP));
-			}*/
-			out.println("<div class=\"input-group\"><label for=\"" + getLinkLabelName() + "\">");
-			out.print(labelTitle);
-			out.print(" : </label>");
+			
+			out.println("<div class=\"col-md-4\">");
+			out.println("<label for=\""+getLinkLabelName()+"\">"+i18nAccess.getText("component.link.label")+"</label>");
 			out.println(XHTMLHelper.getTextInput(getLinkLabelName(), label, "form-control"));
 			out.println("</div>");
+			
+			out.println("<div class=\"col-md-4\">");
+			out.println("<label for=\""+getLinkLabelName()+"\">"+i18nAccess.getText("component.link.id", "page id")+"</label>");
+			String value="";
+			if (!StringHelper.isEmpty(getLinkId())) {
+				value = getLinkId(); 
+			}
+			out.println("<input class=\"form-control\" type=\"text\" name=\""+getLinkName()+"\" id=\""+getLinkName()+"\" value=\""+value+"\" />");
+			out.println("</div></div>");
+			
+			
+			
+			out.println("<script>function selectPage"+getId()+"(id) {jQuery('#"+getLinkName()+"').val(id); jQuery('#form-content').submit(); }</script>");
+			if (page != null) {
+				out.println("<div class=\"current-page\">");
+				out.println(XHTMLNavigationHelper.renderPageResult(ctx, page, null));
+				out.println("</div>");
+			}
+			out.println(XHTMLNavigationHelper.renderComboNavigationAjax(ctx, content.getNavigation(ctx), getLinkName(), link, "selectPage"+getId()));
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -231,15 +222,17 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 		String linkId = properties.getProperty(LINK_KEY, "/");
 		MenuElement linkedPage = navigationService.getPage(ctx, linkId);
 		if (linkedPage != null) {
-			ctx.getRequest().setAttribute("linkedPage", linkedPage.getPageBean(ctx));			
+			PageBean page = linkedPage.getPageBean(ctx);
+			ctx.getRequest().setAttribute("page", page);
+			ctx.getRequest().setAttribute("linkedPage", page);
 			String label = properties.getProperty(LABEL_KEY, "");
 			if (label.trim().length() == 0) {
 				label = linkedPage.getLabel(ctx);
 			}
+			ctx.getRequest().setAttribute("textLabel", properties.getProperty(LABEL_KEY, ""));
 			ctx.getRequest().setAttribute("label", label);
-			
-			String url = URLHelper.createURL(ctx.getContentContextForInternalLink(), linkedPage);			
-			ctx.getRequest().setAttribute("url", url);				
+			String url = URLHelper.createURL(ctx.getContentContextForInternalLink(), linkedPage);
+			ctx.getRequest().setAttribute("url", url);
 		}
 	}
 
@@ -376,8 +369,8 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 	public String performEdit(ContentContext ctx) {
 
 		ContentService content = ContentService.getInstance(ctx.getRequest());
-
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
+		performColumnable(ctx);
 
 		String label = requestService.getParameter(getLinkLabelName(), null);
 		String link = requestService.getParameter(getLinkName(), "/");
@@ -385,7 +378,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 		if (label != null) {
 
 			try {
-				MenuElement elem = content.getNavigation(ctx).searchRealChild(ctx, link);
+				MenuElement elem = content.getNavigation(ctx).searchChildFromId(link);
 				String idLink = "";
 				if (elem != null) {
 					idLink = elem.getId();
@@ -399,7 +392,6 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 					if (linkIdStr.trim().length() == 0) {
 						setNeedRefresh(true);
 					}
-
 					setModify();
 					properties.setProperty(LINK_KEY, idLink);
 					properties.setProperty(LABEL_KEY, label.replace("\"", "&quot;"));
@@ -472,5 +464,11 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 	public String getFontAwesome() {	
 		return "link";
 	}
+	
+	@Override
+	protected boolean getColumnableDefaultValue() {
+		return true;
+	}
+	
 
 }

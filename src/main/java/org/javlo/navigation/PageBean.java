@@ -29,6 +29,7 @@ import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.utils.CollectionAsMap;
+import org.javlo.utils.HtmlPart;
 
 import com.beust.jcommander.ParameterException;
 
@@ -194,6 +195,16 @@ public class PageBean implements Serializable {
 			return null;
 		}
 	}
+	
+	public ImageBean getImage() throws Exception {
+		IImageTitle imageTitle = page.getImage(ctx);
+		if (imageTitle != null) {
+			return new ImageBean(ctx, imageTitle, "standard");
+		} else {
+			return null;
+		}
+	}
+
 
 	public ExtendedColor getColor() {
 		try {
@@ -410,6 +421,10 @@ public class PageBean implements Serializable {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	public HtmlPart getDescription() throws Exception {
+		return page.getDescription(ctx);
 	}
 
 	public String getSlogan() {
