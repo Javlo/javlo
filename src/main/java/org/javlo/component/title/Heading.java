@@ -408,7 +408,8 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	}
 	
 	@Override
-	public String performEdit(ContentContext ctx) throws Exception {	
+	public String performEdit(ContentContext ctx) throws Exception {
+		performColumnable(ctx);
 		String outPerform = super.performEdit(ctx);
 		if (!ctx.getGlobalContext().isMailingPlatform()) {
 			setFieldValue(TEXT, XHTMLHelper.removeTag(getFieldValue(TEXT, "" ),"p"));
