@@ -1382,23 +1382,28 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (prev == null) {
 			return true;
 		}
-		boolean close = false;
-		if (ctx.getColumnableSize()<=0) {
-			close = true;
+		boolean open = false;
+		if (ctx.getColumnableSize()<0) {
+			open = true;
 		}
 		if (ctx.getColumnableSize()+getColumnSize()>max || prev.getColumnSize()<=0) {
-			close = true;
+			open = true;
 		}
-		return close;
+		return open;
 	}
 	
 	protected boolean isCloseRow(ContentContext ctx) {
 		int max = getColumnMaxSize(ctx);
 		IContentVisualComponent next = getNextComponent();
 		boolean close = false;
+		/* auto */
+		if (getColumnSize()==0) {
+			ctx.setColumnableSize(0);
+			return true;
+		}
 		ctx.setColumnableSize(ctx.getColumnableSize()+getColumnSize());
 		if (next != null) {
-			if (ctx.getColumnableSize()+next.getColumnSize() > max || next.getColumnSize()<=0 || !next.isColumnable(ctx)) {
+			if (ctx.getColumnableSize()+next.getColumnSize() > max || next.getColumnSize()<0 || !next.isColumnable(ctx)) {
 				close = true;
 				ctx.setColumnableSize(0);
 			}
@@ -1847,9 +1852,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 						String name = i18nAccess.getText("content." + getType(), getType());
 						
 						//String debug = ""+getNextComponent().getColumnSize()+" <> "+getNextComponent().isColumnable(ctx)+" <> "+ctx.getColumnableSize();
-						
 						if (isColumnable(ctx) && getColumnSize()>=0) {
-							name = name + " <br /> <span class='glyphicon glyphicon-arrow-left'></span> "+(getColumnSize()==0?'A':getColumnSize())+" <span class='glyphicon glyphicon-arrow-right'></span>";
+							name = name + " <br /> <span class='glyphicon glyphicon-arrow-left'></span> "+(getColumnSize()==0?"a":getColumnSize())+" <span class='glyphicon glyphicon-arrow-right'></span>";
 //							if (debug != null) {
 //								name = name +" <br /> "+debug;
 //							}
