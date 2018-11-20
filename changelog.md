@@ -718,6 +718,10 @@ Security in case of vulnerabilities.
 - page properties layout
 - mutltimedia, store data as properties in place of string
 - new internal link - ajax search + columnable
+- link to file, real content true if two link to file in the page
+- DynamicComponent : field wrapped by default
+- DynamicComponent : add no-renderer as class if no renderer defined
+- Wall : 30 items bu pages
 ### Fixed
 - edit index.html of template, load CodeMirror
 - reset navigation if navigation renderer change
