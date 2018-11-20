@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -277,7 +278,12 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
-		return false;
+		IContentVisualComponent previousComp = getPreviousComponent();
+		if (previousComp == null || previousComp.getType().equals(TYPE)) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	@Override

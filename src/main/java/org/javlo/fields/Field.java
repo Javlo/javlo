@@ -520,12 +520,20 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 
 	public String getFieldPrefix(ContentContext ctx) {
 		Locale locale = new Locale(ctx.getRequestContentLanguage());
-		String prefix = properties.getProperty("field." + getUnicName() + ".prefix", "");
+		String prefix = properties.getProperty("field." + getUnicName() + ".prefix", getDefaultPrefix());
 		if (isLabelDisplayed()) {
 			return prefix + "<div class=\"label "+getUnicName()+"\">" + StringHelper.neverNull(getUserLabel(ctx, locale)) + "</div>";
 		} else {
 			return prefix;
 		}
+	}
+	
+	public String getDefaultPrefix() {
+		return properties.getProperty("default.prefix", "<div class=\"dc-field\">");
+	}
+	
+	public String getDefaultSuffix() {
+		return properties.getProperty("default.suffix", "</div>");
 	}
 
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
@@ -626,7 +634,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	}
 
 	public String getFieldSuffix(ContentContext ctx) {
-		return properties.getProperty("field." + getUnicName() + ".suffix", "");
+		return properties.getProperty("field." + getUnicName() + ".suffix", getDefaultSuffix());
 	}
 
 	/**
@@ -827,7 +835,11 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	}
 
 	public boolean isLabelDisplayed() {
-		return StringHelper.isTrue(properties.getProperty("field." + getUnicName() + ".label-displayed", "false"));
+		return StringHelper.isTrue(properties.getProperty("field." + getUnicName() + ".label-displayed"), defaultLabelDisplayed());
+	}
+	
+	public boolean defaultLabelDisplayed() {
+		return StringHelper.isTrue(properties.getProperty("default.label-displayed"), false);
 	}
 
 	public String getCSSClass() {

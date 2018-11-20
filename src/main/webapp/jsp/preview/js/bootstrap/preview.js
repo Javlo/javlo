@@ -27,7 +27,7 @@ if (!String.prototype.startsWith) {
 	    var fieldName = "screenshot";	    
 	    var blob = new Blob([img], {type: "image/png"});
 	    fd.append(fieldName,blob);						
-	    editPreview.ajaxPreviewRequest(ajaxURL, null, fd);	    			
+	    editPreview.ajaxPreviewRequest(ajaxURL, null, fd, true);	    			
 	    return false;
 	}
 	
@@ -1150,7 +1150,10 @@ if (!String.prototype.startsWith) {
 			window.location.href = currentURL;
 		}
 
-		editPreview.ajaxPreviewRequest = function(url, doneFunction, data) {
+		editPreview.ajaxPreviewRequest = function(url, doneFunction, data, async) {
+			if (async==null) {
+				async=false;
+			}
 			editPreview.startAjax();
 			if (url.indexOf("/edit-")>=0) {
 				url = url.replace("/edit-", "/ajax-");
@@ -1170,7 +1173,7 @@ if (!String.prototype.startsWith) {
 				dataType : "json",
 				processData: false,
 				contentType: false,
-				async: false
+				async: async
 			}).done(function(jsonObj) {
 				if (jsonObj.data != null) {
 					if (jsonObj.data["need-refresh"]) {

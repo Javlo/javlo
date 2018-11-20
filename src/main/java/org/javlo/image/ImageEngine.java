@@ -1,11 +1,13 @@
 package org.javlo.image;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
 import java.awt.color.ColorSpace;
+import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -19,8 +21,10 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.imageio.IIOImage;
@@ -31,7 +35,6 @@ import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 
 import org.javlo.helper.StringHelper;
 
-import com.jhlabs.image.GainFilter;
 import com.jhlabs.image.RGBAdjustFilter;
 
 public class ImageEngine {
@@ -1776,29 +1779,65 @@ public class ImageEngine {
 		}
 		return (red+green+blue)/(image.getWidth()*image.getHeight()*3);
 	}
+	
+	public static int getGoogleResultTitleSize(String text) {
+		final int MAX = 600;
+		if (StringHelper.isEmpty(text)) {
+			return 0;
+		} else {
+			if (text.length() > 300) {
+				return MAX;
+			} else {
+				BufferedImage image = new BufferedImage(MAX, 50, BufferedImage.TYPE_BYTE_GRAY);
+				Graphics2D g = image.createGraphics();
+				g.setPaint ( Color.WHITE );
+				g.fillRect ( 0, 0, image.getWidth(), image.getHeight());
+				g.setPaint ( Color.BLACK );
+				Font font = new Font("Arial", Font.PLAIN, 18);
+				Map<TextAttribute, Object> attributes = new HashMap<TextAttribute, Object>();
+				attributes.put(TextAttribute.TRACKING, -0.0048);
+				font = font.deriveFont(attributes);
+				g.setFont(font); 
+			    g.drawString(text, 0, 25);
+			    g.dispose();
+			    image = trim(image, Color.WHITE, 1);
+			    try {
+					ImageIO.write(image, "png", new File("c:/trans/text.png"));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			    return image.getWidth();
+			}
+		}
+	}
 
 	public static void main(String[] args) throws Exception {
-		System.out.println("***** ImageEngine.main : START"); // TODO: remove
-		File catFile = new File("c:/trans/catherine.JPG");
-		BufferedImage cat = ImageIO.read(catFile);
-		File anneFile = new File("c:/trans/anne.JPG");
-		BufferedImage anne = ImageIO.read(anneFile);
-		File blackFile = new File("c:/trans/black.JPG");
-		BufferedImage black = ImageIO.read(blackFile);
-		File whileFile = new File("c:/trans/white.JPG");
-		BufferedImage white = ImageIO.read(whileFile);
 		
-		GainFilter filter = new GainFilter();
-		filter.setGain(0.8f);
-		filter.setBias(0.8f);
-		anne = filter.filter(anne, null);
-		ImageIO.write (anne, "jpg", new File("c:/trans/anne_out.jpg"));
-				
+		//System.out.println("data : "+getGoogleResultTitleSize("patrick est là"));
+		System.out.println("data : "+getGoogleResultTitleSize("Hot Women | Sexy Women Pics | Hot Ladies - theChive"));
 		
-		System.out.println(">>>>>>>>> ImageEngine.main : anne = "+getColorLight(anne)); //TODO: remove debug trace
-		System.out.println(">>>>>>>>> ImageEngine.main : catherine = "+getColorLight(cat)); //TODO: remove debug trace
-		System.out.println(">>>>>>>>> ImageEngine.main : black = "+getColorLight(black)); //TODO: remove debug trace
-		System.out.println(">>>>>>>>> ImageEngine.main : white = "+getColorLight(white)); //TODO: remove debug trace
+//		System.out.println("***** ImageEngine.main : START"); // TODO: remove
+//		File catFile = new File("c:/trans/catherine.JPG");
+//		BufferedImage cat = ImageIO.read(catFile);
+//		File anneFile = new File("c:/trans/anne.JPG");
+//		BufferedImage anne = ImageIO.read(anneFile);
+//		File blackFile = new File("c:/trans/black.JPG");
+//		BufferedImage black = ImageIO.read(blackFile);
+//		File whileFile = new File("c:/trans/white.JPG");
+//		BufferedImage white = ImageIO.read(whileFile);
+//		
+//		GainFilter filter = new GainFilter();
+//		filter.setGain(0.8f);
+//		filter.setBias(0.8f);
+//		anne = filter.filter(anne, null);
+//		ImageIO.write (anne, "jpg", new File("c:/trans/anne_out.jpg"));
+//				
+//		
+//		System.out.println(">>>>>>>>> ImageEngine.main : anne = "+getColorLight(anne)); //TODO: remove debug trace
+//		System.out.println(">>>>>>>>> ImageEngine.main : catherine = "+getColorLight(cat)); //TODO: remove debug trace
+//		System.out.println(">>>>>>>>> ImageEngine.main : black = "+getColorLight(black)); //TODO: remove debug trace
+//		System.out.println(">>>>>>>>> ImageEngine.main : white = "+getColorLight(white)); //TODO: remove debug trace
 	}
 
 	public static BufferedImage convertRGBAToIndexed(BufferedImage src) {

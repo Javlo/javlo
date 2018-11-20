@@ -146,6 +146,15 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 			e.printStackTrace();
 		}
 	}
+	
+	@Override
+	protected String contructViewStyle(ContentContext ctx) {
+		String outClass =  super.contructViewStyle(ctx);
+		if (StringHelper.isEmpty(getDynamicRenderer(ctx))) {
+			outClass=outClass+" no-renderer";
+		}
+		return outClass;
+	}
 
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
@@ -271,9 +280,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		out.println(getPrefix());
 		if (isWrapped()) {
 			if (allValid) {
-				out.println("<div class=\"valid" + cssClass + "\">");
+				out.println("<div class=\"in-wrapper valid" + cssClass + "\">");
 			} else {
-				out.println("<div class=\"not-valid" + cssClass + "\">");
+				out.println("<div class=\"in-wrapper not-valid" + cssClass + "\">");
 			}
 		}
 		String firstFiledClass = " first-field";

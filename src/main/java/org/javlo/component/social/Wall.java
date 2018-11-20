@@ -24,7 +24,7 @@ import org.javlo.utils.JSONMap;
 
 public class Wall extends AbstractPropertiesComponent implements IAction {
 	
-	private static final int PAGE_SIZE = 10;
+	private static final int PAGE_SIZE = 30;
 
 	public static final String TYPE = "wall";
 
