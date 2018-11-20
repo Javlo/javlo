@@ -121,7 +121,6 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 				post.setMainPost(Long.parseLong(rs.getParameter("main")));
 			}
 			String msg = validPost(ctx,post);
-			System.out.println(">>>>>>>>> Wall.performCreatepost : msg = "+msg); //TODO: remove debug trace
 			if (msg != null) {
 				return msg;
 			} else {
