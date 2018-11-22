@@ -2092,6 +2092,9 @@ public class StringHelper {
 	 * @return a string without CR.
 	 */
 	public static String removeCR(String text) {
+		if (text == null) {
+			return null;
+		}
 		StringReader reader = new StringReader(text);
 		BufferedReader bReader = new BufferedReader(reader);
 		StringBuffer res = new StringBuffer();
