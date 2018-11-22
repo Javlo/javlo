@@ -1247,6 +1247,9 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	 * @return large, small or normal
 	 */
 	public String getSize(ContentContext ctx) {
+		if (getValue() == null) {
+			return "normal";
+		}
 		int size = getValue().length();
 		if (size < Integer.parseInt(getPropertyValue("size.small", "16"))) {
 			return "small";
