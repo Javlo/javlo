@@ -258,6 +258,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		if (url != null && url.startsWith('/' + ctx.getGlobalContext().getStaticConfig().getStaticFolder())) {
 			url = URLHelper.createMediaURL(ctx, url);
 		}
+		ctx.getRequest().setAttribute("url", url);
 		
 		String link = getLink();
 		link = URLHelper.convertLink(ctx, link);

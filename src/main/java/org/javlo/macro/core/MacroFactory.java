@@ -61,6 +61,7 @@ import org.javlo.macro.MergeDynamicComponent;
 import org.javlo.macro.MergeGalleryAndGalleries;
 import org.javlo.macro.MergeImagesInGallery;
 import org.javlo.macro.NoClickableImageMacro;
+import org.javlo.macro.NoDashOnImageMacro;
 import org.javlo.macro.PasteCopiedElementInAllLanguageMacro;
 import org.javlo.macro.ReduceSubtitleLevelMacro;
 import org.javlo.macro.SortChildren;
@@ -174,6 +175,7 @@ public class MacroFactory {
 		macros.add(new DownDateMacro());
 		macros.add(new UpDateMacro());
 		macros.add(new DashOnImageMacro());
+		macros.add(new NoDashOnImageMacro());
 		macros.add(new DeleteChildrenAndContent());
 		macros.add(new DeleteSameComponent());
 		macros.add(new DeleteComponentBadArea());
