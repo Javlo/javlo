@@ -713,6 +713,7 @@ Security in case of vulnerabilities.
 - macro icon
 - multimedia taxonomy filter
 - page reference date range
+- no dash macro
 ### Modified
 - track cache by days in place of month
 - add button unactive by default
