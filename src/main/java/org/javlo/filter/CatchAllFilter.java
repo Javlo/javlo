@@ -28,7 +28,7 @@ import org.javlo.context.ContentManager;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.UserInterfaceContext;
-import org.javlo.data.InfoBean;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.RequestHelper;
 import org.javlo.helper.ResourceHelper;
@@ -67,6 +67,9 @@ public class CatchAllFilter implements Filter {
 	private static final String JAVLO_LOGIN_ID = "javlo_login_id";
 
 	public static final String MAIN_URI_KEY = "_mainURI";
+	
+	private static boolean DEBUG = true;
+	
 	/**
 	 * create a static logger.
 	 */
@@ -103,6 +106,10 @@ public class CatchAllFilter implements Filter {
 		/*****************************/
 		/**** INIT GLOBAL CONTEXT ****/
 		/*****************************/
+		
+		if (DEBUG) {
+			LocalLogger.log("URL = "+((HttpServletRequest) request).getRequestURL());
+		}
 
 		// TODO: check this creation
 		GlobalContext globalContext = null;
@@ -149,6 +156,9 @@ public class CatchAllFilter implements Filter {
 
 		if (globalContext == null) {
 			logger.warning("context not found : " + httpRequest.getRequestURI());
+			if (DEBUG) {
+				LocalLogger.log("context not found : " + httpRequest.getRequestURI());
+			}
 			((HttpServletResponse) response).setStatus(HttpServletResponse.SC_NOT_FOUND, "context not found.");
 			return;
 		} else {
@@ -212,8 +222,12 @@ public class CatchAllFilter implements Filter {
 					}
 				}
 			}
-
+			
 			String prefix = editURI.substring(0, 5);
+			if (DEBUG) {
+				LocalLogger.log("prefix : " + prefix);
+				LocalLogger.log("editURI : " + editURI);
+			}
 			editURI = editURI.substring("/edit-".length());
 			String module = editURI;
 			if (editURI.contains("/")) {
@@ -298,6 +312,10 @@ public class CatchAllFilter implements Filter {
 					MenuElement page = content.getPageWithShortURL(ctx, shortURI);
 					if (page != null) {
 						String newURL = URLHelper.createURLWithtoutEncodeURL(ctx, page.getPath());
+						if (DEBUG) {
+							LocalLogger.log("1.sendRedirectTemporarily");
+							LocalLogger.log("newURL : " + newURL);
+						}
 						NetHelper.sendRedirectTemporarily((HttpServletResponse) response, newURL);
 						return;
 					}
@@ -317,6 +335,10 @@ public class CatchAllFilter implements Filter {
 					MenuElement page = content.getPageWithShortURL(ctx, shortURI);
 					if (page != null) {
 						String newURL = URLHelper.createURLWithtoutEncodeURL(ctx, page.getPath());
+						if (DEBUG) {
+							LocalLogger.log("2.sendRedirectTemporarily");
+							LocalLogger.log("newURL : " + newURL);
+						}
 						NetHelper.sendRedirectTemporarily((HttpServletResponse) response, newURL);
 						return;
 					}
@@ -342,6 +364,11 @@ public class CatchAllFilter implements Filter {
 					if (!pattern1.contains("*")) {
 						if (cmsURI.equals(pattern1)) {
 							logger.info("manual redirect : " + pattern1 + " --> " + pattern2);
+							if (DEBUG) {
+								LocalLogger.log("1.sendRedirectPermanently");
+								LocalLogger.log("pattern1 : " + pattern1);
+								LocalLogger.log("pattern2 : " + pattern2);
+							}
 							NetHelper.sendRedirectPermanently((HttpServletResponse) response, pattern2);
 							return;
 						}
@@ -352,6 +379,11 @@ public class CatchAllFilter implements Filter {
 							// ContentContext.getPathPrefix((HttpServletRequest)
 							// request), newURL);
 							logger.info("manual redirect : " + pattern1 + " --> " + newURL);
+							if (DEBUG) {
+								LocalLogger.log("2.sendRedirectPermanently");
+								LocalLogger.log("pattern1 : " + pattern1);
+								LocalLogger.log("newURL : " + newURL);
+							}
 							NetHelper.sendRedirectPermanently((HttpServletResponse) response, newURL);
 							return;
 						}
@@ -391,6 +423,10 @@ public class CatchAllFilter implements Filter {
 //						if (httpRequest.getSession().isNew()) {
 //							httpRequest.getSession().setAttribute(InfoBean.NEW_SESSION_PARAM, true);
 //						}
+						if (DEBUG) {
+							LocalLogger.log("1.forward");
+							LocalLogger.log("newPath : " + newPath);
+						}
 						httpRequest.setAttribute(MAIN_URI_KEY, URLDecoder.decode(httpRequest.getRequestURI(), ContentContext.CHARACTER_ENCODING));
 						globalContext.log("url", "forward add view : " + httpRequest.getRequestURI() + " >> " + newPath);
 						httpRequest.getRequestDispatcher(newPath).forward(httpRequest, response);
@@ -420,10 +456,20 @@ public class CatchAllFilter implements Filter {
 //				httpRequest.getSession().setAttribute(InfoBean.NEW_SESSION_PARAM, true);
 //			}
 			globalContext.log("url", "forward : " + httpRequest.getRequestURI() + " >> " + forwardURI);
+			if (DEBUG) {
+				LocalLogger.log("1.forward");
+				LocalLogger.log("newPath : " + forwardURI);
+			}
 			httpRequest.getRequestDispatcher(forwardURI).forward(httpRequest, response);
 		} else {
 			// JavloServletResponse javloResponse = new
 			// JavloServletResponse((HttpServletResponse)response);
+			
+			if (DEBUG) {
+				LocalLogger.log("request uri : " + httpRequest.getRequestURI());
+				LocalLogger.log("forwardURI  : " + forwardURI);
+				LocalLogger.log("next.doFilter");
+			}
 			next.doFilter(httpRequest, response);
 			/*
 			 * if (javloResponse.isError()) { String viewURI = uri; String newPath =

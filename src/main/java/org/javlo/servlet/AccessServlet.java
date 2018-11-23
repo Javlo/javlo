@@ -116,6 +116,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	public static long COUNT_ACCESS = 0;
 
 	public static long COUNT_304 = 0;
+	
+	private static boolean DEBUG = true;
 
 	private static final DecimalFormat df = new DecimalFormat("#####0.00");
 
@@ -269,6 +271,10 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		COUNT_ACCESS++;
 
 		logger.fine("uri : " + request.getRequestURI());
+		
+		if (DEBUG) {
+			LocalLogger.log("AccessServlet : uri : "+request.getRequestURI());
+		}
 
 		StaticConfig staticConfig = StaticConfig.getInstance(getServletContext());
 

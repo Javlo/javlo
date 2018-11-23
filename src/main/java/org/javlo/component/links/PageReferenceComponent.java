@@ -65,6 +65,7 @@ import org.javlo.navigation.ReactionMenuElementComparator;
 import org.javlo.navigation.ReactionSmartPageBeanComparator;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+import org.javlo.utils.TimeRange;
 
 /**
  * list of links to a subset of pages.
@@ -183,7 +184,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	private static final List<String> TIME_SELECTION_OPTIONS = Arrays.asList(new String[] { "before", "inside", "after" });
 
 	private static final String TIME_SELECTION_KEY = "time-selection";
-
+	
+	private static final String START_DATE_KEY = "start-date";
+	
+	private static final String END_DATE_KEY = "end-date";
+	
 	private static final String DISPLAY_FIRST_PAGE_KEY = "display-first-page";
 
 	private static final String CHANGE_ORDER_KEY = "reverse-order";
@@ -379,6 +384,18 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				return false;
 			}
 		}
+		
+		String startDateStr = properties.getProperty(START_DATE_KEY);
+		String endDateStr = properties.getProperty(END_DATE_KEY);
+		if (!StringHelper.isEmpty(startDateStr) || !StringHelper.isEmpty(endDateStr)) {
+			Date startDate = StringHelper.parseInputDate(startDateStr);
+			Date endDate = StringHelper.parseInputDate(endDateStr);
+			TimeRange tr = new TimeRange(startDate, endDate);
+			if (!tr.isInside(page.getContentDateNeverNull(ctx))) {
+				return false;
+			}
+		}
+		
 		if (getSelectedTag(ctx).size() == 0) {
 			return true;
 		}
@@ -492,11 +509,15 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	}
 
 	protected boolean isUITimeSelection(ContentContext ctx) {
-		return StringHelper.isTrue(getConfig(ctx).getProperty("ui.time-selection", "true"));
+		return StringHelper.isTrue(getConfig(ctx).getProperty("ui.time-selection", null), true);
+	}
+	
+	protected boolean isDateRangeSelection(ContentContext ctx) {
+		return StringHelper.isTrue(getConfig(ctx).getProperty("ui.date-range", null), true);
 	}
 
 	protected boolean isUIFullDisplayFirstPage(ContentContext ctx) {
-		return StringHelper.isTrue(getConfig(ctx).getProperty("ui.full-display-first-page", "true"));
+		return StringHelper.isTrue(getConfig(ctx).getProperty("ui.full-display-first-page", null), false);
 	}
 
 	protected boolean isUIFilterOnEditUsers(ContentContext ctx) {
@@ -504,7 +525,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	}
 
 	protected boolean isUILargeSorting(ContentContext ctx) {
-		return StringHelper.isTrue(getConfig(ctx).getProperty("ui.large-sorting", "true"));
+		return StringHelper.isTrue(getConfig(ctx).getProperty("ui.large-sorting", null), true);
 	}
 
 	/**
@@ -624,6 +645,15 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				out.println("<input type=\"checkbox\" name=\"" + getTimeSelectionInputName(option) + "\"" + selected + " />");
 				out.println("<label for=\"" + getTimeSelectionInputName(option) + "\">" + i18nAccess.getText("content.page-teaser." + option, option) + "</label>");
 			}
+			out.println("</div>");
+		}
+		
+		if (isDateRangeSelection(ctx)) {
+			out.println("<div class=\"line-inline\">");
+			out.println("<label>" + i18nAccess.getText("global.from") + " : ");
+			out.println("<input type=\"date\" name=\"" + getInputName(START_DATE_KEY) + "\" value=\""+getStartDate()+"\" /></label>");
+			out.println("<label>" + i18nAccess.getText("global.to") + " : ");
+			out.println("<input type=\"date\" name=\"" + getInputName(END_DATE_KEY) + "\" value=\""+getEndDate()+"\" /></label>");
 			out.println("</div>");
 		}
 
@@ -1034,6 +1064,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			return getTimeSelectionOptions();
 		}
 		return StringHelper.stringToCollection(properties.getProperty(TIME_SELECTION_KEY, null));
+	}
+	
+	private String getStartDate() {
+		return properties.getProperty(START_DATE_KEY, "");
+	}
+	
+	private String getEndDate() {
+		return properties.getProperty(END_DATE_KEY, "");
 	}
 
 	protected boolean isDisplayFirstPage() {
@@ -1529,7 +1567,16 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 					}
 				}
 			}
-
+			
+			if (!properties.getProperty(START_DATE_KEY, "").equals(requestService.getParameter(getInputName(START_DATE_KEY),""))) {
+				properties.setProperty(START_DATE_KEY, requestService.getParameter(getInputName(START_DATE_KEY),""));
+				setModify();
+			}
+			if (!properties.getProperty(END_DATE_KEY, "").equals(requestService.getParameter(getInputName(END_DATE_KEY),""))) {
+				properties.setProperty(END_DATE_KEY, requestService.getParameter(getInputName(END_DATE_KEY),""));
+				setModify();
+			}
+			
 			if (!StringHelper.isEmpty(requestService.getParameter(getDirectLinkInputName()))) {
 				String page = requestService.getParameter(getDirectLinkInputName());
 				MenuElement pageFound = menu.searchChildFromId(page);

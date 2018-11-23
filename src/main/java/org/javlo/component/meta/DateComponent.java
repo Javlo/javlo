@@ -148,6 +148,9 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 //	}
 
 	protected String renderDate(ContentContext ctx, Date date) throws FileNotFoundException, IOException {
+		if (getStyle() == null) {
+			return StringHelper.renderDate(date);
+		}
 		if (getStyle().equals(USER_FRIENDLY_DATE_TYPE)) {
 			return StringHelper.renderUserFriendlyDate(ctx, date);
 		} else if (getStyle().equals(MEDIUM_DATE_TYPE)) {

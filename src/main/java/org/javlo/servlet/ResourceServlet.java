@@ -83,6 +83,7 @@ public class ResourceServlet extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
 		}
+		System.out.println(">>>>>>>>> ResourceServlet.processRequest : request.getServletPath() = "+request.getServletPath()); //TODO: remove debug trace
 		if (request.getServletPath().equals("/favicon.ico") || request.getServletPath().equals("/robots.txt")) {
 			response.setHeader("Cache-Control", "max-age=600,must-revalidate");
 			GlobalContext globalContext = GlobalContext.getSessionContext(request.getSession());

@@ -712,6 +712,7 @@ Security in case of vulnerabilities.
 - macro sort on priority
 - macro icon
 - multimedia taxonomy filter
+- page reference date range
 ### Modified
 - track cache by days in place of month
 - add button unactive by default

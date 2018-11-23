@@ -9,42 +9,69 @@ import org.javlo.helper.TimeHelper;
 
 public class TimeRange implements Serializable {
 
-	private Calendar startDateCal = Calendar.getInstance();
+	private Calendar startDateCal = null;
 
-	private Calendar endDateCal = Calendar.getInstance();
+	private Calendar endDateCal = null;
 
 	public TimeRange(Date startDate, Date endDate) {
-		this.startDateCal.setTime(startDate);
+		if (startDate != null) {
+			startDateCal = Calendar.getInstance();
+			startDateCal.setTime(startDate);
+		}
 		if (endDate != null) {
-			this.endDateCal.setTime(endDate);
-		} else {
-			this.endDateCal.setTime(startDate);
+			endDateCal = Calendar.getInstance();
+			endDateCal.setTime(endDate);
 		}
 	}
 
 	public Date getEndDate() {
+		if (endDateCal == null) {
+			return null;
+		}
 		return endDateCal.getTime();
 	}
 
 	public Date getStartDate() {
+		if (startDateCal == null) {
+			return null;
+		}
 		return startDateCal.getTime();
 	}
 
 	public void setEndData(Date endDate) {
+		if (endDateCal == null) {
+			endDateCal = Calendar.getInstance();
+		}
 		this.endDateCal.setTime(endDate);
 	}
 
 	public void setStartDate(Date startDate) {
+		if (startDateCal == null) {
+			startDateCal = Calendar.getInstance();
+		}
 		this.startDateCal.setTime(startDate);
 	}
 
 	public boolean isBefore(Date date) {
+		Calendar refCal = startDateCal;
+		if (refCal == null) {
+			refCal = endDateCal;
+			if (refCal == null) {
+				return true;
+			}
+		}
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
-		return cal.before(startDateCal);
+		return cal.before(refCal);
 	}
 
 	public boolean isInside(Date date) {
+		if (startDateCal == null && endDateCal == null) {
+			return true;
+		}
+		if (startDateCal == null || endDateCal == null) {
+			return false;
+		}
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 		if (startDateCal.equals(endDateCal)) {
@@ -54,7 +81,6 @@ public class TimeRange implements Serializable {
 				return false;
 			}
 		} else {
-
 			if (cal.equals(startDateCal) || cal.equals(endDateCal)) {
 				return true;
 			} else {
@@ -64,9 +90,16 @@ public class TimeRange implements Serializable {
 	}
 
 	public boolean isAfter(Date date) {
+		Calendar refCal = endDateCal;
+		if (refCal == null) {
+			refCal = startDateCal;
+			if (refCal == null) {
+				return true;
+			}
+		}
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
-		return cal.after(endDateCal);
+		return cal.after(refCal);
 	}
 
 	public boolean isNull() {

@@ -1841,6 +1841,14 @@ public class StringHelper {
 	public static Date parseDate(String inDate) throws ParseException {
 		return parseDate(inDate, "dd/MM/yyyy");
 	}
+	
+	public static Date parseInputDate(String inDate) throws ParseException {
+		return parseDate(inDate, "yyyy-MM-dd");
+	}
+	
+	public static String renderInputDate(Date inDate) throws ParseException {
+		return renderDate(inDate, "yyyy-MM-dd");
+	}
 
 	/**
 	 * null save parse int.
