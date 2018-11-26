@@ -2,7 +2,9 @@ package org.javlo.module.ticket;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -153,16 +155,22 @@ public class TicketAction extends AbstractModuleAction {
 	}
 	
 	public static String performUpload(RequestService rs, ContentContext ctx, GlobalContext globalContext, User user, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
-		File imageFile = TicketService.getTempImageFile(ctx);
-		imageFile.getParentFile().mkdirs();
-		imageFile.createNewFile();		
+		InputStream in = null;
 		for (FileItem item : rs.getAllFileItem()) {
 			JavaScriptBlob blob = new JavaScriptBlob(new String(item.get()));
-			ResourceHelper.writeBytesToFile(imageFile, blob.getData());			
-		}	
-		BufferedImage img = ImageIO.read(imageFile);
-		img = ImageEngine.trim(img, Color.WHITE, 1);
-		ImageIO.write(img, "png", imageFile);
+			in = new ByteArrayInputStream(blob.getData());
+		}
+		if (in != null) {
+			BufferedImage img = ImageIO.read(in);
+			in.close();
+			in=null;
+			File imageFile = TicketService.getTempImageFile(ctx);
+			imageFile.getParentFile().mkdirs();
+			imageFile.createNewFile();
+			img = ImageEngine.trim(img, Color.WHITE, 1);
+			ImageEngine.storeImage(img, imageFile);
+		}
+		//ImageIO.write(img, "jpg", imageFile);
 		return null;
 	}
 

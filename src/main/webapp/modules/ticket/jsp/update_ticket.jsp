@@ -5,7 +5,7 @@
 <div class="row">	
 	<div class="col-md-2">		
 		<div id="screenshot">
-			<c:if test="${not empty newTicket}"><c:url var="screenshot" value="/web-tmp/${globalContext.contextKey}_${info.page.name}.png" ></c:url></c:if>
+			<c:if test="${not empty newTicket}"><c:url var="screenshot" value="/web-tmp/${globalContext.contextKey}_${info.page.name}.jpg" ></c:url></c:if>
 			<c:if test="${empty newTicket && not empty ticket.screenshot}"><c:set var="screenshot" value="${ticket.screenshot}" /></c:if>
 			<c:if test="${empty screenshot}">no screenshot</c:if>
 			<c:if test="${not empty screenshot}"><a href="${screenshot}" target="_blank"><img id="screenshot-container" src="${info.ajaxLoaderURL}" alt="page screenshot" lang="en" /></a></c:if>

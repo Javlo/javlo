@@ -73,14 +73,14 @@ public class TicketService {
 	}
 	
 	public static File getTempImageFile(ContentContext ctx) throws Exception {
-		return new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getWebTempDir().getAbsolutePath(), ctx.getGlobalContext().getContextKey()+'_'+ctx.getCurrentPage().getName()+".png"));
+		return new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getWebTempDir().getAbsolutePath(), ctx.getGlobalContext().getContextKey()+'_'+ctx.getCurrentPage().getName()+".jpg"));
 	}
 
 	private void storeTicket(ContentContext ctx, TicketBean bean) throws Exception {
 		if (!bean.isDebugNote()) {
 			if (!StringHelper.isEmpty(bean.getTitle())) {
 				File ticketFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), bean.getId() + ".xml"));
-				File ticketScreenshot = new File(URLHelper.mergePath(folder.getAbsolutePath(), bean.getId() + ".png"));
+				File ticketScreenshot = new File(URLHelper.mergePath(folder.getAbsolutePath(), bean.getId() + ".jpg"));
 				File tempScreenshot = getTempImageFile(ctx);
 				if (tempScreenshot.exists() && !ticketScreenshot.exists()) {
 					FileUtils.moveFile(tempScreenshot, ticketScreenshot);
