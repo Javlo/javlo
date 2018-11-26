@@ -24,7 +24,7 @@ public class SocialFilter {
 	}
 	
 	public boolean isFilterEmpty() {
-		return StringHelper.isEmpty(query) && !onlyMine;
+		return StringHelper.isEmpty(title) && StringHelper.isEmpty(author) && StringHelper.isEmpty(query) && !onlyMine;
 	}
 
 	public String getQuery() {
