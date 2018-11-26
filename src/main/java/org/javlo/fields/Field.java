@@ -529,7 +529,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	}
 	
 	public String getDefaultPrefix() {
-		return properties.getProperty("default.prefix", "<div class=\"dc-field\">");
+		return properties.getProperty("default.prefix", "<div class=\"dc-field dc-field-"+getName()+"\">");
 	}
 	
 	public String getDefaultSuffix() {

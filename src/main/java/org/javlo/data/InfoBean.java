@@ -718,6 +718,10 @@ public class InfoBean {
 	public String getResourceRootURL() {
 		return URLHelper.createResourceURL(ctx, "/");
 	}
+	
+	public String getMediaRootURL() {
+		return URLHelper.createMediaURL(ctx, "/");
+	}
 
 	public String getStaticRootURL() {
 		return URLHelper.createStaticURL(ctx, "/");
