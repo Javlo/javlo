@@ -18,19 +18,11 @@ public class FileRest implements IRestFactory {
 
 	@Override
 	public IRestItem search(ContentContext ctx, String path, String query) throws Exception {
-		
-		System.out.println(">>>>>>>>> FileRest.search : path = "+path); //TODO: remove debug trace
-		System.out.println(">>>>>>>>> FileRest.search : query = "+query); //TODO: remove debug trace
-		
 		File file = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), path));
-		
-		System.out.println(">>>>>>>>> FileRest.search : file = "+file); //TODO: remove debug trace
-		
 		if (!file.exists()) {
 			return null;
 		} else {
 			return StaticInfo.getInstance(ctx, file);
 		}
-	}	
-
+	}
 }
