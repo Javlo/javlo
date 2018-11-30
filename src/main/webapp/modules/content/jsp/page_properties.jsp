@@ -47,7 +47,7 @@
 	</select>	
 </div>
 </c:if>
-<div class="row">
+<div class="row taxo-row">
 <div class="col-md-8">
 <c:if test="${userInterface.light}">
 <c:set var="found" value="false" />
@@ -63,7 +63,12 @@
 	<label for="new_name">${i18n.edit['item.name']}</label>
 	<input type="text" class="form-control" id="new_name" name="new_name" value="${page.humanName}" />
 </div>
-
+<c:if test="${taxonomy.active}">
+<div class="taxonomy">
+	<label for="taxonomy">${i18n.edit ['taxonomy']}</label>
+	${taxonomySelect}
+</div>
+</c:if>
 <c:if test="${not globalContext.mailingPlatform}">
 <fieldset>
 <legend>${i18n.edit['item.time-range']} (${i18n.edit['item.time-published']}:${page.insideTimeRange})</legend>
@@ -82,12 +87,6 @@
 </div>
 </div>
 </fieldset>
-</c:if>
-<c:if test="${taxonomy.active}">
-<div class="taxonomy">
-	<label for="taxonomy">${i18n.edit ['taxonomy']}</label>
-	${taxonomySelect}
-</div>
 </c:if>
 </div><div class="col-md-4">
 <div class="screenshot">

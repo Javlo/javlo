@@ -260,4 +260,5 @@ public class StaticInfoBean implements ITaxonomyContainer {
 	public Set<String> getTaxonomy() {
 		return staticInfo.getTaxonomy(ctx);
 	}
+
 }

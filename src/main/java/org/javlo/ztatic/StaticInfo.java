@@ -7,6 +7,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.text.ParseException;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -21,13 +22,13 @@ import java.util.logging.Logger;
 
 import javax.naming.ConfigurationException;
 
-import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.cache.ICache;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.data.rest.IRestItem;
 import org.javlo.helper.ExifHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -42,7 +43,7 @@ import org.javlo.user.User;
 import org.javlo.xml.NodeXML;
 import org.owasp.encoder.Encode;
 
-public class StaticInfo {
+public class StaticInfo implements IRestItem {
 
 	private static final String FOCUS_ZONE_Y = "focus-zone-y";
 
@@ -1338,6 +1339,18 @@ public class StaticInfo {
 			title = "<span class=\"title\">" + title + "</span>";
 			sep = " - ";
 		}
+		
+		String description = getDescription(ctx);
+		if (description != null && description.trim().length() > 0) {
+			description = "<span class=\"description\">" + description + "</span>";
+			sep = " - ";
+		}
+		
+		String authors = getAuthors(ctx);
+		if (authors != null && authors.trim().length() > 0) {
+			authors = "<span class=\"authors\">" + authors + "</span>";
+			sep = " - ";
+		}
 
 		if (location != null && location.trim().length() > 0) {
 			title = title + "<span class=\"location\">" + sep + location + "</span>";
@@ -1361,11 +1374,7 @@ public class StaticInfo {
 		}
 		String date = null;
 		try {
-			if (dateFromData) {
-				date = StringHelper.renderShortDate(ctx, getDate(ctx));
-			} else if (folder.dateFromData) {
-				date = StringHelper.renderShortDate(ctx, folder.getDate(ctx));
-			}
+			date = StringHelper.renderShortDate(ctx, getManualDate(ctx));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1380,9 +1389,29 @@ public class StaticInfo {
 			title = title + sep + location;
 			sep = " - ";
 		}
+		
+		String description = getAuthors(ctx);
+		if (description != null && description.trim().length() > 0) {
+			title = title + sep + description;
+			sep = " - ";
+		}
+		
+		String authors = getAuthors(ctx);
+		if (authors != null && authors.trim().length() > 0) {
+			title = title + sep + authors;
+			sep = " - ";
+		}
+		
 		if (date != null) {
 			title = title + sep + date;
 		}
+		
+		if (StringHelper.isEmpty(title)) {
+			if (getFile() != null) {
+				title = getFile().getName();
+			}
+		}
+		
 		return title;
 	}
 
@@ -1558,6 +1587,55 @@ public class StaticInfo {
 		} else {
 			return imageSize;
 		}
+	}
+
+	@Override
+	public Map<String, Object> getContentAsMap(ContentContext ctx) throws Exception {
+		if (getFile() == null || !getFile().exists() || !canRead(ctx, ctx.getCurrentUser(), null) || !isShared(ctx)) {
+			return Collections.EMPTY_MAP;
+		}
+		Map<String,Object> data = new HashMap<String,Object>();
+		data.put("title", getTitle(ctx));
+		data.put("fullTitle", getFullTitle(ctx));
+		data.put("fullHtmlTitle", getFullHTMLTitle(ctx));
+		data.put("name", getFile().getName());
+		data.put("description", getDescription(ctx));
+		String authors = getAuthors(ctx);
+		if (!StringHelper.isEmpty(authors)) {
+			data.put("authors", authors);
+		}
+		Collection<String> tags = getTags(ctx);
+		if (tags.size()>0) {
+			data.put("tags", tags);
+		}
+		data.put("date", getDate(ctx));
+		String location = getLocation(ctx);
+		if (!StringHelper.isEmpty(location)) {
+			data.put("location", location);
+		}
+		Collection<String> taxonomy = getTaxonomy(ctx);
+		if (taxonomy.size() > 0) {
+			data.put("taxonomy", getTaxonomy(ctx));
+		}
+		String copyright = getCopyright(ctx);
+		if (!StringHelper.isEmpty(copyright)) {
+			data.put("copyright", copyright);
+		}
+		data.put("language", getLanguage(ctx));
+		data.put("url", getURL(ctx));
+		
+		if (getFile().isDirectory()) {
+			List<Map<String, Object>> childrenArray = new LinkedList<Map<String, Object>>();
+			for (File child : getFile().listFiles()) {
+				Map<String, Object> childData = StaticInfo.getInstance(ctx, child).getContentAsMap(ctx);
+				if (childData.size()>0) {
+					childrenArray.add(childData);
+				}
+			}
+			data.put("children", childrenArray );
+		}
+		
+		return data;
 	}
 
 }
