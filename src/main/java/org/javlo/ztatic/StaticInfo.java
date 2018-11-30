@@ -1429,32 +1429,7 @@ public class StaticInfo implements IRestItem {
 			e.printStackTrace();
 		}
 
-		String sep = "";
-
-		if (title != null && title.trim().length() > 0) {
-			sep = " - ";
-		}
-
-		if (location != null && location.trim().length() > 0) {
-			title = title + sep + location;
-			sep = " - ";
-		}
-
-		String description = getAuthors(ctx);
-		if (description != null && description.trim().length() > 0) {
-			title = title + sep + description;
-			sep = " - ";
-		}
-
-		String authors = getAuthors(ctx);
-		if (authors != null && authors.trim().length() > 0) {
-			title = title + sep + authors;
-			sep = " - ";
-		}
-
-		if (date != null) {
-			title = title + sep + date;
-		}
+		title = StringHelper.mergeString(" - ", title, location, getDescription(ctx), getAuthors(ctx), date);
 
 		if (StringHelper.isEmpty(title)) {
 			if (getFile() != null) {
