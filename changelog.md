@@ -714,6 +714,7 @@ Security in case of vulnerabilities.
 - multimedia taxonomy filter
 - page reference date range
 - no dash macro
+- REST resource service
 ### Modified
 - track cache by days in place of month
 - add button unactive by default
