@@ -28,6 +28,10 @@ public class FieldDate extends Field implements IDate {
 			super(ctx);		
 		}
 		
+		public String getSortableDate() throws FileNotFoundException, IOException {
+			return StringHelper.renderSortableDate(FieldDate.this.getDate(ctx));
+		}
+		
 		public String getShortDate() throws FileNotFoundException, IOException {
 			return StringHelper.renderShortDate(ctx, FieldDate.this.getDate(ctx));
 		}
