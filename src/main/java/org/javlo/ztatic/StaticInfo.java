@@ -1,7 +1,9 @@
 package org.javlo.ztatic;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -24,6 +26,11 @@ import javax.naming.ConfigurationException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tika.exception.TikaException;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.parser.ParseContext;
+import org.apache.tika.parser.Parser;
+import org.apache.tika.parser.mp3.Mp3Parser;
 import org.javlo.cache.ICache;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -42,6 +49,9 @@ import org.javlo.service.location.LocationService;
 import org.javlo.user.User;
 import org.javlo.xml.NodeXML;
 import org.owasp.encoder.Encode;
+import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
 
 public class StaticInfo implements IRestItem {
 
@@ -443,7 +453,7 @@ public class StaticInfo implements IRestItem {
 	private boolean dateFromData = true;
 
 	private int accessFromSomeDays = -1;
-	
+
 	private boolean searchFace = false;
 
 	// private Metadata imageMetadata = null;
@@ -466,21 +476,21 @@ public class StaticInfo implements IRestItem {
 	}
 
 	private String getKey(ContentContext ctx, String inStaticURL, String key) {
-//		if (key.contains("-")) {
-//			if (ctx != null) {
-//				ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-//				String previousKey = key;
-//				key = key.replace("-", "_");
-//				content.setAttribute(ctx, key, content.getAttribute(ctx, previousKey));
-//				content.removeAttribute(ctx, previousKey);
-//			}
-//			key = key.replace("-", "_");
-//		}
+		// if (key.contains("-")) {
+		// if (ctx != null) {
+		// ContentService content = ContentService.getInstance(ctx.getGlobalContext());
+		// String previousKey = key;
+		// key = key.replace("-", "_");
+		// content.setAttribute(ctx, key, content.getAttribute(ctx, previousKey));
+		// content.removeAttribute(ctx, previousKey);
+		// }
+		// key = key.replace("-", "_");
+		// }
 		return KEY + inStaticURL + '-' + key;
 	}
 
 	public static String getStaticUrlFromKey(Object key) {
-		if (!(""+key).contains(".")) {
+		if (!("" + key).contains(".")) {
 			return null;
 		}
 		String url = key.toString().substring(KEY.length());
@@ -554,12 +564,42 @@ public class StaticInfo implements IRestItem {
 			staticInfo.setFile(file);
 			staticInfo.size = file.length();
 
+			if (!staticInfo.isInitialised(ctx)) {
+				staticInfo.init(ctx);
+			}
+
 			outStaticInfo = staticInfo;
+
 			// request.setAttribute(inStaticURL, outStaticInfo);
 			globalContext.setTimeAttribute(KEY, outStaticInfo);
 		}
 
 		return outStaticInfo;
+	}
+
+	private void init(ContentContext ctx) throws IOException, SAXException, TikaException {
+		setInitialised(ctx);
+		if (getFile() == null || !getFile().exists()) {
+			return;
+		}
+		if (StringHelper.isSound(getFile().getName())) {
+			InputStream input = new FileInputStream(getFile());
+			Metadata metadata = new Metadata();
+			try {
+				ContentHandler handler = new DefaultHandler();
+				Parser parser = new Mp3Parser();
+				ParseContext parseCtx = new ParseContext();
+				parser.parse(input, handler, metadata, parseCtx);
+			} finally {
+				ResourceHelper.closeResource(input);
+			}
+			// List all metadata
+			String[] metadataNames = metadata.names();
+			setTitle(ctx, metadata.get("title"));
+			setAuthors(ctx, StringHelper.mergeString(" - ", metadata.get("xmpDM:artist"), metadata.get("xmpDM:composer")));
+			setDescription(ctx, StringHelper.mergeString(" - ", metadata.get("xmpDM:genre"), metadata.get("xmpDM:album")));
+		}
+
 	}
 
 	public String getFullDescription(ContentContext ctx) {
@@ -813,6 +853,16 @@ public class StaticInfo implements IRestItem {
 		return id;
 	}
 
+	public void setInitialised(ContentContext ctx) {
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
+		content.setAttribute(ctx, getKey(ctx, "init-" + ctx.getRequestContentLanguage()), "1");
+	}
+
+	public boolean isInitialised(ContentContext ctx) {
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
+		return StringHelper.isTrue(content.getAttribute(ctx, getKey(ctx, "init-" + ctx.getRequestContentLanguage())));
+	}
+
 	public void setTitle(ContentContext ctx, String title) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		if (StringHelper.isEmpty(title)) {
@@ -963,26 +1013,26 @@ public class StaticInfo implements IRestItem {
 		if (!content.isNavigationLoaded(editCtx)) {
 			editCtx = ctx;
 		}
-		if (!searchFace && content.getAttribute(editCtx, getKey(ctx,FOCUS_ZONE_X), null) == null) {
+		if (!searchFace && content.getAttribute(editCtx, getKey(ctx, FOCUS_ZONE_X), null) == null) {
 			searchFace = true;
 			if (StringHelper.isImage(getFile().getName())) {
 				try {
 					if (getFile().exists()) {
-						try { 
+						try {
 							if (ctx.getGlobalContext().getStaticConfig().isAutoFocus() && ctx.isAsPreviewMode()) {
 								logger.info("search point on interest on START : " + getFile() + " [" + ctx.getGlobalContext().getContextKey() + "]");
-								InitInterest.setPointOfInterestWidthThread(ctx, getFile(), getKey(ctx,FOCUS_ZONE_X), getKey(ctx,FOCUS_ZONE_Y));
+								InitInterest.setPointOfInterestWidthThread(ctx, getFile(), getKey(ctx, FOCUS_ZONE_X), getKey(ctx, FOCUS_ZONE_Y));
 							}
 						} catch (Throwable t) {
 							logger.warning(t.getMessage());
-						}						
+						}
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}
-		String kzx = content.getAttribute(editCtx, getKey(ctx,FOCUS_ZONE_X), "" + DEFAULT_FOCUS_X);
+		String kzx = content.getAttribute(editCtx, getKey(ctx, FOCUS_ZONE_X), "" + DEFAULT_FOCUS_X);
 		return Integer.parseInt(kzx);
 	}
 
@@ -999,10 +1049,10 @@ public class StaticInfo implements IRestItem {
 		if (!content.isNavigationLoaded(editCtx)) {
 			editCtx = ctx;
 		}
-		if (content.getAttribute(editCtx, getKey(ctx,FOCUS_ZONE_X), null) == null) {
+		if (content.getAttribute(editCtx, getKey(ctx, FOCUS_ZONE_X), null) == null) {
 			getFocusZoneX(editCtx); // generate default value
 		}
-		String kzy = content.getAttribute(editCtx, getKey(ctx,FOCUS_ZONE_Y), "" + DEFAULT_FOCUS_Y);
+		String kzy = content.getAttribute(editCtx, getKey(ctx, FOCUS_ZONE_Y), "" + DEFAULT_FOCUS_Y);
 		return Integer.parseInt(kzy);
 	}
 
@@ -1028,7 +1078,7 @@ public class StaticInfo implements IRestItem {
 	 */
 	public void setFocusZoneX(ContentContext ctx, int focusZoneX) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-		content.setAttribute(ctx, getKey(ctx,FOCUS_ZONE_X), "" + focusZoneX);
+		content.setAttribute(ctx, getKey(ctx, FOCUS_ZONE_X), "" + focusZoneX);
 	}
 
 	/**
@@ -1040,9 +1090,9 @@ public class StaticInfo implements IRestItem {
 	public void setFocusZoneY(ContentContext ctx, int focusZoneY) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		if (focusZoneY == DEFAULT_FOCUS_Y) {
-			content.removeAttribute(ctx, getKey(ctx,FOCUS_ZONE_Y));
+			content.removeAttribute(ctx, getKey(ctx, FOCUS_ZONE_Y));
 		} else {
-			content.setAttribute(ctx, getKey(ctx,FOCUS_ZONE_Y), "" + focusZoneY);
+			content.setAttribute(ctx, getKey(ctx, FOCUS_ZONE_Y), "" + focusZoneY);
 		}
 	}
 
@@ -1339,13 +1389,13 @@ public class StaticInfo implements IRestItem {
 			title = "<span class=\"title\">" + title + "</span>";
 			sep = " - ";
 		}
-		
+
 		String description = getDescription(ctx);
 		if (description != null && description.trim().length() > 0) {
 			description = "<span class=\"description\">" + description + "</span>";
 			sep = " - ";
 		}
-		
+
 		String authors = getAuthors(ctx);
 		if (authors != null && authors.trim().length() > 0) {
 			authors = "<span class=\"authors\">" + authors + "</span>";
@@ -1389,29 +1439,29 @@ public class StaticInfo implements IRestItem {
 			title = title + sep + location;
 			sep = " - ";
 		}
-		
+
 		String description = getAuthors(ctx);
 		if (description != null && description.trim().length() > 0) {
 			title = title + sep + description;
 			sep = " - ";
 		}
-		
+
 		String authors = getAuthors(ctx);
 		if (authors != null && authors.trim().length() > 0) {
 			title = title + sep + authors;
 			sep = " - ";
 		}
-		
+
 		if (date != null) {
 			title = title + sep + date;
 		}
-		
+
 		if (StringHelper.isEmpty(title)) {
 			if (getFile() != null) {
 				title = getFile().getName();
 			}
 		}
-		
+
 		return title;
 	}
 
@@ -1594,7 +1644,7 @@ public class StaticInfo implements IRestItem {
 		if (getFile() == null || !getFile().exists() || !canRead(ctx, ctx.getCurrentUser(), null) || !isShared(ctx)) {
 			return Collections.EMPTY_MAP;
 		}
-		Map<String,Object> data = new HashMap<String,Object>();
+		Map<String, Object> data = new HashMap<String, Object>();
 		data.put("title", getTitle(ctx));
 		data.put("fullTitle", getFullTitle(ctx));
 		data.put("fullHtmlTitle", getFullHTMLTitle(ctx));
@@ -1605,7 +1655,7 @@ public class StaticInfo implements IRestItem {
 			data.put("authors", authors);
 		}
 		Collection<String> tags = getTags(ctx);
-		if (tags.size()>0) {
+		if (tags.size() > 0) {
 			data.put("tags", tags);
 		}
 		data.put("date", getDate(ctx));
@@ -1623,18 +1673,18 @@ public class StaticInfo implements IRestItem {
 		}
 		data.put("language", getLanguage(ctx));
 		data.put("url", getURL(ctx));
-		
+
 		if (getFile().isDirectory()) {
 			List<Map<String, Object>> childrenArray = new LinkedList<Map<String, Object>>();
 			for (File child : getFile().listFiles()) {
 				Map<String, Object> childData = StaticInfo.getInstance(ctx, child).getContentAsMap(ctx);
-				if (childData.size()>0) {
+				if (childData.size() > 0) {
 					childrenArray.add(childData);
 				}
 			}
-			data.put("children", childrenArray );
+			data.put("children", childrenArray);
 		}
-		
+
 		return data;
 	}
 

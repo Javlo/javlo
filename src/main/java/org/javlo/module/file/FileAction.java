@@ -387,6 +387,10 @@ public class FileAction extends AbstractModuleAction {
 				if (taxonomy != null) {
 					staticInfo.setTaxonomy(ctx, new HashSet<String>(Arrays.asList(taxonomy)));
 				}
+				String authors = rs.getParameter("authors-" + fileBean.getId(), null);
+				if (authors != null) {
+					staticInfo.setAuthors(ctx, authors);
+				}
 				
 				String copyright = rs.getParameter("copyright-" + fileBean.getId(), null);
 				if (copyright != null) {

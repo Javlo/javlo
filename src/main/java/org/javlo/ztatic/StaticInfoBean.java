@@ -51,6 +51,10 @@ public class StaticInfoBean implements ITaxonomyContainer {
 	public String getReference() {
 		return staticInfo.getReference(ctx);
 	}
+	
+	public String getAuthors() {
+		return staticInfo.getAuthors(ctx);
+	}
 
 	public String getLanguage() {
 		return staticInfo.getLanguage(ctx);

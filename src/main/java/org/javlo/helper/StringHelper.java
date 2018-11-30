@@ -319,6 +319,29 @@ public class StringHelper {
 		}
 		return colorToHexString(color);
 	}
+	
+	/**
+	 * merge string with 'sep' between
+	 * @param sep
+	 * @param part
+	 * @return
+	 */
+	public static String mergeString (String sep, String... parts) {
+		String out = "";
+		sep = StringHelper.neverNull(sep);
+		boolean first = true;
+		for (String part : parts) {
+			if (!StringHelper.isEmpty(part)) {
+				if (!first) {
+					out = out + sep;
+				} else {
+					first = false;
+				}
+				out = out + part;
+			}
+		}
+		return out;
+	}
 
 	/**
 	 * convert a string to another string if math pattern1 and convert to pattern2.

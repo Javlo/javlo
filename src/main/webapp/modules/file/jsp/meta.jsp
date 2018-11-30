@@ -165,6 +165,10 @@ params:
 			<input ${metaReadOnly?'readonly="readonly"':''} class="file-location" type="text" id="location-${file.id}" name="location-${file.id}" value="<c:out value="${file.location}" escapeXml="true" />" />			
 		</div>
 		<div class="line">
+			<label for="authors-${file.id}">${i18n.edit["field.authors"]}</label>
+			<input ${metaReadOnly?'readonly="readonly"':''} class="file-authors" type="text" id="authors-${file.id}" name="authors-${file.id}" value="${file.authors}" />
+		</div>
+		<div class="line">
 			<label for="copyright-${file.id}">${i18n.edit["field.copyright"]}</label>
 			<input ${metaReadOnly?'readonly="readonly"':''} class="file-copyright" type="text" id="copyright-${file.id}" name="copyright-${file.id}" value="<c:out value="${file.copyright}" escapeXml="true" />" />
 		</div>

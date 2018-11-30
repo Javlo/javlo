@@ -715,6 +715,7 @@ Security in case of vulnerabilities.
 - page reference date range
 - no dash macro
 - REST resource service
+- init meta info of the file from mp3 metadata
 ### Modified
 - track cache by days in place of month
 - add button unactive by default
@@ -725,6 +726,7 @@ Security in case of vulnerabilities.
 - DynamicComponent : field wrapped by default
 - DynamicComponent : add no-renderer as class if no renderer defined
 - Wall : 30 items bu pages
+- edit authors information for resource
 ### Fixed
 - edit index.html of template, load CodeMirror
 - reset navigation if navigation renderer change

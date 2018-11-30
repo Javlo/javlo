@@ -476,4 +476,11 @@ public class StringHelperTest extends TestCase {
 		assertEquals(StringHelper.replaceItem("aa DATA[[bb]] dd", "cc", "DATA[[", "]]"), "aa DATA[[cc]] dd");
 	}
 	
+	public void testMergeString() {
+		assertEquals(StringHelper.mergeString(" - ", "part 1", "part 2"), "part 1 - part 2");
+		assertEquals(StringHelper.mergeString(" - ", "part 1", null), "part 1");
+		assertEquals(StringHelper.mergeString(" - ", "part 1", "", "part 2"), "part 1 - part 2");
+		assertEquals(StringHelper.mergeString(null, "part 1", "", "part 2"), "part 1part 2");
+	}
+	
 }

@@ -155,7 +155,7 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 			return StringHelper.getFileExtension(getName()).toLowerCase();
 		}
 	}
-
+	
 	public String getThumbURL() throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (StringHelper.isImage(getName()) || StringHelper.isPDF(getName()) || StringHelper.getFileExtension(getName()).equalsIgnoreCase("mp4")) {
@@ -256,6 +256,13 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 			return null;
 		}
 		return staticInfo.getCopyright(ctx);
+	}
+	
+	public String getAuthors() {
+		if (staticInfo == null) {
+			return null;
+		}
+		return staticInfo.getAuthors(ctx);
 	}
 
 	public String getId() {
