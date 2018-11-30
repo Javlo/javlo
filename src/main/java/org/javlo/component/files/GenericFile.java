@@ -279,7 +279,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
 		IContentVisualComponent previousComp = getPreviousComponent();
-		if (previousComp == null || previousComp.getType().equals(TYPE)) {
+		if (previousComp == null || !previousComp.getType().equals(TYPE)) {
 			return false;
 		} else {
 			return true;
