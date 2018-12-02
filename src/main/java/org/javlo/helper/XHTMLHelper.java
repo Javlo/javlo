@@ -2164,7 +2164,7 @@ public class XHTMLHelper {
 		if (infoBean == null) {
 			return xhtml;
 		}
-		infoBean = InfoBean.createInfoBean(ctx);
+		// infoBean = InfoBean.createInfoBean(ctx);
 		// Map<String, String> properties = BeanHelper.cachedDescribe(infoBean);
 		// Map<String, String> properties = BeanUtils.describe(infoBean);
 		params = StringHelper.extractItem(xhtml, "${" + InfoBean.REQUEST_KEY + ".", "}");

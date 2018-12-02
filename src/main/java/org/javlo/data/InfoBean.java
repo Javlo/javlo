@@ -82,6 +82,8 @@ public class InfoBean {
 	private Map<String, Boolean> areas = null;
 
 	private Map<String, String> bgAreas = null;
+	
+	private String pageNotFoundMessage = null;
 
 	private static final Map<String, String> staticData = Collections.unmodifiableMap(new HashMap<String, String>() {
 		{
@@ -98,7 +100,8 @@ public class InfoBean {
 	public static InfoBean getCurrentInfoBean(ContentContext ctx) throws Exception {
 		InfoBean ib = getCurrentInfoBean(ctx.getRequest());
 		if (ib == null) {
-			ib = updateInfoBean(ctx);
+			ib = createInfoBean(ctx);
+			ctx.getRequest().setAttribute(REQUEST_KEY, ib);
 		}
 		return ib;
 	}
@@ -109,7 +112,7 @@ public class InfoBean {
 	 * @param ctx
 	 * @throws Exception
 	 */
-	public static InfoBean createInfoBean(ContentContext ctx) throws Exception {
+	private static InfoBean createInfoBean(ContentContext ctx) throws Exception {
 		InfoBean info = new InfoBean();
 		info.ctx = ctx;
 		info.globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -123,7 +126,9 @@ public class InfoBean {
 	 * @throws Exception
 	 */
 	public static InfoBean updateInfoBean(ContentContext ctx) throws Exception {
-		InfoBean info = createInfoBean(ctx);
+		InfoBean info = getCurrentInfoBean(ctx);
+		info.ctx = ctx;
+		info.globalContext = ctx.getGlobalContext();
 		ctx.getRequest().setAttribute(REQUEST_KEY, info);
 		return info;
 	}
@@ -1807,5 +1812,14 @@ public class InfoBean {
 		}
 		return bgAreas;
 	}
+
+	public String getPageNotFoundMessage() {
+		return pageNotFoundMessage;
+	}
+
+	public void setPageNotFoundMessage(String pageNotFoundMessage) {
+		this.pageNotFoundMessage = pageNotFoundMessage;
+	}
+	
 
 }

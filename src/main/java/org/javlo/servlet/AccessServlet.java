@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -644,6 +645,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				ContentContext newCtx = new ContentContext(ctx);
 				if (checkContentAviability) {
 					if (!content.contentExistForContext(newCtx)) {
+						String currentLg = ctx.getRequestContentLanguage();
 						newCtx.setContentLanguage(newCtx.getLanguage());
 						if (globalContext.isAutoSwitchToDefaultLanguage()) {
 							Iterator<String> defaultLgs = globalContext.getDefaultLanguages().iterator();
@@ -656,7 +658,11 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							logger.fine("content not found in " + ctx.getPath() + " lg:" + ctx.getRequestContentLanguage());
 							// ctx.setSpecialContentRenderer("/jsp/view/content_not_found.jsp");
 						} else {
+							I18nAccess.getInstance(ctx.getRequest());
+							String msg = i18nAccess.getViewText("global.language-not-found", "Sorry this page does not exist in "+new Locale(currentLg).getDisplayLanguage(Locale.ENGLISH));
+							InfoBean.getCurrentInfoBean(ctx).setPageNotFoundMessage(msg);
 							ctx = newCtx;
+							ctx.setMainLanguage(currentLg);
 							ctx.storeInRequest(request);
 						}
 					}

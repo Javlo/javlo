@@ -398,6 +398,8 @@ public class ContentContext {
 	private String language = null;
 
 	private String contentLanguage = null;
+	
+	private String mainLanguage = null;
 
 	private String requestContentLanguage = null;
 
@@ -2262,6 +2264,18 @@ public class ContentContext {
 			attributes = new HashMap<String, Object>();
 		}
 		attributes.put(key, obj);
+	}
+
+	/**
+	 * return the language of the inititial request (if language has changed)
+	 * @return null if the page displayed is the language asked by the visitor, the language of the visitor otherwise.
+	 */
+	public String getMainLanguage() {
+		return mainLanguage;
+	}
+
+	public void setMainLanguage(String mainLanguage) {
+		this.mainLanguage = mainLanguage;
 	}
 
 }
