@@ -165,7 +165,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 	public String getURL(ContentContext ctx) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		String fileLink = URLHelper.mergePath(getDirSelected(), getFileName());
-		return URLHelper.createResourceURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + fileLink).replace('\\', '/');
+		return URLHelper.createMediaURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + fileLink).replace('\\', '/');
 	}
 
 	@Override
