@@ -58,6 +58,10 @@ public class HtmlPart {
 	public String getText() {
 		return text;
 	}
+	
+	public String getTextForAttribute() {
+		return Encode.forHtmlAttribute(text);
+	}
 
 	public void setText(String text) {
 		this.text = text;

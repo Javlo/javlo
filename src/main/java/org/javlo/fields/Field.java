@@ -89,6 +89,10 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 			return StringHelper.removeTag(StringHelper.removeCR(getValue()));
 		}
 		
+		public String getTextForAttribute() {
+			return Encode.forHtmlAttribute(StringHelper.removeTag(StringHelper.removeCR(getValue())));
+		}
+		
 		public String getXHTMLValue() {
 			return XHTMLHelper.textToXHTML(Field.this.getValue());
 		}

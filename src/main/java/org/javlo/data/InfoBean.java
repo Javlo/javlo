@@ -503,6 +503,15 @@ public class InfoBean {
 			return null;
 		}
 	}
+	
+	public String getPageDescriptionForAttribute() {
+		HtmlPart desc = getPageDescription();
+		if (desc != null) {
+			return desc.getTextForAttribute();
+		} else {
+			return "";
+		}
+	}
 
 	public String getPageID() {
 		return getCurrentPage().getId();
@@ -542,6 +551,10 @@ public class InfoBean {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	public String getPageTitleForAttribute() {
+		return Encode.forHtmlAttribute(getPageTitle());
 	}
 
 	public String getTitle() {
