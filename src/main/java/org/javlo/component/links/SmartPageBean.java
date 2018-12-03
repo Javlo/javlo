@@ -508,20 +508,20 @@ public class SmartPageBean {
 		try {
 			MenuElement firstChild = page.getFirstChild();
 			if (firstChild != null && firstChild.isChildrenAssociation()) {
-				ContentContext ctxLg = ctx;
-				if (ctx.getGlobalContext().isAutoSwitchToDefaultLanguage()) {
-					ctxLg = ctx.getContextWithContent(firstChild);
-				}
-				return URLHelper.createURL(ctxLg, firstChild.getPath());
+//				ContentContext ctxLg = ctx;
+//				if (ctx.getGlobalContext().isAutoSwitchToDefaultLanguage()) {
+//					ctxLg = ctx.getContextWithContent(firstChild);
+//				}
+				return URLHelper.createURL(ctx, firstChild.getPath());
 			} else {
-				ContentContext ctxLg = ctx;
-				if (ctx.getGlobalContext().isAutoSwitchToDefaultLanguage()) {
-					ctxLg = ctx.getContextWithContent(page);
-					if (ctxLg == null) {
-						ctxLg = ctx;
-					}
-				}
-				return URLHelper.createURL(ctxLg, page.getPath());
+//				ContentContext ctxLg = ctx;
+//				if (ctx.getGlobalContext().isAutoSwitchToDefaultLanguage()) {
+//					ctxLg = ctx.getContextWithContent(page);
+//					if (ctxLg == null) {
+//						ctxLg = ctx;
+//					}
+//				}
+				return URLHelper.createURL(ctx, page.getPath());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -1,3 +1,4 @@
+<%@page import="org.javlo.data.InfoBean"%>
 <%@page import="java.util.List"
 %><%@page import="org.javlo.component.core.ComponentFactory"
 %><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
@@ -132,7 +133,11 @@ if (specificComp == null) {
 }
 IContentVisualComponent elem = null;
 IContentVisualComponent previousElem = null;
-	boolean languageChange = !ctx.getContentLanguage().equals(ctx.getLanguage()); 
+InfoBean info = InfoBean.getCurrentInfoBean(ctx);
+	boolean languageChange = !ctx.getContentLanguage().equals(ctx.getLanguage());
+	if (ctx.getArea().equals(ComponentBean.DEFAULT_AREA) && !StringHelper.isEmpty(info.getPageNotFoundMessage())) {
+		%><div lang="${contentContext.mainLanguage}" class="alert alert-info alert-bad-lang">${info.pageNotFoundMessage}</div><%
+	}
 	if (languageChange) {
 		%><div lang="<%=ctx.getContentLanguage()%>"><%
 	}	
