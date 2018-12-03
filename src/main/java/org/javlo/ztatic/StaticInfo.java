@@ -1303,14 +1303,28 @@ public class StaticInfo implements IRestItem {
 		return readRoles;
 	}
 
-	public void addReadRole(ContentContext ctx, String role) {
+	public void addReadRole(ContentContext ctx, String... roles) {
 		if (readRoles == null || readRoles == Collections.EMPTY_LIST) {
 			readRoles = new LinkedList<String>();
 		}
-		if (!readRoles.contains(role)) {
-			readRoles.add(role);
-			storeReadRoles(ctx);
+		for (String role : roles) {
+			if (!readRoles.contains(role)) {
+				readRoles.add(role);
+			}
 		}
+		storeReadRoles(ctx);
+	}
+	
+	public void addReadRole(ContentContext ctx, Collection<String> roles) {
+		if (readRoles == null || readRoles == Collections.EMPTY_LIST) {
+			readRoles = new LinkedList<String>();
+		}
+		for (String role : roles) {
+			if (!readRoles.contains(role)) {
+				readRoles.add(role);
+			}
+		}
+		storeReadRoles(ctx);
 	}
 
 	public void removeReadRole(ContentContext ctx, String role) {

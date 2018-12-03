@@ -37,4 +37,9 @@ public class PageURL extends AbstractVisualComponent {
 	public boolean isUnique() {
 		return true;
 	}
+	
+	@Override
+	public String getFontAwesome() {	
+		return "bookmark-o";
+	}
 }

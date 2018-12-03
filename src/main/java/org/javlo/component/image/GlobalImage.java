@@ -5,6 +5,7 @@ package org.javlo.component.image;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -1092,24 +1093,23 @@ public class GlobalImage extends Image implements IImageFilter {
 
 		for (FileItem item : itemsName) {
 			setNeedRefresh(true);
+			File newFile = null;
 			if (item.getFieldName().equals(getFileXHTMLInputName())) {
-				String newFileName = null;
-				newFileName = saveItem(ctx, item);
-				if ((newFileName != null) && (newFileName.trim().length() > 0)) {
-					properties.setProperty(FILE_NAME_KEY, newFileName);
+				newFile = saveItem(ctx, item);
+				if (newFile != null) {
+					properties.setProperty(FILE_NAME_KEY, newFile.getName());
 					setModify();
 				}
 			} else if (item.getFieldName().equals(getFileXHTMLInputNameOver())) {
-				String newFileName = null;
-				newFileName = saveItem(ctx, item);
-				if ((newFileName != null) && (newFileName.trim().length() > 0)) {
-					properties.setProperty(FILE_NAME_KEY_OVER, newFileName);
+				newFile = saveItem(ctx, item);
+				if (newFile != null) {
+					properties.setProperty(FILE_NAME_KEY_OVER, newFile.getName());
 					setModify();
 				}
 			} else if (item.getFieldName().equals(getDecoImageFileXHTMLInputName())) {
 				String newFileName = null;
-				newFileName = saveItem(ctx, item);
-				if ((newFileName != null) && (newFileName.trim().length() > 0)) {
+				newFile = saveItem(ctx, item);
+				if (newFile != null) {
 					setDecorationImage(newFileName);
 					setModify();
 				}

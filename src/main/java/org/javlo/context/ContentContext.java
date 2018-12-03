@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.AjaxHelper.ScheduledRender;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.StringSecurityUtil;
@@ -869,6 +870,7 @@ public class ContentContext {
 			GlobalContext globalContext = getGlobalContext();
 			globalContext.log("url", "current page : " + getPath());
 			MenuElement root = ContentService.getInstance(globalContext).getNavigation(this);
+			
 			if (getPath().equals("/")) {
 				outPage = root;
 			} else {

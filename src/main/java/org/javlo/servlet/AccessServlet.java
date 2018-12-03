@@ -118,7 +118,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 	public static long COUNT_304 = 0;
 	
-	private static boolean DEBUG = true;
+	private static boolean DEBUG = false;
 
 	private static final DecimalFormat df = new DecimalFormat("#####0.00");
 

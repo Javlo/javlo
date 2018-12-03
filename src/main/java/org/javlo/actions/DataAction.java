@@ -702,7 +702,12 @@ public class DataAction implements IAction {
 								bean.setArea(ctx.getArea());
 								cs.createContent(ctx, bean, previousId, true);
 							}
-							staticInfo.setShared(ctx, false);
+							staticInfo.setShared(ctx, false); 
+							
+							if (ctx.getCurrentPage().getUserRoles().size() > 0) {
+								staticInfo.addReadRole(ctx, ctx.getCurrentPage().getUserRoles());
+							}
+							
 							ctx.setNeedRefresh(true);
 						} else {
 							return "error upload file : " + item.getName();

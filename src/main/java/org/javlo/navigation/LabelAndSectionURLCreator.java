@@ -66,7 +66,7 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 		
 		Collection<IContentVisualComponent> comps = currentPage.getContentByType(freeCtx, PageURL.TYPE);
 		if (comps.size() > 0) {
-			return ((PageURL) comps.iterator().next()).getValue();
+			return '/'+((PageURL) comps.iterator().next()).getValue();
 		}
 		
 		String label;

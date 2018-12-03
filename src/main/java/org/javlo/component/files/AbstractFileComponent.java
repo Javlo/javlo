@@ -196,7 +196,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		ctx.getRequest().setAttribute("linkToImage", StringHelper.isImage(url));
 		ctx.getRequest().setAttribute("blank", ctx.getGlobalContext().isOpenExternalLinkAsPopup(url));
 		ctx.getRequest().setAttribute("description", getDescription());
-		ctx.getRequest().setAttribute("cleanDescription", Encode.forHtmlAttribute(StringHelper.removeTag(getDescription())));		
+		ctx.getRequest().setAttribute("cleanDescription", Encode.forHtmlAttribute(StringHelper.removeTag(getDescription())));
 		ctx.getRequest().setAttribute("mineType", ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(url)));
 		ctx.getRequest().setAttribute("fileName", getFileName());
 		StaticInfo staticInfo = getStaticInfo(ctx);
@@ -224,7 +224,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		if (staticInfo != null) {
 			ctx.getRequest().setAttribute("file", new StaticInfoBean(staticInfo.getContextWithContent(ctx), staticInfo));
 			ctx.getRequest().setAttribute("staticInfoHTML", XHTMLHelper.renderStaticInfo(infoCtx, staticInfo));
-		}		
+		}
 		String value = cleanLabel;
 		if (StringHelper.isEmpty(value)) {
 			value = getLabel();
@@ -233,7 +233,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			}
 		}
 		ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(ctx.getGlobalContext());
-		String text = XHTMLHelper.autoLink(XHTMLHelper.replaceLinks(ctx,XHTMLHelper.replaceJSTLData(ctx, value)),ctx.getGlobalContext());
+		String text = XHTMLHelper.autoLink(XHTMLHelper.replaceLinks(ctx, XHTMLHelper.replaceJSTLData(ctx, value)), ctx.getGlobalContext());
 		text = reverserLinkService.replaceLink(ctx, this, text);
 		ctx.getRequest().setAttribute("text", text);
 	}
@@ -432,12 +432,10 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 
 		if (this instanceof IReverseLinkComponent && isReversedLink(ctx)) {
 			/*
-			 * finalCode.append("<div class=\"line\">");
-			 * finalCode.append(XHTMLHelper
+			 * finalCode.append("<div class=\"line\">"); finalCode.append(XHTMLHelper
 			 * .getCheckbox(getReverseLinkInputName(), isReverseLink()));
-			 * finalCode.append("<label for=\"" + getReverseLinkInputName() +
-			 * "\">" + getReverseLinkeLabelTitle(ctx) + "</label>");
-			 * finalCode.append("</div>");
+			 * finalCode.append("<label for=\"" + getReverseLinkInputName() + "\">" +
+			 * getReverseLinkeLabelTitle(ctx) + "</label>"); finalCode.append("</div>");
 			 */
 
 			finalCode.append("<div class=\"form-group\">");
@@ -988,7 +986,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
-		
+
 		performColumnable(ctx);
 
 		boolean fromShared = isFromShared(ctx);
@@ -1142,7 +1140,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	 * @param request
 	 * @return file name
 	 */
-	String saveFile(ContentContext ctx, String name, InputStream in) throws Exception {
+	File saveFile(ContentContext ctx, String name, InputStream in) throws Exception {
 		String fileName = null;
 
 		fileName = ResourceHelper.getWindowsFileName(name);
@@ -1154,41 +1152,41 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 
 			String realName = dirFile + '/' + imageName;
 
-			File f = new File(realName);
-			if (f.exists()) {
+			File file = new File(realName);
+			if (file.exists()) {
 				// create temp file
-				File tempFile = new File(StringHelper.getFileNameWithoutExtension(f.getAbsolutePath()) + "__TEMP" + '.' + StringHelper.getFileExtension(f.getName()));
+				File tempFile = new File(StringHelper.getFileNameWithoutExtension(file.getAbsolutePath()) + "__TEMP" + '.' + StringHelper.getFileExtension(file.getName()));
 				ResourceHelper.writeStreamToFile(in, tempFile);
 				ResourceStatus resouceStatus = ResourceStatus.getInstance(ctx.getRequest().getSession());
 				resouceStatus.addSource(new LocalResource(ctx, tempFile));
-				resouceStatus.addTarget(new LocalResource(ctx, f));
+				resouceStatus.addTarget(new LocalResource(ctx, file));
 				// throw new IOException("file already exist");
 				ctx.setNeedRefresh(true);
-				return fileName;
+				return file;
 			}
 
-			File dir = f.getParentFile();
+			File dir = file.getParentFile();
 			if (!dir.exists()) {
 				dir.mkdirs();
 			}
-			FileOutputStream out = new FileOutputStream(f);
-			ResourceHelper.writeStreamToStream(in, out);
-			/*
-			 * int read = in.read(); while (read >= 0) { out.write(read); read =
-			 * in.read(); }
-			 */
-			out.close();
+			FileOutputStream out = new FileOutputStream(file);
+			try {
+				ResourceHelper.writeStreamToStream(in, out);
+			} finally {
+				ResourceHelper.closeResource(out);
+			}
 
-			StaticInfo staticInfo = StaticInfo.getInstance(ctx, f);
-			//MenuElement currentPage = ctx.getCurrentPage();
+			StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
+			// MenuElement currentPage = ctx.getCurrentPage();
 
-			//staticInfo.setLinkedPageId(ctx, currentPage.getId());
+			// staticInfo.setLinkedPageId(ctx, currentPage.getId());
 			staticInfo.setShared(ctx, false);
+			return file;
 		}
-		return fileName;
+		return null;
 	}
 
-	protected String saveItem(ContentContext ctx, FileItem item) throws Exception {
+	protected File saveItem(ContentContext ctx, FileItem item) throws Exception {
 		if (!item.isFormField()) {
 			String fileName = StringHelper.getFileNameFromPath(item.getName().replace('\\', '/'));
 			return saveFile(ctx, StringHelper.createFileName(fileName), item.getInputStream());
@@ -1233,16 +1231,24 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			if (item.getFieldName().equals(getFileXHTMLInputName())) {
 				File file = new File(item.getName());
 				ZIPFilter filter = new ZIPFilter();
-				String newFileName = null;
+				File newFile = null;
 				if (filter.accept(file, item.getName()) && expandZip()) {
-					newFileName = item.getName();
+					newFile = new File(item.getName());
 					expandZip(ctx, new ZipInputStream(item.getInputStream()));
 				} else {
-					newFileName = saveItem(ctx, item);
+					newFile = saveItem(ctx, item);
 				}
 
-				if ((newFileName != null) && (newFileName.trim().length() > 0)) {
-					properties.setProperty(FILE_NAME_KEY, newFileName);
+				System.out.println(">>>>>>>>> AbstractFileComponent.uploadFiles : getPage().getUserRoles() = " + getPage().getUserRoles()); // TODO: remove debug trace
+
+				if (getPage().getUserRoles().size() > 0) {
+					StaticInfo staticInfo = StaticInfo.getInstance(ctx, newFile);
+					System.out.println(">>>>>>>>> AbstractFileComponent.uploadFiles : file = " + newFile); // TODO: remove debug trace
+					staticInfo.addReadRole(ctx, getPage().getUserRoles());
+				}
+
+				if (newFile != null) {
+					properties.setProperty(FILE_NAME_KEY, newFile.getName());
 					setModify();
 				}
 			}
@@ -1329,12 +1335,12 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	public boolean isDisplayable(ContentContext ctx) throws Exception {
 		return !StringHelper.isEmpty(getFileName());
 	}
-	
+
 	@Override
-	public String getFontAwesome() {	
+	public String getFontAwesome() {
 		return "file";
 	}
-	
+
 	@Override
 	public boolean transflateFrom(ContentContext ctx, ITranslator translator, String lang) {
 		String newLabel = translator.translate(ctx, getLabel(), lang, ctx.getRequestContentLanguage());
@@ -1347,7 +1353,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			return false;
 		}
 	}
-	
+
 	protected boolean getColumnableDefaultValue() {
 		return true;
 	}

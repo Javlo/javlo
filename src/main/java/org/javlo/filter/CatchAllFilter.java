@@ -68,7 +68,7 @@ public class CatchAllFilter implements Filter {
 
 	public static final String MAIN_URI_KEY = "_mainURI";
 	
-	private static boolean DEBUG = true;
+	private static boolean DEBUG = false;
 	
 	/**
 	 * create a static logger.

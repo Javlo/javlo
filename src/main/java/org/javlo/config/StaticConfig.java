@@ -245,7 +245,6 @@ public class StaticConfig extends Observable {
 				staticConfigLocalisation = replaceFolderVariable(staticConfigLocalisation);
 				
 				if (staticConfigLocalisation != null) {
-					LocalLogger.log("staticConfigLocalisation=" + staticConfigLocalisation);
 					File file = new File(staticConfigLocalisation);
 					logger.info("load static config : " + file +" (exist? "+file.exists()+")");
 					if (!file.exists()) {
