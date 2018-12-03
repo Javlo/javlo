@@ -517,4 +517,9 @@ public class DefaultTemplate extends Template {
 	public boolean isRealContentFromAnyArea() {
 		return false;
 	}
+	
+	@Override
+	public boolean isRemoveEmptyArea() {
+		return true;
+	}
 }

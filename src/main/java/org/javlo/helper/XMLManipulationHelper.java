@@ -383,7 +383,11 @@ public class XMLManipulationHelper {
 					String prefix = "";
 					String suffix = "";
 					if (!displayIfEmpty) {
-						prefix = "<%if ((!globalContext.getQuietArea().contains(\"" + area + "\")) && (!currentPage.isNoComponent(ctx, \"" + area + "\") || (EditContext.getInstance(globalContext, session).isPreviewEditionMode() && ctx.isAsPreviewMode()))) {%>";
+						String testArea = "";
+						if (template.isRemoveEmptyArea()) {
+							testArea =   " && (!currentPage.isNoComponent(ctx, \"" + area + "\") || (EditContext.getInstance(globalContext, session).isPreviewEditionMode() && ctx.isAsPreviewMode()))" ;
+						}
+						prefix = "<%if ((!globalContext.getQuietArea().contains(\"" + area + "\"))"+testArea+") {%>";
 						suffix = "<%}%>";
 					}
 					if ((idValue != null) && (idValue.trim().equals(areaValue))) {

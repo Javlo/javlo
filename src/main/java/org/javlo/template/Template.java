@@ -3214,6 +3214,18 @@ public class Template implements Comparable<Template> {
 			return StringHelper.isTrue(properties.getProperty("bootstrap"));
 		}
 	}
+	
+	/**
+	 * if area empty remove from html (default true)
+	 * @return
+	 */
+	public boolean isRemoveEmptyArea() {
+		if (properties.getProperty("area-remove-empty") == null) {
+			return getParent().isRemoveEmptyArea();
+		} else {
+			return StringHelper.isTrue(properties.getProperty("area-remove-empty"), true);
+		}
+	}
 
 	public Map<String, String> getTemplateExcludeProperties() {
 		String rawProp = getExcludeProperties("template");
