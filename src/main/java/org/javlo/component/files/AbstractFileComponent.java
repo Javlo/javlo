@@ -592,21 +592,21 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		String[] res = new String[0];
 		if (dir.exists()) {
 			File[] files = dir.listFiles(filter);
-
-			Comparator fileComparator = new FileComparator(FileComparator.LASTMODIFIED, true);
-			try {
-				Arrays.sort(files, fileComparator);
-			} catch (Throwable t) { // TODO: try to remove this.
-				t.printStackTrace();
-			}
-
-			ArrayList list = new ArrayList();
-			for (File file : files) {
-				if (file.isFile()) {
-					list.add(file.getName());
+			if (files != null) {
+				Comparator fileComparator = new FileComparator(FileComparator.LASTMODIFIED, true);
+				try {
+					Arrays.sort(files, fileComparator);
+				} catch (Throwable t) { // TODO: try to remove this.
+					t.printStackTrace();
 				}
-				res = new String[list.size()];
-				list.toArray(res);
+				ArrayList list = new ArrayList();
+				for (File file : files) {
+					if (file.isFile()) {
+						list.add(file.getName());
+					}
+					res = new String[list.size()];
+					list.toArray(res);
+				}
 			}
 		}
 		Arrays.sort(res);

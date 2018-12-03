@@ -328,15 +328,20 @@ public class GlobalImage extends Image implements IImageFilter {
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 
 		if (ctx.getRequest().getParameter("path") != null) {
-			String newFolder = URLHelper.removeStaticFolderPrefix(ctx, ctx.getRequest().getParameter("path"));
-			String imageFolder = "/" + ctx.getGlobalContext().getStaticConfig().getImageFolderName();
-			newFolder = newFolder.replaceFirst(imageFolder + '/', "");
-			if (newFolder.equals(imageFolder)) {
-				newFolder = "/";
-			}
-			if (newFolder.trim().length() > 1 && !getDirSelected().equals(newFolder)) {
-				setDirSelected(newFolder);
-				setFileName("");
+			String path = ctx.getRequest().getParameter("path");
+			if (StringHelper.getFileExtension(path).length()>0) {
+				setLink(path);
+			} else {
+				String newFolder = URLHelper.removeStaticFolderPrefix(ctx, path);
+				String imageFolder = "/" + ctx.getGlobalContext().getStaticConfig().getImageFolderName();
+				newFolder = newFolder.replaceFirst(imageFolder + '/', "");
+				if (newFolder.equals(imageFolder)) {
+					newFolder = "/";
+				}
+				if (newFolder.trim().length() > 1 && !getDirSelected().equals(newFolder)) {
+					setDirSelected(newFolder);
+					setFileName("");
+				}
 			}
 		}
 

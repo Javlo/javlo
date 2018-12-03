@@ -66,6 +66,7 @@ import org.javlo.user.IUserInfo;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.utils.HtmlPart;
+import org.owasp.encoder.Encode;
 
 public class InfoBean {
 
@@ -555,6 +556,10 @@ public class InfoBean {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	public String getTitleForAttribute() {
+		return Encode.forHtmlAttribute(getTitle());
 	}
 
 	public String getTime() {
