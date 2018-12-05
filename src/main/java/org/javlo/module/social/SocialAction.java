@@ -21,12 +21,8 @@ public class SocialAction extends AbstractModuleAction {
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
 		String msg = super.prepare(ctx, modulesContext);
-
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		SocialService socialService = SocialService.getInstance(ctx);
-
 		ctx.getRequest().setAttribute("networks", socialService.getAllNetworks());
-
 		return msg;
 	}
 
@@ -46,7 +42,6 @@ public class SocialAction extends AbstractModuleAction {
 			network.update(rs.getParameterMap());
 		}
 		socialService.store();
-
 		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("social.message.network-updated"), GenericMessage.INFO));
 		return null;
 	}

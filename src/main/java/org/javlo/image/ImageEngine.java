@@ -266,13 +266,16 @@ public class ImageEngine {
 		return op.filter(img, target);
 	}
 
-	public static BufferedImage toBufferedImage(java.awt.Image img) {
+	public static BufferedImage toBufferedImage(java.awt.Image img, Color backgroundColor) {
 		if (img instanceof BufferedImage) {
 			return (BufferedImage) img;
 		}
 
 		// Create a buffered image with transparency
 		BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+		if (backgroundColor != null) {
+			fillImage(bimage, backgroundColor);
+		}
 
 		// Draw the image on to the buffered image
 		Graphics2D bGr = bimage.createGraphics();
@@ -283,8 +286,8 @@ public class ImageEngine {
 		return bimage;
 	}
 
-	public static BufferedImage resize(BufferedImage bi, Integer width, Integer height, boolean hq) {
-		return toBufferedImage(scale(bi, width, height, hq));
+	public static BufferedImage resize(BufferedImage bi, Integer width, Integer height, Color backgroundColor, boolean hq) {
+		return toBufferedImage(scale(bi, width, height, hq), backgroundColor);
 	}
 
 	public static BufferedImage zoom(BufferedImage img, double zoom, int interestX, int interestY) {
@@ -505,7 +508,7 @@ public class ImageEngine {
 	public static BufferedImage resizeHeight(BufferedImage bi, int height, Color bgColor, boolean hq) {
 		int width = Math.round(bi.getWidth() * ((float) height / (float) bi.getHeight()));
 		height = Math.round(bi.getHeight() * ((float) width / (float) bi.getWidth()));
-		BufferedImage image = resize(bi, width, height, hq);
+		BufferedImage image = resize(bi, width, height, bgColor, hq);
 
 		if (bgColor != null && image.getColorModel().hasAlpha()) {
 			BufferedImage imgNew;
@@ -532,7 +535,7 @@ public class ImageEngine {
 	public static BufferedImage resizeWidth(BufferedImage bi, int width, int mt, int mr, int ml, int mb, Color bgColor, boolean hq) {
 		int height = Math.round(bi.getHeight() * ((float) width / (float) bi.getWidth()));
 		width = Math.round(bi.getWidth() * ((float) height / (float) bi.getHeight()));
-		BufferedImage image = resize(bi, width, height, hq);
+		BufferedImage image = resize(bi, width, height, bgColor, hq);
 
 		if (bgColor != null && image.getColorModel().hasAlpha() && (mt > 0 || ml > 0 || mr > 0 || mb > 0)) {
 			int inWidth = image.getWidth() + ml + mr;
@@ -704,7 +707,7 @@ public class ImageEngine {
 		int workHeight = filter.getHeight() - (mt + mb);
 
 		if (!cropResize) {
-			workImage = resize(source, workWith, workHeight, hq);
+			workImage = resize(source, workWith, workHeight, bgColor, hq);
 		} else {
 			workImage = ImageEngine.resize(source, filter.getWidth(), filter.getHeight(), cropResize, addBorder, mt, ml, mr, mb, bgColor, fzx, fzy, isFocus, hq);
 			/*
@@ -890,14 +893,14 @@ public class ImageEngine {
 		int workHeight = inHeight;
 
 		if (!cropResize) {
-			workImage = resize(source, workWith, workHeight, hq);
+			workImage = resize(source, workWith, workHeight, bgColor, hq);
 		} else {
 			if ((float) source.getWidth() / (float) source.getHeight() < (float) workWith / (float) workHeight) {
 				int height = (source.getHeight() * workWith) / source.getWidth();
-				workImage = resize(source, workWith, height, hq);
+				workImage = resize(source, workWith, height, bgColor, hq);
 			} else {
 				int width = (source.getWidth() * workHeight) / source.getHeight();
-				workImage = resize(source, width, workHeight, hq);
+				workImage = resize(source, width, workHeight, bgColor, hq);
 			}
 		}
 
@@ -1813,6 +1816,11 @@ public class ImageEngine {
 	}
 
 	public static void main(String[] args) throws Exception {
+		
+		File javloFile = new File("c:/trans/logo.png");
+		BufferedImage image = ImageIO.read(javloFile);
+		image = resize(image, 450, 450, false, true, 0, 0, 0, 0, Color.WHITE, 500, 500, true, true);
+		ImageIO.write (image, "png", new File("c:/trans/javlo_out.png"));
 		
 		//System.out.println("data : "+getGoogleResultTitleSize("patrick est là"));
 		System.out.println("data : "+getGoogleResultTitleSize("Hot Women | Sexy Women Pics | Hot Ladies - theChive"));

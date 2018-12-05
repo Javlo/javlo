@@ -883,7 +883,7 @@ public class ImageTransformServlet extends FileServlet {
 		}
 		
 		if (smallImage) {
-			img = ImageEngine.resize(img, img.getWidth()/2, img.getHeight()/2, true);
+			img = ImageEngine.resize(img, img.getWidth()/2, img.getHeight()/2, config.getBGColor(device, filter, area), true);
 			filter = originalFilter;
 		}
 

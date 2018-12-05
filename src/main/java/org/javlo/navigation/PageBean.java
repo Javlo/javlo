@@ -142,6 +142,10 @@ public class PageBean implements Serializable {
 			return false;
 		}
 	}
+	
+	public List<String> getLayouts() throws Exception {
+		return page.getLayouts(ctx);
+	}
 
 	/**
 	 * get the list of children with isRealContent() and isVisible() is true.

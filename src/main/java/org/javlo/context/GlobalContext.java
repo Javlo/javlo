@@ -65,7 +65,6 @@ import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.ElementaryURLHelper.Code;
 import org.javlo.helper.LangHelper;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
@@ -163,7 +162,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 		private boolean stopStoreThread = false;
 
-		private static final int SLEEP_BETWEEN_STORAGE = 2 * 1000; // 10 sec
+		private static final int SLEEP_BETWEEN_STORAGE = 15 * 1000; // 15 sec
 
 		private Properties dataProperties = null;
 		
@@ -207,7 +206,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 							if (today.get(Calendar.DAY_OF_YEAR) != lastBakcup.get(Calendar.DAY_OF_YEAR)) {
 								lastBakcup = today;
 								try {
-									logger.warning("store backup data : " + lastBakup);
+									logger.info("store backup data : " + lastBakup);
 									ResourceHelper.writeFileToFile(dataFile, lastBakup);
 								} catch (IOException e) {
 									e.printStackTrace();
@@ -2105,7 +2104,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return outLg;
 	}
 
-	public Properties initDataFile() {
+	public synchronized Properties initDataFile() {
 		Properties outProp = dataProperties;
 		if (outProp == null) {
 			outProp = new StructuredProperties();

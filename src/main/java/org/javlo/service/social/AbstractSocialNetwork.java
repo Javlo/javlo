@@ -21,6 +21,7 @@ import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.DebugHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.user.AdminUserFactory;
@@ -116,6 +117,7 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 	}
 
 	public void setClientSecret(String clientSecret) {
+		System.out.println(DebugHelper.getCaller(20));
 		data.put(CLIENT_SECRET, clientSecret);
 	}
 	

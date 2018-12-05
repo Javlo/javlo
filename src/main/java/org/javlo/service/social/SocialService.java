@@ -55,6 +55,7 @@ public class SocialService {
 		Collection<Object> objects = globalContext.getDataKeys();
 		for (Object keyObj : objects) {
 			String key = "" + keyObj;
+			
 			if (key.startsWith(KEY_PREFIX + "." + socialNetwork.getName())) {
 				String value = globalContext.getData(key);
 				key = StringUtils.replaceOnce(key, KEY_PREFIX + "." + socialNetwork.getName(), "");

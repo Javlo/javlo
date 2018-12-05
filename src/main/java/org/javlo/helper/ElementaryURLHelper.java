@@ -110,6 +110,9 @@ public abstract class ElementaryURLHelper {
 	 * add get param to a url
 	 */
 	private static String addParam(String url, String name, String value, boolean encode) {
+		if (url == null) {
+			return null;
+		}
 		if (encode) {
 			if (url.contains("?")) {
 				return url = url + '&' + name + '=' + Encode.forUriComponent(StringHelper.neverNull(value));

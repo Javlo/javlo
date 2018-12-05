@@ -1704,7 +1704,9 @@ public class Edit extends AbstractModuleAction {
 
 		String newPath = menuElement.getParent().getPath();
 		if (menuElement.isChildrenOfAssociation()) {
-			newPath = menuElement.getRootOfChildrenAssociation().getFirstChild().getPath();
+			if (menuElement.getRootOfChildrenAssociation() != null && menuElement.getRootOfChildrenAssociation().getFirstChild() != null) {
+				newPath = menuElement.getRootOfChildrenAssociation().getFirstChild().getPath();
+			} 
 		}
 		if (menuElement.isChildrenAssociation()) {
 			newPath = "/";

@@ -1464,7 +1464,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			if (getHeight(ctx)>0) {
 				return ImageEngine.resizeWidth(image, getWidth(ctx), false);
 			} else {
-				return ImageEngine.resize(image, getWidth(ctx), getHeight(ctx), true);
+				return ImageEngine.resize(image, getWidth(ctx), getHeight(ctx), null, true);
 			}
 		}
 	}
