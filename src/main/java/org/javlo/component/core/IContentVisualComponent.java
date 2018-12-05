@@ -70,11 +70,17 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 
 	/**
 	 * action call when update the content page.
-	 * @return the error message, null if no error
+	 * @return  the error message, null if no error
 	 * 
 	 * @throws Exception
 	 */
-	public String performEdit(ContentContext ctx) throws Exception; 
+	public String performEdit(ContentContext ctx) throws Exception;
+	
+	/**
+	 * get the style of the display (sp. image-left, image-right)
+	 * @return
+	 */
+	public String getStyle();
 
 	/**
 	 * the code for view the element in XHTML environment.
@@ -899,6 +905,12 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 * @return
 	 */
 	public int getColumnSize();
+	
+	/**
+	 * set the size of the column, the column contains the component
+	 * @return
+	 */
+	public void setColumnSize(int size);
 	
 	/**
 	 * get the group of the component (meta, text, links, media,...)

@@ -490,10 +490,14 @@ public class MacroHelper {
 							content = comp.getValue(ctxNoArea);
 						}
 						parentId = addContent(lgCtx.getRequestContentLanguage(), currentPage, parentId, comp.getType(), comp.getComponentCssClass(ctxNoArea), comp.getArea(), comp.getCurrentRenderer(ctx), content, ctx.getCurrentEditUser());
-						if (translate) {
-							ContentService contentService = ContentService.getInstance(ctx.getRequest());
-							IContentVisualComponent newComp = contentService.getComponent(lgCtx, parentId);
-							newComp.transflateFrom(lgCtx, GoogleTranslateService.getTranslator(), ctx.getGlobalContext().getDefaultLanguage());
+						ContentService contentService = ContentService.getInstance(ctx.getRequest());
+						IContentVisualComponent newComp = contentService.getComponent(lgCtx, parentId);
+						if (newComp != null) {
+							newComp.setStyle(lgCtx, comp.getStyle());
+							newComp.setColumnSize(comp.getColumnSize());
+							if (translate) {
+								newComp.transflateFrom(lgCtx, GoogleTranslateService.getTranslator(), ctx.getGlobalContext().getDefaultLanguage());
+							}
 						}
 					}
 				}
