@@ -1228,7 +1228,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		Collection<FileItem> items = service.getAllFileItem();
 		logger.info("upload " + items.size() + " files.");
 		for (FileItem item : items) {
-			if (item.getFieldName().equals(getFileXHTMLInputName())) {
+			if (item.getFieldName().equals(getFileXHTMLInputName()) && !StringHelper.isEmpty(item.getName())) {
 				File file = new File(item.getName());
 				ZIPFilter filter = new ZIPFilter();
 				File newFile = null;
@@ -1238,15 +1238,10 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 				} else {
 					newFile = saveItem(ctx, item);
 				}
-
-				System.out.println(">>>>>>>>> AbstractFileComponent.uploadFiles : getPage().getUserRoles() = " + getPage().getUserRoles()); // TODO: remove debug trace
-
 				if (getPage().getUserRoles().size() > 0) {
 					StaticInfo staticInfo = StaticInfo.getInstance(ctx, newFile);
-					System.out.println(">>>>>>>>> AbstractFileComponent.uploadFiles : file = " + newFile); // TODO: remove debug trace
 					staticInfo.addReadRole(ctx, getPage().getUserRoles());
 				}
-
 				if (newFile != null) {
 					properties.setProperty(FILE_NAME_KEY, newFile.getName());
 					setModify();
