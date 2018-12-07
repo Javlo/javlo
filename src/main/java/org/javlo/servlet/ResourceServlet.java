@@ -79,7 +79,7 @@ public class ResourceServlet extends HttpServlet {
 	 * get the text and the picture and build a button
 	 */
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		if (StringHelper.isEmpty(request.getPathInfo()) || request.getPathInfo().equals("/")) {
+		if (StringHelper.isEmpty(request.getServletPath()) || request.getServletPath().equals("/")) {
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
 		}
