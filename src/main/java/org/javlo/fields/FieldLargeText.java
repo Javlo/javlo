@@ -39,6 +39,10 @@ public class FieldLargeText extends Field {
 		out.close();
 		return writer.toString();
 	}
+	
+	public String getSearchEditXHTMLCode(ContentContext ctx) throws Exception {
+		return super.getEditXHTMLCode(ctx, true);
+	}
 
 	/**
 	 * return the value "displayable"

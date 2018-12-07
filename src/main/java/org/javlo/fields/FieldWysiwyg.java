@@ -60,6 +60,10 @@ public class FieldWysiwyg extends Field {
 		}
 		return super.validate();
 	}
+	
+	public String getSearchEditXHTMLCode(ContentContext ctx) throws Exception {
+		return super.getEditXHTMLCode(ctx, true);
+	}
 
 	@Override
 	public String getEditXHTMLCode(ContentContext ctx, boolean search) {
