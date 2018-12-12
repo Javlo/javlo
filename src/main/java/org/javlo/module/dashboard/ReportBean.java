@@ -7,7 +7,7 @@ import org.javlo.bean.Link;
 
 public class ReportBean {
 	
-	public static final int MAX_LINK_CHECK = 5;
+	public static final int MAX_LINK_CHECK = 10;
 	
 	public int pageDescriptionRight = 0;
 	public int pageDescriptionBad = 0;

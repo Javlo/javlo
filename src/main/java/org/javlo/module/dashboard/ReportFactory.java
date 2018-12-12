@@ -137,46 +137,50 @@ public class ReportFactory {
 							}
 						}
 					} else if (ctx.getGlobalContext().getStaticConfig().isInternetAccess() && comp instanceof ILink) {
-						String url = ((ILink) comp).getURL(ctx);
-						if (url != null && URLHelper.isAbsoluteURL(url)) {
-							try {
-								if (report.badExternalLink < ReportBean.MAX_LINK_CHECK) {
-									Date latestDate = ((ILink) comp).getLatestValidDate();
-									if (latestDate != null) {
-										day.setTime(latestDate);
-									}
-									if (latestDate == null || refreshDate.after(latestDate)) {
-										if (!NetHelper.isURLValid(new URL(url), true)) {
-											report.badExternalLink++;
-											Map<String, String> params = new HashMap<String, String>();
-											params.putAll(moduleAction);
-											params.put("pushcomp", comp.getId());
-											params.put("webaction", "edit.changearea");
-											params.put("area", comp.getArea());
-											report.badExternalLinkPages.add(new Link(URLHelper.createURL(ctx, page, params), page.getTitle(ctx)));
-										} else {
-											report.rightExternalLink++;
-											((ILink) comp).setLatestValidDate(new Date());
+
+						if (comp instanceof IInternalLink) {
+							if (report.badInternalLink < ReportBean.MAX_LINK_CHECK) {
+								String pageId = ((IInternalLink) comp).getLinkId();
+								MenuElement target = root.searchChildFromId(pageId);
+								if (target == null || !target.isActive()) {
+									report.badInternalLink++;
+									Map<String, String> params = new HashMap<String, String>();
+									params.putAll(moduleAction);
+									params.put("pushcomp", comp.getId());
+									params.put("webaction", "edit.changearea");
+									params.put("area", comp.getArea());
+									report.badInternalLinkPages.add(new Link(URLHelper.createURL(ctx, page, params), page.getTitle(ctx)));
+								} else {
+									report.rightInternalLink++;
+								}
+							}
+						} else {
+							String url = ((ILink) comp).getURL(ctx);
+							if (url != null && URLHelper.isAbsoluteURL(url)) {
+								try {
+									if (report.badExternalLink < ReportBean.MAX_LINK_CHECK) {
+										Date latestDate = ((ILink) comp).getLatestValidDate();
+										if (latestDate != null) {
+											day.setTime(latestDate);
+										}
+										if (latestDate == null || refreshDate.after(latestDate)) {
+											if (!NetHelper.isURLValid(new URL(url), true)) {
+												report.badExternalLink++;
+												Map<String, String> params = new HashMap<String, String>();
+												params.putAll(moduleAction);
+												params.put("pushcomp", comp.getId());
+												params.put("webaction", "edit.changearea");
+												params.put("area", comp.getArea());
+												report.badExternalLinkPages.add(new Link(URLHelper.createURL(ctx, page, params), page.getTitle(ctx)));
+											} else {
+												report.rightExternalLink++;
+												((ILink) comp).setLatestValidDate(new Date());
+											}
 										}
 									}
+								} catch (MalformedURLException e) {
+									report.badExternalLink++;
 								}
-							} catch (MalformedURLException e) {
-								report.badExternalLink++;
-							}
-						}
-					} else if (comp instanceof IInternalLink) {
-						if (report.badInternalLink < ReportBean.MAX_LINK_CHECK) {
-							String pageId = ((IInternalLink) comp).getLinkId();
-							if (root.searchChildFromId(pageId) == null) {
-								report.badInternalLink++;
-								Map<String, String> params = new HashMap<String, String>();
-								params.putAll(moduleAction);
-								params.put("pushcomp", comp.getId());
-								params.put("webaction", "edit.changearea");
-								params.put("area", comp.getArea());
-								report.badInternalLinkPages.add(new Link(URLHelper.createURL(ctx, page, params), page.getTitle(ctx)));
-							} else {
-								report.rightInternalLink++;
 							}
 						}
 					}
@@ -189,10 +193,10 @@ public class ReportFactory {
 	public static int getMaxMLinkCheck() {
 		return ReportBean.MAX_LINK_CHECK;
 	}
-	
+
 	public static void main(String[] args) throws MalformedURLException {
 		URL url = new URL("http://www.europarl.europa.eu/sides/getDoc.do?type=OQ&reference=O-2015-000038&language=ES");
-		System.out.println("***** ReportFactory.main : NetHelper.isURLValid(new URL(url), true) = "+NetHelper.isURLValid(url, true)); //TODO: remove debug trace
+		System.out.println("***** ReportFactory.main : NetHelper.isURLValid(new URL(url), true) = " + NetHelper.isURLValid(url, true)); // TODO: remove debug trace
 	}
 
 }

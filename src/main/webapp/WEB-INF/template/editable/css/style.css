@@ -178,3 +178,8 @@ table.float-image-width {
 .col-content-wrapper p {
 	margin: 0 0 15px 0;
 }
+
+.row-page-break {
+	page-break-after: always;
+}
+}
