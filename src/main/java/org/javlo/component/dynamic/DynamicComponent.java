@@ -728,6 +728,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
+		if (isForceCachable()) {
+			return true;
+		}
 		if (!StringHelper.isTrue(properties.getProperty("component.cachable"))) {
 			return false;
 		}
