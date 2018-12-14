@@ -893,6 +893,17 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 			out.println("</div>");
 		}
+		
+		if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser()) && (!isContentCachable(ctx) || isForceCachable())) {
+			out.println("<div class=\"line" + repeatHidden + "\">");
+			if (showRepeat) {
+				out.println("<label for=\"cachable-" + getId() + "\">" + i18nAccess.getText("content.force-cachable", "force cachable") + "</label>");
+			}
+			out.println(XHTMLHelper.getCheckbox("forceCachable-" + getId(), isForceCachable()));
+			out.println("</div>");
+		} else {
+			out.println("<input type=\"hidden\" name=\"forceCachable-" + getId()+"\" value=\""+isForceCachable()+"\" />");
+		}
 
 		if (ctx.getGlobalContext().isCookies()) {
 			out.println("<div class=\"line\">");
@@ -951,6 +962,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		boolean isRepeat = requestService.getParameter("repeat-" + getId(), null) != null;
 		if (isRepeat != isRepeat()) {
 			setRepeat(isRepeat);
+			setModify();
+			setNeedRefresh(true);
+		}
+		
+		boolean isForceCachable = requestService.getParameter("forceCachable-" + getId(), null) != null;
+		if (isForceCachable != isForceCachable()) {
+			setForceCachable(isForceCachable);
 			setModify();
 			setNeedRefresh(true);
 		}
@@ -2479,7 +2497,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
-		return false;
+		return isForceCachable();
 	}
 
 	public boolean isContentCachableByQuery(ContentContext ctx) {
@@ -2601,6 +2619,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public boolean isRepeat() {
 		return componentBean.isRepeat();
+	}
+	
+	public boolean isForceCachable() { 
+		return componentBean.isForceCachable();
 	}
 
 	public boolean isNolink() {
@@ -2888,6 +2910,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return;
 		} else {
 			componentBean.setRepeat(newRepeat);
+			setModify();
+			setNeedRefresh(true);
+		}
+	}
+	
+	public void setForceCachable(boolean inForceCachable) {
+		if (inForceCachable == componentBean.isForceCachable()) {
+			return;
+		} else {
+			componentBean.setForceCachable(inForceCachable);
 			setModify();
 			setNeedRefresh(true);
 		}

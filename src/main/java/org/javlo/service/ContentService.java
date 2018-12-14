@@ -278,6 +278,7 @@ public class ContentService implements IPrintInfo {
 			}
 		}
 		bean.setRepeat(inBean.isRepeat());
+		bean.setForceCachable(inBean.isForceCachable());
 		bean.setRenderer(inBean.getRenderer());
 		bean.setModify(true);
 		bean.setCookiesDisplayStatus(inBean.getCookiesDisplayStatus());
@@ -302,6 +303,7 @@ public class ContentService implements IPrintInfo {
 		bean.setStyle(inBean.getStyle());
 		bean.setArea(inBean.getArea());
 		bean.setRepeat(inBean.isRepeat());
+		bean.setForceCachable(inBean.isForceCachable());
 		bean.setRenderer(inBean.getRenderer());
 		bean.setModify(true);
 		bean.setCookiesDisplayStatus(bean.getCookiesDisplayStatus());

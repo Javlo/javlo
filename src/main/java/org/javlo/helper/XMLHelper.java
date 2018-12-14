@@ -296,7 +296,6 @@ public class XMLHelper {
 				 * if (value.startsWith("test renomage")) { System.out.println(
 				 * "***** value = "+value); }
 				 */
-				String repeat = "" + beans[j].isRepeat();
 				boolean nolink = beans[j].isNolink();
 				String style = beans[j].getStyle();
 				String inlist = "" + beans[j].isList();
@@ -361,10 +360,13 @@ public class XMLHelper {
 					out.print("\" txtcol=\"");
 					out.print(beans[j].getTextColor());
 				}
-				if (StringHelper.isTrue(repeat)) {
-					out.print("\" repeat=\"");
-					out.print(repeat);
+				if (beans[j].isRepeat()) {
+					out.print("\" repeat=\"true");
 				}
+				if (StringHelper.isTrue(beans[j].isForceCachable())) {
+					out.print("\" forceCachable=\"true");
+				}
+				
 				if (nolink) {
 					out.print("\" nolink=\"");
 					out.print(nolink);

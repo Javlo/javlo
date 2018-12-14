@@ -1235,6 +1235,9 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
+		if (isForceCachable()) {
+			return true;
+		}
 		String contentCache = getConfig(ctx).getProperty("cache.content", null);
 		if (contentCache != null) {
 			return StringHelper.isTrue(contentCache);

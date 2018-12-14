@@ -42,4 +42,9 @@ public class PageURL extends AbstractVisualComponent {
 	public String getFontAwesome() {	
 		return "bookmark-o";
 	}
+	
+	@Override
+	public boolean isContentCachable(ContentContext ctx) {
+		return true;
+	}
 }

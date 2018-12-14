@@ -44,7 +44,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		private final ContentContext ctx;
 		private final MenuElement child;
 		private final MenuElement currentPage;
-
+		
 		public ChildLinkBean(ContentContext ctx, MenuElement child, MenuElement currentPage) {
 			this.ctx = ctx;
 			this.child = child;
@@ -586,7 +586,10 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
-		return false;
+		if (isForceCachable()) {
+			return true;
+		}
+		return StringHelper.isTrue(getConfig(ctx).getProperty("config.cache."+getCurrentRenderer(ctx), getConfig(ctx).getProperty("config.cache", null)), false);
 	}
 
 	public boolean isDescription() {

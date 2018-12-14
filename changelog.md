@@ -718,6 +718,7 @@ Security in case of vulnerabilities.
 - init meta info of the file from mp3 metadata
 - PageURL : force page url
 - Etag
+- force cachable on component config
 ### Modified
 - track cache by days in place of month
 - add button unactive by default

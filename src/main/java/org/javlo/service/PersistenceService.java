@@ -687,11 +687,7 @@ public class PersistenceService {
 			String inlist = contentNode.getAttributeValue("inlist", "false");
 			String lg = contentNode.getAttributeValue("language", defaultLg);
 			String renderer = contentNode.getAttributeValue("renderer", null);
-			boolean isRepeat = false;
-			String strRepeat = contentNode.getAttributeValue("repeat", "false");
-			if (strRepeat != null) {
-				isRepeat = StringHelper.isTrue(strRepeat);
-			}
+
 			boolean isNolink = false;
 			String strAutolink = contentNode.getAttributeValue("nolink", null);
 			if (strAutolink != null) {
@@ -716,7 +712,8 @@ public class PersistenceService {
 
 			ComponentBean bean = new ComponentBean(type, content, lg);
 			bean.setId(id);
-			bean.setRepeat(isRepeat);
+			bean.setRepeat(StringHelper.isTrue(contentNode.getAttributeValue("repeat"), false));
+			bean.setForceCachable(StringHelper.isTrue(contentNode.getAttributeValue("forceCachable"), false));
 			bean.setNolink(isNolink);
 			bean.setStyle(style);
 			bean.setList(StringHelper.isTrue(inlist));
