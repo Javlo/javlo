@@ -717,6 +717,7 @@ Security in case of vulnerabilities.
 - REST resource service
 - init meta info of the file from mp3 metadata
 - PageURL : force page url
+- Etag
 ### Modified
 - track cache by days in place of month
 - add button unactive by default
