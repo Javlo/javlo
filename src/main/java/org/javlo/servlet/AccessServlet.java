@@ -451,10 +451,15 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			}
 
 			/** CACHE **/
-			if (ctx.isAsViewMode() && ctx.getCurrentPage() != null && ctx.getCurrentPage().isCacheable(ctx) && globalContext.isPreviewMode() && globalContext.getPublishDate() != null && request.getMethod().equalsIgnoreCase("get") && request.getParameter("webaction") == null) {
+			ContentService content = ContentService.getInstance(ctx.getRequest());
+			MenuElement currentPage = content.getNavigation(ctx).getNoErrorFreeCurrentPage(ctx);
+			if (ctx.isAsViewMode() && currentPage != null && currentPage.isCacheable(ctx) && globalContext.isPreviewMode() && globalContext.getPublishDate() != null && request.getMethod().equalsIgnoreCase("get") && request.getParameter("webaction") == null) {
 				long lastModified = globalContext.getPublishDate().getTime();
 				response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);
 				response.setHeader("Cache-Control", "max-age=60,must-revalidate");
+				if (NetHelper.insertEtag(ctx, currentPage)) {
+					return;
+				}
 				long lastModifiedInBrowser = request.getDateHeader(NetHelper.HEADER_IF_MODIFIED_SINCE);
 				if (lastModified > 0 && lastModified / 1000 <= lastModifiedInBrowser / 1000) {
 					COUNT_304++;
@@ -614,7 +619,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				logger.fine(requestLabel + " : action " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 			}
 
-			ContentService content = ContentService.getInstance(globalContext);
 			if (ctx.getCurrentPage() != null) {
 				ctx.getCurrentPage().updateLinkedData(ctx);
 			}
@@ -1037,10 +1041,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
 							MenuElement page = content.getNavigation(ctx).getNoErrorFreeCurrentPage(ctx);
 							page.addAccess(ctx);
-							System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> AccessServlet.process : ctx.isAsViewMode() = "+ctx.isAsViewMode()); //TODO: remove debug trace
-							if (NetHelper.insertEtag(ctx, page)) {
-								return;
-							}
 						}
 
 						if (ctx.getSpecialContentRenderer() != null) {
