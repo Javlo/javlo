@@ -361,7 +361,7 @@ public class FileServlet extends HttpServlet {
      * @param toMatch The value to be matched.
      * @return True if the given match header matches the given value.
      */
-    private static boolean matches(String matchHeader, String toMatch) {
+    public static boolean matches(String matchHeader, String toMatch) {
         String[] matchValues = matchHeader.split("\\s*,\\s*");
         Arrays.sort(matchValues);
         return Arrays.binarySearch(matchValues, toMatch) > -1

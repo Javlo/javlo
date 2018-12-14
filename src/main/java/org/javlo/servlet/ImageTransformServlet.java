@@ -88,7 +88,7 @@ public class ImageTransformServlet extends FileServlet {
 	
 	public static final String PRELOAD_IMAGE_SUFFIX = "-load";
 	
-	public static final String SMALL_IMAGE_SUFFIX = "-small";
+	public static final String SMALL_IMAGE_SUFFIX = "-sm";
 
 	public static long COUNT_ACCESS = 0;
 
@@ -1203,6 +1203,9 @@ public class ImageTransformServlet extends FileServlet {
 				/* last modified management */
 				long lastModified = getLastModified(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageParam);
 				response.setHeader("Cache-Control", "public,max-age=600");
+				if (NetHelper.insertEtag(ctx, imageFile,""+lastModified)) {
+					return;
+				}
 				// response.setHeader("Accept-Ranges", "bytes");
 				// response.setHeader("Transfer-Encoding", null);
 				Calendar cal = Calendar.getInstance();

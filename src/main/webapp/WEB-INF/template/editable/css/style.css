@@ -179,7 +179,6 @@ table.float-image-width {
 	margin: 0 0 15px 0;
 }
 
-.row-page-break {
+.page-break {
 	page-break-after: always;
-}
 }

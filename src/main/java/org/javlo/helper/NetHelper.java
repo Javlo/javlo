@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -61,6 +62,7 @@ import org.javlo.mailing.MailService;
 import org.javlo.mailing.MailingBuilder;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.resource.VisualResource;
+import org.javlo.servlet.FileServlet;
 import org.javlo.servlet.IVersion;
 import org.javlo.template.Template;
 import org.javlo.user.IUserFactory;
@@ -83,13 +85,12 @@ import net.sf.uadetector.service.UADetectorServiceFactory;
 public class NetHelper {
 
 	public static final String JAVLO_USER_AGENT = "Mozilla/5.0 bot Javlo/" + IVersion.VERSION;
-	
+
 	public static final String MOZILLA_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:63.0) Gecko/20100101 Firefox/63.0";
 
 	private static boolean INIT_HTTPS = false;
 
-	private static final Map<String, Boolean> UserAgentCache = Collections
-			.synchronizedMap(new TimeMap<String, Boolean>(60 * 60 * 24 * 30, 100000));
+	private static final Map<String, Boolean> UserAgentCache = Collections.synchronizedMap(new TimeMap<String, Boolean>(60 * 60 * 24 * 30, 100000));
 
 	/**
 	 * create a static logger.
@@ -162,8 +163,7 @@ public class NetHelper {
 				int status = conn.getResponseCode();
 				redirect = false;
 				if (status != HttpURLConnection.HTTP_OK) {
-					if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM
-							|| status == HttpURLConnection.HTTP_SEE_OTHER)
+					if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM || status == HttpURLConnection.HTTP_SEE_OTHER)
 						redirect = true;
 				}
 				if (redirect) {
@@ -195,8 +195,7 @@ public class NetHelper {
 				int status = conn.getResponseCode();
 				redirect = false;
 				if (status != HttpURLConnection.HTTP_OK) {
-					if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM
-							|| status == HttpURLConnection.HTTP_SEE_OTHER)
+					if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM || status == HttpURLConnection.HTTP_SEE_OTHER)
 						redirect = true;
 				}
 				if (redirect) {
@@ -227,8 +226,7 @@ public class NetHelper {
 				int status = conn.getResponseCode();
 				redirect = false;
 				if (status != HttpURLConnection.HTTP_OK) {
-					if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM
-							|| status == HttpURLConnection.HTTP_SEE_OTHER)
+					if (status == HttpURLConnection.HTTP_MOVED_TEMP || status == HttpURLConnection.HTTP_MOVED_PERM || status == HttpURLConnection.HTTP_SEE_OTHER)
 						redirect = true;
 				}
 				if (redirect) {
@@ -282,8 +280,7 @@ public class NetHelper {
 		return readPage(url, cssInline, cssInline, userAgent, null, null, null, false);
 	}
 
-	public static String postJsonRequest(URL url, String userAgent, Map<String, String> header, String json)
-			throws Exception {
+	public static String postJsonRequest(URL url, String userAgent, Map<String, String> header, String json) throws Exception {
 		logger.fine("postJsonRequest : " + url);
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -296,7 +293,7 @@ public class NetHelper {
 			if (connection instanceof HttpsURLConnection) {
 				nocheckCertificatHttps();
 			}
-			
+
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Content-Type", "application/json");
 
@@ -331,18 +328,13 @@ public class NetHelper {
 			if (conn instanceof HttpURLConnection) {
 				HttpURLConnection httpConn = (HttpURLConnection) conn;
 
-				if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK
-						&& httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP
-						&& httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
-					logger.warning("error readpage :  '" + url + "' return error code : "
-							+ ((HttpURLConnection) conn).getResponseCode());
+				if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
+					logger.warning("error readpage :  '" + url + "' return error code : " + ((HttpURLConnection) conn).getResponseCode());
 					return null;
 				}
 
 				if (url.getProtocol().equalsIgnoreCase("http") || url.getProtocol().equalsIgnoreCase("https")) {
-					if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK
-							&& httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP
-							&& httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
+					if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
 						logger.warning("error readpage : " + httpConn.getResponseCode());
 						return null;
 					}
@@ -372,13 +364,11 @@ public class NetHelper {
 				}
 
 				@Override
-				public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType)
-						throws CertificateException {
+				public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
 				}
 
 				@Override
-				public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType)
-						throws CertificateException {
+				public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
 
 				}
 			} };
@@ -404,12 +394,9 @@ public class NetHelper {
 	 * @return code returned by the http request on the URL.
 	 * @throws IOException
 	 */
-	private static String readPage(URL url, boolean cssInline, boolean mailing, String userAgent, final String userName,
-			final String password, String userToken, boolean noError) throws Exception {
+	private static String readPage(URL url, boolean cssInline, boolean mailing, String userAgent, final String userName, final String password, String userToken, boolean noError) throws Exception {
 
-		logger.fine("readPage : " + url + "  user:" + userName + "  password found:"
-				+ (StringHelper.neverNull(password).length() > 1) + "  token found:"
-				+ (StringHelper.neverNull(userToken).length() > 1));
+		logger.fine("readPage : " + url + "  user:" + userName + "  password found:" + (StringHelper.neverNull(password).length() > 1) + "  token found:" + (StringHelper.neverNull(userToken).length() > 1));
 
 		if (null != userName && userName.trim().length() != 0 && null != password && password.trim().length() != 0) {
 
@@ -477,18 +464,13 @@ public class NetHelper {
 			if (conn instanceof HttpURLConnection) {
 				HttpURLConnection httpConn = (HttpURLConnection) conn;
 				if (!noError) {
-					if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK
-							&& httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP
-							&& httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
-						logger.warning("error readpage :  '" + url + "' return error code : "
-								+ ((HttpURLConnection) conn).getResponseCode());
+					if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
+						logger.warning("error readpage :  '" + url + "' return error code : " + ((HttpURLConnection) conn).getResponseCode());
 						return null;
 					}
 
 					if (url.getProtocol().equalsIgnoreCase("http") || url.getProtocol().equalsIgnoreCase("https")) {
-						if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK
-								&& httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP
-								&& httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
+						if (httpConn.getResponseCode() != HttpURLConnection.HTTP_OK && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP && httpConn.getResponseCode() != HttpURLConnection.HTTP_MOVED_PERM) {
 							logger.warning("error readpage : " + httpConn.getResponseCode());
 							return null;
 						}
@@ -530,8 +512,7 @@ public class NetHelper {
 
 			if (conn instanceof HttpURLConnection) {
 				if (((HttpURLConnection) conn).getResponseCode() != HttpURLConnection.HTTP_OK) {
-					logger.warning("help url '" + url + "' return error code : "
-							+ ((HttpURLConnection) conn).getResponseCode());
+					logger.warning("help url '" + url + "' return error code : " + ((HttpURLConnection) conn).getResponseCode());
 					return null;
 				}
 			}
@@ -652,31 +633,32 @@ public class NetHelper {
 					value = meta.attr("content");
 				} else {
 					return null;
-				} 
-			} 
+				}
+			}
 		}
 		return value;
 	}
 
-	public static PageMeta getPageMeta(URL url) throws Exception  {
+	public static PageMeta getPageMeta(URL url) throws Exception {
 		String html = readPageGet(url);
 		PageMeta pageMeta = new PageMeta();
 		Document doc = Jsoup.parse(html);
 
-		String title = getMeta(doc, "title");		
+		String title = getMeta(doc, "title");
 		if (StringHelper.isEmpty(title)) {
 			return null;
 		}
 		pageMeta.setTitle(title);
 		pageMeta.setUrl(url);
-		String description = getMeta(doc, "description");		
+		String description = getMeta(doc, "description");
 		pageMeta.setDescription(description);
 
-		String imageUrl = getMeta(doc, "image");		
+		String imageUrl = getMeta(doc, "image");
 		pageMeta.setImage(new URL(imageUrl));
 
 		Locale locale = null;
-		String locStr = getMeta(doc, "locale");;
+		String locStr = getMeta(doc, "locale");
+		;
 		if (locStr != null) {
 			if (locStr.contains("_")) {
 				String[] locArray = locStr.split("_");
@@ -690,13 +672,13 @@ public class NetHelper {
 			}
 		}
 		pageMeta.setLocale(locale);
-		
-		String dateStr = getMeta(doc, "modified_time");	
+
+		String dateStr = getMeta(doc, "modified_time");
 		if (StringHelper.isEmpty(dateStr)) {
 			dateStr = getMeta(doc, "published_time");
 			if (StringHelper.isEmpty(dateStr)) {
 				pageMeta.setDate(new Date(readDate(url)));
-			}			
+			}
 		}
 		if (!StringHelper.isEmpty(dateStr)) {
 			Date date = null;
@@ -707,7 +689,7 @@ public class NetHelper {
 				e.printStackTrace();
 				pageMeta.setDate(new Date(readDate(url)));
 			}
-			
+
 		}
 
 		return pageMeta;
@@ -941,11 +923,9 @@ public class NetHelper {
 						try {
 							baseURLParser = new URL(baseURL);
 							if (baseURLParser.getPort() > 0) {
-								url = URLHelper.mergePath(baseURLParser.getProtocol() + ':' + baseURLParser.getPort()
-										+ "://" + baseURLParser.getHost(), url);
+								url = URLHelper.mergePath(baseURLParser.getProtocol() + ':' + baseURLParser.getPort() + "://" + baseURLParser.getHost(), url);
 							} else {
-								url = URLHelper.mergePath(baseURLParser.getProtocol() + "://" + baseURLParser.getHost(),
-										url);
+								url = URLHelper.mergePath(baseURLParser.getProtocol() + "://" + baseURLParser.getHost(), url);
 							}
 						} catch (MalformedURLException e) {
 							e.printStackTrace();
@@ -973,12 +953,10 @@ public class NetHelper {
 	 *            the content
 	 * @return the uri to the local file
 	 */
-	public static String getLocalCopyOfPageImage(ContentContext ctx, URL inURL, String content, CRC32 crc32,
-			boolean preferVertical, boolean needVertical) {
+	public static String getLocalCopyOfPageImage(ContentContext ctx, URL inURL, String content, CRC32 crc32, boolean preferVertical, boolean needVertical) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		return getLocalCopyOfPageImage(staticConfig.getCacheFolder(), globalContext.getDataFolder(), inURL, null,
-				content, crc32, preferVertical, needVertical);
+		return getLocalCopyOfPageImage(staticConfig.getCacheFolder(), globalContext.getDataFolder(), inURL, null, content, crc32, preferVertical, needVertical);
 	}
 
 	public static List<URL> extractMostSimilarLinks(URL url) throws Exception {
@@ -1015,8 +993,7 @@ public class NetHelper {
 	 *            the content
 	 * @return the uri to the local file
 	 */
-	public static String getLocalCopyOfPageImage(String cacheFolder, String dataFolder, URL pageURL, URL imageURL,
-			String content, CRC32 crc32, boolean preferVertical, boolean needVertical) {
+	public static String getLocalCopyOfPageImage(String cacheFolder, String dataFolder, URL pageURL, URL imageURL, String content, CRC32 crc32, boolean preferVertical, boolean needVertical) {
 
 		logger.info("read : " + pageURL);
 
@@ -1187,13 +1164,11 @@ public class NetHelper {
 							}
 
 							@Override
-							public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType)
-									throws CertificateException {
+							public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
 							}
 
 							@Override
-							public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType)
-									throws CertificateException {
+							public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
 							}
 						} };
 						SSLContext sc = SSLContext.getInstance("SSL");
@@ -1213,8 +1188,7 @@ public class NetHelper {
 				}
 				conn.setConnectTimeout(5 * 1000);
 				conn.setRequestMethod("GET");
-				conn.setRequestProperty("User-Agent",
-						"Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 (.NET CLR 3.5.30729)");
+				conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 (.NET CLR 3.5.30729)");
 				int responseCode = ((HttpURLConnection) urlConnection).getResponseCode();
 				if (only404) {
 					return responseCode != 404;
@@ -1327,8 +1301,7 @@ public class NetHelper {
 	 * @return
 	 */
 	public static boolean isConnected() {
-		return canReach("http://www.google.com") || canReach("http://www.belgium.be")
-				|| canReach("http://www.javlo.org");
+		return canReach("http://www.google.com") || canReach("http://www.belgium.be") || canReach("http://www.javlo.org");
 	}
 
 	/**
@@ -1376,26 +1349,20 @@ public class NetHelper {
 		return false;
 	}
 
-	public static void sendMailToAdministrator(GlobalContext globalContext, String subject, String content)
-			throws AddressException {
-		sendMailToAdministrator(globalContext, new InternetAddress(globalContext.getAdministratorEmail()), subject,
-				content);
+	public static void sendMailToAdministrator(GlobalContext globalContext, String subject, String content) throws AddressException {
+		sendMailToAdministrator(globalContext, new InternetAddress(globalContext.getAdministratorEmail()), subject, content);
 	}
 
-	public static void sendMailToAdministrator(GlobalContext globalContext, InternetAddress from, String subject,
-			String content) {
-		MailService mailService = MailService
-				.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
+	public static void sendMailToAdministrator(GlobalContext globalContext, InternetAddress from, String subject, String content) {
+		MailService mailService = MailService.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
 		try {
-			mailService.sendMail(from, new InternetAddress(globalContext.getAdministratorEmail()), subject, content,
-					false);
+			mailService.sendMail(from, new InternetAddress(globalContext.getAdministratorEmail()), subject, content, false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public static void sendXHTMLMail(ContentContext ctx, InternetAddress from, InternetAddress to, InternetAddress cc,
-			InternetAddress bcc, String subject, String content, String templateName) throws Exception {
+	public static void sendXHTMLMail(ContentContext ctx, InternetAddress from, InternetAddress to, InternetAddress cc, InternetAddress bcc, String subject, String content, String templateName) throws Exception {
 		if (templateName == null) {
 			templateName = "basic_mailing";
 		}
@@ -1413,14 +1380,11 @@ public class NetHelper {
 		url = URLHelper.addParam(url, Template.FORCE_TEMPLATE_PARAM_NAME, templateName);
 		String XHTMLContent = NetHelper.readPageGet(new URL(url));
 		XHTMLContent = CSSParser.mergeCSS(XHTMLContent, false);
-		sendMail(ctx.getGlobalContext(), from, to, cc, bcc, subject, XHTMLContent, StringHelper.removeTag(content),
-				true);
+		sendMail(ctx.getGlobalContext(), from, to, cc, bcc, subject, XHTMLContent, StringHelper.removeTag(content), true);
 	}
 
-	public static void sendMail(GlobalContext globalContext, InternetAddress from, InternetAddress to,
-			InternetAddress cc, InternetAddress bcc, String subject, String content) {
-		MailService mailService = MailService
-				.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
+	public static void sendMail(GlobalContext globalContext, InternetAddress from, InternetAddress to, InternetAddress cc, InternetAddress bcc, String subject, String content) {
+		MailService mailService = MailService.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
 		try {
 			mailService.sendMail(null, from, to, cc, bcc, subject, content, false);
 		} catch (Exception e) {
@@ -1428,14 +1392,10 @@ public class NetHelper {
 		}
 	}
 
-	public static void sendMail(GlobalContext globalContext, InternetAddress from, InternetAddress to,
-			InternetAddress cc, InternetAddress bcc, String subject, String content, String contentTxt,
-			boolean isHTML) {
-		MailService mailService = MailService
-				.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
+	public static void sendMail(GlobalContext globalContext, InternetAddress from, InternetAddress to, InternetAddress cc, InternetAddress bcc, String subject, String content, String contentTxt, boolean isHTML) {
+		MailService mailService = MailService.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
 		try {
-			mailService.sendMail(null, from, to, cc, bcc, subject, content, contentTxt, isHTML,
-					globalContext.getDKIMBean());
+			mailService.sendMail(null, from, to, cc, bcc, subject, content, contentTxt, isHTML, globalContext.getDKIMBean());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1524,8 +1484,7 @@ public class NetHelper {
 
 	}
 
-	public static void sendPageByMailing(ContentContext ctx, MenuElement page, String sender, String recipient,
-			Map<String, Object> params) throws Exception {
+	public static void sendPageByMailing(ContentContext ctx, MenuElement page, String sender, String recipient, Map<String, Object> params) throws Exception {
 		ctx = ctx.getContextOnPage(page);
 		MailingBuilder mb = new MailingBuilder();
 		mb.setSender(sender);
@@ -1663,8 +1622,7 @@ public class NetHelper {
 		if (!StringHelper.isDigit(number)) {
 			return null;
 		}
-		String url = "http://ec.europa.eu/taxation_customs/vies/vatResponse.html?number=" + number + "&memberStateCode="
-				+ country;
+		String url = "http://ec.europa.eu/taxation_customs/vies/vatResponse.html?number=" + number + "&memberStateCode=" + country;
 		String content = readPageGet(new URL(url));
 		Document doc = Jsoup.parse(content);
 		Element elem = doc.getElementById("vatResponseFormTable");
@@ -1687,9 +1645,142 @@ public class NetHelper {
 		}
 		return company;
 	}
-	
+
+	/**
+	 * insert and check ETag
+	 * 
+	 * @param ctx
+	 * @param file
+	 * @param secondaryHash
+	 * @return true if content in cache (>> stop rendering)
+	 * @throws IOException
+	 */
+	public static boolean insertEtag(ContentContext ctx, File file, String secondaryHash) throws IOException {
+		if (file == null) {
+			return false;
+		}
+		// Prepare some variables. The ETag is an unique identifier of the file.
+		String fileName = file.getName();
+		long length = file.length();
+		long lastModified = file.lastModified();
+		String eTag = fileName + "_" + length + "_" + lastModified;
+		eTag = '"'+eTag+'"';
+		if (secondaryHash != null) {
+			eTag = eTag + secondaryHash;
+		}
+		long expires = System.currentTimeMillis() + FileServlet.DEFAULT_EXPIRE_TIME;
+		HttpServletRequest request = ctx.getRequest();
+		HttpServletResponse response = ctx.getResponse();
+
+		// Validate request headers for caching
+		// ---------------------------------------------------
+
+		// If-None-Match header should contain "*" or ETag. If so, then return 304.
+		String ifNoneMatch = request.getHeader("If-None-Match");
+		if (ifNoneMatch != null && FileServlet.matches(ifNoneMatch, eTag)) {
+			response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+			response.setHeader("ETag", eTag); // Required in 304.
+			response.setDateHeader("Expires", expires); // Postpone cache with 1 week.
+			return true;
+		}
+
+		// If-Modified-Since header should be greater than LastModified. If so, then
+		// return 304.
+		// This header is ignored if any If-None-Match header is specified.
+		long ifModifiedSince = request.getDateHeader("If-Modified-Since");
+		if (ifNoneMatch == null && ifModifiedSince != -1 && ifModifiedSince + 1000 > lastModified) {
+			response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+			response.setHeader("ETag", eTag); // Required in 304.
+			response.setDateHeader("Expires", expires); // Postpone cache with 1 week.
+			return true;
+		}
+
+		// Validate request headers for resume
+		// ----------------------------------------------------
+
+		// If-Match header should contain "*" or ETag. If not, then return 412.
+		String ifMatch = request.getHeader("If-Match");
+		if (ifMatch != null && !FileServlet.matches(ifMatch, eTag)) {
+			response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED);
+			return true;
+		}
+
+		// If-Unmodified-Since header should be greater than LastModified. If not, then
+		// return 412.
+		long ifUnmodifiedSince = request.getDateHeader("If-Unmodified-Since");
+		if (ifUnmodifiedSince != -1 && ifUnmodifiedSince + 1000 <= lastModified) {
+			response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED);
+			return true;
+		}
+
+		response.setHeader("ETag", eTag);
+		return false;
+
+	}
+
+	public static boolean insertEtag(ContentContext ctx, MenuElement page) throws Exception {
+		if (page == null) {
+			return false;
+		}
+		// Prepare some variables. The ETag is an unique identifier of the file.
+		String pageName = page.getName();
+		long lastModified = ctx.getGlobalContext().getPublishDate().getTime();
+		String eTag = pageName + "_" + lastModified + "_" + page.hashCode();
+		eTag = '"'+eTag+'"';
+		if (!page.isCacheable(ctx) || !ctx.getGlobalContext().isPreviewMode()) {
+			eTag = "W/" + eTag;
+		}
+		long expires = System.currentTimeMillis() + FileServlet.DEFAULT_EXPIRE_TIME;
+		HttpServletRequest request = ctx.getRequest();
+		HttpServletResponse response = ctx.getResponse();
+
+		// Validate request headers for caching
+		// ---------------------------------------------------
+
+		// If-None-Match header should contain "*" or ETag. If so, then return 304.
+		String ifNoneMatch = request.getHeader("If-None-Match");
+		if (ifNoneMatch != null && FileServlet.matches(ifNoneMatch, eTag)) {
+			response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+			response.setHeader("ETag", eTag); // Required in 304.
+			response.setDateHeader("Expires", expires); // Postpone cache with 1 week.
+			return true;
+		}
+
+		// If-Modified-Since header should be greater than LastModified. If so, then
+		// return 304.
+		// This header is ignored if any If-None-Match header is specified.
+		long ifModifiedSince = request.getDateHeader("If-Modified-Since");
+		if (ifNoneMatch == null && ifModifiedSince != -1 && ifModifiedSince + 1000 > lastModified) {
+			response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+			response.setHeader("ETag", eTag); // Required in 304.
+			response.setDateHeader("Expires", expires); // Postpone cache with 1 week.
+			return true;
+		}
+
+		// Validate request headers for resume
+		// ----------------------------------------------------
+
+		// If-Match header should contain "*" or ETag. If not, then return 412.
+		String ifMatch = request.getHeader("If-Match");
+		if (ifMatch != null && !FileServlet.matches(ifMatch, eTag)) {
+			response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED);
+			return true;
+		}
+
+		// If-Unmodified-Since header should be greater than LastModified. If not, then
+		// return 412.
+		long ifUnmodifiedSince = request.getDateHeader("If-Unmodified-Since");
+		if (ifUnmodifiedSince != -1 && ifUnmodifiedSince + 1000 <= lastModified) {
+			response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED);
+			return true;
+		}
+
+		response.setHeader("ETag", eTag);
+		return false;
+	}
+
 	public static void main(String[] args) throws Exception {
-		System.out.println(">>>>>>>>> NetHelper.main : mobile : "+isMobile("Mozilla/5.0 (Android 8.0.0; Mobile; rv:62.0) Gecko/62.0 Firefox/62.0")); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> NetHelper.main : mobile : " + isMobile("Mozilla/5.0 (Android 8.0.0; Mobile; rv:62.0) Gecko/62.0 Firefox/62.0")); // TODO: remove debug trace
 	}
 
 }

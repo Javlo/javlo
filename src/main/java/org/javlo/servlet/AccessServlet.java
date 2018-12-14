@@ -394,7 +394,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				ctx.setContentFound(false);
 			}
 			if (staticConfig.isXSSHeader()) {
-				response.setHeader("X-XSS-Protection", "1");
+				response.setHeader("X-XSS-Protection", "1; mode=block");
 			}
 
 			if (ctx.getCurrentEditUser() != null) {
@@ -1035,7 +1035,12 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						ServletHelper.includeBlocked(request, response);
 					} else {
 						if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
-							content.getNavigation(ctx).getNoErrorFreeCurrentPage(ctx).addAccess(ctx);
+							MenuElement page = content.getNavigation(ctx).getNoErrorFreeCurrentPage(ctx);
+							page.addAccess(ctx);
+							System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> AccessServlet.process : ctx.isAsViewMode() = "+ctx.isAsViewMode()); //TODO: remove debug trace
+							if (NetHelper.insertEtag(ctx, page)) {
+								return;
+							}
 						}
 
 						if (ctx.getSpecialContentRenderer() != null) {

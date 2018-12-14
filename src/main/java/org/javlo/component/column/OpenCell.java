@@ -37,7 +37,7 @@ public class OpenCell extends TableComponent {
 		if (tableContext.isTableOpen()) {
 			out.println("</div></td>");
 			if (isRowBreak()) {
-				out.println("</tr><tr>");
+				out.println("</tr><tr class=\""+getStyle()+"\">");
 			}
 		} else {
 			tableContext.openTable();
@@ -50,7 +50,7 @@ public class OpenCell extends TableComponent {
 				border = "border=\"1\" ";
 			}
 			
-			out.println("<table "+border+"style=\""+tableStyle+"\" class=\"component-table\"><tr>");
+			out.println("<table "+border+"style=\""+tableStyle+"\" class=\"component-table\"><tr class=\""+getStyle()+"\">");
 		}
 		out.println("<td"+getColSpanHTML(ctx)+' '+positionCSS+"style=\""+getTDStyle(ctx)+"\"><div class=\"cell-wrapper\">");
 		if (isCellEmpty(ctx) && ctx.isAsPreviewMode() && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isPreviewEditionMode()) {

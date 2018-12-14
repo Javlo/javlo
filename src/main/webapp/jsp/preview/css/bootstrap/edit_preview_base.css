@@ -183,7 +183,7 @@ body.edit-preview ._page_associate {
 	overflow: hidden;
 }
 
-.page-break {
+div.page-break {
 	border-bottom: 2px #33ef33 dotted;
 	font-size: 0;
 	width: 100%;

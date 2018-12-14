@@ -119,7 +119,7 @@ public class Post {
 	public boolean isValid() {
 		return valid;
 	}
-
+	
 	public void setValid(boolean valid) {
 		this.valid = valid;
 		setAdminTreated();
