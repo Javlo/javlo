@@ -37,8 +37,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -100,6 +98,8 @@ import org.javlo.ztatic.StaticInfo;
 import org.owasp.encoder.Encode;
 
 import com.google.gson.JsonElement;
+
+import ch.simschla.minify.adapter.Minifier;
 
 public class ResourceHelper {
 
@@ -2020,35 +2020,44 @@ public class ResourceHelper {
 		}
 		folder.delete();
 	}
+	
+	public static String mimifyJS(String js) {
+		Minifier minifier = Minifier.forFileName("script.js");
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		minifier.minify(new ByteArrayInputStream(js.getBytes()), out, ContentContext.CHARSET_DEFAULT, null);
+		return new String(out.toByteArray());
+	}
 
 	public static void main(String[] args) throws IOException {
-		File file = new File("c:/trans/changelog.txt");
-		File target = new File("c:/trans/changelog.md");
-
-		PrintStream out = new PrintStream(new FileOutputStream(target));
-		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-			String line;
-			while ((line = br.readLine()) != null) {
-				if (!StringHelper.isEmpty(line)) {
-					if (line.startsWith("*")) {
-						if (line.contains("[")) {
-							line = line.replace("[", "- ");
-							line = line.replace("]", "");
-							line = "## [" + line.substring(2).replaceFirst(" ", "] ");
-						} else {
-							line = "## [" + line.substring(2).replaceFirst(" ", "] - ");
-						}
-						out.println("");
-						out.println(line);
-						out.println("### Added");
-					} else if (line.startsWith(" *")) {
-						line = line.replaceFirst(" \\*", "-");
-						out.println(line);
-					}
-				}
-			}
-		}
-		out.close();
+//		File file = new File("c:/trans/changelog.txt");
+//		File target = new File("c:/trans/changelog.md");
+//
+//		PrintStream out = new PrintStream(new FileOutputStream(target));
+//		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+//			String line;
+//			while ((line = br.readLine()) != null) {
+//				if (!StringHelper.isEmpty(line)) {
+//					if (line.startsWith("*")) {
+//						if (line.contains("[")) {
+//							line = line.replace("[", "- ");
+//							line = line.replace("]", "");
+//							line = "## [" + line.substring(2).replaceFirst(" ", "] ");
+//						} else {
+//							line = "## [" + line.substring(2).replaceFirst(" ", "] - ");
+//						}
+//						out.println("");
+//						out.println(line);
+//						out.println("### Added");
+//					} else if (line.startsWith(" *")) {
+//						line = line.replaceFirst(" \\*", "-");
+//						out.println(line);
+//					}
+//				}
+//			}
+//		}
+//		out.close();
+		
+		System.out.println(">>>>>>>>> ResourceHelper.mimifyJS : "+mimifyJS("var    js='test'; \njs='test2';")); //TODO: remove debug trace
 
 	}
 

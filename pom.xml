@@ -513,6 +513,12 @@
 			<version>1.4.197</version>
 		</dependency>
 
+		<dependency>
+			<groupId>ch.simschla</groupId>
+			<artifactId>fast-and-simple-minify</artifactId>
+			<version>1.0</version>
+		</dependency>
+
 	</dependencies>
 
 	<repositories>

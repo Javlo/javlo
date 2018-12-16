@@ -11,9 +11,10 @@ public class TaxonomyBean {
 
 	private String id;
 	private String name;
+	private String decoration;
 	private TaxonomyBean parent;
 	private List<TaxonomyBean> children = new LinkedList<TaxonomyBean>();
-	private Map<String, String> labels = new HashMap<String, String>();
+	private Map<String, String> labels = new HashMap<String, String>();	
 	private Map<String, String> pathLabels = null;
 
 	public TaxonomyBean() {
@@ -202,6 +203,14 @@ public class TaxonomyBean {
 	@Override
 	public String toString() {
 		return getName();
+	}
+
+	public String getDecoration() {
+		return decoration;
+	}
+
+	public void setDecoration(String decoration) {
+		this.decoration = decoration;
 	}
 	
 }

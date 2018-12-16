@@ -1117,6 +1117,7 @@ public class PersistenceService {
 			taxonomyBean.setId(node.getAttributeValue("id"));
 			String name = node.getAttributeValue("name");
 			taxonomyBean.setName(name);
+			taxonomyBean.setDecoration(node.getAttributeValue("deco",""));
 			for (NodeXML child : node.getChildren()) {
 				if (child.getName().equals("label")) {
 					taxonomyBean.updateLabel(child.getAttributeValue("lang"), child.getContent());

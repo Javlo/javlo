@@ -55,7 +55,7 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 
 	private String area = DEFAULT_AREA;
 
-	public ComponentBean() {
+	public ComponentBean() {		
 		super();
 		id = "";
 		type = "";

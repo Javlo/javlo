@@ -206,8 +206,11 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
+		if (isColumnable(ctx)) {
+			performColumnable(ctx);
+		}
+		
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
-
 		List<String> fields = getFields(ctx);
 		String msg = null;
 		for (String fieldKey : fields) {
@@ -234,9 +237,7 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 				}
 				properties.remove(field);
 			}
-
 		}
-
 		if (isModify()) {
 			storeProperties();
 		}

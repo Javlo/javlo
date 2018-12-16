@@ -30,11 +30,6 @@ import io.bit3.jsass.Options;
 import io.bit3.jsass.Output;
 import io.bit3.jsass.context.FileContext;
 
-//import com.vaadin.sass.internal.ScssContext;
-//import com.vaadin.sass.internal.ScssStylesheet;
-//import com.vaadin.sass.internal.handler.SCSSDocumentHandlerImpl;
-//import com.vaadin.sass.internal.handler.SCSSErrorHandler;
-
 public class CssCompilationFilter implements Filter {
 
 	private static Logger logger = Logger.getLogger(CssCompilationFilter.class.getName());
@@ -61,8 +56,7 @@ public class CssCompilationFilter implements Filter {
 					compileFile = true;
 				}
 			}
-		}
-		if (compileFile) {
+		} else {
 			if (!globalContext.getContextKey().equals(globalContext.getMainContextKey())) {
 				lessFile = new File(StringUtils.replaceOnce(lessFile.getAbsolutePath(), File.separator + globalContext.getMainContextKey() + File.separator, File.separator + globalContext.getContextKey() + File.separator));
 				cssFile.getParentFile().mkdirs();
@@ -92,53 +86,7 @@ public class CssCompilationFilter implements Filter {
 		next.doFilter(request, response);
 	}
 
-//	private static boolean compileSass(boolean prod, File in, File out) {
-//		ScssContext.UrlMode urlMode = ScssContext.UrlMode.MIXED;
-//
-//		boolean minify = true;
-//		boolean ignoreWarnings = true;
-//		try {
-//
-//			if (!in.canRead()) {
-//				System.err.println(in.getCanonicalPath() + " could not be read!");
-//				System.exit(-1);
-//			}
-//			String input = in.getCanonicalPath();
-//
-//			SCSSErrorHandler errorHandler = new SCSSErrorHandler();
-//			errorHandler.setWarningsAreErrors(!ignoreWarnings);
-//
-//			// Parse stylesheet
-//			ScssStylesheet scss = ScssStylesheet.get(input, null, new SCSSDocumentHandlerImpl(), errorHandler);
-//			if (scss == null) {
-//				System.err.println("The scss file " + input + " could not be found.");
-//				return false;
-//			}
-//
-//			// Compile scss -> css
-//			scss.compile(urlMode);
-//
-//			// Write result
-//			Writer writer = null;
-//			try {
-//				writer = createOutputWriter(out.getAbsolutePath());
-//				scss.write(writer, minify);
-//				writer.close();
-//			} finally {
-//				ResourceHelper.safeClose(writer);
-//			}
-//
-//			if (errorHandler.isErrorsDetected()) {
-//				logger.warning("error on sass transform.");
-//				return false;
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			return false;
-//		}
-//		return true;
-//	}
-	
+
 	private static boolean compileSass(boolean prod, File in, File out) throws IOException {
 		URI inputFile = in.toURI();	    	    
 	    if (!out.exists()) {
@@ -147,19 +95,11 @@ public class CssCompilationFilter implements Filter {
 
 	    Compiler compiler = new Compiler();
 	    Options options = new Options();
-//	    URI mapFile;
-//		try {
-//			mapFile = new URI(URLHelper.mergePath(out.getParentFile().getAbsolutePath(), out.getName()+".map"));
-//		} catch (URISyntaxException e1) {
-//			throw new IOException(e1);
-//		}
-//		System.out.println(">>>>>>>>> CssCompilationFilter.compileSass : mapFile = "+mapFile); //TODO: remove debug trace
 	    if (!prod) {
 	    	options.setSourceComments(true);
 	    	options.setSourceMapContents(true);
 	    	options.setSourceMapEmbed(true);
 	    }
-//	    options.setSourceMapFile(mapFile);
 	    try {
 	      FileContext context = new FileContext(inputFile, null, options);
 	      Output output = compiler.compile(context);	      

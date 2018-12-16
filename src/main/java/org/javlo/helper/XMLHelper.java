@@ -585,7 +585,11 @@ public class XMLHelper {
 	}
 	
 	static void insertTaxonomy(PrintWriter out, TaxonomyBean node) throws Exception {
-		out.println("<taxo name=\""+Encode.forXmlAttribute(node.getName())+"\" id=\""+Encode.forXmlAttribute(node.getId())+"\">");
+		String deco = "";
+		if (!StringHelper.isEmpty(node.getDecoration())) {
+			deco = " deco=\""+Encode.forXmlAttribute(node.getDecoration())+"\"";
+		}
+		out.println("<taxo name=\""+Encode.forXmlAttribute(node.getName())+"\" id=\""+Encode.forXmlAttribute(node.getId())+"\""+deco+">");
 		for (Map.Entry<String, String> label : node.getLabels().entrySet()) {
 			out.println("<label lang=\""+Encode.forXmlAttribute(label.getKey())+"\">"+Encode.forXmlContent(label.getValue())+"</label>");
 		}

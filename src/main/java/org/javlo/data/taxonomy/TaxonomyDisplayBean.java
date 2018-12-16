@@ -52,6 +52,10 @@ public class TaxonomyDisplayBean {
 		return bean.getName();
 	}
 	
+	public String getDecoration() {
+		return bean.getDecoration();
+	}
+	
 	public String getLabel() {
 		String parentLabel = "";
 		if (displayParentLabel) {

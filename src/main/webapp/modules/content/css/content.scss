@@ -457,16 +457,19 @@ li.line {
 	margin-bottom: 6px;
 }
 
-.light-edit .ui-tabs-nav, .light-edit .insert-line, .light-edit .header-info, .light-edit #tools {
+.light-edit {
+	.ui-tabs-nav, .light-edit .insert-line, .light-edit .header-info, .light-edit #tools, .header-info, .insert-line {
 	display: none;
-}
-
-.light-edit .insert-line.action {
-	display: block;
-}
-
-.light-edit .component-wrapper {
-	margin-top: 35px;
+	}
+	.insert-line.action {
+		display: block;
+	}
+	.component-wrapper {
+		margin-top: 35px;
+	}
+	.column-selection-block {
+		display: none;
+	}
 }
 
 #content-edit .smart-generic-form {

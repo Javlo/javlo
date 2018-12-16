@@ -40,6 +40,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Priority;
 import org.javlo.bean.InstallBean;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentFactory;
@@ -191,7 +194,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		super.init();
 
 		LocalLogger.init(getServletContext());
-
+		
+		/** reduce cahe on copy bean */
+		
 		System.out.println("");
 		System.out.println("");
 		System.out.println("		    _  ____  _     _     ____");
@@ -201,7 +206,19 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		System.out.println("		\\____/\\_/ \\|\\__/  \\____/\\____/");
 		System.out.println("");
 		System.out.println("");
-
+		
+//		org.apache.commons.beanutils.BeanUtils.setDebug(1);
+//		org.apache.commons.beanutils.PropertyUtils.setDebug(1);
+//		Logger logger = Logger.getLogger(org.apache.commons.beanutils.BeanUtils.class.getName());
+//		logger.setLevel(Level.SEVERE);
+//		logger = Logger.getLogger(org.apache.commons.beanutils.BeanUtilsBean.class.getName());
+//		logger.setLevel(Level.SEVERE);
+//		logger = Logger.getLogger(org.apache.commons.beanutils.PropertyUtils.class.getName());
+//		logger.setLevel(Level.SEVERE);
+		
+//		Log log = LogFactory.getLog(org.apache.commons.beanutils.BeanUtilsBean.class);
+//		System.out.println(">>>>>>>>> AccessServlet.init : class = "+log.getClass().getName()); //TODO: remove debug trace
+		
 		/** JSTL Constant **/
 		getServletContext().setAttribute("BACK_PARAM_NAME", ElementaryURLHelper.BACK_PARAM_NAME);
 

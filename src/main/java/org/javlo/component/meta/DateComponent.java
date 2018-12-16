@@ -169,6 +169,12 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 			return "style not found : "+getStyle();
 		}
 	}
+	
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
+		ctx.getRequest().setAttribute("date", renderDate(ctx, getDate()));
+	}
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {

@@ -67,7 +67,7 @@ public class TaxonomyAction extends AbstractModuleAction {
 			taxonomyService.delete(deletedId);
 			ctx.getAjaxZone().put("item-"+deletedId, "");
 		}
-		for (TaxonomyBean bean : taxonomyService.getAllBeans()) {			
+		for (TaxonomyBean bean : taxonomyService.getAllBeans()) {
 			boolean updateList = false;
 			boolean updateItem = false;
 			String name = rs.getParameter("name-"+bean.getId(), "");
@@ -110,6 +110,11 @@ public class TaxonomyAction extends AbstractModuleAction {
 				} else {					
 					taxonomyService.updateId(bean, newId);
 				}
+			}
+			String newDeco = rs.getParameter("change-deco-"+bean.getId(), "");
+			if (!newDeco.equals(bean.getDecoration())) {
+				bean.setDecoration(newDeco);
+				updateList=true;
 			}
 			if (updateItem) {
 				String jsp = module.getJspPath("/jsp/item.jsp?id="+bean.getId());

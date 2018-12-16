@@ -611,7 +611,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected String getColumn(ContentContext ctx) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		out.println("<div class=\"column-selection\">");
+		out.println("<div class=\"column-selection-block\"><div class=\"column-selection\">");
 		for (Integer colSize : getColumnSizes(ctx)) {
 			String cssClass = "";
 			if (getColumnSize() == colSize) {
@@ -627,7 +627,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("<div class=\"fraction\">"+(colSize==0?"auto":(colSize+"/"+getColumnMaxSize(ctx)))+"</div></div>");
 			out.print(drawColumn(ctx, colSize)+"</label>");
 		}
-		out.println("</div><hr />");
+		out.println("</div><hr /></div>");
 		out.close();
 		return new String(outStream.toByteArray());
 	}

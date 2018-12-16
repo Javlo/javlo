@@ -15,6 +15,7 @@ import org.javlo.actions.IAction;
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.data.taxonomy.TaxonomyBean;
+import org.javlo.data.taxonomy.TaxonomyDisplayBean;
 import org.javlo.data.taxonomy.TaxonomyService;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.StringHelper;
@@ -44,6 +45,11 @@ public class TaxonomySessionComponent extends AbstractPropertiesComponent implem
 	}
 	
 	@Override
+	protected boolean getColumnableDefaultValue() {
+		return true;
+	}
+	
+	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
@@ -63,6 +69,31 @@ public class TaxonomySessionComponent extends AbstractPropertiesComponent implem
 	
 	private String getInputName() {
 		return "taxo-"+getId();
+	}
+	
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
+		List<Map.Entry<String,TaxonomyDisplayBean>> values = new LinkedList<Map.Entry<String,TaxonomyDisplayBean>>();
+		TaxonomyService taxoService = TaxonomyService.getInstance(ctx);
+		TaxonomyBean taxoBean = taxoService.getTaxonomyBean(getFieldValue(TAXONOMY));
+		if (taxoBean != null) {
+			for (TaxonomyBean bean : taxoBean.getAllChildren()) {
+				values.add(new AbstractMap.SimpleEntry(bean.getId(), new TaxonomyDisplayBean(ctx, bean)));
+			}
+			Collections.sort(values, new Comparator<Map.Entry<String,TaxonomyDisplayBean>>() {
+				@Override
+				public int compare(Entry<String, TaxonomyDisplayBean> o1, Entry<String, TaxonomyDisplayBean> o2) {
+					return o1.getValue().getLabel().compareTo(o2.getValue().getLabel());
+				}
+			});
+			ctx.getRequest().setAttribute("value", TaxonomyService.getSessionFilter(ctx, getId()));
+			ctx.getRequest().setAttribute("label", getFieldValue(LABEL));
+			ctx.getRequest().setAttribute("values", values);
+		} else {
+			logger.warning("taxonomy not found : "+getFieldValue(TAXONOMY));
+		}
+		ctx.getRequest().setAttribute("inputName", getInputName());
 	}
 	
 	@Override
@@ -101,7 +132,12 @@ public class TaxonomySessionComponent extends AbstractPropertiesComponent implem
 	
 	public static final String performChoose(ContentContext ctx, RequestService rs) throws Exception {
 		TaxonomySessionComponent comp = (TaxonomySessionComponent)ComponentHelper.getComponentFromRequest(ctx);
-		TaxonomyService.setSessionFilter(ctx, comp.getId(), rs.getParameter(comp.getInputName()));
+		String newTaxo = rs.getParameter(comp.getInputName());
+		String currentChoose = TaxonomyService.getSessionFilter(ctx, comp.getId());
+		if (currentChoose != null && currentChoose.equals(newTaxo)) {
+			newTaxo = null;
+		}
+		TaxonomyService.setSessionFilter(ctx, comp.getId(), newTaxo);
 		return null;
 	}
 	
