@@ -719,6 +719,7 @@ Security in case of vulnerabilities.
 - PageURL : force page url
 - Etag
 - force cachable on component config
+- merge js file
 ### Modified
 - track cache by days in place of month
 - add button unactive by default
