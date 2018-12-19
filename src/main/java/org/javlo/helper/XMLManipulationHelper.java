@@ -516,7 +516,7 @@ public class XMLManipulationHelper {
 						tags[i].getAttributes().put("data-pdfheight", "" + template.getPDFHeigth());
 					}
 					
-					tags[i].getAttributes().put("data-areas", "" + StringHelper.collectionToString(template.getAreas(), " "));
+					tags[i].getAttributes().put("data-areas", "" + template.getAjaxAreas());
 
 					String mainPageAssociationCode = "<%if (currentPage.isChildrenAssociation() && (request.getParameter(\"" + Template.FORCE_TEMPLATE_PARAM_NAME + "\") == null)) {%><jsp:include page=\"/jsp/view/page_association.jsp\" /><%} else {%>";
 

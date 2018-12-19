@@ -784,6 +784,15 @@ public class Template implements Comparable<Template> {
 		}
 		return index;
 	}
+	
+	public String getAjaxAreas() {
+		String areas = properties.getString("ajax.areas", null);
+		if (areas == null) {
+			return StringHelper.collectionToString(getAreas(), ",");
+		} else {
+			return areas;
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<String> getAreas() {
