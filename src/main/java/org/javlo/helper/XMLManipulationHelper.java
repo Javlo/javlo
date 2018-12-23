@@ -301,7 +301,7 @@ public class XMLManipulationHelper {
 	 * @throws BadXMLException
 	 */
 	private static int convertHTMLtoJSP(GlobalContext globalContext, Template template, I18nAccess i18nAccess, File htmlFile, File jspFile, Map<String, String> options, List<String> areas, List<String> resources, List<TemplatePlugin> templatePlugins, List<GenericMessage> messages, List<String> ids, boolean isMail, String fontIncluding) throws IOException {
-
+		
 		String templateVersion = StringHelper.getRandomId();
 		
 		if (fontIncluding.contains("##BASE_URI##")) {

@@ -1316,9 +1316,13 @@ public class Template implements Comparable<Template> {
 			Properties fontList = getFontReference(globalContext);
 			String outIncluding = "";
 			String cssRaw = getRawCss(globalContext, getRawCssFile(globalContext));
+			Set<Object> included = new HashSet<>();
 			for (Object key : fontList.keySet()) {
 				if (cssRaw != null && cssRaw.toString().contains(key.toString())) {
-					outIncluding += fontList.get(key);
+					if (!included.contains(key)) {
+						outIncluding += fontList.get(key);
+						included.add(key);
+					}
 				}
 			}
 			if (globalContext.getTemplateData().getFontHeading() != null && fontList.get(globalContext.getTemplateData().getFontHeading()) != null) {

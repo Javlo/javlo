@@ -1,20 +1,25 @@
 package org.javlo.image;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.IndexColorModel;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -668,12 +673,16 @@ public class ImageConfig {
 		return properties;
 	}
 
-	public static void main(String[] args) throws IOException {
-		File file = new File("c:/trans/test.jpg");
-		// File file = new File("c:/trans/dscf2053.jpg");
-		// File file = new File("c:/trans/dsc_0692.jpg");
-		ImageSize imageSize = ImageHelper.getImageSize(file);
-		System.out.println("##### ImageConfig.main : imageSize = " + imageSize); // TODO: remove debug trace
+	public String printConfig(Device device, String filter, String area) {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		out.println("add border       : " + isAddBorder(device, filter, area));
+		out.println("add image border : " + isAddImageBorder(device, filter, area));
+		out.println("crop image       : " + isCropResize(device, filter, area));
+		out.println("width            : " + getWidth(device, filter, area));
+		out.println("height           : " + getHeight(device, filter, area));
+		out.close();
+		return new String(outStream.toByteArray());
 	}
 
 }

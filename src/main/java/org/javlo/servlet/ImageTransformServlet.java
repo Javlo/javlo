@@ -132,7 +132,10 @@ public class ImageTransformServlet extends FileServlet {
 				System.out.println("cfg.width  : "+config.getWidth(ctx.getDevice(), filter, area));
 				System.out.println("cfg.height : "+config.getHeight(ctx.getDevice(), filter, area));
 				System.out.println("imageName  : "+imageName);
-				System.out.println("-----------------------------------------------------------------------");
+				System.out.println("------------------------------- IMAGE CONFIG -------------------------------");
+				System.out.println(config.printConfig(ctx.getDevice(), filter, area));
+				System.out.println("----------------------------------------------------------------------------");
+
 				System.out.println("");
 			}
 			this.session = ctx.getRequest().getSession();
@@ -335,7 +338,9 @@ public class ImageTransformServlet extends FileServlet {
 			System.out.println("device     : "+ctx.getDevice());
 			System.out.println("cfg.width  : "+config.getWidth(ctx.getDevice(), filter, area));
 			System.out.println("cfg.height : "+config.getHeight(ctx.getDevice(), filter, area));
-			System.out.println("imageName  : "+imageName);			
+			System.out.println("imageName  : "+imageName);
+			System.out.println("------------------------------- IMAGE CONFIG -------------------------------");
+			System.out.println(config.printConfig(ctx.getDevice(), filter, area));
 			System.out.println("----------------------------------------------------------------------------");
 			System.out.println("");
 		}

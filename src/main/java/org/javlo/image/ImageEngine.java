@@ -19,8 +19,10 @@ import java.awt.image.IndexColorModel;
 import java.awt.image.Kernel;
 import java.awt.image.WritableRaster;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
@@ -32,9 +34,12 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+import javax.imageio.stream.ImageOutputStream;
 
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 
+import com.github.jaiimageio.jpeg2000.J2KImageWriteParam;
 import com.jhlabs.image.RGBAdjustFilter;
 
 public class ImageEngine {
@@ -76,16 +81,27 @@ public class ImageEngine {
 
 	public static void storeImage(BufferedImage img, File file) throws IOException {
 		String ext = StringHelper.getFileExtension(file.getName()).toLowerCase();
-		if (img.getType() != BufferedImage.TYPE_3BYTE_BGR && (ext.equals("jpg") || ext.equals("jpeg"))) {
-			img = removeAlpha(img);
+		if (ext.equalsIgnoreCase("jpg") || ext.equalsIgnoreCase("jpeg")) {
+			//ext = "jpeg 2000";
+			if (img.getType() != BufferedImage.TYPE_3BYTE_BGR) {
+				img = removeAlpha(img);
+			}
+			//writeJPEG2000(img, file);
+		} else if (ext.equalsIgnoreCase("png")) {
+			img = autoReduceColor(img);
 		}
 		ImageIO.write(img, ext, file);
 		return;
 	}
-	
+
 	public static void storeImage(BufferedImage img, String ext, OutputStream outImage) throws IOException {
-		if (img.getType() != BufferedImage.TYPE_3BYTE_BGR && (ext.equals("jpg") || ext.equals("jpeg"))) {
-			img = removeAlpha(img);
+		if (ext.equalsIgnoreCase("jpg") || ext.equalsIgnoreCase("jpeg")) {
+			if (img.getType() != BufferedImage.TYPE_3BYTE_BGR) {
+				img = removeAlpha(img);
+			} else if (ext.equalsIgnoreCase("png")) {
+				img = autoReduceColor(img);
+			}
+			//writeJPEG2000(img, outImage);
 		}
 		ImageIO.write(img, ext, outImage);
 		return;
@@ -1766,23 +1782,21 @@ public class ImageEngine {
 		}
 		return outImage;
 	}
-	
-	
-	
+
 	public static double getColorLight(BufferedImage image) {
-		double red=0;
-		double green=0;
-		double blue=0;
+		double red = 0;
+		double green = 0;
+		double blue = 0;
 		for (int y = 0; y < image.getHeight(); y += 1) {
 			for (int x = 0; x < image.getWidth(); x += 1) {
-				red = red + ((double)((image.getRGB(x, y)& 0x00ff0000)>>16)/255);
-				green = green + ((double)((image.getRGB(x, y)& 0x0000ff00)>>8)/255);
-				blue = blue + ((double)((image.getRGB(x, y)& 0x000000ff))/255);
+				red = red + ((double) ((image.getRGB(x, y) & 0x00ff0000) >> 16) / 255);
+				green = green + ((double) ((image.getRGB(x, y) & 0x0000ff00) >> 8) / 255);
+				blue = blue + ((double) ((image.getRGB(x, y) & 0x000000ff)) / 255);
 			}
 		}
-		return (red+green+blue)/(image.getWidth()*image.getHeight()*3);
+		return (red + green + blue) / (image.getWidth() * image.getHeight() * 3);
 	}
-	
+
 	public static int getGoogleResultTitleSize(String text) {
 		final int MAX = 600;
 		if (StringHelper.isEmpty(text)) {
@@ -1793,59 +1807,125 @@ public class ImageEngine {
 			} else {
 				BufferedImage image = new BufferedImage(MAX, 50, BufferedImage.TYPE_BYTE_GRAY);
 				Graphics2D g = image.createGraphics();
-				g.setPaint ( Color.WHITE );
-				g.fillRect ( 0, 0, image.getWidth(), image.getHeight());
-				g.setPaint ( Color.BLACK );
+				g.setPaint(Color.WHITE);
+				g.fillRect(0, 0, image.getWidth(), image.getHeight());
+				g.setPaint(Color.BLACK);
 				Font font = new Font("Arial", Font.PLAIN, 18);
 				Map<TextAttribute, Object> attributes = new HashMap<TextAttribute, Object>();
 				attributes.put(TextAttribute.TRACKING, -0.0048);
 				font = font.deriveFont(attributes);
-				g.setFont(font); 
-			    g.drawString(text, 0, 25);
-			    g.dispose();
-			    image = trim(image, Color.WHITE, 1);
-			    try {
+				g.setFont(font);
+				g.drawString(text, 0, 25);
+				g.dispose();
+				image = trim(image, Color.WHITE, 1);
+				try {
 					ImageIO.write(image, "png", new File("c:/trans/text.png"));
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			    return image.getWidth();
+				return image.getWidth();
 			}
 		}
 	}
 
+	public static BufferedImage autoReduceColor(BufferedImage image) throws IOException {
+		if (image.getType() == BufferedImage.TYPE_BYTE_INDEXED) {
+			return image;
+		}
+		Map<Color, Integer> colors = new HashMap<>();
+		for (int y = 0; y < image.getHeight(); y += 1) {
+			for (int x = 0; x < image.getWidth(); x += 1) {
+				Color c = new Color(image.getRGB(x, y));
+				if (colors.get(c) == null) {
+					colors.put(c, 1);
+				} else {
+					colors.put(c, colors.get(c) + 1);
+				}
+			}
+		}
+		BufferedImage newImage = image;
+		if (colors.size() < 256) {
+			ArrayList<Color> colorsSet = new ArrayList<>(colors.keySet());
+			byte[] r = new byte[255];
+			byte[] g = new byte[255];
+			byte[] b = new byte[255];
+			for (int i = 0; i < colorsSet.size(); i++) {
+				r[i] = (byte) colorsSet.get(i).getRed();
+				g[i] = (byte) colorsSet.get(i).getGreen();
+				b[i] = (byte) colorsSet.get(i).getBlue();
+			}
+			IndexColorModel icm = new IndexColorModel(3, colorsSet.size(), r, g, b);
+			newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_BYTE_INDEXED, icm);
+			Graphics2D graph = newImage.createGraphics();
+			graph.drawRenderedImage(image, null);
+			graph.dispose();
+		}
+		return newImage;
+	}
+
+	public static void writeJPEG2000(BufferedImage image, File file) throws IOException {
+		OutputStream out = new FileOutputStream(file);
+		try {
+			writeJPEG2000(image, out);
+		} finally {
+			ResourceHelper.closeResource(out);
+		}
+	}
+
+	public static void writeJPEG2000(BufferedImage image, OutputStream out) throws IOException {
+		Iterator<ImageWriter> writers = ImageIO.getImageWritersBySuffix("jp2");
+		ImageWriter writer = writers.next();
+		J2KImageWriteParam writeParams = (J2KImageWriteParam) writer.getDefaultWriteParam();
+		writeParams.setLossless(false);
+		writeParams.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+		writeParams.setCompressionType("JPEG2000");
+		// writeParams.setFilter(J2KImageWriteParam.FILTER_97);
+		writeParams.setCompressionQuality(0.5f);
+		writeParams.setEncodingRate(0.5f);
+		ImageOutputStream ios = ImageIO.createImageOutputStream(out);
+		writer.setOutput(ios);
+		writer.write(null, new IIOImage(image, null, null), writeParams);
+		writer.dispose();
+	}
+
 	public static void main(String[] args) throws Exception {
-		
-		File javloFile = new File("c:/trans/logo.png");
+
+		File javloFile = new File("c:/trans/test.jpg");
 		BufferedImage image = ImageIO.read(javloFile);
-		image = resize(image, 450, 450, false, true, 0, 0, 0, 0, Color.WHITE, 500, 500, true, true);
-		ImageIO.write (image, "png", new File("c:/trans/javlo_out.png"));
-		
-		//System.out.println("data : "+getGoogleResultTitleSize("patrick est là"));
-		System.out.println("data : "+getGoogleResultTitleSize("Hot Women | Sexy Women Pics | Hot Ladies - theChive"));
-		
-//		System.out.println("***** ImageEngine.main : START"); // TODO: remove
-//		File catFile = new File("c:/trans/catherine.JPG");
-//		BufferedImage cat = ImageIO.read(catFile);
-//		File anneFile = new File("c:/trans/anne.JPG");
-//		BufferedImage anne = ImageIO.read(anneFile);
-//		File blackFile = new File("c:/trans/black.JPG");
-//		BufferedImage black = ImageIO.read(blackFile);
-//		File whileFile = new File("c:/trans/white.JPG");
-//		BufferedImage white = ImageIO.read(whileFile);
-//		
-//		GainFilter filter = new GainFilter();
-//		filter.setGain(0.8f);
-//		filter.setBias(0.8f);
-//		anne = filter.filter(anne, null);
-//		ImageIO.write (anne, "jpg", new File("c:/trans/anne_out.jpg"));
-//				
-//		
-//		System.out.println(">>>>>>>>> ImageEngine.main : anne = "+getColorLight(anne)); //TODO: remove debug trace
-//		System.out.println(">>>>>>>>> ImageEngine.main : catherine = "+getColorLight(cat)); //TODO: remove debug trace
-//		System.out.println(">>>>>>>>> ImageEngine.main : black = "+getColorLight(black)); //TODO: remove debug trace
-//		System.out.println(">>>>>>>>> ImageEngine.main : white = "+getColorLight(white)); //TODO: remove debug trace
+		if (image != null) {
+			storeImage(image, new File("c:/trans/out_jpg2000.jpg"));
+		}
+
+		// System.out.println("data : "+getGoogleResultTitleSize("patrick est là"));
+		// System.out.println("data : "+getGoogleResultTitleSize("Hot Women | Sexy Women
+		// Pics | Hot Ladies - theChive"));
+
+		// System.out.println("***** ImageEngine.main : START"); // TODO: remove
+		// File catFile = new File("c:/trans/catherine.JPG");
+		// BufferedImage cat = ImageIO.read(catFile);
+		// File anneFile = new File("c:/trans/anne.JPG");
+		// BufferedImage anne = ImageIO.read(anneFile);
+		// File blackFile = new File("c:/trans/black.JPG");
+		// BufferedImage black = ImageIO.read(blackFile);
+		// File whileFile = new File("c:/trans/white.JPG");
+		// BufferedImage white = ImageIO.read(whileFile);
+		//
+		// GainFilter filter = new GainFilter();
+		// filter.setGain(0.8f);
+		// filter.setBias(0.8f);
+		// anne = filter.filter(anne, null);
+		// ImageIO.write (anne, "jpg", new File("c:/trans/anne_out.jpg"));
+		//
+		//
+		// System.out.println(">>>>>>>>> ImageEngine.main : anne =
+		// "+getColorLight(anne)); //TODO: remove debug trace
+		// System.out.println(">>>>>>>>> ImageEngine.main : catherine =
+		// "+getColorLight(cat)); //TODO: remove debug trace
+		// System.out.println(">>>>>>>>> ImageEngine.main : black =
+		// "+getColorLight(black)); //TODO: remove debug trace
+		// System.out.println(">>>>>>>>> ImageEngine.main : white =
+		// "+getColorLight(white)); //TODO: remove debug trace
 	}
 
 	public static BufferedImage convertRGBAToIndexed(BufferedImage src) {
