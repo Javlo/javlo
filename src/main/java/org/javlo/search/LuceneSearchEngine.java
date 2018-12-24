@@ -24,7 +24,6 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
-import org.apache.lucene.util.Version;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.config.StaticConfig;
@@ -93,7 +92,7 @@ public class LuceneSearchEngine implements ISearchEngine {
 		//TODO Is there a better way than TopScoreDocCollector to return all result?
 		IndexReader reader = DirectoryReader.open(langIndex.index);
 		IndexSearcher searcher = new IndexSearcher(reader);
-		TopScoreDocCollector collector = TopScoreDocCollector.create(MAX_RESULTS, true);
+		TopScoreDocCollector collector = TopScoreDocCollector.create(MAX_RESULTS);
 		searcher.search(q, collector);
 		ScoreDoc[] hits = collector.topDocs().scoreDocs;
 
@@ -119,6 +118,10 @@ public class LuceneSearchEngine implements ISearchEngine {
 			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("search.title.no-result") + ' ' + searchStr, GenericMessage.ALERT));
 		}
+		
+		SearchResult searchResult = SearchResult.getInstance(ctxWithContent);
+		searchResult.setQuery(searchStr);
+		searchResult.setSort(sort);
 
 		return result;
 	}
@@ -183,7 +186,7 @@ public class LuceneSearchEngine implements ISearchEngine {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement nav = content.getNavigation(ctx);
 
-		IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_4_10_2, langIndex.analyzer);
+		IndexWriterConfig config = new IndexWriterConfig(langIndex.analyzer);
 		IndexWriter w = null;
 		try {
 			w = new IndexWriter(langIndex.index, config);

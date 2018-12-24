@@ -40,7 +40,7 @@ public class LuceneExperiments {
 		StandardAnalyzer analyzer = new StandardAnalyzer();
 		RAMDirectory index = new RAMDirectory();
 
-		IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_4_10_2, analyzer);//TODO try finally to close?
+		IndexWriterConfig config = new IndexWriterConfig(analyzer);//TODO try finally to close?
 		IndexWriter w = new IndexWriter(index, config);
 
 		addDoc(w, "id1", "namenamename",
@@ -103,7 +103,7 @@ public class LuceneExperiments {
 		int hitsPerPage = 10;
 		IndexReader reader = DirectoryReader.open(index);
 		IndexSearcher searcher = new IndexSearcher(reader);
-		TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage, true);
+		TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage);
 		searcher.search(q, collector);
 		TopDocs td = collector.topDocs();
 
@@ -139,23 +139,23 @@ public class LuceneExperiments {
 	private void printQuery(Query q, String indent) {
 		if (q instanceof BooleanQuery) {
 			BooleanQuery qq = (BooleanQuery) q;
-			System.out.println(indent + "Boolean" + " (Boost: " + qq.getBoost() + ")");
+			System.out.println(indent + "Boolean" + " (Boost: " + qq + ")");
 			for (BooleanClause cl : qq) {
 				System.out.println(indent + "  " + /*"isProhibited=" + cl.isProhibited() + " isRequired=" + cl.isRequired() +*/" occur=" + cl.getOccur().name());
 				printQuery(cl.getQuery(), indent + "\t");
 			}
 		} else if (q instanceof FuzzyQuery) {
 			FuzzyQuery qq = (FuzzyQuery) q;
-			System.out.println(indent + "Fuzzy: " + qq.getTerm() + " (Boost: " + qq.getBoost() + ")");
+			System.out.println(indent + "Fuzzy: " + qq.getTerm() + " (Boost: " + qq + ")");
 		} else if (q instanceof PrefixQuery) {
 			PrefixQuery qq = (PrefixQuery) q;
-			System.out.println(indent + "Prefix: " + qq.getPrefix() + " (Boost: " + qq.getBoost() + ")");
+			System.out.println(indent + "Prefix: " + qq.getPrefix() + " (Boost: " + qq + ")");
 		} else if (q instanceof WildcardQuery) {
 			WildcardQuery qq = (WildcardQuery) q;
-			System.out.println(indent + "Wildcard: " + qq.getTerm() + " (Boost: " + qq.getBoost() + ")");
+			System.out.println(indent + "Wildcard: " + qq.getTerm() + " (Boost: " + qq + ")");
 		} else if (q instanceof TermQuery) {
 			TermQuery qq = (TermQuery) q;
-			System.out.println(indent + "Term: " + qq.getTerm() + " (Boost: " + qq.getBoost() + ")");
+			System.out.println(indent + "Term: " + qq.getTerm() + " (Boost: " + qq + ")");
 		} else {
 			System.out.println(indent + q.getClass());
 		}
@@ -182,7 +182,7 @@ public class LuceneExperiments {
 
 		for (Object[] component : components) {
 			TextField fld = new TextField("content", (String) component[0], Field.Store.YES);
-			fld.setBoost((Float) component[1]);
+			fld.setFloatValue((Float) component[1]);
 			doc.add(fld);
 		}
 
