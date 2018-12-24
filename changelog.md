@@ -734,6 +734,7 @@ Security in case of vulnerabilities.
 - file upload in page inherit page right
 - google authentification from global context in place of static config
 - background image on resize set background color in place of black (if alpha in source)
+- update lucene to 7.6.0
 ### Fixed
 - edit index.html of template, load CodeMirror
 - reset navigation if navigation renderer change
