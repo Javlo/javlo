@@ -479,7 +479,7 @@ public class Template implements Comparable<Template> {
 
 	private static final String MACRO_FOLDER = "macro";
 
-	public static final String EDIT_TEMPLATE_CODE = "[edit]";
+	public static final String EDIT_TEMPLATE_CODE = "_edit_";
 
 	private static final String RESOURCES_DIR = "resources";
 

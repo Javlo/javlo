@@ -477,7 +477,7 @@ public abstract class ElementaryURLHelper {
 		if (templateName != null) {
 			baseUrl = baseUrl + '/' + templateName + '/' + ctx.getVirtualArea();
 		} else {
-			baseUrl = baseUrl + "/[edit]/" + ComponentBean.DEFAULT_AREA;
+			baseUrl = baseUrl + "/"+Template.EDIT_TEMPLATE_CODE+"/" + ComponentBean.DEFAULT_AREA;
 		}
 		if (comp != null) {
 			baseUrl = baseUrl + ImageTransformServlet.COMPONENT_ID_URL_DIR_PREFIX + comp.getId();
