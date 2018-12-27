@@ -3280,7 +3280,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (params.containsKey("content")) {
 			return getValue().contains(params.get("content"));
 		}
-		return false;
+		return true;
 	}
 	
 	@Override

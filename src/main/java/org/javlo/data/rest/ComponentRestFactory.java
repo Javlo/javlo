@@ -16,11 +16,11 @@ public class ComponentRestFactory implements IRestFactory {
 	}
 
 	@Override
-	public IRestItem search(ContentContext ctx, String path, String query) throws Exception {
+	public IRestItem search(ContentContext ctx, String path, String query, int max) throws Exception {
 		IRestItem outItem;
 		path = path.replace('/', ' ').trim();
 		if (StringHelper.isDigit(path)) {
-			IContentVisualComponent comp = ContentService.getInstance(ctx.getGlobalContext()).getComponent(ctx, path);			
+			IContentVisualComponent comp = ContentService.getInstance(ctx.getGlobalContext()).getComponent(ctx, path);
 			if (comp != null && comp.getPage().isReadAccess(ctx, ctx.getCurrentUser())) {
 				outItem = comp;
 			} else {
@@ -28,17 +28,23 @@ public class ComponentRestFactory implements IRestFactory {
 			}
 		} else {
 			RestContainer outRest = new RestContainer("components");
-			for (IContentVisualComponent comp : ContentService.getInstance(ctx.getGlobalContext()).getComponentByType(ctx, path)) {				
+			int c=0;
+			for (IContentVisualComponent comp : ContentService.getInstance(ctx.getGlobalContext()).getComponentByType(ctx, path)) {
 				Map<String,String> params = URLHelper.extractParameterFromURL(query);
 				if (params == null || params.size() == 0 || comp.isRestMatch(ctx, params)) {
 					if (comp.getPage().isReadAccess(ctx, ctx.getCurrentUser())) {
 						outRest.addItem(ctx, comp);
+						c++;
+						if (c>=max) {
+							outItem = outRest;
+							return outItem;
+						}
+					
 					}
 				}
-			}			
+			}
 			outItem = outRest;
 		}
 		return outItem;
-	}	
-
+	}
 }

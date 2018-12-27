@@ -15,7 +15,7 @@ public class TestRest implements IRestFactory {
 	}
 
 	@Override
-	public IRestItem search(ContentContext ctx, String path, String query) {
+	public IRestItem search(ContentContext ctx, String path, String query, int max) {
 		RestItemBean outItem = new RestItemBean();
 		outItem.setQuery("{\"path\" : \""+path+"\"}");
 		Map<String,String> map = new HashMap<String, String>();

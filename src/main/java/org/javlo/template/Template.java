@@ -2179,9 +2179,7 @@ public class Template implements Comparable<Template> {
 		if (renderer == null && parent != null) {
 			return parent.getSearchRenderer(ctx);
 		}
-		return URLHelper.createStaticTemplateURLWithoutContext(ctx, ctx.getCurrentTemplate(), renderer); // not
-																											// this
-																											// ?
+		return URLHelper.createStaticTemplateURLWithoutContext(ctx, ctx.getCurrentTemplate(), renderer);
 	}
 
 	public String getSelectedClass() {

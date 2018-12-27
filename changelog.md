@@ -735,9 +735,11 @@ Security in case of vulnerabilities.
 - google authentification from global context in place of static config
 - background image on resize set background color in place of black (if alpha in source)
 - update lucene to 7.6.0
+- rest update
 ### Fixed
 - edit index.html of template, load CodeMirror
 - reset navigation if navigation renderer change
 - don't delete meta data of source when copy resources
 - paste element in edit mode, null pointer corrected
 - tracker take only view url
+## [2.1.2.2] - 27/12/2018

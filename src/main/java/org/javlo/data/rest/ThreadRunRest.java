@@ -16,7 +16,7 @@ public class ThreadRunRest implements IRestFactory {
 	}
 
 	@Override
-	public IRestItem search(ContentContext ctx, String path, String query) {
+	public IRestItem search(ContentContext ctx, String path, String query, int max) {
 		RestItemBean outItem = new RestItemBean();
 		ThreadManager threadManager = ThreadManager.getInstance(ctx.getRequest().getSession().getServletContext());		
 		outItem.setQuery("{\"thread\" : \""+query+"\"}");
