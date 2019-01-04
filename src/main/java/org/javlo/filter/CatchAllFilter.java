@@ -561,6 +561,8 @@ public class CatchAllFilter implements Filter {
 								String msg = i18nAccess.getText("user.error.msg");
 								MessageRepository messageRepository = MessageRepository.getInstance(((HttpServletRequest) request));
 								messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
+							} else {
+								ContentService.getInstance(globalContext).releaseViewNav(globalContext);
 							}
 							ModulesContext.getInstance(httpRequest.getSession(), globalContext).loadModule(httpRequest.getSession(), globalContext);
 						}

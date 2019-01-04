@@ -664,28 +664,45 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return e.getMessage();
 		}
 	}
+	
+	public String getEditRenderer(ContentContext ctx) {
+		return null;
+	}
+	
+	public void prepareEdit(ContentContext ctx) {
+		return;
+	}
 
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
-		StringBuffer finalCode = new StringBuffer();
-		finalCode.append(getDebugHeader(ctx));
-		finalCode.append(getSpecialInputTag());
-		finalCode.append("<textarea class=\"form-control resizable-textarea full-width\" id=\"" + getContentName() + "\" name=\"" + getContentName() + "\"");
-		finalCode.append(" rows=\"" + (countLine() + 1) + "\">");
-		finalCode.append(getValue());
-		finalCode.append("</textarea>");
-		if (getEditorComplexity(ctx) != null) {
-			Map<String, String> filesParams = new HashMap<String, String>();
-			String path = FileAction.getPathPrefix(ctx);
-			filesParams.put("path", path);
-			filesParams.put("webaction", "changeRenderer");
-			filesParams.put("page", "meta");
-			filesParams.put("select", "_TYPE_");
-			filesParams.put(ContentContext.PREVIEW_EDIT_PARAM, "true");
-
-			String chooseImageURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
-			finalCode.append("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getContentName() + "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "'));</script>");
+		if (getEditRenderer(ctx) != null) {
+			ctx.getRequest().setAttribute("compid", getId());
+			ctx.getRequest().setAttribute("value", getValue());
+			ctx.getRequest().setAttribute("inputName", getContentName());
+			
+			prepareEdit(ctx);
+			return executeJSP(ctx, getEditRenderer(ctx));
+		} else {
+			StringBuffer finalCode = new StringBuffer();
+			finalCode.append(getDebugHeader(ctx));
+			finalCode.append(getSpecialInputTag());
+			finalCode.append("<textarea class=\"form-control resizable-textarea full-width\" id=\"" + getContentName() + "\" name=\"" + getContentName() + "\"");
+			finalCode.append(" rows=\"" + (countLine() + 1) + "\">");
+			finalCode.append(getValue());
+			finalCode.append("</textarea>");
+			if (getEditorComplexity(ctx) != null) {
+				Map<String, String> filesParams = new HashMap<String, String>();
+				String path = FileAction.getPathPrefix(ctx);
+				filesParams.put("path", path);
+				filesParams.put("webaction", "changeRenderer");
+				filesParams.put("page", "meta");
+				filesParams.put("select", "_TYPE_");
+				filesParams.put(ContentContext.PREVIEW_EDIT_PARAM, "true");
+	
+				String chooseImageURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
+				finalCode.append("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getContentName() + "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "'));</script>");
+			}
+			return finalCode.toString();
 		}
-		return finalCode.toString();
 	}
 
 	public boolean isAskWidth(ContentContext ctx) {

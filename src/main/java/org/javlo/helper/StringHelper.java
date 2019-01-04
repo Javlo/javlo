@@ -1860,6 +1860,14 @@ public class StringHelper {
 			return "" + inStr;
 		}
 	}
+	
+	public static String neverNullOrEmpty(Object inStr, String replaceWith) {
+		if (isEmpty(inStr)) {
+			return replaceWith;
+		} else {
+			return ""+inStr;
+		}
+	}
 
 	public static Date parseDate(String inDate) throws ParseException {
 		return parseDate(inDate, "dd/MM/yyyy");

@@ -346,6 +346,14 @@ public class LangHelper {
 		}
 	}
 	
+	public static <E> List<E> createList(E... items) {
+		List<E> out = new LinkedList<>();
+		for (E i : items) {
+			out.add(i);
+		}
+		return out;
+	}
+	
 	/**
 	 * compare two objects with one of them null.
 	 * @param obj1

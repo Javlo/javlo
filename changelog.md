@@ -742,5 +742,5 @@ Security in case of vulnerabilities.
 - don't delete meta data of source when copy resources
 - paste element in edit mode, null pointer corrected
 - tracker take only view url
-- fix lib security
+- security : update lib
 ## [2.1.2.2] - 27/12/2018

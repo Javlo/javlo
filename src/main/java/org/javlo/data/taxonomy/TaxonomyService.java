@@ -37,6 +37,7 @@ public class TaxonomyService {
 
 	private Map<String, TaxonomyBean> taxonomyBeanMap = new HashMap<String, TaxonomyBean>();
 	private Map<String, TaxonomyBean> taxonomyBeanPathMap = new HashMap<String, TaxonomyBean>();
+	private Map<String, TaxonomyDisplayBean> taxonomyDisplayBeanPathMap = new HashMap<String, TaxonomyDisplayBean>();
 	private List<Map.Entry<String, String>> options = null;
 
 	public static final TaxonomyService getInstance(ContentContext ctx) {		
@@ -179,6 +180,16 @@ public class TaxonomyService {
 			}
 		}
 	}
+	
+	private void fillMapPath(String path, TaxonomyDisplayBean currentBean) {
+		if (currentBean.getChildren().size() > 0) {
+			String newPath = URLHelper.mergePath(path, currentBean.getName());
+			taxonomyDisplayBeanPathMap.put(newPath, currentBean);
+			for (TaxonomyDisplayBean child : currentBean.getChildren()) {
+				fillMapPath(newPath, child);
+			}
+		}
+	}
 
 	public Map<String, TaxonomyBean> getTaxonomyBeanPathMap() {
 		if (taxonomyBeanPathMap.size() == 0) {
@@ -189,6 +200,17 @@ public class TaxonomyService {
 			}
 		}
 		return taxonomyBeanPathMap;
+	}
+	
+	public Map<String, TaxonomyDisplayBean> getTaxonomyDisplayBeanPathMap(ContentContext ctx) {
+		if (taxonomyDisplayBeanPathMap.size() == 0) {
+			synchronized (taxonomyDisplayBeanPathMap) {
+				if (taxonomyDisplayBeanPathMap.size() == 0) {
+					fillMapPath("/", new TaxonomyDisplayBean(ctx, root));
+				}
+			}
+		}
+		return taxonomyDisplayBeanPathMap;
 	}
 	
 	public TaxonomyBean getTaxonomyBean(String id) {

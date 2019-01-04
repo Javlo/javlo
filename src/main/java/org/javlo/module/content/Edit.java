@@ -1598,7 +1598,7 @@ public class Edit extends AbstractModuleAction {
 				globalContext.setLatestPublisher(ctx.getCurrentEditUser().getLogin());
 				globalContext.storeRedirectUrlList();
 
-				content.releaseViewNav(ctx, globalContext);
+				content.releaseViewNav(globalContext);
 
 				String msg = i18nAccess.getText("content.published");
 				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), new GenericMessage(msg, GenericMessage.INFO), false);

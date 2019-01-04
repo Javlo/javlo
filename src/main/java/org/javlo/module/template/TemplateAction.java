@@ -124,8 +124,7 @@ public class TemplateAction extends AbstractModuleAction {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		Module module = moduleContext.getCurrentModule();
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
-		TemplateContext templateContext = TemplateContext.getInstance(ctx.getRequest().getSession(), globalContext,
-				module);
+		TemplateContext templateContext = TemplateContext.getInstance(ctx.getRequest().getSession(), globalContext, module);
 
 		Collection<Template> allTemplate = TemplateFactory.getAllDiskTemplates(ctx.getRequest().getSession().getServletContext());
 		Collection<String> contextTemplates = globalContext.getTemplatesNames();
@@ -138,12 +137,10 @@ public class TemplateAction extends AbstractModuleAction {
 			ctx.getRequest().setAttribute("nobrowse", "true");
 		}
 
-		RoleWrapper roleWrapper = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession())
-				.getRoleWrapper(ctx, ctx.getCurrentEditUser());
+		RoleWrapper roleWrapper = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession()).getRoleWrapper(ctx, ctx.getCurrentEditUser());
 
 		String webaction = StringHelper.neverNull(ctx.getRequest().getParameter("webaction"));
-		if (templateContext.getCurrentLink().equals("hierarchy")
-				&& (!webaction.equals("template.goEditTemplate") || ctx.getRequest().getParameter("back") != null)) {
+		if (templateContext.getCurrentLink().equals("hierarchy") && (!webaction.equals("template.goEditTemplate") || ctx.getRequest().getParameter("back") != null)) {
 			Map<String, TemplateHierarchy> templatesH = new HashMap<String, TemplateHierarchy>();
 			List<TemplateHierarchy> rootTemplateH = new LinkedList<TemplateHierarchy>();
 			for (Template template : allTemplate) {
@@ -188,8 +185,7 @@ public class TemplateAction extends AbstractModuleAction {
 		String templateName = requestService.getParameter("templateid", null);
 
 		if (templateName != null) {
-			Template template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext())
-					.get(templateName);
+			Template template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(templateName);
 			if (template == null) {
 				msg = "template not found : " + templateName;
 				module.restoreAll();
@@ -201,24 +197,18 @@ public class TemplateAction extends AbstractModuleAction {
 				FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest());
 				fileModuleContext.clear();
 				fileModuleContext.setRoot(template.getTemplateRealPath());
-				fileModuleContext.setTitle(
-						"<a href=\"" + URLHelper.createModuleURL(ctx, ctx.getPath(), TemplateContext.NAME, params)
-								+ "\">" + template.getId() + "</a>");
+				fileModuleContext.setTitle("<a href=\"" + URLHelper.createModuleURL(ctx, ctx.getPath(), TemplateContext.NAME, params) + "\">" + template.getId() + "</a>");
 				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 
-				ImageConfig imageConfig = ImageConfig.getNewInstance(globalContext, ctx.getRequest().getSession(),
-						template);
-				ImageConfig parentImageConfig = ImageConfig.getNewInstance(globalContext, ctx.getRequest().getSession(),
-						template.getParent());
+				ImageConfig imageConfig = ImageConfig.getNewInstance(globalContext, ctx.getRequest().getSession(), template);
+				ImageConfig parentImageConfig = ImageConfig.getNewInstance(globalContext, ctx.getRequest().getSession(), template.getParent());
 				ctx.getRequest().setAttribute("filters", imageConfig.getFilters());
 
-				if (requestService.getParameter("filter", null) != null
-						&& requestService.getParameter("back", null) == null) {
+				if (requestService.getParameter("filter", null) != null && requestService.getParameter("back", null) == null) {
 					ctx.getRequest().setAttribute("areas", template.getAreas());
 					ctx.getRequest().setAttribute("textProperties", getTextProperties());
 					ctx.getRequest().setAttribute("booleanProperties", getBooleanProperties());
-					ctx.getRequest().setAttribute("allValues",
-							new ReadOnlyPropertiesConfigurationMap(parentImageConfig.getProperties(), false));
+					ctx.getRequest().setAttribute("allValues", new ReadOnlyPropertiesConfigurationMap(parentImageConfig.getProperties(), false));
 					if (template.getImageConfigFile().exists()) {
 						Properties values = new Properties();
 						Reader fileReader = new FileReader(template.getImageConfigFile());
@@ -231,33 +221,25 @@ public class TemplateAction extends AbstractModuleAction {
 						ite.next().setRenderer("/jsp/images.jsp");
 					}
 					// module.setRenderer("/jsp/images.jsp");
-				} else if (requestService.getParameter("css", null) != null
-						&& requestService.getParameter("back", null) == null) {
+				} else if (requestService.getParameter("css", null) != null && requestService.getParameter("back", null) == null) {
 					if (module.getMainBoxes().size() > 0) {
 						module.getMainBoxes().iterator().next().setRenderer("/jsp/css.jsp");
 						module.setRenderer(null);
 					} else {
-						module.createMainBox("edit_template",
-								i18nAccess.getText("template.edit.title") + " : " + template.getName(), "/jsp/css.jsp",
-								false);
+						module.createMainBox("edit_template", i18nAccess.getText("template.edit.title") + " : " + template.getName(), "/jsp/css.jsp", false);
 						module.setRenderer(null);
 					}
-				} else if (requestService.getParameter("html", null) != null
-						&& requestService.getParameter("back", null) == null) {
+				} else if (requestService.getParameter("html", null) != null && requestService.getParameter("back", null) == null) {
 					if (module.getMainBoxes().size() > 0) {
 						module.getMainBoxes().iterator().next().setRenderer("/jsp/html.jsp");
 						module.setRenderer(null);
 					} else {
-						module.createMainBox("edit_template",
-								i18nAccess.getText("template.edit.title") + " : " + template.getName(), "/jsp/html.jsp",
-								false);
+						module.createMainBox("edit_template", i18nAccess.getText("template.edit.title") + " : " + template.getName(), "/jsp/html.jsp", false);
 						module.setRenderer(null);
 					}
 				} else if (requestService.getParameter("back", null) != null) {
 					module.restoreAll();
-					module.createMainBox("edit_template",
-							i18nAccess.getText("template.edit.title") + " : " + template.getName(),
-							"/jsp/edit_template.jsp", false);
+					module.createMainBox("edit_template", i18nAccess.getText("template.edit.title") + " : " + template.getName(), "/jsp/edit_template.jsp", false);
 				}
 			}
 		} else if (requestService.getParameter("list", null) == null) {
@@ -265,16 +247,13 @@ public class TemplateAction extends AbstractModuleAction {
 			fileModuleContext.clear();
 			fileModuleContext.setRoot(globalContext.getStaticConfig().getTemplateFolder());
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-			fileModuleContext
-					.setTitle("<a href=\"" + URLHelper.createModuleURL(ctx, ctx.getPath(), TemplateContext.NAME, params)
-							+ "\">" + i18nAccess.getText("template.action.browse") + "</a>");
+			fileModuleContext.setTitle("<a href=\"" + URLHelper.createModuleURL(ctx, ctx.getPath(), TemplateContext.NAME, params) + "\">" + i18nAccess.getText("template.action.browse") + "</a>");
 			module.restoreAll();
 		}
 
 		params.clear();
 		params.put("webaction", "browse");
-		ctx.getRequest().setAttribute("fileURL",
-				URLHelper.createInterModuleURL(ctx, ctx.getPath(), FileModuleContext.MODULE_NAME, params));
+		ctx.getRequest().setAttribute("fileURL", URLHelper.createInterModuleURL(ctx, ctx.getPath(), FileModuleContext.MODULE_NAME, params));
 
 		/** choose template if we come from admin module **/
 		if (moduleContext.getFromModule() != null && moduleContext.getFromModule().getName().equals("admin")) {
@@ -283,11 +262,9 @@ public class TemplateAction extends AbstractModuleAction {
 		return msg;
 	}
 
-	public String performGoEditTemplate(ServletContext application, HttpServletRequest request, ContentContext ctx,
-			RequestService requestService, Module module, I18nAccess i18nAccess) throws Exception {
+	public String performGoEditTemplate(ServletContext application, HttpServletRequest request, ContentContext ctx, RequestService requestService, Module module, I18nAccess i18nAccess) throws Exception {
 		String msg = null;
-		Template template = TemplateFactory.getDiskTemplate(application,
-				requestService.getParameter("templateid", null));
+		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("templateid", null));
 		if (template == null) {
 			msg = "template not found : " + requestService.getParameter("templateid", null);
 			module.clearAllBoxes();
@@ -302,19 +279,14 @@ public class TemplateAction extends AbstractModuleAction {
 			} catch (BadXMLException e) {
 				e.printStackTrace();
 			}
-			module.createMainBox("edit_template",
-					i18nAccess.getText("template.edit.title") + " : " + template.getName(), "/jsp/edit_template.jsp",
-					false);
+			module.createMainBox("edit_template", i18nAccess.getText("template.edit.title") + " : " + template.getName(), "/jsp/edit_template.jsp", false);
 		}
 		return msg;
 	}
 
-	public String performEditTemplate(ServletContext application, StaticConfig staticConfig, ContentContext ctx,
-			RequestService requestService, Module module, I18nAccess i18nAccess, MessageRepository messageRepository)
-			throws Exception {
+	public String performEditTemplate(ServletContext application, StaticConfig staticConfig, ContentContext ctx, RequestService requestService, Module module, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
 		String msg = null;
-		Template template = TemplateFactory.getTemplates(application)
-				.get(requestService.getParameter("templateid", null));
+		Template template = TemplateFactory.getTemplates(application).get(requestService.getParameter("templateid", null));
 		if (template == null) {
 			return "template not found : " + requestService.getParameter("templateid", null);
 		}
@@ -323,12 +295,10 @@ public class TemplateAction extends AbstractModuleAction {
 		} else {
 			try {
 				template.setAuthors(requestService.getParameter("author", template.getAuthors()));
-				Date date = StringHelper.parseDate(requestService.getParameter("creation-date", null),
-						staticConfig.getDefaultDateFormat());
+				Date date = StringHelper.parseDate(requestService.getParameter("creation-date", null), staticConfig.getDefaultDateFormat());
 				template.setCreationDate(date);
 				template.setValid(requestService.getParameter("valid", null) != null);
-				messageRepository.setGlobalMessageAndNotification(ctx,
-						new GenericMessage(i18nAccess.getText("template.message.updated"), GenericMessage.INFO));
+				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.updated"), GenericMessage.INFO));
 
 				Collection<String> areas = template.getAreas();
 				for (String area : areas) {
@@ -371,8 +341,7 @@ public class TemplateAction extends AbstractModuleAction {
 		return msg;
 	}
 
-	public String performChangeRenderer(HttpSession session, RequestService requestService, GlobalContext globalContext,
-			Module currentModule, I18nAccess i18nAccess) throws Exception {
+	public String performChangeRenderer(HttpSession session, RequestService requestService, GlobalContext globalContext, Module currentModule, I18nAccess i18nAccess) throws Exception {
 
 		currentModule.restoreAll();
 
@@ -382,8 +351,7 @@ public class TemplateAction extends AbstractModuleAction {
 		}
 		TemplateContext.getInstance(session, globalContext, currentModule).setCurrentLink(list);
 
-		IRemoteResourcesFactory tempFact = RemoteTemplateFactoryManager.getInstance(session.getServletContext())
-				.getRemoteTemplateFactory(globalContext, list);
+		IRemoteResourcesFactory tempFact = RemoteTemplateFactoryManager.getInstance(session.getServletContext()).getRemoteTemplateFactory(globalContext, list);
 		session.setAttribute("templateFactory", tempFact);
 		if (tempFact != null) {
 			try {
@@ -406,15 +374,12 @@ public class TemplateAction extends AbstractModuleAction {
 		if (area == null) {
 			return "bad request structure, need 'area' as parameter.";
 		}
-		Template template = TemplateFactory.getDiskTemplate(application,
-				requestService.getParameter("templateid", null));
+		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("templateid", null));
 		template.deleteArea(area);
 		return null;
 	}
 
-	public String performImport(RequestService requestService, HttpSession session, ContentContext ctx,
-			GlobalContext globalContext, Module currentModule, MessageRepository messageRepository,
-			I18nAccess i18nAccess) throws Exception {
+	public String performImport(RequestService requestService, HttpSession session, ContentContext ctx, GlobalContext globalContext, Module currentModule, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String list = requestService.getParameter("list", null);
 		String templateName = requestService.getParameter("templateid", null);
 		if (list == null || templateName == null) {
@@ -423,8 +388,7 @@ public class TemplateAction extends AbstractModuleAction {
 		TemplateContext templateContext = TemplateContext.getInstance(session, globalContext, currentModule);
 		templateContext.setCurrentLink(list);
 		if (list != null) {
-			IRemoteResourcesFactory tempFact = RemoteTemplateFactoryManager.getInstance(session.getServletContext())
-					.getRemoteTemplateFactory(globalContext, list);
+			IRemoteResourcesFactory tempFact = RemoteTemplateFactoryManager.getInstance(session.getServletContext()).getRemoteTemplateFactory(globalContext, list);
 			IRemoteResource template = tempFact.getResource(templateName);
 			if (template == null) {
 				return "template not found : " + templateName;
@@ -442,19 +406,13 @@ public class TemplateAction extends AbstractModuleAction {
 				in.close();
 
 				URL imageURL = new URL(template.getImageURL());
-				File visualFile = new File(
-						URLHelper.mergePath(newTemplate.getTemplateRealPath(), newTemplate.getVisualFile()));
+				File visualFile = new File(URLHelper.mergePath(newTemplate.getTemplateRealPath(), newTemplate.getVisualFile()));
 				RenderedImage image = JAI.create("url", imageURL);
 				out = new FileOutputStream(visualFile);
 				JAI.create("encode", image, out, "png", null);
 				out.close();
 
-				messageRepository
-						.setGlobalMessageAndNotification(ctx,
-								new GenericMessage(
-										i18nAccess.getText("template.message.imported",
-												new String[][] { { "name", newTemplate.getId() } }),
-										GenericMessage.INFO));
+				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.imported", new String[][] { { "name", newTemplate.getId() } }), GenericMessage.INFO));
 
 				templateContext.setCurrentLink(null); // return to local
 														// template list.
@@ -477,10 +435,8 @@ public class TemplateAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public String performValidate(RequestService requestService, HttpSession session, ContentContext ctx)
-			throws Exception {
-		Template template = TemplateFactory.getTemplates(session.getServletContext())
-				.get(requestService.getParameter("id", null));
+	public String performValidate(RequestService requestService, HttpSession session, ContentContext ctx) throws Exception {
+		Template template = TemplateFactory.getTemplates(session.getServletContext()).get(requestService.getParameter("id", null));
 		if (template == null) {
 			Collection<Template> templates;
 			templates = TemplateFactory.getAllTemplates(session.getServletContext());
@@ -493,7 +449,7 @@ public class TemplateAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public String performDelete(RequestService requestService, HttpSession session, ContentContext ctx)	throws Exception {
+	public String performDelete(RequestService requestService, HttpSession session, ContentContext ctx) throws Exception {
 		Template template = TemplateFactory.getDiskTemplate(session.getServletContext(), requestService.getParameter("id", null));
 		if (template != null) {
 			template.delete();
@@ -501,43 +457,32 @@ public class TemplateAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public String performCommit(RequestService requestService, ServletContext application, ContentContext ctx,
-			MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
-		Template template = TemplateFactory.getDiskTemplate(application,
-				requestService.getParameter("templateid", null));
+	public String performCommit(RequestService requestService, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("templateid", null));
 		template.clearRenderer(ctx);
-		messageRepository.setGlobalMessageAndNotification(ctx,
-				new GenericMessage(
-						i18nAccess.getText("template.message.commited",
-								new String[][] { { "name", requestService.getParameter("templateid", null) } }),
-						GenericMessage.INFO));
+		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.commited", new String[][] { { "name", requestService.getParameter("templateid", null) } }), GenericMessage.INFO));
+		I18nAccess.getInstance(ctx).resetViewLanguage(ctx);
 		return null;
 	}
 
-	public String performCommitChildren(RequestService requestService, ServletContext application, ContentContext ctx,
-			MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
-		Template template = TemplateFactory.getDiskTemplate(application,
-				requestService.getParameter("templateid", null));
+	public String performCommitChildren(RequestService requestService, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("templateid", null));
 		template.clearRenderer(ctx);
 		Collection<Template> children = TemplateFactory.getTemplateAllChildren(application, template);
 		for (Template child : children) {
 			child.clearRenderer(ctx);
 		}
-		messageRepository.setGlobalMessageAndNotification(ctx,
-				new GenericMessage(
-						i18nAccess.getText("template.message.commited",	new String[][] { { "name", requestService.getParameter("templateid", null) } }), GenericMessage.INFO));
+		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.commited", new String[][] { { "name", requestService.getParameter("templateid", null) } }), GenericMessage.INFO));
+		I18nAccess.getInstance(ctx).resetViewLanguage(ctx);
 		return null;
 	}
 
-	public static String performChangeFromPreview(RequestService rs, HttpSession session, ContentContext ctx,
-			Module currentModule, MessageRepository messageRepository, I18nAccess i18nAccess)
-			throws FileNotFoundException, IOException {
+	public static String performChangeFromPreview(RequestService rs, HttpSession session, ContentContext ctx, Module currentModule, MessageRepository messageRepository, I18nAccess i18nAccess) throws FileNotFoundException, IOException {
 		TemplateContext.getInstance(session, ctx.getGlobalContext(), currentModule).checkEditMode(ctx);
 		return null;
 	}
 
-	public static String performSelectTemplate(RequestService rs, ContentContext ctx, EditContext editContext,
-			MenuElement currentPage, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+	public static String performSelectTemplate(RequestService rs, ContentContext ctx, EditContext editContext, MenuElement currentPage, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 
 		if (!Edit.checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
@@ -545,20 +490,20 @@ public class TemplateAction extends AbstractModuleAction {
 			String templateName = rs.getParameter("templateid", null);
 			Template template = TemplateFactory.getDiskTemplate(ctx.getRequest().getSession().getServletContext(), templateName);
 			if (templateName != null && template == null) {
-				return "template not found : "+templateName;
+				return "template not found : " + templateName;
 			} else {
 				if (ctx.getGlobalContext().isOpenPlatform()) {
 					currentPage = currentPage.getRoot();
-				}			
-				currentPage.setTemplateId(templateName);			
+				}
+				currentPage.setTemplateId(templateName);
 				MailingModuleContext mailingCtx = MailingModuleContext.getInstance(ctx.getRequest());
 				mailingCtx.setCurrentTemplate(null);
 				if (template != null && !ctx.getGlobalContext().isMailingPlatform()) {
-				if (template.isOnePage()) {
-					currentPage.setChildrenAssociation(true);
-				} else {
-					currentPage.setChildrenAssociation(false);
-				}
+					if (template.isOnePage()) {
+						currentPage.setChildrenAssociation(true);
+					} else {
+						currentPage.setChildrenAssociation(false);
+					}
 				}
 			}
 		}
@@ -572,9 +517,7 @@ public class TemplateAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performUpdateFilter(RequestService rs, ServletContext application, GlobalContext globalContext,
-			HttpSession session, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess)
-			throws Exception {
+	public static String performUpdateFilter(RequestService rs, ServletContext application, GlobalContext globalContext, HttpSession session, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String filter = rs.getParameter("filter", null);
 
 		if (filter == null) {
@@ -635,8 +578,7 @@ public class TemplateAction extends AbstractModuleAction {
 					imageConfig.remove(key);
 					modifiy = true;
 				} else {
-					if (val != StringHelper.isTrue(imageConfig.getProperty(key, null))
-							|| imageConfig.getProperty(key, null) == null) {
+					if (val != StringHelper.isTrue(imageConfig.getProperty(key, null)) || imageConfig.getProperty(key, null) == null) {
 						imageConfig.setProperty(key, "" + val);
 						modifiy = true;
 					}
@@ -653,8 +595,7 @@ public class TemplateAction extends AbstractModuleAction {
 						modifiy = true;
 						ctx.getRequest().setAttribute("modifiedArea", area);
 					} else {
-						if (val != StringHelper.isTrue(imageConfig.getProperty(key, null))
-								|| imageConfig.getProperty(key, null) == null) {
+						if (val != StringHelper.isTrue(imageConfig.getProperty(key, null)) || imageConfig.getProperty(key, null) == null) {
 							imageConfig.setProperty(key, "" + val);
 							modifiy = true;
 							ctx.getRequest().setAttribute("modifiedArea", area);
@@ -676,8 +617,7 @@ public class TemplateAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performEditHTML(RequestService rs, ServletContext application, ContentContext ctx,
-			MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+	public static String performEditHTML(RequestService rs, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String html = rs.getParameter("html", null);
 		if (html == null) {
 			return "error : no 'html' param.";
@@ -688,11 +628,9 @@ public class TemplateAction extends AbstractModuleAction {
 			} else {
 				// store new value
 				if (rs.getParameter("text", null) != null) {
-					File htmlFile = new File(URLHelper.mergePath(template.getSourceFolder().getAbsolutePath(),
-							rs.getParameter("file", "")));
+					File htmlFile = new File(URLHelper.mergePath(template.getSourceFolder().getAbsolutePath(), rs.getParameter("file", "")));
 					if (htmlFile.exists() && htmlFile.isFile()) {
-						ResourceHelper.writeStringToFile(htmlFile, rs.getParameter("text", null),
-								ContentContext.CHARACTER_ENCODING);
+						ResourceHelper.writeStringToFile(htmlFile, rs.getParameter("text", null), ContentContext.CHARACTER_ENCODING);
 					} else {
 						return "file not found : " + htmlFile;
 					}
@@ -710,8 +648,7 @@ public class TemplateAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performEditCSS(RequestService rs, ServletContext application, ContentContext ctx,
-			MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+	public static String performEditCSS(RequestService rs, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String css = rs.getParameter("css", null);
 		if (css == null) {
 			return "error : no 'css' param.";
@@ -722,11 +659,9 @@ public class TemplateAction extends AbstractModuleAction {
 			} else {
 				// store new value
 				if (rs.getParameter("text", null) != null) {
-					File cssFile = new File(URLHelper.mergePath(template.getSourceFolder().getAbsolutePath(),
-							rs.getParameter("file", "")));
+					File cssFile = new File(URLHelper.mergePath(template.getSourceFolder().getAbsolutePath(), rs.getParameter("file", "")));
 					if (cssFile.exists() && cssFile.isFile()) {
-						ResourceHelper.writeStringToFile(cssFile, rs.getParameter("text", null),
-								ContentContext.CHARACTER_ENCODING);
+						ResourceHelper.writeStringToFile(cssFile, rs.getParameter("text", null), ContentContext.CHARACTER_ENCODING);
 					} else {
 						return "file not found : " + cssFile;
 					}
@@ -749,8 +684,7 @@ public class TemplateAction extends AbstractModuleAction {
 		if (AdminUserSecurity.getInstance().isGod(ctx.getCurrentEditUser())) {
 			return globalContext.getDataFolder();
 		} else {
-			return URLHelper.mergePath(globalContext.getDataFolder(),
-					globalContext.getStaticConfig().getStaticFolder());
+			return URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder());
 		}
 	}
 
@@ -763,20 +697,17 @@ public class TemplateAction extends AbstractModuleAction {
 		}
 	}
 
-	public static String performUpload(ContentContext ctx, RequestService rs, MessageRepository messageRepository,
-			I18nAccess i18nAccess) throws Exception {
+	public static String performUpload(ContentContext ctx, RequestService rs, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String sourceFolder = getContextROOTFolder(ctx);
 		FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest());
 		File folder = new File(sourceFolder, fileModuleContext.getPath());
 		for (FileItem file : rs.getAllFileItem()) {
-			File newFile = new File(
-					URLHelper.mergePath(folder.getAbsolutePath(), StringHelper.createFileName(file.getName())));
+			File newFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), StringHelper.createFileName(file.getName())));
 			newFile = ResourceHelper.getFreeFileName(newFile);
 			InputStream in = file.getInputStream();
 			try {
 				if (!uploadTemplate(ctx, in, newFile) && in != null && file.getName().trim().length() > 0) {
-					messageRepository.setGlobalMessage(new GenericMessage(
-							i18nAccess.getText("template.error.bad-template-file"), GenericMessage.ALERT));
+					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("template.error.bad-template-file"), GenericMessage.ALERT));
 				}
 			} finally {
 				ResourceHelper.closeResource(in);
@@ -788,12 +719,10 @@ public class TemplateAction extends AbstractModuleAction {
 			URL url = new URL(urlStr);
 			InputStream in = url.openConnection().getInputStream();
 			try {
-				File newFile = new File(URLHelper.mergePath(folder.getAbsolutePath(),
-						StringHelper.createFileName(StringHelper.getFileNameFromPath(urlStr))));
+				File newFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), StringHelper.createFileName(StringHelper.getFileNameFromPath(urlStr))));
 				newFile = ResourceHelper.getFreeFileName(newFile);
 				if (!uploadTemplate(ctx, in, newFile)) {
-					messageRepository.setGlobalMessage(new GenericMessage(
-							i18nAccess.getText("template.error.bad-template-file"), GenericMessage.ALERT));
+					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("template.error.bad-template-file"), GenericMessage.ALERT));
 				}
 			} finally {
 				ResourceHelper.closeResource(in);
@@ -803,12 +732,10 @@ public class TemplateAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static Collection<PageTemplateRef> searchPageTemplate(ContentContext ctx, String templateName)
-			throws Exception {
+	public static Collection<PageTemplateRef> searchPageTemplate(ContentContext ctx, String templateName) throws Exception {
 		if (ctx.getGlobalContext().isMaster()) {
 			Collection<PageTemplateRef> outPages = new LinkedList<PageTemplateRef>();
-			Collection<GlobalContext> allContext = GlobalContextFactory
-					.getAllGlobalContext(ctx.getRequest().getSession().getServletContext());
+			Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(ctx.getRequest().getSession().getServletContext());
 			ContentContext externalCtx = new ContentContext(ctx);
 			for (GlobalContext context : allContext) {
 				externalCtx.setForceGlobalContext(context);
@@ -821,8 +748,7 @@ public class TemplateAction extends AbstractModuleAction {
 						if (!template.getName().equals(templateName)) {
 							ref = "inherited";
 						}
-						outPages.add(new PageTemplateRef(nav.getPage().getName(), context.getContextKey(),
-								URLHelper.createURL(externalCtx, "/"), ref));
+						outPages.add(new PageTemplateRef(nav.getPage().getName(), context.getContextKey(), URLHelper.createURL(externalCtx, "/"), ref));
 					}
 				}
 			}

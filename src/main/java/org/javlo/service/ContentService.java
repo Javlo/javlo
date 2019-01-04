@@ -758,7 +758,7 @@ public class ContentService implements IPrintInfo {
 	public void releaseAll(ContentContext ctx, GlobalContext globalContext) throws Exception {
 		components.clear();
 		releasePreviewNav(ctx);
-		releaseViewNav(ctx, globalContext);
+		releaseViewNav(globalContext);
 		I18nResource.getInstance(globalContext).clearAllCache();
 	}
 
@@ -797,7 +797,7 @@ public class ContentService implements IPrintInfo {
 		}
 	}
 
-	public void releaseViewNav(ContentContext ctx, GlobalContext globalContext) throws Exception {
+	public void releaseViewNav(GlobalContext globalContext) throws Exception {
 		synchronized (globalContext.RELEASE_CACHE) {
 			setViewNav(null);
 			globalContext.releaseAllCache();

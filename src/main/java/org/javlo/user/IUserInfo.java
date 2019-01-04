@@ -114,5 +114,9 @@ public interface IUserInfo {
 	 * @return true if user logged from external module.
 	 */
 	boolean isExternalLoginUser();
+	
+	public String getCountry();
+	
+	public String getOrganization();
 
 }

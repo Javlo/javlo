@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.checkerframework.checker.units.qual.cd;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.service.IListItem;
@@ -48,12 +49,43 @@ public class TaxonomyDisplayBean {
 		}
 	}
 	
+	public List<TaxonomyDisplayBean> getChildren() {
+		List<TaxonomyDisplayBean> children = new LinkedList<>();
+		for (TaxonomyBean bean : bean.getChildren()) {
+			children.add(new TaxonomyDisplayBean(ctx, bean));
+		}
+		return children;
+	}
+	
+	public List<TaxonomyDisplayBean> getAllChildren() {
+		List<TaxonomyDisplayBean> children = new LinkedList<>();
+		for (TaxonomyBean bean : bean.getAllChildren()) {
+			children.add(new TaxonomyDisplayBean(ctx, bean));
+		}
+		return children;
+	}
+	
 	public String getName() {
 		return bean.getName();
 	}
 	
+	public String getId() {
+		return bean.getId();
+	}
+	
 	public String getDecoration() {
 		return bean.getDecoration();
+	}
+	
+	public String getPathLabel() {
+		String parentLabel = "";
+		parentLabel = getParent().getLabel()+" > ";
+		String label = bean.getLabels().get(ctx.getRequestContentLanguage());
+		if (StringHelper.isEmpty(label)) {
+			return parentLabel+getName();
+		} else {
+			return parentLabel+label;
+		}
 	}
 	
 	public String getLabel() {

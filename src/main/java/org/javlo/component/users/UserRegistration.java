@@ -224,14 +224,14 @@ public class UserRegistration extends MapComponent implements IAction {
 		UserRegistration comp = (UserRegistration) ComponentHelper.getComponentFromRequest(ctx);
 
 		IUserFactory userFactory;
-		UserInfo userInfo;
+		IUserInfo userInfo;
 
 		if (comp == null || comp.isAdminRegistration()) {
 			userFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 			userInfo = new AdminUserInfo();
 		} else {
 			userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
-			userInfo = new UserInfo();
+			userInfo = userFactory.createUserInfos();
 		}
 
 		String login = rs.getParameter("login", "").trim();

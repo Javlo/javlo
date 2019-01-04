@@ -427,11 +427,8 @@ public class UserFactory implements IUserFactory, Serializable {
 
 	@Override
 	public User login(HttpServletRequest request, String login, String password) {
-
 		logger.fine("try to log : " + login);
-		
 		GlobalContext globalContext = GlobalContext.getInstance(request);
-		
 		MaxLoginService maxLoginService = MaxLoginService.getInstance();
 		if (!maxLoginService.isLoginAuthorised(globalContext)) {
 			
@@ -447,19 +444,11 @@ public class UserFactory implements IUserFactory, Serializable {
 			//request.getSession().removeAttribute(SESSION_KEY);
 			return null;
 		}
-
-		
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
-
 		boolean logged = request.getUserPrincipal() != null && request.getUserPrincipal().getName().equals(login);
 		User user = getUser(login);
-//		if (user == null) {
-//			user = getUserByEmail(login);
-//		}
-
 		boolean passwordEqual = false;
 		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
-
 		if (user == null && !globalContext.isMaster()) {
 			IUserFactory masterUserFactory;
 			try {
@@ -470,21 +459,12 @@ public class UserFactory implements IUserFactory, Serializable {
 				e.printStackTrace();
 			}
 		}
-
 		if (user != null) {
 			if (user.getPassword() != null) {
 				passwordEqual = user.getPassword().equals(SecurityHelper.encryptPassword(password));
 			}
 		}
-
 		if (user == null || (!logged && user.getPassword() != null && !passwordEqual)) {
-			// if (globalContext.getAdministrator().equals(login) && (logged ||
-			// globalContext.administratorLogin(login, password))) {
-			// logger.info("log user with password : " + login + " obtain full
-			// control role.");
-			// user = createUser(login, (new HashSet(Arrays.asList(new String[]
-			// { AdminUserSecurity.FULL_CONTROL_ROLE }))));
-			// } else
 			if (editCtx.getEditUser(login) != null && (logged || editCtx.hardLogin(login, password))) {
 				logger.info("log user with password : " + login + " obtain general admin mode and full control role.");
 				user = createUser(login, (new HashSet(Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE }))));
@@ -496,22 +476,9 @@ public class UserFactory implements IUserFactory, Serializable {
 		} else {
 			logger.warning("no login.");
 		}
-		/*
-		 * if (user != null &&
-		 * globalCtx.getAdministrator().equals(user.getLogin())) {
-		 * System.out.println("**** A ****"); user.getUserInfo().addRoles((new
-		 * HashSet(Arrays.asList(new String[] {
-		 * AdminUserSecurity.FULL_CONTROL_ROLE })))); } if (user != null &&
-		 * editCtx.getEditUser(user.getLogin()) != null) { System.out.println(
-		 * "**** Bs ****"); user.getUserInfo().addRoles((new
-		 * HashSet(Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN,
-		 * AdminUserSecurity.FULL_CONTROL_ROLE })))); }
-		 */
-
 		if (user != null) {
 			user.setContext(globalContext.getContextKey());
 			request.getSession().setAttribute(SESSION_KEY, user);
-
 			if (staticConfig.getDefaultPassword().equals(password)) {
 				I18nAccess i18nAccess;
 				try {

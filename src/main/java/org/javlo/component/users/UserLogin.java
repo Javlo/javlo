@@ -35,6 +35,7 @@ import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.service.social.Facebook;
 import org.javlo.service.social.SocialService;
@@ -157,6 +158,12 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 		IUserFactory uf = UserFactory.createUserFactory(globalContext, session);
 		if (uf.login(request, rs.getParameter("login", rs.getParameter("email", null)), rs.getParameter("password", "")) == null) {
 			return i18nAccess.getViewText("user.error.login");
+		} else {
+			try {
+				ContentService.getInstance(globalContext).releaseViewNav(globalContext);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		return null;
 	}
