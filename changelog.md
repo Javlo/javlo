@@ -744,3 +744,5 @@ Security in case of vulnerabilities.
 - tracker take only view url
 - security : update lib
 ## [2.1.2.2] - 27/12/2018
+### Added
+- add edit renderer
