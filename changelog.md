@@ -748,3 +748,5 @@ Security in case of vulnerabilities.
 - add edit renderer
 ### modified
 - defautl edit template : /jsp/edit/template/mandy-lane-premium-bright
+### fixed
+- menu if no add button (preview)
