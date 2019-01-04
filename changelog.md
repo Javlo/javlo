@@ -746,3 +746,5 @@ Security in case of vulnerabilities.
 ## [2.1.2.2] - 27/12/2018
 ### Added
 - add edit renderer
+### modified
+- defautl edit template : /jsp/edit/template/mandy-lane-premium-bright

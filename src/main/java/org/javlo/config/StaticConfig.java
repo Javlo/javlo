@@ -1602,7 +1602,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getEditTemplateFolder() {
-		return properties.getString("edit-template.folder", "/jsp/edit/template/mandy-lane-premium-flat");
+		return properties.getString("edit-template.folder", "/jsp/edit/template/mandy-lane-premium-bright");
 	}
 
 	/**
