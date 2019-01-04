@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
 
+import org.javlo.config.StaticConfig;
 import org.javlo.helper.StringHelper;
 import org.javlo.mailing.MailConfig;
 import org.javlo.module.core.IMainModuleName;
@@ -91,9 +92,9 @@ public class UserInterfaceContext {
 			instance.fromString(user.getUserInfo().getInfo());
 			session.setAttribute(KEY, instance);
 		}
-
+		StaticConfig stConf = globalContext.getStaticConfig();
 		instance.lightInterface = AdminUserSecurity.getInstance().haveRole(user, AdminUserSecurity.LIGHT_INTERFACE_ROLE);
-		instance.setMinimalInterface(instance.lightInterface && !AdminUserSecurity.getInstance().haveRole(user, AdminUserSecurity.NAVIGATION_ROLE));
+		instance.setMinimalInterface(instance.lightInterface && !AdminUserSecurity.getInstance().haveRole(user, AdminUserSecurity.NAVIGATION_ROLE) && stConf.isAddButton());
 		instance.contributor = AdminUserSecurity.getInstance().haveRole(user, AdminUserSecurity.CONTRIBUTOR_ROLE);
 		instance.setModel(AdminUserSecurity.getInstance().canRole(user, AdminUserSecurity.MODEL_ROLE)); 
 
