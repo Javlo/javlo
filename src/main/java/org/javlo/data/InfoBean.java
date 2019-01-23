@@ -850,6 +850,15 @@ public class InfoBean {
 			return null;
 		}
 	}
+	
+	public String getCookiesPolicyUrl() {
+		String url = globalContext.getCookiesPolicyUrl();
+		if (url != null) {
+			return url.replace("#lang#", ctx.getRequestContentLanguage());
+		} else {
+			return null;
+		}
+	}
 
 	public Collection<String> getAdminRoles() {
 		return globalContext.getAdminUserRoles();

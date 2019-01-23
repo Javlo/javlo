@@ -746,7 +746,11 @@ Security in case of vulnerabilities.
 ## [2.1.2.2] - 27/12/2018
 ### Added
 - add edit renderer
+- GeoService : convert address to coord.
+- admin user can simulate access from a other user
 ### modified
 - defautl edit template : /jsp/edit/template/mandy-lane-premium-bright
+- FieldFile use file servlet in place of resourceServlet
+- autologin in view mode
 ### fixed
 - menu if no add button (preview)
