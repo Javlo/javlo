@@ -40,9 +40,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Priority;
 import org.javlo.bean.InstallBean;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentFactory;
@@ -69,6 +66,7 @@ import org.javlo.helper.TimeHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XMLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.i18n.RequestI18nAccess;
 import org.javlo.macro.ClearDataAccessCount;
 import org.javlo.mailing.MailService;
 import org.javlo.mailing.MailingThread;
@@ -494,6 +492,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			}
 
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
+			request.setAttribute("vi18n", new RequestI18nAccess(ctx, i18nAccess));
 			if (ctx.getCurrentPage() != null) {
 				i18nAccess.setRequestMap(ctx.getCurrentPage().getI18n(ctx));
 			}

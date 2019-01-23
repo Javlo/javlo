@@ -71,8 +71,6 @@ public class UserFactory implements IUserFactory, Serializable {
 	protected List<IUserInfo> userInfoList = null; // TODO: create a external
 	// application scope class
 
-	public static final String SESSION_KEY = "currentUser";
-
 	// private StaticConfig staticConfig = null;
 
 	public static IUserFactory createUserFactory(GlobalContext globalContext, HttpSession session) {
@@ -152,6 +150,17 @@ public class UserFactory implements IUserFactory, Serializable {
 			}
 		}
 	}
+	
+	@Override
+	public User adminFakeLogin(HttpServletRequest request, String login) {
+		GlobalContext globalContext = GlobalContext.getInstance(request);
+		User user = getUser(login);
+		if (user != null) {
+			user.setContext(globalContext.getContextKey());
+			request.getSession().setAttribute(getSessionKey(), user);
+		}
+		return user;
+	}
 
 	@Override
 	public User autoLogin(HttpServletRequest request, String login) {
@@ -162,7 +171,7 @@ public class UserFactory implements IUserFactory, Serializable {
 			return null;
 		} else if (user != null) {
 			user.setContext(globalContext.getContextKey());
-			request.getSession().setAttribute(SESSION_KEY, user);
+			request.getSession().setAttribute(getSessionKey(), user);
 		}
 		return user;
 	}
@@ -244,7 +253,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	 * null; } } return user; }
 	 **/
 	public User getCurrentUser(GlobalContext globalContext, HttpSession session) {
-		User user = (User) session.getAttribute(SESSION_KEY);
+		User user = (User) session.getAttribute(getSessionKey());
 		return user;
 	}
 	
@@ -301,7 +310,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		}
 		if (outUser != null) {
 			outUser.setContext(globalContext.getContextKey());
-			request.getSession().setAttribute(SESSION_KEY, outUser);
+			request.getSession().setAttribute(getSessionKey(), outUser);
 		}
 		return outUser;
 	}
@@ -424,6 +433,10 @@ public class UserFactory implements IUserFactory, Serializable {
 	public boolean isStandardStorage() {
 		return true;
 	}
+	
+	protected String getSessionKey() {
+		return "currentUser";
+	}
 
 	@Override
 	public User login(HttpServletRequest request, String login, String password) {
@@ -478,7 +491,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		}
 		if (user != null) {
 			user.setContext(globalContext.getContextKey());
-			request.getSession().setAttribute(SESSION_KEY, user);
+			request.getSession().setAttribute(getSessionKey(), user);
 			if (staticConfig.getDefaultPassword().equals(password)) {
 				I18nAccess i18nAccess;
 				try {
@@ -502,7 +515,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	 */
 	@Override
 	public void logout(HttpSession session) {
-		session.removeAttribute(SESSION_KEY);
+		session.removeAttribute(getSessionKey());
 	}
 
 	/*
@@ -557,9 +570,9 @@ public class UserFactory implements IUserFactory, Serializable {
 			User newUser = getUser(getCurrentUser(globalContext, session).getLogin());
 			if (newUser != null) {
 				newUser.setContext(globalContext.getContextKey());
-				session.setAttribute(SESSION_KEY, newUser);
+				session.setAttribute(getSessionKey(), newUser);
 			} else {
-				session.setAttribute(SESSION_KEY, null);
+				session.setAttribute(getSessionKey(), null);
 			}
 		}
 	}

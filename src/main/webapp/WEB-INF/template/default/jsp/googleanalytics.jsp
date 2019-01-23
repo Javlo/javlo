@@ -1,12 +1,25 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<c:if test="${!info.device.pdf}"><!-- Google Analytics - 296/07/2016 -->
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %><c:if test="${!info.device.pdf}">
+  <!-- Global site tag (gtag.js) - Google Analytics 23/01/2019 -->
+<c:if test="${cookiesService.accepted}">
+<script async src="https://www.googletagmanager.com/gtag/js?id=${globalContext.googleAnalyticsUACCT}"></script>
 <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '${globalContext.googleAnalyticsUACCT}');
+</script>
+</c:if><c:if test="${!cookiesService.accepted}">
 
-  ga('create', '${globalContext.googleAnalyticsUACCT}', 'auto');
-  ga('set', 'anonymizeIp', true);
-  ga('send', 'pageview');
-</script></c:if>	
+<script>
+function loadGoogleAnalytics() {  
+  var script = document.createElement('script');
+  script.src = 'https://www.googletagmanager.com/gtag/js?id=${globalContext.googleAnalyticsUACCT}';
+  var head = document.getElementsByTagName("head")[0];
+  head.appendChild(script);
+  window.dataLayer = window.dataLayer || [];  function gtag(){dataLayer.push(arguments);}  gtag('js', new Date());  gtag('config', '${globalContext.googleAnalyticsUACCT}');
+}
+</script>
+
+<div class="_cookie-cache" data-status="1" data-function="loadGoogleAnalytics"></div>
+</c:if>	
+</c:if>

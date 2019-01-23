@@ -4005,7 +4005,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 		TimeRangeComponent comp = getTimeRangeComponent(ctx);
 		if (comp != null) {
-			desc.timeRange = new TimeRange(comp.getStartDate(), comp.getEndDate());
+			desc.timeRange = new TimeRange(comp.getStartDate(ctx), comp.getEndDate(ctx));
 		} else {
 			Date contentDate = getContentDateNeverNull(ctx);
 			desc.timeRange = new TimeRange(contentDate, contentDate);
@@ -5646,7 +5646,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 					if (getDescription(ctx) != null) {
 						description = getDescription(ctx).getText();
 					}
-					Event event = new Event(ctx, getName(), eventComp.getId(), eventComp.getStartDate(), eventComp.getEndDate(), getTitle(ctx), description, getImage(noAreaCtx));
+					Event event = new Event(ctx, getName(), eventComp.getId(), eventComp.getStartDate(ctx), eventComp.getEndDate(ctx), getTitle(ctx), description, getImage(noAreaCtx));
 					event.setCategory(getCategory(ctx));
 					event.setLocation(getLocation(ctx));
 					event.setUrl(new URL(URLHelper.createURL(ctx.getContextForAbsoluteURL(), this)));
@@ -5689,7 +5689,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 					if (getDescription(ctx) != null) {
 						description = getDescription(ctx).getText();
 					}
-					Event event = new Event(ctx, getName(), eventComp.getId(), eventComp.getStartDate(), eventComp.getEndDate(), getTitle(ctx), description, getImage(noAreaCtx));
+					Event event = new Event(ctx, getName(), eventComp.getId(), eventComp.getStartDate(ctx), eventComp.getEndDate(ctx), getTitle(ctx), description, getImage(noAreaCtx));
 					event.setCategory(getCategory(ctx));
 					event.setLocation(getLocation(ctx));
 					event.setUrl(new URL(URLHelper.createURL(ctx.getContextForAbsoluteURL(), this)));

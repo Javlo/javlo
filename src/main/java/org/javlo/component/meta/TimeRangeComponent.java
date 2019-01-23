@@ -35,8 +35,8 @@ public class TimeRangeComponent extends DateComponent {
 	}
 	
 	@Override
-	public Date getDate() {
-		return getStartDate();
+	public Date getDate(ContentContext ctx) {
+		return getStartDate(ctx);
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class TimeRangeComponent extends DateComponent {
 			setValue(getValue().replaceAll("-", VALUE_SEPARATOR));
 		}
 
-		if (getEndDate() == null && initDate) {
+		if (getEndDate(null) == null && initDate) {
 			Calendar calStart = GregorianCalendar.getInstance();
 			Calendar calEnd = GregorianCalendar.getInstance();
 			calEnd.roll(Calendar.WEEK_OF_YEAR, true);
@@ -73,12 +73,12 @@ public class TimeRangeComponent extends DateComponent {
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		StringBuffer finalCode = new StringBuffer();
 		finalCode.append(getSpecialInputTag());
-		finalCode.append("<div class=\"row\"><div class=\"col-sm-6\"><div class=\"form-group date\"><label>Start : <input class=\"form-control\" id=\"contentdate\" style=\"width: 120px;\" type=\"text\" id=\"" + getInputStartDateName() + "\" name=\"" + getInputStartDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getStartDate(), "") + "\"/></label></div></div>");
-		finalCode.append("<div class=\"col-sm-6\"><div class=\"form-group\"><label>End : <input class=\"form-control date\" style=\"width: 120px;\" type=\"text\" id=\"" + getInputEndDateName() + "\" name=\"" + getInputEndDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getEndDate(), "") + "\"/></label></div></div></div>");
+		finalCode.append("<div class=\"row\"><div class=\"col-sm-6\"><div class=\"form-group date\"><label>Start : <input class=\"form-control\" id=\"contentdate\" style=\"width: 120px;\" type=\"text\" id=\"" + getInputStartDateName() + "\" name=\"" + getInputStartDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getStartDate(ctx), "") + "\"/></label></div></div>");
+		finalCode.append("<div class=\"col-sm-6\"><div class=\"form-group\"><label>End : <input class=\"form-control date\" style=\"width: 120px;\" type=\"text\" id=\"" + getInputEndDateName() + "\" name=\"" + getInputEndDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getEndDate(ctx), "") + "\"/></label></div></div></div>");
 		return finalCode.toString();
 	}
 
-	public Date getStartDate() {
+	public Date getStartDate(ContentContext ctx) {
 		Date date = null;
 		try {
 			String dateStr = getValue().split(VALUE_SEPARATOR)[0];
@@ -89,7 +89,7 @@ public class TimeRangeComponent extends DateComponent {
 		return date;
 	}
 
-	public Date getEndDate() {
+	public Date getEndDate(ContentContext ctx) {
 		Date date = null;
 		try {
 			String dateStr = getValue().split(VALUE_SEPARATOR)[1];
@@ -123,8 +123,8 @@ public class TimeRangeComponent extends DateComponent {
 	public void prepareView(ContentContext ctx) throws Exception {	
 		super.prepareView(ctx);
 		String range = "";
-		if (getStartDate() != null && getEndDate() != null) {
-			range = renderDate(ctx, getStartDate()) + " - " + renderDate(ctx, getEndDate());
+		if (getStartDate(ctx) != null && getEndDate(ctx) != null) {
+			range = renderDate(ctx, getStartDate(ctx)) + " - " + renderDate(ctx, getEndDate(ctx));
 		}		
 		ctx.getRequest().setAttribute("range", range );
 	}
@@ -134,8 +134,8 @@ public class TimeRangeComponent extends DateComponent {
 		if (getCurrentRenderer(ctx) != null && getCurrentRenderer(ctx).equalsIgnoreCase(HIDDEN)) {
 			return "";
 		}
-		if (getStartDate() != null && getEndDate() != null) {
-			return renderDate(ctx, getStartDate()) + " - " + renderDate(ctx, getEndDate());
+		if (getStartDate(ctx) != null && getEndDate(ctx) != null) {
+			return renderDate(ctx, getStartDate(ctx)) + " - " + renderDate(ctx, getEndDate(ctx));
 		} else {
 			return "";
 		}

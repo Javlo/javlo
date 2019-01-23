@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.apache.commons.imaging.formats.tiff.constants.GeoTiffTagConstants;
 import org.javlo.actions.IAction;
 import org.javlo.context.ContentContext;
 import org.javlo.macro.core.IInteractiveMacro;

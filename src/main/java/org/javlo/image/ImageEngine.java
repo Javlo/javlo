@@ -81,12 +81,12 @@ public class ImageEngine {
 
 	public static void storeImage(BufferedImage img, File file) throws IOException {
 		String ext = StringHelper.getFileExtension(file.getName()).toLowerCase();
-		if (ext.equalsIgnoreCase("jpg") || ext.equalsIgnoreCase("jpeg")) {
-			//ext = "jpeg 2000";
+		if (ext.equalsIgnoreCase("jp2")) {
+			ext="jpeg2000";
+		} else if (ext.equalsIgnoreCase("jpg") || ext.equalsIgnoreCase("jpeg")) {
 			if (img.getType() != BufferedImage.TYPE_3BYTE_BGR) {
 				img = removeAlpha(img);
 			}
-			//writeJPEG2000(img, file);
 		} else if (ext.equalsIgnoreCase("png")) {
 			img = autoReduceColor(img);
 		}
@@ -1894,7 +1894,7 @@ public class ImageEngine {
 		File javloFile = new File("c:/trans/test.jpg");
 		BufferedImage image = ImageIO.read(javloFile);
 		if (image != null) {
-			storeImage(image, new File("c:/trans/out_jpg2000.jpg"));
+			storeImage(image, new File("c:/trans/out_jpg2000.jp2"));
 		}
 
 		// System.out.println("data : "+getGoogleResultTitleSize("patrick est là"));

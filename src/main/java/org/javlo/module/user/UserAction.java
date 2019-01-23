@@ -844,12 +844,11 @@ public class UserAction extends AbstractModuleAction {
 		UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		IUserFactory userFactory = userContext.getUserFactory(ctx);
-
-		if (userFactory.getCurrentUser(globalContext, ctx.getRequest().getSession()) == null || !AdminUserSecurity.getInstance().canRole(userFactory.getCurrentUser(globalContext, ctx.getRequest().getSession()), AdminUserSecurity.USER_ROLE)) {
+		if (!AdminUserSecurity.getInstance().canRole(ctx.getCurrentUser(), AdminUserSecurity.USER_ROLE)) {
 			return "no access";
 		}
 
+		IUserFactory userFactory = AdminUserFactory.createUserFactory(ctx.getRequest());
 		if (userContext.getCurrentRole() != null && !userFactory.getAllRoles(globalContext, ctx.getRequest().getSession()).contains(userContext.getCurrentRole())) {
 			userContext.setCurrentRole(null);
 		}

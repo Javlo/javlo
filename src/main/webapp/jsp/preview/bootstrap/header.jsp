@@ -414,7 +414,7 @@
 				<c:if test="${i18n.edit['preview.label.user.tooltip'] != 'preview.label.user.tooltip'}">
 					<c:set var="tooltip" value=' data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'preview.label.user.tooltip\']}"' />
 				</c:if>
-				<a ${tooltip} href="${info.currentEditURL}?module=users&webaction=user.changeMode&mode=myself&previewEdit=true" class="as-modal btn btn-default btn-sm btn-user"><span class="glyphicon glyphicon-user" aria-hidden="true"></span><span class="text">${info.userName}</span></a>					
+				<a ${tooltip} href="${info.currentEditURL}?module=users&webaction=user.changeMode&mode=myself&previewEdit=true" class="as-modal btn btn-default btn-sm btn-user"><span class="glyphicon glyphicon-user" aria-hidden="true"></span><span class="text">${info.adminUserName}</span></a>					
 				<a class="btn btn-default btn-sm" title="${i18n.edit['global.logout']}" href="${logoutURL}"><span class="glyphicon glyphicon-log-out"></span><span class="text">${i18n.edit["global.logout"]}</span></a>				
 				</li>				
 			</c:if>

@@ -45,6 +45,11 @@ public class AdminUserFactory extends UserFactory {
 		session.setAttribute(globalContext.getAdminUserFactoryClassName(), res); 
 		return res;
 	}
+	
+	@Override
+	protected String getSessionKey() {
+		return "adminCurrentUser";
+	}
 
 	/**
 	 * @deprecated use createUserFactory
@@ -185,7 +190,7 @@ public class AdminUserFactory extends UserFactory {
 		}
 		if (user != null) {
 			user.setContext(globalContext.getContextKey());
-			request.getSession().setAttribute(SESSION_KEY, user);			
+			request.getSession().setAttribute(getSessionKey(), user);			
 		}
 
 		EditContext editContext = EditContext.getInstance(globalContext, request.getSession());
@@ -204,7 +209,7 @@ public class AdminUserFactory extends UserFactory {
 	}
 
 	public User getCurrentUser(HttpSession session) {
-		User user = (User) session.getAttribute(SESSION_KEY);
+		User user = (User) session.getAttribute(getSessionKey());
 		if (user != null && user.isEditor()) {			
 			return user;
 		} else {
@@ -250,7 +255,7 @@ public class AdminUserFactory extends UserFactory {
 
 		if (outUser != null) {			
 			outUser.setContext(globalContext.getContextKey());
-			request.getSession().setAttribute(SESSION_KEY, outUser);
+			request.getSession().setAttribute(getSessionKey(), outUser);
 		}
 
 		EditContext editContext = EditContext.getInstance(globalContext, request.getSession());

@@ -372,7 +372,7 @@ public class FieldFile extends Field implements IStaticContainer {
 		}
 
 		String relativePath = URLHelper.mergePath(getFileTypeFolder(), getCurrentFolder());
-		String fileURL = URLHelper.createResourceURL(ctx, URLHelper.mergePath(relativePath, getCurrentFile()));
+		String fileURL = URLHelper.createFileURL(ctx, URLHelper.mergePath(relativePath, getCurrentFile()));
 
 		String target = "";
 		if (ctx.getGlobalContext().isOpenFileAsPopup()) {
@@ -391,7 +391,7 @@ public class FieldFile extends Field implements IStaticContainer {
 
 	public String getURL(ContentContext ctx) {
 		String relativePath = URLHelper.mergePath(getFileTypeFolder(), getCurrentFolder());
-		return URLHelper.createResourceURL(ctx, URLHelper.mergePath(relativePath, getCurrentFile()));
+		return URLHelper.createFileURL(ctx, URLHelper.mergePath(relativePath, getCurrentFile()));
 	}
 
 	@Override
@@ -669,7 +669,7 @@ public class FieldFile extends Field implements IStaticContainer {
 		String relativePath = URLHelper.mergePath(getFileTypeFolder(),getCurrentFolder());
 		String fileURL = URLHelper.mergePath(relativePath, getCurrentFile());
 		try {
-			return URLHelper.createResourceURL(ctx, '/' + fileURL);
+			return URLHelper.createFileURL(ctx, '/' + fileURL);
 		} catch (Exception e) {			
 			e.printStackTrace();
 			return null;

@@ -20,6 +20,8 @@ public interface IUserFactory {
 	public abstract User getUser(String login);
 
 	public abstract User autoLogin(HttpServletRequest request, String login);
+	
+	public abstract User adminFakeLogin(HttpServletRequest request, String login);
 
 	public abstract User login(HttpServletRequest request, String login, String password);
 

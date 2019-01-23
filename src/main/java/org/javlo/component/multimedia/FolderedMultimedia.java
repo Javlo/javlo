@@ -77,31 +77,31 @@ public class FolderedMultimedia extends TimeRangeComponent implements IImageTitl
 
 	Collection<File> multimediaFolder;
 
-	protected Date getStartDate(HttpServletRequest request) {
+	protected Date getStartDateInternal(ContentContext ctx) {
 		try {
-			if (request != null && request.getParameter("startdate") != null && request.getParameter("startdate").length() > 0) {
-				return StringHelper.parseDate(request.getParameter("startdate"));
+			if (ctx.getRequest() != null && ctx.getRequest().getParameter("startdate") != null && ctx.getRequest().getParameter("startdate").length() > 0) {
+				return StringHelper.parseDate(ctx.getRequest().getParameter("startdate"));
 			} else {
-				return super.getStartDate();
+				return super.getStartDate(ctx);
 			}
 
 		} catch (Throwable t) {
 			// t.printStackTrace();
-			return super.getStartDate();
+			return super.getStartDate(ctx);
 		}
 	}
 
-	protected Date getEndDate(HttpServletRequest request) {
+	protected Date getEndDateInternal(ContentContext ctx) {
 		try {
-			if (request != null && request.getParameter("enddate") != null && request.getParameter("enddate").length() > 0) {
-				return StringHelper.parseDate(request.getParameter("enddate"));
+			if (ctx.getRequest() != null && ctx.getRequest().getParameter("enddate") != null && ctx.getRequest().getParameter("enddate").length() > 0) {
+				return StringHelper.parseDate(ctx.getRequest().getParameter("enddate"));
 			} else {
-				return super.getEndDate();
+				return super.getEndDate(ctx);
 			}
 
 		} catch (Throwable t) {
 			// t.printStackTrace();
-			return super.getEndDate();
+			return super.getEndDate(ctx);
 		}
 	}
 
@@ -121,17 +121,17 @@ public class FolderedMultimedia extends TimeRangeComponent implements IImageTitl
 			currentDate.setTime(info.getDate(ctx));
 		}
 		Calendar startDate = GregorianCalendar.getInstance();
-		if (getStartDate(ctx.getRequest()) == null) {
+		if (getStartDateInternal(ctx) == null) {
 			startDate = null;
 		} else {
-			startDate.setTime(getStartDate(ctx.getRequest()));
+			startDate.setTime(getStartDateInternal(ctx));
 		}
 
 		Calendar endDate = GregorianCalendar.getInstance();
-		if (getEndDate(ctx.getRequest()) == null) {
+		if (getEndDateInternal(ctx) == null) {
 			endDate = null;
 		} else {
-			endDate.setTime(getEndDate(ctx.getRequest()));
+			endDate.setTime(getEndDateInternal(ctx));
 		}
 
 		boolean afterAccept = true;
@@ -171,18 +171,18 @@ public class FolderedMultimedia extends TimeRangeComponent implements IImageTitl
 		}
 
 		Calendar startDate = null;
-		if (getStartDate() == null) {
+		if (getStartDate(ctx) == null) {
 			startDate = null;
 		} else {
 			startDate = GregorianCalendar.getInstance();
-			startDate.setTime(getStartDate());
+			startDate.setTime(getStartDate(ctx));
 		}
 		Calendar endDate = null;
-		if (getEndDate() == null) {
+		if (getEndDate(ctx) == null) {
 			endDate = null;
 		} else {
 			endDate = GregorianCalendar.getInstance();
-			endDate.setTime(getEndDate());
+			endDate.setTime(getEndDate(ctx));
 		}
 
 		boolean afterAccept = true;
@@ -409,8 +409,8 @@ public class FolderedMultimedia extends TimeRangeComponent implements IImageTitl
 
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getInputStartDateName() + "\">" + i18nAccess.getText("content.multimedia-gallery.date-range") + "</label>");
-		out.println(" : <input id=\"contentdate\" style=\"width: 120px;\" type=\"text\" id=\"" + getInputStartDateName() + "\" name=\"" + getInputStartDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getStartDate(), "") + "\"/> - ");
-		out.println("<input style=\"width: 120px;\" type=\"text\" id=\"" + getInputEndDateName() + "\" name=\"" + getInputEndDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getEndDate(), "") + "\"/>");
+		out.println(" : <input id=\"contentdate\" style=\"width: 120px;\" type=\"text\" id=\"" + getInputStartDateName() + "\" name=\"" + getInputStartDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getStartDate(ctx), "") + "\"/> - ");
+		out.println("<input style=\"width: 120px;\" type=\"text\" id=\"" + getInputEndDateName() + "\" name=\"" + getInputEndDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getEndDate(ctx), "") + "\"/>");
 		out.println("</div>");
 
 		out.println("<div class=\"line\">");

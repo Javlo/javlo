@@ -408,7 +408,7 @@ public class LdapDirectUserFactory extends AdminUserFactory {
 				User outUser = new User(userInfo);
 				EditContext editContext = EditContext.getInstance(globalContext, request.getSession());
 				editContext.setEditUser(outUser);
-				request.getSession().setAttribute(SESSION_KEY, outUser);
+				request.getSession().setAttribute(getSessionKey(), outUser);
 				/** reload module **/
 				try {
 					ModulesContext.getInstance(request.getSession(), globalContext).loadModule(request.getSession(), globalContext);

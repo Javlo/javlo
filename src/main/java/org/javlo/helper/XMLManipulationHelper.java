@@ -539,6 +539,9 @@ public class XMLManipulationHelper {
 					String renderBodyAsDiv = tags[i].renderOpen();
 
 					String openBodyCode = "<c:if test=\"${not contentContext.pageAssociation}\">" + renderBodyAsBody + "</c:if><c:if test=\"${contentContext.pageAssociation}\">" + renderBodyAsDiv + "</c:if>";
+					if (htmlFile.getName().contains("pdf")) {
+						fontIncluding="";
+					}
 					String closeBodyCode = StringHelper.neverNull(fontIncluding) + "<c:if test=\"${not contentContext.pageAssociation}\">" + getGoogleAnalyticsCode() + "</body></c:if><c:if test=\"${contentContext.pageAssociation}\"></" + tag + "></c:if>";
 					remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, "</c:if>" + openBodyCode + openPageCode);
 					remplacement.addReplacement(tags[i].getCloseStart(), tags[i].getCloseEnd() + 1, closePageCode + closeBodyCode + "<c:if test=\"${not contentContext.pageAssociation}\">");

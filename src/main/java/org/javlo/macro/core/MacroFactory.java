@@ -83,6 +83,7 @@ import org.javlo.macro.interactive.ImportContent;
 import org.javlo.macro.interactive.ImportExternalPage;
 import org.javlo.macro.interactive.ImportGalleryMacro;
 import org.javlo.macro.interactive.ImportHTMLPageMacro;
+import org.javlo.macro.interactive.LogAsUser;
 import org.javlo.macro.interactive.MailingStat;
 import org.javlo.macro.interactive.PushStaticOnFtp;
 import org.javlo.macro.interactive.RenameChildren;
@@ -211,6 +212,7 @@ public class MacroFactory {
 		macros.add(new CommitTemplate());
 		macros.add(new CleanStaticInfoPersistence());
 		macros.add(new DeleteTrackerCache());
+		macros.add(new LogAsUser());
 		
 		/** macro bean **/
 		initMacroBean(macros);

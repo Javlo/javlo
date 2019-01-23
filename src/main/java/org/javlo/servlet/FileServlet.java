@@ -168,6 +168,7 @@ public class FileServlet extends HttpServlet {
 
         // Validate and process Range and If-Range headers.
         String range = request.getHeader("Range");
+        
         if (range != null) {
 
             // Range header should match format "bytes=n-n,n-n,n-n...". If not, then return 416.

@@ -58,7 +58,7 @@ public class ArrayHelper {
 		}
 	}
 
-	private static String readExcelCell(ContentContext ctx, XSSFCell cell) {
+	public static String readExcelCell(ContentContext ctx, XSSFCell cell) {
 		String lg = "en";
 		if (ctx != null) {
 			lg = ctx.getRequestContentLanguage();

@@ -204,6 +204,14 @@ public class TaxonomyBean {
 	public String toString() {
 		return getName();
 	}
+	
+	public String getFinalDecoration() {
+		if (StringHelper.isEmpty(decoration) && getParent() != null) {
+			return getParent().getFinalDecoration();
+		} else {
+			return decoration;
+		}
+	}
 
 	public String getDecoration() {
 		return decoration;

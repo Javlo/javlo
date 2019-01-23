@@ -50,9 +50,9 @@ public class MultimediaGallery extends TimeRangeComponent {
 			currentDate.setTime(info.getDate(ctx));
 		}
 		Calendar startDate = GregorianCalendar.getInstance();
-		startDate.setTime(getStartDate());
+		startDate.setTime(getStartDate(ctx));
 		Calendar endDate = GregorianCalendar.getInstance();
-		endDate.setTime(getEndDate());
+		endDate.setTime(getEndDate(ctx));
 		return (info.isShared(ctx) || !isDisplayOnlyShared()) && info.getDate(ctx) != null && currentDate.after(startDate) && currentDate.before(endDate) && index < getMaxListSize();
 	}
 
@@ -126,8 +126,8 @@ public class MultimediaGallery extends TimeRangeComponent {
 		PrintWriter out = new PrintWriter(writer);
 
 		out.println(getSpecialInputTag());
-		out.println("<input id=\"contentdate\" style=\"width: 120px;\" type=\"text\" id=\"" + getInputStartDateName() + "\" name=\"" + getInputStartDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getStartDate(), "") + "\"/> - ");
-		out.println("<input style=\"width: 120px;\" type=\"text\" id=\"" + getInputEndDateName() + "\" name=\"" + getInputEndDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getEndDate(), "") + "\"/>&nbsp;&nbsp;");
+		out.println("<input id=\"contentdate\" style=\"width: 120px;\" type=\"text\" id=\"" + getInputStartDateName() + "\" name=\"" + getInputStartDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getStartDate(ctx), "") + "\"/> - ");
+		out.println("<input style=\"width: 120px;\" type=\"text\" id=\"" + getInputEndDateName() + "\" name=\"" + getInputEndDateName() + "\" value=\"" + StringHelper.renderDateWithDefaultValue(getEndDate(ctx), "") + "\"/>&nbsp;&nbsp;");
 		out.println(i18nAccess.getText("content.multimedia-gallery.list-size") + " : <input style=\"width: 120px;\" type=\"text\" id=\"" + getInputMaxListSizeName() + "\" name=\"" + getInputMaxListSizeName() + "\" value=\"" + getMaxListSize() + "\"/>");
 
 		out.close();

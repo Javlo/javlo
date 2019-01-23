@@ -1548,11 +1548,18 @@ public class ContentContext {
 	 * @return
 	 */
 	public String getCurrentUserId() {
+		if (getCurrentUser() != null) {
+			return getCurrentUser().getLogin();
+		} else if (getCurrentEditUser() != null) {
+			return getCurrentEditUser().getLogin();
+		} 
+		return null;
+	}
+	
+	public String getCurrentAdminUserId() {
 		if (getCurrentEditUser() != null) {
 			return getCurrentEditUser().getLogin();
-		} else if (getCurrentUser() != null) {
-			return getCurrentUser().getLogin();
-		}
+		} 
 		return null;
 	}
 

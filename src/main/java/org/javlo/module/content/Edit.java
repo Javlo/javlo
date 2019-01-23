@@ -182,7 +182,7 @@ public class Edit extends AbstractModuleAction {
 	 * update previous command zone.
 	 * 
 	 * @param ctx
-	 * @param currentModule
+	 * @param data.currentModule
 	 * @param newId
 	 *            the id of the component
 	 * @param previousId
@@ -1155,6 +1155,10 @@ public class Edit extends AbstractModuleAction {
 		if (ctx.isEditPreview() && componentContext.getNewComponents() != null && componentContext.getNewComponents().size() == 1) {
 			InfoBean.getCurrentInfoBean(ctx).setTools(false);
 			ctx.getRequest().setAttribute("noinsert", "true");
+		}
+		
+		if (ctx.isClosePopup() && ctx.isAjax()) {
+			ctx.getAjaxInsideZone().put("main-body", "<script>closePopup();</script>");
 		}
 
 		return message;

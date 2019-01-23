@@ -29,7 +29,7 @@ public class TimeHelper {
 	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TimeHelper.class.getName());
 
 	/**
-	 * set the date at the first day of the week.
+	 * set the date at the first day of the week.o
 	 * 
 	 * @param date
 	 * @return
@@ -56,6 +56,27 @@ public class TimeHelper {
 			return false;
 		} else if (calDate.get(Calendar.YEAR) == calRef.get(Calendar.YEAR)) {
 			if (calDate.get(Calendar.DAY_OF_YEAR) < calRef.get(Calendar.DAY_OF_YEAR)) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * check if date is after other date.
+	 */
+	public static boolean isAfterForDay(Date date, Date ref) {
+		if (ref == null) {
+			return true;
+		}
+		Calendar calDate = Calendar.getInstance();
+		calDate.setTime(date);
+		Calendar calRef = Calendar.getInstance();
+		calRef.setTime(ref);
+		if (calDate.get(Calendar.YEAR) < calRef.get(Calendar.YEAR)) {
+			return false;
+		} else if (calDate.get(Calendar.YEAR) == calRef.get(Calendar.YEAR)) {
+			if (calDate.get(Calendar.DAY_OF_YEAR) <= calRef.get(Calendar.DAY_OF_YEAR)) {
 				return false;
 			}
 		}

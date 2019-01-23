@@ -130,6 +130,25 @@ public class BeanHelper {
 		return res;
 	}
 
+	public static Map bean2MapAllGet(Object bean) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+		Map res = new Hashtable();
+		Method[] methods = bean.getClass().getMethods();
+		for (Method method : methods) {
+			if (method.getName().startsWith("get")) {
+				String name = method.getName().substring(3);
+				name = StringHelper.firstLetterLower(name);
+				if (method.getParameterTypes().length == 0) {
+					String value = ""+method.invoke(bean, (Object[]) null);
+					if (value == null) {
+						value = "";
+					}
+					res.put(name, value);
+				}
+			}
+		}
+		return res;
+	}
+
 	public static List<String> beanSetList(Object bean) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		List<String> outKeys = new LinkedList<String>();
 		Method[] methods = bean.getClass().getMethods();
@@ -172,6 +191,60 @@ public class BeanHelper {
 		return outStr.toString();
 	}
 
+	public static int copy(Map map, Object bean, String keyPrefix, String keySuffix) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+		keyPrefix = StringHelper.neverNull(keyPrefix);
+		keySuffix = StringHelper.neverNull(keySuffix);
+		Iterator keys = bean2MapAllGet(bean).keySet().iterator();
+		int notFound = 0;
+		while (keys.hasNext()) {
+			Object key = keys.next();
+			String mapKey = keyPrefix + key + keySuffix;
+			if (map.get(mapKey) instanceof String) {
+				String name = (String) key;
+				name = StringHelper.firstLetterLower(name);
+				String value = (String) map.get(mapKey);
+				String methodName = "set" + StringHelper.firstLetterUpper(name);
+				try {
+					Method method = bean.getClass().getMethod(methodName, new Class[] { String.class });
+					method.invoke(bean, new Object[] { value });
+				} catch (NoSuchMethodException e) {
+					if (StringHelper.isDigit(value) || value == null) {
+						try {
+							Method method = bean.getClass().getMethod(methodName, new Class[] { int.class });
+							method.invoke(bean, new Object[] { Integer.parseInt(value) });
+						} catch (NoSuchMethodException e1) {
+							try {
+								Method method = bean.getClass().getMethod(methodName, new Class[] { long.class });
+								method.invoke(bean, new Object[] { Long.parseLong(value) });
+							} catch (NoSuchMethodException e2) {
+							}
+						}
+					}
+					notFound++;
+				}
+			}
+			if (map.get(mapKey) instanceof String[]) {
+				String name = (String) key;
+				name = StringHelper.firstLetterLower(name);
+				String[] value = (String[]) map.get(mapKey);
+				String methodName = "set" + StringHelper.firstLetterUpper(name);
+				try {
+					Method method = bean.getClass().getMethod(methodName, new Class[] { String[].class });
+					method.invoke(bean, new Object[] { value });
+				} catch (NoSuchMethodException e) {
+					Method method;
+					try {
+						method = bean.getClass().getMethod(methodName, new Class[] { String.class });
+						method.invoke(bean, StringHelper.arrayToString(value, ","));
+					} catch (NoSuchMethodException e1) {
+						notFound++;
+					}
+				}
+			}
+		}
+		return notFound;
+	}
+
 	/**
 	 * copy map in bean, call set[key] ( value ).
 	 * 
@@ -212,9 +285,9 @@ public class BeanHelper {
 				} catch (NoSuchMethodException e) {
 					Method method;
 					try {
-						method = bean.getClass().getMethod(methodName, new Class[] { String.class });						
+						method = bean.getClass().getMethod(methodName, new Class[] { String.class });
 						method.invoke(bean, StringHelper.arrayToString(value, ","));
-					} catch (NoSuchMethodException e1) {						
+					} catch (NoSuchMethodException e1) {
 						notFound++;
 					}
 				}
@@ -252,18 +325,18 @@ public class BeanHelper {
 
 		BeanUtils.copyProperties(bean2, bean1);
 		/*
-		 * Method[] methods = bean1.getClass().getDeclaredMethods(); int
-		 * notFound = 0; for (int i = 0; i < methods.length; i++) { if
+		 * Method[] methods = bean1.getClass().getDeclaredMethods(); int notFound = 0;
+		 * for (int i = 0; i < methods.length; i++) { if
 		 * (methods[i].getName().startsWith("get")||methods[i].getName().
 		 * startsWith("is")) {
 		 * 
 		 * String name = methods[i].getName().substring(3); name =
-		 * StringHelper.firstLetterLower(name); Object value =
-		 * methods[i].invoke(bean1, (Object[]) null); String method2 = "set" +
+		 * StringHelper.firstLetterLower(name); Object value = methods[i].invoke(bean1,
+		 * (Object[]) null); String method2 = "set" +
 		 * StringHelper.firstLetterUpper(name); try { Method method =
 		 * bean2.getClass().getMethod(method2, new Class[] { String.class });
-		 * method.invoke(bean2, new Object[] { value }); } catch
-		 * (NoSuchMethodException e) { notFound++; }
+		 * method.invoke(bean2, new Object[] { value }); } catch (NoSuchMethodException
+		 * e) { notFound++; }
 		 * 
 		 * } }
 		 */
@@ -408,17 +481,13 @@ public class BeanHelper {
 		bean1.setPassword("AZE");
 		bean1.setEmail("p@bean.com");
 
-		System.out.println("[BeanHelper.java]-[test NC]-bean2.getLogin()="
-				+ bean2.getLogin()); /* TODO: REMOVE TRACE */
-		System.out.println("[BeanHelper.java]-[test NC]-bean2.getPassword()="
-				+ bean2.getPassword()); /* TODO: REMOVE TRACE */
+		System.out.println("[BeanHelper.java]-[test NC]-bean2.getLogin()=" + bean2.getLogin()); /* TODO: REMOVE TRACE */
+		System.out.println("[BeanHelper.java]-[test NC]-bean2.getPassword()=" + bean2.getPassword()); /* TODO: REMOVE TRACE */
 
 		copy(bean1, bean2);
 
-		System.out.println("[BeanHelper.java]-[test]-bean2.getLogin()="
-				+ bean2.getLogin()); /* TODO: REMOVE TRACE */
-		System.out.println("[BeanHelper.java]-[test]-bean2.getPassword()="
-				+ bean2.getPassword()); /* TODO: REMOVE TRACE */
+		System.out.println("[BeanHelper.java]-[test]-bean2.getLogin()=" + bean2.getLogin()); /* TODO: REMOVE TRACE */
+		System.out.println("[BeanHelper.java]-[test]-bean2.getPassword()=" + bean2.getPassword()); /* TODO: REMOVE TRACE */
 
 		Map map = new Hashtable();
 		map.put("login", "plemarchand");
@@ -426,16 +495,14 @@ public class BeanHelper {
 
 		copy(map, bean2);
 
-		System.out.println("[BeanHelper.java]-[test]-bean2.getLogin()="
-				+ bean2.getLogin()); /* TODO: REMOVE TRACE */
-		System.out.println("[BeanHelper.java]-[test]-bean2.getPassword()="
-				+ bean2.getPassword()); /* TODO: REMOVE TRACE */
+		System.out.println("[BeanHelper.java]-[test]-bean2.getLogin()=" + bean2.getLogin()); /* TODO: REMOVE TRACE */
+		System.out.println("[BeanHelper.java]-[test]-bean2.getPassword()=" + bean2.getPassword()); /* TODO: REMOVE TRACE */
 
 	}
 
 	public static Object getProperty(Object bean, String property) {
 		try {
-			return ""+bean.getClass().getMethod("get" + WordUtils.capitalize(property), null).invoke(bean, null);
+			return "" + bean.getClass().getMethod("get" + WordUtils.capitalize(property), null).invoke(bean, null);
 		} catch (Exception e) {
 			return null;
 		}
@@ -459,8 +526,8 @@ public class BeanHelper {
 	 * Collections.synchronizedMap(new HashMap<Class, Map<String,String>>());
 	 * 
 	 * public static Map<String,String> cachedDescribe(Object bean) throws
-	 * IllegalAccessException, InvocationTargetException, NoSuchMethodException
-	 * { if (bean == null) { return null; } Map<String,String> beanDescription =
+	 * IllegalAccessException, InvocationTargetException, NoSuchMethodException { if
+	 * (bean == null) { return null; } Map<String,String> beanDescription =
 	 * beanDescribeCache.get(bean.getClass()); if (beanDescription == null) {
 	 * beanDescription = BeanUtils.describe(bean);
 	 * beanDescribeCache.put(bean.getClass(), beanDescription); } return

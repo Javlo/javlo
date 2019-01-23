@@ -28,7 +28,7 @@ public class FontHelper {
 						outStr = outStr + style;
 					}
 				}
-				outStr="<style>\n"+outStr+"</style>";
+				outStr="<style style=\"display: none;\">\n"+outStr+"</style>";
 			} catch (Exception e) {
 				outStr = inFontIncluding;
 				e.printStackTrace();

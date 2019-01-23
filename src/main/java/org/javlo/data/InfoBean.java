@@ -596,6 +596,10 @@ public class InfoBean {
 	public String getUserName() {
 		return ctx.getCurrentUserId();
 	}
+	
+	public String getAdminUserName() {
+		return ctx.getCurrentAdminUserId();
+	}
 
 	public String getUserLabel() {
 		User user = ctx.getCurrentUser();
@@ -839,7 +843,12 @@ public class InfoBean {
 	}
 
 	public String getPrivateHelpURL() {
-		return globalContext.getPrivateHelpURL();
+		String url = globalContext.getPrivateHelpURL();
+		if (url != null) {
+			return url.replace("#lang#", ctx.getRequestContentLanguage());
+		} else {
+			return null;
+		}
 	}
 
 	public Collection<String> getAdminRoles() {

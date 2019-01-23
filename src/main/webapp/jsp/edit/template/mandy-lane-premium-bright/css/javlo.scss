@@ -166,11 +166,17 @@ h1 {
 }
 
 fieldset {
-	margin: 4px 0;
-	padding: 4px;
-	border-color: -moz-use-text-color #CCCCCC #CCCCCC;
-	border: 1px solid #CCCCCC;
-	border-radius: 3px;
+	padding: 5px 15px;
+	background-color: #eeeeee;
+	margin: 15px 0;
+	border-radius: 5px;
+	border: 1px #cccccc solid;
+	legend {
+		border-radius: 5px;
+		border: 1px #cccccc solid;
+		background-color: #ffffff;
+		padding: 5px;
+	}
 }
 
 .with-title option {
