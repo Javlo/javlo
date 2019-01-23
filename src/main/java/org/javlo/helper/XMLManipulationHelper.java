@@ -764,7 +764,7 @@ public class XMLManipulationHelper {
 						}
 						// }
 					} else {
-						if (!attributes.get("src").toLowerCase().startsWith("http://") && !attributes.get("src").contains("${")) {
+						if (!StringHelper.isURL(attributes.get("src")) && !attributes.get("src").contains("${")) {
 							attributes.put("src", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + srcValue + "\")%>");
 						}
 						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].toString());

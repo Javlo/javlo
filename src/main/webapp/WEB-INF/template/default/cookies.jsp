@@ -53,7 +53,7 @@ function actionCookie(action) {
 		<form action="${info.currentURL}" method="post">
 			<button type="button" name="webaction" value="view.acceptcookies" class="btn btn-sm btn-primary" onclick="return acceptCookie();">${i18n.view['cookies.accept']}</button>
 			<button type="button" name="webaction" value="view.refusecookies" class="btn btn-sm btn-secondary" onclick="return refuseCookie();">${i18n.view['cookies.refuse']}</button>
-			<c:if test="${not empty info.cookiesPolicyUrl}"><a class="btn btn-sm btn-secondary" target="_blank" href="${globalContext.cookiesPolicyUrl}">${i18n.view['global.more']}</a></c:if>
+			<c:if test="${not empty globalContext.cookiesPolicyUrl}"><a class="btn btn-sm btn-secondary" target="_blank" href="${info.cookiesPolicyUrl}">${i18n.view['global.more']}</a></c:if>
 		</form>
 	</div>	
 </div>
