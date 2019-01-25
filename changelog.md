@@ -754,3 +754,4 @@ Security in case of vulnerabilities.
 - autologin in view mode
 ### fixed
 - menu if no add button (preview)
+- page reference list of page display correction
