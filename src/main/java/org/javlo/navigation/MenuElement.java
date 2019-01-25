@@ -2746,18 +2746,15 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 						desc.label = getContent(defaultLgCtx).getLabel(ctx);
 						if ((desc.label.trim().length() == 0) && (name != null)) {
 							desc.label = getSubTitle(defaultLgCtx);
-							if (StringHelper.isEmpty(desc.label)) {
-								desc.label = name;
-							}
 						}
 					}
-				} else {
-					desc.label = name;
 				}
-
 			}
 		}
 		desc.label = StringHelper.removeTag(desc.label);
+		if (StringHelper.isEmpty(desc.label)) {
+			desc.label = name;
+		}
 		return desc.label;
 	}
 
