@@ -139,7 +139,7 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 	
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {	
-		return true;
+		return !getValue().contains("${");
 	}
 	
 	@Override

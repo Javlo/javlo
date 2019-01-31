@@ -149,7 +149,12 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 
 	@Override
 	public String getTextTitle(ContentContext ctx) {
-		return StringHelper.removeTag(getFieldValue(TEXT));
+		try {
+			return XHTMLHelper.replaceJSTLData(ctx,StringHelper.removeTag(getFieldValue(TEXT)));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return StringHelper.removeTag(getFieldValue(TEXT));
+		}
 	}
 	
 	@Override
@@ -218,7 +223,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 			if (ctx.getGlobalContext().isMailingPlatform()) {
 				tag = "div";
 			}
-			return "<" + tag + " class=\"inside-wrapper\"" + style + ">" + cleanValue(ctx, getTitle(ctx)) + "</" + tag + ">";
+			return "<" + tag + " class=\"inside-wrapper\"" + style + ">" + XHTMLHelper.replaceJSTLData(ctx, cleanValue(ctx, getTitle(ctx))) + "</" + tag + ">";
 		}
 	}
 	
@@ -405,7 +410,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
-		return true;	
+		return !getValue().contains("${");	
 	}
 	
 	@Override

@@ -615,6 +615,10 @@ public class StaticConfig extends Observable {
 		}
 		return defaultSubject;
 	}
+	
+	public String getMailTemplateParent() {
+		return properties.getString("mail.template.parent", "mail-template");
+	}
 
 	/**
 	 * config the device. device config strucure : device.[device code].[config]

@@ -453,10 +453,9 @@ public class I18nAccess implements Serializable {
 	 */
 	public String getText(String key, Map<?, ?> balises) {
 		String text = getText(key);
-		Collection<?> keys = balises.entrySet();
+		Collection<?> keys = balises.keySet();
 		for (Object name : keys) {
-			String baliseName = (String) name;
-			text = text.replaceAll(START_BALISE + baliseName + END_BALISE, (String) balises.get(baliseName));
+			text = text.replaceAll(START_BALISE + name + END_BALISE, (String) balises.get(name));
 		}
 		return text;
 	}

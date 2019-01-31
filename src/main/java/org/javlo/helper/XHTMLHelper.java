@@ -2157,7 +2157,7 @@ public class XHTMLHelper {
 		Collection<String> params = StringHelper.extractItem(xhtml, "${param.", "}");
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		for (String param : params) {
-			xhtml = xhtml.replace("${param." + param + "}", URLDecoder.decode(requestService.getParameter(param, ""), ContentContext.CHARACTER_ENCODING));
+			xhtml = xhtml.replace("${param." + param + "}", XHTMLHelper.textToXHTML(URLDecoder.decode(requestService.getParameter(param, ""), ContentContext.CHARACTER_ENCODING), ctx.getGlobalContext()));
 		}
 
 		InfoBean infoBean = InfoBean.getCurrentInfoBean(ctx.getRequest());

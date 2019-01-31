@@ -2,10 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head> 
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="<jv:url value='/js/edit/ajax.js?ts=${info.ts}' />"></script>
+<script type="text/javascript" src="<jv:url value='/js/edit/core.js?ts=${info.ts}' />"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/javlo/core.js?ts=${info.ts}"></script>
 <script type="text/javascript">
-	function closePopup() {
+	function closePopup(parentURL) {
 		var url = top.location.href; // close iframe and refresh parent frame
 		var anchor = "";
+		if (parentURL != null) {
+			url = parentURL;
+		}
 		<c:if test="${not empty contentContext.parentURL}">
 		url = "${contentContext.parentURL}";
 		</c:if>
@@ -309,8 +315,6 @@
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.form.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.elastic.source.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/custom/gallery.js"></script>	
-<script type="text/javascript" src="<jv:url value='/js/edit/ajax.js?ts=${info.ts}' />"></script>
-<script type="text/javascript" src="<jv:url value='/js/edit/core.js?ts=${info.ts}' />"></script>
 
 <!-- color picker -->
 <script type="text/javascript" src="<jv:url value='/js/lib/colorpicker/js/colorpicker.js' />"></script>
@@ -320,7 +324,6 @@
 <script type="text/javascript" src="<jv:url value='/js/lib/chosen/chosen.jquery.js' />"></script>
 <link rel="stylesheet" media="screen" type="text/css" href="<jv:url value='/js/lib/chosen/chosen.css' />" />
 
-<script type="text/javascript" src="${info.editTemplateURL}/js/javlo/core.js?ts=${info.ts}"></script>
 <c:if test="${not info.editLanguage eq 'en'}">
 	<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.ui.datepicker-${info.editLanguage}.js"></script>
 </c:if>

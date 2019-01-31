@@ -48,7 +48,7 @@ public class TicketBean implements Serializable, Ticket {
 
 	public TicketBean(Ticket ticket) {
 		try {
-			BeanHelper.copy(ticket, this);
+			BeanHelper.copyBean(ticket, this);
 		} catch (Exception e) {
 			throw new RuntimeException("Exception when copying Ticket", e);
 		}

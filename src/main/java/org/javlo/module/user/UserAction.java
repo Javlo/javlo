@@ -232,7 +232,7 @@ public class UserAction extends AbstractModuleAction {
 			IUserInfo userInfo = user.getUserInfo();
 			try {
 
-				BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo);
+				BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo, StringHelper.isTrue(ctx.getRequestService().getParameter("reset-boolean"), true));
 
 				List<String> functions = requestService.getParameterListValues("function", Collections.EMPTY_LIST);
 				if (functions.size() > 0 && userInfo instanceof AdminUserInfo) {
@@ -308,7 +308,7 @@ public class UserAction extends AbstractModuleAction {
 			IUserInfo userInfo = user.getUserInfo();
 			String pwd = user.getPassword();
 			try {
-				BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo);
+				BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo, StringHelper.isTrue(ctx.getRequestService().getParameter("reset-boolean"), true));
 				if (!userInfo.getPassword().equals(pwd)) {
 					userInfo.setPassword(SecurityHelper.encryptPassword(userInfo.getPassword()));
 				}
@@ -746,7 +746,7 @@ public class UserAction extends AbstractModuleAction {
 						IUserInfo userInfo = userFact.createUserInfos();
 						String[] labels = usersArrays[0];
 						try {
-							BeanHelper.copy(JavaHelper.createMap(labels, usersArrays[i]), userInfo);
+							BeanHelper.copy(JavaHelper.createMap(labels, usersArrays[i]), userInfo, false);
 							userInfoList.add(userInfo);
 						} catch (Exception e) {
 							logger.warning("error on : " + userInfo.getLogin() + " : " + e.getMessage());

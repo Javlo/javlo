@@ -351,7 +351,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		for (int i = 1; i < csvArray.length; i++) {
 			IUserInfo newUserInfo = new UserInfo();
 			Map<String, String> values = JavaHelper.createMap(csvArray[0], csvArray[i]);
-			BeanHelper.copy(values, newUserInfo);			
+			BeanHelper.copy(values, newUserInfo, false);
 			userInfoList.add(newUserInfo);
 		}
 		return userInfoList;
@@ -386,7 +386,7 @@ public class UserFactory implements IUserFactory, Serializable {
 							for (int i = 1; i < csvArray.length; i++) {
 								IUserInfo newUserInfo = createUserInfos();
 								Map<String, String> values = JavaHelper.createMap(csvArray[0], csvArray[i]);
-								BeanHelper.copy(values, newUserInfo);
+								BeanHelper.copy(values, newUserInfo, false);
 								userInfoList.add(newUserInfo);
 							}
 						} catch (Exception e) {
@@ -674,7 +674,7 @@ public class UserFactory implements IUserFactory, Serializable {
 				IUserInfo currentUserInfo = user.getUserInfo();
 				try {
 					if (currentUserInfo != null) {
-						BeanHelper.copy(userInfo, currentUserInfo);
+						BeanHelper.copyBean(userInfo, currentUserInfo);
 					}
 					unlockStore();
 				} catch (Exception e) {
@@ -693,7 +693,7 @@ public class UserFactory implements IUserFactory, Serializable {
 				IUserInfo currentUserInfo = user.getUserInfo();
 				try {
 					if (currentUserInfo != null) {
-						BeanHelper.copy(userInfo, currentUserInfo);
+						BeanHelper.copyBean(userInfo, currentUserInfo);
 					}
 				} catch (Exception e) {
 //					LocalLogger.log(e);

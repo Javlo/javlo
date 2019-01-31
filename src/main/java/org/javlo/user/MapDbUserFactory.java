@@ -39,7 +39,7 @@ public class MapDbUserFactory extends UserFactory {
 					IUserInfo newUserInfo = createUserInfos();
 					Map<String, String> values = JavaHelper.createMap(fields, StringHelper.stringToArray(val, SEP));
 					try {
-						BeanHelper.copy(values, newUserInfo);
+						BeanHelper.copy(values, newUserInfo, false);
 						return new User(newUserInfo);
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -64,7 +64,7 @@ public class MapDbUserFactory extends UserFactory {
 						IUserInfo newUserInfo = createUserInfos();
 						Map<String, String> values = JavaHelper.createMap(fields, StringHelper.stringToArray(entry.getValue(), SEP));
 						try {
-							BeanHelper.copy(values, newUserInfo);
+							BeanHelper.copy(values, newUserInfo, false);
 							userInfoList.add(newUserInfo);
 						} catch (Exception e) {
 							e.printStackTrace();

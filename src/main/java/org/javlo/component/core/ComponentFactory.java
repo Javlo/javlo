@@ -495,7 +495,7 @@ public class ComponentFactory {
 	 */
 	public static IContentVisualComponent createUnlinkedComponentFromMap(ContentContext ctx, Map<String,Object> data) throws Exception {
 		ComponentBean bean = new ComponentBean();
-		BeanHelper.copy(data, bean);
+		BeanHelper.copy(data, bean, false);
 		return createComponent(ctx, bean, null, null, null);
 	}
 

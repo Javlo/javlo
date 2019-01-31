@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.AjaxHelper.ScheduledRender;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.StringSecurityUtil;
@@ -477,8 +476,6 @@ public class ContentContext {
 	private boolean refreshParent = false;
 
 	private Boolean closePopup = null;
-
-	private String parentURL = null;
 
 	private ContentContext() {
 	}
@@ -1906,11 +1903,11 @@ public class ContentContext {
 	}
 
 	public String getParentURL() {
-		return parentURL;
+		return (String)request.getAttribute("parentURL");
 	}
 
 	public void setParentURL(String parentURL) {
-		this.parentURL = parentURL;
+		request.setAttribute("parentURL", parentURL);
 	}
 
 	public boolean isClosePopup() {

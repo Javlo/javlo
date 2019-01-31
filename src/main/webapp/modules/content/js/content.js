@@ -102,6 +102,23 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 		    fontsize_formats: fontsize,
 		    toolbar: "textlang | undo redo searchreplace | bold italic underline fontsizeselect forecolor backcolor removeformat | charmap nonbreaking | alignleft aligncenter alignright alignjustify | link | bullist numlist outdent indent"
 		});
+	} if (complexity == "email") {
+		tinymce.init({
+			textlang_langs : contentLanguage,			
+		    selector: cssQuery,
+		    convert_urls: false,
+		    menubar : false,
+		    nonbreaking_force_tab: true,
+		    content_css: wysiwygCss,
+		    height : "180",
+		    plugins: [
+		        "advlist autolink lists link image charmap print preview anchor",
+		        "searchreplace visualblocks code",
+		        "insertdatetime table paste textcolor colorpicker nonbreaking textlang"
+		    ],
+		    fontsize_formats: fontsize,
+		    toolbar: "textlang | undo redo searchreplace | bold italic underline strikethrough fontsizeselect removeformat | table charmap nonbreaking code | alignleft aligncenter alignright alignjustify | link"
+		});
 	} else if (complexity == "high") {		
 		tinymce.init({
 			textlang_langs : contentLanguage,

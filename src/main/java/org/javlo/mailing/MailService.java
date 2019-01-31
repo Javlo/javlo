@@ -13,6 +13,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -23,14 +24,11 @@ import java.util.logging.Logger;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
-import javax.mail.Folder;
 import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.NoSuchProviderException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
-import javax.mail.Store;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
@@ -46,6 +44,8 @@ import org.javlo.external.agitos.dkim.SMTPDKIMMessage;
 import org.javlo.external.agitos.dkim.SigningAlgorithm;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.navigation.MenuElement;
+import org.javlo.service.ContentService;
 
 /**
  * This class, working in a singleton mode, is a utility for sending mail
@@ -691,6 +691,16 @@ public class MailService {
 
 	public static void main(String[] args) throws FileNotFoundException, MessagingException, IOException {
 		writeEMLFile("test", "<b>coucou</b><br />Je m'appel Patrick.", new FileOutputStream(new File("c:/trans/test_email.eml")));
+	}
+	
+	public static List<MenuElement> getMailTemplate(ContentContext ctx) throws Exception {
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		MenuElement mailParent = content.getNavigation(ctx).searchChildFromName(ctx.getGlobalContext().getStaticConfig().getMailTemplateParent());
+		if (mailParent == null) {
+			return Collections.EMPTY_LIST;
+		} else {
+			return mailParent.getChildMenuElements();
+		}
 	}
 
 }

@@ -748,10 +748,17 @@ Security in case of vulnerabilities.
 - add edit renderer
 - GeoService : convert address to coord.
 - admin user can simulate access from a other user
+- textToHTML tag
+- mailService : list of page template
+- beanutils copy with boolean
 ### modified
 - defautl edit template : /jsp/edit/template/mandy-lane-premium-bright
 - FieldFile use file servlet in place of resourceServlet
 - autologin in view mode
+- replace JSTL in title
+- email wysiwyg editor
+- bean utils copy with set false if boolean not found
+- wysiwig not cachable if contains vars
 ### fixed
 - menu if no add button (preview)
 - page reference list of page display correction

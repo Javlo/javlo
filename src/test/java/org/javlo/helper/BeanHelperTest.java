@@ -22,6 +22,7 @@ public class BeanHelperTest extends TestCase {
 		private String title;
 		private int age;
 		private long dist;
+		private boolean optin = false;
 
 		public String getFirstname() {
 			return firstname;
@@ -62,6 +63,14 @@ public class BeanHelperTest extends TestCase {
 		public void setDist(long dist) {
 			this.dist = dist;
 		}
+
+		public boolean isOptin() {
+			return optin;
+		}
+
+		public void setOptin(Boolean optin) {
+			this.optin = optin;
+		}
 	}
 
 	public void testSetProperty() throws Exception {
@@ -73,36 +82,52 @@ public class BeanHelperTest extends TestCase {
 		bean.setLastname("noname");
 		BeanHelper.setProperty(bean, "lastname", null);
 		assertEquals(bean.getLastname(), null);
+		BeanHelper.setProperty(bean, "optin", true);
+		assertTrue(bean.isOptin());
 	}
 	
 	public void testCopy() throws Exception {
-		Map<String,String> test = new HashMap<>();
+		Map<String,Object> test = new HashMap<>();
 		test.put("firstname", "Barbara");
 
 		Bean b = new Bean();
-//		BeanHelper.copy(test, b);
-//		assertEquals(b.getFirstname(), "Barbara");
+		BeanHelper.copy(test, b, false);
+		assertEquals(b.getFirstname(), "Barbara");
+		assertFalse(b.isOptin());
+		test.put("optin", "true");
+		BeanHelper.copy(test, b,false);
+		assertTrue(b.isOptin());
+		test.remove("optin");
+		BeanHelper.copy(test, b, true);
+		assertFalse(b.isOptin());
+		
+		test = new HashMap<>();
+		b = new Bean();
 		test.put("firstname-69", "Catherine");
 		test.put("age-69", "23");
 		test.put("dist-69", "9999");
+		test.put("optin-69", (Boolean)true);
 		BeanHelper.copy(test, b, null, "-69");
 		assertEquals(b.getFirstname(), "Catherine");
 		assertEquals(b.getAge(), 23);
 		assertEquals(b.getDist(), 9999);
+		assertTrue(b.isOptin());
 		
-//		test = new HashMap<>();
-//		test.put("*firstname-69", "Patrick");
-//		BeanHelper.copy(test, b, "*", "-69");
-//		assertEquals(b.getFirstname(), "Patrick");
-//
-//		b.setFirstname("test");
-//		test.put("*firstname-69", "Patrick");
-//		BeanHelper.copy(test, b, "+", "-69");
-//		assertEquals(b.getFirstname(), "test");
-//		
-//		
-//		Bean a = new Bean();
-//		test.put("firstname-69", "Isabelle");
-//		BeanHelper.copy(test, a, null, "-69");
+		BeanHelper.copy(test, b, null, "-69");
+		
+		test = new HashMap<>();
+		test.put("*firstname-69", "Patrick");
+		BeanHelper.copy(test, b, "*", "-69");
+		assertEquals(b.getFirstname(), "Patrick");
+
+		b.setFirstname("test");
+		test.put("*firstname-69", "Patrick");
+		BeanHelper.copy(test, b, "+", "-69");
+		assertEquals(b.getFirstname(), "test");
+		
+		
+		Bean a = new Bean();
+		test.put("firstname-69", "Isabelle");
+		BeanHelper.copy(test, a, null, "-69");
 	}
 }

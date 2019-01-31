@@ -1140,7 +1140,7 @@ public class Edit extends AbstractModuleAction {
 		} else {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.not-updated"), GenericMessage.ALERT));
 		}
-
+		
 		if (requestService.getParameter("save", null) != null && editContext.isPreviewEditionMode() && !ResourceStatus.isResource(ctx.getRequest().getSession()) && requestService.getParameter("upload", null) == null) {
 			String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE));
 			if (!StringHelper.isEmpty(requestService.getParameter("forward_anchor")) && !url.contains("#")) {
@@ -1158,7 +1158,11 @@ public class Edit extends AbstractModuleAction {
 		}
 		
 		if (ctx.isClosePopup() && ctx.isAjax()) {
-			ctx.getAjaxInsideZone().put("main-body", "<script>closePopup();</script>");
+			if (ctx.getParentURL() != null) {
+				ctx.getAjaxInsideZone().put("main-body", "<script>closePopup('"+ctx.getParentURL()+"');</script>");
+			} else {
+				ctx.getAjaxInsideZone().put("main-body", "<script>closePopup();</script>");
+			}
 		}
 
 		return message;

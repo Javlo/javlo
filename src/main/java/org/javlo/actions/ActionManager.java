@@ -279,7 +279,7 @@ public class ActionManager {
 					logger.severe(message);
 				}
 			} else {
-				message = "method not found : " + methodName;
+				message = "method not found : " + methodName + " on "+action.getClass().getCanonicalName();
 				logger.warning(message);
 			}
 		} catch (Exception e) {

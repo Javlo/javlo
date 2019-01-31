@@ -302,10 +302,10 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 			Map<String,String> allValues = new HashMap<String, String>();
 			for (String field : fields) {
 				allValues.put(field, StringHelper.neverNull(rs.getParameter(field)));
-				BeanHelper.copy(allValues, userInfo);
+				BeanHelper.copy(allValues, userInfo, false);
 			}
 		} else {
-			BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo);	
+			BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo, false);	
 		}
 		/* restore password */
 		userInfo.setPassword(pwd);

@@ -101,7 +101,6 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		out.println("<div class=\"row\">");
 		for (String field : fields) {
 			if (!field.startsWith("label")) {
-				
 				renderField(out, ctx, field);
 			}
 		}

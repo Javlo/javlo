@@ -134,11 +134,14 @@ public class BeanHelper {
 		Map res = new Hashtable();
 		Method[] methods = bean.getClass().getMethods();
 		for (Method method : methods) {
-			if (method.getName().startsWith("get")) {
+			if (method.getName().startsWith("get") || method.getName().startsWith("is")) {
 				String name = method.getName().substring(3);
+				if (method.getName().startsWith("is")) {
+					name = method.getName().substring(2);
+				}
 				name = StringHelper.firstLetterLower(name);
 				if (method.getParameterTypes().length == 0) {
-					String value = ""+method.invoke(bean, (Object[]) null);
+					String value = "" + method.invoke(bean, (Object[]) null);
 					if (value == null) {
 						value = "";
 					}
@@ -222,8 +225,25 @@ public class BeanHelper {
 					}
 					notFound++;
 				}
-			}
-			if (map.get(mapKey) instanceof String[]) {
+			} else if (map.get(mapKey) instanceof Boolean) {
+				String name = (String) key;
+				name = StringHelper.firstLetterLower(name);
+				Boolean value = (Boolean) map.get(mapKey);
+				String methodName = "set" + StringHelper.firstLetterUpper(name);
+				try {
+					Method method = bean.getClass().getMethod(methodName, new Class[] { boolean.class });
+					method.invoke(bean, new Object[] { value });
+				} catch (NoSuchMethodException e) {
+					Method method;
+					try {
+						method = bean.getClass().getMethod(methodName, new Class[] { Boolean.class });
+						method.invoke(bean, value);
+					} catch (NoSuchMethodException e1) {
+						e1.printStackTrace();
+						notFound++;
+					}
+				}
+			} else if (map.get(mapKey) instanceof String[]) {
 				String name = (String) key;
 				name = StringHelper.firstLetterLower(name);
 				String[] value = (String[]) map.get(mapKey);
@@ -244,6 +264,16 @@ public class BeanHelper {
 		}
 		return notFound;
 	}
+	
+	public static void resetBoolean(Object bean) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		for (Method m : bean.getClass().getMethods()) {
+			if (m.getName().startsWith("set") && m.getParameterTypes().length==1) {
+				if (m.getParameterTypes()[0].equals(Boolean.class)) {
+					m.invoke(bean, false);
+				}
+			}
+		}
+	}
 
 	/**
 	 * copy map in bean, call set[key] ( value ).
@@ -255,9 +285,14 @@ public class BeanHelper {
 	 * @return the number of key found in bean without set equivalent method in
 	 *         bean.
 	 */
-	public static int copy(Map map, Object bean) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+	public static int copy(Map map, Object bean, boolean resetBoolean) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		Iterator keys = map.keySet().iterator();
 		int notFound = 0;
+		
+		if (resetBoolean) {
+			resetBoolean(bean);
+		}
+		
 		while (keys.hasNext()) {
 			Object key = keys.next();
 			if (map.get(key) instanceof String) {
@@ -271,10 +306,34 @@ public class BeanHelper {
 					Method method = bean.getClass().getMethod(methodName, new Class[] { String.class });
 					method.invoke(bean, new Object[] { value });
 				} catch (NoSuchMethodException e) {
-					notFound++;
+					Method method;
+					try {
+						method = bean.getClass().getMethod(methodName, new Class[] { Boolean.class });
+						method.invoke(bean, new Object[] { StringHelper.isTrue(value) });
+					} catch (NoSuchMethodException e1) {
+						notFound++;
+					}
+
 				}
-			}
-			if (map.get(key) instanceof String[]) {
+			} else if (map.get(key) instanceof Boolean) {
+				String name = (String) key;
+				name = StringHelper.firstLetterLower(name);
+				Boolean value = (Boolean) map.get(key);
+				String methodName = "set" + StringHelper.firstLetterUpper(name);
+				try {
+					Method method = bean.getClass().getMethod(methodName, new Class[] { boolean.class });
+					method.invoke(bean, new Object[] { value });
+				} catch (NoSuchMethodException e) {
+					Method method;
+					try {
+						method = bean.getClass().getMethod(methodName, new Class[] { Boolean.class });
+						method.invoke(bean, value);
+					} catch (NoSuchMethodException e1) {
+						e1.printStackTrace();
+						notFound++;
+					}
+				}
+			} else if (map.get(key) instanceof String[]) {
 				String name = (String) key;
 				name = StringHelper.firstLetterLower(name);
 				String[] value = (String[]) map.get(key);
@@ -321,7 +380,7 @@ public class BeanHelper {
 	 * @param bean2
 	 *            a class with set and get method.
 	 */
-	public static void copy(Object bean1, Object bean2) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+	public static void copyBean(Object bean1, Object bean2) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 
 		BeanUtils.copyProperties(bean2, bean1);
 		/*
@@ -484,7 +543,7 @@ public class BeanHelper {
 		System.out.println("[BeanHelper.java]-[test NC]-bean2.getLogin()=" + bean2.getLogin()); /* TODO: REMOVE TRACE */
 		System.out.println("[BeanHelper.java]-[test NC]-bean2.getPassword()=" + bean2.getPassword()); /* TODO: REMOVE TRACE */
 
-		copy(bean1, bean2);
+		copyBean(bean1, bean2);
 
 		System.out.println("[BeanHelper.java]-[test]-bean2.getLogin()=" + bean2.getLogin()); /* TODO: REMOVE TRACE */
 		System.out.println("[BeanHelper.java]-[test]-bean2.getPassword()=" + bean2.getPassword()); /* TODO: REMOVE TRACE */
@@ -493,7 +552,7 @@ public class BeanHelper {
 		map.put("login", "plemarchand");
 		map.put("password", "456");
 
-		copy(map, bean2);
+		copy(map, bean2, false);
 
 		System.out.println("[BeanHelper.java]-[test]-bean2.getLogin()=" + bean2.getLogin()); /* TODO: REMOVE TRACE */
 		System.out.println("[BeanHelper.java]-[test]-bean2.getPassword()=" + bean2.getPassword()); /* TODO: REMOVE TRACE */
