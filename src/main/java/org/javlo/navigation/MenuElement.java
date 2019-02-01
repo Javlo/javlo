@@ -3587,7 +3587,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 				desc.pageTitle = getLabel(newCtx);
 			}
 		}
-		return XHTMLHelper.replaceJSTLData(ctx, desc.pageTitle);
+		return desc.pageTitle;
 	}
 
 	/**
