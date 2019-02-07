@@ -212,6 +212,23 @@ body.right-admin #page-404 {
 	width: auto;
 }
 
+.btn .loader {
+	display: none;
+}
+
+body.ajax-loading {
+	.btn .text {
+		display: none;
+	}
+	
+	.btn .loader {
+		display: block;
+		img {
+			height: 18px;
+		}	
+	}
+}
+
 #content-edit table input,#content-edit table select,#content-edit table textarea,#content-edit table a {
 	display: inline-block;
 	margin-left: 6px;

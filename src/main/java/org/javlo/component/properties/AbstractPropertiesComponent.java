@@ -56,23 +56,52 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		}
 	}
 	
+	public List<Map.Entry<String, String>> getFieldChoice(ContentContext ctx, String fieldName) {
+		return null;
+	}
+	
+	protected int getMdSize() {
+		return 4;		
+	}
+	
+	protected int getXsSize() {
+		return 6;
+	}
+
 	protected void renderField(PrintWriter out, ContentContext ctx, String field) throws ServiceException, Exception {
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 		String fieldName = getFieldName(field);
 		String fieldType = getFieldType(field);
-		out.println("<div class=\"col-md-4 col-xs-6\">");
+		out.println("<div class=\"col-md-"+getMdSize()+" col-xs-"+getXsSize()+"\">");
 		out.println("<div class=\"form-group\">");
 		if (fieldType.equals("text")) {
 			out.println("<label for=\"" + createKeyWithField(fieldName) + "\">");
 			out.println(i18nAccess.getText("field." + fieldName, fieldName));
 			out.println("</label>");
-			out.print("<textarea class=\"form-control\" rows=\"" + getRowSize(fieldName) + "\" id=\"");
-			out.print(createKeyWithField(field));
-			out.print("\" name=\"");
-			out.print(createKeyWithField(fieldName));
-			out.print("\">");
-			out.print(getFieldValue(fieldName));
-			out.println("</textarea>");
+			List<Map.Entry<String, String>> choices = getFieldChoice(ctx, fieldName);
+			if (choices == null) {
+				out.print("<textarea class=\"form-control\" rows=\"" + getRowSize(fieldName) + "\" id=\"");
+				out.print(createKeyWithField(field));
+				out.print("\" name=\"");
+				out.print(createKeyWithField(fieldName));
+				out.print("\">");
+				out.print(getFieldValue(fieldName));
+				out.println("</textarea>");
+			} else {
+				out.print("<select class=\"form-control\" id=\"");
+				out.print(createKeyWithField(field));
+				out.print("\" name=\"");
+				out.print(createKeyWithField(fieldName));
+				out.println("\">");
+				for (Map.Entry<String, String> option : choices) {
+					String selected ="";
+					if (option.getKey().equals(getFieldValue(fieldName))) {
+						selected = " selected=\"selected\"";
+					}
+					out.println("<option value=\""+option.getKey()+"\""+selected+">"+option.getValue()+"</option>");
+				}
+				out.print("</select>");
+			}
 		} else if (fieldType.equals("checkbox")) {
 			out.println("<div class=\"checkbox\"><label>");
 			String checked = "";
@@ -88,7 +117,20 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 			out.println("</label>");
 			out.println("</div>");
 		} else {
-			out.println("type not found : " + fieldType);
+			out.println("<div class=\"form-group\">");
+			out.println("<label for=\"" + createKeyWithField(fieldName) + "\">");
+			out.println(i18nAccess.getText("field." + fieldName, fieldName));
+			out.println("</label>");
+			out.print("<input type=\""+fieldType+"\" id=\"");
+			out.print(createKeyWithField(field));
+			out.print("\" name=\"");
+			out.print(createKeyWithField(fieldName));
+			out.print("\" value=\"");
+			out.print(getFieldValue(fieldName));			
+			out.print("\" />");
+			
+
+			out.println("</div>");
 		}
 		out.println("</div></div>");
 	}
@@ -99,13 +141,16 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		PrintWriter out = new PrintWriter(writer);
 		List<String> fields = getFields(ctx);
 		out.println("<div class=\"row\">");
+		boolean label = false;
 		for (String field : fields) {
 			if (!field.startsWith("label")) {
 				renderField(out, ctx, field);
+			} else {
+				label = true;
 			}
 		}
 		out.println("</div>");
-		if (fields.size()>0) {
+		if (label) {
 			out.println("<h3>label</h3><div class=\"row\">");
 			for (String field : fields) {
 				if (field.startsWith("label")) {
@@ -208,7 +253,7 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		if (isColumnable(ctx)) {
 			performColumnable(ctx);
 		}
-		
+
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		List<String> fields = getFields(ctx);
 		String msg = null;
@@ -310,11 +355,11 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 
 	@Override
 	public boolean transflateFrom(ContentContext ctx, ITranslator translator, String lang) {
-		if (isValueTranslatable()) {			
+		if (isValueTranslatable()) {
 			boolean translated = true;
 			try {
-				for (String field : getFields(ctx)) {				
-					String value =  StringEscapeUtils.unescapeHtml4(getFieldValue(field));
+				for (String field : getFields(ctx)) {
+					String value = StringEscapeUtils.unescapeHtml4(getFieldValue(field));
 					String newValue = translator.translate(ctx, value, lang, ctx.getRequestContentLanguage());
 					if (newValue == null) {
 						translated = false;

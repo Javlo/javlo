@@ -29,6 +29,10 @@ public class BeanHelper {
 		String password;
 
 		String email;
+		
+		private int age = 0;
+		
+		private double distance;
 
 		/**
 		 * @return
@@ -72,12 +76,30 @@ public class BeanHelper {
 			password = string;
 		}
 
+		public int getAge() {
+			return age;
+		}
+
+		public void setAge(int age) {
+			this.age = age;
+		}
+
+		public double getDistance() {
+			return distance;
+		}
+
+		public void setDistance(double distance) {
+			this.distance = distance;
+		}
+
 	}
 
 	public class Bean2 {
 		String login;
 
 		String password;
+		
+		private int age = 0;
 
 		/**
 		 * @return
@@ -105,6 +127,14 @@ public class BeanHelper {
 		 */
 		public void setPassword(String string) {
 			password = string;
+		}
+
+		public int getAge() {
+			return age;
+		}
+
+		public void setAge(int age) {
+			this.age = age;
 		}
 
 	}
@@ -201,6 +231,7 @@ public class BeanHelper {
 		int notFound = 0;
 		while (keys.hasNext()) {
 			Object key = keys.next();
+			
 			String mapKey = keyPrefix + key + keySuffix;
 			if (map.get(mapKey) instanceof String) {
 				String name = (String) key;
@@ -211,7 +242,7 @@ public class BeanHelper {
 					Method method = bean.getClass().getMethod(methodName, new Class[] { String.class });
 					method.invoke(bean, new Object[] { value });
 				} catch (NoSuchMethodException e) {
-					if (StringHelper.isDigit(value) || value == null) {
+					if (StringHelper.isFloat(value) || value == null) {
 						try {
 							Method method = bean.getClass().getMethod(methodName, new Class[] { int.class });
 							method.invoke(bean, new Object[] { Integer.parseInt(value) });
@@ -220,6 +251,11 @@ public class BeanHelper {
 								Method method = bean.getClass().getMethod(methodName, new Class[] { long.class });
 								method.invoke(bean, new Object[] { Long.parseLong(value) });
 							} catch (NoSuchMethodException e2) {
+								try {
+									Method method = bean.getClass().getMethod(methodName, new Class[] { double.class });
+									method.invoke(bean, new Object[] { Double.parseDouble(value) });
+								} catch (NoSuchMethodException e3) {
+								}
 							}
 						}
 					}
@@ -551,11 +587,13 @@ public class BeanHelper {
 		Map map = new Hashtable();
 		map.put("login", "plemarchand");
 		map.put("password", "456");
+		map.put("age", "15");
 
 		copy(map, bean2, false);
 
 		System.out.println("[BeanHelper.java]-[test]-bean2.getLogin()=" + bean2.getLogin()); /* TODO: REMOVE TRACE */
 		System.out.println("[BeanHelper.java]-[test]-bean2.getPassword()=" + bean2.getPassword()); /* TODO: REMOVE TRACE */
+		System.out.println("[BeanHelper.java]-[test]-bean2.getAge()=" + bean2.getAge()); /* TODO: REMOVE TRACE */
 
 	}
 
@@ -578,6 +616,13 @@ public class BeanHelper {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	public static String replaceValueInText (String text, Object bean, String prefix, String suffix) {
+		for (String label : getAllLabels(bean)) {
+			text = text.replace(prefix+label+suffix, ""+getProperty(bean, label));
+		}
+		return text;
 	}
 
 	/*

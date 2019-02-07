@@ -231,7 +231,6 @@ public class MailingBuilder {
 				}
 				url = URLHelper.addParam(url, IUserFactory.TOKEN_PARAM, user.getUserInfo().getToken());				
 			}			
-			System.out.println("##### MailingBuilder.sendMailing : url = "+url); //TODO: remove debug trace
 			String content = NetHelper.readPageForMailing(new URL(url));
 			if (content != null) {
 				m.setContent(content);

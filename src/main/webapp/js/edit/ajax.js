@@ -46,6 +46,7 @@ jQuery(document).ready(function() {
 			event.preventDefault();
 			jQuery("#ajax-loader").addClass("active");
 			jQuery(".ajax-loader").addClass("active");
+			jQuery("body").addClass("ajax-loading");
 			var queryString = jQuery(this).attr("action"); 
 			ajaxRequest(queryString, this);
 			return false;
@@ -71,6 +72,7 @@ jQuery(document).ready(function() {
 			event.preventDefault();
 			jQuery("#ajax-loader").addClass("active");
 			jQuery(".ajax-loader").addClass("active");
+			jQuery("body").addClass("ajax-loading");
 			var queryString = form.attr("action");
 			sep="?";
 			if (queryString.indexOf("?")>=0) {
@@ -307,6 +309,7 @@ function startAjaxLoading() {
 	jQuery("#ajax-loader").addClass("active");
 	jQuery(".ajax-loader").addClass("active");
 	jQuery("#upload-zone").addClass("hidden");
+	jQuery("body").addClass("ajax-loading");
 }
 
 function endAjaxLoading() {
@@ -315,5 +318,6 @@ function endAjaxLoading() {
 		jQuery("#ajax-loader").removeClass("active");
 		jQuery(".ajax-loader").removeClass("active");
 		jQuery("#upload-zone").removeClass("hidden");
+		jQuery("body").removeClass("ajax-loading");
 	}
 }

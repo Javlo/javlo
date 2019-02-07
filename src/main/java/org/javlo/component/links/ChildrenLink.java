@@ -683,7 +683,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			if (isLockParentPage()) {
 				page = getPage();
 			}
-			return page.getChildMenuElements().size()>0;
+			return page != null && page.getChildMenuElements().size()>0;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

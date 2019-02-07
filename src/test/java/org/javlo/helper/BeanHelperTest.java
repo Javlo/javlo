@@ -22,6 +22,7 @@ public class BeanHelperTest extends TestCase {
 		private String title;
 		private int age;
 		private long dist;
+		private double distance = 0;
 		private boolean optin = false;
 
 		public String getFirstname() {
@@ -71,6 +72,14 @@ public class BeanHelperTest extends TestCase {
 		public void setOptin(Boolean optin) {
 			this.optin = optin;
 		}
+
+		public double getDistance() {
+			return distance;
+		}
+
+		public void setDistance(double distance) {
+			this.distance = distance;
+		}
 	}
 
 	public void testSetProperty() throws Exception {
@@ -106,11 +115,13 @@ public class BeanHelperTest extends TestCase {
 		test.put("firstname-69", "Catherine");
 		test.put("age-69", "23");
 		test.put("dist-69", "9999");
+		test.put("distance-69", "2.5");
 		test.put("optin-69", (Boolean)true);
 		BeanHelper.copy(test, b, null, "-69");
 		assertEquals(b.getFirstname(), "Catherine");
 		assertEquals(b.getAge(), 23);
 		assertEquals(b.getDist(), 9999);
+		assertEquals(b.getDistance(), 2.5, 0.0001);
 		assertTrue(b.isOptin());
 		
 		BeanHelper.copy(test, b, null, "-69");
@@ -129,5 +140,13 @@ public class BeanHelperTest extends TestCase {
 		Bean a = new Bean();
 		test.put("firstname-69", "Isabelle");
 		BeanHelper.copy(test, a, null, "-69");
+	}
+	
+	public void testReplaceValueInText() {
+		String text = "Hi {{firstname}}, how are you ?";
+		Bean b = new Bean();
+		b.setFirstname("Patrick");
+		text = BeanHelper.replaceValueInText(text, b, "{{", "}}");
+		assertEquals(text, "Hi Patrick, how are you ?");
 	}
 }

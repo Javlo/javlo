@@ -624,6 +624,11 @@ public class URLHelper extends ElementaryURLHelper {
 			MenuElement elem = ctx.getCurrentPage();
 			template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(elem.getTemplateId());
 		}
+		
+		if (template == null) {
+			return null;
+		}
+		
 		if (template.getFolder(globalContext) == null) {
 			template = Template.getApplicationInstance(ctx.getRequest().getSession().getServletContext(), ctx, globalContext.getDefaultTemplate());
 		}
