@@ -400,7 +400,16 @@ public class StringHelperTest extends TestCase {
 		assertTrue(StringHelper.matchQuestionPattern("ee", "ee"));
 	}
 	
-	
+	public void testRenderDouble() {
+		assertEquals(StringHelper.renderDouble(1, 2), "1");
+		assertEquals(StringHelper.renderDouble(0, 2), "0");
+		assertEquals(StringHelper.renderDouble(0.1, 2), "0,1");
+		assertEquals(StringHelper.renderDouble(0.1, 2, '.'), "0.1");
+		assertEquals(StringHelper.renderDouble(0.01, 2), "0,01");
+		assertEquals(StringHelper.renderDouble(0.001, 2), "0");
+		assertEquals(StringHelper.renderDouble(120, 2), "120");
+		assertEquals(StringHelper.renderDouble(120.3, 2), "120,3");
+	}
 	
 	public void testMatchSimplePattern() {
 		assertTrue(StringHelper.matchSimplePattern("eeA", "ee*", false));

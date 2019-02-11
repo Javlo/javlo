@@ -27,6 +27,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.Normalizer;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -2406,17 +2407,17 @@ public class StringHelper {
 	}
 
 	public static String renderDouble(double value, int precision, char sep) {
-		long deca = Math.round(Math.pow(10, precision));
-		long intValue = Math.round(value * deca);
-		String decimal = "" + intValue;
-		decimal = decimal.substring(decimal.length() - precision, decimal.length());
-		while ((decimal.length() > 0) && (decimal.charAt(decimal.length() - 1) == '0')) {
-			decimal = decimal.substring(0, decimal.length() - 1);
+		String format = "#.";
+		for (int i=0; i<precision; i++) {
+			format += "#";
 		}
-		if (decimal.length() > 0) {
-			decimal = sep + decimal;
+		DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.ENGLISH);
+		otherSymbols.setDecimalSeparator(sep);
+		if (sep == ',') {
+			otherSymbols.setGroupingSeparator('.');
 		}
-		return Math.round(intValue / deca) + decimal;
+		DecimalFormat df = new DecimalFormat(format, otherSymbols);		
+		return df.format(value);
 	}
 
 	public static String renderDoubleAsPercentage(double value) {

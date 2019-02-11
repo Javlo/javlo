@@ -80,13 +80,13 @@ import org.javlo.utils.StructuredConfigurationProperties;
 import net.sf.jasperreports.engine.util.FileBufferedWriter;
 
 public class Template implements Comparable<Template> {
-	
+
 	public static final String PREVIEW_EDIT_CODE = "#PREVIEW-EDIT#";
 
 	public static final String FORCE_TEMPLATE_PARAM_NAME = "force-template";
-	
+
 	private static final String FONT_REFERENCE_FILE = "fonts_reference.properties";
-	
+
 	private static final String RAW_CSS_FILE = "raw_css.txt";
 
 	private static class TemplateComparator implements Comparator<Template> {
@@ -526,9 +526,9 @@ public class Template implements Comparable<Template> {
 	private List<String> notAdminAreas = null;
 
 	private String fakeName = null;
-	
+
 	private List<Integer> sizes = null;
-	
+
 	public static Template getApplicationInstance(ServletContext application, ContentContext ctx, String templateDir) throws Exception {
 
 		Template outTemplate = null;
@@ -784,7 +784,7 @@ public class Template implements Comparable<Template> {
 		}
 		return index;
 	}
-	
+
 	public String getAjaxAreas() {
 		String areas = properties.getString("ajax.areas", null);
 		if (areas == null) {
@@ -913,7 +913,7 @@ public class Template implements Comparable<Template> {
 		}
 		return areas;
 	}
-	
+
 	public Map<String, String> getQuietableAreaMap() {
 		String areasRaw = properties.getProperty("area-quietable");
 		if (areasRaw == null) {
@@ -922,7 +922,7 @@ public class Template implements Comparable<Template> {
 		if (StringHelper.isEmpty(areasRaw)) {
 			return Collections.EMPTY_MAP;
 		} else {
-			return new ListMapValueValue(StringHelper.stringToCollection(areasRaw,","));
+			return new ListMapValueValue(StringHelper.stringToCollection(areasRaw, ","));
 		}
 	}
 
@@ -1287,15 +1287,15 @@ public class Template implements Comparable<Template> {
 			return dir.getName() + '/' + siteFolder;
 		}
 	}
-	
+
 	private File getRawCssFile(GlobalContext globalContext) {
 		return new File(URLHelper.mergePath(getWorkTemplateRealPath(globalContext), RAW_CSS_FILE));
 	}
-	
+
 	private String getRawCss(GlobalContext globalContext, File file) throws IOException {
 		return ResourceHelper.loadStringFromFile(file);
 	}
-	
+
 	private void appendRawCssFile(GlobalContext globalContext, String data, File file) throws IOException {
 		PrintWriter out = null;
 		try {
@@ -1305,16 +1305,17 @@ public class Template implements Comparable<Template> {
 			ResourceHelper.closeResource(out);
 		}
 	}
-	
+
 	public Properties getFontReference(GlobalContext globalContext) throws IOException {
-		File file = new File(URLHelper.mergePath(getWorkTemplateRealPath(globalContext), FONT_REFERENCE_FILE));		
+		File file = new File(URLHelper.mergePath(getWorkTemplateRealPath(globalContext), FONT_REFERENCE_FILE));
 		return ResourceHelper.loadProperties(file);
 	}
-	
+
 	private String getFontIncluding(GlobalContext globalContext) throws Exception {
+		String outIncluding = "";
+		Map<?, ?> fontList = getFontReference(globalContext); 
 		if (isAutoFontIncluding()) {
-			Properties fontList = getFontReference(globalContext);
-			String outIncluding = "";
+			outIncluding = "";
 			String cssRaw = getRawCss(globalContext, getRawCssFile(globalContext));
 			Set<Object> included = new HashSet<>();
 			for (Object key : fontList.keySet()) {
@@ -1325,20 +1326,18 @@ public class Template implements Comparable<Template> {
 					}
 				}
 			}
-			if (globalContext.getTemplateData().getFontHeading() != null && fontList.get(globalContext.getTemplateData().getFontHeading()) != null) {
-				outIncluding += fontList.get(globalContext.getTemplateData().getFontHeading());
-			}
-			if (globalContext.getTemplateData().getFontText() != null && fontList.get(globalContext.getTemplateData().getFontText()) != null) {
-				outIncluding += fontList.get(globalContext.getTemplateData().getFontText());
-			}
-			return outIncluding;
-		} else {
-			return "";
 		}
+		if (globalContext.getTemplateData().getFontHeading() != null && fontList.get(globalContext.getTemplateData().getFontHeading()) != null) {
+			outIncluding += fontList.get(globalContext.getTemplateData().getFontHeading());
+		}
+		if (globalContext.getTemplateData().getFontText() != null && fontList.get(globalContext.getTemplateData().getFontText()) != null) {
+			outIncluding += fontList.get(globalContext.getTemplateData().getFontText());
+		}
+		return outIncluding;
 	}
-	
+
 	private boolean isAutoFontIncluding() {
-		return properties.getBoolean("font.auto-including", true);
+		return properties.getBoolean("font.auto-including", false);
 	}
 
 	public String getHomeRenderer(GlobalContext globalContext) {
@@ -1368,7 +1367,7 @@ public class Template implements Comparable<Template> {
 	public String getVersion() {
 		return properties.getString("version", "?");
 	}
-	
+
 	public Integer getBootstrapVersion() {
 		Integer version = properties.getInteger("bootstrap.verion", null);
 		if (version == null) {
@@ -1377,11 +1376,11 @@ public class Template implements Comparable<Template> {
 			return version;
 		}
 	}
-	
+
 	public boolean isColumnable() {
 		return getColumnableRowTag() != null;
 	}
-	
+
 	public List<Integer> getColumnableSizes() {
 		if (sizes != null) {
 			return sizes;
@@ -1391,14 +1390,14 @@ public class Template implements Comparable<Template> {
 			return getParent().getColumnableSizes();
 		} else {
 			List<Integer> outSizes = new LinkedList<Integer>();
-			for (String strSize : StringHelper.stringToCollection(sizesRaw,",")) {
+			for (String strSize : StringHelper.stringToCollection(sizesRaw, ",")) {
 				outSizes.add(Integer.parseInt(strSize));
 			}
 			sizes = outSizes;
 			return outSizes;
 		}
 	}
-	
+
 	public String getColumnableRowTag() {
 		String tag = properties.getString("columnable.row.tag", null);
 		if (tag == null) {
@@ -1407,7 +1406,7 @@ public class Template implements Comparable<Template> {
 			return tag;
 		}
 	}
-	
+
 	public String getColumnableRowTagIn() {
 		String tag = properties.getString("columnable.row.in.tag", null);
 		if (tag == null) {
@@ -1416,7 +1415,7 @@ public class Template implements Comparable<Template> {
 			return tag;
 		}
 	}
-	
+
 	public String getColumnableColTagIn() {
 		String tag = properties.getString("columnable.col.in.tag", null);
 		if (tag == null) {
@@ -1425,7 +1424,7 @@ public class Template implements Comparable<Template> {
 			return tag;
 		}
 	}
-	
+
 	public String getColumnableStyleTagIn() {
 		String tag = properties.getString("columnable.col.in.style", null);
 		if (tag == null) {
@@ -1434,7 +1433,7 @@ public class Template implements Comparable<Template> {
 			return tag;
 		}
 	}
-	
+
 	public String getColumnableClassTagIn() {
 		String tag = properties.getString("columnable.col.in.class", null);
 		if (tag == null) {
@@ -1443,7 +1442,7 @@ public class Template implements Comparable<Template> {
 			return tag;
 		}
 	}
-	
+
 	public String getColumnableColTag() {
 		String tag = properties.getString("columnable.col.tag", null);
 		if (tag == null) {
@@ -1452,7 +1451,7 @@ public class Template implements Comparable<Template> {
 			return tag;
 		}
 	}
-	
+
 	public String getColumnableRowStyle() {
 		String tag = properties.getString("columnable.row.style", null);
 		if (tag == null) {
@@ -1461,7 +1460,7 @@ public class Template implements Comparable<Template> {
 			return tag;
 		}
 	}
-	
+
 	public String getColumnableRowClass() {
 		String cssClass = properties.getString("columnable.row.class", null);
 		if (cssClass == null) {
@@ -1470,7 +1469,7 @@ public class Template implements Comparable<Template> {
 			return cssClass;
 		}
 	}
-	
+
 	public String getColumnableColStyleDefault() {
 		String style = properties.getString("columnable.col.style.default", null);
 		if (style == null) {
@@ -1479,25 +1478,25 @@ public class Template implements Comparable<Template> {
 			return style;
 		}
 	}
-	
+
 	public String getColumnableColStyle(int size) {
-		String style = properties.getString("columnable.col.style."+size, null);
+		String style = properties.getString("columnable.col.style." + size, null);
 		if (style == null) {
-			return StringHelper.neverNull(getParent().getColumnableColStyle(size),getColumnableColStyleDefault());
+			return StringHelper.neverNull(getParent().getColumnableColStyle(size), getColumnableColStyleDefault());
 		} else {
 			return style;
 		}
 	}
-	
+
 	public String getColumnableColClass(int size) {
-		String style = properties.getString("columnable.col.class."+size, null);
+		String style = properties.getString("columnable.col.class." + size, null);
 		if (style == null) {
-			return StringHelper.neverNull(getParent().getColumnableColClass(size),getColumnableColClassDefault());
+			return StringHelper.neverNull(getParent().getColumnableColClass(size), getColumnableColClassDefault());
 		} else {
 			return style;
 		}
 	}
-	
+
 	public String getColumnableColClassDefault() {
 		String cssClass = properties.getString("columnable.col.class.default", null);
 		if (cssClass == null) {
@@ -1506,7 +1505,7 @@ public class Template implements Comparable<Template> {
 			return cssClass;
 		}
 	}
-	
+
 	public String getHomeRendererFullName(GlobalContext globalContext) {
 		if (dir == null) {
 			logger.warning("no valid dir : " + dir);
@@ -2126,12 +2125,12 @@ public class Template implements Comparable<Template> {
 			logger.warning("renderer not found on template : " + getName() + " (parent:" + getParent() + " device:" + ctx.getDevice() + ")");
 			return null;
 		}
-		String params = "?_menufix="+ctx.getGlobalContext().getTemplateData().isFixMenu();
-		params += "&_menularge="+ctx.getGlobalContext().getTemplateData().isLargeMenu();
-		params += "&_menusearch="+ctx.getGlobalContext().getTemplateData().isSearchMenu();
-		params += "&_menujssearch="+ctx.getGlobalContext().getTemplateData().isJssearchMenu();
-		params += "&_menudropdown="+ctx.getGlobalContext().getTemplateData().isDropdownMenu();
-		params += "&_menulogin="+ctx.getGlobalContext().getTemplateData().isLoginMenu();
+		String params = "?_menufix=" + ctx.getGlobalContext().getTemplateData().isFixMenu();
+		params += "&_menularge=" + ctx.getGlobalContext().getTemplateData().isLargeMenu();
+		params += "&_menusearch=" + ctx.getGlobalContext().getTemplateData().isSearchMenu();
+		params += "&_menujssearch=" + ctx.getGlobalContext().getTemplateData().isJssearchMenu();
+		params += "&_menudropdown=" + ctx.getGlobalContext().getTemplateData().isDropdownMenu();
+		params += "&_menulogin=" + ctx.getGlobalContext().getTemplateData().isLoginMenu();
 		String templateParams = getHTMLFileParams(ctx.getDevice());
 		if (templateParams != null) {
 			params = params + '&' + templateParams;
@@ -2522,7 +2521,7 @@ public class Template implements Comparable<Template> {
 			ResourceHelper.copyDir(templateSrc, templateTarget, false, new WEBFileFilter(this, false, jsp, true));
 			/** filter html and css **/
 			Iterator<File> files = FileUtils.iterateFiles(templateSrc, new String[] { "html", "htm", "jsp", "js", "css", "scss", "less" }, true);
-			
+
 			/** plugins **/
 			if (globalContext != null && !parent) {
 				Collection<String> currentPlugin = getAllPluginsName(globalContext);
@@ -2583,7 +2582,7 @@ public class Template implements Comparable<Template> {
 					}
 				}
 			}
-			
+
 			/** import context **/
 			File componentFolderTarget = new File(URLHelper.mergePath(templateTarget.getAbsolutePath(), DYNAMIC_COMPONENTS_PROPERTIES_FOLDER));
 			File srcComp = new File(globalContext.getExternComponentFolder());
@@ -2592,7 +2591,7 @@ public class Template implements Comparable<Template> {
 			}
 			FileUtils.copyDirectory(srcComp, componentFolderTarget);
 
-			/** prepare merging of all sass component class **/			
+			/** prepare merging of all sass component class **/
 			if (componentFolderTarget.exists() && componentFolderTarget.isDirectory()) {
 				Iterator<File> cssFiles = FileUtils.iterateFiles(componentFolderTarget, new String[] { "css", "scss" }, true);
 				Collection<File> fixedFiles = new LinkedList<>();
@@ -2606,7 +2605,7 @@ public class Template implements Comparable<Template> {
 				try {
 					for (File cssFile : fixedFiles) {
 						if (StringHelper.getFileExtension(cssFile.getName()).equalsIgnoreCase("css")) {
-							File sassFile = new File(StringHelper.getFileNameWithoutExtension(cssFile.getAbsolutePath())+".scss");
+							File sassFile = new File(StringHelper.getFileNameWithoutExtension(cssFile.getAbsolutePath()) + ".scss");
 							if (sassFile.exists()) {
 								sassFile.delete();
 							}
@@ -2614,7 +2613,7 @@ public class Template implements Comparable<Template> {
 							cssFile = sassFile;
 						}
 						if (!componentsList.contains(cssFile)) {
-							String line = "@import '"+DYNAMIC_COMPONENTS_PROPERTIES_FOLDER+"/"+cssFile.getName()+"';";
+							String line = "@import '" + DYNAMIC_COMPONENTS_PROPERTIES_FOLDER + "/" + cssFile.getName() + "';";
 							outSassImport.write(line);
 							outSassImport.newLine();
 							componentsList.add(cssFile);
@@ -2624,7 +2623,7 @@ public class Template implements Comparable<Template> {
 					ResourceHelper.closeResource(outSassImport);
 				}
 			}
-			
+
 		} else {
 			logger.warning("template not found : " + templateSrc);
 		}
@@ -2708,7 +2707,7 @@ public class Template implements Comparable<Template> {
 	public boolean isMailing() {
 		return properties.getBoolean("mailing", getParent().isMailing());
 	}
-	
+
 	public boolean isOnePage() {
 		return properties.getBoolean("onepage", getParent().isOnePage());
 	}
@@ -3225,9 +3224,10 @@ public class Template implements Comparable<Template> {
 			return StringHelper.isTrue(properties.getProperty("bootstrap"));
 		}
 	}
-	
+
 	/**
 	 * if area empty remove from html (default true)
+	 * 
 	 * @return
 	 */
 	public boolean isRemoveEmptyArea() {
@@ -3397,7 +3397,7 @@ public class Template implements Comparable<Template> {
 			return StringHelper.stringToCollection(rawFonts, ";");
 		}
 	}
-	
+
 	public List<String> getWebFonts(GlobalContext globalContext) {
 		List<String> outFonts = new LinkedList<String>();
 		outFonts.addAll(XHTMLHelper.WEB_FONTS);
@@ -3418,17 +3418,16 @@ public class Template implements Comparable<Template> {
 	public boolean isFake() {
 		return fakeName != null;
 	}
-	
+
 	public static void main(String[] args) throws IOException {
 		File file = new File("c:/trans/fonts_reference_src.properties");
-		
+
 		Properties prop = ResourceHelper.loadProperties(file);
-		for(Object key : prop.keySet()) {
-			prop.setProperty((String)key, "<link href=\"https://fonts.googleapis.com/css?family="+(key.toString().replace(" ", "+")+"\" rel=\"stylesheet\">"));
+		for (Object key : prop.keySet()) {
+			prop.setProperty((String) key, "<link href=\"https://fonts.googleapis.com/css?family=" + (key.toString().replace(" ", "+") + "\" rel=\"stylesheet\">"));
 		}
 		file = new File("c:/trans/fonts_reference.properties");
 		prop.store(new FileOutputStream(file), "");
 	}
-	
-	
+
 }
