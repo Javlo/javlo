@@ -89,6 +89,8 @@ public class ImageTransformServlet extends FileServlet {
 	public static final String PRELOAD_IMAGE_SUFFIX = "-load";
 	
 	public static final String SMALL_IMAGE_SUFFIX = "-sm";
+	
+	public static final String MOBILE_IMAGE_SUFFIX = "-mob";
 
 	public static long COUNT_ACCESS = 0;
 
@@ -550,7 +552,13 @@ public class ImageTransformServlet extends FileServlet {
 		if (filter.endsWith(SMALL_IMAGE_SUFFIX)) {
 			smallImage = true;
 			filter = filter.substring(0, filter.lastIndexOf(SMALL_IMAGE_SUFFIX));
-		}	
+		}
+		
+		boolean mobileImage = false;		
+		if (filter.endsWith(MOBILE_IMAGE_SUFFIX)) {
+			mobileImage = true;
+			filter = filter.substring(0, filter.lastIndexOf(MOBILE_IMAGE_SUFFIX));
+		}
 		
 		int width = config.getWidth(device, filter, area);
 		int height = config.getHeight(device, filter, area);
@@ -773,7 +781,11 @@ public class ImageTransformServlet extends FileServlet {
 					int ml = config.getMarginLeft(device, filter, area);
 					int mr = config.getMarginRigth(device, filter, area);
 					int mb = config.getMarginBottom(device, filter, area);
-					img = ImageEngine.resize(img, width, height, config.isCropResize(device, filter, area), config.isAddBorder(device, filter, area), mt, ml, mr, mb, config.getBGColor(device, filter, area), focusX, focusY, config.isFocusZone(device, filter, area), hq);
+					int newHeight = height;
+					if (mobileImage) {
+						newHeight=height*2;
+					}
+					img = ImageEngine.resize(img, width, newHeight, config.isCropResize(device, filter, area), config.isAddBorder(device, filter, area), mt, ml, mr, mb, config.getBGColor(device, filter, area), focusX, focusY, config.isFocusZone(device, filter, area), hq);
 				}
 			} else {
 				int mt = config.getMarginTop(device, filter, area);
@@ -784,7 +796,11 @@ public class ImageTransformServlet extends FileServlet {
 				if (config.isCropResize(device, filter, area)) {
 					// org.javlo.helper.Logger.stepCount("transform",
 					// "start - transformation - 3.3");
-					img = ImageEngine.resize(img, width, height, true, false, mt, ml, mr, mb, null, focusX, focusY, config.isFocusZone(device, filter, area), hq);
+					int newHeight = height;
+					if (mobileImage) {
+						newHeight=height*2;
+					}
+					img = ImageEngine.resize(img, width, newHeight, true, false, mt, ml, mr, mb, null, focusX, focusY, config.isFocusZone(device, filter, area), hq);
 				} else {
 					if (width > 0) {
 						// org.javlo.helper.Logger.stepCount("transform",
@@ -887,7 +903,7 @@ public class ImageTransformServlet extends FileServlet {
 			filter = originalFilter;
 		}
 		
-		if (smallImage) {
+		if (smallImage || mobileImage) {
 			img = ImageEngine.resize(img, img.getWidth()/2, img.getHeight()/2, config.getBGColor(device, filter, area), true);
 			filter = originalFilter;
 		}
