@@ -53,6 +53,16 @@
 		<filter-name>CatchAll</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+	
+	<servlet>
+		<servlet-name>DataDocServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.DataDocServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DataDocServlet</servlet-name>
+		<url-pattern>/datadoc/*</url-pattern>
+	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>AccessServlet</servlet-name>
@@ -63,6 +73,7 @@
 		<servlet-name>AccessServlet</servlet-name>
 		<url-pattern>/view/*</url-pattern>
 	</servlet-mapping>
+	
 	<servlet-mapping>
 		<servlet-name>AccessServlet</servlet-name>
 		<url-pattern>/preview/*</url-pattern>

@@ -85,7 +85,7 @@ import net.sf.uadetector.service.UADetectorServiceFactory;
 public class NetHelper {
 
 	public static final String JAVLO_USER_AGENT = "Mozilla/5.0 bot Javlo/" + IVersion.VERSION;
-
+	
 	public static final String MOZILLA_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:63.0) Gecko/20100101 Firefox/63.0";
 
 	private static boolean INIT_HTTPS = false;
@@ -386,6 +386,22 @@ public class NetHelper {
 		}
 	}
 
+	public static void writeURLToStream(URL url, OutputStream out) throws Exception {
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		connection.setRequestProperty("User-Agent", JAVLO_USER_AGENT);
+		// skip https validation
+		if (connection instanceof HttpsURLConnection) {
+			nocheckCertificatHttps();
+		}
+		connection.setRequestMethod("GET");
+		InputStream in = connection.getInputStream();
+		try {
+			ResourceHelper.writeStreamToStream(in, out);
+		} finally {
+			ResourceHelper.closeResource(in);
+		}
+	}
+
 	/**
 	 * read a page a put content in a String.
 	 * 
@@ -454,10 +470,14 @@ public class NetHelper {
 			}
 
 			// Send request
-			DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-			wr.writeBytes(query);
-			wr.flush();
-			wr.close();
+			OutputStream outStr = connection.getOutputStream();
+			DataOutputStream wr = new DataOutputStream(outStr);
+			try {
+				wr.writeBytes(query);
+				wr.flush();
+			} finally {
+				ResourceHelper.closeResource(out, wr);
+			}
 
 			URLConnection conn = connection;
 
@@ -1664,7 +1684,7 @@ public class NetHelper {
 		long length = file.length();
 		long lastModified = file.lastModified();
 		String eTag = fileName + "_" + length + "_" + lastModified;
-		eTag = '"'+eTag+'"';
+		eTag = '"' + eTag + '"';
 		if (secondaryHash != null) {
 			eTag = eTag + secondaryHash;
 		}
@@ -1726,7 +1746,7 @@ public class NetHelper {
 		String pageName = page.getName();
 		long lastModified = ctx.getGlobalContext().getPublishDate().getTime();
 		String eTag = pageName + "_" + lastModified + "_" + page.hashCode();
-		eTag = '"'+eTag+'"';
+		eTag = '"' + eTag + '"';
 		if (!page.isCacheable(ctx) || !ctx.getGlobalContext().isPreviewMode()) {
 			eTag = "W/" + eTag;
 		}

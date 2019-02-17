@@ -1139,7 +1139,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								if (page404 != null) {
 									ctx.setCurrentPageCached(page404);
 									template = TemplateFactory.getTemplate(ctx, page404);
-									ctx.setCurrentTemplate(template);
 								} else {
 									Template defaultTemplate = TemplateFactory.getDiskTemplates(getServletContext()).get(globalContext.getDefaultTemplate());
 									if (defaultTemplate != null) {

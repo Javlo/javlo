@@ -200,7 +200,7 @@ public abstract class ElementaryURLHelper {
 		return workingURL;
 	}
 
-	protected static final String createNoProtocolURL(ContentContext ctx, GlobalContext globalContext, String uri, boolean ajax, boolean withPathPrefix, boolean widthEncodeURL) {
+	protected static final String createNoProtocolURL(ContentContext ctx, GlobalContext globalContext, String servletPath, String uri, boolean ajax, boolean withPathPrefix, boolean widthEncodeURL) {
 		String newUri;
 
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
@@ -272,15 +272,15 @@ public abstract class ElementaryURLHelper {
 
 		if (noNavigationAreaCheckCtx.getContentLanguage().equals(noNavigationAreaCheckCtx.getLanguage())) {
 			if (withPathPrefix) {
-				newUri = URLHelper.mergePath(getPathPrefix(ctx), mode, noNavigationAreaCheckCtx.getLanguage(), uri);
+				newUri = URLHelper.mergePath(getPathPrefix(ctx), mode, servletPath, noNavigationAreaCheckCtx.getLanguage(), uri);
 			} else {
-				newUri = URLHelper.mergePath(mode, noNavigationAreaCheckCtx.getLanguage(), uri);
+				newUri = URLHelper.mergePath(mode, servletPath, noNavigationAreaCheckCtx.getLanguage(), uri);
 			}
 		} else {
 			if (withPathPrefix) {
-				newUri = URLHelper.mergePath(getPathPrefix(ctx), mode, noNavigationAreaCheckCtx.getLanguage() + '-' + noNavigationAreaCheckCtx.getContentLanguage(), uri);
+				newUri = URLHelper.mergePath(getPathPrefix(ctx), mode, servletPath, noNavigationAreaCheckCtx.getLanguage() + '-' + noNavigationAreaCheckCtx.getContentLanguage(), uri);
 			} else {
-				newUri = URLHelper.mergePath(mode, noNavigationAreaCheckCtx.getLanguage() + '-' + noNavigationAreaCheckCtx.getContentLanguage(), uri);
+				newUri = URLHelper.mergePath(mode, servletPath, noNavigationAreaCheckCtx.getLanguage() + '-' + noNavigationAreaCheckCtx.getContentLanguage(), uri);
 			}
 		}
 		
@@ -306,7 +306,7 @@ public abstract class ElementaryURLHelper {
 	public static final String createSSLURL(String uri, ContentContext ctx) {
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		String sslURL = createNoProtocolURL(ctx, globalContext, uri, false, true, true);
+		String sslURL = createNoProtocolURL(ctx, globalContext, null, uri, false, true, true);
 		if (ctx.getRequest().getProtocol().toLowerCase().indexOf("http:") != -1) {
 			String host = ctx.getRequest().getServerName();
 			sslURL = "https://" + host + ':' + HTTPS_PORT + sslURL;
@@ -525,7 +525,7 @@ public abstract class ElementaryURLHelper {
 
 	}
 
-	protected static String createURL(ContentContext ctx, GlobalContext globalContext, String uri, boolean ajax, boolean forceTemplate, boolean withPathPrefix, boolean widthEncodeURL) {
+	protected static String createURL(ContentContext ctx, GlobalContext globalContext, String servletUri, String uri, boolean ajax, boolean forceTemplate, boolean withPathPrefix, boolean widthEncodeURL) {
 
 		if (uri == null) {
 			return "";
@@ -555,7 +555,7 @@ public abstract class ElementaryURLHelper {
 				uri = uri + urlSuffix;
 			}
 		}
-		String url = createNoProtocolURL(ctx, globalContext, uri, ajax, withPathPrefix, widthEncodeURL);
+		String url = createNoProtocolURL(ctx, globalContext, servletUri, uri, ajax, withPathPrefix, widthEncodeURL);
 		if (ctx.isAbsoluteURL()) {
 			url = addHost(ctx, url);
 		}

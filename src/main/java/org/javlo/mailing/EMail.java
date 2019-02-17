@@ -49,6 +49,16 @@ public class EMail extends Mail {
 		}
 		return recipients;
 	}
+	
+	public void addRecipient(InternetAddress recipient) {
+		if (recipient == null) {
+			return;
+		}
+		if (this.recipients == null) {
+			this.recipients = new LinkedList<>();
+		}
+		this.recipients.add(recipient);
+	}
 
 	public void setRecipients(List<InternetAddress> recipients) {
 		this.recipients = recipients;
@@ -79,6 +89,16 @@ public class EMail extends Mail {
 	public void setBccRecipients(List<InternetAddress> bccRecipients) {
 		this.bccRecipients = bccRecipients;
 	}
+	
+	public void addBccRecipient(InternetAddress bccRecipient) {
+		if (bccRecipient == null) {
+			return;
+		}
+		if (this.bccRecipients == null) {
+			this.bccRecipients = new LinkedList<>();
+		}
+		this.bccRecipients.add(bccRecipient);
+	}
 
 	public String getTxtContent() {
 		return txtContent;
@@ -98,6 +118,17 @@ public class EMail extends Mail {
 	public void setAttachments(Collection<Attachment> attachments) {
 		this.attachments = attachments;
 	}
+	
+	public void addAttachment(Attachment attachment) {
+		if (attachment == null) {
+			return;
+		}
+		if (this.attachments == null) {
+			this.attachments = new LinkedList<>();
+		}
+		this.attachments.add(attachment);
+	}
+
 
 	public String getUnsubscribeLink() {
 		return unsubscribeLink;

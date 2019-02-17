@@ -29,6 +29,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.service.RequestService;
+import org.javlo.service.document.DataDocument;
 import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.servlet.ProxyServlet;
 import org.javlo.template.Template;
@@ -79,7 +80,7 @@ public class URLHelper extends ElementaryURLHelper {
 
 	public static String createAjaxURL(ContentContext ctx) {
 		GlobalContext globalContext = ctx.getGlobalContext();
-		return createURL(ctx, globalContext, ctx.getPath(), true, true, true, true);
+		return createURL(ctx, globalContext, null, ctx.getPath(), true, true, true, true);
 	}
 
 	public static String createAjaxURL(ContentContext ctx, Map params) {
@@ -88,7 +89,7 @@ public class URLHelper extends ElementaryURLHelper {
 
 	public static String createAjaxURL(ContentContext ctx, String path) {
 		GlobalContext globalContext = ctx.getGlobalContext();
-		return createURL(ctx, globalContext, path, true, true, true, true);
+		return createURL(ctx, globalContext, null, path, true, true, true, true);
 	}
 
 	public static String createAjaxURL(ContentContext ctx, String path, Map params) {
@@ -670,6 +671,28 @@ public class URLHelper extends ElementaryURLHelper {
 		}
 	}
 	
+	/**
+	 * transform document data to param for url
+	 * @param ctx
+	 * @param category the category of the document
+	 * @param id
+	 * @param url
+	 * @return
+	 */
+	public static String createDataDocumentURL(ContentContext ctx, DataDocument doc, String url) {
+		String id = ""+doc.getId();
+		if (doc.getToken() != null) {
+			id = id+'-'+doc.getToken();
+		}
+		return createURLWithServletPath(ctx, "datadoc/"+doc.getCategory()+"/"+id, url);
+	}
+	
+	public static String createURLWithoutURLFacotry(ContentContext ctx, String path) {
+		ContentContext noFactCtx = new ContentContext(ctx);
+		noFactCtx.setURLFactory(null);
+		return createURL(noFactCtx, path);
+	}
+	
 	public static String createPDFURL(ContentContext ctx) {
 		ContentContext pdfCtx = new ContentContext(ctx);
 		pdfCtx.setFormat("pdf");
@@ -755,8 +778,15 @@ public class URLHelper extends ElementaryURLHelper {
 	 */
 	public static String createURL(ContentContext ctx, String uri) {
 		GlobalContext globalContext = ctx.getGlobalContext();
-		return createURL(ctx, globalContext, uri, false, false, true, true);
+		return createURL(ctx, globalContext, null, uri, false, false, true, true);
 	}
+	
+	public static String createURLWithServletPath(ContentContext ctx, String servletPath, String uri) {
+		GlobalContext globalContext = ctx.getGlobalContext();
+		return createURL(ctx, globalContext, servletPath, uri, false, false, true, true);
+	}
+	
+	
 
 	/**
 	 * create url without context and without encoreURL (remove jsessionid)
@@ -775,16 +805,16 @@ public class URLHelper extends ElementaryURLHelper {
 
 	public static String createURLWithtoutEncodeURL(ContentContext ctx, String uri) {
 		GlobalContext globalContext = ctx.getGlobalContext();
-		return createURL(ctx, globalContext, uri, false, false, true, false);
+		return createURL(ctx, globalContext, null, uri, false, false, true, false);
 	}
 
 	public static String createURLWithtoutContext(ContentContext ctx, String uri) {
 		GlobalContext globalContext = ctx.getGlobalContext();
-		return createURL(ctx, globalContext, uri, false, false, false, false);
+		return createURL(ctx, globalContext, null, uri, false, false, false, false);
 	}
 
 	public static String createURL(ContentContext ctx, GlobalContext globalContext, String uri) {
-		return createURL(ctx, globalContext, uri, false, false, true, true);
+		return createURL(ctx, globalContext, null, uri, false, false, true, true);
 	}
 
 	public static String createURL(ContentContext ctx, String path, Map params) {
@@ -910,7 +940,7 @@ public class URLHelper extends ElementaryURLHelper {
 
 	public static String createURLNoForceTemplate(ContentContext ctx) {
 		GlobalContext globalContext = ctx.getGlobalContext();
-		return createURL(ctx, globalContext, ctx.getPath(), false, false, true, true);
+		return createURL(ctx, globalContext, null, ctx.getPath(), false, false, true, true);
 	}
 
 	/**
@@ -923,7 +953,7 @@ public class URLHelper extends ElementaryURLHelper {
 	 * @return a URL
 	 */
 	public static String createURLNoPathPrefix(ContentContext ctx, String uri) {
-		return createURL(ctx, ctx.getGlobalContext(), uri, false, false, false, true);
+		return createURL(ctx, ctx.getGlobalContext(), null, uri, false, false, false, true);
 	}
 
 	/**
@@ -1219,7 +1249,9 @@ public class URLHelper extends ElementaryURLHelper {
 	public static String mergePath(String... paths) {
 		String outPath = "";
 		for (String path : paths) {
-			outPath = mergePath(outPath, path);
+			if (path != null) {
+				outPath = mergePath(outPath, path);
+			}
 		}
 		return outPath.toString();
 	}

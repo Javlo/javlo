@@ -56,13 +56,17 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.XHTMLNavigationHelper;
 import org.javlo.helper.Comparator.StringComparator;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.mailing.EMail;
 import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
+import org.javlo.mailing.MailService.Attachment;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.service.CaptchaService;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+import org.javlo.service.document.DataDocument;
+import org.javlo.service.document.DataDocumentService;
 import org.javlo.service.event.Event;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
@@ -245,6 +249,10 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	public boolean isEvent() {
 		return true;
 	}
+	
+	public boolean isDocument() {
+		return true;
+	}
 
 	public static final String TYPE = "smart-generic-form";
 
@@ -308,7 +316,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			out.println(XHTMLHelper.renderLine("file to big :", getInputName("message-tobig-file"), getLocalConfig(false).getProperty("message.tobig-file", "")));
 		}
 		out.println("</fieldset></div></div>");
-
+		
 		/** EVENT **/
 		if (isEvent()) {
 			out.println("<fieldset><legend>Event</legend><div class=\"row\"><div class=\"col-sm-6\"><div class=\"row\"><div class=\"col-xs-6\">");
@@ -328,6 +336,15 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			out.println(XHTMLNavigationHelper.renderComboNavigation(ctx, getPage().getRoot(), getInputName("mail-closed-link"), getLocalConfig(false).getProperty("mail.closed.link", ""), true) + "</div>");
 			out.println(XHTMLHelper.renderLine("close message :", getInputName("event-close-message"), getLocalConfig(false).getProperty("event.close.message", "")));
 			out.println("</div></fieldset>");
+		}
+		
+		/** DOC **/
+		if (isDocument()) {
+			out.println("<fieldset><legend>Doc</legend><div class=\"row\"><div class=\"col-sm-6\">");
+			out.println(XHTMLNavigationHelper.renderComboNavigation(ctx, getPage().getRoot(), getInputName("doc-link"), getLocalConfig(false).getProperty("doc-link", ""), true));
+			out.println("</div><div class=\"col-sm-6\">");
+			out.println("<input class=\"form-control\" placeholder=\"category\" name=\""+getInputName("doc-category")+"\" value=\""+getLocalConfig(false).getProperty("doc-category","")+"\" />");
+			out.println("</div></div></fieldset>");
 		}
 
 		out.println("<div class=\"action-add\"><input type=\"text\" name=\"" + getInputName("new-name") + "\" placeholder=\"field name\" /> <input type=\"submit\" name=\"" + getInputName("add") + "\" value=\"add field\" /></div>");
@@ -425,16 +442,19 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		Collections.sort(fields, new Field.FieldComparator());
 		int currentWidth = 0;
 		Field lastField = null;
+		boolean firstSetted = false;
 		for (Field field : fields) {
-			if (currentWidth == 0) {
-				field.setFirst(true);
+			if (!field.getType().equals("hidden")) {
+				if (currentWidth == 0) {
+					field.setFirst(true);
+				}
+				currentWidth = currentWidth + field.getWidth();
+				if (currentWidth >= 12) {
+					field.setLast(true);
+					currentWidth = 0;
+				}
+				lastField = field;
 			}
-			currentWidth = currentWidth + field.getWidth();
-			if (currentWidth >= 12) {
-				field.setLast(true);
-				currentWidth = 0;
-			}
-			lastField = field;
 		}
 		if (lastField != null) {
 			lastField.setLast(true);
@@ -697,6 +717,9 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		getLocalConfig(false).setProperty("mail.closed.link", rs.getParameter(getInputName("mail-closed-link"), ""));
 		getLocalConfig(false).setProperty("event.open.message", rs.getParameter(getInputName("event-open-message"), ""));
 		getLocalConfig(false).setProperty("event.close.message", rs.getParameter(getInputName("event-close-message"), ""));
+		
+		getLocalConfig(false).setProperty("doc-link", rs.getParameter(getInputName("doc-link"), ""));
+		getLocalConfig(false).setProperty("doc-category", rs.getParameter(getInputName("doc-category"), ""));
 
 		if (isCaptcha()) {
 			getLocalConfig(false).setProperty("label.captcha", rs.getParameter(getInputName("label-captcha"), ""));
@@ -1027,6 +1050,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			adminMailData.put("location", loc);
 		}
 		
+		Map<String,String> dataDoc = new HashMap<>();
 		for (Field field : comp.getFields()) {
 			String key = field.getName();			
 
@@ -1043,6 +1067,12 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				fakeFilled = true;
 			} else if (!withXHTML && (finalValue.toLowerCase().contains("</a>") || finalValue.toLowerCase().contains("</div>"))) {
 				fakeFilled = true;
+			}
+			
+			if (field.getType().equals("hidden")) {
+				dataDoc.put(StringHelper.firstLetterLower(key), field.getLabel());
+			} else {
+				dataDoc.put(StringHelper.firstLetterLower(key), ""+value);
 			}
 
 			if (!update || !field.getType().equals("file")) {
@@ -1214,7 +1244,19 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 						}
 						absCtx.setRenderMode(ContentContext.PREVIEW_MODE);
 						String adminMailContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), "Please check you event, it will be automaticly closed soon.", data, editURL, "edit >>", null);
-						mailService.sendMail(null, new InternetAddress(globalContext.getAdministratorEmail()), toEmail, ccList, bccList, subject, adminMailContent, true, null, globalContext.getDKIMBean());
+						
+						EMail email = new EMail();
+						email.setSender(new InternetAddress(globalContext.getAdministratorEmail()));
+						email.setCcRecipients(ccList);
+						email.setBccRecipients(bccList);
+						email.setSubject(subject);
+						email.setContent(adminMailContent);
+						email.setHtml(true);
+						email.setDkim(globalContext.getDKIMBean());
+						
+						mailService.sendMail(null, email);
+						
+						//mailService.sendMail(null, new InternetAddress(globalContext.getAdministratorEmail()), toEmail, ccList, bccList, subject, adminMailContent, true, null, globalContext.getDKIMBean());
 					}
 
 					if (comp.isClosedEventSite(ctx)) {
@@ -1253,13 +1295,32 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 					String mailPath;
 					String mailSubject;
+					
+					Attachment attachment = null;
 					if (!eventClose) {
-						mailPath = comp.getLocalConfig(false).getProperty("mail.confirm.link", null);
-						mailSubject = comp.getLocalConfig(false).getProperty("mail.confirm.subject", null);
+						mailPath = comp.getLocalConfig(false).getProperty("doc-link", null);
+						String category = comp.getLocalConfig(false).getProperty("doc-category");
+						if (comp.isDocument() && !StringHelper.isEmpty(category)) {
+							DataDocument doc = new DataDocument(category, dataDoc);
+							doc.resetToken();
+							DataDocumentService.getInstance(ctx.getGlobalContext()).createDocumentData(doc);
+							ContentContext pdfCtx = new ContentContext(ctx);
+							pdfCtx.setFormat("pdf");
+							ByteArrayOutputStream pdfStream = new ByteArrayOutputStream();
+							String pdfURL = URLHelper.createDataDocumentURL(pdfCtx.getContextForAbsoluteURL(), doc, mailPath);
+							System.out.println(">>>>>>>>> SmartGenericForm.performSubmit : pdfURL = "+pdfURL); //TODO: remove debug trace
+							NetHelper.readPage(new URL(pdfURL), pdfStream);
+							pdfStream.flush();
+							attachment = new Attachment(category+'_'+doc.getId()+".pdf", pdfStream.toByteArray());
+						}
 					} else {
 						mailPath = comp.getLocalConfig(false).getProperty("mail.closed.link", null);
 						mailSubject = comp.getLocalConfig(false).getProperty("mail.closed.subject", null);
 					}
+					
+					mailPath = comp.getLocalConfig(false).getProperty("mail.confirm.link", null);
+					mailSubject = comp.getLocalConfig(false).getProperty("mail.confirm.subject", null);
+					
 					ContentContext pageCtx = ctx.getContextForAbsoluteURL();
 					pageCtx.setRenderMode(ContentContext.PAGE_MODE);
 					if (!StringHelper.isEmpty(mailSubject)) {
@@ -1292,7 +1353,19 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 								}
 
 								InternetAddress registrationFrom = new InternetAddress(comp.getLocalConfig(false).getProperty("mail.from", StaticConfig.getInstance(request.getSession()).getSiteEmail()));
-								NetHelper.sendMail(ctx.getGlobalContext(), registrationFrom, to, null, bccEmail, mailSubject, email, null, true);
+								
+								EMail userMail = new EMail();
+								userMail.setSender(registrationFrom);
+								userMail.addRecipient(to);
+								userMail.addBccRecipient(bccEmail);
+								userMail.setSubject(mailSubject);
+								userMail.setContent(email);
+								userMail.setHtml(true);
+								userMail.addAttachment(attachment);
+								
+								mailService.sendMail(null, userMail);
+								
+								//NetHelper.sendMail(ctx.getGlobalContext(), registrationFrom, to, null, bccEmail, mailSubject, email, null, true);
 							} else {
 								return "warning : no recipient found.";
 							}

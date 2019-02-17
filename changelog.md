@@ -751,6 +751,7 @@ Security in case of vulnerabilities.
 - textToHTML tag
 - mailService : list of page template
 - beanutils copy with boolean
+- data document
 ### modified
 - defautl edit template : /jsp/edit/template/mandy-lane-premium-bright
 - FieldFile use file servlet in place of resourceServlet
@@ -762,3 +763,4 @@ Security in case of vulnerabilities.
 ### fixed
 - menu if no add button (preview)
 - page reference list of page display correction
+## [2.1.2.3] - 17/02/2019

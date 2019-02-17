@@ -916,6 +916,7 @@ public class ContentContext {
 		}
 
 		if (outPage == null) {
+			System.out.println(">>>>>>>>> ContentContext.getCurrentPage : PAGE NOUT FOUND : "+getPath()); //TODO: remove debug trace
 			logger.warning("page not found : " + getPath());
 		}
 
