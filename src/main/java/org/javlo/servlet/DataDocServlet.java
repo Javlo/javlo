@@ -53,7 +53,6 @@ public class DataDocServlet extends HttpServlet {
 	}
 
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-		System.out.println(">>>>>>>>> DataDocServlet.process : request uri = "+request.getRequestURL()); //TODO: remove debug trace
 		String path = request.getPathInfo();
 		String[] pathSplit = StringHelper.split(request.getPathInfo(), "/");
 		String category = pathSplit[1];
@@ -70,7 +69,6 @@ public class DataDocServlet extends HttpServlet {
 			String newPath = path.substring(category.length()+idStrSize+2);
 			ContentContext ctx = ContentContext.getContentContext(request, response);
 			newPath = newPath.substring(3);
-			System.out.println(">>>>>>>>> DataDocServlet.process : newPath = "+newPath); //TODO: remove debug trace
 			String contentType = getServletContext().getMimeType(newPath);
 			if (StringHelper.isEmpty(contentType)) {
 				contentType = "text/html; charset=" + ContentContext.CHARACTER_ENCODING;
@@ -83,7 +81,6 @@ public class DataDocServlet extends HttpServlet {
 				response.setContentType(contentType);
 				String url = URLHelper.createURL(ctx.getContextForAbsoluteURL(), newPath, doc.getData());
 				url = URLHelper.addParam(url, "documentId", ""+doc.getId());
-				System.out.println(">>>>>>>>> DataDocServlet.process : url = "+url); //TODO: remove debug trace
 				NetHelper.writeURLToStream(new URL(url), response.getOutputStream());
 			}
 		} catch (Exception e) {
