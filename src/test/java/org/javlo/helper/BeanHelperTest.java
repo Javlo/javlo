@@ -149,4 +149,11 @@ public class BeanHelperTest extends TestCase {
 		text = BeanHelper.replaceValueInText(text, b, "{{", "}}");
 		assertEquals(text, "Hi Patrick, how are you ?");
 	}
+	
+	public void testBean2Map() throws Exception {
+		Bean b = new Bean();
+		Map m = BeanHelper.bean2Map(b);
+		/** this method return only string method **/
+		assertEquals(m.size(), 3);
+	}
 }

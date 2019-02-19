@@ -85,7 +85,13 @@ public class UserAction extends AbstractModuleAction {
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		IUserFactory userFactory = userContext.getUserFactory(ctx);
-		if (userFactory.getCurrentUser(globalContext, ctx.getRequest().getSession()) == null) {
+//		if (userFactory.getCurrentUser(globalContext, ctx.getRequest().getSession()) == null) {
+//			logger.warning("security error no user found.");
+//			return null;
+//		}
+		
+		if (ctx.getCurrentEditUser() == null) {
+			logger.warning("security error no user found.");
 			return null;
 		}
 
@@ -104,7 +110,6 @@ public class UserAction extends AbstractModuleAction {
 		} else {
 			ctx.getRequest().setAttribute("users", userContext.getUserFactory(ctx).getUserInfoList());
 		}
-
 		if (((requestService.getParameter("user", null) == null && requestService.getParameter("cuser", null) == null) || requestService.getParameter("back", null) != null) && !userContext.getMode().equals(UserModuleContext.VIEW_MY_SELF)) {
 			moduleContext.getCurrentModule().restoreAll();
 		} else {
@@ -146,6 +151,7 @@ public class UserAction extends AbstractModuleAction {
 			}
 
 			Map<String, String> userInfoMap = BeanHelper.bean2Map(user.getUserInfo());
+			System.out.println("#userInfoMap = "+userInfoMap.size());
 			ctx.getRequest().setAttribute("functions", LangHelper.collectionToMap(StringHelper.stringToCollection(userInfoMap.get("function"), ";")));
 
 			ctx.getRequest().setAttribute("user", user);

@@ -50,7 +50,7 @@
 <div class="col-sm-4">
 	<div class="form-group login">
 		<label for="login">login
-		<input class="form-control" type="text" id="login" name="login" value="${userInfoMap["login"]}" /></label> 
+		<input class="form-control" type="text" id="login" name="login" value="${userInfoMap['login']}" /></label> 
 	</div>
 	<c:if test="${not empty webaction}">
 		<div class="form-group password">
@@ -64,20 +64,20 @@
 	</c:if>
 	<div class="form-group firstName">
 		<label for="firstName">firstName
-		<input class="form-control" type="text" id="firstName" name="firstName" value="${userInfoMap["firstName"]}" /></label> 
+		<input class="form-control" type="text" id="firstName" name="firstName" value="${userInfoMap['firstName']}" /></label> 
 	</div>
 	<div class="form-group lastName">
 		<label for="lastName">lastName
-		<input class="form-control" type="text" id="lastName" name="lastName" value="${userInfoMap["lastName"]}" /></label> 
+		<input class="form-control" type="text" id="lastName" name="lastName" value="${userInfoMap['lastName']}" /></label> 
 	</div>
 	<div class="form-group email">
 		<label for="email">email
-		<input class="form-control" type="text" id="email" name="email" value="${userInfoMap["email"]}" /></label> 
+		<input class="form-control" type="text" id="email" name="email" value="${userInfoMap['email']}" /></label> 
 	</div>
 	<div class="form-group organization">
 		<label for="organization">${i18n.edit['field.organization']}
 		<c:if test="${empty list.organization}">
-		<input class="form-control" type="text" id="organization" name="organization" value="${userInfoMap["organization"]}" />
+		<input class="form-control" type="text" id="organization" name="organization" value="${userInfoMap['organization']}" />
 		</c:if> 
 		<c:if test="${not empty list.organization}">
 		 	<select id="organization" name="organization" class="form-control">
@@ -91,36 +91,36 @@
 	</div>
 	<div class="form-group phone">
 		<label for="phone">phone
-		<input type="text" class="form-control" id="phone" name="phone" value="${userInfoMap["phone"]}" /></label> 
+		<input type="text" class="form-control" id="phone" name="phone" value="${userInfoMap['phone']}" /></label> 
 	</div>
 	<div class="form-group mobile">
 		<label for="mobile">mobile
-		<input type="text" id="mobile" class="form-control" name="mobile" value="${userInfoMap["mobile"]}" /></label> 
+		<input type="text" id="mobile" class="form-control" name="mobile" value="${userInfoMap['mobile']}" /></label> 
 	</div>
 </div>
 <div class="col-sm-4 address">
 	<div class="form-group">
 		<label for="address">address
-		<input type="text" id="address" class="form-control" name="address" value="${userInfoMap["address"]}" /></label> 
+		<input type="text" id="address" class="form-control" name="address" value="${userInfoMap['address']}" /></label> 
 	</div>
 	<div class="form-group postCode">
 		<label for="postCode">postCode
-		<input type="text" id="postCode" class="form-control" name="postCode" value="${userInfoMap["postCode"]}" /></label> 
+		<input type="text" id="postCode" class="form-control" name="postCode" value="${userInfoMap['postCode']}" /></label> 
 	</div>
 	<div class="form-group city">
 		<label for="city">city
-		<input type="text" class="form-control" id="city" name="city" value="${userInfoMap["city"]}" /></label> 
+		<input type="text" class="form-control" id="city" name="city" value="${userInfoMap['city']}" /></label> 
 	</div>
 	<div class="form-group country">
 		<label for="country">country
 		<c:if test="${empty list.countries}">
-			<input type="text" id="country" name="country" class="form-control" value="${userInfoMap["country"]}" />
+			<input type="text" id="country" name="country" class="form-control" value="${userInfoMap['country']}" />
 		</c:if>
 		 <c:if test="${not empty list.countries}">
 		 	<select class="form-control" id="country" name="country">
 		 		<option></option>
 		 		<c:forEach var="country" items="${list.countries}">
-		 			<option value="${country.key}"${userInfoMap["country"] == country.key?' selected="selected"':''}>${country.value}</option>
+		 			<option value="${country.key}"${userInfoMap['country'] == country.key?' selected="selected"':''}>${country.value}</option>
 		 		</c:forEach>		 		
 		 	</select>
 		 </c:if>
@@ -128,15 +128,15 @@
 	</div>
 	<div class="form-group url">
 		<label for="url">url
-		<input class="form-control" type="text" id="url" name="url" value="${userInfoMap["url"]}" /></label> 
+		<input class="form-control" type="text" id="url" name="url" value="${userInfoMap['url']}" /></label> 
 	</div>
 	<div class="form-group">
 		<label for="specialFunction">Special function
-		<input class="form-control" type="text" id="specialFunction" name="specialFunction" value="${userInfoMap["specialFunction"]}" /></label> 
+		<input class="form-control" type="text" id="specialFunction" name="specialFunction" value="${userInfoMap['specialFunction']}" /></label> 
 	</div>
 	<div class="form-group preferredLanguageRaw">
 		<label for="preferredLanguageRaw">preferred Language
-		<input type="text" id="preferredLanguageRaw" class="form-control" name="preferredLanguageRaw" value="${userInfoMap["preferredLanguageRaw"]}" /></label> 
+		<input type="text" id="preferredLanguageRaw" class="form-control" name="preferredLanguageRaw" value="${userInfoMap['preferredLanguageRaw']}" /></label> 
 	</div>
 	<c:if test="${empty webaction}">
 	<div class="form-group token">
