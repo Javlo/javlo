@@ -80,7 +80,8 @@ public class DataDocServlet extends HttpServlet {
 			} else {
 				response.setContentType(contentType);
 				String url = URLHelper.createURL(ctx.getContextForAbsoluteURL(), newPath, doc.getData());
-				url = URLHelper.addParam(url, "documentId", ""+doc.getId());
+				url = URLHelper.addParam(url, "documentId", ""+doc.getId());				
+				url = URLHelper.addParam(url, "date", ""+StringHelper.renderDate(doc.getDate()));
 				NetHelper.writeURLToStream(new URL(url), response.getOutputStream());
 			}
 		} catch (Exception e) {

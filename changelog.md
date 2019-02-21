@@ -764,3 +764,5 @@ Security in case of vulnerabilities.
 - menu if no add button (preview)
 - page reference list of page display correction
 ## [2.1.2.3] - 17/02/2019
+### Added
+- data document with date
