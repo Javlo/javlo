@@ -1561,4 +1561,18 @@ public class URLHelper extends ElementaryURLHelper {
 		return link;
 	}
 
+	public static String addAnchor(String url, String anchor) {
+		if (StringHelper.isEmpty(anchor)) {
+			return url;
+		}
+		if (!anchor.startsWith("#")) {
+			anchor = '#'+anchor;
+		}
+		if (url.contains("?")) {
+			return url.replace("?", anchor);
+		} else {
+			return url + anchor;
+		}
+	}
+
 }

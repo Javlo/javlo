@@ -1308,7 +1308,6 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 							pdfCtx.setFormat("pdf");
 							ByteArrayOutputStream pdfStream = new ByteArrayOutputStream();
 							String pdfURL = URLHelper.createDataDocumentURL(pdfCtx.getContextForAbsoluteURL(), doc, mailPath);
-							System.out.println(">>>>>>>>> SmartGenericForm.performSubmit : pdfURL = "+pdfURL); //TODO: remove debug trace
 							NetHelper.readPage(new URL(pdfURL), pdfStream);
 							pdfStream.flush();
 							attachment = new Attachment(category+'_'+doc.getId()+".pdf", pdfStream.toByteArray());

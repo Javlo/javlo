@@ -90,26 +90,29 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 				if (reverseLink == null) {
 					reverseLink = "none";
 				}
-				out.println("<div class=\"col-md-4\">");
+				out.println("<div class=\"col-md-3\">");
 				out.println("<div class=\"form-group\"><label for=\"" + getReverseLinkName() + "\">" + reverseLinkLabel + " : </label>");
 				out.println(XHTMLHelper.getReverlinkSelectType(ctx, getReverseLinkName(), reverseLink));
 				out.println("</div>");
 				out.println("</div>");
 			}
 			
-			out.println("<div class=\"col-md-4\">");
+			out.println("<div class=\"col-md-3\">");
 			out.println("<label for=\""+getLinkLabelName()+"\">"+i18nAccess.getText("component.link.label")+"</label>");
 			out.println(XHTMLHelper.getTextInput(getLinkLabelName(), label, "form-control"));
 			out.println("</div>");
 			
-			out.println("<div class=\"col-md-4\">");
+			out.println("<div class=\"col-md-3\">");
 			out.println("<label for=\""+getLinkLabelName()+"\">"+i18nAccess.getText("component.link.id", "page id")+"</label>");
 			String value="";
 			if (!StringHelper.isEmpty(getLinkId())) {
 				value = getLinkId(); 
 			}
 			out.println("<input class=\"form-control\" type=\"text\" name=\""+getLinkName()+"\" id=\""+getLinkName()+"\" value=\""+value+"\" />");
-			out.println("</div></div>");
+			out.println("</div><div class=\"col-md-3\">");
+			out.println("<label for=\""+getInputName("anchor")+"\">"+i18nAccess.getText("component.anchor.label", "anchor")+"</label>");
+			out.println(XHTMLHelper.getTextInput(getInputName("anchor"), getField("anchor"), "form-control"));
+			out.println("</div>");
 			
 			
 			
@@ -232,7 +235,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 			ctx.getRequest().setAttribute("textLabel", properties.getProperty(LABEL_KEY, ""));
 			ctx.getRequest().setAttribute("label", label);
 			String url = URLHelper.createURL(ctx.getContentContextForInternalLink(), linkedPage);
-			ctx.getRequest().setAttribute("url", url);
+			ctx.getRequest().setAttribute("url", URLHelper.addAnchor(url, getField("anchor")));
 		}
 	}
 
@@ -283,6 +286,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 				ContentContext viewCtx = new ContentContext(ctx);
 				viewCtx.setRenderMode(ContentContext.VIEW_MODE);
 				url = URLHelper.createURL(viewCtx, link);
+				url = URLHelper.addAnchor(url, getField("anchor"));
 				if (getParam().trim().length() == 0) {
 					res.append(StringHelper.toXMLAttribute(url) + "?" + MailingAction.MAILING_FEEDBACK_PARAM_NAME + "=" + MailingAction.MAILING_FEEDBACK_VALUE_NAME);
 				} else {
@@ -374,6 +378,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 
 		String label = requestService.getParameter(getLinkLabelName(), null);
 		String link = requestService.getParameter(getLinkName(), "/");
+		String anchor = requestService.getParameter(getInputName("anchor"), "");
 
 		if (label != null) {
 
@@ -404,6 +409,13 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 					ReverseLinkService reverselinkService = ReverseLinkService.getInstance(globalContext);
 					reverselinkService.clearCache();
 				}
+				
+				if (!anchor.equals(getField("anchor"))) {
+					setField("anchor", anchor);
+					setModify();
+				}
+				
+				
 				if (isModify()) {
 					storeProperties();
 				}

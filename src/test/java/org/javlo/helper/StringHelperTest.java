@@ -492,4 +492,11 @@ public class StringHelperTest extends TestCase {
 		assertEquals(StringHelper.mergeString(null, "part 1", "", "part 2"), "part 1part 2");
 	}
 	
+	public void testParseInputDate() throws ParseException {
+		Date date = StringHelper.parseInputDate("1975-11-27");
+		assertEquals(StringHelper.renderDate(date, "dd/MM/yyyy"), "27/11/1975");
+		date = StringHelper.parseInputDate("27111975");
+		assertEquals(StringHelper.renderDate(date, "dd/MM/yyyy"), "27/11/1975");
+	}
+	
 }
