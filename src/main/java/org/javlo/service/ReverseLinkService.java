@@ -279,7 +279,7 @@ public class ReverseLinkService {
 							if (componentPage != null && componentPage.getComponent() != null && componentPage.getComponent().isOnlyPreviousComponent()) {
 								IContentVisualComponent prevComp = ComponentHelper.getPreviousComponent((IContentVisualComponent) componentPage.getComponent(), ctx);
 								if (prevComp != null && comp != null && prevComp.getId().equals(comp.getId())) {
-									remplacement.addReplacementIfPossible(textPos, textPos + text.length(), "<a href=\"" + url + "\"" + target + ">" + text + "</a>");
+									remplacement.addReplacementIfPossible(textPos, textPos + text.length(), "<a class=\"reverse-link\" href=\"" + url + "\"" + target + ">" + text + "</a>");
 								}
 							} else {
 								if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
@@ -296,7 +296,7 @@ public class ReverseLinkService {
 										if (componentPage != null && ctx.getRequest().getAttribute("replaced-" + componentPage.hashCode()) == null) {
 											if (!componentPage.getComponent().isOnlyThisPage() || componentPage.getPage().equals(currentPage)) {
 												if (comp  == null || !url.equals(URLHelper.createURL(ctx, comp.getPage()))) {
-													remplacement.addReplacementIfPossible(textPos, textPos + text.length(), linkInfo + "<a class=\"reverse-link-preview\" href=\"" + url + "\" id=\"link-" + randomId + "\">" + text + "</a>");
+													remplacement.addReplacementIfPossible(textPos, textPos + text.length(), linkInfo + "<a class=\"reverse-link reverse-link-preview\" href=\"" + url + "\" id=\"link-" + randomId + "\">" + text + "</a>");
 												}
 											}
 										}
@@ -307,7 +307,7 @@ public class ReverseLinkService {
 										if (ctx.getRequest().getAttribute("replaced-" + componentPage.hashCode()) == null) {
 											/* no link on him self */
 											if (comp == null || !url.equals(URLHelper.createURL(ctx, comp.getPage()))) {
-												remplacement.addReplacementIfPossible(textPos, textPos + text.length(), "<a href=\"" + url + "\"" + target + ">" + text + "</a>");
+												remplacement.addReplacementIfPossible(textPos, textPos + text.length(), "<a class=\"reverse-link\" href=\"" + url + "\"" + target + ">" + text + "</a>");
 											}
 										}
 									}
