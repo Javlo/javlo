@@ -112,9 +112,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 			out.println("</div><div class=\"col-md-3\">");
 			out.println("<label for=\""+getInputName("anchor")+"\">"+i18nAccess.getText("component.anchor.label", "anchor")+"</label>");
 			out.println(XHTMLHelper.getTextInput(getInputName("anchor"), getField("anchor"), "form-control"));
-			out.println("</div>");
-			
-			
+			out.println("</div></div>");
 			
 			out.println("<script>function selectPage"+getId()+"(id) {jQuery('#"+getLinkName()+"').val(id); jQuery('#form-content').submit(); }</script>");
 			if (page != null) {
@@ -166,7 +164,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 			if (child != null) {
 				String link = "#";
 				link = child.getPath();
-				return URLHelper.createURL(ctx.getContentContextForInternalLink(), link);
+				return URLHelper.addAnchor(URLHelper.createURL(ctx.getContentContextForInternalLink(), link), getField("anchor"));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

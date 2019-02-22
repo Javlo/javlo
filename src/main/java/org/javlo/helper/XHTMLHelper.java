@@ -1803,9 +1803,11 @@ public class XHTMLHelper {
 			out.print(cssClass);
 			out.print("\"");
 		}
-		out.print(" value=\"");
-		out.print(value.replace("\"", "&quot;"));
-		out.print("\"");
+		if (value != null) {
+			out.print(" value=\"");
+			out.print(value.replace("\"", "&quot;"));
+			out.print("\"");
+		}
 		for (String[] attribute : attributes) {
 			out.print(" ");
 			out.print(attribute[0]);
@@ -2913,7 +2915,7 @@ public class XHTMLHelper {
 		out.println("</td></tr></table></td></tr></table></td></tr></table></body></html>");
 		return new String(outStream.toByteArray());
 	}
-	
+
 	public static final void convert(final File xhtmlFile, final File pdfFile) throws IOException, DocumentException {
 		final String xhtmlUrl = xhtmlFile.toURI().toURL().toString();
 		final OutputStream reportPdfStream = new FileOutputStream(pdfFile);
@@ -2927,7 +2929,7 @@ public class XHTMLHelper {
 	public static void main(String[] args) throws Exception {
 		File file = new File("c:/trans/mail.html");
 		String html = createUserMail(null, "title", "ceci est le contenu", null, "http://www.javlo.org", "action", "ceci est le footer");
-		ResourceHelper.writeStringToFile(file,  html);
+		ResourceHelper.writeStringToFile(file, html);
 	}
 
 	public static String compress(String newContent) {
