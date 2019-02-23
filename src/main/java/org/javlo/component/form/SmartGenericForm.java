@@ -987,6 +987,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		result.put("__X-Forwarded-For", request.getHeader("x-forwarded-for"));
 		result.put("__X-Real-IP", request.getHeader("x-real-ip"));
 		result.put("__referer", request.getHeader("referer"));
+		result.put("__agent", request.getHeader("User-Agent"));
 		String registrationID = StringHelper.getShortRandomId();
 		result.put("_registrationID", registrationID);
 		result.put("_event-close", "" + comp.isClose(ctx));
