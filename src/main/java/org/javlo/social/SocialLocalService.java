@@ -229,7 +229,7 @@ public class SocialLocalService {
 			while (rs.next()) {
 				Post post = rsToPost(conn, rs, username, admin, needCheck);
 				if (socialFilter.isNoResponse()) {
-					if (getReplies(socialFilter, username, admin, needCheck, post.getId()).size()==0) {
+					if (StringHelper.isEmpty(post.getAdminMessage()) && getReplies(socialFilter, username, admin, needCheck, post.getId()).size()==0) {
 						outPost.add(post);
 					}
 				} else {
