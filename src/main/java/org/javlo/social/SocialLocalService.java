@@ -62,7 +62,7 @@ public class SocialLocalService {
 		} catch (Exception e) {
 		}
 		try {
-			st.execute("alter table post modify adminMessage varchar(3500)");
+			st.execute("alter table post modify adminMessage varchar(6500)");
 		} catch (Exception e) {
 		}
 		try {
@@ -228,7 +228,13 @@ public class SocialLocalService {
 			ResultSet rs = conn.createStatement().executeQuery(sql);
 			while (rs.next()) {
 				Post post = rsToPost(conn, rs, username, admin, needCheck);
-				outPost.add(post);
+				if (socialFilter.isNoResponse()) {
+					if (getReplies(socialFilter, username, admin, needCheck, post.getId()).size()==0) {
+						outPost.add(post);
+					}
+				} else {
+					outPost.add(post);
+				}
 			}
 		} finally {
 			dataBaseService.releaseConnection(conn);

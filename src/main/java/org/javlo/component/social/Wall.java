@@ -183,8 +183,8 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 	 */
 	private static String validPost(ContentContext ctx, Post post) throws FileNotFoundException, IOException {
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-		if (post.getAdminMessage() != null && post.getAdminMessage().length() > 3000) {
-			return i18nAccess.getViewText("wall.error.admin-size", "Administrators message can not exceed 3000 characters");
+		if (post.getAdminMessage() != null && post.getAdminMessage().length() > 6000) {
+			return i18nAccess.getViewText("wall.error.admin-size", "Administrators message can not exceed 6000 characters");
 		}
 		if (post.getTitle() != null && post.getTitle().length() > 250) {
 			return i18nAccess.getViewText("wall.error.title-size", "Title can not exceed 250 characters");
@@ -221,6 +221,7 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 			socialFilter.setQuery(rs.getParameter("text-filter",null));
 			socialFilter.setOnlyMine(StringHelper.isTrue(rs.getParameter("filter-mine", null)));
 			socialFilter.setNotValided(StringHelper.isTrue(rs.getParameter("notvalided", null)));
+			socialFilter.setNoResponse(StringHelper.isTrue(rs.getParameter("noresponse", null)));
 		}
 		return null;
 	}

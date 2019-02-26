@@ -11,6 +11,7 @@ public class SocialFilter {
 	private String title;
 	private boolean onlyMine = false;
 	private boolean notValided = false;
+	private boolean noResponse = false;
 	
 	private static final String KEY = "socialFilter";
 	
@@ -77,6 +78,14 @@ public class SocialFilter {
 
 	public void setAuthor(String author) {
 		this.author = author;
+	}
+
+	public boolean isNoResponse() {
+		return noResponse;
+	}
+
+	public void setNoResponse(boolean noResponse) {
+		this.noResponse = noResponse;
 	}
 
 }

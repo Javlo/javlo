@@ -24,6 +24,7 @@ public class BeanHelperTest extends TestCase {
 		private long dist;
 		private double distance = 0;
 		private boolean optin = false;
+		private Boolean close = null;
 
 		public String getFirstname() {
 			return firstname;
@@ -80,6 +81,14 @@ public class BeanHelperTest extends TestCase {
 		public void setDistance(double distance) {
 			this.distance = distance;
 		}
+
+		public Boolean getClose() {
+			return close;
+		}
+
+		public void setClose(Boolean close) {
+			this.close = close;
+		}
 	}
 
 	public void testSetProperty() throws Exception {
@@ -123,13 +132,17 @@ public class BeanHelperTest extends TestCase {
 		assertEquals(b.getDist(), 9999);
 		assertEquals(b.getDistance(), 2.5, 0.0001);
 		assertTrue(b.isOptin());
+		assertNull(b.getClose());
 		
 		BeanHelper.copy(test, b, null, "-69");
 		
 		test = new HashMap<>();
 		test.put("*firstname-69", "Patrick");
+		test.put("*close-69", true);
 		BeanHelper.copy(test, b, "*", "-69");
 		assertEquals(b.getFirstname(), "Patrick");
+		assertNotNull(b.getClose());
+		assertTrue(b.getClose());
 
 		b.setFirstname("test");
 		test.put("*firstname-69", "Patrick");

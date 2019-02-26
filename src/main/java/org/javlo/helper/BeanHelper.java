@@ -270,9 +270,8 @@ public class BeanHelper {
 					Method method = bean.getClass().getMethod(methodName, new Class[] { boolean.class });
 					method.invoke(bean, new Object[] { value });
 				} catch (NoSuchMethodException e) {
-					Method method;
 					try {
-						method = bean.getClass().getMethod(methodName, new Class[] { Boolean.class });
+						Method method = bean.getClass().getMethod(methodName, new Class[] { Boolean.class });
 						method.invoke(bean, value);
 					} catch (NoSuchMethodException e1) {
 						e1.printStackTrace();
