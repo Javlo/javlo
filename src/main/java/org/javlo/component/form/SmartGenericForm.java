@@ -1248,6 +1248,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 						
 						EMail email = new EMail();
 						email.setSender(new InternetAddress(globalContext.getAdministratorEmail()));
+						email.addRecipients(toEmail);
 						email.setCcRecipients(ccList);
 						email.setBccRecipients(bccList);
 						email.setSubject(subject);

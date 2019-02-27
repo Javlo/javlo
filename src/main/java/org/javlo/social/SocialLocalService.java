@@ -147,6 +147,11 @@ public class SocialLocalService {
 		}
 		return filterSQL;
 	}
+	
+	public long __getPostListSize(SocialFilter socialFilter, String username, String group, boolean admin, boolean needCheck) throws Exception {
+		//public List<Post> getPost(SocialFilter socialFilter, boolean admin, boolean needCheck, String username, String group, int size, int index) throws Exception {
+		return getPost(socialFilter, admin, needCheck, username, group,-1,-1).size();
+	}
 
 	public long getPostListSize(SocialFilter socialFilter, String username, String group, boolean admin, boolean needCheck) throws Exception {
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
@@ -161,6 +166,10 @@ public class SocialLocalService {
 			}
 
 			String sql = "select count(id) from post mainpost where groupName='" + group + "' " + notAdminQuery + " and mainPost is null" + getSQLFilter(socialFilter, username);
+			if (socialFilter.isNoResponse()) {
+				sql = sql + " AND adminValid=1 AND (select count(*) from post childPost where childPost.parent=mainpost.id)=0";
+			}
+			System.out.println("sql = "+sql);
 			ResultSet rs = conn.createStatement().executeQuery(sql);
 			if (rs.next()) {
 				return rs.getLong(1);
@@ -224,17 +233,17 @@ public class SocialLocalService {
 			if (admin) {
 				notAdminQuery = "";
 			}
-			String sql = "select * from post mainpost where groupName='" + group + "' " + notAdminQuery + " and mainPost is null" + getSQLFilter(socialFilter, username) + " order by updateTime desc limit " + size + " offset " + index;
+			String sql = "select * from post mainpost where groupName='" + group + "' " + notAdminQuery + " and mainPost is null" + getSQLFilter(socialFilter, username) + " order by updateTime desc";
+			if (socialFilter.isNoResponse()) {
+				sql = sql + " AND post.adminValid=1 AND (select count(*) from post childPost where childPost.parent=mainpost.id)=0";
+			}
+			if (size > 0) {
+				sql = sql + " limit " + size + " offset " + index;
+			}			
 			ResultSet rs = conn.createStatement().executeQuery(sql);
 			while (rs.next()) {
 				Post post = rsToPost(conn, rs, username, admin, needCheck);
-				if (socialFilter.isNoResponse()) {
-					if (StringHelper.isEmpty(post.getAdminMessage()) && getReplies(socialFilter, username, admin, needCheck, post.getId()).size()==0) {
-						outPost.add(post);
-					}
-				} else {
-					outPost.add(post);
-				}
+				outPost.add(post);
 			}
 		} finally {
 			dataBaseService.releaseConnection(conn);
