@@ -54,6 +54,7 @@ public class SocialFilter {
 		author = null;
 		onlyMine = false;
 		notValided = false;
+		noResponse = false;
 	}
 
 	public boolean isNotValided() {
