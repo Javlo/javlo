@@ -650,23 +650,21 @@ public class TemplateAction extends AbstractModuleAction {
 
 	public static String performEditCSS(RequestService rs, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String css = rs.getParameter("css", null);
-		if (css == null) {
-			return "error : no 'css' param.";
+		Template template = TemplateFactory.getTemplates(application).get(rs.getParameter("templateid", ""));
+		if (template == null) {
+			return "template not found";
 		} else {
-			Template template = TemplateFactory.getTemplates(application).get(rs.getParameter("templateid", ""));
-			if (template == null) {
-				return "template not found";
-			} else {
-				// store new value
-				if (rs.getParameter("text", null) != null) {
-					File cssFile = new File(URLHelper.mergePath(template.getSourceFolder().getAbsolutePath(), rs.getParameter("file", "")));
-					if (cssFile.exists() && cssFile.isFile()) {
-						ResourceHelper.writeStringToFile(cssFile, rs.getParameter("text", null), ContentContext.CHARACTER_ENCODING);
-					} else {
-						return "file not found : " + cssFile;
-					}
+			// store new value
+			if (rs.getParameter("text", null) != null) {
+				File cssFile = new File(URLHelper.mergePath(template.getSourceFolder().getAbsolutePath(), rs.getParameter("file", "")));
+				if (cssFile.exists() && cssFile.isFile()) {
+					ResourceHelper.writeStringToFile(cssFile, rs.getParameter("text", null), ContentContext.CHARACTER_ENCODING);
+				} else {
+					return "file not found : " + cssFile;
 				}
-				// load current value
+			}
+			// load current value
+			if (css != null) {
 				File cssFile = new File(URLHelper.mergePath(template.getSourceFolder().getAbsolutePath(), css));
 				if (!cssFile.exists()) {
 					return "file not found : " + cssFile;

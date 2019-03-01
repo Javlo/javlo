@@ -766,3 +766,5 @@ Security in case of vulnerabilities.
 ## [2.1.2.3] - 17/02/2019
 ### Added
 - data document with date
+### Modified
+- update code mirror

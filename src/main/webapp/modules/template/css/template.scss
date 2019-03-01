@@ -233,6 +233,13 @@ input[readonly] {
     	display: inline-block;
 }
 
+.CodeMirror {
+    font-family: monospace;
+    height: 65vh;
+    color: black;
+    direction: ltr;
+}
+
 @media screen and (max-width: 1700px) {
 	.gallery .display-list ul li {
 		width: 33%;
