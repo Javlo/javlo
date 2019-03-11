@@ -24,9 +24,9 @@ ContentService content = ContentService.getInstance(globalContext);
 <div class="sidebar panel panel-default">
 	<div class="panel-body">	
 	<div class="pc_body">
-		<c:if test="${not empty currentUser}">
-			<h1 id="time-title"><i class="fa fa-clock-o" aria-hidden="true"></i> ${i18n.edit["time.title"]}</h1>
-			<h2>${i18n.edit["time.label.status"]}</h2>
+		<c:if test="${not empty info.editUser}">
+			<h2 class="first-title"><i class="fa fa-clock-o" aria-hidden="true"></i> ${i18n.edit["time.title"]}</h2>
+			<h3>${i18n.edit["time.label.status"]}</h3>
 			<div class="pc_line"><%
 				MenuElement timePage = ctx.getCurrentPage();
 				String path = timePage.getPath();
@@ -57,8 +57,8 @@ ContentService content = ContentService.getInstance(globalContext);
 				%>${i18n.edit[statusKey]}
 			</div>
 			
-			<form action="${info.currentURL}" method="post">				
-					<h2>${i18n.edit["time.label.set-travel-time"]}</h2>
+			<form action="${info.currentURL}" method="post">
+					<h3>${i18n.edit["time.label.set-travel-time"]}</h3>
 					<div class="pc_line">
 						<input type="hidden" name="webaction" value="time.settraveltime" />
 						<div class="form-group">
