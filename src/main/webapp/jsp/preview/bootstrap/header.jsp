@@ -332,7 +332,7 @@
 					</button>					
 					</li>
 			</c:if>
-			<c:if test="${!pdf && userInterface.ticket}">
+			<c:if test="${!pdf && userInterface.ticket  && !contentContext.asTimeMode}">
 				<li><c:url var="url" value="<%=URLHelper.createURL(editCtx)%>"
 						context="/">
 						<c:param name="module" value="ticket"></c:param>

@@ -496,7 +496,7 @@ public class XMLManipulationHelper {
 
 				if (tags[i].getName().equalsIgnoreCase("html")) {
 					String cssClass = StringHelper.neverNull(tags[i].getAttributes().get("class"));
-					cssClass = cssClass + " " + "<%if (infoBean.getEditUser() != null) {if(userInterfaceContext.isMinimalInterface()) {%>preview-minimal <%} else {%>preview-standard <%} if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly()) {%><%=(StringHelper.isTrue(request.getParameter(\"preview-command\"), true)?\"preview-command-visible\":\"preview-command-hidden\")%> <%=StringHelper.neverNull(request.getParameter(\"html-class\"))%> <%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly()) { if(EditContext.getInstance(globalContext, request.getSession()).isPreviewEditionMode() ) {%>edit-preview<%} else {%>preview-only<%} }%><%}}%>";
+					cssClass = cssClass + " " + "<%if (infoBean.getEditUser() != null) {if(userInterfaceContext.isMinimalInterface()) {%>preview-minimal <%} else {%>preview-standard <%} if (ctx.isInteractiveMode() && !ctx.isPreviewOnly()) {%><%=(StringHelper.isTrue(request.getParameter(\"preview-command\"), true)?\"preview-command-visible\":\"preview-command-hidden\")%> <%=StringHelper.neverNull(request.getParameter(\"html-class\"))%> <%if (ctx.isInteractiveMode() && !ctx.isPreviewOnly()) { if(EditContext.getInstance(globalContext, request.getSession()).isPreviewEditionMode() ) {%>edit-preview<%} else {%>preview-only<%} }%><%}}%>";
 					tags[i].getAttributes().put("class", cssClass.trim());
 					remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].renderOpen());
 				}
@@ -1009,7 +1009,7 @@ public class XMLManipulationHelper {
 		StringWriter outString = new StringWriter();
 		BufferedWriter out = new BufferedWriter(outString);
 
-		out.append("<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly()) {%>");
+		out.append("<%if (ctx.isInteractiveMode() && !ctx.isPreviewOnly()) {%>");
 		out.append("<style type=\"text/css\">@font-face {font-family: \"javloFont\"; src: url('${info.staticRootURL}fonts/javlo-italic.ttf') format(\"truetype\");}</style>");
 		out.append("<%}%>");
 
