@@ -549,7 +549,7 @@ public class PersistenceService {
 					}
 				}
 			}
-			logger.info("store dayInfo for : "+StringHelper.renderDate(cal.getTime()));
+			logger.info("store dayInfo for : " + StringHelper.renderDate(cal.getTime()));
 			dayInfo.store(propFile);
 			return dayInfo;
 		} else
@@ -737,6 +737,11 @@ public class PersistenceService {
 			bean.setAuthors(authors);
 			try {
 				bean.setModificationDate(parseDate(contentNode.getAttributeValue("modificationDate", "01/01/1970 00:00:00")));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			try {
+				bean.setCreationDate(parseDate(contentNode.getAttributeValue("creationDate", "01/01/1970 00:00:00")));
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
@@ -1054,31 +1059,33 @@ public class PersistenceService {
 				root.setPriority(10);
 				root.setVisible(true);
 			}
-			if (propFile != null && !propFile.exists()) {
-				NodeXML properties = firstNode.getChild("properties");
-				if (properties != null && properties.getAttributeValue("name", "").equals("global")) {
-					NodeXML property = properties.getChild("property");
-					while (property != null) {
-						contentAttributeMap.put(property.getAttributeValue("key"), property.getContent());
-						property = property.getNext("property");
+			if (propFile != null) {
+				if (!propFile.exists()) {
+					NodeXML properties = firstNode.getChild("properties");
+					if (properties != null && properties.getAttributeValue("name", "").equals("global")) {
+						NodeXML property = properties.getChild("property");
+						while (property != null) {
+							contentAttributeMap.put(property.getAttributeValue("key"), property.getContent());
+							property = property.getNext("property");
+						}
 					}
-				}
-			} else {
-				logger.info("load data : " + propFile);
-				Reader reader = new InputStreamReader(new FileInputStream(propFile), ContentContext.CHARACTER_ENCODING);
-				Properties prop = new Properties();
-				try {
-					prop.load(reader);
-				} finally {
-					ResourceHelper.closeResource(reader);
-				}
-				for (Map.Entry<Object, Object> entry : prop.entrySet()) {
-					/*** remove static as prefix for static info */
-					String key = entry.getKey().toString();
-					if (key.startsWith("staticinfo-/static")) {
-						key = key.replaceFirst("staticinfo-/static", "staticinfo-");
+				} else {
+					logger.info("load data : " + propFile);
+					Reader reader = new InputStreamReader(new FileInputStream(propFile), ContentContext.CHARACTER_ENCODING);
+					Properties prop = new Properties();
+					try {
+						prop.load(reader);
+					} finally {
+						ResourceHelper.closeResource(reader);
 					}
-					contentAttributeMap.put(key, entry.getValue().toString());
+					for (Map.Entry<Object, Object> entry : prop.entrySet()) {
+						/*** remove static as prefix for static info */
+						String key = entry.getKey().toString();
+						if (key.startsWith("staticinfo-/static")) {
+							key = key.replaceFirst("staticinfo-/static", "staticinfo-");
+						}
+						contentAttributeMap.put(key, entry.getValue().toString());
+					}
 				}
 			}
 			if (taxonomyBean != null) {
@@ -1117,7 +1124,7 @@ public class PersistenceService {
 			taxonomyBean.setId(node.getAttributeValue("id"));
 			String name = node.getAttributeValue("name");
 			taxonomyBean.setName(name);
-			taxonomyBean.setDecoration(node.getAttributeValue("deco",""));
+			taxonomyBean.setDecoration(node.getAttributeValue("deco", ""));
 			for (NodeXML child : node.getChildren()) {
 				if (child.getName().equals("label")) {
 					taxonomyBean.updateLabel(child.getAttributeValue("lang"), child.getContent());

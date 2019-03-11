@@ -24,56 +24,38 @@ ContentService content = ContentService.getInstance(globalContext);
 <div class="sidebar panel panel-default">
 	<div class="panel-body">	
 	<div class="pc_body">
-		<c:if test="${not empty currentUser}">			
-				<div class="pc_form_line">
-					<div class="form-group">
-					<form id="pc_form" action="${info.currentURL}" method="post">
-						<div class="pc_line">
-							<input type="hidden" name="webaction" value="time.replacecurrentpage" />
-							<input class="btn btn-default" id="tc_replace_current_page_button" type="submit" value="${i18n.edit['time.action.replace-current-page']}" class="pc_edit_true" />
-						</div>
-					</form>
-					</div><div class="form-group">					
-					<form id="pc_form" action="${info.currentURL}" method="post">
-						<div class="pc_line">
-							<input type="hidden" name="webaction" value="time.ReplaceCurrentPageAndChildren" />
-							<input class="btn btn-default" id="tc_replace_current_page_and_children_button" type="submit" value="${i18n.edit['time.action.replace-current-page-and-children']}" class="pc_edit_true" />
-						</div>
-					</form>
-					</div>
-				</div>
-				
-				<h2>${i18n.edit["time.label.status"]}</h2>
-				<div class="pc_line"><%
-					MenuElement timePage = ctx.getCurrentPage();
-					String path = timePage.getPath();
-					MenuElement viewPage = content.getNavigation(editCtx).searchChild(editCtx, path);
-					String statusKey = "time.status";
-					if (viewPage == null) {
-						statusKey += ".deleted";
+		<c:if test="${not empty currentUser}">
+			<h1 id="time-title"><i class="fa fa-clock-o" aria-hidden="true"></i> ${i18n.edit["time.title"]}</h1>
+			<h2>${i18n.edit["time.label.status"]}</h2>
+			<div class="pc_line"><%
+				MenuElement timePage = ctx.getCurrentPage();
+				String path = timePage.getPath();
+				MenuElement viewPage = content.getNavigation(editCtx).searchChild(editCtx, path);
+				String statusKey = "time.status";
+				if (viewPage == null) {
+					statusKey += ".deleted";
+				} else {
+					boolean metadataEquals = timePage.isMetadataEquals(viewPage);
+					boolean contentEquals = timePage.isContentEquals(viewPage);
+					boolean childrenEquals = timePage.isChildrenEquals(viewPage);
+					if (metadataEquals && contentEquals && childrenEquals) {
+						statusKey += ".same";
 					} else {
-						boolean metadataEquals = timePage.isMetadataEquals(viewPage);
-						boolean contentEquals = timePage.isContentEquals(viewPage);
-						boolean childrenEquals = timePage.isChildrenEquals(viewPage);
-						if (metadataEquals && contentEquals && childrenEquals) {
-							statusKey += ".same";
-						} else {
-							statusKey += ".different.on";
-							if (!metadataEquals) {
-								statusKey += "-metadata";
-							}
-							if (!contentEquals) {
-								statusKey += "-content";
-							}
-							if (!childrenEquals) {
-								statusKey += "-children";
-							}
+						statusKey += ".different.on";
+						if (!metadataEquals) {
+							statusKey += "-metadata";
+						}
+						if (!contentEquals) {
+							statusKey += "-content";
+						}
+						if (!childrenEquals) {
+							statusKey += "-children";
 						}
 					}
-					pageContext.setAttribute("statusKey", statusKey);
-					%>${i18n.edit[statusKey]}
-				</div>
-			
+				}
+				pageContext.setAttribute("statusKey", statusKey);
+				%>${i18n.edit[statusKey]}
+			</div>
 			
 			<form action="${info.currentURL}" method="post">				
 					<h2>${i18n.edit["time.label.set-travel-time"]}</h2>
@@ -90,11 +72,36 @@ ContentService content = ContentService.getInstance(globalContext);
 						}
 						%>
 						</select></div>
-						<input type="submit" class="btn btn-default" value="${i18n.edit['time.action.set']}" />						
-						<input type="submit" class="btn btn-default pull-right" name="next" value="${i18n.edit['time.action.next']}" />
-						<input type="submit" class="btn btn-default pull-right" name="previous" value="${i18n.edit['time.action.previous']}" />
+						<div class="form-group">
+						<div class="row">
+						<div class="col-md-3">						
+						<button type="submit" class="btn btn-default pull-right btn-block" name="next" title="${i18n.edit['time.action.next']}"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+						</div><div class="col-md-6"><input type="submit" class="btn btn-primary btn-block" value="${i18n.edit['time.action.set']}" /></div><div class="col-md-3">
+						<button type="submit" class="btn btn-default pull-right btn-block" name="previous" title="${i18n.edit['time.action.previous']}"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+						</div>
+						</div>
+						</div>
 					</div>
 			</form>
+			
+			<div class="pc_form_line">
+				<div class="form-group">
+					<form id="pc_form" action="${info.currentURL}" method="post">
+						<div class="pc_line">
+							<input type="hidden" name="webaction" value="time.replacecurrentpage" />
+							<input class="btn btn-default btn-block" id="tc_replace_current_page_button" type="submit" value="${i18n.edit['time.action.replace-current-page']}" class="pc_edit_true" />
+						</div>
+					</form>
+					</div><div class="form-group">					
+					<form id="pc_form" action="${info.currentURL}" method="post">
+						<div class="pc_line">
+							<input type="hidden" name="webaction" value="time.ReplaceCurrentPageAndChildren" />
+							<input class="btn btn-default btn-block" id="tc_replace_current_page_and_children_button" type="submit" value="${i18n.edit['time.action.replace-current-page-and-children']}" class="pc_edit_true" />
+						</div>
+					</form>
+					</div>
+				</div>
+			
 		</c:if>
 	</div>
 	<div class="pc_footer">

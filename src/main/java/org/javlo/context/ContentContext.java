@@ -1168,6 +1168,10 @@ public class ContentContext {
 	public boolean isAsPreviewMode() {
 		return getRenderMode() == PREVIEW_MODE && !isPreviewOnly();
 	}
+	
+	public boolean isAsTimeMode() {
+		return getRenderMode() == TIME_MODE;
+	}
 
 	public boolean isAsPageMode() {
 		return getRenderMode() == PAGE_MODE;

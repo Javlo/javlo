@@ -33,7 +33,7 @@
 		readOnlyClass = "no-access";
 		accessType = "button";
 	}
-%><c:set var="logged" value="${not empty editUser}" /><c:set var="pdf" value="${info.device.code == 'pdf'}" />
+%><c:set var="logged" value="${not empty info.editUser}" /><c:set var="pdf" value="${info.device.code == 'pdf'}" />
 <c:if test="${logged || !globalContext.staticConfig.addButton}">
 <c:if test="${!userInterface.minimalInterface}">
 <div class="header">	
@@ -193,7 +193,7 @@
 			</li>
 			</c:if>
 			<c:if test="${logged}">
-			<li><c:if test="${globalContext.previewMode}">
+			<li><c:if test="${globalContext.previewMode && !contentContext.asTimeMode}">
 					<form id="pc_form" action="${info.currentURL}" method="post">
 						<div class="pc_line">
 							<input type="hidden" name="webaction" value="edit.previewedit" />
@@ -207,14 +207,14 @@
 							</c:if>
 						</div>
 					</form>
-				</c:if> <c:if test="${!globalContext.previewMode}">
+				</c:if> <c:if test="${!globalContext.previewMode && !contentContext.asTimeMode}">
 					<div class="link-wrapper">						
 						<a class="btn btn-default btn-sm btn-mode btn-wait-loading" href="${info.currentViewURLWidthDevice}"
 							target="_blank"><span class="glyphicon glyphicon-eye-open"
 							aria-hidden="true"></span>${i18n.edit['preview.label.not-edit-page']}</a>
 					</div>
 				</c:if></li>
-			<c:if test="${!pdf && userInterface.mailing}">				
+			<c:if test="${!pdf && userInterface.mailing  && !contentContext.asTimeMode}">				
 				<li><c:url var="url" value="<%=URLHelper.createURL(editCtx)%>"
 						context="/">
 						<c:param name="module" value="mailing"></c:param>
@@ -272,7 +272,7 @@
 					</form>					
 					</li>
 			</c:if>
-			<c:if test="${!userInterface.minimalInterface}">
+			<c:if test="${!userInterface.minimalInterface && !contentContext.asTimeMode}">
 			<li class="undo${contentContext.canUndo?'':' no-access'}"><form
 								class="${!info.page.pageLocalEmpty?'no-access':''}"
 								action="${info.currentURL}" method="get">
@@ -314,7 +314,7 @@
 					</form></li>
 			</c:if>
 			</c:if>
-			<c:if test="${userInterface.search && !userInterface.minimalInterface}">
+			<c:if test="${userInterface.search && !userInterface.minimalInterface && !contentContext.asTimeMode}">
 			<li><c:url var="url" value="<%=URLHelper.createURL(editCtx)%>"
 						context="/">
 						<c:param name="module" value="search"></c:param>
@@ -368,9 +368,9 @@
 				</ul>
 			</div>
 			<c:if test="${userInterface.mobilePreview && contentContext.globalContext.staticConfig.mobilePreview}"><li>
-			<a id="_btn-mobile" class="btn btn-default btn-sm btn-mobile btn-color btn-notext badged" data-toggle="collapse" data-target="#_mobile_preview" href="#_mobile_preview"  aria-expanded="false" aria-controls="_mobile_preview">
+			<c:if test="${!contentContext.asTimeMode}"><a id="_btn-mobile" class="btn btn-default btn-sm btn-mobile btn-color btn-notext badged" data-toggle="collapse" data-target="#_mobile_preview" href="#_mobile_preview"  aria-expanded="false" aria-controls="_mobile_preview">
 				<span class="glyphicon glyphicon-phone" aria-hidden="true"></span>				
-			</a>
+			</a></c:if>
 			<div class="discution collapse" id="discution">
 				<jsp:include page="${info.editTemplateFolder}/im.jsp" />
 			</div>	
