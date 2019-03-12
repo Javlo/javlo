@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -39,6 +38,7 @@ import org.javlo.navigation.PageBean;
 import org.javlo.service.ContentService;
 import org.javlo.service.NotificationService;
 import org.javlo.service.RequestService;
+import org.javlo.tracking.DayInfo;
 import org.javlo.tracking.Track;
 import org.javlo.tracking.Tracker;
 import org.javlo.user.AdminUserSecurity;
@@ -164,14 +164,22 @@ public class DashboardAction extends AbstractModuleAction {
 			pagelist = true;
 			ctx.getRequest().setAttribute("report", ReportFactory.getReport(ctx));
 		}
+		
+		System.out.println(">>>>>>>>> DashboardAction.prepare : dashboardContext.getCurrentModule().getRenderer() = "+dashboardContext.getCurrentModule().getRenderer()); //TODO: remove debug trace		
+		
 		if (dashboardContext.getCurrentModule().getBoxes().size() > 1) {
 			ctx.getRequest().setAttribute("page", "main");
 			ctx.getRequest().setAttribute("memory", new MemoryBean());
 		} else {
-			if (!report && !pagelist) {
+			if (!report && !pagelist && !dashboardContext.getCurrentModule().getRenderer().contains("use.jsp")) {
 				ctx.getRequest().setAttribute("page", "tracker");
 			} else if (!pagelist) {
 				ctx.getRequest().setAttribute("page", "report");
+			} else if (dashboardContext.getCurrentModule().getRenderer().contains("use.jsp")) {
+				StatContext statCtx = createStatContext(ctx.getRequest());
+				List<DayInfo> dayInfos = Tracker.getTracker(globalContext, ctx.getRequest().getSession()).getDayInfos(statCtx);
+				ctx.getRequest().setAttribute("dayInfos", dayInfos);
+				ctx.getRequest().setAttribute("page", "use");
 			} else {
 				ctx.getRequest().setAttribute("page", "list");
 			}
@@ -198,6 +206,33 @@ public class DashboardAction extends AbstractModuleAction {
 			ctx.getRequest().setAttribute("debugNotes", debugNoteList);
 		}
 		return msg;
+	}
+	
+	private static StatContext createStatContext(HttpServletRequest request) {
+		StatContext statCtx = StatContext.getInstance(request);
+		RequestService rs = RequestService.getInstance(request);
+		// 30 days is default period
+		Calendar now = Calendar.getInstance();
+		statCtx.setTo(new Date(now.getTime().getTime()));
+		now.add(Calendar.DAY_OF_YEAR, -30);
+		statCtx.setFrom(new Date(now.getTime().getTime()));
+		String year = rs.getParameter("y", "" + now.get(Calendar.YEAR));
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.YEAR, Integer.parseInt(year));
+		cal.set(Calendar.MONTH, 11);
+		cal.set(Calendar.DAY_OF_MONTH, 31);
+		cal.set(Calendar.HOUR, 23);
+		cal.set(Calendar.MINUTE, 59);
+		cal.set(Calendar.SECOND, 59);
+		statCtx.setTo(cal.getTime());
+		cal.set(Calendar.YEAR, Integer.parseInt(year));
+		cal.set(Calendar.MONTH, 0);
+		cal.set(Calendar.DAY_OF_MONTH, 1);
+		cal.set(Calendar.HOUR, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		statCtx.setFrom(cal.getTime());
+		return statCtx;
 	}
 
 	public static String performReadTracker(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, GlobalContext globalContext, HttpSession session, HttpServletRequest request) throws Exception {
@@ -241,7 +276,30 @@ public class DashboardAction extends AbstractModuleAction {
 				desktopAndMobile[1].add(input.getValue()[1]);
 			}
 			ctx.setAjaxMap(ajaxMap.getMap());
-
+		} else if (type.equals("dayinfo")) {
+			// Map<String, Integer> ajaxMap = new LinkedHashMap<String,
+			// Integer>();
+			String year = rs.getParameter("y", "" + now.get(Calendar.YEAR));
+			Calendar cal = Calendar.getInstance();
+			cal.set(Calendar.YEAR, Integer.parseInt(year));
+			cal.set(Calendar.MONTH, 11);
+			cal.set(Calendar.DAY_OF_MONTH, 31);
+			cal.set(Calendar.HOUR, 23);
+			cal.set(Calendar.MINUTE, 59);
+			cal.set(Calendar.SECOND, 59);
+			statCtx.setTo(cal.getTime());
+			cal.set(Calendar.YEAR, Integer.parseInt(year));
+			cal.set(Calendar.MONTH, 0);
+			cal.set(Calendar.DAY_OF_MONTH, 1);
+			cal.set(Calendar.HOUR, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			statCtx.setFrom(cal.getTime());
+			List<DayInfo> dayInfo = tracker.getDayInfos(statCtx);
+			ObjectBuilder ajaxMap = LangHelper.object();
+			ListBuilder datas = ajaxMap.list("datas");
+			datas.add(dayInfo);
+			ctx.setAjaxMap(ajaxMap.getMap());
 		} else if (type.equals("languages")) {
 			ObjectBuilder ajaxMap = LangHelper.object();
 			List<Entry<String, Integer>> languages = new LinkedList<Map.Entry<String, Integer>>(tracker.getLanguage(statCtx).entrySet());
@@ -415,6 +473,13 @@ public class DashboardAction extends AbstractModuleAction {
 		dashboardContext.getCurrentModule().addMainBox("tracker", "tracker", "/jsp/tracker.jsp", false);
 		return null;
 
+	}
+	
+	public static String performUsePage(RequestService rs, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		ModulesContext dashboardContext = ModulesContext.getInstance(session, ctx.getGlobalContext());
+		dashboardContext.getCurrentModule().clearAllBoxes();
+		dashboardContext.getCurrentModule().setRenderer("/jsp/use.jsp");
+		return null;
 	}
 
 	public static String performReportPage(RequestService rs, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {

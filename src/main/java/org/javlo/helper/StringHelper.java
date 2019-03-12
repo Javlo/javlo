@@ -92,7 +92,7 @@ public class StringHelper {
 	public static final String NUMERIC = "0123456789";
 
 	public static final String BASIC_CHAR = ALPHABET.toLowerCase() + ALPHABET.toUpperCase() + NUMERIC + "_-+= ,.;:*|&\"'";
-	
+
 	public static final String URLOK_CHAR = ALPHABET.toLowerCase() + ALPHABET.toUpperCase() + NUMERIC;
 
 	public static final String ALPHANUM = ALPHABET + NUMERIC;
@@ -280,7 +280,7 @@ public class StringHelper {
 		out.close();
 		return new String(outStream.toByteArray());
 	}
-	
+
 	/**
 	 * convert a collection to text. Each item of the collection will be a line if
 	 * the text.
@@ -320,14 +320,15 @@ public class StringHelper {
 		}
 		return colorToHexString(color);
 	}
-	
+
 	/**
 	 * merge string with 'sep' between
+	 * 
 	 * @param sep
 	 * @param part
 	 * @return
 	 */
-	public static String mergeString (String sep, String... parts) {
+	public static String mergeString(String sep, String... parts) {
 		String out = "";
 		sep = StringHelper.neverNull(sep);
 		boolean first = true;
@@ -1861,19 +1862,19 @@ public class StringHelper {
 			return "" + inStr;
 		}
 	}
-	
+
 	public static String neverNullOrEmpty(Object inStr, String replaceWith) {
 		if (isEmpty(inStr)) {
 			return replaceWith;
 		} else {
-			return ""+inStr;
+			return "" + inStr;
 		}
 	}
 
 	public static Date parseDate(String inDate) throws ParseException {
 		return parseDate(inDate, "dd/MM/yyyy");
 	}
-	
+
 	public static Date parseInputDate(String inDate) throws ParseException {
 		try {
 			return parseDate(inDate, "yyyy-MM-dd");
@@ -1881,7 +1882,7 @@ public class StringHelper {
 			return parseDate(inDate, "ddMMyyyy");
 		}
 	}
-	
+
 	public static String renderInputDate(Date inDate) throws ParseException {
 		return renderDate(inDate, "yyyy-MM-dd");
 	}
@@ -1947,36 +1948,66 @@ public class StringHelper {
 	}
 
 	public static Date smartParseDate(String inDate) {
+		return smartParseDate(inDate, "en");
+	}
+
+	public static Date smartParseDate(String inDate, String lang) {
 		if (inDate == null) {
 			return null;
 		}
-		if (inDate.length() > "yyyy-MM-dd".length()) {
-			return smartParseDateTime(inDate);
-		}
-		Date outDate = null;
 		inDate = inDate.trim();
 		if (inDate.length() == 0) {
 			return null;
-		} else {
-			if (inDate.contains("/")) {
-				try {
-					outDate = parseDate(inDate, '/');
-				} catch (ParseException e) {
+		}
+		Date outDate = null;
+		inDate = inDate.trim();
+		if (inDate.length() == "ddMMyyyy".length() && StringHelper.isDigit(inDate)) {
+			try {
+				Date date1 = parseDate(inDate, "yyyyMMdd");
+				Date date2 = parseDate(inDate, "ddMMyyyy");
+				if (Math.abs(date1.getTime() - System.currentTimeMillis()) > (Math.abs(date2.getTime() - System.currentTimeMillis()))) {
+					outDate = date2;
+				} else {
+					outDate = date1;
 				}
-			} else if (inDate.contains(":")) {
-				try {
-					outDate = parseDate(inDate, ':');
-				} catch (ParseException e) {
-				}
-			} else if (inDate.contains("-")) {
-				try {
-					outDate = parseDate(inDate, '-');
-				} catch (ParseException e) {
-				}
-			} else if (inDate.contains(" ")) {
-				try {
-					outDate = parseDate(inDate, ' ');
-				} catch (ParseException e) {
+			} catch (ParseException e) {
+			}
+		}
+		// start with year ?
+		if (outDate == null) {
+			if (!StringHelper.isDigit(inDate.substring(0, 4))) {
+				if (inDate.contains("/")) {
+					try {
+						outDate = parseDate(inDate, '/');
+					} catch (ParseException e) {
+					}
+				} else if (inDate.contains(":")) {
+					try {
+						outDate = parseDate(inDate, ':');
+					} catch (ParseException e) {
+					}
+				} else if (inDate.contains("-")) {
+					try {
+						outDate = parseDate(inDate, '-');
+					} catch (ParseException e) {
+					}
+				} else if (inDate.contains(" ")) {
+					try {
+						outDate = parseDate(inDate, ' ');
+					} catch (ParseException e) {
+					}
+				} 
+				if (outDate==null) {
+					try {
+						SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", new Locale(lang));
+						outDate = format.parse(inDate);
+					} catch (ParseException e) {
+						try {
+							SimpleDateFormat format = new SimpleDateFormat("dd MMMMM yyyy", new Locale(lang));
+							outDate = format.parse(inDate);
+						} catch (ParseException e1) {
+						}
+					}
 				}
 			}
 		}
@@ -2412,7 +2443,7 @@ public class StringHelper {
 
 	public static String renderDouble(double value, int precision, char sep) {
 		String format = "#.";
-		for (int i=0; i<precision; i++) {
+		for (int i = 0; i < precision; i++) {
 			format += "#";
 		}
 		DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.ENGLISH);
@@ -2420,7 +2451,7 @@ public class StringHelper {
 		if (sep == ',') {
 			otherSymbols.setGroupingSeparator('.');
 		}
-		DecimalFormat df = new DecimalFormat(format, otherSymbols);		
+		DecimalFormat df = new DecimalFormat(format, otherSymbols);
 		return df.format(value);
 	}
 
@@ -2563,7 +2594,7 @@ public class StringHelper {
 		}
 		return renderDate(date, "dd/MM/yyyy HH:mm:ss");
 	}
-	
+
 	public static String renderTimeShort(Date date) {
 		if (date == null) {
 			return null;
@@ -3373,10 +3404,15 @@ public class StringHelper {
 
 	/**
 	 * replace text in larger text
-	 * @param text the original text
-	 * @param newItem the new text part
-	 * @param prefix the prefix before the replacement
-	 * @param suffix the suffix afther the replacement
+	 * 
+	 * @param text
+	 *            the original text
+	 * @param newItem
+	 *            the new text part
+	 * @param prefix
+	 *            the prefix before the replacement
+	 * @param suffix
+	 *            the suffix afther the replacement
 	 * @return
 	 */
 	public static String replaceItem(String text, String newItem, String prefix, String suffix) {
@@ -3384,7 +3420,7 @@ public class StringHelper {
 		if (prefixPos >= 0) {
 			int suffixPos = text.indexOf(suffix, prefixPos);
 			if (suffixPos > prefixPos) {
-				return text.substring(0, prefixPos+prefix.length())+newItem+text.substring(suffixPos);
+				return text.substring(0, prefixPos + prefix.length()) + newItem + text.substring(suffixPos);
 			}
 		}
 		return text;
@@ -4177,6 +4213,6 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(">>>>>>>>> StringHelper.main : test replace CR = "+collectionToText(stringToCollection(replaceCR("\nJavlo\nCMS\n", "?")))); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> StringHelper.main : test replace CR = " + collectionToText(stringToCollection(replaceCR("\nJavlo\nCMS\n", "?")))); // TODO: remove debug trace
 	}
 }

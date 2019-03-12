@@ -512,7 +512,7 @@ public class PersistenceService {
 		to.setTime(day);
 		to.add(Calendar.DAY_OF_YEAR, 1);
 		to = TimeHelper.convertRemoveAfterDay(to);
-		Track[] tracks = loadTracks(from.getTime(), to.getTime(), true, false);
+		Track[] tracks = loadTracks(from.getTime(), to.getTime(), false, false);
 		return tracks;
 	}
 
@@ -525,26 +525,41 @@ public class PersistenceService {
 		if (!csvFile.exists() && !propFile.exists()) {
 			return null;
 		}
+		DayInfo dayInfo = null;
+		if (propFile.exists()) {
+			dayInfo = new DayInfo(propFile);
+			if (dayInfo.version != DayInfo.CURRENT_VERSION) {
+				propFile.delete();
+			}
+		}
 		if (csvFile.exists() && (!propFile.exists() || csvFile.lastModified() > propFile.lastModified())) {
-			DayInfo dayInfo = new DayInfo();
+			dayInfo = new DayInfo(cal.getTime());
 			for (Track track : getAllTrack(cal.getTime())) {
 				if (!track.getPath().contains(".php")) {
 					dayInfo.pagesCount++;
 					boolean mobile = NetHelper.isMobile(track.getUserAgent());
-					if (mobile) {
-						dayInfo.pagesCountMobile++;
+					if (track.getAction() != null && track.getAction().endsWith("publish")) {
+						dayInfo.publishCount++;
 					}
-					if (cache.get("session-" + track.getSessionId()) == null) {
-						cache.put("session-" + track.getSessionId(), track.getPath());
-						dayInfo.sessionCount++;
+					if (track.getAction() != null && track.getAction().endsWith("save")) {
+						dayInfo.saveCount++;
+					}
+					if (track.isView()) {
 						if (mobile) {
-							dayInfo.sessionCountMobile++;
+							dayInfo.pagesCountMobile++;
 						}
-					} else if (cache.get("session2Click-" + track.getSessionId()) == null && !track.getPath().equals(cache.get("session-" + track.getSessionId()))) {
-						cache.put("session2Click-" + track.getSessionId(), 1);
-						dayInfo.session2ClickCount++;
-						if (mobile) {
-							dayInfo.session2ClickCountMobile++;
+						if (cache.get("session-" + track.getSessionId()) == null) {
+							cache.put("session-" + track.getSessionId(), track.getPath());
+							dayInfo.sessionCount++;
+							if (mobile) {
+								dayInfo.sessionCountMobile++;
+							}
+						} else if (cache.get("session2Click-" + track.getSessionId()) == null && !track.getPath().equals(cache.get("session-" + track.getSessionId()))) {
+							cache.put("session2Click-" + track.getSessionId(), 1);
+							dayInfo.session2ClickCount++;
+							if (mobile) {
+								dayInfo.session2ClickCountMobile++;
+							}
 						}
 					}
 				}
@@ -552,10 +567,8 @@ public class PersistenceService {
 			logger.info("store dayInfo for : " + StringHelper.renderDate(cal.getTime()));
 			dayInfo.store(propFile);
 			return dayInfo;
-		} else
-
-		{
-			return new DayInfo(propFile);
+		} else {
+			return dayInfo;
 		}
 
 	}
@@ -1438,6 +1451,12 @@ public class PersistenceService {
 										track.setUserAgent(userAgent);
 									}
 
+									String ext = StringHelper.getFileExtension(track.getPath());
+									if (StringHelper.isEmpty(ext) || ext.equalsIgnoreCase("htm")) {
+										ext = "html"; // default rendering
+									}
+									boolean isView = track.getPath() != null && ext.equals("html") && !track.getPath().contains("/edit") && !track.getPath().contains("/preview") && !track.getPath().contains("/time") && !track.getPath().contains("/ajax");
+									track.setView(isView);
 									if (onlyResource) {
 										if (!track.getPath().startsWith("/view/") && !track.getPath().startsWith("/preview/") && !track.getPath().startsWith("/edit/") && !track.getPath().startsWith("/ajax/")) {
 											track.setPath(URLHelper.removeTemplateFromResourceURL(track.getPath()));
@@ -1456,11 +1475,7 @@ public class PersistenceService {
 											countTrack++;
 										}
 									} else {
-										String ext = StringHelper.getFileExtension(track.getPath());
-										if (StringHelper.isEmpty(ext) || ext.equalsIgnoreCase("htm")) {
-											ext = "html"; // default rendering
-										}
-										if (track.getPath() != null && ext.equals("html") && !track.getPath().contains("/edit") && !track.getPath().contains("/preview") && !track.getPath().contains("/time") && !track.getPath().contains("/ajax")) {
+										if (isView) {
 											track.setPath(StringHelper.getFileNameWithoutExtension(track.getPath()));
 											Calendar trackCal = Calendar.getInstance();
 											trackCal.setTimeInMillis(track.getTime());

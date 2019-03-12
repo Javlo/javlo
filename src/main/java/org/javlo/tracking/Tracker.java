@@ -12,6 +12,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -44,7 +45,7 @@ import org.javlo.ztatic.StaticInfo;
  *         track event.
  */
 public class Tracker {
-
+	
 	public static final String TRACKING_PARAM = "tracking";
 
 	Logger logger = Logger.getLogger(Tracker.class.getName());
@@ -69,7 +70,7 @@ public class Tracker {
 	public void clearCache() {
 		// cache.clear();
 	}
-
+	
 	public static void trace(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		if (!StringHelper.isTrue(request.getParameter(TRACKING_PARAM), true)) {
 			return;
@@ -602,6 +603,21 @@ public class Tracker {
 			if (dayInfo != null) {
 				data.get(from.get(Calendar.MONTH))[0] += dayInfo.getSession2ClickCount()-dayInfo.getSession2ClickCountMobile();
 				data.get(from.get(Calendar.MONTH))[1] += dayInfo.getSession2ClickCountMobile();
+			}
+			from.add(Calendar.DAY_OF_MONTH, 1);			
+		}
+		return data;
+	}
+	
+	public List<DayInfo> getDayInfos(StatContext statCtx) throws IOException {
+		Calendar from = TimeHelper.convertRemoveAfterDay(TimeHelper.getCalendar(statCtx.getFrom()));
+		Calendar to = TimeHelper.convertRemoveAfterDay(TimeHelper.getCalendar(statCtx.getTo()));
+		List<DayInfo> data = new LinkedList<>();
+		Map<String,Object> cache = new HashMap<String,Object>();
+		while (from.getTimeInMillis() <= to.getTimeInMillis()) {
+			DayInfo dayInfo = persistenceService.getTrackDayInfo(from, cache);
+			if (dayInfo != null) {
+				data.add(dayInfo);
 			}
 			from.add(Calendar.DAY_OF_MONTH, 1);			
 		}

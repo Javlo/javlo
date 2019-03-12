@@ -88,6 +88,10 @@ public class DynamicComponentCreator extends AbstractVisualComponent implements 
 		} else if (rs.getParameter("id", null) != null) {
 			ContentService contentService = ContentService.getInstance(ctx.getRequest());
 			IContentVisualComponent comp = contentService.getComponent(ctx, rs.getParameter("id", null));
+			if (comp == null) {
+				logger.severe("component not found : "+rs.getParameter("id", null));
+				return "component not found : "+rs.getParameter("id", null);
+			}
 			ctx.getRequest().setAttribute(EDIT_KEY, true);
 			out.println(comp.getXHTMLCode(ctx));
 			ctx.getRequest().removeAttribute(EDIT_KEY);

@@ -373,7 +373,7 @@ public class ContentService implements IPrintInfo {
 	public String createContentWidthId(ContentContext ctx, MenuElement page, String area, String parentId, ComponentBean inBean, boolean releaseCache) throws Exception {
 		ComponentBean bean = new ComponentBean(inBean);
 		bean.setArea(area);
-		bean.setAuthors(ctx.getCurrentEditUser().getLogin());
+		bean.setAuthors(ctx.getCurrentUser().getLogin());
 		bean.setLanguage(ctx.getRequestContentLanguage());
 		page.addContent(parentId, bean, releaseCache);
 		return bean.getId();

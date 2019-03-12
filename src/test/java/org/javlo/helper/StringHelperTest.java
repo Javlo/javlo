@@ -499,4 +499,17 @@ public class StringHelperTest extends TestCase {
 		assertEquals(StringHelper.renderDate(date, "dd/MM/yyyy"), "27/11/1975");
 	}
 	
+	public void testSmartParseDate() throws ParseException {	
+		assertEquals(StringHelper.renderDate(StringHelper.smartParseDate("27/11/1975")), "27/11/1975");
+		assertEquals(StringHelper.renderDate(StringHelper.smartParseDate("27-11-1975")), "27/11/1975");
+		assertEquals(StringHelper.renderDate(StringHelper.smartParseDate("1975-11-27")), "27/11/1975");
+		assertEquals(StringHelper.renderDate(StringHelper.smartParseDate("1975-11-27")), "27/11/1975");
+		assertEquals(StringHelper.renderDate(StringHelper.smartParseDate("19751127")), "27/11/1975");
+		assertEquals(StringHelper.renderDate(StringHelper.smartParseDate("27111975")), "27/11/1975");
+		assertEquals(StringHelper.renderDate(StringHelper.smartParseDate("27 nov 1975")), "27/11/1975");
+		assertEquals(StringHelper.renderDate(StringHelper.smartParseDate("27 nov. 1975", "fr")), "27/11/1975");
+		assertEquals(StringHelper.renderDate(StringHelper.smartParseDate("27 november 1975")), "27/11/1975");
+		assertEquals(StringHelper.renderDate(StringHelper.smartParseDate("27 novembre 1975", "fr")), "27/11/1975");
+	}
+	
 }

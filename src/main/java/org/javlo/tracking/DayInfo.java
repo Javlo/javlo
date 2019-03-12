@@ -2,12 +2,17 @@ package org.javlo.tracking;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.Properties;
 
 import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.utils.StructuredProperties;
 
 public class DayInfo {
+	
+	public static final int CURRENT_VERSION = 2;
 	
 	public int sessionCount = 0;
 	public int session2ClickCount = 0;
@@ -15,8 +20,15 @@ public class DayInfo {
 	public int sessionCountMobile = 0;
 	public int pagesCount = 0;
 	public int pagesCountMobile = 0;
+	public int publishCount = 0;
+	public int saveCount = 0;
 	
-	public DayInfo() {
+	public int version = 1;
+	
+	public Date date;
+	
+	public DayInfo(Date date) {
+		this.date = date;
 	}
 	
 	public DayInfo(File file) throws IOException {
@@ -26,6 +38,14 @@ public class DayInfo {
 		pagesCountMobile = Integer.parseInt(prop.getProperty("session.mobile.count"));
 		session2ClickCount = Integer.parseInt(prop.getProperty("session.2clicks.count"));
 		session2ClickCountMobile = Integer.parseInt(prop.getProperty("session.2clicks.mobile.count"));
+		publishCount = Integer.parseInt(prop.getProperty("action.publish.count", "0"));
+		saveCount = Integer.parseInt(prop.getProperty("action.save.count", "0"));
+		version = Integer.parseInt(prop.getProperty("version", "1"));
+		try {
+			date = StringHelper.parseSortableDate(prop.getProperty("date", "2000-01-01"));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void store(File file) throws IOException {
@@ -35,6 +55,10 @@ public class DayInfo {
 		prop.setProperty("session.mobile.count", ""+pagesCountMobile);
 		prop.setProperty("session.2clicks.count", ""+session2ClickCount);
 		prop.setProperty("session.2clicks.mobile.count", ""+session2ClickCountMobile);
+		prop.setProperty("action.publish.count", ""+publishCount);
+		prop.setProperty("action.save.count", ""+saveCount);
+		prop.setProperty("version", ""+CURRENT_VERSION);
+		prop.setProperty("date", ""+StringHelper.renderSortableDate(date));
 		ResourceHelper.writePropertiesToFile(prop, file, "day info");
 	}
 
@@ -84,6 +108,10 @@ public class DayInfo {
 
 	public void setPagesCountMobile(int pagesCountMobile) {
 		this.pagesCountMobile = pagesCountMobile;
+	}
+	
+	public String getDate() {
+		return StringHelper.renderSortableDate(date);
 	}
 	
 }

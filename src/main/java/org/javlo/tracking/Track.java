@@ -21,6 +21,7 @@ public class Track implements Comparable<Track> {
 	String path;
 	String refered;
 	String userAgent;
+	boolean view = false;
 	
 	String sessionId;
 	String IP;
@@ -157,5 +158,11 @@ public class Track implements Comparable<Track> {
 	}
 	public String getSortableTime() {
 		return StringHelper.renderSortableTime(new Date(time));
+	}
+	public void setView(boolean view) {
+		this.view = view;
+	}
+	public boolean isView() {
+		return view;
 	}
 }
