@@ -3,6 +3,7 @@ package org.javlo.tracking;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 
@@ -12,7 +13,7 @@ import org.javlo.utils.StructuredProperties;
 
 public class DayInfo {
 	
-	public static final int CURRENT_VERSION = 2;
+	public static final int CURRENT_VERSION = 8;
 	
 	public int sessionCount = 0;
 	public int session2ClickCount = 0;
@@ -22,6 +23,7 @@ public class DayInfo {
 	public int pagesCountMobile = 0;
 	public int publishCount = 0;
 	public int saveCount = 0;
+	public String mostSavePage = "";
 	
 	public int version = 1;
 	
@@ -40,6 +42,7 @@ public class DayInfo {
 		session2ClickCountMobile = Integer.parseInt(prop.getProperty("session.2clicks.mobile.count"));
 		publishCount = Integer.parseInt(prop.getProperty("action.publish.count", "0"));
 		saveCount = Integer.parseInt(prop.getProperty("action.save.count", "0"));
+		mostSavePage = prop.getProperty("action.save.page", "");
 		version = Integer.parseInt(prop.getProperty("version", "1"));
 		try {
 			date = StringHelper.parseSortableDate(prop.getProperty("date", "2000-01-01"));
@@ -57,6 +60,7 @@ public class DayInfo {
 		prop.setProperty("session.2clicks.mobile.count", ""+session2ClickCountMobile);
 		prop.setProperty("action.publish.count", ""+publishCount);
 		prop.setProperty("action.save.count", ""+saveCount);
+		prop.setProperty("action.save.page", ""+mostSavePage);
 		prop.setProperty("version", ""+CURRENT_VERSION);
 		prop.setProperty("date", ""+StringHelper.renderSortableDate(date));
 		ResourceHelper.writePropertiesToFile(prop, file, "day info");
@@ -110,8 +114,26 @@ public class DayInfo {
 		this.pagesCountMobile = pagesCountMobile;
 	}
 	
+	public int getPublishCount() {
+		return publishCount;
+	}
+	
+	public int getSaveCount() {
+		return saveCount;
+	}
+	
 	public String getDate() {
 		return StringHelper.renderSortableDate(date);
+	}
+	
+	public int getMonth() {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		return cal.get(Calendar.MONTH);
+	}
+	
+	public String getMostSavePage() {
+		return mostSavePage;
 	}
 	
 }

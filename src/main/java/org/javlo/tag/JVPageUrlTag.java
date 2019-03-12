@@ -18,6 +18,8 @@ public class JVPageUrlTag extends TagSupport {
 	private String var = null;
 	
 	private String params = null;
+	
+	private boolean view = false;
 
 	public void setName(String name) {
 		this.name = name;
@@ -37,6 +39,9 @@ public class JVPageUrlTag extends TagSupport {
 			
 			ContentContext ctx;
 			ctx = ContentContext.getContentContext((HttpServletRequest) pageContext.getRequest(), (HttpServletResponse) pageContext.getResponse());
+			if (view) {
+				ctx.setRenderMode(ContentContext.VIEW_MODE);
+			}
 			String url = URLHelper.createURLFromPageName(ctx, name);
 			if (params != null) {
 				if (url.contains("?")) {
@@ -63,6 +68,14 @@ public class JVPageUrlTag extends TagSupport {
 
 	public void setVar(String var) {
 		this.var = var;
+	}
+
+	public boolean isView() {
+		return view;
+	}
+
+	public void setView(boolean view) {
+		this.view = view;
 	}
 
 }

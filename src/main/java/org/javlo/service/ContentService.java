@@ -985,6 +985,25 @@ public class ContentService implements IPrintInfo {
 			return null;
 		}
 	}
+	
+	public static String getPageNameFromPath(String path) {
+		if (path == null) {
+			return null;
+		}
+		if (path.endsWith("/")) {
+			return "/";
+		}
+		int point = path.indexOf('.');
+		if (point >= 0) {
+			path = path.substring(0, path.indexOf("."));
+		}
+		String[] splittedPath = path.split("/");
+		return splittedPath[splittedPath.length-1];
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(getPageNameFromPath("/javlo/sexy/ajax-edit-content/fr/blog.html"));
+	}
 
 	@Override
 	public void printInfo(ContentContext ctx, PrintStream out) {

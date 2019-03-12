@@ -417,24 +417,7 @@ public class ContentManager {
 	// }
 
 	public static void main(String[] args) {
-
-		String lg = "";
-
-		String realPath = "/view/fr";
-
-		if (realPath != null) {
-			String[] splitedPath = StringHelper.split(realPath, "/");
-
-			System.out.println("**** splitedPath.length = " + splitedPath.length);
-
-			int splitedPathMinSize = 3;
-
-			if (splitedPath.length >= splitedPathMinSize) {
-				lg = splitedPath[2].toLowerCase();
-			}
-		}
-
-		System.out.println("** lg = " + lg);
+		System.out.println("** url = " + getPath("/javlo/sexy/ajax-edit-content/fr/fake/fake-2019/fake-2019-janvier/fake-2019-janvier-4.html"));
 	}
 
 	public static String[] splitPath(String path) {

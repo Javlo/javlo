@@ -46,6 +46,12 @@
             <description>params list sample ("tag=news").</description>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
+        <attribute>
+            <name>view</name>
+            <required>false</required>
+            <description>force view url.</description>
+            <rtexprvalue>false</rtexprvalue>
+        </attribute>
     </tag> 
     <tag>
         <name>tablebox</name>

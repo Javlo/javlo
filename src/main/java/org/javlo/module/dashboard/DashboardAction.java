@@ -165,9 +165,12 @@ public class DashboardAction extends AbstractModuleAction {
 			ctx.getRequest().setAttribute("report", ReportFactory.getReport(ctx));
 		}
 		
-		System.out.println(">>>>>>>>> DashboardAction.prepare : dashboardContext.getCurrentModule().getRenderer() = "+dashboardContext.getCurrentModule().getRenderer()); //TODO: remove debug trace		
-		
-		if (dashboardContext.getCurrentModule().getBoxes().size() > 1) {
+		if (dashboardContext.getCurrentModule().getRenderer() != null && dashboardContext.getCurrentModule().getRenderer().contains("use.jsp")) {
+			StatContext statCtx = createStatContext(ctx.getRequest());
+			List<DayInfo> dayInfos = Tracker.getTracker(globalContext, ctx.getRequest().getSession()).getDayInfos(statCtx);
+			ctx.getRequest().setAttribute("dayInfos", dayInfos);
+			ctx.getRequest().setAttribute("page", "use");
+		} else if (dashboardContext.getCurrentModule().getBoxes().size() > 1) {
 			ctx.getRequest().setAttribute("page", "main");
 			ctx.getRequest().setAttribute("memory", new MemoryBean());
 		} else {
@@ -175,11 +178,6 @@ public class DashboardAction extends AbstractModuleAction {
 				ctx.getRequest().setAttribute("page", "tracker");
 			} else if (!pagelist) {
 				ctx.getRequest().setAttribute("page", "report");
-			} else if (dashboardContext.getCurrentModule().getRenderer().contains("use.jsp")) {
-				StatContext statCtx = createStatContext(ctx.getRequest());
-				List<DayInfo> dayInfos = Tracker.getTracker(globalContext, ctx.getRequest().getSession()).getDayInfos(statCtx);
-				ctx.getRequest().setAttribute("dayInfos", dayInfos);
-				ctx.getRequest().setAttribute("page", "use");
 			} else {
 				ctx.getRequest().setAttribute("page", "list");
 			}

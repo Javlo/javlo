@@ -71,6 +71,7 @@ import org.javlo.service.exception.ServiceException;
 import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.tracking.DayInfo;
 import org.javlo.tracking.Track;
+import org.javlo.utils.NeverEmptyMap;
 import org.javlo.utils.TimeTracker;
 import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
@@ -532,6 +533,7 @@ public class PersistenceService {
 				propFile.delete();
 			}
 		}
+		Map<String, Integer> savePage = new NeverEmptyMap<>(Integer.class);
 		if (csvFile.exists() && (!propFile.exists() || csvFile.lastModified() > propFile.lastModified())) {
 			dayInfo = new DayInfo(cal.getTime());
 			for (Track track : getAllTrack(cal.getTime())) {
@@ -542,6 +544,7 @@ public class PersistenceService {
 						dayInfo.publishCount++;
 					}
 					if (track.getAction() != null && track.getAction().endsWith("save")) {
+						savePage.put(track.getPath(), savePage.get(track.getPath())+1);
 						dayInfo.saveCount++;
 					}
 					if (track.isView()) {
@@ -563,6 +566,17 @@ public class PersistenceService {
 						}
 					}
 				}
+			}
+			if (savePage.size()>0) {
+				int max = 0;
+				String maxPage = null;
+				for (Map.Entry<String, Integer> e : savePage.entrySet()) {
+					if (e.getValue()>max) {
+						max = e.getValue();
+						maxPage = e.getKey();
+					}
+				}
+				dayInfo.mostSavePage = ContentService.getPageNameFromPath(maxPage);
 			}
 			logger.info("store dayInfo for : " + StringHelper.renderDate(cal.getTime()));
 			dayInfo.store(propFile);

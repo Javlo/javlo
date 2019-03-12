@@ -80,3 +80,13 @@ td.forme, td.priority {
 	top: 15px;
 	right: 15px;
 }
+
+.select-year {
+	margin: 15px 0;
+}
+
+.btn-expand {
+	padding: 6px 0 0 6px;
+	font-size: 22px;
+	display: inline-block;
+}
