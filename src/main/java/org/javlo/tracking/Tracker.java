@@ -45,7 +45,7 @@ import org.javlo.ztatic.StaticInfo;
  *         track event.
  */
 public class Tracker {
-	
+
 	public static final String TRACKING_PARAM = "tracking";
 
 	Logger logger = Logger.getLogger(Tracker.class.getName());
@@ -70,27 +70,27 @@ public class Tracker {
 	public void clearCache() {
 		// cache.clear();
 	}
-	
+
 	public static void trace(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		if (!StringHelper.isTrue(request.getParameter(TRACKING_PARAM), true)) {
 			return;
 		}
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		Tracker tracker = Tracker.getTracker(globalContext, request.getSession());
-//		IUserFactory fact = UserFactory.createUserFactory(globalContext, request.getSession());
-//		User user = fact.getCurrentUser(globalContext, request.getSession());
-		String userName = ""+request.getUserPrincipal();
-		/*if (user != null) {
-			userName = user.getLogin();
-		}
-		ContentContext ctx = ContentContext.getContentContext(request, response);
-		if (ctx.getRenderMode() == ContentContext.EDIT_MODE || ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
-			EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
-			if (editCtx.getUserPrincipal() != null) {
-				userName = editCtx.getUserPrincipal().getName();
-			}
-		}*/
-//		ContentContext ctx = ContentContext.getContentContext(request, response);
+		// IUserFactory fact = UserFactory.createUserFactory(globalContext,
+		// request.getSession());
+		// User user = fact.getCurrentUser(globalContext, request.getSession());
+		String userName = "" + request.getUserPrincipal();
+		/*
+		 * if (user != null) { userName = user.getLogin(); } ContentContext ctx =
+		 * ContentContext.getContentContext(request, response); if (ctx.getRenderMode()
+		 * == ContentContext.EDIT_MODE || ctx.getRenderMode() ==
+		 * ContentContext.PREVIEW_MODE) { EditContext editCtx =
+		 * EditContext.getInstance(globalContext, request.getSession()); if
+		 * (editCtx.getUserPrincipal() != null) { userName =
+		 * editCtx.getUserPrincipal().getName(); } }
+		 */
+		// ContentContext ctx = ContentContext.getContentContext(request, response);
 		RequestService requestService = RequestService.getInstance(request);
 		String action = requestService.getParameter("webaction", null);
 
@@ -130,8 +130,8 @@ public class Tracker {
 	/**
 	 * return a count of access by language
 	 * 
-	 * @return a array of language, key is language, value if a Interger ; click
-	 *         for the language
+	 * @return a array of language, key is language, value if a Interger ; click for
+	 *         the language
 	 */
 	public Map<String, Integer> getLanguage(StatContext statCtx) {
 		Map<String, Integer> res = new HashMap<String, Integer>();
@@ -312,10 +312,10 @@ public class Tracker {
 			}
 		}
 		/*
-		 * for (int i = 0; i < allPages.length; i++) { if (allPages[i][0] !=
-		 * null && allPages[i][0].equals("view")) { if
-		 * (StringHelper.getFileNameWithoutExtension(allPages[i][1]).endsWith(
-		 * path)) { return Integer.parseInt(allPages[i][2]); } } }
+		 * for (int i = 0; i < allPages.length; i++) { if (allPages[i][0] != null &&
+		 * allPages[i][0].equals("view")) { if
+		 * (StringHelper.getFileNameWithoutExtension(allPages[i][1]).endsWith( path)) {
+		 * return Integer.parseInt(allPages[i][2]); } } }
 		 */
 		return c;
 	}
@@ -373,7 +373,7 @@ public class Tracker {
 		Collection<Track> collection;
 		// synchronized (cache) {
 		String key = "resource_" + from.getTime() + " " + to.getTime();
-		logger.finest("create Tracker info : " + key);		
+		logger.finest("create Tracker info : " + key);
 		collection = new LinkedList<Track>();
 		Track[] tracks = getResourceTracks(from, to);
 		for (Track track : tracks) {
@@ -423,8 +423,8 @@ public class Tracker {
 		 * StaticConfig staticConfig =
 		 * StaticConfig.getInstance(ctx.getRequest().getSession()); path =
 		 * URLHelper.createTransformURL(viewCtx,
-		 * URLHelper.mergePath(staticConfig.getStaticFolder(),
-		 * staticInfo.getResource()) , "thumb-view"); outAccess = outAccess +
+		 * URLHelper.mergePath(staticConfig.getStaticFolder(), staticInfo.getResource())
+		 * , "thumb-view"); outAccess = outAccess +
 		 * getCountAccessNoTemplate(from.getTime(), to.getTime(), path);
 		 */
 		return outAccess;
@@ -477,10 +477,12 @@ public class Tracker {
 	public Map<Integer, Integer> getSessionByMonth(StatContext statCtx) {
 		return getSessionByMoment(statCtx, Calendar.MONTH);
 	}
-	
-	/*public Map<Integer, Integer> _getSession2ClickByMonth(StatContext statCtx, GlobalContext globalContext) {
-		return getSession2ClickByMoment(statCtx, Calendar.MONTH);
-	}*/
+
+	/*
+	 * public Map<Integer, Integer> _getSession2ClickByMonth(StatContext statCtx,
+	 * GlobalContext globalContext) { return getSession2ClickByMoment(statCtx,
+	 * Calendar.MONTH); }
+	 */
 
 	public Map<Integer, Integer[]> getSession2ClickByMonth(StatContext statCtx, GlobalContext globalContext) {
 		Properties cache = null;
@@ -493,8 +495,8 @@ public class Tracker {
 		}
 		final String CACHE_KEY_PREFIX = "sess2clk_";
 		Map<Integer, Integer[]> outStat = new HashMap<Integer, Integer[]>();
-		for (int i=0; i<12; i++) {
-			outStat.put(i, new Integer[] {0,0});
+		for (int i = 0; i < 12; i++) {
+			outStat.put(i, new Integer[] { 0, 0 });
 		}
 		Calendar from = Calendar.getInstance();
 		from.setTime(statCtx.getFrom());
@@ -511,29 +513,30 @@ public class Tracker {
 			String val0 = null;
 			String val1 = null;
 			if (cache != null) {
-				val0 = cache.getProperty(key+"-0");
-				val1 = cache.getProperty(key+"-1");
+				val0 = cache.getProperty(key + "-0");
+				val1 = cache.getProperty(key + "-1");
 			}
 			if (val0 != null || val1 != null) {
-				outStat.put(from.get(Calendar.MONTH), new Integer[] {Integer.parseInt(StringHelper.neverNull(val0, "0")),Integer.parseInt(StringHelper.neverNull(val1, "0"))});
-			} else {				
+				outStat.put(from.get(Calendar.MONTH), new Integer[] { Integer.parseInt(StringHelper.neverNull(val0, "0")), Integer.parseInt(StringHelper.neverNull(val1, "0")) });
+			} else {
 				statCtx.setFrom(from.getTime());
 				statCtx.setTo(localTo.getTime());
 				Map<Integer, Integer[]> data = getSession2ClickByMonth(statCtx, globalContext);
 				if (data.size() == 1) {
 					Integer[] click = data.entrySet().iterator().next().getValue();
 					if (cache != null && localTo.before(now)) {
-						cache.setProperty(key+"-0", ""+click[0]);
-						cache.setProperty(key+"-1", ""+click[1]);
+						cache.setProperty(key + "-0", "" + click[0]);
+						cache.setProperty(key + "-1", "" + click[1]);
 					}
 					outStat.put(from.get(Calendar.MONTH), click);
 					try {
 						PersistenceService.getInstance(globalContext).storeTrackCache();
 					} catch (ServiceException e) {
 						e.printStackTrace();
-					}					
-				} if (data.size()>1) {
-					logger.warning("bad size returned : "+data.size());
+					}
+				}
+				if (data.size() > 1) {
+					logger.warning("bad size returned : " + data.size());
 				}
 			}
 			from = localTo;
@@ -542,8 +545,8 @@ public class Tracker {
 	}
 
 	/**
-	 * return session open by a moment define by constant in Calendar object
-	 * (sp. Calendar.DAY_OF_WEEK ).
+	 * return session open by a moment define by constant in Calendar object (sp.
+	 * Calendar.DAY_OF_WEEK ).
 	 * 
 	 * @param statCtx
 	 *            statistic context
@@ -573,13 +576,13 @@ public class Tracker {
 		}
 		return res;
 	}
-	
+
 	private static boolean isView(String url) {
 		if (url.contains("/preview")) {
 			return false;
 		} else if (url.contains("/edit")) {
 			return false;
-		} else if (url.contains("/"+Template.DEFAULT_TEMPLATE_NAME+"/")) {
+		} else if (url.contains("/" + Template.DEFAULT_TEMPLATE_NAME + "/")) {
 			return false;
 		} else if (url.contains("/img/")) {
 			return false;
@@ -589,45 +592,45 @@ public class Tracker {
 			return true;
 		}
 	}
-	
+
 	public Map<Integer, Integer[]> getSession2ClickByMonth(StatContext statCtx) throws IOException {
 		Calendar from = TimeHelper.convertRemoveAfterDay(TimeHelper.getCalendar(statCtx.getFrom()));
 		Calendar to = TimeHelper.convertRemoveAfterDay(TimeHelper.getCalendar(statCtx.getTo()));
 		Map<Integer, Integer[]> data = new HashMap<Integer, Integer[]>();
-		for (int i=0; i<12; i++) {
-			data.put(i, new Integer[] {0,0});
+		for (int i = 0; i < 12; i++) {
+			data.put(i, new Integer[] { 0, 0 });
 		}
-		Map<String,Object> cache = new HashMap<String,Object>();
+		Map<String, Object> cache = new HashMap<String, Object>();
 		while (from.getTimeInMillis() <= to.getTimeInMillis()) {
 			DayInfo dayInfo = persistenceService.getTrackDayInfo(from, cache);
 			if (dayInfo != null) {
-				data.get(from.get(Calendar.MONTH))[0] += dayInfo.getSession2ClickCount()-dayInfo.getSession2ClickCountMobile();
+				data.get(from.get(Calendar.MONTH))[0] += dayInfo.getSession2ClickCount() - dayInfo.getSession2ClickCountMobile();
 				data.get(from.get(Calendar.MONTH))[1] += dayInfo.getSession2ClickCountMobile();
 			}
-			from.add(Calendar.DAY_OF_MONTH, 1);			
+			from.add(Calendar.DAY_OF_MONTH, 1);
 		}
 		return data;
 	}
-	
+
 	public List<DayInfo> getDayInfos(StatContext statCtx) throws IOException {
 		Calendar from = TimeHelper.convertRemoveAfterDay(TimeHelper.getCalendar(statCtx.getFrom()));
 		Calendar to = TimeHelper.convertRemoveAfterDay(TimeHelper.getCalendar(statCtx.getTo()));
 		List<DayInfo> data = new LinkedList<>();
-		Map<String,Object> cache = new HashMap<String,Object>();
+		Map<String, Object> cache = new HashMap<String, Object>();
 		while (from.getTimeInMillis() <= to.getTimeInMillis()) {
 			DayInfo dayInfo = persistenceService.getTrackDayInfo(from, cache);
 			if (dayInfo != null) {
 				data.add(dayInfo);
 			}
-			from.add(Calendar.DAY_OF_MONTH, 1);			
+			from.add(Calendar.DAY_OF_MONTH, 1);
 		}
 		return data;
 	}
 
 	/**
-	 * return session open by a moment define by constant in Calendar object
-	 * (sp. Calendar.DAY_OF_WEEK ).
-	 * 2
+	 * return session open by a moment define by constant in Calendar object (sp.
+	 * Calendar.DAY_OF_WEEK ). 2
+	 * 
 	 * @param statCtx
 	 *            statistic context
 	 * @param moment
@@ -638,8 +641,8 @@ public class Tracker {
 	 */
 	private Map<Integer, Integer[]> getSession2ClickByMoment(StatContext statCtx, int moment) {
 		/*
-		 * get all tracks because a "real" session is a session with get html
-		 * AND ressources
+		 * get all tracks because a "real" session is a session with get html AND
+		 * ressources
 		 */
 		Track[] tracks = getClickTracks(statCtx.getFrom(), statCtx.getTo());
 		Map<Integer, Integer[]> res = new HashMap<Integer, Integer[]>();
@@ -659,12 +662,12 @@ public class Tracker {
 				Integer key = new Integer(cal.get(moment));
 				Integer[] clicks = res.get(key);
 				if (clicks == null) {
-					clicks = new Integer[] {0,0};
+					clicks = new Integer[] { 0, 0 };
 				}
 				if (!NetHelper.isMobile(track.getUserAgent())) {
 					clicks[0] = new Integer(clicks[0].intValue() + 1);
 				} else {
-					clicks[1] = new Integer(clicks[1].intValue() + 1);	
+					clicks[1] = new Integer(clicks[1].intValue() + 1);
 				}
 				res.put(key, clicks);
 				secondSessionIdFound.add(tracks[i].getSessionId());
@@ -693,8 +696,8 @@ public class Tracker {
 	}
 
 	/**
-	 * return the time pass on a page ( time between the click on the page and
-	 * the next click in the same session )
+	 * return the time pass on a page ( time between the click on the page and the
+	 * next click in the same session )
 	 * 
 	 * @return a map with path as key and a array with total time in index 0 and
 	 *         click count in index 1
@@ -738,7 +741,7 @@ public class Tracker {
 		return trackers;
 	}
 
-	public Track[] getClickTracks(Date from, Date to) {		
+	public Track[] getClickTracks(Date from, Date to) {
 		Track[] trackers = persistenceService.loadTracks(from, to, false, false);
 		return trackers;
 	}
@@ -747,12 +750,12 @@ public class Tracker {
 		// TODO: make this method
 		return getViewClickTracks(from, to);
 	}
-	
+
 	public static void main(String[] args) {
 		Calendar cal = Calendar.getInstance();
-		System.out.println(">>>>>>>>> Tracker.main : date = "+StringHelper.renderTime(cal.getTime())); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> Tracker.main : date = " + StringHelper.renderTime(cal.getTime())); // TODO: remove debug trace
 		cal.add(Calendar.DAY_OF_MONTH, 1);
-		System.out.println(">>>>>>>>> Tracker.main : date = "+StringHelper.renderTime(cal.getTime())); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> Tracker.main : date = " + StringHelper.renderTime(cal.getTime())); // TODO: remove debug trace
 	}
 
 }

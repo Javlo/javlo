@@ -95,6 +95,7 @@ import org.javlo.servlet.AccessServlet;
 import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.template.TemplateData;
 import org.javlo.tracking.Tracker;
+import org.javlo.tracking.TrackerInitThread;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
@@ -645,6 +646,12 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			newInstance.writeInfo(session, System.out);
 			newInstance.cleanDataAccess();
 			newInstance.loadFiles();
+			
+			try {
+				(new TrackerInitThread(Tracker.getTracker(newInstance, session))).start();
+			} catch (ServiceException e) {
+				e.printStackTrace();
+			}
 
 			// TODO : init resource Id
 

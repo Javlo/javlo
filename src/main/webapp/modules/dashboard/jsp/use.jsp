@@ -22,12 +22,14 @@
 <table class="table">
 <tr>
 	<th>date</th>
+	<th>#visit</th>
 	<th>#publish</th>
 	<th>#save</th>
-	<th>page most saved</th>
+	<c:if test="${param.expand}"><th>page most saved</th></c:if>
 </tr>
 
 <c:set var="m" value="-1" />
+<c:set var="vt" value="0" />
 <c:set var="pt" value="0" />
 <c:set var="sp" value="0" />
 <c:set var="startDate" value="" />
@@ -35,6 +37,7 @@
 <c:forEach var="day" items="${dayInfos}" varStatus="status">
 	<c:set var="emptyList" value="false" />
 	<c:if test="${m == day.month}">
+		<c:set var="vt" value="${vt+day.sessionCount}" />
 		<c:set var="pt" value="${pt+day.publishCount}" />
 		<c:set var="st" value="${st+day.saveCount}" />
 	</c:if>
@@ -42,11 +45,13 @@
 	<c:if test="${m != -1}">
 	<tr>
 		<th>${startDate} - ${endDate}</th>
+		<th>${vt}</th>
 		<th>${pt}</th>
 		<th>${st}</th>
-		<th></th>
+		<c:if test="${param.expand}"><th></th></c:if>
 	</tr>
 	</c:if>
+	<c:set var="vt" value="${day.sessionCount}" />
 	<c:set var="pt" value="${day.publishCount}" />
 	<c:set var="st" value="${day.saveCount}" />
 	<c:set var="m" value="${day.month}" />
@@ -55,6 +60,7 @@
 	<c:if test="${param.expand}">
 	<tr>
 		<td>${day.date}</td>
+		<td>${day.sessionCount}</td>
 		<td>${day.publishCount}</td>
 		<td>${day.saveCount}</td>
 		<jv:pageurl var="pageURL" name="${day.mostSavePage}" view="true" />
@@ -68,9 +74,10 @@
 </c:forEach>
 <tr>
 	<th>${startDate} - ${endDate}</th>
+	<th>${vt}</th>
 	<th>${pt}</th>
 	<th>${st}</th>
-	<th></th>
+	<c:if test="${param.expand}"><th></th></c:if>
 </tr>
 </table>
 </c:if><c:if test="${emptyList}">

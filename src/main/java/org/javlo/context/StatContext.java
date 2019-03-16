@@ -35,17 +35,25 @@ public class StatContext implements Serializable {
 		Calendar fromCal = GregorianCalendar.getInstance();
 		fromCal.add(Calendar.MONTH, -1);
 		from = fromCal.getTime();
-		request.getSession().setAttribute(SESSION_KEY, this);
-		GlobalContext glContext = GlobalContext.getInstance(request);
-		if (!glContext.isMailing()) {
-			statChoices = new String[] { "report", "pages", "language", "days", "days-session", "hours", "referer" };
+		if (request != null) {
+			request.getSession().setAttribute(SESSION_KEY, this);
+			GlobalContext glContext = GlobalContext.getInstance(request);
+			if (!glContext.isMailing()) {
+				statChoices = new String[] { "report", "pages", "language", "days", "days-session", "hours", "referer" };
+			} else {
+				statChoices = new String[] { "report", "pages", "language", "days", "days-session", "hours", "referer", MAILING_VIEW };
+			}
 		} else {
-			statChoices = new String[] { "report", "pages", "language", "days", "days-session", "hours", "referer", MAILING_VIEW };
+			statChoices = new String[] { "report", "pages", "language", "days", "days-session", "hours", "referer" };
 		}
+		
 		currentStat = statChoices[0];
 	}
 
 	public static final StatContext getInstance(HttpServletRequest request) {
+		if (request == null) {
+			return new StatContext(null);
+		}
 		StatContext ctx = (StatContext) request.getSession().getAttribute(SESSION_KEY);
 		if (ctx == null) {
 			ctx = new StatContext(request);

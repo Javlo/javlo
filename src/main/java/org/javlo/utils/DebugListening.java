@@ -104,7 +104,7 @@ public class DebugListening {
 				if (SEND_ERROR_MAIL) {
 					if (staticConfig.getErrorMailReport() != null) {
 						MailService mailService = MailService.getInstance(new MailConfig(globalContext, StaticConfig.getInstance(request.getSession()), null));
-						mailService.sendMail(new InternetAddress(staticConfig.getErrorMailReport()), new InternetAddress(staticConfig.getErrorMailReport()), subject, adminEmail, true, globalContext.getDKIMBean());
+						mailService.sendMail(new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(staticConfig.getErrorMailReport()), subject, adminEmail, true, globalContext.getDKIMBean());
 						logger.warning("SEND ERROR TO ADMINISTRATOR");
 					} else {
 						logger.warning("no error email defined, the error message will be displayed in log.");

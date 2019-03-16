@@ -257,9 +257,9 @@ request.setAttribute("editUser", ctx.getCurrentEditUser());
 					<a id="preview-delete-zone" href="#" class="hidden">&nbsp;</a>
 					<a href="http://www.javlo.org">javlo.org</a>
     				<c:if test="${!userInterface.light}">    		 
-    					<span class="version">2017 - v ${info.version} - ${info.previewVersion}</span> 
+    					<span class="version">2019 - v ${info.version} - ${info.previewVersion}</span> 
     				</c:if>
-				</div>				
+				</div>
 				<div class="subblock">
 				<div id="pc_macro">
 					<fieldset class="closable">

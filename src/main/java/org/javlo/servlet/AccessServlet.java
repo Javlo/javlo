@@ -96,6 +96,8 @@ import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.thread.ThreadManager;
+import org.javlo.tracking.Tracker;
+import org.javlo.tracking.TrackerInitThread;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.MaxLoginService;
@@ -274,7 +276,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 		MultiReadRequestWrapper.clearTempDir(getServletContext());
 		TemplateFactory.copyDefaultTemplate(getServletContext());
-
+		
 		try {
 			ResourceHelper.deleteFolder(staticConfig.getWebTempDir());
 		} catch (Throwable t) {

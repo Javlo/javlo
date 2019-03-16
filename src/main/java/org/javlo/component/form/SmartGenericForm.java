@@ -923,6 +923,9 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		SmartGenericForm comp = (SmartGenericForm) content.getComponent(ctx, rs.getParameter("comp_id", null));
 		boolean eventClose = comp.isClose(ctx);
 
+		System.out.println(">>>>>>>>>>>>>> CLOSE : "+eventClose);
+		
+		
 		String code = rs.getParameter("_form-code", "");
 		if (!comp.cacheForm.containsKey(code) && !comp.isCaptcha(ctx)) {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
@@ -1295,21 +1298,20 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 						mailService.sendMail(null, new InternetAddress(globalContext.getAdministratorEmail()), toEmail, ccList, bccList, subject, adminMailContent, true, null, globalContext.getDKIMBean());
 					}
 
-					String mailPath;
-					String mailSubject;
+					String mailPath = comp.getLocalConfig(false).getProperty("mail.confirm.link", null);
+					String mailSubject = comp.getLocalConfig(false).getProperty("mail.confirm.subject", null);
 					
 					Attachment attachment = null;
 					if (!eventClose) {
-						mailPath = comp.getLocalConfig(false).getProperty("doc-link", null);
 						String category = comp.getLocalConfig(false).getProperty("doc-category");
-						if (comp.isDocument() && !StringHelper.isEmpty(category)) {
+						if (comp.isDocument() && !StringHelper.isEmpty(category) && !StringHelper.isEmpty(comp.getLocalConfig(false).getProperty("doc-link", null))) {
 							DataDocument doc = new DataDocument(category, dataDoc);
 							doc.resetToken();
 							DataDocumentService.getInstance(ctx.getGlobalContext()).createDocumentData(doc);
 							ContentContext pdfCtx = new ContentContext(ctx);
 							pdfCtx.setFormat("pdf");
 							ByteArrayOutputStream pdfStream = new ByteArrayOutputStream();
-							String pdfURL = URLHelper.createDataDocumentURL(pdfCtx.getContextForAbsoluteURL(), doc, mailPath);
+							String pdfURL = URLHelper.createDataDocumentURL(pdfCtx.getContextForAbsoluteURL(), doc, comp.getLocalConfig(false).getProperty("doc-link", null));
 							NetHelper.readPage(new URL(pdfURL), pdfStream);
 							pdfStream.flush();
 							attachment = new Attachment(category+'_'+doc.getId()+".pdf", pdfStream.toByteArray());
@@ -1317,10 +1319,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					} else {
 						mailPath = comp.getLocalConfig(false).getProperty("mail.closed.link", null);
 						mailSubject = comp.getLocalConfig(false).getProperty("mail.closed.subject", null);
-					}
-					
-					mailPath = comp.getLocalConfig(false).getProperty("mail.confirm.link", null);
-					mailSubject = comp.getLocalConfig(false).getProperty("mail.confirm.subject", null);
+					}					
 					
 					ContentContext pageCtx = ctx.getContextForAbsoluteURL();
 					pageCtx.setRenderMode(ContentContext.PAGE_MODE);
@@ -1363,6 +1362,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 								userMail.setContent(email);
 								userMail.setHtml(true);
 								userMail.addAttachment(attachment);
+								userMail.setDkim(globalContext.getDKIMBean());
 								
 								mailService.sendMail(null, userMail);
 								
