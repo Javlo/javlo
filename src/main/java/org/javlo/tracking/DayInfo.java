@@ -5,15 +5,20 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.mutable.MutableInt;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.utils.NeverEmptyMap;
 import org.javlo.utils.StructuredProperties;
 
 public class DayInfo {
 	
-	public static final int CURRENT_VERSION = 8;
+	public static final int CURRENT_VERSION = 16;
+
+	private static final String PAGES_VISITS_PREFIX = "path.visits.";
 	
 	public int sessionCount = 0;
 	public int session2ClickCount = 0;
@@ -24,6 +29,7 @@ public class DayInfo {
 	public int publishCount = 0;
 	public int saveCount = 0;
 	public String mostSavePage = "";
+	public Map<String, MutableInt> visitPath = new NeverEmptyMap<>(MutableInt.class);
 	
 	public int version = 1;
 	
@@ -49,6 +55,14 @@ public class DayInfo {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+		
+		// search data
+		for (Object k : prop.keySet()) {
+			if (((String)k).startsWith(PAGES_VISITS_PREFIX)) {
+				String path = k.toString().substring(PAGES_VISITS_PREFIX.length());
+				visitPath.put(path, new MutableInt(Integer.parseInt((String)prop.get(k))));
+			}
+		}
 	}
 	
 	public void store(File file) throws IOException {
@@ -63,6 +77,9 @@ public class DayInfo {
 		prop.setProperty("action.save.page", ""+mostSavePage);
 		prop.setProperty("version", ""+CURRENT_VERSION);
 		prop.setProperty("date", ""+StringHelper.renderSortableDate(date));
+		for (String k : visitPath.keySet()) {
+			prop.setProperty(PAGES_VISITS_PREFIX+k, ""+visitPath.get(k).intValue());
+		}
 		ResourceHelper.writePropertiesToFile(prop, file, "day info");
 	}
 
@@ -134,6 +151,12 @@ public class DayInfo {
 	
 	public String getMostSavePage() {
 		return mostSavePage;
+	}
+	
+	public static void main(String[] args) {
+		DayInfo di = new DayInfo(new Date());
+		di.visitPath.get("test").increment();
+		System.out.println(di.visitPath.keySet());
 	}
 	
 }

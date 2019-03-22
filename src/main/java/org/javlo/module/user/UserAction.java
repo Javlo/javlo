@@ -91,7 +91,7 @@ public class UserAction extends AbstractModuleAction {
 //		}
 		
 		if (ctx.getCurrentEditUser() == null) {
-			logger.warning("security error no user found.");
+			logger.fine("security error no user found.");
 			return null;
 		}
 
@@ -151,7 +151,6 @@ public class UserAction extends AbstractModuleAction {
 			}
 
 			Map<String, String> userInfoMap = BeanHelper.bean2Map(user.getUserInfo());
-			System.out.println("#userInfoMap = "+userInfoMap.size());
 			ctx.getRequest().setAttribute("functions", LangHelper.collectionToMap(StringHelper.stringToCollection(userInfoMap.get("function"), ";")));
 
 			ctx.getRequest().setAttribute("user", user);

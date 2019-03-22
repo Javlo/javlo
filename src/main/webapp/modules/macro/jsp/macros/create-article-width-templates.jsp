@@ -35,7 +35,7 @@ ${js}
 </div><div class="col-sm-4">
 <div class="form-group">
 	<label for="date">date</label>
-	<input type="text" class="datepicker form-control" id="date" name="date" value="${info.currentDate}"/>
+	<input type="text" class="datepicker form-control" id="date" name="date" value="" required />
 </div>
 </div></div>
 

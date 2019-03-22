@@ -178,7 +178,32 @@
 	<span><c:if test="${empty page.info.imageBean}">-</c:if><c:if test="${not empty page.info.imageBean}"><a href="${page.info.imageBean.url}" target="_blank">${page.info.imageBean.name}</a></c:if></span></div>
 </div></div>
 
-</div></div>
+</div>
+
+<fieldset>
+<legend>stat</legend>
+<div class="row">
+	<div class="col-sm-4">
+		<div class="line">
+			<label>${i18n.edit['item.page.day-visit']}</label>
+			<span>${page.lastDayVisit}</span>
+		</div>
+	</div><div class="col-sm-4">
+		<div class="line">
+			<label>${i18n.edit['item.page.mount-visit']}</label>
+			<span>${page.lastMountVisit}</span>
+		</div>
+	</div><div class="col-sm-4">
+		<div class="line">
+			<label>${i18n.edit['item.page.year-visit']}</label>
+			<span>${page.lastYearVisit}</span>
+		</div>
+	</div>
+</div>
+
+</fieldset>
+
+</div>
 <div class="col-md-6">
 <div class="bloc-default">
 <div class="row">

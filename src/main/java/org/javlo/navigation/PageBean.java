@@ -27,6 +27,7 @@ import org.javlo.service.ContentService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
+import org.javlo.tracking.Tracker;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.utils.CollectionAsMap;
 import org.javlo.utils.HtmlPart;
@@ -787,6 +788,24 @@ public class PageBean implements Serializable {
 		} else {
 			return null;
 		}
+	}
+	
+	public int getLastDayVisit() throws ServiceException, IOException {
+		Tracker tracker = Tracker.getTracker(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		String path = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), ctx.getPath());
+		return tracker.getLastDayPathReading(path);
+	}
+	
+	public int getLastMountVisit() throws ServiceException, IOException {
+		Tracker tracker = Tracker.getTracker(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		String path = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), ctx.getPath());
+		return tracker.getLastMountPathReading(path);
+	}
+	
+	public int getLastYearVisit() throws ServiceException, IOException {
+		Tracker tracker = Tracker.getTracker(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		String path = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), ctx.getPath());
+		return tracker.getLastYearPathReading(path);
 	}
 
 }

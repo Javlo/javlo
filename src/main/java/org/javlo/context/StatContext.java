@@ -30,6 +30,11 @@ public class StatContext implements Serializable {
 	private String parentPath = null;
 	private String currentMailing = null;
 	private String mailingFilter = "";
+	
+	public StatContext(Date from, Date to) {
+		this.from = from;
+		this.to = to;
+	}
 
 	private StatContext(HttpServletRequest request) {
 		Calendar fromCal = GregorianCalendar.getInstance();

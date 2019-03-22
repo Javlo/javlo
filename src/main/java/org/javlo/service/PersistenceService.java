@@ -72,6 +72,7 @@ import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.tracking.DayInfo;
 import org.javlo.tracking.Track;
 import org.javlo.utils.NeverEmptyMap;
+import org.javlo.utils.TimeMap;
 import org.javlo.utils.TimeTracker;
 import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
@@ -482,16 +483,16 @@ public class PersistenceService {
 		return URLHelper.mergePath(globalContext.getDataFolder(), _TRACKING_DIRECTORY);
 	}
 
-	private Reader getTrackReader(Calendar cal) throws IOException {
+	private static Reader getTrackReader(Calendar cal, String trackingDir) throws IOException {
 		int year = cal.get(Calendar.YEAR);
 		int mount = cal.get(Calendar.MONTH);
 		int day = cal.get(Calendar.DAY_OF_MONTH);
 
-		File dir = new File(getTrackingDirectory() + '/' + year + '/' + mount);
+		File dir = new File(trackingDir + '/' + year + '/' + mount);
 		if (!dir.exists()) {
 			return null;
 		}
-		File file = new File(getTrackingDirectory() + '/' + year + '/' + mount + "/tracks-" + day + ".csv");
+		File file = new File(trackingDir + '/' + year + '/' + mount + "/tracks-" + day + ".csv");
 		if (!file.exists()) {
 			return null;
 		}
@@ -505,7 +506,11 @@ public class PersistenceService {
 	 * 
 	 * @return a list of track.
 	 */
-	public synchronized Track[] getAllTrack(Date day) {
+	public Track[] getAllTrack(Date day) {
+		return getAllTrack(day, getTrackingDirectory());
+	}
+	
+	public static synchronized Track[] getAllTrack(Date day, String trackingDir) {
 		Calendar from = Calendar.getInstance();
 		from.setTime(day);
 		from = TimeHelper.convertRemoveAfterDay(from);
@@ -513,20 +518,34 @@ public class PersistenceService {
 		to.setTime(day);
 		to.add(Calendar.DAY_OF_YEAR, 1);
 		to = TimeHelper.convertRemoveAfterDay(to);
-		Track[] tracks = loadTracks(from.getTime(), to.getTime(), false, false);
+		Track[] tracks = loadTracks(from.getTime(), to.getTime(), false, false, trackingDir);
 		return tracks;
 	}
 
-	public DayInfo getTrackDayInfo(Calendar cal, Map<String, Object> cache) throws IOException {
+	public TimeMap<Long, DayInfo> dayInfoCache = new TimeMap<>(2 * 60, 100000);
+
+	public DayInfo getTrackDayInfo(Calendar cal, Map<String, Object> globalMem) throws IOException {
+		return getTrackDayInfo(cal, globalMem, dayInfoCache, getTrackingDirectory());
+	}
+
+	public static DayInfo getTrackDayInfo(Calendar cal, Map<String, Object> globalMem, TimeMap<Long, DayInfo> dayInfoCache, String trackingDir) throws IOException {
+		
+		DayInfo dayInfo = null;
+		if (dayInfoCache != null) {
+			dayInfo = dayInfoCache.get(cal.getTimeInMillis());
+			if (dayInfo != null) {
+				return dayInfo;
+			}
+		}
+
 		int year = cal.get(Calendar.YEAR);
 		int mount = cal.get(Calendar.MONTH);
 		int day = cal.get(Calendar.DAY_OF_MONTH);
-		File csvFile = new File(getTrackingDirectory() + '/' + year + '/' + mount + "/tracks-" + day + ".csv");
-		File propFile = new File(getTrackingDirectory() + '/' + year + '/' + mount + "/tracks-" + day + ".properties");
+		File csvFile = new File(trackingDir + '/' + year + '/' + mount + "/tracks-" + day + ".csv");
+		File propFile = new File(trackingDir + '/' + year + '/' + mount + "/tracks-" + day + ".properties");
 		if (!csvFile.exists() && !propFile.exists()) {
 			return null;
 		}
-		DayInfo dayInfo = null;
 		if (propFile.exists()) {
 			dayInfo = new DayInfo(propFile);
 			if (dayInfo.version != DayInfo.CURRENT_VERSION) {
@@ -536,7 +555,10 @@ public class PersistenceService {
 		Map<String, Integer> savePage = new NeverEmptyMap<>(Integer.class);
 		if (csvFile.exists() && (!propFile.exists() || csvFile.lastModified() > propFile.lastModified())) {
 			dayInfo = new DayInfo(cal.getTime());
-			for (Track track : getAllTrack(cal.getTime())) {
+			if (globalMem == null) {
+				globalMem = new HashMap<>();
+			}
+			for (Track track : getAllTrack(cal.getTime(), trackingDir)) {
 				if (!track.getPath().contains(".php")) {
 					dayInfo.pagesCount++;
 					boolean mobile = NetHelper.isMobile(track.getUserAgent());
@@ -544,34 +566,35 @@ public class PersistenceService {
 						dayInfo.publishCount++;
 					}
 					if (track.getAction() != null && track.getAction().endsWith("save")) {
-						savePage.put(track.getPath(), savePage.get(track.getPath())+1);
+						savePage.put(track.getPath(), savePage.get(track.getPath()) + 1);
 						dayInfo.saveCount++;
 					}
-					if (track.isView()) {
+					//if (track.isView()) {
 						if (mobile) {
 							dayInfo.pagesCountMobile++;
 						}
-						if (cache.get("session-" + track.getSessionId()) == null) {
-							cache.put("session-" + track.getSessionId(), track.getPath());
+						dayInfo.visitPath.get(URLHelper.removeParam(track.getPath())).increment();
+						if (globalMem.get("session-" + track.getSessionId()) == null) {
+							globalMem.put("session-" + track.getSessionId(), track.getPath());
 							dayInfo.sessionCount++;
 							if (mobile) {
 								dayInfo.sessionCountMobile++;
 							}
-						} else if (cache.get("session2Click-" + track.getSessionId()) == null && !track.getPath().equals(cache.get("session-" + track.getSessionId()))) {
-							cache.put("session2Click-" + track.getSessionId(), 1);
+						} else if (globalMem.get("session2Click-" + track.getSessionId()) == null && !track.getPath().equals(globalMem.get("session-" + track.getSessionId()))) {
+							globalMem.put("session2Click-" + track.getSessionId(), 1);
 							dayInfo.session2ClickCount++;
 							if (mobile) {
 								dayInfo.session2ClickCountMobile++;
 							}
 						}
-					}
+					//}
 				}
 			}
-			if (savePage.size()>0) {
+			if (savePage.size() > 0) {
 				int max = 0;
 				String maxPage = null;
 				for (Map.Entry<String, Integer> e : savePage.entrySet()) {
-					if (e.getValue()>max) {
+					if (e.getValue() > max) {
 						max = e.getValue();
 						maxPage = e.getKey();
 					}
@@ -580,10 +603,12 @@ public class PersistenceService {
 			}
 			logger.info("store dayInfo for : " + StringHelper.renderDate(cal.getTime()));
 			dayInfo.store(propFile);
-			return dayInfo;
-		} else {
-			return dayInfo;
+
 		}
+		if (dayInfoCache != null) {
+			dayInfoCache.put(cal.getTimeInMillis(), dayInfo);
+		}
+		return dayInfo;
 
 	}
 
@@ -1394,8 +1419,12 @@ public class PersistenceService {
 	 * Integer.parseInt(prop.getProperty("version", "1")); } else { // set default
 	 * value version = 1; } return version; }
 	 */
-
+	
 	public Track[] loadTracks(Date from, Date to, boolean onlyViewClick, boolean onlyResource) {
+		return loadTracks(from, to, onlyViewClick, onlyResource, getTrackingDirectory());
+	}
+
+	public static Track[] loadTracks(Date from, Date to, boolean onlyViewClick, boolean onlyResource, String trackingDir) {
 
 		Collection<Track> outCol = new ArrayList<Track>();
 
@@ -1431,7 +1460,7 @@ public class PersistenceService {
 		while (countBcl < 1000 && calFrom.before(calTo) || ((calFrom.get(Calendar.DAY_OF_MONTH) == calTo.get(Calendar.DAY_OF_MONTH)))) {
 			countBcl++;
 			try {
-				Reader reader = getTrackReader(calFrom);
+				Reader reader = getTrackReader(calFrom, trackingDir);
 				if (reader != null) {
 					BufferedReader bufReader = new BufferedReader(reader);
 					String line = bufReader.readLine();
@@ -1451,7 +1480,7 @@ public class PersistenceService {
 										track.setTime(Long.parseLong(trackInfo[0]));
 									} catch (NumberFormatException e) {
 										track.setTime(0);
-										logger.warning(e.getMessage());
+										logger.warning("error parse : " + trackInfo[0]);
 									}
 									track.setPath(trackInfo[1]);
 									track.setSessionId(trackInfo[2]);
@@ -1569,7 +1598,7 @@ public class PersistenceService {
 		}
 	}
 
-	private void releaseTrackReader(Reader reader) throws IOException {
+	private static void releaseTrackReader(Reader reader) throws IOException {
 		reader.close();
 	}
 
@@ -1822,13 +1851,12 @@ public class PersistenceService {
 	}
 
 	public static void main(String[] args) throws Exception {
-		PersistenceService persistenceService = PersistenceService.getInstance(null);
 		Calendar cal = Calendar.getInstance();
-		Track[] tracks = persistenceService.getAllTrack(new Date());
-		System.out.println("#tracks = " + tracks.length);
-		for (Track track : tracks) {
-			System.out.println("user agent = " + track.getUserAgent());
-		}
+		cal.setTime(StringHelper.parseDate("22/03/2019"));
+		Map memData = new HashMap();
+		DayInfo di = getTrackDayInfo(cal,memData , null, "C:/Users/user/data/javlo/data-ctx/data-sexy/persitence/tracking");
+		System.out.println(">>>>>>>>> PersistenceService.main : #pages : "+di.pagesCount); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> PersistenceService.main : #di.visitPages = "+di.visitPath.size()); //TODO: remove debug trace
 	}
 
 	public boolean isLoaded() {

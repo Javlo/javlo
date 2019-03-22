@@ -214,3 +214,7 @@ body .el-finder {
 	width: auto;
 	background-color: transparent;
 }
+
+.row.stat .line {
+	margin: 0;
+}

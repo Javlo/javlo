@@ -1,6 +1,7 @@
 package org.javlo.module.file;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -20,6 +21,8 @@ import org.javlo.data.taxonomy.ITaxonomyContainer;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.service.exception.ServiceException;
+import org.javlo.tracking.Tracker;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.ztatic.StaticInfo;
 import org.javlo.ztatic.StaticInfo.Position;
@@ -93,7 +96,7 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 	public String getURL() {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (!isDirectory()) {
-			return URLHelper.createResourceURL(ctx, '/' + (staticInfo.isStaticFolder()?globalContext.getStaticConfig().getStaticFolder():"") + staticInfo.getStaticURL());
+			return URLHelper.createMediaURL(ctx, '/' + (staticInfo.isStaticFolder()?globalContext.getStaticConfig().getStaticFolder():"") + staticInfo.getStaticURL());
 		} else {
 			String currentURL;
 			try {
@@ -463,6 +466,21 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 			e.printStackTrace();
 			return e.getMessage();
 		}
+	}
+	
+	public int getLastDayVisit() throws ServiceException, IOException {
+		Tracker tracker = Tracker.getTracker(ctx.getGlobalContext(), ctx.getRequest().getSession()); 
+		return tracker.getLastDayPathReading(getURL());
+	}
+	
+	public int getLastMountVisit() throws ServiceException, IOException {
+		Tracker tracker = Tracker.getTracker(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		return tracker.getLastMountPathReading(getURL());
+	}
+	
+	public int getLastYearVisit() throws ServiceException, IOException {
+		Tracker tracker = Tracker.getTracker(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		return tracker.getLastYearPathReading(getURL());
 	}
 	
 }

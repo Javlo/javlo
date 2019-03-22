@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,6 +39,7 @@ import org.javlo.service.RequestService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.template.Template;
+import org.javlo.utils.TimeMap;
 import org.javlo.ztatic.StaticInfo;
 
 /**
@@ -611,14 +613,69 @@ public class Tracker {
 		}
 		return data;
 	}
+	
+	public int getLastMountPathReading(String path) throws IOException {
+		Calendar cal = Calendar.getInstance();
+		Calendar cal2 = Calendar.getInstance();
+		cal2.add(Calendar.MONTH, -1);
+		AtomicInteger pageTotalVisit = new AtomicInteger(0);
+		StatContext statCtx = new StatContext(cal2.getTime(), cal.getTime());
+		List<DayInfo> dayInfoList = getDayInfos(statCtx);
+		dayInfoList.parallelStream()
+			.filter(d -> d.visitPath.get(path) != null)
+			.forEach(d -> pageTotalVisit.addAndGet(d.visitPath.get(path).intValue()));
+		return pageTotalVisit.get();
+	}
+	
+	public int getLastYearPathReading(String path) throws IOException {
+		Calendar cal = Calendar.getInstance();
+		Calendar cal2 = Calendar.getInstance();
+		cal2.add(Calendar.YEAR, -1);
+		AtomicInteger pageTotalVisit = new AtomicInteger(0);
+		StatContext statCtx = new StatContext(cal2.getTime(), cal.getTime());
+		List<DayInfo> dayInfoList = getDayInfos(statCtx);
+		dayInfoList.parallelStream()
+			.filter(d -> d.visitPath.get(path) != null)
+			.forEach(d -> pageTotalVisit.addAndGet(d.visitPath.get(path).intValue()));
+		return pageTotalVisit.get();
+	}
+	
+	public int getLastDayPathReading(String path) throws IOException {
+		Calendar cal = Calendar.getInstance();
+		Calendar cal2 = Calendar.getInstance();
+		cal2.add(Calendar.DAY_OF_YEAR, -1);
+		AtomicInteger pageTotalVisit = new AtomicInteger(0);
+		StatContext statCtx = new StatContext(cal2.getTime(), cal.getTime());
+		List<DayInfo> dayInfoList = getDayInfos(statCtx);
+		dayInfoList.parallelStream()
+			.filter(d -> d.visitPath.get(path) != null)
+			.forEach(d -> pageTotalVisit.addAndGet(d.visitPath.get(path).intValue()));
+		return pageTotalVisit.get();
+	}
+	
+	private static int testLastMountPageReading(String path) throws IOException {
+		Calendar cal = Calendar.getInstance();
+		Calendar cal2 = Calendar.getInstance();
+		cal2.add(Calendar.MONTH, -1);
+		AtomicInteger pageTotalVisit = new AtomicInteger(0);
+		StatContext statCtx = new StatContext(cal2.getTime(), cal.getTime());
+		List<DayInfo> dayInfoList = getDayInfos(statCtx, null, "C:\\Users\\user\\data\\javlo\\data-ctx\\data-sexy\\persitence\\tracking");
+		dayInfoList.parallelStream()
+			.filter(d -> d.visitPath.get(path) != null)
+			.forEach(d -> pageTotalVisit.addAndGet(d.visitPath.get(path).intValue()));
+		return pageTotalVisit.get();
+	}
 
 	public List<DayInfo> getDayInfos(StatContext statCtx) throws IOException {
+		return getDayInfos(statCtx, persistenceService.dayInfoCache, persistenceService.getTrackingDirectory());
+	}
+	
+	public static List<DayInfo> getDayInfos(StatContext statCtx, TimeMap<Long, DayInfo> dayInfoCache, String trackingDir) throws IOException {
 		Calendar from = TimeHelper.convertRemoveAfterDay(TimeHelper.getCalendar(statCtx.getFrom()));
 		Calendar to = TimeHelper.convertRemoveAfterDay(TimeHelper.getCalendar(statCtx.getTo()));
 		List<DayInfo> data = new LinkedList<>();
-		Map<String, Object> cache = new HashMap<String, Object>();
 		while (from.getTimeInMillis() <= to.getTimeInMillis()) {
-			DayInfo dayInfo = persistenceService.getTrackDayInfo(from, cache);
+			DayInfo dayInfo = PersistenceService.getTrackDayInfo(from, null, dayInfoCache, trackingDir);
 			if (dayInfo != null) {
 				data.add(dayInfo);
 			}
@@ -751,11 +808,8 @@ public class Tracker {
 		return getViewClickTracks(from, to);
 	}
 
-	public static void main(String[] args) {
-		Calendar cal = Calendar.getInstance();
-		System.out.println(">>>>>>>>> Tracker.main : date = " + StringHelper.renderTime(cal.getTime())); // TODO: remove debug trace
-		cal.add(Calendar.DAY_OF_MONTH, 1);
-		System.out.println(">>>>>>>>> Tracker.main : date = " + StringHelper.renderTime(cal.getTime())); // TODO: remove debug trace
+	public static void main(String[] args) throws IOException {
+		System.out.println(">>>>>>>>> Tracker.main : testLastMountPageReading = "+testLastMountPageReading("/javlo/sexy/fr/home2/offices")); //TODO: remove debug trace
 	}
 
 }

@@ -81,6 +81,7 @@ public class NeverEmptyMap<K, V> implements Map<K, V> {
 		V val = internalMap.get(key);
 		if (val == null) {
 			val = newInstance();
+			put((K)key,val);
 		}
 		return val;
 	}
