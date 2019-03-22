@@ -218,6 +218,6 @@ body .el-finder {
 .row.stat .line {
 	margin: 0;
 	label {
-		width: auto;
+		width: auto !important;
 	}
 }
