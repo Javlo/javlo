@@ -752,6 +752,7 @@ Security in case of vulnerabilities.
 - mailService : list of page template
 - beanutils copy with boolean
 - data document
+- path tracking
 ### modified
 - defautl edit template : /jsp/edit/template/mandy-lane-premium-bright
 - FieldFile use file servlet in place of resourceServlet

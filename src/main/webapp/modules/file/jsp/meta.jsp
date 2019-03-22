@@ -222,17 +222,17 @@ params:
 		<div class="row stat">
 			<div class="col-md-4">
 				<div class="line">
-					<label>${i18n.edit['item.page.day-visit']}</label>
+					<label>${i18n.edit['item.page.day-visit']} :</label>
 					<span>${file.lastDayVisit}</span>
 				</div>
 			</div><div class="col-md-4">
 				<div class="line">
-					<label>${i18n.edit['item.page.mount-visit']}</label>
+					<label>${i18n.edit['item.page.mount-visit']} :</label>
 					<span>${file.lastMountVisit}</span>
 				</div>
 			</div><div class="col-md-4">
 				<div class="line">
-					<label>${i18n.edit['item.page.year-visit']}</label>
+					<label>${i18n.edit['item.page.year-visit']} :</label>
 					<span>${file.lastYearVisit}</span>
 				</div>
 			</div>
