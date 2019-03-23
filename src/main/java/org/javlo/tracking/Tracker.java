@@ -96,7 +96,7 @@ public class Tracker {
 		RequestService requestService = RequestService.getInstance(request);
 		String action = requestService.getParameter("webaction", null);
 
-		Track track = new Track(userName, action, request.getRequestURI(), System.currentTimeMillis(), request.getHeader("Referer"), request.getHeader("User-Agent"));
+		Track track = new Track(userName, action, request.getRequestURI(), System.currentTimeMillis(), request.getHeader("Referer"), request.getHeader("User-Agent"), request.getHeader("Range"));
 		track.setIP(ContentContext.getRealRemoteIp(request, StaticConfig.getInstance(request.getSession()).isAnonymisedTracking()));
 		track.setSessionId(request.getSession().getId());
 		tracker.addTrack(track);

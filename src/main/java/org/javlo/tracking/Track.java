@@ -21,6 +21,7 @@ public class Track implements Comparable<Track> {
 	String path;
 	String refered;
 	String userAgent;
+	String range;
 	boolean view = false;
 	
 	String sessionId;
@@ -62,13 +63,14 @@ public class Track implements Comparable<Track> {
 	 * @param path the current path
 	 * @param time the time of the action
 	 */
-	public Track(String userName, String action, String path, long time, String inReferer, String agent) {		
+	public Track(String userName, String action, String path, long time, String inReferer, String agent, String range) {		
 		this.userName = userName;
 		this.action = action;
 		this.path = path;
 		this.time = time;
 		this.refered = inReferer;
 		this.userAgent = agent;
+		this.range = StringHelper.neverEmpty(range, "");
 	}
 	/**
 	 * @return Returns the action.
@@ -108,6 +110,9 @@ public class Track implements Comparable<Track> {
 		res.append (" - ");
 		res.append ("time=");
 		res.append (time);
+		res.append (" - ");
+		res.append ("range=");
+		res.append (range);
 		return res.toString();
 	}
     /**
@@ -152,7 +157,13 @@ public class Track implements Comparable<Track> {
 	public String getUserAgent() {
 		return userAgent;
 	}
-
+	
+	public String getRange() {
+		return range;
+	}
+	public void setRange(String range) {
+		this.range = StringHelper.neverEmpty(range,"");
+	}
 	public void setUserAgent(String userAgent) {
 		this.userAgent = userAgent;
 	}

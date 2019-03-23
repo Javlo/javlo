@@ -273,13 +273,21 @@ public class PersistenceService {
 		outTrack.append(",");
 		outTrack.append(track.getIP());
 		outTrack.append(",");
-		outTrack.append(track.getUserName());
+		if (track.getUserName() != null) {
+			outTrack.append(track.getUserName());
+		}
 		outTrack.append(",");
-		outTrack.append(track.getAction());
+		if (track.getAction() != null) {
+			outTrack.append(track.getAction());
+		}
 		outTrack.append(",");
-		outTrack.append(track.getRefered());
+		if (track.getRefered() != null) {
+			outTrack.append(track.getRefered());
+		}
 		outTrack.append(",");
 		outTrack.append(track.getUserAgent());
+		outTrack.append(",");
+		outTrack.append(track.getRange());
 		return outTrack.toString();
 	}
 
@@ -1489,6 +1497,9 @@ public class PersistenceService {
 									track.setAction(trackInfo[5]);
 									if (trackInfo.length > 6) {
 										track.setRefered(trackInfo[6]);
+									}
+									if (trackInfo.length > 7) {
+										track.setRange(trackInfo[7]);
 									}
 									if (userAgent != null) {
 										track.setUserAgent(userAgent);
