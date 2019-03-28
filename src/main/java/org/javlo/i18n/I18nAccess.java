@@ -144,6 +144,10 @@ public class I18nAccess implements Serializable {
 	private Properties contextEdit = null;
 
 	private ReadOnlyMultiMap propViewMap = null;
+	
+	private Map<String,String> calendarViewMap = null;
+	
+	private Map<String,String> calendarEditMap = null;
 
 	private final Object lockViewMap = new Object();
 
@@ -518,6 +522,52 @@ public class I18nAccess implements Serializable {
 		}
 		return text;
 	}
+	
+	/**
+	 * return trad for calendar
+	 * @return
+	 */
+	public Map<String,String> getCalendarView() {
+		// calendar
+		if (calendarViewMap == null) {
+			synchronized(this) {
+				if (calendarViewMap == null) {
+					calendarViewMap = new HashMap();
+					Calendar cal = Calendar.getInstance();
+					Locale locale = new Locale(viewLg, "BE");
+					for (int i=1; i<=7; i++) {
+						cal.set(Calendar.DAY_OF_WEEK, i);
+						calendarViewMap.put("calendar.day.short."+i, cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, locale));
+						calendarViewMap.put("calendar.day.long."+i, cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, locale));
+					}
+				}
+			}			
+		}
+		return calendarViewMap;
+	}
+	
+	/**
+	 * return trad for calendar
+	 * @return
+	 */
+	public Map<String,String> getCalendarEdit() {
+		// calendar
+		if (calendarEditMap == null) {
+			synchronized(this) {
+				if (calendarEditMap == null) {
+					calendarEditMap = new HashMap();
+					Calendar cal = Calendar.getInstance();					
+					Locale locale = new Locale(viewLg, "BE");
+					for (int i=1; i<=7; i++) {
+						cal.set(Calendar.DAY_OF_WEEK, i);
+						calendarEditMap.put("calendar.day.short."+i, cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, locale));
+						calendarEditMap.put("calendar.day.long."+i, cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, locale));
+					}
+				}
+			}			
+		}
+		return calendarEditMap;
+	}
 
 	public Map<String, String> getView() {
 
@@ -535,7 +585,7 @@ public class I18nAccess implements Serializable {
 					// propViewMap.addMap(new ReadOnlyPropertiesConfigurationMap(localPropView,
 					// displayKey));
 					propViewMap.addMap(localPropView.getProperties());
-				}
+				}				
 			}
 			if (templateView != null && (!templateViewImported || createPropViewMap)) {
 				propViewMap.addMap(templateView);
@@ -696,6 +746,8 @@ public class I18nAccess implements Serializable {
 		viewLg = newViewLg;
 
 		propViewMap = null;
+		
+		calendarViewMap = null;
 		// propEditMap = null;
 	}
 

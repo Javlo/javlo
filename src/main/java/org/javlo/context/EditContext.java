@@ -20,7 +20,6 @@ import javax.servlet.http.HttpSession;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.title.Heading;
 import org.javlo.config.StaticConfig;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.user.AdminUserSecurity;

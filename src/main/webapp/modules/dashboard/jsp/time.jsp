@@ -6,24 +6,27 @@
 		<c:set var="options" value="<option>${y}</option>${options}" />
 	</c:forEach>	
 	<c:set var="options" value="<option value=''>${i18n.edit['global.select']}</option>${options}" />
-<select class="form-input pull-right" onchange="updateYear(this.value)">
+<select class="form-input pull-right" onchange="updateYearForTime(this.value)">
 ${options}
 </select>
 <br /><br />
-<div id="year-chart"></div>
+<div id="time-chart"></div>
 <!-- <div class="export"><a href="#" onclick="downloadImage('#year-chart', 'year-${globalContext.contextKey}'); return false;"><span class="glyphicon glyphicon-cloud-download"></span></a></div>  -->
 </div>
 
 <script type="text/javascript">
-function updateYear(year) {
-	jQuery('#year-chart').html("");
+
+var s1 = [2, 6, 7, 10];
+
+function updateYearForTime(year) {
+	jQuery('#time-chart').html("");
 	if (year == "") {
-		jQuery('#year-chart').removeClass("pie");		
+		jQuery('#time-chart').removeClass("pie");		
 		return;
 	}
-	jQuery('#year-chart').addClass("pie");	
+	jQuery('#time-chart').addClass("pie");	
 	jQuery.ajax({
-	url : "${info.currentURL}".replace("/edit", "/ajax")+"?webaction=dashboard.readTracker&type=year&y="+year,
+	url : "${info.currentURL}".replace("/edit", "/ajax")+"?webaction=dashboard.readTracker&type=time&y="+year,
 	cache : true,		
 	type : "post",
 	dataType : "json",
@@ -32,28 +35,23 @@ function updateYear(year) {
 	}
 }).done(function(jsonObj) {	 
 	jQuery.jqplot.config.enablePlugins = true;
-	    plot1 = jQuery.jqplot('year-chart', jsonObj.datas, {        
+	    plot1 = jQuery.jqplot('time-chart', [jsonObj.datas], {	    	
 	        animate: !jQuery.jqplot.use_excanvas,
 	        stackSeries: true,
 	        seriesDefaults:{
-	            renderer:jQuery.jqplot.BarRenderer,
-	            pointLabels: { show: true }
+	            renderer:jQuery.jqplot.BarRenderer
 	        },
-	        legend: {
-                show: true,
-                location: 'ne',
-                placement: 'inside',
-				labels:['desktop', 'mobile']
-            },
             axes: {            
                 xaxis: {
                     renderer: jQuery.jqplot.CategoryAxisRenderer,
-                    ticks: ['${info.months[0]}', '${info.months[1]}', '${info.months[2]}', '${info.months[3]}', '${info.months[4]}', '${info.months[5]}', '${info.months[6]}', '${info.months[7]}', '${info.months[8]}', '${info.months[9]}', '${info.months[10]}', '${info.months[11]}']
+                    ticks: [
+                    	<c:forEach var="d" begin="0" end="23">'${d}'<c:if test="${d<23}">,</c:if></c:forEach>                    	
+                    ]
                 }
             }	        
 	    }); 
 	    
 });
 }
-updateYear(${info.currentYear});
+updateYearForTime(${info.currentYear});
 </script>

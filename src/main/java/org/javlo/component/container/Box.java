@@ -160,7 +160,7 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		final String BOX_KEY = "_box_counter";
 		if (!isCloseBox()) {			
 			String suffix = "";
-			if (ctx.isAsPreviewMode() && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isPreviewEditionMode()) {				
+			if (ctx.isEditPreview()) {				
 				Integer boxCounter = (Integer)ctx.getRequest().getAttribute(BOX_KEY);
 				if (boxCounter == null) {
 					boxCounter = 0;
@@ -170,7 +170,7 @@ public class Box extends AbstractVisualComponent implements IContainer {
 					ctx.getRequest().setAttribute(BOX_KEY, boxCounter);
 				}
 				getBoxStack(ctx).push(StringHelper.ALPHABET_UPPER_CASE.charAt(boxCounter%26));
-				suffix = "<div " + getPreviewAttributes(ctx) + ">[Open box - "+StringHelper.ALPHABET_UPPER_CASE.charAt(boxCounter%26)+"]</div>";
+				suffix = "<div " + getPreviewAttributes(ctx) + ">[Open box - "+StringHelper.ALPHABET_UPPER_CASE.charAt(boxCounter%26)+" - "+getStyle()+"]</div>";
 			}			
 			return  getOpenCode(ctx) + suffix + getInternalPrefix(ctx);
 		} else {

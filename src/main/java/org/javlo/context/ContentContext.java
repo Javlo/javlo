@@ -1227,6 +1227,18 @@ public class ContentContext {
 		RequestService rs = RequestService.getInstance(request);
 		return StringHelper.isTrue(rs.getParameter(PREVIEW_ONLY_MODE));
 	}
+	
+	/**
+	 * return true if content is editable in preview mode
+	 * @return
+	 */
+	public boolean isPreviewEditionMode() {
+		if (!isAsPreviewMode())  {
+			return false;
+		} else {
+			return EditContext.getInstance(getGlobalContext(), request.getSession()).isPreviewEditionMode();
+		}
+	}
 
 	public boolean isViewPrefix() {
 		return viewPrefix;

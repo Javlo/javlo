@@ -17,6 +17,7 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.mutable.MutableInt;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.core.DebugNote;
 import org.javlo.component.core.IContentVisualComponent;
@@ -43,6 +44,7 @@ import org.javlo.tracking.Track;
 import org.javlo.tracking.Tracker;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.utils.MemoryBean;
+import org.javlo.utils.NeverEmptyMap;
 
 public class DashboardAction extends AbstractModuleAction {
 
@@ -298,7 +300,41 @@ public class DashboardAction extends AbstractModuleAction {
 			ListBuilder datas = ajaxMap.list("datas");
 			datas.add(dayInfo);
 			ctx.setAjaxMap(ajaxMap.getMap());
-		} else if (type.equals("languages")) {
+		} else if (type.equals("time")) {
+			// Map<String, Integer> ajaxMap = new LinkedHashMap<String,
+			// Integer>();
+			String year = rs.getParameter("y", "" + now.get(Calendar.YEAR));
+			Calendar cal = Calendar.getInstance();
+			cal.set(Calendar.YEAR, Integer.parseInt(year));
+			cal.set(Calendar.MONTH, 11);
+			cal.set(Calendar.DAY_OF_MONTH, 31);
+			cal.set(Calendar.HOUR, 23);
+			cal.set(Calendar.MINUTE, 59);
+			cal.set(Calendar.SECOND, 59);
+			statCtx.setTo(cal.getTime());
+			cal.set(Calendar.YEAR, Integer.parseInt(year));
+			cal.set(Calendar.MONTH, 0);
+			cal.set(Calendar.DAY_OF_MONTH, 1);
+			cal.set(Calendar.HOUR, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			statCtx.setFrom(cal.getTime());
+			List<DayInfo> dayInfoList = tracker.getDayInfos(statCtx);
+			
+			Map<Integer, MutableInt> timeVist = new NeverEmptyMap<>(MutableInt.class);
+			for (DayInfo di : dayInfoList) {
+				for (int i=0; i<24; i++) {
+					timeVist.get(i).add(di.timeVist.get(i));
+				}
+			}
+			ObjectBuilder ajaxMap = LangHelper.object();
+			ListBuilder datas = ajaxMap.list("datas");	
+			for (Map.Entry<Integer, MutableInt> e : timeVist.entrySet() ) {
+				datas.add(e.getValue().toInteger());
+			}
+			
+			ctx.setAjaxMap(ajaxMap.getMap());
+		}  else if (type.equals("languages")) {
 			ObjectBuilder ajaxMap = LangHelper.object();
 			List<Entry<String, Integer>> languages = new LinkedList<Map.Entry<String, Integer>>(tracker.getLanguage(statCtx).entrySet());
 			Collections.sort(languages, new Comparator<Entry<String, Integer>>() {
