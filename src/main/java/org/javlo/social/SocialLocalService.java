@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -110,6 +111,36 @@ public class SocialLocalService {
 			dataBaseService.releaseConnection(conn);
 		}
 		return outPost;
+	}
+	
+	public SocialStat getSocialStat(LocalDate date) throws Exception {
+		SocialStat outStat = new SocialStat();
+		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
+		try {
+			PreparedStatement ps = conn.prepareStatement("select count(distinct author) from post where adminvalid=true AND time > ?");
+			ps.setDate(1, java.sql.Date.valueOf(date));
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				outStat.setTotalAuthors(rs.getInt(1));
+			}
+			ps.close();
+			ps = conn.prepareStatement("select count(*) from post where adminvalid=true AND time > ?");
+			ps.setDate(1, java.sql.Date.valueOf(date));
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				outStat.setTotalPost(rs.getInt(1));
+			}
+			ps.close();
+			ps = conn.prepareStatement("select count(*) from post where adminvalid=true AND parent is null AND time > ?");
+			ps.setDate(1, java.sql.Date.valueOf(date));
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				outStat.setTotalMessage(rs.getInt(1));
+			}
+		} finally {
+			dataBaseService.releaseConnection(conn);
+		}
+		return outStat;
 	}
 
 	private static String getSQLFilter(SocialFilter socialFilter, String username) {

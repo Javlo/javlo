@@ -266,11 +266,13 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.xhtmlrenderer/flying-saucer-pdf-itext5 -->
 		<dependency>
-			<groupId>org.xhtmlrenderer</groupId>
-			<artifactId>flying-saucer-pdf-itext5</artifactId>
-			<version>9.1.16</version>
+    		<groupId>org.xhtmlrenderer</groupId>
+    		<artifactId>flying-saucer-pdf-itext5</artifactId>
+    		<version>9.1.18</version>
 		</dependency>
+
 
 		<!-- <dependency> <groupId>jjil</groupId> <artifactId>jjil.core</artifactId> 
 			<version>0.1</version> </dependency> <dependency> <groupId>jjil</groupId> 

@@ -2,6 +2,7 @@ package org.javlo.component.social;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -70,6 +71,10 @@ public class Wall extends AbstractPropertiesComponent implements IAction {
 			ctx.getRequest().setAttribute("access", false);
 		} else {
 			SocialLocalService socialService = SocialLocalService.getInstance(ctx.getGlobalContext());
+			if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser())) {
+				ctx.getRequest().setAttribute("stat30", socialService.getSocialStat(LocalDate.now().minusDays(30)));
+				ctx.getRequest().setAttribute("stat365", socialService.getSocialStat(LocalDate.now().minusDays(365)));
+			}
 			ctx.getRequest().setAttribute("pageSize", PAGE_SIZE);
 			long countResult = socialService.getPostListSize(SocialFilter.getInstance(ctx.getRequest().getSession()), ctx.getCurrentUserId(), getWallName(ctx), AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentUser()), isNeedCheck());
 			float pageCountFloat = ((float)countResult/(float)PAGE_SIZE);

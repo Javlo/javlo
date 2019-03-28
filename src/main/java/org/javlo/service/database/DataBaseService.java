@@ -68,6 +68,16 @@ public class DataBaseService {
 	public void releaseConnection(Connection conn) throws SQLException {
 		conn.close();
 	}
+	
+	public void releaseConnection(Statement st, Connection conn) throws SQLException {
+		if (st != null) {
+			try {
+				st.close();
+			} catch (Throwable t) {
+			}
+		}
+		conn.close();
+	}
 
 	private void loadDriver() throws SQLException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		ClassLoader cl = DataBaseService.class.getClassLoader();
