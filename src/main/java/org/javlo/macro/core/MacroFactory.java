@@ -18,7 +18,6 @@ import org.javlo.macro.ClearDataAccessCount;
 import org.javlo.macro.ClearTransformURLCache;
 import org.javlo.macro.CommitTemplate;
 import org.javlo.macro.ConvertUserForComansys;
-import org.javlo.macro.CopyLanguageStructureHereMacro;
 import org.javlo.macro.CopyLanguageStructureMacro;
 import org.javlo.macro.CreateAllContentSample;
 import org.javlo.macro.CreateAlphabeticChildrenHereMacro;
@@ -79,6 +78,7 @@ import org.javlo.macro.interactive.CreateContentChildren;
 import org.javlo.macro.interactive.CreateRedirectionForAllLanguages;
 import org.javlo.macro.interactive.DeleteComponent;
 import org.javlo.macro.interactive.DeleteDynamicComponent;
+import org.javlo.macro.interactive.DisplayDashBoard;
 import org.javlo.macro.interactive.ImportContent;
 import org.javlo.macro.interactive.ImportExternalPage;
 import org.javlo.macro.interactive.ImportGalleryMacro;
@@ -154,7 +154,6 @@ public class MacroFactory {
 		macros.add(new CleanResourceImageMacro());
 		macros.add(new CleanResourceNameMacro());
 		macros.add(new CopyLanguageStructureMacro());
-		macros.add(new CopyLanguageStructureHereMacro());
 		macros.add(new ImportDefaultLanguageMacro());
 		macros.add(new ImportAndTranslateDefaultLanguageMacro());
 		macros.add(new DeleteSmartExternalLinkMacro());
@@ -213,6 +212,7 @@ public class MacroFactory {
 		macros.add(new CleanStaticInfoPersistence());
 		macros.add(new DeleteTrackerCache());
 		macros.add(new LogAsUser());
+		macros.add(new DisplayDashBoard());
 		
 		/** macro bean **/
 		initMacroBean(macros);
