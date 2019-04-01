@@ -197,7 +197,7 @@ public class SocialLocalService {
 			}
 
 			String sql = "select count(id) from post mainpost where groupName='" + group + "' " + notAdminQuery + " and mainPost is null" + getSQLFilter(socialFilter, username);
-			if (socialFilter.isNoResponse()) {
+			if (socialFilter.isNoResponse() && admin) {
 				sql = sql + " AND mainpost.adminValid=1 AND (select count(*) from post childPost where childPost.parent=mainpost.id)=0";
 			}
 			System.out.println("sql = "+sql);
@@ -265,7 +265,7 @@ public class SocialLocalService {
 				notAdminQuery = "";
 			}
 			String sql = "select * from post mainpost where groupName='" + group + "' " + notAdminQuery + " and mainPost is null" + getSQLFilter(socialFilter, username);
-			if (socialFilter.isNoResponse()) {
+			if (socialFilter.isNoResponse()  && admin) {
 				sql = sql + " AND mainpost.adminValid=1 AND (select count(*) from post childPost where childPost.parent=mainpost.id)=0";
 			}
 			sql = sql + " order by updateTime desc";
