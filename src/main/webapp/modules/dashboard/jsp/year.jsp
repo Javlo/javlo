@@ -6,7 +6,7 @@
 		<c:set var="options" value="<option>${y}</option>${options}" />
 	</c:forEach>	
 	<c:set var="options" value="<option value=''>${i18n.edit['global.select']}</option>${options}" />
-<select class="form-input pull-right" onchange="updateYear(this.value); updateYearForTime(this.value);">
+<select class="form-input pull-right" onchange="updateYear(this.value); updateYearForTime(this.value); updateDaysForTime(this.value); return false;">
 ${options}
 </select>
 <br />
@@ -65,6 +65,54 @@ function updateYear(year) {
 });
 }
 updateYear(${info.currentYear});
+</script>
+
+<h3>${i18n.edit['dashboard.title.days']}</h3>
+
+<div id="days-chart"></div>
+
+<script type="text/javascript">
+
+<c:url var="ajaxURL" value="${info.currentAjaxURL}" context="/">
+	<c:param name="webaction" value="dashboard.readTracker" />
+	<c:param name="type" value="days" />
+</c:url>
+
+function updateDaysForTime(year) {
+	jQuery('#days-chart').html("");
+	if (year == "") {
+		jQuery('#days-chart').removeClass("pie");		
+		return;
+	}
+	jQuery('#days-chart').addClass("pie");	
+	jQuery.ajax({
+	url : "${ajaxURL}&y="+year,
+	cache : true,		
+	type : "post",
+	dataType : "json",
+	error : function(jqXHR, textStatus, errorThrown) {
+		console.log("ajax error : ",errorThrown);
+	}
+}).done(function(jsonObj) {	 
+	jQuery.jqplot.config.enablePlugins = true;
+	    plot1 = jQuery.jqplot('days-chart', [jsonObj.datas], {	    	
+	        animate: !jQuery.jqplot.use_excanvas,
+	        stackSeries: true,
+	        seriesDefaults:{
+	            renderer:jQuery.jqplot.BarRenderer
+	        },
+            axes: {            
+                xaxis: {
+                    renderer: jQuery.jqplot.CategoryAxisRenderer,
+                    ticks: [
+                    	<c:forEach var="d" begin="1" end="7">'${info.longDays[d]}'<c:if test="${d<7}">,</c:if></c:forEach>                    	
+                    ]
+                }
+            }	        
+	    });
+});
+}
+updateDaysForTime(${info.currentYear});
 </script>
 
 <h3>${i18n.edit['dashboard.title.hours']}</h3>

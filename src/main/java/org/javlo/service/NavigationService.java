@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 import org.javlo.cache.ICache;
 import org.javlo.component.core.ComponentFactory;
+import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.links.PageMirrorComponent;
 import org.javlo.context.ContentContext;
@@ -141,13 +142,13 @@ public class NavigationService {
 
 	public void removeNavigation(ContentContext ctx, MenuElement elem) throws Exception {
 		Set<String> pageDeleted = new HashSet<String>();
-		removeNavigationRec(pageDeleted, elem);
+		removeNavigationRec(ctx, pageDeleted, elem);
 		persistenceService.setAskStore(true);
 		for (IContentVisualComponent comp : ComponentFactory.getAllComponentsFromContext(ctx)) {
 			if (comp instanceof PageMirrorComponent) {
 				PageMirrorComponent pageMirror = (PageMirrorComponent) comp;
 				if (pageMirror.isDeleteIfNoSource() && !pageDeleted.contains(pageMirror.getPage().getId())) {
-					removeNavigationRec(pageDeleted, comp.getPage());
+					removeNavigationRec(ctx, pageDeleted, comp.getPage());
 				}
 			}
 		}
@@ -155,16 +156,19 @@ public class NavigationService {
 
 	public void removeNavigationNoStore(ContentContext ctx, MenuElement elem) throws Exception {
 		Set<String> pageDeleted = new HashSet<String>();
-		removeNavigationRec(pageDeleted, elem);
+		removeNavigationRec(ctx, pageDeleted, elem);
 	}
 
-	private void removeNavigationRec(Collection<String> deletedPage, MenuElement elem) throws Exception {
+	private void removeNavigationRec(ContentContext ctx, Collection<String> deletedPage, MenuElement elem) throws Exception {
 		Collection<MenuElement> children = new LinkedList<MenuElement>(elem.getChildMenuElements());
 		for (MenuElement element : children) {
-			removeNavigationRec(deletedPage, element);
+			removeNavigationRec(ctx, deletedPage, element);
 		}
-		if (elem.getParent() != null) {
-			elem.getParent().removeChild(elem);
+		if (elem.getParent() != null) {			
+			for (IContentVisualComponent comp : elem.getAllLanguageContent(ctx)) {
+				comp.delete(ctx);
+			}
+			elem.getParent().removeChild(elem);			
 		}
 	}
 

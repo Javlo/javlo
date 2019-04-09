@@ -2,7 +2,7 @@
 %><%@page import="org.javlo.helper.URLHelper"
 %><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
-%><c:if test="${fn:length(info.addMacro)>0 || fn:length(info.macro)>0}"><%
+%><%
 ContentContext ctx = ContentContext.getContentContext(request, response);
 ContentContext editCtx = new ContentContext(ctx);
 editCtx.setRenderMode(ContentContext.EDIT_MODE);
@@ -83,4 +83,3 @@ if (ctx.getGlobalContext().getStaticConfig().isAddButton()) {
 </div>
 </c:if>
 <%}%>
-</c:if>

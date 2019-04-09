@@ -16,10 +16,11 @@ import org.javlo.utils.StructuredProperties;
 
 public class DayInfo {
 	
-	public static final int CURRENT_VERSION = 17;
+	public static final int CURRENT_VERSION = 18;
 
 	private static final String PAGES_VISITS_PREFIX = "path.visits.";
 	private static final String TIME_VISITS_PREFIX = "time.visits.";
+	private static final String DAYS_VISITS_PREFIX = "days.visits.";
 	
 	public int sessionCount = 0;
 	public int session2ClickCount = 0;
@@ -32,6 +33,7 @@ public class DayInfo {
 	public String mostSavePage = "";
 	public Map<String, MutableInt> visitPath = new NeverEmptyMap<>(MutableInt.class);
 	public Map<Integer, MutableInt> timeVist = new NeverEmptyMap<>(MutableInt.class);
+	public Map<Integer, MutableInt> daysVist = new NeverEmptyMap<>(MutableInt.class);
 	
 	public int version = 1;
 	
@@ -71,6 +73,12 @@ public class DayInfo {
 				timeVist.put(hour, new MutableInt(Integer.parseInt((String)prop.get(k))));
 			}
 		}
+		for (Object k : prop.keySet()) {
+			if (((String)k).startsWith(DAYS_VISITS_PREFIX)) {
+				int day = Integer.parseInt(k.toString().substring(DAYS_VISITS_PREFIX.length()));
+				daysVist.put(day, new MutableInt(Integer.parseInt((String)prop.get(k))));
+			}
+		}
 	}
 	
 	public void store(File file) throws IOException {
@@ -87,6 +95,9 @@ public class DayInfo {
 		prop.setProperty("date", ""+StringHelper.renderSortableDate(date));
 		for (Integer k : timeVist.keySet()) {
 			prop.setProperty(TIME_VISITS_PREFIX+k, ""+timeVist.get(k).intValue());
+		}
+		for (Integer k : daysVist.keySet()) {
+			prop.setProperty(DAYS_VISITS_PREFIX+k, ""+daysVist.get(k).intValue());
 		}
 		for (String k : visitPath.keySet()) {
 			prop.setProperty(PAGES_VISITS_PREFIX+k, ""+visitPath.get(k).intValue());

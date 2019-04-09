@@ -2276,6 +2276,18 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 		return outComp;
 	}
+	
+	public List<IContentVisualComponent> getAllLanguageContent(ContentContext ctx) throws Exception {
+
+		List<IContentVisualComponent> outComp = new LinkedList<IContentVisualComponent>();
+
+		for (ComponentBean bean : getContent()) {
+			IContentVisualComponent comp = ComponentFactory.createComponent(ctx, bean, this, null, null);
+			outComp.add(comp);
+		}
+
+		return outComp;
+	}
 
 	public List<IContentVisualComponent> getContentByImplementation(ContentContext ctx, Class clazz) throws Exception {
 

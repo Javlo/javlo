@@ -339,6 +339,10 @@ public class StaticConfig extends Observable {
 	public boolean isTimeTracker() {
 		return properties.getBoolean("time-tracker", false);
 	}
+	
+	public boolean isPageTrash() {
+		return properties.getBoolean("page.trash", false);
+	}
 
 	public Level getAccessLogLevel() {
 		try {

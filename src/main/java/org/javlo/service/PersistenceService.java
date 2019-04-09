@@ -587,6 +587,11 @@ public class PersistenceService {
 							trackCal.setTimeInMillis(track.getTime());
 							dayInfo.timeVist.get(trackCal.get(Calendar.HOUR_OF_DAY)).add(1);
 						}
+						if (!track.isView()) {
+							Calendar trackCal = Calendar.getInstance();
+							trackCal.setTimeInMillis(track.getTime());
+							dayInfo.daysVist.get(trackCal.get(Calendar.DAY_OF_WEEK)).add(1);
+						}
 						if (globalMem.get("session-" + track.getSessionId()) == null) {
 							globalMem.put("session-" + track.getSessionId(), track.getPath());
 							dayInfo.sessionCount++;

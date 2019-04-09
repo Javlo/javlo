@@ -1514,10 +1514,17 @@ public class InfoBean {
 	public int getCurrentMonth() {
 		return Calendar.getInstance().get(Calendar.MONTH);
 	}
+	
+	public String getUserLanguage() {
+		if (ctx.isAsEditMode()) {
+			return globalContext.getEditLanguage(ctx.getRequest().getSession());
+		} else {
+			return getLanguage();
+		}
+	}
 
-	public String[] getMonths() {
-		String language = globalContext.getEditLanguage(ctx.getRequest().getSession());
-		return DateFormatSymbols.getInstance(new Locale(language)).getMonths();
+	public String[] getMonths() {		
+		return DateFormatSymbols.getInstance(new Locale(getUserLanguage())).getMonths();
 	}
 
 	public String getAjaxLoaderURL() {
@@ -1855,6 +1862,32 @@ public class InfoBean {
 
 	public void setPageNotFoundMessage(String pageNotFoundMessage) {
 		this.pageNotFoundMessage = pageNotFoundMessage;
+	}
+	
+	public String[] getShortDays() {
+		String[] days = new String[8];
+		Locale locale = new Locale(getUserLanguage());
+		Calendar cal = Calendar.getInstance(locale);
+		for (int i=1; i<=7; i++) {
+			cal.set(Calendar.DAY_OF_WEEK, i);
+			days[i]=cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT_FORMAT, locale);
+		}
+		return days;
+	}
+	
+	public String[] getLongDays() {
+		String[] days = new String[8];
+		Locale locale = new Locale(getUserLanguage());
+		Calendar cal = Calendar.getInstance(locale);
+		for (int i=1; i<=7; i++) {
+			cal.set(Calendar.DAY_OF_WEEK, i);
+			days[i]=cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG_FORMAT, locale);
+		}
+		return days;
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(Calendar.SUNDAY);
 	}
 	
 

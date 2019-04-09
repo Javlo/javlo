@@ -334,6 +334,40 @@ public class DashboardAction extends AbstractModuleAction {
 			}
 			
 			ctx.setAjaxMap(ajaxMap.getMap());
+		}   else if (type.equals("days")) {
+			// Map<String, Integer> ajaxMap = new LinkedHashMap<String,
+			// Integer>();
+			String year = rs.getParameter("y", "" + now.get(Calendar.YEAR));
+			Calendar cal = Calendar.getInstance();
+			cal.set(Calendar.YEAR, Integer.parseInt(year));
+			cal.set(Calendar.MONTH, 11);
+			cal.set(Calendar.DAY_OF_MONTH, 31);
+			cal.set(Calendar.HOUR, 23);
+			cal.set(Calendar.MINUTE, 59);
+			cal.set(Calendar.SECOND, 59);
+			statCtx.setTo(cal.getTime());
+			cal.set(Calendar.YEAR, Integer.parseInt(year));
+			cal.set(Calendar.MONTH, 0);
+			cal.set(Calendar.DAY_OF_MONTH, 1);
+			cal.set(Calendar.HOUR, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			statCtx.setFrom(cal.getTime());
+			List<DayInfo> dayInfoList = tracker.getDayInfos(statCtx);
+			
+			Map<Integer, MutableInt> daysVist = new NeverEmptyMap<>(MutableInt.class);
+			for (DayInfo di : dayInfoList) {
+				for (int i=1; i<=7; i++) {
+					daysVist.get(i).add(di.daysVist.get(i));
+				}
+			}
+			ObjectBuilder ajaxMap = LangHelper.object();
+			ListBuilder datas = ajaxMap.list("datas");	
+			for (Map.Entry<Integer, MutableInt> e : daysVist.entrySet() ) {
+				datas.add(e.getValue().toInteger());
+			}
+			
+			ctx.setAjaxMap(ajaxMap.getMap());
 		}  else if (type.equals("languages")) {
 			ObjectBuilder ajaxMap = LangHelper.object();
 			List<Entry<String, Integer>> languages = new LinkedList<Map.Entry<String, Integer>>(tracker.getLanguage(statCtx).entrySet());
