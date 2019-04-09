@@ -768,5 +768,7 @@ Security in case of vulnerabilities.
 ### Added
 - data document with date
 - use report
+- stat by days
 ### Modified
 - update code mirror
+- no trash by default 
