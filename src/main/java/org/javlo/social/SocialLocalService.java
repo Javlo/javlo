@@ -197,7 +197,7 @@ public class SocialLocalService {
 			}
 
 			String sql = "select count(id) from post mainpost where groupName='" + group + "' " + notAdminQuery + " and mainPost is null" + getSQLFilter(socialFilter, username);
-			if (socialFilter.isNoResponse() && admin) {
+			if (socialFilter != null && socialFilter.isNoResponse() && admin) {
 				sql = sql + " AND mainpost.adminValid=1 AND (select count(*) from post childPost where childPost.parent=mainpost.id)=0";
 			}
 			System.out.println("sql = "+sql);
@@ -265,7 +265,7 @@ public class SocialLocalService {
 				notAdminQuery = "";
 			}
 			String sql = "select * from post mainpost where groupName='" + group + "' " + notAdminQuery + " and mainPost is null" + getSQLFilter(socialFilter, username);
-			if (socialFilter.isNoResponse()  && admin) {
+			if (socialFilter != null && socialFilter.isNoResponse() && admin) {
 				sql = sql + " AND mainpost.adminValid=1 AND (select count(*) from post childPost where childPost.parent=mainpost.id)=0";
 			}
 			sql = sql + " order by updateTime desc";
@@ -419,7 +419,7 @@ public class SocialLocalService {
 			} else {
 				ps.setNull(6, java.sql.Types.LONGVARCHAR);
 			}
-			if (post.getMainPost() != null && post.getMainPost() > 0) {
+			if (post.getMainPost() != null && post.getMainPost() > 0 && post.isValid() && post.isAdminValided()) {
 				ps.setLong(7, post.getMainPost());
 				PreparedStatement psParent = conn.prepareStatement("update post set updateTime=?, latestContributor=? where id=" + post.getMainPost());
 				psParent.setTimestamp(1, new java.sql.Timestamp(new Date().getTime()));
