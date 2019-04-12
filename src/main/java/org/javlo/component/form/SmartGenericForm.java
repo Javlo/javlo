@@ -923,9 +923,6 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		SmartGenericForm comp = (SmartGenericForm) content.getComponent(ctx, rs.getParameter("comp_id", null));
 		boolean eventClose = comp.isClose(ctx);
 
-		System.out.println(">>>>>>>>>>>>>> CLOSE : "+eventClose);
-		
-		
 		String code = rs.getParameter("_form-code", "");
 		if (!comp.cacheForm.containsKey(code) && !comp.isCaptcha(ctx)) {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
@@ -1145,8 +1142,10 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			 
 			if (ctx.getCurrentUser() != null) {
 				adminMailData.put("user", ctx.getCurrentUser().getLogin());
-			}		
-
+			}
+			String pageLink = URLHelper.createVirtualURL(ctx.getContextForAbsoluteURL());
+			adminMailData.put("title", "<a href=\""+pageLink+"\">"+ctx.getCurrentPage().getPageTitle(ctx)+"</a>");
+			
 			if (value instanceof Object[]) {				
 				finalValue = StringHelper.arrayToString((Object[]) params.get(key), ",");
 				adminMailData.put(field.getLabel() + " (" + key + ") ", finalValue);

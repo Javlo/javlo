@@ -183,7 +183,9 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 				}
 			}
 		} else {
-			deleteMySelf(ctx);
+			if (!StringHelper.isEmpty(getValue())) {
+				deleteMySelf(ctx);
+			}
 			ctx.getRequest().setAttribute("xhtml", "");
 		}
 		super.prepareView(ctx);
@@ -399,6 +401,21 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+		}
+	}
+	
+	@Override
+	public String getSpecificClass(ContentContext ctx) {
+		MenuElement page = null;
+		try {
+			page = getMirrorPage(ctx);
+		} catch (Exception e) { 
+			e.printStackTrace();
+		}
+		if (page == null) {
+			return null;
+		} else {
+			return "page-mirror-"+page.getName();
 		}
 	}
 

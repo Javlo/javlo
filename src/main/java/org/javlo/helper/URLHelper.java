@@ -671,6 +671,20 @@ public class URLHelper extends ElementaryURLHelper {
 		}
 	}
 	
+	public static String createVirtualURL(ContentContext ctx) {
+		try {
+			MenuElement page = ctx.getVirtualCurrentPage();
+			if (page != null) {
+				return createURL(ctx, page);	
+			} else {
+				return createURL(ctx);
+			}			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	/**
 	 * transform document data to param for url
 	 * @param ctx

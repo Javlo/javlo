@@ -2039,6 +2039,14 @@ public class ContentContext {
 		this.currentTemplate = null;
 		this.virtualCurrentPage = new WeakReference(virtualCurrentPage);
 	}
+	
+	public MenuElement getVirtualCurrentPage() {
+		if (virtualCurrentPage != null) {
+			return virtualCurrentPage.get();
+		} else {
+			return null;
+		}
+	}
 
 	/**
 	 * create a area to render content with other rules than area of content.
