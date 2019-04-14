@@ -127,9 +127,7 @@ public class SiteMap extends AbstractVisualComponent {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 
-		out.print("<div class=\"");
-		out.print("webmap");
-		out.println("\"><ul>");
+		out.print("<div class=\"webmap\"><ul>");
 		Collection<MenuElement> childs = menu.getChildMenuElements(ctx, false);
 		boolean showAll = false;
 		boolean showVisible = false;
@@ -223,6 +221,10 @@ public class SiteMap extends AbstractVisualComponent {
 	@Override
 	public String getFontAwesome() {	
 		return "sitemap";
+	}
+	
+	protected boolean getColumnableDefaultValue() {
+		return true;
 	}
 
 }
