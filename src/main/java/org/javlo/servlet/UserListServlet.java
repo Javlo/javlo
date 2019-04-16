@@ -53,10 +53,11 @@ public class UserListServlet extends HttpServlet {
 		try {
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			EditContext editContext = EditContext.getInstance(globalContext, request.getSession());
+			ContentContext ctx = ContentContext.getContentContext(request, response);			
 
-			if (editContext.getUserPrincipal() != null) {
+			if (ctx.getCurrentEditUser() != null) {
 				IUserFactory userFact = UserFactory.createUserFactory(globalContext, request.getSession());
-				User user = userFact.getCurrentUser(globalContext, request.getSession());
+				User user = ctx.getCurrentEditUser();
 
 				// TODO: check role
 				if (user != null) {
@@ -68,7 +69,6 @@ public class UserListServlet extends HttpServlet {
 					List<String> confirmedUser = null;
 					if (eventId != null) {
 						EventRegistration event = null;
-						ContentContext ctx = ContentContext.getContentContext(request, response);
 						ContentService content = ContentService.getInstance(ctx.getRequest());
 						event = (EventRegistration) content.getComponent(ctx, eventId);
 						if (event == null) {
@@ -80,10 +80,12 @@ public class UserListServlet extends HttpServlet {
 					}
 
 					if (!AdminUserSecurity.getInstance().canRole(user, AdminUserSecurity.USER_ROLE) && !AdminUserSecurity.getInstance().haveRight(user, AdminUserSecurity.ADMIN_USER_ROLE)) {
+						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 						throw new ServletException("user:" + user.getLogin() + " have no suffisant right.");
 					}
 
 					if (!AdminUserSecurity.getInstance().haveRight(user, AdminUserSecurity.ADMIN_USER_ROLE) && admin) {
+						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 						throw new ServletException("user:" + user.getLogin() + " have no suffisant right for download admin user list.");
 					}
 
@@ -156,11 +158,11 @@ public class UserListServlet extends HttpServlet {
 					}
 					response.getOutputStream().flush();
 					return;
+				} else {
+					logger.warning(request.getRequestURI()+" : user not found.");
 				}
 			}
-
-			response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
-			getServletContext().getRequestDispatcher("/jsp/edit/login.jsp").include(request, response);
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
