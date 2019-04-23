@@ -769,6 +769,9 @@ Security in case of vulnerabilities.
 - data document with date
 - use report
 - stat by days
+- user mail in template
 ### Modified
 - update code mirror
-- no trash by default 
+- no trash by default
+### fixed
+- image can be repeated for represent page (but linked with the page)

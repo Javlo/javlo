@@ -99,6 +99,7 @@ org.javlo.component.multimedia.OnlineVideo
 org.javlo.component.multimedia.EmbedVideo
 org.javlo.component.multimedia.AllImagesGallery
 org.javlo.component.text.XHTML
+org.javlo.component.text.ExtendedWidget
 
 --content.title.container
 

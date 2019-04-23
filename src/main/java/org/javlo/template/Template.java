@@ -1561,6 +1561,41 @@ public class Template implements Comparable<Template> {
 			return menuRenderer;
 		}
 	}
+	
+	/***
+	 * mail for send to user with :
+	 * ${logo} : url to logo
+	 * ${site} : global site title
+	 * ${title} : title of the email
+	 * ${text} : main text of the email
+	 * ${action.link} : action button url
+	 * ${action.text} : action button text
+	 * ${email} : contact email
+	 * ${root} : root url
+	 * #cccccc : special color
+	 * #555555 : title color
+	 * #333333 : text color
+	 * @param globalContext
+	 * @return
+	 * @throws IOException
+	 */
+	public String getUserMailHtml(GlobalContext globalContext) throws IOException {
+		File userMailFile = new File(URLHelper.mergePath(getTemplateTargetFolder(globalContext),"mail", "user.html"));
+		if (userMailFile.exists()) {
+			return ResourceHelper.loadStringFromFile(userMailFile);
+		} else {
+			return  null;
+		}
+	}
+	
+	public String getAdminMailHtml(GlobalContext globalContext) throws IOException {
+		File userMailFile = new File(URLHelper.mergePath(getTemplateTargetFolder(globalContext),"mail", "admin.html"));
+		if (userMailFile.exists()) {
+			return ResourceHelper.loadStringFromFile(userMailFile);
+		} else {
+			return  null;
+		}
+	}
 
 	public String getHTMLHomeFile() {
 		return properties.getString("home", getParent().getHTMLHomeFile());

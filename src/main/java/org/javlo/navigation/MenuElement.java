@@ -3058,10 +3058,28 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		IContentComponentsList contentList = getAllContent(ctx);
 		while (contentList.hasNext(ctx)) {
 			IContentVisualComponent elem = contentList.next(ctx);
-			if ((elem instanceof IImageTitle) && (!elem.isRepeat())) {
+			if ((elem instanceof IImageTitle)) {
 				IImageTitle imageComp = (IImageTitle) elem;
 				if (imageComp.isImageValid(ctx)) {
-					res.add(new ImageTitleBean(imageComp.getImageDescription(ctx), imageComp.getResourceURL(ctx), imageComp.getImageLinkURL(ctx), elem.getArea().equals(ComponentBean.DEFAULT_AREA) ? 6 : 4));
+					int w=0;
+					if (!elem.isRepeat()) {
+						if (elem.getArea().equals(ComponentBean.DEFAULT_AREA)) {
+							w=6;
+						} else {
+							w=4;
+						}
+					} else {
+						if (elem.getPage().equals(this)) {
+							if (elem.getArea().equals(ComponentBean.DEFAULT_AREA)) {
+								w=3;
+							} else {
+								w=1;
+							}
+						}
+					}
+					if (w>0) {
+						res.add(new ImageTitleBean(imageComp.getImageDescription(ctx), imageComp.getResourceURL(ctx), imageComp.getImageLinkURL(ctx), w));
+					}
 				}
 			}
 		}

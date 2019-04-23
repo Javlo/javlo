@@ -539,7 +539,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	public String getDefaultSuffix() {
 		return properties.getProperty("default.suffix", "</div>");
 	}
-
+	
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		String refCode = referenceViewCode(ctx);		
 		if (refCode != null) {

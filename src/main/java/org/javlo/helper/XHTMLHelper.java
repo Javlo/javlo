@@ -2879,6 +2879,39 @@ public class XHTMLHelper {
 		out.close();
 		return new String(outStream.toByteArray());
 	}
+	
+	public static String createUserMail(ContentContext ctx, String title, String content,String link, String linkLabel, String footer) throws IOException, Exception {
+		String xhtml = ctx.getCurrentTemplate().getUserMailHtml(ctx.getGlobalContext());
+		TemplateData templateData = ctx.getCurrentTemplate().getTemplateData();
+		if (xhtml == null) {
+			return createUserMail(templateData, title, content, null, link, linkLabel, footer);
+		} else {
+			xhtml = xhtml.replace("${site}", ctx.getCurrentPage().getGlobalTitle(ctx));
+			xhtml = xhtml.replace("${title}", title);
+			xhtml = xhtml.replace("${text}", content);
+			xhtml = xhtml.replace("${action.url}", link);
+			xhtml = xhtml.replace("${action.text}", linkLabel);
+			xhtml = xhtml.replace("${root}", URLHelper.createURL(ctx.getContextForAbsoluteURL(), "/"));
+			String logo = ctx.getGlobalContext().getTemplateData().getLogo();
+			if (logo != null) {
+				logo = URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), logo);
+				xhtml = xhtml.replace("${logo}", URLHelper.createTransformURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE).getContextForAbsoluteURL(), logo, "mail-logo"));
+			} 
+			xhtml = xhtml.replace("${footer}", footer);
+			xhtml = xhtml.replace("${email}", ctx.getGlobalContext().getAdministratorEmail());
+			if (templateData.getTitle() != null) {
+				xhtml = xhtml.replace("#555555", templateData.getTitle().toString());
+			}
+			if (templateData.getText() != null) {
+				xhtml = xhtml.replace("#333333", templateData.getText().toString());
+			}
+			if (templateData.getSpecial() != null) {
+				xhtml = xhtml.replace("#cccccc", templateData.getSpecial().toString());
+			}
+			return xhtml;
+		}
+		
+	}
 
 	public static String createUserMail(TemplateData templateData, String title, String content, Map data, String link, String linkLabel, String footer) {
 

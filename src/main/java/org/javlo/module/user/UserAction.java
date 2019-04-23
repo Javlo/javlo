@@ -39,6 +39,7 @@ import org.javlo.helper.ArrayHelper;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.JavaHelper;
 import org.javlo.helper.LangHelper;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.RequestParameterMap;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.SecurityHelper;
@@ -47,6 +48,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ImageEngine;
+import org.javlo.mailing.Mail;
 import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
@@ -338,9 +340,31 @@ public class UserAction extends AbstractModuleAction {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				return e.getMessage();
+				return e. getMessage();
 			}
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("user.message.updated", new String[][] { { "user", user.getLogin() } }), GenericMessage.INFO));
+		}
+		return null;
+	}
+	
+	public String performCreateuserwidthemail(ContentContext ctx, StaticConfig staticConfig, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository) throws IOException, Exception {
+		String newUser = requestService.getParameter("email", null);
+		if (!StringHelper.isMail(newUser)) {
+			return i18nAccess.getViewText("mailing.error.email");
+		}
+		UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
+		IUserFactory userFactory = userContext.getUserFactory(ctx);
+		if (userFactory.getUser(newUser) != null) {
+			return i18nAccess.getViewText("registration.error.email_alreadyexist");
+		} else {
+			GlobalContext gc = ctx.getGlobalContext();
+			 String title = i18nAccess.getViewText("registration.mail.confirm.title");
+			 String subject = i18nAccess.getViewText("registration.mail.confirm.subject")+ctx.getCurrentPage().getGlobalTitle(ctx);
+			 String text = i18nAccess.getViewText("registration.mail.confirm.text");
+			 String actionLabel = i18nAccess.getViewText("registration.mail.confirm.action");
+			 String actionUrl= URLHelper.createURL(ctx.getContextForAbsoluteURL());
+			 String mail = XHTMLHelper.createUserMail(ctx, title, text, actionUrl, actionLabel, "");
+			 NetHelper.sendMail(gc, new InternetAddress(gc.getAdministratorEmail()), new InternetAddress(newUser), null, null, subject, mail,null,true);
 		}
 		return null;
 	}
