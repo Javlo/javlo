@@ -1504,7 +1504,7 @@ public class InfoBean {
 
 	public PageBean getRegistrationPage() throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
-		MenuElement regPage = content.getNavigation(ctx).searchChildFromName("register", "registered", "registration");
+		MenuElement regPage = content.getRegistrationPage(ctx);
 		if (regPage != null) {
 			return regPage.getPageBean(ctx);
 		}
@@ -1874,6 +1874,10 @@ public class InfoBean {
 
 	public void setPageNotFoundMessage(String pageNotFoundMessage) {
 		this.pageNotFoundMessage = pageNotFoundMessage;
+	}
+	
+	public String getAjaxLoginUrl() {
+		return URLHelper.createActionURL(ctx, "user.login", ctx.getPath());
 	}
 	
 	public String[] getShortDays() {

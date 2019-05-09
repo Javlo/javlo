@@ -2880,7 +2880,7 @@ public class XHTMLHelper {
 		return new String(outStream.toByteArray());
 	}
 	
-	public static String createUserMail(ContentContext ctx, String title, String content,String link, String linkLabel, String footer) throws IOException, Exception {
+	public static String createUserMail(ContentContext ctx, String logo, String title, String content,String link, String linkLabel, String footer) throws IOException, Exception {
 		String xhtml = ctx.getCurrentTemplate().getUserMailHtml(ctx.getGlobalContext());
 		TemplateData templateData = ctx.getCurrentTemplate().getTemplateData();
 		if (xhtml == null) {
@@ -2892,11 +2892,21 @@ public class XHTMLHelper {
 			xhtml = xhtml.replace("${action.url}", link);
 			xhtml = xhtml.replace("${action.text}", linkLabel);
 			xhtml = xhtml.replace("${root}", URLHelper.createURL(ctx.getContextForAbsoluteURL(), "/"));
-			String logo = ctx.getGlobalContext().getTemplateData().getLogo();
-			if (logo != null) {
-				logo = URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), logo);
-				xhtml = xhtml.replace("${logo}", URLHelper.createTransformURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE).getContextForAbsoluteURL(), logo, "mail-logo"));
-			} 
+			if (logo == null) {
+				logo = ctx.getGlobalContext().getTemplateData().getLogo();
+				if (logo != null) {
+					logo = URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), logo);
+					xhtml = xhtml.replace("${logo}", URLHelper.createTransformURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE).getContextForAbsoluteURL(), logo, "mail-logo"));
+				} else {
+					xhtml = xhtml.replace("${logo}", URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), "/images/font/mail_logo.png"));
+				}
+			} else {
+				if (!StringHelper.isURL(logo)) {
+					xhtml = xhtml.replace("${logo}", URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), logo));
+				} else {
+					xhtml = xhtml.replace("${logo}", logo);
+				}
+			}
 			xhtml = xhtml.replace("${footer}", footer);
 			xhtml = xhtml.replace("${email}", ctx.getGlobalContext().getAdministratorEmail());
 			if (templateData.getTitle() != null) {
@@ -2959,11 +2969,11 @@ public class XHTMLHelper {
 		reportPdfStream.close();
 	}
 
-	public static void main(String[] args) throws Exception {
-		File file = new File("c:/trans/mail.html");
-		String html = createUserMail(null, "title", "ceci est le contenu", null, "http://www.javlo.org", "action", "ceci est le footer");
-		ResourceHelper.writeStringToFile(file, html);
-	}
+//	public static void main(String[] args) throws Exception {
+//		File file = new File("c:/trans/mail.html");
+//		String html = createUserMail(null, null, "title", "ceci est le contenu", null, "http://www.javlo.org", "action", "ceci est le footer");
+//		ResourceHelper.writeStringToFile(file, html);
+//	}
 
 	public static String compress(String newContent) {
 		newContent = newContent.replaceAll("[\n\r]", " ");

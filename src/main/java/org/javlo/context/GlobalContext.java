@@ -149,8 +149,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private final String INSTANCE_ID = StringHelper.getLargeRandomIdBase64();
 
 	public static final String SCREENSHOT_FILE_NAME = "screenshot.png";
-	
-	
+
+	private TimeMap<String, String> tokenToMail = new TimeMap<String,String>(60*24);
+
 	private List<String> quietArea = null;
 
 	public static final String POP_HOST_PARAM = "mail.pop.host";
@@ -4169,5 +4170,27 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public File getPageScreenshotFile(String pageName) {
 		return new File(URLHelper.mergePath(getStaticFolder(), "_screenshots_pages", pageName+".png"));
 	}
-
+	
+	public synchronized String createEmailToken(String email) {
+		if (StringHelper.isMail(email) && tokenToMail.get(email) != null) {
+			return tokenToMail.get(email);
+		}
+		String token = StringHelper.getNewToken();
+		while(tokenToMail.get(token) != null) {
+			token = StringHelper.getNewToken();
+		}
+		tokenToMail.put(token, email);
+		tokenToMail.put(email, token);
+		return token;
+	}
+	
+	public String getEmailFromToken(String token) {
+		String email = tokenToMail.get(token);
+		if (!StringHelper.isMail(email)) {
+			return null;
+		} else {
+			return email;
+		}
+	}
+	
 }

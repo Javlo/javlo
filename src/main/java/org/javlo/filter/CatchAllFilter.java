@@ -42,6 +42,7 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.module.mailing.MailingAction;
+import org.javlo.module.user.UserAction;
 import org.javlo.navigation.MenuElement;
 import org.javlo.portlet.filter.MultiReadRequestWrapper;
 import org.javlo.service.ContentService;
@@ -64,7 +65,6 @@ public class CatchAllFilter implements Filter {
 	private static final Set<String> COMPRESS_EXT = new HashSet<String>(Arrays.asList(new String[] { "js", "jpg", "jpeg", "png", "css", "font", "woff", "gif" }));
 
 	public static final String CHECK_CONTEXT_PARAM = "__check_context";
-	private static final String JAVLO_LOGIN_ID = "javlo_login_id";
 
 	public static final String MAIN_URI_KEY = "_mainURI";
 
@@ -552,7 +552,7 @@ public class CatchAllFilter implements Filter {
 							if (request.getParameter("autologin") != null) {
 								DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
 								String codeId = service.setData(login, IUserFactory.AUTO_LOGIN_AGE_SEC);
-								RequestHelper.setCookieValue(httpResponse, JAVLO_LOGIN_ID, codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, null);
+								RequestHelper.setCookieValue(httpResponse, UserAction.JAVLO_LOGIN_ID, codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, null);
 							}
 							if (login == null && httpRequest.getUserPrincipal() != null) {
 								login = httpRequest.getUserPrincipal().getName();
@@ -565,10 +565,17 @@ public class CatchAllFilter implements Filter {
 								ContentService.getInstance(globalContext).releaseViewNav(globalContext);
 							}
 							ModulesContext.getInstance(httpRequest.getSession(), globalContext).loadModule(httpRequest.getSession(), globalContext);
+//							ContentContext ctx = ContentContext.getContentContext(httpRequest, (HttpServletResponse) response);
+//							User loggedUser = fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession());
+//							if (ctx.isAjax() && loggedUser != null) {
+//								ctx.getAjaxData().put("login", login);
+//								ctx.getAjaxData().put("firstname", loggedUser.getUserInfo().getFirstName());
+//								ctx.getAjaxData().put("lastname", loggedUser.getUserInfo().getLastName());
+//								ctx.getAjaxData().put("email", loggedUser.getUserInfo().getEmail());
+//							}
 						}
 					}
 				}
-				fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession());
 			}
 
 			boolean newUser = false;
@@ -577,7 +584,7 @@ public class CatchAllFilter implements Filter {
 			if (fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null && adminFact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null) {
 
 				/* AUTO LOGIN */
-				String autoLoginId = RequestHelper.getCookieValue(httpRequest, JAVLO_LOGIN_ID);
+				String autoLoginId = RequestHelper.getCookieValue(httpRequest,  UserAction.JAVLO_LOGIN_ID);
 				String autoLoginUser = null;
 				if (autoLoginId != null) {
 					DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
@@ -620,7 +627,7 @@ public class CatchAllFilter implements Filter {
 					if (request.getParameter("autologin") != null) {
 						DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
 						String codeId = service.setData(editUser.getLogin(), ((long) IUserFactory.AUTO_LOGIN_AGE_SEC) * 1000);
-						RequestHelper.setCookieValue(httpResponse, JAVLO_LOGIN_ID, codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, null);
+						RequestHelper.setCookieValue(httpResponse,  UserAction.JAVLO_LOGIN_ID, codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, null);
 					}
 					globalContext.addPrincipal(editUser);
 					globalContext.eventLogin(editUser.getLogin());

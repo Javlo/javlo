@@ -269,9 +269,10 @@ public class UserRegistration extends MapComponent implements IAction {
 			BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo, StringHelper.isTrue(rs.getParameter("reset-boolean"), true));
 			if (emailLogin != null) {
 				userInfo.setLogin(emailLogin);
-				userInfo.setEmail(emailLogin);
+				userInfo.setEmail(emailLogin);				
 			}
 
+			userInfo.setSite(ctx.getGlobalContext().getContextKey());
 			userInfo.setPassword(SecurityHelper.encryptPassword(userInfo.getPassword()));
 
 			userInfo.addRoles(new HashSet<String>(comp.getFieldList(FIELD_SELECTED_ROLES)));

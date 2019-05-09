@@ -134,13 +134,28 @@ public class ICal implements IStringSeralizable {
 		return !StringHelper.isEmpty(uid);
 	}
 	
-	@Override
-	public String storeToString() {
+	public static String getOpenCalendarString() {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		out.println("BEGIN:VCALENDAR");
 		out.println("VERSION:2.0");
 		out.println("PRODID:-//hacksw/handcal//NONSGML v1.0//EN");
+		out.close();
+		return new String(outStream.toByteArray());
+	}
+	
+	public static String getEndCalendarString() {
+		return "BEGIN:VCALENDAR";
+	}
+	
+	@Override
+	public String storeToString() {
+		return getOpenCalendarString()+storeEventString()+getEndCalendarString();
+	}
+	
+	public String storeEventString() {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
 		out.println("BEGIN:VEVENT");
 		DateFormat dateFormat = getDateFormat();
 		if (getUid() != null) {
@@ -171,8 +186,7 @@ public class ICal implements IStringSeralizable {
 			out.println("STATUS:"+status);
 		}
 		out.println("SEQUENCE:"+sequence);
-		out.println("END:VEVENT");
-		out.println("END:VCALENDAR");		
+		out.println("END:VEVENT");		
 		out.close();
 		return new String(outStream.toByteArray());
 	}

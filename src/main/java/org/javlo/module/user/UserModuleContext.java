@@ -18,7 +18,7 @@ import org.javlo.user.IUserFactory;
 import org.javlo.user.UserFactory;
 
 public class UserModuleContext {
-
+	
 	private static final String KEY = "userContext";
 
 	public static final String VIEW_MY_SELF = "myself";

@@ -367,7 +367,11 @@ public class TemplateData {
 	}
 
 	public void setLogo(String logo) {
-		this.logo = logo;
+		if (logo != null && logo.equalsIgnoreCase("null")) {
+			this.logo = null;
+		} else {
+			this.logo = logo;
+		}
 	}
 
 	public void setText(Color text) {

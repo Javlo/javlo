@@ -36,6 +36,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nResource;
 import org.javlo.module.core.IPrintInfo;
 import org.javlo.navigation.MenuElement;
+import org.javlo.navigation.PageBean;
 import org.javlo.template.TemplateFactory;
 
 /**
@@ -1005,6 +1006,10 @@ public class ContentService implements IPrintInfo {
 		System.out.println(getPageNameFromPath("/javlo/sexy/ajax-edit-content/fr/blog.html"));
 	}
 
+	public MenuElement getRegistrationPage(ContentContext ctx) throws Exception {
+		return getNavigation(ctx).searchChildFromName("register", "registered", "registration");
+	}
+	
 	@Override
 	public void printInfo(ContentContext ctx, PrintStream out) {
 		out.println("****");

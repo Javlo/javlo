@@ -97,6 +97,7 @@ public class GlobalContextCreationBean {
 		newUser.setLogin(getEmail());
 		newUser.setPassword(getPassword());
 		newUser.addRoles(DEFAULT_ROLES);
+		newUser.setSite(ctx.getGlobalContext().getContextKey());
 		userFactory.addUserInfo(newUser);	
 		userFactory.store();
 		

@@ -483,6 +483,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return ctx.getCurrentPage();
 		}
 	}
+	
+	protected String getForcedRenderer(ContentContext ctx) {
+		return (String)ctx.getRequest().getAttribute("frenderer-"+getId());
+	}
+	
+	protected void setForcedRenderer(ContentContext ctx, String renderer) {
+		ctx.getRequest().setAttribute("frenderer-"+getId(), renderer);
+	}
 
 	/**
 	 * get current renderer key
@@ -1732,6 +1740,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			if (renderer == null && renderers.size() > 0) {
 				renderer = renderers.values().iterator().next();
 			}
+		}
+		if (getForcedRenderer(ctx) != null) {
+			System.out.println(">>>>>>>>> AbstractVisualComponent.getRenderer : getForcedRenderer(ctx) = "+getForcedRenderer(ctx)); //TODO: remove debug trace
+			renderer = getForcedRenderer(ctx);
 		}
 		try {
 			if (ctx.getCurrentTemplate() != null && renderer != null) {

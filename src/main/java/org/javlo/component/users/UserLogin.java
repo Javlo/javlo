@@ -35,6 +35,7 @@ import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.user.UserAction;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.service.social.Facebook;
@@ -84,9 +85,7 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-
 		SocialService.getInstance(ctx).prepare(ctx);
-		
 		if (ctx.getCurrentUser() != null) {
 			ctx.getRequest().setAttribute("user", ctx.getCurrentUser());
 			ctx.getRequest().setAttribute("userInfoMap", ctx.getCurrentUser().getUserInfo());			
@@ -103,6 +102,17 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 				}
 			}
 			ctx.getRequest().setAttribute("images", imageURL);
+		} else {
+			RequestService rs = RequestService.getInstance(ctx.getRequest());
+			String email = ctx.getGlobalContext().getEmailFromToken(rs.getParameter(UserAction.INIT_TOKEN));
+			if (email == null) {
+				email = ctx.getGlobalContext().getEmailFromToken(rs.getParameter("createToken"));
+			}
+			logger.info("email found with token : "+email);
+			if (email != null) {
+				ctx.getRequest().setAttribute("newEmail", email);
+				setForcedRenderer(ctx, "/jsp/components/user-login/create-with-token.jsp");
+			}
 		}
 	}
 
@@ -169,13 +179,31 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 	}
 
 	public static String performRegister(RequestService rs, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
-		String login = rs.getParameter("login", rs.getParameter("email", "").trim()).trim();
+		String login;
+		String email;
+		UserLogin comp = (UserLogin) ComponentHelper.getComponentFromRequest(ctx);
+		if (ctx.getGlobalContext().getSpecialConfig().isCreateAccountWithToken()) {
+			String token = rs.getParameter("createToken");
+			if (token == null) {
+				return "no token";
+			} else {
+				login = ctx.getGlobalContext().getEmailFromToken(token);				
+				if (login == null) {
+					return i18nAccess.getText("user.message.password-bad-token");
+				}
+				email = login;
+			}
+		} else {		
+			login = rs.getParameter("login", rs.getParameter("email", "").trim()).trim();
+			email = rs.getParameter("email", null);
+			if (!StringHelper.isEmpty(comp.getFieldValue(UserLogin.VALIDATION)) && !StringHelper.isTrue(rs.getParameter("valid"))) {
+				return i18nAccess.getViewText("registration.error.check", "Please check : ")+'"'+comp.getFieldValue(UserLogin.VALIDATION)+'"';
+			}
+		}
 		IUserFactory userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), session);
 		String password = rs.getParameter("password", "").trim();
 		String password2 = rs.getParameter("passwordbis", "").trim();
 		ctx.getRequest().setAttribute("userInfoMap", new RequestParameterMap(ctx.getRequest()));
-		
-		String email = rs.getParameter("email", null);
 
 		if (email != null && !PatternHelper.MAIL_PATTERN.matcher(email).matches()) {
 			return i18nAccess.getViewText("registration.error.email", "Please enter a valid email.");
@@ -191,12 +219,9 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 			return i18nAccess.getViewText("registration.error.need-login", "please fill login field");
 		}
 
-		UserLogin comp = (UserLogin) ComponentHelper.getComponentFromRequest(ctx);
-		if (!StringHelper.isEmpty(comp.getFieldValue(UserLogin.VALIDATION)) && !StringHelper.isTrue(rs.getParameter("valid"))) {
-			return i18nAccess.getViewText("registration.error.check", "Please check : ")+'"'+comp.getFieldValue(UserLogin.VALIDATION)+'"';
-		}
-		IUserInfo userInfo = new UserInfo();
+		IUserInfo userInfo = userFactory.createUserInfos();
 		userInfo.setLogin(login);
+		userInfo.setSite(ctx.getGlobalContext().getContextKey());
 		if (email != null) {
 			userInfo.setEmail(email);
 		} else {

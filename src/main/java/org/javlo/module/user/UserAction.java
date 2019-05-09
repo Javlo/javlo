@@ -35,11 +35,13 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.filter.CatchAllFilter;
 import org.javlo.helper.ArrayHelper;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.JavaHelper;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.NetHelper;
+import org.javlo.helper.RequestHelper;
 import org.javlo.helper.RequestParameterMap;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.SecurityHelper;
@@ -48,13 +50,15 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ImageEngine;
-import org.javlo.mailing.Mail;
 import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.navigation.MenuElement;
+import org.javlo.service.ContentService;
+import org.javlo.service.DataToIDService;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserInfo;
@@ -66,13 +70,17 @@ import org.javlo.user.UserFactory;
 import org.javlo.user.UserInfoSorting;
 import org.javlo.user.exception.UserAllreadyExistException;
 import org.javlo.utils.CSVFactory;
+import org.javlo.utils.JSONMap;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.StaticInfo;
 import org.javlo.ztatic.StaticInfoBean;
 import org.owasp.encoder.Encode;
 
 public class UserAction extends AbstractModuleAction {
+	
+	public static final String JAVLO_LOGIN_ID = "javlo_login_id";
 
+	public static final String INIT_TOKEN = "initToken";
 	private static Logger logger = Logger.getLogger(UserAction.class.getName());
 
 	@Override
@@ -362,9 +370,20 @@ public class UserAction extends AbstractModuleAction {
 			 String subject = i18nAccess.getViewText("registration.mail.confirm.subject")+ctx.getCurrentPage().getGlobalTitle(ctx);
 			 String text = i18nAccess.getViewText("registration.mail.confirm.text");
 			 String actionLabel = i18nAccess.getViewText("registration.mail.confirm.action");
+			 
+			 ContentService contentService = ContentService.getInstance(ctx.getGlobalContext());
+			 MenuElement regPage = contentService.getRegistrationPage(ctx);
+			 
 			 String actionUrl= URLHelper.createURL(ctx.getContextForAbsoluteURL());
-			 String mail = XHTMLHelper.createUserMail(ctx, title, text, actionUrl, actionLabel, "");
+			 if (regPage != null) {
+				 actionUrl= URLHelper.createURL(ctx.getContextForAbsoluteURL(), regPage);
+			 }
+			 actionUrl = URLHelper.addParam(actionUrl, INIT_TOKEN, ctx.getGlobalContext().createEmailToken(newUser));
+			 String mail = XHTMLHelper.createUserMail(ctx, "/images/font/user-plus.png", title, text, actionUrl, actionLabel, "");
+			 
 			 NetHelper.sendMail(gc, new InternetAddress(gc.getAdministratorEmail()), new InternetAddress(newUser), null, null, subject, mail,null,true);
+			 
+			 messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getViewText(" "), GenericMessage.INFO));
 		}
 		return null;
 	}
@@ -395,6 +414,7 @@ public class UserAction extends AbstractModuleAction {
 		}
 
 		IUserInfo newUserInfo = userFactory.createUserInfos();
+		
 		if (newUser.contains("<")) {
 			try {
 				InternetAddress internetAddress = new InternetAddress(newUser);
@@ -410,6 +430,7 @@ public class UserAction extends AbstractModuleAction {
 		}
 		newUserInfo.setId(newUser);
 		newUserInfo.setLogin(newUser);
+		newUserInfo.setSite(ctx.getGlobalContext().getContextKey());
 		if (StringHelper.isMail(newUser)) {
 			newUserInfo.setEmail(newUser);
 		}
@@ -477,7 +498,6 @@ public class UserAction extends AbstractModuleAction {
 	}
 
 	public static String performAskChangePassword(RequestService rs, ContentContext ctx, EditContext editContext, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
-
 		String email = rs.getParameter("email", null);
 		if (email == null && rs.getParameter("j_username", null) != null) {
 			email = rs.getParameter("j_username", null);
@@ -508,8 +528,12 @@ public class UserAction extends AbstractModuleAction {
 				Map<String, String> params = new HashMap<String, String>();
 				params.put("pwtoken", globalContext.getChangePasswordToken(user.getLogin()));
 				params.put("hideform", "true");
-				String link = URLHelper.createURL(ctx.getContextForAbsoluteURL(), params);
-				String mailBody = XHTMLHelper.createUserMail(globalContext.getTemplateData(), body, null, null, link, i18nAccess.getViewText("user.change-password"), null);
+				ContentService contentService = ContentService.getInstance(globalContext);
+				MenuElement regPage = contentService.getRegistrationPage(ctx);
+				String link = URLHelper.createURL(ctx.getContextForAbsoluteURL(), regPage, params);
+				//String mailBody = XHTMLHelper.createUserMail(globalContext.getTemplateData(), body, null, null, link, i18nAccess.getViewText("user.change-password"), null);
+				String mailBody = XHTMLHelper.createUserMail(ctx, "/images/font/lock.png", body, "", link, i18nAccess.getViewText("user.change-password"), "");
+				
 				MailService mailService = MailService.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
 				mailService.sendMail(globalContext, new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(email), subject, mailBody, true);
 				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("user.message.change-password-link"), GenericMessage.INFO));
@@ -979,6 +1003,45 @@ public class UserAction extends AbstractModuleAction {
 			}
 		}
 		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("global.delete-file", "file deleted."), GenericMessage.INFO));
+		return null;
+	}
+	
+	public static String performLogin(ContentContext ctx, HttpServletRequest request, RequestService rs, GlobalContext globalContext, I18nAccess i18nAccess) throws Exception {
+		IUserFactory fact = UserFactory.createUserFactory(request);
+		if (fact.getCurrentUser(globalContext, request.getSession()) == null) {
+			String login = request.getParameter("login");
+			if (login != null || request.getUserPrincipal() != null) {
+				if (request.getParameter("autologin") != null) {
+					DataToIDService service = DataToIDService.getInstance(request.getSession().getServletContext());
+					String codeId = service.setData(login, IUserFactory.AUTO_LOGIN_AGE_SEC);
+					RequestHelper.setCookieValue(ctx.getResponse(), JAVLO_LOGIN_ID, codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, null);
+				}
+				if (login == null && request.getUserPrincipal() != null) {
+					login = request.getUserPrincipal().getName();
+				} else if (fact.login(request, login, request.getParameter("password")) == null) {
+					String msg = i18nAccess.getText("user.error.msg");
+					MessageRepository messageRepository = MessageRepository.getInstance(((HttpServletRequest) request));
+					messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
+				} else {
+					ContentService.getInstance(globalContext).releaseViewNav(globalContext);
+				}
+				ModulesContext.getInstance(request.getSession(), globalContext).loadModule(request.getSession(), globalContext);
+				User loggedUser = fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession());
+				Map<String,Object> data = new HashMap<>();
+				if (loggedUser != null) {					
+					data.put("logged", true);
+					data.put("login", loggedUser.getUserInfo().getLogin());
+					data.put("firstname", loggedUser.getUserInfo().getFirstName());
+					data.put("lastname", loggedUser.getUserInfo().getLastName());
+					data.put("email", loggedUser.getUserInfo().getEmail());
+					data.put("message", i18nAccess.getViewText("login.done"));					
+				} else {
+					data.put("logged", false);
+					data.put("error", i18nAccess.getViewText("login.error"));	
+				}
+				JSONMap.JSON.toJson(data, ctx.getResponse().getWriter());
+			}
+		}
 		return null;
 	}
 

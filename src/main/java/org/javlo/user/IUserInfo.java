@@ -97,6 +97,10 @@ public interface IUserInfo {
 	public InternetAddress getInternetAddress();
 	
 	public String encryptPassword(String pwd);
+	
+	public String getSite();
+	
+	public void setSite(String site);
 
 	/**
 	 * get the type of account (default, facebook, google account...)

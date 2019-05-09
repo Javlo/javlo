@@ -69,6 +69,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	private String avatarURL = null;
 	private String birthdate = null;
 	private String memberdate = null;
+	private String site = null;
 	private String[] preferredLanguage = new String[0];
 	private Set<String> roles = new HashSet<String>();
 	private Date creationDate = new Date();
@@ -668,5 +669,13 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 
 	public void setRegion(String region) {
 		this.region = region;
+	}
+
+	public String getSite() {
+		return site;
+	}
+
+	public void setSite(String site) {
+		this.site = site;
 	}
 }

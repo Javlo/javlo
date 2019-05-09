@@ -17,10 +17,13 @@ import java.awt.image.ColorModel;
 import java.awt.image.ConvolveOp;
 import java.awt.image.IndexColorModel;
 import java.awt.image.Kernel;
+import java.awt.image.RescaleOp;
 import java.awt.image.WritableRaster;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,10 +39,19 @@ import javax.imageio.ImageWriter;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.ImageOutputStream;
 
+import org.apache.batik.anim.dom.SVGDOMImplementation;
+import org.apache.batik.transcoder.TranscoderException;
+import org.apache.batik.transcoder.TranscoderInput;
+import org.apache.batik.transcoder.TranscoderOutput;
+import org.apache.batik.transcoder.TranscodingHints;
+import org.apache.batik.transcoder.image.ImageTranscoder;
+import org.apache.batik.util.SVGConstants;
+import org.apache.commons.io.FileUtils;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 
 import com.github.jaiimageio.jpeg2000.J2KImageWriteParam;
+import com.jhlabs.image.ContrastFilter;
 import com.jhlabs.image.RGBAdjustFilter;
 
 public class ImageEngine {
@@ -133,6 +145,65 @@ public class ImageEngine {
 		newPixel = newPixel << 8;
 		newPixel += blue;
 		return newPixel;
+	}
+	
+	public static BufferedImage loadSvg(InputStream svgStream) throws IOException {
+
+	    final BufferedImage[] imagePointer = new BufferedImage[1];
+
+	    // Rendering hints can't be set programatically, so
+	    // we override defaults with a temporary stylesheet.
+	    // These defaults emphasize quality and precision, and
+	    // are more similar to the defaults of other SVG viewers.
+	    // SVG documents can still override these defaults.
+	    String css = "svg {" +
+	            "shape-rendering: geometricPrecision;" +
+	            "text-rendering:  geometricPrecision;" +
+	            "color-rendering: optimizeQuality;" +
+	            "image-rendering: optimizeQuality;" +
+	            "}";
+	    File cssFile = File.createTempFile("batik-default-override-", ".css");
+	    FileUtils.writeStringToFile(cssFile, css);
+
+	    TranscodingHints transcoderHints = new TranscodingHints();
+	    transcoderHints.put(ImageTranscoder.KEY_XML_PARSER_VALIDATING, Boolean.FALSE);
+	    transcoderHints.put(ImageTranscoder.KEY_DOM_IMPLEMENTATION,
+	            SVGDOMImplementation.getDOMImplementation());
+	    transcoderHints.put(ImageTranscoder.KEY_DOCUMENT_ELEMENT_NAMESPACE_URI,
+	            SVGConstants.SVG_NAMESPACE_URI);
+	    transcoderHints.put(ImageTranscoder.KEY_DOCUMENT_ELEMENT, "svg");
+	    transcoderHints.put(ImageTranscoder.KEY_USER_STYLESHEET_URI, cssFile.toURI().toString());
+
+	    try {
+
+	        TranscoderInput input = new TranscoderInput(svgStream);
+
+	        ImageTranscoder t = new ImageTranscoder() {
+
+	            @Override
+	            public BufferedImage createImage(int w, int h) {
+	                return new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+	            }
+
+	            @Override
+	            public void writeImage(BufferedImage image, TranscoderOutput out)
+	                    throws TranscoderException {
+	                imagePointer[0] = image;
+	            }
+	        };
+	        t.setTranscodingHints(transcoderHints);
+	        t.transcode(input, null);
+	    }
+	    catch (TranscoderException ex) {
+	        // Requires Java 6
+	        ex.printStackTrace();
+	        throw new IOException("Couldn't convert.");
+	    }
+	    finally {
+	        cssFile.delete();
+	    }
+
+	    return imagePointer[0];
 	}
 
 	// The luminance method
@@ -1890,12 +1961,61 @@ public class ImageEngine {
 	}
 
 	public static void main(String[] args) throws Exception {
-
-		File javloFile = new File("c:/trans/test.jpg");
-		BufferedImage image = ImageIO.read(javloFile);
-		if (image != null) {
-			storeImage(image, new File("c:/trans/out_jpg2000.jp2"));
+		
+//		InputStream in = new FileInputStream(new File("c:/trans/yin-yang-solid.svg"));		
+//		BufferedImage img = loadSvg(in);				
+//		in.close();
+//		
+//		ContrastFilter imageFilter = new ContrastFilter();
+//		imageFilter.setContrast((float)0.001);
+//		imageFilter.setBrightness((float)0.001);
+//		img = imageFilter.filter(img, null); 
+//		//img = luminosity(img);
+//		
+//		img = resizeHeight(img, 50, null, true);
+//		
+//		ImageIO.write(img, "png", new File("c:/trans/yy.png"));
+//		
+		File svgDir = new File("C:\\trans\\fonts\\svgs\\regular");
+		for (File svg : svgDir.listFiles()) {
+			if (svg.getName().endsWith(".svg")) {
+				System.out.println(svg);
+				InputStream in = new FileInputStream(svg);		
+				BufferedImage img = loadSvg(in);				
+				in.close();
+				
+				for (int y = 0; y < img.getHeight(); y += 1) {
+					for (int x = 0; x < img.getWidth(); x += 1) {
+						Color c = new Color(img.getRGB(x, y), true);
+						Color newCol = new Color(160, 160, 160, c.getAlpha());
+						img.setRGB(x, y, newCol.getRGB());
+					}
+				}
+					 
+				
+//				RescaleOp rescaleOp = new RescaleOp(0.2f, 5, null);
+//				rescaleOp.filter(img, img); 
+				
+//				ContrastFilter imageFilter = new ContrastFilter();
+//				imageFilter.setContrast((float)0.001);
+//				imageFilter.setBrightness((float)0.001);
+//				img = imageFilter.filter(img, null); 
+				//img = luminosity(img);
+				
+				img = resizeHeight(img, 50, null, true);
+				
+				ImageIO.write(img, "png", new File("C:\\work\\javlo2\\src\\main\\webapp\\images\\font\\"+svg.getName().replace(".svg", ".png")));
+			}
 		}
+		
+		
+		
+
+//		File javloFile = new File("c:/trans/test.jpg");
+//		BufferedImage image = ImageIO.read(javloFile);
+//		if (image != null) {
+//			storeImage(image, new File("c:/trans/out_jpg2000.jp2"));
+//		}
 
 		// System.out.println("data : "+getGoogleResultTitleSize("patrick est là"));
 		// System.out.println("data : "+getGoogleResultTitleSize("Hot Women | Sexy Women

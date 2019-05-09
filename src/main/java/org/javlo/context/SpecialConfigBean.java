@@ -37,4 +37,8 @@ public class SpecialConfigBean {
 		return StringHelper.isTrue(config.get("sitemap.resources"), true);
 	}
 	
+	public boolean isCreateAccountWithToken() {
+		return StringHelper.isTrue(config.get("security.account.token"), false);
+	}
+	
 }
