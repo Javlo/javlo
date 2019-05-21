@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -42,6 +43,10 @@ public class SocialLocalService {
 			outService.createDataBase();
 			if (globalContext != null) {
 				globalContext.setAttribute(KEY, outService);
+				
+				SocialStat st = outService.getSocialStat(2018);
+				logger.info("social stat 2018 : "+st);
+				
 			}
 		}
 		return outService;
@@ -133,6 +138,56 @@ public class SocialLocalService {
 			ps.close();
 			ps = conn.prepareStatement("select count(*) from post where adminvalid=true AND parent is null AND time > ?");
 			ps.setDate(1, java.sql.Date.valueOf(date));
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				outStat.setTotalMessage(rs.getInt(1));
+			}
+		} finally {
+			dataBaseService.releaseConnection(conn);
+		}
+		return outStat;
+	}
+	
+	public SocialStat getSocialStat(int year) throws Exception {
+		SocialStat outStat = new SocialStat();
+		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
+		
+		Calendar start = Calendar.getInstance();		
+		start.set(Calendar.YEAR, year);
+		start.set(Calendar.DAY_OF_MONTH, 1);
+		start.set(Calendar.MONTH, 0);
+		start.set(Calendar.HOUR, 0);
+		start.set(Calendar.MINUTE, 0);
+		start.set(Calendar.SECOND, 0);
+		
+		Calendar end = Calendar.getInstance();
+		end.set(Calendar.YEAR, year);
+		end.set(Calendar.DAY_OF_MONTH, 31);
+		end.set(Calendar.MONTH, 11);
+		end.set(Calendar.HOUR, 0);
+		end.set(Calendar.MINUTE, 0);
+		end.set(Calendar.SECOND, 0);
+		
+		try {
+			PreparedStatement ps = conn.prepareStatement("select count(distinct author) from post where adminvalid=true AND time > ? AND time < ?");
+			ps.setDate(1, new java.sql.Date(start.getTime().getTime()));
+			ps.setDate(2, new java.sql.Date(end.getTime().getTime()));
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				outStat.setTotalAuthors(rs.getInt(1));
+			}
+			ps.close();
+			ps = conn.prepareStatement("select count(*) from post where adminvalid=true AND time > ? and time < ?");
+			ps.setDate(1, new java.sql.Date(start.getTime().getTime()));
+			ps.setDate(2, new java.sql.Date(end.getTime().getTime()));			
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				outStat.setTotalPost(rs.getInt(1));
+			}
+			ps.close();
+			ps = conn.prepareStatement("select count(*) from post where adminvalid=true AND parent is null AND time > ? and time < ?");
+			ps.setDate(1, new java.sql.Date(start.getTime().getTime()));
+			ps.setDate(2, new java.sql.Date(end.getTime().getTime()));			
 			rs = ps.executeQuery();
 			if (rs.next()) {
 				outStat.setTotalMessage(rs.getInt(1));

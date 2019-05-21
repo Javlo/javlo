@@ -34,4 +34,9 @@ public class SocialStat {
 		}
 		return totalPost/totalMessage;
 	}
+	
+	@Override
+	public String toString() {
+		return "totalAuthors="+totalAuthors+ " - totalMessage="+totalMessage+" - totalPost="+totalPost;
+	}
 }
