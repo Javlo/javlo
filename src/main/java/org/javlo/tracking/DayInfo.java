@@ -47,9 +47,9 @@ public class DayInfo {
 		Properties prop = ResourceHelper.loadProperties(file);
 		sessionCount = Integer.parseInt(prop.getProperty("session.count", "0"));
 		pagesCount = Integer.parseInt(prop.getProperty("pages.count", "0"));
-		pagesCountMobile = Integer.parseInt(prop.getProperty("session.mobile.count"));
-		session2ClickCount = Integer.parseInt(prop.getProperty("session.2clicks.count"));
-		session2ClickCountMobile = Integer.parseInt(prop.getProperty("session.2clicks.mobile.count"));
+		pagesCountMobile = Integer.parseInt(prop.getProperty("session.mobile.count", "0"));
+		session2ClickCount = Integer.parseInt(prop.getProperty("session.2clicks.count", "0"));
+		session2ClickCountMobile = Integer.parseInt(prop.getProperty("session.2clicks.mobile.count", "0"));
 		publishCount = Integer.parseInt(prop.getProperty("action.publish.count", "0"));
 		saveCount = Integer.parseInt(prop.getProperty("action.save.count", "0"));
 		mostSavePage = prop.getProperty("action.save.page", "");
