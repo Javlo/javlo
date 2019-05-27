@@ -129,7 +129,6 @@ public class Template implements Comparable<Template> {
 		List<String> htmls;
 		List<String> renderers;
 		boolean bootstrap = false;
-		private Map<String, String> s = null;
 		private Map<String, List<String>> cssByFolder;
 		private Template template;
 		private TemplateBean parentBean;
@@ -1034,14 +1033,6 @@ public class Template implements Comparable<Template> {
 
 	public String getAuthors() {
 		return properties.getString("authors", getParent().getAuthors());
-	}
-
-	public Collection<String> getCategories() {
-		String categoriesRaw = properties.getString("categories");
-		if (categoriesRaw == null) {
-			return Collections.emptyList();
-		}
-		return StringHelper.stringToCollection(categoriesRaw, ",");
 	}
 
 	protected List<File> getComponentFile(GlobalContext globalContext) throws IOException {

@@ -115,8 +115,9 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 	@Override
 	public Collection<String> getExternalResources(ContentContext ctx) {
 		try {
-			if (getMirrorPage(ctx) != null) {
-				return getMirrorPage(ctx).getExternalResources(ctx);
+			MenuElement mp = getMirrorPage(ctx);
+			if (mp != null && !ctx.mirrorDone(mp.getId())) {
+				return mp.getExternalResources(ctx);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

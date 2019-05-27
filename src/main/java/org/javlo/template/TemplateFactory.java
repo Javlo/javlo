@@ -99,32 +99,6 @@ public class TemplateFactory {
 		return authors;
 	}
 
-	public static Collection<String> getAllCategories(ServletContext application) throws Exception {
-		return getAllCategories(application, null);
-	}
-
-	/**
-	 * list of categories for a specific user
-	 * 
-	 * @param session
-	 * @param user
-	 * @param mailling
-	 * @return
-	 * @throws IOException
-	 */
-	public static Collection<String> getAllCategories(ServletContext application, User user) throws Exception {
-		Collection<Template> templates;
-		templates = getAllTemplates(application);
-
-		Collection<String> categories = new TreeSet<String>();
-		for (Template template : templates) {
-			if (user == null || template.visibleForRoles(user.getRoles())) {
-				categories.addAll(template.getCategories());
-			}
-		}
-		return categories;
-	}
-
 	public static List<String> getAllSources(ServletContext application) throws Exception {
 		Collection<Template> templates = getAllTemplates(application);
 		List<String> sources = new LinkedList<String>();

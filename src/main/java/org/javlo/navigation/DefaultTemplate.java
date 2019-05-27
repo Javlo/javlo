@@ -310,11 +310,6 @@ public class DefaultTemplate extends Template {
 	}
 
 	@Override
-	public Collection<String> getCategories() {
-		return Collections.EMPTY_LIST;
-	}
-
-	@Override
 	public String getSpecialRendererTemplate() {
 		return null;
 	}

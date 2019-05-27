@@ -11,11 +11,13 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletRequest;
@@ -131,6 +133,8 @@ public class ContentContext {
 	private boolean stopRendering = false;
 
 	private boolean takeScreenShort = true;
+	
+	private Set<String> mirrorId = new HashSet<>();
 
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free) {
 		ContentContext ctx = new ContentContext();
@@ -2307,6 +2311,15 @@ public class ContentContext {
 
 	public void setMainLanguage(String mainLanguage) {
 		this.mainLanguage = mainLanguage;
+	}
+	
+	public boolean mirrorDone(String id) {
+		if (mirrorId.contains(id)) {
+			return true;
+		} else {
+			mirrorId.add(id);
+			return false;
+		}
 	}
 
 }
