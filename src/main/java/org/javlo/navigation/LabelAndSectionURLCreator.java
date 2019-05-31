@@ -123,9 +123,6 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 
 	@Override
 	public String createURL(ContentContext ctx, MenuElement currentPage) throws Exception {		
-		if (currentPage.isLikeRoot(ctx)) {
-			return "/";
-		}		
 		return createURLWithoutExt(ctx, currentPage) +getExtension(ctx) ;
 	}
 	
