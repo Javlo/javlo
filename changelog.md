@@ -775,3 +775,4 @@ Security in case of vulnerabilities.
 - no trash by default
 ### fixed
 - image can be repeated for represent page (but linked with the page)
+- not return in preview on save in edit mode
