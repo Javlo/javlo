@@ -408,7 +408,12 @@
 					<c:set var="tooltip" value=' data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'preview.label.edit.tooltip\']}"' />
 				</c:if>
 				<li class="user"><c:if test="${!userInterface.contributor}">
-				<a ${tooltip} id="pc_edit_mode_button" class="btn btn-default btn-sm" title="${i18n.edit['global.exit']}" href="<%=URLHelper.createURL(returnEditCtx)%>"><span class="glyphicon glyphicon-briefcase"></span><span class="text">edit</span></a>	
+					<c:url var="editURL" value="<%=URLHelper.createURL(returnEditCtx)%>" context="/">
+						<c:param name="module" value="content" />
+						<c:param name="webaction" value="previewEdit" />
+						<c:param name="preview" value="false" />
+					</c:url>
+				<a ${tooltip} id="pc_edit_mode_button" class="btn btn-default btn-sm" title="${i18n.edit['global.exit']}" href="${editURL}"><span class="glyphicon glyphicon-briefcase"></span><span class="text">edit</span></a>	
 				</c:if>
 				<c:set var="tooltip" value="" />
 				<c:if test="${i18n.edit['preview.label.user.tooltip'] != 'preview.label.user.tooltip'}">

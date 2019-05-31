@@ -74,7 +74,7 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 			jsFormat = "var format="+format+";";
 		}
 		
-		finalCode.append("<script type=\"text/javascript\">"+jsFormat+jsFontsize+jsWysiwygCss+"jQuery(document).ready(loadWysiwyg('#" + getContentName() + "','"+getEditorComplexity(ctx)+"','"+chooseImageURL+"', format, fontsize, wysiwygCss));</script>");
+		finalCode.append("<script type=\"text/javascript\">"+jsFormat+jsFontsize+jsWysiwygCss+"jQuery(document).ready(loadWysiwyg('#" + getContentName() + "','"+getEditorComplexity(ctx)+"','"+chooseImageURL+"', format, fontsize, wysiwygCss));loadWysiwyg('#" + getContentName() + "','"+getEditorComplexity(ctx)+"','"+chooseImageURL+"', format, fontsize, wysiwygCss)</script>");
 		return finalCode.toString();
 	}
 

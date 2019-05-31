@@ -86,7 +86,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	public static final String IMAGE_FILTER = "image-filter";
 
 	static final String DATE = "date";
-
+	
 	static final String LINK_KEY = "link";
 
 	public static final String TYPE = "global-image";

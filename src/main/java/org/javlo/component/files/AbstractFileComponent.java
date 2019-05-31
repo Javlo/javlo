@@ -796,7 +796,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		}
 		out.println("</div></div>");
 		if (!isFromShared(ctx)) {
-			out.println("<script type=\"text/javascript\">document.addEventListener(\"DOMContentLoaded\", function(event) { initFocusPoint();});</script>");
+			out.println("<script type=\"text/javascript\">document.addEventListener(\"DOMContentLoaded\", function(event) { initFocusPoint();}); initFocusPoint();</script>");
 		}
 		if (imageList) {
 			out.println("<div class=\"name\">" + getFileName() + "</div>");

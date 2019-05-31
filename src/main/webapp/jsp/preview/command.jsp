@@ -37,12 +37,12 @@ if (!rightOnPage) {
 request.setAttribute("editUser", ctx.getCurrentEditUser());
 %><div id="preview_command" lang="${info.editLanguage}" class="edit-${not empty editUser} ${editPreview == 'true'?'edit':'preview'}">
 	<div class="pc_header"><span class="title">${i18n.edit["preview.command"]}</span>
-	<c:url var="url" value="<%=URLHelper.createURL(returnEditCtx)%>" context="/">
+	<c:url var="editURL" value="<%=URLHelper.createURL(returnEditCtx)%>" context="/">
 		<c:param name="module" value="content" />
 		<c:param name="webaction" value="previewEdit" />
 		<c:param name="preview" value="false" />
 	</c:url>
-	<c:if test="${!userInterface.contributor}"><a id="pc_edit_mode_button" title="${i18n.edit['global.exit']}" href="${url}">X</a></c:if>
+	<c:if test="${!userInterface.contributor}"><a id="pc_edit_mode_button" title="${i18n.edit['global.exit']}" href="${editURL}">X</a></c:if>
 	<c:url var="url" value="<%=URLHelper.createURL(returnEditCtx)%>" context="/">
 		<c:param name="edit-logout" value="true" />
 	</c:url>
