@@ -45,7 +45,6 @@ public class StatusServlet extends HttpServlet {
 					status.add(new CheckBean("Latest update", StringHelper.renderTime(new Date(latestrefresh)), false));
 					long freemem = runtime.freeMemory();
 					status.add(new CheckBean("Free memory", freemem + " (" + freemem / 1024 + " KB)" + " (" + freemem / 1024 / 1024 + " MB)", freemem < 1024 * 1024));
-					status.add(new CheckBean("Context", ctx.getGlobalContext().getContextKey(), StringHelper.isEmpty(ctx.getGlobalContext().getContextKey())));
 					boolean connected = NetHelper.isConnected();
 					status.add(new CheckBean("Internet access", "" + connected, !connected));
 					String smtpMsg = null;
