@@ -3,9 +3,11 @@ package org.javlo.servlet.status;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -19,12 +21,11 @@ import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.service.ContentService;
 import org.javlo.servlet.IVersion;
+import org.javlo.utils.TimeMap;
 
 public class StatusServlet extends HttpServlet {
 
-	private static final Long REFRESH_TIME = (long)1000 * 60 * 60;
-	private static long latestrefresh = 0;
-	private static String data = null;
+	private static Map<String,String> datas = Collections.synchronizedMap(new TimeMap<>(1000 * 60 * 60));
 
 	/**
 	 * 
@@ -33,16 +34,15 @@ public class StatusServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ContentContext ctx;
 		try {
-			if (System.currentTimeMillis() - latestrefresh > REFRESH_TIME) {
-				synchronized (REFRESH_TIME) {
-					Runtime runtime = Runtime.getRuntime();
-					latestrefresh = System.currentTimeMillis();
-					ctx = ContentContext.getContentContext(request, response);
+			ContentContext ctx = ContentContext.getContentContext(request, response);;
+			String data = datas.get(ctx.getGlobalContext().getContextKey());
+			if (data == null) {
+				synchronized (datas) {
+					Runtime runtime = Runtime.getRuntime();					
 					List<CheckBean> status = new LinkedList<>();
 					status.add(new CheckBean("Version", "" + IVersion.VERSION, false));
-					status.add(new CheckBean("Latest update", StringHelper.renderTime(new Date(latestrefresh)), false));
+					status.add(new CheckBean("Latest update", StringHelper.renderTime(new Date(System.currentTimeMillis())), false));
 					long freemem = runtime.freeMemory();
 					status.add(new CheckBean("Free memory", freemem + " (" + freemem / 1024 + " KB)" + " (" + freemem / 1024 / 1024 + " MB)", freemem < 1024 * 1024));
 					boolean connected = NetHelper.isConnected();
@@ -71,6 +71,7 @@ public class StatusServlet extends HttpServlet {
 					out.println("</table>");
 					out.close();
 					data = new String(outStream.toByteArray());
+					datas.put(ctx.getGlobalContext().getContextKey(), data);
 				}
 			}
 			response.getWriter().println(data);
