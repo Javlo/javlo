@@ -36,7 +36,7 @@ public class CheckBean {
 		if (error) {
 			style="background-color: #dc3545; color: #ffffff; padding: 8px;";
 		}
-		return "<tr data-error=\""+error+"\""><td style=\"background-color: #eeeeee; color: #000000; padding: 8px;\">"+label+"</td>"+"<td style=\""+style+"\">"+message+"</td></tr>";
+		return "<tr data-error=\""+error+"\"><td style=\"background-color: #eeeeee; color: #000000; padding: 8px;\">"+label+"</td>"+"<td style=\""+style+"\">"+message+"</td></tr>";
 	}
 	
 	
