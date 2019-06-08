@@ -54,7 +54,7 @@ public class StatusServlet extends HttpServlet {
 					} catch (Exception e) {
 						smtpMsg = e.getMessage();
 					}
-					status.add(new CheckBean("SMTP", StringHelper.neverEmpty(smtpMsg, ""), smtpMsg != null));
+					status.add(new CheckBean("SMTP", StringHelper.neverEmpty(smtpMsg, "OK"), smtpMsg != null));
 					ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 					int previewPageCount = content.getNavigation(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE)).getAllChildrenList().size();
 					status.add(new CheckBean("#pages - preview", "" + previewPageCount, previewPageCount == 0));
