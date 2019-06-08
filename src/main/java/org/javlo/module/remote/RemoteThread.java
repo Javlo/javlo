@@ -1,17 +1,25 @@
 package org.javlo.module.remote;
 
+import java.net.URL;
 import java.util.logging.Logger;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
+import org.python.icu.util.Calendar;
 
 public class RemoteThread extends Thread {
 	
 	private static Logger logger = Logger.getLogger(RemoteThread.class.getName());
 
-	private long TIME_BETWEEN_CHECK = 10000; // 10 sec
+	private long TIME_BETWEEN_CHECK = 100000; // 100 sec
 
 	private boolean stop = false;
 	private long countCheck = 0;
+	private int latestDaySendStatus = -1;
+	private static int HOUR_SEND_STATUS = 7;
 	RemoteService remoteService;
 	
 	public RemoteThread(RemoteService remoteService) {
@@ -45,6 +53,39 @@ public class RemoteThread extends Thread {
 					}
 				}
 				remoteService.sendNotification();
+				
+				/** send all status **/
+				Calendar cal = Calendar.getInstance();
+				int error = 0;
+				if (cal.get(Calendar.DAY_OF_WEEK) != latestDaySendStatus && cal.get(Calendar.HOUR) == HOUR_SEND_STATUS) {
+					String mail = "";
+					for (RemoteBean bean : remoteService.getRemotes()) {
+						try {
+							URL url = new URL(bean.getUrl()+"/status.html");
+							String status =  NetHelper.readPageGet(url);
+							
+							if (status.contains("data-error=\"true\"")) {
+								error++;
+							} else if (!status.contains("data-error=\"false\"")) {
+								mail += "<div style=\"background-color: #cccccc; color: #ffffff; padding: 8px; margin: 15px;\">NOT JAVLO : "+bean.getUrl()+"</div>"; 
+							} else {
+								mail += status;
+							}
+							
+						} catch (Exception e) {
+							error++;
+							mail += "<div style=\"background-color: #dc3545; color: #ffffff; padding: 8px; margin: 15px;\">ERROR : "+bean.getUrl()+" : "+e.getMessage()+"</div>";
+						}
+					}
+					try {
+						NetHelper.sendMail(remoteService.getGlobalContext(), new InternetAddress(remoteService.getGlobalContext().getAdministratorEmail()), new InternetAddress(remoteService.getGlobalContext().getAdministratorEmail()), null, null, "javlo status (error : "+error+")", mail, null, true);
+					} catch (AddressException e) {
+						e.printStackTrace();
+					}
+				}
+				
+				
+				
 				sleep(TIME_BETWEEN_CHECK);
 			}
 		} catch (InterruptedException e) {
