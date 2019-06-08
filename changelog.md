@@ -770,6 +770,7 @@ Security in case of vulnerabilities.
 - use report
 - stat by days
 - user mail in template
+- status.html page
 ### Modified
 - update code mirror
 - no trash by default

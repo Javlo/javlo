@@ -63,6 +63,16 @@
 		<servlet-name>DataDocServlet</servlet-name>
 		<url-pattern>/datadoc/*</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>StatusServlet</servlet-name>
+		<servlet-class>org.javlo.servlet.status.StatusServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>StatusServlet</servlet-name>
+		<url-pattern>/status.html</url-pattern>
+	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>AccessServlet</servlet-name>

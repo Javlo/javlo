@@ -9,7 +9,7 @@
 	<name>Javlo 2</name>
 	<url>http://www.javlo.org/</url>
 	<inceptionYear>2012</inceptionYear>
-
+	
 	<description>
 		Javlo is a easy to use and deploy website content management system. Javlo helps content managers worldwide to create and maintain beautiful websites fast and efficiently.
 		The browser based user interface features configurable editors for structured content with well defined fields.
@@ -55,6 +55,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+	
+	
 
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/com.github.jai-imageio/jai-imageio-core -->
