@@ -64,7 +64,7 @@ public class StatusServlet extends HttpServlet {
 					PrintStream out = new PrintStream(outStream);
 					
 					out.println("<table style=\"border: 1px #000000 solid; width: 100%; max-width: 1000px; margin: 15px auto; border-collapse: collapse;\">");
-					out.println("<td style=\"background-color: #000000; color: #ffffff; font-size: 18px; text-align: center; padding: 10px\" colspan=\"2\">" + ctx.getGlobalContext().getContextKey() + " " + ctx.getRealRemoteIp() + "</td>");
+					out.println("<td style=\"background-color: #000000; color: #ffffff; font-size: 18px; text-align: center; padding: 10px\" colspan=\"2\">" + ctx.getGlobalContext().getContextKey() + "</td>");
 					for (CheckBean checkBean : status) {
 						out.println(checkBean.getTableHtml());
 					}
