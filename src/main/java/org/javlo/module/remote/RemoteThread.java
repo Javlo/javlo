@@ -77,12 +77,12 @@ public class RemoteThread extends Thread {
 								
 							} catch (Exception e) {
 								try {
-									NetHelper.readPageGet(url);
+									NetHelper.readPageGet(new URL(bean.getUrl()));
 									mail += "<div style=\"background-color: #cccccc; color: #ffffff; padding: 8px; margin: 15px;\">NOT JAVLO : "+bean.getUrl()+"</div>"; 
 								} catch (Exception e1) {
-									mail += "<div style=\"background-color: #dc3545; color: #ffffff; padding: 8px; margin: 15px;\">ERROR : "+bean.getUrl()+" : "+e1.getMessage()+"</div>";
+									mail += "<div style=\"background-color: #dc3545; color: #ffffff; padding: 8px; margin: 15px;\">ERROR : "+bean.getUrl()+" ["+e1.getMessage()+"]</div>";
+									error++;
 								}
-								error++;
 							}
 						} catch (MalformedURLException e1) {
 							e1.printStackTrace();
