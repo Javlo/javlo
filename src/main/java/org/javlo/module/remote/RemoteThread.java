@@ -90,7 +90,7 @@ public class RemoteThread extends Thread {
 						
 					}
 					try {
-						NetHelper.sendMail(remoteService.getGlobalContext(), new InternetAddress(remoteService.getGlobalContext().getAdministratorEmail()), new InternetAddress(remoteService.getGlobalContext().getAdministratorEmail()), null, null, "javlo status (error : "+error+")", mail, null, true);
+						NetHelper.sendMail(remoteService.getGlobalContext(), new InternetAddress(remoteService.getGlobalContext().getAdministratorEmail()), new InternetAddress(remoteService.getGlobalContext().getAdministratorEmail()), null, null, "javlo status (error : "+error+") from :  "+remoteService.getGlobalContext().getContextKey(), mail, null, true);
 					} catch (AddressException e) {
 						e.printStackTrace();
 					}
