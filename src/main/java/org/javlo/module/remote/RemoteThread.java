@@ -1,5 +1,6 @@
 package org.javlo.module.remote;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Logger;
 
@@ -58,24 +59,35 @@ public class RemoteThread extends Thread {
 				Calendar cal = Calendar.getInstance();
 				int error = 0;
 				if (cal.get(Calendar.DAY_OF_WEEK) != latestDaySendStatus && cal.get(Calendar.HOUR) == HOUR_SEND_STATUS) {
+					latestDaySendStatus = cal.get(Calendar.DAY_OF_WEEK);
 					String mail = "";
 					for (RemoteBean bean : remoteService.getRemotes()) {
+						URL url;
 						try {
-							URL url = new URL(bean.getUrl()+"/status.html");
-							String status =  NetHelper.readPageGet(url);
-							
-							if (status.contains("data-error=\"true\"")) {
+							url = new URL(bean.getUrl()+"/status.html");
+							try {
+								String status =  NetHelper.readPageGet(url);
+								if (status.contains("data-error=\"true\"")) {
+									error++;
+								} else if (!status.contains("data-error=\"false\"")) {
+									mail += "<div style=\"background-color: #cccccc; color: #ffffff; padding: 8px; margin: 15px;\">NOT JAVLO : "+bean.getUrl()+"</div>"; 
+								} else {
+									mail += status;
+								}
+								
+							} catch (Exception e) {
+								try {
+									NetHelper.readPageGet(url);
+									mail += "<div style=\"background-color: #cccccc; color: #ffffff; padding: 8px; margin: 15px;\">NOT JAVLO : "+bean.getUrl()+"</div>"; 
+								} catch (Exception e1) {
+									mail += "<div style=\"background-color: #dc3545; color: #ffffff; padding: 8px; margin: 15px;\">ERROR : "+bean.getUrl()+" : "+e1.getMessage()+"</div>";
+								}
 								error++;
-							} else if (!status.contains("data-error=\"false\"")) {
-								mail += "<div style=\"background-color: #cccccc; color: #ffffff; padding: 8px; margin: 15px;\">NOT JAVLO : "+bean.getUrl()+"</div>"; 
-							} else {
-								mail += status;
 							}
-							
-						} catch (Exception e) {
-							error++;
-							mail += "<div style=\"background-color: #dc3545; color: #ffffff; padding: 8px; margin: 15px;\">ERROR : "+bean.getUrl()+" : "+e.getMessage()+"</div>";
+						} catch (MalformedURLException e1) {
+							e1.printStackTrace();
 						}
+						
 					}
 					try {
 						NetHelper.sendMail(remoteService.getGlobalContext(), new InternetAddress(remoteService.getGlobalContext().getAdministratorEmail()), new InternetAddress(remoteService.getGlobalContext().getAdministratorEmail()), null, null, "javlo status (error : "+error+")", mail, null, true);
