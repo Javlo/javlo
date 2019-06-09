@@ -2,11 +2,13 @@ package org.javlo.module.remote;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
+import org.javlo.context.GlobalContext;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.python.icu.util.Calendar;
@@ -27,6 +29,40 @@ public class RemoteThread extends Thread {
 		setDaemon(true);
 		setName("remote thread : "+remoteService.getGlobalContext().getContextKey());
 		this.remoteService = remoteService;
+	}
+	
+	public static String renderRemoteStatus(RemoteService remoteService, AtomicInteger error) {
+
+		String mail = "";
+		for (RemoteBean bean : remoteService.getRemotes()) {
+			URL url;
+			try {
+				url = new URL(bean.getUrl()+"/status.html");
+				try {
+					String status =  NetHelper.readPageGet(url);
+					if (status.contains("data-error=\"true\"")) {
+						error.getAndIncrement();
+					} else if (!status.contains("data-error=\"false\"")) {
+						mail += "<div style=\"background-color: #cccccc; color: #ffffff; padding: 8px; margin: 15px;\">NOT JAVLO : "+bean.getUrl()+"</div>"; 
+					} else {
+						mail += status;
+					}
+					
+				} catch (Exception e) {
+					try {
+						NetHelper.readPageGet(new URL(bean.getUrl()));
+						mail += "<div style=\"background-color: #cccccc; color: #ffffff; padding: 8px; margin: 15px;\">NOT JAVLO : "+bean.getUrl()+"</div>"; 
+					} catch (Exception e1) {
+						mail += "<div style=\"background-color: #dc3545; color: #ffffff; padding: 8px; margin: 15px;\">ERROR : "+bean.getUrl()+" ["+e1.getMessage()+"]</div>";
+						error.getAndIncrement();
+					}
+				}
+			} catch (MalformedURLException e1) {
+				e1.printStackTrace();
+			}
+			
+		}
+		return mail;
 	}
 
 	@Override
@@ -57,47 +93,18 @@ public class RemoteThread extends Thread {
 				
 				/** send all status **/
 				Calendar cal = Calendar.getInstance();
-				int error = 0;
+				
 				if (cal.get(Calendar.DAY_OF_WEEK) != latestDaySendStatus && cal.get(Calendar.HOUR) == HOUR_SEND_STATUS) {
 					latestDaySendStatus = cal.get(Calendar.DAY_OF_WEEK);
-					String mail = "";
-					for (RemoteBean bean : remoteService.getRemotes()) {
-						URL url;
-						try {
-							url = new URL(bean.getUrl()+"/status.html");
-							try {
-								String status =  NetHelper.readPageGet(url);
-								if (status.contains("data-error=\"true\"")) {
-									error++;
-								} else if (!status.contains("data-error=\"false\"")) {
-									mail += "<div style=\"background-color: #cccccc; color: #ffffff; padding: 8px; margin: 15px;\">NOT JAVLO : "+bean.getUrl()+"</div>"; 
-								} else {
-									mail += status;
-								}
-								
-							} catch (Exception e) {
-								try {
-									NetHelper.readPageGet(new URL(bean.getUrl()));
-									mail += "<div style=\"background-color: #cccccc; color: #ffffff; padding: 8px; margin: 15px;\">NOT JAVLO : "+bean.getUrl()+"</div>"; 
-								} catch (Exception e1) {
-									mail += "<div style=\"background-color: #dc3545; color: #ffffff; padding: 8px; margin: 15px;\">ERROR : "+bean.getUrl()+" ["+e1.getMessage()+"]</div>";
-									error++;
-								}
-							}
-						} catch (MalformedURLException e1) {
-							e1.printStackTrace();
-						}
-						
-					}
 					try {
-						NetHelper.sendMail(remoteService.getGlobalContext(), new InternetAddress(remoteService.getGlobalContext().getAdministratorEmail()), new InternetAddress(remoteService.getGlobalContext().getAdministratorEmail()), null, null, "javlo status (error : "+error+") from :  "+remoteService.getGlobalContext().getContextKey(), mail, null, true);
+						GlobalContext globalContext = remoteService.getGlobalContext();
+						AtomicInteger error = new AtomicInteger(0);
+						String mail = renderRemoteStatus(remoteService, error);
+						NetHelper.sendMail(globalContext, new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(globalContext.getAdministratorEmail()), null, null, "javlo status (error : "+error+") from :  "+globalContext.getContextKey(), mail, null, true);
 					} catch (AddressException e) {
 						e.printStackTrace();
 					}
 				}
-				
-				
-				
 				sleep(TIME_BETWEEN_CHECK);
 			}
 		} catch (InterruptedException e) {

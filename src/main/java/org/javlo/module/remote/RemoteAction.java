@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
@@ -37,6 +38,7 @@ public class RemoteAction extends AbstractModuleAction {
 	private static final String RENDER_MODE_LIST = "list";
 	private static final String RENDER_MODE_TREE = "tree";
 	private static final String SITEMAP_TREE = "sitemap";
+	private static final String STATUS = "status";
 
 	@Override
 	public String getActionGroupName() {
@@ -129,6 +131,12 @@ public class RemoteAction extends AbstractModuleAction {
 				instance.getSites().add(remote);
 			}
 		}
+		
+		if (STATUS.equals(currentRenderMode)) {
+			AtomicInteger error = new AtomicInteger(0);
+			ctx.getRequest().setAttribute("status", RemoteThread.renderRemoteStatus(remoteService, error));
+			ctx.getRequest().setAttribute("error", error.get());
+		}
 
 		ctx.getRequest().setAttribute("remoteServers", remoteServers);
 
@@ -209,6 +217,8 @@ public class RemoteAction extends AbstractModuleAction {
 			renderer = "jsp/charge.jsp";
 		} else if (SITEMAP_TREE.equals(newRenderMode)) {
 			renderer = "jsp/sitemap.jsp";
+		} else if (STATUS.equals(newRenderMode)) {
+			renderer = "jsp/status.jsp";
 		} else {
 			newRenderMode = RENDER_MODE_LIST;
 			renderer = "jsp/list.jsp";
