@@ -645,11 +645,15 @@ public class Tracker {
 		Calendar cal2 = Calendar.getInstance();
 		cal2.add(Calendar.DAY_OF_YEAR, -1);
 		AtomicInteger pageTotalVisit = new AtomicInteger(0);
-		StatContext statCtx = new StatContext(cal2.getTime(), cal.getTime());
-		List<DayInfo> dayInfoList = getDayInfos(statCtx);
-		dayInfoList.parallelStream()
-			.filter(d -> d.visitPath.get(path) != null)
-			.forEach(d -> pageTotalVisit.addAndGet(d.visitPath.get(path).intValue()));
+		try {
+			StatContext statCtx = new StatContext(cal2.getTime(), cal.getTime());
+			List<DayInfo> dayInfoList = getDayInfos(statCtx);
+			dayInfoList.parallelStream()
+				.filter(d -> d.visitPath.get(path) != null)
+				.forEach(d -> pageTotalVisit.addAndGet(d.visitPath.get(path).intValue()));
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
 		return pageTotalVisit.get();
 	}
 	
