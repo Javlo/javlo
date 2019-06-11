@@ -648,9 +648,16 @@ public class Tracker {
 		try {
 			StatContext statCtx = new StatContext(cal2.getTime(), cal.getTime());
 			List<DayInfo> dayInfoList = getDayInfos(statCtx);
-			dayInfoList.parallelStream()
-				.filter(d -> d.visitPath.get(path) != null)
-				.forEach(d -> pageTotalVisit.addAndGet(d.visitPath.get(path).intValue()));
+			
+			for (DayInfo d : dayInfoList) {
+				if (d.visitPath.get(path) != null) {
+					pageTotalVisit.addAndGet(d.visitPath.get(path).intValue());
+				}
+			}
+			
+//			dayInfoList.parallelStream()
+//				.filter(d -> d.visitPath.get(path) != null)
+//				.forEach(d -> pageTotalVisit.addAndGet(d.visitPath.get(path).intValue()));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
