@@ -16,7 +16,7 @@ import org.javlo.utils.StructuredProperties;
 
 public class DayInfo {
 	
-	public static final int CURRENT_VERSION = 18;
+	public static final int CURRENT_VERSION = 19;
 
 	private static final String PAGES_VISITS_PREFIX = "path.visits.";
 	private static final String TIME_VISITS_PREFIX = "time.visits.";
@@ -45,15 +45,15 @@ public class DayInfo {
 	
 	public DayInfo(File file) throws IOException {
 		Properties prop = ResourceHelper.loadProperties(file);
-		sessionCount = Integer.parseInt(prop.getProperty("session.count", "0"));
-		pagesCount = Integer.parseInt(prop.getProperty("pages.count", "0"));
-		pagesCountMobile = Integer.parseInt(prop.getProperty("session.mobile.count", "0"));
-		session2ClickCount = Integer.parseInt(prop.getProperty("session.2clicks.count", "0"));
-		session2ClickCountMobile = Integer.parseInt(prop.getProperty("session.2clicks.mobile.count", "0"));
-		publishCount = Integer.parseInt(prop.getProperty("action.publish.count", "0"));
-		saveCount = Integer.parseInt(prop.getProperty("action.save.count", "0"));
+		sessionCount = StringHelper.parseInt(prop.getProperty("session.count", "0"));
+		pagesCount = StringHelper.parseInt(prop.getProperty("pages.count", "0"));
+		pagesCountMobile = StringHelper.parseInt(prop.getProperty("session.mobile.count", "0"));
+		session2ClickCount = StringHelper.parseInt(prop.getProperty("session.2clicks.count", "0"));
+		session2ClickCountMobile = StringHelper.parseInt(prop.getProperty("session.2clicks.mobile.count", "0"));
+		publishCount = StringHelper.parseInt(prop.getProperty("action.publish.count", "0"));
+		saveCount = StringHelper.parseInt(prop.getProperty("action.save.count", "0"));
 		mostSavePage = prop.getProperty("action.save.page", "");
-		version = Integer.parseInt(prop.getProperty("version", "1"));
+		version = StringHelper.parseInt(prop.getProperty("version", "1"));
 		try {
 			date = StringHelper.parseSortableDate(prop.getProperty("date", "2000-01-01"));
 		} catch (ParseException e) {

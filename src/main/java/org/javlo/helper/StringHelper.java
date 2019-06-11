@@ -4215,4 +4215,28 @@ public class StringHelper {
 	public static void main(String[] args) {
 		System.out.println(">>>>>>>>> StringHelper.main : test replace CR = " + collectionToText(stringToCollection(replaceCR("\nJavlo\nCMS\n", "?")))); // TODO: remove debug trace
 	}
+	
+	/**
+	 * parse txt, if is'nt integer return 0
+	 * @param txt
+	 * @return
+	 */
+	public static Integer parseInt(String txt) {
+		return parseInt(txt, 0);
+		
+	}
+	
+	/**
+	 * parse int, if txt is'nt integer return default value.
+	 * @param txt
+	 * @param defaultValue
+	 * @return
+	 */
+	public static Integer parseInt(String txt, Integer defaultValue) {
+		try {
+			return Integer.parseInt(txt);
+		} catch (NumberFormatException e) {
+			return defaultValue;
+		}
+	}
 }
