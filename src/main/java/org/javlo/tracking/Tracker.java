@@ -621,9 +621,16 @@ public class Tracker {
 		AtomicInteger pageTotalVisit = new AtomicInteger(0);
 		StatContext statCtx = new StatContext(cal2.getTime(), cal.getTime());
 		List<DayInfo> dayInfoList = getDayInfos(statCtx);
-		dayInfoList.parallelStream()
-			.filter(d -> d.visitPath.get(path) != null)
-			.forEach(d -> pageTotalVisit.addAndGet(d.visitPath.get(path).intValue()));
+		
+		for (DayInfo d : dayInfoList) {
+			if (d.visitPath.get(path) != null) {
+				pageTotalVisit.addAndGet(d.visitPath.get(path).intValue());
+			}
+		}
+		
+//		dayInfoList.parallelStream()
+//			.filter(d -> d.visitPath.get(path) != null)
+//			.forEach(d -> pageTotalVisit.addAndGet(d.visitPath.get(path).intValue()));
 		return pageTotalVisit.get();
 	}
 	
@@ -634,9 +641,16 @@ public class Tracker {
 		AtomicInteger pageTotalVisit = new AtomicInteger(0);
 		StatContext statCtx = new StatContext(cal2.getTime(), cal.getTime());
 		List<DayInfo> dayInfoList = getDayInfos(statCtx);
-		dayInfoList.parallelStream()
-			.filter(d -> d.visitPath.get(path) != null)
-			.forEach(d -> pageTotalVisit.addAndGet(d.visitPath.get(path).intValue()));
+		
+		for (DayInfo d : dayInfoList) {
+			if (d.visitPath.get(path) != null) {
+				pageTotalVisit.addAndGet(d.visitPath.get(path).intValue());
+			}
+		}
+		
+//		dayInfoList.parallelStream()
+//			.filter(d -> d.visitPath.get(path) != null)
+//			.forEach(d -> pageTotalVisit.addAndGet(d.visitPath.get(path).intValue()));
 		return pageTotalVisit.get();
 	}
 	
@@ -671,9 +685,16 @@ public class Tracker {
 		AtomicInteger pageTotalVisit = new AtomicInteger(0);
 		StatContext statCtx = new StatContext(cal2.getTime(), cal.getTime());
 		List<DayInfo> dayInfoList = getDayInfos(statCtx, null, "C:\\Users\\user\\data\\javlo\\data-ctx\\data-sexy\\persitence\\tracking");
-		dayInfoList.parallelStream()
-			.filter(d -> d.visitPath.get(path) != null)
-			.forEach(d -> pageTotalVisit.addAndGet(d.visitPath.get(path).intValue()));
+		
+		for (DayInfo d : dayInfoList) {
+			if (d.visitPath.get(path) != null) {
+				pageTotalVisit.addAndGet(d.visitPath.get(path).intValue());
+			}
+		}
+		
+//		dayInfoList.parallelStream()
+//			.filter(d -> d.visitPath.get(path) != null)
+//			.forEach(d -> pageTotalVisit.addAndGet(d.visitPath.get(path).intValue()));
 		return pageTotalVisit.get();
 	}
 
