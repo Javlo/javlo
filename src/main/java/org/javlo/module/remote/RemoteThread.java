@@ -34,6 +34,9 @@ public class RemoteThread extends Thread {
 	public static String renderRemoteStatus(RemoteService remoteService, AtomicInteger error) {
 
 		String mail = "";
+		if (remoteService.getRemotes().size()==0) {
+			return "";
+		}
 		for (RemoteBean bean : remoteService.getRemotes()) {
 			URL url;
 			try {
@@ -100,7 +103,9 @@ public class RemoteThread extends Thread {
 						GlobalContext globalContext = remoteService.getGlobalContext();
 						AtomicInteger error = new AtomicInteger(0);
 						String mail = renderRemoteStatus(remoteService, error);
-						NetHelper.sendMail(globalContext, new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(globalContext.getAdministratorEmail()), null, null, "javlo status (error : "+error+") from :  "+globalContext.getContextKey(), mail, null, true);
+						if (!StringHelper.isEmpty(mail)) {
+							NetHelper.sendMail(globalContext, new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(globalContext.getAdministratorEmail()), null, null, "javlo status (error : "+error+") from :  "+globalContext.getContextKey(), mail, null, true);
+						}
 					} catch (AddressException e) {
 						e.printStackTrace();
 					}
