@@ -1,6 +1,55 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><%@ taglib uri="/WEB-INF/javlo.tld" prefix="jv"%><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head> 
+<head>
+<style>
+	#main-loader {
+		position : fixed;
+		z-index: 9999;
+		background-color: rgba(0,0,0,0.8);
+		top : 0px;
+		left : 0px;
+		height : 100%;
+		width : 100%;
+		cursor : wait;		
+	}
+	.lds-ripple {
+	  display: inline-block;
+	  position: absolute;
+	  width: 128px;
+	  height: 128px;
+	  top: 50%;
+	  margin-top: -64px;
+	  left: 50%;
+	  margin-left: -64px;
+	  
+	}
+	.lds-ripple div {
+	  position: absolute;
+	  border: 4px solid #fff;
+	  opacity: 1;
+	  border-radius: 50%;
+	  animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+	}
+	.lds-ripple div:nth-child(2) {
+	  animation-delay: -0.5s;
+	}
+	@keyframes lds-ripple {
+	  0% {
+	    top: 28px;
+	    left: 28px;
+	    width: 0;
+	    height: 0;
+	    opacity: 1;
+	  }
+	  100% {
+	    top: -1px;
+	    left: -1px;
+	    width: 58px;
+	    height: 58px;
+	    opacity: 0;
+	  }
+	}	
+</style> 
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="<jv:url value='/js/edit/ajax.js?ts=${info.ts}' />"></script>
 <script type="text/javascript" src="<jv:url value='/js/edit/core.js?ts=${info.ts}' />"></script>
@@ -112,8 +161,10 @@
 	<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.jgrowl.js"></script>
 	</head>
 
-	<body id="main-body" class="bodygrey ${info.admin?'right-admin ':'noright-admin '}${not empty param.previewEdit?'previewEdit':''}${requestService.parameterMap.lightEdit?' light-edit':''}">
+	<body id="main-body" onload="jQuery('#main-loader').remove();" class="bodygrey ${info.admin?'right-admin ':'noright-admin '}${not empty param.previewEdit?'previewEdit':''}${requestService.parameterMap.lightEdit?' light-edit':''}">
 
+		<div id="main-loader" onclick="jQuery('#main-loader').remove();"><div class="lds-ripple"><div></div><div></div></div></div>
+		
 		<c:if test="${empty param.previewEdit}">
 			<div class="header">
 
