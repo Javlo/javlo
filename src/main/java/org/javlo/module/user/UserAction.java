@@ -366,24 +366,20 @@ public class UserAction extends AbstractModuleAction {
 			return i18nAccess.getViewText("registration.error.email_alreadyexist");
 		} else {
 			GlobalContext gc = ctx.getGlobalContext();
-			 String title = i18nAccess.getViewText("registration.mail.confirm.title");
-			 String subject = i18nAccess.getViewText("registration.mail.confirm.subject")+ctx.getCurrentPage().getGlobalTitle(ctx);
-			 String text = i18nAccess.getViewText("registration.mail.confirm.text");
-			 String actionLabel = i18nAccess.getViewText("registration.mail.confirm.action");
-			 
-			 ContentService contentService = ContentService.getInstance(ctx.getGlobalContext());
-			 MenuElement regPage = contentService.getRegistrationPage(ctx);
-			 
-			 String actionUrl= URLHelper.createURL(ctx.getContextForAbsoluteURL());
-			 if (regPage != null) {
-				 actionUrl= URLHelper.createURL(ctx.getContextForAbsoluteURL(), regPage);
-			 }
-			 actionUrl = URLHelper.addParam(actionUrl, INIT_TOKEN, ctx.getGlobalContext().createEmailToken(newUser));
-			 String mail = XHTMLHelper.createUserMail(ctx, "/images/font/user-plus.png", title, text, actionUrl, actionLabel, "");
-			 
-			 NetHelper.sendMail(gc, new InternetAddress(gc.getAdministratorEmail()), new InternetAddress(newUser), null, null, subject, mail,null,true);
-			 
-			 messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getViewText(" "), GenericMessage.INFO));
+			String title = i18nAccess.getViewText("registration.mail.confirm.title");
+			String subject = i18nAccess.getViewText("registration.mail.confirm.subject")+ctx.getCurrentPage().getGlobalTitle(ctx);
+			String text = i18nAccess.getViewText("registration.mail.confirm.text");
+			String actionLabel = i18nAccess.getViewText("registration.mail.confirm.action");
+			ContentService contentService = ContentService.getInstance(ctx.getGlobalContext());
+			MenuElement regPage = contentService.getRegistrationPage(ctx);
+			String actionUrl= URLHelper.createURL(ctx.getContextForAbsoluteURL());
+			if (regPage != null) {
+				actionUrl= URLHelper.createURL(ctx.getContextForAbsoluteURL(), regPage);
+			}
+			actionUrl = URLHelper.addParam(actionUrl, INIT_TOKEN, ctx.getGlobalContext().createEmailToken(newUser));
+			String mail = XHTMLHelper.createUserMail(ctx, "/images/font/user-plus.png", title, text, actionUrl, actionLabel, "");
+			NetHelper.sendMail(gc, new InternetAddress(gc.getAdministratorEmail()), new InternetAddress(newUser), null, null, subject, mail,null,true);
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getViewText(" "), GenericMessage.INFO));
 		}
 		return null;
 	}

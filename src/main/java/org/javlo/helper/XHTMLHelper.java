@@ -2880,6 +2880,32 @@ public class XHTMLHelper {
 		return new String(outStream.toByteArray());
 	}
 	
+	public static String getTableAlert(String linkLabel) {
+		if (StringHelper.isEmpty(linkLabel)) {
+			return "";
+		}
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		out.println("<table width=\"100%\"><tr><td>&nbsp;</td></tr><tr><td align=\"center\" bgcolor=\"#FFFFFF\">");
+		out.println("<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">");
+		out.println("<tr>");
+		out.println("<td width=\"1\">&nbsp;</td>");
+		out.println("<td height=\"40\" valign=\"middle\" align=\"center\" bgcolor=\"#eeeeee\" style=\"font-family:Helvetica, sans-serif; font-size:13px; color:#767676; mso-line-height-rule:exactly; line-height:16px; font-weight:bold; border:1px solid #dedede; border-radius:2px; -moz-border-radius:2px; -ms-border-radius:2px; -o-border-radius:2px; -webkit-border-radius:2px;\">");
+		out.println("<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">");
+		out.println("<tr>");
+		out.println("<td width=\"1\">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>");
+		out.println("<td width=\"1\">&nbsp;</td><td style=\"font-family:Helvetica, sans-serif; font-size:13px; color:#767676;\">"+linkLabel+"</td><td width=\"1\">&nbsp;</td>");
+		out.println("<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>");
+		out.println("</table>");
+		out.println("</td>");
+		out.println("<td width=\"1\">&nbsp;</td>");
+		out.println("</tr>");
+		out.println("</table>");
+		out.println("</td></tr></table>");
+		out.close();
+		return new String(outStream.toByteArray());
+	}
+	
 	public static String createUserMail(ContentContext ctx, String logo, String title, String content,String link, String linkLabel, String footer) throws IOException, Exception {
 		String xhtml = ctx.getCurrentTemplate().getUserMailHtml(ctx.getGlobalContext());
 		TemplateData templateData = ctx.getCurrentTemplate().getTemplateData();
@@ -2887,10 +2913,18 @@ public class XHTMLHelper {
 			return createUserMail(templateData, title, content, null, link, linkLabel, footer);
 		} else {
 			xhtml = xhtml.replace("${site}", ctx.getCurrentPage().getGlobalTitle(ctx));
-			xhtml = xhtml.replace("${title}", title);
-			xhtml = xhtml.replace("${text}", content);
-			xhtml = xhtml.replace("${action.url}", link);
-			xhtml = xhtml.replace("${action.text}", linkLabel);
+			if (title != null) {
+				xhtml = xhtml.replace("${title}", title);
+			}
+			if (content != null) {
+				xhtml = xhtml.replace("${text}", content);
+			}
+			if (link != null) {
+				xhtml = xhtml.replace("${action.url}", link);
+			}
+			if (linkLabel != null) {
+				xhtml = xhtml.replace("${action.text}", linkLabel);
+			}
 			xhtml = xhtml.replace("${root}", URLHelper.createURL(ctx.getContextForAbsoluteURL(), "/"));
 			if (logo == null) {
 				logo = ctx.getGlobalContext().getTemplateData().getLogo();
@@ -2982,6 +3016,12 @@ public class XHTMLHelper {
 			newContent = newContent.replace("  ", " ");
 		}
 		return newContent;
+	}
+	
+	public static void main(String[] args) throws IOException {
+		String xhtml = getTableAlert("This is a test message");
+		
+		ResourceHelper.writeStringToFile(new File("c:/trans/test_html.html"), xhtml);
 	}
 
 }
