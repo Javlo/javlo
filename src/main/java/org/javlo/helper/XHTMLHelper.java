@@ -2890,13 +2890,15 @@ public class XHTMLHelper {
 		out.println("<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">");
 		out.println("<tr>");
 		out.println("<td width=\"1\">&nbsp;</td>");
-		out.println("<td height=\"40\" valign=\"middle\" align=\"center\" bgcolor=\"#eeeeee\" style=\"font-family:Helvetica, sans-serif; font-size:13px; color:#767676; mso-line-height-rule:exactly; line-height:16px; font-weight:bold; border:1px solid #dedede; border-radius:2px; -moz-border-radius:2px; -ms-border-radius:2px; -o-border-radius:2px; -webkit-border-radius:2px;\">");
+		out.println("<td height=\"40\" valign=\"middle\" align=\"center\" bgcolor=\"#fafafa\" style=\"font-family:Helvetica, sans-serif; font-size:13px; color:#565656; mso-line-height-rule:exactly; line-height:16px; font-weight:bold; border:1px solid #dedede; border-radius:2px; -moz-border-radius:2px; -ms-border-radius:2px; -o-border-radius:2px; -webkit-border-radius:2px;\">");
 		out.println("<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\">");
 		out.println("<tr>");
 		out.println("<td width=\"1\">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>");
-		out.println("<td width=\"1\">&nbsp;</td><td style=\"font-family:Helvetica, sans-serif; font-size:13px; color:#767676;\">"+linkLabel+"</td><td width=\"1\">&nbsp;</td>");
+		out.println("</tr><tr>");
+		out.println("<td width=\"1\">&nbsp;&nbsp;&nbsp;&nbsp;</td><td style=\"font-family:Helvetica, sans-serif; font-size:13px; color:#565656; text-align: center;\">"+linkLabel+"</td><td width=\"1\">&nbsp;&nbsp;&nbsp;&nbsp;</td>");
+		out.println("</tr><tr>");
 		out.println("<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>");
-		out.println("</table>");
+		out.println("</tr></table>");
 		out.println("</td>");
 		out.println("<td width=\"1\">&nbsp;</td>");
 		out.println("</tr>");

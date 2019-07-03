@@ -2601,6 +2601,13 @@ public class StringHelper {
 		}
 		return renderDate(date, "dd/MM/yy HH:mm");
 	}
+	
+	public static String renderTimeOnlyShort(Date date) {
+		if (date == null) {
+			return null;
+		}
+		return renderDate(date, "HH:mm");
+	}
 
 	public static String renderTimeOnly(Date date) {
 		if (date == null) {
