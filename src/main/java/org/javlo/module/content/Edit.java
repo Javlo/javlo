@@ -910,7 +910,12 @@ public class Edit extends AbstractModuleAction {
 			// comp.setNextComponent(ComponentHelper.getNextComponent(comp, ctx));
 			ComponentHelper.updateNextAndPrevious(ctx, comp.getPage(), comp.getArea());
 			if (!type.equals("clipboard") && StringHelper.isTrue(rs.getParameter("init", null))) {
-				comp.initContent(ctx);
+				String defaultValue = content.getDefaultValue(ctx, comp.getType());
+				if (defaultValue != null) {
+					comp.setValue(defaultValue);
+				} else {
+					comp.initContent(ctx);
+				}
 			}
 		}
 

@@ -25,7 +25,6 @@ import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.Unknown;
 import org.javlo.component.links.MirrorComponent;
-
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
@@ -36,13 +35,14 @@ import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nResource;
 import org.javlo.module.core.IPrintInfo;
 import org.javlo.navigation.MenuElement;
-import org.javlo.navigation.PageBean;
 import org.javlo.template.TemplateFactory;
 
 /**
  * @author pvanderm represent a content
  */
 public class ContentService implements IPrintInfo {
+
+	private static final String DEFAULT_CONTENT_PAGE = "component_default";
 
 	public static final String TRASH_PAGE_NAME = "_trash_page_";
 
@@ -986,7 +986,7 @@ public class ContentService implements IPrintInfo {
 			return null;
 		}
 	}
-	
+
 	public static String getPageNameFromPath(String path) {
 		if (path == null) {
 			return null;
@@ -999,9 +999,9 @@ public class ContentService implements IPrintInfo {
 			path = path.substring(0, path.indexOf("."));
 		}
 		String[] splittedPath = path.split("/");
-		return splittedPath[splittedPath.length-1];
+		return splittedPath[splittedPath.length - 1];
 	}
-	
+
 	public static void main(String[] args) {
 		System.out.println(getPageNameFromPath("/javlo/sexy/ajax-edit-content/fr/blog.html"));
 	}
@@ -1009,7 +1009,18 @@ public class ContentService implements IPrintInfo {
 	public MenuElement getRegistrationPage(ContentContext ctx) throws Exception {
 		return getNavigation(ctx).searchChildFromName("register", "registered", "registration");
 	}
-	
+
+	public String getDefaultValue(ContentContext ctx, String type) throws Exception {
+		MenuElement defaultContentPage = getNavigation(ctx).searchChildFromName(DEFAULT_CONTENT_PAGE);		
+		if (defaultContentPage != null) {
+			List<IContentVisualComponent> content = defaultContentPage.getContentByType(ctx, type);
+			if (content.size() > 0) {
+				return content.iterator().next().getValue(ctx);
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public void printInfo(ContentContext ctx, PrintStream out) {
 		out.println("****");

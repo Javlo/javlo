@@ -318,6 +318,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		ContentContext ctx = null;
 		try {
 			ctx = ContentContext.getContentContext(request, response);
+			if (globalContext.getStaticConfig().isOauthView()) {
+				SocialService.getInstance(ctx).prepare(ctx);
+			}
 			if (!staticConfig.isFoundFile()) {		
 				try {
 					boolean install = StringHelper.isTrue(request.getParameter("install"));

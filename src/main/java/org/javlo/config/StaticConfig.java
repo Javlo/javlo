@@ -1403,6 +1403,10 @@ public class StaticConfig extends Observable {
 	public boolean isFirstPasswordMustBeChanged() {
 		return properties.getBoolean("security.change-password", true);
 	}
+	
+	public boolean isOauthView() {
+		return properties.getBoolean("security.oauth.view", false);
+	}
 
 	public String getOauthGoogleIdClient() {
 		return properties.getString("security.oauth.google-id-client", null);
