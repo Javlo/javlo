@@ -41,6 +41,7 @@ public class OauthServlet extends HttpServlet {
 		if (request.getParameter("state") != null) {
 			Map<String, String> params = StringHelper.stringToMap(request.getParameter("state"));
 			socialNetworkName = params.get("name");
+			logger.info("socialNetworkName = "+socialNetworkName);
 			try {
 				ContentContext ctx = ContentContext.getContentContext(request, response);
 				MenuElement targetPage = NavigationHelper.getPageById(ctx, params.get("page"));
@@ -92,6 +93,7 @@ public class OauthServlet extends HttpServlet {
 				throw new ServletException(e);
 			}
 		} else {
+			logger.info("no state");
 			OAuthAuthzResponse oar;
 			try {
 				oar = OAuthAuthzResponse.oauthCodeAuthzResponse(request);
