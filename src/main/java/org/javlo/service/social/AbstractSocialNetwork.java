@@ -120,7 +120,7 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 		System.out.println(DebugHelper.getCaller(20));
 		data.put(CLIENT_SECRET, clientSecret);
 	}
-	
+
 	@Override
 	public String getApiKey() {
 		return StringHelper.neverNull(data.get(API_KEY));
@@ -145,7 +145,7 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 
 	@Override
 	public String getSigninURL(ContentContext ctx) throws Exception {
-		String clientId = getClientId();		
+		String clientId = getClientId();
 		if (clientId == null || clientId.isEmpty()) {
 			return null;
 		}
@@ -181,7 +181,7 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 	}
 
 	@Override
-	public void performRedirect(HttpServletRequest request, HttpServletResponse response) {
+	public void performRedirect(HttpServletRequest request, HttpServletResponse response, boolean admin) {
 		HttpClient httpClient = null;
 		try {
 			httpClient = new URLConnectionClient();
@@ -196,7 +196,7 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 				return;
 			}
 			ContentContext ctx = ContentContext.getContentContext(request, response);
-			login(ctx, user);
+			login(ctx, user, admin);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -215,15 +215,15 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 			String code = oar.getCode();
 			String accessToken = getAccessToken(code, oAuthClient);
 			TransientUserInfo.getInstance(request.getSession()).setToken(accessToken);
-			return getSocialUser(accessToken, oAuthClient);			
+			return getSocialUser(accessToken, oAuthClient);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return  null;
+			return null;
 		} finally {
 			if (httpClient != null) {
 				httpClient.shutdown();
 			}
-		}		
+		}
 	}
 
 	public String getAccessToken(String code, OAuthClient oAuthClient) throws OAuthSystemException, OAuthProblemException {
@@ -271,27 +271,54 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 		return null;
 	}
 
-	protected void login(ContentContext ctx, SocialUser socialUser) throws UserAllreadyExistException, IOException {
-		logger.info("login : "+socialUser);
-		IUserFactory userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
-		User user = userFactory.getUser(socialUser.getEmail());
-		if (user == null) { // admin not found
+	protected void login(ContentContext ctx, SocialUser socialUser, boolean admin) throws UserAllreadyExistException, IOException {
+		logger.info("login : " + socialUser);
+
+		/** view user **/
+
+		IUserFactory userFactory;
+		if (!admin) {
 			userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
-			user = userFactory.getUser(socialUser.getEmail());
-			if (user == null) {
-				UserInfo userInfo = new UserInfo();
-				userInfo.setLogin(socialUser.getEmail());
-				userInfo.setEmail(socialUser.getEmail());
-				userInfo.setFirstName(socialUser.getFirstName());
-				userInfo.setLastName(socialUser.getLastName());
-				userInfo.setAvatarURL(socialUser.getAvatarURL());
-				userInfo.setAccountType("oauth");
-				fillUserInfo(userInfo, socialUser);
-				userFactory.addUserInfo(userInfo);
-				userFactory.store();
+			User user = userFactory.getUser(socialUser.getEmail());
+			if (user == null) { // view not found
+				userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
+				user = userFactory.getUser(socialUser.getEmail());
+				if (user == null) {
+					UserInfo userInfo = new UserInfo();
+					userInfo.setLogin(socialUser.getEmail());
+					userInfo.setEmail(socialUser.getEmail());
+					userInfo.setFirstName(socialUser.getFirstName());
+					userInfo.setLastName(socialUser.getLastName());
+					userInfo.setAvatarURL(socialUser.getAvatarURL());
+					userInfo.setAccountType("oauth");
+					fillUserInfo(userInfo, socialUser);
+					userFactory.addUserInfo(userInfo);
+					userFactory.store();
+				}
+			}
+		} else {
+			/** edit user **/
+			userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
+			User user = userFactory.getUser(socialUser.getEmail());
+			if (user == null) { // admin not found
+				userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
+				user = userFactory.getUser(socialUser.getEmail());
+				if (user == null) {
+					UserInfo userInfo = new UserInfo();
+					userInfo.setLogin(socialUser.getEmail());
+					userInfo.setEmail(socialUser.getEmail());
+					userInfo.setFirstName(socialUser.getFirstName());
+					userInfo.setLastName(socialUser.getLastName());
+					userInfo.setAvatarURL(socialUser.getAvatarURL());
+					userInfo.setAccountType("oauth");
+					fillUserInfo(userInfo, socialUser);
+					userFactory.addUserInfo(userInfo);
+					userFactory.store();
+				}
 			}
 		}
 		userFactory.autoLogin(ctx.getRequest(), socialUser.getEmail());
+
 	}
 
 	protected void fillUserInfo(UserInfo userInfo, SocialUser socialUser) {

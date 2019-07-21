@@ -60,7 +60,7 @@ public interface ISocialNetwork {
 	
 	public void setRedirectURL(String url);
 	
-	public void performRedirect(HttpServletRequest request, HttpServletResponse response);
+	public void performRedirect(HttpServletRequest request, HttpServletResponse response, boolean admin);
 
 	public SocialUser getSocialUser(HttpServletRequest request);
 

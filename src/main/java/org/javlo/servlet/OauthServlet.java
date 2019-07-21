@@ -59,7 +59,7 @@ public class OauthServlet extends HttpServlet {
 					}
 					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 				} else {
-					social.performRedirect(request, response);
+					social.performRedirect(request, response, admin);
 					params = new HashMap<String,String>();
 					if (admin) {
 						params.put("oauth", "true");
