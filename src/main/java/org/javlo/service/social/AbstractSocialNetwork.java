@@ -272,6 +272,7 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 	}
 
 	protected void login(ContentContext ctx, SocialUser socialUser) throws UserAllreadyExistException, IOException {
+		logger.info("login : "+socialUser);
 		IUserFactory userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
 		User user = userFactory.getUser(socialUser.getEmail());
 		if (user == null) { // admin not found

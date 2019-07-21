@@ -41,7 +41,7 @@ public class OauthServlet extends HttpServlet {
 		if (request.getParameter("state") != null) {
 			Map<String, String> params = StringHelper.stringToMap(request.getParameter("state"));
 			socialNetworkName = params.get("name");
-			logger.info("socialNetworkName = "+socialNetworkName);
+			logger.info("socialNetworkName = "+socialNetworkName+" admin="+admin);
 			try {
 				ContentContext ctx = ContentContext.getContentContext(request, response);
 				MenuElement targetPage = NavigationHelper.getPageById(ctx, params.get("page"));
@@ -59,7 +59,7 @@ public class OauthServlet extends HttpServlet {
 					}
 					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 				} else {
-					social.performRedirect(request, response);					
+					social.performRedirect(request, response);
 					params = new HashMap<String,String>();
 					if (admin) {
 						params.put("oauth", "true");

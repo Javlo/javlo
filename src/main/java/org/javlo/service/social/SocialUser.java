@@ -38,8 +38,13 @@ public class SocialUser {
 	}
 
 	public SocialUser setAvatarURL(String avatarURL) {
-		this.avatarURL = avatarURL;
+		this.avatarURL = avatarURL;	
 		return this;
+	}
+	
+	@Override
+	public String toString() {
+		return "email:"+email+" - firstName:"+firstName+" - lastName:"+lastName;
 	}
 
 }
