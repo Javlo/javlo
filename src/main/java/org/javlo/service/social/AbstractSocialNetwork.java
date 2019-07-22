@@ -156,7 +156,9 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 		AuthenticationRequestBuilder builder = createAuthenticationRequest();
 		configureAuthenticationRequest(builder, clientId, ctx);
 		OAuthClientRequest request = buildAuthenticationRequest(builder);
-		return request.getLocationUri();
+		String uri = request.getLocationUri();
+		System.out.println(">>>>>>>>>>>>>> uri = "+uri);
+		return uri;
 	}
 
 	protected AuthenticationRequestBuilder createAuthenticationRequest() {
