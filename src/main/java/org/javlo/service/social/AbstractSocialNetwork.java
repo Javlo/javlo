@@ -326,9 +326,11 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 
 	public String getLoginURL() {
 		String url = getAuthzEndpoint();
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> getRedirectURL = "+getRedirectURL());
 		url = URLHelper.addParam(url, "client_id", getClientId());
 		url = URLHelper.addParam(url, "redirect_uri", getRedirectURL());
 		url = URLHelper.addParam(url, "response_type", "code");
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> url = "+url);
 		return url;
 	}
 }
