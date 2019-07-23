@@ -32,6 +32,7 @@ public class SocialService {
 			outService = new SocialService();
 			outService.globalContext = globalContext;
 			outService.redirectURL = URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), "/oauth2callback");
+			System.out.println(">>>>>>>>>>>>>>>>>>>> outService.redirectURL = "+outService.redirectURL);
 			globalContext.setAttribute(KEY, outService);
 
 		}
