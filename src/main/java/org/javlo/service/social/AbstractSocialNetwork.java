@@ -51,9 +51,9 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 	@Override
 	public void prepare(ContentContext ctx) throws Exception {
 		String url = getSigninURL(ctx);
-//		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> url = "+url);
-//		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> URLHelper.addParam(url, RequestHelper.CLOSE_WINDOW_PARAMETER, \"true\") = "+URLHelper.addParam(url, RequestHelper.CLOSE_WINDOW_PARAMETER, "true"));
-//		
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> url = "+url);
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> URLHelper.addParam(url, RequestHelper.CLOSE_WINDOW_PARAMETER, \"true\") = "+URLHelper.addParam(url, RequestHelper.CLOSE_WINDOW_PARAMETER, "true"));
+		
 		ctx.getRequest().setAttribute(getName() + "_signinURL", url );
 		ctx.getRequest().setAttribute(getName() + "_signinURLPopup", URLHelper.addParam(url, RequestHelper.CLOSE_WINDOW_PARAMETER, "true"));
 	}
@@ -163,7 +163,7 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 		configureAuthenticationRequest(builder, clientId, ctx);
 		OAuthClientRequest request = buildAuthenticationRequest(builder);
 		String uri = request.getLocationUri();
-//		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> uri = "+uri);
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> uri = "+uri);
 		return uri;
 	}
 
@@ -180,7 +180,7 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 	}
 
 	public String getRedirectURL() {
-//		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> redirectURL = "+redirectURL);
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> redirectURL = "+redirectURL);
 		return redirectURL;
 	}
 
