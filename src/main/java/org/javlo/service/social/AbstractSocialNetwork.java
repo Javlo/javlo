@@ -22,6 +22,7 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.DebugHelper;
+import org.javlo.helper.RequestHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.user.AdminUserFactory;
@@ -49,7 +50,12 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 
 	@Override
 	public void prepare(ContentContext ctx) throws Exception {
-		ctx.getRequest().setAttribute(getName() + "_signinURL", getSigninURL(ctx));
+		String url = getSigninURL(ctx);
+//		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> url = "+url);
+//		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> URLHelper.addParam(url, RequestHelper.CLOSE_WINDOW_PARAMETER, \"true\") = "+URLHelper.addParam(url, RequestHelper.CLOSE_WINDOW_PARAMETER, "true"));
+//		
+		ctx.getRequest().setAttribute(getName() + "_signinURL", url );
+		ctx.getRequest().setAttribute(getName() + "_signinURLPopup", URLHelper.addParam(url, RequestHelper.CLOSE_WINDOW_PARAMETER, "true"));
 	}
 
 	@Override
@@ -157,7 +163,7 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 		configureAuthenticationRequest(builder, clientId, ctx);
 		OAuthClientRequest request = buildAuthenticationRequest(builder);
 		String uri = request.getLocationUri();
-		System.out.println(">>>>>>>>>>>>>> uri = "+uri);
+//		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> uri = "+uri);
 		return uri;
 	}
 
@@ -174,6 +180,7 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 	}
 
 	public String getRedirectURL() {
+//		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> redirectURL = "+redirectURL);
 		return redirectURL;
 	}
 

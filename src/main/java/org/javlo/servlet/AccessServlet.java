@@ -705,23 +705,25 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 				PrintWriter out = new PrintWriter(new OutputStreamWriter(response.getOutputStream()));
 				out.println("<script type=\"text/javascript\">");
-				out.println("if (window.opener != null) {");
-				if (newURL == null) {
-					out.println("	window.opener.location.href = window.opener.location.href;");
-				} else {
-					out.println("	window.opener.location.href = '" + newURL + "';");
+				if (!ctx.isLikeViewRenderMode()) {
+					out.println("if (window.opener != null) {");
+					if (newURL == null) {
+						out.println("	window.opener.location.href = window.opener.location.href;");
+					} else {
+						out.println("	window.opener.location.href = '" + newURL + "';");
+					}
+					out.println("	if (window.opener.progressWindow) {");
+					out.println("		window.opener.progressWindow.close();");
+					out.println("	}");
+					out.println("}");
+					out.println("if (window.parent != null) {");
+					if (newURL == null) {
+						out.println("	window.parent.location.href = window.parent.location.href;");
+					} else {
+						out.println("	window.parent.location.href = '" + newURL + "';");
+					}
+					out.println("}");
 				}
-				out.println("	if (window.opener.progressWindow) {");
-				out.println("		window.opener.progressWindow.close();");
-				out.println("	}");
-				out.println("}");
-				out.println("if (window.parent != null) {");
-				if (newURL == null) {
-					out.println("	window.parent.location.href = window.parent.location.href;");
-				} else {
-					out.println("	window.parent.location.href = '" + newURL + "';");
-				}
-				out.println("}");
 				out.println("window.close();");
 				out.println("</script>");
 				out.close();

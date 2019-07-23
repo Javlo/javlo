@@ -77,7 +77,7 @@ import org.javlo.ztatic.StaticInfoBean;
 import org.owasp.encoder.Encode;
 
 public class UserAction extends AbstractModuleAction {
-	
+
 	public static final String JAVLO_LOGIN_ID = "javlo_login_id";
 
 	public static final String INIT_TOKEN = "initToken";
@@ -99,13 +99,14 @@ public class UserAction extends AbstractModuleAction {
 //			logger.warning("security error no user found.");
 //			return null;
 //		}
-		
+
 		if (ctx.getCurrentEditUser() == null) {
 			logger.fine("security error no user found.");
 			return null;
 		}
 
-		if (userContext.getCurrentRole() != null && !userFactory.getAllRoles(globalContext, ctx.getRequest().getSession()).contains(userContext.getCurrentRole())) {
+		if (userContext.getCurrentRole() != null && !userFactory
+				.getAllRoles(globalContext, ctx.getRequest().getSession()).contains(userContext.getCurrentRole())) {
 			userContext.setCurrentRole(null);
 		}
 
@@ -120,7 +121,9 @@ public class UserAction extends AbstractModuleAction {
 		} else {
 			ctx.getRequest().setAttribute("users", userContext.getUserFactory(ctx).getUserInfoList());
 		}
-		if (((requestService.getParameter("user", null) == null && requestService.getParameter("cuser", null) == null) || requestService.getParameter("back", null) != null) && !userContext.getMode().equals(UserModuleContext.VIEW_MY_SELF)) {
+		if (((requestService.getParameter("user", null) == null && requestService.getParameter("cuser", null) == null)
+				|| requestService.getParameter("back", null) != null)
+				&& !userContext.getMode().equals(UserModuleContext.VIEW_MY_SELF)) {
 			moduleContext.getCurrentModule().restoreAll();
 		} else {
 			User user = null;
@@ -149,19 +152,22 @@ public class UserAction extends AbstractModuleAction {
 				Module currentModule = moduleContext.getCurrentModule();
 				currentModule.setToolsRenderer(null);
 				currentModule.setRenderer("/jsp/edit_current.jsp");
-				user = userFactory.getUser(userFactory.getCurrentUser(globalContext, ctx.getRequest().getSession()).getLogin());
+				user = userFactory
+						.getUser(userFactory.getCurrentUser(globalContext, ctx.getRequest().getSession()).getLogin());
 			}
 
 			if (user == null) {
 				if (userSet) {
-					return "user not found (prepare) : " + requestService.getParameter("user", requestService.getParameter("cuser", null));
+					return "user not found (prepare) : "
+							+ requestService.getParameter("user", requestService.getParameter("cuser", null));
 				} else {
 					return null;
 				}
 			}
 
 			Map<String, String> userInfoMap = BeanHelper.bean2Map(user.getUserInfo());
-			ctx.getRequest().setAttribute("functions", LangHelper.collectionToMap(StringHelper.stringToCollection(userInfoMap.get("function"), ";")));
+			ctx.getRequest().setAttribute("functions",
+					LangHelper.collectionToMap(StringHelper.stringToCollection(userInfoMap.get("function"), ";")));
 
 			ctx.getRequest().setAttribute("user", user);
 			ctx.getRequest().setAttribute("userInfoMap", userInfoMap);
@@ -183,7 +189,8 @@ public class UserAction extends AbstractModuleAction {
 
 		}
 
-		List<String> roles = new LinkedList<String>(userFactory.getAllRoles(globalContext, ctx.getRequest().getSession()));
+		List<String> roles = new LinkedList<String>(
+				userFactory.getAllRoles(globalContext, ctx.getRequest().getSession()));
 		Collections.sort(roles);
 
 		if (userFactory instanceof AdminUserFactory) {
@@ -202,9 +209,11 @@ public class UserAction extends AbstractModuleAction {
 		}
 
 		if (!userContext.getMode().equals(UserModuleContext.VIEW_MY_SELF)) {
-			String CSVLink = URLHelper.createStaticURL(ctx, "/users-list/" + globalContext.getContextKey() + "-users.csv");
+			String CSVLink = URLHelper.createStaticURL(ctx,
+					"/users-list/" + globalContext.getContextKey() + "-users.csv");
 			if (userContext.getMode().equals(UserModuleContext.ADMIN_USERS_LIST)) {
-				CSVLink = URLHelper.createStaticURL(ctx, "/users-list/" + globalContext.getContextKey() + "-admin-users.csv");
+				CSVLink = URLHelper.createStaticURL(ctx,
+						"/users-list/" + globalContext.getContextKey() + "-admin-users.csv");
 				CSVLink = CSVLink + "?admin=true";
 			}
 			ctx.getRequest().setAttribute("CSVLink", CSVLink);
@@ -227,14 +236,19 @@ public class UserAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public String performEdit(Module currentModule) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+	public String performEdit(Module currentModule)
+			throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		currentModule.setToolsRenderer(null);
 		currentModule.setRenderer("/jsp/edit.jsp");
 		return null;
 	}
 
-	public String performUpdateCurrent(ContentContext ctx, GlobalContext globalContext, EditContext editContext, RequestService requestService, StaticConfig staticConfig, AdminUserSecurity adminUserSecurity, AdminUserFactory adminUserFactory, HttpSession session, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) {
-		if (requestService.getParameter("ok", null) != null || requestService.getParameter("token", null) != null || requestService.getParameter("notoken", null) != null) {
+	public String performUpdateCurrent(ContentContext ctx, GlobalContext globalContext, EditContext editContext,
+			RequestService requestService, StaticConfig staticConfig, AdminUserSecurity adminUserSecurity,
+			AdminUserFactory adminUserFactory, HttpSession session, Module currentModule, I18nAccess i18nAccess,
+			MessageRepository messageRepository) {
+		if (requestService.getParameter("ok", null) != null || requestService.getParameter("token", null) != null
+				|| requestService.getParameter("notoken", null) != null) {
 			UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
 			IUserFactory userFactory = userContext.getUserFactory(ctx);
 			if (requestService.getParameter("type", "").equals("visitors")) {
@@ -247,7 +261,8 @@ public class UserAction extends AbstractModuleAction {
 			IUserInfo userInfo = user.getUserInfo();
 			try {
 
-				BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo, StringHelper.isTrue(ctx.getRequestService().getParameter("reset-boolean"), true));
+				BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo,
+						StringHelper.isTrue(ctx.getRequestService().getParameter("reset-boolean"), true));
 
 				List<String> functions = requestService.getParameterListValues("function", Collections.EMPTY_LIST);
 				if (functions.size() > 0 && userInfo instanceof AdminUserInfo) {
@@ -268,14 +283,16 @@ public class UserAction extends AbstractModuleAction {
 					InputStream in = null;
 					try {
 						in = userFile.getInputStream();
-						File newFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getUserFolder(user), userFile.getName()));
+						File newFile = new File(
+								URLHelper.mergePath(ctx.getGlobalContext().getUserFolder(user), userFile.getName()));
 						ResourceHelper.writeStreamToFile(in, newFile);
 					} finally {
 						ResourceHelper.safeClose(in);
 					}
 				}
 				String avatarFileName = userInfo.getLogin() + ".png";
-				File avatarFile = new File(URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getAvatarFolder(), avatarFileName));
+				File avatarFile = new File(URLHelper.mergePath(globalContext.getDataFolder(),
+						staticConfig.getAvatarFolder(), avatarFileName));
 				if (StringHelper.isTrue(requestService.getParameter("deleteAvatar", null))) {
 					avatarFile.delete();
 				}
@@ -291,7 +308,8 @@ public class UserAction extends AbstractModuleAction {
 					} finally {
 						ResourceHelper.safeClose(in);
 					}
-					FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).deleteAllFile(globalContext.getContextKey(), avatarFileName);
+					FileCache.getInstance(ctx.getRequest().getSession().getServletContext())
+							.deleteAllFile(globalContext.getContextKey(), avatarFileName);
 				}
 
 				userFactory.updateUserInfo(userInfo);
@@ -301,7 +319,10 @@ public class UserAction extends AbstractModuleAction {
 				return e.getMessage();
 			}
 
-			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("user.message.updated", new String[][] { { "user", user.getLogin() } }), GenericMessage.INFO));
+			messageRepository.setGlobalMessageAndNotification(ctx,
+					new GenericMessage(
+							i18nAccess.getText("user.message.updated", new String[][] { { "user", user.getLogin() } }),
+							GenericMessage.INFO));
 		}
 
 		if (editContext.isPreviewEditionMode()) {
@@ -311,7 +332,9 @@ public class UserAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public String performUpdate(ContentContext ctx, GlobalContext globalContext, RequestService requestService, StaticConfig staticConfig, AdminUserSecurity adminUserSecurity, AdminUserFactory adminUserFactory, HttpSession session, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) {
+	public String performUpdate(ContentContext ctx, GlobalContext globalContext, RequestService requestService,
+			StaticConfig staticConfig, AdminUserSecurity adminUserSecurity, AdminUserFactory adminUserFactory,
+			HttpSession session, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) {
 		if (requestService.getParameter("back", null) == null) {
 			UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
 			IUserFactory userFactory = userContext.getUserFactory(ctx);
@@ -323,7 +346,8 @@ public class UserAction extends AbstractModuleAction {
 			IUserInfo userInfo = user.getUserInfo();
 			String pwd = user.getPassword();
 			try {
-				BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo, StringHelper.isTrue(ctx.getRequestService().getParameter("reset-boolean"), true));
+				BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo,
+						StringHelper.isTrue(ctx.getRequestService().getParameter("reset-boolean"), true));
 				if (!userInfo.getPassword().equals(pwd)) {
 					userInfo.setPassword(SecurityHelper.encryptPassword(userInfo.getPassword()));
 				}
@@ -337,25 +361,33 @@ public class UserAction extends AbstractModuleAction {
 				}
 				boolean admin = userFactory instanceof AdminUserFactory;
 				IUserInfo ui = user.getUserInfo();
-				if (!admin || adminUserSecurity.haveRight(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()), AdminUserSecurity.ADMIN_USER_ROLE, AdminUserSecurity.GENERAL_ADMIN)) {
+				if (!admin
+						|| adminUserSecurity.haveRight(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()),
+								AdminUserSecurity.ADMIN_USER_ROLE, AdminUserSecurity.GENERAL_ADMIN)) {
 					ui.setRoles(newRoles);
 					userFactory.updateUserInfo(ui);
 				} else {
 					newRoles.removeAll(ui.getRoles());
 					if (newRoles.size() > 0) {
-						messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("global.message.noright"), GenericMessage.ERROR));
+						messageRepository.setGlobalMessageAndNotification(ctx,
+								new GenericMessage(i18nAccess.getText("global.message.noright"), GenericMessage.ERROR));
 					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				return e. getMessage();
+				return e.getMessage();
 			}
-			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("user.message.updated", new String[][] { { "user", user.getLogin() } }), GenericMessage.INFO));
+			messageRepository.setGlobalMessageAndNotification(ctx,
+					new GenericMessage(
+							i18nAccess.getText("user.message.updated", new String[][] { { "user", user.getLogin() } }),
+							GenericMessage.INFO));
 		}
 		return null;
 	}
-	
-	public String performCreateuserwidthemail(ContentContext ctx, StaticConfig staticConfig, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository) throws IOException, Exception {
+
+	public String performCreateuserwidthemail(ContentContext ctx, StaticConfig staticConfig,
+			RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository)
+			throws IOException, Exception {
 		String newUser = requestService.getParameter("email", null);
 		if (!StringHelper.isMail(newUser)) {
 			return i18nAccess.getViewText("mailing.error.email");
@@ -367,24 +399,29 @@ public class UserAction extends AbstractModuleAction {
 		} else {
 			GlobalContext gc = ctx.getGlobalContext();
 			String title = i18nAccess.getViewText("registration.mail.confirm.title");
-			String subject = i18nAccess.getViewText("registration.mail.confirm.subject")+ctx.getCurrentPage().getGlobalTitle(ctx);
+			String subject = i18nAccess.getViewText("registration.mail.confirm.subject")
+					+ ctx.getCurrentPage().getGlobalTitle(ctx);
 			String text = i18nAccess.getViewText("registration.mail.confirm.text");
 			String actionLabel = i18nAccess.getViewText("registration.mail.confirm.action");
 			ContentService contentService = ContentService.getInstance(ctx.getGlobalContext());
 			MenuElement regPage = contentService.getRegistrationPage(ctx);
-			String actionUrl= URLHelper.createURL(ctx.getContextForAbsoluteURL());
+			String actionUrl = URLHelper.createURL(ctx.getContextForAbsoluteURL());
 			if (regPage != null) {
-				actionUrl= URLHelper.createURL(ctx.getContextForAbsoluteURL(), regPage);
+				actionUrl = URLHelper.createURL(ctx.getContextForAbsoluteURL(), regPage);
 			}
 			actionUrl = URLHelper.addParam(actionUrl, INIT_TOKEN, ctx.getGlobalContext().createEmailToken(newUser));
-			String mail = XHTMLHelper.createUserMail(ctx, "/images/font/user-plus.png", title, text, actionUrl, actionLabel, "");
-			NetHelper.sendMail(gc, new InternetAddress(gc.getAdministratorEmail()), new InternetAddress(newUser), null, null, subject, mail,null,true);
-			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getViewText(" "), GenericMessage.INFO));
+			String mail = XHTMLHelper.createUserMail(ctx, "/images/font/user-plus.png", title, text, actionUrl,
+					actionLabel, "");
+			NetHelper.sendMail(gc, new InternetAddress(gc.getAdministratorEmail()), new InternetAddress(newUser), null,
+					null, subject, mail, null, true);
+			messageRepository.setGlobalMessageAndNotification(ctx,
+					new GenericMessage(i18nAccess.getViewText(" "), GenericMessage.INFO));
 		}
 		return null;
 	}
 
-	public String performCreateUser(ContentContext ctx, StaticConfig staticConfig, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository) {
+	public String performCreateUser(ContentContext ctx, StaticConfig staticConfig, RequestService requestService,
+			I18nAccess i18nAccess, MessageRepository messageRepository) {
 		String newUser = requestService.getParameter("user", null);
 		if (StringHelper.isEmpty(newUser)) {
 			newUser = requestService.getParameter("login", null);
@@ -410,7 +447,7 @@ public class UserAction extends AbstractModuleAction {
 		}
 
 		IUserInfo newUserInfo = userFactory.createUserInfos();
-		
+
 		if (newUser.contains("<")) {
 			try {
 				InternetAddress internetAddress = new InternetAddress(newUser);
@@ -454,17 +491,20 @@ public class UserAction extends AbstractModuleAction {
 				return e.getMessage();
 			}
 		} catch (UserAllreadyExistException e) {
-			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("user.error.allready-exist"), GenericMessage.ERROR));
+			messageRepository.setGlobalMessage(
+					new GenericMessage(i18nAccess.getViewText("user.error.allready-exist"), GenericMessage.ERROR));
 			return null;
 		}
 
-		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getViewText("registration.message.registred"), GenericMessage.INFO));
+		messageRepository.setGlobalMessageAndNotification(ctx,
+				new GenericMessage(i18nAccess.getViewText("registration.message.registred"), GenericMessage.INFO));
 		ctx.getRequest().setAttribute("hideForm", true);
 
 		return null;
 	}
 
-	public String performDeleteUser(ContentContext ctx, RequestService requestService, I18nAccess i18nAccess, MessageRepository messageRepository) throws UserAllreadyExistException {
+	public String performDeleteUser(ContentContext ctx, RequestService requestService, I18nAccess i18nAccess,
+			MessageRepository messageRepository) throws UserAllreadyExistException {
 		UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
 		IUserFactory userFactory = userContext.getUserFactory(ctx);
 
@@ -484,16 +524,20 @@ public class UserAction extends AbstractModuleAction {
 		}
 
 		if (deletedUser > 0) {
-			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("user.message.delete", new String[][] { { "deletedUser", "" + deletedUser } }), GenericMessage.INFO));
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(
+					i18nAccess.getText("user.message.delete", new String[][] { { "deletedUser", "" + deletedUser } }),
+					GenericMessage.INFO));
 		} else {
-			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.no-delete"), GenericMessage.ALERT));
+			messageRepository.setGlobalMessage(
+					new GenericMessage(i18nAccess.getText("user.message.no-delete"), GenericMessage.ALERT));
 		}
 
 		return null;
 
 	}
 
-	public static String performAskChangePassword(RequestService rs, ContentContext ctx, EditContext editContext, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+	public static String performAskChangePassword(RequestService rs, ContentContext ctx, EditContext editContext,
+			GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String email = rs.getParameter("email", null);
 		if (email == null && rs.getParameter("j_username", null) != null) {
 			email = rs.getParameter("j_username", null);
@@ -519,7 +563,8 @@ public class UserAction extends AbstractModuleAction {
 			if (user == null) {
 				return i18nAccess.getViewText("user.message.error.change-mail-not-found");
 			} else {
-				String subject = i18nAccess.getViewText("user.message.change-password.email-subject") + ' ' + globalContext.getGlobalTitle();
+				String subject = i18nAccess.getViewText("user.message.change-password.email-subject") + ' '
+						+ globalContext.getGlobalTitle();
 				String body = i18nAccess.getViewText("user.message.change-password.email-body");
 				Map<String, String> params = new HashMap<String, String>();
 				params.put("pwtoken", globalContext.getChangePasswordToken(user.getLogin()));
@@ -527,19 +572,27 @@ public class UserAction extends AbstractModuleAction {
 				ContentService contentService = ContentService.getInstance(globalContext);
 				MenuElement regPage = contentService.getRegistrationPage(ctx);
 				String link = URLHelper.createURL(ctx.getContextForAbsoluteURL(), regPage, params);
-				//String mailBody = XHTMLHelper.createUserMail(globalContext.getTemplateData(), body, null, null, link, i18nAccess.getViewText("user.change-password"), null);
-				String mailBody = XHTMLHelper.createUserMail(ctx, "/images/font/lock.png", body, "", link, i18nAccess.getViewText("user.change-password"), "");
-				
-				MailService mailService = MailService.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
-				mailService.sendMail(globalContext, new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(email), subject, mailBody, true);
-				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("user.message.change-password-link"), GenericMessage.INFO));
+				// String mailBody = XHTMLHelper.createUserMail(globalContext.getTemplateData(),
+				// body, null, null, link, i18nAccess.getViewText("user.change-password"),
+				// null);
+				String mailBody = XHTMLHelper.createUserMail(ctx, "/images/font/lock.png", body, "", link,
+						i18nAccess.getViewText("user.change-password"), "");
+
+				MailService mailService = MailService
+						.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
+				mailService.sendMail(globalContext, new InternetAddress(globalContext.getAdministratorEmail()),
+						new InternetAddress(email), subject, mailBody, true);
+				messageRepository.setGlobalMessage(new GenericMessage(
+						i18nAccess.getViewText("user.message.change-password-link"), GenericMessage.INFO));
 			}
 		}
 
 		return null;
 	}
 
-	public static String performChangePasswordWithToken(RequestService rs, ContentContext ctx, EditContext editContext, GlobalContext globalContext, HttpSession session, StaticConfig staticConfig, MessageRepository messageRepository, I18nAccess i18nAccess) {
+	public static String performChangePasswordWithToken(RequestService rs, ContentContext ctx, EditContext editContext,
+			GlobalContext globalContext, HttpSession session, StaticConfig staticConfig,
+			MessageRepository messageRepository, I18nAccess i18nAccess) {
 		String token = rs.getParameter("token", null);
 		String pwd1 = rs.getParameter("password", null);
 		String pwd2 = rs.getParameter("password2", null);
@@ -549,7 +602,8 @@ public class UserAction extends AbstractModuleAction {
 			return i18nAccess.getViewText("user.message.password-bad-token");
 		} else {
 			if (pwd1 == null || pwd1.length() < 4) {
-				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.password-to-short"), GenericMessage.ERROR));
+				messageRepository.setGlobalMessage(
+						new GenericMessage(i18nAccess.getText("user.message.password-to-short"), GenericMessage.ERROR));
 			} else {
 				if (!pwd1.equals(pwd2)) {
 					return i18nAccess.getViewText("login.message.password-not-same");
@@ -580,7 +634,8 @@ public class UserAction extends AbstractModuleAction {
 					userFactory.updateUserInfo(ui);
 					userFactory.store();
 					userFactory.reload(globalContext, session);
-					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("user.message.ok-change-password"), GenericMessage.INFO));
+					messageRepository.setGlobalMessage(new GenericMessage(
+							i18nAccess.getViewText("user.message.ok-change-password"), GenericMessage.INFO));
 					if (editContext.isPreviewEditionMode()) {
 						ctx.setClosePopup(true);
 					}
@@ -593,7 +648,9 @@ public class UserAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performChangePassword(RequestService rs, ContentContext ctx, EditContext editContext, GlobalContext globalContext, HttpSession session, StaticConfig staticConfig, MessageRepository messageRepository, I18nAccess i18nAccess) {
+	public static String performChangePassword(RequestService rs, ContentContext ctx, EditContext editContext,
+			GlobalContext globalContext, HttpSession session, StaticConfig staticConfig,
+			MessageRepository messageRepository, I18nAccess i18nAccess) {
 		String pwd = rs.getParameter("password", null);
 		String newPwd = rs.getParameter("newpassword", null);
 
@@ -605,7 +662,8 @@ public class UserAction extends AbstractModuleAction {
 
 		if (user.getPassword().equals(pwd)) {
 			if (newPwd == null || newPwd.length() < 4) {
-				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.password-to-short"), GenericMessage.ERROR));
+				messageRepository.setGlobalMessage(
+						new GenericMessage(i18nAccess.getText("user.message.password-to-short"), GenericMessage.ERROR));
 			} else {
 				IUserInfo ui = user.getUserInfo();
 				ui.setPassword(SecurityHelper.encryptPassword(newPwd));
@@ -613,7 +671,8 @@ public class UserAction extends AbstractModuleAction {
 					userFactory.updateUserInfo(ui);
 					userFactory.store();
 					userFactory.reload(globalContext, session);
-					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.ok-change-password"), GenericMessage.INFO));
+					messageRepository.setGlobalMessage(new GenericMessage(
+							i18nAccess.getText("user.message.ok-change-password"), GenericMessage.INFO));
 
 					if (editContext.isPreviewEditionMode()) {
 						ctx.setClosePopup(true);
@@ -625,13 +684,16 @@ public class UserAction extends AbstractModuleAction {
 				}
 			}
 		} else {
-			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.bad-password"), GenericMessage.ERROR));
+			messageRepository.setGlobalMessage(
+					new GenericMessage(i18nAccess.getText("user.message.bad-password"), GenericMessage.ERROR));
 		}
 
 		return null;
 	}
 
-	public static String performChangePassword2Check(RequestService rs, GlobalContext globalContext, HttpSession session, ContentContext ctx, StaticConfig staticConfig, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+	public static String performChangePassword2Check(RequestService rs, GlobalContext globalContext,
+			HttpSession session, ContentContext ctx, StaticConfig staticConfig, MessageRepository messageRepository,
+			I18nAccess i18nAccess) throws IOException {
 		String newPwd = rs.getParameter("newpassword", "");
 		String newPwd2 = rs.getParameter("newpassword2", null);
 
@@ -651,14 +713,16 @@ public class UserAction extends AbstractModuleAction {
 				userFactory.updateUserInfo(ui);
 				userFactory.store();
 				userFactory.reload(ctx.getGlobalContext(), session);
-				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.ok-change-password"), GenericMessage.INFO));
+				messageRepository.setGlobalMessage(
+						new GenericMessage(i18nAccess.getText("user.message.ok-change-password"), GenericMessage.INFO));
 				ctx.getRequest().setAttribute("passwordChanged", true);
 			}
 		}
 		return null;
 	}
 
-	public static String performToken(HttpServletRequest request, ContentContext ctx, GlobalContext globalContext, HttpSession session) {
+	public static String performToken(HttpServletRequest request, ContentContext ctx, GlobalContext globalContext,
+			HttpSession session) {
 		UserFactory factory = AdminUserFactory.createAdminUserFactory(globalContext, session);
 		User user = factory.getCurrentUser(globalContext, session);
 		if (user == null) {
@@ -685,7 +749,8 @@ public class UserAction extends AbstractModuleAction {
 			for (Cell title : cells) {
 				Cell finalTitle = title;
 
-				if (title != null && title.getValue() != null && title.getValue().toLowerCase().contains(field.toLowerCase())) {
+				if (title != null && title.getValue() != null
+						&& title.getValue().toLowerCase().contains(field.toLowerCase())) {
 					return p;
 				}
 				p++;
@@ -694,7 +759,8 @@ public class UserAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performUpload(RequestService rs, HttpSession session, User user, ContentContext ctx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+	public static String performUpload(RequestService rs, HttpSession session, User user, ContentContext ctx,
+			GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 
 		if (!AdminUserSecurity.getInstance().canRole(user, AdminUserSecurity.USER_ROLE)) {
 			return "security error.";
@@ -746,7 +812,8 @@ public class UserAction extends AbstractModuleAction {
 								userInfo.setLogin(emails.iterator().next());
 							}
 							if (!StringHelper.isEmpty(userContext.getCurrentRole())) {
-								userInfo.addRoles(new HashSet(Arrays.asList(new String[] { userContext.getCurrentRole() })));
+								userInfo.addRoles(
+										new HashSet(Arrays.asList(new String[] { userContext.getCurrentRole() })));
 							}
 							if (!StringHelper.isEmpty(userInfo.getPassword())) {
 								userInfo.setPassword(StringHelper.encryptPassword(userInfo.getPassword()));
@@ -780,12 +847,14 @@ public class UserAction extends AbstractModuleAction {
 					String[][] usersArrays = csvFact.getArray();
 					if (usersArrays == null || usersArrays.length < 1) {
 						msg = i18nAccess.getText("global.message.file-format-error");
-						MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
+						MessageRepository.getInstance(ctx)
+								.setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
 						return null;
 					} else {
 						if (usersArrays[0].length < 5) {
 							msg = i18nAccess.getText("global.message.file-format-error");
-							MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
+							MessageRepository.getInstance(ctx)
+									.setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
 							return null;
 						}
 					}
@@ -841,7 +910,8 @@ public class UserAction extends AbstractModuleAction {
 			}
 			userFact.store();
 
-			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(i18nAccess.getText("global.message.imported") + countUserInsered, GenericMessage.INFO));
+			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(
+					i18nAccess.getText("global.message.imported") + countUserInsered, GenericMessage.INFO));
 
 			logger.info("vrac user imported : " + countUserInsered);
 		}
@@ -849,7 +919,8 @@ public class UserAction extends AbstractModuleAction {
 		return msg;
 	}
 
-	public static String performSelectRole(HttpServletRequest request, ContentContext ctx, GlobalContext globalContext, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+	public static String performSelectRole(HttpServletRequest request, ContentContext ctx, GlobalContext globalContext,
+			HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		String role = request.getParameter("role");
 
 		boolean admin = StringHelper.isTrue(request.getParameter("admin"));
@@ -867,13 +938,18 @@ public class UserAction extends AbstractModuleAction {
 			for (IUserInfo user : userFact.getUserInfoList()) {
 				user.removeRoles(roleSet);
 				userFact.updateUserInfo(user);
-				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.ok-remove-role", "Role removed from all users : ") + ' ' + role, GenericMessage.INFO));
+				messageRepository.setGlobalMessage(new GenericMessage(
+						i18nAccess.getText("user.message.ok-remove-role", "Role removed from all users : ") + ' '
+								+ role,
+						GenericMessage.INFO));
 			}
 		} else if (!StringHelper.isEmpty(request.getParameter("add"))) {
 			for (IUserInfo user : userFact.getUserInfoList()) {
 				user.addRoles(roleSet);
 				userFact.updateUserInfo(user);
-				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.ok-add-role", "Role added to all users : ") + ' ' + role, GenericMessage.INFO));
+				messageRepository.setGlobalMessage(new GenericMessage(
+						i18nAccess.getText("user.message.ok-add-role", "Role added to all users : ") + ' ' + role,
+						GenericMessage.INFO));
 			}
 		} else {
 
@@ -882,14 +958,16 @@ public class UserAction extends AbstractModuleAction {
 			}
 			UserModuleContext context = UserModuleContext.getInstance(request);
 			context.setCurrentRole(role);
-			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("user.message.ok-change-role") + ' ' + role, GenericMessage.INFO));
+			messageRepository.setGlobalMessage(new GenericMessage(
+					i18nAccess.getText("user.message.ok-change-role") + ' ' + role, GenericMessage.INFO));
 
 		}
 		return null;
 
 	}
 
-	public static String performAjaxUserList(RequestService rs, HttpSession session, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
+	public static String performAjaxUserList(RequestService rs, HttpSession session, ContentContext ctx,
+			MessageRepository messageRepository, I18nAccess i18nAccess) {
 		UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -898,7 +976,8 @@ public class UserAction extends AbstractModuleAction {
 		}
 
 		IUserFactory userFactory = AdminUserFactory.createUserFactory(ctx.getRequest());
-		if (userContext.getCurrentRole() != null && !userFactory.getAllRoles(globalContext, ctx.getRequest().getSession()).contains(userContext.getCurrentRole())) {
+		if (userContext.getCurrentRole() != null && !userFactory
+				.getAllRoles(globalContext, ctx.getRequest().getSession()).contains(userContext.getCurrentRole())) {
 			userContext.setCurrentRole(null);
 		}
 
@@ -955,12 +1034,15 @@ public class UserAction extends AbstractModuleAction {
 		for (IUserInfo userInfo : users) {
 			if (query == null || StringHelper.arrayToString(userInfo.getAllValues()).contains(query)) {
 				if (record >= displayStart && record < displayStart + pageSize) {
-					out.print(sep + '[' + '"' + "<input type=\\\"checkbox\\\" name=\\\"" + Encode.forJavaScriptAttribute(userInfo.getLogin()) + "\\\" />" + '"' + ',');
+					out.print(sep + '[' + '"' + "<input type=\\\"checkbox\\\" name=\\\""
+							+ Encode.forJavaScriptAttribute(userInfo.getLogin()) + "\\\" />" + '"' + ',');
 					Map<String, String> params = new HashMap<String, String>();
 					params.put("webaction", "edit");
 					params.put("cuser", userInfo.getEncryptLogin());
-					String editURL = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), params);
-					out.print('"' + "<a href=\\\"" + editURL + "\\\">" + Encode.forJavaScriptAttribute(userInfo.getLogin()) + "</a>" + '"' + ',');
+					String editURL = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE),
+							params);
+					out.print('"' + "<a href=\\\"" + editURL + "\\\">"
+							+ Encode.forJavaScriptAttribute(userInfo.getLogin()) + "</a>" + '"' + ',');
 					out.print('"' + Encode.forJavaScriptAttribute(userInfo.getFirstName()) + '"' + ',');
 					out.print('"' + Encode.forJavaScriptAttribute(userInfo.getLastName()) + '"' + ',');
 					out.print('"' + Encode.forJavaScriptAttribute(userInfo.getEmail()) + '"' + ',');
@@ -988,7 +1070,8 @@ public class UserAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performDeleteFile(RequestService rs, User user, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
+	public static String performDeleteFile(RequestService rs, User user, ContentContext ctx,
+			MessageRepository messageRepository, I18nAccess i18nAccess) {
 		File userFolder = new File(ctx.getGlobalContext().getUserFolder(user));
 		String fileName = rs.getParameter("name", null);
 		if (userFolder.isDirectory()) {
@@ -998,19 +1081,23 @@ public class UserAction extends AbstractModuleAction {
 				}
 			}
 		}
-		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("global.delete-file", "file deleted."), GenericMessage.INFO));
+		messageRepository.setGlobalMessage(
+				new GenericMessage(i18nAccess.getText("global.delete-file", "file deleted."), GenericMessage.INFO));
 		return null;
 	}
-	
-	public static String performLogin(ContentContext ctx, HttpServletRequest request, RequestService rs, GlobalContext globalContext, I18nAccess i18nAccess) throws Exception {
+
+	public static String performLogin(ContentContext ctx, HttpServletRequest request, RequestService rs,
+			GlobalContext globalContext, I18nAccess i18nAccess) throws Exception {
 		IUserFactory fact = UserFactory.createUserFactory(request);
+		User loggedUser = ctx.getCurrentUser(); // for return current user information withtout login
 		if (fact.getCurrentUser(globalContext, request.getSession()) == null) {
 			String login = request.getParameter("login");
 			if (login != null || request.getUserPrincipal() != null) {
 				if (request.getParameter("autologin") != null) {
 					DataToIDService service = DataToIDService.getInstance(request.getSession().getServletContext());
 					String codeId = service.setData(login, IUserFactory.AUTO_LOGIN_AGE_SEC);
-					RequestHelper.setCookieValue(ctx.getResponse(), JAVLO_LOGIN_ID, codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, null);
+					RequestHelper.setCookieValue(ctx.getResponse(), JAVLO_LOGIN_ID, codeId,
+							IUserFactory.AUTO_LOGIN_AGE_SEC, null);
 				}
 				if (login == null && request.getUserPrincipal() != null) {
 					login = request.getUserPrincipal().getName();
@@ -1021,22 +1108,25 @@ public class UserAction extends AbstractModuleAction {
 				} else {
 					ContentService.getInstance(globalContext).releaseViewNav(globalContext);
 				}
-				ModulesContext.getInstance(request.getSession(), globalContext).loadModule(request.getSession(), globalContext);
-				User loggedUser = fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession());
-				Map<String,Object> data = new HashMap<>();
-				if (loggedUser != null) {					
-					data.put("logged", true);
-					data.put("login", loggedUser.getUserInfo().getLogin());
-					data.put("firstname", loggedUser.getUserInfo().getFirstName());
-					data.put("lastname", loggedUser.getUserInfo().getLastName());
-					data.put("email", loggedUser.getUserInfo().getEmail());
-					data.put("message", i18nAccess.getViewText("login.done"));					
-				} else {
-					data.put("logged", false);
-					data.put("error", i18nAccess.getViewText("login.error"));	
-				}
-				JSONMap.JSON.toJson(data, ctx.getResponse().getWriter());
+				ModulesContext.getInstance(request.getSession(), globalContext).loadModule(request.getSession(),
+						globalContext);
+				loggedUser = fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession());
 			}
+			Map<String, Object> data = new HashMap<>();
+			if (loggedUser != null) {
+				data.put("logged", true);
+				data.put("login", loggedUser.getUserInfo().getLogin());
+				data.put("firstname", loggedUser.getUserInfo().getFirstName());
+				data.put("lastname", loggedUser.getUserInfo().getLastName());
+				data.put("email", loggedUser.getUserInfo().getEmail());
+				data.put("message", i18nAccess.getViewText("login.done"));
+			} else {
+				data.put("logged", false);
+				if (login != null) {
+					data.put("error", i18nAccess.getViewText("login.error"));
+				}
+			}
+			JSONMap.JSON.toJson(data, ctx.getResponse().getWriter());
 		}
 		return null;
 	}
@@ -1047,19 +1137,23 @@ public class UserAction extends AbstractModuleAction {
 		XSSFWorkbook excel = ArrayHelper.loadWorkBook(in);
 		in.close();
 		for (int sheet = 0; sheet < excel.getNumberOfSheets(); sheet++) {
-			System.out.println(">>>>>>>>> UserAction.performUpload : EXCEL FILE - " + sheet); // TODO: remove debug trace
+			System.out.println(">>>>>>>>> UserAction.performUpload : EXCEL FILE - " + sheet); // TODO: remove debug
+																								// trace
 			Cell[][] cells = ArrayHelper.getXLSXArray(null, excel, sheet);
 
 			System.out.println("titles : " + ArrayHelper.getTitles(cells));
 
-			System.out.println(">>>>>>>>> UserAction.performUpload : #cells : " + cells.length); // TODO: remove debug trace
-			System.out.println(">>>>>>>>> UserAction.performUpload : #cells[0] : " + cells[0].length); // TODO: remove debug trace
+			System.out.println(">>>>>>>>> UserAction.performUpload : #cells : " + cells.length); // TODO: remove debug
+																									// trace
+			System.out.println(">>>>>>>>> UserAction.performUpload : #cells[0] : " + cells[0].length); // TODO: remove
+																										// debug trace
 			for (int i = 1; i < cells.length; i++) {
 				String label = "rolesRaw";
 				Integer labelPos = getFieldPos(cells[0], label);
 				System.out.println(">>>>>>>>> UserAction.main : labelPos = " + labelPos); // TODO: remove debug trace
 				if (labelPos != null && cells[i][labelPos] != null) {
-					System.out.println(">>>>>>>>> UserAction.performUpload : add : label=" + label + "   value=" + cells[i][labelPos].getValue()); // TODO: remove debug trace
+					System.out.println(">>>>>>>>> UserAction.performUpload : add : label=" + label + "   value="
+							+ cells[i][labelPos].getValue()); // TODO: remove debug trace
 				}
 			}
 			if (newUserInfo.size() == 0) {
