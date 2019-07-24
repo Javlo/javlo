@@ -1131,6 +1131,24 @@ public class UserAction extends AbstractModuleAction {
 		JSONMap.JSON.toJson(data, ctx.getResponse().getWriter());	
 		return null;
 	}
+	
+	public static String performLogout(ContentContext ctx, HttpServletRequest request, RequestService rs,
+			GlobalContext globalContext, I18nAccess i18nAccess) throws Exception {
+		IUserFactory fact = UserFactory.createUserFactory(request);
+		if (fact.getCurrentUser(globalContext, ctx.getRequest().getSession()) != null) {
+			fact.logout(ctx.getRequest().getSession());
+		} else {
+			fact = AdminUserFactory.createUserFactory(request);
+			if (fact.getCurrentUser(globalContext, ctx.getRequest().getSession()) != null) {
+				fact.logout(ctx.getRequest().getSession());
+			}
+		}		
+		Map<String, Object> data = new HashMap<>();
+		data.put("logged", false);
+		RequestHelper.setJSONType(ctx.getResponse());
+		JSONMap.JSON.toJson(data, ctx.getResponse().getWriter());	
+		return null;
+	}
 
 	public static void main(String[] args) throws Exception {
 		List<IUserInfo> newUserInfo = new LinkedList<IUserInfo>();
