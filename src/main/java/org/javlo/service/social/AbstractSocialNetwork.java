@@ -50,11 +50,8 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 
 	@Override
 	public void prepare(ContentContext ctx) throws Exception {
-		String url = getSigninURL(ctx);
-		ctx.getRequest().setAttribute(getName() + "_signinURL", url );
-		url = URLHelper.addParam(url, RequestHelper.CLOSE_WINDOW_PARAMETER, "true");
-		url = URLHelper.addParam(url, "ts", ""+System.currentTimeMillis());
-		ctx.getRequest().setAttribute(getName() + "_signinURLPopup", url);
+		ctx.getRequest().setAttribute(getName() + "_signinURL", getSigninURL(ctx, false));
+		ctx.getRequest().setAttribute(getName() + "_signinURLPopup", getSigninURL(ctx, true));
 	}
 
 	@Override
@@ -149,7 +146,7 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 	public abstract String getTokenEndpoint();
 
 	@Override
-	public String getSigninURL(ContentContext ctx) throws Exception {
+	public String getSigninURL(ContentContext ctx, boolean popup) throws Exception {
 		String clientId = getClientId();
 		if (clientId == null || clientId.isEmpty()) {
 			return null;
@@ -159,7 +156,7 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 			return null;
 		}
 		AuthenticationRequestBuilder builder = createAuthenticationRequest();
-		configureAuthenticationRequest(builder, clientId, ctx);
+		configureAuthenticationRequest(builder, clientId, ctx, popup);
 		OAuthClientRequest request = buildAuthenticationRequest(builder);
 		String uri = request.getLocationUri();
 		return uri;
@@ -169,8 +166,12 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 		return OAuthClientRequest.authorizationLocation(getAuthzEndpoint());
 	}
 
-	protected void configureAuthenticationRequest(AuthenticationRequestBuilder builder, String clientId, ContentContext ctx) throws Exception {
-		builder.setClientId(clientId).setResponseType(OAuth.OAUTH_CODE).setState(getState(ctx)).setRedirectURI(getRedirectURL());
+	protected void configureAuthenticationRequest(AuthenticationRequestBuilder builder, String clientId, ContentContext ctx, boolean popup) throws Exception {
+		String url = getRedirectURL();
+		if (popup) {
+			url = URLHelper.addParam(url, RequestHelper.CLOSE_WINDOW_PARAMETER, "true");
+		}
+		builder.setClientId(clientId).setResponseType(OAuth.OAUTH_CODE).setState(getState(ctx)).setRedirectURI(url);
 	}
 
 	protected OAuthClientRequest buildAuthenticationRequest(AuthenticationRequestBuilder builder) throws OAuthSystemException {

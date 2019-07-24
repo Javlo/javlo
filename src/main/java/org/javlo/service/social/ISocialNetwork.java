@@ -54,7 +54,7 @@ public interface ISocialNetwork {
 	 */
 	public void prepare(ContentContext ctx) throws  Exception;
 	
-	public String getSigninURL(ContentContext ctx) throws Exception;
+	public String getSigninURL(ContentContext ctx, boolean popup) throws Exception;
 	
 	public String getRedirectURL();
 	
