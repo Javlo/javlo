@@ -1143,10 +1143,6 @@ public class UserAction extends AbstractModuleAction {
 				fact.logout(ctx.getRequest().getSession());
 			}
 		}		
-		Map<String, Object> data = new HashMap<>();
-		data.put("logged", false);
-		RequestHelper.setJSONType(ctx.getResponse());
-		JSONMap.JSON.toJson(data, ctx.getResponse().getWriter());	
 		return null;
 	}
 
