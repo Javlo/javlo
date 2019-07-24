@@ -51,9 +51,6 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 	@Override
 	public void prepare(ContentContext ctx) throws Exception {
 		String url = getSigninURL(ctx);
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> url = "+url);
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> URLHelper.addParam(url, RequestHelper.CLOSE_WINDOW_PARAMETER, \"true\") = "+URLHelper.addParam(url, RequestHelper.CLOSE_WINDOW_PARAMETER, "true"));
-		
 		ctx.getRequest().setAttribute(getName() + "_signinURL", url );
 		ctx.getRequest().setAttribute(getName() + "_signinURLPopup", URLHelper.addParam(url, RequestHelper.CLOSE_WINDOW_PARAMETER, "true"));
 	}
@@ -163,7 +160,6 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 		configureAuthenticationRequest(builder, clientId, ctx);
 		OAuthClientRequest request = buildAuthenticationRequest(builder);
 		String uri = request.getLocationUri();
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> uri = "+uri);
 		return uri;
 	}
 
@@ -180,14 +176,11 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 	}
 
 	public String getRedirectURL() {
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> get redirectURL = "+redirectURL);
 		return redirectURL;
 	}
 
 	@Override
 	public void setRedirectURL(String redirectURL) {
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> set redirectURL = "+redirectURL);
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> caller = "+DebugHelper.getCaller());
 		this.redirectURL = redirectURL;
 	}
 
@@ -337,11 +330,9 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 
 	public String getLoginURL() {
 		String url = getAuthzEndpoint();
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> getRedirectURL = "+getRedirectURL());
 		url = URLHelper.addParam(url, "client_id", getClientId());
 		url = URLHelper.addParam(url, "redirect_uri", getRedirectURL());
-		url = URLHelper.addParam(url, "response_type", "code");
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> url = "+url);
+		url = URLHelper.addParam(url, "response_type", "code");		
 		return url;
 	}
 }
