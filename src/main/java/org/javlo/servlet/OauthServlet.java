@@ -43,10 +43,13 @@ public class OauthServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
+		
+		String servletPath = request.getServletPath();
 		logger.info("oauth url = "+request.getRequestURL()+'?'+request.getQueryString());
 		
 		String socialNetworkName;
-		boolean admin = request.getServletPath().contains("admin");
+		boolean admin = servletPath.contains("admin");
+		boolean poppup = servletPath.endsWith(ISocialNetwork.POPUP_URI_SUFFIX);
 		if (request.getParameter("state") != null) {
 			Map<String, String> params = StringHelper.stringToMap(request.getParameter("state"));
 			socialNetworkName = params.get("name");
@@ -112,8 +115,8 @@ public class OauthServlet extends HttpServlet {
 						}
 					}
 					RequestService requestService = RequestService.getInstance(request);
-					System.out.println(">>>>>>>>>>>>>>>>>>>> StringHelper.isTrue(requestService.getParameter(RequestHelper.CLOSE_WINDOW_PARAMETER),false) = "+StringHelper.isTrue(requestService.getParameter(RequestHelper.CLOSE_WINDOW_PARAMETER),false));
-					if (StringHelper.isTrue(requestService.getParameter(RequestHelper.CLOSE_WINDOW_PARAMETER),false)) {
+					System.out.println(">>>>>>>>>>>>>>>>>>>> poppup = "+poppup);
+					if (poppup) {
 						response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
 						PrintWriter out = new PrintWriter(new OutputStreamWriter(response.getOutputStream()));
 						out.println("<script type=\"text/javascript\">");

@@ -9,6 +9,8 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.javlo.context.ContentContext;
 
 public interface ISocialNetwork {
+	
+	public static final String POPUP_URI_SUFFIX = "/popup";
 
 	public String getName();
 
