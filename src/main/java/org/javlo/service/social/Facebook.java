@@ -73,8 +73,8 @@ public class Facebook extends AbstractSocialNetwork {
 	}
 
 	@Override
-	protected void configureAuthenticationRequest(AuthenticationRequestBuilder builder, String clientId, ContentContext ctx) throws Exception {
-		super.configureAuthenticationRequest(builder, clientId, ctx);
+	protected void configureAuthenticationRequest(AuthenticationRequestBuilder builder, String clientId, ContentContext ctx, boolean popup) throws Exception {
+		super.configureAuthenticationRequest(builder, clientId, ctx, popup);
 		builder.setScope(DEFAULT_SCOPE);
 	}
 
