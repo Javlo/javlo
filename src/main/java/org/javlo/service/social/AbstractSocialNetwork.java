@@ -52,7 +52,9 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 	public void prepare(ContentContext ctx) throws Exception {
 		String url = getSigninURL(ctx);
 		ctx.getRequest().setAttribute(getName() + "_signinURL", url );
-		ctx.getRequest().setAttribute(getName() + "_signinURLPopup", URLHelper.addParam(url, RequestHelper.CLOSE_WINDOW_PARAMETER, "true"));
+		url = URLHelper.addParam(url, RequestHelper.CLOSE_WINDOW_PARAMETER, "true");
+		url = URLHelper.addParam(url, "ts", ""+System.currentTimeMillis());
+		ctx.getRequest().setAttribute(getName() + "_signinURLPopup", url);
 	}
 
 	@Override
