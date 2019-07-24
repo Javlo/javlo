@@ -27,8 +27,10 @@ import org.javlo.service.social.ISocialNetwork;
 import org.javlo.service.social.SocialService;
 import org.javlo.service.social.SocialUser;
 import org.javlo.user.AdminUserFactory;
+import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.User;
+import org.javlo.user.UserFactory;
 
 public class OauthServlet extends HttpServlet {
 
@@ -93,7 +95,22 @@ public class OauthServlet extends HttpServlet {
 								}
 							}
 						}
-					}		
+					} else {
+						SocialUser socialUser = social.getSocialUser(request);
+						if (socialUser != null) {
+							logger.info("oauth login : "+socialUser.getFirstName());
+							IUserFactory userFactory = UserFactory.createUserFactory(ctx.getRequest());
+							IUserInfo userInfo = userFactory.createUserInfos();
+							userInfo.setFirstName(socialUser.getFirstName());
+							userInfo.setLastName(socialUser.getLastName());
+							userInfo.setAvatarURL(socialUser.getAvatarURL());
+							userInfo.setPassword(StringHelper.getRandomId());
+							userFactory.updateUserInfo(userInfo);
+							userFactory.store();
+						} else {
+							logger.warning("socialUser not found.");
+						}
+					}
 					RequestService requestService = RequestService.getInstance(request);
 					System.out.println(">>>>>>>>>>>>>>>>>>>> StringHelper.isTrue(requestService.getParameter(RequestHelper.CLOSE_WINDOW_PARAMETER),false) = "+StringHelper.isTrue(requestService.getParameter(RequestHelper.CLOSE_WINDOW_PARAMETER),false));
 					if (StringHelper.isTrue(requestService.getParameter(RequestHelper.CLOSE_WINDOW_PARAMETER),false)) {
