@@ -1090,8 +1090,8 @@ public class UserAction extends AbstractModuleAction {
 			GlobalContext globalContext, I18nAccess i18nAccess) throws Exception {
 		IUserFactory fact = UserFactory.createUserFactory(request);
 		User loggedUser = ctx.getCurrentUser(); // for return current user information withtout login
-		if (fact.getCurrentUser(globalContext, request.getSession()) == null) {
-			String login = request.getParameter("login");
+		String login = request.getParameter("login");
+		if (fact.getCurrentUser(globalContext, request.getSession()) == null) {			
 			if (login != null || request.getUserPrincipal() != null) {
 				if (request.getParameter("autologin") != null) {
 					DataToIDService service = DataToIDService.getInstance(request.getSession().getServletContext());
@@ -1112,22 +1112,22 @@ public class UserAction extends AbstractModuleAction {
 						globalContext);
 				loggedUser = fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession());
 			}
-			Map<String, Object> data = new HashMap<>();
-			if (loggedUser != null) {
-				data.put("logged", true);
-				data.put("login", loggedUser.getUserInfo().getLogin());
-				data.put("firstname", loggedUser.getUserInfo().getFirstName());
-				data.put("lastname", loggedUser.getUserInfo().getLastName());
-				data.put("email", loggedUser.getUserInfo().getEmail());
-				data.put("message", i18nAccess.getViewText("login.done"));
-			} else {
-				data.put("logged", false);
-				if (login != null) {
-					data.put("error", i18nAccess.getViewText("login.error"));
-				}
-			}
-			JSONMap.JSON.toJson(data, ctx.getResponse().getWriter());
 		}
+		Map<String, Object> data = new HashMap<>();
+		if (loggedUser != null) {
+			data.put("logged", true);
+			data.put("login", loggedUser.getUserInfo().getLogin());
+			data.put("firstname", loggedUser.getUserInfo().getFirstName());
+			data.put("lastname", loggedUser.getUserInfo().getLastName());
+			data.put("email", loggedUser.getUserInfo().getEmail());
+			data.put("message", i18nAccess.getViewText("login.done"));
+		} else {
+			data.put("logged", false);
+			if (login != null) {
+				data.put("error", i18nAccess.getViewText("login.error"));
+			}
+		}
+		JSONMap.JSON.toJson(data, ctx.getResponse().getWriter());	
 		return null;
 	}
 
