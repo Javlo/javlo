@@ -31,7 +31,7 @@ case GenericMessage.SUCCESS:
 ContentContext ctx = ContentContext.getContentContext(request, response);
 SocialService socialService = SocialService.getInstance(ctx);
 ISocialNetwork googleOauth = socialService.getGoogle();
-googleOauth.setRedirectURL(URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), "/oauth2callbackadmin"));
+//googleOauth.setRedirectURL(URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), "/oauth2callbackadmin"));
 //googleOauth.setClientId(ctx.getGlobalContext().getStaticConfig().getOauthGoogleIdClient());
 //googleOauth.setClientSecret(ctx.getGlobalContext().getStaticConfig().getOauthGoogleSecret());
 %><html>
