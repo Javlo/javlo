@@ -40,6 +40,9 @@ public class OauthServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		logger.info("oauth url = "+request.getRequestURL()+'?'+request.getQueryString());
+		
 		String socialNetworkName;
 		boolean admin = request.getServletPath().contains("admin");
 		if (request.getParameter("state") != null) {
@@ -92,7 +95,8 @@ public class OauthServlet extends HttpServlet {
 						}
 					}		
 					RequestService requestService = RequestService.getInstance(request);
-					if (StringHelper.isTrue(requestService.getParameter(RequestHelper.CLOSE_WINDOW_PARAMETER, "false"))) {
+					System.out.println(">>>>>>>>>>>>>>>>>>>> StringHelper.isTrue(requestService.getParameter(RequestHelper.CLOSE_WINDOW_PARAMETER),false) = "+StringHelper.isTrue(requestService.getParameter(RequestHelper.CLOSE_WINDOW_PARAMETER),false));
+					if (StringHelper.isTrue(requestService.getParameter(RequestHelper.CLOSE_WINDOW_PARAMETER),false)) {
 						response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
 						PrintWriter out = new PrintWriter(new OutputStreamWriter(response.getOutputStream()));
 						out.println("<script type=\"text/javascript\">");

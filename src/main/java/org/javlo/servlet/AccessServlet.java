@@ -471,8 +471,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			/** CACHE **/
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			MenuElement currentPage = content.getNavigation(ctx).getNoErrorFreeCurrentPage(ctx);
-			boolean closewin = StringHelper.isTrue(requestService.getParameter(RequestHelper.CLOSE_WINDOW_PARAMETER, "false"));
-			if (!closewin && ctx.isAsViewMode() && currentPage != null && currentPage.isCacheable(ctx) && globalContext.isPreviewMode() && globalContext.getPublishDate() != null && request.getMethod().equalsIgnoreCase("get") && request.getParameter("webaction") == null) {
+			if (ctx.isAsViewMode() && currentPage != null && currentPage.isCacheable(ctx) && globalContext.isPreviewMode() && globalContext.getPublishDate() != null && request.getMethod().equalsIgnoreCase("get") && request.getParameter("webaction") == null) {
 				long lastModified = globalContext.getPublishDate().getTime();
 				response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);
 				response.setHeader("Cache-Control", "max-age=60,must-revalidate");
@@ -699,7 +698,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 			localLogger.endCount("execute action", "execute action = " + action);
 
-			if (StringHelper.isTrue(requestService.getParameter(RequestHelper.CLOSE_WINDOW_PARAMETER, "false"))) {
+			if (StringHelper.isTrue(requestService.getParameter(RequestHelper.CLOSE_WINDOW_PARAMETER), false)) {
 				String newURL = requestService.getParameter(RequestHelper.CLOSE_WINDOW_URL_PARAMETER, null);
 
 				response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
