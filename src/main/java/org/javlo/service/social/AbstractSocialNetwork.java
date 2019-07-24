@@ -180,12 +180,14 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 	}
 
 	public String getRedirectURL() {
-		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> redirectURL = "+redirectURL);
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> get redirectURL = "+redirectURL);
 		return redirectURL;
 	}
 
 	@Override
 	public void setRedirectURL(String redirectURL) {
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> set redirectURL = "+redirectURL);
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> caller = "+DebugHelper.getCaller());
 		this.redirectURL = redirectURL;
 	}
 

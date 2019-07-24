@@ -35,8 +35,7 @@ public class SocialService {
 			System.out.println(">>>>>>>>>>>>>>>>>>>> outService.redirectURL = "+outService.redirectURL);
 			globalContext.setAttribute(KEY, outService);
 
-		}
-		
+		}		
 		return outService;
 	}
 	
