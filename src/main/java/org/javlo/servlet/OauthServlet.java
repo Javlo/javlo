@@ -16,13 +16,11 @@ import org.apache.oltu.oauth2.client.response.OAuthAuthzResponse;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.NavigationHelper;
-import org.javlo.helper.RequestHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
-import org.javlo.service.RequestService;
 import org.javlo.service.social.ISocialNetwork;
 import org.javlo.service.social.SocialService;
 import org.javlo.service.social.SocialUser;
@@ -114,7 +112,6 @@ public class OauthServlet extends HttpServlet {
 							logger.warning("socialUser not found.");
 						}
 					}
-					RequestService requestService = RequestService.getInstance(request);
 					System.out.println(">>>>>>>>>>>>>>>>>>>> poppup = "+poppup);
 					if (poppup) {
 						response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
