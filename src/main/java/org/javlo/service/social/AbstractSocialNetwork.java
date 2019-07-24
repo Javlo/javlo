@@ -168,6 +168,7 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 
 	protected void configureAuthenticationRequest(AuthenticationRequestBuilder builder, String clientId, ContentContext ctx, boolean popup) throws Exception {
 		String url = getRedirectURL();
+		System.out.println(">>>> popup = "+popup);
 		if (popup) {
 			url = url +POPUP_URI_SUFFIX;
 		}
