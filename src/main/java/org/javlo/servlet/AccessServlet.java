@@ -698,7 +698,10 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 			localLogger.endCount("execute action", "execute action = " + action);
 
+			System.out.println(">>>>>>>>>>>>>>>>>> requestService.getParameter(RequestHelper.CLOSE_WINDOW_PARAMETER, \"false\") = "+requestService.getParameter(RequestHelper.CLOSE_WINDOW_PARAMETER, "false"));
+			
 			if (StringHelper.isTrue(requestService.getParameter(RequestHelper.CLOSE_WINDOW_PARAMETER, "false"))) {
+				System.out.println(">>>>>>>>>>>>>>>>>> CLOSE");
 				String newURL = requestService.getParameter(RequestHelper.CLOSE_WINDOW_URL_PARAMETER, null);
 
 				response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
