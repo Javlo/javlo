@@ -1127,6 +1127,7 @@ public class UserAction extends AbstractModuleAction {
 				data.put("error", i18nAccess.getViewText("login.error"));
 			}
 		}
+		RequestHelper.setJSONType(ctx.getResponse());
 		JSONMap.JSON.toJson(data, ctx.getResponse().getWriter());	
 		return null;
 	}

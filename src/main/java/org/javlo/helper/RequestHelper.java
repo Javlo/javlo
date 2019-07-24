@@ -125,5 +125,9 @@ public class RequestHelper {
 		Cookie cokkie = new Cookie(key, value);
 		response.addCookie(cokkie);
 	}
+	
+	public static final void setJSONType(HttpServletResponse response) {
+		response.setContentType("application/json");
+	}
 
 }

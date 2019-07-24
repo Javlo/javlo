@@ -46,7 +46,6 @@ public class WebAction extends HttpServlet {
 				return;
 			}
 			String action = uri.substring(uri.indexOf("webaction")).split("/")[1];
-
 			
 			ContentContext ctx = ContentContext.getContentContext(request, response);
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
