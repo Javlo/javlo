@@ -1,6 +1,8 @@
 package org.javlo.servlet;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -14,11 +16,13 @@ import org.apache.oltu.oauth2.client.response.OAuthAuthzResponse;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.NavigationHelper;
+import org.javlo.helper.RequestHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
+import org.javlo.service.RequestService;
 import org.javlo.service.social.ISocialNetwork;
 import org.javlo.service.social.SocialService;
 import org.javlo.service.social.SocialUser;
@@ -86,8 +90,19 @@ public class OauthServlet extends HttpServlet {
 								}
 							}
 						}
-					}										
-					response.sendRedirect(URLHelper.createURL(ctx, targetPage, params));
+					}		
+					RequestService requestService = RequestService.getInstance(request);
+					if (StringHelper.isTrue(requestService.getParameter(RequestHelper.CLOSE_WINDOW_PARAMETER, "false"))) {
+						response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
+						PrintWriter out = new PrintWriter(new OutputStreamWriter(response.getOutputStream()));
+						out.println("<script type=\"text/javascript\">");
+						out.println("window.close();");
+						out.println("</script>");
+						out.close();
+						return;
+					} else {
+						response.sendRedirect(URLHelper.createURL(ctx, targetPage, params));
+					}
 				}
 			} catch (Exception e) {
 				throw new ServletException(e);
