@@ -97,20 +97,20 @@ public class OauthServlet extends HttpServlet {
 							}
 						}
 					} else {
-						SocialUser socialUser = social.getSocialUser(request);
-						if (socialUser != null) {
-							logger.info("oauth login : "+socialUser.getFirstName());
-							IUserFactory userFactory = UserFactory.createUserFactory(ctx.getRequest());
-							IUserInfo userInfo = userFactory.createUserInfos();
-							userInfo.setFirstName(socialUser.getFirstName());
-							userInfo.setLastName(socialUser.getLastName());
-							userInfo.setAvatarURL(socialUser.getAvatarURL());
-							userInfo.setPassword(StringHelper.getRandomId());
-							userFactory.updateUserInfo(userInfo);
-							userFactory.store();
-						} else {
-							logger.warning("socialUser not found.");
-						}
+//						SocialUser socialUser = social.getSocialUser(request);
+//						if (socialUser != null) {
+//							logger.info("oauth login : "+socialUser.getFirstName());
+//							IUserFactory userFactory = UserFactory.createUserFactory(ctx.getRequest());
+//							IUserInfo userInfo = userFactory.createUserInfos();
+//							userInfo.setFirstName(socialUser.getFirstName());
+//							userInfo.setLastName(socialUser.getLastName());
+//							userInfo.setAvatarURL(socialUser.getAvatarURL());
+//							userInfo.setPassword(StringHelper.getRandomId());
+//							userFactory.updateUserInfo(userInfo);
+//							userFactory.store();
+//						} else {
+//							logger.warning("socialUser not found.");
+//						}
 					}
 					System.out.println(">>>>>>>>>>>>>>>>>>>> poppup = "+poppup);
 					if (poppup) {
