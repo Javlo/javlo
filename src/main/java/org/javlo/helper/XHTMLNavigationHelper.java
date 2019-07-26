@@ -347,18 +347,18 @@ public class XHTMLNavigationHelper {
 		return renderMenu(ctx, content.getNavigation(ctx), fromDepth, toDepth, true, 0, false, false, true, false, false, null, null);
 	}
 
-	public static String renderMenu(ContentContext ctx, int fromDepth, int toDepth, boolean extended) throws Exception {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
-		return renderMenu(ctx, content.getNavigation(ctx), fromDepth, toDepth, true, 0, extended, false, true, false, false, null, null);
-	}
-
-	public static String renderMenu(ContentContext ctx, MenuElement fromPage, int fromDepth, int toDepth) throws Exception {
-		return renderMenu(ctx, fromPage, fromDepth, toDepth, false, 0, false, false, true, false, false, null, null);
-	}
-
-	public static String renderMenu(ContentContext ctx, MenuElement fromPage, int fromDepth, int toDepth, boolean extended) throws Exception {
-		return renderMenu(ctx, fromPage, fromDepth, toDepth, true, fromDepth, extended, false, true, false, false, null, null);
-	}
+//	public static String renderMenu(ContentContext ctx, int fromDepth, int toDepth, boolean extended) throws Exception {
+//		ContentService content = ContentService.getInstance(ctx.getRequest());
+//		return renderMenu(ctx, content.getNavigation(ctx), fromDepth, toDepth, true, 0, extended, false, true, false, false, null, null);
+//	}
+//
+//	public static String renderMenu(ContentContext ctx, MenuElement fromPage, int fromDepth, int toDepth) throws Exception {
+//		return renderMenu(ctx, fromPage, fromDepth, toDepth, false, 0, false, false, true, false, false, null, null);
+//	}
+//
+//	public static String renderMenu(ContentContext ctx, MenuElement fromPage, int fromDepth, int toDepth, boolean extended) throws Exception {
+//		return renderMenu(ctx, fromPage, fromDepth, toDepth, true, fromDepth, extended, false, true, false, false, null, null);
+//	}
 
 	private static String renderMenu(ContentContext ctx, MenuElement menu, int fromDepth, int toDepth, boolean onlyVisible, int depth, boolean extended, boolean image, boolean withVirtual, boolean selecteableItem, Boolean selectableBetween, List<MenuElement> values, MenuElement value) throws Exception {
 		
