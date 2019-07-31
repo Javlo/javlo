@@ -209,7 +209,7 @@
 	
 	<servlet-mapping>
 		<servlet-name>oauth2callback</servlet-name>
-		<url-pattern>/oauth2callbackadmin</url-pattern>
+		<url-pattern>/oauth2callback_admin</url-pattern>
 	</servlet-mapping>
 	
 	<servlet-mapping>

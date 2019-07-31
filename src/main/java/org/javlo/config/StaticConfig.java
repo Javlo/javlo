@@ -1547,7 +1547,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getHelpURL() {
-		return properties.getString("site.help-url", "http://www.javlo.org/help_");
+		return properties.getString("site.help-url", "/help/${language}");
 	}
 
 	public boolean isDefaultTemplateImported() {

@@ -171,13 +171,27 @@ for (IContentVisualComponent comp : components) {
       </ul>
     </div>
       <div class="header-action"><%
-	     Map<String,String> params = new Hashtable<String,String>();
-		 params.put("webaction", "edit.delete");
-		 params.put("id", comp.getId());
-      	 String actionURL = URLHelper.createURL(ctx, params);
-      	 if (!ctx.isEditPreview() && AdminUserSecurity.getInstance().canModifyConponent(ctx, comp.getId())) {%><a class="delete ajax" title="${i18n.edit['global.delete']}" href="<%=actionURL%>"></a><%}
-      	 if (!ctx.isEditPreview()) {%><a class="copy ajax" title="${i18n.edit['content.copy']}" href="${info.currentURL}?webaction=copy&id=<%=comp.getId()%>"></a><%}%>
-      	 <%if(comp.isHelpURL(ctx)) {%><a class="help" title="help" target="_blanck" href="<%=comp.getHelpURL(ctx)%>"></a><%}%>
+	    Map<String,String> params = new Hashtable<String,String>();
+		params.put("webaction", "edit.delete");
+		params.put("id", comp.getId());
+      	String actionURL = URLHelper.createURL(ctx, params);
+      	if (!ctx.isEditPreview() && AdminUserSecurity.getInstance().canModifyConponent(ctx, comp.getId())) {%><a class="delete ajax" title="${i18n.edit['global.delete']}" href="<%=actionURL%>"></a><%}
+      	if (!ctx.isEditPreview()) {%><a class="copy ajax" title="${i18n.edit['content.copy']}" href="${info.currentURL}?webaction=copy&id=<%=comp.getId()%>"></a><%}%>
+      	<%if (comp.isHelpURL(ctx)) {
+      		if (comp.getHelpText(ctx) != null) {%>
+      		<a class="help tooltip" title="help" target="_blanck" href="<%=comp.getHelpURL(ctx)%>" data-tooltip-content="#tooltip_comp_<%=comp.getId()%>"></a>
+      		<div class="tooltip_templates">
+      			<div class="tooltip_container">
+      			<span id="tooltip_comp_<%=comp.getId()%>"><%=comp.getHelpText(ctx)%></span>
+      			</div>
+      		</div>
+      		<script type="text/javascript"> 
+      		jQuery('.tooltip').tooltipster();
+      		</script>
+      		<%} else {%>
+      		<a class="help" title="help" target="_blanck" href="<%=comp.getHelpURL(ctx)%>"></a>
+      		<%}
+      	}%>
       </div>
       <div class="header-info">
       	<%

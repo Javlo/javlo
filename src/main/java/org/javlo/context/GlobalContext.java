@@ -1653,7 +1653,12 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public String getHelpURL() {
-		return properties.getString("help-url", staticConfig.getHelpURL());
+		String url = properties.getString("help-url");
+		if (StringHelper.isEmpty(url)) {
+			return staticConfig.getHelpURL();
+		} else {
+			return url;
+		}
 	}
 
 	public String getMainHelpURL() {

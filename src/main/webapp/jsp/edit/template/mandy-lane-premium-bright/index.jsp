@@ -54,6 +54,7 @@
 <script type="text/javascript" src="<jv:url value='/js/edit/ajax.js?ts=${info.ts}' />"></script>
 <script type="text/javascript" src="<jv:url value='/js/edit/core.js?ts=${info.ts}' />"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/javlo/core.js?ts=${info.ts}"></script>
+<script type="text/javascript" src="<jv:url value='/js/lib/tooltipster-master/js/tooltipster.bundle.min.js' />"></script>
 <script type="text/javascript">
 	function closePopup(parentURL) {
 		var url = top.location.href; // close iframe and refresh parent frame
@@ -381,8 +382,7 @@
 <script type="text/javascript" src="${info.editTemplateURL}/js/custom/general.js?ts=${info.ts}"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.autosize-min.js"></script>
 
-<link rel="stylesheet" href="<jv:url value='/js/lib/tooltipster-master/css/tooltipster.css' />" />
-<script type="text/javascript" src="<jv:url value='/js/lib/tooltipster-master/js/jquery.tooltipster.min.js' />"></script>
+<link rel="stylesheet" href="<jv:url value='/js/lib/tooltipster-master/css/tooltipster.bundle.min.css' />" />
 
 <!-- module '${currentModule.name}' CSS -->
 <c:forEach var="css" items="${currentModule.CSS}">

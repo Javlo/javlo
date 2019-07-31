@@ -3,6 +3,35 @@ body .component-wrapper {
 	overflow: visible;
 }
 
+.tooltip_templates {
+	display: none;
+}
+
+.tooltipster-content {
+	max-width: 900px;
+}
+
+.tooltipster-content h2 {
+	margin-top: 10px;
+	margin-bottom: 15px;
+}
+
+.tooltipster-content ul, .tooltipster-content p, .tooltipster-content img, .tooltipster-content h3, .tooltipster-content h4, .tooltipster-content h5 {
+	margin-bottom: 10px;
+}
+
+.tooltipster-content ul li {
+	list-style: disc;
+}
+
+.tooltipster-content ul li li {
+	list-style: circle;
+}
+
+.tooltipster-content ul {
+	margin-left: 15px;
+}
+
 .component .header {
 	padding: 1px;	
 }

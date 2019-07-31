@@ -112,6 +112,10 @@ import org.owasp.encoder.Encode;
  * @author Patrick Vandermaesen
  */
 public abstract class AbstractVisualComponent implements IContentVisualComponent {
+	
+	private static boolean LOCAL_HELP = true;
+	
+	private static final Map<String,String> helpText = Collections.synchronizedMap(new HashMap<>());
 
 	private static final String MIRROR_WRAPPED = "mirrorWrapped";
 
@@ -303,6 +307,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected String getBaseHelpURL(ContentContext ctx) {
 		GlobalContext globalContext = ctx.getGlobalContext();
 		String helpURL = globalContext.getHelpURL();
+		if (!StringHelper.isURL(helpURL)) {
+			helpURL = URLHelper.createStaticURL(ctx, helpURL);
+		} else {
+			LOCAL_HELP = false;
+		}
 		if (helpURL.contains("${language}")) {
 			helpURL = helpURL.replace("${language}", globalContext.getEditLanguage(ctx.getRequest().getSession()));
 		} else {
@@ -313,7 +322,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public boolean isHelpURL(ContentContext ctx) {
-		return !StringHelper.isEmpty(ctx.getGlobalContext().getHelpURL()) && !StringHelper.isEmpty(getHelpURI(ctx));
+		if (LOCAL_HELP) {
+			try {
+				return getHelpText(ctx) != null;
+			} catch (IOException e) {
+				e.printStackTrace();
+				return false;
+			}
+		} else {
+			return !StringHelper.isEmpty(ctx.getGlobalContext().getHelpURL()) && !StringHelper.isEmpty(getHelpURI(ctx));
+		}
 	}
 
 	@Override
@@ -1228,6 +1246,46 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public String getHeaderContent(ContentContext ctx) {
 		return null;
 	}
+	
+	@Override
+	public String getHelpText(ContentContext ctx) throws IOException {
+		if (!LOCAL_HELP) {
+			return null;
+		}
+		String editLang = ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession());
+		final String cacheKey = getType()+"_"+editLang;
+		String txt = helpText.get(cacheKey);
+		if (txt!= null) {			
+			if (StringHelper.isEmpty(txt)) {
+				return null;
+			} else {
+				return txt;
+			}
+		} else {
+			String helpPath = "/help/"+editLang+"/components/"+getType()+".html";
+			helpPath = ctx.getRequest().getSession().getServletContext().getRealPath(helpPath);
+			File helpFile = new File(helpPath);
+			if (!helpFile.exists()) {
+				if (!editLang.equals("en")) {
+					helpPath = "/help/en/components/"+getType()+".html";
+					helpPath = ctx.getRequest().getSession().getServletContext().getRealPath(helpPath);
+					helpFile = new File(helpPath);
+				}
+			}
+			txt="";
+			if (helpFile.exists()) {
+				txt = ResourceHelper.loadStringFromFile(helpFile);
+			} else {
+				txt = "";
+			}
+			// helpText.put(cacheKey, txt); //TODO: restore cache
+			if (StringHelper.isEmpty(txt)) {
+				return null;
+			} else {
+				return txt;
+			}
+		}
+	}
 
 	@Override
 	public final String getHelpURL(ContentContext ctx) {
@@ -1247,7 +1305,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		lgCtx.setAllLanguage(lang);
 		String url = URLHelper.mergePath(baseURL, getHelpURI(ctx));
 		return url;
-
 	}
 
 	protected String getHelpType() {

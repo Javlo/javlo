@@ -570,6 +570,8 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 */
 	public String getHelpURL(ContentContext ctx);
 	
+	public String getHelpText(ContentContext ctx) throws IOException;
+	
 	public boolean isHelpURL(ContentContext ctx);
 
 	/**
