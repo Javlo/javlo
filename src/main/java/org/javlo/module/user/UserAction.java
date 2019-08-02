@@ -1088,7 +1088,7 @@ public class UserAction extends AbstractModuleAction {
 
 	public static String performLogin(ContentContext ctx, HttpServletRequest request, RequestService rs,
 			GlobalContext globalContext, I18nAccess i18nAccess) throws Exception {
-		IUserFactory fact = UserFactory.createUserFactory(request);
+	IUserFactory fact = UserFactory.createUserFactory(request);
 		User loggedUser = ctx.getCurrentUser(); // for return current user information withtout login
 		String login = request.getParameter("login");
 		if (fact.getCurrentUser(globalContext, request.getSession()) == null) {			
@@ -1115,6 +1115,8 @@ public class UserAction extends AbstractModuleAction {
 		}
 		Map<String, Object> data = new HashMap<>();
 		if (loggedUser != null) {
+			globalContext.addPrincipal(loggedUser);
+			globalContext.eventLogin(loggedUser.getLogin());
 			data.put("logged", true);
 			data.put("login", loggedUser.getUserInfo().getLogin());
 			data.put("firstname", loggedUser.getUserInfo().getFirstName());

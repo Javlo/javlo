@@ -45,11 +45,11 @@ public class AdminUserFactory extends UserFactory {
 		session.setAttribute(globalContext.getAdminUserFactoryClassName(), res); 
 		return res;
 	}
-	
-	@Override
-	protected String getSessionKey() {
-		return "adminCurrentUser";
-	}
+//	
+//	@Override
+//	protected String getSessionKey() {
+//		return "adminCurrentUser";
+//	}
 
 	/**
 	 * @deprecated use createUserFactory

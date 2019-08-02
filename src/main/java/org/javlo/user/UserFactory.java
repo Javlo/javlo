@@ -40,6 +40,8 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.io.TransactionFile;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.core.ModuleException;
+import org.javlo.module.core.ModulesContext;
 import org.javlo.user.exception.UserAllreadyExistException;
 import org.javlo.utils.CSVFactory;
 import org.javlo.utils.TimeMap;
@@ -482,6 +484,15 @@ public class UserFactory implements IUserFactory, Serializable {
 				logger.info("log user with password : " + login + " obtain general admin mode and full control role.");
 				user = createUser(login, (new HashSet(Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE }))));
 				editCtx.setEditUser(user);
+				/** reload module **/
+				try {
+					ModulesContext.getInstance(request.getSession(), globalContext).loadModule(request.getSession(), globalContext);
+				} catch (ModuleException e) {
+					e.printStackTrace();
+				}
+				if (user != null) {
+					user.setEditor(true);
+				}
 			} else {
 				logger.info("fail to log user with password : " + login + ".");
 				user = null;

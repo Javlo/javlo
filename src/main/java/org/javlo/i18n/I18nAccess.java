@@ -660,7 +660,7 @@ public class I18nAccess implements Serializable {
 			if (templateView != null) {
 				text = templateView.getProperty(key);
 			}
-			if (text == null) {
+			if (text == null && propView != null) {
 				synchronized (lock) {
 					text = propView.getString(key);
 				}
