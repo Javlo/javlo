@@ -112,7 +112,6 @@ public class OauthServlet extends HttpServlet {
 //							logger.warning("socialUser not found.");
 //						}
 					}
-					System.out.println(">>>>>>>>>>>>>>>>>>>> poppup = "+poppup);
 					if (poppup) {
 						response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
 						PrintWriter out = new PrintWriter(new OutputStreamWriter(response.getOutputStream()));

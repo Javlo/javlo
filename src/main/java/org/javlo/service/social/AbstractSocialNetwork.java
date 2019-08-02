@@ -333,7 +333,6 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 			}			
 		}
 		userFactory.autoLogin(ctx.getRequest(), socialUser.getEmail());
-
 	}
 
 	protected void fillUserInfo(UserInfo userInfo, SocialUser socialUser) {
