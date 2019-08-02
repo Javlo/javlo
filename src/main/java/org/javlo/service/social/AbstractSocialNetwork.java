@@ -308,8 +308,24 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 			/** edit user **/
 			userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
 			User user = userFactory.getUser(socialUser.getEmail());
-			if (user == null) { // admin not found
+			if (user == null) {
 				userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
+				user = userFactory.getUser(socialUser.getEmail());
+				if (user == null) {
+					UserInfo userInfo = new UserInfo();
+					userInfo.setLogin(socialUser.getEmail());
+					userInfo.setEmail(socialUser.getEmail());
+					userInfo.setFirstName(socialUser.getFirstName());
+					userInfo.setLastName(socialUser.getLastName());
+					userInfo.setAvatarURL(socialUser.getAvatarURL());
+					userInfo.setAccountType("oauth");
+					fillUserInfo(userInfo, socialUser);
+					userFactory.addUserInfo(userInfo);
+					userFactory.store();
+				}
+			}
+			if (user == null) { // view user not found
+				userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
 				user = userFactory.getUser(socialUser.getEmail());
 				if (user == null) {
 					UserInfo userInfo = new UserInfo();
