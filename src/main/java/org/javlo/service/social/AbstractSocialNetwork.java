@@ -169,7 +169,7 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 	protected void configureAuthenticationRequest(AuthenticationRequestBuilder builder, String clientId, ContentContext ctx, boolean popup) throws Exception {
 		String url = getRedirectURL();
 		if (popup && !url.endsWith(POPUP_URI_SUFFIX)) {
-			url = url +POPUP_URI_SUFFIX;
+			url = url + POPUP_URI_SUFFIX;
 			setRedirectURL(url);
 		}
 		builder.setClientId(clientId).setResponseType(OAuth.OAUTH_CODE).setState(getState(ctx)).setRedirectURI(url);
@@ -311,35 +311,26 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 			if (user == null) {
 				userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
 				user = userFactory.getUser(socialUser.getEmail());
-				if (user == null) {
-					UserInfo userInfo = new UserInfo();
-					userInfo.setLogin(socialUser.getEmail());
-					userInfo.setEmail(socialUser.getEmail());
-					userInfo.setFirstName(socialUser.getFirstName());
-					userInfo.setLastName(socialUser.getLastName());
-					userInfo.setAvatarURL(socialUser.getAvatarURL());
-					userInfo.setAccountType("oauth");
-					fillUserInfo(userInfo, socialUser);
-					userFactory.addUserInfo(userInfo);
-					userFactory.store();
+				if (user == null) { // view user not found
+					userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
+					user = userFactory.getUser(socialUser.getEmail());
+					if (user == null) {
+						user = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession()).getUser(socialUser.getEmail());
+					}
+					if (user == null) {
+						UserInfo userInfo = new UserInfo();
+						userInfo.setLogin(socialUser.getEmail());
+						userInfo.setEmail(socialUser.getEmail());
+						userInfo.setFirstName(socialUser.getFirstName());
+						userInfo.setLastName(socialUser.getLastName());
+						userInfo.setAvatarURL(socialUser.getAvatarURL());
+						userInfo.setAccountType("oauth");
+						fillUserInfo(userInfo, socialUser);
+						userFactory.addUserInfo(userInfo);
+						userFactory.store();
+					}
 				}
-			}
-			if (user == null) { // view user not found
-				userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
-				user = userFactory.getUser(socialUser.getEmail());
-				if (user == null) {
-					UserInfo userInfo = new UserInfo();
-					userInfo.setLogin(socialUser.getEmail());
-					userInfo.setEmail(socialUser.getEmail());
-					userInfo.setFirstName(socialUser.getFirstName());
-					userInfo.setLastName(socialUser.getLastName());
-					userInfo.setAvatarURL(socialUser.getAvatarURL());
-					userInfo.setAccountType("oauth");
-					fillUserInfo(userInfo, socialUser);
-					userFactory.addUserInfo(userInfo);
-					userFactory.store();
-				}
-			}
+			}			
 		}
 		userFactory.autoLogin(ctx.getRequest(), socialUser.getEmail());
 
@@ -352,7 +343,7 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 		String url = getAuthzEndpoint();
 		url = URLHelper.addParam(url, "client_id", getClientId());
 		url = URLHelper.addParam(url, "redirect_uri", getRedirectURL());
-		url = URLHelper.addParam(url, "response_type", "code");		
+		url = URLHelper.addParam(url, "response_type", "code");
 		return url;
 	}
 }
