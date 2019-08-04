@@ -781,3 +781,5 @@ Security in case of vulnerabilities.
 - image can be repeated for represent page (but linked with the page)
 - not return in preview on save in edit mode
 ## [2.1.2.4] - 31/07/2019
+### Added
+ - secure text component
