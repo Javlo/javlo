@@ -27,8 +27,8 @@
 </c:forEach>
 </select>
 <input type="submit" class="action-button add-user" value="${i18n.edit['global.ok']}" />
-<input type="submit" style="display: inline;" class="action-button needconfirm" name="add" title="${i18n.edit['user.remove-role']}" value="+" />
-<input type="submit" style="display: inline;" class="action-button needconfirm" name="remove" title="${i18n.edit['user.add-role']}" value="-" />
+<input type="submit" style="display: inline;" class="action-button needconfirm" name="add" title="${i18n.edit['user.add-role']}" value="+" />
+<input type="submit" style="display: inline;" class="action-button needconfirm" name="remove" title="${i18n.edit['user.remove-role']}" value="-" />
 </div>
 </form>
 </c:if>

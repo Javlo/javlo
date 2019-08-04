@@ -108,6 +108,7 @@ import org.javlo.utils.backup.BackupThread;
 import org.javlo.ztatic.FileCache;
 import org.xhtmlrenderer.swing.Java2DRenderer;
 import org.xhtmlrenderer.util.FSImageWriter;
+import org.apache.commons.logging.LogFactory;
 
 public class AccessServlet extends HttpServlet implements IVersion {
 
@@ -133,6 +134,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	 * create a static logger.
 	 */
 	public static Logger logger = Logger.getLogger(AccessServlet.class.getName());
+		
 
 	@Override
 	public void destroy() {
@@ -191,8 +193,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	public void init() throws ServletException {
 		super.init();
 
-		LocalLogger.init(getServletContext());
-		
+		org.apache.log4j.Logger.getLogger("org.apache.common").setLevel(org.apache.log4j.Level.INFO);
+		Logger.getLogger("org.apache.common").setLevel(Level.INFO);
 		/** reduce cahe on copy bean */
 		
 		System.out.println("");

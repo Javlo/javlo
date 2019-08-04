@@ -110,6 +110,7 @@ public class UserAction extends AbstractModuleAction {
 			userContext.setCurrentRole(null);
 		}
 
+
 		if (userContext.getCurrentRole() != null) {
 			List<IUserInfo> users = new LinkedList<IUserInfo>();
 			for (IUserInfo user : userContext.getUserFactory(ctx).getUserInfoList()) {
@@ -975,11 +976,10 @@ public class UserAction extends AbstractModuleAction {
 			return "no access";
 		}
 
-		IUserFactory userFactory = AdminUserFactory.createUserFactory(ctx.getRequest());
-		if (userContext.getCurrentRole() != null && !userFactory
-				.getAllRoles(globalContext, ctx.getRequest().getSession()).contains(userContext.getCurrentRole())) {
-			userContext.setCurrentRole(null);
-		}
+//		IUserFactory userFactory = AdminUserFactory.createUserFactory(ctx.getRequest());
+//		if (userContext.getCurrentRole() != null && !userFactory.getAllRoles(globalContext, ctx.getRequest().getSession()).contains(userContext.getCurrentRole())) {
+//			userContext.setCurrentRole(null);
+//		}
 
 		List<IUserInfo> users = null;
 		if (userContext.getCurrentRole() != null) {
