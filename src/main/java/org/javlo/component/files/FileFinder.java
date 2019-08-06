@@ -39,6 +39,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 
 	public static final String TYPE = "file-finder";
 
+	private static String SORT_WEIGHT = "sort_weight";
 	private static String SORT_NAME = "sort_name";
 	private static String SORT_TITLE = "sort_title";
 	private static String SORT_DATE = "sort_creation_date";
@@ -48,9 +49,9 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 	private static String SORT_DATE_DESC = "sort_creation_date_desc";
 	private static String SORT_MODIFDATE_DESC = "sort_date_desc";
 
-	private static String[] styleList = new String[] { SORT_NAME, SORT_TITLE, SORT_DATE, SORT_MODIFDATE, SORT_NAME_DESC, SORT_TITLE_DESC, SORT_DATE_DESC, SORT_MODIFDATE_DESC };
+	private static String[] styleList = new String[] { SORT_WEIGHT, SORT_NAME, SORT_TITLE, SORT_DATE, SORT_MODIFDATE, SORT_NAME_DESC, SORT_TITLE_DESC, SORT_DATE_DESC, SORT_MODIFDATE_DESC };
 
-	private static class FileFilter implements ITaxonomyContainer {
+	public static class FileFilter implements ITaxonomyContainer {
 		private String text = null;
 		private List<String> ext = Collections.emptyList();
 		private List<String> noext = Collections.emptyList();
@@ -69,10 +70,15 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 			}
 			return outFilter;
 		}
+		
+		public boolean isActive() {
+			return !StringHelper.isEmpty(text) || taxonomy.size()>0;
+		}
 
-		public boolean match(ContentContext ctx, StaticInfo file) throws Exception {
+		public int match(ContentContext ctx, StaticInfo file) throws Exception {
+			int matchScore = 0;
 			if (file == null || file.getFile() == null) {
-				return false;
+				return 0;
 			} else {
 				if (acceptDirectory || !file.getFile().isDirectory()) {
 					if (UserSecurity.isCurrentUserCanRead(ctx, file) && file.isShared(ctx)) {
@@ -82,13 +88,42 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 								if (noext.size() == 0 || !noext.contains(fileExt)) {
 									if (tags.size() == 0 || !Collections.disjoint(file.getTags(ctx), tags)) {
 										if (file.getFile().getCanonicalPath().startsWith(getRoot().getCanonicalPath())) {
-											boolean outTest = text == null || text.trim().length() == 0 || (file.getFile().getAbsolutePath() + ' ' + file.getTitle(ctx) + ' ' + file.getDescription(ctx)).contains(text);
-											if (outTest && taxonomy.size()>0) {
+											boolean textUndefinedOrMatch = true;
+											if (!StringHelper.isEmpty(text)) {												
+												for (String t : text.split(" ")) {
+													boolean found = false;
+													if (StringHelper.containsNoCase(file.getTitle(ctx), t)) {
+														matchScore = matchScore + 6;
+														found = true;
+													}
+													if (StringHelper.containsNoCase(file.getFile().getAbsolutePath(), t)) {
+														matchScore = matchScore + 4;
+														found = true;
+													}												
+													if (StringHelper.containsNoCase(file.getDescription(ctx), t)) {
+														matchScore = matchScore + 2;
+														found = true;
+													}
+													if (matchScore == 0) {
+														textUndefinedOrMatch = false;
+													}				
+													if (!found) {
+														matchScore = 0;
+														textUndefinedOrMatch = false;
+														break;
+													}
+												}
+											}
+											if (textUndefinedOrMatch && taxonomy.size()>0) {
 												StaticInfoBean staticInfoBean = new StaticInfoBean(ctx, file);
 												TaxonomyService taxonomyService = TaxonomyService.getInstance(ctx);
-												return taxonomyService.isMatch(staticInfoBean, this);
+												if (taxonomyService.isMatch(staticInfoBean, this)) {
+													matchScore = matchScore + 1;
+												} else {
+													matchScore = 0;
+												}
 											} else {
-												return outTest;
+												return matchScore;
 											}
 										}
 									}
@@ -96,12 +131,12 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 							}
 						} catch (IOException e) {
 							e.printStackTrace();
-							return false;
+							return 0;
 						}
 					}
 				}
 			}
-			return false;
+			return matchScore;
 		}
 
 		public File getRoot() {
@@ -156,7 +191,8 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		// Set<String> ref = new HashSet<String>();
 		for (File file : ResourceHelper.getAllFiles(filter.getRoot(), null)) {
 			StaticInfo info = StaticInfo.getInstance(ctx, file);
-			if (filter.match(ctx, info)) {
+			int matchScore = filter.match(ctx, info);
+			if (matchScore>0) {
 				StaticInfo.ReferenceBean refBean = info.getReferenceBean(ctx);				
 				FileBean fileBean = null;
 				if (refBean != null) {
@@ -174,6 +210,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 						fileBean.addTranslation(new FileBean(ctx, file, refBean.getLanguage()));
 					}
 					outFileList.add(fileBean);
+					fileBean.setWeight(matchScore);
 					if (outFileList.size()>=max) {
 						break;
 					}
@@ -195,6 +232,8 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 				Collections.sort(outFileList, new FileBean.FileBeanComparator(ctx, -1, true));
 			} else if (getStyle().contentEquals(SORT_TITLE_DESC)) {
 				Collections.sort(outFileList, new FileBean.FileBeanComparator(ctx, 3, true));
+			} else {
+				Collections.sort(outFileList, new FileBean.FileBeanComparator(ctx, 5, false));
 			}
 		}
 
@@ -217,6 +256,9 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		if (rs.getParameter("max", "").equals("100")) {
 			maxSize = 100;
+		}
+		if (rs.getParameter("max", "").equals("1000")) {
+			maxSize = 1000;
 		}
 		ctx.getRequest().setAttribute("files", getFileList(ctx, filter,  maxSize));
 	}
@@ -295,6 +337,9 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 
 	@Override
 	public String performUpload(ContentContext ctx) throws Exception {
+		if (!isUploadOnDrop()) {
+			return "no upload !";
+		}
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		Collection<FileItem> items = requestService.getAllFileItem();
 		for (FileItem item : items) {
@@ -315,7 +360,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 
 	@Override
 	public boolean isUploadOnDrop() {
-		return true;
+		return false;
 	}
 
 	@Override

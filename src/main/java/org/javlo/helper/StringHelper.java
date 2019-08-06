@@ -91,7 +91,8 @@ public class StringHelper {
 
 	public static final String NUMERIC = "0123456789";
 
-	public static final String BASIC_CHAR = ALPHABET.toLowerCase() + ALPHABET.toUpperCase() + NUMERIC + "_-+= ,.;:*|&\"'";
+	public static final String BASIC_CHAR = ALPHABET.toLowerCase() + ALPHABET.toUpperCase() + NUMERIC
+			+ "_-+= ,.;:*|&\"'";
 
 	public static final String URLOK_CHAR = ALPHABET.toLowerCase() + ALPHABET.toUpperCase() + NUMERIC;
 
@@ -103,9 +104,15 @@ public class StringHelper {
 
 	private static final char DEFAULT_ESCAPE = '\\';
 
-	public static final String[][] TXT2HTML = { { " ?", "&nbsp;?" }, { " !", "&nbsp;!" }, { "\u00c1", "&Aacute;" }, { "\u00e1", "&aacute;" }, { "\u00c0", "&Agrave;" }, { "\u00e0", "&agrave;" }, { "\u00e7", "&ccedil;" }, { "\u00c7", "&Ccedil;" }, { "\u00c9", "&Eacute;" }, { "\u00e9", "&eacute;" }, { "\u00c8", "&Egrave;" }, { "\u00e8", "&egrave;" }, { "\u00ca", "&Ecirc;" }, { "\u00ea", "&ecirc;" }, { "\u00cf", "&Iuml;" }, { "\u00ef", "&iuml;" }, { "\u00f9", "&ugrave;" }, { "\u00d9", "&Ugrave;" }, { "\u2019", "'" }, { "\u00D6", "&Ouml;" }, { "\u00F6", "&ouml;" } };
+	public static final String[][] TXT2HTML = { { " ?", "&nbsp;?" }, { " !", "&nbsp;!" }, { "\u00c1", "&Aacute;" },
+			{ "\u00e1", "&aacute;" }, { "\u00c0", "&Agrave;" }, { "\u00e0", "&agrave;" }, { "\u00e7", "&ccedil;" },
+			{ "\u00c7", "&Ccedil;" }, { "\u00c9", "&Eacute;" }, { "\u00e9", "&eacute;" }, { "\u00c8", "&Egrave;" },
+			{ "\u00e8", "&egrave;" }, { "\u00ca", "&Ecirc;" }, { "\u00ea", "&ecirc;" }, { "\u00cf", "&Iuml;" },
+			{ "\u00ef", "&iuml;" }, { "\u00f9", "&ugrave;" }, { "\u00d9", "&Ugrave;" }, { "\u2019", "'" },
+			{ "\u00D6", "&Ouml;" }, { "\u00F6", "&ouml;" } };
 
-	public static SimpleDateFormat RFC822DATEFORMAT = new SimpleDateFormat("EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z", Locale.US);
+	public static SimpleDateFormat RFC822DATEFORMAT = new SimpleDateFormat("EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z",
+			Locale.US);
 
 	private static final String EU_ACCEPTABLE_CHAR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.\u0443\u0435\u0438\u0448\u0449\u043a\u0441\u0434\u0437\u0446\u044c\u044f\u0430\u043e\u0436\u0433\u0442\u043d\u0432\u043c\u0447\u044e\u0439\u044a\u044d\u0444\u0445\u043f\u0440\u043b\u0431\u044b\u0423\u0415\u0418\u0428\u0429\u041a\u0421\u0414\u0417\u0426\u042c\u042f\u0410\u041e\u0416\u0413\u0422\u041d\u0412\u041c\u0427\u042e\u0419\u042a\u042d\u0424\u0425\u041f\u0420\u041b\u0411\u03c2\u03b5\u03c1\u03c4\u03c5\u03b8\u03b9\u03bf\u03c0\u03b1\u03c3\u03b4\u03c6\u03b3\u03b7\u03be\u03ba\u03bb\u03b6\u03c7\u03c8\u03c9\u03b2\u03bd\u03bc\u0395\u03a1\u03a4\u03a5\u0398\u0399\u039f\u03a0\u0391\u03a3\u03a6\u0393\u0397\u039e\u039a\u039b\u0396\u03a7\u03a8\u03a9\u0392\u039d\u039c";
 
@@ -117,9 +124,11 @@ public class StringHelper {
 
 	private static final String KEY_ACCEPTABLE_CHAR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-	private static final Collection<String> IMAGE_EXTENSION = Arrays.asList(new String[] { "jpg", "jpeg", "gif", "png" });
+	private static final Collection<String> IMAGE_EXTENSION = Arrays
+			.asList(new String[] { "jpg", "jpeg", "gif", "png" });
 
-	private static final Collection<String> EDITABLE_EXTENSION = Arrays.asList(new String[] { "css", "less", "scss", "txt", "html", "xhtml", "jsp", "properties", "csv", "jpg", "jpeg", "gif", "png" });
+	private static final Collection<String> EDITABLE_EXTENSION = Arrays.asList(new String[] { "css", "less", "scss",
+			"txt", "html", "xhtml", "jsp", "properties", "csv", "jpg", "jpeg", "gif", "png" });
 
 	public static final String DEFAULT_LIST_SEPARATOR = "?";
 
@@ -220,10 +229,8 @@ public class StringHelper {
 	/**
 	 * change the file extension of the path
 	 * 
-	 * @param inFileName
-	 *            a path or a url to a file.
-	 * @param newExt
-	 *            the new extension of the file.
+	 * @param inFileName a path or a url to a file.
+	 * @param newExt     the new extension of the file.
 	 * @return the same path with the new extension.
 	 */
 	public static String changeFileExtension(String inFileName, String newExt) {
@@ -243,7 +250,8 @@ public class StringHelper {
 		return collectionToString(col, DEFAULT_SEPARATOR);
 	}
 
-	public static <T extends IStringSeralizable> String collectionStringSeralizableToString(Collection<T> col, String sep) {
+	public static <T extends IStringSeralizable> String collectionStringSeralizableToString(Collection<T> col,
+			String sep) {
 		List<String> list = new LinkedList<String>();
 		for (IStringSeralizable item : col) {
 			list.add(item.storeToString());
@@ -251,7 +259,8 @@ public class StringHelper {
 		return collectionToString(list, sep);
 	}
 
-	public static <T extends IStringSeralizable> List<T> stringToStringSeralizableCollection(String data, String sep, Class c) throws InstantiationException, IllegalAccessException {
+	public static <T extends IStringSeralizable> List<T> stringToStringSeralizableCollection(String data, String sep,
+			Class c) throws InstantiationException, IllegalAccessException {
 		List<T> outList = new LinkedList<T>();
 		for (String itemData : StringHelper.stringToCollection(data, sep)) {
 			T newItem = (T) c.newInstance();
@@ -350,10 +359,8 @@ public class StringHelper {
 	 * pattern is a String with one '*' for any characters. sample : /*, /test/*,
 	 * /view/fr --> /test/view/fr
 	 * 
-	 * @param pattern1
-	 *            a pattern with one '*'
-	 * @param pattern2
-	 *            a pattern with one '*'
+	 * @param pattern1 a pattern with one '*'
+	 * @param pattern2 a pattern with one '*'
 	 * @param text
 	 * @return
 	 */
@@ -395,8 +402,7 @@ public class StringHelper {
 	/**
 	 * replace CR with <br />
 	 * 
-	 * @param text
-	 *            a simple text
+	 * @param text a simple text
 	 * @return XHTML code
 	 */
 	public static String CR2BR(String text) {
@@ -430,7 +436,8 @@ public class StringHelper {
 	private static Map<String, String> getTransliteration() {
 		if (transliteration == null) {
 			Properties prop = new Properties();
-			InputStream in = StringHelper.class.getClassLoader().getResourceAsStream("/data/transliteration.properties");
+			InputStream in = StringHelper.class.getClassLoader()
+					.getResourceAsStream("/data/transliteration.properties");
 			try {
 				prop.load(in);
 			} catch (IOException e) {
@@ -622,8 +629,7 @@ public class StringHelper {
 	 * acceptable name. sample: "l'\u00e9l\u00e9phant rose.odt" ->
 	 * "l_elephant_rose.odt"
 	 * 
-	 * @param fileName
-	 *            a bad file name
+	 * @param fileName a bad file name
 	 * @return a correct file name
 	 */
 	public static String createFileName(String fileName) {
@@ -662,7 +668,8 @@ public class StringHelper {
 	 * @return
 	 */
 	public static String trim(String text, char trimChar) {
-		if (text == null || text.length() == 0 || (text.charAt(0) != trimChar && text.charAt(text.length() - 1) != trimChar)) {
+		if (text == null || text.length() == 0
+				|| (text.charAt(0) != trimChar && text.charAt(text.length() - 1) != trimChar)) {
 			return text;
 		} else {
 			int s = 0;
@@ -696,8 +703,7 @@ public class StringHelper {
 	/**
 	 * replace CR with a space
 	 * 
-	 * @param text
-	 *            a simple text
+	 * @param text a simple text
 	 * @return one line text
 	 */
 	public static String CRtoSpace(String text) {
@@ -721,10 +727,8 @@ public class StringHelper {
 	/**
 	 * cut the end of a xhtml code. sample: "aaa&acute;coucou", 5 = "aaa&acute;c"
 	 * 
-	 * @param str
-	 *            the string
-	 * @param cut
-	 *            the end charaster must be removed.
+	 * @param str the string
+	 * @param cut the end charaster must be removed.
 	 * @return a trunced XHTML String
 	 */
 	public static String cutEndXHTML(String str, int cut) {
@@ -786,10 +790,8 @@ public class StringHelper {
 	/**
 	 * insert char from a Sting (encoded with encodeNoChar)
 	 * 
-	 * @param data
-	 *            string to be encoded
-	 * @param noChars
-	 *            list of vorbiden char
+	 * @param data    string to be encoded
+	 * @param noChars list of vorbiden char
 	 * @return
 	 */
 	public static String decodeNoChar(String data, String noChars) {
@@ -819,10 +821,8 @@ public class StringHelper {
 	/**
 	 * remove char from a Sting
 	 * 
-	 * @param data
-	 *            string to be encoded
-	 * @param noChars
-	 *            list of vorbiden char
+	 * @param data    string to be encoded
+	 * @param noChars list of vorbiden char
 	 * @return
 	 */
 	public static String encodeNoChar(String data, String noChars) {
@@ -906,10 +906,8 @@ public class StringHelper {
 	 * split a String, if there are no character between two token this method place
 	 * a empty String ( != String.split )
 	 * 
-	 * @param str
-	 *            a standard str
-	 * @param token
-	 *            a token ( not pattern !!! )
+	 * @param str   a standard str
+	 * @param token a token ( not pattern !!! )
 	 * @return a array of String without the token
 	 */
 	public static String frameTokenCaseUnsensitive(String str, String token, String prefix, String sufix) {
@@ -946,7 +944,8 @@ public class StringHelper {
 
 		do {
 			Calendar today = Calendar.getInstance();
-			int daySec = today.get(Calendar.HOUR_OF_DAY) * 24 * 60 + today.get(Calendar.MINUTE) * 60 + today.get(Calendar.SECOND);
+			int daySec = today.get(Calendar.HOUR_OF_DAY) * 24 * 60 + today.get(Calendar.MINUTE) * 60
+					+ today.get(Calendar.SECOND);
 			String currentDate = format.format(today.getTime());
 			newDateId = currentDate + '-' + formatter.format(daySec);
 
@@ -979,7 +978,8 @@ public class StringHelper {
 
 		do {
 			Calendar today = Calendar.getInstance();
-			int daySec = today.get(Calendar.HOUR_OF_DAY) * 24 * 60 + today.get(Calendar.MINUTE) * 60 + today.get(Calendar.SECOND);
+			int daySec = today.get(Calendar.HOUR_OF_DAY) * 24 * 60 + today.get(Calendar.MINUTE) * 60
+					+ today.get(Calendar.SECOND);
 			String currentDate = format.format(today.getTime());
 			String prefix = currentDate + '-' + formatter.format(daySec);
 			newDateId = prefix + '-' + getDigitMod9(prefix);
@@ -1012,8 +1012,7 @@ public class StringHelper {
 	/**
 	 * retreive the file extension.
 	 * 
-	 * @param inFileName
-	 *            a file name
+	 * @param inFileName a file name
 	 * @return a file extension without dot ( pdf, zip, ... )
 	 */
 	public static String getFileExtension(String inFileName) {
@@ -1048,8 +1047,7 @@ public class StringHelper {
 	/**
 	 * retreive the file extension.
 	 * 
-	 * @param inFileName
-	 *            a file name
+	 * @param inFileName a file name
 	 * @return a file name
 	 */
 	public static String getFileNameFromPath(String path) {
@@ -1100,8 +1098,7 @@ public class StringHelper {
 	/**
 	 * retreive the file extension.
 	 * 
-	 * @param inFileName
-	 *            a file name
+	 * @param inFileName a file name
 	 * @return a file extension without dot ( pdf, zip, ... )
 	 */
 	public static String getFileNameWithoutExtension(String inFileName) {
@@ -1116,8 +1113,7 @@ public class StringHelper {
 	/**
 	 * return a formated size in a String.
 	 * 
-	 * @param filePath
-	 *            a path to a file
+	 * @param filePath a path to a file
 	 * @return a string represent a size (sample : 45KB)
 	 */
 	public static final String getFileSize(String filePath) {
@@ -1163,8 +1159,7 @@ public class StringHelper {
 	 * transform a string of number (length 10) to a structured communication, last
 	 * number is the mod 97 of the first number
 	 * 
-	 * @param code
-	 *            a string of length 10 with only number
+	 * @param code a string of length 10 with only number
 	 * @return a string on length 12 with the the last number is the mod 97
 	 */
 	public static String encodeAsStructuredCommunicationMod97(String code) {
@@ -1275,8 +1270,7 @@ public class StringHelper {
 	/**
 	 * retreive the size of a String with html code. sample: "aaa&acute;" = 4.
 	 * 
-	 * @param str
-	 *            the string
+	 * @param str the string
 	 * @return the size of the String;
 	 */
 	public static int htmlSize(String str) {
@@ -1422,8 +1416,7 @@ public class StringHelper {
 	/**
 	 * return true if the filename in a html image).
 	 * 
-	 * @param fileName
-	 *            file name with extension
+	 * @param fileName file name with extension
 	 * @return true if file name is a image
 	 */
 	public static final boolean isHTML(String fileName) {
@@ -1453,8 +1446,7 @@ public class StringHelper {
 	 * return true if the filename in a image for wcms (sp. : tif or psd in not a
 	 * image).
 	 * 
-	 * @param fileName
-	 *            file name with extension
+	 * @param fileName file name with extension
 	 * @return true if file name is a image
 	 */
 	public static final boolean isImage(String fileName) {
@@ -1472,8 +1464,7 @@ public class StringHelper {
 	 * return true if the filename in a image for wcms (sp. : tif or psd in not a
 	 * image).
 	 * 
-	 * @param fileName
-	 *            file name with extension
+	 * @param fileName file name with extension
 	 * @return true if file name is a image
 	 */
 	public static final boolean isEditable(String fileName) {
@@ -1491,8 +1482,7 @@ public class StringHelper {
 	 * return true if the filename in a image for wcms (sp. : tif or psd in not a
 	 * image).
 	 * 
-	 * @param fileName
-	 *            file name with extension
+	 * @param fileName file name with extension
 	 * @return true if file name is a image
 	 */
 	public static final boolean isJpeg(String fileName) {
@@ -1510,8 +1500,7 @@ public class StringHelper {
 	 * return true if the filename in a image for wcms (sp. : tif or psd in not a
 	 * image).
 	 * 
-	 * @param fileName
-	 *            file name with extension
+	 * @param fileName file name with extension
 	 * @return true if file name is a image
 	 */
 	public static final boolean isExcelFile(String fileName) {
@@ -1529,8 +1518,7 @@ public class StringHelper {
 	 * return true if the file extension is an image for wcms (sp. : tif or psd is
 	 * not an image).
 	 * 
-	 * @param fileExtension
-	 *            file extension
+	 * @param fileExtension file extension
 	 * @return true if file name is a image
 	 * @see #getFileExtension(String)
 	 */
@@ -1553,8 +1541,7 @@ public class StringHelper {
 	 * return true if the file extension is an image for wcms (sp. : tif or psd is
 	 * not an image).
 	 * 
-	 * @param fileExtension
-	 *            file extension
+	 * @param fileExtension file extension
 	 * @return true if file name is a image
 	 * @see #getFileExtension(String)
 	 */
@@ -1567,8 +1554,7 @@ public class StringHelper {
 	/**
 	 * return true if the filename in a document (sp. : word, libreoffice...).
 	 * 
-	 * @param fileName
-	 *            file name with extension
+	 * @param fileName file name with extension
 	 * @return true if file name is a image
 	 */
 	public static final boolean isDoc(String fileName) {
@@ -1591,8 +1577,7 @@ public class StringHelper {
 	/**
 	 * return true if the filename in a PDF file.
 	 * 
-	 * @param fileName
-	 *            file name with extension
+	 * @param fileName file name with extension
 	 * @return true if file name is a image
 	 */
 	public static final boolean isPDF(String fileName) {
@@ -1638,8 +1623,7 @@ public class StringHelper {
 	/**
 	 * return true if the filename in a sound file image.
 	 * 
-	 * @param fileName
-	 *            file name with extension
+	 * @param fileName file name with extension
 	 * @return true if file name is a sound
 	 */
 	public static final boolean isSound(String fileName) {
@@ -1714,8 +1698,7 @@ public class StringHelper {
 	/**
 	 * return true if the filename in a url file).
 	 * 
-	 * @param fileName
-	 *            file name with extension
+	 * @param fileName file name with extension
 	 * @return true if file name is a url file
 	 */
 	public static final boolean isURLFile(String fileName) {
@@ -1727,8 +1710,7 @@ public class StringHelper {
 	/**
 	 * return true if the filename in a video file image).
 	 * 
-	 * @param fileName
-	 *            file name with extension
+	 * @param fileName file name with extension
 	 * @return true if file name is a video
 	 */
 	public static final boolean isVideo(String fileName) {
@@ -1821,10 +1803,8 @@ public class StringHelper {
 	/**
 	 * transform a string empty to a other string
 	 * 
-	 * @param inStr
-	 *            a string can be null
-	 * @param replaceWith
-	 *            replace with this if null.
+	 * @param inStr       a string can be null
+	 * @param replaceWith replace with this if null.
 	 * @return never null ( empty string if input is null)
 	 */
 	public static String neverEmpty(String inStr, String replaceWith) {
@@ -1838,8 +1818,7 @@ public class StringHelper {
 	/**
 	 * transform a string null in a empty String.
 	 * 
-	 * @param inStr
-	 *            a string can be null
+	 * @param inStr a string can be null
 	 * @return never null ( empty string if input is null)
 	 */
 	public static String neverNull(Object inStr) {
@@ -1849,10 +1828,8 @@ public class StringHelper {
 	/**
 	 * transform a string null in a empty String.
 	 * 
-	 * @param inStr
-	 *            a string can be null
-	 * @param replaceWith
-	 *            replace with this if null.
+	 * @param inStr       a string can be null
+	 * @param replaceWith replace with this if null.
 	 * @return never null ( empty string if input is null)
 	 */
 	public static String neverNull(Object inStr, String replaceWith) {
@@ -1890,10 +1867,8 @@ public class StringHelper {
 	/**
 	 * null save parse int.
 	 * 
-	 * @param value
-	 *            a string with a int inside
-	 * @param defaultValue
-	 *            the value if string value is null
+	 * @param value        a string with a int inside
+	 * @param defaultValue the value if string value is null
 	 * @return
 	 */
 	public static int parseInt(String value, int defaultValue) {
@@ -1965,7 +1940,8 @@ public class StringHelper {
 			try {
 				Date date1 = parseDate(inDate, "yyyyMMdd");
 				Date date2 = parseDate(inDate, "ddMMyyyy");
-				if (Math.abs(date1.getTime() - System.currentTimeMillis()) > (Math.abs(date2.getTime() - System.currentTimeMillis()))) {
+				if (Math.abs(date1.getTime() - System.currentTimeMillis()) > (Math
+						.abs(date2.getTime() - System.currentTimeMillis()))) {
 					outDate = date2;
 				} else {
 					outDate = date1;
@@ -1996,8 +1972,8 @@ public class StringHelper {
 						outDate = parseDate(inDate, ' ');
 					} catch (ParseException e) {
 					}
-				} 
-				if (outDate==null) {
+				}
+				if (outDate == null) {
 					try {
 						SimpleDateFormat format = new SimpleDateFormat("dd MMM yyyy", new Locale(lang));
 						outDate = format.parse(inDate);
@@ -2162,8 +2138,7 @@ public class StringHelper {
 	/**
 	 * remove CR from a String
 	 * 
-	 * @param text
-	 *            a simple String
+	 * @param text a simple String
 	 * @return a string without CR.
 	 */
 	public static String removeCR(String text) {
@@ -2238,12 +2213,9 @@ public class StringHelper {
 	 * remove sequence from a string. sample : removeSequence ("slkqfj #dlskj#
 	 * sdljf", "#", "#") -> slkqfj sdljf.
 	 * 
-	 * @param text
-	 *            a simple text
-	 * @param prefix
-	 *            the prefix for identify the sequence
-	 * @param sufix
-	 *            the sufix for identify the sequence
+	 * @param text   a simple text
+	 * @param prefix the prefix for identify the sequence
+	 * @param sufix  the sufix for identify the sequence
 	 * @return
 	 */
 	public static final String removeSequence(String text, String prefix, String sufix) {
@@ -2268,8 +2240,7 @@ public class StringHelper {
 	/**
 	 * remove tag. sample: <a href="#">link</a> -> link
 	 * 
-	 * @param text
-	 *            XHTML Code
+	 * @param text XHTML Code
 	 * @return simple text
 	 */
 	public static String removeTag(String text) {
@@ -2563,8 +2534,7 @@ public class StringHelper {
 	/**
 	 * return a formated size in a String.
 	 * 
-	 * @param filePath
-	 *            a path to a file
+	 * @param filePath a path to a file
 	 * @return a string represent a size (sample : 45KB)
 	 */
 	public static final String renderSize(long size) {
@@ -2601,7 +2571,7 @@ public class StringHelper {
 		}
 		return renderDate(date, "dd/MM/yy HH:mm");
 	}
-	
+
 	public static String renderTimeOnlyShort(Date date) {
 		if (date == null) {
 			return null;
@@ -2626,7 +2596,8 @@ public class StringHelper {
 	 * @throws IOException
 	 * @throws FileNotFoundException
 	 */
-	public static String renderUserFriendlyDate(ContentContext ctx, Date date) throws FileNotFoundException, IOException {
+	public static String renderUserFriendlyDate(ContentContext ctx, Date date)
+			throws FileNotFoundException, IOException {
 		if (date == null) {
 			return null;
 		}
@@ -2726,8 +2697,7 @@ public class StringHelper {
 	/**
 	 * extract email from a free text
 	 * 
-	 * @param text
-	 *            a free text
+	 * @param text a free text
 	 * @return a collection of email address
 	 */
 	public static Collection<InternetAddress> searchStructuredEmail(String text) {
@@ -2756,8 +2726,7 @@ public class StringHelper {
 	/**
 	 * extract email from a free text
 	 * 
-	 * @param text
-	 *            a free text
+	 * @param text a free text
 	 * @return a collection of email address
 	 */
 	public static Collection<String> searchEmail(String text) {
@@ -2786,8 +2755,7 @@ public class StringHelper {
 	/**
 	 * extract external link from a free text
 	 * 
-	 * @param text
-	 *            a free text, can be html
+	 * @param text a free text, can be html
 	 * @return a collection of URL
 	 */
 	public static List<URL> searchLinks(String text) {
@@ -2818,10 +2786,8 @@ public class StringHelper {
 	 * split a String, if there are no character between two token this method place
 	 * a empty String ( != String.split )
 	 * 
-	 * @param str
-	 *            a standard str
-	 * @param token
-	 *            a token ( not pattern !!! )
+	 * @param str   a standard str
+	 * @param token a token ( not pattern !!! )
 	 * @return a array of String without the separator
 	 */
 	public static String[] split(String str, String token) {
@@ -2843,10 +2809,8 @@ public class StringHelper {
 	 * split a String, if there are no character between two token this method place
 	 * a empty String ( != String.split )
 	 * 
-	 * @param str
-	 *            a standard str
-	 * @param token
-	 *            a token ( not pattern !!! )
+	 * @param str   a standard str
+	 * @param token a token ( not pattern !!! )
 	 * @return a array of String with the separator
 	 */
 	public static String[] splitStaySeparator(String str, char token) {
@@ -2871,10 +2835,8 @@ public class StringHelper {
 	 * split a String, if there are no character between two token this method place
 	 * a empty String ( != String.split )
 	 * 
-	 * @param str
-	 *            a standard str
-	 * @param token
-	 *            a token ( not pattern !!! )
+	 * @param str   a standard str
+	 * @param token a token ( not pattern !!! )
 	 * @return a array of String with the separator
 	 */
 	public static String[] splitStaySeparator(String str, String token) {
@@ -3028,21 +2990,21 @@ public class StringHelper {
 		return outText;
 	}
 
-	public static String textToList(GlobalContext globalContext, String text, String sep, String layout, boolean autoLink) {
+	public static String textToList(GlobalContext globalContext, String text, String sep, String layout,
+			boolean autoLink) {
 		return textToList(globalContext, text, sep, layout, autoLink, null);
 	}
 
 	/**
-	 * @param sep
-	 *            separation between title and text. sample "1.2 great section"
-	 *            sep=" " -> "1.2" is title and "great section" is text.
-	 * @param layout
-	 *            the layout of the list : ("ul-ul", "ol-ol", "ul-ol", "ol-ul") the
-	 *            first element is the first level and the next is all the next
-	 *            level.
+	 * @param sep    separation between title and text. sample "1.2 great section"
+	 *               sep=" " -> "1.2" is title and "great section" is text.
+	 * @param layout the layout of the list : ("ul-ul", "ol-ol", "ul-ol", "ol-ul")
+	 *               the first element is the first level and the next is all the
+	 *               next level.
 	 * @return a xhtml list.
 	 */
-	public static String textToList(GlobalContext globalContext, String text, String sep, String layout, boolean autoLink, String ulClass) {
+	public static String textToList(GlobalContext globalContext, String text, String sep, String layout,
+			boolean autoLink, String ulClass) {
 
 		String firstTag = "ul";
 		String secondTag = "ul";
@@ -3155,8 +3117,7 @@ public class StringHelper {
 	/**
 	 * transform a String to insert in a JavaScript.
 	 * 
-	 * @param inStr
-	 *            a Simple String
+	 * @param inStr a Simple String
 	 * @return a String with replacement for insert into a javascript.
 	 */
 	public static String toJSString(String inStr) {
@@ -3180,12 +3141,9 @@ public class StringHelper {
 	 * transform a String to a max size. sample: "Welcome in the new wave party" -->
 	 * "Welcome in the..."
 	 * 
-	 * @param str
-	 *            the string must be cut.
-	 * @param size
-	 *            the max size of the final string.
-	 * @param sufix
-	 *            the sufix of new String if cutted (sp. ... ).
+	 * @param str   the string must be cut.
+	 * @param size  the max size of the final string.
+	 * @param sufix the sufix of new String if cutted (sp. ... ).
 	 * @return
 	 */
 	public static String toMaxSize(String str, int size, String sufix) {
@@ -3255,8 +3213,7 @@ public class StringHelper {
 	 * replace CR with <br />
 	 * and replace special char to html code
 	 * 
-	 * @param text
-	 *            a simple text
+	 * @param text a simple text
 	 * @return XHTML code
 	 */
 	public static String txt2htmlCR(String text) {
@@ -3412,14 +3369,10 @@ public class StringHelper {
 	/**
 	 * replace text in larger text
 	 * 
-	 * @param text
-	 *            the original text
-	 * @param newItem
-	 *            the new text part
-	 * @param prefix
-	 *            the prefix before the replacement
-	 * @param suffix
-	 *            the suffix afther the replacement
+	 * @param text    the original text
+	 * @param newItem the new text part
+	 * @param prefix  the prefix before the replacement
+	 * @param suffix  the suffix afther the replacement
 	 * @return
 	 */
 	public static String replaceItem(String text, String newItem, String prefix, String suffix) {
@@ -3488,10 +3441,8 @@ public class StringHelper {
 	/**
 	 * create a new unic key.
 	 * 
-	 * @param length
-	 *            the length of the key.
-	 * @param keys
-	 *            set of keys allready exist
+	 * @param length the length of the key.
+	 * @param keys   set of keys allready exist
 	 * @return null if all keys are in keys set
 	 */
 	public static String createKey(int length, Set<String> keys) {
@@ -3592,6 +3543,44 @@ public class StringHelper {
 			}
 		}
 		return false;
+	}
+
+	public static boolean containsOne(String source, String... texts) {
+		if (StringHelper.isEmpty(source)) {
+			return texts.length == 0;
+		}
+		source = source.toLowerCase();
+		for (String text : texts) {
+			if (StringUtils.contains(source, text.toLowerCase())) {
+				return true;
+			}			
+		}
+		return false;
+	}
+	
+	public static boolean containsNoCase(String text, String token) {
+		if (StringHelper.isEmpty(text)) {
+			return StringHelper.isEmpty(token);
+		} else {
+			if (StringHelper.isEmpty(token)) {
+				return true;
+			} else {
+				return text.toLowerCase().contains(token.toLowerCase());
+			}
+		}
+	}
+	
+	public static boolean containsAny(String source, String... texts) {
+		if (StringHelper.isEmpty(source)) {
+			return texts.length == 0;
+		}
+		source = source.toLowerCase();
+		for (String text : texts) {
+			if (!StringUtils.contains(source, text.toLowerCase())) {
+				return false;
+			}			
+		}
+		return true;
 	}
 
 	/**
@@ -3706,7 +3695,8 @@ public class StringHelper {
 		return true;
 	}
 
-	private static final char[] hexDigit = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+	private static final char[] hexDigit = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E',
+			'F' };
 
 	public static String getNewToken() {
 		return getRandomString(32, KEY_ACCEPTABLE_CHAR) + getRandomId();
@@ -3834,8 +3824,7 @@ public class StringHelper {
 	 * @param text
 	 * @param sep
 	 * @param i
-	 * @param defaultValue
-	 *            default value if item not found
+	 * @param defaultValue default value if item not found
 	 * @return
 	 */
 	public static String getItem(String text, String sep, int i, String defaultValue) {
@@ -3854,8 +3843,7 @@ public class StringHelper {
 	/**
 	 * transform a string with size in pixel in integer.
 	 * 
-	 * @param pxSize
-	 *            a size in px (sp. '12px').
+	 * @param pxSize a size in px (sp. '12px').
 	 * @return null if bad param (sp. 12%, tralala, null) and the value in pixel if
 	 *         corrent param (12px, 0px, 23 px).
 	 */
@@ -3946,10 +3934,8 @@ public class StringHelper {
 	/**
 	 * Test if the value is included in the range.
 	 * 
-	 * @param range
-	 *            Range values are like -25,25-30,31-35,35+
-	 * @param value
-	 *            the integer to test
+	 * @param range Range values are like -25,25-30,31-35,35+
+	 * @param value the integer to test
 	 * @return <code>true</code> is the value is in the range <code>false</code>
 	 *         otherwise
 	 */
@@ -4020,7 +4006,8 @@ public class StringHelper {
 		return md5Hex(data + now);
 	}
 
-	public static boolean timedTokenValidate(String tokenData, String orignalData, int validityRangeInMinutes, long timeInMillis) {
+	public static boolean timedTokenValidate(String tokenData, String orignalData, int validityRangeInMinutes,
+			long timeInMillis) {
 		if (tokenData == null) {
 			return false;
 		}
@@ -4043,7 +4030,8 @@ public class StringHelper {
 			 * Character.isDigit(data.charAt(i))) { outCleanData.append(data.charAt(i)); }
 			 * else if (stopOnBadChar) { break; }
 			 */
-			if ((data.charAt(i) >= 'a' && data.charAt(i) <= 'z') || (data.charAt(i) >= '0' && data.charAt(i) <= '9') || (data.charAt(i) >= 'A' && data.charAt(i) <= 'Z')) {
+			if ((data.charAt(i) >= 'a' && data.charAt(i) <= 'z') || (data.charAt(i) >= '0' && data.charAt(i) <= '9')
+					|| (data.charAt(i) >= 'A' && data.charAt(i) <= 'Z')) {
 				outCleanData.append(data.charAt(i));
 			} else if (stopOnBadChar) {
 				break;
@@ -4220,21 +4208,24 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(">>>>>>>>> StringHelper.main : test replace CR = " + collectionToText(stringToCollection(replaceCR("\nJavlo\nCMS\n", "?")))); // TODO: remove debug trace
+		System.out.println(">>>>>>>>> StringHelper.main : test replace CR = "
+				+ collectionToText(stringToCollection(replaceCR("\nJavlo\nCMS\n", "?")))); // TODO: remove debug trace
 	}
-	
+
 	/**
 	 * parse txt, if is'nt integer return 0
+	 * 
 	 * @param txt
 	 * @return
 	 */
 	public static Integer parseInt(String txt) {
 		return parseInt(txt, 0);
-		
+
 	}
-	
+
 	/**
 	 * parse int, if txt is'nt integer return default value.
+	 * 
 	 * @param txt
 	 * @param defaultValue
 	 * @return

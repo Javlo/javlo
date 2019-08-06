@@ -34,7 +34,7 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 
 		private final ContentContext ctx;
 		private final int sort;
-		private int order = 1;
+		private int order = 1;				
 		
 		public FileBeanComparator(ContentContext inCtx, int inSort) {
 			this(inCtx, inSort, false);
@@ -56,10 +56,13 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 				return file1.getStaticInfo().getTitle(ctx).compareTo(file2.getStaticInfo().getTitle(ctx))*order;
 			} else if (sort == 4) {
 				return -file1.getStaticInfo().getCreationDate(ctx).compareTo(file2.getStaticInfo().getCreationDate(ctx))*order;
-			} else {
+			} else if (sort == 5) {
+				return file2.getWeight()-file1.getWeight()*order;
+			}else {
 				return -file1.getStaticInfo().getDate(ctx).compareTo(file2.getStaticInfo().getDate(ctx))*order;
 			}
 		}
+		
 	}
 
 	ContentContext ctx;
@@ -68,6 +71,7 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 	Map<String, String> readRoles;
 	private List<FileBean> translation = Collections.emptyList();
 	private String beanLanguage;
+	private int weight = 0;
 
 	public FileBean(ContentContext ctx, File file) {
 		this.ctx = ctx;
@@ -481,6 +485,14 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 	public int getLastYearVisit() throws ServiceException, IOException {
 		Tracker tracker = Tracker.getTracker(ctx.getGlobalContext(), ctx.getRequest().getSession());
 		return tracker.getLastYearPathReading(getURL());
+	}
+	
+	public int getWeight() {
+		return weight;
+	}
+
+	public void setWeight(int weight) {
+		this.weight = weight;
 	}
 	
 }
