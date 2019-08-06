@@ -175,7 +175,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 					}
 					outFileList.add(fileBean);
 					if (outFileList.size()>=max) {
-						break,
+						break;
 					}
 				}
 			}
