@@ -240,16 +240,16 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		properties.load(stringToStream(getValue()));
 	}
 	
-	@Override
-	public void setModify() {
-		super.setModify();
-		properties.clear();
-		try {
-			properties.load(stringToStream(getValue()));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+//	@Override
+//	public void setModify() {
+//		super.setModify();
+//		properties.clear();
+//		try {
+//			properties.load(stringToStream(getValue()));
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	protected String getListSeparator() {
 		return ",";
@@ -289,7 +289,7 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 			} else {
 				if (StringHelper.isTrue(properties.get(field))) {
 					setModify();
-				}
+				}				
 				properties.remove(field);
 			}
 		}

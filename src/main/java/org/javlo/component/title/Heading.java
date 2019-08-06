@@ -76,10 +76,10 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		out.println("<div class=\"form-group\">");
 		out.println("<label for=\"" + getInputName(TEXT) + "\">" + i18nAccess.getText("content.header.text", "text") + "</label>");
 		if (ctx.getGlobalContext().isMailingPlatform()) {
-			out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputName(TEXT) + "\" name=\"" + getInputName(TEXT) + "\" value=\"" + Encode.forHtmlAttribute(getFieldValue(TEXT)) + "\" >");
+			out.println("<input class=\"form-control\" type=\"text\" id=\"" + createKeyWithField(TEXT) + "\" name=\"" + createKeyWithField(TEXT) + "\" value=\"" + Encode.forHtmlAttribute(getFieldValue(TEXT)) + "\" >");
 		} else {
-			out.println("<textarea rows=\"1\" class=\"form-control\" id=\"" + getInputName(TEXT) + "\" name=\"" + getInputName(TEXT) + "\">"+Encode.forHtmlContent(getFieldValue(TEXT))+"</textarea>");
-			out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + getInputName(TEXT) + "','soft',''));</script>");
+			out.println("<textarea rows=\"1\" class=\"form-control\" id=\"" + createKeyWithField(TEXT) + "\" name=\"" + createKeyWithField(TEXT) + "\">"+Encode.forHtmlContent(getFieldValue(TEXT))+"</textarea>");
+			out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + createKeyWithField(TEXT) + "','soft',''));</script>");
 		}
 		out.println("</div>");
 
@@ -87,13 +87,13 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 			out.println("</div><div class=\"col-sm-4\"><div class=\"form-group\">");
 			out.println(depthHTML);
 			out.println("<label for=\"" + getInputName(SMALL_TEXT) + "\">" + i18nAccess.getText("content.header.smtext", "small text") + "</label>");
-			out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputName(SMALL_TEXT) + "\" name=\"" + getInputName(SMALL_TEXT) + "\" value=\"" + getFieldValue(SMALL_TEXT) + "\" >");
+			out.println("<input class=\"form-control\" type=\"text\" id=\"" + createKeyWithField(SMALL_TEXT) + "\" name=\"" + createKeyWithField(SMALL_TEXT) + "\" value=\"" + getFieldValue(SMALL_TEXT) + "\" >");
 			out.println("</div>");
 		}
 		
 		out.println("<div class=\"form-group\">");
 		out.println("<label for=\"" + getInputName(LINK) + "\">" + i18nAccess.getText("content.header.link", "link") + "</label>");
-		out.println("<input class=\"form-control\" type=\"text\" id=\"" + getInputName(LINK) + "\" name=\"" + getInputName(LINK) + "\" value=\"" + getFieldValue(LINK) + "\" >");		
+		out.println("<input class=\"form-control\" type=\"text\" id=\"" + createKeyWithField(LINK) + "\" name=\"" + createKeyWithField(LINK) + "\" value=\"" + getFieldValue(LINK) + "\" >");		
 		out.println("</div>");
 		if (!ctx.getGlobalContext().isMailingPlatform()) {
 			out.println("</div></div>");
