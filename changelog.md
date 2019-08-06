@@ -786,3 +786,5 @@ Security in case of vulnerabilities.
 ### Modified
  - security update
  - file-finder optimisation
+### fixed
+ - change heading level correction
