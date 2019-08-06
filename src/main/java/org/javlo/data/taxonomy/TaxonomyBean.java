@@ -14,7 +14,7 @@ public class TaxonomyBean {
 	private String decoration;
 	private TaxonomyBean parent;
 	private List<TaxonomyBean> children = new LinkedList<TaxonomyBean>();
-	private Map<String, String> labels = new HashMap<String, String>();	
+	private Map<String, String> labels = new HashMap<String, String>();
 	private Map<String, String> pathLabels = null;
 
 	public TaxonomyBean() {
@@ -53,10 +53,10 @@ public class TaxonomyBean {
 			return false;
 		}
 	}
-	
+
 	public Map<String, String> getPathLabels() {
 		if (pathLabels == null) {
-			pathLabels = new HashMap<String,String>();
+			pathLabels = new HashMap<String, String>();
 			for (String lg : getLabels().keySet()) {
 				String label = getLabels().get(lg);
 				TaxonomyBean parent = getParent();
@@ -66,8 +66,10 @@ public class TaxonomyBean {
 						if (l == null) {
 							l = parent.getName();
 						}
-						label = l + " > "+label;
-						parent = parent.getParent();	
+						if (!".".equals(l)) {
+							label = l + " > " + label;
+						}
+						parent = parent.getParent();
 					}
 				}
 				pathLabels.put(lg, label);
@@ -80,10 +82,10 @@ public class TaxonomyBean {
 		return labels;
 	}
 
-	public void setLabels(Map<String, String> labels) {
-		pathLabels = null;
-		this.labels = labels;
-	}
+	// public void setLabels(Map<String, String> labels) {
+	// pathLabels = null;
+	// this.labels = labels;
+	// }
 
 	public boolean updateLabel(String lang, String label) {
 		pathLabels = null;
@@ -115,20 +117,20 @@ public class TaxonomyBean {
 	public List<TaxonomyBean> getChildren() {
 		return children;
 	}
-	
-	private static final void addChildren(List<TaxonomyBean> list, TaxonomyBean bean) {		
+
+	private static final void addChildren(List<TaxonomyBean> list, TaxonomyBean bean) {
 		for (TaxonomyBean child : bean.getChildren()) {
 			list.add(child);
 			addChildren(list, child);
 		}
 	}
-	
+
 	public List<TaxonomyBean> getAllChildren() {
 		List<TaxonomyBean> allChildren = new LinkedList<TaxonomyBean>();
 		addChildren(allChildren, this);
 		return allChildren;
 	}
-	
+
 	public TaxonomyBean searchChildByName(String name) {
 		for (TaxonomyBean taxonomyBean : children) {
 			if (taxonomyBean.getName().equals(name)) {
@@ -199,12 +201,12 @@ public class TaxonomyBean {
 			}
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return getName();
 	}
-	
+
 	public String getFinalDecoration() {
 		if (StringHelper.isEmpty(decoration) && getParent() != null) {
 			return getParent().getFinalDecoration();
@@ -220,6 +222,5 @@ public class TaxonomyBean {
 	public void setDecoration(String decoration) {
 		this.decoration = decoration;
 	}
-	
-}
 
+}

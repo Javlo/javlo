@@ -150,7 +150,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		return styleList;
 	}
 
-	protected List<FileBean> getFileList(ContentContext ctx, FileFilter filter) throws Exception {
+	protected List<FileBean> getFileList(ContentContext ctx, FileFilter filter, int max) throws Exception {
 		Map<String, FileBean> fileWithRef = new HashMap<String, FileBean>();
 		List<FileBean> outFileList = new LinkedList<FileBean>();
 		// Set<String> ref = new HashSet<String>();
@@ -173,7 +173,10 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 						fileWithRef.put(refBean.getReference(), fileBean);
 						fileBean.addTranslation(new FileBean(ctx, file, refBean.getLanguage()));
 					}
-					outFileList.add(fileBean);					
+					outFileList.add(fileBean);
+					if (outFileList.size()>=max) {
+						break,
+					}
 				}
 			}
 			if (getStyle().contentEquals(SORT_NAME)) {
@@ -209,7 +212,13 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		filter.setNoext(StringHelper.stringToCollection(getFieldValue("noext"), ","));
 		filter.setRoot(new File(URLHelper.mergePath(filter.getRoot().getCanonicalPath(), getFieldValue("root"))));
 		ctx.getRequest().setAttribute("filter", filter);
-		ctx.getRequest().setAttribute("files", getFileList(ctx, filter));
+		
+		int maxSize = 10;
+		RequestService rs = RequestService.getInstance(ctx.getRequest());
+		if (rs.getParameter("max", "").equals("100")) {
+			maxSize = 100;
+		}
+		ctx.getRequest().setAttribute("files", getFileList(ctx, filter,  maxSize));
 	}
 
 	@Override
