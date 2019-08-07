@@ -1486,6 +1486,12 @@ public class URLHelper extends ElementaryURLHelper {
 
 	public static String getFileTypeURL(ContentContext ctx, File file) {
 		String fileType = StringHelper.getFileExtension(file.getName());
+		if (fileType.equalsIgnoreCase("docx")) {
+			fileType="doc";
+		}
+		if (fileType.equalsIgnoreCase("xlsx")) {
+			fileType="xls";
+		}
 		boolean folder = file.isDirectory();
 		String imageFolder = MINETYPE_FOLDER;
 		if (folder) {
