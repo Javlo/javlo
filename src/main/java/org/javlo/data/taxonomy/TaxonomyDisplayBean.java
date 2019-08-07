@@ -79,7 +79,9 @@ public class TaxonomyDisplayBean {
 	
 	public String getPathLabel() {
 		String parentLabel = "";
-		parentLabel = getParent().getLabel()+" > ";
+		if (!getParent().getLabel().equals(".")) {
+			parentLabel = getParent().getLabel()+" > ";
+		}
 		String label = bean.getLabels().get(ctx.getRequestContentLanguage());
 		if (StringHelper.isEmpty(label)) {
 			return parentLabel+getName();

@@ -21,6 +21,8 @@ import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.data.taxonomy.ITaxonomyContainer;
+import org.javlo.data.taxonomy.TaxonomyBean;
+import org.javlo.data.taxonomy.TaxonomyDisplayBean;
 import org.javlo.data.taxonomy.TaxonomyService;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.ResourceHelper;
@@ -240,7 +242,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		return outFileList;
 	}
 
-	private List<String> FIELDS = Arrays.asList(new String[] { "root", "tags", "ext", "noext" });
+	private List<String> FIELDS = Arrays.asList(new String[] { "root", "tags", "ext", "noext", "taxonomy" });
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
@@ -261,6 +263,19 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 			maxSize = 1000;
 		}
 		ctx.getRequest().setAttribute("files", getFileList(ctx, filter,  maxSize));
+		
+		List<String> taxonomyIds = StringHelper.stringToCollection(getFieldValue("taxonomy"), ",");
+		if (taxonomyIds.size()>0) {
+			List<TaxonomyDisplayBean> beans = new LinkedList<>();
+			TaxonomyService ts = TaxonomyService.getInstance(ctx);
+			for(String id : taxonomyIds) {
+				TaxonomyBean b = ts.getTaxonomyBean(id);
+				if (b!=null) {
+					beans.add(new TaxonomyDisplayBean(ctx, b));
+				}
+			}
+			ctx.getRequest().setAttribute("taxonomies", beans);
+		}
 	}
 
 	@Override
@@ -300,6 +315,13 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		String staticLinkURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		String linkToResources = "<a class=\"browse-link btn btn-default btn-xs\" href=\"" + staticLinkURL + "\">" + i18nAccess.getText("content.goto-static") + "</a>";
+		
+		if (ctx.getGlobalContext().getAllTaxonomy(ctx).isActive()) {
+			String taxoName = createKeyWithField("taxonomy");			
+			out.println("<label for=\""+getFieldValue("taxonomy")+"\">"+i18nAccess.getText("taxonomy") + "</label>");
+			out.println(ctx.getGlobalContext().getAllTaxonomy(ctx).getSelectHtml(taxoName, "form-control chosen-select", StringHelper.stringToSet(getFieldValue("taxonomy"), ","), true));
+			out.println("<hr />");
+		}
 
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getInputName("root") + "\">root</label>");
