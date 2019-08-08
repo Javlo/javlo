@@ -62,13 +62,16 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		private File root;
 		private boolean acceptDirectory = false;
 
-		public static FileFilter getInstance(ContentContext ctx) {
+		public static FileFilter getInstance(ContentContext ctx, Collection<String> rootTaxonomy) {
 			FileFilter outFilter = new FileFilter();
 			outFilter.text = ctx.getRequest().getParameter("text");	
 			outFilter.root = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getFileFolder()));
 			String[] taxonomy = ctx.getRequest().getParameterValues("taxonomy");
 			if (taxonomy != null) {
-				outFilter.taxonomy = new HashSet(Arrays.asList(taxonomy));
+				outFilter.taxonomy = new HashSet<String>(Arrays.asList(taxonomy));
+				if (outFilter.taxonomy.size() == 0) {
+					outFilter.taxonomy.addAll(rootTaxonomy);					
+				}				
 			}
 			return outFilter;
 		}
@@ -187,14 +190,16 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		return styleList;
 	}
 
-	protected List<FileBean> getFileList(ContentContext ctx, FileFilter filter, int max) throws Exception {
+	protected List<FileBean> getFileList(ContentContext ctx, FileFilter filter, int max, boolean defaultFound) throws Exception {
 		Map<String, FileBean> fileWithRef = new HashMap<String, FileBean>();
 		List<FileBean> outFileList = new LinkedList<FileBean>();
 		// Set<String> ref = new HashSet<String>();
+		boolean filterActive = filter.isActive();
 		for (File file : ResourceHelper.getAllFiles(filter.getRoot(), null)) {
 			StaticInfo info = StaticInfo.getInstance(ctx, file);
+			
 			int matchScore = filter.match(ctx, info);
-			if (matchScore>0) {
+			if (matchScore>0 || (defaultFound && !filterActive)) {
 				StaticInfo.ReferenceBean refBean = info.getReferenceBean(ctx);				
 				FileBean fileBean = null;
 				if (refBean != null) {
@@ -242,17 +247,22 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		return outFileList;
 	}
 
-	private List<String> FIELDS = Arrays.asList(new String[] { "root", "tags", "ext", "noext", "taxonomy" });
+	private List<String> FIELDS = Arrays.asList(new String[] { "root", "tags", "ext", "noext", "taxonomy", "display" });
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		FileFilter filter = FileFilter.getInstance(ctx);
+		
+		List<String> taxonomyIds = StringHelper.stringToCollection(getFieldValue("taxonomy"), ",");
+		
+		FileFilter filter = FileFilter.getInstance(ctx, taxonomyIds);
 		filter.setTags(getTags());
 		filter.setExt(StringHelper.stringToCollection(getFieldValue("ext"), ","));
 		filter.setNoext(StringHelper.stringToCollection(getFieldValue("noext"), ","));
 		filter.setRoot(new File(URLHelper.mergePath(filter.getRoot().getCanonicalPath(), getFieldValue("root"))));
 		ctx.getRequest().setAttribute("filter", filter);
+		boolean display = StringHelper.isTrue(getFieldValue("display"));
+		ctx.getRequest().setAttribute("display", display);
 		
 		int maxSize = 10;
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
@@ -262,9 +272,9 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		if (rs.getParameter("max", "").equals("1000")) {
 			maxSize = 1000;
 		}
-		ctx.getRequest().setAttribute("files", getFileList(ctx, filter,  maxSize));
+		ctx.getRequest().setAttribute("files", getFileList(ctx, filter,  maxSize, display));
 		
-		List<String> taxonomyIds = StringHelper.stringToCollection(getFieldValue("taxonomy"), ",");
+		
 		if (taxonomyIds.size()>0) {
 			List<TaxonomyDisplayBean> beans = new LinkedList<>();
 			TaxonomyService ts = TaxonomyService.getInstance(ctx);
@@ -325,7 +335,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getInputName("root") + "\">root</label>");
-		FileFilter filter = FileFilter.getInstance(ctx);
+		FileFilter filter = FileFilter.getInstance(ctx, StringHelper.stringToCollection(getFieldValue("taxonomy"), ","));
 		List<File> dirList = ResourceHelper.getAllDirList(filter.getRoot());
 		dirList.add(0, filter.getRoot());
 		out.println(XHTMLHelper.getInputOneSelect(createKeyWithField("root"), ResourceHelper.removePrefixFromPathList(dirList, filter.getRoot().getCanonicalPath()), getFieldValue("root"), true));
@@ -348,6 +358,11 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		out.println("<label for=\"" + createKeyWithField("noext") + "\">refused files</label>");
 		out.println("<input type=\"text\" name=\"" + createKeyWithField("noext") + "\" value=\"" + getFieldValue("noext") + "\" />");
 		out.println("</div>");
+		
+		out.println("<div class=\"line\">");
+		out.println("<label for=\"" + createKeyWithField("display") + "\">display results by default</label>");
+		out.println("<input type=\"checkbox\" name=\"" + createKeyWithField("display") + "\" value=\"true\" "+(StringHelper.isTrue(getFieldValue("display"))?" checked=\"checked\"":"")+"/>");
+		out.println("</div>");
 		out.close();
 		return new String(outStream.toByteArray());
 	}
@@ -366,7 +381,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		Collection<FileItem> items = requestService.getAllFileItem();
 		for (FileItem item : items) {
 			File file = new File(item.getName());
-			FileFilter filter = FileFilter.getInstance(ctx);
+			FileFilter filter = FileFilter.getInstance(ctx, StringHelper.stringToCollection(getFieldValue("taxonomy"), ","));
 			filter.setRoot(new File(URLHelper.mergePath(filter.getRoot().getCanonicalPath(), getFieldValue("root"))));
 			File targetFile = new File(URLHelper.mergePath(filter.getRoot().getAbsolutePath(), StringHelper.createFileName(file.getName())));
 			targetFile = ResourceHelper.getFreeFileName(targetFile);
