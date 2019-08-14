@@ -595,11 +595,6 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
-		<repository>
-			<id>be.noctis</id>
-			<name>noctis</name>
-			<url>http://mvn.noctis.be</url>
-		</repository>
 	</repositories>
 
 	<scm>
