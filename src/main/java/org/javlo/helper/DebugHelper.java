@@ -152,7 +152,7 @@ public class DebugHelper {
 	public static void updateLoggerLevel(ServletContext application) throws Exception {
 		StaticConfig staticConfig = StaticConfig.getInstance(application);
 		Logger.getLogger("").setLevel(staticConfig.getAllLogLevel());
-		AccessServlet.logger.setLevel(staticConfig.getAccessLogLevel());		
+		//AccessServlet.logger.setLevel(staticConfig.getAccessLogLevel());
 		ImageTransformServlet.logger.setLevel(staticConfig.getAccessLogLevel());
 		CatchAllFilter.logger.setLevel(staticConfig.getAccessLogLevel());
 		MenuElement.logger.setLevel(staticConfig.getNavigationLogLevel());

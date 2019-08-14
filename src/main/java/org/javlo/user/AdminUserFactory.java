@@ -79,6 +79,15 @@ public class AdminUserFactory extends UserFactory {
 	protected String getFileName() {
 		return URLHelper.mergePath(dataFolder, adminUserInfoFile);
 	}
+	
+	public User getCurrentUser(GlobalContext globalContext, HttpSession session) {
+		User user = (User) session.getAttribute(getSessionKey());
+		if (user != null && user.isEditor()) {
+			return user;
+		} else {
+			return null;
+		}
+	}
 
 	@Override
 	public User getUser(String login) {
@@ -237,8 +246,10 @@ public class AdminUserFactory extends UserFactory {
 
 	@Override
 	public User login(HttpServletRequest request, String token) {
-		User outUser = super.login(request, token);
-		if (outUser == null && !master) {
+		logger.info("try login with token : "+token);
+		//User outUser = super.login(request, token);
+		User outUser = null;
+		if (!master) {
 			IUserFactory masterUserFactory;
 			try {
 				masterUserFactory = AdminUserFactory.createUserFactory(GlobalContext.getMasterContext(request.getSession()), request.getSession());
@@ -247,8 +258,16 @@ public class AdminUserFactory extends UserFactory {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
+		}		
 		GlobalContext globalContext = GlobalContext.getInstance(request);
+		if (outUser == null) {			
+			List<IUserInfo> users = getUserInfoList();
+			for (IUserInfo user : users) {
+				if (user.getToken() != null && user.getToken().equals(token)) {
+					outUser = new User(user);
+				}
+			}
+		}
 		if (outUser == null) {
 			outUser = EditContext.getInstance(GlobalContext.getInstance(request), request.getSession()).hardLoginByToken(token);
 		}
@@ -270,6 +289,9 @@ public class AdminUserFactory extends UserFactory {
 		}
 		if (outUser != null) {
 			outUser.setEditor(true);
+			logger.info("user logged with token : "+outUser.getLogin());
+		} else {
+			logger.info("fail login with token.");
 		}
 		return outUser;
 	}

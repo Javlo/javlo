@@ -40,6 +40,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.javlo.bean.InstallBean;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentFactory;
@@ -96,6 +98,7 @@ import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.thread.ThreadManager;
+import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.MaxLoginService;
@@ -108,7 +111,6 @@ import org.javlo.utils.backup.BackupThread;
 import org.javlo.ztatic.FileCache;
 import org.xhtmlrenderer.swing.Java2DRenderer;
 import org.xhtmlrenderer.util.FSImageWriter;
-import org.apache.commons.logging.LogFactory;
 
 public class AccessServlet extends HttpServlet implements IVersion {
 
@@ -133,8 +135,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	/**
 	 * create a static logger.
 	 */
-	public static Logger logger = Logger.getLogger(AccessServlet.class.getName());
-		
+//	public static Logger logger = Logger.getLogger(AccessServlet.class.getName());
+	
+	public static Log logger = LogFactory.getLog(AccessServlet.class);		
 
 	@Override
 	public void destroy() {
@@ -225,7 +228,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		try {
 			DebugHelper.updateLoggerLevel(getServletContext());
 		} catch (Exception e1) {
-			logger.warning("error when update logger level : " + e1.getMessage());
+			logger.warn("error when update logger level : " + e1.getMessage());
 			e1.printStackTrace();
 		}
 
@@ -288,7 +291,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	public void process(HttpServletRequest request, HttpServletResponse response, boolean post) throws ServletException {
 		COUNT_ACCESS++;
 
-		logger.fine("uri : " + request.getRequestURI());
+		logger.debug("uri : " + request.getRequestURI());
 		
 		if (DEBUG) {
 			LocalLogger.log("AccessServlet : uri : "+request.getRequestURI());
@@ -334,13 +337,13 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							if (installBean.getConfigStatus() == InstallBean.ERROR) {
 								request.setAttribute("error", "error on install, check log and try again.");
 								install = false;
-								logger.severe("error on install.");
+								logger.fatal("error on install.");
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
 							request.setAttribute("error", e.getMessage());
 							install = false;
-							logger.severe("exception on install.");
+							logger.fatal("exception on install.");
 						}
 					}
 					if (!install) {
@@ -367,7 +370,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			if (ctx.isAsEditMode() || ctx.isAsPreviewMode()) {
 				if (staticConfig.isEditIpSecurity()) {
 					if (!NetHelper.isIPAccepted(ctx)) {
-						logger.warning("refuse access for ip : " + ctx.getRemoteIp());
+						logger.warn("refuse access for ip : " + ctx.getRemoteIp());
 						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 						return;
 					}
@@ -378,7 +381,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				SecurityHelper.checkUserAccess(ctx);
 				AdminUserSecurity userSec = AdminUserSecurity.getInstance();
 				if (ctx.getCurrentEditUser() == null || !userSec.canRole(ctx.getCurrentEditUser(), "content") && !ctx.getCurrentPage().isPublic(ctx)) {
-					logger.warning("unauthorized access : " + request.getRequestURL());
+					logger.warn("unauthorized access : " + request.getRequestURL());
 					response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 				}
 			}
@@ -409,7 +412,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			}
 
 			if (!staticConfig.isContentExtensionValid(ctx.getFormat())) {
-				logger.warning("extension not found : " + ctx.getFormat() + " url=" + request.getRequestURL());
+				logger.warn("extension not found : " + ctx.getFormat() + " url=" + request.getRequestURL());
 				ctx.setFormat(staticConfig.getDefaultContentExtension());
 				ctx.setContentFound(false);
 			}
@@ -491,9 +494,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			}
 
 			ctx.getCurrentTemplate();
-			if (logger.isLoggable(Level.FINE)) {
-				logger.fine(requestLabel + " : first ContentContext " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
-				logger.fine("device : " + ctx.getDevice());
+			if (logger.isDebugEnabled()) {
+				logger.debug(requestLabel + " : first ContentContext " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+				logger.debug("device : " + ctx.getDevice());
 			}
 
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
@@ -556,8 +559,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 			RequestHelper.traceMailingFeedBack(ctx);
 
-			if (logger.isLoggable(Level.FINE)) {
-				logger.fine(requestLabel + " : i18nAccess.requestInit(ctx) " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+			if (logger.isDebugEnabled()) {
+				logger.debug(requestLabel + " : i18nAccess.requestInit(ctx) " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 			}
 
 			/* ********************** */
@@ -567,7 +570,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			if (ctx.getRenderMode() == ContentContext.EDIT_MODE) {
 				long minSize = staticConfig.getMinFreeSpaceOnDataFolder();
 				if (new File(staticConfig.getAllDataFolder()).getFreeSpace() < minSize) {
-					logger.warning("not enough space on data disk.");
+					logger.warn("not enough space on data disk.");
 					MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 					messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage("WARNING : Space left on device becoming to low.  Please log off and contact the administrator.", GenericMessage.ERROR));
 					String msg = "no enough free space on data device : " + new File(staticConfig.getAllDataFolder()).getFreeSpace() + " bytes free.";
@@ -636,8 +639,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			if (ctx.isStopRendering()) {
 				return;
 			}
-			if (logger.isLoggable(Level.FINE)) {
-				logger.fine(requestLabel + " : action " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+			if (logger.isDebugEnabled()) {
+				logger.debug(requestLabel + " : action " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 			}
 
 			if (ctx.getCurrentPage() != null) {
@@ -680,7 +683,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							}
 						}
 						if (!content.contentExistForContext(newCtx)) {
-							logger.fine("content not found in " + ctx.getPath() + " lg:" + ctx.getRequestContentLanguage());
+							logger.debug("content not found in " + ctx.getPath() + " lg:" + ctx.getRequestContentLanguage());
 							// ctx.setSpecialContentRenderer("/jsp/view/content_not_found.jsp");
 						} else {
 							I18nAccess.getInstance(ctx.getRequest());
@@ -694,8 +697,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				}
 			}
 
-			if (logger.isLoggable(Level.FINE)) {
-				logger.fine(requestLabel + " : content integrity " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+			if (logger.isDebugEnabled()) {
+				logger.debug(requestLabel + " : content integrity " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 			}
 
 			localLogger.endCount("execute action", "execute action = " + action);
@@ -742,14 +745,14 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			// Tracker.trace(request, response);
 			localLogger.endCount("tracking", "tracking user");
 
-			if (logger.isLoggable(Level.FINE)) {
-				logger.fine(requestLabel + " : tracking " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+			if (logger.isDebugEnabled()) {
+				logger.debug(requestLabel + " : tracking " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 			}
 
 			InfoBean infoBean = InfoBean.updateInfoBean(ctx);
 
-			if (logger.isLoggable(Level.FINE)) {
-				logger.fine(requestLabel + " : InfoBean " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+			if (logger.isDebugEnabled()) {
+				logger.debug(requestLabel + " : InfoBean " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 			}
 
 			/* **** */
@@ -801,7 +804,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								ctx.setForcePathPrefix(request, savePathPrefix);
 							}
 						} else {
-							logger.severe("master context not found.");
+							logger.fatal("master context not found.");
 						}
 					}
 
@@ -848,10 +851,10 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								try {
 									ZipManagement.zipFile(outZip, file, mainFolder);
 								} catch (IOException e) {
-									logger.warning("error zip file : " + file + " (" + e.getMessage() + ')');
+									logger.warn("error zip file : " + file + " (" + e.getMessage() + ')');
 								}
 							} else {
-								logger.warning("file not found for create zip : " + file);
+								logger.warn("file not found for create zip : " + file);
 							}
 						}
 					}
@@ -864,7 +867,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 					out.write(XMLHelper.getPageXML(ctx, elem));
 				} else if (ctx.getFormat().equalsIgnoreCase("png") || ctx.getFormat().equalsIgnoreCase("jpg")) {
 					if (ctx.getGlobalContext().getStaticConfig().isConvertHTMLToImage()) {
-						logger.warning("convert image convertion : " + request.getRequestURI());
+						logger.warn("convert image convertion : " + request.getRequestURI());
 						String fileFormat = ctx.getFormat().toLowerCase();
 						response.setContentType("image/" + fileFormat + ";");
 						OutputStream out = response.getOutputStream();
@@ -891,7 +894,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						FSImageWriter imageWriter = new FSImageWriter();
 						imageWriter.write(img, out);
 					} else {
-						logger.warning("rejected content image convertion : " + request.getRequestURI());
+						logger.warn("rejected content image convertion : " + request.getRequestURI());
 						response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 						return;
 					}
@@ -936,7 +939,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								while (parent != null) {
 									parent = parent.getParent();
 								}
-								logger.warning("no acces to : " + ctx.getCurrentPage().getName() + " (public:" + ctx.getCurrentPage().isPublic(ctx) + ")");
+								logger.warn("no acces to : " + ctx.getCurrentPage().getName() + " (public:" + ctx.getCurrentPage().isPublic(ctx) + ")");
 								response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 								return;
 							}
@@ -972,8 +975,16 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						}
 
 						if (ctx.getCurrentUser() != null) {
-							String userToken = UserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getTokenCreateIfNotExist(ctx.getCurrentUser());
+							logger.debug("create user token : "+ctx.getCurrentUser().getLogin());
+							String userToken;
+							if(ctx.getCurrentUser().isEditor()) {
+								userToken = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getTokenCreateIfNotExist(ctx.getCurrentUser());
+							} else {
+								userToken = UserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getTokenCreateIfNotExist(ctx.getCurrentUser());								
+							}
+							logger.debug("userToken : "+userToken);
 							String token = globalContext.createOneTimeToken(userToken);
+							logger.debug("token : "+token);
 							params.put(IUserFactory.TOKEN_PARAM, token);
 						}
 
@@ -992,6 +1003,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						params.put("clean-html", "true");
 
 						String url = URLHelper.createURL(viewCtx, params);
+						url = url.replace("pdfwebaction", "webaction");
 
 						/*
 						 * if (staticConfig.getApplicationLogin() != null) { url =
@@ -1017,7 +1029,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 					OutputStream out = response.getOutputStream();
 					Event event = ctx.getCurrentPage().getEvent(ctx);
 					if (event == null) {
-						logger.warning("event not found on page : " + ctx.getPath() + "  context:" + ctx.getGlobalContext().getContextKey());
+						logger.warn("event not found on page : " + ctx.getPath() + "  context:" + ctx.getGlobalContext().getContextKey());
 						response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 						return;
 					} else {
@@ -1056,7 +1068,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 					response.getWriter().write(agendaXML);
 				} else {
 					if (elem == null) {
-						logger.warning("bad path : " + path);
+						logger.warn("bad path : " + path);
 					}
 					if ((template == null) || (!template.exist()) || (template.getRendererFullName(ctx) == null)) {
 						ServletHelper.includeBlocked(request, response);
@@ -1139,7 +1151,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 									return;
 								}
 							}
-							logger.warning("page not found (" + globalContext.getContextKey() + ") : " + ctx.getPath());
+							logger.warn("page not found (" + globalContext.getContextKey() + ") : " + ctx.getPath());
 							ctx.getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND, "page not found : " + ctx.getPath());
 							if (ctx.isAsViewMode()) {
 								MenuElement page404 = content.getNavigation(ctx).searchChildFromName(staticConfig.get404PageName());
@@ -1173,7 +1185,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								TimeTracker.end(globalContext.getContextKey(), "render", timeTrackerNumber);
 								VisitorContext.getInstance(request.getSession()).setPreviousPage(ctx.getCurrentPage().getPageBean(ctx));
 							} else {
-								logger.warning("page undefined (" + globalContext.getContextKey() + ") : " + ctx.getPath());
+								logger.warn("page undefined (" + globalContext.getContextKey() + ") : " + ctx.getPath());
 								response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 							}
 						}
@@ -1181,13 +1193,13 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				}
 				localLogger.endCount("content", "include content");
 
-				if (logger.isLoggable(Level.FINE)) {
-					logger.fine(requestLabel + " : render " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+				if (logger.isDebugEnabled()) {
+					logger.debug(requestLabel + " : render " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 				}
 			}
 
-			if (logger.isLoggable(Level.FINE)) {
-				logger.fine(requestLabel + " : all process method " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+			if (logger.isDebugEnabled()) {
+				logger.debug(requestLabel + " : all process method " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 			}
 
 //			if (StringHelper.isTrue(request.getSession().getAttribute(InfoBean.NEW_SESSION_PARAM))) {
@@ -1218,7 +1230,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				} catch (Throwable tmail) {
 				}
 			} else {
-				logger.warning(t.getMessage());
+				logger.warn(t.getMessage());
 			}
 		} finally {
 			PersistenceService persistenceService;

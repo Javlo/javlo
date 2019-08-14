@@ -292,7 +292,7 @@ public class UserFactory implements IUserFactory, Serializable {
 
 	@Override
 	public User login(HttpServletRequest request, String token) {
-		
+		logger.info("try login with token.");
 		if (token == null || token.trim().length() == 0) {
 			return null;
 		}
@@ -313,6 +313,11 @@ public class UserFactory implements IUserFactory, Serializable {
 		if (outUser != null) {
 			outUser.setContext(globalContext.getContextKey());
 			request.getSession().setAttribute(getSessionKey(), outUser);
+		}
+		if (outUser != null) {
+			logger.info("user logged with token : "+outUser.getLogin());
+		} else {
+			logger.info("fail login with token.");
 		}
 		return outUser;
 	}

@@ -1902,6 +1902,16 @@ public class InfoBean {
 		return days;
 	}
 	
+	public String getSearchPageUrl() throws Exception {
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		MenuElement searchPage = content.getNavigation(ctx).searchChildFromName(ctx.getGlobalContext().getStaticConfig().getSearchPageName());
+		if (searchPage != null) {
+			return URLHelper.createURL(ctx, searchPage) ;
+		} else {
+			return null;
+		}
+	}
+	
 	public static void main(String[] args) {
 		System.out.println(Calendar.SUNDAY);
 	}

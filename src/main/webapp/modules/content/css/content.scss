@@ -2,6 +2,10 @@
 	max-width: none; /* hack ie 9 */
 }
 
+.overflow-visible {
+	overflow: visible !important;
+}
+
 .component .ui-widget-content * {
     box-sizing: border-box;
 }

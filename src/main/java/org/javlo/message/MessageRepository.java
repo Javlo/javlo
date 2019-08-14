@@ -238,8 +238,8 @@ public class MessageRepository {
 		return outAllMessages().size() > 0;
 	}
 
-	public boolean haveGlobalMessage() {
-		return globalMessage != GenericMessage.EMPTY_MESSAGE;
+	public boolean haveImportantMessage() {
+		return globalMessage.getType() <= GenericMessage.ALERT;
 	}
 
 }

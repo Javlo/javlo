@@ -788,3 +788,4 @@ Security in case of vulnerabilities.
  - file-finder optimisation
 ### fixed
  - change heading level correction
+ - close popup site propoerties in preview mode if no error

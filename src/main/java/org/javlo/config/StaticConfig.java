@@ -2140,6 +2140,9 @@ public class StaticConfig extends Observable {
 		return outBean;
 	}
 	
+	public String getSearchPageName() {
+		return properties.getString("page.search", "search-result");
+	}
 	
 	public static void main(String[] args) {
 		System.out.println(">>>>>>>>> StaticConfig.main : getJavloHome = "+getJavloHome()); //TODO: remove debug trace

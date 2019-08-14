@@ -719,7 +719,7 @@ public class AdminAction extends AbstractModuleAction {
 				}
 			}
 		}
-		if (!messageRepository.haveGlobalMessage()) {
+		if (!messageRepository.haveImportantMessage()) {
 			ctx.setClosePopup(true);
 		}
 		return msg;
