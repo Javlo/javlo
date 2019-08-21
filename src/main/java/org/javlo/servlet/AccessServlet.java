@@ -405,7 +405,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							globalContext.log("url", "redirect : " + mainURL + " >> " + URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()) + " - [" + pageUrl + "]");
 						}
 						logger.info("redirect : " + mainURL + " >> " + URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()));
-						NetHelper.sendRedirectPermanently(response, URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()));
+						NetHelper.sendRedirectTemporarily(response, URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()));
 						return;
 					}
 				}
