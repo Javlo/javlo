@@ -1799,7 +1799,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 		}
 		if (getForcedRenderer(ctx) != null) {
-			System.out.println(">>>>>>>>> AbstractVisualComponent.getRenderer : getForcedRenderer(ctx) = "+getForcedRenderer(ctx)); //TODO: remove debug trace
 			renderer = getForcedRenderer(ctx);
 		}
 		try {

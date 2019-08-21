@@ -1,4 +1,4 @@
-package org.javlo.servlet.servletWrapper;
+package org.javlo.servlet.servletwrapper;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -13,8 +13,6 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.RequestHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.service.RequestService;
-import org.javlo.tracking.Track;
-import org.javlo.tracking.Tracker;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
