@@ -206,6 +206,14 @@ params:
 			</c:forEach>
 		</fieldset>
 		</c:if>
+		
+		<c:if test="${taxonomy.active && empty param.select}">
+			<div class="taxonomy">
+			<label>${i18n.edit['taxonomy']}</label>
+			${file.taxonomySelect}
+			</div>
+		</c:if>
+		
 		<c:if test="${fn:length(readRoles) > 0}">
 		<fieldset class="roles">
 		<legend>${i18n.edit["field.read-roles"]}</legend>
@@ -239,13 +247,6 @@ params:
 		</div>
 		</fieldset>
 		
-		
-		<c:if test="${taxonomy.active && empty param.select}">
-			<div class="taxonomy">			
-			<label>${i18n.edit['taxonomy']}</label>
-			${file.taxonomySelect}
-			</div>
-		</c:if>
 		</div>
 		</c:if>
 	</li>
