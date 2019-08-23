@@ -45,7 +45,6 @@ import org.javlo.user.IUserInfo;
 import org.javlo.user.TransientUserInfo;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
-import org.javlo.user.UserInfo;
 
 public class UserLogin extends AbstractPropertiesComponent implements IAction {
 
@@ -187,7 +186,7 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 			if (token == null) {
 				return "no token";
 			} else {
-				login = ctx.getGlobalContext().getEmailFromToken(token);				
+				login = ctx.getGlobalContext().getEmailFromToken(token);
 				if (login == null) {
 					return i18nAccess.getText("user.message.password-bad-token");
 				}
