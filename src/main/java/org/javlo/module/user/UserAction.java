@@ -416,7 +416,7 @@ public class UserAction extends AbstractModuleAction {
 			NetHelper.sendMail(gc, new InternetAddress(gc.getAdministratorEmail()), new InternetAddress(newUser), null,
 					null, subject, mail, null, true);
 			messageRepository.setGlobalMessageAndNotification(ctx,
-					new GenericMessage(i18nAccess.getViewText(" "), GenericMessage.INFO));
+					new GenericMessage(i18nAccess.getViewText("registration.message.mail-send"), GenericMessage.INFO));
 		}
 		return null;
 	}
