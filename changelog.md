@@ -783,6 +783,7 @@ Security in case of vulnerabilities.
 ## [2.1.2.4] - 31/07/2019
 ### Added
  - secure text component
+ - restore published version
 ### Modified
  - security update
  - file-finder optimisation

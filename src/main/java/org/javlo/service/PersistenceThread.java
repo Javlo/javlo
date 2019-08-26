@@ -164,10 +164,6 @@ public class PersistenceThread implements Runnable {
 		this.persistenceService = persistenceService;
 	}
 
-	protected File getXMLPersistenceFile(int mode, long version) {
-		return new File(persistenceService.getPersistenceFilePrefix(mode) + '_' + version + ".xml");
-	}
-
 	protected File getXMLPersistenceFile(int mode) {
 		return new File(persistenceService.getPersistenceFilePrefix(mode) + ".xml");
 	}
@@ -184,7 +180,7 @@ public class PersistenceThread implements Runnable {
 		}
 		File file;
 		if (renderMode == ContentContext.PREVIEW_MODE) {
-			file = getXMLPersistenceFile(ContentContext.PREVIEW_MODE, localVersion);
+			file = persistenceService.getXMLPersistenceFile(ContentContext.PREVIEW_MODE, localVersion);
 			// file = new File(persistenceService.getDirectory() + "/content_" +
 			// ContentContext.PREVIEW_MODE + '_' + localVersion + ".xml");
 			if (!file.exists()) {

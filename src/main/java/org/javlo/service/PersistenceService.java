@@ -89,11 +89,13 @@ public class PersistenceService {
 		private int version;
 		private String date;
 		private String type;
+		private String file;
 
-		public MetaPersistenceBean(int version, String date, String type) {
+		public MetaPersistenceBean(int version, String date, String type, String file) {
 			this.version = version;
 			this.date = date;
 			this.type = type;
+			this.file = file;
 		}
 
 		public int getVersion() {
@@ -118,6 +120,14 @@ public class PersistenceService {
 
 		public void setType(String type) {
 			this.type = type;
+		}
+
+		public String getFile() {
+			return file;
+		}
+
+		public void setFile(String file) {
+			this.file = file;
 		}
 
 	}
@@ -388,7 +398,7 @@ public class PersistenceService {
 				String timeCode = zip.getName().replaceAll(STORE_FILE_PREFIX + ContentContext.VIEW_MODE + ".", "").replaceAll(".xml", "").replaceAll(".zip", "");
 				try {
 					Date publishTime = StringHelper.parseSecondFileTime(timeCode);
-					outList.add(new MetaPersistenceBean(0, StringHelper.renderSortableTime(publishTime), "published"));
+					outList.add(new MetaPersistenceBean(0, StringHelper.renderSortableTime(publishTime), "published", zip.getName()));
 				} catch (ParseException e) {
 					logger.warning(e.getMessage());
 				}
@@ -404,7 +414,7 @@ public class PersistenceService {
 					int versionInteger = -1;
 					try {
 						versionInteger = Integer.parseInt(version);
-						outList.add(new MetaPersistenceBean(versionInteger, StringHelper.renderSortableTime(new Date(file.lastModified())), "preview"));
+						outList.add(new MetaPersistenceBean(versionInteger, StringHelper.renderSortableTime(new Date(file.lastModified())), "preview", file.getName()));
 					} catch (NumberFormatException e) {
 						logger.warning("bad file name format : " + file.getName());
 					}
@@ -452,7 +462,7 @@ public class PersistenceService {
 
 	}
 
-	private String getBackupDirectory() {
+	public String getBackupDirectory() {
 		return URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getBackupFolder());
 	}
 
@@ -1856,6 +1866,11 @@ public class PersistenceService {
 		} else {
 			NetHelper.sendMailToAdministrator(globalContext, "Javlo persistence Error on : " + globalContext.getContextKey(), content);
 		}
+	}
+	
+	
+	public File getXMLPersistenceFile(int mode, long version) {
+		return new File(getPersistenceFilePrefix(mode) + '_' + version + ".xml");
 	}
 
 	public boolean clean(ContentContext ctx) {

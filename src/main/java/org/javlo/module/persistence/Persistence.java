@@ -6,10 +6,12 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import javax.servlet.http.HttpServletRequest;
@@ -121,11 +123,11 @@ public class Persistence extends AbstractModuleAction {
 		if (ctx.getCurrentUser().getUserInfo().getToken() != null) {
 			ctx.getRequest().setAttribute("token", globalContext.getOneTimeToken(ctx.getCurrentUser().getUserInfo().getToken()));
 		}
-		
+
 		File genericFileFolder = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder(), SmartGenericForm.FOLDER));
 		if (genericFileFolder.exists() && genericFileFolder.list().length > 0) {
-			String formCSVLink = URLHelper.createResourceURL(ctx, SmartGenericForm.FOLDER+".csv");		
-			String formXLSXLink = URLHelper.createResourceURL(ctx, SmartGenericForm.FOLDER+".xlsx");
+			String formCSVLink = URLHelper.createResourceURL(ctx, SmartGenericForm.FOLDER + ".csv");
+			String formXLSXLink = URLHelper.createResourceURL(ctx, SmartGenericForm.FOLDER + ".xlsx");
 			ctx.getRequest().setAttribute("formCSVLink", formCSVLink);
 			ctx.getRequest().setAttribute("formXLSXLink", formXLSXLink);
 		}
@@ -203,7 +205,7 @@ public class Persistence extends AbstractModuleAction {
 						} catch (Exception e) {
 							e.printStackTrace();
 							logger.warning("Error on file : " + entry.getName() + " (" + e.getMessage() + ')');
-						} 
+						}
 						entry = zipIn.getNextEntry();
 					}
 					if (node != null) {
@@ -212,9 +214,8 @@ public class Persistence extends AbstractModuleAction {
 							String baseURL = resourcesNode.getAttributeValue("url");
 							if (baseURL != null) {
 								/*
-								 * files will not realy downloaded because he
-								 * already exist, this method is call for update
-								 * metadata
+								 * files will not realy downloaded because he already exist, this method is call
+								 * for update metadata
 								 */
 								ResourceHelper.downloadResource(ctx, ctx.getGlobalContext().getDataFolder(), baseURL, resourcesNode);
 							}
@@ -237,7 +238,7 @@ public class Persistence extends AbstractModuleAction {
 				in = url.openStream();
 				NodeXML node = XMLFactory.getFirstNode(in);
 				NodeXML pageNode = node.getChild("page");
-				logger.info("import #pages : "+pageNode.getAllChildren().size());
+				logger.info("import #pages : " + pageNode.getAllChildren().size());
 				GlobalContext globalContext = GlobalContext.getInstance(request);
 				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 				NavigationHelper.importPage(ctx, persistenceService, pageNode, currentPage, ctx.getLanguage(), true);
@@ -266,25 +267,59 @@ public class Persistence extends AbstractModuleAction {
 
 	public static String performRestore(RequestService rs, ContentContext ctx, ContentService content, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String newServiceStr = rs.getParameter("version", null);
-		if (newServiceStr == null) {
-			return "bad request structure : need 'version' parameter.";
-		}
-		int newVersion = Integer.parseInt(newServiceStr);
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-		persistenceService.setVersion(newVersion);
-
-		content.releasePreviewNav(ctx);
-
-		MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("persistence.message.new-version", new String[][] { { "version", "" + newVersion } }), GenericMessage.INFO), false);
-
+		if (newServiceStr == null) {
+			String fileName = rs.getParameter("file", null);
+			if (fileName == null) {
+				return "bad request structure : need 'version' or 'file' arameter.";
+			}
+			File file = new File(URLHelper.mergePath(persistenceService.getBackupDirectory(), fileName));
+			if (!file.exists()) {
+				return "file not found : "+file;
+			} else {
+				persistenceService.getDirectory();				
+				ZipFile zip = new ZipFile(file);
+				try {
+				Enumeration<? extends ZipEntry> entries = zip.entries();
+				if (entries.hasMoreElements()) {
+					ZipEntry e = entries.nextElement();
+					InputStream in = zip.getInputStream(e);
+					try {
+						String xml = ResourceHelper.writeStreamToString(in, ContentContext.CHARACTER_ENCODING);
+						File newTargetFile = persistenceService.getXMLPersistenceFile(ContentContext.PREVIEW_MODE, persistenceService.getVersion()+1);
+						ResourceHelper.writeStringToFile(newTargetFile, xml, ContentContext.CHARACTER_ENCODING);
+						persistenceService.setVersion(persistenceService.getVersion()+1);
+						content.releasePreviewNav(ctx);
+					} finally {
+						in.close();
+					}
+				}
+				} finally {
+					zip.close();
+				}
+			}
+		} else {
+			int newVersion = Integer.parseInt(newServiceStr);
+			
+			persistenceService.setVersion(newVersion);
+			content.releasePreviewNav(ctx);
+			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("persistence.message.new-version", new String[][] { { "version", "" + newVersion } }), GenericMessage.INFO), false);
+		}
 		return null;
 	}
 
 	public static void main(String[] args) throws IOException {
-		URL url = new URL("http://localhost/javlo/sexy/resource/static/images/anette dawn/05.jpg");
-		url.openConnection();
-		System.out.println("***** Persistence.main : DONE"); // TODO: remove
-																// debug trace
+		File file = new File ("C:\\Users\\user\\data\\javlo\\data-ctx\\data-javlo\\backup\\content_2.2018-04-09_19-13-04.xml.zip");
+		ZipFile zip = new ZipFile(file);
+		Enumeration<? extends ZipEntry> entries = zip.entries();
+		while (entries.hasMoreElements()) {
+			ZipEntry e = entries.nextElement();
+			InputStream in = zip.getInputStream(e);
+			String xml = ResourceHelper.writeStreamToString(in, "utf-8");
+			System.out.println(xml);
+			in.close();
+		}
+		zip.close();
 	}
 
 }
