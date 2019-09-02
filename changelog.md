@@ -784,6 +784,7 @@ Security in case of vulnerabilities.
 ### Added
  - secure text component
  - restore published version
+ - ExtendedWidget
 ### Modified
  - security update
  - file-finder optimisation
