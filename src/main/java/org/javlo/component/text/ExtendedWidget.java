@@ -3,25 +3,79 @@
  */
 package org.javlo.component.text;
 
-import org.javlo.component.core.AbstractVisualComponent;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.List;
+
+import org.javlo.component.core.ComponentBean;
+import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.css.CSSElement;
+import org.javlo.helper.CSSParser;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
-import org.javlo.helper.XHTMLHelper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import io.bit3.jsass.CompilationException;
+
 /**
  * @author pvandermaesen
  */
-public class ExtendedWidget extends AbstractVisualComponent {
+public class ExtendedWidget extends AbstractPropertiesComponent {
+	
+	private List<String> FIELDS = Arrays.asList(new String[] {"xhtml", "css", "file"});
 
 	public static final String TYPE = "extendedWidget";
 
 	public static final String XHTML_RESOURCE_FOLDER = "_xhtml_resources";
 
 	private Boolean cachable = null;
-
+	
+	@Override
+	public void init(ComponentBean bean, ContentContext ctx) throws Exception {	
+		super.init(bean, ctx);
+		File renderer = getRendererFile(ctx);
+		if (!renderer.exists()) {
+			renderer.getParentFile().mkdirs();
+		}
+	}
+	
+	public void createRenderer(ContentContext ctx) throws CompilationException, IOException {
+		File renderer = getRendererFile(ctx);
+		final String filePrefix = "<%@ taglib uri=\"http://java.sun.com/jsp/jstl/core\" prefix=\"c\"%><%@ taglib prefix=\"fn\" uri=\"http://java.sun.com/jsp/jstl/functions\"%><%@ taglib uri=\"/WEB-INF/javlo.tld\" prefix=\"jv\"%>";
+		String css = getFieldValue("css");
+		String style = "";
+		if (css != null && css.contains("{")) {
+			style = "<style>"+CSSParser.prefixAllQueries('.'+getSpecificCssClass(ctx), getFieldValue("css"))+"</style>";
+		}
+		ResourceHelper.writeStringToFile(renderer, filePrefix+style+getFieldValue("xhtml"));
+	}
+	
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
+		File file = getRendererFile(ctx);
+		if (!file.exists()) {
+			file.createNewFile();
+			createRenderer(ctx);
+		}
+	}
+	
+	@Override
+	public void delete(ContentContext ctx) {
+		super.delete(ctx);
+		getRendererFile(ctx).delete();
+	}
+	
+	private File getRendererFile(ContentContext ctx) {
+		return new File(ctx.getRequest().getSession().getServletContext().getRealPath(getRenderer(ctx)));
+	}
+	
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
@@ -31,16 +85,29 @@ public class ExtendedWidget extends AbstractVisualComponent {
 	public String getEditRenderer(ContentContext ctx) {
 		return "/jsp/edit/component/extendedWidget/edit_extendedWidget.jsp";
 	}
+	
+	@Override
+	public String getRenderer(ContentContext ctx) {		
+		return "/jsp/view/component/"+TYPE+"/view_"+getId()+".jsp";
+	}
 
 	@Override
 	public String getHexColor() {
 		return GRAPHIC_COLOR;
 	}
+	
+	@Override
+	public String getSpecificCssClass(ContentContext ctx) {
+		return "css-wrp-"+getId();
+	}
 
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
-		cachable = null;
-		return super.performEdit(ctx);
+		String msg = super.performEdit(ctx);
+		if (isModify()) {
+			createRenderer(ctx);
+		}
+		return msg;
 	}
 
 	/*
@@ -69,16 +136,16 @@ public class ExtendedWidget extends AbstractVisualComponent {
 	}
 
 
-	@Override
-	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		String xhtml = getValue();
-		if (xhtml.toLowerCase().contains("<body")) {
-			Document doc = Jsoup.parse(xhtml);
-			Elements body = doc.select("body");
-			xhtml = body.html();
-		}
-		return XHTMLHelper.replaceLinks(ctx, XHTMLHelper.replaceJSTLData(ctx, xhtml));
-	}
+//	@Override
+//	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+//		String xhtml = getValue();
+//		if (xhtml.toLowerCase().contains("<body")) {
+//			Document doc = Jsoup.parse(xhtml);
+//			Elements body = doc.select("body");
+//			xhtml = body.html();
+//		}
+//		return XHTMLHelper.replaceLinks(ctx, XHTMLHelper.replaceJSTLData(ctx, xhtml));
+//	}
 
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
@@ -111,5 +178,11 @@ public class ExtendedWidget extends AbstractVisualComponent {
 	protected boolean getColumnableDefaultValue() {
 		return true;
 	}
+
+	@Override
+	public List<String> getFields(ContentContext ctx) throws Exception {
+		return FIELDS;
+	}
+	
 	
 }

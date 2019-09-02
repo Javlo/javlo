@@ -8,19 +8,19 @@
 	<div class="col-md-6">
 		<fieldset>
 			<legend>XHMTL</legend>
-			<textarea class="form-control" name="hxtml-${compid}" rows="14"></textarea>
+			<textarea class="form-control" name="xhtml-${compid}" rows="14">${field.xhtml}</textarea>
 		</fieldset>
 	</div>
 	<div class="col-md-6">
 		<fieldset>
-			<legend>CSS</legend>
-			<textarea class="form-control" name="css-${compid}" rows="14"></textarea>
+			<legend>SCSS</legend>
+			<textarea class="form-control" name="css-${compid}" rows="14">${field.css}</textarea>
 		</fieldset>
 	</div>
 	
 	</div>
 	
-	<fieldset>
-		<legend>Resources</legend>
-		<input type="file" name="file-${compid}" /> <button type="button">add</button>			
-	</fieldset>
+<!-- 	<fieldset> -->
+<!-- 		<legend>Resources</legend> -->
+<%-- 		<input type="file" name="file-${compid}" /> <button type="button">add</button>			 --%>
+<!-- 	</fieldset> -->

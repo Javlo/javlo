@@ -16,6 +16,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import io.bit3.jsass.CompilationException;
+import io.bit3.jsass.Compiler;
+import io.bit3.jsass.Options;
+import io.bit3.jsass.Output;
+
 public class CSSParser {
 
 	/**
@@ -195,7 +200,13 @@ public class CSSParser {
 				if (removeCSS) {
 					remp.addReplacement(tag.getOpenStart(), tag.getCloseEnd() + 1, "");
 				}
-				String inside = html.substring(tag.getOpenEnd() + 1, tag.getCloseStart() - 1);
+				String inside = html;
+				try {
+					inside = html.substring(tag.getOpenEnd() + 1, tag.getCloseStart() - 1);
+				} catch (Throwable t) {
+					t.printStackTrace();
+					logger.severe("error parsing on tag : "+tag+" [tag.getOpenEnd()="+tag.getOpenEnd()+",tag.getCloseStart():"+tag.getCloseStart()+"]");
+				}
 				css.append(inside);
 			}
 		}
@@ -310,6 +321,16 @@ public class CSSParser {
 		if (!newProp.endsWith(";"))
 			newProp += ";";
 		return newProp + oldProp;
+	}
+	
+	public static final String prefixAllQueries(String prefix, String css) throws CompilationException {
+		Compiler compiler = new Compiler();
+		Output output = compiler.compileString(prefix+" { "+css+"}", new Options());
+		return output.getCss();
+	}
+	
+	public static void main(String[] args) throws CompilationException {
+		System.out.println(prefixAllQueries(".cp-wrp", "h2 { color: red; } p { size: 1.2em}"));
 	}
 
 }

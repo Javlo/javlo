@@ -195,6 +195,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	@Override
 	public void init() throws ServletException {
 		super.init();
+		
+		System.out.println(">>>>>>>>> AccessServlet.init : log : "+logger.getClass().getCanonicalName()); //TODO: remove debug trace
 
 		org.apache.log4j.Logger.getLogger("org.apache.common").setLevel(org.apache.log4j.Level.INFO);
 		Logger.getLogger("org.apache.common").setLevel(Level.INFO);
@@ -291,7 +293,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	public void process(HttpServletRequest request, HttpServletResponse response, boolean post) throws ServletException {
 		COUNT_ACCESS++;
 
-		logger.debug("uri : " + request.getRequestURI());
+		//logger.debug("uri : " + request.getRequestURI());
 		
 		if (DEBUG) {
 			LocalLogger.log("AccessServlet : uri : "+request.getRequestURI());
@@ -495,8 +497,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 			ctx.getCurrentTemplate();
 			if (logger.isDebugEnabled()) {
-				logger.debug(requestLabel + " : first ContentContext " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
-				logger.debug("device : " + ctx.getDevice());
+				//logger.debug(requestLabel + " : first ContentContext " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+				//logger.debug("device : " + ctx.getDevice());
 			}
 
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
@@ -560,7 +562,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			RequestHelper.traceMailingFeedBack(ctx);
 
 			if (logger.isDebugEnabled()) {
-				logger.debug(requestLabel + " : i18nAccess.requestInit(ctx) " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+				//logger.debug(requestLabel + " : i18nAccess.requestInit(ctx) " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 			}
 
 			/* ********************** */
@@ -640,7 +642,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				return;
 			}
 			if (logger.isDebugEnabled()) {
-				logger.debug(requestLabel + " : action " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+				//logger.debug(requestLabel + " : action " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 			}
 
 			if (ctx.getCurrentPage() != null) {
@@ -683,7 +685,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							}
 						}
 						if (!content.contentExistForContext(newCtx)) {
-							logger.debug("content not found in " + ctx.getPath() + " lg:" + ctx.getRequestContentLanguage());
+							//logger.debug("content not found in " + ctx.getPath() + " lg:" + ctx.getRequestContentLanguage());
 							// ctx.setSpecialContentRenderer("/jsp/view/content_not_found.jsp");
 						} else {
 							I18nAccess.getInstance(ctx.getRequest());
@@ -698,7 +700,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			}
 
 			if (logger.isDebugEnabled()) {
-				logger.debug(requestLabel + " : content integrity " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+				//logger.debug(requestLabel + " : content integrity " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 			}
 
 			localLogger.endCount("execute action", "execute action = " + action);
@@ -746,13 +748,13 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			localLogger.endCount("tracking", "tracking user");
 
 			if (logger.isDebugEnabled()) {
-				logger.debug(requestLabel + " : tracking " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+				//logger.debug(requestLabel + " : tracking " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 			}
 
 			InfoBean infoBean = InfoBean.updateInfoBean(ctx);
 
 			if (logger.isDebugEnabled()) {
-				logger.debug(requestLabel + " : InfoBean " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+				//logger.debug(requestLabel + " : InfoBean " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 			}
 
 			/* **** */
@@ -975,16 +977,16 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						}
 
 						if (ctx.getCurrentUser() != null) {
-							logger.debug("create user token : "+ctx.getCurrentUser().getLogin());
+							//logger.debug("create user token : "+ctx.getCurrentUser().getLogin());
 							String userToken;
 							if(ctx.getCurrentUser().isEditor()) {
 								userToken = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getTokenCreateIfNotExist(ctx.getCurrentUser());
 							} else {
-								userToken = UserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getTokenCreateIfNotExist(ctx.getCurrentUser());								
+								userToken = UserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getTokenCreateIfNotExist(ctx.getCurrentUser());
 							}
-							logger.debug("userToken : "+userToken);
+							//logger.debug("userToken : "+userToken);
 							String token = globalContext.createOneTimeToken(userToken);
-							logger.debug("token : "+token);
+							//logger.debug("token : "+token);
 							params.put(IUserFactory.TOKEN_PARAM, token);
 						}
 
@@ -1194,12 +1196,12 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				localLogger.endCount("content", "include content");
 
 				if (logger.isDebugEnabled()) {
-					logger.debug(requestLabel + " : render " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+					//logger.debug(requestLabel + " : render " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 				}
 			}
 
 			if (logger.isDebugEnabled()) {
-				logger.debug(requestLabel + " : all process method " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
+				//logger.debug(requestLabel + " : all process method " + df.format((double) (System.currentTimeMillis() - startTime) / (double) 1000) + " sec.");
 			}
 
 //			if (StringHelper.isTrue(request.getSession().getAttribute(InfoBean.NEW_SESSION_PARAM))) {
@@ -1303,6 +1305,10 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** IMAGE AUTO FOCUS  :  " + staticConfig.isAutoFocus());
 		out.println("**** MAIL THREAD       :  " + staticConfig.isMailingThread());
 		out.println("**** MAIL HOST         :  " + staticConfig.getSMTPHost() + ':' + staticConfig.getSMTPPort() + " - [connection valid:" + smtpConnect + ']');
+		out.println("**** APACHE COM. LOG   :  " + LogFactory.getFactory().getClass().getCanonicalName());
+		out.println("**** LOG4J CONFIG LOG  :  " + System.getProperty("log4j.configurationFile"));
+		
+		
 		out.println("**** ALL LOG LVL       :  " + staticConfig.getAllLogLevel());
 		out.println("**** ACCESS LOG LVL    :  " + staticConfig.getAccessLogLevel());
 		out.println("**** NAV LOG LVL       :  " + staticConfig.getNavigationLogLevel());

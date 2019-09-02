@@ -2071,6 +2071,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (!StringHelper.isEmpty(getManualCssClass())) {
 			style = style + ' ' + getManualCssClass() + ' ';
 		}
+		if (!StringHelper.isEmpty(getSpecificCssClass(ctx))) {
+			style = style + ' ' + getSpecificCssClass(ctx) + ' ';
+		}
 		if (isColored()) {
 			style = style + " colored";
 		}
@@ -2079,6 +2082,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			style = style + ' ' + currentRenderer;
 		}
 		return style.trim();
+	}
+	
+	public String getSpecificCssClass(ContentContext ctx) {
+		return null;
 	}
 
 	public boolean isColored() {
