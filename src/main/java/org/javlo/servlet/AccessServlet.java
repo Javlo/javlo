@@ -28,8 +28,6 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipOutputStream;
 
 import javax.mail.Session;
@@ -40,8 +38,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.javlo.bean.InstallBean;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentFactory;
@@ -109,6 +105,8 @@ import org.javlo.utils.DoubleOutputStream;
 import org.javlo.utils.TimeTracker;
 import org.javlo.utils.backup.BackupThread;
 import org.javlo.ztatic.FileCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.swing.Java2DRenderer;
 import org.xhtmlrenderer.util.FSImageWriter;
 
@@ -137,7 +135,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	 */
 //	public static Logger logger = Logger.getLogger(AccessServlet.class.getName());
 	
-	public static Log logger = LogFactory.getLog(AccessServlet.class);		
+	public static Logger logger = LoggerFactory.getLogger(AccessServlet.class);		
 
 	@Override
 	public void destroy() {
@@ -195,11 +193,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	@Override
 	public void init() throws ServletException {
 		super.init();
-		
-		System.out.println(">>>>>>>>> AccessServlet.init : log : "+logger.getClass().getCanonicalName()); //TODO: remove debug trace
 
-		org.apache.log4j.Logger.getLogger("org.apache.common").setLevel(org.apache.log4j.Level.INFO);
-		Logger.getLogger("org.apache.common").setLevel(Level.INFO);
 		/** reduce cahe on copy bean */
 		
 		System.out.println("");
@@ -339,13 +333,13 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							if (installBean.getConfigStatus() == InstallBean.ERROR) {
 								request.setAttribute("error", "error on install, check log and try again.");
 								install = false;
-								logger.fatal("error on install.");
+								logger.error("error on install.");
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
 							request.setAttribute("error", e.getMessage());
 							install = false;
-							logger.fatal("exception on install.");
+							logger.error("exception on install.");
 						}
 					}
 					if (!install) {
@@ -806,7 +800,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								ctx.setForcePathPrefix(request, savePathPrefix);
 							}
 						} else {
-							logger.fatal("master context not found.");
+							logger.error("master context not found.");
 						}
 					}
 
@@ -957,7 +951,15 @@ public class AccessServlet extends HttpServlet implements IVersion {
 					}
 					FileCache fileCache = FileCache.getInstance(getServletContext());
 					File pdfFileCache = fileCache.getPDFPage(ctx, ctx.getCurrentPage(), lowDef);
-					if (staticConfig.isPDFCache() && pdfFileCache.exists() && pdfFileCache.length() > 0) {
+					
+					boolean isParam;
+					if (lowDef) {
+						isParam = request.getParameterMap().size()>2; // skip _checkcontext 
+					} else {
+						isParam = request.getParameterMap().size()>1; // skip _checkcontext
+					}
+					
+					if (!isParam && staticConfig.isPDFCache() && pdfFileCache.exists() && pdfFileCache.length() > 0) {
 						synchronized (FileCache.PDF_LOCK) {
 							logger.info("pdf file found in cache : " + pdfFileCache);
 							if (pdfFileCache.exists()) {
@@ -1305,8 +1307,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** IMAGE AUTO FOCUS  :  " + staticConfig.isAutoFocus());
 		out.println("**** MAIL THREAD       :  " + staticConfig.isMailingThread());
 		out.println("**** MAIL HOST         :  " + staticConfig.getSMTPHost() + ':' + staticConfig.getSMTPPort() + " - [connection valid:" + smtpConnect + ']');
-		out.println("**** APACHE COM. LOG   :  " + LogFactory.getFactory().getClass().getCanonicalName());
-		out.println("**** LOG4J CONFIG LOG  :  " + System.getProperty("log4j.configurationFile"));
+		out.println("**** SLF4J COM. LOG    :  " + LoggerFactory.getILoggerFactory().getClass().getCanonicalName());
 		
 		
 		out.println("**** ALL LOG LVL       :  " + staticConfig.getAllLogLevel());

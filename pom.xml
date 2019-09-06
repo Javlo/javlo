@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
@@ -9,7 +10,7 @@
 	<name>Javlo 2</name>
 	<url>http://www.javlo.org/</url>
 	<inceptionYear>2012</inceptionYear>
-	
+
 	<description>
 		Javlo is a easy to use and deploy website content management system. Javlo helps content managers worldwide to create and maintain beautiful websites fast and efficiently.
 		The browser based user interface features configurable editors for structured content with well defined fields.
@@ -55,8 +56,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	
-	
+
+
 
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/com.github.jai-imageio/jai-imageio-core -->
@@ -270,9 +271,9 @@
 
 		<!-- https://mvnrepository.com/artifact/org.xhtmlrenderer/flying-saucer-pdf-itext5 -->
 		<dependency>
-    		<groupId>org.xhtmlrenderer</groupId>
-    		<artifactId>flying-saucer-pdf-itext5</artifactId>
-    		<version>9.1.18</version>
+			<groupId>org.xhtmlrenderer</groupId>
+			<artifactId>flying-saucer-pdf-itext5</artifactId>
+			<version>9.1.18</version>
 		</dependency>
 
 
@@ -567,6 +568,14 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-dbcp2</artifactId>
 			<version>2.5.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.2.3</version>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>

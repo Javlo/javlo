@@ -2001,6 +2001,14 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		templates.addAll(StringHelper.stringToCollection(templatesRaw));
 		return templates;
 	}
+	
+	/**
+	 * time attribute, it's key,value stay in the map a specific time (default 5 mintues)
+	 * @return unmodifiable map
+	 */
+	public Map<Object, Object> getTimeAttributes() {
+		return Collections.unmodifiableMap(timeAttributes);
+	}
 
 	public Object getTimeAttribute(String key) {
 		return timeAttributes.get(key);

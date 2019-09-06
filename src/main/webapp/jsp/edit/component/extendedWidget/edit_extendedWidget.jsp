@@ -8,13 +8,13 @@
 	<div class="col-md-6">
 		<fieldset>
 			<legend>XHMTL</legend>
-			<textarea class="form-control" name="xhtml-${compid}" rows="14">${field.xhtml}</textarea>
+			<textarea class="form-control text-editor" data-mode="text/html" data-ext="html"  name="xhtml-${compid}" rows="14">${fn:escapeXml(field.xhtml)}</textarea>
 		</fieldset>
 	</div>
 	<div class="col-md-6">
 		<fieldset>
 			<legend>SCSS</legend>
-			<textarea class="form-control" name="css-${compid}" rows="14">${field.css}</textarea>
+			<textarea class="form-control text-editor" data-mode="text/x-scss" data-ext="css"  name="css-${compid}" rows="14">${field.css}</textarea>
 		</fieldset>
 	</div>
 	

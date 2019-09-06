@@ -3,17 +3,14 @@
  */
 package org.javlo.component.text;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
 
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
-import org.javlo.css.CSSElement;
 import org.javlo.helper.CSSParser;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -42,6 +39,7 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 		File renderer = getRendererFile(ctx);
 		if (!renderer.exists()) {
 			renderer.getParentFile().mkdirs();
+			createRenderer(ctx);
 		}
 	}
 	
@@ -53,7 +51,11 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 		if (css != null && css.contains("{")) {
 			style = "<style>"+CSSParser.prefixAllQueries('.'+getSpecificCssClass(ctx), getFieldValue("css"))+"</style>";
 		}
-		ResourceHelper.writeStringToFile(renderer, filePrefix+style+getFieldValue("xhtml"));
+		String xhtml = getFieldValue("xhtml");
+		String errorMsg = "<strong>Error : NO SCRIPLET</strong>";
+		xhtml = xhtml.replace("<%", errorMsg);
+		xhtml = xhtml.replace(errorMsg + '@', "<%@");
+		ResourceHelper.writeStringToFile(renderer, filePrefix+style+xhtml);
 	}
 	
 	@Override
@@ -87,7 +89,7 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 	}
 	
 	@Override
-	public String getRenderer(ContentContext ctx) {		
+	public String getRenderer(ContentContext ctx) {
 		return "/jsp/view/component/"+TYPE+"/view_"+getId()+".jsp";
 	}
 
@@ -107,6 +109,7 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 		if (isModify()) {
 			createRenderer(ctx);
 		}
+		cachable=null;
 		return msg;
 	}
 
@@ -149,14 +152,10 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
-		if (!isRepeat()) {
-			return true;
-		} else {
-			if (cachable == null) {
-				cachable = !getValue().contains("${");				
-			}
-			return cachable;
+		if (cachable == null) {
+			cachable = !getValue().contains("${");				
 		}
+		return cachable;
 	}
 	
 	@Override

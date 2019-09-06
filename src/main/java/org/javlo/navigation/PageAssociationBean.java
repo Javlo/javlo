@@ -1,5 +1,6 @@
 package org.javlo.navigation;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,10 +33,14 @@ public class PageAssociationBean {
 	
 	public List<PageBean> getArticles() throws Exception {
 		if (articles == null) {
-			articles = new LinkedList<PageBean>();
 			MenuElement articlesPage = getArticlesRootInternal();
-			for (MenuElement child : articlesPage.getChildMenuElements()) {
-				articles.add(child.getPageBean(ctx));
+			if (articlesPage == null) {
+				articles = Collections.EMPTY_LIST;
+			} else {
+				articles = new LinkedList<PageBean>();
+				for (MenuElement child : articlesPage.getChildMenuElements()) {
+					articles.add(child.getPageBean(ctx));
+				}
 			}
 		}
 		return articles;
@@ -70,7 +75,12 @@ public class PageAssociationBean {
 	}
 
 	public PageBean getArticleRoot() throws Exception {
-		return getArticlesRootInternal().getPageBean(ctx);
+		MenuElement root = getArticlesRootInternal();
+		if (root != null) {
+			return root.getPageBean(ctx);
+		} else {
+			return null;
+		}
 	}
 	
 	public String getTitle() {

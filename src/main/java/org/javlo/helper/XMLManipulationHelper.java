@@ -540,7 +540,7 @@ public class XMLManipulationHelper {
 					String renderBodyAsDiv = tags[i].renderOpen();
 
 					String openBodyCode = "<c:if test=\"${not contentContext.pageAssociation}\">" + renderBodyAsBody + "</c:if><c:if test=\"${contentContext.pageAssociation}\">" + renderBodyAsDiv + "</c:if>";
-					if (htmlFile.getName().contains("pdf")) {
+					if (htmlFile.getName().contains("pdf")  || isMail) {
 						fontIncluding="";
 					}
 					

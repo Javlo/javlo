@@ -785,9 +785,11 @@ Security in case of vulnerabilities.
  - secure text component
  - restore published version
  - ExtendedWidget
+ - introduction SLF4J
 ### Modified
  - security update
  - file-finder optimisation
+ - jsmirror in content module
 ### fixed
  - change heading level correction
  - close popup site propoerties in preview mode if no error

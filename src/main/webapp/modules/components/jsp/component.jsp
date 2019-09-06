@@ -29,10 +29,10 @@
 		</ul>
 	</div>
 	<c:if test="${xhtmlExist}"><div id="htmltab" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
-		<textarea name="html" class="text-editor" rows="10" cols="10" data-mode="text/html">${fn:escapeXml(xhtml)}</textarea>
+		<textarea name="html" class="text-editor" rows="10" cols="10" data-ext="html"  data-mode="text/html">${fn:escapeXml(xhtml)}</textarea>
 	</div></c:if>
 	<c:if test="${cssExist}"><div id="csstab" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
-		<textarea class="form-control text-editor" data-mode="text/x-scss" name="css">${fn:escapeXml(css)}</textarea>		
+		<textarea class="form-control text-editor" data-ext="css" data-mode="text/x-scss" name="css">${fn:escapeXml(css)}</textarea>		
 	</div></c:if>
 	<c:if test="${propertiesExist}"><div id="propertiestab" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
 		<textarea class="form-control text-editor" data-mode="text/properties" name="properties">${properties}</textarea>		
