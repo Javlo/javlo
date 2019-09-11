@@ -1,0 +1,22 @@
+/* CONSTRUCTOR */
+
+
+
+/* ----- Wrapper ----- */
+.wrapper {}
+.wrapper > .container {
+	position:relative;
+	width:1200px;
+	margin:0 auto;
+	padding:0;
+}
+
+
+.col-left {
+	display:block;
+	float:left;
+}
+.col-right {
+	display:block;
+	float:right;
+}

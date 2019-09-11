@@ -176,7 +176,7 @@ public class DashboardAction extends AbstractModuleAction {
 			ctx.getRequest().setAttribute("page", "main");
 			ctx.getRequest().setAttribute("memory", new MemoryBean());
 		} else {
-			if (!report && !pagelist && !dashboardContext.getCurrentModule().getRenderer().contains("use.jsp")) {
+			if (!report && !pagelist && !(dashboardContext.getCurrentModule().getRenderer() != null && dashboardContext.getCurrentModule().getRenderer().contains("use.jsp"))) {
 				ctx.getRequest().setAttribute("page", "tracker");
 			} else if (!pagelist) {
 				ctx.getRequest().setAttribute("page", "report");

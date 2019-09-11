@@ -6,6 +6,7 @@ import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.MacroHelper;
+import org.javlo.helper.NavigationHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -19,46 +20,21 @@ public class DuplicatePage extends AbstractMacro {
 	public String getName() {
 		return "duplicate-page";
 	}
-
-	@Override
-	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
-		MenuElement currentPage = ctx.getCurrentPage();
-		if (currentPage.getParent() == null) {
-			return "you can't duplicate the root page.";
-		}
-		if (ctx.getCurrentPage().getChildMenuElements().size() > 0) {
-			if (ctx.getCurrentPage().isChildrenOfAssociation()) {
-				return "No page selected. Please choose a page to duplicate an try again.";
-			} else {
-				return "you can't duplicate a page width children.";
-			}
+	
+	private void duplicatePage(ContentContext ctx, MenuElement parent, MenuElement page) throws Exception {
+		
+		if (parent == null) {
+			parent = page.getParent();
 		}
 		
-		if (!Edit.checkPageSecurity(ctx, currentPage.getParent())) {
-			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
-			return null;
-		}
-
-		ContentService content = ContentService.getInstance(ctx.getRequest());
-
-		String baseName = "child";
-		if (currentPage.getName().contains("-")) {
-			baseName = currentPage.getName().substring(0, currentPage.getName().lastIndexOf('-'));
-		}
-
-		String newPageName = baseName + "-1";
-		int index = 2;
-		while (content.getNavigation(ctx).searchChildFromName(newPageName) != null) {
-			newPageName = currentPage.getName() + '-' + index;
-			index++;
-		}
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		
-		MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, ctx.getCurrentPage().getParent(), newPageName, false, false);
-		newPage.setTemplateId(currentPage.getTemplateId());
+		String newPageName = NavigationHelper.getNewName(page);
+		
+		MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, parent, newPageName, false, false);
+		newPage.setTemplateId(page.getTemplateId());
 		ContentContext noAreaCtx = ctx.getContextWithoutArea();
-		ContentElementList comps = currentPage.getContent(noAreaCtx);
+		ContentElementList comps = page.getContent(noAreaCtx);
 		
 		String parentId = "0";
 		while (comps.hasNext(noAreaCtx)) {
@@ -66,6 +42,34 @@ public class DuplicatePage extends AbstractMacro {
 			parentId = content.createContentMirrorIfNeeded(noAreaCtx.getContextWidthOtherRequestLanguage(next.getComponentBean().getLanguage()), newPage, next, parentId, false);
 		}
 		
+		for (MenuElement child : page.getChildMenuElements()) {
+			duplicatePage(ctx, newPage, child);
+		}
+	}
+	
+	@Override
+	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
+		MenuElement currentPage = ctx.getCurrentPage();
+		if (currentPage.getParent() == null) {
+			return "you can't duplicate the root page.";
+		}
+//		if (ctx.getCurrentPage().getChildMenuElements().size() > 0) {
+//			if (ctx.getCurrentPage().isChildrenOfAssociation()) {
+//				return "No page selected. Please choose a page to duplicate an try again.";
+//			} else {
+//				return "you can't duplicate a page width children.";
+//			}
+//		}
+		
+		if (!Edit.checkPageSecurity(ctx, currentPage.getParent())) {
+			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
+			return null;
+		}
+	
+		duplicatePage(ctx, null, currentPage);
+
 		return null;
 	}
 

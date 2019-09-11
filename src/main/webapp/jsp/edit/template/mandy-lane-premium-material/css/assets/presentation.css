@@ -1,0 +1,129 @@
+/* PRESENTATION */
+
+
+
+/* ----- Presentation-Page ----- */
+body.presentation-page  {
+	padding:50px 0 0 0;
+}
+
+
+
+/* ----- Presentation-Page (Hide) ----- */
+body.presentation-page #header #menu,
+body.presentation-page #header #admin,
+body.presentation-page #bg-image {
+	display:none;
+}
+/* ----- Presentation-Page (Logo) ----- */
+body.presentation-page #header #logo {
+	float:none;
+	position:relative;
+	margin:0 auto;
+	width:150px;
+}
+body.presentation-page #header #logo a {
+	width:100%;
+}
+/* ----- Presentation-Page (Presentation) ----- */
+body.presentation-page #header #presentation {
+	position:absolute;
+	right:15px;
+	top:0;
+}
+
+
+
+
+/* ----- Presentation-Page (Elements) ----- */
+body.presentation-page .for-content {
+	margin-top:0;
+}
+body.presentation-page .for-content > .container {
+	width:100%;
+}
+
+
+
+
+
+
+/* ----- Frame ----- */
+.frame {
+	width:100%;
+}
+.frame-wrap {
+	width:1000px;
+	margin:0 auto;
+	overflow:hidden;
+	padding:150px 0;
+}
+.frame-description {
+	width:60%;
+}
+.frame.left .frame-description {
+	float:left;
+}
+.frame.right .frame-description {
+	float:right;
+}
+
+
+
+
+
+
+.frame#welcome {
+	background:url(../../img/bg-frame/frame-1.jpg) no-repeat center bottom;
+	background-size:100%;
+}
+.frame#how {
+	background:white;
+}
+.frame#faq {}
+
+
+
+
+.frame h1 {
+	margin:0 0 15px 0;
+	font-size:3.6em;
+	font-weight:700;
+	
+}
+.frame h2 {
+	margin:0;
+	font-size:1.4em;
+	font-weight:300;
+}
+
+
+
+.frame#welcome h1,
+.frame#welcome h2 {
+	color:#fff;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
