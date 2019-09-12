@@ -2471,9 +2471,7 @@ input[type=radio],input[type=checkbox] {
 }
 
 .action-button {
-	-webkit-box-shadow: 0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24);
-	box-shadow: 0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24);
-	border: none;
+	border: 1px #cccccc solid;;
 	display: inline-block;
 	color: #4E5155;
 	margin: 4px 2px;
@@ -2487,6 +2485,6 @@ input[type=radio],input[type=checkbox] {
 }
 
 .action-button:hover {
-	background-color: $content-bg;
+	border-color: #2090f0;
 	text-decoration: none;
 }
