@@ -1304,7 +1304,7 @@ public class Template implements Comparable<Template> {
 
 	private String getFontIncluding(GlobalContext globalContext) throws Exception {
 		String outIncluding = "";
-		Map<?, ?> fontList = getFontReference(globalContext); 
+		Map<?, ?> fontList = getFontReference(globalContext);
 		if (isAutoFontIncluding()) {
 			outIncluding = "";
 			String cssRaw = getRawCss(globalContext, getRawCssFile(globalContext));
@@ -1552,39 +1552,33 @@ public class Template implements Comparable<Template> {
 			return menuRenderer;
 		}
 	}
-	
+
 	/***
-	 * mail for send to user with :
-	 * ${logo} : url to logo
-	 * ${site} : global site title
-	 * ${title} : title of the email
-	 * ${text} : main text of the email
-	 * ${action.link} : action button url
-	 * ${action.text} : action button text
-	 * ${email} : contact email
-	 * ${root} : root url
-	 * #cccccc : special color
-	 * #555555 : title color
-	 * #333333 : text color
+	 * mail for send to user with : ${logo} : url to logo ${site} : global site
+	 * title ${title} : title of the email ${text} : main text of the email
+	 * ${action.link} : action button url ${action.text} : action button text
+	 * ${email} : contact email ${root} : root url #cccccc : special color #555555 :
+	 * title color #333333 : text color
+	 * 
 	 * @param globalContext
 	 * @return
 	 * @throws IOException
 	 */
 	public String getUserMailHtml(GlobalContext globalContext) throws IOException {
-		File userMailFile = new File(URLHelper.mergePath(getTemplateTargetFolder(globalContext),"mail", "user.html"));
+		File userMailFile = new File(URLHelper.mergePath(getTemplateTargetFolder(globalContext), "mail", "user.html"));
 		if (userMailFile.exists()) {
 			return ResourceHelper.loadStringFromFile(userMailFile);
 		} else {
-			return  null;
+			return null;
 		}
 	}
-	
+
 	public String getAdminMailHtml(GlobalContext globalContext) throws IOException {
-		File userMailFile = new File(URLHelper.mergePath(getTemplateTargetFolder(globalContext),"mail", "admin.html"));
+		File userMailFile = new File(URLHelper.mergePath(getTemplateTargetFolder(globalContext), "mail", "admin.html"));
 		if (userMailFile.exists()) {
 			return ResourceHelper.loadStringFromFile(userMailFile);
 		} else {
-			return  null;
+			return null;
 		}
 	}
 
@@ -2591,20 +2585,22 @@ public class Template implements Comparable<Template> {
 
 			while (files.hasNext()) {
 				File file = files.next();
-				File targetFile = new File(file.getAbsolutePath().replace(templateSrc.getAbsolutePath(), templateTarget.getAbsolutePath()));
-				if (ctx != null) {
-					try {
-						String fileExt = FilenameUtils.getExtension(file.getName());
-						if (fileExt.equalsIgnoreCase("css") || fileExt.equalsIgnoreCase("scss") || fileExt.equalsIgnoreCase("less") || fileExt.equalsIgnoreCase("sass")) {
-							appendRawCssFile(globalContext, ResourceHelper.loadStringFromFile(file), inRawCssFile);
+				if (!file.getAbsolutePath().contains(".git")) {
+					File targetFile = new File(file.getAbsolutePath().replace(templateSrc.getAbsolutePath(), templateTarget.getAbsolutePath()));
+					if (ctx != null) {
+						try {
+							String fileExt = FilenameUtils.getExtension(file.getName());
+							if (fileExt.equalsIgnoreCase("css") || fileExt.equalsIgnoreCase("scss") || fileExt.equalsIgnoreCase("less") || fileExt.equalsIgnoreCase("sass")) {
+								appendRawCssFile(globalContext, ResourceHelper.loadStringFromFile(file), inRawCssFile);
+							}
+							if (fileExt.equalsIgnoreCase("jsp") || fileExt.equalsIgnoreCase("html")) {
+								ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map, ctx.getGlobalContext().getStaticConfig().isCompressJsp());
+							} else {
+								ResourceHelper.filteredFileCopy(file, targetFile, map);
+							}
+						} catch (Exception e) {
+							logger.warning("error on copy file : " + file + " err:" + e.getMessage());
 						}
-						if (fileExt.equalsIgnoreCase("jsp") || fileExt.equalsIgnoreCase("html")) {
-							ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map, ctx.getGlobalContext().getStaticConfig().isCompressJsp());
-						} else {
-							ResourceHelper.filteredFileCopy(file, targetFile, map);
-						}
-					} catch (Exception e) {
-						logger.warning("error on copy file : " + file + " err:" + e.getMessage());
 					}
 				}
 			}

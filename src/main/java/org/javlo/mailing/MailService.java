@@ -693,9 +693,13 @@ public class MailService {
 		writeEMLFile("test", "<b>coucou</b><br />Je m'appel Patrick.", new FileOutputStream(new File("c:/trans/test_email.eml")));
 	}
 	
-	public static List<MenuElement> getMailTemplate(ContentContext ctx) throws Exception {
+	public static MenuElement getMailTemplateParentPage(ContentContext ctx) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
-		MenuElement mailParent = content.getNavigation(ctx).searchChildFromName(ctx.getGlobalContext().getStaticConfig().getMailTemplateParent());
+		return content.getNavigation(ctx).searchChildFromName(ctx.getGlobalContext().getStaticConfig().getMailTemplateParent());
+	}
+	
+	public static List<MenuElement> getMailTemplate(ContentContext ctx) throws Exception {		
+		MenuElement mailParent = getMailTemplateParentPage(ctx);
 		if (mailParent == null) {
 			return Collections.EMPTY_LIST;
 		} else {
