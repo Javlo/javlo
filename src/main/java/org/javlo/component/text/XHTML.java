@@ -10,6 +10,7 @@ import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
+import org.javlo.service.ReverseLinkService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -90,6 +91,7 @@ public class XHTML extends AbstractVisualComponent {
 			Elements body = doc.select("body");
 			xhtml = body.html();
 		}
+		xhtml = ReverseLinkService.getInstance(ctx.getGlobalContext()).replaceLink(ctx, null, xhtml);
 		return XHTMLHelper.replaceLinks(ctx, XHTMLHelper.replaceJSTLData(ctx, xhtml));
 	}
 
