@@ -362,6 +362,12 @@ public class CatchAllFilter implements Filter {
 					String pattern1 = entry.getKey();
 					String pattern2 = entry.getValue();
 					if (!pattern1.contains("*")) {
+						
+						if (cmsURI.startsWith("/fr")) {
+						System.out.println(">>>>>>>>> CatchAllFilter.doFilter : pattern1 = "+pattern1); //TODO: remove debug trace
+						System.out.println(">>>>>>>>> CatchAllFilter.doFilter : cmsURI = "+cmsURI); //TODO: remove debug trace
+						}
+						
 						if (cmsURI.equals(pattern1)) {
 							logger.info("manual redirect : " + pattern1 + " --> " + pattern2);
 							if (DEBUG) {
