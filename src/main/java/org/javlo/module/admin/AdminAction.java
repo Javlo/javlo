@@ -2,9 +2,12 @@ package org.javlo.module.admin;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -70,6 +73,7 @@ import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.user.exception.JavloSecurityException;
+import org.javlo.utils.StructuredProperties;
 import org.javlo.utils.TimeTracker;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.ResourceFactory;
@@ -483,10 +487,11 @@ public class AdminAction extends AbstractModuleAction {
 
 					String uriAlias = requestService.getParameter("uri-alias", null);
 					if (uriAlias != null) {
+						StructuredProperties prop = new StructuredProperties();
 						Properties properties = new Properties();
-						InputStream in = new ByteArrayInputStream(uriAlias.getBytes());
-						properties.load(in);
-						in.close();
+						Reader reader = new InputStreamReader(new ByteArrayInputStream(uriAlias.getBytes()));
+						properties.load(reader);
+						reader.close();
 						currentGlobalContext.setAliasURI(properties);
 					} else {
 						return "uri-alias parameter not found.";
