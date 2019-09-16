@@ -301,11 +301,11 @@ public class XMLManipulationHelper {
 	 * @throws BadXMLException
 	 */
 	private static int convertHTMLtoJSP(GlobalContext globalContext, Template template, I18nAccess i18nAccess, File htmlFile, File jspFile, Map<String, String> options, List<String> areas, List<String> resources, List<TemplatePlugin> templatePlugins, List<GenericMessage> messages, List<String> ids, boolean isMail, String fontIncluding) throws IOException {
-		
+
 		String templateVersion = StringHelper.getRandomId();
-		
+
 		if (fontIncluding.contains("##BASE_URI##")) {
-			fontIncluding=fontIncluding.replace("##BASE_URI##", "${info.rootTemplateURL}");
+			fontIncluding = fontIncluding.replace("##BASE_URI##", "${info.rootTemplateURL}");
 		} else {
 			fontIncluding = FontHelper.loadFont(fontIncluding);
 		}
@@ -385,9 +385,9 @@ public class XMLManipulationHelper {
 					if (!displayIfEmpty) {
 						String testArea = "";
 						if (template.isRemoveEmptyArea()) {
-							testArea =   " && (!currentPage.isNoComponent(ctx, \"" + area + "\") || (EditContext.getInstance(globalContext, session).isPreviewEditionMode() && ctx.isAsPreviewMode()))" ;
+							testArea = " && (!currentPage.isNoComponent(ctx, \"" + area + "\") || (EditContext.getInstance(globalContext, session).isPreviewEditionMode() && ctx.isAsPreviewMode()))";
 						}
-						prefix = "<%if ((!globalContext.getQuietArea().contains(\"" + area + "\"))"+testArea+") {%>";
+						prefix = "<%if ((!globalContext.getQuietArea().contains(\"" + area + "\"))" + testArea + ") {%>";
 						suffix = "<%}%>";
 					}
 					if ((idValue != null) && (idValue.trim().equals(areaValue))) {
@@ -396,7 +396,7 @@ public class XMLManipulationHelper {
 						remplacement.addReplacement(tags[i].getCloseEnd() + 1, tags[i].getCloseEnd() + 1, suffix);
 
 						String checkEmptyArea = "${empty info.areaEmpty['" + area + "']?' _not_empty_area':' _empty_area'}";
-						String cssClass = StringHelper.neverNull(tags[i].getAttributes().get("class")+"<%if (currentPage.getImageBackgroundForArea(ctx).get(\"" + area + "\") != null){%> width-background<%}%>");
+						String cssClass = StringHelper.neverNull(tags[i].getAttributes().get("class") + "<%if (currentPage.getImageBackgroundForArea(ctx).get(\"" + area + "\") != null){%> width-background<%}%>");
 						tags[i].getAttributes().put("class", (cssClass + " _area").trim() + checkEmptyArea + " pos-<%=currentPage.getPosition()%>");
 						String style = StringHelper.neverNull(tags[i].getAttributes().get("style")).trim();
 						if (!style.endsWith(";") && style.length() > 0) {
@@ -516,7 +516,7 @@ public class XMLManipulationHelper {
 					if (template.isPDFRenderer()) {
 						tags[i].getAttributes().put("data-pdfheight", "" + template.getPDFHeigth());
 					}
-					
+
 					tags[i].getAttributes().put("data-areas", "" + template.getAjaxAreas());
 
 					String mainPageAssociationCode = "<%if (currentPage.isChildrenAssociation() && (request.getParameter(\"" + Template.FORCE_TEMPLATE_PARAM_NAME + "\") == null)) {%><jsp:include page=\"/jsp/view/page_association.jsp\" /><%} else {%>";
@@ -540,15 +540,15 @@ public class XMLManipulationHelper {
 					String renderBodyAsDiv = tags[i].renderOpen();
 
 					String openBodyCode = "<c:if test=\"${not contentContext.pageAssociation}\">" + renderBodyAsBody + "</c:if><c:if test=\"${contentContext.pageAssociation}\">" + renderBodyAsDiv + "</c:if>";
-					if (htmlFile.getName().contains("pdf")  || isMail) {
-						fontIncluding="";
+					if (htmlFile.getName().contains("pdf") || isMail) {
+						fontIncluding = "";
 					}
-					
+
 					String GACode = "";
 					if (!template.isMailing()) {
 						GACode = getGoogleAnalyticsCode();
 					}
-					
+
 					String closeBodyCode = StringHelper.neverNull(fontIncluding) + "<c:if test=\"${not contentContext.pageAssociation}\">" + GACode + "</body></c:if><c:if test=\"${contentContext.pageAssociation}\"></" + tag + "></c:if>";
 					remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, "</c:if>" + openBodyCode + openPageCode);
 					remplacement.addReplacement(tags[i].getCloseStart(), tags[i].getCloseEnd() + 1, closePageCode + closeBodyCode + "<c:if test=\"${not contentContext.pageAssociation}\">");
@@ -566,9 +566,9 @@ public class XMLManipulationHelper {
 
 					remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, "<%=ctx.getGlobalContext().getHeaderBloc()%>" + getEscapeMenu(targetEscapeMenu) + getResetTemplate() + getAfterBodyCode());
 					if (isMail && globalContext.getStaticConfig().isMailingUserTracking()) {
-						previewCode = previewCode + "<%Map mParams = new HashMap();mParams.put(MailingAction.MAILING_FEEDBACK_PARAM_NAME, MailingAction.MAILING_FEEDBACK_VALUE_NAME);%><img class=\"empty_image\" style=\"height: 0; width: 0; margin:0; padding: 0;\" width=\"0\" height=\"0\" src=\"<%=URLHelper.createStaticURL(ctx, \"/mfb.png\", mParams)%>\" /> ";
+						previewCode = previewCode + "<%Map mParams = new HashMap();mParams.put(MailingAction.MAILING_FEEDBACK_PARAM_NAME, MailingAction.MAILING_FEEDBACK_VALUE_NAME);%><img class=\"empty_image\" alt=\"\" style=\"height: 0; width: 0; margin:0; padding: 0;\" width=\"0\" height=\"0\" src=\"<%=URLHelper.createStaticURL(ctx, \"/mfb.png\", mParams)%>\" /> ";
 					}
-					
+
 					String footerResourceIndlue = "<!-- comp resources --><%for (String uri : currentPage.getExternalResources(ctx)) {%><%=XHTMLHelper.renderHeaderResourceInsertion(ctx, uri)%><%}%>";
 					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart() - 1, footerResourceIndlue + "<%=ctx.getGlobalContext().getFooterBloc()%>" + previewCode);
 				}
@@ -650,9 +650,9 @@ public class XMLManipulationHelper {
 					String staticHeader = StringHelper.neverEmpty(globalContext.getStaticConfig().getHtmlHead(), "");
 
 					if (content.indexOf(HEADER_ZONE) > 0) {
-						remplacement.addReplacement(content.indexOf(HEADER_ZONE), content.indexOf(HEADER_ZONE) + HEADER_ZONE.length(), getHTMLPrefixHead(globalContext, headContext) + staticHeader);
+						remplacement.addReplacement(content.indexOf(HEADER_ZONE), content.indexOf(HEADER_ZONE) + HEADER_ZONE.length(), getHTMLPrefixHead(globalContext, headContext, isMail) + staticHeader);
 					} else {
-						remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getHTMLPrefixHead(globalContext, headContext) + staticHeader);
+						remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getHTMLPrefixHead(globalContext, headContext, isMail) + staticHeader);
 					}
 
 					/** template plugin **/
@@ -1011,33 +1011,36 @@ public class XMLManipulationHelper {
 		return "";
 	}
 
-	private static String getHTMLPrefixHead(GlobalContext globalContext, PrefixHeadContext context) throws IOException {
+	private static String getHTMLPrefixHead(GlobalContext globalContext, PrefixHeadContext context, boolean isMail) throws IOException {
 
 		StringWriter outString = new StringWriter();
 		BufferedWriter out = new BufferedWriter(outString);
 
-		out.append("<%if (ctx.isInteractiveMode() && !ctx.isPreviewOnly()) {%>");
-		out.append("<style type=\"text/css\">@font-face {font-family: \"javloFont\"; src: url('${info.staticRootURL}fonts/javlo-italic.ttf') format(\"truetype\");}</style>");
-		out.append("<%}%>");
-
+		if (!isMail) {
+			out.append("<%if (ctx.isInteractiveMode() && !ctx.isPreviewOnly()) {%>");
+			out.append("<style type=\"text/css\">@font-face {font-family: \"javloFont\"; src: url('${info.staticRootURL}fonts/javlo-italic.ttf') format(\"truetype\");}</style>");
+			out.append("<%}%>");
+			out.append("<%if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {%>");
+			out.newLine();
+			out.append("<script>");
+			out.newLine();
+			out.append("<!--");
+			out.newLine();
+			out.append("var sLanguage = '<%=ctx.getRequestContentLanguage()%>';");
+			out.newLine();
+			out.append("var server = '<%=URLHelper.createStaticURL(ctx, \"/\")%>';");
+			out.newLine();
+			out.append("-->");
+			out.newLine();
+			out.append("</script>");
+			out.newLine();
+			out.append("<%}%>");
+		}
+		
 		out.append(getTakeScreenShortCode(globalContext));
 
-		out.append("<%if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {%>");
-		out.newLine();
-		out.append("<script>");
-		out.newLine();
-		out.append("<!--");
-		out.newLine();
-		out.append("var sLanguage = '<%=ctx.getRequestContentLanguage()%>';");
-		out.newLine();
-		out.append("var server = '<%=URLHelper.createStaticURL(ctx, \"/\")%>';");
-		out.newLine();
-		out.append("-->");
-		out.newLine();
-		out.append("</script>");
-		out.newLine();
-		out.append("<%}%>");
-		if (context.isKeyword()) {
+		
+		if (context.isKeyword() && !isMail) {
 			out.append("<%if (currentPage.getKeywords(ctx).length()>0){%>");
 			out.newLine();
 			out.append("<meta name=\"keywords\" content=\"<%=currentPage.getKeywords(ctx)%>\" />");
@@ -1049,23 +1052,18 @@ public class XMLManipulationHelper {
 			out.newLine();
 			out.append("<%}%>");
 		}
-		out.newLine();
-		out.append("<%=XHTMLNavigationHelper.getRSSHeader(ctx, currentPage)%>");
-		out.newLine();
-
-		/*
-		 * out.append(
-		 * "<link rel=\"stylesheet\" type=\"text/css\" href=\"<%=URLHelper.createStaticURL(ctx,\"/jsp/view/components_css.jsp\")%>\" />"
-		 * ); out.newLine();
-		 */
-		out.append("<link rel=\"shortcut icon\" type=\"image/ico\" href=\"<%=URLHelper.createStaticURL(ctx,\"/favicon.ico\")%>\" />");
-		out.newLine();
-
-		out.append("<%if (ctx.getRenderMode() != ContentContext.VIEW_MODE) {%>");
-		out.append("<meta name=\"ROBOTS\" content=\"NONE\" />");
-		out.append("<%}%>");
-		out.newLine();
-
+		if (!isMail) {
+			out.newLine();
+			out.append("<%=XHTMLNavigationHelper.getRSSHeader(ctx, currentPage)%>");
+			out.newLine();
+			out.append("<link rel=\"shortcut icon\" type=\"image/ico\" href=\"<%=URLHelper.createStaticURL(ctx,\"/favicon.ico\")%>\" />");
+			out.newLine();
+			out.append("<%if (ctx.getRenderMode() != ContentContext.VIEW_MODE) {%>");
+			out.append("<meta name=\"ROBOTS\" content=\"NONE\" />");
+			out.append("<%}%>");
+			out.newLine();			
+		}
+		
 		out.append("<%if (ctx.isInteractiveMode()) {%>");
 		out.newLine();
 		if (globalContext.getStaticConfig().getJSLibPreview() == null) {
@@ -1088,9 +1086,6 @@ public class XMLManipulationHelper {
 		}
 		out.newLine();
 		out.append("<%EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());%>");
-		out.newLine();
-
-		out.newLine();
 		out.append("<%}%>");
 
 		out.close();
