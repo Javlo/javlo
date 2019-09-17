@@ -150,7 +150,8 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	@Override
 	public String getTextTitle(ContentContext ctx) {
 		try {
-			return XHTMLHelper.replaceJSTLData(ctx,StringHelper.removeTag(getFieldValue(TEXT)));
+			// return XHTMLHelper.replaceJSTLData(ctx,StringHelper.removeTag(getFieldValue(TEXT))); // warning recursive call of title
+			return StringHelper.removeTag(getFieldValue(TEXT));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return StringHelper.removeTag(getFieldValue(TEXT));
