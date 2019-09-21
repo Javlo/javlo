@@ -786,6 +786,7 @@ Security in case of vulnerabilities.
  - restore published version
  - ExtendedWidget
  - introduction SLF4J
+ - add forward url as canonical url
 ### Modified
  - security update
  - file-finder optimisation
