@@ -223,13 +223,18 @@ public class InfoBean {
 	}
 
 	public String getCurrentCanonicalURL() throws Exception {
+		
+		if (!StringHelper.isEmpty(getCurrentPage().getForward(ctx))) {
+			return getCurrentPage().getForward(ctx);
+		}
+		
 		ContentContext robotCtx = new ContentContext(ctx);
 		MenuElement popupPage = NavigationHelper.getPopupPage(ctx);
 		if (popupPage != null) {
 			robotCtx.setCurrentPageCached(popupPage);
 		}
 		robotCtx.setDevice(Device.getFakeDevice("robot"));
-		robotCtx.setAbsoluteURL(true);
+		robotCtx.setAbsoluteURL(true);		
 		return URLHelper.createURL(robotCtx);
 	}
 
@@ -1914,6 +1919,10 @@ public class InfoBean {
 	
 	public static void main(String[] args) {
 		System.out.println(Calendar.SUNDAY);
+	}
+	
+	public String getForwardUrl() throws Exception {
+		return ctx.getCurrentPage().getForward(ctx);
 	}
 	
 
