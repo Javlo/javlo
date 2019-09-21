@@ -33,7 +33,7 @@ public class Forward extends AbstractVisualComponent {
 		if (ctx.isAsViewMode()) {
 			return "";
 		} else {
-			return TYPE+" >> "+getValue();
+			return "<div class=\"alert alert-danger\">"+TYPE+" >> "+getValue()+"</div>";
 		}
 	}
 

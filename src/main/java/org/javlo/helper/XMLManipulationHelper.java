@@ -725,16 +725,15 @@ public class XMLManipulationHelper {
 						}
 					}
 					out.println("<!-- end template plugins -->");
-					out.println("<%}");
+					out.println("<%}%>");
 
-					/** forward **/
-					out.println("if (!StringHelper.isEmpty(currentPage.getForward(ctx))) {%><!--FRW--><meta http-equiv=\"refresh\" content=\"0; url=<%=currentPage.getForward(ctx)%>\" /><%}%>");
 					out.println("<%=ctx.getGlobalContext().getMetaBloc()%>");
 
 					out.print("<%if (currentPage.getMetaHead(ctx) != null) {%>");
 					out.print("<%=currentPage.getMetaHead(ctx)%>");
 					out.println("<%}%>");
 					out.close();
+					
 					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart(), getHTMLSufixHead(globalContext.getStaticConfig(), template) + new String(outStream.toByteArray()));
 				}
 
@@ -1015,8 +1014,11 @@ public class XMLManipulationHelper {
 
 		StringWriter outString = new StringWriter();
 		BufferedWriter out = new BufferedWriter(outString);
+		
+		/** forward **/
+		out.append("<%if (!StringHelper.isEmpty(currentPage.getForward(ctx))) {%><!--FRW--><meta http-equiv=\"refresh\" content=\"0; url=<%=currentPage.getForward(ctx)%>\" /><%}%>");
 
-		if (!isMail) {
+		if (!isMail) {			
 			out.append("<%if (ctx.isInteractiveMode() && !ctx.isPreviewOnly()) {%>");
 			out.append("<style type=\"text/css\">@font-face {font-family: \"javloFont\"; src: url('${info.staticRootURL}fonts/javlo-italic.ttf') format(\"truetype\");}</style>");
 			out.append("<%}%>");
