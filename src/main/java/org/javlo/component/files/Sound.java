@@ -103,8 +103,8 @@ public class Sound extends AbstractFileComponent implements IReverseLinkComponen
 		return staticConfig.getFileFolder();
 	}
 	
-	private String getInputNamePageRef() {
-		return getInputName("page-ref");
+	private String getInputNamePageSummary() {
+		return getInputName("page-summary");
 	}
 	
 	@Override
@@ -113,8 +113,8 @@ public class Sound extends AbstractFileComponent implements IReverseLinkComponen
 		PrintStream out = new PrintStream(outStream);
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		out.println("<div class=\"form-group\">");
-		out.println("<label for=\""+getInputNamePageRef()+"\">"+i18nAccess.getText("global.summary")+"</label>");
-		out.println("<input type=\"text\" name=\""+getInputNamePageRef()+"\" />");
+		out.println("<label for=\""+getInputNamePageSummary()+"\">"+i18nAccess.getText("sound.summary")+"</label>");
+		out.println("<input class=\"form-control\" type=\"text\" value=\""+getDefaultSummaryPage()+"\" name=\""+getInputNamePageSummary()+"\" />");
 		out.println("</div>");
 		out.println(super.getEditXHTMLCode(ctx));
 		out.close();
@@ -175,10 +175,19 @@ public class Sound extends AbstractFileComponent implements IReverseLinkComponen
 		String fileLink = URLHelper.mergePath(getDirSelected(), getFileName());
 		return URLHelper.createResourceURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + fileLink).replace('\\', '/');
 	}
+	
+	public static final String SESSION_SUMMARY_PAGE_KEY = "sound_summary_page";
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
-		super.prepareView(ctx);		
+		super.prepareView(ctx);
+		
+		String summaryPage = (String)ctx.getRequest().getSession().getAttribute(SESSION_SUMMARY_PAGE_KEY);
+		if (summaryPage == null) {
+			ctx.getRequest().getSession().setAttribute(SESSION_SUMMARY_PAGE_KEY, getDefaultSummaryPage());
+			summaryPage = (String)ctx.getRequest().getSession().getAttribute(SESSION_SUMMARY_PAGE_KEY);
+		}		
+		
 		if ((getValue() != null) && (getValue().trim().length() > 0)) {
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 			String url = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
@@ -321,6 +330,22 @@ public class Sound extends AbstractFileComponent implements IReverseLinkComponen
 	@Override
 	public String getFontAwesome() {
 		return "microphone";
+	}
+	
+	public String getDefaultSummaryPage() {
+		return properties.getProperty("default-summary-page");
+	}
+	
+	@Override
+	public String performEdit(ContentContext ctx) throws Exception {
+		RequestService rs = RequestService.getInstance(ctx.getRequest());
+		String defaultSummary = rs.getParameter(getInputNamePageSummary());
+		if (defaultSummary != null) {
+			properties.setProperty("default-summary-page", defaultSummary);
+			storeProperties();
+			setModify();
+		}
+		return super.performEdit(ctx);
 	}
 
 }
