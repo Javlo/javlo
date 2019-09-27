@@ -1049,12 +1049,12 @@ public class ImageEngine {
 			}
 		}
 		
-		try {
-			storeImage(workImage, new File("c:/trans/focus/out_"+interestX+'_'+interestY+"_work.jpg"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			storeImage(workImage, new File("c:/trans/focus/out_"+interestX+'_'+interestY+"_work.jpg"));
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 
 		// repositioning the image
 		int realInterestX = (interestX * workImage.getWidth()) / 1000;
@@ -1066,10 +1066,7 @@ public class ImageEngine {
 		}
 
 		int realInterestY = (interestY * workImage.getHeight()) / 1000;		
-		System.out.println(">>>>>>>>> ImageEngine.resize : realInterestY = "+realInterestY); //TODO: remove debug trace
-		System.out.println(">>>>>>>>> ImageEngine.resize : inHeight = "+inHeight); //TODO: remove debug trace
 		int deltaY = realInterestY - inHeight / 2;
-		System.out.println(">>>>>>>>> ImageEngine.resize : 1.deltaY = "+deltaY); //TODO: remove debug trace
 		if (deltaY < 0) {
 			deltaY = 0;
 		} else if (deltaY + inHeight > workImage.getHeight()) {
@@ -1078,8 +1075,6 @@ public class ImageEngine {
 				deltaY = 0;
 			}
 		}
-		
-		System.out.println(">>>>>>>>> ImageEngine.resize : 2.deltaY = "+deltaY); //TODO: remove debug trace
 		
 		
 
