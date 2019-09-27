@@ -17,7 +17,6 @@ import java.awt.image.ColorModel;
 import java.awt.image.ConvolveOp;
 import java.awt.image.IndexColorModel;
 import java.awt.image.Kernel;
-import java.awt.image.RescaleOp;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.FileInputStream;
@@ -51,10 +50,11 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 
 import com.github.jaiimageio.jpeg2000.J2KImageWriteParam;
-import com.jhlabs.image.ContrastFilter;
 import com.jhlabs.image.RGBAdjustFilter;
 
 public class ImageEngine {
+	
+	public static boolean DISPLAY_FOCUS = false;
 
 	private static Logger logger = Logger.getLogger(ImageEngine.class.getName());
 
@@ -497,6 +497,31 @@ public class ImageEngine {
 		}
 		return image.getRGB(x, y);
 	}
+	
+	/**
+	 * set a color in a image, coord can be out of the image size.
+	 * 
+	 * @param image
+	 *            a standard java image
+	 * @param x
+	 *            if < 0 -> get 0 id > width -> get width-1
+	 * @param y
+	 *            if < 0 -> get 0 id > length -> get length-1
+	 * @return the color of a pixel
+	 */
+	public static void setColor(BufferedImage image, int x, int y, Color color) {
+		if (x < 0) {
+			return;
+		} else if (x >= image.getWidth()) {
+			return;
+		}
+		if (y < 0) {
+			return;
+		} else if (y >= image.getHeight()) {
+			return;
+		}
+		image.setRGB(x, y, color.getRGB());
+	}
 
 	/**
 	 * if color null return transparent.
@@ -821,6 +846,30 @@ public class ImageEngine {
 		}
 		return outImage;
 	}
+	
+	public static final void mark(BufferedImage img, int x, int y) {
+		for (int dx=-5; dx<=5; dx++) {
+			for (int dy=-5; dy<=5; dy++) {
+				setColor(img, x+dx, y, Color.RED);
+				setColor(img, x, y+dy, Color.RED);
+			}
+		}
+	}
+	
+	public static final void markInterest(BufferedImage source, int interestX, int interestY) {
+		int realInterestX = (interestX * source.getWidth()) / 1000;
+		int realInterestY = (interestY * source.getHeight()) / 1000;
+		final int SIZE = 30;
+		final int HEIGHT = 5;
+		for (int dx=-30; dx<=30; dx++) {
+			for (int dy=-30; dy<=30; dy++) {
+				for (int h=-HEIGHT; h<=HEIGHT; h++) {
+					setColor(source, realInterestX+dx, realInterestY+h, Color.RED);
+					setColor(source, realInterestX+h, realInterestY+dy, Color.RED);
+				}
+			}
+		}
+	}
 
 	public static BufferedImage centerInterest(BufferedImage source, int interestX, int interestY, int minWidth, int minHeight) {
 		if ((minWidth > source.getWidth()) || (minWidth == 0)) {
@@ -829,9 +878,15 @@ public class ImageEngine {
 		if ((minHeight > source.getHeight()) || (minHeight == 0)) {
 			minHeight = source.getHeight();
 		}
-		BufferedImage workImage = null;
 		int realInterestX = (interestX * source.getWidth()) / 1000;
 		int realInterestY = (interestY * source.getHeight()) / 1000;
+		
+//		System.out.println(">>>>>>>>> ImageEngine.centerInterest : realInterestX = "+realInterestX); //TODO: remove debug trace
+//		System.out.println(">>>>>>>>> ImageEngine.centerInterest : realInterestY = "+realInterestY); //TODO: remove debug trace
+		
+		if (DISPLAY_FOCUS) {
+			mark(source, interestX, interestY);
+		}
 
 		int startX = realInterestX - (source.getWidth() - realInterestX);
 		if (startX < 0) {
@@ -886,7 +941,7 @@ public class ImageEngine {
 			height = source.getHeight();
 		}
 
-		workImage = new BufferedImage(width, height, source.getType());
+		BufferedImage workImage = new BufferedImage(width, height, source.getType());
 
 		for (int x = 0; x < workImage.getWidth(); x++) {
 			for (int y = 0; y < workImage.getHeight(); y++) {
@@ -971,24 +1026,34 @@ public class ImageEngine {
 			}
 			source = outImage;
 		} else if (focusZone) {
-			source = centerInterest(source, interestX, interestY, inWidth, inHeight);
+//			source = centerInterest(source, interestX, interestY, inWidth, inHeight);
+//			try {
+//				storeImage(source, new File("c:/trans/focus/out_"+interestX+'_'+interestY+"_zentered.jpg"));
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 		}
 
 		BufferedImage workImage;
 
-		int workWith = inWidth;
-		int workHeight = inHeight;
-
 		if (!cropResize) {
-			workImage = resize(source, workWith, workHeight, bgColor, hq);
+			workImage = resize(source, inWidth, inHeight, bgColor, hq);
 		} else {
-			if ((float) source.getWidth() / (float) source.getHeight() < (float) workWith / (float) workHeight) {
-				int height = (source.getHeight() * workWith) / source.getWidth();
-				workImage = resize(source, workWith, height, bgColor, hq);
+			if ((float) source.getWidth() / (float) source.getHeight() < (float) inWidth / (float) inHeight) {
+				int height = (source.getHeight() * inWidth) / source.getWidth();
+				workImage = resize(source, inWidth, height, bgColor, hq);
 			} else {
-				int width = (source.getWidth() * workHeight) / source.getHeight();
-				workImage = resize(source, width, workHeight, bgColor, hq);
+				int width = (source.getWidth() * inHeight) / source.getHeight();
+				workImage = resize(source, width, inHeight, bgColor, hq);
 			}
+		}
+		
+		try {
+			storeImage(workImage, new File("c:/trans/focus/out_"+interestX+'_'+interestY+"_work.jpg"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 		// repositioning the image
@@ -1000,8 +1065,11 @@ public class ImageEngine {
 			deltaX = workImage.getWidth() - inWidth;
 		}
 
-		int realInterestY = (interestY * workImage.getHeight()) / 1000;
+		int realInterestY = (interestY * workImage.getHeight()) / 1000;		
+		System.out.println(">>>>>>>>> ImageEngine.resize : realInterestY = "+realInterestY); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> ImageEngine.resize : inHeight = "+inHeight); //TODO: remove debug trace
 		int deltaY = realInterestY - inHeight / 2;
+		System.out.println(">>>>>>>>> ImageEngine.resize : 1.deltaY = "+deltaY); //TODO: remove debug trace
 		if (deltaY < 0) {
 			deltaY = 0;
 		} else if (deltaY + inHeight > workImage.getHeight()) {
@@ -1010,6 +1078,10 @@ public class ImageEngine {
 				deltaY = 0;
 			}
 		}
+		
+		System.out.println(">>>>>>>>> ImageEngine.resize : 2.deltaY = "+deltaY); //TODO: remove debug trace
+		
+		
 
 		BufferedImage outImage = new BufferedImage(inWidth + ml + mr, inHeight + mt + mb, BufferedImage.TYPE_4BYTE_ABGR);
 		if (bgColor != null) {
@@ -1976,46 +2048,50 @@ public class ImageEngine {
 //		
 //		ImageIO.write(img, "png", new File("c:/trans/yy.png"));
 //		
-		File svgDir = new File("C:\\trans\\fonts\\svgs\\regular");
-		for (File svg : svgDir.listFiles()) {
-			if (svg.getName().endsWith(".svg")) {
-				System.out.println(svg);
-				InputStream in = new FileInputStream(svg);		
-				BufferedImage img = loadSvg(in);				
-				in.close();
-				
-				for (int y = 0; y < img.getHeight(); y += 1) {
-					for (int x = 0; x < img.getWidth(); x += 1) {
-						Color c = new Color(img.getRGB(x, y), true);
-						Color newCol = new Color(160, 160, 160, c.getAlpha());
-						img.setRGB(x, y, newCol.getRGB());
-					}
-				}
-					 
-				
-//				RescaleOp rescaleOp = new RescaleOp(0.2f, 5, null);
-//				rescaleOp.filter(img, img); 
-				
-//				ContrastFilter imageFilter = new ContrastFilter();
-//				imageFilter.setContrast((float)0.001);
-//				imageFilter.setBrightness((float)0.001);
-//				img = imageFilter.filter(img, null); 
-				//img = luminosity(img);
-				
-				img = resizeHeight(img, 50, null, true);
-				
-				ImageIO.write(img, "png", new File("C:\\work\\javlo2\\src\\main\\webapp\\images\\font\\"+svg.getName().replace(".svg", ".png")));
-			}
-		}
+//		File svgDir = new File("C:\\trans\\fonts\\svgs\\regular");
+//		for (File svg : svgDir.listFiles()) {
+//			if (svg.getName().endsWith(".svg")) {
+//				System.out.println(svg);
+//				InputStream in = new FileInputStream(svg);		
+//				BufferedImage img = loadSvg(in);				
+//				in.close();
+//				
+//				for (int y = 0; y < img.getHeight(); y += 1) {
+//					for (int x = 0; x < img.getWidth(); x += 1) {
+//						Color c = new Color(img.getRGB(x, y), true);
+//						Color newCol = new Color(160, 160, 160, c.getAlpha());
+//						img.setRGB(x, y, newCol.getRGB());
+//					}
+//				}
+//					 
+//				
+////				RescaleOp rescaleOp = new RescaleOp(0.2f, 5, null);
+////				rescaleOp.filter(img, img); 
+//				
+////				ContrastFilter imageFilter = new ContrastFilter();
+////				imageFilter.setContrast((float)0.001);
+////				imageFilter.setBrightness((float)0.001);
+////				img = imageFilter.filter(img, null); 
+//				//img = luminosity(img);
+//				
+//				img = resizeHeight(img, 50, null, true);
+//				
+//				ImageIO.write(img, "png", new File("C:\\work\\javlo2\\src\\main\\webapp\\images\\font\\"+svg.getName().replace(".svg", ".png")));
+//			}
+//		}
 		
 		
 		
 
-//		File javloFile = new File("c:/trans/test.jpg");
-//		BufferedImage image = ImageIO.read(javloFile);
-//		if (image != null) {
-//			storeImage(image, new File("c:/trans/out_jpg2000.jp2"));
-//		}
+		File javloFile = new File("c:/trans/img1.jpg");
+		BufferedImage image = ImageIO.read(javloFile);
+		
+		image = ImageEngine.resize(image, 512, 512, true, false, 0, 0, 0, 0, null, 100, 100, true, true);
+		
+		
+		if (image != null) {
+			storeImage(image, new File("c:/trans/out.jpg"));
+		}
 
 		// System.out.println("data : "+getGoogleResultTitleSize("patrick est là"));
 		// System.out.println("data : "+getGoogleResultTitleSize("Hot Women | Sexy Women

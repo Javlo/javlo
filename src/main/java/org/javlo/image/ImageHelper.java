@@ -432,10 +432,29 @@ public class ImageHelper {
 		}
 		return outData;
 	}
+	
+	public static void createImage(File file, int fx, int fy) throws IOException {
+		System.out.println("=== CREATE IMAGE : "+fx+","+fy+" ===");
+		BufferedImage image = ImageIO.read(file);
+		ImageEngine.markInterest(image, fx, fy);
+		ImageEngine.storeImage(image, new File("c:/trans/focus/out_"+fx+'_'+fy+"_src.jpg"));
+		image = ImageEngine.resize(image, 512, 512, true, false, 0, 0, 0, 0, null, fx, fy, true, true);
+		ImageEngine.storeImage(image, new File("c:/trans/focus/out_"+fx+'_'+fy+"_trg.jpg"));
+	}
 
 	public static void main(String[] args) throws Exception {
-		BufferedImage bestImage = getBestImageFromVideo(new File("c:/trans/test2.mp4"));
-		ImageIO.write(bestImage, "png", new File("c:/trans/test2.png"));
+//		BufferedImage bestImage = getBestImageFromVideo(new File("c:/trans/test2.mp4"));
+//		ImageIO.write(bestImage, "png", new File("c:/trans/test2.png"));
+		
+		
+		File javloFile = new File("c:/trans/img2.jpg");
+//		createImage(javloFile, 500, 500);
+//		createImage(javloFile, 100, 500);
+//		createImage(javloFile, 500, 100);
+		createImage(javloFile, 200, 200);
+		createImage(javloFile, 200, 900);
+//		createImage(javloFile, 100, 900);
+		
 	}
 
 	public static BufferedImage toBufferedImage(Picture src) {

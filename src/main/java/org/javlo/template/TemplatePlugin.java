@@ -67,9 +67,16 @@ public class TemplatePlugin {
 				out.println(head);
 			}
 		}
+		for (int i = 0; i < 10000; i++) {
+			String head = config.getProperty("head."+globalContext.getStaticConfig().getEnv()+"."+i);
+			if (head != null) {
+				out.println(head);
+			}
+		}
 		out.close();
 		String outHead = new String(outStream.toByteArray());
 		/** load external config **/
+		
 		Properties externalConfig = loadConfig(globalContext.getTemplatePluginConfig());		
 		for (Object key : externalConfig.keySet()) {
 			outHead = outHead.replace("${"+key+"}", externalConfig.getProperty(key.toString()));
