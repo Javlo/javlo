@@ -433,7 +433,6 @@ public class URLHelper extends ElementaryURLHelper {
 	}
 
 	public static String createTemplateResourceURL(ContentContext ctx, String url) {
-
 		if (url == null) {
 			return null;
 		}

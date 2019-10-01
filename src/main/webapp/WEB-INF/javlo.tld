@@ -13,7 +13,13 @@
         <attribute>
             <name>value</name>
             <required>true</required>
-            <description>the URI</description>
+            <description>the URI</description>            
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>webaction</name>
+            <required>false</required>
+            <description>create a action url in place of static url</description>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>

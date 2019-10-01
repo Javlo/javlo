@@ -21,6 +21,7 @@ import org.javlo.helper.PaginationContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLNavigationHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.search.DefaultSearchEngine;
 import org.javlo.search.ISearchEngine;
 import org.javlo.search.SearchEngineFactory;
 import org.javlo.search.SearchFilter;
@@ -39,8 +40,16 @@ public class SearchActions implements IAction {
 	 * create a static logger.
 	 */
 	protected static Logger logger = Logger.getLogger(SearchActions.class.getName());
-
+	
+	public static String performDefaultsearch(HttpServletRequest request, HttpServletResponse response) {
+		return performSearch(request, response, true);
+	}
+	
 	public static String performSearch(HttpServletRequest request, HttpServletResponse response) {
+		return performSearch(request, response, false);
+	}
+
+	private static String performSearch(HttpServletRequest request, HttpServletResponse response, boolean defaultSearchEngine) {
 		String msg = null;
 
 		try {
@@ -84,7 +93,12 @@ public class SearchActions implements IAction {
 
 			if (searchStr != null) {
 				if (searchStr.length() > 0) {
-					ISearchEngine search = SearchEngineFactory.getEngine(ctx);
+					ISearchEngine search;
+					if (defaultSearchEngine) {
+						search = new DefaultSearchEngine();
+					} else {
+						search = SearchEngineFactory.getEngine(ctx);
+					}
 					List<SearchElement> result = search.search(ctx, groupId, searchStr, sort, componentList);
 					if (!ctx.isAjax()) {
 						if (ctx.getCurrentPage().getContentByType(ctx.getContextWithoutArea(), SearchResultComponent.TYPE).size() == 0) {
@@ -121,9 +135,9 @@ public class SearchActions implements IAction {
 		return msg;
 	}
 	
-	public synchronized static String performSearchresulthtml(ContentContext ctx) throws Exception {
+	private static String performSearchresulthtml(ContentContext ctx, boolean defautSearchEngine) throws Exception {
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
-		performSearch(ctx.getRequest(), ctx.getResponse());
+		performSearch(ctx.getRequest(), ctx.getResponse(), defautSearchEngine);
 		List<SearchElement> result = (List<SearchElement>)ctx.getAjaxData().get("searchResult");
 		if (result != null) {
 			ctx.getAjaxData().remove("searchResult");
@@ -149,6 +163,14 @@ public class SearchActions implements IAction {
 			}
 		}
 		return null;
+	}
+	
+	public synchronized static String performSearchresulthtml(ContentContext ctx) throws Exception {
+		return performSearchresulthtml(ctx, false);
+	}
+	
+	public synchronized static String performSearchdefaultresulthtml(ContentContext ctx) throws Exception {
+		return performSearchresulthtml(ctx, true);
 	}
 
 	public static String performTemplate(HttpServletRequest request, HttpServletResponse response) throws Exception {

@@ -1,5 +1,6 @@
 package org.javlo.servlet;
 
+import java.io.UnsupportedEncodingException;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -37,7 +38,7 @@ public class WebAction extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		process(request, response);
 	}
-
+	
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		try {
 			String uri = request.getRequestURI();
@@ -46,6 +47,14 @@ public class WebAction extends HttpServlet {
 				return;
 			}
 			String action = uri.substring(uri.indexOf("webaction")).split("/")[1];
+			
+			try {
+				request.setCharacterEncoding(ContentContext.CHARACTER_ENCODING);
+			} catch (UnsupportedEncodingException e1) {
+				e1.printStackTrace();
+			}
+			
+			logger.info("action servlet : "+action);
 			
 			ContentContext ctx = ContentContext.getContentContext(request, response);
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());

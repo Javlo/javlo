@@ -351,7 +351,6 @@ public class SearchResult {
 	}
 
 	private void searchInPage(MenuElement page, ContentContext ctx, String groupId, String inSearchText, Collection<String> componentType, List<MenuElement> rootPage) throws Exception {
-
 		SearchFilter searchFilter = SearchFilter.getInstance(ctx);
 		boolean tagOK = true;
 		if (searchFilter.getTag() != null && !page.getTags(ctx).contains(searchFilter.getTag())) {
@@ -362,17 +361,17 @@ public class SearchResult {
 
 			if (groupId == null || groupId.trim().length() == 0 || page.getGroupID(ctx).contains(groupId)) {
 
-				ContentContext ctxWithContent = ctx.getContextWithContent(page);
+				//ContentContext ctxWithContent = ctx.getContextWithContent(page);
 
-				if (ctxWithContent != null) {
-					ContentElementList elemList = page.getLocalContentCopy(ctxWithContent);
+//				if (ctxWithContent != null) {
+					ContentElementList elemList = page.getLocalContentCopy(ctx);
 
 					searchText = inSearchText;
 					int searchLevel = 0;
 					String searchText = StringHelper.createFileName(inSearchText).toLowerCase();
 
-					while (elemList.hasNext(ctxWithContent)) {
-						IContentVisualComponent cpt = elemList.next(ctxWithContent);
+					while (elemList.hasNext(ctx)) {
+						IContentVisualComponent cpt = elemList.next(ctx);
 
 						if (componentType == null || componentType.contains(cpt.getType())) {
 							if (cpt.getSearchLevel() > 0) {
@@ -384,9 +383,9 @@ public class SearchResult {
 						}
 					}
 					if (searchLevel != 0) {
-						addResult(ctx, page, inSearchText, page.getName(), page.getFullLabel(ctxWithContent), URLHelper.createURL(ctxWithContent, page.getPath()), page.getDescriptionAsText(ctxWithContent), searchLevel);
+						addResult(ctx, page, inSearchText, page.getName(), page.getFullLabel(ctx), URLHelper.createURL(ctx, page.getPath()), page.getDescriptionAsText(ctx), searchLevel);
 					}
-				}
+				
 			}
 		}
 		Collection<MenuElement> children = page.getChildMenuElements();

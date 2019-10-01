@@ -14,6 +14,7 @@ public class JVUrlTag extends TagSupport {
 	private static final long serialVersionUID = 1L;
 
 	private String value = null;
+	private String webaction = null;
 
 	public void setValue(String value) {
 		this.value = value;
@@ -25,11 +26,19 @@ public class JVUrlTag extends TagSupport {
 			JspWriter out = pageContext.getOut();
 			ContentContext ctx;
 			ctx = ContentContext.getContentContext((HttpServletRequest) pageContext.getRequest(), (HttpServletResponse) pageContext.getResponse());
-			out.print(URLHelper.createStaticURL(ctx, value));
+			if (webaction == null) {
+				out.print(URLHelper.createStaticURL(ctx, value));
+			} else {
+				out.print(URLHelper.createActionURL(ctx, webaction, value));
+			}
 		} catch (Exception ioe) {
 			throw new JspException("Error: " + ioe.getMessage());
 		}
 		return SKIP_BODY;
+	}
+
+	public void setWebaction(String webaction) {
+		this.webaction = webaction;
 	}
 
 }

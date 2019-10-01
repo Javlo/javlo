@@ -50,7 +50,7 @@ function updateSearch(query, resultId, selectMethod) {
 
 function updateSearchThread(query, resultId, selectMethod) {
 	var searchURL = currentAjaxURL;
-	searchURL = addParam(searchURL, "webaction=search.searchresulthtml");
+	searchURL = addParam(searchURL, "webaction=search.searchdefaultresulthtml");
 	searchURL = addParam(searchURL, "q="+query);
 	searchURL = addParam(searchURL, "id="+resultId);
 	searchURL = addParam(searchURL, "method="+selectMethod);
