@@ -791,6 +791,7 @@ Security in case of vulnerabilities.
  - security update
  - file-finder optimisation
  - jsmirror in content module
+ - internal-link use default search engine
 ### fixed
  - change heading level correction
  - close popup site propoerties in preview mode if no error
