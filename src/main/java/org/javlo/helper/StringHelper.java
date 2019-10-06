@@ -1353,7 +1353,7 @@ public class StringHelper {
 	 */
 	public static boolean isDigit(String str) {
 		if (str != null) {
-			str = str.trim();
+			//str = str.trim();
 			if (str.length() == 0) {
 				return false;
 			}
@@ -1366,8 +1366,9 @@ public class StringHelper {
 				}
 			}
 			return true;
+		} else {
+			return false;
 		}
-		return false;
 	}
 
 	/**

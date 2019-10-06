@@ -70,6 +70,8 @@ import org.owasp.encoder.Encode;
 
 public class InfoBean {
 
+	public static final String FAKE_PATH_PARAMETER_NAME = "_fake_path";
+
 	private static final String ts = "" + System.currentTimeMillis();
 
 	public static final String REQUEST_KEY = "info";
@@ -181,16 +183,16 @@ public class InfoBean {
 	}
 
 	public String getCurrentURL() throws Exception {
-		if (fakeCurrentURL != null) {
-			return fakeCurrentURL;
+		if (getFakeCurrentURL() != null) {
+			return getFakeCurrentURL();
 		} else {
 			return URLHelper.createURL(ctx);
 		}
 	}
 	
 	public String getVirtualCurrentURL() throws Exception {
-		if (fakeCurrentURL != null) {
-			return fakeCurrentURL;
+		if (getFakeCurrentURL() != null) {
+			return getFakeCurrentURL();
 		} else {
 			return URLHelper.createVirtualURL(ctx);
 		}
@@ -201,8 +203,8 @@ public class InfoBean {
 	}
 
 	public String getCurrentURLWidthDevice() throws Exception {
-		if (fakeCurrentURL != null) {
-			return fakeCurrentURL;
+		if (getFakeCurrentURL() != null) {
+			return getFakeCurrentURL();
 		} else {
 			String url = URLHelper.createURL(ctx);
 			if (!url.contains(Device.FORCE_DEVICE_PARAMETER_NAME)) {
@@ -213,8 +215,8 @@ public class InfoBean {
 	}
 
 	public String getCurrentAjaxURLWidthDevice() {
-		if (fakeCurrentURL != null) {
-			return fakeCurrentURL;
+		if (getFakeCurrentURL() != null) {
+			return getFakeCurrentURL();
 		} else {
 			String url = URLHelper.createAjaxURL(ctx);
 			url = URLHelper.addParam(url, Device.FORCE_DEVICE_PARAMETER_NAME, "" + ctx.getDevice());
@@ -1764,7 +1766,11 @@ public class InfoBean {
 	}
 
 	public String getFakeCurrentURL() {
-		return fakeCurrentURL;
+		if (fakeCurrentURL == null && ctx.getRequest().getParameter(FAKE_PATH_PARAMETER_NAME) != null) {
+			return ctx.getRequest().getParameter(FAKE_PATH_PARAMETER_NAME);
+		} else {
+			return fakeCurrentURL;
+		}
 	}
 
 	public void setFakeCurrentURL(String fakeCurrentURL) {

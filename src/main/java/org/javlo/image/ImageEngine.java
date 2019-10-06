@@ -19,8 +19,6 @@ import java.awt.image.IndexColorModel;
 import java.awt.image.Kernel;
 import java.awt.image.WritableRaster;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -36,7 +34,6 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
-import javax.imageio.stream.ImageOutputStream;
 
 import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.apache.batik.transcoder.TranscoderException;
@@ -46,10 +43,8 @@ import org.apache.batik.transcoder.TranscodingHints;
 import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.batik.util.SVGConstants;
 import org.apache.commons.io.FileUtils;
-import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 
-import com.github.jaiimageio.jpeg2000.J2KImageWriteParam;
 import com.jhlabs.image.RGBAdjustFilter;
 
 public class ImageEngine {
@@ -93,9 +88,7 @@ public class ImageEngine {
 
 	public static void storeImage(BufferedImage img, File file) throws IOException {
 		String ext = StringHelper.getFileExtension(file.getName()).toLowerCase();
-		if (ext.equalsIgnoreCase("jp2")) {
-			ext="jpeg2000";
-		} else if (ext.equalsIgnoreCase("jpg") || ext.equalsIgnoreCase("jpeg")) {
+		if (ext.equalsIgnoreCase("jpg") || ext.equalsIgnoreCase("jpeg")) {
 			if (img.getType() != BufferedImage.TYPE_3BYTE_BGR) {
 				img = removeAlpha(img);
 			}
@@ -2002,30 +1995,30 @@ public class ImageEngine {
 		return newImage;
 	}
 
-	public static void writeJPEG2000(BufferedImage image, File file) throws IOException {
-		OutputStream out = new FileOutputStream(file);
-		try {
-			writeJPEG2000(image, out);
-		} finally {
-			ResourceHelper.closeResource(out);
-		}
-	}
-
-	public static void writeJPEG2000(BufferedImage image, OutputStream out) throws IOException {
-		Iterator<ImageWriter> writers = ImageIO.getImageWritersBySuffix("jp2");
-		ImageWriter writer = writers.next();
-		J2KImageWriteParam writeParams = (J2KImageWriteParam) writer.getDefaultWriteParam();
-		writeParams.setLossless(false);
-		writeParams.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-		writeParams.setCompressionType("JPEG2000");
-		// writeParams.setFilter(J2KImageWriteParam.FILTER_97);
-		writeParams.setCompressionQuality(0.5f);
-		writeParams.setEncodingRate(0.5f);
-		ImageOutputStream ios = ImageIO.createImageOutputStream(out);
-		writer.setOutput(ios);
-		writer.write(null, new IIOImage(image, null, null), writeParams);
-		writer.dispose();
-	}
+//	public static void writeJPEG2000(BufferedImage image, File file) throws IOException {
+//		OutputStream out = new FileOutputStream(file);
+//		try {
+//			writeJPEG2000(image, out);
+//		} finally {
+//			ResourceHelper.closeResource(out);
+//		}
+//	}
+//
+//	public static void writeJPEG2000(BufferedImage image, OutputStream out) throws IOException {
+//		Iterator<ImageWriter> writers = ImageIO.getImageWritersBySuffix("jp2");
+//		ImageWriter writer = writers.next();
+//		J2KImageWriteParam writeParams = (J2KImageWriteParam) writer.getDefaultWriteParam();
+//		writeParams.setLossless(false);
+//		writeParams.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+//		writeParams.setCompressionType("JPEG2000");
+//		// writeParams.setFilter(J2KImageWriteParam.FILTER_97);
+//		writeParams.setCompressionQuality(0.5f);
+//		writeParams.setEncodingRate(0.5f);
+//		ImageOutputStream ios = ImageIO.createImageOutputStream(out);
+//		writer.setOutput(ios);
+//		writer.write(null, new IIOImage(image, null, null), writeParams);
+//		writer.dispose();
+//	}
 
 	public static void main(String[] args) throws Exception {
 		

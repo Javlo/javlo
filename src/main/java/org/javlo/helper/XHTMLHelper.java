@@ -23,6 +23,7 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URLDecoder;
+import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -3004,6 +3005,10 @@ public class XHTMLHelper {
 		renderer.createPDF(reportPdfStream);
 		reportPdfStream.close();
 	}
+	
+	public static final String escapeNotAsciiChar(String html) {
+		return  StringEscapeUtils.unescapeXml(StringEscapeUtils.escapeHtml4(html));		 
+	}
 
 //	public static void main(String[] args) throws Exception {
 //		File file = new File("c:/trans/mail.html");
@@ -3021,9 +3026,7 @@ public class XHTMLHelper {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		String xhtml = getTableAlert("This is a test message");
-		
-		ResourceHelper.writeStringToFile(new File("c:/trans/test_html.html"), xhtml);
+		System.out.println(">>>>>>>>> XHTMLHelper.main : "+escapeNotAsciiChar("été")); //TODO: remove debug trace
 	}
 
 }
