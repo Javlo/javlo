@@ -118,14 +118,8 @@ public class DocxUtils {
 							bean.setType(Heading.TYPE);
 							bean.setValue("text=" + text + "\ndepth=" + titleLevel);
 						} else {
-							if (titleLevel == 1) {
-								bean.setType(Title.TYPE);
-								bean.setValue(text);
-							} else {
-								bean.setType(SubTitle.TYPE);
-								bean.setValue(text);
-								bean.setStyle("" + titleLevel);
-							}
+							bean.setType(Heading.TYPE);
+							bean.setValue("text="+text+"\ndepth="+titleLevel);
 						}
 					}
 				} else if (item.tagName().equals("img") && item.attr("src") != null && item.attr("src").trim().length() > 0) {
