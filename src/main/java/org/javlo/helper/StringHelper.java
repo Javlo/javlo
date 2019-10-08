@@ -688,7 +688,7 @@ public class StringHelper {
 		}
 	}
 
-	public String noRepeatChar(String text, char chr) {
+	public static String noRepeatChar(String text, char chr) {
 		StringBuffer outStr = new StringBuffer();
 		char latestChar = 0;
 		for (char c : text.toCharArray()) {
@@ -4209,9 +4209,9 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(">>>>>>>>> StringHelper.main : test replace CR = "
-				+ collectionToText(stringToCollection(replaceCR("\nJavlo\nCMS\n", "?")))); // TODO: remove debug trace
+		System.out.println(">>>>>>>>> StringHelper.main : no repeat : "+noRepeatChar("patrick  Vdm ", ' ')); //TODO: remove debug trace
 	}
+	
 
 	/**
 	 * parse txt, if is'nt integer return 0

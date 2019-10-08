@@ -1783,7 +1783,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public boolean isSharedImportDocument() {
-		return StringHelper.isTrue(properties.getString("shared.import-document", null), false);
+		return StringHelper.isTrue(properties.getString("shared.import-document", null), true);
 	}
 
 	public boolean isIntegrityCheck() {
