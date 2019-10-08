@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.component.list.FreeTextList;
@@ -114,13 +115,9 @@ public class DocxUtils {
 						bean.setType(WysiwygParagraph.TYPE);
 						bean.setValue(text);
 					} else {
-						if (globalContext != null && globalContext.hasComponent(Heading.TYPE)) {
-							bean.setType(Heading.TYPE);
-							bean.setValue("text=" + text + "\ndepth=" + titleLevel);
-						} else {
-							bean.setType(Heading.TYPE);
-							bean.setValue("text="+text+"\ndepth="+titleLevel);
-						}
+						bean.setType(Heading.TYPE);
+						text = StringEscapeUtils.unescapeXml(StringEscapeUtils.escapeHtml4(text));
+						bean.setValue("text=" + text + "\ndepth=" + titleLevel);
 					}
 				} else if (item.tagName().equals("img") && item.attr("src") != null && item.attr("src").trim().length() > 0) {
 					ByteArrayOutputStream outStream = new ByteArrayOutputStream();
