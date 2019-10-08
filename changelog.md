@@ -793,6 +793,7 @@ Security in case of vulnerabilities.
  - jsmirror in content module
  - internal-link use default search engine
  - shared.import-document default true
+ - import title link heading in place of title and subtitle
 ### fixed
  - change heading level correction
  - close popup site propoerties in preview mode if no error
