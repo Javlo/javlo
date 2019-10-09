@@ -54,7 +54,7 @@ public class WebAction extends HttpServlet {
 				e1.printStackTrace();
 			}
 			
-			logger.info("action servlet : "+action);
+			logger.fine("action servlet : "+action);
 			
 			ContentContext ctx = ContentContext.getContentContext(request, response);
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
