@@ -1931,5 +1931,9 @@ public class InfoBean {
 		return ctx.getCurrentPage().getForward(ctx);
 	}
 	
+	public String getDefaultEmailSender() {
+		return ctx.getGlobalContext().getAdministratorEmail();
+	}
+	
 
 }
