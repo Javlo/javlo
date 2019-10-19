@@ -109,16 +109,16 @@ public class NetHelper {
 	public static final String HEADER_IF_MODIFIED_SINCE_ETAG = "if-None-Match";
 
 	public static String readPageForMailing(URL url) throws Exception {
-		return readPage(url, true, true, null, null, null, null, false);
+		return readPage(url, true, true, null, null, null, null, true);
 	}
 
 	public static String readPageForMailing(URL url, String login, String pwd) throws Exception {
 		logger.info("url=" + url);
-		return readPage(url, true, true, null, login, pwd, null, false);
+		return readPage(url, true, true, null, login, pwd, null, true);
 	}
 
 	public static String readPageForMailing(URL url, String token) throws Exception {
-		return readPage(url, true, true, null, null, null, token, false);
+		return readPage(url, true, true, null, null, null, token, true);
 	}
 
 	public static String readPage(URL url) throws Exception {
