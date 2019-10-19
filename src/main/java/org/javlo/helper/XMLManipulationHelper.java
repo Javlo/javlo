@@ -525,7 +525,7 @@ public class XMLManipulationHelper {
 					String closePageCode = "<%}%><c:if test=\"${contentContext.pageAssociation}\"></div></c:if>";
 
 					tags[i].addCssClass("<%for (String layout : ctx.getCurrentPage().getLayouts(ctx)) {%><%=' '+layout%><%}%>");
-					tags[i].addCssClass("${globalContext.templateData.large?'large-content':''} ${globalContext.templateData.small?'small-content':''}");
+					tags[i].addCssClass("${globalContext.templateData.large?'large-content':'not-large-content'} ${globalContext.templateData.small?'small-content':''}");
 					tags[i].addCssClass("page-index-${contentContext.currentPage.index} page-index-${contentContext.currentPage.index%2==0?'even':'odd'}");
 					String renderBodyAsBody = tags[i].renderOpen();
 					String tag = "div";
