@@ -6,7 +6,7 @@ public class DKIMBean {
 	private String selector;
 	private String privatekey;
 	private String mailUser; 
-
+	
 	public DKIMBean(String signingdomain, String selector, String privatekey, String mailUser) {
 		this.signingdomain = signingdomain;
 		this.selector = selector;

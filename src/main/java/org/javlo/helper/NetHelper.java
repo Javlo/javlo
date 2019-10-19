@@ -440,9 +440,13 @@ public class NetHelper {
 			if (userToken != null) {
 				url = new URL(URLHelper.addParam(url.toString(), IUserFactory.TOKEN_PARAM, userToken));
 			}
-
+			
 			String query = StringHelper.neverNull(url.getQuery(), "");
 			url = removeParams(url);
+			
+			if (mailing && (url.getQuery() == null || !url.getQuery().contains(ContentContext.FORCE_ABSOLUTE_URL))) {
+				url = new URL(URLHelper.addParam(url.toString(), ContentContext.FORCE_ABSOLUTE_URL, "true"));
+			}
 
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestProperty("User-Agent", JAVLO_USER_AGENT);
