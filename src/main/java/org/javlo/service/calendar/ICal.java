@@ -8,12 +8,12 @@ import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.javlo.helper.IStringSeralizable;
 import org.javlo.helper.StringHelper;
-import org.python.icu.util.Calendar;
 
 public class ICal implements IStringSeralizable {
 	
@@ -185,6 +185,7 @@ public class ICal implements IStringSeralizable {
 		if (status != null) {
 			out.println("STATUS:"+status);
 		}
+		out.println("DTSTAMP:"+dateFormat.format(new Date()));
 		out.println("SEQUENCE:"+sequence);
 		out.println("END:VEVENT");		
 		out.close();
