@@ -709,6 +709,8 @@ public class ResourceHelper {
 			return "application/vnd.oasis.opendocument.text";
 		} else if (ext.equals("ods")) {
 			return "application/vnd.oasis.opendocument.spreadsheet";
+		} else if (ext.equals("ics")) {
+			return "text/calendar";
 		}
 		return "application/octet-stream";
 	}

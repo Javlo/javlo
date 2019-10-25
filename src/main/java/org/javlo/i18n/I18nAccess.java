@@ -74,9 +74,9 @@ public class I18nAccess implements Serializable {
 	public static I18nAccess getInstance(ContentContext ctx) throws ServiceException, Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		I18nAccess i18n = getInstance(ctx.getRequest());
-		if (ctx.getRenderMode() == ContentContext.EDIT_MODE || ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
-			i18n.initEdit(globalContext, ctx.getRequest().getSession());
-			ModulesContext moduleContext = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext);
+		i18n.initEdit(globalContext, ctx.getRequest().getSession());		
+		if (ctx.getRenderMode() == ContentContext.EDIT_MODE || ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {			
+			ModulesContext moduleContext = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext);	
 			i18n.setCurrentModule(globalContext, ctx.getRequest().getSession(), moduleContext.getCurrentModule());
 		}
 		i18n.changeViewLanguage(ctx);
