@@ -787,6 +787,7 @@ Security in case of vulnerabilities.
  - ExtendedWidget
  - introduction SLF4J
  - add forward url as canonical url
+ - more info in ical service
 ### Modified
  - security update
  - file-finder optimisation
@@ -797,3 +798,5 @@ Security in case of vulnerabilities.
 ### fixed
  - change heading level correction
  - close popup site propoerties in preview mode if no error
+ - attachement order in mail
+ - ical close tag correction
