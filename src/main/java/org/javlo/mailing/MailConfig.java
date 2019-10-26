@@ -1,5 +1,7 @@
 package org.javlo.mailing;
 
+import java.util.Map;
+
 import org.javlo.config.StaticConfig;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
@@ -24,6 +26,14 @@ public class MailConfig {
 		this.login = login;
 		this.password = password;		
 	}
+	
+	public MailConfig(Map config) {
+		this.SMTPHost = ""+config.get("host");
+		this.SMTPPort = ""+config.get("port");
+		this.login = ""+config.get("login");
+		this.password = ""+config.get("password");
+	}
+
 
 	public MailConfig(GlobalContext globalContext, StaticConfig staticConfig, Mailing mailing) {
 		if (staticConfig != null) {

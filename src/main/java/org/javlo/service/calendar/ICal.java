@@ -10,12 +10,23 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.javlo.helper.IStringSeralizable;
 import org.javlo.helper.StringHelper;
 
 public class ICal implements IStringSeralizable {
+	
+	public static final String STATUS_TENTATIVE = "TENTATIVE";
+	public static final String STATUS_CONFIRMED = "CONFIRMED";
+	public static final String STATUS_CANCELLED = "CANCELLED";
+	
+	public static final String TRANSP_OPAQUE = "OPAQUE";
+	public static final String TRANSP_TRANSPARENT = "TRANSPARENT";
 	
 	private String id = StringHelper.getRandomId();
 	private String uid = null;
@@ -24,13 +35,15 @@ public class ICal implements IStringSeralizable {
 	private String summary;
 	private String location;
 	private String description;
-	private String transp;
+	private String transp = TRANSP_OPAQUE;
 	private String categories;
-	private String status;
+	private String status = STATUS_CONFIRMED;
 	private boolean editable;
-	private int sequence = 1;
+	private int sequence = 0;
 	private boolean next = false;
 	private int colorGroup=1;
+	private List<InternetAddress> attendee = new LinkedList<>();
+	private InternetAddress organizer = null;
 	
 	private static DateFormat getDateFormat()  {
 		return new SimpleDateFormat("yyyyMMdd'T'HHmmss");
@@ -138,14 +151,15 @@ public class ICal implements IStringSeralizable {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		out.println("BEGIN:VCALENDAR");
-		out.println("VERSION:2.0");
 		out.println("PRODID:-//hacksw/handcal//NONSGML v1.0//EN");
+		out.println("VERSION:2.0");
+		out.println("CALSCALE:GREGORIAN");		
 		out.close();
 		return new String(outStream.toByteArray());
 	}
 	
 	public static String getEndCalendarString() {
-		return "BEGIN:VCALENDAR";
+		return "END:VCALENDAR";
 	}
 	
 	@Override
@@ -184,6 +198,14 @@ public class ICal implements IStringSeralizable {
 		}
 		if (status != null) {
 			out.println("STATUS:"+status);
+		}
+		if (attendee.size()>0) {
+			for (InternetAddress add : attendee) {
+				out.println("ATTENDEE;ROLE=REQ-PARTICIPANT;CN="+add.getPersonal()+":MAILTO:"+add.getAddress());
+			}
+		}
+		if (organizer != null) {
+			out.println("ORGANIZER;CN="+organizer.getPersonal()+":MAILTO:"+organizer.getAddress());
 		}
 		out.println("DTSTAMP:"+dateFormat.format(new Date()));
 		out.println("SEQUENCE:"+sequence);
@@ -377,6 +399,26 @@ public class ICal implements IStringSeralizable {
 
 	public void setColorGroup(int group) {
 		this.colorGroup = group;
+	}
+	
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	
+	public String getStatus() {
+		return status;
+	}
+	
+	public void addAttendee(InternetAddress email) {
+		attendee.add(email);
+	}
+
+	public InternetAddress getOrganizer() {
+		return organizer;
+	}
+
+	public void setOrganizer(InternetAddress organizer) {
+		this.organizer = organizer;
 	}
 	
 }

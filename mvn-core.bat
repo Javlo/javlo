@@ -1,1 +1,1 @@
-@mvn -Pcore %*
+@mvn -P core %*
