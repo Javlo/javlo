@@ -174,6 +174,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	private String configTemplate = null;
 
 	private String group = null;
+	
+	private GenericMessage localMessage = null;
 
 	public String getGroup() {
 		return group;
@@ -2491,6 +2493,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	 * @throws Exception
 	 */
 	public void prepareView(ContentContext ctx) throws Exception {
+		
+		setLocalMessage(null);
 
 		if (logger.isLoggable(Level.FINE)) {
 			logger.fine("load : " + getType() + " on : " + URLHelper.createURL(ctx));
@@ -3404,6 +3408,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			setValue(newValue);
 			return translated;
 		}
+	}
+
+	public GenericMessage getLocalMessage() {
+		return localMessage;
+	}
+
+	public void setLocalMessage(GenericMessage localMessage) {
+		this.localMessage = localMessage;
 	}
 
 }
