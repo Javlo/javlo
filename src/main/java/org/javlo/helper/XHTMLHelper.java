@@ -2160,7 +2160,13 @@ public class XHTMLHelper {
 		Collection<String> params = StringHelper.extractItem(xhtml, "${param.", "}");
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		for (String param : params) {
-			xhtml = xhtml.replace("${param." + param + "}", XHTMLHelper.textToXHTML(URLDecoder.decode(requestService.getParameter(param, ""), ContentContext.CHARACTER_ENCODING), ctx.getGlobalContext()));
+			String decodedParam = requestService.getParameter(param, "");
+			try {
+				decodedParam = URLDecoder.decode(decodedParam, ContentContext.CHARACTER_ENCODING);
+			} catch (Exception e) {
+				logger.warning(e.getMessage());
+			}
+			xhtml = xhtml.replace("${param." + param + "}", XHTMLHelper.textToXHTML(decodedParam, ctx.getGlobalContext()));
 		}
 
 		InfoBean infoBean = InfoBean.getCurrentInfoBean(ctx.getRequest());
