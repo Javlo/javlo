@@ -394,14 +394,13 @@ public class UserAction extends AbstractModuleAction {
 			return i18nAccess.getViewText("mailing.error.email");
 		}
 		UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
-		IUserFactory userFactory = userContext.getUserFactory(ctx);
-		if (userFactory.getUser(newUser) != null) {
+		IUserFactory userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		if (userFactory.getUserByEmail(newUser) != null) {
 			return i18nAccess.getViewText("registration.error.email_alreadyexist");
 		} else {
 			GlobalContext gc = ctx.getGlobalContext();
 			String title = i18nAccess.getViewText("registration.mail.confirm.title");
-			String subject = i18nAccess.getViewText("registration.mail.confirm.subject")
-					+ ctx.getCurrentPage().getGlobalTitle(ctx);
+			String subject = i18nAccess.getViewText("registration.mail.confirm.subject") + ctx.getCurrentPage().getGlobalTitle(ctx);
 			String text = i18nAccess.getViewText("registration.mail.confirm.text");
 			String actionLabel = i18nAccess.getViewText("registration.mail.confirm.action");
 			ContentService contentService = ContentService.getInstance(ctx.getGlobalContext());
