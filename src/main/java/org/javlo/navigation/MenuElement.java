@@ -49,6 +49,7 @@ import org.javlo.component.image.ImageBackground;
 import org.javlo.component.image.ImageBean;
 import org.javlo.component.image.ImageTitleBean;
 import org.javlo.component.image.SortImageTitleByPriority;
+import org.javlo.component.layout.PDFLayoutComponent;
 import org.javlo.component.links.ChildrenLink;
 import org.javlo.component.links.PageMirrorComponent;
 import org.javlo.component.links.PageReferenceComponent;
@@ -78,6 +79,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.ContentManager;
 import org.javlo.context.GlobalContext;
+import org.javlo.data.InfoBean;
 import org.javlo.data.rest.IRestItem;
 import org.javlo.data.taxonomy.ITaxonomyContainer;
 import org.javlo.helper.BeanHelper;
@@ -98,6 +100,7 @@ import org.javlo.module.content.Edit;
 import org.javlo.module.core.IPrintInfo;
 import org.javlo.service.ClipBoard;
 import org.javlo.service.ContentService;
+import org.javlo.service.PDFLayout;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.event.Event;
@@ -5966,6 +5969,25 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 	public String getHtmlSectionId(ContentContext ctx) {
 		return "section_" + getHtmlId(ctx);
+	}
+	
+	public String getPDFLayout(ContentContext ctx) throws Exception {
+		String pdfData = ctx.getGlobalContext().getStaticConfig().getDefaultPDFLayout();
+		ContentContext newCtx = new ContentContext(ctx);
+		newCtx.setArea(null);
+		if (newCtx.getRenderMode() == ContentContext.EDIT_MODE) {
+			newCtx.setRenderMode(ContentContext.PREVIEW_MODE);
+		}
+		IContentComponentsList contentList = getAllContent(newCtx);
+		while (contentList.hasNext(newCtx)) {
+			IContentVisualComponent comp = contentList.next(newCtx);
+			if (comp.getType().equals(PDFLayoutComponent.TYPE)) {
+				pdfData = comp.getValue(newCtx);
+			}
+		}
+		InfoBean.updateInfoBean(newCtx);
+		pdfData = XHTMLHelper.replaceJSTLData(newCtx, pdfData);
+		return pdfData;
 	}
 
 }

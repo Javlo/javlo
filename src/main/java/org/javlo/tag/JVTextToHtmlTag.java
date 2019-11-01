@@ -27,7 +27,7 @@ public class JVTextToHtmlTag extends BodyTagSupport {
 			ReverseLinkService rlx = ReverseLinkService.getInstance(ctx.getGlobalContext());
 			html=rlx.replaceLink(ctx, null, html);
 			html=XHTMLHelper.autoLink(html);
-			html=XHTMLHelper.textToXHTML(html, ctx.getGlobalContext());
+			html=XHTMLHelper.textToXHTMLWidthParagraph(html, ctx.getGlobalContext());
 			html=XHTMLHelper.replaceJSTLData(ctx, html );
 			getBodyContent().getEnclosingWriter().print(html);
 		} catch (Exception ioe) {

@@ -564,8 +564,7 @@ public class UserAction extends AbstractModuleAction {
 			if (user == null) {
 				return i18nAccess.getViewText("user.message.error.change-mail-not-found");
 			} else {
-				String subject = i18nAccess.getViewText("user.message.change-password.email-subject") + ' '
-						+ globalContext.getGlobalTitle();
+				String subject = i18nAccess.getViewText("user.message.change-password.email-subject") + ' '	+ globalContext.getGlobalTitle();
 				String body = i18nAccess.getViewText("user.message.change-password.email-body");
 				Map<String, String> params = new HashMap<String, String>();
 				params.put("pwtoken", globalContext.getChangePasswordToken(user.getLogin()));

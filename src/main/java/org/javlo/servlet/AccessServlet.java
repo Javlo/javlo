@@ -79,6 +79,7 @@ import org.javlo.security.password.IPasswordEncryption;
 import org.javlo.service.ContentService;
 import org.javlo.service.ListService;
 import org.javlo.service.PDFConvertion;
+import org.javlo.service.PDFLayout;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.event.Event;
@@ -361,6 +362,16 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			ctx.getDevice().correctWithTemplate(ctx.getCurrentTemplate());
 			if (ctx.getDevice().isMobileDevice()) {
 				EditContext.getInstance(globalContext, request.getSession()).setPreviewEditionMode(false);
+			}
+			if (ctx.getDevice().isPdf()) {
+				String pdfLayoutRaw = request.getParameter(PDFLayout.REQUEST_KEY);
+				if (pdfLayoutRaw != null) {
+					PDFLayout pdfLayout = PDFLayout.getInstance(request);
+					pdfLayout.setValues(pdfLayoutRaw);
+				} else {
+					PDFLayout pdfLayout = PDFLayout.getInstance(request);
+					pdfLayout.setValues(ctx.getCurrentPage().getPDFLayout(ctx));
+				}
 			}
 			ctx.setPageRequest(true);
 			if (ctx.isAsEditMode() || ctx.isAsPreviewMode()) {
@@ -941,6 +952,15 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							}
 						}
 					}
+					String pdfLayoutRaw = request.getParameter(PDFLayout.REQUEST_KEY);
+					if (pdfLayoutRaw != null) {
+						PDFLayout pdfLayout = PDFLayout.getInstance(request);
+						pdfLayout.setValues(pdfLayoutRaw);
+					} else {
+						PDFLayout pdfLayout = PDFLayout.getInstance(request);
+						pdfLayout.setValues(ctx.getCurrentPage().getPDFLayout(ctx));
+					}
+					
 					response.setContentType("application/pdf;");
 					OutputStream out = response.getOutputStream();
 					Map<String, String> params = new HashMap<String, String>();
@@ -1008,7 +1028,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 						String url = URLHelper.createURL(viewCtx, params);
 						url = url.replace("pdfwebaction", "webaction");
-
+						
 						/*
 						 * if (staticConfig.getApplicationLogin() != null) { url =
 						 * URLHelper.addCredential(url, staticConfig.getApplicationLogin(),

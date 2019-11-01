@@ -535,6 +535,8 @@ public class CatchAllFilter implements Filter {
 				String realToken = globalContext.convertOneTimeToken(token);
 				if (realToken != null) {
 					token = realToken;
+				} else {
+					logger.warning("bad one time token : "+token);
 				}
 			}
 			if (fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null && adminFact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null) {

@@ -147,7 +147,7 @@
         <name>texttohtml</name>
         <bodycontent>JSP</bodycontent>
         <tag-class>org.javlo.tag.JVTextToHtmlTag</tag-class> 
-        <info>allows to transform a text into an HTML version, replace links and jstl variables.</info>       
+        <info>allows to transform a text into an HTML version, replace links and jstl variables.</info>
     </tag>
      <tag>
         <name>enc64</name>

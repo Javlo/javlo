@@ -2305,29 +2305,47 @@ public class XHTMLHelper {
 	public static String textToXHTML(String text) {
 		return textToXHTML(text, false, null, (GlobalContext) null);
 	}
+	
+	public static String textToXHTMLWidthParagraph(String text) {
+		return textToXHTML(text, false, false, null, (GlobalContext) null, true);
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(textToXHTMLWidthParagraph("patrick\\nbarbara"));
+	}
 
 	public static String textToXHTMLNewWin(String text) {
-		return textToXHTML(text, false, true, null, (GlobalContext) null);
+		return textToXHTML(text, false, true, null, (GlobalContext) null, false);
 	}
 
 	public static String textToXHTML(String text, boolean notFollow) {
-		return textToXHTML(text, notFollow, false, null, (GlobalContext) null);
+		return textToXHTML(text, notFollow, false, null, (GlobalContext) null, false);
 	}
 
 	public static String textToXHTML(String text, GlobalContext globalContext) {
-		return textToXHTML(text, false, false, null, globalContext);
+		return textToXHTML(text, false, false, null, globalContext, false);
+	}
+	
+	public static String textToXHTMLWidthParagraph(String text, GlobalContext globalContext) {
+		return textToXHTML(text, false, false, null, globalContext, true);
 	}
 
 	public static String textToXHTML(String text, boolean notFollow, GlobalContext globalContext) {
-		return textToXHTML(text, notFollow, false, null, globalContext);
+		return textToXHTML(text, notFollow, false, null, globalContext, false);
 	}
 
 	public static String textToXHTML(String text, boolean notFollow, String cssClass, GlobalContext globalContext) {
-		return textToXHTML(text, notFollow, false, cssClass, globalContext);
+		return textToXHTML(text, notFollow, false, cssClass, globalContext, false);
 	}
 
 	// cssClass and popup not used
-	private static String textToXHTML(String text, boolean notFollow, boolean newWin, String cssClass, GlobalContext globalContext) {
+	private static String textToXHTML(String text, boolean notFollow, boolean newWin, String cssClass, GlobalContext globalContext, boolean paragraph) {
+		
+		
+		String separation = "<br />";
+		if (paragraph) {
+			separation = "<p>";
+		}
 
 		String res = autoLink(text, notFollow, newWin, globalContext);
 
@@ -2340,13 +2358,24 @@ public class XHTMLHelper {
 		try {
 			String p = in.readLine();
 			if (p != null) {
+				if (paragraph) {
+					out.print("<p>");
+				}
 				out.print(p);
 			}
 
 			for (p = in.readLine(); p != null; p = in.readLine()) {
-				out.println("<br />");
+				out.println(separation);
 				out.print(p);
+				if (paragraph) {
+					separation = "</p><p>";
+				}
 			}
+			
+			if (paragraph) {
+				out.print("</p>");
+			}
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -3029,10 +3058,6 @@ public class XHTMLHelper {
 			newContent = newContent.replace("  ", " ");
 		}
 		return newContent;
-	}
-	
-	public static void main(String[] args) throws IOException {
-		System.out.println(">>>>>>>>> XHTMLHelper.main : "+escapeNotAsciiChar("été")); //TODO: remove debug trace
 	}
 
 }

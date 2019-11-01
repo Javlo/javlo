@@ -292,7 +292,7 @@ public class UserFactory implements IUserFactory, Serializable {
 
 	@Override
 	public User login(HttpServletRequest request, String token) {
-		logger.info("try login with token.");
+		logger.info("try login with token token = "+token);
 		if (token == null || token.trim().length() == 0) {
 			return null;
 		}

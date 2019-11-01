@@ -27,5 +27,10 @@ public class XHTMLHelperTest extends TestCase {
 		assertEquals(XHTMLHelper.replaceOutTag("<p class=\"test\">test</p>", "test", "replace"), "<p class=\"test\">replace</p>");
 		assertEquals(XHTMLHelper.replaceOutTag("<p class=\"test\">table</p>", "test", "replace"), "<p class=\"test\">table</p>");		
 	}
+	
+	public void testToHTML() {
+		assertEquals(XHTMLHelper.textToXHTML("line1\\nline2"), "line1<br />line2");
+		assertEquals(XHTMLHelper.textToXHTMLWidthParagraph("line1\\nline2"), "<p>line1</p><p>line2</p>");
+	}
 
 }

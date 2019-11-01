@@ -44,6 +44,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.macro.core.IMacro;
 import org.javlo.service.ContentService;
+import org.javlo.service.PDFLayout;
 import org.javlo.servlet.AccessServlet;
 import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.template.TemplateFactory;
@@ -160,6 +161,7 @@ public class StaticConfig extends Observable {
 	private String encryptedFirstPassword = null;
 
 	public static final List<String> BASIC_MODULES = Arrays.asList(new String[] { "admin", "content", "file" });
+	private static final String DEFAULT_PDF_LAYOUT = (new PDFLayout()).store();
 
 	public Boolean internetAccess = null;
 
@@ -2142,6 +2144,10 @@ public class StaticConfig extends Observable {
 	
 	public String getSearchPageName() {
 		return properties.getString("page.search", "search-result");
+	}
+	
+	public String getDefaultPDFLayout() {
+		return properties.getString("pdf.layout", DEFAULT_PDF_LAYOUT);
 	}
 	
 	public static void main(String[] args) {

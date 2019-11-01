@@ -1108,7 +1108,7 @@ public class ImageTransformServlet extends FileServlet {
 			StaticInfo staticInfo = null;
 			if (imageFromTemplateFolder && template != null) {
 				localFile = true;
-				imageName = URLHelper.mergePath(template.getLocalWorkTemplateFolder(), template.getId(), globalContext.getContextKey(), imageName);				
+				imageName = URLHelper.mergePath(template.getLocalWorkTemplateFolder(), template.getId(), globalContext.getContextKey(), imageName);
 			} else if (imageName.substring(1).startsWith(staticConfig.getShareDataFolderKey())) {
 				imageName = imageName.substring(staticConfig.getShareDataFolderKey().length() + 2);
 				dataFolder = globalContext.getSharedDataFolder(request.getSession());
@@ -1193,6 +1193,7 @@ public class ImageTransformServlet extends FileServlet {
 					baseExtension = StringHelper.getFileExtension(imageFile.getName());
 				}
 				if (!imageFile.exists()) {
+					logger.warning("image not found : "+imageFile);
 					imageName = NO_IMAGE_FILE;
 					imageFile = new File(ResourceHelper.getRealPath(ctx.getRequest().getSession().getServletContext(), imageName));
 				}
