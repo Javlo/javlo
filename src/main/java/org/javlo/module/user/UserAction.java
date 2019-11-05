@@ -68,6 +68,7 @@ import org.javlo.user.IUserInfo;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.user.UserInfoSorting;
+import org.javlo.user.UserSecurity;
 import org.javlo.user.exception.UserAllreadyExistException;
 import org.javlo.utils.CSVFactory;
 import org.javlo.utils.JSONMap;
@@ -109,7 +110,6 @@ public class UserAction extends AbstractModuleAction {
 				.getAllRoles(globalContext, ctx.getRequest().getSession()).contains(userContext.getCurrentRole())) {
 			userContext.setCurrentRole(null);
 		}
-
 
 		if (userContext.getCurrentRole() != null) {
 			List<IUserInfo> users = new LinkedList<IUserInfo>();
@@ -400,7 +400,8 @@ public class UserAction extends AbstractModuleAction {
 		} else {
 			GlobalContext gc = ctx.getGlobalContext();
 			String title = i18nAccess.getViewText("registration.mail.confirm.title");
-			String subject = i18nAccess.getViewText("registration.mail.confirm.subject") + ctx.getCurrentPage().getGlobalTitle(ctx);
+			String subject = i18nAccess.getViewText("registration.mail.confirm.subject")
+					+ ctx.getCurrentPage().getGlobalTitle(ctx);
 			String text = i18nAccess.getViewText("registration.mail.confirm.text");
 			String actionLabel = i18nAccess.getViewText("registration.mail.confirm.action");
 			ContentService contentService = ContentService.getInstance(ctx.getGlobalContext());
@@ -563,7 +564,8 @@ public class UserAction extends AbstractModuleAction {
 			if (user == null) {
 				return i18nAccess.getViewText("user.message.error.change-mail-not-found");
 			} else {
-				String subject = i18nAccess.getViewText("user.message.change-password.email-subject") + ' '	+ globalContext.getGlobalTitle();
+				String subject = i18nAccess.getViewText("user.message.change-password.email-subject") + ' '
+						+ globalContext.getGlobalTitle();
 				String body = i18nAccess.getViewText("user.message.change-password.email-body");
 				Map<String, String> params = new HashMap<String, String>();
 				params.put("pwtoken", globalContext.getChangePasswordToken(user.getLogin()));
@@ -731,6 +733,22 @@ public class UserAction extends AbstractModuleAction {
 				user.getUserInfo().setToken(StringHelper.getRandomIdBase64());
 			}
 			ctx.addAjaxData("token", user.getUserInfo().getToken());
+		}
+		return null;
+	}
+
+	public static String performRestoreshadowaccess(HttpServletRequest request, RequestService rs,
+			I18nAccess i18nAccess, ContentContext ctx, GlobalContext globalContext, HttpSession session)
+			throws Exception {
+
+		User user = UserSecurity.getShadowUser(request.getSession());
+		UserSecurity.clearShadowUser(request.getSession());
+		if (user == null) {
+			return "shadow user not found.";
+		} else {
+			performLogout(ctx, request, rs, globalContext, i18nAccess);
+			UserFactory factory = AdminUserFactory.createAdminUserFactory(globalContext, session);
+			factory.autoLogin(request, user.getLogin());
 		}
 		return null;
 	}
@@ -1086,10 +1104,10 @@ public class UserAction extends AbstractModuleAction {
 
 	public static String performLogin(ContentContext ctx, HttpServletRequest request, RequestService rs,
 			GlobalContext globalContext, I18nAccess i18nAccess) throws Exception {
-	IUserFactory fact = UserFactory.createUserFactory(request);
+		IUserFactory fact = UserFactory.createUserFactory(request);
 		User loggedUser = ctx.getCurrentUser(); // for return current user information withtout login
 		String login = request.getParameter("login");
-		if (fact.getCurrentUser(globalContext, request.getSession()) == null) {			
+		if (fact.getCurrentUser(globalContext, request.getSession()) == null) {
 			if (login != null || request.getUserPrincipal() != null) {
 				if (request.getParameter("autologin") != null) {
 					DataToIDService service = DataToIDService.getInstance(request.getSession().getServletContext());
@@ -1128,12 +1146,11 @@ public class UserAction extends AbstractModuleAction {
 			}
 		}
 		RequestHelper.setJSONType(ctx.getResponse());
-		JSONMap.JSON.toJson(data, ctx.getResponse().getWriter());	
+		JSONMap.JSON.toJson(data, ctx.getResponse().getWriter());
 		return null;
 	}
-	
-	public static String performLogout(ContentContext ctx, HttpServletRequest request, RequestService rs,
-			GlobalContext globalContext, I18nAccess i18nAccess) throws Exception {
+
+	public static String performLogout(ContentContext ctx, HttpServletRequest request, RequestService rs, GlobalContext globalContext, I18nAccess i18nAccess) throws Exception {
 		IUserFactory fact = UserFactory.createUserFactory(request);
 		if (fact.getCurrentUser(globalContext, ctx.getRequest().getSession()) != null) {
 			fact.logout(ctx.getRequest().getSession());
@@ -1142,7 +1159,7 @@ public class UserAction extends AbstractModuleAction {
 			if (fact.getCurrentUser(globalContext, ctx.getRequest().getSession()) != null) {
 				fact.logout(ctx.getRequest().getSession());
 			}
-		}		
+		}
 		return null;
 	}
 

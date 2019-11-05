@@ -84,5 +84,7 @@ public interface IUserFactory {
 	User getUserByEmail(String email);
 	
 	public RoleWrapper getRoleWrapper(ContentContext ctx, User user);
+	
+	public String getSessionKey();
 
 }

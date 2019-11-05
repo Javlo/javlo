@@ -533,7 +533,15 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public List<String> extractFieldsFromRenderer(ContentContext ctx) throws IOException {
 		String cr = getRenderer(ctx);
 		if (cr != null) {
-			File renderer = new File(ctx.getRequest().getSession().getServletContext().getRealPath(cr));
+			if (cr.contains("?")) {
+				cr = cr.substring(0, cr.indexOf('?'));
+			}
+			String realPath = ctx.getRequest().getSession().getServletContext().getRealPath(cr);
+			if (realPath == null) {
+				logger.severe("coun't not convert : "+cr+" to path.");
+				return null;
+			}
+			File renderer = new File(realPath);
 			if (renderer.exists()) {
 				Pattern pattern = Pattern.compile("(name=\")(.+?)(\")");
 				Matcher matcher = pattern.matcher(ResourceHelper.loadStringFromFile(renderer));
@@ -3296,7 +3304,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	public static void main(String[] args) {
-		Collections.EMPTY_MAP.clear();
+		String cr = "/jsp/test.jsp?p=test";
+		cr = cr.substring(0, cr.indexOf('?'));
+		System.out.println(cr);
 	}
 
 	@Override

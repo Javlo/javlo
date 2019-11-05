@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import org.javlo.actions.IAction;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
+import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IInteractiveMacro;
 import org.javlo.message.GenericMessage;
@@ -86,6 +87,7 @@ public class LogAsUser implements IInteractiveMacro, IAction {
 		} else {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("macro.log-as-user.login", "user not found : ")+login, GenericMessage.ERROR));
 		}
+		ctx.setParentURL(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE)));
 		ctx.setClosePopup(true);
 		return null;
 	}

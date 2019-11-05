@@ -2,10 +2,15 @@ package org.javlo.user;
 
 import java.util.Collections;
 
+import javax.servlet.http.HttpSession;
+
 import org.javlo.context.ContentContext;
+import org.javlo.context.GlobalContext;
 import org.javlo.ztatic.StaticInfo;
 
 public class UserSecurity {
+	
+	public static String SHADOW_USER = "shadowUser";
 
 	private UserSecurity() {
 	}
@@ -23,6 +28,18 @@ public class UserSecurity {
 			}
 		}
 		return true;
+	}
+	
+	public static void storeShadowUser(HttpSession session) {
+		session.setAttribute(SHADOW_USER, session.getAttribute(UserFactory.createUserFactory(GlobalContext.getSessionContext(session), session).getSessionKey()));
+	}
+	
+	public static User getShadowUser(HttpSession session) {
+		return (User)session.getAttribute(SHADOW_USER);
+	}
+	
+	public static void clearShadowUser(HttpSession session) {
+		session.removeAttribute(SHADOW_USER);
 	}
 
 }

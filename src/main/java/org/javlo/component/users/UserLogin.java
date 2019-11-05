@@ -321,6 +321,9 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 		/* save password */
 		String pwd = userInfo.getPassword();
 		IContentVisualComponent comp = ComponentHelper.getComponentFromRequest(ctx);
+		if (comp==null) {
+			return "component not found.";
+		}
 		List<String> fields = comp.extractFieldsFromRenderer(ctx);
 		if (fields != null && fields.size() > 0) {
 			Map<String,String> allValues = new HashMap<String, String>();

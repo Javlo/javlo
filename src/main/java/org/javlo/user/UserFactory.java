@@ -158,6 +158,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		User user = getUser(login);
 		if (user != null) {
+			UserSecurity.storeShadowUser(request.getSession());;
 			user.setContext(globalContext.getContextKey());
 			request.getSession().setAttribute(getSessionKey(), user);
 		}
@@ -441,7 +442,8 @@ public class UserFactory implements IUserFactory, Serializable {
 		return true;
 	}
 	
-	protected String getSessionKey() {
+	@Override
+	public String getSessionKey() {
 		return "currentUser";
 	}
 
