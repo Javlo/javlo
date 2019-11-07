@@ -18,7 +18,8 @@ import org.javlo.image.ImageHelper;
 public class MailingFeedback extends HttpServlet {
 	
 	private static final String IMAGE = "/images/empty.png";
-	
+	private static final String CONTENT_TYPE = ImageHelper.getImageExtensionToManType(IMAGE);
+		
 	private byte[] data = null;
 	
 	@Override
@@ -33,7 +34,7 @@ public class MailingFeedback extends HttpServlet {
 		resp.setHeader("Cache-Control", "no-cache");
 		resp.setHeader("Accept-Ranges", "bytes");
 		resp.setContentType(getServletInfo());
-		resp.setContentType(ImageHelper.getImageExtensionToManType(IMAGE));
+		resp.setContentType(CONTENT_TYPE);
 		ByteArrayInputStream in = new ByteArrayInputStream(data);
 		ResourceHelper.writeStreamToStream(in, resp.getOutputStream());
 		ResourceHelper.closeResource(in);
