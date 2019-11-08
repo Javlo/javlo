@@ -208,8 +208,12 @@ public class MailService {
 		} else {
 			Transport transport = mailSession.getTransport("smtp");
 			
-			try {				
-				transport.connect(mailConfig.getSMTPHost(), mailConfig.getSMTPPortInt(), mailConfig.getLogin(), mailConfig.getPassword());
+			try {
+				String password = mailConfig.getPassword();
+				if (StringHelper.isEmpty(password)) {
+					password=null;
+				}
+				transport.connect(mailConfig.getSMTPHost(), mailConfig.getSMTPPortInt(), mailConfig.getLogin(), password);
 			} catch (MessagingException e) {
 				logger.severe(e.getMessage());
 				
