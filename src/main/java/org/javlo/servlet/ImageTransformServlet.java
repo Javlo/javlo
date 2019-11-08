@@ -998,7 +998,7 @@ public class ImageTransformServlet extends FileServlet {
 		}
 		ctx.setRenderMode(ContentContext.PREVIEW_MODE); // user for staticInfo
 														// storage
-		RequestHelper.traceMailingFeedBack(ctx);
+		//RequestHelper.traceMailingFeedBack(ctx);
 		
 		OutputStream out = null;
 

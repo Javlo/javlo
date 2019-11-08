@@ -566,7 +566,7 @@ public class XMLManipulationHelper {
 
 					remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, "<%=ctx.getGlobalContext().getHeaderBloc()%>" + getEscapeMenu(targetEscapeMenu) + getResetTemplate() + getAfterBodyCode());
 					if (isMail && globalContext.getStaticConfig().isMailingUserTracking()) {
-						previewCode = previewCode + "<%Map mParams = new HashMap();mParams.put(MailingAction.MAILING_FEEDBACK_PARAM_NAME, MailingAction.MAILING_FEEDBACK_VALUE_NAME);%><img class=\"empty_image\" alt=\"\" style=\"height: 0; width: 0; margin:0; padding: 0;\" width=\"0\" height=\"0\" src=\"<%=URLHelper.createStaticURL(ctx, \"/mfb.png\", mParams)%>\" /> ";
+						previewCode = previewCode + "<img class=\"empty_image\" alt=\"\" style=\"height: 0; width: 0; margin:0; padding: 0;\" width=\"0\" height=\"0\" src=\"<%=URLHelper.createStaticURL(ctx, globalContext.getStaticConfig().getMailingFeedBackURI())%>\" /> ";
 					}
 
 					String footerResourceIndlue = "<!-- comp resources --><%for (String uri : currentPage.getExternalResources(ctx)) {%><%=XHTMLHelper.renderHeaderResourceInsertion(ctx, uri)%><%}%>";

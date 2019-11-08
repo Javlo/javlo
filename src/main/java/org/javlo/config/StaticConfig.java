@@ -43,6 +43,8 @@ import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.macro.core.IMacro;
+import org.javlo.mailing.feedback.DefaultMailingFeedback;
+import org.javlo.module.mailing.MailingAction;
 import org.javlo.service.ContentService;
 import org.javlo.service.PDFLayout;
 import org.javlo.servlet.AccessServlet;
@@ -1983,6 +1985,24 @@ public class StaticConfig extends Observable {
 			return 60 * 60 * 2;
 		} else {
 			return Integer.parseInt(backupCount);
+		}
+	}
+	
+	public String getMailingFeedBackURI() {
+		String classRaw = properties.getProperty("mailing.feedback.uri");
+		if (StringHelper.isEmpty(classRaw)) {
+			return "/mfb/mfb.png?"+MailingAction.MAILING_FEEDBACK_PARAM_NAME+'='+MailingAction.MAILING_FEEDBACK_VALUE_NAME;
+		} else {
+			return classRaw;
+		}
+	}
+	
+	public List<String> getMailingFeedbackClass() {
+		String classRaw = properties.getProperty("mailing.feedback.class");
+		if (StringHelper.isEmpty(classRaw)) {
+			return Arrays.asList( new String[] {DefaultMailingFeedback.class.getCanonicalName()});
+		} else {
+			return StringHelper.stringToCollection(classRaw, ",");
 		}
 	}
 

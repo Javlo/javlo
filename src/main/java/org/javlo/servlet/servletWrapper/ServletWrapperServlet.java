@@ -57,7 +57,7 @@ public class ServletWrapperServlet extends HttpServlet {
 		ContentContext ctx;
 		try {
 			ctx = ContentContext.getContentContext(request, response);
-			RequestHelper.traceMailingFeedBack(ctx);
+//			RequestHelper.traceMailingFeedBack(ctx);
 		} catch (Exception e1) {
 			e1.printStackTrace();
 			throw new ServletException(e1.getMessage());

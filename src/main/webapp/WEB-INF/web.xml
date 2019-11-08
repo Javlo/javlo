@@ -128,7 +128,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>mfb</servlet-name>
-		<url-pattern>/mfb.png</url-pattern>
+		<url-pattern>/mfb/*</url-pattern>
 	</servlet-mapping>
 
 	<servlet>

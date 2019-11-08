@@ -14,6 +14,8 @@ import org.javlo.context.ContentContext;
 import org.javlo.helper.RequestHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.image.ImageHelper;
+import org.javlo.mailing.feedback.IMailingFeedback;
+import org.javlo.mailing.feedback.MailingFeedbackFactory;
 
 public class MailingFeedback extends HttpServlet {
 	
@@ -40,8 +42,10 @@ public class MailingFeedback extends HttpServlet {
 		ResourceHelper.closeResource(in);
 		ContentContext ctx;
 		try {
-			ctx = ContentContext.getContentContext(req, resp);
-			RequestHelper.traceMailingFeedBack(ctx);
+			ctx = ContentContext.getContentContext(req, resp);			
+			for (IMailingFeedback mailingFeedback : MailingFeedbackFactory.getInstance(ctx).getAllMailingFeedback()) {
+				mailingFeedback.treatFeedback(ctx);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		

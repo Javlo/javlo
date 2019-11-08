@@ -103,7 +103,7 @@ public class ContentOnlyServlet extends HttpServlet {
 			}
 			
 
-			RequestHelper.traceMailingFeedBack(ctx);
+			//RequestHelper.traceMailingFeedBack(ctx);
 
 			ctx.setRenderMode(ContentContext.PAGE_MODE); // todo: check how we can remove this line.
 
