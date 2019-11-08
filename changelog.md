@@ -788,6 +788,7 @@ Security in case of vulnerabilities.
  - introduction SLF4J
  - add forward url as canonical url
  - more info in ical service
+ - mailing feedback factory
 ### Modified
  - security update
  - file-finder optimisation
