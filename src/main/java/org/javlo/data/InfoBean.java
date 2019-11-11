@@ -2,6 +2,7 @@ package org.javlo.data;
 
 import java.io.File;
 import java.text.DateFormatSymbols;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -411,6 +412,22 @@ public class InfoBean {
 
 	public String getNowSortable() {
 		return StringHelper.renderSortableDate(new Date());
+	}
+	
+	public String getNowInputDate() throws ParseException {
+		return StringHelper.renderInputDate(new Date());
+	}
+	
+	public String getMajorInputDate() throws ParseException {
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.YEAR, 18);
+		return StringHelper.renderInputDate(cal.getTime());
+	}
+	
+	public String getMaxAgeInputDate() throws ParseException {
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.YEAR, 120);
+		return StringHelper.renderInputDate(cal.getTime());
 	}
 
 	public String getCurrentDate() {
