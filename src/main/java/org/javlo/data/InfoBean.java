@@ -420,13 +420,13 @@ public class InfoBean {
 	
 	public String getMajorInputDate() throws ParseException {
 		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.YEAR, 18);
+		cal.add(Calendar.YEAR, -18);
 		return StringHelper.renderInputDate(cal.getTime());
 	}
 	
 	public String getMaxAgeInputDate() throws ParseException {
 		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.YEAR, 120);
+		cal.add(Calendar.YEAR, -120);
 		return StringHelper.renderInputDate(cal.getTime());
 	}
 
