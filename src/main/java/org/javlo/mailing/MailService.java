@@ -165,8 +165,8 @@ public class MailService {
 					finalProps.put("mail.smtp.socketFactory.class","javax.net.ssl.SSLSocketFactory");
 				} else if (Integer.parseInt(mailing.getSMTPPort()) == 587) {
 					finalProps.put("mail.smtp.starttls.enable","true");
-					finalProps.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-					finalProps.put("mail.smtp.socketFactory.fallback", "false");
+//					finalProps.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+//					finalProps.put("mail.smtp.socketFactory.fallback", "false");
 				}
 			}
 			if (mailing.getLogin() != null) {
