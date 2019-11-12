@@ -123,6 +123,8 @@ import org.javlo.ztatic.IStaticContainer;
 public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxonomyContainer {
 
 	public static MenuElement NOT_FOUND_PAGE = new MenuElement();
+	
+	public static final String NULL_STRING = "NS";
 
 	public static int INSTANCE = 0;
 
@@ -3229,6 +3231,12 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 					}
 				}
 			}
+		}
+		if (desc.linkOn == null) {
+			desc.linkOn = "";
+		}
+		if (desc.linkOn.length()==0) {
+			return null;
 		}
 		return desc.linkOn;
 	}
