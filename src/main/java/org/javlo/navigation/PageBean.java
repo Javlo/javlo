@@ -613,6 +613,10 @@ public class PageBean implements Serializable {
 			}
 		}
 	}
+	
+	public String getLinkOn() throws Exception {
+		return page.getLinkOn(ctx);
+	}
 
 	public int getSeoWeight() {
 		return page.getFinalSeoWeight();
