@@ -18,10 +18,10 @@ public class MailConfig {
 	
 	private String tempDir = null;
 	
-	public MailConfig(String host, int post, String login, String password) {
+	public MailConfig(String host, int port, String login, String password) {
 		this.SMTPHost = host;
-		if (post > 0) {
-		this.SMTPPort = ""+post;
+		if (port > 0) {
+		this.SMTPPort = ""+port;
 		}
 		this.login = login;
 		this.password = password;		
