@@ -1012,11 +1012,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			setNeedRefresh(true);
 		}
 
-		boolean isForceCachable = requestService.getParameter("forceCachable-" + getId(), null) != null;
-		if (isForceCachable != isForceCachable()) {
-			setForceCachable(isForceCachable);
-			setModify();
-			setNeedRefresh(true);
+		if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser())) {
+			boolean isForceCachable = requestService.getParameter("forceCachable-" + getId(), null) != null;
+			if (isForceCachable != isForceCachable()) {
+				setForceCachable(isForceCachable);
+				setModify();
+				setNeedRefresh(true);
+			}
 		}
 
 		boolean isNolink = requestService.getParameter("nolink-" + getId(), null) != null;
