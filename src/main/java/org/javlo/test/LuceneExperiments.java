@@ -103,7 +103,7 @@ public class LuceneExperiments {
 		int hitsPerPage = 10;
 		IndexReader reader = DirectoryReader.open(index);
 		IndexSearcher searcher = new IndexSearcher(reader);
-		TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage);
+		TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage, Integer.MAX_VALUE);
 		searcher.search(q, collector);
 		TopDocs td = collector.topDocs();
 

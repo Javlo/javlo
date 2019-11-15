@@ -2710,7 +2710,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	public boolean isAlternativeTemplate(ContentContext ctx) {
-		boolean out = ctx.getRequest().getSession().getAttribute(getAlternateTemplateSessionKey()) != null;
+		boolean out = ctx.getRequest().getSession(false).getAttribute(getAlternateTemplateSessionKey()) != null;
 		return out;
 	}
 

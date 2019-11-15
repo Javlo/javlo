@@ -100,7 +100,6 @@ import org.javlo.module.content.Edit;
 import org.javlo.module.core.IPrintInfo;
 import org.javlo.service.ClipBoard;
 import org.javlo.service.ContentService;
-import org.javlo.service.PDFLayout;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.event.Event;

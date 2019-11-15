@@ -42,5 +42,14 @@ public class GlobalContextFactory {
 		}
 		return masterContext;
 	}
+	
+	public static String getGlobalContextTitle(ServletContext application, String contextKey) throws IOException {
+		for (GlobalContext globalContext : getAllGlobalContext(application)) {
+			if (globalContext.getContextKey().equals(contextKey)) {
+				return globalContext.getGlobalTitle();
+			}
+		}
+		return null;
+	}
 
 }

@@ -1325,6 +1325,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** TEMP DIR          :  " + staticConfig.getTempDir());
 		out.println("**** IMAGE TEMP DIR    :  " + staticConfig.getImageCacheFolder());
 		out.println("**** IMAGE AUTO FOCUS  :  " + staticConfig.isAutoFocus());
+		out.println("**** SEARCH ENGINE     :  " + staticConfig.getSearchEngineClassName());
 		out.println("**** MAIL THREAD       :  " + staticConfig.isMailingThread());
 		out.println("**** MAIL HOST         :  " + staticConfig.getSMTPHost() + ':' + staticConfig.getSMTPPort() + " - [connection valid:" + smtpConnect + ']');
 		out.println("**** MAILING FB URI    :  " + staticConfig.getMailingFeedBackURI());

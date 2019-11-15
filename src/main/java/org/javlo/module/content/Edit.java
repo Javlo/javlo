@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.search.SearchService;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.column.TableBreak;
 import org.javlo.component.container.IContainer;
@@ -66,6 +67,7 @@ import org.javlo.module.ticket.Ticket;
 import org.javlo.module.ticket.TicketBean;
 import org.javlo.module.ticket.TicketService;
 import org.javlo.navigation.MenuElement;
+import org.javlo.search.SearchEngineFactory;
 import org.javlo.search.SearchResult;
 import org.javlo.search.SearchResult.SearchElement;
 import org.javlo.service.ClipBoard;
@@ -1625,6 +1627,7 @@ public class Edit extends AbstractModuleAction {
 
 				// clean component list when publish
 				ComponentFactory.cleanComponentList(request.getSession().getServletContext(), globalContext);
+				
 			}
 
 			// /*** check url ***/
@@ -1689,6 +1692,12 @@ public class Edit extends AbstractModuleAction {
 			AdminAction.clearCache(ctx);
 
 			TimeTracker.end(globalContext.getContextKey(), "publish", trackerNumber);
+			
+			if (SearchEngineFactory.getEngine(ctx) != null) {
+				SearchEngineFactory.getEngine(ctx).updateData(ctx);
+			} else {
+				logger.severe("no search engine.");
+			}
 
 			return message;
 		}

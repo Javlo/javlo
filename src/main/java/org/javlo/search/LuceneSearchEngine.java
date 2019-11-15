@@ -68,6 +68,12 @@ public class LuceneSearchEngine implements ISearchEngine {
 		private Analyzer analyzer;
 
 	}
+	
+	@Override
+	public void updateData(ContentContext ctx) throws Exception {
+		String key = GLOBAL_CONTEXT_KEY_PREFIX + ctx.getRequestContentLanguage();
+		ctx.getGlobalContext().setAttribute(key, null);
+	}
 
 	@Override
 	public List<SearchElement> search(ContentContext ctx, String groupId, String searchStr, String sort, List<String> componentList) throws Exception {
@@ -92,7 +98,7 @@ public class LuceneSearchEngine implements ISearchEngine {
 		//TODO Is there a better way than TopScoreDocCollector to return all result?
 		IndexReader reader = DirectoryReader.open(langIndex.index);
 		IndexSearcher searcher = new IndexSearcher(reader);
-		TopScoreDocCollector collector = TopScoreDocCollector.create(MAX_RESULTS);
+		TopScoreDocCollector collector = TopScoreDocCollector.create(MAX_RESULTS, Integer.MAX_VALUE);
 		searcher.search(q, collector);
 		ScoreDoc[] hits = collector.topDocs().scoreDocs;
 

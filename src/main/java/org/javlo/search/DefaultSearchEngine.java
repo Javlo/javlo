@@ -15,5 +15,9 @@ public class DefaultSearchEngine implements ISearchEngine {
 		wrapped.search(ctx, groupId, searchStr, sort, componentList);
 		return wrapped.getSearchResult();
 	}
+	
+	@Override
+	public void updateData(ContentContext ctx) throws Exception {
+	}
 
 }
