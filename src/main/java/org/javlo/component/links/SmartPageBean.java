@@ -140,7 +140,7 @@ public class SmartPageBean {
 		if (getUrl() == null) {
 			return false;
 		}
-		return getUrl().equals(getLinkOn());
+		return !getUrl().equals(getLinkOn());
 	}
 
 	public String getAttTitle() {
