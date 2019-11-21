@@ -600,6 +600,13 @@ public class PageBean implements Serializable {
 	public boolean isTrash() {
 		return ContentService.TRASH_PAGE_NAME.equals(getName());
 	}
+	
+	public boolean isPopup() throws Exception {
+		if (getUrl() == null) {
+			return false;
+		}
+		return getUrl().equals(getLinkOn());
+	}
 
 	public String getLink() throws Exception {
 		if (page.isRealContent(ctx)) {
