@@ -135,6 +135,13 @@ public class SmartPageBean {
 	public boolean isLinkRealContent() throws Exception {
 		return page.isLinkRealContent(ctx);
 	}
+	
+	public boolean isPopup() throws Exception {
+		if (getUrl() == null) {
+			return false;
+		}
+		return getUrl().equals(getLinkOn());
+	}
 
 	public String getAttTitle() {
 		try {
