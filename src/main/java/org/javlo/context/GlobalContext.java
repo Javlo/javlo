@@ -1643,6 +1643,61 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getGlobalTitle() {
 		return properties.getString("global-title", "Javlo");
 	}
+	
+	public String getOwnerName() {
+		return properties.getString("owner.name", "");
+	}
+	
+	public void setOwnerName(String name) {		
+		synchronized (properties) {
+			properties.setProperty("owner.name", name);
+			save();
+		}
+	}
+	
+	public String getOwnerAddress() {
+		return properties.getString("owner.address", "");
+	}
+	
+	public void setOwnerAddress(String add) {		
+		synchronized (properties) {
+			properties.setProperty("owner.address", add);
+			save();
+		}
+	}
+	
+	public String getOwnerNumber() {
+		return properties.getString("owner.number", "");
+	}
+	
+	public void setOwnerNumber(String num) {		
+		synchronized (properties) {
+			properties.setProperty("owner.number", num);
+			save();
+		}
+	}
+	
+	public String getOwnerPhone() {
+		return properties.getString("owner.phone", "");
+	}
+	
+	public void setOwnerPhone(String phone) {		
+		synchronized (properties) {
+			properties.setProperty("owner.phone", phone);
+			save();
+		}
+	}
+	
+	public String getOwnerEmail() {
+		return properties.getString("owner.email", "");
+	}
+	
+	public void setOwnerEmail(String email) {		
+		synchronized (properties) {
+			properties.setProperty("owner.email", email);
+			save();
+		}
+	}
 
 	public String getGoogleAnalyticsUACCT() {
 		return properties.getString("google.uacct", "");

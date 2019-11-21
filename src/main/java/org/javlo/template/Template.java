@@ -42,6 +42,7 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.naming.ConfigurationException;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -76,8 +77,6 @@ import org.javlo.utils.ListAsMap;
 import org.javlo.utils.ListMapValueValue;
 import org.javlo.utils.ReadOnlyPropertiesConfigurationMap;
 import org.javlo.utils.StructuredConfigurationProperties;
-
-import net.sf.jasperreports.engine.util.FileBufferedWriter;
 
 public class Template implements Comparable<Template> {
 
@@ -2710,6 +2709,10 @@ public class Template implements Comparable<Template> {
 	}
 
 	public boolean isAlternativeTemplate(ContentContext ctx) {
+		HttpSession session = ctx.getRequest().getSession(false);
+		if (session == null) {
+			return false;
+		}
 		boolean out = ctx.getRequest().getSession(false).getAttribute(getAlternateTemplateSessionKey()) != null;
 		return out;
 	}

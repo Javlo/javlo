@@ -122,6 +122,12 @@ public class GlobalContextBean {
 	private boolean reversedlink;
 	private boolean backupThread;
 	
+	private String ownerName;
+	private String ownerAddress;
+	private String ownerNumber;
+	private String ownerPhone;
+	private String ownerEmail;
+	
 	private TemplateData templateData = null;
 	
 	private List<String> quietArea = Collections.EMPTY_LIST;
@@ -225,6 +231,12 @@ public class GlobalContextBean {
 		setQuietArea(globalContext.getQuietArea());
 		
 		setBackupThread(globalContext.isBackupThread());
+		
+		setOwnerName(globalContext.getOwnerName());
+		setOwnerAddress(globalContext.getOwnerAddress());
+		setOwnerNumber(globalContext.getOwnerNumber());
+		setOwnerEmail(globalContext.getOwnerEmail());
+		setOwnerPhone(globalContext.getOwnerPhone());
 		
 		try {
 			setSpecialConfig(ResourceHelper.loadStringFromFile(globalContext.getSpecialConfigFile()));
@@ -935,6 +947,46 @@ public class GlobalContextBean {
 
 	public void setBackupThread(boolean backupThread) {
 		this.backupThread = backupThread;
+	}
+
+	public String getOwnerName() {
+		return ownerName;
+	}
+
+	public void setOwnerName(String ownerName) {
+		this.ownerName = ownerName;
+	}
+
+	public String getOwnerAddress() {
+		return ownerAddress;
+	}
+
+	public void setOwnerAddress(String ownerAddress) {
+		this.ownerAddress = ownerAddress;
+	}
+
+	public String getOwnerNumber() {
+		return ownerNumber;
+	}
+
+	public void setOwnerNumber(String ownerNumber) {
+		this.ownerNumber = ownerNumber;
+	}
+
+	public String getOwnerPhone() {
+		return ownerPhone;
+	}
+
+	public void setOwnerPhone(String ownerPhone) {
+		this.ownerPhone = ownerPhone;
+	}
+
+	public String getOwnerEmail() {
+		return ownerEmail;
+	}
+
+	public void setOwnerEmail(String ownerEmail) {
+		this.ownerEmail = ownerEmail;
 	}
 
 }

@@ -2,7 +2,6 @@ package org.javlo.module.admin;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -432,6 +431,12 @@ public class AdminAction extends AbstractModuleAction {
 					ctx.setNeedRefresh(true);
 				}
 			}
+			/** owner **/
+			ctx.getGlobalContext().setOwnerName(requestService.getParameter("owner.name", ""));
+			ctx.getGlobalContext().setOwnerAddress(requestService.getParameter("owner.address", ""));
+			ctx.getGlobalContext().setOwnerNumber(requestService.getParameter("owner.number", ""));
+			ctx.getGlobalContext().setOwnerPhone(requestService.getParameter("owner.phone", ""));
+			ctx.getGlobalContext().setOwnerEmail(requestService.getParameter("owner.email", ""));
 			/** macro **/
 			MacroFactory.getInstance(ctx).clear(ctx);
 			MacroFactory macroFactory = MacroFactory.getInstance(ctx);
@@ -477,6 +482,13 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setReversedLink(requestService.getParameter("reversedlink", null) != null);
 					currentGlobalContext.setContentIntegrity(requestService.getParameter("integrity", ""));
 					currentGlobalContext.setComponentsFiltered(StringHelper.isTrue(requestService.getParameter("components-filtered", null)));
+					
+					/** owner **/
+					currentGlobalContext.setOwnerName(requestService.getParameter("owner.name", ""));
+					currentGlobalContext.setOwnerAddress(requestService.getParameter("owner.address", ""));
+					currentGlobalContext.setOwnerNumber(requestService.getParameter("owner.number", ""));
+					currentGlobalContext.setOwnerPhone(requestService.getParameter("owner.phone", ""));
+					currentGlobalContext.setOwnerEmail(requestService.getParameter("owner.email", ""));
 
 					try {
 						currentGlobalContext.setURLFactory(requestService.getParameter("urlfactory", ""));

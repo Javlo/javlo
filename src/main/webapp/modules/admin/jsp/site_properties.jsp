@@ -23,9 +23,6 @@
 					<label>${i18n.edit['admin.form.size']}</label>
 					<span>${currentContext.size}</span>
 				</div><div class="form-group">		
-					<label for="global-title">${i18n.edit['admin.form.global-title']}</label>
-					<input class="form-control" type="text" id="global-title" name="global-title" value="${currentContext.globalTitle}" />	
-				</div><div class="form-group">		
 					<label for="template-mode">${i18n.edit['admin.title.template-mode']}</label>
 					<select class="form-control" id="template-mode" name="template-mode">
 						<c:forEach var="layout" items="${contentContext.globalContext.staticConfig.previewLayout}">
@@ -59,6 +56,39 @@
 				</div>
 		</div>
 	</fieldset>
+	
+	<fieldset>
+	<legend>${i18n.edit['admin.form.owner']}</legend>
+	<div class="row">
+	<div class="col-sm-6">
+	<div class="form-group">		
+	<label for="global-title">${i18n.edit['admin.form.global-title']}</label>
+	<input class="form-control" type="text" id="global-title" name="global-title" value="${currentContext.globalTitle}" />	
+	</div>
+	<div class="form-group">		
+		<label for="owner.name">${i18n.edit['admin.form.owner.name']}</label>
+		<input class="form-control" type="text" id="owner.name" name="owner.name" value="${currentContext.ownerName}" />	
+	</div>
+	<div class="form-group">		
+		<label for="owner.address">${i18n.edit['admin.form.owner.address']}</label>
+		<textarea class="form-control" id="owner.address" name="owner.address">${currentContext.ownerAddress}</textarea>	
+	</div>
+	</div><div class="col-sm-6">
+	<div class="form-group">		
+		<label for="owner.number">${i18n.edit['admin.form.owner.number']}</label>
+		<input class="form-control" type="text" id="owner.number" name="owner.number" value="${currentContext.ownerNumber}" />	
+	</div>
+	<div class="form-group">		
+		<label for="owner.email">${i18n.edit['admin.form.owner.email']}</label>
+		<input class="form-control" type="email" id="owner.email" name="owner.email" value="${currentContext.ownerEmail}" />	
+	</div>
+	<div class="form-group">		
+		<label for="owner.phone">${i18n.edit['admin.form.owner.phone']}</label>
+		<input class="form-control" type="text" id="owner.phone" name="owner.phone" value="${currentContext.ownerPhone}" />	
+	</div>
+	</div></div>
+	</fieldset>
+	
 	<jsp:include page="graphic_charter.jsp" />
 	<div class="pull-right">
 		<button type="submit" class="btn btn-primary">${i18n.edit['global.ok']}</button>
@@ -112,11 +142,6 @@
 	<span>${currentContext.size}</span>
 </div>
 
-<div class="form-group">		
-	<label for="global-title">${i18n.edit['admin.form.global-title']}</label>
-	<input class="form-control" type="text" id="global-title" name="global-title" value="${currentContext.globalTitle}" />	
-</div>
-
 <c:if test="${fn:length(contentContext.currentTemplate.quietableAreaMap)>0}">
 <div class="form-group">		
 	<label for="global-title">${i18n.edit['admin.form.quiet-area']} : </label>
@@ -142,6 +167,38 @@
 </div>
 </div>
 
+</fieldset>
+
+<fieldset>
+	<legend>${i18n.edit['admin.form.owner']}</legend>
+	<div class="row">
+	<div class="col-sm-6">
+	<div class="form-group">		
+	<label for="global-title">${i18n.edit['admin.form.global-title']}</label>
+	<input class="form-control" type="text" id="global-title" name="global-title" value="${currentContext.globalTitle}" />	
+</div>
+<div class="form-group">		
+	<label for="owner.name">${i18n.edit['admin.form.owner.name']}</label>
+	<input class="form-control" type="text" id="owner.name" name="owner.name" value="${currentContext.ownerName}" />	
+</div>
+<div class="form-group">		
+	<label for="owner.address">${i18n.edit['admin.form.owner.address']}</label>
+	<textarea class="form-control" id="owner.address" name="owner.address">${currentContext.ownerAddress}</textarea>	
+</div>
+</div><div class="col-sm-6">
+<div class="form-group">		
+	<label for="owner.number">${i18n.edit['admin.form.owner.number']}</label>
+	<input class="form-control" type="text" id="owner.number" name="owner.number" value="${currentContext.ownerNumber}" />	
+</div>
+<div class="form-group">		
+	<label for="owner.email">${i18n.edit['admin.form.owner.email']}</label>
+	<input class="form-control" type="email" id="owner.email" name="owner.email" value="${currentContext.ownerEmail}" />	
+</div>
+<div class="form-group">		
+	<label for="owner.phone">${i18n.edit['admin.form.owner.phone']}</label>
+	<input class="form-control" type="text" id="owner.phone" name="owner.phone" value="${currentContext.ownerPhone}" />	
+</div>
+</div></div>
 </fieldset>
 
 <fieldset>
