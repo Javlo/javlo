@@ -64,7 +64,7 @@ public class SmartPageBean {
 		public String getCssClass() {
 			return cssClass;
 		}
-
+		
 		public String getDescription() {
 			return description;
 		}
@@ -130,6 +130,10 @@ public class SmartPageBean {
 
 	public static SmartPageBean getInstance(ContentContext ctx, ContentContext lgCtx, MenuElement page, PageReferenceComponent comp) {
 		return new SmartPageBean(ctx, lgCtx, page, comp);
+	}
+	
+	public boolean isLinkRealContent() throws Exception {
+		return page.isLinkRealContent(ctx);
 	}
 
 	public String getAttTitle() {
