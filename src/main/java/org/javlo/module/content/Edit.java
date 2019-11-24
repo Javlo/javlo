@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.search.SearchService;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.column.TableBreak;
 import org.javlo.component.container.IContainer;
