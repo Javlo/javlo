@@ -455,6 +455,14 @@ public class ImageHelper {
 		createImage(javloFile, 200, 900);
 //		createImage(javloFile, 100, 900);
 		
+		File vid = new File("c:/trans/test2.mp4");
+		BufferedImage img = getBestImageFromVideo(vid);
+		
+		ImageEngine.storeImage(img, new File("c:/trans/test.jpg"));
+		ImageEngine.storeImage(img, new File("c:/trans/test.png"));
+		ImageEngine.storeImage(img, new File("c:/trans/test.tiff"));
+		ImageEngine.storeImage(img, new File("c:/trans/test.gif"));
+		
 	}
 
 	public static BufferedImage toBufferedImage(Picture src) {

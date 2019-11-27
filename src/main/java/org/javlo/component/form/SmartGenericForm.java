@@ -1,11 +1,5 @@
 package org.javlo.component.form;
 
-import static j2html.TagCreator.a;
-import static j2html.TagCreator.div;
-import static j2html.TagCreator.input;
-import static j2html.TagCreator.label;
-import static j2html.TagCreator.span;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -266,17 +260,22 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		//out.println(XHTMLHelper.renderLine("filename", getInputName("filename"), getLocalConfig(false).getProperty("filename", "")));
 		
 		out.println("<div class=\"row\">");
-		out.println(div(label("title").attr("for", getInputName("title"))).withClass("col-sm-2").render());
-		out.println(div(div(input().withClass("form-control").attr("id", getInputName("title")).attr("name", getInputName("title")).attr("value",getLocalConfig(false).getProperty("title", ""))).withClass("form-group")).withClass("col-sm-10").render());
+		out.println("<div><label for=\""+getInputName("title")+" class=\"col-sm-2\" >title</label>");
+		//out.println(div(label("title").attr("for", getInputName("title"))).withClass("col-sm-2").render());
+		out.println("<div><div><input class=\"form-control\" id=\""+getInputName("title")+"\" name=\""+getInputName("title")+"\" value=\""+getLocalConfig(false).getProperty("title", "")+" class=\"form-group col-sm-10\" />");
+		//out.println(div(div(input().withClass("form-control").attr("id", getInputName("title")).attr("name", getInputName("title")).attr("value",getLocalConfig(false).getProperty("title", ""))).withClass("form-group")).withClass("col-sm-10").render());
 		out.println("</div>");
 
 		String inputName = getInputName("filename");
 		out.println("<div class=\"row\">");
-		out.println(div(label("filename").attr("for", inputName)).withClass("col-sm-2").render());
-		out.println(div(div(input().withClass("form-control").attr("id", inputName).attr("name", inputName).attr("value",getLocalConfig(false).getProperty("filename", ""))).withClass("form-group")).withClass("col-sm-8").render());
+		out.println("<div><label for=\""+inputName+" class=\"col-sm-2\" >filename</label>");
+		//out.println(div(label("filename").attr("for", inputName)).withClass("col-sm-2").render());
+		out.println("<div><div><input class=\"form-control\" id=\""+inputName+"\" name=\""+inputName+"\" value=\""+getLocalConfig(false).getProperty("filename", "")+" class=\"form-group col-sm-8\" />");
+		//out.println(div(div(input().withClass("form-control").attr("id", inputName).attr("name", inputName).attr("value",getLocalConfig(false).getProperty("filename", ""))).withClass("form-group")).withClass("col-sm-8").render());
 		String csvLink = URLHelper.createResourceURL(ctx, URLHelper.mergePath("/",staticConfig.getStaticFolder(),FOLDER, getLocalConfig(false).getProperty("filename", "")));
 		String xlsxLink = FilenameUtils.removeExtension(csvLink)+".xlsx";
-		out.println(div(a("[XSLX]").attr("href", xlsxLink),span(" - "),a("[CSV]").attr("href", csvLink)).withClass("col-sm-2").render());
+		out.println("<div class=\"col-sm-2\"><a href=\""+xlsxLink+"\">[XSLX]</a> - <a href=\""+csvLink+"\">[CSV]</a></div>");
+//		out.println(div(a("[XSLX]").attr("href", xlsxLink),span(" - "),a("[CSV]").attr("href", csvLink)).withClass("col-sm-2").render());
 		out.println("</div>");
 
 		out.println("<div class=\"row\"><div class=\"col-sm-2\">");

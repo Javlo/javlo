@@ -23,12 +23,12 @@ import org.javlo.user.User;
 
 import com.dropbox.core.DbxAppInfo;
 import com.dropbox.core.DbxAuthFinish;
-import com.dropbox.core.DbxClient;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.DbxSessionStore;
 import com.dropbox.core.DbxStandardSessionStore;
 import com.dropbox.core.DbxWebAuth;
+import com.dropbox.core.v1.DbxClientV1;
 
 public class DropboxAction implements IModuleAction {
 
@@ -101,7 +101,7 @@ public class DropboxAction implements IModuleAction {
 
 		try {
 			DbxAppInfo info = getAppInfo(ctx);
-			if (info == null || info.host == null) {
+			if (info == null || info.getHost() == null) {
 				return "Error, dropbox not configured.";
 			}
 		} catch (Throwable t) {
@@ -125,7 +125,7 @@ public class DropboxAction implements IModuleAction {
 		} else {
 			try {
 			ctx.getRequest().setAttribute("config", config);
-			DbxClient client = new DbxClient(new DbxRequestConfig("Javlo/2.0", Locale.getDefault().toString()), config.getToken());
+			DbxClientV1 client = new DbxClientV1(new DbxRequestConfig("Javlo/2.0", Locale.getDefault().toString()), config.getToken());
 			ctx.getRequest().setAttribute("linkedAccount", client.getAccountInfo().displayName);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -234,14 +234,19 @@ public class DropboxAction implements IModuleAction {
 			return "Authentification module was not initialized.";
 		}
 		// Start authorization.
-		String authorizePageUrl = getWebAuth(session).start();
+		
+		
+		//String authorizePageUrl = getWebAuth(session).start(urlState)
+		
+		//TODO: Deprecated. use DbxWebAuth(DbxRequestConfig,DbxAppInfo) and authorize(com.dropbox.core.DbxWebAuth.Request) instead. Starts authorization and returns a "authorization URL" on the Dropbox website that gives the lets the user grant your app access to their Dropbox account. 
 
 		// Redirect the user to the Dropbox website so they can approve our
 		// application.
 		// The Dropbox website will send them back to
 		// "http://my-server.com/dropbox-auth-finish"
 		// when they're done.
-		response.sendRedirect(authorizePageUrl);
+		
+		//response.sendRedirect(authorizePageUrl);
 		return null;
 	}
 
@@ -253,7 +258,7 @@ public class DropboxAction implements IModuleAction {
 			}
 			Map<String, String[]> parameterMap = rs.getParametersMap();
 			authFinish = getWebAuth(session).finish(parameterMap);
-			String accessToken = authFinish.accessToken;
+			String accessToken = authFinish.getAccessToken();
 			DropboxConfig dropboxConfig = new DropboxConfig();
 			dropboxConfig.setToken(accessToken);
 			setConfig(ctx, dropboxConfig);

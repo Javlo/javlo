@@ -421,7 +421,7 @@
 		<dependency>
 			<groupId>com.dropbox.core</groupId>
 			<artifactId>dropbox-core-sdk</artifactId>
-			<version>1.7.7</version>
+			<version>3.1.1</version>
 			 <exclusions>
 		    <exclusion>
 					<groupId>com.fasterxml.jackson.core</groupId>
@@ -437,15 +437,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.apache.oltu.oauth2</groupId>
 			<artifactId>org.apache.oltu.oauth2.client</artifactId>
-			<version>1.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>de.java2html</groupId>
-			<artifactId>java2html</artifactId>
-			<version>5.0</version>
+			<version>1.0.2</version>
 		</dependency>
 		
 		<dependency>
@@ -522,15 +518,13 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
-		<!-- 04/10/2017 -->
-		<!-- https://mvnrepository.com/artifact/com.j2html/j2html -->
-		<dependency>
-			<groupId>com.j2html</groupId>
-			<artifactId>j2html</artifactId>
-			<version>1.2.0</version>
-		</dependency>
 		
+		<dependency>
+			<groupId>de.java2html</groupId>
+			<artifactId>java2html</artifactId>
+			<version>5.0</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.mapdb/mapdb -->
 		<dependency>
 			<groupId>org.mapdb</groupId>
@@ -560,18 +554,18 @@
 		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/org.elasticsearch.client/elasticsearch-rest-client -->
-<!-- 		<dependency> -->
-<!-- 		    <groupId>org.elasticsearch.client</groupId> -->
-<!-- 		    <artifactId>elasticsearch-rest-client</artifactId> -->
-<!-- 		    <version>${elasticsearch.version}</version> -->
-<!-- 		</dependency> -->
+		<dependency>
+		    <groupId>org.elasticsearch.client</groupId>
+		    <artifactId>elasticsearch-rest-client</artifactId>
+		    <version>${elasticsearch.version}</version>
+		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/org.elasticsearch.client/elasticsearch-rest-high-level-client -->
-<!-- 		<dependency> -->
-<!-- 		    <groupId>org.elasticsearch.client</groupId> -->
-<!-- 		    <artifactId>elasticsearch-rest-high-level-client</artifactId> -->
-<!-- 		    <version>${elasticsearch.version}</version> -->
-<!-- 		</dependency> -->
+		<dependency>
+		    <groupId>org.elasticsearch.client</groupId>
+		    <artifactId>elasticsearch-rest-high-level-client</artifactId>
+		    <version>${elasticsearch.version}</version>
+		</dependency>
 		
 	</dependencies>
 

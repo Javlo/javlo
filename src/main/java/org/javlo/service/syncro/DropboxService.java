@@ -14,11 +14,12 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 
-import com.dropbox.core.DbxClient;
-import com.dropbox.core.DbxEntry;
+
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
-import com.dropbox.core.DbxWriteMode;
+import com.dropbox.core.v1.DbxClientV1;
+import com.dropbox.core.v1.DbxEntry;
+import com.dropbox.core.v1.DbxWriteMode;
 
 public class DropboxService {
 
@@ -32,7 +33,7 @@ public class DropboxService {
 		}
 	}
 
-	DbxClient client = null;
+	DbxClientV1 client = null;
 	long totalDownloadSize = 0;
 
 	private DropboxService() {
@@ -49,7 +50,7 @@ public class DropboxService {
 		}
 		if (outService == null) {
 			outService = new DropboxService();
-			outService.client = new DbxClient(outService.getConfig(ctx), token);
+			outService.client = new DbxClientV1(outService.getConfig(ctx), token);
 			if (ctx != null) {
 				ctx.getRequest().getSession().setAttribute(DropboxService.class.getName(), outService);
 			}
@@ -75,7 +76,7 @@ public class DropboxService {
 		return outFileList;
 	}
 
-	private static void getAllDropboxFile(Map<String, DbxEntry> outFileList, DbxClient client, String dropboxMainRoot, String dropboxRoot) throws DbxException {
+	private static void getAllDropboxFile(Map<String, DbxEntry> outFileList, DbxClientV1 client, String dropboxMainRoot, String dropboxRoot) throws DbxException {
 		DbxEntry.WithChildren listing = client.getMetadataWithChildren(dropboxRoot);
 		for (DbxEntry child : listing.children) {
 			if (child.isFile()) {
@@ -86,7 +87,7 @@ public class DropboxService {
 		}
 	}
 
-	private static Map<String, DbxEntry> getAllDropboxFile(DbxClient client, String dropboxRoot) throws DbxException {
+	private static Map<String, DbxEntry> getAllDropboxFile(DbxClientV1 client, String dropboxRoot) throws DbxException {
 		Map<String, DbxEntry> outFileList = new HashMap<String, DbxEntry>();
 		getAllDropboxFile(outFileList, client, dropboxRoot, dropboxRoot);
 		return outFileList;
