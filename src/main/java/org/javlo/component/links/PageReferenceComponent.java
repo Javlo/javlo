@@ -184,11 +184,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	private static final List<String> TIME_SELECTION_OPTIONS = Arrays.asList(new String[] { "before", "inside", "after" });
 
 	private static final String TIME_SELECTION_KEY = "time-selection";
-	
+
 	private static final String START_DATE_KEY = "start-date";
-	
+
 	private static final String END_DATE_KEY = "end-date";
-	
+
 	private static final String DISPLAY_FIRST_PAGE_KEY = "display-first-page";
 
 	private static final String CHANGE_ORDER_KEY = "reverse-order";
@@ -384,7 +384,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				return false;
 			}
 		}
-		
+
 		String startDateStr = properties.getProperty(START_DATE_KEY);
 		String endDateStr = properties.getProperty(END_DATE_KEY);
 		if (!StringHelper.isEmpty(startDateStr) || !StringHelper.isEmpty(endDateStr)) {
@@ -395,7 +395,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				return false;
 			}
 		}
-		
+
 		if (getSelectedTag(ctx).size() == 0) {
 			return true;
 		}
@@ -486,13 +486,33 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	private String getContentTitle() {
 		return properties.getProperty("content-title", "");
 	}
-	
-	private boolean isPopup() {
+
+	private String getOnlyDepth() {
+		return properties.getProperty("only-depth", "");
+	}
+
+	private void setOnlyDepth(String value) {
+		if (StringHelper.isDigit(value)) {
+			properties.setProperty("only-depth", value);
+		} else if (StringHelper.isEmpty(value)) {
+			properties.remove("only-depth");
+		}
+	}
+
+	public boolean isPopup() {
 		return StringHelper.isTrue(properties.getProperty("popup", null), false);
 	}
-	
+
+	public boolean isDisplayDate() {
+		return StringHelper.isTrue(properties.getProperty("displaydate", null), true);
+	}
+
 	private void setPopup(boolean popup) {
-		properties.setProperty("popup", ""+popup);
+		properties.setProperty("popup", "" + popup);
+	}
+
+	private void setDisplayDate(boolean displayDate) {
+		properties.setProperty("displaydate", "" + displayDate);
 	}
 
 	public String getCSSClassName(ContentContext ctx) {
@@ -511,7 +531,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	protected boolean isUITimeSelection(ContentContext ctx) {
 		return StringHelper.isTrue(getConfig(ctx).getProperty("ui.time-selection", null), true);
 	}
-	
+
 	protected boolean isDateRangeSelection(ContentContext ctx) {
 		return StringHelper.isTrue(getConfig(ctx).getProperty("ui.date-range", null), true);
 	}
@@ -550,15 +570,15 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		out.println("<fieldset class=\"config\">");
 		out.println("<legend>" + i18nAccess.getText("global.config") + "</legend>");
 
+		out.println("<div class=\"row\">");
+
+		/* rendering */
+		out.println("<div class=\"col-md-6\">");
+
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getInputNameTitle() + "\">" + i18nAccess.getText("global.title") + " : </label>");
 		out.println("<input type=\"text\" id=\"" + getInputNameTitle() + "\" name=\"" + getInputNameTitle() + "\" value=\"" + getContentTitle() + "\"  />");
 		out.println("</div>");
-
-		/* by default selected */
-		out.println("<div class=\"line\">");
-		out.println(XHTMLHelper.getCheckbox(getDefaultSelectedInputName(), isDefaultSelected()));
-		out.println("<label for=\"" + getDefaultSelectedInputName() + "\">" + i18nAccess.getText("content.page-teaser.default-selected") + "</label></div>");
 
 		if (isUIFullDisplayFirstPage(ctx)) {
 			/* first page full */
@@ -571,6 +591,47 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			out.println("<label for=\"" + getInputFirstPageFull() + "\">" + i18nAccess.getText("content.display-first-page") + "</label>");
 			out.println("</div>");
 		}
+
+		out.println("<div class=\"line\">");
+		out.println(XHTMLHelper.getCheckbox(getInputPopup(), isPopup()));
+		out.println("<label for=\"" + getInputPopup() + "\">" + i18nAccess.getText("content.page-teaser.popup", "popup") + "</label></div>");
+
+		out.println("<div class=\"line\">");
+		out.println(XHTMLHelper.getCheckbox(getInputDisplayDate(), isDisplayDate()));
+		out.println("<label for=\"" + getInputPopup() + "\">" + i18nAccess.getText("content.page-teaser.display-date", "display date") + "</label></div>");
+
+		if (isUIFilterOnEditUsers(ctx)) {
+			out.println("<div class=\"line\">");
+			out.println(XHTMLHelper.getCheckbox(getIntranetModeInputName(), isIntranetMode()));
+			out.println("<label for=\"" + getIntranetModeInputName() + "\">" + i18nAccess.getText("content.intranet-mode") + "</label></div>");
+		}
+
+		out.println("</div>");
+
+		/* list selection */
+		out.println("<div class=\"col-md-6\">");
+
+		out.println("<div class=\"line\">");
+		out.println("<label for=\"" + getInputNameOnlyDepth() + "\">" + i18nAccess.getText("content.page-teaser.only-depth", "only depth") + " : </label>");
+		out.println("<input type=\"text\" id=\"" + getInputNameOnlyDepth() + "\" name=\"" + getInputNameOnlyDepth() + "\" value=\"" + getOnlyDepth() + "\"  />");
+		out.println("</div>");
+
+		out.println("<div class=\"line\">");
+		out.println(XHTMLHelper.getCheckbox(getDefaultSelectedInputName(), isDefaultSelected()));
+		out.println("<label for=\"" + getDefaultSelectedInputName() + "\">" + i18nAccess.getText("content.page-teaser.default-selected") + "</label></div>");
+
+		out.println("<div class=\"line\">");
+		out.println(XHTMLHelper.getCheckbox(getWidthEmptyPageInputName(), isWidthEmptyPage()));
+		out.println("<label for=\"" + getWidthEmptyPageInputName() + "\">" + i18nAccess.getText("content.page-teaser.width-empty-page") + "</label></div>");
+
+		out.println("<div class=\"line\">");
+		out.println(XHTMLHelper.getCheckbox(getEventInputName(), isOnlyEvent()));
+		out.println("<label for=\"" + getEventInputName() + "\">" + i18nAccess.getText("content.page-teaser.event") + "</label></div>");
+
+		out.println("</div>");
+
+		out.println("</div>"); // /row
+
 		/* tag filter */
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (globalContext.isTags() && globalContext.getTags().size() > 0) {
@@ -589,28 +650,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			// out.println(XHTMLHelper.getInputOneSelectFirstEnpty(getTagsInputName(),
 			// globalContext.getTags(), getSelectedTag(ctx)));
 			out.println("</div>");
-		}
-
-		out.println("<div class=\"line\">");
-		out.println(XHTMLHelper.getCheckbox(getWidthEmptyPageInputName(), isWidthEmptyPage()));
-		out.println("<label for=\"" + getWidthEmptyPageInputName() + "\">" + i18nAccess.getText("content.page-teaser.width-empty-page") + "</label></div>");
-
-		out.println("<div class=\"line\">");
-		out.println(XHTMLHelper.getCheckbox(getOnlyWithoutChildrenInputName(), isOnlyPageWithoutChildren()));
-		out.println("<label for=\"" + getOnlyWithoutChildrenInputName() + "\">" + i18nAccess.getText("content.page-teaser.only-without-children") + "</label></div>");
-
-		out.println("<div class=\"line\">");
-		out.println(XHTMLHelper.getCheckbox(getEventInputName(), isOnlyEvent()));
-		out.println("<label for=\"" + getEventInputName() + "\">" + i18nAccess.getText("content.page-teaser.event") + "</label></div>");
-		
-		out.println("<div class=\"line\">");
-		out.println(XHTMLHelper.getCheckbox(getInputPopup(), isPopup()));
-		out.println("<label for=\"" + getInputPopup() + "\">" + i18nAccess.getText("content.page-teaser.popup", "popup") + "</label></div>");
-
-		if (isUIFilterOnEditUsers(ctx)) {
-			out.println("<div class=\"line\">");
-			out.println(XHTMLHelper.getCheckbox(getIntranetModeInputName(), isIntranetMode()));
-			out.println("<label for=\"" + getIntranetModeInputName() + "\">" + i18nAccess.getText("content.intranet-mode") + "</label></div>");
 		}
 
 		/* parent node */
@@ -633,6 +672,18 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		out.println("<input id=\"" + getLastPageNumberInputName() + "\" name=\"" + getLastPageNumberInputName() + "\" value=\"" + lastValue + "\"/>");
 		out.println("</div>");
 
+		out.println("<div class=\"row\"><div class=\"col-md-6\">");
+		
+		if (isDateRangeSelection(ctx)) {
+			out.println("<div class=\"line-inline\">");
+			out.println("<label>" + i18nAccess.getText("global.from") + " : ");
+			out.println("<input type=\"date\" name=\"" + getInputName(START_DATE_KEY) + "\" value=\"" + getStartDate() + "\" /></label>");
+			out.println("<label>" + i18nAccess.getText("global.to") + " : ");
+			out.println("<input type=\"date\" name=\"" + getInputName(END_DATE_KEY) + "\" value=\"" + getEndDate() + "\" /></label>");
+			out.println("</div>");
+		}
+		
+		out.println("</div><div class=\"col-md-6\">");
 		/* time selection */
 		if (isUITimeSelection(ctx)) {
 			out.println("<div class=\"line-inline\">");
@@ -648,14 +699,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			out.println("</div>");
 		}
 		
-		if (isDateRangeSelection(ctx)) {
-			out.println("<div class=\"line-inline\">");
-			out.println("<label>" + i18nAccess.getText("global.from") + " : ");
-			out.println("<input type=\"date\" name=\"" + getInputName(START_DATE_KEY) + "\" value=\""+getStartDate()+"\" /></label>");
-			out.println("<label>" + i18nAccess.getText("global.to") + " : ");
-			out.println("<input type=\"date\" name=\"" + getInputName(END_DATE_KEY) + "\" value=\""+getEndDate()+"\" /></label>");
-			out.println("</div>");
-		}
+		out.println("</div></div>");
 
 		out.println("</fieldset>");
 
@@ -852,11 +896,18 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	private String getInputNameTitle() {
 		return "title_" + getId();
 	}
-	
+
+	private String getInputNameOnlyDepth() {
+		return "onlydepth_" + getId();
+	}
+
 	private String getInputPopup() {
 		return "popup_" + getId();
 	}
 
+	private String getInputDisplayDate() {
+		return "disdplaydate_" + getId();
+	}
 
 	private int getLastPageNumber() {
 		if (!StringHelper.isDigit(properties.getProperty(PAGE_END_PROP_KEY, ""))) {
@@ -1044,7 +1095,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			}
 			return getConfig(ctx).getProperty("suffix", null) + suffix + colSuffix;
 		}
-		return "</div>"+colSuffix;
+		return "</div>" + colSuffix;
 	}
 
 	protected Collection<String> getSelectedTag(ContentContext ctx) {
@@ -1065,11 +1116,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 		return StringHelper.stringToCollection(properties.getProperty(TIME_SELECTION_KEY, null));
 	}
-	
+
 	private String getStartDate() {
 		return properties.getProperty(START_DATE_KEY, "");
 	}
-	
+
 	private String getEndDate() {
 		return properties.getProperty(END_DATE_KEY, "");
 	}
@@ -1138,8 +1189,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 		if (isSessionTaxonomy(ctx)) {
 			return false;
-		}		
-		return StringHelper.isTrue(getConfig(ctx).getProperty("config.cache."+getCurrentRenderer(ctx), getConfig(ctx).getProperty("config.cache", null)), false);
+		}
+		return StringHelper.isTrue(getConfig(ctx).getProperty("config.cache." + getCurrentRenderer(ctx), getConfig(ctx).getProperty("config.cache", null)), false);
 	}
 
 	@Override
@@ -1227,10 +1278,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		return StringHelper.isTrue(properties.getProperty(WIDTH_EMPTY_PAGE_PROP_KEY), false);
 	}
 
-	private boolean isOnlyPageWithoutChildren() {
-		return StringHelper.isTrue(properties.getProperty(ONLY_PAGE_WITHOUT_CHILDREN), false);
-	}
-
 	private boolean isOnlyEvent() {
 		return StringHelper.isTrue(properties.getProperty(ONLY_EVENT), false);
 	}
@@ -1299,7 +1346,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			}
 		}
 	}
-	
+
 	protected boolean isRedisplay(ContentContext ctx) {
 		return StringHelper.isTrue(getConfig(ctx).getProperty("redisplay", null), false);
 	}
@@ -1404,8 +1451,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		Collection<String> allMonthsKeys = new HashSet<String>();
 
 		boolean withEmptyPage = isWidthEmptyPage();
-		boolean onlyPageWithoutChildren = isOnlyPageWithoutChildren();
 		boolean intranetMode = isIntranetMode();
+
+		Integer onlyDepth = null;
+		if (StringHelper.isDigit(getOnlyDepth())) {
+			onlyDepth = Integer.parseInt(getOnlyDepth());
+		}
+
+		int refDepth = ctx.getCurrentPage().getDepth();
 
 		for (MenuElement page : selectedPage) {
 			ContentContext lgCtx = ctx;
@@ -1417,7 +1470,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			if (filterPage(lgCtx, page, selectedPage, Collections.EMPTY_LIST, "", false)) {
 				if (countPage < getMaxNews()) {
 					if (backDate == null || page.getContentDateNeverNull(lgCtx).after(backDate.getTime())) {
-						if ((withEmptyPage || page.isRealContentAnyLanguage(lgCtx)) && (!onlyPageWithoutChildren || page.getChildMenuElements().size() == 0 || page.isChildrenAssociation())) {
+						if ((withEmptyPage || page.isRealContentAnyLanguage(lgCtx))) {
 							if (firstPage == null) {
 								firstPage = page;
 							}
@@ -1428,28 +1481,30 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 							if (realContent) {
 								realContentSize++;
 							}
-							if (!intranetMode || page.getEditorRoles().size() == 0 || (ctx.getCurrentEditUser() != null && ctx.getCurrentEditUser().validForRoles(page.getEditorRoles()))) {
-								if (realContent) {
-									if (tagFilter == null || tagFilter.trim().length() == 0 || page.getTags(lgCtx).contains(tagFilter)) {
-										if (catFilter == null || catFilter.trim().length() == 0 || page.getCategory(lgCtx).equals(catFilter)) {
-											Calendar cal = Calendar.getInstance();
-											cal.setTime(page.getContentDateNeverNull(lgCtx));
-											cal = TimeHelper.convertRemoveAfterMonth(cal);
-											String key = ("" + cal.get(Calendar.YEAR)) + '-' + cal.get(Calendar.MONTH);
-											if (!allMonthsKeys.contains(key)) {
-												allMonths.add(cal);
-												allMonthsKeys.add(key);
-											}
-											if (monthFilter == null || TimeHelper.betweenInDay(page.getContentDateNeverNull(lgCtx), startDate.getTime(), endDate.getTime())) {
-												SmartPageBean pageBean = SmartPageBean.getInstance(ctx, lgCtx, page, this);
-												boolean isRedisplay = isRedisplay(ctx);
-												boolean isAlreadyDisplayed = pageBean.isAlreadyDisplayed();
-												if (isRedisplay || !isAlreadyDisplayed) {
-													countPage++;
+							if (onlyDepth == null || onlyDepth == page.getDepth() - refDepth) {
+								if (!intranetMode || page.getEditorRoles().size() == 0 || (ctx.getCurrentEditUser() != null && ctx.getCurrentEditUser().validForRoles(page.getEditorRoles()))) {
+									if (realContent) {
+										if (tagFilter == null || tagFilter.trim().length() == 0 || page.getTags(lgCtx).contains(tagFilter)) {
+											if (catFilter == null || catFilter.trim().length() == 0 || page.getCategory(lgCtx).equals(catFilter)) {
+												Calendar cal = Calendar.getInstance();
+												cal.setTime(page.getContentDateNeverNull(lgCtx));
+												cal = TimeHelper.convertRemoveAfterMonth(cal);
+												String key = ("" + cal.get(Calendar.YEAR)) + '-' + cal.get(Calendar.MONTH);
+												if (!allMonthsKeys.contains(key)) {
+													allMonths.add(cal);
+													allMonthsKeys.add(key);
 												}
-												if (countPage >= firstPageNumber && countPage <= lastPageNumber) {
+												if (monthFilter == null || TimeHelper.betweenInDay(page.getContentDateNeverNull(lgCtx), startDate.getTime(), endDate.getTime())) {
+													SmartPageBean pageBean = SmartPageBean.getInstance(ctx, lgCtx, page, this);
+													boolean isRedisplay = isRedisplay(ctx);
+													boolean isAlreadyDisplayed = pageBean.isAlreadyDisplayed();
 													if (isRedisplay || !isAlreadyDisplayed) {
-														pageBeans.add(pageBean);
+														countPage++;
+													}
+													if (countPage >= firstPageNumber && countPage <= lastPageNumber) {
+														if (isRedisplay || !isAlreadyDisplayed) {
+															pageBeans.add(pageBean);
+														}
 													}
 												}
 											}
@@ -1570,16 +1625,16 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 					}
 				}
 			}
-			
-			if (!properties.getProperty(START_DATE_KEY, "").equals(requestService.getParameter(getInputName(START_DATE_KEY),""))) {
-				properties.setProperty(START_DATE_KEY, requestService.getParameter(getInputName(START_DATE_KEY),""));
+
+			if (!properties.getProperty(START_DATE_KEY, "").equals(requestService.getParameter(getInputName(START_DATE_KEY), ""))) {
+				properties.setProperty(START_DATE_KEY, requestService.getParameter(getInputName(START_DATE_KEY), ""));
 				setModify();
 			}
-			if (!properties.getProperty(END_DATE_KEY, "").equals(requestService.getParameter(getInputName(END_DATE_KEY),""))) {
-				properties.setProperty(END_DATE_KEY, requestService.getParameter(getInputName(END_DATE_KEY),""));
+			if (!properties.getProperty(END_DATE_KEY, "").equals(requestService.getParameter(getInputName(END_DATE_KEY), ""))) {
+				properties.setProperty(END_DATE_KEY, requestService.getParameter(getInputName(END_DATE_KEY), ""));
 				setModify();
 			}
-			
+
 			if (!StringHelper.isEmpty(requestService.getParameter(getDirectLinkInputName()))) {
 				String page = requestService.getParameter(getDirectLinkInputName());
 				MenuElement pageFound = menu.searchChildFromId(page);
@@ -1620,10 +1675,18 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				storeProperties();
 				setModify();
 			}
-			
+
+			String onlyDepth = requestService.getParameter(getInputNameOnlyDepth(), "");
+			if (!getOnlyDepth().equals(onlyDepth)) {
+				setOnlyDepth(onlyDepth);
+				storeProperties();
+				setModify();
+			}
+
 			String popupRaw = requestService.getParameter(getInputPopup(), null);
 			setPopup(StringHelper.isTrue(popupRaw));
-			
+			setDisplayDate(StringHelper.isTrue(requestService.getParameter(getInputDisplayDate(), null)));
+
 			List<String> tags = requestService.getParameterListValues(getTagsInputName(), null);
 			String tagRaw = StringHelper.collectionToString(tags, ",");
 			if (!properties.getProperty(TAG_KEY, "").equals(tagRaw)) {
@@ -1709,12 +1772,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			}
 			setWidthPageEmpty(withEmptyPage);
 
-			boolean onlyWithoutChildren = requestService.getParameter(getOnlyWithoutChildrenInputName(), null) != null;
-			if (onlyWithoutChildren != isOnlyPageWithoutChildren()) {
-				setModify();
-			}
-			setOnlyPageWithoutChildren(onlyWithoutChildren);
-
 			String basePage = requestService.getParameter(getParentNodeInputName(), "/");
 			if (!basePage.equals(getParentNode(ctx))) {
 				setNeedRefresh(true);
@@ -1799,10 +1856,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	private void setWidthPageEmpty(boolean selected) {
 		properties.setProperty(WIDTH_EMPTY_PAGE_PROP_KEY, "" + selected);
-	}
-
-	private void setOnlyPageWithoutChildren(boolean selected) {
-		properties.setProperty(ONLY_PAGE_WITHOUT_CHILDREN, "" + selected);
 	}
 
 	private void setTaxonomy(Collection<String> taxonomy) {
@@ -1935,13 +1988,13 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	protected boolean getColumnableDefaultValue() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean isDisplayable(ContentContext ctx) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement menu = content.getNavigation(ctx);
 		List<MenuElement> allChildren = menu.getAllChildrenList();
-		return getSelectedPages(ctx, allChildren).size()>1;
+		return getSelectedPages(ctx, allChildren).size() > 1;
 	}
 
 }

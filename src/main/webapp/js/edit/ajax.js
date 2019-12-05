@@ -185,6 +185,9 @@ function ajaxRequest(url, form, doneFunction) {
 		if (doneFunction != null) {			
 			doneFunction(jsonObj);
 		}
+		if (typeof javloRebuildForm !== "undefined") { 
+			javloRebuildForm();
+		}
 	});	
 }
 

@@ -285,6 +285,11 @@ public class ContentContext {
 
 	private static void init(ContentContext ctx, HttpServletRequest request, HttpServletResponse response) {
 		try {
+			ctx.ajax = ContentManager.isAjax(request);
+			ctx.setRequest(request);
+			ctx.setResponse(response);
+			ctx.setPath(ContentManager.getPath(request));
+			
 			RequestService requestService = RequestService.getInstance(request);
 			String forcedMode = requestService.getParameter(FORCE_MODE_PARAMETER_NAME, null);
 			if (forcedMode != null) {
@@ -309,12 +314,6 @@ public class ContentContext {
 			if (requestService.getParameter("parentURL", null) != null) {
 				ctx.setParentURL(requestService.getParameter("parentURL", null));
 			}
-
-			ctx.ajax = ContentManager.isAjax(request);
-			ctx.setRequest(request);
-			ctx.setResponse(response);
-			ctx.setPath(ContentManager.getPath(request));
-
 			String lg = ContentManager.getLanguage(ctx);
 			ctx.setLanguage(lg);
 			String contentLg = ContentManager.getContentLanguage(ctx);
@@ -370,7 +369,6 @@ public class ContentContext {
 			if (ctx.getDevice() == null) {
 				ctx.setDevice(Device.getDevice(ctx));
 			}
-
 			StaticConfig config = StaticConfig.getInstance(request.getSession());
 			ctx.viewPrefix = config.isViewPrefix();
 
@@ -394,7 +392,6 @@ public class ContentContext {
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	private String path = "/";
@@ -920,7 +917,6 @@ public class ContentContext {
 		}
 
 		if (outPage == null) {
-			System.out.println(">>>>>>>>> ContentContext.getCurrentPage : PAGE NOUT FOUND : "+getPath()); //TODO: remove debug trace
 			logger.warning("page not found : " + getPath());
 		}
 

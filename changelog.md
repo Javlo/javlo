@@ -796,8 +796,11 @@ Security in case of vulnerabilities.
  - internal-link use default search engine
  - shared.import-document default true
  - import title link heading in place of title and subtitle
+ - new layout + depth rules
+ - remove use report from dashboard
 ### fixed
  - change heading level correction
  - close popup site propoerties in preview mode if no error
  - attachement order in mail
  - ical close tag correction
+ - contentcontext null request correction

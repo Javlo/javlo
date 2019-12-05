@@ -2713,7 +2713,7 @@ public class Template implements Comparable<Template> {
 		if (session == null) {
 			return false;
 		}
-		boolean out = ctx.getRequest().getSession(false).getAttribute(getAlternateTemplateSessionKey()) != null;
+		boolean out = session.getAttribute(getAlternateTemplateSessionKey()) != null;
 		return out;
 	}
 
