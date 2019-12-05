@@ -42,14 +42,14 @@ public class SearchActions implements IAction {
 	protected static Logger logger = Logger.getLogger(SearchActions.class.getName());
 	
 	public static String performDefaultsearch(HttpServletRequest request, HttpServletResponse response) {
-		return performSearch(request, response, true);
+		return search(request, response, true);
 	}
 	
 	public static String performSearch(HttpServletRequest request, HttpServletResponse response) {
-		return performSearch(request, response, false);
+		return search(request, response, false);
 	}
 
-	private static String performSearch(HttpServletRequest request, HttpServletResponse response, boolean defaultSearchEngine) {
+	private static String search(HttpServletRequest request, HttpServletResponse response, boolean defaultSearchEngine) {
 		String msg = null;
 
 		try {
@@ -89,8 +89,6 @@ public class SearchActions implements IAction {
 			searchFilter.setEndDate(StringHelper.smartParseDate(requestService.getParameter("enddate", null)));
 			searchFilter.setTag(requestService.getParameter("tag", null));
 
-			logger.info("search action : " + searchStr);
-
 			if (searchStr != null) {
 				if (searchStr.length() > 0) {
 					ISearchEngine search;
@@ -99,7 +97,9 @@ public class SearchActions implements IAction {
 					} else {
 						search = SearchEngineFactory.getEngine(ctx);
 					}
+					logger.info("search action : '" + searchStr+ "' [engine:"+search.getClass().getName()+']');
 					List<SearchElement> result = search.search(ctx, groupId, searchStr, sort, componentList);
+					System.out.println(">>> result = "+result);
 					if (!ctx.isAjax()) {
 						if (ctx.getCurrentPage().getContentByType(ctx.getContextWithoutArea(), SearchResultComponent.TYPE).size() == 0) {
 							ctx.setSpecialContentRenderer("/jsp/view/search/search_result.jsp");
@@ -137,7 +137,7 @@ public class SearchActions implements IAction {
 	
 	private static String performSearchresulthtml(ContentContext ctx, boolean defautSearchEngine) throws Exception {
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
-		performSearch(ctx.getRequest(), ctx.getResponse(), defautSearchEngine);
+		search(ctx.getRequest(), ctx.getResponse(), defautSearchEngine);
 		List<SearchElement> result = (List<SearchElement>)ctx.getAjaxData().get("searchResult");
 		if (result != null) {
 			ctx.getAjaxData().remove("searchResult");
