@@ -1970,7 +1970,7 @@ public class XHTMLHelper {
 		}
 	}
 
-	public static String renderHeaderResourceInsertion(ContentContext ctx, String resource) {
+	public static String renderHeaderResourceInsertion(ContentContext ctx, String resource) throws Exception {
 		if (!alreadyInserted(ctx, resource)) {
 			if (StringHelper.getFileExtension(resource).equalsIgnoreCase("css")) {
 				return "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + URLHelper.createStaticURL(ctx, resource) + "\" />";
