@@ -148,7 +148,7 @@
 								<div>
 									<c:if test="${not empty param['force-device-code']}"><input type="hidden" name="force-device-code" value="${param['force-device-code']}" /></c:if>
 									<input type="hidden" value="${info.pageID}" name="page" /> <input
-										type="hidden" value="${globalContext.openPlatform?'edit.DeletePage':'edit.movePageToTrash'}" name="webaction" />
+										type="hidden" value="${globalContext.pageTrash?'edit.DeletePage':'edit.movePageToTrash'}" name="webaction" />
 									<c:if test="${not empty param['force-device-code']}"><input type="hidden" name="force-device-code" value="${param['force-device-code']}" /></c:if>
 									<c:if test="${!info.page.root}">
 										<c:set var="tooltip" value="" />
