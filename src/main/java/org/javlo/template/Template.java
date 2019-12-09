@@ -77,6 +77,7 @@ import org.javlo.utils.ListAsMap;
 import org.javlo.utils.ListMapValueValue;
 import org.javlo.utils.ReadOnlyPropertiesConfigurationMap;
 import org.javlo.utils.StructuredConfigurationProperties;
+import org.javlo.utils.TimeMap;
 
 public class Template implements Comparable<Template> {
 
@@ -633,7 +634,7 @@ public class Template implements Comparable<Template> {
 
 	private Template parent = null;
 
-	private boolean templateImportationError = false;
+	private static final Map<String, File> templateErrorMap = Collections.synchronizedMap(new TimeMap<String,File>(60*60));
 
 	/**
 	 * check the structure of the template.
@@ -682,7 +683,6 @@ public class Template implements Comparable<Template> {
 				e.printStackTrace();
 			}
 			dynamicsComponents = null;
-			templateImportationError = false;
 			contextWithTemplateImported.clear();
 			i18n.clear();
 		}
@@ -700,7 +700,6 @@ public class Template implements Comparable<Template> {
 				}
 				reload();
 				dynamicsComponents = null;
-				templateImportationError = false;
 				contextWithTemplateImported.clear();
 				i18n.clear();
 			} catch (IOException e) {
@@ -1989,7 +1988,6 @@ public class Template implements Comparable<Template> {
 				List<String> resources = new LinkedList<String>();
 				List<String> ids = new LinkedList<String>();
 				if (!HTMLFile.exists()) {
-					templateImportationError = false;
 					contextWithTemplateImported.remove(ctx.getGlobalContext().getContextKey());
 					FileUtils.deleteDirectory(HTMLFile.getParentFile());
 					importTemplateInWebapp(config, ctx);
@@ -2503,7 +2501,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	public void importTemplateInWebapp(StaticConfig config, ContentContext ctx) throws IOException {
-		if (templateImportationError) {
+		if (templateErrorMap.containsKey(getName())) {
 			return;
 		}
 		GlobalContext globalContext = null;
@@ -2522,8 +2520,8 @@ public class Template implements Comparable<Template> {
 					importTemplateInWebapp(config, ctx, globalContext, templateTgt, null, true, false, getRawCssFile(globalContext));
 					logger.info("import template : " + getName() + " in " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - startTime));
 				} else {
-					logger.severe("folder not found : " + templateSrc);
-					templateImportationError = true;
+					logger.severe("folder not found : " + templateSrc+"   templateImportationError="+templateErrorMap.containsKey(getName()));
+					templateErrorMap.put(getName(), getFolder());
 				}
 			}
 		}

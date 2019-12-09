@@ -86,16 +86,14 @@ public class SharedContentAction extends AbstractModuleAction {
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
 		String msg = super.prepare(ctx, modulesContext);
-		
 		SharedContentService service = SharedContentService.getInstance(ctx);
 		List<String> activeProvider = service.getActiveProviderNames(ctx);
-		
 		Collection<ISharedContentProvider> contentProviders = SharedContentService.getInstance(ctx).getAllProvider(ctx);
 		List<SharedContentBean> beans = new LinkedList<SharedContentAction.SharedContentBean>();
 		for (ISharedContentProvider iSharedContentProvider : contentProviders) {
 			ctx.setContentContextIfNeeded(iSharedContentProvider);
 			SharedContentBean bean = new SharedContentBean(ctx,iSharedContentProvider);
-			if (activeProvider.contains(bean.getName())) {				
+			if (activeProvider.contains(bean.getName())) {
 				bean.setActive(true);
 			}
 			beans.add(bean);
@@ -107,7 +105,6 @@ public class SharedContentAction extends AbstractModuleAction {
 		}
 		out.close();
 		ctx.getRequest().setAttribute("urls", new String(outStream.toByteArray()));
-
 		ctx.getRequest().setAttribute("providers", beans);
 		return msg;
 	}

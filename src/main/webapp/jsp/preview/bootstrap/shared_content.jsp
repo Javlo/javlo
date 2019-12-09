@@ -74,7 +74,7 @@
 	</div>
 </form>
 <c:if test="${not empty provider}">
-<div id="shared-content-result" class="content shared-content ${provider.type} ajax-loader ${provider.uploadable?'upload-zone':'no-upload'}" data-url="${info.uploadSharedURL}">
+<div id="shared-content-result" class="content shared-content ${provider.type} ${provider.uploadable?'upload-zone':'no-upload'}" data-url="${info.uploadSharedURL}">
 <jsp:include page="shared_content_result.jsp"></jsp:include>
 </div>
 </c:if>
