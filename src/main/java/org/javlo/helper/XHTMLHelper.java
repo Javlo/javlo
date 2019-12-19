@@ -2605,7 +2605,7 @@ public class XHTMLHelper {
 					if (!hrefValue.startsWith("#") && !hrefValue.startsWith("${")) {
 						if (hrefValue.startsWith("page:")) {
 							String pageName = hrefValue.substring("page:".length());
-							tag.getAttributes().put("href", URLHelper.createURLFromPageName(ctx, pageName));
+							tag.getAttributes().put("href", URLHelper.createURLFromPageName(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), pageName));
 						} else if (hrefValue.toLowerCase().startsWith("rss")) {
 							String channel = "";
 							if (hrefValue.contains(":")) {
