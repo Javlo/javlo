@@ -260,21 +260,21 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		//out.println(XHTMLHelper.renderLine("filename", getInputName("filename"), getLocalConfig(false).getProperty("filename", "")));
 		
 		out.println("<div class=\"row\">");
-		out.println("<div><label for=\""+getInputName("title")+" class=\"col-sm-2\" >title</label>");
+		out.println("<div class=\"col-sm-2\"><label for=\""+getInputName("title")+"\">title</label>");
 		//out.println(div(label("title").attr("for", getInputName("title"))).withClass("col-sm-2").render());
-		out.println("<div><div><input class=\"form-control\" id=\""+getInputName("title")+"\" name=\""+getInputName("title")+"\" value=\""+getLocalConfig(false).getProperty("title", "")+" class=\"form-group col-sm-10\" />");
+		out.println("</div><div class=\"form-group col-sm-10\"><input class=\"form-control\" id=\""+getInputName("title")+"\" name=\""+getInputName("title")+"\" value=\""+getLocalConfig(false).getProperty("title", "")+"\" />");
 		//out.println(div(div(input().withClass("form-control").attr("id", getInputName("title")).attr("name", getInputName("title")).attr("value",getLocalConfig(false).getProperty("title", ""))).withClass("form-group")).withClass("col-sm-10").render());
-		out.println("</div>");
+		out.println("</div></div>");
 
 		String inputName = getInputName("filename");
 		out.println("<div class=\"row\">");
-		out.println("<div><label for=\""+inputName+" class=\"col-sm-2\" >filename</label>");
+		out.println("<div class=\"col-sm-2\"><label for=\""+inputName+"\">filename</label>");
 		//out.println(div(label("filename").attr("for", inputName)).withClass("col-sm-2").render());
-		out.println("<div><div><input class=\"form-control\" id=\""+inputName+"\" name=\""+inputName+"\" value=\""+getLocalConfig(false).getProperty("filename", "")+" class=\"form-group col-sm-8\" />");
+		out.println("</div><div class=\"form-group col-sm-6\"><input class=\"form-control\" id=\""+inputName+"\" name=\""+inputName+"\" value=\""+getLocalConfig(false).getProperty("filename", "")+"\" />");
 		//out.println(div(div(input().withClass("form-control").attr("id", inputName).attr("name", inputName).attr("value",getLocalConfig(false).getProperty("filename", ""))).withClass("form-group")).withClass("col-sm-8").render());
 		String csvLink = URLHelper.createResourceURL(ctx, URLHelper.mergePath("/",staticConfig.getStaticFolder(),FOLDER, getLocalConfig(false).getProperty("filename", "")));
 		String xlsxLink = FilenameUtils.removeExtension(csvLink)+".xlsx";
-		out.println("<div class=\"col-sm-2\"><a href=\""+xlsxLink+"\">[XSLX]</a> - <a href=\""+csvLink+"\">[CSV]</a></div>");
+		out.println("</div><div class=\"col-sm-2\"><a href=\""+xlsxLink+"\">[XSLX]</a> - <a href=\""+csvLink+"\">[CSV]</a></div>");
 //		out.println(div(a("[XSLX]").attr("href", xlsxLink),span(" - "),a("[CSV]").attr("href", csvLink)).withClass("col-sm-2").render());
 		out.println("</div>");
 
@@ -283,7 +283,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		out.println("</div><div class=\"col-sm-5\">");
 		out.println(XHTMLHelper.renderLine("google recaptcha site key", getInputName(RECAPTCHAKEY), getLocalConfig(false).getProperty(RECAPTCHAKEY, "")));
 		out.println("</div><div class=\"col-sm-5\">");
-		out.println(XHTMLHelper.renderLine("google recaptcha secret key", getInputName(RECAPTCHASECRETKEY), getLocalConfig(false).getProperty(RECAPTCHASECRETKEY, "")));
+		out.println(XHTMLHelper.renderLine("google secret key", getInputName(RECAPTCHASECRETKEY), getLocalConfig(false).getProperty(RECAPTCHASECRETKEY, "")));
 		out.println("</div></div>");
 		if (isFile()) {
 			out.println(XHTMLHelper.renderLine("max file size (Kb)", getInputName("filesize"), "" + getMaxFileSize()));
