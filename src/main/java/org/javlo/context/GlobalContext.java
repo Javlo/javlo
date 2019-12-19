@@ -107,6 +107,7 @@ import org.javlo.utils.TimeMap;
 import org.javlo.utils.backup.BackupBean;
 import org.javlo.utils.backup.BackupThread;
 import org.owasp.encoder.Encode;
+import org.python.modules.synchronize;
 
 public class GlobalContext implements Serializable, IPrintInfo {
 
@@ -314,12 +315,12 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	private void startThread() {
-		if (storePropertyThread == null || storePropertyThread.stopStoreThread) {
+		if (getMainContext() == null && (storePropertyThread == null || storePropertyThread.stopStoreThread)) {
 			storePropertyThread = new StorePropertyThread(this);
 			storePropertyThread.start();
 		}
 		/** backup **/
-		if (isBackupThread()) {
+		if (isBackupThread() && getMainContext() == null) {
 			startBackupThread();
 		}
 		activePopThread();
@@ -385,6 +386,15 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		if (isDefinedByHost() != define) {
 			properties.setProperty("define_by_host", define);
 			save();
+		}
+	}
+	
+	public static GlobalContext getMainInstance(HttpServletRequest request) {
+		GlobalContext globalContext = getInstance(request);
+		if (globalContext.getMainContext() != null) {
+			return globalContext.getMainContext();
+		} else {
+			return globalContext;
 		}
 	}
 
@@ -457,18 +467,28 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		if (contextKey == null) {
 			return null;
 		}
-		contextKey = contextKey.toLowerCase();
-		GlobalContext newInstance = getRealInstance(session, contextKey);
-		String alias = newInstance.getAliasOf();
-		if (alias.trim().length() > 0) {
-			String newContextKey = StringHelper.stringToFileName(alias);
-			if (!newContextKey.equals(contextKey)) {
-				newInstance = getRealInstance(session, alias);
-				newInstance.setMainContextKey(contextKey);
+		GlobalContext globalContext = (GlobalContext) session.getAttribute(KEY+"_"+contextKey);
+		if (globalContext==null) {
+			contextKey = contextKey.toLowerCase();
+			GlobalContext newInstance = getRealInstance(session, contextKey);
+			String alias = newInstance.getAliasOf();
+			if (alias.trim().length() > 0) {
+				if (newInstance.isAliasActive()) {
+					newInstance.setMainContext(getRealInstance(session, alias));
+				} else {
+					String newContextKey = StringHelper.stringToFileName(alias);
+					if (!newContextKey.equals(contextKey)) {
+						newInstance = getRealInstance(session, alias);
+						newInstance.setSourceContextKey(contextKey);
+					}
+				}
 			}
+			session.setAttribute(KEY, newInstance);
+			session.setAttribute(KEY+"_"+contextKey, newInstance);
+			globalContext = newInstance;
 		}
-		session.setAttribute(KEY, newInstance);
-		return newInstance;
+		
+		return globalContext;
 	}
 
 	public static GlobalContext getInstance(ServletContext application, StaticConfig staticConfig, File configFile) throws IOException {
@@ -804,8 +824,12 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	private String contextKey = null;
 
-	private String mainContextKey = null;
-
+	private String sourceContextKey = null;
+	
+	private GlobalContext mainContext = null;
+	
+	private List<GlobalContext> subContexts = null;
+	
 	private boolean creation = false;
 
 	private static final String VOTES = "";
@@ -1015,6 +1039,49 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return properties.getString("alias", "");
 	}
 	
+	public boolean isAliasActive() {
+		return StringHelper.isTrue(properties.getString("alias.active", null));
+	}
+	
+	public void setAliasActive(boolean aliasActive) {
+		synchronized (properties) {
+			properties.setProperty("alias.active", aliasActive);
+			save();
+		}
+	}
+	
+	public void setMainContext(GlobalContext mainContext) {
+		this.mainContext = mainContext;
+		mainContext.addSubContext(this);
+	}
+	
+	public GlobalContext getMainContextOrContext() {
+		if (mainContext != null) {
+			return mainContext;
+		} else {
+			return this;
+		}
+	}
+	
+	public GlobalContext getMainContext() {
+		return mainContext;
+	}
+	
+	public List<GlobalContext> getSubContexts() {
+		if (subContexts == null) {
+			return Collections.emptyList();
+		} else {
+			return subContexts;
+		}
+	}
+	
+	public synchronized void addSubContext (GlobalContext globalContext) {
+		if (subContexts == null) {
+			subContexts = new LinkedList<>();
+		}
+		subContexts.add(globalContext);
+	}
+	
 	public List<Principal> getAllPrincipals() { // TODO: check this method, some
 		// element of the list is null
 		// ???
@@ -1126,8 +1193,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 		return modules;
 	}
-
-	public Set<String> getContentLanguages() {
+	
+	private Set<String> getLocalsContentLanguages() {
 		String lgRAW = properties.getString("content-languages", getRAWLanguages());
 		if (lgRAW == null || lgRAW.trim().length() == 0) {
 			return getLanguages();
@@ -1144,8 +1211,20 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return outLg;
 	}
 
+	public Set<String> getContentLanguages() {
+		return getLocalsContentLanguages();
+	}
+
 	public String getContextKey() {
 		return contextKey;
+	}
+	
+	public String getContextMainKey() {
+		if (getMainContext() != null) {
+			return getMainContext().getContextKey();
+		} else {
+			return getContextKey();
+		}
 	}
 
 	public String getCountry() {
@@ -1353,14 +1432,18 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public String getDataFolder() {
-		if (dataFolder == null) {
-			dataFolder = staticConfig.getAllDataFolder();
-			if (getFolder() != null) {
-				dataFolder = ElementaryURLHelper.mergePath(dataFolder, getFolder());
+		GlobalContext realGlobalContext = this;
+		if (getMainContext() != null) {
+			realGlobalContext = getMainContext();
+		}
+		if (realGlobalContext.dataFolder == null) {
+			realGlobalContext.dataFolder = staticConfig.getAllDataFolder();
+			if (realGlobalContext.getFolder() != null) {
+				realGlobalContext.dataFolder = ElementaryURLHelper.mergePath(realGlobalContext.dataFolder, getFolder());
 			}
 			try {
-				File folderFile = new File(dataFolder);
-				dataFolder = folderFile.getCanonicalPath();
+				File folderFile = new File(realGlobalContext.dataFolder);
+				realGlobalContext.dataFolder = folderFile.getCanonicalPath();
 				if (!folderFile.exists()) {
 					folderFile.mkdirs();
 				}
@@ -1368,7 +1451,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				logger.warning(e.getMessage());
 			}
 		}
-		return dataFolder;
+		return realGlobalContext.dataFolder;
 	}
 	
 	public String getBackupDirectory() {
@@ -1473,6 +1556,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public String getDefaultLanguagesRAW() {
+		if (getLanguages().size() == 0) {
+			return "en";
+		}
 		return properties.getString("default.language", getLanguages().iterator().next());
 	}
 
@@ -1750,9 +1836,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		String filters = properties.getString("image.view-filter", "preview;thumb-view");
 		return Arrays.asList(filters.split(";"));
 	}
-
-	public Set<String> getLanguages() {
-		String lgRAW = properties.getString("languages", "fr;nl;en");
+	
+	private Set<String> getLocalLanguages() {				
+		String lgRAW = properties.getString("languages", null);
 		if (lgRAW == null) {
 			return Collections.emptySet();
 		}
@@ -1763,6 +1849,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		return outLg;
 	}
+
+	public Set<String> getLanguages() {
+			return getLocalLanguages();
+		}
 
 	public Date getLatestLoginDate() {
 		try {
@@ -1994,7 +2084,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public String getRAWLanguages() {
-		return properties.getString("languages", "fr;nl;en");
+		return properties.getString("languages", null);
 	}
 
 	public String getResourceId(String path) {
@@ -2539,7 +2629,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			save();
 		}
 	}
-
+	
 	public void setAliasURI(Properties aliasURI) {
 
 		synchronized (properties) {
@@ -3369,6 +3459,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		out.println("**** Alias of           :  " + getAliasOf());
 		out.println("**** User Factory       :  " + getUserFactoryClassName());
 		out.println("**** Admin User Factory :  " + getAdminUserFactoryClassName());
+		out.println("**** Language           :  " + getLanguages());
+		out.println("**** ContentLanguage    :  " + getContentLanguages());
 		out.println("**** Data size          :  " + getDataKeys().size());
 		out.println("**** Data folder        :  " + getDataFolder());
 		if (viewPages != null) {
@@ -3485,6 +3577,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		if (!StringHelper.isEmpty(getDMZServerInter()) || !StringHelper.isEmpty(getDMZServerIntra())) {
 			return PersistenceThread.LOCK;
 		} else {
+			if (getMainContext() != null) {
+				return getMainContext().localLock;
+			}
 			return localLock;
 		}
 	}
@@ -3607,16 +3702,16 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	 * 
 	 * @return
 	 */
-	public String getMainContextKey() {
-		if (mainContextKey != null) {
-			return mainContextKey;
+	public String getSourceContextKey() {
+		if (sourceContextKey != null) {
+			return sourceContextKey;
 		} else {
 			return contextKey;
 		}
 	}
-
-	public void setMainContextKey(String mainContextKey) {
-		this.mainContextKey = mainContextKey;
+	
+	public void setSourceContextKey(String sourceContextKey) {
+		this.sourceContextKey = sourceContextKey;
 	}
 
 	public boolean isReversedLink() {

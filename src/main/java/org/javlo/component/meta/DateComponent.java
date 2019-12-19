@@ -115,18 +115,25 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 
 		StringBuffer finalCode = new StringBuffer();
 		finalCode.append(getSpecialInputTag());
-		finalCode.append("<input id=\"contentdate\" style=\"width: 120px;\" type=\"text\" id=\"" + getInputDateName() + "\" name=\"" + getInputDateName() + "\" value=\"" + StringHelper.renderDate(date) + "\"/>");
-		finalCode.append("<input style=\"margin-left: 30px;width: 120px;\" type=\"text\" id=\"" + getInputTimeName() + "\" name=\"" + getInputTimeName() + "\" value=\"" + StringHelper.renderOnlyTime(date) + "\"/>");
+		finalCode.append("<input id=\"contentdate\" style=\"width: 120px;\" type=\"date\" id=\"" + getInputDateName() + "\" name=\"" + getInputDateName() + "\" value=\"" + StringHelper.renderInputDate(date) + "\"/>");
+		finalCode.append("<input style=\"margin-left: 30px;width: 120px;\" type=\"time\" id=\"" + getInputTimeName() + "\" name=\"" + getInputTimeName() + "\" value=\"" + StringHelper.renderOnlyTime(date) + "\"/>");
 		return finalCode.toString();
 	}
 
 	public Date getDate() {
 		Date date = null;
+		if (StringHelper.isEmpty(getValue())) {
+			return null;
+		}
 		try {
-			date = StringHelper.parseTime(getValue());
+			if (getValue().contains("/")) {
+				date = StringHelper.parseTime(getValue());
+			} else {
+				date = StringHelper.parseInputDateAndTime(getValue());
+			}
 		} catch (ParseException e) {
 			try {
-				date = StringHelper.parseDate(getValue());
+				date = StringHelper.parseInputDate(getValue());
 			} catch (ParseException e2) {
 			}
 		}

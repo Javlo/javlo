@@ -208,6 +208,7 @@
 <div class="col-sm-6">
 
 <c:if test="${fn:length(contextList) > 0}">
+<c:if test="${not empty currentContext.aliasActive}"><div class="row"><div class="col-md-6"></c:if>
 <div class="form-group">		
 	<label for="alias">${i18n.edit['admin.form.alias']}</label>	
 	<select id="alias" name="alias" class="form-control">
@@ -217,6 +218,15 @@
 		</c:forEach>
 	</select>	
 </div>
+<c:if test="${not empty currentContext.aliasActive}"></div><div class="col-md-6">
+<div class="form-group">		
+	<label for="alias-active">${i18n.edit['admin.form.alias-active']}</label>
+	<select id="alias-active" name="alias-active" class="form-control">
+		<option value="true" ${currentContext.aliasActive?'selected="selected"':''} >${i18n.edit['global.yes']}</option>
+		<option value="false" ${!currentContext.aliasActive?'selected="selected"':''} >${i18n.edit['global.no']}</option>
+	</select>	
+</div>
+</div></div></c:if>
 </c:if>
 
 <div class="form-group">		

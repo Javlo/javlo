@@ -197,8 +197,8 @@ public class CatchAllFilter implements Filter {
 
 		String editURI = uri;
 
-		if (editURI.startsWith('/' + globalContext.getMainContextKey())) {
-			editURI = editURI.substring(globalContext.getMainContextKey().length() + 1);
+		if (editURI.startsWith('/' + globalContext.getSourceContextKey())) {
+			editURI = editURI.substring(globalContext.getSourceContextKey().length() + 1);
 		}
 
 		if (user != null && AdminUserSecurity.getInstance().haveRole(user, AdminUserSecurity.CONTRIBUTOR_ROLE) && (!ContentContext.isEditPreview(httpRequest))) {
@@ -292,7 +292,7 @@ public class CatchAllFilter implements Filter {
 		/******************/
 
 		String shortURI = uri;
-		String contextKey = globalContext.getMainContextKey();
+		String contextKey = globalContext.getSourceContextKey();
 		if (shortURI.startsWith('/' + contextKey)) {
 			if (shortURI.length() > globalContext.getContextKey().length() + 2) {
 				shortURI = shortURI.substring(globalContext.getContextKey().length() + 2);

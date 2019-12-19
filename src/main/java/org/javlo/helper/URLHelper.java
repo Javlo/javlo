@@ -329,17 +329,40 @@ public class URLHelper extends ElementaryURLHelper {
 	public static String createTransformURL(ContentContext ctx, File file, String filter) throws Exception {
 		GlobalContext globalContext = ctx.getGlobalContext();
 		String url = file.getCanonicalPath();
-		url = StringHelper.cleanPath(url);				
-		url = StringUtils.removeStart(url, StringHelper.cleanPath(globalContext.getDataFolder()));
+		url = StringHelper.cleanPath(url);
+		url = StringUtils.removeStart(url, StringHelper.cleanPath(globalContext.getMainContext().getDataFolder()));
 		return createTransformURL(ctx, url, filter);
 	}
 
+	@Deprecated
+	/**
+	 * use create createMediaURL
+	 * @param ctx
+	 * @param file
+	 * @return
+	 * @throws IOException
+	 */
 	public static String createResourceURL(ContentContext ctx, File file) throws IOException {
 		GlobalContext globalContext = ctx.getGlobalContext();
 		String url = file.getCanonicalPath();
 		url = StringHelper.cleanPath(url);				
 		url = StringUtils.removeStart(url, StringHelper.cleanPath(globalContext.getDataFolder()));
 		return createResourceURL(ctx, url);
+	}
+	
+	/**
+	 * create a link to the file from media servlet
+	 * @param ctx
+	 * @param file
+	 * @return
+	 * @throws IOException
+	 */
+	public static String createMediaURL(ContentContext ctx, File file) throws IOException {
+		GlobalContext globalContext = ctx.getGlobalContext();
+		String url = file.getCanonicalPath();
+		url = StringHelper.cleanPath(url);				
+		url = StringUtils.removeStart(url, StringHelper.cleanPath(globalContext.getDataFolder()));
+		return createMediaURL(ctx, url);
 	}
 	
 	public static String createFileURL(ContentContext ctx, File file) throws IOException {

@@ -667,6 +667,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	public void clearRenderer(ContentContext ctx) {
+		logger.info("clear template renderer : "+ctx.getGlobalContext().getContextKey());
 		synchronized (ctx.getGlobalContext().getLockImportTemplate()) {
 			String templateFolder = config.getTemplateFolder();
 			File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolderName()));
@@ -685,6 +686,11 @@ public class Template implements Comparable<Template> {
 			dynamicsComponents = null;
 			contextWithTemplateImported.clear();
 			i18n.clear();
+		}
+		for (GlobalContext subContext : ctx.getGlobalContext().getSubContexts()) {
+			ContentContext subCtx = new ContentContext(ctx);
+			subCtx.setForceGlobalContext(subContext);
+			clearRenderer(subCtx);
 		}
 	}
 

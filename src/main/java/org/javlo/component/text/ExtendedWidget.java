@@ -14,6 +14,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.helper.CSSParser;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -43,7 +44,7 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 		}
 	}
 	
-	public void createRenderer(ContentContext ctx) throws CompilationException, IOException {
+	public void createRenderer(ContentContext ctx) throws Exception {
 		File renderer = getRendererFile(ctx);
 		final String filePrefix = "<%@ taglib uri=\"http://java.sun.com/jsp/jstl/core\" prefix=\"c\"%><%@ taglib prefix=\"fn\" uri=\"http://java.sun.com/jsp/jstl/functions\"%><%@ taglib uri=\"/WEB-INF/javlo.tld\" prefix=\"jv\"%>";
 		String css = getFieldValue("css");
@@ -55,6 +56,7 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 		String errorMsg = "<strong>Error : NO SCRIPLET</strong>";
 		xhtml = xhtml.replace("<%", errorMsg);
 		xhtml = xhtml.replace(errorMsg + '@', "<%@");
+		xhtml = XHTMLHelper.replaceLinks(ctx, xhtml);
 		ResourceHelper.writeStringToFile(renderer, filePrefix+style+xhtml);
 	}
 	

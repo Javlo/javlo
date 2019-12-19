@@ -789,6 +789,7 @@ Security in case of vulnerabilities.
  - add forward url as canonical url
  - more info in ical service
  - mailing feedback factory
+ - create mirror site with other language list
 ### Modified
  - security update
  - file-finder optimisation
@@ -798,6 +799,8 @@ Security in case of vulnerabilities.
  - import title link heading in place of title and subtitle
  - new layout + depth rules
  - remove use report from dashboard
+ - add crop option on layer image filter
+ - replace link on extended widget
 ### fixed
  - change heading level correction
  - close popup site propoerties in preview mode if no error

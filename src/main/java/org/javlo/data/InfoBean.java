@@ -80,7 +80,7 @@ public class InfoBean {
 	//public static final String NEW_SESSION_PARAM = "__new_session";
 
 	private String fakeCurrentURL = null;
-
+	
 	private ImageBean imageHeader = null;
 
 	private Map<String, Boolean> areas = null;

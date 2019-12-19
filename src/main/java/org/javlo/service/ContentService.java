@@ -121,6 +121,9 @@ public class ContentService implements IPrintInfo {
 	}
 
 	public static ContentService getInstance(GlobalContext globalContext) {
+		if (globalContext.getMainContext() != null) {
+			globalContext = globalContext.getMainContext();
+		}
 		ContentService content = null;
 		content = (ContentService) globalContext.getAttribute(ContentService.class.getName());
 		if (content == null) {
@@ -802,6 +805,9 @@ public class ContentService implements IPrintInfo {
 		synchronized (globalContext.RELEASE_CACHE) {
 			setViewNav(null);
 			globalContext.releaseAllCache();
+			for (GlobalContext subContext : globalContext.getSubContexts()) {
+				subContext.releaseAllCache();
+			}
 			clearComponentCache();
 			shortURLMap = null;
 		}

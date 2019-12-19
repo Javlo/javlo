@@ -24,7 +24,9 @@ GlobalContext globalContext = GlobalContext.getInstance(request);
 </form>
 <%}%>
 </c:if>
-
+<c:if test="${not empty param.message}">
+	<div class="alert alert-danger">${param.message}</div>
+</c:if>
 <p><a href="http://www.javlo.org">javlo.org</a></p>
 </div>
 </body>

@@ -452,7 +452,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		String keySuffix = ctx.getGlobalContext().getContextKey() + '-' + ctx.getLanguage() + '-' + ctx.getRequestContentLanguage() + '-' + ctx.getRenderMode() + '-' + templateId + '-' + pageId;
+		String contextKey = ctx.getGlobalContext().getContextKey();
+		if (ctx.getGlobalContext().getMainContext() != null) {
+			contextKey = ctx.getGlobalContext().getMainContext().getContextKey();
+		}
+		String keySuffix = contextKey + '-' + ctx.getLanguage() + '-' + ctx.getRequestContentLanguage() + '-' + ctx.getRenderMode() + '-' + templateId + '-' + pageId;
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		if (requestService.getParameter(CACHE_KEY_SUFFIX_PARAM_NAME, null) != null) {
 			keySuffix = keySuffix + '-' + requestService.getParameter(CACHE_KEY_SUFFIX_PARAM_NAME, null);
@@ -2377,7 +2381,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	@Override
-	public final String getXHTMLCode(ContentContext ctx) {
+	public String getXHTMLCode(ContentContext ctx) {
 		try {
 
 			if (isNeedDelete(ctx)) {

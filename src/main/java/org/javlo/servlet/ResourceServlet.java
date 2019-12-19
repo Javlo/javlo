@@ -22,7 +22,6 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.NetHelper;
-import org.javlo.helper.RequestHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -30,8 +29,6 @@ import org.javlo.module.admin.AdminAction;
 import org.javlo.navigation.RobotsTxt;
 import org.javlo.service.syncro.FileStructureFactory;
 import org.javlo.user.AdminUserFactory;
-import org.javlo.user.IUserFactory;
-import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.utils.CSVFactory;
 import org.javlo.utils.JSONMap;
@@ -83,9 +80,9 @@ public class ResourceServlet extends HttpServlet {
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
 		}
+		GlobalContext globalContext = GlobalContext.getMainInstance(request);
 		if (request.getServletPath().equals("/favicon.ico") || request.getServletPath().equals("/robots.txt")) {
 			response.setHeader("Cache-Control", "max-age=600,must-revalidate");
-			GlobalContext globalContext = GlobalContext.getSessionContext(request.getSession());
 			if (globalContext != null) {
 				String filePath = URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), request.getServletPath());
 				String finalName = URLHelper.mergePath(globalContext.getDataFolder(), filePath);
@@ -134,13 +131,12 @@ public class ResourceServlet extends HttpServlet {
 			}
 		}
 		/* TRACKING */
-		GlobalContext globalContext = GlobalContext.getInstance(request);
-		IUserFactory fact = UserFactory.createUserFactory(globalContext, request.getSession());
-		User user = fact.getCurrentUser(globalContext, ctx.getRequest().getSession());
-		String userName = null;
-		if (user != null) {
-			userName = user.getLogin();
-		}
+//		IUserFactory fact = UserFactory.createUserFactory(globalContext, request.getSession());
+//		User user = fact.getCurrentUser(globalContext, ctx.getRequest().getSession());
+//		String userName = null;
+//		if (user != null) {
+//			userName = user.getLogin();
+//		}
 //		try {
 //			Tracker tracker = Tracker.getTracker(globalContext, request.getSession());
 //			Track track = new Track(userName, "view picture", request.getRequestURI(), System.currentTimeMillis(), request.getHeader("referer"), request.getHeader("User-Agent"));

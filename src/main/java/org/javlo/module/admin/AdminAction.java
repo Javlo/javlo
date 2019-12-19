@@ -469,6 +469,7 @@ public class AdminAction extends AbstractModuleAction {
 					checkRight(ctx, currentGlobalContext);
 					currentGlobalContext.setGlobalTitle(requestService.getParameter("global-title", null));
 					currentGlobalContext.setAliasOf(requestService.getParameter("alias", "").trim());
+					currentGlobalContext.setAliasActive(StringHelper.isTrue(requestService.getParameter("alias-active", null)));
 					currentGlobalContext.setDefaultTemplate(requestService.getParameter("default-template", null));
 					currentGlobalContext.setRAWLanguages(requestService.getParameter("languages", null));
 					currentGlobalContext.setRAWContentLanguages(requestService.getParameter("content-languages", null));

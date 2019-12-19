@@ -259,7 +259,11 @@ public class PersistenceService {
 			instance = new PersistenceService();
 			if (globalContext != null) {
 				globalContext.setAttribute(getKey(globalContext), instance);
-				instance.globalContext = globalContext;
+				if (globalContext.getMainContext() != null) {
+					instance.globalContext = globalContext.getMainContext();
+				} else {
+					instance.globalContext = globalContext;
+				}
 				File dir = new File(instance.getDirectory());
 				dir.mkdirs();
 				dir = new File(instance.getTrackingDirectory());
@@ -270,7 +274,11 @@ public class PersistenceService {
 	}
 
 	public static String getKey(GlobalContext globalContext) {
-		return KEY + globalContext.getContextKey();
+		String contextKey = globalContext.getContextKey();
+		if (globalContext.getMainContext() != null) {
+			contextKey = globalContext.getMainContext().getContextKey();
+		}
+		return KEY + contextKey;
 	}
 
 	private static String trackToString(Track track) {

@@ -156,7 +156,7 @@ public class ImageTransformServlet extends FileServlet {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			this.globalContext = ctx.getGlobalContext();
+			this.globalContext = GlobalContext.getMainInstance(ctx.getRequest());
 			this.imageParam = imageParam;
 			
 			focusX = StaticInfo.DEFAULT_FOCUS_X;
@@ -189,7 +189,7 @@ public class ImageTransformServlet extends FileServlet {
 		public ImageTransforming(ContentContext ctx, File image) {
 			startTime = System.currentTimeMillis();
 			file = image;
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			GlobalContext globalContext = GlobalContext.getMainInstance(ctx.getRequest());
 			context = globalContext.getContextKey();
 			fileSize = image.length();
 		}
@@ -322,7 +322,7 @@ public class ImageTransformServlet extends FileServlet {
 			deviceCode = device.getCode();
 		}
 		FileCache fc = FileCache.getInstance(getServletContext());
-		long lm = fc.getLastModified(ImageHelper.createSpecialDirectory(ctx.getBean(), ctx.getGlobalContext().getContextKey(), filter, area, deviceCode, template, comp, param), name);
+		long lm = fc.getLastModified(ImageHelper.createSpecialDirectory(ctx.getBean(), GlobalContext.getMainInstance(ctx.getRequest()).getContextKey(), filter, area, deviceCode, template, comp, param), name);
 		return lm;
 	}
 
@@ -462,7 +462,7 @@ public class ImageTransformServlet extends FileServlet {
 			if (ctx.getDevice() != null) {
 				deviceCode = ctx.getDevice().getCode();
 			}
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			GlobalContext globalContext = GlobalContext.getMainInstance(ctx.getRequest());
 			String dir = ImageHelper.createSpecialDirectory(ctx.getBean(), globalContext.getContextKey(), filter, area, deviceCode, template, comp, imageParam);
 
 			String fileExtension = config.getFileExtension(ctx.getDevice(), filter, area);
@@ -668,13 +668,11 @@ public class ImageTransformServlet extends FileServlet {
 				fgImage = ImageIO.read(projection.getForeground());
 			}
 			try {
-				img = ImageEngine.projectionImage(bgImage, fgImage, img, projection.getPolygon(), projection.getAlpha());
+				img = ImageEngine.projectionImage(bgImage, fgImage, img, projection.getPolygon(), projection.getAlpha(), projection.isCrop(), focusX, focusY);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		
-		
 		
 		if (config.isBackGroudColor(device, filter, area) && img.getColorModel().hasAlpha()) {
 			img = ImageEngine.applyBgColor(img, config.getBGColor(device, filter, area));
@@ -962,7 +960,7 @@ public class ImageTransformServlet extends FileServlet {
 			deviceCode = device.getCode();
 		}
 		FileCache fc = FileCache.getInstance(getServletContext());
-		return fc.getFile(ImageHelper.createSpecialDirectory(ctx.getBean(), ctx.getGlobalContext().getContextKey(), filter, area, deviceCode, template, comp, imageParam), name, lastModificationDate);
+		return fc.getFile(ImageHelper.createSpecialDirectory(ctx.getBean(), GlobalContext.getMainInstance(ctx.getRequest()).getContextKey(), filter, area, deviceCode, template, comp, imageParam), name, lastModificationDate);
 	}
 	
 	/**
@@ -984,7 +982,8 @@ public class ImageTransformServlet extends FileServlet {
 			System.out.println(">>> ProcessRequest URI = "+request.getRequestURI());
 		}
 		
-		GlobalContext globalContext = GlobalContext.getInstance(request);
+		GlobalContext globalContext = GlobalContext.getMainInstance(request);
+		
 		int trackerNumber = TimeTracker.start(globalContext.getContextKey(), ImageTransformServlet.class.getName());
 
 		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
@@ -1031,8 +1030,7 @@ public class ImageTransformServlet extends FileServlet {
 			realURL = URLHelper.cleanPath(realURL, false);
 			pathInfo = realURL;			
 		}
-
-		String dataFolder = globalContext.getDataFolder();
+		
 		String imageName = pathInfo;
 		imageName = imageName.replace('\\', '/');
 		logger.finest("apply fitler on image : " + imageName);
@@ -1106,6 +1104,7 @@ public class ImageTransformServlet extends FileServlet {
 
 			boolean localFile = false;
 			StaticInfo staticInfo = null;
+			String dataFolder = globalContext.getDataFolder();
 			if (imageFromTemplateFolder && template != null) {
 				localFile = true;
 				imageName = URLHelper.mergePath(template.getLocalWorkTemplateFolder(), template.getId(), globalContext.getContextKey(), imageName);
@@ -1143,7 +1142,7 @@ public class ImageTransformServlet extends FileServlet {
 			}
 
 			if (staticInfo != null) {
-				if (AdminUserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getCurrentUser(request.getSession()) == null) {
+				if (AdminUserFactory.createUserFactory(GlobalContext.getMainInstance(ctx.getRequest()), request.getSession()).getCurrentUser(request.getSession()) == null) {
 					if (!staticInfo.canRead(ctx, UserFactory.createUserFactory(globalContext, request.getSession()).getCurrentUser(globalContext, request.getSession()), request.getParameter(RESOURCE_TOKEN_KEY))) {
 						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 						TimeTracker.end(globalContext.getContextKey(), ImageTransformServlet.class.getName(), trackerNumber);
@@ -1187,6 +1186,7 @@ public class ImageTransformServlet extends FileServlet {
 				}
 				
 				File imageFile = new File(URLHelper.mergePath(baseFolder, imageName));
+				
 				String baseExtension = StringHelper.getFileExtension(imageFile.getName());
 				if (!imageFile.exists()) {
 					imageFile = new File(URLHelper.mergePath(baseFolder, StringHelper.getFileNameWithoutExtension(imageName)));
@@ -1245,6 +1245,7 @@ public class ImageTransformServlet extends FileServlet {
 				}
 
 				File file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified(), imageParam);
+				
 				if ((file != null)) {
 					super.processRequest(request, response, file, content);
 //					if (file.length() > 0) {

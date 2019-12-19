@@ -317,6 +317,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		}
 
 		GlobalContext globalContext = GlobalContext.getInstance(request);
+		
 		Thread.currentThread().setName("AccessServlet-" + globalContext.getContextKey());
 		ContentContext ctx = null;
 		try {
@@ -559,8 +560,12 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				if (ctx.getCurrentEditUser() == null) {
 					InfoBean.updateInfoBean(ctx);
 					response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
-					String jspForLogin = editCtx.getLoginRenderer();
-					getServletContext().getRequestDispatcher(jspForLogin).include(request, response);
+					if (ctx.getGlobalContext().getMainContext() == null) {
+						String jspForLogin = editCtx.getLoginRenderer();
+						getServletContext().getRequestDispatcher(jspForLogin).include(request, response);
+					} else {
+						request.getSession().getServletContext().getRequestDispatcher("/jsp/view/error/blocked.jsp?message=use main context for edit : '"+ctx.getGlobalContext().getMainContext().getContextKey()+"'").include(request, response);
+					}
 					return;
 				}
 			}

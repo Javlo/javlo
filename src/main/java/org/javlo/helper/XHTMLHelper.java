@@ -2305,11 +2305,11 @@ public class XHTMLHelper {
 	public static String textToXHTML(String text) {
 		return textToXHTML(text, false, null, (GlobalContext) null);
 	}
-	
+
 	public static String textToXHTMLWidthParagraph(String text) {
 		return textToXHTML(text, false, false, null, (GlobalContext) null, true);
 	}
-	
+
 	public static void main(String[] args) {
 		System.out.println(textToXHTMLWidthParagraph("patrick\\nbarbara"));
 	}
@@ -2325,7 +2325,7 @@ public class XHTMLHelper {
 	public static String textToXHTML(String text, GlobalContext globalContext) {
 		return textToXHTML(text, false, false, null, globalContext, false);
 	}
-	
+
 	public static String textToXHTMLWidthParagraph(String text, GlobalContext globalContext) {
 		return textToXHTML(text, false, false, null, globalContext, true);
 	}
@@ -2340,8 +2340,7 @@ public class XHTMLHelper {
 
 	// cssClass and popup not used
 	private static String textToXHTML(String text, boolean notFollow, boolean newWin, String cssClass, GlobalContext globalContext, boolean paragraph) {
-		
-		
+
 		String separation = "<br />";
 		if (paragraph) {
 			separation = "<p>";
@@ -2371,11 +2370,11 @@ public class XHTMLHelper {
 					separation = "</p><p>";
 				}
 			}
-			
+
 			if (paragraph) {
 				out.print("</p>");
 			}
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -2603,7 +2602,7 @@ public class XHTMLHelper {
 				String hrefValue = tag.getAttributes().get("href");
 				if (hrefValue != null) {
 					hrefValue = hrefValue.trim();
-					if (!hrefValue.startsWith("#")) {
+					if (!hrefValue.startsWith("#") && !hrefValue.startsWith("${")) {
 						if (hrefValue.startsWith("page:")) {
 							String pageName = hrefValue.substring("page:".length());
 							tag.getAttributes().put("href", URLHelper.createURLFromPageName(ctx, pageName));
@@ -2626,7 +2625,7 @@ public class XHTMLHelper {
 			} else if (tag.getName().equalsIgnoreCase("img")) {
 				String src = tag.getAttribute("src", null);
 				if (src != null) {
-					if (!StringHelper.isURL(src)) { // relative path
+					if (!StringHelper.isURL(src) && !src.startsWith("${")) { // relative path
 						String urlPrefix = URLHelper.mergePath("/", ctx.getRequest().getContextPath(), ctx.getPathPrefix(), "/");
 						if (src.startsWith(urlPrefix)) {
 							InfoBean info = InfoBean.getCurrentInfoBean(ctx);
@@ -2915,7 +2914,7 @@ public class XHTMLHelper {
 		out.close();
 		return new String(outStream.toByteArray());
 	}
-	
+
 	public static String getTableAlert(String linkLabel) {
 		if (StringHelper.isEmpty(linkLabel)) {
 			return "";
@@ -2931,7 +2930,7 @@ public class XHTMLHelper {
 		out.println("<tr>");
 		out.println("<td width=\"1\">&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>");
 		out.println("</tr><tr>");
-		out.println("<td width=\"1\">&nbsp;&nbsp;&nbsp;&nbsp;</td><td style=\"font-family:Helvetica, sans-serif; font-size:13px; color:#565656; text-align: center;\">"+linkLabel+"</td><td width=\"1\">&nbsp;&nbsp;&nbsp;&nbsp;</td>");
+		out.println("<td width=\"1\">&nbsp;&nbsp;&nbsp;&nbsp;</td><td style=\"font-family:Helvetica, sans-serif; font-size:13px; color:#565656; text-align: center;\">" + linkLabel + "</td><td width=\"1\">&nbsp;&nbsp;&nbsp;&nbsp;</td>");
 		out.println("</tr><tr>");
 		out.println("<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>");
 		out.println("</tr></table>");
@@ -2943,8 +2942,8 @@ public class XHTMLHelper {
 		out.close();
 		return new String(outStream.toByteArray());
 	}
-	
-	public static String createUserMail(ContentContext ctx, String logo, String title, String content,String link, String linkLabel, String footer) throws IOException, Exception {
+
+	public static String createUserMail(ContentContext ctx, String logo, String title, String content, String link, String linkLabel, String footer) throws IOException, Exception {
 		String xhtml = ctx.getCurrentTemplate().getUserMailHtml(ctx.getGlobalContext());
 		TemplateData templateData = ctx.getCurrentTemplate().getTemplateData();
 		if (xhtml == null) {
@@ -2992,7 +2991,7 @@ public class XHTMLHelper {
 			}
 			return xhtml;
 		}
-		
+
 	}
 
 	public static String createUserMail(TemplateData templateData, String title, String content, Map data, String link, String linkLabel, String footer) {
@@ -3040,16 +3039,17 @@ public class XHTMLHelper {
 		renderer.createPDF(reportPdfStream);
 		reportPdfStream.close();
 	}
-	
+
 	public static final String escapeNotAsciiChar(String html) {
-		return  StringEscapeUtils.unescapeXml(StringEscapeUtils.escapeHtml4(html));		 
+		return StringEscapeUtils.unescapeXml(StringEscapeUtils.escapeHtml4(html));
 	}
 
-//	public static void main(String[] args) throws Exception {
-//		File file = new File("c:/trans/mail.html");
-//		String html = createUserMail(null, null, "title", "ceci est le contenu", null, "http://www.javlo.org", "action", "ceci est le footer");
-//		ResourceHelper.writeStringToFile(file, html);
-//	}
+	// public static void main(String[] args) throws Exception {
+	// File file = new File("c:/trans/mail.html");
+	// String html = createUserMail(null, null, "title", "ceci est le contenu",
+	// null, "http://www.javlo.org", "action", "ceci est le footer");
+	// ResourceHelper.writeStringToFile(file, html);
+	// }
 
 	public static String compress(String newContent) {
 		newContent = newContent.replaceAll("[\n\r]", " ");

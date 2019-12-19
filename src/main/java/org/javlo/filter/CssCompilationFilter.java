@@ -57,8 +57,8 @@ public class CssCompilationFilter implements Filter {
 				}
 			}
 		} else {
-			if (!globalContext.getContextKey().equals(globalContext.getMainContextKey())) {
-				lessFile = new File(StringUtils.replaceOnce(lessFile.getAbsolutePath(), File.separator + globalContext.getMainContextKey() + File.separator, File.separator + globalContext.getContextKey() + File.separator));
+			if (!globalContext.getContextKey().equals(globalContext.getSourceContextKey())) {
+				lessFile = new File(StringUtils.replaceOnce(lessFile.getAbsolutePath(), File.separator + globalContext.getSourceContextKey() + File.separator, File.separator + globalContext.getContextKey() + File.separator));
 				cssFile.getParentFile().mkdirs();
 			}
 			if (lessFile.exists()) {

@@ -1146,7 +1146,7 @@ public class Edit extends AbstractModuleAction {
 		} else {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.not-updated"), GenericMessage.ALERT));
 		}
-		
+
 		if (requestService.getParameter("save", null) != null && editContext.isPreviewEditionMode() && !ResourceStatus.isResource(ctx.getRequest().getSession()) && requestService.getParameter("upload", null) == null) {
 			String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE));
 			if (!StringHelper.isEmpty(requestService.getParameter("forward_anchor")) && !url.contains("#")) {
@@ -1162,10 +1162,10 @@ public class Edit extends AbstractModuleAction {
 			InfoBean.getCurrentInfoBean(ctx).setTools(false);
 			ctx.getRequest().setAttribute("noinsert", "true");
 		}
-		
+
 		if (ctx.isClosePopup() && ctx.isAjax()) {
 			if (ctx.getParentURL() != null) {
-				ctx.getAjaxInsideZone().put("main-body", "<script>closePopup('"+ctx.getParentURL()+"');</script>");
+				ctx.getAjaxInsideZone().put("main-body", "<script>closePopup('" + ctx.getParentURL() + "');</script>");
 			} else {
 				ctx.getAjaxInsideZone().put("main-body", "<script>closePopup();</script>");
 			}
@@ -1593,41 +1593,37 @@ public class Edit extends AbstractModuleAction {
 
 			String message = null;
 
-			synchronized (globalContext.getLockLoadContent()) {
+			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 
-				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
+			if (!globalContext.isPortail()) {
+				persistenceService.publishPreviewFile(ctx);
+			} else {
+				ContentContext viewCtx = new ContentContext(ctx);
+				viewCtx.setRenderMode(ContentContext.VIEW_MODE);
 
-				if (!globalContext.isPortail()) {
-					persistenceService.publishPreviewFile(ctx);
-				} else {
-					ContentContext viewCtx = new ContentContext(ctx);
-					viewCtx.setRenderMode(ContentContext.VIEW_MODE);
-
-					MenuElement viewNav = content.getNavigation(viewCtx);
-					NavigationHelper.publishNavigation(ctx, content.getNavigation(ctx), viewNav);
-					persistenceService.store(viewCtx, ContentContext.VIEW_MODE);
-				}
-
-				globalContext.setPublishDate(new Date());
-				globalContext.setLatestPublisher(ctx.getCurrentEditUser().getLogin());
-				globalContext.storeRedirectUrlList();
-
-				content.releaseViewNav(globalContext);
-
-				String msg = i18nAccess.getText("content.published");
-				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), new GenericMessage(msg, GenericMessage.INFO), false);
-				// MessageRepository.getInstance(ctx).setGlobalMessage(new
-				// GenericMessage(msg, GenericMessage.INFO));
-
-				SynchroHelper.performSynchro(ctx);
-
-				NavigationService navigationService = NavigationService.getInstance(globalContext);
-				navigationService.clearAllViewPage();
-
-				// clean component list when publish
-				ComponentFactory.cleanComponentList(request.getSession().getServletContext(), globalContext);
-				
+				MenuElement viewNav = content.getNavigation(viewCtx);
+				NavigationHelper.publishNavigation(ctx, content.getNavigation(ctx), viewNav);
+				persistenceService.store(viewCtx, ContentContext.VIEW_MODE);
 			}
+
+			globalContext.setPublishDate(new Date());
+			globalContext.setLatestPublisher(ctx.getCurrentEditUser().getLogin());
+			globalContext.storeRedirectUrlList();
+
+			content.releaseViewNav(globalContext);
+
+			String msg = i18nAccess.getText("content.published");
+			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), new GenericMessage(msg, GenericMessage.INFO), false);
+			// MessageRepository.getInstance(ctx).setGlobalMessage(new
+			// GenericMessage(msg, GenericMessage.INFO));
+
+			SynchroHelper.performSynchro(ctx);
+
+			NavigationService navigationService = NavigationService.getInstance(globalContext);
+			navigationService.clearAllViewPage();
+
+			// clean component list when publish
+			ComponentFactory.cleanComponentList(request.getSession().getServletContext(), globalContext);
 
 			// /*** check url ***/
 			// ContentContext lgCtx = new ContentContext(ctx);
@@ -1691,7 +1687,7 @@ public class Edit extends AbstractModuleAction {
 			AdminAction.clearCache(ctx);
 
 			TimeTracker.end(globalContext.getContextKey(), "publish", trackerNumber);
-			
+
 			if (SearchEngineFactory.getEngine(ctx) != null) {
 				SearchEngineFactory.getEngine(ctx).updateData(ctx);
 			} else {
@@ -1727,7 +1723,7 @@ public class Edit extends AbstractModuleAction {
 		if (menuElement.isChildrenOfAssociation()) {
 			if (menuElement.getRootOfChildrenAssociation() != null && menuElement.getRootOfChildrenAssociation().getFirstChild() != null) {
 				newPath = menuElement.getRootOfChildrenAssociation().getFirstChild().getPath();
-			} 
+			}
 		}
 		if (menuElement.isChildrenAssociation()) {
 			newPath = "/";
@@ -1908,12 +1904,12 @@ public class Edit extends AbstractModuleAction {
 	public static String performDuplicate(RequestService rs, ContentContext ctx, EditContext editCtx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		IContentVisualComponent comp = content.getComponent(ctx, rs.getParameter("id"));
-		
+
 		MenuElement targetPage = NavigationHelper.searchPage(ctx, rs.getParameter("pageCompID"));
 		if (targetPage == null) {
 			targetPage = ctx.getCurrentPage();
 		}
-		
+
 		if (comp == null) {
 			return "component not found : " + rs.getParameter("id");
 		} else {

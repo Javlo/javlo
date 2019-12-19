@@ -8,13 +8,15 @@ public class ProjectionConfig {
 	private float alpha;
 	private File background;
 	private File foreground;
+	private boolean crop = false;
 	
-	public ProjectionConfig(Polygon4 polygon, float alpha, File background, File foreground) {
+	public ProjectionConfig(Polygon4 polygon, float alpha, File background, File foreground, boolean crop) {
 		super();
 		this.polygon = polygon;
 		this.alpha = alpha;
 		this.background = background;
 		this.foreground = foreground;
+		this.crop = crop;
 	}
 	public Polygon4 getPolygon() {
 		return polygon;
@@ -39,5 +41,11 @@ public class ProjectionConfig {
 	}
 	public void setForeground(File foreground) {
 		this.foreground = foreground;
+	}
+	public boolean isCrop() {
+		return crop;
+	}
+	public void setCrop(boolean crop) {
+		this.crop = crop;
 	}
 }

@@ -727,11 +727,9 @@ public class FolderedMultimedia extends TimeRangeComponent implements IImageTitl
 			}
 
 			if (acceptStaticInfo(ctx, info)) {
-
 				String multimediaURL = URLHelper.createResourceURL(lgCtx, getPage(), getMultimediaFileURL(ctx, currentLg, file));
-
 				String previewURL = multimediaURL;
-				String fileName = ResourceHelper.removeDataFolderDir(globalContext, file.getAbsolutePath());
+				String fileName = ResourceHelper.removeDataFolderDir(globalContext.getMainContextOrContext(), file.getAbsolutePath());
 				if (StringHelper.isImage(file.getName())) {
 					if (isCountAccess(ctx)) {
 						previewURL = URLHelper.createTransformURL(lgCtx, getPage(), getImageFilePath(ctx, fileName), getPreviewFilter(file));

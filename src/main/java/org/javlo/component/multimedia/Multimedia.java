@@ -928,7 +928,7 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 			if (resource == null || resource.getPath() == null) {
 				return null;
 			}
-			String fileName = ResourceHelper.removeDataFolderDir(ctx.getGlobalContext(), resource.getPath());
+			String fileName = ResourceHelper.removeDataFolderDir(ctx.getGlobalContext().getMainContextOrContext(), resource.getPath());
 			resource.setURL(fileName);
 			resource.setPreviewURL(fileName);
 			return resource;
@@ -997,7 +997,7 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 				String absoluteMultimediaURL = URLHelper.createResourceURL(lgCtx.getContextForAbsoluteURL(), getPage(), getMultimediaFileURL(ctx, currentLg, file));
 
 				String previewURL = multimediaURL;
-				String fileName = ResourceHelper.removeDataFolderDir(globalContext, file.getAbsolutePath());
+				String fileName = ResourceHelper.removeDataFolderDir(globalContext.getMainContextOrContext(), file.getAbsolutePath());
 				if (StringHelper.isImage(file.getName()) || StringHelper.isVideo(file.getName())) {
 					if (countAccess) {
 						previewURL = URLHelper.createTransformURL(lgCtx, getPage(), getImageFilePath(ctx, fileName), getPreviewFilter(file));

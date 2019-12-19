@@ -25,7 +25,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -33,7 +32,6 @@ import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
-import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 
 import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.apache.batik.transcoder.TranscoderException;
@@ -43,6 +41,7 @@ import org.apache.batik.transcoder.TranscodingHints;
 import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.batik.util.SVGConstants;
 import org.apache.commons.io.FileUtils;
+import org.javlo.helper.MathHelper;
 import org.javlo.helper.StringHelper;
 
 import com.jhlabs.image.RGBAdjustFilter;
@@ -61,25 +60,6 @@ public class ImageEngine {
 	 * special color to set automatic color (value is random)
 	 */
 	public final static Color DETECT_COLOR = new Color(235, 124, 32, 15);
-
-	// This class overrides the setCompressionQuality() method to workaround
-	// a problem in compressing JPEG images using the javax.imageio package.
-	private static class MyImageWriteParam extends JPEGImageWriteParam {
-		public MyImageWriteParam() {
-			super(Locale.getDefault());
-		}
-
-		/*
-		 * public void setCompressionQuality(float quality) { if (quality < 0.0F ||
-		 * quality > 1.0F) { throw new
-		 * IllegalArgumentException("Quality out-of-bounds!"); } this.compressionQuality
-		 * = 256 - (quality 256); }
-		 */
-
-		public void setCompressionQuality(int quality) {
-			this.compressionQuality = quality;
-		}
-	}
 
 	public static BufferedImage loadImage(File file) throws IOException {
 		BufferedImage outImage = ImageIO.read(file);
@@ -1693,11 +1673,18 @@ public class ImageEngine {
 		}
 	}
 
-	public static BufferedImage projectionImage(BufferedImage back, BufferedImage top, BufferedImage source, Polygon4 p4, float alpha) throws Exception {
+	public static BufferedImage projectionImage(BufferedImage back, BufferedImage top, BufferedImage source, Polygon4 p4, float alpha, boolean crop, int interestX, int interestY) throws Exception {
 		int leftX = p4.getSquare().getX1();
 		int topY = p4.getSquare().getY1();
 		int rightX = p4.getSquare().getX3();
 		int bottomY = p4.getSquare().getY3();
+		
+		System.out.println(">>>>>>>>> ImageEngine.projectionImage : crop = "+crop); //TODO: remove debug trace
+		if (crop) {
+			int width = MathHelper.max(p4.getX1(),p4.getX2(),p4.getX3(),p4.getX4()) - MathHelper.min(p4.getX1(),p4.getX2(),p4.getX3(),p4.getX4());
+			int height = MathHelper.max(p4.getY1(),p4.getY2(),p4.getY3(),p4.getY4()) - MathHelper.min(p4.getY1(),p4.getY2(),p4.getY3(),p4.getY4());
+			source = resize(source, width, height, true, false, 0, 0, 0, 0, null, interestX, interestY, true, true);
+		}
 
 		BufferedImage tempImage = new BufferedImage(back.getWidth(), back.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
 
@@ -2070,17 +2057,6 @@ public class ImageEngine {
 		
 		
 		
-
-		File javloFile = new File("c:/trans/img1.jpg");
-		BufferedImage image = ImageIO.read(javloFile);
-		
-		image = ImageEngine.resize(image, 512, 512, true, false, 0, 0, 0, 0, null, 100, 100, true, true);
-		
-		
-		if (image != null) {
-			storeImage(image, new File("c:/trans/out.jpg"));
-		}
-
 		// System.out.println("data : "+getGoogleResultTitleSize("patrick est là"));
 		// System.out.println("data : "+getGoogleResultTitleSize("Hot Women | Sexy Women
 		// Pics | Hot Ladies - theChive"));

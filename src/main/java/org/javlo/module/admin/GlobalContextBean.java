@@ -34,6 +34,7 @@ public class GlobalContextBean {
 	private String key;
 	private String administrator;
 	private String aliasOf;
+	private boolean aliasActive;
 	private List<GlobalContextBean> alias = new LinkedList<GlobalContextBean>();
 	private String creationDate;
 	private String latestLoginDate;
@@ -140,6 +141,7 @@ public class GlobalContextBean {
 		setFolder(globalContext.getFolder());
 		setAdministrator(globalContext.getAdministrator());
 		setAliasOf(globalContext.getAliasOf());
+		setAliasActive(globalContext.isAliasActive());
 		setCountUser(globalContext.getCountUser());
 		setCreationDate(StringHelper.renderSortableTime(globalContext.getCreationDate()));
 		setLatestLoginDate(StringHelper.renderSortableTime(globalContext.getLatestLoginDate()));
@@ -295,6 +297,14 @@ public class GlobalContextBean {
 
 	public void setAdministrator(String administrator) {
 		this.administrator = administrator;
+	}
+	
+	public boolean isAliasActive() {
+		return aliasActive;
+	}
+	
+	public void setAliasActive(boolean aliasActive) {
+		this.aliasActive = aliasActive;
 	}
 
 	public String getAliasOf() {

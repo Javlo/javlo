@@ -159,7 +159,7 @@ public class StaticInfoBean implements ITaxonomyContainer {
 	}
 
 	public String getURL() throws IOException {
-		return URLHelper.createResourceURL(ctx, staticInfo.getFile());
+		return URLHelper.createMediaURL(ctx, staticInfo.getFile());
 	}
 
 	public int getFocusZoneX() {

@@ -1,6 +1,7 @@
 package org.javlo.image;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -628,6 +630,7 @@ public class ImageConfig {
 		String alpha = properties.getString(getKey(device, filter, area, "projection.alpha"));
 		String bg = properties.getString(getKey(device, filter, area, "projection.background"));
 		String fg = properties.getString(getKey(device, filter, area, "projection.foreground"));
+		boolean crop = StringHelper.isTrue(properties.getString(getKey(device, filter, area, "projection.crop")), false);
 		if (!StringHelper.isEmpty(polygon) && !StringHelper.isEmpty(bg)) {
 			String[] polyPoint = polygon.split(",");
 			File bgFile = new File(URLHelper.mergePath(template.getWorkTemplateRealPath(globalContext), bg));
@@ -647,7 +650,7 @@ public class ImageConfig {
 						alphaFloat = Float.parseFloat(alpha);
 					}
 					if (alphaFloat >= 0 && alphaFloat <= 1) {
-						return new ProjectionConfig(p, alphaFloat, bgFile, fgFile);
+						return new ProjectionConfig(p, alphaFloat, bgFile, fgFile, crop);
 					} else {
 						logger.severe("bad alpha [" + template.getName() + "] : " + alpha);
 					}
@@ -679,6 +682,25 @@ public class ImageConfig {
 		out.println("height           : " + getHeight(device, filter, area));
 		out.close();
 		return new String(outStream.toByteArray());
+	}
+	
+	public static void main(String[] args) throws Exception {
+		System.out.println("*** start ***");
+		File javloFile = new File("c:/trans/xxx/image4.jpg");
+		BufferedImage image = ImageIO.read(javloFile);
+		File backFile = new File("c:/trans/xxx/title2.png");
+		BufferedImage back = ImageIO.read(backFile);
+		
+		
+		Polygon4 poly = new Polygon4(0,0,660,0,660,222,0,222);
+		image = ImageEngine.projectionImage(back, null, image, poly, 1, true, 500, 500);
+		
+		
+		if (image != null) {
+			ImageEngine.storeImage(image, new File("c:/trans/xxx/out.jpg"));
+		}
+		
+		System.out.println("*** done ***");
 	}
 
 }

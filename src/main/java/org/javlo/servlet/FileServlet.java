@@ -92,7 +92,7 @@ public class FileServlet extends HttpServlet {
             return;
         }
         
-        GlobalContext globalContext = GlobalContext.getInstance(request);
+        GlobalContext globalContext = GlobalContext.getMainInstance(request);
 
         // URL-decode the file name (might contain spaces and on) and prepare file object.
         if (file == null) {
