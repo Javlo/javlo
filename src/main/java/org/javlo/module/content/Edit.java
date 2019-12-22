@@ -1231,6 +1231,14 @@ public class Edit extends AbstractModuleAction {
 						modify = true;
 					}
 				}
+				
+				if (userInterface.isAdmin()) {
+					boolean isAdmin = StringHelper.isTrue(requestService.getParameter("admin", null));
+					if (page.isAdmin() != isAdmin) {
+						page.setAdmin(isAdmin);
+						modify = true;
+					}
+				}
 
 				if (requestService.getParameter("shorturl", null) != null) {
 					if (!page.isShortURL()) {

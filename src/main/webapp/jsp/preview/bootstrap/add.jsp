@@ -1,3 +1,4 @@
+<%@page import="org.javlo.module.content.Edit"%>
 <%@page import="org.javlo.context.ContentContext"
 %><%@page import="org.javlo.helper.URLHelper"
 %><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
@@ -65,6 +66,34 @@ if (ctx.getGlobalContext().getStaticConfig().isAddButton()) {
 			</c:if>
 		</div>
 	</form>
+	<%
+	String readOnlyClass = "access";
+	boolean rightOnPage = Edit.checkPageSecurity(ctx);	
+	if (rightOnPage) {%>
+	<form id="pc_del_page_form" class="<%=readOnlyClass%>"
+		action="${info.currentURL}" method="post">
+		<div>
+			<c:if test="${not empty param['force-device-code']}"><input type="hidden" name="force-device-code" value="${param['force-device-code']}" /></c:if>
+			<input type="hidden" value="${info.pageID}" name="page" /> <input
+				type="hidden" value="${globalContext.pageTrash?'edit.DeletePage':'edit.movePageToTrash'}" name="webaction" />
+			<c:if test="${not empty param['force-device-code']}"><input type="hidden" name="force-device-code" value="${param['force-device-code']}" /></c:if>
+			<c:if test="${!info.page.root}">
+				<c:set var="tooltip" value="" />
+				<c:if test="${i18n.edit['preview.label.delete.tooltip'] != 'preview.label.delete.tooltip'}">
+					<c:set var="tooltip" value=' data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'preview.label.delete.tooltip\']}"' />
+				</c:if>
+				<button ${tooltip} class="btn-add-delete action" type="submit" onclick="if (!confirm('${i18n.edit['menu.confirm-page']}')) return false;" title="${i18n.edit['menu.delete']}">
+					<i class="fa fa-trash-o" aria-hidden="true"></i>
+				</button>
+			</c:if>
+			<c:if test="${info.page.root}">
+				<button class="btn-add-delete action" type="button" onclick="if (!confirm('${i18n.edit['menu.confirm-page']}')) return false;" disabled="disabled">
+					<i class="fa fa-trash-o" aria-hidden="true"></i>
+				</button>
+			</c:if>
+		</div>
+	</form>
+	<%}%>
 	<c:url var="logoutURL" value="<%=URLHelper.createURL(ctx)%>" context="/">
 		<c:param name="edit-logout" value="true" />
 	</c:url>

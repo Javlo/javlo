@@ -494,6 +494,14 @@ public class PageBean implements Serializable {
 			return false;
 		}
 	}
+	
+	public boolean isAdmin() {
+		try {
+			return page.isAdmin();
+		} catch (Exception e) {
+			return false;
+		}
+	}
 
 	public boolean isVisibleForContext() {
 		try {

@@ -207,35 +207,37 @@
 <div class="col-md-6">
 <div class="bloc-default">
 <div class="row">
-<div class="col-md-3">
+<div class="col-md-2">
 <div class="form-group">
 	<input type="checkbox" id="page_visible" name="view" ${page.info.visible?'checked="checked"':''} value="true" />
 	<label class="suffix" for="page_visible">${i18n.edit['item.visible']}</label>
 </div>
-</div><div class="col-md-3">
+</div><div class="col-md-2">
 <c:if test="${!userInterface.light}">
 <div class="form-group">
 	<input type="checkbox" id="page_active" name="active" ${page.info.pageActive?'checked="checked"':''} value="true" />
 	<label class="suffix" for="page_active">${i18n.edit['item.active']}</label>
 </div>
 </c:if>
-</div><div class="col-md-3">
+</div><div class="col-md-2">
 <c:if test="${userInterface.model && !info.page.root && !page.childrenOfAssociation}">
 <div class="form-group">
 	<input type="checkbox" id="page_model" name="model" ${page.model?'checked="checked"':''} value="true" />
 	<label class="suffix" for="page_model">Model</label>
 </div></c:if>
-</div><div class="col-md-3">
+</div><div class="col-md-2">
 <c:if test="${!userInterface.light}">
 <div class="form-group">
 	<input type="hidden" name="special_input" value="true" />
 	<label class="suffix">
 	<input type="checkbox" id="break_repeat" name="break_repeat" ${page.info.breakRepeat?'checked="checked"':''} value="true" />
 	${i18n.edit['item.break-repeat']}</label>
+</div></c:if></div><c:if test="${userInterface.admin}"><div class="col-md-2">
+<div class="form-group">
+	<input type="checkbox" id="page_admin" name="admin" ${page.admin?'checked="checked"':''} value="true" />
+	<label class="suffix" for="page_admin">Admin</label>
 </div>
-
-</c:if>
-</div></div>
+</div></c:if></div>
 
 <c:if test="${not globalContext.mailingPlatform}">
 <div class="form-group">

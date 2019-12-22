@@ -28,7 +28,9 @@ public class UserInterfaceContext {
 
 	private boolean contributor = true;
 	
-	private boolean model = false;	
+	private boolean model = false;
+	
+	private boolean admin = true;
 	
 	private boolean navigation = true;
 	
@@ -41,6 +43,8 @@ public class UserInterfaceContext {
 	private boolean search = false;
 	
 	private boolean mobilePreview = true;
+	
+	private boolean addOnly = false;
 
 	private String currentModule = null;
 
@@ -89,6 +93,9 @@ public class UserInterfaceContext {
 			} else {
 				instance.setSearch(false);
 			}
+			if (user.getRoles().contains(AdminUserSecurity.ADD_ONLY) && globalContext.getStaticConfig().isAddButton()) {
+				instance.addOnly = true;
+			}
 			instance.fromString(user.getUserInfo().getInfo());
 			session.setAttribute(KEY, instance);
 		}
@@ -97,6 +104,7 @@ public class UserInterfaceContext {
 		instance.setMinimalInterface(instance.lightInterface && !AdminUserSecurity.getInstance().haveRole(user, AdminUserSecurity.NAVIGATION_ROLE) && stConf.isAddButton());
 		instance.contributor = AdminUserSecurity.getInstance().haveRole(user, AdminUserSecurity.CONTRIBUTOR_ROLE);
 		instance.setModel(AdminUserSecurity.getInstance().canRole(user, AdminUserSecurity.MODEL_ROLE)); 
+		instance.setAdmin(AdminUserSecurity.getInstance().isAdmin(user));
 
 		return instance;
 	}
@@ -234,6 +242,18 @@ public class UserInterfaceContext {
 
 	public void setMinimalInterface(boolean minimalInterface) {
 		this.minimalInterface = minimalInterface;
+	}
+	
+	public boolean isAddOnly() {
+		return addOnly;
+	}
+
+	public boolean isAdmin() {
+		return admin;
+	}
+
+	public void setAdmin(boolean admin) {
+		this.admin = admin;
 	}
 	
 }

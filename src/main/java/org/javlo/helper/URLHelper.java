@@ -330,7 +330,7 @@ public class URLHelper extends ElementaryURLHelper {
 		GlobalContext globalContext = ctx.getGlobalContext();
 		String url = file.getCanonicalPath();
 		url = StringHelper.cleanPath(url);
-		url = StringUtils.removeStart(url, StringHelper.cleanPath(globalContext.getMainContext().getDataFolder()));
+		url = StringUtils.removeStart(url, StringHelper.cleanPath(globalContext.getMainContextOrContext().getDataFolder()));
 		return createTransformURL(ctx, url, filter);
 	}
 

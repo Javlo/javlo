@@ -896,6 +896,10 @@ public class SmartPageBean {
 	public boolean isModel() {
 		return page.isModel();
 	}
+	
+	public boolean isAdmin() {
+		return page.isAdmin();
+	}
 
 	public PageContentMap getData() {
 		return new PageContentMap(ctx, page);

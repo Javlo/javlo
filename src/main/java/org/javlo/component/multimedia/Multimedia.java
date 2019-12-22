@@ -1268,7 +1268,7 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 	protected boolean isDisplayOnlyShared() {
 		return true;
 	}
-
+	
 	boolean isFolder() {
 		return true;
 	}

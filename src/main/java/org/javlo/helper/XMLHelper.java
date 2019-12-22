@@ -466,6 +466,10 @@ public class XMLHelper {
 				out.print("\" active=\"");
 				out.print(page.isActive());
 			}
+			if (page.isAdmin()) {
+				out.print("\" admin=\"");
+				out.print(page.isAdmin());
+			}
 			if (page.isModel()) {
 				out.print("\" model=\"");
 				out.print(page.isModel());

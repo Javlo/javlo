@@ -1044,6 +1044,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	}
 
 	public boolean isActive(ContentContext ctx) {
+		if (isAdmin() && ctx.getCurrentEditUser() == null) {
+			return false;
+		}
 		return isActive();
 	}
 
@@ -1148,6 +1151,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	private String templateId;
 
 	private boolean model;
+	
+	private boolean admin;
 
 	private String savedParent;
 
@@ -5921,6 +5926,14 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 	public void setModel(boolean model) {
 		this.model = model;
+	}
+	
+	public boolean isAdmin() {
+		return admin;
+	}
+
+	public void setAdmin(boolean admin) {
+		this.admin = admin;
 	}
 
 	public String getIpSecurityErrorPageName() {

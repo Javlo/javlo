@@ -135,7 +135,9 @@ public abstract class AbstractSocialNetwork implements ISocialNetwork {
 	protected String getState(ContentContext ctx) throws Exception {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("name", getName());
-		params.put("page", ctx.getCurrentPage().getId());
+		if (ctx.getCurrentPage() != null) {
+			params.put("page", ctx.getCurrentPage().getId());
+		}
 		return StringHelper.mapToString(params);
 	}
 

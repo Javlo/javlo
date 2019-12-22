@@ -54,6 +54,8 @@ public class AdminUserSecurity implements Serializable {
 	public static String SYNCHRO_CLIENT = "sync-client";
 
 	public static String SYNCHRO_ADMIN = "sync-admin";
+	
+	public static String ADD_ONLY = "add-only";
 
 	public static String SYNCHRO_SERVER = "sync-server";
 

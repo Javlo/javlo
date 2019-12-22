@@ -952,6 +952,7 @@ public class PersistenceService {
 
 		page.setTemplateId(layout);
 		page.setModel(StringHelper.isTrue(pageXML.getAttributeValue("model", null), false));
+		page.setAdmin(StringHelper.isTrue(pageXML.getAttributeValue("admin", null), false));
 		page.setSavedParent(freeData);
 
 		page.setUserRoles(new HashSet<String>(StringHelper.stringToCollection(roles, ";")));
