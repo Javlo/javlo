@@ -1132,12 +1132,16 @@ public class StaticInfo implements IRestItem {
 	}
 
 	public void setFile(File file) {
-		crc32 = null;
 		this.file = file;
+		resetCRC32();
 	}
 
 	public File getFile() {
 		return file;
+	}
+	
+	public void resetCRC32() {
+		crc32 = null;
 	}
 
 	public long getCRC32() {

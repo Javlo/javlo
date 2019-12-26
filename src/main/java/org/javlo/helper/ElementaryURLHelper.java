@@ -501,7 +501,9 @@ public abstract class ElementaryURLHelper {
 			File file = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), fileURL));
 			StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
 			if (staticInfo != null) {
-				url = URLHelper.addParam(url, "hash", staticInfo.getVersionHash(ctx));
+				if (!url.contains("&hash=") && !url.contains("?hash=")) {
+					url = URLHelper.addParam(url, "hash", staticInfo.getVersionHash(ctx));
+				}
 			}
 		}
 		url = createStaticURL(ctx, referencePage, url, true);

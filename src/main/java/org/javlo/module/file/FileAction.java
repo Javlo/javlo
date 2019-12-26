@@ -735,12 +735,12 @@ public class FileAction extends AbstractModuleAction {
 			}
 			NetHelper.sendRedirectTemporarily(ctx.getResponse(), URLHelper.createURL(ctx, params));			
 		} else {
+			StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
 			ImageMetadata md = ExifHelper.readMetadata(file);
 			BufferedImage image = ImageIO.read(file);
 			boolean transform = false;
 			if (StringHelper.isTrue(rs.getParameter("flip", null))) {
 				image = ImageEngine.flip(image, false);
-				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
 				if (staticInfo.getFocusZoneX(ctx) != StaticInfo.DEFAULT_FOCUS_X) {
 					staticInfo.setFocusZoneX(ctx, 2 * StaticInfo.DEFAULT_FOCUS_X - staticInfo.getFocusZoneX(ctx));
 				}
@@ -763,15 +763,14 @@ public class FileAction extends AbstractModuleAction {
 				int height = Math.round(cropHeight * image.getHeight() / REFERENCE_SIZE);
 				int x = Math.round(cropLeft * image.getWidth() / REFERENCE_SIZE);
 				int y = Math.round(cropTop * image.getHeight() / REFERENCE_SIZE);
-				image = ImageEngine.cropImage(image, width, height, x, y);
-				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
+				image = ImageEngine.cropImage(image, width, height, x, y);				
 				staticInfo.resetImageSize(ctx);
 			}
 			if (transform) {
 				logger.info("transform : " + file);
 				FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).deleteAllFile(ctx.getGlobalContext().getContextKey(), file.getName());
-	
 				TransactionFile transactionFile = new TransactionFile(file);
+				staticInfo.resetCRC32();
 				try {
 					ImageIO.write(image, StringHelper.getFileExtension(file.getName().toLowerCase()), transactionFile.getTempFile());
 					transactionFile.commit();

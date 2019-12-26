@@ -781,7 +781,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		String url;
 		if (getFileName().trim().length() > 0) {
 			url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), "list");
-			url = URLHelper.addParam(url, "hash", getStaticInfo(ctx).getVersionHash(ctx));
+			//url = URLHelper.addParam(url, "hash", getStaticInfo(ctx).getVersionHash(ctx));
 			if (isFromShared(ctx)) {
 				out.println("<img src=\"" + url + "\" />&nbsp;");
 			} else if (!isFromShared(ctx)) {
@@ -814,7 +814,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 					String previewURL = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image), "preview");
 					previewURL = URLHelper.addParam(previewURL, "CRC32", "" + staticInfo.getCRC32());
 					url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, image), "list");
-					url = URLHelper.addParam(url, "hash", staticInfo.getVersionHash(ctx));
+					//url = URLHelper.addParam(url, "hash", staticInfo.getVersionHash(ctx));
 					String id = "image_name_select__" + getId();
 					// if (i < maxDisplayedImage || isSelectedImage) {
 					out.print("<div " + selected + ">");

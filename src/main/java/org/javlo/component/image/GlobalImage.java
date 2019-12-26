@@ -838,7 +838,9 @@ public class GlobalImage extends Image implements IImageFilter {
 					openLink = true;
 				}
 			}
-			thumbURL = URLHelper.addParam(thumbURL, "hash", getStaticInfo(ctx).getVersionHash(ctx));
+			if (!thumbURL.contains("&hash=") && !thumbURL.contains("?hash=")) {
+				thumbURL = URLHelper.addParam(thumbURL, "hash", getStaticInfo(ctx).getVersionHash(ctx));
+			}
 			res.append("<img src=\"");
 			res.append(thumbURL);
 			res.append("\" alt=\"");
