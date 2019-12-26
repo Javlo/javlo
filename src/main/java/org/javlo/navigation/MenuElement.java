@@ -4650,6 +4650,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			if (!isActive()) {
 				return false;
 			}
+			if (isAdmin() && ctx.getCurrentEditUser() == null) {
+				return false;
+			}
 			ContentContext contentAreaCtx = new ContentContext(ctx);
 			contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
 			ContentElementList content = this.getContent(contentAreaCtx);
