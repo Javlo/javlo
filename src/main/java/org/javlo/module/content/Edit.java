@@ -88,6 +88,7 @@ import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
+import org.javlo.user.User;
 import org.javlo.utils.TimeTracker;
 import org.javlo.ztatic.FileCache;
 
@@ -375,8 +376,12 @@ public class Edit extends AbstractModuleAction {
 			AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
-			if (adminUserFactory.getCurrentUser(globalContext, ctx.getRequest().getSession()) == null) {
+			User user = adminUserFactory.getCurrentUser(globalContext, ctx.getRequest().getSession());
+			if (user == null) {
 				return false;
+			}
+			if (user.getRoles().contains(AdminUserSecurity.CONTRIBUTOR_ROLE)) {
+				return page.getCreator().equals(user.getLogin());
 			}
 			ContentService.getInstance(globalContext);
 			if (page.getEditorRoles().size() > 0) {
