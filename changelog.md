@@ -807,3 +807,4 @@ Security in case of vulnerabilities.
  - attachement order in mail
  - ical close tag correction
  - contentcontext null request correction
+ - edit image hashcode reset
