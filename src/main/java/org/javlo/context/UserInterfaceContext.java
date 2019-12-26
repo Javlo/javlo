@@ -49,6 +49,8 @@ public class UserInterfaceContext {
 	private String currentModule = null;
 
 	private boolean minimalInterface = false;
+	
+	private String login = "";
 
 	public static final String KEY = "userInterface";
 
@@ -62,11 +64,16 @@ public class UserInterfaceContext {
 		UserInterfaceContext instance = (UserInterfaceContext) session.getAttribute(KEY);
 		AdminUserFactory userFact = AdminUserFactory.createUserFactory(globalContext, session);
 		User user = userFact.getCurrentUser(session);
-		if (instance == null || instance.globalContext != globalContext) {			
+		String login = null;
+		if (user != null) {
+			login = user.getLogin();
+		}
+		if (instance == null || instance.globalContext != globalContext || !instance.login.equals(login)) {
 			if (userFact == null || user == null) {
 				return FAKE_INSTACE;
 			}
 			instance = new UserInterfaceContext();
+			instance.login = user.getLogin();
 			instance.session = session;
 			instance.globalContext = globalContext;			
 			MailConfig config = new MailConfig(globalContext, globalContext.getStaticConfig(), null);
@@ -105,7 +112,6 @@ public class UserInterfaceContext {
 		instance.contributor = AdminUserSecurity.getInstance().haveRole(user, AdminUserSecurity.CONTRIBUTOR_ROLE);
 		instance.setModel(AdminUserSecurity.getInstance().canRole(user, AdminUserSecurity.MODEL_ROLE)); 
 		instance.setAdmin(AdminUserSecurity.getInstance().isAdmin(user));
-
 		return instance;
 	}
 
