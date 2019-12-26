@@ -12,6 +12,7 @@
     	    org.javlo.context.GlobalContext,
     	    org.javlo.module.content.Edit,
     	    org.javlo.context.EditContext,
+    	    org.javlo.context.UserInterfaceContext,
     	    org.javlo.message.MessageRepository,
     	    org.javlo.message.GenericMessage,
     	    org.javlo.helper.StringHelper"
