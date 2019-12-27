@@ -74,15 +74,10 @@ if (ctx.getGlobalContext().getStaticConfig().isAddButton()) {
 		action="${info.currentURL}" method="post">
 		<div>
 			<c:if test="${not empty param['force-device-code']}"><input type="hidden" name="force-device-code" value="${param['force-device-code']}" /></c:if>
-			<input type="hidden" value="${info.pageID}" name="page" /> <input
-				type="hidden" value="${globalContext.pageTrash?'edit.DeletePage':'edit.movePageToTrash'}" name="webaction" />
+			<input type="hidden" value="${info.pageID}" name="page" /> <input type="hidden" value="${globalContext.pageTrash?'edit.DeletePage':'edit.movePageToTrash'}" name="webaction" />
 			<c:if test="${not empty param['force-device-code']}"><input type="hidden" name="force-device-code" value="${param['force-device-code']}" /></c:if>
 			<c:if test="${!info.page.root}">
-				<c:set var="tooltip" value="" />
-				<c:if test="${i18n.edit['preview.label.delete.tooltip'] != 'preview.label.delete.tooltip'}">
-					<c:set var="tooltip" value=' data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'preview.label.delete.tooltip\']}"' />
-				</c:if>
-				<button ${tooltip} class="btn-add-delete action" type="submit" onclick="if (!confirm('${i18n.edit['menu.confirm-page']}')) return false;" title="${i18n.edit['menu.delete']}">
+				<button class="btn-add-delete action" type="submit" onclick="if (!confirm('${i18n.edit['menu.confirm-page']}')) return false;" title="${i18n.edit['menu.delete']}">
 					<i class="fa fa-trash-o" aria-hidden="true"></i>
 				</button>
 			</c:if>
