@@ -943,8 +943,9 @@ public class Edit extends AbstractModuleAction {
 				ctx.setRenderMode(Integer.parseInt(mode));
 			}
 			ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, newId);
-
-			ctx.getAjaxInsideZone().put(selecterPrefix + area, ComponentHelper.renderArea(ctx, areaKey));
+			
+			String htmlArea = ComponentHelper.renderArea(ctx, areaKey);
+			ctx.getAjaxInsideZone().put(selecterPrefix + area, htmlArea);
 		}
 		ctx.resetCurrentPageCached();
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);

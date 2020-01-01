@@ -1763,7 +1763,12 @@ public class Template implements Comparable<Template> {
 	}
 
 	public String getSpecialAreaRenderer() {
-		return properties.getString("area-renderer", getParent().getSpecialAreaRenderer());
+		String renderer = properties.getString("area-renderer", getParent().getSpecialAreaRenderer());
+		if (StringHelper.isEmpty(renderer)) {
+			return null;
+		} else {
+			return renderer;
+		}
 	}
 
 	public void setImageFiltersRAW(String imageFilterRAW) {

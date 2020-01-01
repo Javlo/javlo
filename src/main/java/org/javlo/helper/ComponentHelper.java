@@ -496,12 +496,12 @@ public class ComponentHelper {
 	}
 
 	public static String renderArea(ContentContext ctx, String areaKey) throws Exception {
-		String specialRenderer = ctx.getCurrentTemplate().getSpecialAreaRenderer();
+		Template tpl = ctx.getCurrentTemplate();
+		String specialRenderer = tpl.getSpecialAreaRenderer();
 		if (specialRenderer == null) {
 			return ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey);
 		} else {
 			specialRenderer = URLHelper.mergePath(ctx.getCurrentTemplate().getFolder(ctx.getGlobalContext()), specialRenderer);
-			Template tpl = ctx.getCurrentTemplate();
 			Area area = Template.getArea(tpl.getRows(), areaKey);
 			ctx.getRequest().setAttribute("areaStyle", area);
 			specialRenderer = URLHelper.mergePath(ctx.getCurrentTemplate().getLocalWorkTemplateFolder(), specialRenderer);
