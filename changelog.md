@@ -790,6 +790,7 @@ Security in case of vulnerabilities.
  - more info in ical service
  - mailing feedback factory
  - create mirror site with other language list
+ - reset recaptcha from central config
 ### Modified
  - security update
  - file-finder optimisation
