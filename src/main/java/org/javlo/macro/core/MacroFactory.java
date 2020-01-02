@@ -63,6 +63,7 @@ import org.javlo.macro.NoClickableImageMacro;
 import org.javlo.macro.NoDashOnImageMacro;
 import org.javlo.macro.PasteCopiedElementInAllLanguageMacro;
 import org.javlo.macro.ReduceSubtitleLevelMacro;
+import org.javlo.macro.ResetRecaptcha;
 import org.javlo.macro.SortChildren;
 import org.javlo.macro.UndeletePage;
 import org.javlo.macro.UnlinkMirrorComponent;
@@ -213,6 +214,7 @@ public class MacroFactory {
 		macros.add(new DeleteTrackerCache());
 		macros.add(new LogAsUser());
 		macros.add(new DisplayDashBoard());
+		macros.add(new ResetRecaptcha());
 		
 		/** macro bean **/
 		initMacroBean(macros);

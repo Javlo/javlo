@@ -76,9 +76,9 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 	private static final String USER_FIELD = "_user";
 
-	private static final String RECAPTCHASECRETKEY = "recaptchasecretkey";
+	public static final String RECAPTCHASECRETKEY = "recaptchasecretkey";
 
-	private static final String RECAPTCHAKEY = "recaptchakey";
+	public static final String RECAPTCHAKEY = "recaptchakey";
 	
 	public static final String FOLDER = "dynamic-form-result";
 	
@@ -501,7 +501,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		getLocalConfig(false).remove("field." + name);
 	}
 
-	protected void store(ContentContext ctx) throws IOException {
+	public void store(ContentContext ctx) throws IOException {
 		Writer writer = new StringWriter();
 		getLocalConfig(false).store(writer, "comp:" + getId());
 		if (!getValue().equals(writer.toString())) {
@@ -626,6 +626,14 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				}
 			}
 		}
+		
+		if (!StringHelper.isEmpty(ctx.getGlobalContext().getSpecialConfig().getMap().get(RECAPTCHAKEY)) && !StringHelper.isEmpty(ctx.getGlobalContext().getSpecialConfig().getMap().get(RECAPTCHASECRETKEY))) {
+			if (StringHelper.isEmpty(getRecaptchaKey())) {
+				getLocalConfig(false).setProperty(RECAPTCHAKEY, ""+ctx.getGlobalContext().getSpecialConfig().getMap().get(RECAPTCHAKEY));
+				getLocalConfig(false).setProperty(RECAPTCHASECRETKEY, ""+ctx.getGlobalContext().getSpecialConfig().getMap().get(RECAPTCHASECRETKEY));
+			}
+		}
+		
 	}
 	
 	protected boolean isUpdate(ContentContext ctx) throws Exception {
