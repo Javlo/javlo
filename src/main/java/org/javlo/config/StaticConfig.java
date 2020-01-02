@@ -1042,6 +1042,10 @@ public class StaticConfig extends Observable {
 		}
 		return result;
 	}
+	
+	public String getProperty(String key, String defaultValue) {
+		return properties.getString(key, defaultValue);
+	}
 
 	public String getProxyHost() {
 		return properties.getString("proxy.host", getDefaultProxyHost());
