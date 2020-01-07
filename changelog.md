@@ -791,6 +791,7 @@ Security in case of vulnerabilities.
  - mailing feedback factory
  - create mirror site with other language list
  - reset recaptcha from central config
+ - create sepa QRCode
 ### Modified
  - security update
  - file-finder optimisation
