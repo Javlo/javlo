@@ -14,6 +14,7 @@ if (ctx.getGlobalContext().getStaticConfig().isAddButton()) {
 <div class="add">	
 <div class="macros hiddenCollapse bloc-background" id="addMacros">
 <c:forEach var="macro" items="${info.addMacro}">
+<c:set var="key" value="macro.${macro.name}" />
 <c:if test="${!macro.interative}">
 	<c:set var="url" value="${macro.url}" />
 	<c:if test="${empty url}">
@@ -27,7 +28,6 @@ if (ctx.getGlobalContext().getStaticConfig().isAddButton()) {
 	</c:url>
 	</c:if>
 	<a class="btn btn-default" aria-label="Left Align" href="${url}" title="${i18n.edit[descriptionKey] != descriptionKey?i18n.edit[descriptionKey]:''}">
-	  <c:set var="key" value="macro.${macro.name}" />
 	  <c:set var="descriptionKey" value="macro.description.${macro.name}" />
 	  <span class="button-group-addon"><i class="${macro.icon}" aria-hidden="true"></i></span> ${i18n.edit[key] != key?i18n.edit[key]:macro.name}
 	</a>
