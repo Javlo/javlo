@@ -99,7 +99,6 @@ public class SearchActions implements IAction {
 					}
 					logger.info("search action : '" + searchStr+ "' [engine:"+search.getClass().getName()+']');
 					List<SearchElement> result = search.search(ctx, groupId, searchStr, sort, componentList);
-					System.out.println(">>> result = "+result);
 					if (!ctx.isAjax()) {
 						if (ctx.getCurrentPage().getContentByType(ctx.getContextWithoutArea(), SearchResultComponent.TYPE).size() == 0) {
 							ctx.setSpecialContentRenderer("/jsp/view/search/search_result.jsp");

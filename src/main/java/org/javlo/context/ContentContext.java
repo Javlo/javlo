@@ -429,6 +429,8 @@ public class ContentContext {
 	public Boolean editPreview = null;
 
 	private boolean checkContentArea = true;
+	
+	private boolean actionServlet = false;
 
 	/** cache **/
 
@@ -2316,6 +2318,14 @@ public class ContentContext {
 			mirrorId.add(id);
 			return false;
 		}
+	}
+
+	public boolean isActionServlet() {
+		return actionServlet;
+	}
+
+	public void setActionServlet(boolean actionServlet) {
+		this.actionServlet = actionServlet;
 	}
 
 }

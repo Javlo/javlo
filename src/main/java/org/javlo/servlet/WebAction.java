@@ -57,6 +57,7 @@ public class WebAction extends HttpServlet {
 			logger.fine("action servlet : "+action);
 			
 			ContentContext ctx = ContentContext.getContentContext(request, response);
+			ctx.setActionServlet(true);
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			RequestService rs = RequestService.getInstance(request);
 			request.setAttribute("social", SocialService.getInstance(ctx));
