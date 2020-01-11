@@ -2167,7 +2167,7 @@ public class StaticConfig extends Observable {
 	}
 	
 	public String getSearchPageName() {
-		return properties.getString("page.search", "search-result");
+		return properties.getString("page.search", "search");
 	}
 	
 	public String getRegisterPageName() {
