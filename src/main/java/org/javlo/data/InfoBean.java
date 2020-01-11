@@ -1932,7 +1932,7 @@ public class InfoBean {
 	
 	public String getSearchPageUrl() throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
-		MenuElement searchPage = content.getNavigation(ctx).searchChildFromName(ctx.getGlobalContext().getStaticConfig().getSearchPageName());
+		MenuElement searchPage = content.getNavigation(ctx).searchChildFromName(ctx.getGlobalContext().getSpecialConfig().getSearchPageName());
 		if (searchPage != null) {
 			return URLHelper.createURL(ctx, searchPage) ;
 		} else {
@@ -1940,6 +1940,56 @@ public class InfoBean {
 		}
 	}
 	
+	public boolean isSearchPage() throws Exception {
+		return ctx.getCurrentPage().getName().equals(ctx.getGlobalContext().getSpecialConfig().getSearchPageName());
+	}
+	
+	public String getRegisterPageUrl() throws Exception {
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		MenuElement page = content.getNavigation(ctx).searchChildFromName(ctx.getGlobalContext().getSpecialConfig().getRegisterPageName());
+		if (page != null) {
+			return URLHelper.createURL(ctx, page) ;
+		} else {
+			return null;
+		}
+	}
+	
+	public boolean isRegisterPage() throws Exception {
+		return ctx.getCurrentPage().getName().equals(ctx.getGlobalContext().getSpecialConfig().getRegisterPageName());
+	}
+
+	public String getLoginPageUrl() throws Exception {
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		MenuElement page = content.getNavigation(ctx).searchChildFromName(ctx.getGlobalContext().getSpecialConfig().getLoginPageName());
+		if (page != null) {
+			return URLHelper.createURL(ctx, page) ;
+		} else {
+			return null;
+		}
+	}
+	
+	public boolean isLoginPage() throws Exception {
+		return ctx.getCurrentPage().getName().equals(ctx.getGlobalContext().getSpecialConfig().getLoginPageName());
+	}
+
+	public String getNewsPageUrl() throws Exception {		
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		MenuElement page = content.getNavigation(ctx).searchChildFromName(ctx.getGlobalContext().getSpecialConfig().getNewsPageName());
+		if (page != null) {
+			return URLHelper.createURL(ctx, page) ;
+		} else {
+			return null;
+		}
+	}
+	
+	public boolean isNewsPage() throws Exception {
+		return ctx.getCurrentPage().getName().equals(ctx.getGlobalContext().getSpecialConfig().getNewsPageName());
+	}
+	
+	public boolean isHomePage() throws Exception {
+		return ctx.getCurrentPage().getName().equals(getRoot().getName());
+	}
+
 	public static void main(String[] args) {
 		System.out.println(Calendar.SUNDAY);
 	}
@@ -1952,5 +2002,4 @@ public class InfoBean {
 		return ctx.getGlobalContext().getAdministratorEmail();
 	}
 	
-
 }

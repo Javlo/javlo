@@ -4179,7 +4179,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		if (config == null) {
 			File configFile = getSpecialConfigFile();
 			if (!configFile.exists()) {
-				config = new SpecialConfigBean(Collections.EMPTY_MAP);
+				config = new SpecialConfigBean(Collections.EMPTY_MAP, getStaticConfig());
 			} else {
 				Properties p = new Properties();
 				Reader fileReader = null;
@@ -4191,7 +4191,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				} finally {
 					ResourceHelper.closeResource(fileReader);
 				}
-				config = new SpecialConfigBean(p);
+				config = new SpecialConfigBean(p, getStaticConfig());
 			}
 		}
 		return config;

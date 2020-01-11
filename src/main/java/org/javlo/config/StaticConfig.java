@@ -1678,7 +1678,7 @@ public class StaticConfig extends Observable {
 	public int getImageMaxWidth() {
 		return properties.getInt("image.max-width", 0);
 	}
-
+	
 	public boolean isUndo() {
 		return properties.getBoolean("function.undo", true);
 	}
@@ -2168,6 +2168,18 @@ public class StaticConfig extends Observable {
 	
 	public String getSearchPageName() {
 		return properties.getString("page.search", "search-result");
+	}
+	
+	public String getRegisterPageName() {
+		return properties.getString("page.register", "register");
+	}
+	
+	public String getLoginPageName() {
+		return properties.getString("page.login", "register");
+	}
+	
+	public String getNewsPageName() {
+		return properties.getString("page.news", "news");
 	}
 	
 	public String getDefaultPDFLayout() {
