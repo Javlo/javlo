@@ -1987,7 +1987,7 @@ public class InfoBean {
 	}
 	
 	public boolean isHomePage() throws Exception {
-		return ctx.getCurrentPage().getName().equals(getRoot().getName());
+		return ctx.getCurrentPage().isLikeRoot(ctx);
 	}
 
 	public static void main(String[] args) {
