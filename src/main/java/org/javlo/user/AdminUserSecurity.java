@@ -56,6 +56,8 @@ public class AdminUserSecurity implements Serializable {
 	public static String SYNCHRO_ADMIN = "sync-admin";
 	
 	public static String ADD_ONLY = "add-only";
+	
+	public static String VIEW_ACCESS = "view-access";
 
 	public static String SYNCHRO_SERVER = "sync-server";
 
@@ -76,7 +78,7 @@ public class AdminUserSecurity implements Serializable {
 		String[] macroRights = { "macro" };
 		Set<String> macroSet = new HashSet<String>(Arrays.asList(macroRights));
 		rights.put(MACRO_ROLE, macroSet);
-
+		
 		/* VALIDATION RIGHT */
 		String[] validationRights = { "validationpage" };
 		Set<String> validationSet = new HashSet<String>(Arrays.asList(validationRights));
@@ -165,6 +167,16 @@ public class AdminUserSecurity implements Serializable {
 				if (role.equalsIgnoreCase(inRole)) {
 					return true;
 				}
+			}
+		}
+		return false;
+	}
+	
+	public boolean isViewOnly(User user) {
+		if (user != null) {
+			Set<String> roles = user.getRoles();
+			if (roles.size() == 0 || (roles.size() == 1 && roles.contains(VIEW_ACCESS))) {
+				return true;
 			}
 		}
 		return false;

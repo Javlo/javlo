@@ -207,6 +207,18 @@ public class CatchAllFilter implements Filter {
 				return;
 			}
 		}
+		
+		if (user != null && AdminUserSecurity.getInstance().isViewOnly(user)) {
+			if (editURI.startsWith("/edit")) {
+				httpRequest.getRequestDispatcher(editURI.replaceFirst("/edit", "/view")).forward(request, response);
+				return;
+			}
+			if (editURI.startsWith("/preview")) {
+				httpRequest.getRequestDispatcher(editURI.replaceFirst("/preview", "/view")).forward(request, response);
+				return;
+			}
+		}
+
 
 		if (editURI.startsWith("/edit-") || editURI.startsWith("/ajax-") || editURI.startsWith("/preview-edit")) {
 			boolean editPreview = false;
