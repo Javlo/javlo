@@ -320,7 +320,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 	 * @throws Exception
 	 */
 	protected boolean filterPage(ContentContext ctx, MenuElement page, Collection<MenuElement> currentSelection, Collection<String> commands, String filter, boolean widthUnactive) throws Exception {
-
 		if (!page.isActive(ctx) && !widthUnactive) {
 			return false;
 		}
@@ -349,10 +348,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				}
 			}
 		}
+		
+		if (ctx.getRequest().getParameter("lang") != null) {
+			ctx.setAllLanguage(ctx.getRequest().getParameter("lang"));
+		}
 
 		// filter = removeCommandFromFilter(filter);
-
-		if (filter != null && !(page.getTitle(ctx) + ' ' + page.getName() + ' ' + page.getLabel(ctx)).contains(filter)) {
+		String pageData = page.getName() + ' ' + page.getTitle(ctx) + ' ' + ' ' + page.getLabel(ctx);
+		if (filter != null && !(pageData).toLowerCase().contains(filter.toLowerCase())) {
 			return false;
 		}
 		if (!page.isChildOf(getParentNode(ctx))) {
@@ -755,8 +758,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		String tableID = "table-" + getId();
 		out.println("<div class=\"row\"><div class=\"col-sm-9\"><div class=\"array-filter line\">");
 		String ajaxURL = URLHelper.createExpCompLink(ctx, getId());
-		out.println("<input class=\"input\" type=\"text\" placeholder=\"" + i18nAccess.getText("global.filter") + "\" onkeyup=\"filterPage('" + ajaxURL + "',this.value, '." + tableID + " tbody');\"/>");
-		String resetFilterScript = "jQuery('#comp-" + getId() + " .array-filter .input').val(''); filterPage('" + ajaxURL + "',jQuery('#comp-" + getId() + " .array-filter .input').val(), '." + tableID + " tbody'); return false;";
+		out.println("<input class=\"input\" type=\"text\" placeholder=\"" + i18nAccess.getText("global.filter") + "\" onkeyup=\"filterPage('" + ajaxURL + "',this.value, '." + tableID + " tbody', '"+ctx.getRequestContentLanguage()+"');\"/>");
+		String resetFilterScript = "jQuery('#comp-" + getId() + " .array-filter .input').val(''); filterPage('" + ajaxURL + "',jQuery('#comp-" + getId() + " .array-filter .input').val(), '." + tableID + " tbody', '"+ctx.getRequestContentLanguage()+"'); return false;";
 		out.println("<input type=\"button\" onclick=\"" + resetFilterScript + "\" value=\"" + i18nAccess.getText("global.reset") + "\" />");
 		String allScript = "if (jQuery('#comp-" + getId() + " .array-filter .input').val().indexOf(':all')<0) {jQuery('#comp-" + getId() + " .array-filter .input').val(jQuery('#comp-" + getId() + " .array-filter .input').val()+' :all'); filterPage('" + ajaxURL + "',jQuery('#comp-" + getId() + " .array-filter .input').val(), '." + tableID + " tbody'); return false;}";
 		out.println("<input type=\"button\" onclick=\"" + allScript + "\" value=\"" + i18nAccess.getText("global.all") + "\" />");
@@ -782,7 +785,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		out.print("<div class=\"page-list-container\"><table class=\"");
 		out.print("page-list" + ' ' + tableID);
-		String onlyCheckedScript = "if (jQuery('#comp-" + getId() + " .array-filter .input').val().indexOf(':checked')<0) {jQuery('#comp-" + getId() + " .array-filter .input').val(jQuery('#comp-" + getId() + " .array-filter .input').val()+' :checked'); filterPage('" + ajaxURL + "',jQuery('#comp-" + getId() + " .array-filter .input').val(), '." + tableID + " tbody'); return false;}";
+		String onlyCheckedScript = "if (jQuery('#comp-" + getId() + " .array-filter .input').val().indexOf(':checked')<0) {jQuery('#comp-" + getId() + " .array-filter .input').val(jQuery('#comp-" + getId() + " .array-filter .input').val()+' :checked'); filterPage('" + ajaxURL + "',jQuery('#comp-" + getId() + " .array-filter .input').val(), '." + tableID + " tbody', '"+ctx.getRequestContentLanguage()+"'); return false;}";
 		out.println("\"><thead><tr><th>&nbsp</th><th>" + i18nAccess.getText("global.label") + "</th><th>" + i18nAccess.getText("global.date") + "</th><th>" + i18nAccess.getText("global.modification") + "</th><th>" + i18nAccess.getText("content.page-teaser.language") + "</th><th title=\"" + i18nAccess.getText("content.page-reference.content.help") + "\">" + i18nAccess.getText("content.page-reference.content") + "</th><th>" + i18nAccess.getText("global.select") + " <a href=\"#\" onclick=\"" + onlyCheckedScript + "\">(" + currentSelection.size() + ")</a></th></tr></thead><tbody>");
 
 		int numberOfPage = 16384;
