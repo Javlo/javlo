@@ -16,6 +16,12 @@
             <description>the URI</description>            
             <rtexprvalue>true</rtexprvalue>
         </attribute>
+         <attribute>
+            <name>name</name>
+            <required>false</required>
+            <description>request scope variable name</description>            
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
         <attribute>
             <name>webaction</name>
             <required>false</required>

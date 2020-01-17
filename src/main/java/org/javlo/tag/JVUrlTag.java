@@ -15,6 +15,7 @@ public class JVUrlTag extends TagSupport {
 
 	private String value = null;
 	private String webaction = null;
+	private String name = null;
 
 	public void setValue(String value) {
 		this.value = value;
@@ -26,10 +27,16 @@ public class JVUrlTag extends TagSupport {
 			JspWriter out = pageContext.getOut();
 			ContentContext ctx;
 			ctx = ContentContext.getContentContext((HttpServletRequest) pageContext.getRequest(), (HttpServletResponse) pageContext.getResponse());
+			String url;
 			if (webaction == null) {
-				out.print(URLHelper.createStaticURL(ctx, value));
+				url = URLHelper.createStaticURL(ctx, value);
 			} else {
-				out.print(URLHelper.createActionURL(ctx, webaction, value));
+				url = URLHelper.createActionURL(ctx, webaction, value);
+			}
+			if (getName() == null) {
+				out.print(url);
+			} else {
+				ctx.getRequest().setAttribute(getName(), url);
 			}
 		} catch (Exception ioe) {
 			throw new JspException("Error: " + ioe.getMessage());
@@ -39,6 +46,14 @@ public class JVUrlTag extends TagSupport {
 
 	public void setWebaction(String webaction) {
 		this.webaction = webaction;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }
