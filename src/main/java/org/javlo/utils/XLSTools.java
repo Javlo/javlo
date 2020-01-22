@@ -30,7 +30,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 
 public class XLSTools {
-	
+
 	private static Logger logger = Logger.getLogger(XLSTools.class.getName());
 
 	public static final String REQUEST_ATTRIBUTE_KEY = "array";
@@ -118,16 +118,16 @@ public class XLSTools {
 				outCell = "?";
 				break;
 			}
-			
+
 		} else {
 			try {
 				outCell = formatter.formatCellValue(cell);
 			} catch (RuntimeException r) {
-				System.out.println("exception : "+r.getMessage());
-				System.out.print("cell value :"+cell.getRawValue());
-				System.out.print(" / cell type :"+cell.getCellType());
-				System.out.print(" / cell col :"+cell.getColumnIndex());
-				System.out.println(" / cell row :"+cell.getRowIndex());
+				System.out.println("exception : " + r.getMessage());
+				System.out.print("cell value :" + cell.getRawValue());
+				System.out.print(" / cell type :" + cell.getCellType());
+				System.out.print(" / cell col :" + cell.getColumnIndex());
+				System.out.println(" / cell row :" + cell.getRowIndex());
 				outCell = "ERR:" + r.getMessage();
 			}
 		}
@@ -185,7 +185,7 @@ public class XLSTools {
 					try {
 						dblVal = Double.parseDouble(val);
 					} catch (NumberFormatException e) {
-						dblVal = (double)-1;
+						dblVal = (double) -1;
 					}
 				}
 				if (val != null) {
@@ -248,7 +248,7 @@ public class XLSTools {
 			ResourceHelper.closeResource(in);
 		}
 	}
-	
+
 	public static Cell[][] createArray(int x, int y) throws Exception {
 		Cell[][] outArray = new Cell[y][];
 		for (int i = 0; i < outArray.length; i++) {
@@ -259,18 +259,18 @@ public class XLSTools {
 		}
 		return outArray;
 	}
-	
-	public static final List<Map<String, Cell>> getItems(ContentContext ctx, Cell[][] data) { 
-		List<Map<String, Cell>> outList = new LinkedList<Map<String,Cell>>();		
+
+	public static final List<Map<String, Cell>> getItems(ContentContext ctx, Cell[][] data) {
+		List<Map<String, Cell>> outList = new LinkedList<Map<String, Cell>>();
 		Cell[] firstLine = data[0];
-		for (int i = 1; i < data.length; i++) {			
+		for (int i = 1; i < data.length; i++) {
 			Map<String, Cell> item = new HashMap<String, Cell>();
 			Cell[] line = data[i];
 			for (int j = 0; j < line.length; j++) {
 				if (j < firstLine.length) {
 					item.put(firstLine[j].getValue(), line[j]);
 				} else {
-					logger.warning("error line "+i+" too big  : "+line.length+" #title="+firstLine.length);
+					logger.warning("error line " + i + " too big  : " + line.length + " #title=" + firstLine.length);
 				}
 			}
 			outList.add(item);
@@ -341,56 +341,64 @@ public class XLSTools {
 
 	public static void writeXLS(Cell[][] array, OutputStream out) throws IOException {
 		HSSFWorkbook workbook = new HSSFWorkbook();
-		HSSFSheet sheet = workbook.createSheet();
-		int rowNum = 0;
-		for (Cell[] row : array) {
-			HSSFRow excelRow = sheet.createRow(rowNum);
-			rowNum++;
-			int cellNum = 0;
-			for (Cell cell : row) {
-				HSSFCell excelCell = excelRow.createCell(cellNum);
-				if (cell == null) {
-					excelCell.setCellType(HSSFCell.CELL_TYPE_BLANK);
-				} else {
-					try {
-						excelCell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
-						excelCell.setCellValue(Integer.parseInt(cell.getValue()));
-					} catch (NumberFormatException e) {
-						excelCell.setCellType(HSSFCell.CELL_TYPE_STRING);
-						excelCell.setCellValue(cell.getValue());
+		try {
+			HSSFSheet sheet = workbook.createSheet();
+			int rowNum = 0;
+			for (Cell[] row : array) {
+				HSSFRow excelRow = sheet.createRow(rowNum);
+				rowNum++;
+				int cellNum = 0;
+				for (Cell cell : row) {
+					HSSFCell excelCell = excelRow.createCell(cellNum);
+					if (cell == null) {
+						excelCell.setCellType(HSSFCell.CELL_TYPE_BLANK);
+					} else {
+						try {
+							excelCell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
+							excelCell.setCellValue(Integer.parseInt(cell.getValue()));
+						} catch (NumberFormatException e) {
+							excelCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+							excelCell.setCellValue(cell.getValue());
+						}
 					}
+					cellNum++;
 				}
-				cellNum++;
 			}
+			workbook.write(out);
+		} finally {
+			workbook.close();
 		}
-		workbook.write(out);
 	}
 
 	public static void writeXLSX(Cell[][] array, OutputStream out) throws IOException {
 		XSSFWorkbook workbook = new XSSFWorkbook();
-		XSSFSheet sheet = workbook.createSheet();
-		int rowNum = 0;
-		for (Cell[] row : array) {
-			XSSFRow excelRow = sheet.createRow(rowNum);
-			rowNum++;
-			int cellNum = 0;
-			for (Cell cell : row) {
-				XSSFCell excelCell = excelRow.createCell(cellNum);
-				if (cell == null) {
-					excelCell.setCellType(HSSFCell.CELL_TYPE_BLANK);
-				} else {
-					try {
-						excelCell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
-						excelCell.setCellValue(Long.parseLong(cell.getValue()));
-					} catch (NumberFormatException e) {
-						excelCell.setCellType(HSSFCell.CELL_TYPE_STRING);
-						excelCell.setCellValue(cell.getValue());
+		try {
+			XSSFSheet sheet = workbook.createSheet();
+			int rowNum = 0;
+			for (Cell[] row : array) {
+				XSSFRow excelRow = sheet.createRow(rowNum);
+				rowNum++;
+				int cellNum = 0;
+				for (Cell cell : row) {
+					XSSFCell excelCell = excelRow.createCell(cellNum);
+					if (cell == null) {
+						excelCell.setCellType(HSSFCell.CELL_TYPE_BLANK);
+					} else {
+						try {
+							excelCell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
+							excelCell.setCellValue(Long.parseLong(cell.getValue()));
+						} catch (NumberFormatException e) {
+							excelCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+							excelCell.setCellValue(cell.getValue());
+						}
 					}
+					cellNum++;
 				}
-				cellNum++;
 			}
+			workbook.write(out);
+		} finally {
+			workbook.close();
 		}
-		workbook.write(out);
 	}
 
 	public static void main(String[] args) {
