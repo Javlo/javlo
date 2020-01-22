@@ -101,6 +101,14 @@ public class PageBean implements Serializable {
 	public String getUrl() {
 		return URLHelper.createURL(ctx, page);
 	}
+	
+	public String getPreviewUrl() {		
+		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), page);
+	}
+	
+	public String getViewUrl() {		
+		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), page);
+	}
 
 	public String getPdfUrl() {
 		ContentContext pdfCtx = ctx.getFreeContentContext();

@@ -22,9 +22,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 
-import org.javlo.actions.DataAction;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.component.image.Image;
@@ -47,6 +47,7 @@ import org.javlo.utils.UnclosableInputStream;
 import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
 import org.javlo.ztatic.IStaticContainer;
+import org.python.icu.util.Calendar;
 
 public class ContentHelper {
 
@@ -495,6 +496,42 @@ public class ContentHelper {
 			}
 		}
 
+	}
+	
+	public static MenuElement createPage(ContentContext ctx, MenuElement template, MenuElement root, Date date) throws Exception {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		String yearPageName = root.getName() + "-" + cal.get(Calendar.YEAR);
+		MenuElement yearPage = MacroHelper.addPageIfNotExist(ctx, root.getName(), yearPageName, true);
+		MacroHelper.createMonthStructure(ctx, yearPage);
+		String mountPageName = MacroHelper.getMonthPageName(ctx, yearPage.getName(), date);
+		MenuElement mounthPage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx).searchChildFromName(mountPageName);
+		if (mounthPage != null) {
+			MenuElement newPage = MacroHelper.createArticlePageName(ctx, mounthPage);
+			if (newPage != null) {
+				ContentService content = ContentService.getInstance(ctx.getRequest());
+				newPage.setTemplateId(template.getTemplateId());
+				ContentContext noAreaCtx = ctx.getContextWithArea(null);
+				ContentElementList contentList = template.getContent(noAreaCtx);
+				Map<String, String> parents = new HashMap<String, String>();
+				while (contentList.hasNext(noAreaCtx)) {
+					IContentVisualComponent comp = contentList.next(noAreaCtx);
+					if (!comp.isRepeat()) {
+						ComponentBean bean = new ComponentBean(comp.getComponentBean());
+						bean.setId(StringHelper.getRandomId());
+						String parent = parents.get(bean.getArea());
+						if (parent == null) {
+							parent = "0";
+						}
+						parent = content.createContent(ctx, bean, parent, false);
+						parents.put(bean.getArea(), parent);
+					}
+				}
+				ctx.getCurrentPage().releaseCache();
+			}
+			return newPage;
+		}
+		return null;
 	}
 
 	/**

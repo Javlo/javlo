@@ -58,6 +58,18 @@ jQuery(document).bind("ajaxUpdate",function () {
 		});
 		return false;
 	});
+
+	jQuery('button.needconfirm').click(function(){
+		var jsInput = this;
+		var input = jQuery(this);		
+		jConfirm(i18n.confirm, i18n.validate, function(r) {
+			if (r) {
+				input.append("<input type=\"hidden\" name=\""+input.attr("name")+"\" value=\""+input.attr("value")+"\" />");
+				jsInput.form.submit();
+			}
+		});
+		return false;
+	});
 	
 	var notifCount = jQuery("#notification-count");
 	if(notifCount.text() == "0") {
