@@ -418,6 +418,10 @@ public class PageBean implements Serializable {
 	public String getTechnicalTitle() {
 		return page.getTechnicalTitle(ctx);
 	}
+	
+	public String getSubTitle() throws Exception {
+		return page.getSubTitle(ctx);
+	}
 
 	public String getTitleOrSubtitle() {
 		try {

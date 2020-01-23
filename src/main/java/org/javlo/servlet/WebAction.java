@@ -47,6 +47,10 @@ public class WebAction extends HttpServlet {
 				return;
 			}
 			String action = uri.substring(uri.indexOf("webaction")).split("/")[1];
+			// session id
+			if (action.contains(";")) {
+				action = action.substring(0, action.indexOf(";"));
+			}
 			
 			try {
 				request.setCharacterEncoding(ContentContext.CHARACTER_ENCODING);
