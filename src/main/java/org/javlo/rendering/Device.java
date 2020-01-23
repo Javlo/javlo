@@ -178,7 +178,7 @@ public class Device implements Serializable {
 		return !NetHelper.isUserAgentRobot(getUserAgent());
 	}
 	
-	public boolean isOldDevice() {
+	public boolean isOld() {
 		if (userAgent == null) {
 			return false;
 		} else {
