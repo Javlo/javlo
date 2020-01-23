@@ -182,7 +182,7 @@ public class Device implements Serializable {
 		if (userAgent == null) {
 			return false;
 		} else {
-			return userAgent.contains("MSIE");
+			return userAgent.contains("MSIE") || userAgent.contains("(Windows NT");
 		}
 	}
 
