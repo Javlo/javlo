@@ -177,6 +177,14 @@ public class Device implements Serializable {
 	public boolean isHuman() {
 		return !NetHelper.isUserAgentRobot(getUserAgent());
 	}
+	
+	public boolean isOldDevice() {
+		if (userAgent == null) {
+			return false;
+		} else {
+			return userAgent.contains("MSIE");
+		}
+	}
 
 	public boolean isForced() {
 		return forcedCode != null;
