@@ -80,12 +80,14 @@ public class QuizzPartyContext {
 			if (StringHelper.isDigit(name.substring(HASH_SIZE))) {
 				int number = Integer.parseInt(name.substring(HASH_SIZE));
 				QuizzPartyContext outQuizz = quizzMap.get(number);
-				outQuizz.setParticipant(outQuizz.getParticipant() + 1);
-				if (outQuizz != null && outQuizz.getName().equals(name)) {
-					session.setAttribute(KEY, outQuizz);
-					return outQuizz;
-				} else {
-					return null;
+				if (outQuizz != null) {
+					outQuizz.setParticipant(outQuizz.getParticipant() + 1);
+					if (outQuizz != null && outQuizz.getName().equals(name)) {
+						session.setAttribute(KEY, outQuizz);
+						return outQuizz;
+					} else {
+						return null;
+					}
 				}
 			} else {
 				return null;
