@@ -151,9 +151,11 @@ public class QuizzPartyContext {
 			}
 		}
 		int total = result.yes+result.no+result.na;
-		result.yes = Math.round(result.yes*100/total);
-		result.no = Math.round(result.no*100/total);
-		result.na = Math.round(result.na*100/total);
+		if (total>0) {
+			result.yes = Math.round(result.yes*100/total);
+			result.no = Math.round(result.no*100/total);
+			result.na = Math.round(result.na*100/total);
+		}
 	}
 
 	public int getCheck() {
