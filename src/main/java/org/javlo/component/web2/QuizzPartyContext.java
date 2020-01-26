@@ -88,6 +88,8 @@ public class QuizzPartyContext {
 					} else {
 						return null;
 					}
+				} else {
+					return null;
 				}
 			} else {
 				return null;
