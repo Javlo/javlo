@@ -68,7 +68,7 @@ public class QuizzPartyContext {
 				if (i == MAX_QUIZZ) {
 					throw new Exception("to many quizz try again later.");
 				}
-				name = StringHelper.getRandomString(HASH_SIZE, "0123456789aqwxszcedvfrbtgnhyjuiklopm") + i;
+			name = StringHelper.getRandomString(HASH_SIZE, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ") + i;
 				QuizzPartyContext outQuizz = new QuizzPartyContext(name);
 				outQuizz.setMasterSessionId(session.getId());
 				session.setAttribute(KEY, outQuizz);
@@ -77,6 +77,7 @@ public class QuizzPartyContext {
 				return outQuizz;
 			}
 		} else {
+			name = name.toUpperCase();
 			if (StringHelper.isDigit(name.substring(HASH_SIZE))) {
 				int number = Integer.parseInt(name.substring(HASH_SIZE));
 				QuizzPartyContext outQuizz = quizzMap.get(number);
