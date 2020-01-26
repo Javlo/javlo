@@ -134,8 +134,10 @@ public class QuizzPartyContext {
 	}
 
 	public void previousQuestion() {
-		this.question--;
-		updateCheck();
+		if (this.question>1) {
+			this.question--;
+			updateCheck();
+		}
 	}
 
 	private void updateCheck() {
