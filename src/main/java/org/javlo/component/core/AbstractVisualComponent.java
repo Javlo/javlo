@@ -2526,6 +2526,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		ctx.getRequest().setAttribute("renderer", getCurrentRenderer(ctx));
 		ctx.getRequest().setAttribute("previewAttributes", getPreviewAttributes(ctx));
 		ctx.getRequest().setAttribute("previewCSS", getPreviewCssClass(ctx, getComponentCssClass(ctx)));
+		ctx.getRequest().setAttribute("previewClass", getPreviewCssClass(ctx, null));
 		ctx.getRequest().setAttribute("previewID", getPreviewCssId(ctx));
 		ctx.getRequest().setAttribute("cssStyle", getCSSStyle(ctx));
 		ctx.getRequest().setAttribute("cssClass", getComponentCssClass(ctx));

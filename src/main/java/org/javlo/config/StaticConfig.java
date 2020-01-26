@@ -31,6 +31,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.javlo.actions.DefaultGeneralLister;
+import org.javlo.actions.IGeneralListner;
 import org.javlo.bean.InstallBean;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -104,6 +106,8 @@ public class StaticConfig extends Observable {
 	private List<String> ipMaskList = null;
 
 	private boolean foundFile = false;
+	
+	private IGeneralListner generalListner;
 
 	private static class FolderBean {
 		String thread = null;
@@ -2184,6 +2188,18 @@ public class StaticConfig extends Observable {
 	
 	public String getDefaultPDFLayout() {
 		return properties.getString("pdf.layout", DEFAULT_PDF_LAYOUT);
+	}
+	
+	public IGeneralListner getGeneralLister() throws SecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		if (generalListner == null) {
+			String generalListerClass = properties.getString("generallister.class", null);
+			if (generalListerClass == null) {
+				generalListner = new DefaultGeneralLister();
+			} else {
+				generalListner = (IGeneralListner) Class.forName(generalListerClass.trim()).newInstance();
+			}
+		}
+		return generalListner;
 	}
 	
 	public static void main(String[] args) {

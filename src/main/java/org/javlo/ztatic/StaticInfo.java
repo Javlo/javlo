@@ -917,6 +917,10 @@ public class StaticInfo implements IRestItem {
 			content.setAttribute(ctx, getKey(ctx, "authors"), authors);
 		}
 	}
+	
+	public void resetDate() {
+		date = null;
+	}
 
 	public Date getDate(ContentContext ctx) {
 		if (date == null) {

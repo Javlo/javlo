@@ -13,6 +13,7 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
+import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.URL;
@@ -283,6 +284,12 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		
 		try {
 			ResourceHelper.deleteFolder(staticConfig.getWebTempDir());
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+		
+		try {
+			staticConfig.getGeneralLister().onInit(getServletContext());
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
@@ -1336,6 +1343,11 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** IMAGE TEMP DIR    :  " + staticConfig.getImageCacheFolder());
 		out.println("**** IMAGE AUTO FOCUS  :  " + staticConfig.isAutoFocus());
 		out.println("**** SEARCH ENGINE     :  " + staticConfig.getSearchEngineClassName());
+		try {
+			out.println("**** GENERAL LISTNER   :  " + staticConfig.getGeneralLister().getClass());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		out.println("**** MAIL THREAD       :  " + staticConfig.isMailingThread());
 		out.println("**** MAIL HOST         :  " + staticConfig.getSMTPHost() + ':' + staticConfig.getSMTPPort() + " - [connection valid:" + smtpConnect + ']');
 		out.println("**** MAILING FB URI    :  " + staticConfig.getMailingFeedBackURI());

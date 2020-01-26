@@ -53,17 +53,38 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		ctx.getRequest().setAttribute("titleBox", getTitle());
 		ctx.getRequest().setAttribute("footerBox", getFooter());
 	}
+	
+	private Box getOpenComponent(ContentContext ctx) {
+		if (isCloseBox()) {
+			IContentVisualComponent comp = getPreviousComponent();
+			IContentVisualComponent prevComp = null;
+			while (comp != null && !(prevComp != null)) {
+				if (comp instanceof Box) {
+					return (Box)comp;
+				}
+				comp = comp.getPreviousComponent();
+			}
+		}
+		return null;
+	}
+	
+	private Box getCloseComponent(ContentContext ctx) {
+		if (!isCloseBox()) {
+			IContentVisualComponent comp = getNextComponent();
+			IContentVisualComponent nextComp = null;
+			while (comp != null && !(nextComp != null)) {
+				if (comp instanceof Box) {
+					return (Box)comp;
+				}
+				comp = comp.getNextComponent();
+			}
+		}
+		return null;
+	}
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
-		IContentVisualComponent comp = getPreviousComponent();
-		IContentVisualComponent prevComp = null;
-		while (comp != null && !(prevComp != null)) {
-			if (comp instanceof Box) {
-				prevComp = comp;
-			}
-			comp = comp.getPreviousComponent();
-		}
+		IContentVisualComponent prevComp = getOpenComponent(ctx);
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 
@@ -118,15 +139,85 @@ public class Box extends AbstractVisualComponent implements IContainer {
 	public String getType() {
 		return TYPE;
 	}
-
+	
 	@Override
-	public String getPrefixViewXHTMLCode(ContentContext ctx) {
+	protected String getColomnablePrefix(ContentContext ctx) {
+		if (!isCloseBox()) {
+			return super.getColomnablePrefix(ctx);
+		} else {
+			Box box = getOpenComponent(ctx);
+			if (box != null) {
+				return box.getColomnablePrefix(ctx);
+			}
+		}
 		return "";
 	}
 
 	@Override
+	public String getPrefixViewXHTMLCode(ContentContext ctx) {
+		if (!isCloseBox()) {
+			return getColomnablePrefix(ctx);
+		} else {
+			return "";
+		}
+	}
+
+	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+		if (isCloseBox()) {
+			Box parentBox = getOpenComponent(ctx);
+			if (parentBox != null) {
+				return parentBox.getColomnableSuffix(ctx);
+			}
+		}
 		return "";
+	}
+	
+	protected boolean isBoxCloseRow(ContentContext ctx) {
+		int max = getColumnMaxSize(ctx);
+		IContentVisualComponent next = getNextComponent();
+		while (next != null && !next.getType().equals(getType())) {
+			next = next.getNextComponent();
+		}
+		boolean close = false;
+		/* auto */
+		if (getColumnSize() == 0) {
+			ctx.setColumnableSize(0);
+			return true;
+		}
+		ctx.setColumnableSize(ctx.getColumnableSize() + getColumnSize());
+		if (next != null) {
+			if (ctx.getColumnableSize() + next.getColumnSize() > max || next.getColumnSize() < 0 || !next.isColumnable(ctx)) {
+				close = true;
+				ctx.setColumnableSize(0);
+			}
+		} else {
+			close = true;
+			ctx.setColumnableSize(0);
+		}
+		return close;
+	}
+	
+	@Override
+	protected boolean isCloseRow(ContentContext ctx) {
+		if (!isCloseBox()) {
+			Box closeBox = getCloseComponent(ctx);
+			if (closeBox != null) {
+				return closeBox.isCloseRow(ctx);
+			} 
+		}
+		return isBoxCloseRow(ctx);
+	}
+	
+	@Override
+	protected boolean isOpenRow(ContentContext ctx) {
+		if (isCloseBox()) {
+			Box openBox = getOpenComponent(ctx);
+			if (openBox != null) {
+				return openBox.isOpenRow(ctx);
+			} 
+		}
+		return isBoxCloseRow(ctx);
 	}
 
 	protected String getInternalPrefix(ContentContext ctx) {
@@ -210,6 +301,7 @@ public class Box extends AbstractVisualComponent implements IContainer {
 
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
+		performColumnable(ctx);
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		boolean closeBox = requestService.getParameter(getCloseBoxInputName(), null) != null;
 		String title = requestService.getParameter(getTitleBoxInputName(), "");
@@ -272,6 +364,11 @@ public class Box extends AbstractVisualComponent implements IContainer {
 	@Override
 	public String getFontAwesome() {
 		return "square-o";
+	}
+	
+	@Override
+	protected boolean getColumnableDefaultValue() {
+		return true;
 	}
 
 }

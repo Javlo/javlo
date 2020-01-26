@@ -1,6 +1,10 @@
-/* preview.js V 2.0.0.5 */
+/* preview.js V 2.0.0.6 */
 
 var PREVIEWLOG = false;
+
+if (PREVIEWLOG) {
+	console.log(">>> LOAD preview.js <<<");
+}
 
 var previewScrollPos;
 var previewHeight;
@@ -581,6 +585,14 @@ if (!String.prototype.startsWith) {
 						console.log("*** DROP COMPONENT 2 ***");
 					}
 
+					area=editPreview.searchArea(pjq(this));
+					if (area===null) {
+						if (PREVIEWLOG) {
+							console.log("break drop because area null.");
+							return;
+						}
+					}
+
 					event.preventDefault();
 					var textData = event.dataTransfer.getData("text");
 					if (textData.startsWith("page:page-")) {						
@@ -608,7 +620,7 @@ if (!String.prototype.startsWith) {
 					}
 					var subComp = pjq(this);
 					
-					area=editPreview.searchArea(pjq(this));
+					
 
 					countDrop++;
 					if (PREVIEWLOG) {
