@@ -10,6 +10,7 @@ import java.io.PrintStream;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -47,7 +48,7 @@ import org.javlo.utils.UnclosableInputStream;
 import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
 import org.javlo.ztatic.IStaticContainer;
-import org.python.icu.util.Calendar;
+
 
 public class ContentHelper {
 

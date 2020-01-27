@@ -7,7 +7,6 @@ import org.javlo.actions.IAction;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.service.RequestService;
 
@@ -77,11 +76,12 @@ public class QuizzParty extends AbstractVisualComponent implements IAction {
 	
 	public static String performStatus(ContentContext ctx, RequestService rs) throws Exception {
 		QuizzPartyContext quizz = QuizzPartyContext.getInstance(ctx.getRequest().getSession());
+		String json = "[]";
 		if (quizz != null) {
-			String json = new Gson().toJson(quizz);
-			ResourceHelper.writeStringToStream(json, ctx.getResponse().getOutputStream(), ContentContext.CHARACTER_ENCODING);
-			ctx.setStopRendering(true);
+			json = new Gson().toJson(quizz);			
 		}
+		ResourceHelper.writeStringToStream(json, ctx.getResponse().getOutputStream(), ContentContext.CHARACTER_ENCODING);
+		ctx.setStopRendering(true);
 		return null;
 	}
 	
@@ -101,6 +101,14 @@ public class QuizzParty extends AbstractVisualComponent implements IAction {
 			quizz.previousQuestion();
 		} else {
 			return "security error !";
+		}
+		return null;
+	}
+	
+	public static String performReset(ContentContext ctx, HttpSession session, RequestService rs) throws Exception {
+		QuizzPartyContext quizz = QuizzPartyContext.getInstance(ctx.getRequest().getSession());
+		if (quizz != null) {
+			quizz.reset(session);
 		}
 		return null;
 	}

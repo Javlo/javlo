@@ -50,13 +50,18 @@ public class QuizzPartyContext {
 	private int question = 1;
 	private int check = 0;
 	private Result result = new Result();
+	private boolean reset;
 
 	private QuizzPartyContext(String name) {
 		this.name = name;
 	}
 
 	public static final QuizzPartyContext getInstance(HttpSession session) throws Exception {
-		return (QuizzPartyContext) session.getAttribute(KEY);
+		QuizzPartyContext quizz = (QuizzPartyContext) session.getAttribute(KEY);
+		if (quizz != null && quizz.isReset()) {
+			session.removeAttribute(KEY);
+		}
+		return quizz;
 	}
 
 	public static final QuizzPartyContext getInstance(HttpSession session, String name) throws Exception {
@@ -194,6 +199,19 @@ public class QuizzPartyContext {
 	
 	public Result getResult() {
 		return result;
+	}
+	
+	public void reset(HttpSession session) {
+		setReset(true);
+		session.removeAttribute(KEY);
+	}
+
+	public boolean isReset() {
+		return reset;
+	}
+
+	public void setReset(boolean reset) {
+		this.reset = reset;
 	}
 
 }
