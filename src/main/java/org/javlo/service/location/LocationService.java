@@ -1,14 +1,20 @@
 package org.javlo.service.location;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.Locale;
+
+import org.javlo.helper.NetHelper;
 
 import com.google.code.geocoder.Geocoder;
 import com.google.code.geocoder.GeocoderRequestBuilder;
 import com.google.code.geocoder.model.GeocodeResponse;
 import com.google.code.geocoder.model.GeocoderAddressComponent;
 import com.google.code.geocoder.model.GeocoderRequest;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 public class LocationService {
 	
@@ -38,8 +44,16 @@ public class LocationService {
 		return loc;		
 	}
 	
-	public static void main(String[] args) throws IOException {
-		System.out.println(getLocation("50.616910, 4.813719", "en"));
+	public static void main(String[] args) throws Exception {
+		//System.out.println(getLocation("50.616910, 4.813719", "en"));
+		IpPosition pos = getIpPosition("212.68.230.251");
+		System.out.println(pos.getAlpha2());
+	}
+	
+	public static IpPosition getIpPosition(String ip) throws JsonSyntaxException, MalformedURLException, Exception {
+		//ObjectMapper mapper = new ObjectMapper();
+		//IpPosition obj = mapper.readValue(new URL("https://api.ipgeolocationapi.com/geolocate/"+ip), Staff.class);
+		return new Gson().fromJson(NetHelper.readPageGet(new URL("https://api.ipgeolocationapi.com/geolocate/"+ip)), IpPosition.class);
 	}
 
 }
