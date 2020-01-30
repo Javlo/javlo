@@ -275,10 +275,10 @@ public class ContentService implements IPrintInfo {
 		IContentVisualComponent previousComp = ContentService.getInstance(ctx.getRequest()).getComponent(ctx, parentId);
 		if (previousComp != null) {
 			bean.setArea(previousComp.getArea());
-		} else {
+		} else {			
 			if (inBean.getArea() != null) {
 				bean.setArea(inBean.getArea());
-			} else {
+			} else {		
 				bean.setArea(ctx.getArea());
 			}
 		}

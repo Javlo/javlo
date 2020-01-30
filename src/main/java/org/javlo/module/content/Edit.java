@@ -1707,6 +1707,11 @@ public class Edit extends AbstractModuleAction {
 			} else {
 				logger.severe("no search engine.");
 			}
+			
+			String eventMessage = staticConfig.getGeneralLister().onPublish(ctx);
+			if (eventMessage != null) {
+				message = eventMessage;
+			}
 
 			return message;
 		}

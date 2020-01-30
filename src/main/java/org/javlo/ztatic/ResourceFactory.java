@@ -90,14 +90,15 @@ public class ResourceFactory {
 		staticInfoReferenceCache.clear();
 	}
 	
-	public void update(ContentContext ctx, StaticInfo staticInfo) throws Exception {
+	public void update(ContentContext ctx, StaticInfo staticInfo) throws Exception {		
 		StaticInfo.ReferenceBean ref = staticInfo.getReferenceBean(ctx);
 		if (ref != null) {
 			staticInfoCache.remove(ref);
 			if (ref.getReference() != null) {
 				staticInfoReferenceCache.remove(ref.getReference());
 			}
-		}		
+		}
+		staticInfo.resetDate();
 	}
 
 }

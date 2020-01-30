@@ -810,3 +810,4 @@ Security in case of vulnerabilities.
  - ical close tag correction
  - contentcontext null request correction
  - reset hashcode on edit image
+ - action servlet work with a sessionId
