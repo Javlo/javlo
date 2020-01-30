@@ -51,8 +51,6 @@ public class LocationService {
 	}
 	
 	public static IpPosition getIpPosition(String ip) throws JsonSyntaxException, MalformedURLException, Exception {
-		//ObjectMapper mapper = new ObjectMapper();
-		//IpPosition obj = mapper.readValue(new URL("https://api.ipgeolocationapi.com/geolocate/"+ip), Staff.class);
 		return new Gson().fromJson(NetHelper.readPageGet(new URL("https://api.ipgeolocationapi.com/geolocate/"+ip)), IpPosition.class);
 	}
 
