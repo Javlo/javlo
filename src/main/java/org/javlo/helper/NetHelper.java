@@ -126,7 +126,7 @@ public class NetHelper {
 	}
 
 	public static String readPageGet(URLConnection conn, boolean checkReturnCode) throws Exception {
-		nocheckCertificatHttps();
+//		nocheckCertificatHttps();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		InputStream in = null;
 		try {

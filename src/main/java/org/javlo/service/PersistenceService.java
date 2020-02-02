@@ -68,6 +68,8 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.exception.ServiceException;
+import org.javlo.service.location.IpPosition;
+import org.javlo.service.location.LocationService;
 import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.tracking.DayInfo;
 import org.javlo.tracking.Track;
@@ -584,6 +586,9 @@ public class PersistenceService {
 			if (globalMem == null) {
 				globalMem = new HashMap<>();
 			}
+			
+			Set<String> sessionDone = new HashSet<>();
+			
 			for (Track track : getAllTrack(cal.getTime(), trackingDir)) {
 				if (!track.getPath().contains(".php")) {
 					dayInfo.pagesCount++;
@@ -595,6 +600,29 @@ public class PersistenceService {
 						savePage.put(track.getPath(), savePage.get(track.getPath()) + 1);
 						dayInfo.saveCount++;
 					}
+					
+//					if (!sessionDone.contains(track.getSessionId())) {
+//						sessionDone.add(track.getSessionId());
+//						IpPosition ipPos;
+//						try {
+//							ipPos = LocationService.getIpPosition(track.getIP());
+//							if (ipPos != null) {
+//								if (ipPos.getAlpha2() != null) {
+//									dayInfo.countryVisit.get(ipPos.getAlpha2()).increment();
+//								} else {
+//									dayInfo.countryVisit.get(DayInfo.COUNTRY_NOT_FOUND).increment();
+//								}
+//							} else {
+//								dayInfo.countryVisit.get(DayInfo.COUNTRY_NOT_FOUND).increment();
+//								logger.warning("country not found for ip "+track.getIP());
+//							}
+//						} catch (Exception e) {
+//							dayInfo.countryVisit.get(DayInfo.COUNTRY_NOT_FOUND).increment();
+//							e.printStackTrace();
+//						}
+//						
+//					}
+					
 					//if (track.isView()) {
 						if (mobile) {
 							dayInfo.pagesCountMobile++;
@@ -637,7 +665,7 @@ public class PersistenceService {
 				}
 				dayInfo.mostSavePage = ContentService.getPageNameFromPath(maxPage);
 			}
-			logger.info("store dayInfo for : " + StringHelper.renderDate(cal.getTime()));
+			logger.info(" - store dayInfo for : " + StringHelper.renderDate(cal.getTime()));
 			dayInfo.store(propFile);
 
 		}

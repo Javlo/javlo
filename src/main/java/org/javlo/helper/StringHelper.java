@@ -2149,7 +2149,11 @@ public class StringHelper {
 	}
 
 	public static Date parseTimeOnly(String inDate) throws ParseException {
-		return parseDate(inDate, "HH:mm:ss");
+		try {
+			return parseDate(inDate, "HH:mm:ss");
+		} catch (ParseException e) {
+			return parseDate(inDate, "HH:mm");
+		}
 	}
 
 	public static String[] readLines(String text) {

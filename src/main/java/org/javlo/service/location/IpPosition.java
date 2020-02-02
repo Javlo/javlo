@@ -8,9 +8,9 @@ public class IpPosition {
 	private String alpha2;
 	private String name;
 	private int countryCode;
-	private String addressFromat;
+	private String addressFormat;
 	private List<String> languages;
-	private Geo deo;
+	private Geo geo;
 	private String currency;
 	
 	public String getContinent() {
@@ -37,23 +37,23 @@ public class IpPosition {
 	public void setCountryCode(int countryCode) {
 		this.countryCode = countryCode;
 	}
-	public String getAddressFromat() {
-		return addressFromat;
+	public String getAddressFormat() {
+		return addressFormat;
 	}
-	public void setAddressFromat(String addressFromat) {
-		this.addressFromat = addressFromat;
+	public void setAddressFormat(String addressFromat) {
+		this.addressFormat = addressFromat;
 	}
 	public List<String> getLanguages() {
 		return languages;
 	}
 	public void setLanguages(List<String> languages) {
 		this.languages = languages;
+	}	
+	public Geo getGeo() {
+		return geo;
 	}
-	public Geo getDeo() {
-		return deo;
-	}
-	public void setDeo(Geo deo) {
-		this.deo = deo;
+	public void setGeo(Geo geo) {
+		this.geo = geo;
 	}
 	public String getCurrency() {
 		return currency;

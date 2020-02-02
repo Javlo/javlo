@@ -66,6 +66,9 @@ public class Track implements Comparable<Track> {
 	public Track(String userName, String action, String path, long time, String inReferer, String agent, String range) {		
 		this.userName = userName;
 		this.action = action;
+		if (path.contains(";jsessionid")) {
+			path = path.substring(0, path.indexOf(";jsessionid"));
+		}
 		this.path = path;
 		this.time = time;
 		this.refered = inReferer;
