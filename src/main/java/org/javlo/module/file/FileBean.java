@@ -186,6 +186,10 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 			return URLHelper.createStaticURL(ctx, staticInfo.getURL(ctx));*/
 		}
 	}
+	
+	public String getDynamicUrl() {
+		return "${info.mediaRootURL}"+URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(),getPath());
+	}
 
 	public StaticInfo getStaticInfo() {
 		if (staticInfo == StaticInfo.EMPTY_INSTANCE) {

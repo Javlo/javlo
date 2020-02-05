@@ -99,7 +99,26 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 		        "searchreplace visualblocks code fullscreen",
 		        "insertdatetime media table paste textcolor colorpicker nonbreaking textlang"
 		    ],
+			fontsize_formats: fontsize,
+			image_advtab: true,
 		    fontsize_formats: fontsize,
+		    //paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
+		    file_browser_callback: function(field_name, url, type, win) {		    	
+	    	 	jQuery("body").data("fieldName", field_name);	    	 	
+	    	 	var fileURL = chooseFileURL.replace("_TYPE_",type);	    	 	
+		    	tinyMCE.activeEditor.windowManager.open({
+		            file : fileURL,
+		            title : 'Select resource',
+		            width : jQuery(document).width()-100,  // Your dimensions may differ - toy around with them
+		            height :  jQuery(document).height()-150,
+		            resizable : "yes",
+		            inline : "yes",  // This parameter only has an effect if you use the inlinepopups plugin!
+		            close_previous : "no"
+		        }, {
+		            window : win,
+		            input : field_name
+		        });		    	
+		    },
 		    toolbar: "textlang | undo redo searchreplace | bold italic underline fontsizeselect forecolor backcolor removeformat | charmap nonbreaking | alignleft aligncenter alignright alignjustify | link | bullist numlist outdent indent"
 		});
 	} if (complexity == "email") {
@@ -116,7 +135,26 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 		        "searchreplace visualblocks code",
 		        "insertdatetime table paste textcolor colorpicker nonbreaking textlang"
 		    ],
+			fontsize_formats: fontsize,
+			 image_advtab: true,
 		    fontsize_formats: fontsize,
+		    //paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
+		    file_browser_callback: function(field_name, url, type, win) {		    	
+	    	 	jQuery("body").data("fieldName", field_name);	    	 	
+	    	 	var fileURL = chooseFileURL.replace("_TYPE_",type);	    	 	
+		    	tinyMCE.activeEditor.windowManager.open({
+		            file : fileURL,
+		            title : 'Select resource',
+		            width : jQuery(document).width()-100,  // Your dimensions may differ - toy around with them
+		            height :  jQuery(document).height()-150,
+		            resizable : "yes",
+		            inline : "yes",  // This parameter only has an effect if you use the inlinepopups plugin!
+		            close_previous : "no"
+		        }, {
+		            window : win,
+		            input : field_name
+		        });		    	
+		    },
 		    toolbar: "textlang | undo redo searchreplace | bold italic underline strikethrough fontsizeselect removeformat | table charmap nonbreaking code | alignleft aligncenter alignright alignjustify | link"
 		});
 	} else if (complexity == "high") {		
@@ -158,7 +196,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 	    	 	var fileURL = chooseFileURL.replace("_TYPE_",type);	    	 	
 		    	tinyMCE.activeEditor.windowManager.open({
 		            file : fileURL,
-		            title : 'Select resouce',
+		            title : 'Select resource',
 		            width : jQuery(document).width()-100,  // Your dimensions may differ - toy around with them
 		            height :  jQuery(document).height()-150,
 		            resizable : "yes",
@@ -167,8 +205,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 		        }, {
 		            window : win,
 		            input : field_name
-		        });
-		    	
+		        });		    	
 		    },
 		    templates: [
 		        {title: 'Test template 1', content: 'Test 1'},

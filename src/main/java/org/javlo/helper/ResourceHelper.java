@@ -894,8 +894,9 @@ public class ResourceHelper {
 
 	public static boolean isResourceURL(ContentContext ctx, String url) {
 		String startURL = URLHelper.createResourceURL(ctx, "/");
+		String fileURL = URLHelper.createFileURL(ctx, "/");
 		String shortURL = URLHelper.createStaticURL(ctx, ElementaryURLHelper.IMG_SERVLET_PATH);
-		return url.startsWith(shortURL) || url.startsWith(startURL);
+		return url.startsWith(shortURL) || url.startsWith(startURL) || url.startsWith(fileURL);
 	}
 
 	public static boolean isTransformURL(ContentContext ctx, String url) throws Exception {

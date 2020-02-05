@@ -102,7 +102,7 @@ params:
 			</c:if>
 			<c:set var="dataURL" value="" />			
 			<c:if test="${not empty param.select && !file.directory}">
-				<c:set var="dataURL" value='data-url="${file.freeURL}"' />
+				<c:set var="dataURL" value='data-url="${file.dynamicUrl}"' />
 			</c:if>
 			<a ${!file.directory && not empty param.select?'class="select-item"':''} href="${fileSelectURL}" ${dataURL}><img src="${file.thumbURL}" /></a>			
 			<c:if test="${file.image && !metaReadOnly && empty param.select}">
@@ -270,8 +270,8 @@ params:
 	<script type="text/javascript">
 		jQuery(".select-item").click(function() {
 			if (parent.tinyMCE !== undefined) {
-				var fieldName = parent.jQuery("body").data("fieldName");
 				var url = jQuery(this).data("url");
+				var fieldName = parent.jQuery("body").data("fieldName");				
 				parent.jQuery("#"+fieldName).val(url);
 				parent.tinyMCE.activeEditor.windowManager.close(window);				
 			}

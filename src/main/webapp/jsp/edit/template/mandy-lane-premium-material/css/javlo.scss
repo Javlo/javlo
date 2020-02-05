@@ -1302,6 +1302,10 @@ body.previewEdit {
 	padding: 3px 6px;
 }
 
+.form-list .small fieldset {
+	display: none;
+}
+
 .form-list fieldset label, .form-list fieldset .label {
 	display: inline-block;
 	margin: 0 6px 0 3px;

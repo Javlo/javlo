@@ -91,9 +91,9 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {	
 		super.prepareView(ctx);
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());		
 		String text = XHTMLHelper.autoLink(XHTMLHelper.replaceLinks(ctx,XHTMLHelper.replaceJSTLData(ctx, getValue())),globalContext);
+		ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
 		text = reverserLinkService.replaceLink(ctx, this, text);
 		ctx.getRequest().setAttribute("text",text);
 	}

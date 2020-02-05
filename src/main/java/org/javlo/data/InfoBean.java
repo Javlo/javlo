@@ -782,6 +782,10 @@ public class InfoBean {
 		return URLHelper.createResourceURL(ctx, "/");
 	}
 	
+	public String getFileRootURL() {
+		return URLHelper.createFileURL(ctx, "/");
+	}
+	
 	public String getMediaRootURL() {
 		return URLHelper.createMediaURL(ctx, "/");
 	}
