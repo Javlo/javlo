@@ -2088,9 +2088,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				e.printStackTrace();
 			}
 		}
-		if (!StringHelper.isEmpty(getManualCssClass())) {
-			style = style + ' ' + getManualCssClass() + ' ';
-		}
+//		if (!StringHelper.isEmpty(getManualCssClass())) {
+//			style = style + ' ' + getManualCssClass() + ' ';
+//		}
 		if (!StringHelper.isEmpty(getSpecificCssClass(ctx))) {
 			style = style + ' ' + getSpecificCssClass(ctx) + ' ';
 		}
@@ -2530,6 +2530,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		ctx.getRequest().setAttribute("previewID", getPreviewCssId(ctx));
 		ctx.getRequest().setAttribute("cssStyle", getCSSStyle(ctx));
 		ctx.getRequest().setAttribute("cssClass", getComponentCssClass(ctx));
+		ctx.getRequest().setAttribute("manualCssClass", getManualCssClass());
 		if (!AbstractVisualComponent.isMirrorWrapped(ctx, this)) {
 			ctx.getRequest().setAttribute(MIRROR_WRAPPED, false);
 			ctx.getRequest().setAttribute("nextSame", isNextSame(ctx));
