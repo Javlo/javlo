@@ -59,6 +59,7 @@ import org.javlo.component.meta.ContactBean;
 import org.javlo.component.meta.ContactInformation;
 import org.javlo.component.meta.DateComponent;
 import org.javlo.component.meta.EventDefinitionComponent;
+import org.javlo.component.meta.Font;
 import org.javlo.component.meta.ForceRealContent;
 import org.javlo.component.meta.Forward;
 import org.javlo.component.meta.HeadMeta;
@@ -1904,7 +1905,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	}
 
 	/**
-	 * get the category of the page (category component)
+	 * get the font of the page (category component)
 	 * 
 	 * @param ctx
 	 * @return
@@ -1927,13 +1928,13 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		IContentComponentsList contentList = getContent(noAreaCtx);
 		while (contentList.hasNext(noAreaCtx)) {
 			IContentVisualComponent elem = contentList.next(noAreaCtx);
-			if (elem.getType().equals(Category.TYPE)) {
+			if (elem.getType().equals(Font.TYPE)) {
 				res = elem.getValue(noAreaCtx);
 			}
 		}
-		desc.category = StringUtils.replace(res, "\"", "&quot;");
+		desc.font = res;
 
-		return desc.category;
+		return desc.font;
 	}
 
 	/**
