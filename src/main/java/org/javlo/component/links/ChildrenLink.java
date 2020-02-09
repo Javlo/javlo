@@ -230,6 +230,10 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			return child.isChildrenAssociation();
 		}
 		
+		public String getFont() throws Exception {
+			return child.getFont(ctx);
+		}
+		
 	}
 
 	private static final String LOCK_PARENT_PAGE = "lock-parent-page";
