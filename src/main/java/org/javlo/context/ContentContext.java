@@ -2178,7 +2178,10 @@ public class ContentContext {
 				if (ip.contains(",")) {
 					ip = ip.substring(0, ip.indexOf(","));
 				}
-				return ip.trim();
+				ip = ip.trim();
+				if (!StringHelper.isEmpty(ip)) {
+					return ip.trim();
+				}
 			}
 		}
 		return request.getRemoteAddr();
