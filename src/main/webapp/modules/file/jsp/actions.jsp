@@ -2,7 +2,9 @@
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
 %><c:if test="${fn:length(info.contentLanguages) > 1 and empty param.previewEdit && empty param.templateid}">
 <div class="special${empty componentsList?' last':''}">
+
 <form id="form-languages" action="${info.currentURL}" method="get" class="js-submit">
+
 <div class="select-languages form_default">
 	<input type="hidden" name="webaction" value="file.changeLanguage" />
 	<c:if test="${info.admin && globalContext.master}">
@@ -24,7 +26,6 @@
 </form>
 </div>
 </c:if>
-
 <c:if test="${not empty param[BACK_PARAM_NAME]}"><a class="action-button back" href="${param[BACK_PARAM_NAME]}&path=${param.path}&backreturn=true"><span>${i18n.edit['action.back']}</span></a></c:if>
 <c:if test="${empty param.templateid && empty param.select}"><a class="action-button save" href="#save" onclick="jQuery('#form-meta').submit(); return false;"><span>${i18n.edit['action.update']}</span></a></c:if>
 <c:if test="${not empty globalContext.DMZServerInter}">

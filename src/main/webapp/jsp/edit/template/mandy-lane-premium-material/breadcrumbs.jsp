@@ -53,7 +53,7 @@
 		</c:if>
 </c:if>
 <c:if test="${not empty currentModule.breadcrumbList}">
-	<c:forEach var="link" items="${currentModule.breadcrumbList}" varStatus="status">	
+	<c:forEach var="link" items="${currentModule.breadcrumbList}" varStatus="status">
 		<c:if test="${empty link.url || link.readonly && !status.last}"><div class="link-wrapper"></c:if>
 		<c:if test="${not empty link.url && !link.readonly}">	
 			<c:url var="url" value="${link.url}" context="/">

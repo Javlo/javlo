@@ -1,6 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<div id="year" class="content">
+<div id="year">
+<div class="content">
 	<c:set var="options" value="" />
 	<c:forEach var="y" begin="2014" end="${info.currentYear}">		
 		<c:set var="options" value="<option>${y}</option>${options}" />
@@ -9,13 +10,14 @@
 <select class="form-input pull-right" onchange="updateYear(this.value); updateYearForTime(this.value); updateDaysForTime(this.value); return false;">
 ${options}
 </select>
-<br />
+</div>
 
 <h3>${i18n.edit['dashboard.title.month']}</h3>
 
+<div class="content">
 <div id="year-chart"></div>
+</div>
 
-<br />
 <script type="text/javascript">
 
 <c:url var="ajaxURL" value="${info.currentAjaxURL}" context="/">
@@ -69,7 +71,7 @@ updateYear(${info.currentYear});
 
 <h3>${i18n.edit['dashboard.title.days']}</h3>
 
-<div id="days-chart"></div>
+<div class="content"><div id="days-chart"></div></div>
 
 <script type="text/javascript">
 
@@ -117,8 +119,7 @@ updateDaysForTime(${info.currentYear});
 
 <h3>${i18n.edit['dashboard.title.hours']}</h3>
 
-<div id="time-chart"></div>
-</div>
+<div class="content"><div id="time-chart"></div></div>
 
 <script type="text/javascript">
 
@@ -164,3 +165,40 @@ function updateYearForTime(year) {
 updateYearForTime(${info.currentYear});
 </script>
 
+
+<c:url var="countryAjaxURL" value="${info.currentAjaxURL}" context="/">
+<c:param name="webaction" value="dashboard.readTracker" />
+<c:param name="type" value="country" />
+</c:url>
+
+<h3>${i18n.edit['dashboard.title.country']}</h3>
+
+<div class="content ${not empty lightInterface?'light':''}">
+
+<table cellpadding="0" cellspacing="0" border="0" class="dyntable cell-border compact stripe" id="countrytable">
+
+</table>
+
+
+<script type="text/javascript">
+jQuery(document).ready(function() {
+	jQuery.ajax({
+	    url: '${countryAjaxURL}',
+	    success: function(ajaxData){
+		  var dataSet = ajaxData.datas;		  
+		  jQuery('#countrytable').DataTable({
+			data: dataSet,
+			columns: [
+		      { title: "country" },
+		      { title: "visit" }
+		    ],
+		    order: [[ 1, "desc" ]]
+		  });
+	    }
+	});
+});
+</script>
+
+</div>
+
+</div>

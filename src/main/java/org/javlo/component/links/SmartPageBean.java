@@ -990,4 +990,5 @@ public class SmartPageBean {
 			return null;
 		}
 	}
+	
 }

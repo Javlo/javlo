@@ -2182,12 +2182,16 @@ public class StaticConfig extends Observable {
 		return properties.getString("page.login", "register");
 	}
 	
-	public String getNewsPageName() {
-		return properties.getString("page.news", "news");
+	public String getIP2LocationURL() {
+		return properties.getString("tracking.url.ip2", null);
 	}
 	
 	public String getDefaultPDFLayout() {
 		return properties.getString("pdf.layout", DEFAULT_PDF_LAYOUT);
+	}
+	
+	public String getNewsPageName() {
+		return properties.getString("page.news", "news");
 	}
 	
 	public IGeneralListner getGeneralLister() throws SecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {

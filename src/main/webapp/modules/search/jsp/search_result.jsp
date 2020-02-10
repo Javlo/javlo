@@ -14,7 +14,7 @@
 		<div>
 			<input type="hidden" name="webaction" value="deleteUser" />
 		</div>
-		<table cellpadding="0" cellspacing="0" border="0" class="dyntable" id="sitelist">
+		<table cellpadding="0" cellspacing="0" border="0" class="dyntable cell-border compact stripe" id="sitelist">
 			<thead>
 				<tr>
 					<th class="head0"></th>

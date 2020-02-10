@@ -13,8 +13,8 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
-import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -86,6 +86,7 @@ import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.event.Event;
 import org.javlo.service.integrity.IntegrityFactory;
+import org.javlo.service.location.LocationService;
 import org.javlo.service.remote.RemoteMessage;
 import org.javlo.service.remote.RemoteMessageService;
 import org.javlo.service.resource.Resource;
@@ -250,7 +251,13 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		}
 
 		LocalLogger.SPECIAL_LOG_FILE = new File(staticConfig.getSpecialLogFile());
-
+		
+		try {
+			LocationService.init(getServletContext());
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		
 		writeInfo(System.out);
 
 		DebugListening.staticConfig = staticConfig;
@@ -1328,6 +1335,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** ENV               :  " + staticConfig.getEnv());
 		out.println("**** Internet Access   :  " + staticConfig.isInternetAccess());
 		out.println("**** STATIC CONFIG DIR :  " + staticConfig.getStaticConfigLocalisation());
+		out.println("**** IP2 FILE          :  " + LocationService.ipDbFile);		
 		out.println("**** PROXY HOST        :  " + staticConfig.getProxyHost());
 		out.println("**** PROXY PORT        :  " + staticConfig.getProxyPort());
 		out.println("**** DIR RELATIVE      :  " + staticConfig.isDataFolderRelative());

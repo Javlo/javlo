@@ -98,6 +98,7 @@ public class FileAction extends AbstractModuleAction {
 		ctx.getRequest().setAttribute("pathPrefix", getROOTPath(ctx));
 		ctx.getRequest().setAttribute("sort", fileModuleContext.getSort());
 		ctx.getRequest().setAttribute("canUpload", AdminUserSecurity.isCurrentUserCanUpload(ctx));
+		ctx.getRequest().setAttribute("backImage", URLHelper.createStaticResourceURL(ctx, "/images/mimetypes/folder-empty.svg"));
 		
 		/*
 		 * File importFolder = new
@@ -118,7 +119,7 @@ public class FileAction extends AbstractModuleAction {
 		updateBreadCrumb(RequestService.getInstance(ctx.getRequest()), ctx, EditContext.getInstance(globalContext, ctx.getRequest().getSession()), modulesContext, modulesContext.getCurrentModule(), fileModuleContext, false, null);
 		if (editFileName != null) {
 			if (StringHelper.isImage(editFileName)) {
-				updateBreadCrumb(RequestService.getInstance(ctx.getRequest()), ctx, EditContext.getInstance(globalContext, ctx.getRequest().getSession()), modulesContext, modulesContext.getCurrentModule(), fileModuleContext, true, editFileName);
+				updateBreadCrumb(RequestService.getInstance(ctx.getRequest()), ctx, EditContext.getInstance(globalContext, ctx.getRequest().getSession()), modulesContext, modulesContext.getCurrentModule(), fileModuleContext, false, editFileName);
 				modulesContext.getCurrentModule().setToolsRenderer(null);
 				File editFile = new File(URLHelper.mergePath(getFolder(ctx).getAbsolutePath(), editFileName));
 				ctx.getRequest().setAttribute("editFile", editFileName);
@@ -282,9 +283,9 @@ public class FileAction extends AbstractModuleAction {
 					}
 				}				
 				Collections.sort(childrenLinks, new HtmlLink.SortOnLegend());				
-				if (i<2 && rs.getParameter("select") != null) {
-					readonly=true;
-				}
+//				if (i<2 && rs.getParameter("select") != null) {
+//					readonly=true;
+//				}
 				currentModule.pushBreadcrumb(new HtmlLink(staticURL, path, path, i == pathItems.length - 1, childrenLinks, readonly));
 			}
 		}

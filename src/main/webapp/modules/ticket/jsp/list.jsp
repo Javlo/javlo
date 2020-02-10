@@ -3,7 +3,7 @@
 <div class="content">
 
 <c:if test="${!contentContext.device.mobileDevice}">
-<table cellpadding="0" cellspacing="0" border="0" class="dyntable" id="notes">
+<table cellpadding="0" cellspacing="0" border="0" class="dyntable cell-border compact stripe" id="notes">
  <thead>
      <tr>       
        <th class="head1">Authors</th>

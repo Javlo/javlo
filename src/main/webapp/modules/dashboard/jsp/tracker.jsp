@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<div id="content" class="content ${not empty lightInterface?'light':''}">
+<div class="content ${not empty lightInterface?'light':''}">
 	<form id="roles-form" action="${info.currentURL}" method="get" class="form-inline">
 		<div class="row">
 		<div class="col-sm-3">

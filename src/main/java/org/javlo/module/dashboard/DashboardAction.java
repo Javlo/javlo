@@ -276,6 +276,41 @@ public class DashboardAction extends AbstractModuleAction {
 				desktopAndMobile[1].add(input.getValue()[1]);
 			}
 			ctx.setAjaxMap(ajaxMap.getMap());
+		} else if (type.equals("country")) {
+			// Map<String, Integer> ajaxMap = new LinkedHashMap<String,
+			// Integer>();
+			String year = rs.getParameter("y", "" + now.get(Calendar.YEAR));
+			Calendar cal = Calendar.getInstance();
+			cal.set(Calendar.YEAR, Integer.parseInt(year));
+			cal.set(Calendar.MONTH, 11);
+			cal.set(Calendar.DAY_OF_MONTH, 31);
+			cal.set(Calendar.HOUR, 23);
+			cal.set(Calendar.MINUTE, 59);
+			cal.set(Calendar.SECOND, 59);
+			statCtx.setTo(cal.getTime());
+			cal.set(Calendar.YEAR, Integer.parseInt(year));
+			cal.set(Calendar.MONTH, 0);
+			cal.set(Calendar.DAY_OF_MONTH, 1);
+			cal.set(Calendar.HOUR, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			statCtx.setFrom(cal.getTime());
+			
+			Map<String, MutableInt> countryVisit = new NeverEmptyMap<>(MutableInt.class);
+			for (DayInfo dayInfo : tracker.getDayInfos(statCtx)) {
+				for (String key : dayInfo.countryVisit.keySet()) {
+					countryVisit.get(key).add(dayInfo.countryVisit.get(key));
+				}
+			}
+			ObjectBuilder ajaxMap = LangHelper.object();
+			ListBuilder datas = ajaxMap.list("datas");
+			for (Map.Entry<String, MutableInt> entry : countryVisit.entrySet()) {
+				String[] d = new String[2];
+				d[0] = entry.getKey();
+				d[1] = ""+entry.getValue();
+				datas.add(d);
+			}
+			ctx.setAjaxMap(ajaxMap.getMap());
 		} else if (type.equals("dayinfo")) {
 			// Map<String, Integer> ajaxMap = new LinkedHashMap<String,
 			// Integer>();

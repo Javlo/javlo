@@ -8,7 +8,7 @@
 		<div>
 			<input type="hidden" name="webaction" value="selectHistory" />
 		</div>
-		<table cellpadding="0" cellspacing="0" border="0" class="dyntable" id="history-table">
+		<table cellpadding="0" cellspacing="0" border="0" class="dyntable cell-border compact stripe" id="history-table">
 			<thead>
 				<tr>
 					<th width="13" class="head0">&nbsp;</th>

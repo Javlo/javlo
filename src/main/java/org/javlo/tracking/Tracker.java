@@ -139,7 +139,7 @@ public class Tracker {
 		Map<String, Integer> res = new HashMap<String, Integer>();
 		Track[] tracks = getViewClickTracks(statCtx.getFrom(), statCtx.getTo());
 		for (Track track : tracks) {
-			String lg = getLanguage(track.getPath());
+			String lg = getLanguage(track, tracks);
 			Integer c = res.get(lg);
 			if (c == null) {
 				c = new Integer(0);
@@ -150,16 +150,26 @@ public class Tracker {
 		return res;
 	}
 
-	String getLanguage(String path) {
+	public static String getLanguage(String path) {
 		String[] pathDec = StringUtils.split(path, "/");
 		if (pathDec.length < 2) {
-			return "undifined";
+			return "?";
 		}
-		String lg = "undefined";
+		String lg = "?";
 		if (pathDec[1].length() == 2) {
 			return pathDec[1];
 		} else if (pathDec.length > 2 && pathDec[2].length() == 2) {
 			return pathDec[2];
+		}
+		return lg;
+	}
+
+	public static String getLanguage(Track track, Track[] tracks) {
+		String lg = null;
+		for (int i = tracks.length-1; i > 0 && (lg == null || lg.length() == 0); i--) {
+			if (tracks[i].getSessionId().equals(track.getSessionId())) {
+				lg = getLanguage(tracks[i].getPath());
+			}
 		}
 		return lg;
 	}
@@ -613,7 +623,7 @@ public class Tracker {
 		}
 		return data;
 	}
-	
+
 	public int getLastMountPathReading(String path) throws IOException {
 		Calendar cal = Calendar.getInstance();
 		Calendar cal2 = Calendar.getInstance();
@@ -621,19 +631,19 @@ public class Tracker {
 		AtomicInteger pageTotalVisit = new AtomicInteger(0);
 		StatContext statCtx = new StatContext(cal2.getTime(), cal.getTime());
 		List<DayInfo> dayInfoList = getDayInfos(statCtx);
-		
+
 		for (DayInfo d : dayInfoList) {
 			if (d.visitPath.get(path) != null) {
 				pageTotalVisit.addAndGet(d.visitPath.get(path).intValue());
 			}
 		}
-		
-//		dayInfoList.parallelStream()
-//			.filter(d -> d.visitPath.get(path) != null)
-//			.forEach(d -> pageTotalVisit.addAndGet(d.visitPath.get(path).intValue()));
+
+		// dayInfoList.parallelStream()
+		// .filter(d -> d.visitPath.get(path) != null)
+		// .forEach(d -> pageTotalVisit.addAndGet(d.visitPath.get(path).intValue()));
 		return pageTotalVisit.get();
 	}
-	
+
 	public int getLastYearPathReading(String path) throws IOException {
 		Calendar cal = Calendar.getInstance();
 		Calendar cal2 = Calendar.getInstance();
@@ -641,19 +651,19 @@ public class Tracker {
 		AtomicInteger pageTotalVisit = new AtomicInteger(0);
 		StatContext statCtx = new StatContext(cal2.getTime(), cal.getTime());
 		List<DayInfo> dayInfoList = getDayInfos(statCtx);
-		
+
 		for (DayInfo d : dayInfoList) {
 			if (d.visitPath.get(path) != null) {
 				pageTotalVisit.addAndGet(d.visitPath.get(path).intValue());
 			}
 		}
-		
-//		dayInfoList.parallelStream()
-//			.filter(d -> d.visitPath.get(path) != null)
-//			.forEach(d -> pageTotalVisit.addAndGet(d.visitPath.get(path).intValue()));
+
+		// dayInfoList.parallelStream()
+		// .filter(d -> d.visitPath.get(path) != null)
+		// .forEach(d -> pageTotalVisit.addAndGet(d.visitPath.get(path).intValue()));
 		return pageTotalVisit.get();
 	}
-	
+
 	public int getLastDayPathReading(String path) throws IOException {
 		Calendar cal = Calendar.getInstance();
 		Calendar cal2 = Calendar.getInstance();
@@ -662,22 +672,22 @@ public class Tracker {
 		try {
 			StatContext statCtx = new StatContext(cal2.getTime(), cal.getTime());
 			List<DayInfo> dayInfoList = getDayInfos(statCtx);
-			
+
 			for (DayInfo d : dayInfoList) {
 				if (d.visitPath.get(path) != null) {
 					pageTotalVisit.addAndGet(d.visitPath.get(path).intValue());
 				}
 			}
-			
-//			dayInfoList.parallelStream()
-//				.filter(d -> d.visitPath.get(path) != null)
-//				.forEach(d -> pageTotalVisit.addAndGet(d.visitPath.get(path).intValue()));
+
+			// dayInfoList.parallelStream()
+			// .filter(d -> d.visitPath.get(path) != null)
+			// .forEach(d -> pageTotalVisit.addAndGet(d.visitPath.get(path).intValue()));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
 		return pageTotalVisit.get();
 	}
-	
+
 	private static int testLastMountPageReading(String path) throws IOException {
 		Calendar cal = Calendar.getInstance();
 		Calendar cal2 = Calendar.getInstance();
@@ -685,23 +695,23 @@ public class Tracker {
 		AtomicInteger pageTotalVisit = new AtomicInteger(0);
 		StatContext statCtx = new StatContext(cal2.getTime(), cal.getTime());
 		List<DayInfo> dayInfoList = getDayInfos(statCtx, null, "C:\\Users\\user\\data\\javlo\\data-ctx\\data-sexy\\persitence\\tracking");
-		
+
 		for (DayInfo d : dayInfoList) {
 			if (d.visitPath.get(path) != null) {
 				pageTotalVisit.addAndGet(d.visitPath.get(path).intValue());
 			}
 		}
-		
-//		dayInfoList.parallelStream()
-//			.filter(d -> d.visitPath.get(path) != null)
-//			.forEach(d -> pageTotalVisit.addAndGet(d.visitPath.get(path).intValue()));
+
+		// dayInfoList.parallelStream()
+		// .filter(d -> d.visitPath.get(path) != null)
+		// .forEach(d -> pageTotalVisit.addAndGet(d.visitPath.get(path).intValue()));
 		return pageTotalVisit.get();
 	}
 
 	public List<DayInfo> getDayInfos(StatContext statCtx) throws IOException {
 		return getDayInfos(statCtx, persistenceService.dayInfoCache, persistenceService.getTrackingDirectory());
 	}
-	
+
 	public static List<DayInfo> getDayInfos(StatContext statCtx, TimeMap<Long, DayInfo> dayInfoCache, String trackingDir) throws IOException {
 		Calendar from = TimeHelper.convertRemoveAfterDay(TimeHelper.getCalendar(statCtx.getFrom()));
 		Calendar to = TimeHelper.convertRemoveAfterDay(TimeHelper.getCalendar(statCtx.getTo()));
@@ -841,7 +851,7 @@ public class Tracker {
 	}
 
 	public static void main(String[] args) throws IOException {
-		System.out.println(">>>>>>>>> Tracker.main : testLastMountPageReading = "+testLastMountPageReading("/javlo/sexy/fr/home2/offices")); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> Tracker.main : testLastMountPageReading = " + testLastMountPageReading("/javlo/sexy/fr/home2/offices")); // TODO: remove debug trace
 	}
 
 }

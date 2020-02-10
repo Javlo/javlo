@@ -363,7 +363,7 @@
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.alerts.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.validate.min.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.colorbox-min.js"></script>
-<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/datatables	/datatables.min.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.form.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.elastic.source.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/custom/gallery.js"></script>	

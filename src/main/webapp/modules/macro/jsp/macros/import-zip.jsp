@@ -4,7 +4,7 @@
 
 <fieldset>
 <legend>Import page</legend>
-<table class="dyntable">
+<table class="dyntable cell-border compact stripe">
 <c:if test="${fn:length(pages)==0}">
 <div class="notification msgalert">
 <a class="close"></a>

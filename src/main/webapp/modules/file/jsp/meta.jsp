@@ -37,6 +37,30 @@ params:
 <c:if test="${not empty param[BACK_PARAM_NAME]}"><input type="hidden" name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" /></c:if>
 
 <ul>
+
+<!-- <c:if test="${not empty param.select}">
+      <li class="directory small select unlock item">
+      		<div class="body">		
+		<div class="download">			
+			<div class="no-focus">			
+			<c:url var="fileSelectURL" value="/.." context="/">
+				<c:if test="${not empty param.select}"><c:param name="select" value="${param.select}" /></c:if>
+				<c:if test="${not empty param.editPreview}"><c:param name="previewEdit" value="${param.previewEdit}" /></c:if>
+				<c:if test="${not empty param[BACK_PARAM_NAME]}">
+					<c:param name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" />
+				</c:if>
+			</c:url>
+			<a href="${fileSelectURL}"><img src="/" alt=".."/></a>			
+			<div class="label">
+				<span>..</span>
+			</div>
+			</div>
+		</div>		
+      
+      
+	  </li>
+</c:if> -->
+
 <c:forEach var="file" items="${files}">
 	<c:url var="fileURL" value="${file.URL}" context="/">
 		<c:if test="${not empty param.select}">

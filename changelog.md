@@ -792,6 +792,8 @@ Security in case of vulnerabilities.
  - create mirror site with other language list
  - reset recaptcha from central config
  - create sepa QRCode
+ - IP2location localisation of ip localy
+ - update datatables version to 1.10.20
 ### Modified
  - security update
  - file-finder optimisation

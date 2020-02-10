@@ -73,6 +73,7 @@ import org.javlo.service.location.LocationService;
 import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.tracking.DayInfo;
 import org.javlo.tracking.Track;
+import org.javlo.tracking.Tracker;
 import org.javlo.utils.NeverEmptyMap;
 import org.javlo.utils.TimeMap;
 import org.javlo.utils.TimeTracker;
@@ -589,7 +590,8 @@ public class PersistenceService {
 			
 			Set<String> sessionDone = new HashSet<>();
 			
-			for (Track track : getAllTrack(cal.getTime(), trackingDir)) {
+			Track[] allTracks = getAllTrack(cal.getTime(), trackingDir);
+			for (Track track : allTracks) {
 				if (!track.getPath().contains(".php")) {
 					dayInfo.pagesCount++;
 					boolean mobile = NetHelper.isMobile(track.getUserAgent());
@@ -600,28 +602,30 @@ public class PersistenceService {
 						savePage.put(track.getPath(), savePage.get(track.getPath()) + 1);
 						dayInfo.saveCount++;
 					}
-					
-//					if (!sessionDone.contains(track.getSessionId())) {
-//						sessionDone.add(track.getSessionId());
-//						IpPosition ipPos;
-//						try {
-//							ipPos = LocationService.getIpPosition(track.getIP());
-//							if (ipPos != null) {
-//								if (ipPos.getAlpha2() != null) {
-//									dayInfo.countryVisit.get(ipPos.getAlpha2()).increment();
-//								} else {
-//									dayInfo.countryVisit.get(DayInfo.COUNTRY_NOT_FOUND).increment();
-//								}
-//							} else {
-//								dayInfo.countryVisit.get(DayInfo.COUNTRY_NOT_FOUND).increment();
-//								logger.warning("country not found for ip "+track.getIP());
-//							}
-//						} catch (Exception e) {
-//							dayInfo.countryVisit.get(DayInfo.COUNTRY_NOT_FOUND).increment();
-//							e.printStackTrace();
-//						}
-//						
-//					}
+					if (!sessionDone.contains(track.getSessionId())) {
+						sessionDone.add(track.getSessionId());
+						IpPosition ipPos;
+						try {
+							ipPos = LocationService.getIpPosition(track.getIP());
+							if (ipPos != null) {
+								if (ipPos.getCountryCode() != null) {
+									String lg = StringHelper.neverEmpty(Tracker.getLanguage(track, allTracks), "?");
+									//if (lg.length() == 2) {
+										String key = ipPos.getCountryCode()+'-'+lg;
+										dayInfo.countryVisit.get(key).increment();
+									//}
+								} else {
+									dayInfo.countryVisit.get(DayInfo.COUNTRY_NOT_FOUND).increment();
+								}
+							} else {
+								dayInfo.countryVisit.get(DayInfo.COUNTRY_NOT_FOUND).increment();
+								logger.fine("country not found for ip "+track.getIP());
+							}
+						} catch (Exception e) {
+							dayInfo.countryVisit.get(DayInfo.COUNTRY_NOT_FOUND).increment();
+							e.printStackTrace();
+						}
+					}
 					
 					//if (track.isView()) {
 						if (mobile) {

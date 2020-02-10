@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <div id="content"
 	class="content full-height ${not empty lightInterface?'light':''}">
-	<table cellpadding="0" cellspacing="0" border="0" class="dyntable"
+	<table cellpadding="0" cellspacing="0" border="0" class="dyntable cell-border compact stripe"
 		id="sitelist">
 		<thead>
 			<tr>

@@ -2,7 +2,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <div class="content">
 
-<table cellpadding="0" cellspacing="0" border="0" class="dyntable" id="remotelist">
+<table cellpadding="0" cellspacing="0" border="0" class="dyntable cell-border compact stripe" id="remotelist">
  <thead>
      <tr>       
        <th class="head0">url</th>                  

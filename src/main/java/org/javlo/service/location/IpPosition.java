@@ -1,65 +1,51 @@
 package org.javlo.service.location;
 
-import java.util.List;
-
 public class IpPosition {
 	
-	private String continent;
-	private String alpha2;
-	private String name;
-	private int countryCode;
-	private String addressFormat;
-	private List<String> languages;
-	private Geo geo;
-	private String currency;
+	private String countryCode;
+	private String countryName;
+	private String region;
+	private String city;
 	
-	public String getContinent() {
-		return continent;
+	public IpPosition(IpRange ipRange) {
+		this.countryCode = ipRange.getCountryCode();
+		this.countryName = ipRange.getCountryName();
+		this.region = ipRange.getRegion();
+		this.city = ipRange.getCity();
 	}
-	public void setContinent(String continent) {
-		this.continent = continent;
-	}
-	public String getAlpha2() {
-		return alpha2;
-	}
-	public void setAlpha2(String alpha2) {
-		this.alpha2 = alpha2;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public int getCountryCode() {
-		return countryCode;
-	}
-	public void setCountryCode(int countryCode) {
+	
+	
+	
+	public IpPosition(String countryCode, String countryName, String region, String city) {
+		super();
 		this.countryCode = countryCode;
-	}
-	public String getAddressFormat() {
-		return addressFormat;
-	}
-	public void setAddressFormat(String addressFromat) {
-		this.addressFormat = addressFromat;
-	}
-	public List<String> getLanguages() {
-		return languages;
-	}
-	public void setLanguages(List<String> languages) {
-		this.languages = languages;
-	}	
-	public Geo getGeo() {
-		return geo;
-	}
-	public void setGeo(Geo geo) {
-		this.geo = geo;
-	}
-	public String getCurrency() {
-		return currency;
-	}
-	public void setCurrency(String currency) {
-		this.currency = currency;
+		this.countryName = countryName;
+		this.region = region;
+		this.city = city;
 	}
 
+	public String getCountryCode() {
+		return countryCode;
+	}
+	public void setCountryCode(String countryCode) {
+		this.countryCode = countryCode;
+	}
+	public String getCountryName() {
+		return countryName;
+	}
+	public void setCountryName(String countryName) {
+		this.countryName = countryName;
+	}
+	public String getRegion() {
+		return region;
+	}
+	public void setRegion(String region) {
+		this.region = region;
+	}
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
+	}
 }
