@@ -305,10 +305,12 @@ public class DashboardAction extends AbstractModuleAction {
 			ObjectBuilder ajaxMap = LangHelper.object();
 			ListBuilder datas = ajaxMap.list("datas");
 			for (Map.Entry<String, MutableInt> entry : countryVisit.entrySet()) {
-				String[] d = new String[2];
-				d[0] = entry.getKey();
-				d[1] = ""+entry.getValue();
-				datas.add(d);
+				if (entry.getKey().length()<6) {
+					String[] d = new String[2];				
+					d[0] = entry.getKey();
+					d[1] = ""+entry.getValue();
+					datas.add(d);
+				}
 			}
 			ctx.setAjaxMap(ajaxMap.getMap());
 		} else if (type.equals("dayinfo")) {

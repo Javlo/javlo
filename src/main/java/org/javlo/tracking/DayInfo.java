@@ -23,7 +23,7 @@ public class DayInfo {
 	private static final String DAYS_VISITS_PREFIX = "days.visits.";
 	private static final String COUNTRY_VISITS_PREFIX = "country.visits.";
 	
-	public static final String COUNTRY_NOT_FOUND = "NT_FND";
+	public static final String COUNTRY_NOT_FOUND = "NT_FD";
 	
 	public int sessionCount = 0;
 	public int session2ClickCount = 0;

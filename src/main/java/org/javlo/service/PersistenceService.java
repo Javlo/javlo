@@ -589,6 +589,7 @@ public class PersistenceService {
 			}
 			
 			Set<String> sessionDone = new HashSet<>();
+			Set<String> session2ClickDone = new HashSet<>();
 			
 			Track[] allTracks = getAllTrack(cal.getTime(), trackingDir);
 			for (Track track : allTracks) {
@@ -604,6 +605,8 @@ public class PersistenceService {
 					}
 					if (!sessionDone.contains(track.getSessionId())) {
 						sessionDone.add(track.getSessionId());
+					} else if (!session2ClickDone.contains(track.getSessionId())) {
+						session2ClickDone.add(track.getSessionId());
 						IpPosition ipPos;
 						try {
 							ipPos = LocationService.getIpPosition(track.getIP());

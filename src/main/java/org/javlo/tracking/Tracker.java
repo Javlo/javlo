@@ -165,8 +165,8 @@ public class Tracker {
 	}
 
 	public static String getLanguage(Track track, Track[] tracks) {
-		String lg = null;
-		for (int i = tracks.length-1; i > 0 && (lg == null || lg.length() == 0); i--) {
+		String lg = "?";
+		for (int i = tracks.length-1; i > 0 && lg.length() != 2; i--) {
 			if (tracks[i].getSessionId().equals(track.getSessionId())) {
 				lg = getLanguage(tracks[i].getPath());
 			}

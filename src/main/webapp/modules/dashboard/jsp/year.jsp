@@ -7,7 +7,7 @@
 		<c:set var="options" value="<option>${y}</option>${options}" />
 	</c:forEach>	
 	<c:set var="options" value="<option value=''>${i18n.edit['global.select']}</option>${options}" />
-<select class="form-input pull-right" onchange="updateYear(this.value); updateYearForTime(this.value); updateDaysForTime(this.value); return false;">
+<select class="form-input pull-right" onchange="updateYear(this.value); updateYearForTime(this.value); updateDaysForTime(this.value); updateYearForCountries(this.value); return false;">
 ${options}
 </select>
 </div>
@@ -181,21 +181,26 @@ updateYearForTime(${info.currentYear});
 
 
 <script type="text/javascript">
-jQuery(document).ready(function() {
+
+function updateYearForCountries(year) {
 	jQuery.ajax({
-	    url: '${countryAjaxURL}',
-	    success: function(ajaxData){
-		  var dataSet = ajaxData.datas;		  
-		  jQuery('#countrytable').DataTable({
-			data: dataSet,
-			columns: [
-		      { title: "country" },
-		      { title: "visit" }
-		    ],
-		    order: [[ 1, "desc" ]]
-		  });
+	    url: '${countryAjaxURL}&y='+year,
+	    success: function(ajaxData){	    	
+	    	var countrytable = jQuery('#countrytable').DataTable({
+	    		data: ajaxData.datas,
+	    		columns: [
+	    	      { title: "country" },
+	    	      { title: "visit" }
+	    	    ],
+	    	    order: [[ 1, "desc" ]],
+	    	    bDestroy: true
+	    	  });
 	    }
 	});
+}
+
+jQuery(document).ready(function() {	
+	updateYearForCountries(${info.currentYear});	
 });
 </script>
 
