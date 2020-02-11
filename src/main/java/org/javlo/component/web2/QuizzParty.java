@@ -78,9 +78,9 @@ public class QuizzParty extends AbstractVisualComponent implements IAction {
 	
 	public static String performStatus(ContentContext ctx, RequestService rs) throws Exception {
 		QuizzPartyContext quizz = QuizzPartyContext.getInstance(ctx.getRequest().getSession());
-		quizz.checkPlayers();
 		String json = "[]";
 		if (quizz != null) {
+			quizz.checkPlayers();
 			json = new Gson().toJson(quizz);			
 		}
 		ResourceHelper.writeStringToStream(json, ctx.getResponse().getOutputStream(), ContentContext.CHARACTER_ENCODING);
