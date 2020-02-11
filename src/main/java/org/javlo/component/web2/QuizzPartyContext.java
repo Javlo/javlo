@@ -1,6 +1,7 @@
 package org.javlo.component.web2;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,7 +39,7 @@ public class QuizzPartyContext {
 		public int na = 0;
 	}
 	
-	private Map<String, QuizzPlayer> players = new TimeMap<>(20);
+	private Map<String, QuizzPlayer> players = new TimeMap<>(10);
 
 	private List<List<Response>> responses = new ArrayList<>();
 
@@ -93,7 +94,6 @@ public class QuizzPartyContext {
 				QuizzPartyContext outQuizz = quizzMap.get(number);
 
 				if (outQuizz != null) {
-					outQuizz.playerLife(session);
 					if (outQuizz != null && outQuizz.getName().equals(name)) {
 						session.setAttribute(KEY, outQuizz);
 						return outQuizz;
@@ -221,20 +221,24 @@ public class QuizzPartyContext {
 	}
 
 	public void checkPlayers() {
-		int countPlayer = 0;
-		Iterator<Map.Entry<String, QuizzPlayer>> ite = players.entrySet().iterator();
-		while (ite.hasNext()) {
-			if (ite.next().getValue() != null) {
+		int countPlayer = 0;		
+		Collection<String> needDeleted = new LinkedList<>();
+		for (Map.Entry<String,QuizzPlayer> player : players.entrySet()) {
+			if (player.getValue() != null) {
 				countPlayer++;
 			} else {
-				ite.remove();
+				needDeleted.add(player.getKey());
 			}
+		}
+		for (String sessionId : needDeleted) {
+			needDeleted.remove(sessionId);
 		}
 		participant = countPlayer;		
 	}
 	
 	public void playerLife(HttpSession session) {
 		QuizzPlayer player = new QuizzPlayer(session.getId());
+		players.remove(player.getSessionId());
 		players.put(player.getSessionId(), player);
 
 	}

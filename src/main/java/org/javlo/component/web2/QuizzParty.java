@@ -78,6 +78,9 @@ public class QuizzParty extends AbstractVisualComponent implements IAction {
 		QuizzPartyContext quizz = QuizzPartyContext.getInstance(ctx.getRequest().getSession());
 		String json = "[]";
 		if (quizz != null) {
+			if (!quizz.getMasterSessionId().equals(ctx.getRequest().getSession().getId())) {
+				quizz.playerLife(ctx.getRequest().getSession());
+			}
 			quizz.checkPlayers();
 			json = new Gson().toJson(quizz);			
 		}
