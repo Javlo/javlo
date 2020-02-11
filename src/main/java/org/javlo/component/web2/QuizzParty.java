@@ -58,7 +58,6 @@ public class QuizzParty extends AbstractVisualComponent implements IAction {
 
 	public static String performCreate(ContentContext ctx, HttpSession session, RequestService rs) throws Exception {
 		QuizzPartyContext.getInstance(session, null);
-		ctx.getRequest().getSession().setMaxInactiveInterval(60*30);
 		return null;
 	}
 
@@ -71,7 +70,6 @@ public class QuizzParty extends AbstractVisualComponent implements IAction {
 		if (quizz == null) {
 			return "quizz '"+name+"' not found.";
 		} else {
-			ctx.getRequest().getSession().setMaxInactiveInterval(60);
 			return null;
 		}
 	}
