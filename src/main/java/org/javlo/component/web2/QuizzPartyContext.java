@@ -11,8 +11,11 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpSession;
 
 import org.javlo.helper.StringHelper;
+import org.javlo.utils.TimeMap;
 
 public class QuizzPartyContext {
+	
+	private static Logger logger = Logger.getLogger(QuizzPartyContext.class.getName());
 
 	public static final int YES = 1;
 	public static final int NO = 0;
@@ -35,11 +38,9 @@ public class QuizzPartyContext {
 		public int na = 0;
 	}
 	
-	private WeakHashMap<String, QuizzPlayer> players = new WeakHashMap<>();
+	private Map<String, QuizzPlayer> players = new TimeMap<>(20);
 
 	private List<List<Response>> responses = new ArrayList<>();
-
-	private static Logger logger = Logger.getLogger(QuizzPartyContext.class.getName());
 
 	private static final String KEY = "quizz";
 	private static final Map<Integer, QuizzPartyContext> quizzMap = new WeakHashMap<>();
@@ -90,12 +91,9 @@ public class QuizzPartyContext {
 			if (StringHelper.isDigit(name.substring(HASH_SIZE))) {
 				int number = Integer.parseInt(name.substring(HASH_SIZE));
 				QuizzPartyContext outQuizz = quizzMap.get(number);
-				
-				QuizzPlayer player = new QuizzPlayer(session.getId());
-				session.setAttribute("player", player);
-				outQuizz.players.put(player.getSessionId(), player);
-				
+
 				if (outQuizz != null) {
+					outQuizz.playerLife(session);
 					if (outQuizz != null && outQuizz.getName().equals(name)) {
 						session.setAttribute(KEY, outQuizz);
 						return outQuizz;
@@ -233,6 +231,12 @@ public class QuizzPartyContext {
 			}
 		}
 		participant = countPlayer;		
+	}
+	
+	public void playerLife(HttpSession session) {
+		QuizzPlayer player = new QuizzPlayer(session.getId());
+		players.put(player.getSessionId(), player);
+
 	}
 
 }
