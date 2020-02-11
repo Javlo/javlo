@@ -34,6 +34,8 @@ public class QuizzPartyContext {
 		public int no = 0;
 		public int na = 0;
 	}
+	
+	private WeakHashMap<String, QuizzPlayer> players = new WeakHashMap<>();
 
 	private List<List<Response>> responses = new ArrayList<>();
 
@@ -58,8 +60,10 @@ public class QuizzPartyContext {
 
 	public static final QuizzPartyContext getInstance(HttpSession session) throws Exception {
 		QuizzPartyContext quizz = (QuizzPartyContext) session.getAttribute(KEY);
-		if (quizz != null && quizz.isReset()) {
-			session.removeAttribute(KEY);
+		if (quizz != null) {
+			if (quizz.isReset()) {
+				session.removeAttribute(KEY);
+			}
 		}
 		return quizz;
 	}
@@ -86,8 +90,12 @@ public class QuizzPartyContext {
 			if (StringHelper.isDigit(name.substring(HASH_SIZE))) {
 				int number = Integer.parseInt(name.substring(HASH_SIZE));
 				QuizzPartyContext outQuizz = quizzMap.get(number);
+				
+				QuizzPlayer player = new QuizzPlayer(session.getId());
+				session.setAttribute("player", player);
+				outQuizz.players.put(player.getSessionId(), player);
+				
 				if (outQuizz != null) {
-					outQuizz.setParticipant(outQuizz.getParticipant() + 1);
 					if (outQuizz != null && outQuizz.getName().equals(name)) {
 						session.setAttribute(KEY, outQuizz);
 						return outQuizz;
@@ -212,6 +220,19 @@ public class QuizzPartyContext {
 
 	public void setReset(boolean reset) {
 		this.reset = reset;
+	}
+
+	public void checkPlayers() {
+		int countPlayer = 0;
+		Iterator<Map.Entry<String, QuizzPlayer>> ite = players.entrySet().iterator();
+		while (ite.hasNext()) {
+			if (ite.next().getValue() != null) {
+				countPlayer++;
+			} else {
+				ite.remove();
+			}
+		}
+		participant = countPlayer;		
 	}
 
 }
