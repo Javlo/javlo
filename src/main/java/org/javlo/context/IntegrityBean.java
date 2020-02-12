@@ -20,15 +20,15 @@ public class IntegrityBean {
 	}
 	
 	public int getDescriptionMinSize() {
-		return Integer.parseInt(data.getProperty("description.min-size", "100"));
+		return Integer.parseInt(data.getProperty("description.min-size", "50"));
 	}
 	
 	public int getDescriptionMaxSize() {
-		return Integer.parseInt(data.getProperty("description.max-size", "300"));
+		return Integer.parseInt(data.getProperty("description.max-size", "160"));
 	}
 	
 	public int getTitleMaxSize() {
-		return Integer.parseInt(data.getProperty("title.max-size", "60"));
+		return Integer.parseInt(data.getProperty("title.max-size", "70"));
 	}
 	
 	public int getContentMinSize() {
