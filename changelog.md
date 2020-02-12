@@ -805,6 +805,7 @@ Security in case of vulnerabilities.
  - remove use report from dashboard
  - add crop option on layer image filter
  - replace link on extended widget
+ - update integrity rules
 ### fixed
  - change heading level correction
  - close popup site propoerties in preview mode if no error
