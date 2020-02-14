@@ -794,6 +794,7 @@ Security in case of vulnerabilities.
  - create sepa QRCode
  - IP2location localisation of ip localy
  - update datatables version to 1.10.20
+ - section component
 ### Modified
  - security update
  - file-finder optimisation
@@ -806,6 +807,7 @@ Security in case of vulnerabilities.
  - add crop option on layer image filter
  - replace link on extended widget
  - update integrity rules
+ - update DataTables to 1.10.20
 ### fixed
  - change heading level correction
  - close popup site propoerties in preview mode if no error
