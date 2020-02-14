@@ -9,6 +9,7 @@ import org.javlo.bean.Link;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
 
 public class SectionLinks extends AbstractVisualComponent {
 	
@@ -26,7 +27,9 @@ public class SectionLinks extends AbstractVisualComponent {
 		while (comp != null) {
 			if (comp instanceof Section) {
 				Section section = (Section)comp;
-				links.add(new Link("#"+section.getHtmlId(), section.getTitle()));
+				if (!StringHelper.isEmpty(section.getTitle())) {
+					links.add(new Link("#"+section.getHtmlId(), section.getTitle()));
+				}
 			}
 			comp = comp.getNextComponent();
 		}
