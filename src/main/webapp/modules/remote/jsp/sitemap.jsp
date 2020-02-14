@@ -67,7 +67,6 @@ jQuery(document).ready(function() {
 		update(urls[i][0], urls[i][1]);	
 	}
 	jQuery('#remotelist').dataTable( {
-		 "sPaginationType": "full_numbers",
 		 "aaSorting": [[ 1, "desc" ]],
 		 "aoColumns": [
 		               null,

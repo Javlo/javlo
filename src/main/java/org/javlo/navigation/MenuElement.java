@@ -208,7 +208,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		public ImageTitleBean imageHeader;
 
 		public Map<String, ImageTitleBean> imageAreaBackground;
-
+		
 		public Collection<String> needdedResources = null;
 
 		private Map<String, Boolean> emptyArea = Collections.EMPTY_MAP;
@@ -2949,7 +2949,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		while (contentList.hasNext(ctx)) {
 			IContentVisualComponent elem = contentList.next(specialCtx);
 			if ((elem instanceof ImageBackground) && elem.isRealContent(specialCtx)) {
-				if (!((ImageBackground) elem).isForArea()) {
+				if (((ImageBackground) elem).isForGlobal()) {
 					IImageTitle imageComp = (IImageTitle) elem;
 					if (imageComp.isImageValid(specialCtx)) {
 						int priority = imageComp.getPriority(specialCtx);
@@ -3000,7 +3000,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		}
 		return desc.imageAreaBackground;
 	}
-
+	
 	public IImageTitle getImage(ContentContext ctx) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 		if (desc.imageLink != null) {

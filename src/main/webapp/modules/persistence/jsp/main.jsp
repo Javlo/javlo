@@ -63,7 +63,6 @@
 							jQuery('#sitelist')
 									.dataTable(
 											{
-												"sPaginationType" : "full_numbers",
 												"aaSorting" : [ [ 0, "desc" ] ],
 												"aoColumns" : [
 														null,

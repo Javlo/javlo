@@ -2,7 +2,7 @@
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <div class="left">
 
-<table cellpadding="0" cellspacing="0" border="0" class="dyntable cell-border compact stripe" id="sitelist">
+<table cellpadding="0" cellspacing="0" border="0" class="dyntable cell-border compact stripe display" id="sitelist">
  <thead>
      <tr>
          <th class="head0">${i18n.edit['admin.title.context-key']}</th>
@@ -17,16 +17,6 @@
          <th class="head0">&nbsp;</th>
      </tr>
 </thead>
-<colgroup>
-    <col class="con0" />
-    <col class="con1" />
-    <col class="con0" />
-    <col class="con1" />
-    <col class="con0" />
-    <col class="con1" />
-	<col class="con0" />
-	<col class="con1" />
-</colgroup>
 <tbody> 
  <c:forEach var="context" items="${contextList}">
  <tr class="gradeX${context.master?' master':''}${fn:length(context.alias)>0?' as-alias':''}">
@@ -75,26 +65,12 @@
  </tr>	
  </c:forEach>
 </tbody>
-<tfoot>
-   <tr>
-     <th class="head0">${i18n.edit['admin.title.context-key']}</th>
-     <th class="head1">${i18n.edit['admin.title.admin']}</th>
-     <th class="head0">${i18n.edit['admin.title.alias']}</th>
-     <th class="head1">${i18n.edit['admin.title.creation']}</th>
-     <th class="head0">${i18n.edit['admin.title.latest-login']}</th>
-     <th class="head1">${i18n.edit['admin.title.count-user']}</th>
-	 <th class="head0">${i18n.edit['admin.title.loaded']}</th>         
-     <th class="head0">${i18n.edit['admin.title.view']}</th>
-     <th class="head1">${i18n.edit['admin.title.edit']}</th>
-     <th class="head0">&nbsp;</th>
-   </tr>
-</tfoot>
+
 </table>
 
 <script type="text/javascript">
 jQuery(document).ready(function() {
-	jQuery('#sitelist').dataTable( {
-		"sPaginationType": "full_numbers",
+	jQuery('#sitelist').DataTable( {
 		 "aaSorting": [[ 4, "desc" ]],
 		 "aoColumns": [
 		               null,

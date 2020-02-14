@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <div id="notification" class="content">
 
-<table cellpadding="0" cellspacing="0" border="0" class="dyntable" id="notifications">
+<table cellpadding="0" cellspacing="0" border="0" class="dyntable display" id="notifications">
  <thead>
      <tr>
        <th class="head1">time</th>
@@ -38,7 +38,6 @@
 <script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery('#notifications').dataTable( {
-		 "sPaginationType": "full_numbers",
 		 "aaSorting": [[ 0, "desc" ]],
 		 "aoColumns": [
 		               null,

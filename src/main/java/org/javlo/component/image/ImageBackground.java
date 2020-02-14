@@ -7,11 +7,12 @@ import org.javlo.helper.StringHelper;
 public class ImageBackground extends GlobalImage {
 
 	private static final String AREA = "area";
+	private static final String CONTAINER = "container";
 	public static final String TYPE = "image-background";
 	
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
-		return new String[] { "global", AREA };
+		return new String[] { "global", AREA, CONTAINER };
 	}
 	
 	@Override
@@ -29,11 +30,17 @@ public class ImageBackground extends GlobalImage {
 		return false;
 	}
 	
+	public boolean isForGlobal() {
+		return !isForArea() && ! isForContainer();
+	}
+	
 	public boolean isForArea() {
 		return AREA.equals(getStyle());
 	}
 	
-	
+	public boolean isForContainer() {
+		return CONTAINER.equals(getStyle());
+	}
 	
 	@Override
 	public String getType() {

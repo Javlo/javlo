@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <div id="search-result" class="left">
 <h1>${i18n.edit['search.title']} ${param.query}</h1>
-<table cellpadding="0" cellspacing="0" border="0" class="dyntable" id="sitelist">
+<table cellpadding="0" cellspacing="0" border="0" class="dyntable display" id="sitelist">
  <thead>
      <tr>
        <th class="head0">${i18n.edit['search.title.page-relevance']}</th>
@@ -43,7 +43,6 @@
 <script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery('#sitelist').dataTable( {
-		"sPaginationType": "full_numbers",
 		 "aaSorting": [[ 0, "asc" ]],
 		 "aoColumns": [
 		               null,

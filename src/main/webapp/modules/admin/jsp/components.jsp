@@ -7,7 +7,7 @@
 <input type="hidden" name="context" value="${context}" />
 </div>
 
-<table cellpadding="0" cellspacing="0" border="0" class="dyntable cell-border compact stripe" id="sitelist">
+<table cellpadding="0" cellspacing="0" border="0" class="dyntable cell-border compact stripe display" id="sitelist">
  <thead>
      <tr>
        <th class="head0">type</th>
@@ -65,7 +65,6 @@
 <script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery('#sitelist').shadowInputs().dataTable( {
-		 "sPaginationType": "full_numbers",
 		 "aaSorting": [[ 2, "desc" ]],
 		 "aoColumns": [
 		               { "asSorting": [ "" ] },

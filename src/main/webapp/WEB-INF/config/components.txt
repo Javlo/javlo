@@ -105,6 +105,8 @@ org.javlo.component.text.ExtendedWidget
 --content.title.container
 
 org.javlo.component.container.Box
+org.javlo.component.container.Section
+org.javlo.component.container.SectionLinks
 org.javlo.component.container.TextDirection
 org.javlo.component.container.RepeatContainer
 org.javlo.component.core.MessageContainer

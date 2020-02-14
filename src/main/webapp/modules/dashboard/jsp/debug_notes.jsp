@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <div id="debug" class="content">
 
-<table cellpadding="0" cellspacing="0" border="0" class="dyntable cell-border compact stripe" id="notes">
+<table cellpadding="0" cellspacing="0" border="0" class="dyntable cell-border compact stripe display" id="notes">
  <thead>
      <tr>
        <th class="head1">date</th>
@@ -46,7 +46,6 @@
 <script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery('#notes').dataTable( {
-		 "sPaginationType": "full_numbers",
 		 "aaSorting": [[ 0, "desc" ]],
 		 "aoColumns": [
 		               null,

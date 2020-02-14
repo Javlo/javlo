@@ -21,7 +21,7 @@
 	</form>
 
 <c:if test="${not empty tracks && fn:length(tracks)>0}">		
-<table cellpadding="0" cellspacing="0" border="0" class="dyntable" id="remotelist">
+<table cellpadding="0" cellspacing="0" border="0" class="dyntable display" id="remotelist">
  <thead>
      <tr>       
        <th class="head0">time</th>                  
@@ -78,7 +78,6 @@
 <script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery('#remotelist').dataTable( {
-		 "sPaginationType": "full_numbers",
 		 "aaSorting": [[ 0, "desc" ]],
 		 "aoColumns": [
 		               null,

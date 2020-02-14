@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <div class="content">
-<table cellpadding="0" cellspacing="0" border="0" class="dyntable cell-border compact stripe" id="baskets">
+<table cellpadding="0" cellspacing="0" border="0" class="dyntable cell-border compact stripe display" id="baskets">
  <thead>
      <tr>       
        <th class="head1">id</th>
@@ -80,7 +80,6 @@
 <script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery('#baskets').dataTable( {
-		 "sPaginationType": "full_numbers",
 		 "aaSorting": [[ 3, "desc" ]],
 		 "aoColumns": [
 		               null,

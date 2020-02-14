@@ -5,7 +5,7 @@
 		<div>
 			<input type="hidden" name="webaction" value="deleteUser" />
 		</div>
-		<table cellpadding="0" cellspacing="0" border="0" class="dyntable cell-border compact stripe" id="sitelist">
+		<table cellpadding="0" cellspacing="0" border="0" class="dyntable cell-border compact stripe display" id="sitelist">
 			<thead>
 				<tr>
 					<th width="13" class="head0">&nbsp;</th>
@@ -50,7 +50,6 @@
 							jQuery('#sitelist')
 									.dataTable(
 											{
-												"sPaginationType" : "full_numbers",
 												"aaSorting" : [ [ 5, "desc" ] ],
 												"aoColumns" : [  { "bSortable": false }, null,	null, null, null, null ],
 												"oLanguage" : {
