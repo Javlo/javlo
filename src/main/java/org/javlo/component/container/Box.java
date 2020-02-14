@@ -66,6 +66,8 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		ImageBackground bg = getBackgroundImage(ctx);
 		if (bg != null) {
 			ctx.getRequest().setAttribute("backgroundImage", new ImageBean(ctx, bg, "background"));
+		} else {
+			ctx.getRequest().setAttribute("backgroundImage", null);
 		}
 	}
 	
