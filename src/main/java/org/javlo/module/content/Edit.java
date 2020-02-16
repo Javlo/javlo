@@ -891,12 +891,15 @@ public class Edit extends AbstractModuleAction {
 			newId = content.createContent(ctx, targetPage, areaKey, previousId, type, "", true);
 			IContentVisualComponent openBox = contentService.getComponent(ctx, newId);
 			if (openBox instanceof IContainer && ctx.isEditPreview()) {
-				if (previousComp != null) {
+				if (previousComp != null && !(previousComp instanceof IContainer)) {
 					ComponentHelper.moveComponent(ctx, previousComp, openBox, targetPage, area);
 				}
 				String closePreviousid = previousId;
 				if (previousComp == null) {
 					closePreviousid = newId;
+				}
+				if (previousComp instanceof IContainer) {
+					closePreviousid = openBox.getId();
 				}
 				newId = content.createContent(ctx, targetPage, areaKey, closePreviousid, type, "", true);
 				IContentVisualComponent closeBox = contentService.getComponent(ctx, newId);
