@@ -87,13 +87,25 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		return null;
 	}
 	
-	private Box getOpenComponent(ContentContext ctx) {
-		if (isCloseBox()) {
+	@Override
+	public Box getOpenComponent(ContentContext ctx) {
+		int depth = 0;
+		if (!isCloseBox()) {
+			return this;
+		} else {
 			IContentVisualComponent comp = getPreviousComponent();
-			IContentVisualComponent prevComp = null;
-			while (comp != null && !(prevComp != null)) {
+			IContentVisualComponent previousComp = null;
+			while (comp != null && !(previousComp != null)) {
 				if (comp.getType().equals(getType())) {
-					return (Box)comp;
+					if (!((IContainer)comp).isOpen(ctx)) {
+						depth++;
+					} else {
+						if (depth==0) {
+							return (Box)comp;
+						} else {
+							depth--;
+						}
+					}
 				}
 				comp = comp.getPreviousComponent();
 			}
@@ -101,13 +113,25 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		return null;
 	}
 	
-	private Box getCloseComponent(ContentContext ctx) {
-		if (!isCloseBox()) {
+	@Override
+	public Box getCloseComponent(ContentContext ctx) {
+		int depth = 0;
+		if (isCloseBox()) {
+			return this;
+		} else {
 			IContentVisualComponent comp = getNextComponent();
 			IContentVisualComponent nextComp = null;
 			while (comp != null && !(nextComp != null)) {
 				if (comp.getType().equals(getType())) {
-					return (Box)comp;
+					if (((IContainer)comp).isOpen(ctx)) {
+						depth++;
+					} else {
+						if (depth==0) {
+							return (Box)comp;
+						} else {
+							depth--;
+						}
+					}
 				}
 				comp = comp.getNextComponent();
 			}
@@ -188,19 +212,19 @@ public class Box extends AbstractVisualComponent implements IContainer {
 	public String getType() {
 		return TYPE;
 	}
-	
-	@Override
-	protected String getColomnablePrefix(ContentContext ctx) {
-		if (!isCloseBox()) {
-			return super.getColomnablePrefix(ctx);
-		} else {
-			Box box = getOpenComponent(ctx);
-			if (box != null) {
-				return box.getColomnablePrefix(ctx);
-			}
-		}
-		return "";
-	}
+//	
+//	@Override
+//	protected String getColomnablePrefix(ContentContext ctx) {
+//		if (!isCloseBox()) {
+//			return super.getColomnablePrefix(ctx);
+//		} else {
+//			Box box = getOpenComponent(ctx);
+//			if (box != null) {
+//				return box.getColomnablePrefix(ctx);
+//			}
+//		}
+//		return "";
+//	}
 
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
@@ -211,14 +235,33 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		}
 	}
 
+//	@Override
+//	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+//		if (isCloseBox()) {
+//			Box parentBox = getOpenComponent(ctx);
+//			if (parentBox != null) {
+//				return parentBox.getColomnableSuffix(ctx);
+//			}
+//		}
+//		return "";
+//	}
+	
 	@Override
-	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		if (isCloseBox()) {
-			Box parentBox = getOpenComponent(ctx);
-			if (parentBox != null) {
-				return parentBox.getColomnableSuffix(ctx);
-			}
+	protected String getColumn(ContentContext ctx) {
+		if (isOpen(ctx)) {
+			return super.getColumn(ctx);
+		} else {
+			return "";
 		}
+	}
+	
+	@Override
+	protected String getForcedPrefixViewXHTMLCode(ContentContext ctx) {
+		return "";
+	}
+	
+	@Override
+	protected String getForcedSuffixViewXHTMLCode(ContentContext ctx) {
 		return "";
 	}
 	
@@ -231,43 +274,43 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		boolean close = false;
 		/* auto */
 		if (getColumnSize() == 0) {
-			ctx.setColumnableSize(0);
+			ctx.setColumnableSize(0, ctx.getColumnableDepth());
 			return true;
 		}
-		ctx.setColumnableSize(ctx.getColumnableSize() + getColumnSize());
+		ctx.setColumnableSize(ctx.getColumnableSize(ctx.getColumnableDepth()) + getColumnSize(), ctx.getColumnableDepth());
 		if (next != null) {
-			if (ctx.getColumnableSize() + next.getColumnSize() > max || next.getColumnSize() < 0 || !next.isColumnable(ctx)) {
+			if (ctx.getColumnableSize(ctx.getColumnableDepth()) + next.getColumnSize() > max || next.getColumnSize() < 0 || !next.isColumnable(ctx)) {
 				close = true;
-				ctx.setColumnableSize(0);
+				ctx.setColumnableSize(0, ctx.getColumnableDepth());
 			}
 		} else {
 			close = true;
-			ctx.setColumnableSize(0);
+			ctx.setColumnableSize(0, ctx.getColumnableDepth());
 		}
 		return close;
 	}
 	
-	@Override
-	protected boolean isCloseRow(ContentContext ctx) {
-		if (!isCloseBox()) {
-			Box closeBox = getCloseComponent(ctx);
-			if (closeBox != null) {
-				return closeBox.isCloseRow(ctx);
-			} 
-		}
-		return isBoxCloseRow(ctx);
-	}
-	
-	@Override
-	protected boolean isOpenRow(ContentContext ctx) {
-		if (isCloseBox()) {
-			Box openBox = getOpenComponent(ctx);
-			if (openBox != null) {
-				return openBox.isOpenRow(ctx);
-			} 
-		}
-		return isBoxCloseRow(ctx);
-	}
+//	@Override
+//	protected boolean isCloseRow(ContentContext ctx) {
+//		if (!isCloseBox()) {
+//			Box closeBox = getCloseComponent(ctx);
+//			if (closeBox != null) {
+//				return closeBox.isCloseRow(ctx);
+//			} 
+//		}
+//		return isBoxCloseRow(ctx);
+//	}
+//	
+//	@Override
+//	protected boolean isOpenRow(ContentContext ctx) {
+//		if (isCloseBox()) {
+//			Box openBox = getOpenComponent(ctx);
+//			if (openBox != null) {
+//				return openBox.isOpenRow(ctx);
+//			} 
+//		}
+//		return isBoxCloseRow(ctx);
+//	}
 
 	protected String getInternalPrefix(ContentContext ctx) {
 		String parent = "";

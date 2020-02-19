@@ -50,6 +50,7 @@ import org.javlo.cache.ICache;
 import org.javlo.component.column.TableBreak;
 import org.javlo.component.column.TableComponent;
 import org.javlo.component.config.ComponentConfig;
+import org.javlo.component.container.IContainer;
 import org.javlo.component.links.MirrorComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -143,7 +144,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	public static final String HIDDEN = "hidden";
 
-	private static final List<Integer> DEFAULT_COLUMN_SIZE = new LinkedList<Integer>(Arrays.asList(new Integer[] { 0, 1, 2, 3, 4, 6, 8, 10, 12 }));
+	private static final List<Integer> DEFAULT_COLUMN_SIZE = new LinkedList<Integer>(Arrays.asList(new Integer[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 }));
 
 	public static final String FORCE_COMPONENT_ID = "___FORCE_COMPONENT_ID";
 
@@ -1487,44 +1488,75 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected boolean isOpenRow(ContentContext ctx) {
 		int max = getColumnMaxSize(ctx);
 		IContentVisualComponent prev = getPreviousComponent();
-		if (prev == null) {
-			return true;
+		if (prev instanceof IContainer) {
+			prev = ((IContainer)prev).getOpenComponent(ctx);
 		}
 		boolean open = false;
-		if (ctx.getColumnableSize() <= 0) {
+		if (prev == null) {
 			open = true;
+		} else {		
+			if (ctx.getColumnableSize(ctx.getColumnableDepth()) <= 0) {
+				open = true;
+			}
+			if (ctx.getColumnableSize(ctx.getColumnableDepth()) + getColumnSize() > max || prev.getColumnSize() <= 0) {
+				open = true;
+			}
 		}
-		if (ctx.getColumnableSize() + getColumnSize() > max || prev.getColumnSize() <= 0) {
-			open = true;
+		if (this instanceof IContainer) {
+			IContainer container = (IContainer)this;
+			if (container.isOpen(ctx)) {
+				ctx.setColumnableDepth(ctx.getColumnableDepth()+1);
+			}
 		}
 		return open;
 	}
 
 	protected boolean isCloseRow(ContentContext ctx) {
+		
+		int colSize = getColumnSize();
+		
+		if (this instanceof IContainer) {
+			IContainer container = (IContainer)this;
+			if (!container.isOpen(ctx)) {
+				colSize = container.getOpenComponent(ctx).getColumnSize();
+				ctx.setColumnableDepth(ctx.getColumnableDepth()-1);
+				if (ctx.getColumnableDepth()<0) {
+					logger.severe("bad component structure columnable depth is negative : "+ctx.getRequest().getRequestURL());
+				}
+			}
+		}
+		
 		int max = getColumnMaxSize(ctx);
 		IContentVisualComponent next = getNextComponent();
 		boolean close = false;
 		/* auto */
 		if (getColumnSize() == 0) {
-			ctx.setColumnableSize(0);
+			ctx.setColumnableSize(0, ctx.getColumnableDepth());
 			return true;
 		}
-		ctx.setColumnableSize(ctx.getColumnableSize() + getColumnSize());
+		ctx.setColumnableSize(ctx.getColumnableSize(ctx.getColumnableDepth()) + colSize, ctx.getColumnableDepth());
 		if (next != null) {
-			if (ctx.getColumnableSize() + next.getColumnSize() > max || next.getColumnSize() < 0 || !next.isColumnable(ctx)) {
+			if (ctx.getColumnableSize(ctx.getColumnableDepth()) + next.getColumnSize() > max || next.getColumnSize() < 0 || !next.isColumnable(ctx)) {
 				close = true;
-				ctx.setColumnableSize(0);
+				ctx.setColumnableSize(0,ctx.getColumnableDepth());
 			}
 		} else {
 			close = true;
-			ctx.setColumnableSize(0);
+			ctx.setColumnableSize(0,ctx.getColumnableDepth());
 		}
 		return close;
 	}
 
 	protected String getColomnablePrefix(ContentContext ctx) {
 		String colPrefix = "";
-		if (isColumnable(ctx) && getColumnSize() >= 0 && getColumnSize() != getColumnMaxSize(ctx)) {
+		int columnSize = getColumnSize();
+		if (this instanceof IContainer) {
+			IContainer container = (IContainer)this;
+			if (!container.isOpen(ctx)) {
+				return "";
+			} 
+		}
+		if (isColumnable(ctx) && columnSize >= 0 && columnSize != getColumnMaxSize(ctx)) {
 			try {
 				Template tpl = ctx.getCurrentTemplate();
 				colPrefix = "<" + tpl.getColumnableRowTag() + " style=\"" + tpl.getColumnableRowStyle() + "\" class=\"" + tpl.getColumnableRowClass() + " component-row-" + getType() + "\">";
@@ -1549,20 +1581,29 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	protected String getColomnableSuffix(ContentContext ctx) {
 		String colSuffix = "";
-		if (isColumnable(ctx) && getColumnSize() >= 0 && getColumnSize() != getColumnMaxSize(ctx)) {
+		int columnSize = getColumnSize();
+		if (this instanceof IContainer) {
+			IContainer container = (IContainer)this;
+			if (!container.isOpen(ctx)) {
+				columnSize = container.getOpenComponent(ctx).getColumnSize();
+			} else {
+				return "";
+			}
+		}
+		if (isColumnable(ctx) && columnSize >= 0 && columnSize != getColumnMaxSize(ctx)) {
 			Template tpl;
 			try {
 				tpl = ctx.getCurrentTemplate();
-				colSuffix = "</" + tpl.getColumnableRowTag() + ">";
+				colSuffix = "</" + tpl.getColumnableRowTag() + "> <!-- close row : "+getId()+" -->";
 				if (!StringHelper.isEmpty(tpl.getColumnableRowTagIn())) {
 					colSuffix = "</" + tpl.getColumnableRowTagIn() + '>' + colSuffix;
 				}
 				if (!isCloseRow(ctx)) {
 					colSuffix = "";
 				}
-				colSuffix = "</" + tpl.getColumnableColTag() + ">" + colSuffix;
+				colSuffix = "</" + tpl.getColumnableColTag() + "> <!-- close col : "+getId()+" -->" + colSuffix;
 				if (!StringHelper.isEmpty(tpl.getColumnableColTagIn())) {
-					colSuffix = "</" + tpl.getColumnableColTagIn() + ">" + colSuffix;
+					colSuffix = "</" + tpl.getColumnableColTagIn() + "> <!-- close in col : "+getId()+" -->" + colSuffix;
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -2184,7 +2225,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 		String suffix;
 		if (!componentBean.isList()) {
-			suffix = "</" + getTag(ctx) + ">";
+			suffix = "</" + getTag(ctx) + "> <!-- /forced suffix t:"+getType()+" -->";
 		} else {
 			suffix = "</" + getListItemTag(ctx) + '>';
 		}

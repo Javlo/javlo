@@ -1,8 +1,9 @@
 package org.javlo.component.container;
 
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 
-public interface IContainer {
+public interface IContainer extends IContentVisualComponent {
 	
 	public static String OPEN_CONTAINER_CODE = "<div class=\"component-container\">";
 	
@@ -27,5 +28,9 @@ public interface IContainer {
 	 * @return
 	 */
 	public String getCloseCode(ContentContext ctx);
+	
+	public IContainer getCloseComponent(ContentContext ctx);
+	
+	public IContainer getOpenComponent(ContentContext ctx);
 
 }

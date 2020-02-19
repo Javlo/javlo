@@ -946,7 +946,7 @@ public class Edit extends AbstractModuleAction {
 				ctx.setRenderMode(Integer.parseInt(mode));
 			}
 			ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, newId);
-			
+
 			String htmlArea = ComponentHelper.renderArea(ctx, areaKey);
 			ctx.getAjaxInsideZone().put(selecterPrefix + area, htmlArea);
 		}
@@ -1240,7 +1240,7 @@ public class Edit extends AbstractModuleAction {
 						modify = true;
 					}
 				}
-				
+
 				if (userInterface.isAdmin()) {
 					boolean isAdmin = StringHelper.isTrue(requestService.getParameter("admin", null));
 					if (page.isAdmin() != isAdmin) {
@@ -1710,7 +1710,7 @@ public class Edit extends AbstractModuleAction {
 			} else {
 				logger.severe("no search engine.");
 			}
-			
+
 			String eventMessage = staticConfig.getGeneralLister().onPublish(ctx);
 			if (eventMessage != null) {
 				message = eventMessage;
@@ -1935,7 +1935,23 @@ public class Edit extends AbstractModuleAction {
 		if (comp == null) {
 			return "component not found : " + rs.getParameter("id");
 		} else {
-			content.createContent(ctx, comp.getComponentBean(), comp.getId(), true);
+			if (comp instanceof IContainer) {
+				IContainer openComponent = ((IContainer) comp).getOpenComponent(ctx);
+				IContainer closeComponent = ((IContainer) comp).getCloseComponent(ctx);
+				if (openComponent == null || closeComponent == null) {
+					logger.severe("no bloc found for container : " + comp.getId() + " (" + comp.getType() + ')');
+				} else {
+					String previousId = content.createContent(ctx, openComponent.getComponentBean(), closeComponent.getId(), false);
+					comp = comp.getNextComponent();
+					while (!comp.getId().equals(closeComponent.getId())) {
+						previousId = content.createContent(ctx, comp.getComponentBean(), previousId, false);
+						comp = comp.getNextComponent();
+					}
+					content.createContent(ctx, closeComponent.getComponentBean(), previousId, false);
+				}
+			} else {
+				content.createContent(ctx, comp.getComponentBean(), comp.getId(), true);
+			}
 			if (ctx.isAjax()) {
 				String id = rs.getParameter("id");
 				ctx.addAjaxZone("comp-" + id, "");

@@ -45,6 +45,7 @@ import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
+import org.javlo.utils.NeverEmptyMap;
 import org.javlo.utils.downloader.Html2Directory;
 
 /**
@@ -497,7 +498,9 @@ public class ContentContext {
 
 	private String contextRequestLanguage = null;
 
-	private int columnableSize = 0;
+	private Map<Integer,Integer> columnableSizes = new NeverEmptyMap<Integer, Integer>(Integer.class);
+	
+	private int columnableDepth = 0;
 
 	private Map<String, Object> attributes = null;
 
@@ -2279,12 +2282,12 @@ public class ContentContext {
 		return StringHelper.isTrue(request.getParameter(TAKE_SCREENSHOT));
 	}
 
-	public int getColumnableSize() {
-		return columnableSize;
+	public int getColumnableSize(int depth) {	
+		return columnableSizes.get(depth);
 	}
 
-	public void setColumnableSize(int columnableSize) {
-		this.columnableSize = columnableSize;
+	public void setColumnableSize(int columnableSize, int depth) {
+		this.columnableSizes.put(depth, columnableSize);
 	}
 
 	public Object getAttribute(String key) {
@@ -2329,6 +2332,14 @@ public class ContentContext {
 
 	public void setActionServlet(boolean actionServlet) {
 		this.actionServlet = actionServlet;
+	}
+
+	public int getColumnableDepth() {
+		return columnableDepth;
+	}
+
+	public void setColumnableDepth(int columnableDepth) {
+		this.columnableDepth = columnableDepth;
 	}
 
 }
