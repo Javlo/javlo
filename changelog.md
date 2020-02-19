@@ -808,6 +808,7 @@ Security in case of vulnerabilities.
  - replace link on extended widget
  - update integrity rules
  - update DataTables to 1.10.20
+ - container recursive
 ### fixed
  - change heading level correction
  - close popup site propoerties in preview mode if no error
