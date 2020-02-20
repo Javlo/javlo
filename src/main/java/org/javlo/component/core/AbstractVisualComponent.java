@@ -3041,6 +3041,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	public void setModify() {
 		componentBean.setModify(true);
+		updateCache();
+	}
+	
+	protected void updateCache() {
+		
 	}
 
 	@Override

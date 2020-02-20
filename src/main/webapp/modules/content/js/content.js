@@ -63,6 +63,8 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 	if (wysiwygCss == null) {
 		wysiwygCss = staticRootURL+"modules/content/js/tinymce.css";
 	}
+
+	console.log("wysiwygCss = ",wysiwygCss);
 	
 	tinymce.init({
 	    paste_as_text: true
@@ -77,7 +79,9 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 	    	{ title: 'h5', block: 'h5', classes: 'heading' },
 	    	{ title: 'h6', block: 'h6', classes: 'heading' },
 	        { title: 'highlight', inline: 'span', classes: 'text-highlight' },
-	        { title: 'whisper', inline: 'span', classes: 'text-whisper' }
+			{ title: 'whisper', inline: 'span', classes: 'text-whisper' },
+			{ title: 'left', block: 'div', classes: 'float-left mr-3 mb-1' },
+			{ title: 'right', block: 'div', classes: 'float-right ml-3 mb-1' }
 	      ];
 	}
 	

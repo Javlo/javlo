@@ -23,7 +23,6 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URLDecoder;
-import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;

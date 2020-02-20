@@ -126,7 +126,7 @@ params:
 			</c:if>
 			<c:set var="dataURL" value="" />			
 			<c:if test="${not empty param.select && !file.directory}">
-				<c:set var="dataURL" value='data-url="${file.dynamicUrl}"' />
+				<c:set var="dataURL" value='data-url="${file.absoluteURL}"' />
 			</c:if>
 			<a ${!file.directory && not empty param.select?'class="select-item"':''} href="${fileSelectURL}" ${dataURL}><img src="${file.thumbURL}" /></a>			
 			<c:if test="${file.image && !metaReadOnly && empty param.select}">

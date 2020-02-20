@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.javlo.component.core.AbstractVisualComponent;
+import org.javlo.component.core.ISubTitle;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.InfoBean;
@@ -21,6 +22,9 @@ import org.javlo.service.ITranslator;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.utils.SuffixPrefix;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 /**
  * @author pvandermaesen
@@ -28,6 +32,13 @@ import org.javlo.utils.SuffixPrefix;
 public class WysiwygParagraph extends AbstractVisualComponent {
 
 	public static final String TYPE = "wysiwyg-paragraph";
+
+	
+	private String title = null;
+	
+	private String subtitle = null;
+	
+	private int subtitleLevel = 0;
 	
 	@Override
 	protected String getEditorComplexity(ContentContext ctx) {
@@ -119,6 +130,40 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 		return true;
 	}
 	
+	@Override
+	public void updateCache() {
+		String xhtml = getValue();		
+		Document doc = Jsoup.parse(xhtml);
+		Elements titles = doc.getElementsByTag("h1");
+		this.title = null;
+		if (titles.size() > 0) {
+			this.title = titles.get(0).text();
+		}
+		this.subtitle = null;
+		for (int i=2; i<=6 && this.subtitle == null; i++) {
+			titles = doc.getElementsByTag("h"+i);
+			if (titles.size() > 0) {
+				this.subtitle = titles.get(0).text();
+				this.subtitleLevel = i;
+			}
+		}
+	}
+	
+	
+	@Override
+	public int getLabelLevel(ContentContext ctx) {
+		if (title != null) {
+			return HIGH_LABEL_LEVEL;
+		} else {
+			return -1;
+		}
+	}
+	
+	@Override
+	public String getTextTitle(ContentContext ctx) {
+		return title;
+	}
+	
 	/*@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
 		if (ctx.isAsViewMode() && getValue().contains("</p>")) {
@@ -198,5 +243,6 @@ public class WysiwygParagraph extends AbstractVisualComponent {
 	protected boolean getColumnableDefaultValue() {
 		return true;
 	}
-	
+
+
 }
