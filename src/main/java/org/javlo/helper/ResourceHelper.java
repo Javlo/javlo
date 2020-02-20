@@ -374,6 +374,25 @@ public class ResourceHelper {
 			return true;
 		}
 	}
+	
+	public static String extractResourcePathFromURL(ContentContext ctx, String url) {
+		if (url == null) {
+			return null;
+		}
+		ContentContext createUrlCtx = new ContentContext(ctx);
+		if (StringHelper.isURL(url)) {
+			createUrlCtx.setAbsoluteURL(true);
+		}
+		String baseResourceUrl = URLHelper.createResourceURL(createUrlCtx, "/");
+		if (url.startsWith(baseResourceUrl)) {
+			return url.substring(baseResourceUrl.length());
+		}
+		String baseMediaUrl = URLHelper.createMediaURL(createUrlCtx, "/");
+		if (url.startsWith(baseMediaUrl)) {
+			return url.substring(baseMediaUrl.length());
+		}
+		return url;
+	}
 
 	public static void filteredFileCopyEscapeScriplet(File file1, File file2, Map<String, String> filter, boolean compress) throws IOException {
 		if (!file2.exists()) {
