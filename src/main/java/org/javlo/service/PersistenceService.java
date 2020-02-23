@@ -613,10 +613,10 @@ public class PersistenceService {
 							if (ipPos != null) {
 								if (ipPos.getCountryCode() != null) {
 									String lg = StringHelper.neverEmpty(Tracker.getLanguage(track, allTracks), "?");
-									//if (lg.length() == 2) {
+									if (lg.length() == 2) {
 										String key = ipPos.getCountryCode()+'-'+lg;
 										dayInfo.countryVisit.get(key).increment();
-									//}
+									}
 								} else {
 									dayInfo.countryVisit.get(DayInfo.COUNTRY_NOT_FOUND).increment();
 								}

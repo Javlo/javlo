@@ -3,6 +3,8 @@ package org.javlo.component.container;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
@@ -32,8 +34,8 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		return "id_" + getId();
 	}
 	
-	protected String getParallaxBoxInputName() {
-		return "parallax_" + getId();
+	protected String getLayoutBoxInputName() {
+		return "layout_" + getId();
 	}
 
 	protected String getFooterBoxInputName() {
@@ -146,7 +148,11 @@ public class Box extends AbstractVisualComponent implements IContainer {
 			return getType()+getId();
 		}
 	}
-
+	
+	protected Collection<String> getLayouts() {
+		return Collections.EMPTY_LIST;
+	}
+	
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		IContentVisualComponent prevComp = getOpenComponent(ctx);
@@ -185,14 +191,24 @@ public class Box extends AbstractVisualComponent implements IContainer {
 			out.println("<label for=\"" + getTitleBoxInputName() + "\">Title</label>");
 			out.println("<input class=\"form-control\" type=\"text\" name=\"" + getTitleBoxInputName() + "\" value=\"" + XHTMLHelper.stringToAttribute(getTitle()) + "\" />");
 			out.println("</div>");
+			
+			out.println("<div class=\"row\"><div class=\"col-md-6\">");
+			
 			out.println("<div class=\"form-group\">");
 			out.println("<label for=\"" + getIdBoxInputName() + "\">id</label>");
 			out.println("<input class=\"form-control\" type=\"text\" name=\"" + getIdBoxInputName() + "\" value=\"" + XHTMLHelper.stringToAttribute(getManualId()) + "\" />");
 			out.println("</div>");
-			out.println("<div class=\"form-group\">");
-			out.println("<label for=\"" + getParallaxBoxInputName() + "\">parallax</label>");
-			out.println("<input class=\"form-control\" type=\"checkbox\" name=\"" + getParallaxBoxInputName() + "\" "+(isParallax()?"checked=\"checked\"')":"")+" />");
-			out.println("</div>");
+			
+			out.println("</div><div class=\"col-md-6\">");
+			
+			if (getLayouts().size() > 0) {
+				out.println("<div class=\"form-group\">");
+				out.println("<label for=\"" + getLayoutBoxInputName() + "\">parallax</label>");
+				//out.println("<input class=\"form-control\" type=\"checkbox\" name=\"" + getParallaxBoxInputName() + "\" "+(isParallax()?"checked=\"checked\"')":"")+" />");
+				out.println(XHTMLHelper.getInputOneSelect(getLayoutBoxInputName(), getLayouts(), getContainerLayout(), "form-control"));
+				out.println("</div>");
+				out.println("</div></div>");
+			}
 		} else {
 			out.println("<div class=\"form-group\">");
 			out.println("<label for=\"" + getFooterBoxInputName() + "\">Footer</label>");
@@ -383,12 +399,12 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		}
 	}
 	
-	public boolean isParallax() {
+	public String getContainerLayout() {
 		List<String> values = StringHelper.stringToCollection(getValue(), ";");
 		if (values.size()>4) {
-			return StringHelper.isTrue(StringHelper.stringToCollection(getValue(), ";").get(4));
+			return StringHelper.stringToCollection(getValue(), ";").get(4);
 		} else {
-			return false;
+			return "";
 		}
 	}
 	
@@ -417,13 +433,13 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		String title = requestService.getParameter(getTitleBoxInputName(), "");
 		String manualId = requestService.getParameter(getIdBoxInputName(), "");
 		String footer = requestService.getParameter(getFooterBoxInputName(), "");
-		String parallax = requestService.getParameter(getParallaxBoxInputName(), "false");
+		String layout = requestService.getParameter(getLayoutBoxInputName(), "false");
 		if (closeBox) {
 			title = getTitle();			
 		} else {
 			footer = getFooter();
 		}
-		String newValue = StringHelper.collectionToString(Arrays.asList(new String[] { "" + closeBox, title, footer,manualId,parallax }), ";");
+		String newValue = StringHelper.collectionToString(Arrays.asList(new String[] { "" + closeBox, title, footer,manualId,layout }), ";");
 		if (!newValue.equals(getValue())) {
 			setValue(newValue);
 			setModify();

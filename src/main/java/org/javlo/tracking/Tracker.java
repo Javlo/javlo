@@ -151,12 +151,33 @@ public class Tracker {
 	}
 
 	public static String getLanguage(String path) {
-		String[] pathDec = StringUtils.split(path, "/");
-		if (pathDec.length < 2) {
+		String[] pathDec = StringUtils.splitByWholeSeparator(path, "/");
+		if (pathDec.length < 1) {
 			return "?";
 		}
 		String lg = "?";
-		if (pathDec[1].length() == 2) {
+		if (pathDec[0].length() == 2) {
+			return pathDec[0];
+		} else if (pathDec.length > 1 && pathDec[1].length() == 2) {
+			return pathDec[1];
+		} else if (pathDec.length > 2 && pathDec[2].length() == 2) {
+			return pathDec[2];
+		}
+		return lg;
+	}
+	
+	public static String getLanguageDEBUG(String path) {
+		String[] pathDec = StringUtils.splitByWholeSeparator(path, "/");
+		System.out.println(">>>>>>>>> Tracker.getLanguageDEBUG : pathDec.length = "+pathDec.length); //TODO: remove debug trace
+		if (pathDec.length < 1) {
+			System.out.println(">>>>>>>>> Tracker.getLanguageDEBUG : < 1"); //TODO: remove debug trace
+			return "?";
+		}
+		String lg = "?";
+		System.out.println(">>>>>>>>> Tracker.getLanguageDEBUG : pathDec[0] = "+pathDec[0]); //TODO: remove debug trace
+		if (pathDec[0].length() == 2) {
+			return pathDec[0];
+		} else if (pathDec.length > 1 && pathDec[1].length() == 2) {
 			return pathDec[1];
 		} else if (pathDec.length > 2 && pathDec[2].length() == 2) {
 			return pathDec[2];
@@ -166,7 +187,7 @@ public class Tracker {
 
 	public static String getLanguage(Track track, Track[] tracks) {
 		String lg = "?";
-		for (int i = tracks.length-1; i > 0 && lg.length() != 2; i--) {
+		for (int i = tracks.length-1; i > 0 && lg.length() != 2; i--) {			
 			if (tracks[i].getSessionId().equals(track.getSessionId())) {
 				lg = getLanguage(tracks[i].getPath());
 			}
@@ -851,7 +872,7 @@ public class Tracker {
 	}
 
 	public static void main(String[] args) throws IOException {
-		System.out.println(">>>>>>>>> Tracker.main : testLastMountPageReading = " + testLastMountPageReading("/javlo/sexy/fr/home2/offices")); // TODO: remove debug trace
+		System.out.println(">>>>>>>>> Tracker.main : lang = " + getLanguage("/fr/qui-est-le-bdf/atingo.html")); // TODO: remove debug trace
 	}
 
 }

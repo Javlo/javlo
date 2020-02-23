@@ -963,6 +963,10 @@ public class XHTMLHelper {
 		content.toArray(contentArray);
 		return getInputOneSelect(name, contentArray, value, js, sort);
 	}
+	
+	public static String getInputOneSelect(String name, List<? extends Object> content, String value, String cssClass) {
+		return getInputOneSelect(name, content, value, cssClass, null, true);
+	}
 
 	public static String getInputOneSelect(String name, List<? extends Object> content, String value, String cssClass, String js, boolean sort) {
 
