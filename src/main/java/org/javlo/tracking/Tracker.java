@@ -47,6 +47,8 @@ import org.javlo.ztatic.StaticInfo;
  *         track event.
  */
 public class Tracker {
+	
+	private static final Set<String> NOT_LANG_SET = new HashSet<String>(Arrays.asList("js", "ph", "be", "lg"));
 
 	public static final String TRACKING_PARAM = "tracking";
 
@@ -175,11 +177,11 @@ public class Tracker {
 		}
 		String lg = "?";
 		System.out.println(">>>>>>>>> Tracker.getLanguageDEBUG : pathDec[0] = "+pathDec[0]); //TODO: remove debug trace
-		if (pathDec[0].length() == 2) {
+		if (pathDec[0].length() == 2 && !NOT_LANG_SET.contains(pathDec[0])) {
 			return pathDec[0];
-		} else if (pathDec.length > 1 && pathDec[1].length() == 2) {
+		} else if (pathDec.length > 1 && pathDec[1].length() == 2 && !NOT_LANG_SET.contains(pathDec[1])) {
 			return pathDec[1];
-		} else if (pathDec.length > 2 && pathDec[2].length() == 2) {
+		} else if (pathDec.length > 2 && pathDec[2].length() == 2 && !NOT_LANG_SET.contains(pathDec[2])) {
 			return pathDec[2];
 		}
 		return lg;
