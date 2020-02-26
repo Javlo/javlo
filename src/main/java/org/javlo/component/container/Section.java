@@ -5,11 +5,24 @@ import java.util.Collection;
 
 public class Section extends Box {
 	
-	private static final String PARALLAX = "parallax";
+	private static final String PARALLAX_KEY = "parallax";
+	
+	private static final String PARALLAX_NEUTRAL = PARALLAX_KEY+"-neutral";
+	
+	private static final String PARALLAX_LIGHT = PARALLAX_KEY+"-light";
+	
+	private static final String PARALLAX_DARK = PARALLAX_KEY+"-dark";
 
 	private static final String FIX_BACKGROUND = "fix-background";
 	
-	private static final Collection<String> layouts = Arrays.asList(new String[] {PARALLAX, FIX_BACKGROUND});
+	private static final String COLOR_LIGHT = "light";
+	
+	private static final String COLOR_DARK = "dark";
+	
+	private static final String NEUTRAL = "neutral";
+	
+	private static final Collection<String> layouts = Arrays.asList(new String[] {PARALLAX_NEUTRAL, PARALLAX_LIGHT, PARALLAX_DARK, FIX_BACKGROUND});
+	private static final Collection<String> colors = Arrays.asList(new String[] {COLOR_LIGHT, COLOR_DARK, NEUTRAL});
 	
 	private static final String TYPE = "section";
 	
@@ -23,11 +36,16 @@ public class Section extends Box {
 		return layouts;
 	}
 	
+	@Override
+	protected Collection<String> getColors() {
+		return colors;
+	}
+	
 	public boolean isParallax() {
-		return PARALLAX.equals(getContainerLayout());
+		return getContainerLayout().contains(PARALLAX_KEY);
 	}
 	
 	public boolean isFix() {
-		return PARALLAX.equals(FIX_BACKGROUND);
+		return PARALLAX_NEUTRAL.equals(FIX_BACKGROUND);
 	}
 }
