@@ -56,6 +56,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.taxonomy.TaxonomyBean;
 import org.javlo.data.taxonomy.TaxonomyService;
+import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.DebugHelper.StructureException;
 import org.javlo.helper.LocalLogger;
@@ -1434,6 +1435,11 @@ public class PersistenceService {
 							correctCharacterEncoding(xmlFile);
 						}
 						return load(ctx, renderMode, contentAttributeMap, timeTravelDate, false, null);
+					}
+					
+					/** init next and previous component **/
+					for (MenuElement page : root.getAllChildrenList()) {
+						ComponentHelper.updateNextAndPrevious(ctx, page, null);
 					}
 
 					/** load linked content **/

@@ -373,7 +373,7 @@ public class ComponentHelper {
 	}
 
 	public static void updateNextAndPrevious(ContentContext ctx, MenuElement page, String area) throws Exception {
-		if (ctx != null && page != null && area != null) {
+		if (ctx != null && page != null) {
 			ContentContext areaContext = new ContentContext(ctx);
 			areaContext.setArea(area);
 			ContentElementList content = page.getContent(areaContext);
