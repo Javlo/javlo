@@ -322,3 +322,25 @@ _component-title {
 	text-align: center;
 	font-weight: bold;
 }
+
+#preview_command input.filter {
+	font-size: 0.9em;
+	padding: 3px 6px;
+	margin-bottom: 5px;
+}
+
+#preview_command .filter-wrapper {
+	position: relative;
+}
+
+#preview_command .filter-wrapper .reset-filter {
+	position: absolute;
+	right: 6px;
+	top: 4px;
+	font-size: 20px;
+	opacity: 0.6;
+}
+
+#preview_command .filter-wrapper .reset-filter:hover {
+	opacity: 0.9;
+} 

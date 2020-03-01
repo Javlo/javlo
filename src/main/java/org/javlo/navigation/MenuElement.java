@@ -4012,6 +4012,19 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		return templateId;
 	}
 	
+	public String getTemplateIdOnInherited(ContentContext ctx) {
+		String outTemplate = this.templateId;
+		MenuElement parent = getParent();
+		while (parent != null && outTemplate == null) {
+			outTemplate = parent.getTemplateId();
+			parent = parent.getParent();
+		}
+		if (outTemplate == null) {
+			return ctx.getGlobalContext().getDefaultTemplate();
+		}
+		return outTemplate;
+	}
+	
 	public Collection<MenuElement> getTemplates() {
 		for (MenuElement child : getChildMenuElements()) {
 			if (child.getName().equals(LAYOUTS_PREFIX+getName())) {

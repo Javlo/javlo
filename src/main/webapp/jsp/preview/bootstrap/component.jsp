@@ -62,6 +62,31 @@ document.addEventListener("DOMContentLoaded", function(event) {
   <button type="button" class="btn btn-default btn-xs btn-3" role="group" onclick="displayComplexity(3);">${i18n.edit['preview.component-group.admin']}</button>
   </div></c:if>
 </div>
+
+<div class="filter-wrapper">
+<input id="filter-components" type="text" class="form-control filter" placeholder="filter..." onkeyup="filter(this.value);"/>
+<button type="button" class="reset-filter"><i class="fa fa-times-circle" aria-hidden="true" onclick="document.getElementById('filter-components').value = ''; filter('');"></i></button>
+</div>
+
+<script>
+	function filter(text) {
+		if (text === null || text.length == 0) {
+			document.querySelectorAll('#preview_command .component-list .component').forEach(item => {
+				item.classList.remove('hidden');
+			});
+			return;
+		}
+		text = text.toLowerCase();
+		document.querySelectorAll('#preview_command .component-list .component').forEach(item => {
+			if (item.querySelectorAll('.text')[0].innerHTML.toLowerCase().indexOf(text) < 0) {
+				item.classList.add('hidden');
+			} else {
+				item.classList.remove('hidden');
+			}	
+		});
+	}
+</script>
+
 </c:if>
 <div class="component-list height-to-bottom ${globalContext.componentsFiltered?'display-1':''}">
 <c:set var="cat" value="" />

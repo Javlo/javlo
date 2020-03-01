@@ -785,6 +785,10 @@ public class PageBean implements Serializable {
 		return page.getIndex();
 	}
 	
+	public String getFont() throws Exception {
+		return page.getFont(ctx);
+	}
+	
 	public String getContentLanguage() {
 		return ctx.getRequestContentLanguage();
 	}

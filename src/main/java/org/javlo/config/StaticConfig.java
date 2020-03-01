@@ -1030,7 +1030,15 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getProductVersion() {
-		return AccessServlet.VERSION;
+		return properties.getString("product.version",AccessServlet.VERSION);		
+	}
+	
+	public String getProductName() {
+		return properties.getString("product.name",getCmsName());		
+	}
+	
+	public String getProductUrl() {
+		return properties.getString("product.url",null);		
 	}
 
 	/**

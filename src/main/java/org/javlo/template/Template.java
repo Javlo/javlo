@@ -88,7 +88,7 @@ public class Template implements Comparable<Template> {
 	private static final String FONT_REFERENCE_FILE = "fonts_reference.properties";
 
 	private static final String RAW_CSS_FILE = "raw_css.txt";
-
+	
 	private static class TemplateComparator implements Comparator<Template> {
 
 		@Override
@@ -2509,6 +2509,40 @@ public class Template implements Comparable<Template> {
 			lockImport = globalContext.getLockImportTemplate();
 		}
 		return lockImport;
+	}
+	
+	public int rebuildTemplate(ContentContext ctx, boolean css) {
+		File target = new File(getTemplateTargetFolder(ctx.getGlobalContext()));
+		File indexFile = new File(URLHelper.mergePath(target.getAbsolutePath(), "index.jsp"));
+		int outCount=0;
+		if (indexFile.exists()) {
+			indexFile.delete();
+			outCount++;
+		}
+		if (css) {
+			outCount = outCount + rebuildTemplateCss(ctx, target);
+		}		
+		return outCount;
+	}
+	
+	protected int rebuildTemplateCss(ContentContext ctx, File folder) {
+		int outCount=0;
+		for (File f : folder.listFiles()) {
+			if (f.isDirectory()) {
+				outCount = outCount+rebuildTemplateCss(ctx, f);
+			} else {
+				if (f.getName().toLowerCase().endsWith(".css")) {
+					File scss = new File(StringHelper.replaceFileExtension(f.getAbsolutePath(), ".scss"));
+					File less = new File(StringHelper.replaceFileExtension(f.getAbsolutePath(), ".less"));
+					if (less.exists() || scss.exists()) {
+						System.out.println(">>>>>>>>> Template.rebuildTemplateCss : DELETE : "+f); //TODO: remove debug trace
+						f.delete();
+						outCount++;
+					}
+				}
+			}
+		}
+		return outCount;
 	}
 
 	public void importTemplateInWebapp(StaticConfig config, ContentContext ctx) throws IOException {

@@ -1008,6 +1008,14 @@ public class StringHelper {
 		}
 		return sum % 9;
 	}
+	
+	public static String replaceFileExtension (String file, String ext) {
+		if (!file.contains(".")) {
+			return file+'.'+ext;
+		} else {
+			return file.substring(0, file.lastIndexOf('.'))+ext;
+		}
+	}
 
 	/**
 	 * retreive the file extension.

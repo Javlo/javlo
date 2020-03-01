@@ -689,6 +689,22 @@ public class InfoBean {
 			return null;
 		}
 	}
+	
+	/**
+	 * return the root page with this template, stop to parent page with different template
+	 * @return
+	 * @throws Exception 
+	 */
+	public PageBean getTemplateRoot() throws Exception {
+		String template = getCurrentPage().getTemplateIdOnInherited(ctx);
+		MenuElement root = getCurrentPage();
+		MenuElement parent = getCurrentPage().getParent();
+		while (parent != null && parent.getTemplateIdOnInherited(ctx).equals(template)) {
+			root = parent;
+			parent = parent.getParent();
+		}
+		return root.getPageBean(ctx);
+	}
 
 	/**
 	 * get the list of the pages from current to root
@@ -701,13 +717,13 @@ public class InfoBean {
 
 		List<PageBean> pagePath = new LinkedList<PageBean>();
 
-		while (page.getParent() != null) {
-			page = page.getParent();
+		while (page != null) {			
 			try {
 				pagePath.add(0, page.getPageBean(ctx));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			page = page.getParent();
 		}
 
 		return pagePath;

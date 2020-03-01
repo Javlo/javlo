@@ -62,6 +62,8 @@ import org.javlo.macro.MergeImagesInGallery;
 import org.javlo.macro.NoClickableImageMacro;
 import org.javlo.macro.NoDashOnImageMacro;
 import org.javlo.macro.PasteCopiedElementInAllLanguageMacro;
+import org.javlo.macro.RebuitTemplate;
+import org.javlo.macro.RebuitTemplateHtml;
 import org.javlo.macro.ReduceSubtitleLevelMacro;
 import org.javlo.macro.ResetRecaptcha;
 import org.javlo.macro.SortChildren;
@@ -210,6 +212,8 @@ public class MacroFactory {
 		macros.add(new InitContentMacro());
 		macros.add(new ImportMysqlDataBase());
 		macros.add(new CommitTemplate());
+		macros.add(new RebuitTemplate());
+		macros.add(new RebuitTemplateHtml());
 		macros.add(new CleanStaticInfoPersistence());
 		macros.add(new DeleteTrackerCache());
 		macros.add(new LogAsUser());
