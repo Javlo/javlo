@@ -1928,6 +1928,10 @@ public class InfoBean {
 		return URLHelper.createActionURL(ctx, "user.login", ctx.getPath());
 	}
 	
+	public String getWebactionUrl() {
+		return URLHelper.createActionURL(ctx, null, null);
+	}	
+	
 	public String[] getShortDays() {
 		String[] days = new String[8];
 		Locale locale = new Locale(getUserLanguage());
