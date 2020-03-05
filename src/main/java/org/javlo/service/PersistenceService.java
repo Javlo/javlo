@@ -1437,10 +1437,6 @@ public class PersistenceService {
 						return load(ctx, renderMode, contentAttributeMap, timeTravelDate, false, null);
 					}
 					
-					/** init next and previous component **/
-					for (MenuElement page : root.getAllChildrenList()) {
-						ComponentHelper.updateNextAndPrevious(ctx, page, null);
-					}
 
 					/** load linked content **/
 					/*

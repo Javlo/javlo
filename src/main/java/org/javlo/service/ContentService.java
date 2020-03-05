@@ -30,6 +30,7 @@ import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.GlobalContextFactory;
 import org.javlo.data.InfoBean;
+import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nResource;
@@ -625,6 +626,10 @@ public class ContentService implements IPrintInfo {
 				Map<String, String> contentAttributeMap = new HashMap<String, String>();
 				timeTravelerNav = persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, timeTravelDate);
 				timeTravelerGlobalMap = contentAttributeMap;
+				/** init next and previous component **/
+				for (MenuElement page : timeTravelerNav.getAllChildrenList()) {
+					ComponentHelper.updateNextAndPrevious(ctx, page, null);
+				}
 			}
 			res = timeTravelerNav;
 		} else if (!ctx.isAsViewMode() || !previewMode) { // TODO: check the
@@ -637,6 +642,10 @@ public class ContentService implements IPrintInfo {
 						PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 						Map<String, String> contentAttributeMap = new HashMap<String, String>();
 						previewNav = persistenceService.load(ctx, ContentContext.PREVIEW_MODE, contentAttributeMap, null);
+						/** init next and previous component **/
+						for (MenuElement page : previewNav.getAllChildrenList()) {
+							ComponentHelper.updateNextAndPrevious(ctx, page, null);
+						}
 						previewGlobalMap = contentAttributeMap;
 						logger.info("load preview of '" + globalContext.getContextKey() + "' nav in " + StringHelper.renderTimeInSecond((System.currentTimeMillis() - startTime) / 1000) + " sec.");
 					}
@@ -654,6 +663,10 @@ public class ContentService implements IPrintInfo {
 						Map<String, String> contentAttributeMap = new HashMap<String, String>();
 						MenuElement page = persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, null);
 						setViewNav(page);
+						/** init next and previous component **/
+						for (MenuElement p : page.getAllChildrenList()) {
+							ComponentHelper.updateNextAndPrevious(ctx, p, null);
+						}
 						// NavigationService.checkSameUrl(ctx,
 						// page.getAllChildrenList()); // important to be afther
 						// setViewNav otherwise --> recursive
