@@ -7,7 +7,7 @@
 		<c:set var="options" value="<option>${y}</option>${options}" />
 	</c:forEach>	
 	<c:set var="options" value="<option value=''>${i18n.edit['global.select']}</option>${options}" />
-<select class="form-input pull-right" onchange="updateYear(this.value); updateYearForTime(this.value); updateDaysForTime(this.value); updateYearForCountries(this.value); return false;">
+<select class="form-input pull-right" onchange="generalUpdateYear(this.value); return false;">
 ${options}
 </select>
 </div>
@@ -19,6 +19,14 @@ ${options}
 </div>
 
 <script type="text/javascript">
+
+function generalUpdateYear(year) {
+	updateYear(year);
+	updateYearForTime(year);
+	updateDaysForTime(year);
+	updateYearForCountries(year);
+	updateYearForPages(year);
+}
 
 <c:url var="ajaxURL" value="${info.currentAjaxURL}" context="/">
 <c:param name="webaction" value="dashboard.readTracker" />
