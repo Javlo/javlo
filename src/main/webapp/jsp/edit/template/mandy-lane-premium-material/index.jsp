@@ -360,10 +360,15 @@
 <link rel="stylesheet" media="print" href="${info.editTemplateURL}/css/print.css" />
 <link rel="stylesheet" href="${info.editTemplateURL}/font-awesome/css/font-awesome.min.css" />
 
+<link rel="stylesheet" href="${info.editTemplateURL}/js/plugins/datatables/Buttons-1.6.1/css/buttons.bootstrap.min.css" />
+
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.alerts.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.validate.min.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.colorbox-min.js"></script>
-<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/datatables	/datatables.min.js"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jszip.min.js"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/datatables/datatables.min.js"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/datatables/Buttons-1.6.1/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/datatables/Buttons-1.6.1/js/buttons.html5.min.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.form.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.elastic.source.js"></script>
 <script type="text/javascript" src="${info.editTemplateURL}/js/custom/gallery.js"></script>	

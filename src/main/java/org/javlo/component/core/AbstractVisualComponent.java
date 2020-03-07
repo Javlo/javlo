@@ -1568,7 +1568,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					colPrefix = "";
 					firstClass = "";
 				}
-				colPrefix = colPrefix + "<" + tpl.getColumnableColTag() + " style=\"" + tpl.getColumnableColStyle(getColumnSize()) + "\" class=\"" + firstClass + tpl.getColumnableColClass(getColumnSize()) + "\">";
+				
+				int currentSize = ctx.getColumnableSize(ctx.getColumnableDepth());
+				int leftSize = getColumnMaxSize(ctx)-currentSize;
+				
+				colPrefix = colPrefix + "<" + tpl.getColumnableColTag() + " style=\"" + tpl.getColumnableColStyle(getColumnSize()) + "\" class=\"" + firstClass + tpl.getColumnableColClass(getColumnSize(), currentSize, leftSize) + "\">";
 				if (!StringHelper.isEmpty(tpl.getColumnableColTagIn())) {
 					colPrefix = colPrefix + '<' + tpl.getColumnableColTagIn() + " class=\"" + tpl.getColumnableClassTagIn() + "\" style=\"" + tpl.getColumnableStyleTagIn() + "\">";
 				}

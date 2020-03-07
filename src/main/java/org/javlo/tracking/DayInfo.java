@@ -16,12 +16,13 @@ import org.javlo.utils.StructuredProperties;
 
 public class DayInfo {
 	
-	public static final int CURRENT_VERSION = 22;
+	public static final int CURRENT_VERSION = 23;
 
 	private static final String PAGES_VISITS_PREFIX = "path.visits.";
 	private static final String TIME_VISITS_PREFIX = "time.visits.";
 	private static final String DAYS_VISITS_PREFIX = "days.visits.";
 	private static final String COUNTRY_VISITS_PREFIX = "country.visits.";
+	private static final String LANGUAGE_VISITS_PREFIX = "language.visits.";
 	
 	public static final String COUNTRY_NOT_FOUND = "NT_FD";
 	
@@ -38,6 +39,7 @@ public class DayInfo {
 	public Map<Integer, MutableInt> timeVist = new NeverEmptyMap<>(MutableInt.class);
 	public Map<Integer, MutableInt> daysVist = new NeverEmptyMap<>(MutableInt.class);
 	public Map<String, MutableInt> countryVisit = new NeverEmptyMap<>(MutableInt.class);
+	public Map<String, MutableInt> languageVisit = new NeverEmptyMap<>(MutableInt.class);
 	
 	public int version = 1;
 	
@@ -68,7 +70,9 @@ public class DayInfo {
 		for (Object k : prop.keySet()) {
 			if (((String)k).startsWith(PAGES_VISITS_PREFIX)) {
 				String path = k.toString().substring(PAGES_VISITS_PREFIX.length());
-				visitPath.put(path, new MutableInt(Integer.parseInt((String)prop.get(k))));
+				if (StringHelper.isDigit(""+prop.get(k))) {
+					visitPath.put(path, new MutableInt(Integer.parseInt((String)prop.get(k))));
+				}
 			}
 		}
 		for (Object k : prop.keySet()) {
@@ -86,6 +90,11 @@ public class DayInfo {
 		for (Object k : prop.keySet()) {
 			if (((String)k).startsWith(COUNTRY_VISITS_PREFIX)) {
 				countryVisit.put(k.toString().substring(COUNTRY_VISITS_PREFIX.length()), new MutableInt(Integer.parseInt((String)prop.get(k))));
+			}
+		}
+		for (Object k : prop.keySet()) {
+			if (((String)k).startsWith(LANGUAGE_VISITS_PREFIX)) {
+				languageVisit.put(k.toString().substring(LANGUAGE_VISITS_PREFIX.length()), new MutableInt(Integer.parseInt((String)prop.get(k))));
 			}
 		}
 	}
@@ -110,6 +119,12 @@ public class DayInfo {
 		}
 		for (String k : countryVisit.keySet()) {
 			prop.setProperty(COUNTRY_VISITS_PREFIX+k, ""+countryVisit.get(k).intValue());
+		}
+		for (String k : languageVisit.keySet()) {
+			prop.setProperty(LANGUAGE_VISITS_PREFIX+k, ""+languageVisit.get(k).intValue());
+		}
+		for (String k : visitPath.keySet()) {
+			prop.setProperty(PAGES_VISITS_PREFIX+k, ""+languageVisit.get(k).intValue());
 		}
 		ResourceHelper.writePropertiesToFile(prop, file, "day info");
 	}

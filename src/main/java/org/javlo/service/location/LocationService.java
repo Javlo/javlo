@@ -146,7 +146,7 @@ public class LocationService {
 		}
 		
 		if (ipDbFile == null || !ipDbFile.exists()) {
-			Logger.warn("ipDbFile not found.");
+			//Logger.warn("ipDbFile not found.");
 			return null;
 		}
 		if (ip2Location == null) {

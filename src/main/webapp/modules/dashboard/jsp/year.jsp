@@ -168,10 +168,10 @@ updateYearForTime(${info.currentYear});
 
 <c:url var="countryAjaxURL" value="${info.currentAjaxURL}" context="/">
 <c:param name="webaction" value="dashboard.readTracker" />
-<c:param name="type" value="country" />
+<c:param name="type" value="language" />
 </c:url>
 
-<h3>${i18n.edit['dashboard.title.country']}</h3>
+<h3>${i18n.edit['dashboard.title.language']}</h3>
 
 <div class="content ${not empty lightInterface?'light':''}">
 
@@ -189,11 +189,17 @@ function updateYearForCountries(year) {
 	    	var countrytable = jQuery('#countrytable').DataTable({
 	    		data: ajaxData.datas,
 	    		columns: [
-	    	      { title: "country" },
+	    	      { title: "lang" },
 	    	      { title: "visit" }
 	    	    ],
 	    	    order: [[ 1, "desc" ]],
-	    	    bDestroy: true
+				bDestroy: true,
+				dom: 'Bfrtip',
+				buttons: [
+					'copyHtml5',
+					'excelHtml5',
+					'csvHtml5'
+				]
 	    	  });
 	    }
 	});
@@ -201,6 +207,52 @@ function updateYearForCountries(year) {
 
 jQuery(document).ready(function() {	
 	updateYearForCountries(${info.currentYear});	
+});
+</script>
+
+</div>
+
+<c:url var="pageAjaxURL" value="${info.currentAjaxURL}" context="/">
+<c:param name="webaction" value="dashboard.readTracker" />
+<c:param name="type" value="pages" />
+</c:url>
+
+<h3>${i18n.edit['dashboard.title.pages']}</h3>
+
+<div class="content ${not empty lightInterface?'light':''}">
+
+<table cellpadding="0" cellspacing="0" border="0" class="dyntable cell-border compact stripe" id="pageAjaxURL">
+
+</table>
+
+
+<script type="text/javascript">
+
+function updateYearForPages(year) {
+	jQuery.ajax({
+	    url: '${pageAjaxURL}&y='+year,
+	    success: function(ajaxData){	    	
+	    	var countrytable = jQuery('#pageAjaxURL').DataTable({
+	    		data: ajaxData.datas,
+	    		columns: [
+	    	      { title: "page" },
+	    	      { title: "visit" }
+	    	    ],
+	    	    order: [[ 1, "desc" ]],
+				bDestroy: true,
+				dom: 'Bfrtip',
+				buttons: [
+					'copyHtml5',
+					'excelHtml5',
+					'csvHtml5'
+				]
+	    	  });
+	    }
+	});
+}
+
+jQuery(document).ready(function() {	
+	updateYearForPages(${info.currentYear});	
 });
 </script>
 

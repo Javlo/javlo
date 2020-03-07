@@ -187,14 +187,16 @@ public class Tracker {
 		return lg;
 	}
 
-	public static String getLanguage(Track track, Track[] tracks) {
-		String lg = "?";
-		for (int i = tracks.length-1; i > 0 && lg.length() != 2; i--) {			
-			if (tracks[i].getSessionId().equals(track.getSessionId())) {
-				lg = getLanguage(tracks[i].getPath());
+	public static String getLanguage(Track inTrack, Track[] tracks) {
+		for (Track track : tracks) {			
+			if (track.getSessionId().equals(inTrack.getSessionId())) {
+				String lg = getLanguage(track.getPath());
+				if (lg.length() == 2 && !lg.equals("wp") && !lg.equals("js") && !lg.equals("00")) {
+					return lg;
+				}
 			}
 		}
-		return lg;
+		return "?";
 	}
 
 	/**

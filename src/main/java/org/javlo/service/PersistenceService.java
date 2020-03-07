@@ -48,6 +48,7 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.mutable.MutableInt;
 import org.apache.xml.utils.XMLChar;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentLayout;
@@ -56,9 +57,11 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.taxonomy.TaxonomyBean;
 import org.javlo.data.taxonomy.TaxonomyService;
-import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.DebugHelper.StructureException;
+import org.javlo.helper.LangHelper;
+import org.javlo.helper.LangHelper.ListBuilder;
+import org.javlo.helper.LangHelper.ObjectBuilder;
 import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
@@ -611,12 +614,15 @@ public class PersistenceService {
 						IpPosition ipPos;
 						try {
 							ipPos = LocationService.getIpPosition(track.getIP());
+							String lg = StringHelper.neverEmpty(Tracker.getLanguage(track, allTracks), "?");
+							if (lg.length() == 2) {
+								dayInfo.languageVisit.get(lg).increment();
+							}
 							if (ipPos != null) {
 								if (ipPos.getCountryCode() != null) {
-									String lg = StringHelper.neverEmpty(Tracker.getLanguage(track, allTracks), "?");
 									if (lg.length() == 2) {
 										String key = ipPos.getCountryCode()+'-'+lg;
-										dayInfo.countryVisit.get(key).increment();
+										dayInfo.countryVisit.get(key).increment();										
 									}
 								} else {
 									dayInfo.countryVisit.get(DayInfo.COUNTRY_NOT_FOUND).increment();
@@ -635,7 +641,14 @@ public class PersistenceService {
 						if (mobile) {
 							dayInfo.pagesCountMobile++;
 						}
-						dayInfo.visitPath.get(URLHelper.removeParam(track.getPath())).increment();
+						String path = URLHelper.removeParam(track.getPath());
+						
+						if (path.contains("html") && !path.contains("404") && !path.startsWith("/preview") && !path.startsWith("/edit") && !path.startsWith("/ajax") && !path.startsWith("/modules") && !path.startsWith("/wait.html") && !path.startsWith("/status.html") && !path.startsWith("/page")) {
+							if (path.length() > 1 && path.endsWith("/")) {
+								path = path.substring(0, path.length()-1);
+							}
+							dayInfo.visitPath.get(path).increment();
+						}
 						if (!track.isView()) {
 							Calendar trackCal = Calendar.getInstance();
 							trackCal.setTimeInMillis(track.getTime());
@@ -1933,12 +1946,36 @@ public class PersistenceService {
 	}
 
 	public static void main(String[] args) throws Exception {
+		System.out.println("___START___");
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(StringHelper.parseDate("22/03/2019"));
+		cal.setTime(StringHelper.parseDate("01/01/2020"));
 		Map memData = new HashMap();
-		DayInfo di = getTrackDayInfo(cal,memData , null, "C:/Users/user/data/javlo/data-ctx/data-sexy/persitence/tracking");
-		System.out.println(">>>>>>>>> PersistenceService.main : #pages : "+di.pagesCount); //TODO: remove debug trace
-		System.out.println(">>>>>>>>> PersistenceService.main : #di.visitPages = "+di.visitPath.size()); //TODO: remove debug trace
+		DayInfo dayInfo = getTrackDayInfo(cal,memData , null, "C:/Users/user/data/javlo/data-ctx/data-sexy/persitence/tracking");
+		System.out.println(">>>>>>>>> PersistenceService.main : #pages : "+dayInfo.pagesCount); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> PersistenceService.main : #languageVisit : "+dayInfo.languageVisit.size()); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> PersistenceService.main : #languageVisit fr : "+dayInfo.languageVisit.get("fr")); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> PersistenceService.main : #languageVisit nl : "+dayInfo.languageVisit.get("nl")); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> PersistenceService.main : #di.visitPages = "+dayInfo.visitPath.size()); //TODO: remove debug trace
+		
+		Map<String, MutableInt> pagesVisit = new NeverEmptyMap<>(MutableInt.class);
+		
+		System.out.println(">>>>>>>>> DashboardAction.performReadTracker : #dayInfo.visitPath = "+dayInfo.visitPath.size()); //TODO: remove debug trace
+		for (String key : dayInfo.visitPath.keySet()) {
+			pagesVisit.get(key).add(dayInfo.visitPath.get(key));
+		}
+		
+		System.out.println(">>>>>>>>> PersistenceService.main : #pagesVisit = "+pagesVisit.size()); //TODO: remove debug trace
+		ObjectBuilder ajaxMap = LangHelper.object();
+		ListBuilder datas = ajaxMap.list("datas");
+		for (Map.Entry<String, MutableInt> entry : pagesVisit.entrySet()) {
+
+				String[] d = new String[2];				
+				d[0] = entry.getKey();
+				d[1] = ""+entry.getValue();
+				datas.add(d);
+				System.out.println(">>>>>>>>> PersistenceService.main : d = "+d); //TODO: remove debug trace
+		}
+		System.out.println(">>>>>>>>> PersistenceService.main : #datas = "+datas.getList().size()); //TODO: remove debug trace
 	}
 
 	public boolean isLoaded() {
