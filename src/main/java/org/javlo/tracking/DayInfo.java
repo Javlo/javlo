@@ -16,7 +16,7 @@ import org.javlo.utils.StructuredProperties;
 
 public class DayInfo {
 	
-	public static final int CURRENT_VERSION = 23;
+	public static final int CURRENT_VERSION = 24;
 
 	private static final String PAGES_VISITS_PREFIX = "path.visits.";
 	private static final String TIME_VISITS_PREFIX = "time.visits.";
@@ -124,7 +124,7 @@ public class DayInfo {
 			prop.setProperty(LANGUAGE_VISITS_PREFIX+k, ""+languageVisit.get(k).intValue());
 		}
 		for (String k : visitPath.keySet()) {
-			prop.setProperty(PAGES_VISITS_PREFIX+k, ""+languageVisit.get(k).intValue());
+			prop.setProperty(PAGES_VISITS_PREFIX+k, ""+visitPath.get(k).intValue());
 		}
 		ResourceHelper.writePropertiesToFile(prop, file, "day info");
 	}

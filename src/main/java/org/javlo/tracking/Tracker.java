@@ -191,7 +191,7 @@ public class Tracker {
 		for (Track track : tracks) {			
 			if (track.getSessionId().equals(inTrack.getSessionId())) {
 				String lg = getLanguage(track.getPath());
-				if (lg.length() == 2 && !lg.equals("wp") && !lg.equals("js") && !lg.equals("00")) {
+				if (lg.length() == 2 && !lg.equals("wp") && !lg.equals("js") && !lg.equals("wp") && !StringHelper.isDigit(lg)) {
 					return lg;
 				}
 			}
