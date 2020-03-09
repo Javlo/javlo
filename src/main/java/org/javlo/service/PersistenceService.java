@@ -561,7 +561,7 @@ public class PersistenceService {
 		return getTrackDayInfo(cal, globalMem, dayInfoCache, getTrackingDirectory());
 	}
 
-	public static DayInfo getTrackDayInfo(Calendar cal, Map<String, Object> globalMem, TimeMap<Long, DayInfo> dayInfoCache, String trackingDir) throws IOException {
+	public synchronized static DayInfo getTrackDayInfo(Calendar cal, Map<String, Object> globalMem, TimeMap<Long, DayInfo> dayInfoCache, String trackingDir) throws IOException {
 		
 		DayInfo dayInfo = null;
 		if (dayInfoCache != null) {
