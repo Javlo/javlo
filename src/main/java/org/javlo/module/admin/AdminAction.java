@@ -129,9 +129,11 @@ public class AdminAction extends AbstractModuleAction {
 		}
 
 		super.prepare(ctx, moduleContext);
-
+		
 		HttpServletRequest request = ctx.getRequest();
 		ServletContext application = request.getSession().getServletContext();
+		
+		request.setAttribute("componentErrorMessage", ComponentFactory.loadErrorMessage);
 
 		ContentContext viewCtx = new ContentContext(ctx);
 		Module currentModule = moduleContext.getCurrentModule();
@@ -242,7 +244,7 @@ public class AdminAction extends AbstractModuleAction {
 					if (!componentsType[i].isHidden(ctx) && !(componentsType[i] instanceof MetaTitle)) {
 						components.add(new ComponentBean(ctx, componentsType[i]));
 					}
-				}
+				}			
 				request.setAttribute("components", components);
 				request.setAttribute("currentComponents", currentComponents);
 

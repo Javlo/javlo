@@ -51,6 +51,8 @@ import org.javlo.utils.StructuredProperties;
  * @author pvanderm
  */
 public class ComponentFactory {
+	
+	public static String loadErrorMessage = null;
 
 	/**
 	 * create a static logger.
@@ -138,7 +140,9 @@ public class ComponentFactory {
 				try {
 					comp = Class.forName(clazz);
 				} catch (Throwable e) {
-					logger.warning(e.getMessage());
+					e.printStackTrace();
+					ComponentFactory.loadErrorMessage = "error on load : "+clazz;
+					logger.warning("update component log level : "+e.getMessage());
 				}
 				Field fields[] = comp.getDeclaredFields();
 				for (Field field : fields) {
@@ -202,10 +206,12 @@ public class ComponentFactory {
 						Class c = ComponentFactory.class.getClassLoader().loadClass(className);
 						comp = (AbstractVisualComponent) c.newInstance();
 					} catch (Throwable t) {
-						logger.warning(t.getMessage());
+						//t.printStackTrace();
+						logger.warning("getComponents application: "+t.getMessage());
 						ComponentBean bean = new ComponentBean();
 						bean.setValue(t.getMessage());
 						comp = new Unknown(null, bean);
+						loadErrorMessage = "component not found (ServletContext) : "+className;
 					}
 					comp.setValid(visible);
 					array.put(clazz, comp);
@@ -256,10 +262,12 @@ public class ComponentFactory {
 							Class c = ComponentFactory.class.getClassLoader().loadClass(className);
 							comp = (AbstractVisualComponent) c.newInstance();
 						} catch (Throwable t) {
-							logger.warning(t.getMessage());
+							//t.printStackTrace();
+							logger.warning("error on create component with globalContext : "+t.getMessage());
 							ComponentBean bean = new ComponentBean();
 							bean.setValue(t.getMessage());
 							comp = new Unknown(null, bean);
+							loadErrorMessage = "component not found (globalContext) : "+className;
 						}
 
 						comp.setValid(visible);
@@ -336,7 +344,8 @@ public class ComponentFactory {
 				}
 				
 			} catch (Throwable e) {
-				logger.warning(e.getMessage());
+				e.printStackTrace();
+				logger.warning("general error on create component : "+e.getMessage());
 			}
 
 			components = new IContentVisualComponent[array.size()];
