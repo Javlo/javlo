@@ -1,5 +1,7 @@
 package org.javlo.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,6 +25,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.data.taxonomy.TaxonomyBean;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XMLHelper;
+import org.javlo.io.SecureFile;
 import org.javlo.navigation.MenuElement;
 import org.javlo.servlet.IVersion;
 import org.javlo.servlet.zip.ZipManagement;
@@ -55,6 +58,8 @@ public class PersistenceThread implements Runnable {
 	private String defaultLg = null;
 
 	private String contextKey = null;
+	
+	private String encryptKey = null;
 
 	private PersistenceService persistenceService;
 
@@ -183,14 +188,22 @@ public class PersistenceThread implements Runnable {
 			file = persistenceService.getXMLPersistenceFile(ContentContext.PREVIEW_MODE, localVersion);
 			// file = new File(persistenceService.getDirectory() + "/content_" +
 			// ContentContext.PREVIEW_MODE + '_' + localVersion + ".xml");
-			if (!file.exists()) {
-				file.getParentFile().mkdirs();
-				file.createNewFile();
+			OutputStream fileStream;
+			if (getEncryptKey() == null) {
+				if (!file.exists()) {
+					file.getParentFile().mkdirs();
+					file.createNewFile();
+				}
+				fileStream = new FileOutputStream(file);
+			} else {
+				fileStream = new ByteArrayOutputStream();
 			}
-			FileOutputStream fileStream = new FileOutputStream(file);
 			OutputStreamWriter fileWriter = new OutputStreamWriter(fileStream, ContentContext.CHARACTER_ENCODING);
 			try {
 				XMLHelper.storeXMLContent(fileWriter, menuElement, renderMode, localVersion, defaultLg, getGlobalContentMap(), getTaxonomyRoot());
+				if (getEncryptKey() != null) {
+					SecureFile.createCyptedFile(file, getEncryptKey(), new ByteArrayInputStream(((ByteArrayOutputStream)fileStream).toByteArray()));
+				}
 			} finally {
 				fileWriter.close();
 				fileStream.close();
@@ -262,6 +275,14 @@ public class PersistenceThread implements Runnable {
 
 	public PersistenceThread(Object lockReference) {
 		this.lockReference = lockReference;
+	}
+
+	public String getEncryptKey() {
+		return encryptKey;
+	}
+
+	public void setEncryptKey(String encryptKey) {
+		this.encryptKey = encryptKey;
 	}
 
 }

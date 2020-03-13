@@ -2,6 +2,7 @@ package org.javlo.service;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
@@ -68,6 +69,7 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.TimeHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.io.SecureFile;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
@@ -361,7 +363,7 @@ public class PersistenceService {
 			int workVersion = getVersion() + 1;
 			File file = new File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' + workVersion + ".xml");
 			File propFile = new File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' + workVersion + ".properties");
-			while (file.exists()) {
+			while (isFileExist(file)) {
 				workVersion++;
 				file.delete();
 				if (propFile.exists()) {
@@ -374,7 +376,7 @@ public class PersistenceService {
 		int workVersion = getVersion() - UNDO_DEPTH;
 		File file = new File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' + workVersion + ".xml");
 		File propFile = new File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' + workVersion + ".properties");
-		if (file.exists()) {
+		if (isFileExist(file)) {
 			file.delete();
 			workVersion = 0;
 		}
@@ -542,7 +544,7 @@ public class PersistenceService {
 	public Track[] getAllTrack(Date day) {
 		return getAllTrack(day, getTrackingDirectory());
 	}
-	
+
 	public static synchronized Track[] getAllTrack(Date day, String trackingDir) {
 		Calendar from = Calendar.getInstance();
 		from.setTime(day);
@@ -562,7 +564,7 @@ public class PersistenceService {
 	}
 
 	public synchronized static DayInfo getTrackDayInfo(Calendar cal, Map<String, Object> globalMem, TimeMap<Long, DayInfo> dayInfoCache, String trackingDir) throws IOException {
-		
+
 		DayInfo dayInfo = null;
 		if (dayInfoCache != null) {
 			dayInfo = dayInfoCache.get(cal.getTimeInMillis());
@@ -591,10 +593,10 @@ public class PersistenceService {
 			if (globalMem == null) {
 				globalMem = new HashMap<>();
 			}
-			
+
 			Set<String> sessionDone = new HashSet<>();
 			Set<String> session2ClickDone = new HashSet<>();
-			
+
 			Track[] allTracks = getAllTrack(cal.getTime(), trackingDir);
 			for (Track track : allTracks) {
 				if (!track.getPath().contains(".php")) {
@@ -621,58 +623,58 @@ public class PersistenceService {
 							if (ipPos != null) {
 								if (ipPos.getCountryCode() != null) {
 									if (lg.length() == 2) {
-										String key = ipPos.getCountryCode()+'-'+lg;
-										dayInfo.countryVisit.get(key).increment();										
+										String key = ipPos.getCountryCode() + '-' + lg;
+										dayInfo.countryVisit.get(key).increment();
 									}
 								} else {
 									dayInfo.countryVisit.get(DayInfo.COUNTRY_NOT_FOUND).increment();
 								}
 							} else {
 								dayInfo.countryVisit.get(DayInfo.COUNTRY_NOT_FOUND).increment();
-								logger.fine("country not found for ip "+track.getIP());
+								logger.fine("country not found for ip " + track.getIP());
 							}
 						} catch (Exception e) {
 							dayInfo.countryVisit.get(DayInfo.COUNTRY_NOT_FOUND).increment();
 							e.printStackTrace();
 						}
 					}
-					
-					//if (track.isView()) {
+
+					// if (track.isView()) {
+					if (mobile) {
+						dayInfo.pagesCountMobile++;
+					}
+					String path = URLHelper.removeParam(track.getPath());
+
+					if (path.contains("html") && !path.contains("404") && !path.startsWith("/preview") && !path.startsWith("/edit") && !path.startsWith("/ajax") && !path.startsWith("/modules") && !path.startsWith("/wait.html") && !path.startsWith("/status.html") && !path.startsWith("/page")) {
+						if (path.length() > 1 && path.endsWith("/")) {
+							path = path.substring(0, path.length() - 1);
+						}
+						dayInfo.visitPath.get(path).increment();
+					}
+					if (!track.isView()) {
+						Calendar trackCal = Calendar.getInstance();
+						trackCal.setTimeInMillis(track.getTime());
+						dayInfo.timeVist.get(trackCal.get(Calendar.HOUR_OF_DAY)).add(1);
+					}
+					if (!track.isView()) {
+						Calendar trackCal = Calendar.getInstance();
+						trackCal.setTimeInMillis(track.getTime());
+						dayInfo.daysVist.get(trackCal.get(Calendar.DAY_OF_WEEK)).add(1);
+					}
+					if (globalMem.get("session-" + track.getSessionId()) == null) {
+						globalMem.put("session-" + track.getSessionId(), track.getPath());
+						dayInfo.sessionCount++;
 						if (mobile) {
-							dayInfo.pagesCountMobile++;
+							dayInfo.sessionCountMobile++;
 						}
-						String path = URLHelper.removeParam(track.getPath());
-						
-						if (path.contains("html") && !path.contains("404") && !path.startsWith("/preview") && !path.startsWith("/edit") && !path.startsWith("/ajax") && !path.startsWith("/modules") && !path.startsWith("/wait.html") && !path.startsWith("/status.html") && !path.startsWith("/page")) {
-							if (path.length() > 1 && path.endsWith("/")) {
-								path = path.substring(0, path.length()-1);
-							}
-							dayInfo.visitPath.get(path).increment();
+					} else if (globalMem.get("session2Click-" + track.getSessionId()) == null && !track.getPath().equals(globalMem.get("session-" + track.getSessionId()))) {
+						globalMem.put("session2Click-" + track.getSessionId(), 1);
+						dayInfo.session2ClickCount++;
+						if (mobile) {
+							dayInfo.session2ClickCountMobile++;
 						}
-						if (!track.isView()) {
-							Calendar trackCal = Calendar.getInstance();
-							trackCal.setTimeInMillis(track.getTime());
-							dayInfo.timeVist.get(trackCal.get(Calendar.HOUR_OF_DAY)).add(1);
-						}
-						if (!track.isView()) {
-							Calendar trackCal = Calendar.getInstance();
-							trackCal.setTimeInMillis(track.getTime());
-							dayInfo.daysVist.get(trackCal.get(Calendar.DAY_OF_WEEK)).add(1);
-						}
-						if (globalMem.get("session-" + track.getSessionId()) == null) {
-							globalMem.put("session-" + track.getSessionId(), track.getPath());
-							dayInfo.sessionCount++;
-							if (mobile) {
-								dayInfo.sessionCountMobile++;
-							}
-						} else if (globalMem.get("session2Click-" + track.getSessionId()) == null && !track.getPath().equals(globalMem.get("session-" + track.getSessionId()))) {
-							globalMem.put("session2Click-" + track.getSessionId(), 1);
-							dayInfo.session2ClickCount++;
-							if (mobile) {
-								dayInfo.session2ClickCountMobile++;
-							}
-						}
-					//}
+					}
+					// }
 				}
 			}
 			if (savePage.size() > 0) {
@@ -1287,7 +1289,15 @@ public class PersistenceService {
 	 */
 	public boolean isPreviewVersion(int version) {
 		File file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + version + ".xml");
-		return file.exists();
+		return isFileExist(file);
+	}
+
+	public boolean isFileExist(File file) {
+		if (globalContext.getSpecialConfig().isSecureEncrypt()) {
+			return SecureFile.isExist(file);
+		} else {
+			return file.exists();
+		}
 	}
 
 	/**
@@ -1377,7 +1387,6 @@ public class PersistenceService {
 			InputStream in = null;
 			ZipInputStream zip = null;
 			try {
-
 				if (timeTravelDate != null) {
 					// An other render mode than VIEW_MODE is not supported
 					// with
@@ -1406,6 +1415,9 @@ public class PersistenceService {
 				}
 				File xmlFile = null;
 				File propFile = null;
+
+				LocalLogger.log("LOAD");
+
 				if (in == null) {
 					if (renderMode == ContentContext.PREVIEW_MODE) {
 						xmlFile = new File(getPersistenceFilePrefix(renderMode) + '_' + version + ".xml");
@@ -1414,8 +1426,21 @@ public class PersistenceService {
 						xmlFile = new File(getPersistenceFilePrefix(renderMode) + ".xml");
 						propFile = new File(getPersistenceFilePrefix(renderMode) + ".properties");
 					}
-					if (xmlFile.exists()) {
-						in = new FileInputStream(xmlFile);
+					LocalLogger.log("xmlFile = " + xmlFile);
+					if (ctx.getGlobalContext().getSpecialConfig().isSecureEncrypt()) {
+						LocalLogger.log("xmlFile = " + xmlFile);
+						if (SecureFile.isExist(xmlFile)) {
+							ByteArrayOutputStream out = new ByteArrayOutputStream();
+							SecureFile.decodeCyptedFile(xmlFile, ctx.getGlobalContext().getSpecialConfig().getSecureEncryptPassword(), out);
+							LocalLogger.log("#out = " + out.toByteArray().length);
+							in = new ByteArrayInputStream(out.toByteArray());
+						} else {
+							LocalLogger.log("not found : xmlFile = " + xmlFile);
+						}
+					} else {
+						if (xmlFile.exists()) {
+							in = new FileInputStream(xmlFile);
+						}
 					}
 				}
 				if (in == null) {
@@ -1449,7 +1474,6 @@ public class PersistenceService {
 						}
 						return load(ctx, renderMode, contentAttributeMap, timeTravelDate, false, null);
 					}
-					
 
 					/** load linked content **/
 					/*
@@ -1506,7 +1530,7 @@ public class PersistenceService {
 	 * Integer.parseInt(prop.getProperty("version", "1")); } else { // set default
 	 * value version = 1; } return version; }
 	 */
-	
+
 	public Track[] loadTracks(Date from, Date to, boolean onlyViewClick, boolean onlyResource) {
 		return loadTracks(from, to, onlyViewClick, onlyResource, getTrackingDirectory());
 	}
@@ -1658,10 +1682,22 @@ public class PersistenceService {
 		storeCurrentView(ctx);
 		File previewFile = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + getVersion() + ".xml");
 		File file = new File(getDirectory() + "/content_" + ContentContext.VIEW_MODE + ".xml");
-		if (file.exists()) {
-			file.delete();
+		if (ctx.getGlobalContext().getSpecialConfig().isSecureEncrypt()) {
+			if (file.exists()) {
+				file.delete();
+			}
+			InputStream in = SecureFile.decodeCyptedFile(previewFile, ctx.getGlobalContext().getSpecialConfig().getSecureEncryptPassword());
+			try {
+				SecureFile.createCyptedFile(file, ctx.getGlobalContext().getSpecialConfig().getSecureEncryptPassword(), in);
+			} finally {
+				ResourceHelper.closeResource(in);
+			}
+		} else {
+			if (file.exists()) {
+				file.delete();
+			}
+			ResourceHelper.copyFile(previewFile, file, true);
 		}
-		ResourceHelper.copyFile(previewFile, file, true);
 	}
 
 	public void redo() {
@@ -1767,6 +1803,9 @@ public class PersistenceService {
 					GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 					persThread.setContextKey(globalContext.getContextKey());
 					persThread.setDataFolder(globalContext.getDataFolder());
+					if (ctx.getGlobalContext().getSpecialConfig().isSecureEncrypt()) {
+						persThread.setEncryptKey(ctx.getGlobalContext().getSpecialConfig().getSecureEncryptPassword());
+					}
 					StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext());
 					if (StaticInfo._STATIC_INFO_DIR != null) {
 						String staticInfo = URLHelper.mergePath(globalContext.getDataFolder(), StaticInfo._STATIC_INFO_DIR);
@@ -1821,7 +1860,7 @@ public class PersistenceService {
 	void storeCurrentView(ContentContext ctx) throws IOException, ParseException {
 		File file = new File(getDirectory() + "/content_" + ContentContext.VIEW_MODE + ".xml");
 
-		if (file.exists()) {
+		if (isFileExist(file)) {
 
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
@@ -1904,7 +1943,7 @@ public class PersistenceService {
 
 	private boolean versionExist(int version) {
 		File file = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + version + ".xml");
-		return file.exists();
+		return isFileExist(file);
 	}
 
 	public void sendPersistenceErrorToAdministrator(String message, File file, Throwable e) throws AddressException {
@@ -1926,8 +1965,7 @@ public class PersistenceService {
 			NetHelper.sendMailToAdministrator(globalContext, "Javlo persistence Error on : " + globalContext.getContextKey(), content);
 		}
 	}
-	
-	
+
 	public File getXMLPersistenceFile(int mode, long version) {
 		return new File(getPersistenceFilePrefix(mode) + '_' + version + ".xml");
 	}
@@ -1950,32 +1988,32 @@ public class PersistenceService {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(StringHelper.parseDate("01/01/2020"));
 		Map memData = new HashMap();
-		DayInfo dayInfo = getTrackDayInfo(cal,memData , null, "C:/Users/user/data/javlo/data-ctx/data-sexy/persitence/tracking");
-		System.out.println(">>>>>>>>> PersistenceService.main : #pages : "+dayInfo.pagesCount); //TODO: remove debug trace
-		System.out.println(">>>>>>>>> PersistenceService.main : #languageVisit : "+dayInfo.languageVisit.size()); //TODO: remove debug trace
-		System.out.println(">>>>>>>>> PersistenceService.main : #languageVisit fr : "+dayInfo.languageVisit.get("fr")); //TODO: remove debug trace
-		System.out.println(">>>>>>>>> PersistenceService.main : #languageVisit nl : "+dayInfo.languageVisit.get("nl")); //TODO: remove debug trace
-		System.out.println(">>>>>>>>> PersistenceService.main : #di.visitPages = "+dayInfo.visitPath.size()); //TODO: remove debug trace
-		
+		DayInfo dayInfo = getTrackDayInfo(cal, memData, null, "C:/Users/user/data/javlo/data-ctx/data-sexy/persitence/tracking");
+		System.out.println(">>>>>>>>> PersistenceService.main : #pages : " + dayInfo.pagesCount); // TODO: remove debug trace
+		System.out.println(">>>>>>>>> PersistenceService.main : #languageVisit : " + dayInfo.languageVisit.size()); // TODO: remove debug trace
+		System.out.println(">>>>>>>>> PersistenceService.main : #languageVisit fr : " + dayInfo.languageVisit.get("fr")); // TODO: remove debug trace
+		System.out.println(">>>>>>>>> PersistenceService.main : #languageVisit nl : " + dayInfo.languageVisit.get("nl")); // TODO: remove debug trace
+		System.out.println(">>>>>>>>> PersistenceService.main : #di.visitPages = " + dayInfo.visitPath.size()); // TODO: remove debug trace
+
 		Map<String, MutableInt> pagesVisit = new NeverEmptyMap<>(MutableInt.class);
-		
-		System.out.println(">>>>>>>>> DashboardAction.performReadTracker : #dayInfo.visitPath = "+dayInfo.visitPath.size()); //TODO: remove debug trace
+
+		System.out.println(">>>>>>>>> DashboardAction.performReadTracker : #dayInfo.visitPath = " + dayInfo.visitPath.size()); // TODO: remove debug trace
 		for (String key : dayInfo.visitPath.keySet()) {
 			pagesVisit.get(key).add(dayInfo.visitPath.get(key));
 		}
-		
-		System.out.println(">>>>>>>>> PersistenceService.main : #pagesVisit = "+pagesVisit.size()); //TODO: remove debug trace
+
+		System.out.println(">>>>>>>>> PersistenceService.main : #pagesVisit = " + pagesVisit.size()); // TODO: remove debug trace
 		ObjectBuilder ajaxMap = LangHelper.object();
 		ListBuilder datas = ajaxMap.list("datas");
 		for (Map.Entry<String, MutableInt> entry : pagesVisit.entrySet()) {
 
-				String[] d = new String[2];				
-				d[0] = entry.getKey();
-				d[1] = ""+entry.getValue();
-				datas.add(d);
-				System.out.println(">>>>>>>>> PersistenceService.main : d = "+d); //TODO: remove debug trace
+			String[] d = new String[2];
+			d[0] = entry.getKey();
+			d[1] = "" + entry.getValue();
+			datas.add(d);
+			System.out.println(">>>>>>>>> PersistenceService.main : d = " + d); // TODO: remove debug trace
 		}
-		System.out.println(">>>>>>>>> PersistenceService.main : #datas = "+datas.getList().size()); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> PersistenceService.main : #datas = " + datas.getList().size()); // TODO: remove debug trace
 	}
 
 	public boolean isLoaded() {

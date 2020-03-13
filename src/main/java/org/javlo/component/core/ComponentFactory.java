@@ -140,9 +140,7 @@ public class ComponentFactory {
 				try {
 					comp = Class.forName(clazz);
 				} catch (Throwable e) {
-					e.printStackTrace();
-					ComponentFactory.loadErrorMessage = "error on load : "+clazz;
-					logger.warning("update component log level : "+e.getMessage());
+					logger.fine("update component log level : "+e.getMessage());
 				}
 				Field fields[] = comp.getDeclaredFields();
 				for (Field field : fields) {

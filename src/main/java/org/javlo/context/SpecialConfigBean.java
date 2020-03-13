@@ -3,7 +3,6 @@ package org.javlo.context;
 import java.util.Map;
 
 import org.javlo.config.StaticConfig;
-import org.javlo.helper.MapHelper;
 import org.javlo.helper.StringHelper;
 
 public class SpecialConfigBean {
@@ -44,6 +43,22 @@ public class SpecialConfigBean {
 
 	public boolean isCreateAccountWithToken() {
 		return StringHelper.isTrue(config.get("security.account.token"), false);
+	}
+	
+	public boolean isSecureEncrypt() {
+		boolean out = StringHelper.isTrue(config.get("security.encrypt"), false);
+		if (out) {
+			out = getSecureEncryptPassword() != null;
+		}
+		return out;
+	}
+	
+	public String getSecureEncryptPassword() {
+		String pwd = (String)config.get("security.encrypt.password");
+		if (pwd == null) {
+			pwd = System.getenv("JAVLO_ENCRYPT_KEY"); 
+		}
+		return pwd;
 	}
 	
 	public String getSearchPageName() {

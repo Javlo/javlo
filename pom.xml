@@ -74,7 +74,7 @@
 			<artifactId>cage</artifactId>
 			<version>1.0</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
@@ -244,8 +244,8 @@
 			<groupId>org.apache.tika</groupId>
 			<artifactId>tika-core</artifactId>
 			<version>${tika.version}</version>
-			   <exclusions>
-		    <exclusion>
+			<exclusions>
+				<exclusion>
 					<groupId>com.fasterxml.jackson.core</groupId>
 					<artifactId>jackson-core</artifactId>
 				</exclusion>
@@ -265,8 +265,8 @@
 			<groupId>org.apache.tika</groupId>
 			<artifactId>tika-parsers</artifactId>
 			<version>${tika.version}</version>
-			 <exclusions>
-		    <exclusion>
+			<exclusions>
+				<exclusion>
 					<groupId>com.fasterxml.jackson.core</groupId>
 					<artifactId>jackson-core</artifactId>
 				</exclusion>
@@ -335,7 +335,7 @@
 			<artifactId>qrgen</artifactId>
 			<version>1.4</version>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.document -->
 		<dependency>
 			<groupId>fr.opensagres.xdocreport</groupId>
@@ -370,7 +370,7 @@
 			<artifactId>fr.opensagres.xdocreport.converter.docx.xwpf</artifactId>
 			<version>${xdocreport.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>ooxml-schemas</artifactId>
@@ -422,8 +422,8 @@
 			<groupId>com.dropbox.core</groupId>
 			<artifactId>dropbox-core-sdk</artifactId>
 			<version>3.1.1</version>
-			 <exclusions>
-		    <exclusion>
+			<exclusions>
+				<exclusion>
 					<groupId>com.fasterxml.jackson.core</groupId>
 					<artifactId>jackson-core</artifactId>
 				</exclusion>
@@ -437,13 +437,13 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.apache.oltu.oauth2</groupId>
 			<artifactId>org.apache.oltu.oauth2.client</artifactId>
 			<version>1.0.2</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.github.sheigutn</groupId>
 			<artifactId>pushbullet-java-8</artifactId>
@@ -518,7 +518,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>de.java2html</groupId>
 			<artifactId>java2html</artifactId>
@@ -551,21 +551,29 @@
 			<artifactId>logback-classic</artifactId>
 			<version>1.2.3</version>
 		</dependency>
-		
-		<!-- https://mvnrepository.com/artifact/org.elasticsearch.client/elasticsearch-rest-client -->
+
+ 		<!-- https://mvnrepository.com/artifact/org.elasticsearch.client/elasticsearch-rest-client -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.elasticsearch.client</groupId> -->
+<!-- 			<artifactId>elasticsearch-rest-client</artifactId> -->
+<!-- 			<version>${elasticsearch.version}</version> -->
+<!-- 		</dependency> -->
+
+		<!-- https://mvnrepository.com/artifact/org.elasticsearch.client/elasticsearch-rest-high-level-client --> 
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.elasticsearch.client</groupId> -->
+<!-- 			<artifactId>elasticsearch-rest-high-level-client</artifactId> -->
+<!-- 			<version>${elasticsearch.version}</version> -->
+<!-- 		</dependency> -->
+
+		<!-- https://mvnrepository.com/artifact/net.lingala.zip4j/zip4j -->
 		<dependency>
-		    <groupId>org.elasticsearch.client</groupId>
-		    <artifactId>elasticsearch-rest-client</artifactId>
-		    <version>${elasticsearch.version}</version>
+			<groupId>net.lingala.zip4j</groupId>
+			<artifactId>zip4j</artifactId>
+			<version>2.5.0</version>
 		</dependency>
-		
-		<!-- https://mvnrepository.com/artifact/org.elasticsearch.client/elasticsearch-rest-high-level-client -->
-		<dependency>
-		    <groupId>org.elasticsearch.client</groupId>
-		    <artifactId>elasticsearch-rest-high-level-client</artifactId>
-		    <version>${elasticsearch.version}</version>
-		</dependency>
-		
+
+
 	</dependencies>
 
 	<repositories>
