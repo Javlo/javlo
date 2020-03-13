@@ -795,6 +795,7 @@ Security in case of vulnerabilities.
  - IP2location localisation of ip localy
  - update datatables version to 1.10.20
  - section component
+ - secure file storage
 ### Modified
  - security update
  - file-finder optimisation
@@ -817,3 +818,4 @@ Security in case of vulnerabilities.
  - contentcontext null request correction
  - reset hashcode on edit image
  - action servlet work with a sessionId
+## [2.1.2.5] - 13/03/2020
