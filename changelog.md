@@ -796,6 +796,7 @@ Security in case of vulnerabilities.
  - update datatables version to 1.10.20
  - section component
  - secure file storage
+ - zip file storage without encyrption
 ### Modified
  - security update
  - file-finder optimisation
