@@ -110,6 +110,8 @@ import org.owasp.encoder.Encode;
 import org.python.modules.synchronize;
 
 public class GlobalContext implements Serializable, IPrintInfo {
+	
+	public static String GLOBAL_ERROR = null;
 
 	private static final Date CREATION_DATE = new Date();
 
@@ -4354,6 +4356,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		} else {
 			return email;
 		}
+	}
+	
+	public String getGlobalError() {
+		return GLOBAL_ERROR;
 	}
 	
 }

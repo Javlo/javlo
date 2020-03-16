@@ -957,6 +957,8 @@ public class AdminAction extends AbstractModuleAction {
 		ResourceFactory.getInstance(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE)).clearCache();
 		ResourceFactory.getInstance(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE)).clearCache();
 		ResourceFactory.getInstance(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE)).clearCache();
+		
+		GlobalContext.GLOBAL_ERROR=null;
 
 		return null;
 	}

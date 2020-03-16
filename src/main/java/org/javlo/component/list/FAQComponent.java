@@ -141,25 +141,6 @@ public class FAQComponent extends AbstractVisualComponent {
 	}
 
 	@Override
-	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		return "";
-	}
-
-	@Override
-	public String getRenderer(ContentContext ctx) {
-		if (getConfig(ctx).getRenderes().size() > 0) {
-			String renderer = getConfig(ctx).getRenderes().values().iterator().next();
-			return renderer;
-		}
-		return "faq.jsp";
-	}
-
-	@Override
-	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		return "";
-	}
-
-	@Override
 	public String getType() {
 		return "faq";
 	}
@@ -169,49 +150,32 @@ public class FAQComponent extends AbstractVisualComponent {
 		super.prepareView(ctx);
 		List<FAQItem> items = new LinkedList<FAQItem>();
 		Title firstTitle = null;
-		if (getValue().contains("faq.")) { // Old style: remove this alternative if no more needed
-			ConfigurationProperties properties = new ConfigurationProperties();
-			properties.load(stringToStream(getValue()));
-			properties.setEncoding(ContentContext.CHARACTER_ENCODING);
-			String title = properties.getString("faq.title");
-			if (title != null) {
-				firstTitle = new Title(title);
-			} else {
-				title = "";
-			}
-			for (int i = 0; i < 99999; i++) {
-				String question = properties.getString("faq." + i + ".question");
-				if (question != null) {
-					String answer = properties.getString("faq." + i + ".answer");
-					items.add(new Question(question, answer));
+		
+		String[] lines = getValue().split("\\r\\n|\\n|\\r");
+		FAQItem lastItem = null;
+		for (String line : lines) {
+			if (line.startsWith(".")) {
+				// Skip hidden line
+			} else if (line.startsWith("t:") || line.startsWith("T:")) {
+				Title title = new Title(line.substring(2));
+				lastItem = title;
+				items.add(lastItem);
+				if (firstTitle == null) {
+					firstTitle = title;
 				}
-			}
-		} else {
-			String[] lines = getValue().split("\\r\\n|\\n|\\r");
-			FAQItem lastItem = null;
-			for (String line : lines) {
-				if (line.startsWith(".")) {
-					// Skip hidden line
-				} else if (line.startsWith("t:") || line.startsWith("T:")) {
-					Title title = new Title(line.substring(2));
-					lastItem = title;
-					items.add(lastItem);
-					if (firstTitle == null) {
-						firstTitle = title;
-					}
-				} else if (line.startsWith("q:") || line.startsWith("Q:")) {
-					lastItem = new Question(line.substring(2));
-					items.add(lastItem);
-				} else if (line.startsWith("a:") || line.startsWith("A:")) {
-					if (lastItem instanceof Question) {
-						Question question = (Question) lastItem;
-						question.setAnswer(line.substring(2));
-					}
-				} else if (lastItem != null) {
-					lastItem.appendLine(line);
+			} else if (line.startsWith("q:") || line.startsWith("Q:")) {
+				lastItem = new Question(line.substring(2));
+				items.add(lastItem);
+			} else if (line.startsWith("a:") || line.startsWith("A:")) {
+				if (lastItem instanceof Question) {
+					Question question = (Question) lastItem;
+					question.setAnswer(line.substring(2));
 				}
+			} else if (lastItem != null) {
+				lastItem.appendLine(line);
 			}
 		}
+		
 		ctx.getRequest().setAttribute("firstTitle", firstTitle);
 		ctx.getRequest().setAttribute("items", items);
 	}

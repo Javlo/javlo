@@ -60,6 +60,8 @@ public class PersistenceThread implements Runnable {
 	private String contextKey = null;
 	
 	private String encryptKey = null;
+	
+	private boolean zipStorage = false;
 
 	private PersistenceService persistenceService;
 
@@ -189,7 +191,7 @@ public class PersistenceThread implements Runnable {
 			// file = new File(persistenceService.getDirectory() + "/content_" +
 			// ContentContext.PREVIEW_MODE + '_' + localVersion + ".xml");
 			OutputStream fileStream;
-			if (getEncryptKey() == null) {
+			if (!isZipStorage()) {
 				if (!file.exists()) {
 					file.getParentFile().mkdirs();
 					file.createNewFile();
@@ -201,9 +203,7 @@ public class PersistenceThread implements Runnable {
 			OutputStreamWriter fileWriter = new OutputStreamWriter(fileStream, ContentContext.CHARACTER_ENCODING);
 			try {
 				XMLHelper.storeXMLContent(fileWriter, menuElement, renderMode, localVersion, defaultLg, getGlobalContentMap(), getTaxonomyRoot());
-				if (getEncryptKey() != null) {
-					SecureFile.createCyptedFile(file, getEncryptKey(), new ByteArrayInputStream(((ByteArrayOutputStream)fileStream).toByteArray()));
-				}
+				SecureFile.createCyptedFile(file, getEncryptKey(), new ByteArrayInputStream(((ByteArrayOutputStream)fileStream).toByteArray()));
 			} finally {
 				fileWriter.close();
 				fileStream.close();
@@ -283,6 +283,14 @@ public class PersistenceThread implements Runnable {
 
 	public void setEncryptKey(String encryptKey) {
 		this.encryptKey = encryptKey;
+	}
+
+	public boolean isZipStorage() {
+		return zipStorage;
+	}
+
+	public void setZipStorage(boolean zipStorage) {
+		this.zipStorage = zipStorage;
 	}
 
 }

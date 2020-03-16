@@ -1293,7 +1293,7 @@ public class PersistenceService {
 	}
 
 	public boolean isFileExist(File file) {
-		if (globalContext.getSpecialConfig().isSecureEncrypt()) {
+		if (globalContext.getSpecialConfig().isStorageZipped()) {
 			return SecureFile.isExist(file);
 		} else {
 			return file.exists();
@@ -1427,7 +1427,7 @@ public class PersistenceService {
 						propFile = new File(getPersistenceFilePrefix(renderMode) + ".properties");
 					}
 					LocalLogger.log("xmlFile = " + xmlFile);
-					if (ctx.getGlobalContext().getSpecialConfig().isSecureEncrypt()) {
+					if (ctx.getGlobalContext().getSpecialConfig().isStorageZipped()) {
 						LocalLogger.log("xmlFile = " + xmlFile);
 						if (SecureFile.isExist(xmlFile)) {
 							ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -1682,7 +1682,7 @@ public class PersistenceService {
 		storeCurrentView(ctx);
 		File previewFile = new File(getDirectory() + "/content_" + ContentContext.PREVIEW_MODE + '_' + getVersion() + ".xml");
 		File file = new File(getDirectory() + "/content_" + ContentContext.VIEW_MODE + ".xml");
-		if (ctx.getGlobalContext().getSpecialConfig().isSecureEncrypt()) {
+		if (ctx.getGlobalContext().getSpecialConfig().isStorageZipped()) {
 			if (file.exists()) {
 				file.delete();
 			}
@@ -1803,6 +1803,7 @@ public class PersistenceService {
 					GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 					persThread.setContextKey(globalContext.getContextKey());
 					persThread.setDataFolder(globalContext.getDataFolder());
+					persThread.setZipStorage(globalContext.getSpecialConfig().isStorageZipped());
 					if (ctx.getGlobalContext().getSpecialConfig().isSecureEncrypt()) {
 						persThread.setEncryptKey(ctx.getGlobalContext().getSpecialConfig().getSecureEncryptPassword());
 					}

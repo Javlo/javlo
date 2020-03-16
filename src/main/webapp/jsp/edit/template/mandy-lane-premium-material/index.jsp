@@ -291,6 +291,11 @@
 			<div class="left">
 
 				<div id="message-container">
+				
+					<c:if test="${not empty globalContext.globalError}">
+						<div class="alert alert-danger">${globalContext.globalError}</div>
+					</c:if>
+				
 					<jsp:include page="message.jsp" />
 				</div>
 

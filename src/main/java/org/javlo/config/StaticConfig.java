@@ -1372,6 +1372,14 @@ public class StaticConfig extends Observable {
 		return properties.getBoolean("download.include-tracking", false);
 	}
 
+	public boolean isStorageZipped() {
+		return properties.getBoolean("persistence.zip", false);
+	}
+	
+	public boolean isSecureEncrypt() {
+		return properties.getBoolean("security.encrypt", false);
+	}
+	
 	public boolean isHostDefineSite() {
 		return properties.getBoolean("url.host-define-site", false);
 	}

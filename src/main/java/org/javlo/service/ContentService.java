@@ -33,6 +33,7 @@ import org.javlo.data.InfoBean;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.Comparator.MenuElementCreationDateComparator;
 import org.javlo.i18n.I18nResource;
 import org.javlo.module.core.IPrintInfo;
 import org.javlo.navigation.MenuElement;
@@ -276,10 +277,10 @@ public class ContentService implements IPrintInfo {
 		IContentVisualComponent previousComp = ContentService.getInstance(ctx.getRequest()).getComponent(ctx, parentId);
 		if (previousComp != null) {
 			bean.setArea(previousComp.getArea());
-		} else {			
+		} else {
 			if (inBean.getArea() != null) {
 				bean.setArea(inBean.getArea());
-			} else {		
+			} else {
 				bean.setArea(ctx.getArea());
 			}
 		}
@@ -612,69 +613,78 @@ public class ContentService implements IPrintInfo {
 	/**
 	 * return all the content.
 	 */
-	public MenuElement getNavigation(ContentContext ctx) throws Exception {
+	public MenuElement getNavigation(ContentContext ctx) {
+		
 		MenuElement res = null;
-		GlobalContext globalContext = ctx.getGlobalContext();
-
-		if (ctx.getRenderMode() == ContentContext.TIME_MODE && globalContext.getTimeTravelerContext().getTravelTime() != null) {
-			if (timeTravelerNav == null) {
-				Date timeTravelDate = globalContext.getTimeTravelerContext().getTravelTime();
-				if (timeTravelDate != null && timeTravelDate.after(globalContext.getPublishDate())) {
-					timeTravelDate = null;
+		try {
+				GlobalContext globalContext = ctx.getGlobalContext();
+	
+			if (ctx.getRenderMode() == ContentContext.TIME_MODE && globalContext.getTimeTravelerContext().getTravelTime() != null) {
+				if (timeTravelerNav == null) {
+					Date timeTravelDate = globalContext.getTimeTravelerContext().getTravelTime();
+					if (timeTravelDate != null && timeTravelDate.after(globalContext.getPublishDate())) {
+						timeTravelDate = null;
+					}
+					PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
+					Map<String, String> contentAttributeMap = new HashMap<String, String>();
+					timeTravelerNav = persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, timeTravelDate);
+					timeTravelerGlobalMap = contentAttributeMap;
+					/** init next and previous component **/
+					for (MenuElement page : timeTravelerNav.getAllChildrenList()) {
+						ComponentHelper.updateNextAndPrevious(ctx, page, null);
+					}
 				}
-				PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-				Map<String, String> contentAttributeMap = new HashMap<String, String>();
-				timeTravelerNav = persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, timeTravelDate);
-				timeTravelerGlobalMap = contentAttributeMap;
-				/** init next and previous component **/
-				for (MenuElement page : timeTravelerNav.getAllChildrenList()) {
-					ComponentHelper.updateNextAndPrevious(ctx, page, null);
-				}
-			}
-			res = timeTravelerNav;
-		} else if (!ctx.isAsViewMode() || !previewMode) { // TODO: check the
-															// test was with :
-															// || !previewMode
-			if (previewNav == null) {
-				synchronized (ctx.getGlobalContext().getLockLoadContent()) {
-					if (previewNav == null) {
-						long startTime = System.currentTimeMillis();
-						PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-						Map<String, String> contentAttributeMap = new HashMap<String, String>();
-						previewNav = persistenceService.load(ctx, ContentContext.PREVIEW_MODE, contentAttributeMap, null);
-						/** init next and previous component **/
-						for (MenuElement page : previewNav.getAllChildrenList()) {
-							ComponentHelper.updateNextAndPrevious(ctx, page, null);
+				res = timeTravelerNav;
+			} else if (!ctx.isAsViewMode() || !previewMode) { // TODO: check the
+																// test was with :
+																// || !previewMode
+				if (previewNav == null) {
+					synchronized (ctx.getGlobalContext().getLockLoadContent()) {
+						if (previewNav == null) {
+							long startTime = System.currentTimeMillis();
+							PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
+							Map<String, String> contentAttributeMap = new HashMap<String, String>();
+							previewNav = persistenceService.load(ctx, ContentContext.PREVIEW_MODE, contentAttributeMap, null);
+							/** init next and previous component **/
+							for (MenuElement page : previewNav.getAllChildrenList()) {
+								ComponentHelper.updateNextAndPrevious(ctx, page, null);
+							}
+							previewGlobalMap = contentAttributeMap;
+							logger.info("load preview of '" + globalContext.getContextKey() + "' nav in " + StringHelper.renderTimeInSecond((System.currentTimeMillis() - startTime) / 1000) + " sec.");
 						}
-						previewGlobalMap = contentAttributeMap;
-						logger.info("load preview of '" + globalContext.getContextKey() + "' nav in " + StringHelper.renderTimeInSecond((System.currentTimeMillis() - startTime) / 1000) + " sec.");
+					}
+				}
+				res = previewNav;
+			} else {
+				res = getViewNav();
+				if (res == null) {
+					synchronized (ctx.getGlobalContext().getLockLoadContent()) {
+						res = getViewNav();
+						if (res == null) {
+							long startTime = System.currentTimeMillis();
+							PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
+							Map<String, String> contentAttributeMap = new HashMap<String, String>();
+							MenuElement page = persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, null);
+							setViewNav(page);
+							/** init next and previous component **/
+							for (MenuElement p : page.getAllChildrenList()) {
+								ComponentHelper.updateNextAndPrevious(ctx, p, null);
+							}
+							// NavigationService.checkSameUrl(ctx,
+							// page.getAllChildrenList()); // important to be afther
+							// setViewNav otherwise --> recursive
+							res = page;
+							viewGlobalMap = contentAttributeMap;
+							logger.info("load view of '" + globalContext.getContextKey() + "' nav in " + StringHelper.renderTimeInSecond((System.currentTimeMillis() - startTime) / 1000) + " sec.");
+						}
 					}
 				}
 			}
-			res = previewNav;
-		} else {
-			res = getViewNav();
+		} catch (Exception e) {
+			e.printStackTrace();
+			GlobalContext.GLOBAL_ERROR = "error load mode="+ctx.getRenderMode()+" ["+e.getMessage()+"]";
 			if (res == null) {
-				synchronized (ctx.getGlobalContext().getLockLoadContent()) {
-					res = getViewNav();
-					if (res == null) {
-						long startTime = System.currentTimeMillis();
-						PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-						Map<String, String> contentAttributeMap = new HashMap<String, String>();
-						MenuElement page = persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, null);
-						setViewNav(page);
-						/** init next and previous component **/
-						for (MenuElement p : page.getAllChildrenList()) {
-							ComponentHelper.updateNextAndPrevious(ctx, p, null);
-						}
-						// NavigationService.checkSameUrl(ctx,
-						// page.getAllChildrenList()); // important to be afther
-						// setViewNav otherwise --> recursive
-						res = page;
-						viewGlobalMap = contentAttributeMap;
-						logger.info("load view of '" + globalContext.getContextKey() + "' nav in " + StringHelper.renderTimeInSecond((System.currentTimeMillis() - startTime) / 1000) + " sec.");
-					}
-				}
+				res = MenuElement.getInstance(ctx);
 			}
 		}
 
@@ -1030,7 +1040,7 @@ public class ContentService implements IPrintInfo {
 	}
 
 	public String getDefaultValue(ContentContext ctx, String type) throws Exception {
-		MenuElement defaultContentPage = getNavigation(ctx).searchChildFromName(DEFAULT_CONTENT_PAGE);		
+		MenuElement defaultContentPage = getNavigation(ctx).searchChildFromName(DEFAULT_CONTENT_PAGE);
 		if (defaultContentPage != null) {
 			List<IContentVisualComponent> content = defaultContentPage.getContentByType(ctx, type);
 			if (content.size() > 0) {

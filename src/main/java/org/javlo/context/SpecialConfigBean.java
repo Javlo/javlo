@@ -45,8 +45,16 @@ public class SpecialConfigBean {
 		return StringHelper.isTrue(config.get("security.account.token"), false);
 	}
 	
+	public boolean isStorageZipped() {
+		if (isSecureEncrypt()) {
+			return true;
+		}
+		boolean out = StringHelper.isTrue(config.get("persistence.zip"), staticConfig.isStorageZipped());
+		return out;
+	}
+	
 	public boolean isSecureEncrypt() {
-		boolean out = StringHelper.isTrue(config.get("security.encrypt"), false);
+		boolean out = StringHelper.isTrue(config.get("security.encrypt"), staticConfig.isSecureEncrypt());
 		if (out) {
 			out = getSecureEncryptPassword() != null;
 		}
@@ -54,6 +62,9 @@ public class SpecialConfigBean {
 	}
 	
 	public String getSecureEncryptPassword() {
+		if (!StringHelper.isTrue(config.get("security.encrypt"), false)) {
+			return null;
+		};
 		String pwd = (String)config.get("security.encrypt.password");
 		if (pwd == null) {
 			pwd = System.getenv("JAVLO_ENCRYPT_KEY"); 
