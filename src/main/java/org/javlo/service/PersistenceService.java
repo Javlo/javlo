@@ -1416,8 +1416,6 @@ public class PersistenceService {
 				File xmlFile = null;
 				File propFile = null;
 
-				LocalLogger.log("LOAD");
-
 				if (in == null) {
 					if (renderMode == ContentContext.PREVIEW_MODE) {
 						xmlFile = new File(getPersistenceFilePrefix(renderMode) + '_' + version + ".xml");
