@@ -63,7 +63,6 @@ import org.javlo.helper.DebugHelper.StructureException;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.LangHelper.ListBuilder;
 import org.javlo.helper.LangHelper.ObjectBuilder;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -391,7 +390,6 @@ public class PersistenceService {
 		 * File(getPersistenceFilePrefix(ContentContext.PREVIEW_MODE) + '_' +
 		 * workVersion + ".properties"); }
 		 */
-		LocalLogger.stepCount("store", "workVersion");
 	}
 
 	public void correctAllFiles() {
@@ -1424,16 +1422,11 @@ public class PersistenceService {
 						xmlFile = new File(getPersistenceFilePrefix(renderMode) + ".xml");
 						propFile = new File(getPersistenceFilePrefix(renderMode) + ".properties");
 					}
-					LocalLogger.log("xmlFile = " + xmlFile);
 					if (ctx.getGlobalContext().getSpecialConfig().isStorageZipped()) {
-						LocalLogger.log("xmlFile = " + xmlFile);
 						if (SecureFile.isExist(xmlFile)) {
 							ByteArrayOutputStream out = new ByteArrayOutputStream();
 							SecureFile.decodeCyptedFile(xmlFile, ctx.getGlobalContext().getSpecialConfig().getSecureEncryptPassword(), out);
-							LocalLogger.log("#out = " + out.toByteArray().length);
 							in = new ByteArrayInputStream(out.toByteArray());
-						} else {
-							LocalLogger.log("not found : xmlFile = " + xmlFile);
 						}
 					} else {
 						if (xmlFile.exists()) {
