@@ -225,7 +225,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 		if (linkedPage != null) {
 			PageBean page = linkedPage.getPageBean(ctx);
 			ctx.getRequest().setAttribute("page", page);
-			ctx.getRequest().setAttribute("linkedPage", page);
+			ctx.getRequest().setAttribute("linkedPage", linkedPage);
 			String label = properties.getProperty(LABEL_KEY, "");
 			if (label.trim().length() == 0) {
 				label = linkedPage.getLabel(ctx);
