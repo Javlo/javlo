@@ -161,7 +161,7 @@ public class MessageRepository {
 	 */
 	public void setGlobalMessage(GenericMessage globalMessage) {
 		if (this.globalMessage != null) {
-			if (this.globalMessage.getType() == 0 || globalMessage.getType() < this.globalMessage.getType()) {
+			if (this.globalMessage.getType() == 0 || globalMessage.getType() > this.globalMessage.getType()) {
 				// is message name, don't replace (for needDisplay function)
 				if (!this.getGlobalMessage().getMessage().equals(globalMessage.getMessage()) || this.getGlobalMessage().getType() != globalMessage.getType()) {
 					this.globalMessage = globalMessage;
