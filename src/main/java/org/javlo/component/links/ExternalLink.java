@@ -123,7 +123,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 				}
 
 				prefix = prefix + "<a " + target + ' ' + getInlineStyle(ctx) + ' '
-						+ getSpecialPreviewCssClass(ctx, style + ' ' + getComponentCssClass(ctx)) + getSpecialPreviewCssId(ctx)
+						+ getPrefixCssClass(ctx, style + ' ' + getComponentCssClass(ctx)) + getSpecialPreviewCssId(ctx)
 						+ " href=\"";
 				prefix = prefix + StringHelper.toXMLAttribute(getLink());
 				prefix = prefix + "\">";

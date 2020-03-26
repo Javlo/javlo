@@ -159,7 +159,7 @@ public class RSSLink extends ComplexPropertiesLink {
 		String label = properties.getProperty(LABEL_KEY, "");
 
 		StringBuffer res = new StringBuffer();
-		res.append("<a " + getSpecialPreviewCssClass(ctx, getComponentCssClass(ctx)) + getSpecialPreviewCssId(ctx) + " href=\" ");
+		res.append("<a " + getPrefixCssClass(ctx, getComponentCssClass(ctx)) + getSpecialPreviewCssId(ctx) + " href=\" ");
 		res.append(getRSSURL(ctx));
 		res.append("\">");
 		res.append(XHTMLHelper.getIconesCode(ctx, "feed.png", "rss"));

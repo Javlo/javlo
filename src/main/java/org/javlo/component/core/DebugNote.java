@@ -126,7 +126,7 @@ public class DebugNote extends AbstractPropertiesComponent {
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
 		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
-			return "<div " + getSpecialPreviewCssClass(ctx, getComponentCssClass(ctx) + " " + getType()) + getSpecialPreviewCssId(ctx) + " >";
+			return "<div " + getPrefixCssClass(ctx, getComponentCssClass(ctx) + " " + getType()) + getSpecialPreviewCssId(ctx) + " >";
 		} else {
 			return "";
 		}

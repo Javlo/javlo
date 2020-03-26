@@ -213,7 +213,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 				openAsPopup = "target=\"_blank\" ";
 			}
 
-			res.append("<a " + getSpecialPreviewCssClass(ctx, getComponentCssClass(ctx)) + getSpecialPreviewCssId(ctx) + " " + rel + openAsPopup + "href=\"");
+			res.append("<a " + getPrefixCssClass(ctx, getComponentCssClass(ctx)) + getSpecialPreviewCssId(ctx) + " " + rel + openAsPopup + "href=\"");
 			if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {
 				res.append(StringHelper.toXMLAttribute(url));
 			} else {

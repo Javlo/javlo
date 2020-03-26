@@ -1177,7 +1177,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 						prefix = getForcedPrefixViewXHTMLCode(ctx);
 						suffix = getForcedSuffixViewXHTMLCode(ctx);
 					}
-					return (prefix + "<div " + getSpecialPreviewCssClass(ctx, "pc_empty-component") + getSpecialPreviewCssId(ctx) + ">" + getEmptyXHTMLCode(ctx) + "</div>" + suffix);
+					return (prefix + "<div " + getPrefixCssClass(ctx, "pc_empty-component") + getSpecialPreviewCssId(ctx) + ">" + getEmptyXHTMLCode(ctx) + "</div>" + suffix);
 				}
 			}
 		}
@@ -1695,9 +1695,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		String style = contructViewStyle(ctx);
 		String prefix;
 		if (!componentBean.isList()) {
-			prefix = "<" + getTag(ctx) + " " + getSpecialPreviewCssClass(ctx, style) + getSpecialPreviewCssId(ctx) + " " + getInlineStyle(ctx) + ">";
+			prefix = "<" + getTag(ctx) + " " + getPrefixCssClass(ctx, style) + getSpecialPreviewCssId(ctx) + " " + getInlineStyle(ctx) + ">";
 		} else {
-			prefix = "<" + getListItemTag(ctx) + getSpecialPreviewCssClass(ctx, style) + getSpecialPreviewCssId(ctx) + " >";
+			prefix = "<" + getListItemTag(ctx) + getPrefixCssClass(ctx, style) + getSpecialPreviewCssId(ctx) + " >";
 		}
 		if (isAjaxWrapper(ctx)) {
 			prefix = prefix + "<div id=\"" + getAjaxId() + "\">";
@@ -2033,8 +2033,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return "";
 	}
 
-	protected String getSpecialPreviewCssClass(ContentContext ctx, String currentClass) {
+	protected String getPrefixCssClass(ContentContext ctx, String currentClass) {
 		String cssClass = getPreviewCssClass(ctx, currentClass);
+		if (!StringHelper.isEmpty(getManualCssClass())) {
+			cssClass += ' '+getManualCssClass();
+		}
 		if (cssClass.trim().length() > 0) {
 			return " class=\"" + cssClass + "\"";
 		} else {
@@ -2545,7 +2548,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected String getPreviewAttributes(ContentContext ctx) {
-		return getSpecialPreviewCssClass(ctx, getComponentCssClass(ctx)) + getSpecialPreviewCssId(ctx);
+		return getPrefixCssClass(ctx, getComponentCssClass(ctx)) + getSpecialPreviewCssId(ctx);
 	}
 
 	/**

@@ -103,7 +103,7 @@ public class Title extends AbstractVisualComponent {
 		} else if (colorStyle.length()>0) {
 			style = " style=\""+colorStyle+'"';
 		}
-		res.append("<h1"+style+" " + getSpecialPreviewCssClass(ctx, getComponentCssClass(ctx)+colorClass) + getSpecialPreviewCssId(ctx) + "><"+getInsideTag(ctx)+">");
+		res.append("<h1"+style+" " + getPrefixCssClass(ctx, getComponentCssClass(ctx)+colorClass) + getSpecialPreviewCssId(ctx) + "><"+getInsideTag(ctx)+">");
 
 		String value = getValue();
 		//GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());

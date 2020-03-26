@@ -38,7 +38,7 @@ public class Paragraph extends AbstractVisualComponent {
 			} else {
 				style = "";
 			}
-			return "<p" + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " " + getInlineStyle(ctx) + ">";
+			return "<p" + getPrefixCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + " " + getInlineStyle(ctx) + ">";
 		}
 	}
 

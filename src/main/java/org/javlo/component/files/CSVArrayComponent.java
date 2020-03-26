@@ -238,7 +238,7 @@ public class CSVArrayComponent extends AbstractFileComponent {
 		}
 
 		StringWriter stringWriter = new StringWriter();
-		stringWriter.append("<div " + getSpecialPreviewCssClass(ctx, getComponentCssClass(ctx) + " " + getType()) + getSpecialPreviewCssId(ctx) + ">");
+		stringWriter.append("<div " + getPrefixCssClass(ctx, getComponentCssClass(ctx) + " " + getType()) + getSpecialPreviewCssId(ctx) + ">");
 		if (getLabel().trim().length() > 0) {
 			stringWriter.append("<table class=\"" + getComponentCssClass(ctx) + "\"><caption>"+Encode.forHtml(getLabel())+"</caption>");
 		} else {

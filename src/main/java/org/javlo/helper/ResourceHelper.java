@@ -718,8 +718,8 @@ public class ResourceHelper {
 		}
 		return "application/octet-stream";
 	}
-
-	public static File[] getFileList(String directory, HttpServletRequest request) {
+	
+	public static File[] getFileList(String directory) {
 		File dir = new File(directory);
 		File[] res;
 		if (dir.exists()) {
@@ -728,6 +728,10 @@ public class ResourceHelper {
 			res = new File[0];
 		}
 		return res;
+	}
+
+	public static File[] getFileList(String directory, HttpServletRequest request) {
+		return getFileList(directory);
 	}
 
 	public static final long getFileSize(String filePath) {

@@ -1030,7 +1030,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		if (getConfig(ctx).getProperty("prefix", null) != null) {
 			String prefix = "";
 			if (ctx.isPreview()) {
-				prefix = "<div " + getSpecialPreviewCssClass(ctx, "") + getSpecialPreviewCssId(ctx) + ">";
+				prefix = "<div " + getPrefixCssClass(ctx, "") + getSpecialPreviewCssId(ctx) + ">";
 			}
 			return colPrefix + prefix + getConfig(ctx).getProperty("prefix", null);
 		}
@@ -1045,7 +1045,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		} else if (isPopularityOrder(ctx)) {
 			specialClass = " popularity-order" + specialClass;
 		}
-		return colPrefix + "<div " + getSpecialPreviewCssClass(ctx, "page-reference" + specialClass + ' ' + getComponentCssClass(ctx)) + getSpecialPreviewCssId(ctx) + ">";
+		return colPrefix + "<div " + getPrefixCssClass(ctx, "page-reference" + specialClass + ' ' + getComponentCssClass(ctx)) + getSpecialPreviewCssId(ctx) + ">";
 	}
 
 	protected String getReverseOrderInput() {

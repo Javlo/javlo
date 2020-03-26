@@ -1,9 +1,10 @@
 package org.javlo.servlet;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.zip.ZipOutputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -77,19 +78,18 @@ public class ZIPServlet extends HttpServlet {
 			}
 			if (!staticConfig.isDownloadIncludeTracking()) {
 				excludes.add("persitence/tracking");
+				excludes.add("persistence/tracking");
 			}
 
-			ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
-			out.setLevel(9);
-
-			ZipManagement.zipDirectory(out, null, globalContext.getDataFolder(), request, excludes, null);
-
-			out.finish();
-			out.flush();
-			out.close();
-
+			ZipManagement.zipDirectory(response.getOutputStream(), null, globalContext.getDataFolder(), request, excludes, null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static void main(String[] args) throws IOException {
+		Set<String> excludes = new HashSet<String>();
+		excludes.add("persitence/tracking");
+		ZipManagement.zipDirectory(new ByteArrayOutputStream(), null, "C:/Users/user/data/javlo/data-ctx/data-4contes", null, excludes, null);
 	}
 }

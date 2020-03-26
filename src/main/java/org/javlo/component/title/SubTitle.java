@@ -26,7 +26,7 @@ public class SubTitle extends AbstractVisualComponent implements ISubTitle {
 		if (isBackgroundColored()) {
 			cssClass = cssClass + " "+COLORED_WRAPPER_CLASS;
 		}
-		return "<div " + getSpecialPreviewCssClass(ctx, cssClass) + getSpecialPreviewCssId(ctx) + " "+getInlineStyle(ctx)+">";
+		return "<div " + getPrefixCssClass(ctx, cssClass) + getSpecialPreviewCssId(ctx) + " "+getInlineStyle(ctx)+">";
 	}
 	
 	@Override

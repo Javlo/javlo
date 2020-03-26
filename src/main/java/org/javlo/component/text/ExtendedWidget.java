@@ -4,7 +4,6 @@
 package org.javlo.component.text;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,8 +17,6 @@ import org.javlo.helper.XHTMLHelper;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-
-import io.bit3.jsass.CompilationException;
 
 /**
  * @author pvandermaesen

@@ -10,12 +10,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +30,10 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.service.ContentService;
 
+import net.lingala.zip4j.io.outputstream.ZipOutputStream;
+import net.lingala.zip4j.model.ZipParameters;
+import net.lingala.zip4j.model.enums.CompressionMethod;
+
 /**
  * @author pvandermaesen
  */
@@ -39,49 +44,111 @@ public class ZipManagement {
 	 */
 	protected static Logger logger = Logger.getLogger(ZipManagement.class.getName());
 
-	public static void zipDirectory(ZipOutputStream out, String targetDir, String sourceDir, HttpServletRequest request) throws IOException {
+	public static void zipDirectory(OutputStream out, String targetDir, String sourceDir, HttpServletRequest request) throws IOException {
 		zipDirectory(out, targetDir, sourceDir, request, null, null);
 	}
 
-	public static void zipDirectory(ZipOutputStream out, String targetDir, String sourceDir, HttpServletRequest request, Set<String> excludes, Set<String> includes) throws IOException {
-		if (targetDir == null) {
-			targetDir = "";
-		} else {
-			targetDir += '/';
-		}
+	private ZipOutputStream initializeZipOutputStream(File outputZipFile) throws IOException {
+		FileOutputStream fos = new FileOutputStream(outputZipFile);
+		return new ZipOutputStream(fos);
+	}
 
-		File[] files = ResourceHelper.getFileList(sourceDir, request);
-		for (File file2 : files) {
-			String name = targetDir + file2.getName();
+	public static void zipDirectory(OutputStream out, String targetDir, String sourceDir, HttpServletRequest request, Set<String> excludes, Set<String> includes) throws IOException {
+		ZipParameters zipParameters = new ZipParameters();
+		byte[] buff = new byte[4096];
+		int readLen;
 
-			if (excludes != null && URLHelper.contains(excludes, name, true)) {
-				continue;
-			}
-			if (file2.isDirectory()) {
-				zipDirectory(out, name, sourceDir + '/' + file2.getName(), request, excludes, includes);
-			} else {
-				if (includes != null && !URLHelper.contains(includes, name, true)) {
-					continue;
+		try (ZipOutputStream zos = new ZipOutputStream(out)) {
+			for (File fileToAdd : createFileList(sourceDir, excludes, includes)) {
+
+				// Entry size has to be set if you want to add entries of STORE compression
+				// method (no compression)
+				// This is not required for deflate compression
+				if (zipParameters.getCompressionMethod() == CompressionMethod.STORE) {
+					zipParameters.setEntrySize(fileToAdd.length());
 				}
-				try {
-					ZipEntry entry = new ZipEntry(name);
-					out.putNextEntry(entry);
-					FileInputStream file = new FileInputStream(file2);
 
-					try {
-						int size = ResourceHelper.writeStreamToStream(file, out);
-						entry.setSize(size);
-					} finally {
-						ResourceHelper.closeResource(file);
+				zipParameters.setFileNameInZip(fileToAdd.getAbsolutePath().replace(sourceDir, ""));
+				zos.putNextEntry(zipParameters);
+
+				try (InputStream inputStream = new FileInputStream(fileToAdd)) {
+					while ((readLen = inputStream.read(buff)) != -1) {
+						zos.write(buff, 0, readLen);
 					}
-
-				} catch (IOException e) { // don't stop the for
-					e.printStackTrace();
 				}
-				out.closeEntry();
+				zos.closeEntry();
 			}
 		}
 	}
+	
+	public static Collection<File> createFileList(String sourceDir, Set<String> excludes, Set<String> includes) throws IOException {
+		return createFileList(sourceDir, sourceDir, excludes, includes);
+	}
+
+	
+	private static Collection<File> createFileList(String basicSource, String sourceDir, Set<String> excludes, Set<String> includes) throws IOException {
+		File[] files = ResourceHelper.getFileList(sourceDir);
+		Collection<File> outFiles = new LinkedList<File>();
+		for (File file2 : files) {
+			String path = URLHelper.cleanPath(file2.getAbsolutePath(), false);
+			path = path.replace(URLHelper.cleanPath(basicSource, false), "");
+			if (excludes != null && URLHelper.contains(excludes, path, true)) {
+				continue;
+			}
+			if (file2.isDirectory()) {
+				outFiles.addAll(createFileList(basicSource, file2.getAbsolutePath(), excludes, includes));
+			} else {
+				if (includes != null && !URLHelper.contains(includes, path, true)) {
+					continue;
+				}
+				outFiles.add(file2);
+			}
+		}
+		return outFiles;
+	}
+
+	// public static void zipDirectoryJAVA(ZipOutputStream out, String targetDir,
+	// String sourceDir, HttpServletRequest request, Set<String> excludes,
+	// Set<String> includes) throws IOException {
+	// if (targetDir == null) {
+	// targetDir = "";
+	// } else {
+	// targetDir += '/';
+	// }
+	//
+	// File[] files = ResourceHelper.getFileList(sourceDir, request);
+	// for (File file2 : files) {
+	// String name = targetDir + file2.getName();
+	//
+	// if (excludes != null && URLHelper.contains(excludes, name, true)) {
+	// continue;
+	// }
+	// if (file2.isDirectory()) {
+	// zipDirectory(out, name, sourceDir + '/' + file2.getName(), request, excludes,
+	// includes);
+	// } else {
+	// if (includes != null && !URLHelper.contains(includes, name, true)) {
+	// continue;
+	// }
+	// try {
+	// ZipEntry entry = new ZipEntry(name);
+	// out.putNextEntry(entry);
+	// FileInputStream file = new FileInputStream(file2);
+	//
+	// try {
+	// int size = ResourceHelper.writeStreamToStream(file, out);
+	// entry.setSize(size);
+	// } finally {
+	// ResourceHelper.closeResource(file);
+	// }
+	//
+	// } catch (IOException e) { // don't stop the for
+	// e.printStackTrace();
+	// }
+	// out.closeEntry();
+	// }
+	// }
+	// }
 
 	public static void zipFile(File zipFile, File inFile) throws IOException {
 		zipFile(zipFile, inFile, inFile.getParentFile());
@@ -92,7 +159,7 @@ public class ZipManagement {
 			zipFile.createNewFile();
 		}
 		OutputStream out = new FileOutputStream(zipFile);
-		ZipOutputStream outZip = new ZipOutputStream(out);
+		java.util.zip.ZipOutputStream outZip = new java.util.zip.ZipOutputStream(out);
 
 		zipFile(outZip, inFile, refDir);
 
@@ -120,7 +187,7 @@ public class ZipManagement {
 		}
 	}
 
-	public static void zipFile(ZipOutputStream out, File inFile, File refDir) throws IOException {
+	public static void zipFile(java.util.zip.ZipOutputStream out, File inFile, File refDir) throws IOException {
 		if (inFile.isDirectory()) {
 			File[] files = inFile.listFiles();
 			for (File file : files) {
@@ -153,7 +220,7 @@ public class ZipManagement {
 		}
 	}
 
-	public static void addFileInZip(ZipOutputStream out, String fileName, InputStream in) throws IOException {
+	public static void addFileInZip(java.util.zip.ZipOutputStream out, String fileName, InputStream in) throws IOException {
 		ZipEntry entry = new ZipEntry(fileName);
 		out.putNextEntry(entry);
 		int read = in.read();
@@ -191,7 +258,7 @@ public class ZipManagement {
 	public static void uploadZipFile(ContentContext ctx, InputStream in) throws Exception {
 		GlobalContext globalContext = ctx.getGlobalContext();
 		StaticConfig staticConfig = globalContext.getStaticConfig();
-		
+
 		String dataFolder = globalContext.getDataFolder();
 		if (staticConfig.isDownloadCleanDataFolder()) {
 			ResourceHelper.moveToGlobalTrash(staticConfig, dataFolder);
@@ -210,7 +277,7 @@ public class ZipManagement {
 
 		ContentService.getInstance(ctx.getRequest()).releaseAll(ctx, globalContext);
 	}
-	
+
 	public static void uploadZipTemplate(String templateFolder, InputStream in, String templateId) throws Exception {
 		ZipInputStream zipIn = new ZipInputStream(in);
 		ZipEntry entry = zipIn.getNextEntry();
@@ -233,7 +300,7 @@ public class ZipManagement {
 			}
 
 			entry = zipIn.getNextEntry();
-		}		
+		}
 		zipIn.close();
 	}
 }

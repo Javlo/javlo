@@ -102,7 +102,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 			}
 
 			String url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + fileLink).replace('\\', '/');
-			res.append("<div " + getSpecialPreviewCssClass(ctx, getCSSClassName(ctx)) + getSpecialPreviewCssId(ctx) + "><img src=\"");
+			res.append("<div " + getPrefixCssClass(ctx, getCSSClassName(ctx)) + getSpecialPreviewCssId(ctx) + "><img src=\"");
 			res.append(url);
 			res.append("\" title=\"");
 			res.append(label);

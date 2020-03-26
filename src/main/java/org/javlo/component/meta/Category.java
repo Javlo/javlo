@@ -43,7 +43,7 @@ public class Category extends AbstractVisualComponent {
 		if (getComponentCssClass(ctx) != null) {
 			style = getComponentCssClass(ctx) + " ";
 		}
-		return "<div " + getSpecialPreviewCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + ">";
+		return "<div " + getPrefixCssClass(ctx, style + getType()) + getSpecialPreviewCssId(ctx) + ">";
 	}
 
 	@Override

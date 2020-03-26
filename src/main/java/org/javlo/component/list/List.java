@@ -30,7 +30,7 @@ public class List extends AbstractVisualComponent {
 	
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		return "<li "+getSpecialPreviewCssClass(ctx, getComponentCssClass(ctx))+getSpecialPreviewCssId(ctx)+">";
+		return "<li "+getPrefixCssClass(ctx, getComponentCssClass(ctx))+getSpecialPreviewCssId(ctx)+">";
 	}
 
 	@Override

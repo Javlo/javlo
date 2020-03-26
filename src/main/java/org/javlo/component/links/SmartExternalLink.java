@@ -569,9 +569,9 @@ public class SmartExternalLink extends ComplexPropertiesLink implements IReverse
 				if (cssClass != null) {
 					insertCssClass = cssClass;
 				}
-				res.append("<div " + getSpecialPreviewCssClass(ctx, getComponentCssClass(ctx) + " " + getType() + " thumbnail")
+				res.append("<div " + getPrefixCssClass(ctx, getComponentCssClass(ctx) + " " + getType() + " thumbnail")
 						+ getSpecialPreviewCssId(ctx) + " >");
-				res.append("<a" + getSpecialPreviewCssClass(ctx, insertCssClass) + getSpecialPreviewCssId(ctx)
+				res.append("<a" + getPrefixCssClass(ctx, insertCssClass) + getSpecialPreviewCssId(ctx)
 						+ " href=\" ");
 				res.append(link);
 				res.append("\">");

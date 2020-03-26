@@ -53,7 +53,7 @@ public class ContentSeparation extends AbstractVisualComponent {
 				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 				PrintStream out = new PrintStream(outStream);
 				
-				out.println("<table "+getSpecialPreviewCssClass(ctx, "") + getSpecialPreviewCssId(ctx)+" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"font-size: "+fontSize+"; table-layout: fixed; margin: 0 auto;\"><tr><td>&nbsp;</td></tr><tr><td>");
+				out.println("<table "+getPrefixCssClass(ctx, "") + getSpecialPreviewCssId(ctx)+" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"font-size: "+fontSize+"; table-layout: fixed; margin: 0 auto;\"><tr><td>&nbsp;</td></tr><tr><td>");
 				out.println("<table style=\"table-layout: fixed; margin: 0 auto; background-color: "+getBackgroundColor()+"\" bgcolor=\""+getBackgroundColor()+"\" width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr><td style=\"font-size: "+fontSize+"\">&nbsp;");
 				if (getStyle().contains("large")) {
 					out.println("<br />&nbsp;");

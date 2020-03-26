@@ -277,7 +277,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 				title = " title=\"" + StringHelper.toXMLAttribute(title) + "\"";
 			}
 
-			res.append("<a " + getSpecialPreviewCssClass(ctx, "") + getSpecialPreviewCssId(ctx) + " href=\" ");
+			res.append("<a " + getPrefixCssClass(ctx, "") + getSpecialPreviewCssId(ctx) + " href=\" ");
 			if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {
 				res.append(StringHelper.toXMLAttribute(url));
 			} else {
@@ -299,7 +299,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 				res.append("<div class=\"body\"><p>");
 			}
 			if (style.contains(IMAGE)) {
-				res.append("<a " + getSpecialPreviewCssClass(ctx, getComponentCssClass(ctx)) + getSpecialPreviewCssId(ctx) + " href=\"");
+				res.append("<a " + getPrefixCssClass(ctx, getComponentCssClass(ctx)) + getSpecialPreviewCssId(ctx) + " href=\"");
 				if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {
 					res.append(url);
 				} else {
