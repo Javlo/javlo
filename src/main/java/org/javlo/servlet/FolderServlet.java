@@ -83,7 +83,7 @@ public class FolderServlet extends HttpServlet {
 				File securityFile = new File(URLHelper.mergePath(uri, ".nozip"));				
 				if (!securityFile.exists()) {
 					response.setContentType("application/gzip");
-					ZipManagement.zipDirectory(response.getOutputStream(), "", folder.getAbsolutePath(), request);
+					ZipManagement.zipDirectory(response.getOutputStream(), folder.getAbsolutePath(), request);
 				} else {
 					response.sendError(404);
 				}

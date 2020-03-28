@@ -1,5 +1,6 @@
 package org.javlo.utils;
 
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,7 +20,7 @@ import com.google.gson.JsonObject;
 
 public class JSONMap implements Map<String, Object> {
 
-	public static final Gson JSON = new GsonBuilder().setDateFormat("yyyy-MM-dd_HH-mm-ss-SSS ").create();
+	public static final Gson JSON = new GsonBuilder().setDateFormat("yyyy-MM-dd_HH-mm-ss-SSS").excludeFieldsWithModifiers(Modifier.TRANSIENT, Modifier.STATIC).create();
 
 	public static JSONMap parseMap(String jsonStr) {
 		return transformMap(JSON.fromJson(jsonStr, JsonElement.class));

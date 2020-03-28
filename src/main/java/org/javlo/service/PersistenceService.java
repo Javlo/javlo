@@ -1867,7 +1867,7 @@ public class PersistenceService {
 				OutputStream out = null;
 				try {
 					out = new FileOutputStream(zipFile);
-					ZipOutputStream outZip = new ZipOutputStream(out);
+					//ZipOutputStream outZip = new ZipOutputStream(out);
 
 					Set<String> includes = new HashSet<String>();
 					includes.addAll(staticConfig.getBackupIncludePatterns());
@@ -1875,9 +1875,7 @@ public class PersistenceService {
 					Set<String> excludes = new HashSet<String>();
 					excludes.addAll(staticConfig.getBackupExcludePatterns());
 
-					ZipManagement.zipDirectory(outZip, null, globalContext.getDataFolder(), ctx.getRequest(), excludes, includes);
-
-					outZip.close();
+					ZipManagement.zipDirectory(out, globalContext.getDataFolder(), ctx.getRequest(), excludes, includes);
 				} finally {
 					if (out != null) {
 						out.close();

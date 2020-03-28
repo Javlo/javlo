@@ -44,8 +44,8 @@ public class ZipManagement {
 	 */
 	protected static Logger logger = Logger.getLogger(ZipManagement.class.getName());
 
-	public static void zipDirectory(OutputStream out, String targetDir, String sourceDir, HttpServletRequest request) throws IOException {
-		zipDirectory(out, targetDir, sourceDir, request, null, null);
+	public static void zipDirectory(OutputStream out, String sourceDir, HttpServletRequest request) throws IOException {
+		zipDirectory(out, sourceDir, request, null, null);
 	}
 
 	private ZipOutputStream initializeZipOutputStream(File outputZipFile) throws IOException {
@@ -53,13 +53,17 @@ public class ZipManagement {
 		return new ZipOutputStream(fos);
 	}
 
-	public static void zipDirectory(OutputStream out, String targetDir, String sourceDir, HttpServletRequest request, Set<String> excludes, Set<String> includes) throws IOException {
-		ZipParameters zipParameters = new ZipParameters();
+	public static void zipDirectory(OutputStream out, String sourceDir, HttpServletRequest request, Set<String> excludes, Set<String> includes) throws IOException {
 		byte[] buff = new byte[4096];
 		int readLen;
+		
+		sourceDir = URLHelper.cleanPath(sourceDir, false);
 
 		try (ZipOutputStream zos = new ZipOutputStream(out)) {
+			ZipParameters zipParameters = new ZipParameters();
 			for (File fileToAdd : createFileList(sourceDir, excludes, includes)) {
+				
+				System.out.println(">>>>>>>>> ZipManagement.zipDirectory : fileToAdd = "+fileToAdd); //TODO: remove debug trace
 
 				// Entry size has to be set if you want to add entries of STORE compression
 				// method (no compression)
@@ -68,7 +72,14 @@ public class ZipManagement {
 					zipParameters.setEntrySize(fileToAdd.length());
 				}
 
-				zipParameters.setFileNameInZip(fileToAdd.getAbsolutePath().replace(sourceDir, ""));
+				String fileName = URLHelper.cleanPath(fileToAdd.getAbsolutePath(), false).replace(sourceDir, "");
+				
+				System.out.println(">>>>>>>>> ZipManagement.zipDirectory : filename = "+fileName); //TODO: remove debug trace
+				if (fileName.startsWith("/")) {
+					fileName = fileName.substring(1);
+				}
+				
+				zipParameters.setFileNameInZip(fileName);
 				zos.putNextEntry(zipParameters);
 
 				try (InputStream inputStream = new FileInputStream(fileToAdd)) {
@@ -79,6 +90,11 @@ public class ZipManagement {
 				zos.closeEntry();
 			}
 		}
+	}
+	
+	public static void main(String[] args) throws IOException {
+		FileOutputStream out = new FileOutputStream(new File("c:/trans/test.zip"));
+		zipDirectory(out, "C:/trans/xxx", null, null, null);
 	}
 	
 	public static Collection<File> createFileList(String sourceDir, Set<String> excludes, Set<String> includes) throws IOException {

@@ -711,7 +711,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	String getFileXHTMLInputNameOver() {
 		return "image_name_over" + ID_SEPARATOR + getId();
 	}
-
+	
 	protected String getFilter(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		return properties.getProperty(IMAGE_FILTER, globalContext.getDefaultImageFilter());

@@ -81,7 +81,7 @@ public class ZIPServlet extends HttpServlet {
 				excludes.add("persistence/tracking");
 			}
 
-			ZipManagement.zipDirectory(response.getOutputStream(), null, globalContext.getDataFolder(), request, excludes, null);
+			ZipManagement.zipDirectory(response.getOutputStream(), globalContext.getDataFolder(), request, excludes, null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -90,6 +90,6 @@ public class ZIPServlet extends HttpServlet {
 	public static void main(String[] args) throws IOException {
 		Set<String> excludes = new HashSet<String>();
 		excludes.add("persitence/tracking");
-		ZipManagement.zipDirectory(new ByteArrayOutputStream(), null, "C:/Users/user/data/javlo/data-ctx/data-4contes", null, excludes, null);
+		ZipManagement.zipDirectory(new ByteArrayOutputStream(), "C:/Users/user/data/javlo/data-ctx/data-4contes", null, excludes, null);
 	}
 }

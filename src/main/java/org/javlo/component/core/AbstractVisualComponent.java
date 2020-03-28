@@ -2274,7 +2274,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return componentBean.getBackgroundColor();
 	}
 
-	private String getManualCssClass() {
+	protected String getManualCssClass() {
 		return componentBean.getManualCssClass();
 	}
 
