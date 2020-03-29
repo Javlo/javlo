@@ -62,9 +62,6 @@ public class ZipManagement {
 		try (ZipOutputStream zos = new ZipOutputStream(out)) {
 			ZipParameters zipParameters = new ZipParameters();
 			for (File fileToAdd : createFileList(sourceDir, excludes, includes)) {
-				
-				System.out.println(">>>>>>>>> ZipManagement.zipDirectory : fileToAdd = "+fileToAdd); //TODO: remove debug trace
-
 				// Entry size has to be set if you want to add entries of STORE compression
 				// method (no compression)
 				// This is not required for deflate compression
@@ -73,8 +70,6 @@ public class ZipManagement {
 				}
 
 				String fileName = URLHelper.cleanPath(fileToAdd.getAbsolutePath(), false).replace(sourceDir, "");
-				
-				System.out.println(">>>>>>>>> ZipManagement.zipDirectory : filename = "+fileName); //TODO: remove debug trace
 				if (fileName.startsWith("/")) {
 					fileName = fileName.substring(1);
 				}
