@@ -1449,10 +1449,11 @@ public class PersistenceService {
 				
 				System.out.println("");
 				System.out.println("");
-				System.out.println(">>>>>>>>> PersistenceService.load : url : "+ctx.getRequest().getRequestURL()); //TODO: remove debug trace
-				System.out.println(">>>>>>>>> PersistenceService.load : context : "+ctx.getGlobalContext().getContextKey()); //TODO: remove debug trace
-				System.out.println(">>>>>>>>> PersistenceService.load : folder : "+ctx.getGlobalContext().getFolder()); //TODO: remove debug trace
-				System.out.println(">>>>>>>>> PersistenceService.load : xmlFile="+xmlFile); //TODO: remove debug trace
+				System.out.println(">>>>>>>>> PersistenceService.load : url           : "+ctx.getRequest().getRequestURL()); //TODO: remove debug trace
+				System.out.println(">>>>>>>>> PersistenceService.load : context       : "+ctx.getGlobalContext().getContextKey()); //TODO: remove debug trace
+				System.out.println(">>>>>>>>> PersistenceService.load : folder        : "+ctx.getGlobalContext().getFolder()); //TODO: remove debug trace
+				System.out.println(">>>>>>>>> PersistenceService.load : getDataFolder : "+ctx.getGlobalContext().getDataFolder()); //TODO: remove debug trace				
+				System.out.println(">>>>>>>>> PersistenceService.load : xmlFile       = "+xmlFile); //TODO: remove debug trace
 				System.out.println("");
 				System.out.println("");
 				
