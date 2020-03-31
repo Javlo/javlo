@@ -107,7 +107,6 @@ import org.javlo.utils.TimeMap;
 import org.javlo.utils.backup.BackupBean;
 import org.javlo.utils.backup.BackupThread;
 import org.owasp.encoder.Encode;
-import org.python.modules.synchronize;
 
 public class GlobalContext implements Serializable, IPrintInfo {
 	
