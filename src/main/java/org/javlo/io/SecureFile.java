@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.javlo.helper.ResourceHelper;
@@ -77,7 +78,13 @@ public class SecureFile {
 		} else {
 			zipFile = new ZipFile(createSecuredFile(file), code.toCharArray());
 		}
-		FileHeader fileHeader = zipFile.getFileHeader(file.getName());
+		
+		List<FileHeader> headers = zipFile.getFileHeaders();
+		if (headers.size()!=1) {
+			throw new IOException("zip container couldn't contains more than one file : "+headers.size());
+		}
+		
+		FileHeader fileHeader = zipFile.getFileHeader(headers.get(0).getFileName());
 		return zipFile.getInputStream(fileHeader);
 	}
 
