@@ -573,6 +573,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			// ServletContextWeakReference gcc =
 			// ServletContextWeakReference.getInstance(session.getServletContext());
 			GlobalContext newInstance = (GlobalContext) session.getServletContext().getAttribute(contextKey);
+			
+			System.out.println(">>>>>>>>> GlobalContext.getRealInstance : contextKey = "+contextKey); //TODO: remove debug trace
+			System.out.println(">>>>>>>>> GlobalContext.getRealInstance : newInstance = "+newInstance); //TODO: remove debug trace
+			
 			if (newInstance == null) {
 				newInstance = new GlobalContext(contextKey);
 				newInstance.staticConfig = staticConfig;
@@ -1454,7 +1458,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		if (realGlobalContext.dataFolder == null) {
 			realGlobalContext.dataFolder = staticConfig.getAllDataFolder();
-			System.out.println(">>>>>>>>> GlobalContext.getDataFolder : contextkey = "+getContextKey()); //TODO: remove debug trace
+			System.out.println(">>>>>>>>> GlobalContext.getDataFolder : contextkey = "+getContextKey()); //TODO: remove debug trace			
 			System.out.println(">>>>>>>>> GlobalContext.getDataFolder : realGlobalContext.getFolder() = "+realGlobalContext.getFolder()); //TODO: remove debug trace
 			if (realGlobalContext.getFolder() != null) {
 				realGlobalContext.dataFolder = ElementaryURLHelper.mergePath(realGlobalContext.dataFolder, getFolder());
