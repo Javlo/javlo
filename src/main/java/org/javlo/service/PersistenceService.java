@@ -98,12 +98,14 @@ public class PersistenceService {
 		private String date;
 		private String type;
 		private String file;
+		private String size;
 
-		public MetaPersistenceBean(int version, String date, String type, String file) {
+		public MetaPersistenceBean(int version, String date, String type, String file, String size) {
 			this.version = version;
 			this.date = date;
 			this.type = type;
 			this.file = file;
+			this.size = size;
 		}
 
 		public int getVersion() {
@@ -137,6 +139,15 @@ public class PersistenceService {
 		public void setFile(String file) {
 			this.file = file;
 		}
+
+		public String getSize() {
+			return size;
+		}
+
+		public void setSize(String size) {
+			this.size = size;
+		}
+		
 
 	}
 
@@ -413,7 +424,7 @@ public class PersistenceService {
 				String timeCode = zip.getName().replaceAll(STORE_FILE_PREFIX + ContentContext.VIEW_MODE + ".", "").replaceAll(".xml", "").replaceAll(".zip", "");
 				try {
 					Date publishTime = StringHelper.parseSecondFileTime(timeCode);
-					outList.add(new MetaPersistenceBean(0, StringHelper.renderSortableTime(publishTime), "published", zip.getName()));
+					outList.add(new MetaPersistenceBean(0, StringHelper.renderSortableTime(publishTime), "published", zip.getName(), StringHelper.renderSize(zip.length())));
 				} catch (ParseException e) {
 					logger.warning(e.getMessage());
 				}
@@ -429,7 +440,7 @@ public class PersistenceService {
 					int versionInteger = -1;
 					try {
 						versionInteger = Integer.parseInt(version);
-						outList.add(new MetaPersistenceBean(versionInteger, StringHelper.renderSortableTime(new Date(file.lastModified())), "preview", file.getName()));
+						outList.add(new MetaPersistenceBean(versionInteger, StringHelper.renderSortableTime(new Date(file.lastModified())), "preview", file.getName(), StringHelper.renderSize(file.length())));
 					} catch (NumberFormatException e) {
 						logger.warning("bad file name format : " + file.getName());
 					}
@@ -1974,36 +1985,7 @@ public class PersistenceService {
 	}
 
 	public static void main(String[] args) throws Exception {
-		System.out.println("___START___");
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(StringHelper.parseDate("01/01/2020"));
-		Map memData = new HashMap();
-		DayInfo dayInfo = getTrackDayInfo(cal, memData, null, "C:/Users/user/data/javlo/data-ctx/data-sexy/persitence/tracking");
-		System.out.println(">>>>>>>>> PersistenceService.main : #pages : " + dayInfo.pagesCount); // TODO: remove debug trace
-		System.out.println(">>>>>>>>> PersistenceService.main : #languageVisit : " + dayInfo.languageVisit.size()); // TODO: remove debug trace
-		System.out.println(">>>>>>>>> PersistenceService.main : #languageVisit fr : " + dayInfo.languageVisit.get("fr")); // TODO: remove debug trace
-		System.out.println(">>>>>>>>> PersistenceService.main : #languageVisit nl : " + dayInfo.languageVisit.get("nl")); // TODO: remove debug trace
-		System.out.println(">>>>>>>>> PersistenceService.main : #di.visitPages = " + dayInfo.visitPath.size()); // TODO: remove debug trace
-
-		Map<String, MutableInt> pagesVisit = new NeverEmptyMap<>(MutableInt.class);
-
-		System.out.println(">>>>>>>>> DashboardAction.performReadTracker : #dayInfo.visitPath = " + dayInfo.visitPath.size()); // TODO: remove debug trace
-		for (String key : dayInfo.visitPath.keySet()) {
-			pagesVisit.get(key).add(dayInfo.visitPath.get(key));
-		}
-
-		System.out.println(">>>>>>>>> PersistenceService.main : #pagesVisit = " + pagesVisit.size()); // TODO: remove debug trace
-		ObjectBuilder ajaxMap = LangHelper.object();
-		ListBuilder datas = ajaxMap.list("datas");
-		for (Map.Entry<String, MutableInt> entry : pagesVisit.entrySet()) {
-
-			String[] d = new String[2];
-			d[0] = entry.getKey();
-			d[1] = "" + entry.getValue();
-			datas.add(d);
-			System.out.println(">>>>>>>>> PersistenceService.main : d = " + d); // TODO: remove debug trace
-		}
-		System.out.println(">>>>>>>>> PersistenceService.main : #datas = " + datas.getList().size()); // TODO: remove debug trace
+		SecureFile.decodeCyptedFile(new File("c:/trans/test.xml"), "fdkjf3ddF32", new ByteArrayOutputStream());
 	}
 
 	public boolean isLoaded() {

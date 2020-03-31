@@ -8,6 +8,7 @@
 				<th class="head0">${i18n.edit['persistence.title.date']}</th>
 				<th class="head1">${i18n.edit['persistence.title.version']}</th>
 				<th class="head0">${i18n.edit['persistence.title.type']}</th>
+				<th class="head1">${i18n.edit['persistence.title.size']}</th>
 				<th class="head0">&nbsp;</th>
 			</tr>
 		</thead>
@@ -16,6 +17,7 @@
 			<col class="con1" />
 			<col class="con0" />
 			<col class="con1" />
+			<col class="con0" />
 		</colgroup>
 		<tbody>
 			<c:forEach var="persistence" items="${persistences}">
@@ -23,7 +25,8 @@
 					<td class="con0">${persistence.date}</td>
 					<td class="con1">${persistence.version}</td>
 					<td class="con0">${persistence.type}</td>
-					<td class="con1"><c:if test="${persistence.type eq 'preview'}">
+					<td class="con1">${persistence.size}</td>
+					<td class="con0"><c:if test="${persistence.type eq 'preview'}">
 							<form id="restore-${persistence.version}" method="post">
 								<div class="line action">
 									<input type="hidden" name="webaction" value="restore" /> <input
@@ -42,7 +45,7 @@
 										value="${i18n.edit['persistence.title.restore-backup']}" />
 								</div>
 							</form>
-						</c:if></td>
+						</c:if></td>					
 				</tr>
 			</c:forEach>
 		</tbody>
@@ -51,6 +54,7 @@
 				<th class="head0">${i18n.edit['persistence.title.date']}</th>
 				<th class="head1">${i18n.edit['persistence.title.version']}</th>
 				<th class="head0">${i18n.edit['persistence.title.type']}</th>
+				<th class="head1">${i18n.edit['persistence.title.size']}</th>
 				<th class="head0">&nbsp;</th>
 			</tr>
 		</tfoot>
@@ -65,6 +69,7 @@
 											{
 												"aaSorting" : [ [ 0, "desc" ] ],
 												"aoColumns" : [
+														null,
 														null,
 														null,
 														null,
