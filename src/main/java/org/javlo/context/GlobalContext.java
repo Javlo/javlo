@@ -111,7 +111,7 @@ import org.python.modules.synchronize;
 
 public class GlobalContext implements Serializable, IPrintInfo {
 	
-	public static String GLOBAL_ERROR = null;
+	public String GLOBAL_ERROR = null;
 
 	private static final Date CREATION_DATE = new Date();
 
@@ -596,6 +596,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					String password = "" + (1000 + Math.round(Math.random() * 8999));
 					newInstance.setPassword(password);
 					newInstance.setFirstPassword(password);
+					
+					if (StringHelper.isEmpty(newInstance.getFolder())) {
+						newInstance.GLOBAL_ERROR = "Error on load : '"+newInstance.contextFile+"' folder in empty.";
+					}
 
 					if (copyDefaultContext) {
 						GlobalContext defaultContext = getDefaultContext(session);
