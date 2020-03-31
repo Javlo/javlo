@@ -407,6 +407,16 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				StaticConfig staticConfig = StaticConfig.getInstance(request.getSession().getServletContext());
 				if (staticConfig.isHostDefineSite()) {
 					String host = ServletHelper.getSiteKey(request);
+					
+					
+					System.out.println("");
+					System.out.println("");
+					System.out.println(">>>>>> url  = "+request.getRequestURL());
+					System.out.println(">>>>>> host = "+host);
+					System.out.println("");
+					System.out.println("");
+					
+					
 					globalContext = GlobalContext.getInstance(request.getSession(), host);
 					contextURI = host;
 				} else {
