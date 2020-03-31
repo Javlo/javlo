@@ -584,6 +584,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				newInstance.cacheMaps = new TimeMap<String, ICache>(staticConfig.getCacheMaxTime(), staticConfig.getCacheMaxSize());
 				newInstance.log("init", "Create context : "+contextKey);
 			} else {
+				System.out.println(">>>>>>>>> GlobalContext.getRealInstance : newInstance contextKey = "+newInstance.getContextKey()); //TODO: remove debug trace
 				newInstance.staticConfig = staticConfig;
 				return newInstance;
 			}
