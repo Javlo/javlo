@@ -35,6 +35,7 @@ import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.Comparator.MenuElementCreationDateComparator;
 import org.javlo.i18n.I18nResource;
+import org.javlo.message.GenericMessage;
 import org.javlo.module.core.IPrintInfo;
 import org.javlo.navigation.MenuElement;
 import org.javlo.template.TemplateFactory;
@@ -682,7 +683,8 @@ public class ContentService implements IPrintInfo {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			GlobalContext.GLOBAL_ERROR = "error load mode="+ctx.getRenderMode()+" ["+e.getMessage()+"]";
+			GlobalContext.GLOBAL_ERROR = "error load mode="+ctx.getRenderMode()+"(zip:"+ctx.getGlobalContext().getSpecialConfig().isStorageZipped()+", pwd?:"+!StringHelper.isEmpty(ctx.getGlobalContext().getSpecialConfig().getSecureEncryptPassword())+") ["+e.getMessage()+"]";
+			NotificationService.getInstance(ctx.getGlobalContext()).addNotification(GlobalContext.GLOBAL_ERROR, GenericMessage.ERROR, ctx.getCurrentUserId(), true);
 			if (res == null) {
 				res = MenuElement.getInstance(ctx);
 			}
