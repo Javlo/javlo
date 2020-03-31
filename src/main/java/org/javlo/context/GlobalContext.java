@@ -1448,18 +1448,21 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public String getDataFolder() {
-		GlobalContext realGlobalContext = this;
+		GlobalContext realGlobalContext = this;		
 		if (getMainContext() != null) {
+			System.out.println(">>>>>>>>> GlobalContext.getDataFolder : getMainContext() = "+getMainContext().getContextKey()); //TODO: remove debug trace
 			realGlobalContext = getMainContext();
 		}
 		if (realGlobalContext.dataFolder == null) {
 			realGlobalContext.dataFolder = staticConfig.getAllDataFolder();
+			System.out.println(">>>>>>>>> GlobalContext.getDataFolder : realGlobalContext.dataFolder = "+realGlobalContext.dataFolder); //TODO: remove debug trace
 			if (realGlobalContext.getFolder() != null) {
 				realGlobalContext.dataFolder = ElementaryURLHelper.mergePath(realGlobalContext.dataFolder, getFolder());
 			}
 			try {
 				File folderFile = new File(realGlobalContext.dataFolder);
 				realGlobalContext.dataFolder = folderFile.getCanonicalPath();
+				System.out.println(">>>>>>>>> GlobalContext.getDataFolder : realGlobalContext.dataFolder = "+realGlobalContext.dataFolder); //TODO: remove debug trace
 				if (!folderFile.exists()) {
 					folderFile.mkdirs();
 				}
