@@ -1445,6 +1445,15 @@ public class PersistenceService {
 						}
 					}
 				}
+				
+				
+				System.out.println("");
+				System.out.println("");
+				System.out.println(">>>>>>>>> PersistenceService.load : xmlFile="+xmlFile); //TODO: remove debug trace
+				System.out.println("");
+				System.out.println("");
+				
+				
 				if (in == null) {
 					root = MenuElement.getInstance(ctx);
 					root.setName("root");
