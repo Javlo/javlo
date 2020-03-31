@@ -899,7 +899,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	private String sharedDataFolder = null;
 
-	private static AppendableTextFile specialLogFile = null;
+	private AppendableTextFile specialLogFile = null;
 
 	private final Map<String, String> oneTimeTokens = Collections.synchronizedMap(new TimeMap<String, String>(60 * 60));
 
