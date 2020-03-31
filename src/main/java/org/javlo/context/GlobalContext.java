@@ -1453,6 +1453,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			System.out.println(">>>>>>>>> GlobalContext.getDataFolder : getMainContext() = "+getMainContext().getContextKey()); //TODO: remove debug trace
 			realGlobalContext = getMainContext();
 		}
+		System.out.println(">>>>>>>>> GlobalContext.getDataFolder : realGlobalContext.dataFolder = "+realGlobalContext.dataFolder); //TODO: remove debug trace
 		if (realGlobalContext.dataFolder == null) {
 			realGlobalContext.dataFolder = staticConfig.getAllDataFolder();
 			System.out.println(">>>>>>>>> GlobalContext.getDataFolder : realGlobalContext.dataFolder = "+realGlobalContext.dataFolder); //TODO: remove debug trace
