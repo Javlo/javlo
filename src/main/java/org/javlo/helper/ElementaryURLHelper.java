@@ -798,9 +798,11 @@ public abstract class ElementaryURLHelper {
 	public static Map<String, String> getParams(URL url) {
 		Map<String, String> outParams = new HashMap<String, String>();
 		String q = url.getQuery();
-		for (String param : StringUtils.split(q, '&')) {
-			String[] splittedParam = StringUtils.split(param, '=');
-			outParams.put(splittedParam[0], splittedParam[1]);
+		if (q != null) {
+			for (String param : StringUtils.split(q, '&')) {
+				String[] splittedParam = StringUtils.split(param, '=');
+				outParams.put(splittedParam[0], splittedParam[1]);
+			}
 		}
 		return outParams;
 	}

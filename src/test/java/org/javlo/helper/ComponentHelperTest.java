@@ -12,8 +12,8 @@ import junit.framework.TestCase;
 public class ComponentHelperTest extends TestCase {
 	
 	public void testGetComponentPosition() throws Exception {
-		FakeHttpContext httpContext = FakeHttpContext.getInstance();
-		HttpServletRequest request = httpContext.getRequest("http://demo.javlo.org/view/en/media.html?webaction=test");		
+		FakeHttpContext httpContext = new FakeHttpContext("http://demo.javlo.org/view/en/media.html?webaction=test");
+		HttpServletRequest request = httpContext.getRequest();		
 		ContentContext ctx = ContentContext.getContentContext(request, httpContext.getResponse());		
 		
 		IContentVisualComponent p = null;

@@ -29,8 +29,8 @@ public class URLHelperTest extends TestCase {
 	}
 	
 	public void testCreateURL() throws Exception {
-		FakeHttpContext httpContext = FakeHttpContext.getInstance();
-		HttpServletRequest request = httpContext.getRequest("http://demo.javlo.org/view/en/media.html?webaction=test");		
+		FakeHttpContext httpContext = new FakeHttpContext("http://demo.javlo.org/view/en/media.html?webaction=test");
+		HttpServletRequest request = httpContext.getRequest();		
 		ContentContext ctx = ContentContext.getContentContext(request, httpContext.getResponse());
 		
 		assertEquals(URLHelper.createURL(ctx, "/page"), "/en/page.html");
@@ -51,8 +51,8 @@ public class URLHelperTest extends TestCase {
 	}
 	
 	public void testCreateForwardURL() throws Exception {
-		FakeHttpContext httpContext = FakeHttpContext.getInstance();
-		TestRequest request = httpContext.getRequest("http://demo.javlo.org/javlo/view/en/media.html?webaction=test");		
+		FakeHttpContext httpContext = new FakeHttpContext("http://demo.javlo.org/javlo/view/en/media.html?webaction=test");
+		TestRequest request = httpContext.getRequest();		
 		ContentContext ctx = ContentContext.getContentContext(request, httpContext.getResponse());	
 		assertEquals(URLHelper.createForwardURL(ctx, "/javlo/view/fr/index.html"), "/javlo/view/fr/index.html");
 		request.setContextPath("/javlo");

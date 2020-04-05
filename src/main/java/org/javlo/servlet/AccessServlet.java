@@ -87,6 +87,7 @@ import org.javlo.service.RequestService;
 import org.javlo.service.event.Event;
 import org.javlo.service.integrity.IntegrityFactory;
 import org.javlo.service.location.LocationService;
+import org.javlo.service.log.Log;
 import org.javlo.service.remote.RemoteMessage;
 import org.javlo.service.remote.RemoteMessageService;
 import org.javlo.service.resource.Resource;
@@ -429,7 +430,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 					if (mainURL != null && !mainURL.endsWith(pageUrl)) {
 						// response.sendRedirect(pageUrl);
 						if (ctx.isPageRequest()) {
-							globalContext.log("url", "redirect : " + mainURL + " >> " + URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()) + " - [" + pageUrl + "]");
+							globalContext.log(Log.WARNING, "url", "redirect : " + mainURL + " >> " + URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()) + " - [" + pageUrl + "]");
 						}
 						logger.info("redirect : " + mainURL + " >> " + URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()));
 						NetHelper.sendRedirectTemporarily(response, URLHelper.createURL(lgCtx, lgCtx.getCurrentPage()));
@@ -1186,7 +1187,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 						/** check content **/
 						if (!ctx.isContentFound()) {
-							globalContext.log("url", "page not found : " + ctx.getPath());
+							globalContext.log(Log.SEVERE, "url", "page not found : " + ctx.getPath());
 							globalContext.add404Url(ctx, ContentManager.getPath(request));
 
 							if (staticConfig.isRedirectWidthName()) {

@@ -721,6 +721,7 @@
 			<properties>
 				<packaging.type>war</packaging.type>
 				<artifact.extension></artifact.extension>
+				<war.config.dir>config</war.config.dir>
 			</properties>
 			<build>
 				<plugins>
@@ -736,7 +737,7 @@
 									<goal>copy-resources</goal>
 								</goals>
 								<configuration>
-									<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/config</outputDirectory>
+									<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/${war.config.dir}</outputDirectory>
 									<resources>
 										<resource>
 											<directory>src/main/config</directory>

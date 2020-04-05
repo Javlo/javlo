@@ -50,6 +50,9 @@ public class POPThread extends Thread {
 		while (!stop && Calendar.getInstance().before(endDate)) {
 			try {
 				Thread.sleep(WAIT_BETWEEN_CHECK_MS);
+				if (stop) {
+					break;
+				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

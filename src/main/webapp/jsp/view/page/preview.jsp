@@ -6,7 +6,8 @@
 <jsp:include page="<%=ctx.getGlobalContext().getStaticConfig().getTimeTravelerFilePath()%>" />
 <%MessageRepository messageRepository = MessageRepository.getInstance(ctx);
             %><div id="message-container" class="standard"><%
-   if (messageRepository.getGlobalMessage().getMessage().trim().length() > 0) {%>
-       <div class="notification <%=messageRepository.getGlobalMessage().getTypeLabel()%>"><%=messageRepository.getGlobalMessage().getMessage()%></div>
+	if (messageRepository.getGlobalMessage().getText().trim().length() > 0) {
+%>
+       <div class="notification <%=messageRepository.getGlobalMessage().getTypeLabel()%>"><%=messageRepository.getGlobalMessage().getText()%></div>
 <%}%></div>
 <%}%>

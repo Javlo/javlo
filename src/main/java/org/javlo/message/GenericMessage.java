@@ -78,6 +78,11 @@ public class GenericMessage {
 	public String getKey() {
 		return key;
 	}
+	
+	@Deprecated
+	public String getText() {
+		return getMessage();
+	}
 
 	/**
 	 * @return

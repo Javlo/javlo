@@ -11,8 +11,8 @@ import junit.framework.TestCase;
 public class NavigationTest extends TestCase {
 	
 	public void testGetPageIfExist() throws Exception {
-		FakeHttpContext httpContext = FakeHttpContext.getInstance();
-		HttpServletRequest request = httpContext.getRequest("http://demo.javlo.org/view/en/media.html?webaction=test");		
+		FakeHttpContext httpContext = new FakeHttpContext("http://demo.javlo.org/view/en/media.html?webaction=test");
+		HttpServletRequest request = httpContext.getRequest();		
 		ContentContext ctx = ContentContext.getContentContext(request, httpContext.getResponse());		
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		

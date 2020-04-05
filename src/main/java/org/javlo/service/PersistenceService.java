@@ -43,13 +43,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.mutable.MutableInt;
 import org.apache.xml.utils.XMLChar;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentLayout;
@@ -60,9 +58,6 @@ import org.javlo.data.taxonomy.TaxonomyBean;
 import org.javlo.data.taxonomy.TaxonomyService;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.DebugHelper.StructureException;
-import org.javlo.helper.LangHelper;
-import org.javlo.helper.LangHelper.ListBuilder;
-import org.javlo.helper.LangHelper.ObjectBuilder;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -1445,21 +1440,6 @@ public class PersistenceService {
 						}
 					}
 				}
-				
-				
-				System.out.println("");
-				System.out.println("");
-				System.out.println(">>>>>>>>> PersistenceService.load : url           						 : "+ctx.getRequest().getRequestURL()); //TODO: remove debug trace
-				System.out.println(">>>>>>>>> PersistenceService.load : context       						 : "+ctx.getGlobalContext().getContextKey()); //TODO: remove debug trace
-				System.out.println(">>>>>>>>> PersistenceService.load : folder        						 : "+ctx.getGlobalContext().getFolder()); //TODO: remove debug trace
-				System.out.println(">>>>>>>>> PersistenceService.load : getDataFolder 						 : "+ctx.getGlobalContext().getDataFolder()); //TODO: remove debug trace	
-				System.out.println(">>>>>>>>> PersistenceService.load : getPersistenceFilePrefix(renderMode) : "+getPersistenceFilePrefix(renderMode)); //TODO: remove debug trace		
-				System.out.println(">>>>>>>>> PersistenceService.load : getDirectory()                       : "+getDirectory()); //TODO: remove debug trace
-				
-				System.out.println(">>>>>>>>> PersistenceService.load : xmlFile       = "+xmlFile); //TODO: remove debug trace
-				System.out.println("");
-				System.out.println("");
-				
 				
 				if (in == null) {
 					root = MenuElement.getInstance(ctx);

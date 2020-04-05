@@ -65,6 +65,7 @@ import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.ElementaryURLHelper.Code;
 import org.javlo.helper.LangHelper;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
@@ -91,6 +92,8 @@ import org.javlo.service.PersistenceThread;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.service.exception.ServiceException;
+import org.javlo.service.log.Log;
+import org.javlo.service.log.LogContainer;
 import org.javlo.servlet.AccessServlet;
 import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.template.TemplateData;
@@ -103,6 +106,7 @@ import org.javlo.user.User;
 import org.javlo.utils.BooleanBean;
 import org.javlo.utils.ConfigurationProperties;
 import org.javlo.utils.StructuredProperties;
+import org.javlo.utils.TimeList;
 import org.javlo.utils.TimeMap;
 import org.javlo.utils.backup.BackupBean;
 import org.javlo.utils.backup.BackupThread;
@@ -161,6 +165,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public static final String POP_USER_PARAM = "mail.pop.user";
 	public static final String POP_PASSWORD_PARAM = "mail.pop.password";
 	public static final String POP_SSL = "mail.pop.ssl";
+	
+	private boolean siteLog = false;
+	private boolean siteLogStack = false;
+	
+	private LogContainer logList = new LogContainer();
 
 	private static class StorePropertyThread extends Thread {
 
@@ -570,21 +579,20 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		StaticConfig staticConfig = StaticConfig.getInstance(session.getServletContext());
 
 		synchronized (LOCK_GLOBAL_CONTEXT_LOAD) {
+			
 			// ServletContextWeakReference gcc =
 			// ServletContextWeakReference.getInstance(session.getServletContext());
 			GlobalContext newInstance = (GlobalContext) session.getServletContext().getAttribute(contextKey);
 			
-			System.out.println(">>>>>>>>> GlobalContext.getRealInstance : contextKey = "+contextKey); //TODO: remove debug trace
-			System.out.println(">>>>>>>>> GlobalContext.getRealInstance : newInstance = "+newInstance); //TODO: remove debug trace
-			
 			if (newInstance == null) {
+				LocalLogger.log("getRealInstance : "+contextKey+" - CRAETE NEW CONTEXT");
 				newInstance = new GlobalContext(contextKey);
 				newInstance.staticConfig = staticConfig;
 				newInstance.application = session.getServletContext();
 				newInstance.cacheMaps = new TimeMap<String, ICache>(staticConfig.getCacheMaxTime(), staticConfig.getCacheMaxSize());
-				newInstance.log("init", "Create context : "+contextKey);
+				newInstance.siteLog = staticConfig.isSiteLog();
+				newInstance.log(Log.INFO, Log.GROUP_INIT_CONTEXT, "Create context : "+contextKey, false);
 			} else {
-				System.out.println(">>>>>>>>> GlobalContext.getRealInstance : newInstance contextKey = "+newInstance.getContextKey()); //TODO: remove debug trace
 				newInstance.staticConfig = staticConfig;
 				return newInstance;
 			}
@@ -597,6 +605,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					newInstance.creation = true;
 				}
 				logger.info("create new context file : "+newInstance.contextFile);
+				newInstance.log(Log.INFO, Log.GROUP_INIT_CONTEXT, "create new context file : "+newInstance.contextFile, false);
 				newInstance.contextFile.createNewFile();
 
 				synchronized (newInstance.properties) {
@@ -673,8 +682,12 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					}
 				}
 			} else {
-				synchronized (newInstance.properties) {
+				newInstance.log(Log.INFO, Log.GROUP_INIT_CONTEXT, "load context file : "+newInstance.contextFile, false);
+				synchronized (newInstance.properties) {					
 					newInstance.properties.load(newInstance.contextFile);
+					newInstance.log(Log.INFO, Log.GROUP_INIT_CONTEXT, "folder : "+newInstance.getFolder(), false);
+					File folder = new File(newInstance.getDataFolder());
+					newInstance.log(Log.INFO, Log.GROUP_INIT_CONTEXT, "data file : "+folder+" (exist?"+folder.exists()+')', false);
 				}
 			}
 			newInstance.startThread();
@@ -1034,6 +1047,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		COUNT_INSTANCE--;
 		if (backupThread != null) {
 			backupThread.run = false;
+		}
+		if (popThread != null) {
+			popThread.setStop(true);
 		}
 		super.finalize();
 	}
@@ -1458,14 +1474,12 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			realGlobalContext = getMainContext();
 		}
 		if (realGlobalContext.dataFolder == null) {
+			log(Log.INFO, Log.GROUP_INIT_CONTEXT, "init data folder with folder : "+getFolder(), false);
 			realGlobalContext.dataFolder = staticConfig.getAllDataFolder();
-			System.out.println(">>>>>>>>> GlobalContext.getDataFolder : contextkey = "+getContextKey()); //TODO: remove debug trace			
-			System.out.println(">>>>>>>>> GlobalContext.getDataFolder : realGlobalContext.getFolder() = "+realGlobalContext.getFolder()); //TODO: remove debug trace
 			if (realGlobalContext.getFolder() != null) {
 				realGlobalContext.dataFolder = ElementaryURLHelper.mergePath(realGlobalContext.dataFolder, getFolder());
 			} else {
 				GLOBAL_ERROR = "no folder found in "+contextFile;
-				System.out.println(">>>>>>>>> GlobalContext.getDataFolder : >>>> GLOBAL_ERROR = "+GLOBAL_ERROR); //TODO: remove debug trace
 			}
 			try {
 				File folderFile = new File(realGlobalContext.dataFolder);
@@ -4262,11 +4276,27 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		return c;
 	}
-
-	public final void log(String group, String text) {
-		if (!getStaticConfig().isSiteLog()) {
+	
+	public LogContainer getLogList() {
+		return logList;
+	}
+	
+	public boolean isSiteLog() {
+		return siteLog;
+	}
+	
+	public void setSiteLog(boolean siteLog) {
+		this.siteLog = siteLog;
+	}
+	
+	public final void log(String level, String group, String text) {
+		if (!siteLog) {
 			return;
 		}
+		
+		logList.add(new Log(level, group, text));
+		
+		
 		if (getStaticConfig().getSiteLogGroup() != null && !getStaticConfig().getSiteLogGroup().equals(group)) {
 			return;
 		}
@@ -4284,6 +4314,36 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			specialLogFile.println(StringHelper.renderTime(new Date()) + " - " + caller + group + " : " + text);
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+		
+	}
+
+	public final void log(String level, String group, String text, boolean store) {
+		if (!siteLog) {
+			return;
+		}
+		
+		logList.add(new Log(level, group, text));
+		
+		if (store && staticConfig.isSiteLogStorage()) {
+			if (getStaticConfig().getSiteLogGroup() != null && !getStaticConfig().getSiteLogGroup().equals(group)) {
+				return;
+			}
+			try {
+				if (specialLogFile == null) {
+					File logFile = new File(URLHelper.mergePath(getStaticFolder(), "site.log"));
+					logFile.getParentFile().mkdirs();
+					specialLogFile = new AppendableTextFile(logFile);
+					specialLogFile.setAutoFlush(true);
+				}
+				String caller = "";
+				if (getStaticConfig().isSiteLogCaller()) {
+					caller = DebugHelper.getCaller() + " - ";
+				}
+				specialLogFile.println(StringHelper.renderTime(new Date()) + " - " + caller + group + " : " + text);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -4384,6 +4444,14 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	
 	public String getGlobalError() {
 		return GLOBAL_ERROR;
+	}
+
+	public boolean isSiteLogStack() {
+		return siteLogStack;
+	}
+
+	public void setSiteLogStack(boolean siteLogStack) {
+		this.siteLogStack = siteLogStack;
 	}
 	
 }

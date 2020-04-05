@@ -2,43 +2,39 @@ package org.javlo.test.servlet;
 
 import java.net.MalformedURLException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 
 public class FakeHttpContext {
 	
-	private HttpServletRequest servletContext;
-	private TestSession session;
+	private TestRequest request;
+	private TestResponse response;
 	
-	private FakeHttpContext() throws MalformedURLException {
-		init();
-	}
-	
-	public static FakeHttpContext getInstance() {
+	public FakeHttpContext(String url) {
 		try {
-			return new FakeHttpContext();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	public TestRequest getRequest(String url) {
-		try {
-			return new TestRequest(session, url);
+			TestSession session = new TestSession();
+			session.setServletContext(new TestServletContext());
+			this.request  = new TestRequest(session, url);
+			this.response = new TestResponse();
 		} catch (MalformedURLException e) {		
 			e.printStackTrace();
-			return null;
 		}
 	}
+	
+	public TestRequest getRequest() {
+		return request;
+	}
 
-	public HttpServletResponse getResponse() {
-		return new TestResponse();
+	public TestResponse getResponse() {
+		return response;
 	}
 	
-	public void init() throws MalformedURLException {		
-		 session = new TestSession();
-		 session.setServletContext(new TestServletContext());
+	public HttpSession getSession() {
+		return request.getSession();
+	}
+	
+	public ServletContext getServletContext() {
+		return request.getSession().getServletContext();
 	}
 
 }

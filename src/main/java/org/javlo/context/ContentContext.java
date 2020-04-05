@@ -38,6 +38,7 @@ import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
+import org.javlo.service.log.Log;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserFactory;
@@ -871,7 +872,7 @@ public class ContentContext {
 		MenuElement outPage = getCurrentPageCached();
 		if (outPage == null) {
 			GlobalContext globalContext = getGlobalContext();
-			globalContext.log("url", "current page : " + getPath());
+			globalContext.log(Log.INFO, "url", "current page : " + getPath());
 			MenuElement root = ContentService.getInstance(globalContext).getNavigation(this);
 			
 			if (getPath().equals("/")) {
@@ -897,18 +898,18 @@ public class ContentContext {
 						setCurrentPageCached(elem);
 						globalContext.storeUrl(this, getPath(), elem.getId());
 					} else {
-						globalContext.log("url", "url not found : " + getPath());
+						globalContext.log(Log.SEVERE, "url", "url not found : " + getPath());
 						elem = globalContext.convertOldURL(this, getPath());
 						if (elem != null) {
 							String newURL = URLHelper.createURL(this, elem);
-							globalContext.log("url", "old redirect : " + getPath() + " >> " + newURL);
+							globalContext.log(Log.WARNING, "url", "old redirect : " + getPath() + " >> " + newURL);
 							logger.info("redirect old url (" + getGlobalContext().getContextKey() + " - " + getPath() + ") --> = " + newURL + " - url renderer:" + globalContext.getURLFactoryClass());
 							if (!response.isCommitted()) {
 								response.sendRedirect(newURL);
 							}
 							setCurrentPageCached(elem);
 						} else {
-							globalContext.log("url", "redirect old url not found : " + getPath());
+							globalContext.log(Log.WARNING, "url", "redirect old url not found : " + getPath());
 							setContentFound(false);
 							elem = root;
 							setPath(root.getPath());

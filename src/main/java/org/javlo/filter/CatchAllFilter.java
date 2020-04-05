@@ -49,6 +49,7 @@ import org.javlo.service.ContentService;
 import org.javlo.service.CountService;
 import org.javlo.service.DataToIDService;
 import org.javlo.service.RequestService;
+import org.javlo.service.log.Log;
 import org.javlo.servlet.FileServlet;
 import org.javlo.template.Template;
 import org.javlo.tracking.Tracker;
@@ -82,7 +83,6 @@ public class CatchAllFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain next) throws IOException, ServletException {
 
-		logger.fine("start catch all filter.");
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		ServletContext servletContext = httpRequest.getSession().getServletContext();
 		CountService.getInstance(servletContext).touch();
@@ -170,7 +170,7 @@ public class CatchAllFilter implements Filter {
 				ContentContext ctx = ContentContext.getContentContext(httpRequest, (HttpServletResponse) response);
 				String url = URLHelper.createAjaxURL(ctx);
 				String forwardURL = URLHelper.removeSite(ctx, url);
-				globalContext.log("url", "forward ajax : " + httpRequest.getRequestURI() + " >> " + forwardURL);
+				globalContext.log(Log.WARNING, "url", "forward ajax : " + httpRequest.getRequestURI() + " >> " + forwardURL);
 				((HttpServletRequest) request).getRequestDispatcher(forwardURL).forward(httpRequest, response);
 				return;
 			} catch (Exception e) {
@@ -440,7 +440,7 @@ public class CatchAllFilter implements Filter {
 							LocalLogger.log("newPath : " + newPath);
 						}
 						httpRequest.setAttribute(MAIN_URI_KEY, URLDecoder.decode(httpRequest.getRequestURI(), ContentContext.CHARACTER_ENCODING));
-						globalContext.log("url", "forward add view : " + httpRequest.getRequestURI() + " >> " + newPath);
+						globalContext.log(Log.WARNING, "url", "forward add view : " + httpRequest.getRequestURI() + " >> " + newPath);
 						httpRequest.getRequestDispatcher(newPath).forward(httpRequest, response);
 						return;
 					}
@@ -467,7 +467,7 @@ public class CatchAllFilter implements Filter {
 			// if (httpRequest.getSession().isNew()) {
 			// httpRequest.getSession().setAttribute(InfoBean.NEW_SESSION_PARAM, true);
 			// }
-			globalContext.log("url", "forward : " + httpRequest.getRequestURI() + " >> " + forwardURI);
+			globalContext.log(Log.WARNING, "url", "forward : " + httpRequest.getRequestURI() + " >> " + forwardURI);
 			if (DEBUG) {
 				LocalLogger.log("1.forward");
 				LocalLogger.log("newPath : " + forwardURI);

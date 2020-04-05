@@ -13,8 +13,8 @@ import junit.framework.TestCase;
 public class ResourceHelperTest extends TestCase {
 	
 	public void testIsTranformURL() throws Exception {
-		FakeHttpContext httpContext = FakeHttpContext.getInstance();		 
-		TestRequest request = httpContext.getRequest("http://demo.javlo.org/view/en/media.html?webaction=test");
+		FakeHttpContext httpContext = new FakeHttpContext("http://demo.javlo.org/view/en/media.html?webaction=test");		 
+		TestRequest request = httpContext.getRequest();
 		request.setContextPath("context");		
 		ContentContext ctx = ContentContext.getContentContext(request, httpContext.getResponse());		
 		assertTrue(ResourceHelper.isTransformURL(ctx, "/context/transform/free/template/zonea/static/gallery/image.jpg"));
@@ -22,8 +22,8 @@ public class ResourceHelperTest extends TestCase {
 	}
 	
 	public void testIsResourceURL() throws Exception {
-		FakeHttpContext httpContext = FakeHttpContext.getInstance();		 
-		TestRequest request = httpContext.getRequest("http://demo.javlo.org/view/en/media.html?webaction=test");
+		FakeHttpContext httpContext = new FakeHttpContext("http://demo.javlo.org/view/en/media.html?webaction=test");		 
+		TestRequest request = httpContext.getRequest();
 		request.setContextPath("context");
 		ContentContext ctx = ContentContext.getContentContext(request, httpContext.getResponse());		
 		assertTrue(ResourceHelper.isResourceURL(ctx, "/context/resource/static/gallery/image.jpg"));

@@ -9,8 +9,8 @@ import junit.framework.TestCase;
 
 public class TestMenuElement extends TestCase {
 	
-		FakeHttpContext httpContext = FakeHttpContext.getInstance();
-		TestRequest request = httpContext.getRequest("http://demo.javlo.org/view/en/media.html?webaction=test");
+		FakeHttpContext httpContext = new FakeHttpContext("http://demo.javlo.org/view/en/media.html?webaction=test");
+		TestRequest request = httpContext.getRequest();
 	
 		private ContentContext getContentContext() throws Exception {
 			return ContentContext.getContentContext(request, httpContext.getResponse());

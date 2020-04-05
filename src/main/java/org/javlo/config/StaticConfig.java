@@ -1558,8 +1558,16 @@ public class StaticConfig extends Observable {
 		return properties.getString("market.server.name", "javlo.org");
 	}
 
+	/**
+	 * log file, if retrun null, choose the latest modified file of log dir
+	 * @return
+	 */
 	public String getLogFile() {
-		return properties.getString("log.file", "/../../logs/catalina.out");
+		return properties.getString("log.file", null);
+	}
+	
+	public String getLogDir() {
+		return properties.getString("log.dir", "/../../logs/");
 	}
 
 	public String getSiteEmail() {
@@ -1933,6 +1941,10 @@ public class StaticConfig extends Observable {
 
 	public boolean isSiteLog() {
 		return StringHelper.isTrue(properties.getString("site.log.active"), false);
+	}
+	
+	public boolean isSiteLogStorage() {
+		return StringHelper.isTrue(properties.getString("site.log.store"), false);
 	}
 
 	public boolean isSiteLogCaller() {
