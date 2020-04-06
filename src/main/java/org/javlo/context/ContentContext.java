@@ -872,7 +872,6 @@ public class ContentContext {
 		MenuElement outPage = getCurrentPageCached();
 		if (outPage == null) {
 			GlobalContext globalContext = getGlobalContext();
-			globalContext.log(Log.INFO, "url", "current page : " + getPath());
 			MenuElement root = ContentService.getInstance(globalContext).getNavigation(this);
 			
 			if (getPath().equals("/")) {
