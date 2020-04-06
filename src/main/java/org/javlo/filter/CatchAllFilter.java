@@ -576,7 +576,8 @@ public class CatchAllFilter implements Filter {
 								MessageRepository messageRepository = MessageRepository.getInstance(((HttpServletRequest) request));
 								messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
 							} else {
-								ContentService.getInstance(globalContext).releaseViewNav(globalContext);
+								//ContentService.getInstance(globalContext).releaseViewNav(globalContext);
+								//TODO: check why we need to releaseViewNav on login
 							}
 							ModulesContext.getInstance(httpRequest.getSession(), globalContext).loadModule(httpRequest.getSession(), globalContext);
 //							ContentContext ctx = ContentContext.getContentContext(httpRequest, (HttpServletResponse) response);
