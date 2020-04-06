@@ -2013,7 +2013,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 								for (MenuElement menuElement : ContentService.getInstance(ctx.getRequest()).getNavigation(lgCtx).getAllChildrenList()) {
 									String pageURL = urlCreator.createURL(lgCtx, menuElement);
 									String pageKeyURL = urlCreator.createURLKey(pageURL);
-									if (url.contains("informatie")) {
+									if (pageURL.contains("informatie")) {
 										log(Log.TEMPORARY, "url", "url="+url+"  pageURL="+pageURL+"  pageKeyURL="+pageKeyURL);
 									}
 									if (pageKeyURL.contains(".")) {
