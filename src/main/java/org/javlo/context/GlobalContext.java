@@ -702,6 +702,12 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			newInstance.cleanDataAccess();
 			newInstance.loadFiles();
 			
+			if (newInstance.getSiteLogFile().exists()) {
+				newInstance.getSiteLogFile().delete();
+			} else {
+				newInstance.getSiteLogFile().getParentFile().mkdir();
+			}
+			
 			try {
 				(new TrackerInitThread(Tracker.getTracker(newInstance, session))).start();
 			} catch (ServiceException e) {
@@ -4294,6 +4300,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		this.siteLog = siteLog;
 	}
 	
+	protected File getSiteLogFile() {
+		return new File(URLHelper.mergePath(getStaticFolder(), "site.log"));
+	}
+	
 	public final void log(String level, String group, String text) {
 		if (!siteLog) {
 			return;
@@ -4307,8 +4317,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		try {
 			if (specialLogFile == null) {
-				File logFile = new File(URLHelper.mergePath(getStaticFolder(), "site.log"));
-				logFile.getParentFile().mkdirs();
+				File logFile = getSiteLogFile();				
 				specialLogFile = new AppendableTextFile(logFile);
 				specialLogFile.setAutoFlush(true);
 			}
