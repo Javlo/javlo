@@ -2007,6 +2007,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 								for (MenuElement menuElement : ContentService.getInstance(ctx.getRequest()).getNavigation(lgCtx).getAllChildrenList()) {
 									String pageURL = urlCreator.createURL(lgCtx, menuElement);
 									String pageKeyURL = urlCreator.createURLKey(pageURL);
+									if (url.contains("informatie")) {
+										log(Log.TEMPORARY, "url", "url="+url+"  pageURL="+pageURL+"  pageKeyURL="+pageKeyURL);
+									}
 									if (pageKeyURL.contains(".")) {
 										pageKeyURL = pageKeyURL.substring(0, pageKeyURL.lastIndexOf("."));
 									}
@@ -2015,6 +2018,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 							}
 						}
 						logger.info("url cache initialized with '" + urlCreator.getClass().getName() + "' url created : " + localViewPages.size() + " [lgs=" + contentLanguages + "]");
+						log(Log.INFO, "url", "url cache initialized with '" + urlCreator.getClass().getName() + "' url created : " + localViewPages.size() + " [lgs=" + contentLanguages + "]");
 						viewPages = localViewPages;
 						urlFromFactoryImported = urlCreator;
 					} else {
@@ -2042,6 +2046,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			MenuElement page = localViewPages.get(keyURL);
 			if (page != null) {
 				if (page == MenuElement.NOT_FOUND_PAGE) {
+					log(Log.SEVERE, "url", "page not found keyURL='"+keyURL+"' url='"+url+"' #localViewPages="+localViewPages.size());
 					return null;
 				} else {
 					return page;
