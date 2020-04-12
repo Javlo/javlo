@@ -53,7 +53,7 @@ public class TransferOrderComponent extends AbstractOrderComponent implements IA
 		out.println("<fieldset>");		
 		out.println("<input type=\"hidden\" name=\""+IContentVisualComponent.COMP_ID_REQUEST_PARAM+"\" value=\""+getId()+"\" />");
 		out.println("<input type=\"hidden\" name=\"webaction\" value=\"transfer.pay\" />");
-		out.println("<input class=\"btn btn-default\" type=\"submit\" value=\""+getData().get("button")+"\" />");
+		out.println("<input class=\"btn btn-secondary\" type=\"submit\" value=\""+getData().get("button")+"\" />");
 		out.println("</fieldset>");
 		out.println("</form>");
 		out.close();
