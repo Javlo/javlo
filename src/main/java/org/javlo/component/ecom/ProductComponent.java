@@ -201,7 +201,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 				action = URLHelper.createURL(ctx);
 			}
 
-			out.println("<form role=\"form\" class=\"form-inline add-basket\" id=\"product-"+getName()+"_"+getId()+"\" method=\"post\" action=\""+action+"\">");
+			out.println("<form role=\"form\" class=\"mb-3 add-basket\" id=\"product-"+getName()+"_"+getId()+"\" method=\"post\" action=\""+action+"\">");
 			out.println("<input type=\"hidden\" name=\"webaction\" value=\"products.buy\" />");
 			out.println("<input type=\"hidden\" name=\"cid\" value=\""+getId()+"\" />");
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
@@ -210,28 +210,30 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 			out.println("<span>"+getName()+"</span>");
 			out.println("</div>");
 			
-			out.println("<div class=\"line list-group-item price\">");
-			out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.price") + "</span> <span class=\"badge\">"+getPrice() + "&nbsp;" + getCurrency() + "</span>");
+			out.println("<div class=\"line list-group-item price d-flex justify-content-between\">");
+			out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.price") + "</span> <span class=\"price\">"+getPrice() + "&nbsp;" + getCurrency() + "</span>");
 			out.println("</div>");
 			
-			out.println("<div class=\"line list-group-item stock\">");
-			out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.stock") + "</span> <span class=\"badge\">"+getRealStock(ctx)+"</span>");
+			out.println("<div class=\"line list-group-item stock d-flex justify-content-between\">");
+			out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.stock") + "</span> <span class=\"stock\">"+getRealStock(ctx)+"</span>");
 			out.println("</div>");
 
-			
-			out.println("</div>");
 
+			out.println("<div class=\"line list-group-item stock d-flex justify-content-between form-inline\">");
 			if (getVirtualStock(ctx) > getOffset()) {
-				out.println("<div class=\"line form-group quantity\">");
+				
 				String Qid = "product-"+StringHelper.getRandomId();
 				out.println("<label for=\""+Qid+"\"><span>"+i18nAccess.getViewText("ecom.quantity")+"</span></label>");
 				out.println("<input class=\"form-control digit\" id=\""+Qid+"\" type=\"text\" name=\"quantity\" value=\"" + getOffset() + "\" maxlength=\"3\"/>");
 
-				out.println("<span class=\"buy\"><input class=\"btn btn-default buy\" type=\"submit\" name=\"buy\" value=\""+i18nAccess.getViewText("ecom.buy")+"\" /></span>");
+				out.println("<span class=\"buy\"><input class=\"btn btn-default btn-primary buy\" type=\"submit\" name=\"buy\" value=\""+i18nAccess.getViewText("ecom.buy")+"\" /></span>");
 				out.println("</div>");
 			} else {
 				out.println("<span class=\"soldout\">"+i18nAccess.getViewText("ecom.soldout")+"</span>");
-			}
+			}			
+			out.println("</div>");
+			out.println("</div>");
+			
 			out.println("</form>");
 			
 			out.close();
