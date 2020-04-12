@@ -214,9 +214,9 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 			out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.price") + "</span> <span class=\"price\">"+getPrice() + "&nbsp;" + getCurrency() + "</span>");
 			out.println("</div>");
 			
-			out.println("<div class=\"line list-group-item stock d-flex justify-content-between\">");
-			out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.stock") + "</span> <span class=\"stock\">"+getRealStock(ctx)+"</span>");
-			out.println("</div>");
+//			out.println("<div class=\"line list-group-item stock d-flex justify-content-between\">");
+//			out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.stock") + "</span> <span class=\"stock\">"+getRealStock(ctx)+"</span>");
+//			out.println("</div>");
 
 
 			out.println("<div class=\"line list-group-item stock d-flex justify-content-between form-inline\">");
