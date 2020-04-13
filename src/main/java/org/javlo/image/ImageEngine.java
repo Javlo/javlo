@@ -47,7 +47,7 @@ import org.javlo.helper.StringHelper;
 import com.jhlabs.image.RGBAdjustFilter;
 
 public class ImageEngine {
-	
+
 	public static boolean DISPLAY_FOCUS = false;
 
 	private static Logger logger = Logger.getLogger(ImageEngine.class.getName());
@@ -86,7 +86,7 @@ public class ImageEngine {
 			} else if (ext.equalsIgnoreCase("png")) {
 				img = autoReduceColor(img);
 			}
-			//writeJPEG2000(img, outImage);
+			// writeJPEG2000(img, outImage);
 		}
 		ImageIO.write(img, ext, outImage);
 		return;
@@ -119,64 +119,54 @@ public class ImageEngine {
 		newPixel += blue;
 		return newPixel;
 	}
-	
+
 	public static BufferedImage loadSvg(InputStream svgStream) throws IOException {
 
-	    final BufferedImage[] imagePointer = new BufferedImage[1];
+		final BufferedImage[] imagePointer = new BufferedImage[1];
 
-	    // Rendering hints can't be set programatically, so
-	    // we override defaults with a temporary stylesheet.
-	    // These defaults emphasize quality and precision, and
-	    // are more similar to the defaults of other SVG viewers.
-	    // SVG documents can still override these defaults.
-	    String css = "svg {" +
-	            "shape-rendering: geometricPrecision;" +
-	            "text-rendering:  geometricPrecision;" +
-	            "color-rendering: optimizeQuality;" +
-	            "image-rendering: optimizeQuality;" +
-	            "}";
-	    File cssFile = File.createTempFile("batik-default-override-", ".css");
-	    FileUtils.writeStringToFile(cssFile, css);
+		// Rendering hints can't be set programatically, so
+		// we override defaults with a temporary stylesheet.
+		// These defaults emphasize quality and precision, and
+		// are more similar to the defaults of other SVG viewers.
+		// SVG documents can still override these defaults.
+		String css = "svg {" + "shape-rendering: geometricPrecision;" + "text-rendering:  geometricPrecision;" + "color-rendering: optimizeQuality;" + "image-rendering: optimizeQuality;" + "}";
+		File cssFile = File.createTempFile("batik-default-override-", ".css");
+		FileUtils.writeStringToFile(cssFile, css);
 
-	    TranscodingHints transcoderHints = new TranscodingHints();
-	    transcoderHints.put(ImageTranscoder.KEY_XML_PARSER_VALIDATING, Boolean.FALSE);
-	    transcoderHints.put(ImageTranscoder.KEY_DOM_IMPLEMENTATION,
-	            SVGDOMImplementation.getDOMImplementation());
-	    transcoderHints.put(ImageTranscoder.KEY_DOCUMENT_ELEMENT_NAMESPACE_URI,
-	            SVGConstants.SVG_NAMESPACE_URI);
-	    transcoderHints.put(ImageTranscoder.KEY_DOCUMENT_ELEMENT, "svg");
-	    transcoderHints.put(ImageTranscoder.KEY_USER_STYLESHEET_URI, cssFile.toURI().toString());
+		TranscodingHints transcoderHints = new TranscodingHints();
+		transcoderHints.put(ImageTranscoder.KEY_XML_PARSER_VALIDATING, Boolean.FALSE);
+		transcoderHints.put(ImageTranscoder.KEY_DOM_IMPLEMENTATION, SVGDOMImplementation.getDOMImplementation());
+		transcoderHints.put(ImageTranscoder.KEY_DOCUMENT_ELEMENT_NAMESPACE_URI, SVGConstants.SVG_NAMESPACE_URI);
+		transcoderHints.put(ImageTranscoder.KEY_DOCUMENT_ELEMENT, "svg");
+		transcoderHints.put(ImageTranscoder.KEY_USER_STYLESHEET_URI, cssFile.toURI().toString());
 
-	    try {
+		try {
 
-	        TranscoderInput input = new TranscoderInput(svgStream);
+			TranscoderInput input = new TranscoderInput(svgStream);
 
-	        ImageTranscoder t = new ImageTranscoder() {
+			ImageTranscoder t = new ImageTranscoder() {
 
-	            @Override
-	            public BufferedImage createImage(int w, int h) {
-	                return new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-	            }
+				@Override
+				public BufferedImage createImage(int w, int h) {
+					return new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+				}
 
-	            @Override
-	            public void writeImage(BufferedImage image, TranscoderOutput out)
-	                    throws TranscoderException {
-	                imagePointer[0] = image;
-	            }
-	        };
-	        t.setTranscodingHints(transcoderHints);
-	        t.transcode(input, null);
-	    }
-	    catch (TranscoderException ex) {
-	        // Requires Java 6
-	        ex.printStackTrace();
-	        throw new IOException("Couldn't convert.");
-	    }
-	    finally {
-	        cssFile.delete();
-	    }
+				@Override
+				public void writeImage(BufferedImage image, TranscoderOutput out) throws TranscoderException {
+					imagePointer[0] = image;
+				}
+			};
+			t.setTranscodingHints(transcoderHints);
+			t.transcode(input, null);
+		} catch (TranscoderException ex) {
+			// Requires Java 6
+			ex.printStackTrace();
+			throw new IOException("Couldn't convert.");
+		} finally {
+			cssFile.delete();
+		}
 
-	    return imagePointer[0];
+		return imagePointer[0];
 	}
 
 	// The luminance method
@@ -449,12 +439,9 @@ public class ImageEngine {
 	/**
 	 * get a color in a image, coord can be out of the image size.
 	 * 
-	 * @param image
-	 *            a standard java image
-	 * @param x
-	 *            if < 0 -> get 0 id > width -> get width-1
-	 * @param y
-	 *            if < 0 -> get 0 id > length -> get length-1
+	 * @param image a standard java image
+	 * @param x     if < 0 -> get 0 id > width -> get width-1
+	 * @param y     if < 0 -> get 0 id > length -> get length-1
 	 * @return the color of a pixel
 	 */
 	public static int getColor(BufferedImage image, int x, int y) {
@@ -470,16 +457,13 @@ public class ImageEngine {
 		}
 		return image.getRGB(x, y);
 	}
-	
+
 	/**
 	 * set a color in a image, coord can be out of the image size.
 	 * 
-	 * @param image
-	 *            a standard java image
-	 * @param x
-	 *            if < 0 -> get 0 id > width -> get width-1
-	 * @param y
-	 *            if < 0 -> get 0 id > length -> get length-1
+	 * @param image a standard java image
+	 * @param x     if < 0 -> get 0 id > width -> get width-1
+	 * @param y     if < 0 -> get 0 id > length -> get length-1
 	 * @return the color of a pixel
 	 */
 	public static void setColor(BufferedImage image, int x, int y, Color color) {
@@ -819,26 +803,26 @@ public class ImageEngine {
 		}
 		return outImage;
 	}
-	
+
 	public static final void mark(BufferedImage img, int x, int y) {
-		for (int dx=-5; dx<=5; dx++) {
-			for (int dy=-5; dy<=5; dy++) {
-				setColor(img, x+dx, y, Color.RED);
-				setColor(img, x, y+dy, Color.RED);
+		for (int dx = -5; dx <= 5; dx++) {
+			for (int dy = -5; dy <= 5; dy++) {
+				setColor(img, x + dx, y, Color.RED);
+				setColor(img, x, y + dy, Color.RED);
 			}
 		}
 	}
-	
+
 	public static final void markInterest(BufferedImage source, int interestX, int interestY) {
 		int realInterestX = (interestX * source.getWidth()) / 1000;
 		int realInterestY = (interestY * source.getHeight()) / 1000;
 		final int SIZE = 30;
 		final int HEIGHT = 5;
-		for (int dx=-30; dx<=30; dx++) {
-			for (int dy=-30; dy<=30; dy++) {
-				for (int h=-HEIGHT; h<=HEIGHT; h++) {
-					setColor(source, realInterestX+dx, realInterestY+h, Color.RED);
-					setColor(source, realInterestX+h, realInterestY+dy, Color.RED);
+		for (int dx = -30; dx <= 30; dx++) {
+			for (int dy = -30; dy <= 30; dy++) {
+				for (int h = -HEIGHT; h <= HEIGHT; h++) {
+					setColor(source, realInterestX + dx, realInterestY + h, Color.RED);
+					setColor(source, realInterestX + h, realInterestY + dy, Color.RED);
 				}
 			}
 		}
@@ -853,10 +837,10 @@ public class ImageEngine {
 		}
 		int realInterestX = (interestX * source.getWidth()) / 1000;
 		int realInterestY = (interestY * source.getHeight()) / 1000;
-		
+
 //		System.out.println(">>>>>>>>> ImageEngine.centerInterest : realInterestX = "+realInterestX); //TODO: remove debug trace
 //		System.out.println(">>>>>>>>> ImageEngine.centerInterest : realInterestY = "+realInterestY); //TODO: remove debug trace
-		
+
 		if (DISPLAY_FOCUS) {
 			mark(source, interestX, interestY);
 		}
@@ -934,28 +918,18 @@ public class ImageEngine {
 	/**
 	 * resize a picture
 	 * 
-	 * @param source
-	 *            the source image
-	 * @param inWidth
-	 *            new with
-	 * @param inHeight
-	 *            new height
-	 * @param cropResize
-	 *            true if image must be croped or false if image must be deformed
-	 * @param mt
-	 *            margin top
-	 * @param ml
-	 *            margin left
-	 * @param mr
-	 *            margin right
-	 * @param mb
-	 *            margin bottom
-	 * @param bgColor
-	 *            background color (for margin and alpha)
-	 * @param interestX
-	 *            x position of the interest zone in the picture
-	 * @param interestY
-	 *            y position of the interest zone in the picture
+	 * @param source     the source image
+	 * @param inWidth    new with
+	 * @param inHeight   new height
+	 * @param cropResize true if image must be croped or false if image must be
+	 *                   deformed
+	 * @param mt         margin top
+	 * @param ml         margin left
+	 * @param mr         margin right
+	 * @param mb         margin bottom
+	 * @param bgColor    background color (for margin and alpha)
+	 * @param interestX  x position of the interest zone in the picture
+	 * @param interestY  y position of the interest zone in the picture
 	 * @return a resized image
 	 */
 	public static BufferedImage resize(BufferedImage source, int inWidth, int inHeight, boolean cropResize, boolean addBorder, int mt, int ml, int mr, int mb, Color bgColor, int interestX, int interestY, boolean focusZone, boolean hq) {
@@ -1021,7 +995,7 @@ public class ImageEngine {
 				workImage = resize(source, width, inHeight, bgColor, hq);
 			}
 		}
-		
+
 //		try {
 //			storeImage(workImage, new File("c:/trans/focus/out_"+interestX+'_'+interestY+"_work.jpg"));
 //		} catch (IOException e) {
@@ -1038,7 +1012,7 @@ public class ImageEngine {
 			deltaX = workImage.getWidth() - inWidth;
 		}
 
-		int realInterestY = (interestY * workImage.getHeight()) / 1000;		
+		int realInterestY = (interestY * workImage.getHeight()) / 1000;
 		int deltaY = realInterestY - inHeight / 2;
 		if (deltaY < 0) {
 			deltaY = 0;
@@ -1048,8 +1022,6 @@ public class ImageEngine {
 				deltaY = 0;
 			}
 		}
-		
-		
 
 		BufferedImage outImage = new BufferedImage(inWidth + ml + mr, inHeight + mt + mb, BufferedImage.TYPE_4BYTE_ABGR);
 		if (bgColor != null) {
@@ -1402,10 +1374,8 @@ public class ImageEngine {
 
 	/**
 	 *
-	 * @param img
-	 *            Image to modify
-	 * @param sepiaIntensity
-	 *            From 0-255, 30 produces nice results
+	 * @param img            Image to modify
+	 * @param sepiaIntensity From 0-255, 30 produces nice results
 	 * @throws Exception
 	 */
 	public static void applySepiaFilter(BufferedImage img, int sepiaIntensity) {
@@ -1476,8 +1446,7 @@ public class ImageEngine {
 	 * 
 	 * @param c1
 	 * @param c2
-	 * @param tolerance
-	 *            difference between two colors 0 >> 3*255
+	 * @param tolerance difference between two colors 0 >> 3*255
 	 * @return
 	 */
 	public static boolean equalColor(Color c1, Color c2, int tolerance) {
@@ -1633,12 +1602,9 @@ public class ImageEngine {
 	/**
 	 * combine two color with transparency
 	 * 
-	 * @param c1
-	 *            front color
-	 * @param c2
-	 *            back color
-	 * @param alpha
-	 *            transparency (0>1)
+	 * @param c1    front color
+	 * @param c2    back color
+	 * @param alpha transparency (0>1)
 	 */
 	public static Color combineColor(Color c1, Color c2, float alpha) {
 		float red = ((float) c1.getRed() / 255) * alpha + ((float) c2.getRed() / 255) * (1 - alpha);
@@ -1650,10 +1616,8 @@ public class ImageEngine {
 	/**
 	 * combine two color with transparency on first
 	 * 
-	 * @param c1
-	 *            front color
-	 * @param c2
-	 *            back color
+	 * @param c1 front color
+	 * @param c2 back color
 	 */
 	public static Color combineColor(Color color1, Color color2) {
 		return combineColor(color1, color2, ((float) color1.getAlpha()) / 255);
@@ -1678,24 +1642,30 @@ public class ImageEngine {
 		int topY = p4.getSquare().getY1();
 		int rightX = p4.getSquare().getX3();
 		int bottomY = p4.getSquare().getY3();
-		
-		System.out.println(">>>>>>>>> ImageEngine.projectionImage : crop = "+crop); //TODO: remove debug trace
+
 		if (crop) {
-			int width = MathHelper.max(p4.getX1(),p4.getX2(),p4.getX3(),p4.getX4()) - MathHelper.min(p4.getX1(),p4.getX2(),p4.getX3(),p4.getX4());
-			int height = MathHelper.max(p4.getY1(),p4.getY2(),p4.getY3(),p4.getY4()) - MathHelper.min(p4.getY1(),p4.getY2(),p4.getY3(),p4.getY4());
+			int width = MathHelper.max(p4.getX1(), p4.getX2(), p4.getX3(), p4.getX4()) - MathHelper.min(p4.getX1(), p4.getX2(), p4.getX3(), p4.getX4());
+			int height = MathHelper.max(p4.getY1(), p4.getY2(), p4.getY3(), p4.getY4()) - MathHelper.min(p4.getY1(), p4.getY2(), p4.getY3(), p4.getY4());
 			source = resize(source, width, height, true, false, 0, 0, 0, 0, null, interestX, interestY, true, true);
 		}
 
 		BufferedImage tempImage = new BufferedImage(back.getWidth(), back.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+//		BufferedImage layerX = new BufferedImage(back.getWidth(), back.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+//		BufferedImage layerY = new BufferedImage(back.getWidth(), back.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+//		BufferedImage layerXY = new BufferedImage(back.getWidth(), back.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
 
 		source = resizeImage(source, rightX - leftX, bottomY - topY);
+
+		//fillImage(source, Color.green);
+		// fillImage(tempImage, Color.blue);
+
 		for (int x = leftX; x < rightX; x++) {
 			for (int y = topY; y < bottomY; y++) {
 				Color c = new Color(source.getRGB(x - leftX, y - topY));
 				c = new Color(colorToRGB((int) Math.round(alpha * 255), c.getRed(), c.getGreen(), c.getBlue()));
 				double posX = translatePositionX(x, y, p4);
-				double posY = translatePositionY(x, y, p4);
-				writeColorWithFloatCoord(tempImage, c, posX, posY);
+				double posY = translatePositionY(x, y, p4);				
+				writeColorWithFloatCoord(tempImage, null, null, null, c, posX, posY);
 			}
 		}
 
@@ -1752,25 +1722,25 @@ public class ImageEngine {
 	 * @param x
 	 * @param y
 	 */
-	private static void writeColorWithFloatCoord(BufferedImage image, Color c, double x, double y) {
+	private static void writeColorWithFloatCoord(BufferedImage image, BufferedImage layerx, BufferedImage layery, BufferedImage layerxy, Color c, double x, double y) {
 		int basicX = (int) Math.floor(x);
 		int basicY = (int) Math.floor(y);
-		float alphaX = (float) x - basicX;
-		float alphaY = (float) y - basicY;
-		Color finalColor = combineColor(c, new Color(image.getRGB(basicX, basicY)), ((1 - alphaX) + (1 - alphaY)) / 2);
-		image.setRGB(basicX, basicY, finalColor.getRGB());
-		if (basicX + 1 < image.getWidth()) {
-			finalColor = combineColor(c, new Color(image.getRGB(basicX + 1, basicY)), Math.abs(alphaX - alphaY) / 4);
-			image.setRGB(basicX + 1, basicY, finalColor.getRGB());
-		}
-		if (basicY + 1 < image.getHeight()) {
-			finalColor = combineColor(c, new Color(image.getRGB(basicX, basicY + 1)), Math.abs(alphaY - alphaX) / 4);
-			image.setRGB(basicX, basicY + 1, finalColor.getRGB());
-		}
-		if (basicY + 1 < image.getHeight() && basicX + 1 < image.getWidth()) {
-			finalColor = combineColor(c, new Color(image.getRGB(basicX, basicY + 1)), (alphaX + alphaY) / 2);
-			image.setRGB(basicX + 1, basicY + 1, finalColor.getRGB());
-		}
+//		float alphaX = (float) x - basicX;
+//		float alphaY = (float) y - basicY;		
+		image.setRGB(basicX, basicY, c.getRGB());
+		
+//		if (basicX + 1 < image.getWidth()) {
+//			finalColor = new Color(c.getRed(), c.getGreen(), c.getBlue(), 255*Math.abs(alphaX - alphaY) / 4);
+//			layerx.setRGB(basicX + 1, basicY, finalColor.getRGB());
+//		}
+//		if (basicY + 1 < image.getHeight()) {
+//			finalColor = new Color(c.getRed(), c.getGreen(), c.getBlue(), Math.abs(alphaY - alphaX) / 4);
+//			layery.setRGB(basicX, basicY + 1, finalColor.getRGB());
+//		}
+//		if (basicY + 1 < image.getHeight() && basicX + 1 < image.getWidth()) {
+//			finalColor = new Color(c.getRed(), c.getGreen(), c.getBlue(), (alphaX + alphaY) / 2);
+//			layerxy.setRGB(basicX + 1, basicY + 1, finalColor.getRGB());
+//		}
 	}
 
 	/**
@@ -1851,12 +1821,9 @@ public class ImageEngine {
 	 * 
 	 * @param image
 	 * @param backgroundColors
-	 * @param size
-	 *            size of border (in %)
-	 * @param degradedSize
-	 *            degraded size bewteen background and image
-	 * @param position
-	 *            1:top 2: right 3:bottom 4:left
+	 * @param size             size of border (in %)
+	 * @param degradedSize     degraded size bewteen background and image
+	 * @param position         1:top 2: right 3:bottom 4:left
 	 * @return
 	 */
 	public static BufferedImage addTransparanceBorder(BufferedImage image, Color backgroundColors, int size, int degradedSize, int position) {
@@ -2008,7 +1975,7 @@ public class ImageEngine {
 //	}
 
 	public static void main(String[] args) throws Exception {
-		
+
 //		InputStream in = new FileInputStream(new File("c:/trans/yin-yang-solid.svg"));		
 //		BufferedImage img = loadSvg(in);				
 //		in.close();
@@ -2054,9 +2021,7 @@ public class ImageEngine {
 //				ImageIO.write(img, "png", new File("C:\\work\\javlo2\\src\\main\\webapp\\images\\font\\"+svg.getName().replace(".svg", ".png")));
 //			}
 //		}
-		
-		
-		
+
 		// System.out.println("data : "+getGoogleResultTitleSize("patrick est là"));
 		// System.out.println("data : "+getGoogleResultTitleSize("Hot Women | Sexy Women
 		// Pics | Hot Ladies - theChive"));
@@ -2086,6 +2051,16 @@ public class ImageEngine {
 		// "+getColorLight(black)); //TODO: remove debug trace
 		// System.out.println(">>>>>>>>> ImageEngine.main : white =
 		// "+getColorLight(white)); //TODO: remove debug trace
+
+		File layerFile = new File("c:/trans/title3.png");
+		File imageFile = new File("c:/trans/img2.jpg");
+		File targetFile = new File("c:/trans/title3_out.png");
+
+		BufferedImage layerImage = ImageIO.read(layerFile);
+		BufferedImage image = ImageIO.read(imageFile);
+
+		BufferedImage outImage = projectionImage(layerImage, null, image, new Polygon4(203, 0, 296, 0, 296, 111, 203, 111), 1, true, 500, 500);
+		ImageIO.write(outImage, "png", targetFile);
 	}
 
 	public static BufferedImage convertRGBAToIndexed(BufferedImage src) {

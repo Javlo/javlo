@@ -72,6 +72,7 @@ import org.javlo.utils.SuffixPrefix;
 import org.javlo.ztatic.StaticInfo;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Entities;
 import org.jsoup.nodes.Entities.EscapeMode;
 import org.jsoup.safety.Whitelist;
 import org.xhtmlrenderer.pdf.ITextRenderer;
@@ -2683,7 +2684,7 @@ public class XHTMLHelper {
 
 	public static String cleanHTML(String html) {
 		Document doc = Jsoup.parse(html);
-		EscapeMode.xhtml.getMap().put('\u00A0', "#160");
+		//Entities.EscapeMode.xhtml.getMap().put('\u00A0', "#160");
 		doc.outputSettings().escapeMode(EscapeMode.xhtml);
 		return doc.outerHtml();
 	}

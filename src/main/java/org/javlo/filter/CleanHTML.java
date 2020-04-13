@@ -98,7 +98,7 @@ public class CleanHTML implements javax.servlet.Filter {
 			} else {
 				doc = Jsoup.parse(responseWrapper.writer.toString());
 			}		
-			EscapeMode.xhtml.getMap().put('\u00A0', "#160");
+			//EscapeMode.xhtml.getMap().put('\u00A0', "#160");
 			doc.outputSettings().escapeMode(EscapeMode.xhtml);
 			response.getWriter().print(doc.outerHtml());
 		} else {
