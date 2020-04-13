@@ -295,6 +295,15 @@ public class PageBean implements Serializable {
 	public String getId() {
 		return page.getId();
 	}
+	
+	public boolean isRealContentAuto() {
+		try {
+			return page.isRealContentAuto(ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
 	public boolean isRealContent() {
 		try {
