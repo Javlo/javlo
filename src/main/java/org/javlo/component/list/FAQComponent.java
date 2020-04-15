@@ -9,6 +9,7 @@ import java.util.List;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
 import org.javlo.utils.ConfigurationProperties;
 
 /**
@@ -183,6 +184,11 @@ public class FAQComponent extends AbstractVisualComponent {
 	@Override
 	public void init(ComponentBean bean, ContentContext newContext) throws Exception {
 		super.init(bean, newContext);
+	}
+	
+	@Override
+	public boolean isRealContent(ContentContext ctx) {
+		return !StringHelper.isEmpty(getValue());
 	}
 
 }
