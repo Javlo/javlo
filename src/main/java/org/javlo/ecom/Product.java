@@ -153,6 +153,7 @@ public class Product {
 	private IImageTitle image;
 	private String imageURL;
 	private int quantity = 1;
+	private double price = 0;
 	private String fakeName = "no-name";
 
 	public String getName() {
@@ -210,7 +211,11 @@ public class Product {
 		if (comp == null) {
 			return -1;
 		} else {
-			return comp.getPrice();
+			if (comp.getPrice() == 0) {
+				return price;
+			} else {
+				return comp.getPrice();
+			}
 		}
 	}
 	
@@ -287,6 +292,10 @@ public class Product {
 
 	public ProductBean getBean() {
 		return new ProductBean(getId(), getPrice(), getReduction(), getVAT(), getCurrencyCode(), getName(), getShortDescription(), getImageURL(), getQuantity(), getWeight());
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
 	}
 
 }

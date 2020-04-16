@@ -24,7 +24,6 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 
-
 public class ProductComponent extends AbstractPropertiesComponent implements IAction {
 
 	static final List<String> FIELDS = Arrays.asList(new String[] { "name", "price", "vat", "promo", "currency", "offset", "weight", "production", "basket-page" });
@@ -33,12 +32,12 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 	public String getHeader() {
 		return "Article V 1.0";
 	}
-	
+
 	@Override
 	public List<String> getFields(ContentContext ctx) throws Exception {
 		return FIELDS;
 	}
-	
+
 	@Override
 	protected boolean getColumnableDefaultValue() {
 		return true;
@@ -63,11 +62,11 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 	public double getReduction() {
 		return getFieldDoubleValue("promo");
 	}
-	
+
 	public String getCurrency() {
 		return getFieldValue("currency", "EUR");
 	}
-	
+
 	public String getBasketPage() {
 		return getFieldValue("basket-page", "");
 	}
@@ -135,7 +134,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 		List<String> fields = getFields(ctx);
 
 		out.println("<div class=\"edit\" style=\"padding: 3px;\"><div class=\"row\">");
-		
+
 		for (String field : fields) {
 			renderField(ctx, out, field, getRowSize(field), getFieldValue(field));
 		}
@@ -148,13 +147,14 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 		out.close();
 		return writer.toString();
 	}
+
 	private void renderField(ContentContext ctx, PrintWriter out, String field, int rowSize, Object value) throws Exception {
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 
 		String fieldId = createKeyWithField(field);
-		
+
 		out.println("<div class=\"col-md-4 col-lg-3\"><div class=\"form-group\">");
-		out.println("<label for=\"" + fieldId + "\">" + i18nAccess.getText("field." + field) + "</label>");		
+		out.println("<label for=\"" + fieldId + "\">" + i18nAccess.getText("field." + field) + "</label>");
 		out.print("<textarea class=\"form-control\" rows=\"" + rowSize + "\" id=\"" + fieldId + "\" name=\"" + fieldId + "\">");
 		out.print(String.valueOf(value));
 		out.println("</textarea>");
@@ -164,7 +164,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
 		String msg = super.performEdit(ctx);
-		
+
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 
 		String stockValue = requestService.getParameter(createKeyWithField("stock"), null);
@@ -183,7 +183,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 			}
 		} catch (Exception e) {
 		}
-		
+
 		return msg;
 	}
 
@@ -192,13 +192,13 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 		if (getOffset() > 0) {
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 			PrintStream out = new PrintStream(outStream);
-			
+
 			String action;
 			if (getBasketPage().trim().length() > 0) {
 				ContentService content = ContentService.getInstance(ctx.getRequest());
 				MenuElement page = content.getNavigation(ctx).searchChildFromName(getBasketPage());
 				if (page != null) {
-					action = URLHelper.createURL(ctx,page);
+					action = URLHelper.createURL(ctx, page);
 				} else {
 					action = URLHelper.createURL(ctx);
 				}
@@ -206,59 +206,66 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 				action = URLHelper.createURL(ctx);
 			}
 
-			out.println("<form role=\"form\" class=\"mb-3 add-basket\" id=\"product-"+getName()+"_"+getId()+"\" method=\"post\" action=\""+action+"\">");
+			out.println("<form role=\"form\" class=\"mb-3 add-basket\" id=\"product-" + getName() + "_" + getId() + "\" method=\"post\" action=\"" + action + "\">");
 			out.println("<input type=\"hidden\" name=\"webaction\" value=\"products.buy\" />");
-			out.println("<input type=\"hidden\" name=\"cid\" value=\""+getId()+"\" />");
+			out.println("<input type=\"hidden\" name=\"cid\" value=\"" + getId() + "\" />");
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
-			
-			out.println("<div class=\"list-group\"><div class=\"line list-group-item name\">");		
-			out.println("<span>"+getName()+"</span>");
+
+			out.println("<div class=\"list-group\"><div class=\"line list-group-item name\">");
+			out.println("<span>" + getName() + "</span>");
 			out.println("</div>");
-			
+
+			double price = getPrice();
 			out.println("<div class=\"line list-group-item price d-flex justify-content-between\">");
-			out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.price") + "</span> <span class=\"price\">"+getPrice() + "&nbsp;" + getCurrency() + "</span>");
+			if (price > 0) {
+				out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.price") + "</span> <span class=\"price\">" + price + "&nbsp;" + getCurrency() + "</span>");
+			} else {
+				out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.gift") + "&nbsp; (" + getCurrency() + ")</span> <span class=\"price\"><input class=\"form-control digit\" name=\"price\" type=\"number\" min=\"2\" value=\"\" /></span>");
+			}
 			out.println("</div>");
-			
+
 //			out.println("<div class=\"line list-group-item stock d-flex justify-content-between\">");
 //			out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.stock") + "</span> <span class=\"stock\">"+getRealStock(ctx)+"</span>");
 //			out.println("</div>");
 
-
 			out.println("<div class=\"line list-group-item stock d-flex justify-content-between form-inline\">");
 			if (getVirtualStock(ctx) > getOffset()) {
-				
-				String Qid = "product-"+StringHelper.getRandomId();
-				out.println("<label for=\""+Qid+"\"><span>"+i18nAccess.getViewText("ecom.quantity")+"</span></label>");
-				out.println("<input class=\"form-control digit\" id=\""+Qid+"\" type=\"text\" name=\"quantity\" value=\"" + getOffset() + "\" maxlength=\"3\"/>");
 
-				out.println("<span class=\"buy\"><input class=\"btn btn-default btn-primary buy\" type=\"submit\" name=\"buy\" value=\""+i18nAccess.getViewText("ecom.buy")+"\" /></span>");
+				String Qid = "product-" + StringHelper.getRandomId();
+				if (price>0) {
+					out.println("<label for=\"" + Qid + "\"><span>" + i18nAccess.getViewText("ecom.quantity") + "</span></label>");
+					out.println("<input class=\"form-control digit\" id=\"" + Qid + "\" type=\"text\" name=\"quantity\" value=\"" + getOffset() + "\" maxlength=\"3\"/>");
+				} else {
+					out.println("<div><input type=\"hidden\" name=\"quantity\" value=\"1\" /></div>");
+				}
+				out.println("<span class=\"buy\"><input class=\"btn btn-default btn-primary buy\" type=\"submit\" name=\"buy\" value=\"" + i18nAccess.getViewText("ecom.buy") + "\" /></span>");
 				out.println("</div>");
 			} else {
-				out.println("<span class=\"soldout\">"+i18nAccess.getViewText("ecom.soldout")+"</span>");
-			}			
+				out.println("<span class=\"soldout\">" + i18nAccess.getViewText("ecom.soldout") + "</span>");
+			}
 			out.println("</div>");
-			
+
 			out.println("</form>");
-			
+
 			out.close();
 			return new String(outStream.toByteArray());
 		} else {
 			return "";
 		}
 	}
-	
+
 	@Override
 	public String getHexColor() {
 		return ECOM_COLOR;
 	}
-	
+
 	@Override
 	public String getActionGroupName() {
 		return "products";
 	}
-	
-	public static String performBuy(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {		
-		
+
+	public static String performBuy(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement currentPage = ctx.getCurrentPage();
 
@@ -269,6 +276,10 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 			if ((comp != null) && (comp instanceof ProductComponent)) {
 				ProductComponent pComp = (ProductComponent) comp;
 				Product product = new Product(pComp);
+				
+				if (StringHelper.isDigit(rs.getParameter("price"))) {
+					product.setPrice(Double.parseDouble(rs.getParameter("price")));
+				}
 
 				/* information from page */
 				product.setUrl(URLHelper.createURL(ctx, currentPage.getPath()));
@@ -287,8 +298,8 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 					Basket basket = Basket.getInstance(ctx);
 					basket.addProduct(product);
-					
-					String msg = i18nAccess.getViewText("ecom.product.add", new String[][] {{"product", pComp.getName()}});					
+
+					String msg = i18nAccess.getViewText("ecom.product.add", new String[][] { { "product", pComp.getName() } });
 					messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
 				}
 			}
@@ -296,5 +307,5 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 		return null;
 	}
-	
+
 }
