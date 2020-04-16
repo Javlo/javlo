@@ -38,6 +38,11 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 	public List<String> getFields(ContentContext ctx) throws Exception {
 		return FIELDS;
 	}
+	
+	@Override
+	protected boolean getColumnableDefaultValue() {
+		return true;
+	}
 
 	public String getType() {
 		return "product";
@@ -231,7 +236,6 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 			} else {
 				out.println("<span class=\"soldout\">"+i18nAccess.getViewText("ecom.soldout")+"</span>");
 			}			
-			out.println("</div>");
 			out.println("</div>");
 			
 			out.println("</form>");

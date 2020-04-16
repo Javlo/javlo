@@ -162,7 +162,6 @@ public class WysiwygParagraph extends AbstractVisualComponent implements IImageT
 			this.imageDescription = images.get(0).attr("alt");
 			this.imageUrl = ResourceHelper.extractResourcePathFromURL(ctx, images.get(0).attr("src"));
 		}
-		System.out.println(">>>>> this.imageUrl = "+this.imageUrl);
 	}
 
 	@Override
