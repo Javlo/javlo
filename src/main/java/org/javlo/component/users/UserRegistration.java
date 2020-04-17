@@ -301,7 +301,7 @@ public class UserRegistration extends MapComponent implements IAction {
 
 			String mailAdminContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), "Registration on : " + globalContext.getGlobalTitle(), mapMailData, URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE)), "go on page >>", null);
 
-			mailService.sendMail(newUser, admin, "new user : " + userInfo.getLogin(), mailAdminContent, true);
+			mailService.sendMail(admin, admin, "new user : " + userInfo.getLogin(), mailAdminContent, true);
 			mailService.sendMail(admin, newUser, i18nAccess.getViewText("user.new-account") + globalContext.getGlobalTitle(), mailAdminContent, true);
 
 			ctx.getRequest().setAttribute("noform", "true");
