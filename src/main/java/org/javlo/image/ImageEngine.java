@@ -18,10 +18,15 @@ import java.awt.image.ConvolveOp;
 import java.awt.image.IndexColorModel;
 import java.awt.image.Kernel;
 import java.awt.image.WritableRaster;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -43,6 +48,9 @@ import org.apache.batik.util.SVGConstants;
 import org.apache.commons.io.FileUtils;
 import org.javlo.helper.MathHelper;
 import org.javlo.helper.StringHelper;
+import org.jcodec.codecs.vpx.VP8Decoder;
+import org.jcodec.common.model.Picture;
+import org.jcodec.scale.AWTUtil;
 
 import com.jhlabs.image.RGBAdjustFilter;
 
@@ -64,6 +72,48 @@ public class ImageEngine {
 	public static BufferedImage loadImage(File file) throws IOException {
 		BufferedImage outImage = ImageIO.read(file);
 		return outImage;
+	}
+	
+	public static void drain(InputStream inputStream, OutputStream outputStream) {
+	    try
+	    {
+	        byte[] buf=new byte[1024];
+	        int count;
+	        while ((count=inputStream.read(buf)) != -1)
+	        {
+	            outputStream.write(buf, 0, count);
+	        }
+	    }
+	    catch (IOException e)
+	    {
+	        throw new RuntimeException(e);
+	    }
+	}
+
+	public static byte[] readBytesFully(InputStream in) {
+		try {
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			BufferedInputStream bufferedIn = new BufferedInputStream(in);
+			drain(bufferedIn, out);
+			out.flush();
+			return out.toByteArray();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static BufferedImage readWebp(File file) throws FileNotFoundException, IOException {
+		VP8Decoder decoder = new VP8Decoder();
+		System.out.println("in " + new File(".").getCanonicalPath());
+		file = file.getCanonicalFile();
+		System.out.println("decoding " + file);
+		Picture picture;
+		try (FileInputStream in = new FileInputStream(file)) {
+			byte[] bytes = readBytesFully(in);
+			ByteBuffer buffer = ByteBuffer.wrap(bytes);			
+			picture = decoder.decodeFrame(buffer, null);
+		}		 
+		return AWTUtil.toBufferedImage(picture);
 	}
 
 	public static void storeImage(BufferedImage img, File file) throws IOException {
@@ -1656,7 +1706,7 @@ public class ImageEngine {
 
 		source = resizeImage(source, rightX - leftX, bottomY - topY);
 
-		//fillImage(source, Color.green);
+		// fillImage(source, Color.green);
 		// fillImage(tempImage, Color.blue);
 
 		for (int x = leftX; x < rightX; x++) {
@@ -1664,7 +1714,7 @@ public class ImageEngine {
 				Color c = new Color(source.getRGB(x - leftX, y - topY));
 				c = new Color(colorToRGB((int) Math.round(alpha * 255), c.getRed(), c.getGreen(), c.getBlue()));
 				double posX = translatePositionX(x, y, p4);
-				double posY = translatePositionY(x, y, p4);				
+				double posY = translatePositionY(x, y, p4);
 				writeColorWithFloatCoord(tempImage, null, null, null, c, posX, posY);
 			}
 		}
@@ -1728,7 +1778,7 @@ public class ImageEngine {
 //		float alphaX = (float) x - basicX;
 //		float alphaY = (float) y - basicY;		
 		image.setRGB(basicX, basicY, c.getRGB());
-		
+
 //		if (basicX + 1 < image.getWidth()) {
 //			finalColor = new Color(c.getRed(), c.getGreen(), c.getBlue(), 255*Math.abs(alphaX - alphaY) / 4);
 //			layerx.setRGB(basicX + 1, basicY, finalColor.getRGB());
@@ -2052,15 +2102,21 @@ public class ImageEngine {
 		// System.out.println(">>>>>>>>> ImageEngine.main : white =
 		// "+getColorLight(white)); //TODO: remove debug trace
 
-		File layerFile = new File("c:/trans/title3.png");
-		File imageFile = new File("c:/trans/img2.jpg");
-		File targetFile = new File("c:/trans/title3_out.png");
-
-		BufferedImage layerImage = ImageIO.read(layerFile);
-		BufferedImage image = ImageIO.read(imageFile);
-
-		BufferedImage outImage = projectionImage(layerImage, null, image, new Polygon4(203, 0, 296, 0, 296, 111, 203, 111), 1, true, 500, 500);
-		ImageIO.write(outImage, "png", targetFile);
+//		File layerFile = new File("c:/trans/title3.png");
+//		File imageFile = new File("c:/trans/img2.jpg");
+//		File targetFile = new File("c:/trans/title3_out.png");
+//
+//		BufferedImage layerImage = ImageIO.read(layerFile);
+//		BufferedImage image = ImageIO.read(imageFile);
+//
+//		BufferedImage outImage = projectionImage(layerImage, null, image, new Polygon4(203, 0, 296, 0, 296, 111, 203, 111), 1, true, 500, 500);
+//		ImageIO.write(outImage, "png", targetFile);
+		
+		
+		File webpFile = new File("c:/trans/test.webp");
+		File targetFile = new File("c:/trans/test_webp.png");
+		BufferedImage image = readWebp(webpFile);
+		ImageIO.write(image, "png", targetFile);
 	}
 
 	public static BufferedImage convertRGBAToIndexed(BufferedImage src) {

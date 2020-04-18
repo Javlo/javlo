@@ -347,7 +347,7 @@ public class UserRegistration extends MapComponent implements IAction {
 				}
 				userInfo = ctx.getCurrentUser().getUserInfo();
 			}
-			password = SecurityHelper.encryptPassword(password2);
+			//password = SecurityHelper.encryptPassword(password2);
 
 			userInfo.setPassword(SecurityHelper.encryptPassword(password));
 			userFactory.store();

@@ -360,13 +360,13 @@ public class TaxonomyService {
 	private List<IListItem> getList(ContentContext ctx, String path, boolean displayParentLabel) {		
 		String[] nodes;
 		if (path.contains("/")) {
-			nodes = StringUtils.split(path, '/');
+			nodes = StringUtils.splitS(path, "/");
 		} else if (path.contains("-")) {
-			nodes = StringUtils.split(path, '-');
+			nodes = StringUtils.splitS(path, "-");
 		} else if (path.contains(".")) {
-			nodes = StringUtils.split(path, '.');
+			nodes = StringUtils.splitS(path, ".");
 		}else {
-			nodes = StringUtils.split(path, '>');
+			nodes = StringUtils.splitS(path, ">");
 		}
 		TaxonomyBean bean = root;
 		for (int i = 0; i < nodes.length; i++) {			

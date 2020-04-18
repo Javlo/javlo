@@ -37,12 +37,18 @@ import org.javlo.helper.URLHelper;
 import org.javlo.template.Template;
 import org.jcodec.api.FrameGrab;
 import org.jcodec.api.JCodecException;
+import org.jcodec.common.Demuxer;
 import org.jcodec.common.DemuxerTrack;
-import org.jcodec.common.FileChannelWrapper;
-import org.jcodec.common.NIOUtils;
+import org.jcodec.common.DemuxerTrackMeta;
+import org.jcodec.common.Format;
+import org.jcodec.common.JCodecUtil;
+import org.jcodec.common.io.FileChannelWrapper;
+import org.jcodec.common.io.NIOUtils;
+import org.jcodec.common.io.SeekableByteChannel;
 import org.jcodec.common.model.ColorSpace;
 import org.jcodec.common.model.Picture;
-import org.jcodec.containers.mp4.demuxer.MP4Demuxer;
+import org.jcodec.containers.mp4.demuxer.MP4DemuxerTrackMeta;
+import org.jcodec.scale.AWTUtil;
 import org.jcodec.scale.ColorUtil;
 import org.jcodec.scale.Transform;
 
@@ -447,15 +453,15 @@ public class ImageHelper {
 //		ImageIO.write(bestImage, "png", new File("c:/trans/test2.png"));
 		
 		
-		File javloFile = new File("c:/trans/img2.jpg");
+//		File javloFile = new File("c:/trans/img2.jpg");
 //		createImage(javloFile, 500, 500);
 //		createImage(javloFile, 100, 500);
 //		createImage(javloFile, 500, 100);
-		createImage(javloFile, 200, 200);
-		createImage(javloFile, 200, 900);
+//		createImage(javloFile, 200, 200);
+//		createImage(javloFile, 200, 900);
 //		createImage(javloFile, 100, 900);
 		
-		File vid = new File("c:/trans/test2.mp4");
+		File vid = new File("c:/trans/image_test/test.mp4");
 		BufferedImage img = getBestImageFromVideo(vid);
 		
 		ImageEngine.storeImage(img, new File("c:/trans/test.jpg"));
@@ -466,26 +472,12 @@ public class ImageHelper {
 	}
 
 	public static BufferedImage toBufferedImage(Picture src) {
-		if (src.getColor() != ColorSpace.RGB) {
-			Transform transform = ColorUtil.getTransform(src.getColor(), ColorSpace.RGB);
-			Picture rgb = Picture.create(src.getWidth(), src.getHeight(), ColorSpace.RGB, src.getCrop());
-			transform.transform(src, rgb);
-			src = rgb;
-		}
-
-		BufferedImage dst = new BufferedImage(src.getCroppedWidth(), src.getCroppedHeight(), BufferedImage.TYPE_3BYTE_BGR);
-
-		if (src.getCrop() == null)
-			toBufferedImage(src, dst);
-		else
-			toBufferedImageCropped(src, dst);
-
-		return dst;
+		return AWTUtil.toBufferedImage(src);
 	}
 
 	private static void toBufferedImageCropped(Picture src, BufferedImage dst) {
 		byte[] data = ((DataBufferByte) dst.getRaster().getDataBuffer()).getData();
-		int[] srcData = src.getPlaneData(0);
+		byte[] srcData = src.getPlaneData(0);
 		int dstStride = dst.getWidth() * 3;
 		int srcStride = src.getWidth() * 3;
 		for (int line = 0, srcOff = 0, dstOff = 0; line < dst.getHeight(); line++) {
@@ -501,7 +493,7 @@ public class ImageHelper {
 
 	public static void toBufferedImage(Picture src, BufferedImage dst) {
 		byte[] data = ((DataBufferByte) dst.getRaster().getDataBuffer()).getData();
-		int[] srcData = src.getPlaneData(0);
+		byte[] srcData = src.getPlaneData(0);
 		for (int i = 0; i < data.length; i++) {
 			data[i] = (byte) srcData[i];
 		}
@@ -565,6 +557,33 @@ public class ImageHelper {
 		}
 		return colors.size();
 	}
+	
+	public static BufferedImage getBestImageFromVideo(File file) throws IOException, JCodecException {
+		
+		Format f = JCodecUtil.detectFormat(file);
+		Demuxer d = JCodecUtil.createDemuxer(f, file);
+		DemuxerTrack vt = d.getVideoTracks().get(0);
+		DemuxerTrackMeta dtm = vt.getMeta();
+
+		int numberOfFrame = dtm.getTotalFrames();
+		
+		int FRAME_SIZE = 24;
+
+		BufferedImage bestImage = null;	
+		int bestScore = 0;
+		for (int i = 0; i < FRAME_SIZE; i++) {
+			int frameNumber = i * numberOfFrame / (FRAME_SIZE * 25);
+			Picture picture = FrameGrab.getFrameFromFile( file, frameNumber);
+			BufferedImage image = ImageHelper.toBufferedImage(picture);
+			int currentScore = ImageHelper.getColorCount(image);
+			if (currentScore > bestScore) {
+				bestScore = currentScore;
+				bestImage = image;
+			}
+		}
+		
+		return bestImage;
+	}
 
 	/**
 	 * create a image for display video
@@ -575,24 +594,27 @@ public class ImageHelper {
 	 * @throws IOException
 	 * @throws JCodecException
 	 */
-	public static BufferedImage getBestImageFromVideo(File file) throws Exception {
-		FileChannelWrapper ch = NIOUtils.readableFileChannel(file);
-		MP4Demuxer demuxer = new MP4Demuxer(ch);
-		DemuxerTrack video_track = demuxer.getVideoTrack();
-		int numberOfFrame = video_track.getMeta().getTotalFrames();
-		int FRAME_SIZE = 4;
-		int bestScore = 0;
-		BufferedImage bestImage = null;
-		for (int i = 0; i < FRAME_SIZE; i++) {
-			int frameNumber = i * numberOfFrame / (FRAME_SIZE * 25);
-			Picture frame = FrameGrab.getNativeFrame(file, frameNumber);
-			BufferedImage image = ImageHelper.toBufferedImage(frame);
-			int currentScore = ImageHelper.getColorCount(image);
-			if (currentScore > bestScore) {
-				bestScore = currentScore;
-				bestImage = image;
-			}
-		}
-		return bestImage;
-	}
+//	public static BufferedImage getBestImageFromVideo(File file) throws Exception {
+//		
+//		SeekableByteChannel input = org.jcodec.common.io.NIOUtils.readableFileChannel(file);
+//		
+//		FileChannelWrapper ch = NIOUtils.readableFileChannel(file);
+//		MP4Demuxer demuxer = new MP4Demuxer(ch);
+//		DemuxerTrack video_track = demuxer.getVideoTrack();
+//		int numberOfFrame = video_track.getMeta().getTotalFrames();
+//		int FRAME_SIZE = 4;
+//		int bestScore = 0;
+//		BufferedImage bestImage = null;
+//		for (int i = 0; i < FRAME_SIZE; i++) {
+//			int frameNumber = i * numberOfFrame / (FRAME_SIZE * 25);
+//			Picture frame = FrameGrab.getNativeFrame(file, frameNumber);
+//			BufferedImage image = ImageHelper.toBufferedImage(frame);
+//			int currentScore = ImageHelper.getColorCount(image);
+//			if (currentScore > bestScore) {
+//				bestScore = currentScore;
+//				bestImage = image;
+//			}
+//		}
+//		return bestImage;
+//	}
 }

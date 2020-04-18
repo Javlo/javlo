@@ -460,7 +460,12 @@
 		<dependency>
 			<groupId>org.jcodec</groupId>
 			<artifactId>jcodec</artifactId>
-			<version>0.1.9</version>
+			<version>0.2.5</version>
+		</dependency>
+		<dependency>
+    		<groupId>org.jcodec</groupId>
+    		<artifactId>jcodec-javase</artifactId>
+    		<version>0.2.5</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.google.code.geocoder-java/geocoder-java -->
