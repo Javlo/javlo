@@ -176,13 +176,14 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 		if(bccString  != null && StringHelper.isMail(bccString)) {
 			bcc = new InternetAddress(getData().getProperty("mail.bcc"));
 		}
-		InternetAddress from;
-		String fromString = getData().getProperty("mail.from");
-		if( fromString != null && StringHelper.isMail(fromString)) {
-			from = new InternetAddress(fromString);
-		} else {
-			from = new InternetAddress(ctx.getGlobalContext().getAdministratorEmail());
-		}	
+//		InternetAddress from;
+//		String fromString = getData().getProperty("mail.from");
+//		if( fromString != null && StringHelper.isMail(fromString)) {
+//			from = new InternetAddress(fromString);
+//		} else {
+//			from = new InternetAddress(ctx.getGlobalContext().getAdministratorEmail());
+//		}	
+		InternetAddress from = new InternetAddress(ctx.getGlobalContext().getAdministratorEmail());
 		InternetAddress to = new InternetAddress(basket.getContactEmail());		
 		if (email == null) {
 			email = getConfirmationEmail(ctx,basket);
