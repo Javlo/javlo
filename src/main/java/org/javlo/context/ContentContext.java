@@ -20,10 +20,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
@@ -1069,6 +1071,14 @@ public class ContentContext {
 	 */
 	public HttpServletRequest getRequest() {
 		return request;
+	}
+	
+	public HttpSession getSession() {
+		return request.getSession();
+	}
+	
+	public ServletContext getServletContext()  {
+		return request.getSession().getServletContext();
 	}
 
 	public RequestService getRequestService() {

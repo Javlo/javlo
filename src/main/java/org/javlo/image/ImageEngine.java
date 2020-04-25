@@ -74,6 +74,11 @@ public class ImageEngine {
 		return outImage;
 	}
 	
+	public static BufferedImage loadImage(InputStream in) throws IOException {
+		BufferedImage outImage = ImageIO.read(in);
+		return outImage;
+	}
+	
 	public static void drain(InputStream inputStream, OutputStream outputStream) {
 	    try
 	    {
@@ -650,10 +655,39 @@ public class ImageEngine {
 	public static BufferedImage resizeWidth(BufferedImage bi, int width, boolean hq) {
 		return resizeWidth(bi, width, 0, 0, 0, 0, null, hq);
 	}
+	
+	public static BufferedImage resizeHeight(BufferedImage bi, int height, boolean hq) {
+		return resizeHeight(bi, height, 0, 0, 0, 0, null, hq);
+	}
 
 	public static BufferedImage resizeWidth(BufferedImage bi, int width, int mt, int mr, int ml, int mb, Color bgColor, boolean hq) {
 		int height = Math.round(bi.getHeight() * ((float) width / (float) bi.getWidth()));
 		width = Math.round(bi.getWidth() * ((float) height / (float) bi.getHeight()));
+		BufferedImage image = resize(bi, width, height, bgColor, hq);
+
+		if (bgColor != null && image.getColorModel().hasAlpha() && (mt > 0 || ml > 0 || mr > 0 || mb > 0)) {
+			int inWidth = image.getWidth() + ml + mr;
+			int inHeight = image.getHeight() + mt + mb;
+
+			BufferedImage outImage = new BufferedImage(inWidth, inHeight, BufferedImage.TYPE_INT_ARGB);
+			for (int x = 0; x < inWidth; x++) {
+				for (int y = 0; y < inHeight; y++) {
+					Color imageColor = bgColor;
+					if ((x >= ml) && (x < image.getWidth() + ml) && (y >= mt) && (y < image.getHeight() + mt)) {
+						imageColor = new Color(image.getRGB(x - ml, y - mt), true);
+					}
+					Color mixedColor = replaceAlpha(imageColor, bgColor);
+					outImage.setRGB(x, y, mixedColor.getRGB());
+				}
+			}
+			image = outImage;
+		}
+		return image;
+	}
+	
+	public static BufferedImage resizeHeight(BufferedImage bi, int height, int mt, int mr, int ml, int mb, Color bgColor, boolean hq) {
+		int width = Math.round(bi.getWidth() * ((float) height / (float) bi.getHeight()));
+		height = Math.round(bi.getHeight() * ((float) width / (float) bi.getWidth()));
 		BufferedImage image = resize(bi, width, height, bgColor, hq);
 
 		if (bgColor != null && image.getColorModel().hasAlpha() && (mt > 0 || ml > 0 || mr > 0 || mb > 0)) {
@@ -2113,10 +2147,19 @@ public class ImageEngine {
 //		ImageIO.write(outImage, "png", targetFile);
 		
 		
-		File webpFile = new File("c:/trans/test.webp");
-		File targetFile = new File("c:/trans/test_webp.png");
-		BufferedImage image = readWebp(webpFile);
+//		File webpFile = new File("c:/trans/test.webp");
+//		File targetFile = new File("c:/trans/test_webp.png");
+//		BufferedImage image = readWebp(webpFile);
+//		ImageIO.write(image, "png", targetFile);
+		
+		File imageFile = new File("c:/trans/img1.jpg");
+		BufferedImage image = ImageIO.read(imageFile);
+		BufferedImage imageWidth = resizeWidth(image, 100, true);
+		image = resizeHeight(image, 100, true);		
+		File targetFile = new File("c:/trans/height_out.png");
 		ImageIO.write(image, "png", targetFile);
+		targetFile = new File("c:/trans/width_out.png");
+		ImageIO.write(imageWidth, "png", targetFile);
 	}
 
 	public static BufferedImage convertRGBAToIndexed(BufferedImage src) {

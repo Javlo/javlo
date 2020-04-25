@@ -561,11 +561,13 @@ public class Basket implements Serializable {
 		}
 		out.println("");
 		out.println("Product :");
+		double total = 0;
 		for (ProductBean product : getProductsBean()) {
+			total += product.getPrice();
 			out.println("   " + product);
 		}
 		out.println("");
-		out.println("TOTAL :");
+		out.println("TOTAL : "+total);
 		out.println("Shiping VAT : " + getDelivery(null, valid));
 		out.println("");
 		out.println("Current Time : " + StringHelper.renderSortableTime(new Date()));
