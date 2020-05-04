@@ -185,7 +185,11 @@ public class Device implements Serializable {
 			return userAgent.contains("Trident");
 		}
 	}
-
+	
+	public boolean isJavascript() {
+		return !getCode().equals("pdf");
+	}
+	
 	public boolean isForced() {
 		return forcedCode != null;
 	}

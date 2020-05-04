@@ -15,6 +15,8 @@ import org.javlo.context.ContentContext;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
+import org.jsoup.Jsoup;
+import org.jsoup.helper.W3CDom;
 import org.w3c.dom.Document;
 import org.xhtmlrenderer.layout.LayoutContext;
 import org.xhtmlrenderer.render.BlockBox;
@@ -60,42 +62,38 @@ public class PDFConvertion {
 		}
 
 		try {
-			//java.net.HttpURLConnection con = (java.net.HttpURLConnection) url.openConnection();
 			String html = NetHelper.readPageGet(url);
-			ResourceHelper.writeStringToFile(new File("c:/trans/html.html"), html);
 			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
 			builder.setEntityResolver(FSEntityResolver.instance());
-			InputStream in = new ByteArrayInputStream(html.getBytes(ContentContext.CHARACTER_ENCODING));
-			Document doc = builder.parse(in);
-			in.close();
 			org.xhtmlrenderer.pdf.ITextRenderer pdfRenderer = new org.xhtmlrenderer.pdf.ITextRenderer();
+			
+			W3CDom w3cDom = new W3CDom();
+			org.w3c.dom.Document doc = w3cDom.fromJsoup(Jsoup.parse(html));
+			
 			pdfRenderer.setDocument(doc, null);
-			pdfRenderer.layout();			
-			//LayoutContext layoutContext = pdfRenderer.getSharedContext().newLayoutContextInstance();			
-			//BlockBox rootBox = pdfRenderer.getRootBox();
-			//correctAllLines(layoutContext, rootBox);
+			pdfRenderer.layout();
 			pdfRenderer.createPDF(out);
 		} catch (Exception e1) {
 			e1.printStackTrace();
 
 		}
-
 	}
-	
-	public static void convertXHTMLToPDF(InputStream in, OutputStream out) {		
 
-		try {			
+	public static void convertXHTMLToPDF(InputStream in, OutputStream out) {
+
+		try {
 			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
 			builder.setEntityResolver(FSEntityResolver.instance());
-			Document doc = builder.parse(in);			
+			Document doc = builder.parse(in);
 			org.xhtmlrenderer.pdf.ITextRenderer pdfRenderer = new org.xhtmlrenderer.pdf.ITextRenderer();
 			pdfRenderer.setDocument(doc, null);
-			pdfRenderer.layout();			
-			//LayoutContext layoutContext = pdfRenderer.getSharedContext().newLayoutContextInstance();			
-			//BlockBox rootBox = pdfRenderer.getRootBox();
-			//correctAllLines(layoutContext, rootBox);
+			pdfRenderer.layout();
+			// LayoutContext layoutContext =
+			// pdfRenderer.getSharedContext().newLayoutContextInstance();
+			// BlockBox rootBox = pdfRenderer.getRootBox();
+			// correctAllLines(layoutContext, rootBox);
 			pdfRenderer.createPDF(out);
 		} catch (Exception e1) {
 			e1.printStackTrace();
@@ -114,8 +112,7 @@ public class PDFConvertion {
 				((LineBox) box).trimTrailingSpace(layout);
 				InlineText text = ((LineBox) box).findTrailingText();
 				/*
-				 * text.getParent().isStartsHere() : for correct unalignement
-				 * with link
+				 * text.getParent().isStartsHere() : for correct unalignement with link
 				 */
 				if (text != null && text.getParent() != null && text.getParent().getLineBox() != null && !text.getParent().isStartsHere()) {
 					JustificationInfo info = text.getParent().getLineBox().getJustificationInfo();
@@ -126,15 +123,47 @@ public class PDFConvertion {
 			}
 		}
 	}
+	
+//	public static void main(String[] args) throws IOException {
+//		org.jsoup.nodes.Document doc = Jsoup.parse(new File("c:/trans/mep_ep.xml"), "UTF-8");
+//		Elements ids = doc.getElementsByTag("id");
+//		Iterator<Element> ite = ids.iterator();		
+//		PrintStream out = new PrintStream(new FileOutputStream(new File("c:/trans/meps_id.txt")));
+//		while(ite.hasNext()) {
+//			out.println(ite.next().text());
+//		}
+//		out.close();				
+//	}
 
 	public static void main(String[] args) throws Exception {
-		String html = NetHelper.readPageGet(new URL("http://localhost/javlo/sexy/fr/invoices/prestation-bondage-jessica-1?nodmz=true&j_token=1frhyvke26U-&force-device-code=pdf&_clear_session=true&clean-html=true&_absolute-url=true"));
-		ResourceHelper.writeStringToFile(new File("c:/trans/html2.html"), html);
+
+		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
+		builder.setEntityResolver(FSEntityResolver.instance());
+
+		String html = ResourceHelper.getFileContent(new File("c:/trans/mail.html"));
+
+		InputStream in = new ByteArrayInputStream(html.getBytes(ContentContext.CHARACTER_ENCODING));
+
+		W3CDom w3cDom = new W3CDom();
+		org.w3c.dom.Document w3cDoc = w3cDom.fromJsoup(Jsoup.parse(html));
+		
+		
+		org.xhtmlrenderer.pdf.ITextRenderer pdfRenderer = new org.xhtmlrenderer.pdf.ITextRenderer();
+		pdfRenderer.setDocument(w3cDoc, "");
+		//pdfRenderer.setDocument(doc, null);
+		pdfRenderer.layout();
+		// LayoutContext layoutContext =
+		// pdfRenderer.getSharedContext().newLayoutContextInstance();
+		// BlockBox rootBox = pdfRenderer.getRootBox();
+		// correctAllLines(layoutContext, rootBox);
+		pdfRenderer.createPDF(new FileOutputStream(new File("c:/trans/doc.pdf")));
+		
+		in.close();
 	}
 
 	/*
-	 * public static void main(String[] args) throws Exception { URL url = new
-	 * URL(
+	 * public static void main(String[] args) throws Exception { URL url = new URL(
 	 * "http://localhost/javlo/mailing/en/data/anna/anna-16/anna-16-june/test-implementation-of-model/test-implementation-of-model-composition.html?nodmz=true&j_token=y7kvR6c5V0g-&force-device-code=pdf&_clear_session=true&clean-html=true&_absolute-url=true"
 	 * ); com.itextpdf.text.Document doc = new
 	 * com.itextpdf.text.Document(PageSize.A4); PdfWriter.getInstance(doc, new

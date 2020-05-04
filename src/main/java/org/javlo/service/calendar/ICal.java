@@ -21,6 +21,8 @@ import org.javlo.helper.StringHelper;
 
 public class ICal implements IStringSeralizable {
 	
+	public static final String ICAL_DEFAULT_ENCODING = "UTF-8";
+	
 	public static final String STATUS_TENTATIVE = "TENTATIVE";
 	public static final String STATUS_CONFIRMED = "CONFIRMED";
 	public static final String STATUS_CANCELLED = "CANCELLED";

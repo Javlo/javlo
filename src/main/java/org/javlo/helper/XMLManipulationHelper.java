@@ -1022,7 +1022,7 @@ public class XMLManipulationHelper {
 			out.append("<%if (ctx.isInteractiveMode() && !ctx.isPreviewOnly()) {%>");
 			out.append("<style type=\"text/css\">@font-face {font-family: \"javloFont\"; src: url('${info.staticRootURL}fonts/javlo-italic.ttf') format(\"truetype\");}</style>");
 			out.append("<%}%>");
-			out.append("<%if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {%>");
+			out.append("<%if (ctx.getRenderMode() != ContentContext.PAGE_MODE && ctx.getDevice().isJavascript()) {%>");
 			out.newLine();
 			out.append("<script>");
 			out.newLine();
