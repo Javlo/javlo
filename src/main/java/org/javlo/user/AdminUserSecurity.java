@@ -21,49 +21,49 @@ public class AdminUserSecurity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	public static String GENERAL_ADMIN = "god";
+	public static final  String GENERAL_ADMIN = "god";
 
-	public static String FULL_CONTROL_ROLE = "admin";
+	public static final String FULL_CONTROL_ROLE = "admin";
 
-	public static String CONTENT_ROLE = "content";
+	public static final String CONTENT_ROLE = "content";
 
-	public static String MODEL_ROLE = "model";
+	public static final String MODEL_ROLE = "model";
 
-	public static String CONTRIBUTOR_ROLE = "contributor";
+	public static final String CONTRIBUTOR_ROLE = "contributor";
 
-	public static String DESIGN_ROLE = "design";
+	public static final String DESIGN_ROLE = "design";
 
-	public static String MACRO_ROLE = "macro";
+	public static final String MACRO_ROLE = "macro";
 
-	public static String MAILING_ROLE = "mailing";
+	public static final String MAILING_ROLE = "mailing";
 
-	public static String LIGHT_INTERFACE_ROLE = "light-interface";
+	public static final String LIGHT_INTERFACE_ROLE = "light-interface";
 
-	public static String VALIDATION_ROLE = "validation";
+	public static final String VALIDATION_ROLE = "validation";
 
-	public static String NAVIGATION_ROLE = "navigation";
+	public static final String NAVIGATION_ROLE = "navigation";
 
-	public static String USER_ROLE = "user";
+	public static final String USER_ROLE = "user";
 
-	public static String ADMIN_USER_ROLE = "admin-user";
+	public static final String ADMIN_USER_ROLE = "admin-user";
 
-	public static String STATISTICS_ROLE = "statistics";
+	public static final String STATISTICS_ROLE = "statistics";
 
-	public static String PUBLISHER_ROLE = "publisher";
+	public static final String PUBLISHER_ROLE = "publisher";
 
-	public static String SYNCHRO_CLIENT = "sync-client";
+	public static final String SYNCHRO_CLIENT = "sync-client";
 
-	public static String SYNCHRO_ADMIN = "sync-admin";
+	public static final String SYNCHRO_ADMIN = "sync-admin";
 	
-	public static String ADD_ONLY = "add-only";
+	public static final String ADD_ONLY = "add-only";
 	
-	public static String VIEW_ACCESS = "view-access";
+	public static final String VIEW_ACCESS = "view-access";
 
-	public static String SYNCHRO_SERVER = "sync-server";
+	public static final String SYNCHRO_SERVER = "sync-server";
 
-	public static String UPLOAD_RESOURCE = "upload-resource";
+	public static final String UPLOAD_RESOURCE = "upload-resource";
 
-	public static String MASTER = "master";
+	public static final String MASTER = "master";
 
 	private final Map<String, Set<String>> rights = new HashMap<String, Set<String>>();
 

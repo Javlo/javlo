@@ -1,11 +1,17 @@
 package org.javlo.module.demo;
 
+import java.lang.reflect.Method;
+
 import javax.servlet.http.HttpSession;
 
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.context.ContentContext;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.security.annotation.HasAllRole;
+import org.javlo.security.annotation.HasAnyRole;
+import org.javlo.service.RequestService;
+import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 
 public class Action extends AbstractModuleAction {
@@ -27,6 +33,18 @@ public class Action extends AbstractModuleAction {
 		ctx.getRequest().setAttribute("demoMessage", "test performed");
 		return null;
 	}
+	
+	@HasAnyRole (roles = {AdminUserSecurity.CONTENT_ROLE})
+	public String performTestAnyRoles(ContentContext ctx, RequestService rs) throws Exception {
+		System.out.println(">>>>>>>>> Action.performTestAnyRoles : ACCESS"); //TODO: remove debug trace
+		return null;
+	}
+	
+	@HasAllRole (roles = {AdminUserSecurity.CONTENT_ROLE})
+	public static String performTestAllRoles(ContentContext ctx, RequestService rs) throws Exception {
+		System.out.println(">>>>>>>>> Action.performTestAllRoles : ACCESS"); //TODO: remove debug trace
+		return null;
+	}
 
 	@Override
 	public Boolean haveRight(HttpSession session, User user) throws ModuleException {
@@ -36,6 +54,17 @@ public class Action extends AbstractModuleAction {
 	@Override
 	public boolean haveRight(ContentContext ctx, String action) {
 		return true;
+	}
+	
+	
+	public static void main(String[] args) {
+		Action testClass = new Action();
+		for (Method m : Action.class.getMethods()) {
+			System.out.println(m.getName());
+			HasAnyRole a = m.getAnnotation(HasAnyRole.class);			
+			System.out.println("a : "+a);				
+			System.out.println("");
+		}
 	}
 
 }

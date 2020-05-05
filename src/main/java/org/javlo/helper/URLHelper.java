@@ -577,6 +577,11 @@ public class URLHelper extends ElementaryURLHelper {
 		if (template.getFolder(globalContext) == null) {
 			template = Template.getApplicationInstance(ctx.getRequest().getSession().getServletContext(), ctx, globalContext.getDefaultTemplate());
 		}
+		
+		if (template == null) {
+			return null;
+		}
+		
 		String templateFullPath;
 		templateFullPath = URLHelper.mergePath(template.getLocalWorkTemplateFolder(), template.getFolder(globalContext));
 
@@ -655,6 +660,11 @@ public class URLHelper extends ElementaryURLHelper {
 		if (template.getFolder(globalContext) == null) {
 			template = Template.getApplicationInstance(ctx.getRequest().getSession().getServletContext(), ctx, globalContext.getDefaultTemplate());
 		}
+		
+		if (template == null) {
+			return null;
+		}
+		
 		String templateFolder;
 		templateFolder = template.getLocalWorkTemplateFolder();
 

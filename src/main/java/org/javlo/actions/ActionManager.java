@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.javlo.component.core.ComponentFactory;
-import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.LangHelper;
@@ -27,6 +26,8 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.security.annotation.HasAllRole;
+import org.javlo.security.annotation.HasAnyRole;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
@@ -71,11 +72,11 @@ public class ActionManager {
 	}
 
 	private static IAction getAction(ContentContext ctx, String group) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, ModuleException {
-		
+
 		IAction outAction = getActionModule(ctx.getRequest(), group);
 		if (outAction == null) {
 			outAction = getActionComponent(ctx, group);
-		} else {			
+		} else {
 			ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext()).setCurrentModuleByActionGroup(group);
 		}
 		if (outAction == null) {
@@ -88,9 +89,9 @@ public class ActionManager {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		ModulesContext moduleContext = ModulesContext.getInstance(request.getSession(), globalContext);
 		Collection<Module> modules = moduleContext.getModules();
-		IAction action = null;	
+		IAction action = null;
 		for (Module module : modules) {
-			action = module.getAction();			
+			action = module.getAction();
 			if (group.equals(action.getActionGroupName())) {
 				return action;
 			}
@@ -98,7 +99,7 @@ public class ActionManager {
 		return null;
 	}
 
-	public static IAction getActionComponent(ContentContext ctx, String group) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {		
+	public static IAction getActionComponent(ContentContext ctx, String group) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		Object[] comp = ComponentFactory.getComponents(ctx);
 		IAction action = null;
 		for (int i = 0; (i < comp.length) && (action == null); i++) {
@@ -168,12 +169,24 @@ public class ActionManager {
 		logger.fine("perform action : " + actionName);
 
 		/*
-		 * AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance(request.getSession().getServletContext()); IUserFactory userFactory = AdminUserFactory.createAdminUserFactory(globalContext, request.getSession()); if (!adminUserSecurity.haveRight(userFactory.getCurrentUser(request.getSession()), removeGroup(actionName).toLowerCase() )) { I18nAccess i18nAccess = I18nAccess.getInstance(request); ContentContext ctx = ContentContext.getContentContext(request, response); MessageRepository msgRepo = MessageRepository.getInstance(ctx); msgRepo.setGlobalMessageAndNotification(ctx,new GenericMessage(i18nAccess.getText("global.message.noright")+ " ("+actionName+')', GenericMessage.ERROR)); return null; }
+		 * AdminUserSecurity adminUserSecurity =
+		 * AdminUserSecurity.getInstance(request.getSession().getServletContext());
+		 * IUserFactory userFactory =
+		 * AdminUserFactory.createAdminUserFactory(globalContext, request.getSession());
+		 * if
+		 * (!adminUserSecurity.haveRight(userFactory.getCurrentUser(request.getSession()
+		 * ), removeGroup(actionName).toLowerCase() )) { I18nAccess i18nAccess =
+		 * I18nAccess.getInstance(request); ContentContext ctx =
+		 * ContentContext.getContentContext(request, response); MessageRepository
+		 * msgRepo = MessageRepository.getInstance(ctx);
+		 * msgRepo.setGlobalMessageAndNotification(ctx,new
+		 * GenericMessage(i18nAccess.getText("global.message.noright")+
+		 * " ("+actionName+')', GenericMessage.ERROR)); return null; }
 		 */
 
 		String group = getActionGroup(actionName);
 		String message = null;
-		
+
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 
 		try {
@@ -183,13 +196,13 @@ public class ActionManager {
 				action = moduleContext.getCurrentModule().getAction();
 			} else {
 				action = getAction(ctx, group);
-			}			
+			}
 			AdminUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, request.getSession());
 			User currentUser = adminUserFactory.getCurrentUser(request.getSession());
-			
+
 			if (action != null) {
-				/** security **/				
-				if (action instanceof IModuleAction) { // if module action								
+				/** security **/
+				if (action instanceof IModuleAction) { // if module action
 					if (currentUser == null) {
 						ctx.setNeedRefresh(true);
 					}
@@ -206,13 +219,13 @@ public class ActionManager {
 					message = invokeAction(request, response, action, actionName);
 					logger.fine("executed action : '" + actionName + "' return : " + message);
 				} else {
-					logger.warning("executed action refused : '" + actionName + "' user : " + currentUser+" on "+globalContext.getContextKey());
+					logger.warning("executed action refused : '" + actionName + "' user : " + currentUser + " on " + globalContext.getContextKey());
 					message = "security error.";
 				}
-			} else {								
-				message = "actions class not found : " + actionName + " - group:"+group+"  (user:"+ctx.getCurrentEditUser()+")";				
-				logger.severe(message);				
-				if (!ctx.isAsViewMode() && currentUser == null && actionName != null) {					
+			} else {
+				message = "actions class not found : " + actionName + " - group:" + group + "  (user:" + ctx.getCurrentEditUser() + ")";
+				logger.severe(message);
+				if (!ctx.isAsViewMode() && currentUser == null && actionName != null) {
 					ctx.setNeedRefresh(true);
 				}
 			}
@@ -236,7 +249,7 @@ public class ActionManager {
 		if (message != null) {
 			msgRepo.setGlobalMessageAndNotification(ctx, new GenericMessage(message, GenericMessage.ERROR), true);
 		}
-		
+
 		String newModule = RequestService.getInstance(request).getParameter("module", null);
 		if (newModule != null) {
 			ModulesContext.getInstance(request.getSession(), GlobalContext.getInstance(request)).setCurrentModule(newModule);
@@ -248,7 +261,7 @@ public class ActionManager {
 	private static String invokeAction(HttpServletRequest request, HttpServletResponse response, IAction action, String actionName) {
 		Method method = null;
 		String methodName = METHOD_PREFIX + formatActionComponentName(actionName);
-		String message = null;		
+		String message = null;
 		try {
 			Method[] methods = action.getClass().getDeclaredMethods();
 			for (Method m : methods) {
@@ -273,29 +286,58 @@ public class ActionManager {
 					paramsInstance[i] = LangHelper.smartInstance(request, response, clazzes[i]);
 				}
 				if (method.getReturnType().isAssignableFrom(String.class)) {
+					HasAllRole hasAllRole = method.getAnnotation(HasAllRole.class);
+					if (hasAllRole != null && hasAllRole.roles() != null && hasAllRole.roles().length > 0) {
+						ContentContext ctx = ContentContext.getContentContext(request, response);
+						AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
+						for (String role : hasAllRole.roles()) {
+							if (!adminUserSecurity.canRole(ctx.getCurrentUser(), role)) {
+								logger.warning(ctx.getGlobalContext().getContextKey() + "-HasAllRole : security error user have not access to method : " + method.getName() + " role:" + role + " user:" + ctx.getCurrentUserId());
+								return "security error.";
+							}
+						}
+					}
+
+					HasAnyRole hasAnyRole = method.getAnnotation(HasAnyRole.class);
+					if (hasAnyRole != null && hasAnyRole.roles() != null && hasAnyRole.roles().length > 0) {
+						ContentContext ctx = ContentContext.getContentContext(request, response);
+						AdminUserSecurity adminUserSecurity = AdminUserSecurity.getInstance();
+						boolean hasRole = false;
+						for (String role : hasAnyRole.roles()) {
+							if (adminUserSecurity.canRole(ctx.getCurrentUser(), role)) {
+							}
+						}
+						if (!hasRole) {
+							logger.warning(ctx.getGlobalContext().getContextKey() + "-hasAnyRole : security error user have not access to method : " + method.getName() + " user:" + ctx.getCurrentUserId());
+							return "security error.";
+						}
+					}
+
 					return (String) method.invoke(action, paramsInstance);
 				} else {
 					message = "bad return type for a action method (must be a String) : " + method;
 					logger.severe(message);
 				}
 			} else {
-				message = "method not found : " + methodName + " on "+action.getClass().getCanonicalName();
+				message = "method not found : " + methodName + " on " + action.getClass().getCanonicalName();
 				logger.warning(message);
 			}
-		} catch (Exception e) {
+		} catch (
+
+		Exception e) {
 			if (e.getCause() != null && e.getCause() instanceof JavloSecurityException) {
 				message = e.getCause().getMessage();
 				logger.warning(message);
 			} else {
 				e.printStackTrace();
 				String errorNum = StringHelper.getRandomId();
-				message = "error - method : " + methodName + " on : " + action.getClass().getCanonicalName() + "  msg:" + e.getMessage()+" num:"+errorNum;
+				message = "error - method : " + methodName + " on : " + action.getClass().getCanonicalName() + "  msg:" + e.getMessage() + " num:" + errorNum;
 				try {
 					I18nAccess i18nAccess = I18nAccess.getInstance(ContentContext.getContentContext(request, response));
-					message = i18nAccess.getViewText("message.error.technical-error", message) +" ["+errorNum+']';
-				} catch (Exception e1) {					
+					message = i18nAccess.getViewText("message.error.technical-error", message) + " [" + errorNum + ']';
+				} catch (Exception e1) {
 					e1.printStackTrace();
-				}				
+				}
 				logger.warning(message);
 			}
 		}
