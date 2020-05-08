@@ -1583,7 +1583,7 @@ public class Edit extends AbstractModuleAction {
 			String pageURL = URLHelper.createURL(ctx);
 			for (Ticket ticket : ticketService.getTickets()) {
 				if (ticket.getUrl() != null && ticket.getUrl().equals(pageURL) && ticket instanceof TicketBean) {
-					((TicketBean) ticket).setStatus(Ticket.DONE_STATUS);
+					((TicketBean) ticket).setStatus(Ticket.STATUS_DONE);
 					ticketService.updateTicket(ctx, (TicketBean) ticket, true);
 				}
 			}

@@ -314,8 +314,7 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 					}
 				}
 			}
-		}
-		
+		}		
 		
 		userInfo.setRoles(newRoles);
 		/* save password */

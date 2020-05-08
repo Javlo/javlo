@@ -149,7 +149,7 @@ public class TicketService {
 		t.setCategory(TicketBean.CATEGORY_DEBUG_NOTE);
 		t.setCreationDate(d.getCreationDate());
 		t.setLastUpdateDate(StringHelper.parseSortableTime(d.getModifDate()));
-		t.setTitle(I18nAccess.getInstance(ctx).getText("content." + DebugNote.TYPE) + ": " + d.getPage().getTitle(ctx));
+		t.setTitle(I18nAccess.getInstance(ctx).getText("content." + DebugNote.TYPE) + ": " + d.getText());
 		t.setShare(TicketBean.SHARE_SITE);
 		t.setReaders(d.getReaders(ctx));
 		t.setComments(new LinkedList<Comment>());

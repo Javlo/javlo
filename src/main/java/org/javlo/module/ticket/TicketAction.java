@@ -26,7 +26,6 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.JavaScriptBlob;
 import org.javlo.helper.NetHelper;
-import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
@@ -113,7 +112,6 @@ public class TicketAction extends AbstractModuleAction {
 		Map<String, TicketUserWrapper> myTickets = getMyTicket(ctx);
 		ctx.getRequest().setAttribute("tickets", myTickets.values());
 
-		boolean onlymine = StringHelper.isTrue(rs.getParameter("mine"));
 		String ticketId = rs.getParameter("id", null);
 		if (ticketId != null) {
 			TicketService ticketService = TicketService.getInstance(ctx.getGlobalContext());

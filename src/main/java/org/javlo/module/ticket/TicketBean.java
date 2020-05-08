@@ -17,7 +17,6 @@ public class TicketBean implements Serializable, Ticket {
 
 	public static final String SHARE_SITE = "site";
 	public static final String CATEGORY_DEBUG_NOTE = "debug-note";
-	public static final String STATUS_NEW = "new";
 
 	public final int PRIORITY_NONE = 0;
 	public final int PRIORITY_LOW = 1;

@@ -18,6 +18,7 @@ import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.module.ticket.Ticket;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.UserFactory;
@@ -126,7 +127,7 @@ public class DebugNote extends AbstractPropertiesComponent {
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
 		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
-			return "<div " + getPrefixCssClass(ctx, getComponentCssClass(ctx) + " " + getType()) + getSpecialPreviewCssId(ctx) + " >";
+			return "<div " + getPrefixCssClass(ctx, getComponentCssClass(ctx) + " " + getType()+" "+"status-"+getStatus()) + getSpecialPreviewCssId(ctx) + " >";
 		} else {
 			return "";
 		}
@@ -199,6 +200,17 @@ public class DebugNote extends AbstractPropertiesComponent {
 		}
 		out.println("<label class=\"radio-inline\"><input type=\"radio\" name=\""+createKeyWithField(PRIORITY)+"\" value=\"3\""+checkedString+" />"+i18nAccess.getText("debug.prority.3", "high")+"</label>");		
 		out.println("</fieldset>");
+		
+		out.println("<fieldset><legend>"+i18nAccess.getText("debug.status", "status")+"</legend>");		
+		for (String status : Ticket.STATUS) {
+			checkedString = "";
+			if (getStatus().equals(status)) {
+				checkedString = " checked=\"checked\"";
+			}
+			out.println("<label class=\"radio-inline\"><input type=\"radio\" name=\""+createKeyWithField(STATUS)+"\" value=\""+status+"\""+checkedString+" />"+status+"</label>");			
+		}
+		out.println("</fieldset>");
+		
 		out.flush();
 		out.close();
 		return writer.toString();

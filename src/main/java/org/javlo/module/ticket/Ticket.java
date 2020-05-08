@@ -1,13 +1,21 @@
 package org.javlo.module.ticket;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 public interface Ticket {
 	
-	public static final String DONE_STATUS = "done";
-
+	public static final String STATUS_NEW = "new";	
+	public static final String STATUS_WORKING = "working";	
+	public static final String STATUS_ONHOLD = "on hold";
+	public static final String STATUS_REJECTED = "rejected";
+	public static final String STATUS_DONE = "done";
+	public static final String STATUS_ARCHIVED = "archived";
+	
+	public static final List<String> STATUS = Arrays.asList(new String[] {STATUS_NEW,STATUS_WORKING,STATUS_ONHOLD,STATUS_REJECTED,STATUS_DONE,STATUS_ARCHIVED });
+	
 	String getTitle();
 
 //	void setTitle(String title);
