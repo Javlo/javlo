@@ -65,7 +65,6 @@ import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.ElementaryURLHelper.Code;
 import org.javlo.helper.LangHelper;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
@@ -106,7 +105,6 @@ import org.javlo.user.User;
 import org.javlo.utils.BooleanBean;
 import org.javlo.utils.ConfigurationProperties;
 import org.javlo.utils.StructuredProperties;
-import org.javlo.utils.TimeList;
 import org.javlo.utils.TimeMap;
 import org.javlo.utils.backup.BackupBean;
 import org.javlo.utils.backup.BackupThread;
@@ -585,7 +583,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			GlobalContext newInstance = (GlobalContext) session.getServletContext().getAttribute(contextKey);
 			
 			if (newInstance == null) {
-				LocalLogger.log("getRealInstance : "+contextKey+" - CRAETE NEW CONTEXT");
+				//LocalLogger.log("getRealInstance : "+contextKey+" - CRAETE NEW CONTEXT");
 				newInstance = new GlobalContext(contextKey);
 				newInstance.staticConfig = staticConfig;
 				newInstance.application = session.getServletContext();
