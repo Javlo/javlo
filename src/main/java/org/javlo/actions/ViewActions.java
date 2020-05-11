@@ -282,6 +282,9 @@ public class ViewActions implements IAction {
 	}
 	
 	public static String performAcceptCookies(ContentContext ctx) throws Exception {
+		if (ctx.getCurrentTemplate() == null) {
+			return "template not found.";
+		}
 		VisitorsMessageService.getInstance(ctx.getRequest().getSession()).markAsDisplayed("cookies");
 		Cookie cookie = new Cookie(ctx.getCurrentTemplate().getCookiesMessageName(), "1");		
 //		String path = ctx.getCurrentTemplate().getCookiesMessagePath();
