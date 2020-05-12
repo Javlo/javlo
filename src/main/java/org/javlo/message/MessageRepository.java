@@ -163,7 +163,7 @@ public class MessageRepository {
 		if (this.globalMessage != null) {
 			if (this.globalMessage.getType() == 0 || globalMessage.getType() > this.globalMessage.getType()) {
 				// is message name, don't replace (for needDisplay function)
-				if (!this.getGlobalMessage().getMessage().equals(globalMessage.getMessage()) || this.getGlobalMessage().getType() != globalMessage.getType()) {
+				if (!this.getGlobalMessage().message.equals(globalMessage.message) || this.getGlobalMessage().getType() != globalMessage.getType()) {
 					this.globalMessage = globalMessage;
 				}
 			}
