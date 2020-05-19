@@ -400,17 +400,20 @@ public class CatchAllFilter implements Filter {
 							return;
 						}
 					}
-				}
-				File staticFile = new File(URLHelper.mergePath(globalContext.getDataFolder(), "www", cmsURI));
-				if (staticFile.exists() && staticFile.isFile() && response instanceof HttpServletResponse) {
-					HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-					httpServletResponse.setContentType(ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(staticFile.getName())));
-					httpServletResponse.setHeader("Accept-Ranges", "bytes");
-					httpServletResponse.setDateHeader("Last-Modified", staticFile.lastModified());
-					httpServletResponse.setDateHeader("Expires", System.currentTimeMillis() + FileServlet.DEFAULT_EXPIRE_TIME);
-					ResourceHelper.writeFileToStream(staticFile, response.getOutputStream());
-					return;
-				}
+				}				
+			}
+			File staticFile = new File(URLHelper.mergePath(globalContext.getDataFolder(), "www", cmsURI));
+			if (StringHelper.isEmpty(cmsURI) || cmsURI.equals("/")) {
+				staticFile = new File(URLHelper.mergePath(globalContext.getDataFolder(), "www", "index.html"));
+			}
+			if (staticFile.exists() && staticFile.isFile() && response instanceof HttpServletResponse) {
+				HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+				httpServletResponse.setContentType(ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(staticFile.getName())));
+				httpServletResponse.setHeader("Accept-Ranges", "bytes");
+				httpServletResponse.setDateHeader("Last-Modified", staticFile.lastModified());
+				httpServletResponse.setDateHeader("Expires", System.currentTimeMillis() + FileServlet.DEFAULT_EXPIRE_TIME);
+				ResourceHelper.writeFileToStream(staticFile, response.getOutputStream());
+				return;
 			}
 		}
 
