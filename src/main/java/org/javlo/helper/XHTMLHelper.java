@@ -61,6 +61,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ExtendedColor;
 import org.javlo.message.GenericMessage;
 import org.javlo.navigation.MenuElement;
+import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
 import org.javlo.service.IListItem;
 import org.javlo.service.RequestService;
@@ -2609,7 +2610,11 @@ public class XHTMLHelper {
 					if (!hrefValue.startsWith("#") && !hrefValue.startsWith("${")) {
 						if (hrefValue.startsWith("page:")) {
 							String pageName = hrefValue.substring("page:".length());
-							tag.getAttributes().put("href", URLHelper.createURLFromPageName(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), pageName));
+							ContentContext pageContext = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
+							Device device = Device.getFakeDevice(ctx.getDevice().getUserAgent());
+							device.setForcedCode("html");
+							pageContext.setDevice(device);
+							tag.getAttributes().put("href", URLHelper.createURLFromPageName(pageContext, pageName));
 						} else if (hrefValue.toLowerCase().startsWith("rss")) {
 							String channel = "";
 							if (hrefValue.contains(":")) {
