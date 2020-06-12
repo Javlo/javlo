@@ -682,8 +682,10 @@ public class ContentService implements IPrintInfo {
 				}
 			}
 		} catch (Exception e) {
+			String traceCode = StringHelper.getRandomId();			
+			ctx.getGlobalContext().GLOBAL_ERROR = "["+traceCode+"] error load mode="+ctx.getRenderMode()+"(zip:"+ctx.getGlobalContext().getSpecialConfig().isStorageZipped()+", pwd?:"+!StringHelper.isEmpty(ctx.getGlobalContext().getSpecialConfig().getSecureEncryptPassword())+") ["+e.getMessage()+"]";
+			logger.severe(ctx.getGlobalContext().GLOBAL_ERROR);
 			e.printStackTrace();
-			ctx.getGlobalContext().GLOBAL_ERROR = "error load mode="+ctx.getRenderMode()+"(zip:"+ctx.getGlobalContext().getSpecialConfig().isStorageZipped()+", pwd?:"+!StringHelper.isEmpty(ctx.getGlobalContext().getSpecialConfig().getSecureEncryptPassword())+") ["+e.getMessage()+"]";
 			NotificationService.getInstance(ctx.getGlobalContext()).addNotification(ctx.getGlobalContext().GLOBAL_ERROR, GenericMessage.ERROR, ctx.getCurrentUserId(), true);
 			if (res == null) {
 				res = MenuElement.getInstance(ctx);

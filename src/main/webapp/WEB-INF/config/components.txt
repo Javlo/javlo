@@ -160,6 +160,7 @@ org.javlo.component.web2.IMComponent
 org.javlo.component.web2.TaxonomySessionComponent
 org.javlo.component.web2.ChooseBaseContext
 org.javlo.component.web2.QuizzParty
+org.javlo.component.web2.survey.ListSurvey
 
 --content.title.special
 
