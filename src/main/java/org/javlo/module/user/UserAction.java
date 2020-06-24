@@ -75,7 +75,10 @@ import org.javlo.utils.JSONMap;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.StaticInfo;
 import org.javlo.ztatic.StaticInfoBean;
+import org.jcodec.common.tools.ToJSON;
 import org.owasp.encoder.Encode;
+
+import com.google.gson.Gson;
 
 public class UserAction extends AbstractModuleAction {
 
@@ -916,7 +919,6 @@ public class UserAction extends AbstractModuleAction {
 	public static String performAjaxUserList(RequestService rs, HttpSession session, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
 
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (!AdminUserSecurity.getInstance().canRole(ctx.getCurrentUser(), AdminUserSecurity.USER_ROLE)) {
 			return "no access";
 		}
@@ -984,10 +986,10 @@ public class UserAction extends AbstractModuleAction {
 					params.put("webaction", "edit");
 					params.put("cuser", userInfo.getEncryptLogin());
 					String editURL = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), params);
-					out.print('"' + "<a href=\\\"" + editURL + "\\\">" + Encode.forJavaScriptAttribute(userInfo.getLogin()) + "</a>" + '"' + ',');
-					out.print('"' + Encode.forJavaScriptAttribute(userInfo.getFirstName()) + '"' + ',');
-					out.print('"' + Encode.forJavaScriptAttribute(userInfo.getLastName()) + '"' + ',');
-					out.print('"' + Encode.forJavaScriptAttribute(userInfo.getEmail()) + '"' + ',');
+					out.print(StringHelper.toJsonValue("<a href=\"" + editURL + "\">"+userInfo.getLogin()+"</a>") + ',');
+					out.print(StringHelper.toJsonValue(userInfo.getFirstName()) + ',');
+					out.print(StringHelper.toJsonValue(userInfo.getLastName()) + ',');
+					out.print(StringHelper.toJsonValue(userInfo.getEmail()) + ',');
 					out.print('"' + StringHelper.renderSortableTime(userInfo.getCreationDate()) + '"' + ']');
 					sep = ",";
 				}
@@ -1082,35 +1084,5 @@ public class UserAction extends AbstractModuleAction {
 			}
 		}
 		return null;
-	}
-
-	public static void main(String[] args) throws Exception {
-		List<IUserInfo> newUserInfo = new LinkedList<IUserInfo>();
-		InputStream in = new FileInputStream(new File("c:/trans/bdf.xlsx"));
-		XSSFWorkbook excel = ArrayHelper.loadWorkBook(in);
-		in.close();
-		for (int sheet = 0; sheet < excel.getNumberOfSheets(); sheet++) {
-			System.out.println(">>>>>>>>> UserAction.performUpload : EXCEL FILE - " + sheet); // TODO: remove debug
-																								// trace
-			Cell[][] cells = ArrayHelper.getXLSXArray(null, excel, sheet);
-
-			System.out.println("titles : " + ArrayHelper.getTitles(cells));
-
-			System.out.println(">>>>>>>>> UserAction.performUpload : #cells : " + cells.length); // TODO: remove debug
-																									// trace
-			System.out.println(">>>>>>>>> UserAction.performUpload : #cells[0] : " + cells[0].length); // TODO: remove
-																										// debug trace
-			for (int i = 1; i < cells.length; i++) {
-				String label = "rolesRaw";
-				Integer labelPos = getFieldPos(cells[0], label);
-				System.out.println(">>>>>>>>> UserAction.main : labelPos = " + labelPos); // TODO: remove debug trace
-				if (labelPos != null && cells[i][labelPos] != null) {
-					System.out.println(">>>>>>>>> UserAction.performUpload : add : label=" + label + "   value=" + cells[i][labelPos].getValue()); // TODO: remove debug trace
-				}
-			}
-			if (newUserInfo.size() == 0) {
-				System.out.println("error : no valid users found in excel file.");
-			}
-		}
 	}
 }

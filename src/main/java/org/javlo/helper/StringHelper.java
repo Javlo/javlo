@@ -70,6 +70,7 @@ import org.jsoup.Jsoup;
 import org.owasp.encoder.Encode;
 
 import com.beust.jcommander.ParameterException;
+import com.google.gson.Gson;
 
 /**
  * @author pvandermaesen
@@ -4319,4 +4320,9 @@ public class StringHelper {
 			return defaultValue;
 		}
 	}
+	
+	public static String toJsonValue(String data) {
+		return new Gson().toJson(data);
+	}	
+
 }

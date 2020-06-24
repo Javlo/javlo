@@ -828,3 +828,5 @@ Security in case of vulnerabilities.
   - Survey new component and API
  ### Modified
   - status in debug note + title of debug note ticket with more info
+### fixed
+  - correct bad char in user list (best json encoding)
