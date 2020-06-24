@@ -824,5 +824,7 @@ Security in case of vulnerabilities.
  - display persistence size
  - annotation for security
  ## [2.1.2.6] - 13/03/202
+ ### Added
+  - Survey new component and API
  ### Modified
   - status in debug note + title of debug note ticket with more info
