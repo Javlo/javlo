@@ -2153,7 +2153,11 @@ public class StringHelper {
 		if (inDate == null) {
 			return null;
 		}
-		return parseDate(inDate, "dd/MM/yyyy HH:mm:ss");
+		try {
+			return parseDate(inDate, "dd/MM/yyyy HH:mm");
+		} catch (ParseException e) {
+			return parseDate(inDate, "dd/MM/yyyy HH:mm:ss");
+		}
 	}
 
 	public static Date parseTimeOnly(String inDate) throws ParseException {

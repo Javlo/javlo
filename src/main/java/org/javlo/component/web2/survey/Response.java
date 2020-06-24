@@ -22,5 +22,12 @@ public class Response {
 	public void setNumber(int number) {
 		this.number = number;
 	}
+	public boolean isEquals(String val) {
+		if (val == null) {
+			return false;
+		} else {
+			return val.contentEquals(""+number) || val.equals(label);
+		}
+	}
 	
 }

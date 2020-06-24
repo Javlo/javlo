@@ -6,10 +6,14 @@ import java.util.List;
 
 import org.javlo.actions.IAction;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.navigation.MenuElement;
+import org.javlo.service.RequestService;
 
 public class ListSurvey extends AsbtractSurvey implements IAction {
 	
+	protected static final String SESSION_NAME = "session_file";
 	protected static final String TITLE_FIELD = "title";
 	protected static final String QUESTION_FIELD = "questions";
 	protected static final String RESPONSE_FIELD = "responses";
@@ -22,11 +26,30 @@ public class ListSurvey extends AsbtractSurvey implements IAction {
 		return TYPE;
 	}
 	
-	private static final List<String> FIELDS = Arrays.asList(new String[] {TITLE_FIELD, QUESTION_FIELD, RESPONSE_FIELD, FIELD_LABEL_SEND});
+	private static final List<String> FIELDS = Arrays.asList(new String[] {SESSION_NAME, TITLE_FIELD, QUESTION_FIELD, RESPONSE_FIELD, FIELD_LABEL_SEND});
+	
+	@Override
+	public boolean initContent(ContentContext ctx) throws Exception {	
+		boolean out = super.initContent(ctx);
+		if (getPage().getParent() != null) {
+			setFieldValue(SESSION_NAME, StringHelper.createFileName(getPage().getParent().getTitle(ctx)));
+		}
+		return out;
+		
+	}
 	
 	@Override
 	public List<String> getFields(ContentContext ctx) throws Exception {	
 		return FIELDS;
+	}
+	
+	@Override
+	protected String getSessionName(ContentContext ctx) {
+		String sessionName = getFieldValue(SESSION_NAME);
+		if (StringHelper.isEmpty(sessionName)) {
+			return super.getSessionName(ctx);
+		}
+		return sessionName;
 	}
 	
 	@Override
@@ -47,12 +70,12 @@ public class ListSurvey extends AsbtractSurvey implements IAction {
 		num=1;
 		List<Question> outQuestion = new LinkedList<Question>();
 		for (String qstr : StringHelper.textToList(getFieldValue(QUESTION_FIELD))) {			
-			num++;
 			Question q = new Question();
 			q.setNumber(num);
 			q.setLabel(qstr);
 			q.setResponses(responses);
 			outQuestion.add(q);
+			num++;
 		}
 		return outQuestion;
 	}
@@ -70,5 +93,26 @@ public class ListSurvey extends AsbtractSurvey implements IAction {
 	@Override
 	public String getActionGroupName() {
 		return TYPE;
+	}
+	
+	public static String performSend(ContentContext ctx, RequestService rs) throws Exception {
+		ListSurvey comp = (ListSurvey)ComponentHelper.getComponentFromRequest(ctx);
+		List<Question> questions = comp.getQuestions();
+		for (Question q : questions) {
+			String rep = rs.getParameter(q.getInputName());
+			if (rep == null) {
+				logger.warning("no response for q : "+q);
+			}
+			q.setResponse(rep);
+			logger.info(""+q);
+		}
+		comp.store(ctx, questions, comp.getFieldValue(TITLE_FIELD));
+		MenuElement nextPage = comp.getPage().getNextBrother();
+		if (nextPage == null) {
+			logger.severe("next page not found.");			
+		} else {
+			ctx.setPath(nextPage.getPath());
+		}
+		return null;
 	}
 }

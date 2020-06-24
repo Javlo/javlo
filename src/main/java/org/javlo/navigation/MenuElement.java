@@ -3423,7 +3423,7 @@
 		}
 	
 		/**
-		 * get the previous menu element in the child list
+		 * get the next menu element in the child list
 		 * 
 		 * @return a MenuElement with the same depth, null if current is the first
 		 *         element.

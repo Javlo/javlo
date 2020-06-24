@@ -112,8 +112,13 @@ public class FieldDate extends Field implements IDate {
 	
 	protected Date getDate() {
 		try {
+			System.out.println(">>>>>>>>> FieldDate.getDate : getValue() = "+getValue()); //TODO: remove debug trace
 			if (getValue() != null && getValue().trim().length() > 0) {
-				return StringHelper.parseDate(getValue());
+				try {
+					return StringHelper.parseTime(getValue());
+				} catch (ParseException e) {
+					return StringHelper.parseDate(getValue());
+				}
 			}
 		} catch (ParseException e) {
 		}
@@ -154,12 +159,7 @@ public class FieldDate extends Field implements IDate {
 			out.println(XHTMLHelper.textToXHTML(displayStr));
 		} else {
 			SimpleDateFormat dateFormat = new SimpleDateFormat(format, new Locale(ctx.getRequestContentLanguage()));
-			try {
-				out.println(dateFormat.format(StringHelper.parseDate(displayStr)));
-			} catch (ParseException e) {
-				e.printStackTrace();
-				return e.getMessage();
-			}
+			out.println(dateFormat.format(getDate()));			
 		}
 
 		out.close();

@@ -46,6 +46,7 @@ import org.javlo.mailing.EMail;
 import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
+import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.CaptchaService;
 import org.javlo.service.ContentService;
@@ -327,6 +328,8 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 	public static String performSubmit(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
+		System.out.println(">>>>>>>>> GenericForm.performSubmit : SUBMIT  "); //TODO: remove debug trace
+		
 		RequestService rs = RequestService.getInstance(request);
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		ContentService content = ContentService.getInstance(request);
@@ -340,9 +343,12 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			if (StringHelper.isEmpty(comp.getRecaptchaSecretKey())) {
 			
 				if (captcha == null || CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode() == null || !CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode().equals(captcha)) {
+					logger.warning("bad captcha");
 					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.captcha", "bad captcha."), GenericMessage.ERROR);
+					MessageRepository.getInstance(ctx).setGlobalMessage(msg);
 					request.setAttribute("msg", msg);
 					request.setAttribute("error_captcha", "true");
+					logger.info("error captcha local");
 					return null;
 				} else {
 					CaptchaService.getInstance(request.getSession()).reset();
@@ -358,6 +364,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.captcha", "bad captcha."), GenericMessage.ERROR);
 					request.setAttribute("msg", msg);
 					request.setAttribute("error_captcha", "true");
+					logger.info("error captcha google");
 					return null;
 				}
 			
