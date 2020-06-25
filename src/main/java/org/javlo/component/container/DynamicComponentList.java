@@ -22,6 +22,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.DynamicComponentService;
+import org.owasp.encoder.Encode;
 
 public class DynamicComponentList extends AbstractPropertiesComponent {
 
@@ -44,7 +45,11 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 	private static final String FILTER_SUFFIX = "-filter";
 	private static final String FILTER_TYPE_SUFFIX = "-filter-type";
 
+	private static final String TITLE_KEY = "__title";
+
 	private static final String MAX_SIZE_KEY = "__maxsize";
+
+	private static final String MAIN_PAGE_KEY = "__mainpage";
 
 	private Boolean realContent = null;
 
@@ -57,7 +62,6 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 	public String getStyleTitle(ContentContext ctx) {
 		return "sort on";
 	}
-	
 
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
@@ -66,15 +70,15 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 			fieldContainer = getFieldContainer(ctx);
 			if (fieldContainer != null) {
 				List<Field> fields = fieldContainer.getFields(ctx);
-				String[] outFields = new String[fields.size()*2 + 1];
+				String[] outFields = new String[fields.size() * 2 + 1];
 				outFields[0] = "";
 				int i = 1;
 				for (Field field : fields) {
-					outFields[i] = "> "+field.getName();
+					outFields[i] = "> " + field.getName();
 					i++;
 				}
 				for (Field field : fields) {
-					outFields[i] = "< "+field.getName();
+					outFields[i] = "< " + field.getName();
 					i++;
 				}
 				return outFields;
@@ -99,11 +103,22 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		List<String> container = service.getAllType(ctx, content.getNavigation(ctx));
 
-		out.println("<div class=\"form-group\">" + XHTMLHelper.getInputOneSelect(createKeyWithField("type"), container, getSelectedType(), "form-control") + "</div>");
+		out.println("<div class=\"row\">");
+		out.println("<div class=\"col-sm-2\"><label for=\"" + createKeyWithField(TITLE_KEY) + "\">title</label></div>");
+		out.println("<div class=\"col-sm-10\"><div class=\"form-group\"><input class=\"form-control\" type=\"text\" id=\"" + createKeyWithField(TITLE_KEY) + "\" name=\"" + createKeyWithField(TITLE_KEY) + "\" value=\"" + properties.getProperty(TITLE_KEY) + "\" /></div></div>");
+		out.println("</div>");
 
 		out.println("<div class=\"row\">");
-		out.println("<div class=\"col-sm-1\"><label for=\"" + getMaxSizeInputName() + "\">max</label></div>");
-		out.println("<div class=\"col-sm-3\"><div class=\"form-group\"><input class=\"form-control\" type=\"text\" id=\"" + getMaxSizeInputName() + "\" name=\"" + getMaxSizeInputName() + "\" value=\"" + (getMaxSize()>0?getMaxSize():"") + "\" /></div></div>");
+		out.println("<div class=\"col-sm-2\"><label for=\"" + createKeyWithField(TITLE_KEY) + "\">component</label></div>");
+		out.println("<div class=\"col-sm-10\"><div class=\"form-group\">" + XHTMLHelper.getInputOneSelect(createKeyWithField("type"), container, getSelectedType(), "form-control") + "</div></div>");
+		out.println("</div>");
+
+		out.println("<div class=\"row\">");
+		out.println("<div class=\"col-sm-2\"><label for=\"" + getMainPageInputName() + "\">main page</label></div>");
+		out.println("<div class=\"col-sm-4\"><div class=\"form-group\"><input class=\"form-control\" type=\"text\" id=\"" + getMainPageInputName() + "\" name=\"" + getMainPageInputName() + "\" value=\"" + getMainPageName() + "\" /></div></div>");
+
+		out.println("<div class=\"col-sm-2\"><label for=\"" + getMaxSizeInputName() + "\">max</label></div>");
+		out.println("<div class=\"col-sm-4\"><div class=\"form-group\"><input class=\"form-control\" type=\"text\" id=\"" + getMaxSizeInputName() + "\" name=\"" + getMaxSizeInputName() + "\" value=\"" + (getMaxSize() > 0 ? getMaxSize() : "") + "\" /></div></div>");
 		out.println("</div>");
 
 		String childrenLabel = i18nAccess.getText("component.filter.children", "search only on children pages.");
@@ -137,6 +152,10 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 
 	protected String getMaxSizeInputName() {
 		return createKeyWithField(MAX_SIZE_KEY);
+	}
+
+	protected String getMainPageInputName() {
+		return createKeyWithField(MAIN_PAGE_KEY);
 	}
 
 	boolean fieldMatch(ContentContext ctx, String name, String value) {
@@ -195,6 +214,15 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 
+		MenuElement parentPage = null;
+		if (!StringHelper.isEmpty(getFieldValue(MAIN_PAGE_KEY))) {
+			parentPage = getPage().getRoot().searchChildFromName(getFieldValue(MAIN_PAGE_KEY));
+			if (parentPage == null) {
+				logger.warning("page not found : "+getFieldValue(MAIN_PAGE_KEY));
+			}
+			System.out.println(">>>>>>>>> DynamicComponentList.getViewXHTMLCode : parentPage = "+parentPage); //TODO: remove debug trace
+		}
+
 		prepareView(ctx);
 
 		realContent = false;
@@ -206,6 +234,10 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
+
+		if (!StringHelper.isEmpty(getFieldValue(TITLE_KEY))) {
+			out.println("<h2>" + Encode.forHtml(getFieldValue(TITLE_KEY)) + "</h2>");
+		}
 
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -223,21 +255,22 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		int maxSize = getMaxSize();
 		for (IFieldContainer container : containers) {
 			if (container.isRealContent(ctx)) {
-				boolean display = true;
-				List<Field> fields = container.getFields(ctx);
-				for (Field field : fields) {
-					if (!fieldMatch(ctx, field.getName(), field.getReference(ctx).getValue(new Locale(ctx.getRequestContentLanguage())))) {
-						display = false;
+				if (parentPage == null || container.getPage().isChildOf(parentPage) || container.getPage().equals(parentPage)) {
+					boolean display = true;
+					List<Field> fields = container.getFields(ctx);				
+					for (Field field : fields) {
+						if (!fieldMatch(ctx, field.getName(), field.getReference(ctx).getValue(new Locale(ctx.getRequestContentLanguage())))) {
+							display = false;
+						}
+					}
+					if (display) {
+						if (maxSize <= 0 || count < maxSize) {
+							realContent = true;
+							visibleContainers.add(container);
+							count++;
+						}
 					}
 				}
-				if (display) {
-					if (maxSize <= 0 || count < maxSize) {
-						realContent = true;
-						visibleContainers.add(container);
-						count++;
-					}
-				}
-
 			}
 		}
 		int index = 0;
@@ -266,6 +299,10 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 
 	private String getSelectedType() {
 		return properties.getProperty("type");
+	}
+
+	private String getMainPageName() {
+		return properties.getProperty(MAIN_PAGE_KEY);
 	}
 
 	private int getMaxSize() {
@@ -299,7 +336,9 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		List<String> outList = new LinkedList<String>();
 		outList.add("type");
 		outList.add("children");
+		outList.add(TITLE_KEY);
 		outList.add(MAX_SIZE_KEY);
+		outList.add(MAIN_PAGE_KEY);
 		if (getSelectedType() != null) {
 			IFieldContainer container = getFieldContainer(ctx);
 			if (container != null) {
@@ -330,7 +369,7 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		}
 		return realContent;
 	}
-
+	
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
 		try {
@@ -363,10 +402,15 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 	private boolean isOnlyChildren() {
 		return StringHelper.isTrue(properties.getProperty("children"));
 	}
-	
+
 	@Override
 	public String getFontAwesome() {
 		return "th";
+	}
+	
+	@Override
+	protected boolean getColumnableDefaultValue() {
+		return true;
 	}
 
 }

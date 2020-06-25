@@ -249,6 +249,10 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 	private String getSelectedType() {
 		return properties.getProperty("type");
 	}
+	
+	private String getParentPage() {
+		return properties.getProperty("page");
+	}
 
 	private String getSelectedField() {
 		return properties.getProperty("field");

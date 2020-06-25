@@ -112,7 +112,6 @@ public class FieldDate extends Field implements IDate {
 	
 	protected Date getDate() {
 		try {
-			System.out.println(">>>>>>>>> FieldDate.getDate : getValue() = "+getValue()); //TODO: remove debug trace
 			if (getValue() != null && getValue().trim().length() > 0) {
 				try {
 					return StringHelper.parseTime(getValue());
