@@ -825,8 +825,9 @@ Security in case of vulnerabilities.
  - annotation for security
  ## [2.1.2.6] - 13/03/202
  ### Added
-  - Survey new component and API
+  - Survey new component and API  
  ### Modified
   - status in debug note + title of debug note ticket with more info
+  - dynamic filter with title, parent page and collunable
 ### fixed
   - correct bad char in user list (best json encoding)
