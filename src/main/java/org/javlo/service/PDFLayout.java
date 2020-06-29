@@ -75,8 +75,7 @@ public class PDFLayout {
 			return (Integer.parseInt(getWidth().replace(ext, ""))-Integer.parseInt(getMarginLeft().replace(ext, "")))-Integer.parseInt(getMarginRight().replace(ext, ""))+ext;
 		} else {
 			return "auto";
-		}
-		
+		}		
 	}
 
 	public void setWidth(String width) {
