@@ -2611,9 +2611,7 @@ public class XHTMLHelper {
 						if (hrefValue.startsWith("page:")) {
 							String pageName = hrefValue.substring("page:".length());
 							ContentContext pageContext = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
-							Device device = Device.getFakeDevice(ctx.getDevice().getUserAgent());
-							device.setForcedCode("html");
-							pageContext.setDevice(device);
+							pageContext.setFormat("html");
 							tag.getAttributes().put("href", URLHelper.createURLFromPageName(pageContext, pageName));
 						} else if (hrefValue.toLowerCase().startsWith("rss")) {
 							String channel = "";
