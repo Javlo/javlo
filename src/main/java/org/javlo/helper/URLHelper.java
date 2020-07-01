@@ -1564,7 +1564,8 @@ public class URLHelper extends ElementaryURLHelper {
 			String group = matcher.group();
 			group = group.substring(0, group.length()-1);	
 			String pageName = group.replaceFirst("page:", "");
-			outText = outText.replaceAll(group, URLHelper.createURLFromPageName(ctx, pageName));
+			ContentContext htmlCtx = ctx.getContextWithOtherFormat("html");
+			outText = outText.replaceAll(group, URLHelper.createURLFromPageName(htmlCtx, pageName));
 		}
 		return outText;
 	}

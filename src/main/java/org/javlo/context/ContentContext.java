@@ -601,9 +601,13 @@ public class ContentContext {
 	}
 
 	public ContentContext getContextWithOtherFormat(String format) {
-		ContentContext outContext = new ContentContext(this);
-		outContext.setFormat(format);
-		return outContext;
+		if (format == null || getFormat().equals(format)) {
+			return this;
+		} else {
+			ContentContext outContext = new ContentContext(this);
+			outContext.setFormat(format);
+			return outContext;
+		}		
 	}
 
 	public ContentContext getContextWithArea(String area) {
