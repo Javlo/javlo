@@ -2421,13 +2421,17 @@
 				}
 			} else {
 				ContentElementList contentList = getAllContent(localContext);
+				Date bestDate = null;
 				while (contentList.hasNext(ctx)) {
 					IContentVisualComponent comp = contentList.next(ctx);
 					if (comp instanceof IDate && ((IDate) comp).isValidDate(ctx)) {
-						return ((IDate) comp).getDate(ctx);
+						IDate dateComp = ((IDate) comp);
+						if (bestDate == null || bestDate.getTime() < dateComp.getDate(ctx).getTime()) {
+							bestDate = dateComp.getDate(ctx);
+						} 
 					}
 				}
-	
+				return bestDate;
 			}
 			return null;
 		}
