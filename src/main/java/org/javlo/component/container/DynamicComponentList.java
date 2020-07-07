@@ -17,6 +17,7 @@ import org.javlo.fields.Field;
 import org.javlo.fields.IFieldContainer;
 import org.javlo.fields.SortContainer;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
@@ -220,7 +221,6 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 			if (parentPage == null) {
 				logger.warning("page not found : "+getFieldValue(MAIN_PAGE_KEY));
 			}
-			System.out.println(">>>>>>>>> DynamicComponentList.getViewXHTMLCode : parentPage = "+parentPage); //TODO: remove debug trace
 		}
 
 		prepareView(ctx);
@@ -236,7 +236,12 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 		PrintStream out = new PrintStream(outStream);
 
 		if (!StringHelper.isEmpty(getFieldValue(TITLE_KEY))) {
-			out.println("<h2>" + Encode.forHtml(getFieldValue(TITLE_KEY)) + "</h2>");
+			if (parentPage == null) {
+				out.println("<h2>" + Encode.forHtml(getFieldValue(TITLE_KEY)) + "</h2>");
+			} else {
+				String url = URLHelper.createURL(ctx, parentPage);
+				out.println("<h2><a href=\""+url+"\">" + Encode.forHtml(getFieldValue(TITLE_KEY)) + "</a></h2>");
+			}
 		}
 
 		ContentService content = ContentService.getInstance(ctx.getRequest());

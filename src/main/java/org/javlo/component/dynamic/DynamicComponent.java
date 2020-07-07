@@ -220,7 +220,10 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 				}
 				if (ctx.getCurrentTemplate() != null) {
 					String linkToJSP = URLHelper.createStaticTemplateURLWithoutContext(ctx, ctx.getCurrentTemplate(), "" + getListRenderer());
-					return executeJSP(ctx, linkToJSP);
+					ctx.getRequest().setAttribute("renderAsList", true);
+					String html = executeJSP(ctx, linkToJSP);
+					ctx.getRequest().removeAttribute("renderAsList");
+					return html;
 				} else {
 					return "";
 				}
