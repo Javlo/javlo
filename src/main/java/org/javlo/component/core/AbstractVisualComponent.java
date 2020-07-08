@@ -50,7 +50,6 @@ import org.javlo.cache.ICache;
 import org.javlo.component.column.TableBreak;
 import org.javlo.component.column.TableComponent;
 import org.javlo.component.config.ComponentConfig;
-import org.javlo.component.container.DynamicComponentList;
 import org.javlo.component.container.IContainer;
 import org.javlo.component.links.MirrorComponent;
 import org.javlo.config.StaticConfig;

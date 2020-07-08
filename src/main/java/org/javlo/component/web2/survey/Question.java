@@ -1,5 +1,6 @@
 package org.javlo.component.web2.survey;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -11,6 +12,15 @@ public class Question {
 	private String label;
 	private List<Response> responses;
 	private Response response;
+	
+	public Question() {}
+	
+	public Question(Question q) {
+		this.number = q.number;
+		this.label = q.label;
+		this.responses = new LinkedList<Response>(q.responses);
+		this.response = q.response;
+	}
 
 	public int getNumber() {
 		return number;

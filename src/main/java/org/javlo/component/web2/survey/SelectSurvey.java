@@ -59,12 +59,11 @@ public class SelectSurvey extends AsbtractSurvey implements IAction {
 	public void prepareView(ContentContext ctx) throws Exception {	
 		super.prepareView(ctx);
 		ctx.getRequest().setAttribute("title", getFieldValue(TITLE_FIELD));
-		ctx.getRequest().setAttribute("questions", getQuestions());
+		ctx.getRequest().setAttribute("questions", getQuestions(ctx));
 		ctx.getRequest().setAttribute("sendLabel", getFieldValue(FIELD_LABEL_SEND));
 	}
 	
-	public List<Question> getQuestions() {
-		
+	public List<Question> getQuestions(ContentContext ctx) {		
 		List<Response> responses = new LinkedList<Response>();
 		responses.add(new Response(UNSELECT_VALUE, 1));
 		responses.add(new Response(SELECT_VALUE, 2));
@@ -98,21 +97,30 @@ public class SelectSurvey extends AsbtractSurvey implements IAction {
 	
 	public static String performSend(ContentContext ctx, RequestService rs) throws Exception {
 		SelectSurvey comp = (SelectSurvey)ComponentHelper.getComponentFromRequest(ctx);
-		List<Question> questions = comp.getQuestions();
+		List<Question> questions = comp.getQuestions(ctx);
 		String selected = rs.getParameter("selected");		
 		if (selected == null) {
 			logger.severe("param 'selected' not found.");
 			return "param 'selected' not found.";
 		}
 		Collection<String> selectedList = StringHelper.stringToCollection(selected, ",");
+		List<Question> selectedQuestion = new LinkedList<Question>();
 		for (Question q : questions) {
 			if (selectedList.contains(""+q.getNumber())) {
 				q.setResponse(SELECT_VALUE);
-			} else {
+				selectedQuestion.add(q);
+			} else {				
 				q.setResponse(UNSELECT_VALUE);
 			}
 			logger.info(""+q);
 		}
+		
+		System.out.println(">>>>>>>>> SelectSurvey.performSend : #selectedQuestion = "+selectedQuestion.size()); //TODO: remove debug trace
+		
+		SurveyContext surveyContext = SurveyContext.getInstance(ctx);
+		surveyContext.setAllQuestions(comp.getQuestions(ctx));
+		surveyContext.setSelectedQuestions(selectedQuestion);		
+		
 		comp.store(ctx, questions, comp.getFieldValue(TITLE_FIELD));
 		MenuElement nextPage = comp.getPage().getNextBrother();
 		if (nextPage == null) {

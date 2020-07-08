@@ -11,22 +11,52 @@ import org.javlo.helper.StringHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.RequestService;
 
-public class ListSurvey extends AsbtractSurvey implements IAction {
+public class SortSurvey extends AsbtractSurvey implements IAction {
 	
 	protected static final String SESSION_NAME = "session_file";
 	protected static final String TITLE_FIELD = "title";
-	protected static final String QUESTION_FIELD = "questions";
-	protected static final String RESPONSE_FIELD = "responses";
+	protected static final String QUESTION_FIELD = "questions";	
 	protected static final String FIELD_LABEL_SEND = "sendlabel";
 
-	public static final String TYPE = "list-survey";
+	public static final String TYPE = "sort-survey";
+	
+	public class BothQuestion {
+		public Question q1;
+		public Question q2;
+		
+		public BothQuestion(Question q1, Question q2) {
+			super();
+			this.q1 = q1;
+			this.q2 = q2;
+		}
+		public Question getQ1() {
+			return q1;
+		}
+		public void setQ1(Question q1) {
+			this.q1 = q1;
+		}
+		public Question getQ2() {
+			return q2;
+		}
+		public void setQ2(Question q2) {
+			this.q2 = q2;
+		}		
+		@Override
+		public int hashCode() {
+			if (q1.getNumber()>q2.getNumber()) {
+				return q1.hashCode()+q2.hashCode();
+			} else {
+				return q2.hashCode()+q1.hashCode();
+			}
+		}
+	}
 
 	@Override
 	public String getType() {
 		return TYPE;
 	}
 	
-	private static final List<String> FIELDS = Arrays.asList(new String[] {SESSION_NAME, TITLE_FIELD, QUESTION_FIELD, RESPONSE_FIELD, FIELD_LABEL_SEND});
+	private static final List<String> FIELDS = Arrays.asList(new String[] {SESSION_NAME, TITLE_FIELD, QUESTION_FIELD, FIELD_LABEL_SEND});
 	
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {	
@@ -55,25 +85,27 @@ public class ListSurvey extends AsbtractSurvey implements IAction {
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {	
 		super.prepareView(ctx);
+		List<BothQuestion> boths = new LinkedList<SortSurvey.BothQuestion>(); 
+		List<Question> questions = getQuestions(ctx);
+		for (Question q1 : questions) {
+			for (Question q2 : questions) {
+				if (q1.getNumber() > q2.getNumber()) {
+					BothQuestion newBoth = new BothQuestion(q1,q2);
+					boths.add(newBoth);					
+				}
+			}
+		}
 		ctx.getRequest().setAttribute("title", getFieldValue(TITLE_FIELD));
-		ctx.getRequest().setAttribute("questions", getQuestions(ctx));
+		ctx.getRequest().setAttribute("boths", boths);
 		ctx.getRequest().setAttribute("sendLabel", getFieldValue(FIELD_LABEL_SEND));
 	}
 	
-	public List<Question> getQuestions(ContentContext ctx) throws Exception {
-		
+	public List<Question> getQuestions(ContentContext ctx) throws Exception {		
 		int num=1;
-		List<Response> responses = new LinkedList<Response>();
-		for (String resp : StringHelper.textToList(getFieldValue(RESPONSE_FIELD))) {
-			responses.add(new Response(resp, num));
-			num++;
-		}
-		
 		List<Question> outQuestion = new LinkedList<Question>();
 		if (StringHelper.isEmpty(getFieldValue(QUESTION_FIELD))) {			
 			for (Question ctxQuestion : SurveyContext.getInstance(ctx).getSelectedQuestions()) {			
 				Question q = new Question(ctxQuestion);
-				q.setResponses(responses);
 				outQuestion.add(q);
 				num++;
 			}	
@@ -83,30 +115,20 @@ public class ListSurvey extends AsbtractSurvey implements IAction {
 				Question q = new Question();
 				q.setNumber(num);
 				q.setLabel(qstr);
-				q.setResponses(responses);
 				outQuestion.add(q);
 				num++;
 			}	
 		}
-		
-		
 		return outQuestion;
 	}
 	
 	public List<Question> getAllQuestions(ContentContext ctx) throws Exception {
-		
 		int num=1;
-		List<Response> responses = new LinkedList<Response>();
-		for (String resp : StringHelper.textToList(getFieldValue(RESPONSE_FIELD))) {
-			responses.add(new Response(resp, num));
-			num++;
-		}
 		
 		List<Question> outQuestion = new LinkedList<Question>();
 		if (StringHelper.isEmpty(getFieldValue(QUESTION_FIELD))) {
 			for (Question ctxQuestion : SurveyContext.getInstance(ctx).getAllQuestions()) {			
-				Question q = new Question(ctxQuestion);
-				q.setResponses(responses);
+				Question q = new Question(ctxQuestion);				
 				outQuestion.add(q);
 				num++;
 			}	
@@ -115,20 +137,18 @@ public class ListSurvey extends AsbtractSurvey implements IAction {
 			for (String qstr : StringHelper.textToList(getFieldValue(QUESTION_FIELD))) {			
 				Question q = new Question();
 				q.setNumber(num);
-				q.setLabel(qstr);
-				q.setResponses(responses);
+				q.setLabel(qstr);				
 				outQuestion.add(q);
 				num++;
 			}	
-		}
-		
+		}		
 		
 		return outQuestion;
 	}
 
 	@Override
 	public String getEditRenderer(ContentContext ctx) {
-		return "/jsp/edit/component/survey/edit_list_survery.jsp";
+		return "/jsp/edit/component/survey/edit_list_survery.jsp?noresponse=true";
 	}
 	
 	@Override
@@ -142,7 +162,7 @@ public class ListSurvey extends AsbtractSurvey implements IAction {
 	}
 	
 	public static String performSend(ContentContext ctx, RequestService rs) throws Exception {
-		ListSurvey comp = (ListSurvey)ComponentHelper.getComponentFromRequest(ctx);
+		SortSurvey comp = (SortSurvey)ComponentHelper.getComponentFromRequest(ctx);
 		List<Question> questions = comp.getAllQuestions(ctx);
 		for (Question q : questions) {
 			String rep = rs.getParameter(q.getInputName());
