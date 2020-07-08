@@ -50,6 +50,7 @@ import org.javlo.cache.ICache;
 import org.javlo.component.column.TableBreak;
 import org.javlo.component.column.TableComponent;
 import org.javlo.component.config.ComponentConfig;
+import org.javlo.component.container.DynamicComponentList;
 import org.javlo.component.container.IContainer;
 import org.javlo.component.links.MirrorComponent;
 import org.javlo.config.StaticConfig;
@@ -1622,6 +1623,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (isDisplayHidden() && ctx.isAsViewMode()) {
 			return "";
 		}
+		
 		if (isWrapped(ctx)) {
 			return colPrefix + getForcedPrefixViewXHTMLCode(ctx);
 		} else {
@@ -1689,6 +1691,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected String getForcedPrefixViewXHTMLCode(ContentContext ctx) {
+		
 		if (getConfig(ctx).getProperty("prefix", null) != null) {
 			return getConfig(ctx).getProperty("prefix", null);
 		}
@@ -1702,6 +1705,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (isAjaxWrapper(ctx)) {
 			prefix = prefix + "<div id=\"" + getAjaxId() + "\">";
 		}
+
+		
 		return prefix;
 	}
 
@@ -2029,8 +2034,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 		if (currentClass != null && currentClass.trim().length() > 0) {
 			return specificClass + currentClass.trim() + ' ' + getType();
-		}
-		return "";
+		} else {
+			return specificClass + getType();
+		}		
 	}
 
 	protected String getPrefixCssClass(ContentContext ctx, String currentClass) {

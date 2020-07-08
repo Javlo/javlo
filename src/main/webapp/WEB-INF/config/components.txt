@@ -6,7 +6,6 @@
 --content.title.meta
 
 org.javlo.component.title.Heading
-org.javlo.component.title.Title
 org.javlo.component.title.SubTitle
 org.javlo.component.title.PageTitle
 org.javlo.component.title.MenuTitle
@@ -161,6 +160,7 @@ org.javlo.component.web2.TaxonomySessionComponent
 org.javlo.component.web2.ChooseBaseContext
 org.javlo.component.web2.QuizzParty
 org.javlo.component.web2.survey.ListSurvey
+org.javlo.component.web2.survey.SelectSurvey
 
 --content.title.special
 
