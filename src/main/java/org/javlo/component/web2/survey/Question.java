@@ -58,15 +58,20 @@ public class Question {
 		if (resp == null) {
 			this.response = null;
 		} else {
-			boolean notfound = true;
-			for (Response r : responses) {
-				if (r.isEquals(resp)) {
-					this.response = r;
-					notfound=false;
+			
+			if (responses.size()>0) {
+				boolean notfound = true;			
+				for (Response r : responses) {
+					if (r.isEquals(resp)) {
+						this.response = r;
+						notfound=false;
+					}
 				}
-			}
-			if (notfound) {
-				logger.warning("response not found : "+resp);
+				if (notfound) {
+					logger.warning("response not found : "+resp);
+				}
+			} else {
+				this.response = new Response(resp, 0);
 			}
 		}
 	}

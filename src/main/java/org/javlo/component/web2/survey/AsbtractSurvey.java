@@ -61,10 +61,10 @@ public abstract class AsbtractSurvey extends AbstractPropertiesComponent {
 		int i=0;
 		for (Question question : questions) {
 			if (question.getResponse() != null) {
-				String val = ""+question.getResponse().getNumber()+'.'+question.getResponse().getLabel();				
+				String val = question.getResponse().getLabel();				
 				newCells[newCells.length-1][i] = new Cell(val, null, newCells, newCells.length-1, i);				
 			} else {
-				logger.warning("response not found : "+question);
+				newCells[newCells.length-1][i] = new Cell("", null, newCells, newCells.length-1, i);
 			}
 			i++;
 		}
@@ -94,7 +94,6 @@ public abstract class AsbtractSurvey extends AbstractPropertiesComponent {
 	}
 	
 	protected void store(ContentContext ctx, List<Question> questions, String stepName) throws Exception {
-		logger.info("store data #Q="+questions.size()+" stepName:"+stepName);
 		storeExcel(ctx, questions, getSessionName(ctx), stepName);
 	}
 	

@@ -378,9 +378,9 @@ public class XLSTools {
 	}
 
 	protected static String renderCell(String content) {
-		if (content.trim().length() == 0) {
-			content = "&nbsp;";
-		}
+//		if (content.trim().length() == 0) {
+//			content = "&nbsp;";
+//		}
 		return XHTMLHelper.autoLink(content);
 	}
 

@@ -1,6 +1,7 @@
 package org.javlo.component.web2.survey;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -97,6 +98,7 @@ public class SortSurvey extends AsbtractSurvey implements IAction {
 		}
 		ctx.getRequest().setAttribute("title", getFieldValue(TITLE_FIELD));
 		ctx.getRequest().setAttribute("boths", boths);
+		ctx.getRequest().setAttribute("questions", questions);
 		ctx.getRequest().setAttribute("sendLabel", getFieldValue(FIELD_LABEL_SEND));
 	}
 	
@@ -128,7 +130,8 @@ public class SortSurvey extends AsbtractSurvey implements IAction {
 		List<Question> outQuestion = new LinkedList<Question>();
 		if (StringHelper.isEmpty(getFieldValue(QUESTION_FIELD))) {
 			for (Question ctxQuestion : SurveyContext.getInstance(ctx).getAllQuestions()) {			
-				Question q = new Question(ctxQuestion);				
+				Question q = new Question(ctxQuestion);		
+				q.setResponses(Collections.emptyList());
 				outQuestion.add(q);
 				num++;
 			}	
@@ -163,9 +166,9 @@ public class SortSurvey extends AsbtractSurvey implements IAction {
 	
 	public static String performSend(ContentContext ctx, RequestService rs) throws Exception {
 		SortSurvey comp = (SortSurvey)ComponentHelper.getComponentFromRequest(ctx);
-		List<Question> questions = comp.getAllQuestions(ctx);
+		List<Question> questions = comp.getAllQuestions(ctx); 
 		for (Question q : questions) {
-			String rep = rs.getParameter(q.getInputName());
+			String rep = rs.getParameter("q"+q.getNumber());
 			q.setResponse(StringHelper.neverEmpty(rep, ""));
 			logger.info(""+q);
 		}

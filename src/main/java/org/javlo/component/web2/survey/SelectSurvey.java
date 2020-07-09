@@ -115,8 +115,6 @@ public class SelectSurvey extends AsbtractSurvey implements IAction {
 			logger.info(""+q);
 		}
 		
-		System.out.println(">>>>>>>>> SelectSurvey.performSend : #selectedQuestion = "+selectedQuestion.size()); //TODO: remove debug trace
-		
 		SurveyContext surveyContext = SurveyContext.getInstance(ctx);
 		surveyContext.setAllQuestions(comp.getQuestions(ctx));
 		surveyContext.setSelectedQuestions(selectedQuestion);		
