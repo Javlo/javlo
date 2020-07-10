@@ -228,4 +228,9 @@ public abstract class AsbtractSurvey extends AbstractPropertiesComponent {
 		
 	}
 	
+	@Override
+	public String getSpecificClass(ContentContext ctx) {
+		return "survey";
+	}
+	
 }
