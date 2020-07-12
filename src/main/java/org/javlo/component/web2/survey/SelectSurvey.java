@@ -2,8 +2,10 @@ package org.javlo.component.web2.survey;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import org.javlo.actions.IAction;
 import org.javlo.context.ContentContext;
@@ -30,6 +32,15 @@ public class SelectSurvey extends AsbtractSurvey implements IAction {
 	private static final List<String> FIELDS = Arrays.asList(new String[] {SESSION_NAME, TITLE_FIELD, QUESTION_FIELD, SELECT, FIELD_LABEL_SEND});
 	private static final String SELECT_VALUE = "yes";
 	private static final String UNSELECT_VALUE = "no";
+	
+	private static final String RANDOM_STYLE = "random";
+	
+	private static final String[] styles = new String[] {"standard", RANDOM_STYLE};
+	
+	@Override
+	public String[] getStyleList(ContentContext ctx) {
+		return styles;
+	}
 	
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {	
@@ -59,7 +70,13 @@ public class SelectSurvey extends AsbtractSurvey implements IAction {
 	public void prepareView(ContentContext ctx) throws Exception {	
 		super.prepareView(ctx);
 		ctx.getRequest().setAttribute("title", getFieldValue(TITLE_FIELD));
-		ctx.getRequest().setAttribute("questions", getQuestions(ctx));
+		if (getStyle().equals(RANDOM_STYLE)) {
+			List<Question> questions = getQuestions(ctx);
+			Collections.shuffle(questions, new Random());
+			ctx.getRequest().setAttribute("questions", questions);
+		} else {
+			ctx.getRequest().setAttribute("questions", getQuestions(ctx));
+		}
 		ctx.getRequest().setAttribute("sendLabel", getFieldValue(FIELD_LABEL_SEND));
 	}
 	
