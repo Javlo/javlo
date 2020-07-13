@@ -20,6 +20,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -204,11 +205,7 @@ public class XLSTools {
 	
 	public static String cleanSheetName(String sheetName) {
 		if (sheetName != null) {
-			if (sheetName.length() > MAX_SHEET_NAME_SIZE) {
-				return sheetName.substring(0, MAX_SHEET_NAME_SIZE-1);
-			} else {
-				return sheetName;
-			}
+			return WorkbookUtil.createSafeSheetName(sheetName);
 		} else {
 			return null;
 		}
