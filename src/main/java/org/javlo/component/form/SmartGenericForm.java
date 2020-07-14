@@ -1403,7 +1403,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 		
 		MenuElement nextPage = comp.getNextPage(ctx);
-		if (nextPage != null) {
+		if (nextPage != null && errorFields.size() == 0) {
 			ctx.setPath(nextPage.getPath());
 		}
 
