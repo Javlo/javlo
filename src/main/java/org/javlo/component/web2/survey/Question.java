@@ -59,7 +59,7 @@ public class Question {
 			this.response = null;
 		} else {
 			
-			if (responses.size()>0) {
+			if (responses != null && responses.size()>0) {
 				boolean notfound = true;			
 				for (Response r : responses) {
 					if (r.isEquals(resp)) {

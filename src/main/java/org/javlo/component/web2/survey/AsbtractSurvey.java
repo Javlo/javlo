@@ -17,14 +17,14 @@ import org.javlo.utils.XLSTools;
 
 public abstract class AsbtractSurvey extends AbstractPropertiesComponent {
 	
-	private static final String storeFolderName = "survey";
+	static final String STORE_FOLDER_NAME = "survey";
 	
 	private File storeFolder;
 	
 	@Override
 	public void init(ComponentBean bean, ContentContext ctx) throws Exception {	
 		super.init(bean, ctx);
-		storeFolder = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), storeFolderName));
+		storeFolder = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), STORE_FOLDER_NAME));
 		storeFolder.mkdirs();
 	}
 	
@@ -33,7 +33,14 @@ public abstract class AsbtractSurvey extends AbstractPropertiesComponent {
 		storeExcel(ctx, excelFile, questions, stepName);
 	}
 	
-	protected synchronized static void storeExcel(ContentContext ctx, File excelFile, List<Question> questions, String stepName) throws Exception {
+	synchronized static void storeExcel(ContentContext ctx, File excelFile, List<Question> inQuestions, String stepName) throws Exception {
+		
+		List<Question> questions = new LinkedList<Question>(inQuestions);
+		Question sessionQ = new Question();
+		sessionQ.setLabel("_session");
+		sessionQ.setResponse(ctx.getSession().getId());
+		questions.add(sessionQ);
+		
 		Cell[][] cells = null;;
 		File sourceFile = null;
 		if (excelFile.exists()) {
@@ -45,7 +52,11 @@ public abstract class AsbtractSurvey extends AbstractPropertiesComponent {
 			cells[0] = new Cell[questions.size()];
 			int i=0;			
 			for (Question q : questions) {
-				cells[0][i] = new Cell(q.getNumber()+"."+q.getLabel(), null, cells, i, 0);
+				if (q.getNumber() > 0) {
+					cells[0][i] = new Cell(q.getNumber()+"."+q.getLabel(), null, cells, i, 0);
+				} else {
+					cells[0][i] = new Cell(q.getLabel(), null, cells, i, 0);
+				}
 				i++;
 			}			
 		}
@@ -84,13 +95,17 @@ public abstract class AsbtractSurvey extends AbstractPropertiesComponent {
 		}		
 	}
 	
-	protected String getSessionName(ContentContext ctx) {
-		MenuElement parentPage = getPage().getParent();
+	public static String getDefaultSessionName(ContentContext ctx) throws Exception {
+		MenuElement parentPage = ctx.getCurrentPage().getParent();
 		if (parentPage != null) {
 			return parentPage.getName();
 		} else {
-			return getPage().getName();
+			return ctx.getCurrentPage().getName();
 		}
+	}
+	
+	protected String getSessionName(ContentContext ctx) throws Exception {
+		return getDefaultSessionName(ctx);
 	}
 	
 	protected void store(ContentContext ctx, List<Question> questions, String stepName) throws Exception {

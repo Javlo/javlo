@@ -44,7 +44,7 @@ public class ListSurvey extends AsbtractSurvey implements IAction {
 	}
 	
 	@Override
-	protected String getSessionName(ContentContext ctx) {
+	protected String getSessionName(ContentContext ctx) throws Exception {
 		String sessionName = getFieldValue(SESSION_NAME);
 		if (StringHelper.isEmpty(sessionName)) {
 			return super.getSessionName(ctx);
@@ -121,7 +121,6 @@ public class ListSurvey extends AsbtractSurvey implements IAction {
 				num++;
 			}	
 		}
-		
 		
 		return outQuestion;
 	}

@@ -162,6 +162,7 @@ org.javlo.component.web2.QuizzParty
 org.javlo.component.web2.survey.ListSurvey
 org.javlo.component.web2.survey.SelectSurvey
 org.javlo.component.web2.survey.SortSurvey
+org.javlo.component.web2.survey.SurveyGenericForm
 
 --content.title.special
 

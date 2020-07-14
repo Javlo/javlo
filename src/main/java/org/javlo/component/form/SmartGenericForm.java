@@ -56,6 +56,7 @@ import org.javlo.mailing.MailService;
 import org.javlo.mailing.MailService.Attachment;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.navigation.MenuElement;
 import org.javlo.service.CaptchaService;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
@@ -1400,7 +1401,16 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		} else {
 			request.setAttribute("errorFields", new CollectionAsMap<String>(errorFields));
 		}
+		
+		MenuElement nextPage = comp.getNextPage(ctx);
+		if (nextPage != null) {
+			ctx.setPath(nextPage.getPath());
+		}
 
+		return null;
+	}
+	
+	protected MenuElement getNextPage(ContentContext ctx) {
 		return null;
 	}
 
