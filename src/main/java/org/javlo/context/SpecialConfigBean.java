@@ -87,5 +87,9 @@ public class SpecialConfigBean {
 	public String getNewsPageName() {
 		return StringHelper.neverEmpty((String)config.get("page.news"), staticConfig.getNewsPageName());
 	}
+	
+	public String getMailingRole() {
+		return StringHelper.neverEmpty((String)config.get("mailing.role"), "mailing");
+	}
 
 }
