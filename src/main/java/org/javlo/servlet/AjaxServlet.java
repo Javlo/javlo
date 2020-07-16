@@ -111,6 +111,9 @@ public class AjaxServlet extends HttpServlet {
 									msgXhtml = "<div class=\"alert alert-" + MessageRepository.getInstance(ctx).getGlobalMessage().getBootstrapType() + "\" role=\"alert\">" + MessageRepository.getInstance(ctx).getGlobalMessage().getMessage() + "</div>";
 								}
 							}
+							if (rs.getParameter("messageIdHtml") != null) {
+								htmlId = rs.getParameter("messageIdHtml");
+							}
 							ctx.addAjaxInsideZone(htmlId, msgXhtml);
 							outMap.put("messageText", MessageRepository.getInstance(ctx).getGlobalMessage().getMessage());
 							outMap.put("messageType", MessageRepository.getInstance(ctx).getGlobalMessage().getBootstrapType());
