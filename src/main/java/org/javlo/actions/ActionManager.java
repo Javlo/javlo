@@ -203,9 +203,9 @@ public class ActionManager {
 			if (action != null) {
 				/** security **/
 				if (action instanceof IModuleAction) { // if module action
-					if (currentUser == null) {
-						ctx.setNeedRefresh(true);
-					}
+//					if (currentUser == null) {
+//						ctx.setNeedRefresh(true);
+//					}
 					if (!AdminUserSecurity.getInstance().isAdmin(currentUser)) {
 						if (!moduleContext.getCurrentModule().haveRight(request.getSession(), currentUser)) {
 							I18nAccess i18nAccess = I18nAccess.getInstance(request);
