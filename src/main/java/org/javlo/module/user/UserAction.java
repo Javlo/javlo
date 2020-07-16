@@ -3,7 +3,6 @@ package org.javlo.module.user;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -35,7 +34,6 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.filter.CatchAllFilter;
 import org.javlo.helper.ArrayHelper;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.JavaHelper;
@@ -75,10 +73,7 @@ import org.javlo.utils.JSONMap;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.StaticInfo;
 import org.javlo.ztatic.StaticInfoBean;
-import org.jcodec.common.tools.ToJSON;
 import org.owasp.encoder.Encode;
-
-import com.google.gson.Gson;
 
 public class UserAction extends AbstractModuleAction {
 
@@ -1026,6 +1021,32 @@ public class UserAction extends AbstractModuleAction {
 		}
 		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("global.delete-file", "file deleted."), GenericMessage.INFO));
 		return null;
+	}
+	
+	public static String performMailingRegistration(RequestService rs, User user, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws UserAllreadyExistException {
+		IUserFactory fact = UserFactory.createUserFactory(ctx.getRequest());
+		String email = rs.getParameter("email");
+		if (StringHelper.isMail(email)) {
+			IUserInfo ui = fact.createUserInfos();
+			ui.setLogin(email);
+			ui.setEmail(email);
+			ui.setFirstName(rs.getParameter("firstname"));
+			ui.setLastName(rs.getParameter("lastname"));
+			ui.setRoles(new HashSet<String>(Arrays.asList(new String[] {ctx.getGlobalContext().getSpecialConfig().getMailingRole()})));
+			
+			logger.info("email: "+email);
+			
+			try {
+				fact.addUserInfo(ui);
+			} catch (UserAllreadyExistException e) {	
+				e.printStackTrace();
+				return i18nAccess.getViewText("registration.error.email_alreadyexist");
+			}
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("mailing.subscribe"), GenericMessage.SUCCESS));
+			return null;
+		} else {
+			return i18nAccess.getViewText("form.error.email");
+		}
 	}
 
 	public static String performLogin(ContentContext ctx, HttpServletRequest request, RequestService rs, GlobalContext globalContext, I18nAccess i18nAccess) throws Exception {
