@@ -142,12 +142,13 @@ public class ListSurvey extends AsbtractSurvey implements IAction {
 	
 	public static String performSend(ContentContext ctx, RequestService rs) throws Exception {
 		ListSurvey comp = (ListSurvey)ComponentHelper.getComponentFromRequest(ctx);
-		List<Question> questions = comp.getAllQuestions(ctx);
+		List<Question> questions = comp.getQuestions(ctx);
 		for (Question q : questions) {
 			String rep = rs.getParameter(q.getInputName());
 			q.setResponse(StringHelper.neverEmpty(rep, ""));
 			logger.info(""+q);
 		}
+		SurveyContext.getInstance(ctx).setSelectedQuestions(questions);
 		comp.store(ctx, questions, comp.getFieldValue(TITLE_FIELD));
 		MenuElement nextPage = comp.getPage().getNextBrother();
 		if (nextPage == null) {
