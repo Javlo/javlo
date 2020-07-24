@@ -39,7 +39,9 @@ public class DuplicatePage extends AbstractMacro {
 		String parentId = "0";
 		while (comps.hasNext(noAreaCtx)) {
 			IContentVisualComponent next = comps.next(noAreaCtx);
-			parentId = content.createContentMirrorIfNeeded(noAreaCtx.getContextWidthOtherRequestLanguage(next.getComponentBean().getLanguage()), newPage, next, parentId, false);
+			if (!next.isRepeat() || next.getPage().equals(parent)) {
+				parentId = content.createContentMirrorIfNeeded(noAreaCtx.getContextWidthOtherRequestLanguage(next.getComponentBean().getLanguage()), newPage, next, parentId, false);
+			}
 		}
 		
 		for (MenuElement child : page.getChildMenuElements()) {
