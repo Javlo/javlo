@@ -823,7 +823,7 @@ Security in case of vulnerabilities.
 ### Added
  - display persistence size
  - annotation for security
- ## [2.1.2.6] - 13/03/2020
+ ## [2.1.2.6] - 13/06/2020
  ### Added
   - Survey new component and API  
  ### Modified
