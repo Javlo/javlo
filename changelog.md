@@ -819,11 +819,11 @@ Security in case of vulnerabilities.
  - contentcontext null request correction
  - reset hashcode on edit image
  - action servlet work with a sessionId
-## [2.1.2.5] - 13/03/202
+## [2.1.2.5] - 13/03/2020
 ### Added
  - display persistence size
  - annotation for security
- ## [2.1.2.6] - 13/03/202
+ ## [2.1.2.6] - 13/03/2020
  ### Added
   - Survey new component and API  
  ### Modified
