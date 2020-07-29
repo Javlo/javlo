@@ -641,7 +641,7 @@ public class StringHelper {
 	public static String createI18NURL(String value) {
 		value = value.trim();
 		value = value.replace("&nbsp;", "-");
-		value = value.replaceAll("[\\.\\(\\)\\#\\]\\[\\@\\*\\+\\=\\;\\,\\!\\$\\\\\\:\\&\\?\\/\\'\\\" ]", "-");
+		value = value.replaceAll("[\\.\\(\\)\\#\\]\\[\\@\\*\\+\\=\\;\\,\\%\\!\\$\\\\\\:\\&\\?\\/\\'\\\" ]", "-");
 		while (value.contains("--")) {
 			value = value.replace("--", "-");
 		}
@@ -4292,7 +4292,7 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(">>>>>>>>> StringHelper.main : no repeat : " + noRepeatChar("patrick  Vdm ", ' ')); // TODO: remove debug trace
+		System.out.println(">>>>>>>>> StringHelper.main : "+createI18NURL("Réduction d'impôts de 60% (au lieu de 45%) pour tout don fait à une association ou ONG en 2020 !")); //TODO: remove debug trace
 	}
 
 	/**

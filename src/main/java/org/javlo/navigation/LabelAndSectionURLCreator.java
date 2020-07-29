@@ -78,18 +78,10 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 			label = currentPage.getLabel(freeCtx);
 		}		
 		
-		if (label.startsWith("Agenda Week")) {
-			label = label.substring("Agenda Week".length()).trim();
-			if (label.contains(" ") && label.length() == 7) {				
-				label = label.substring(3, 7)+"-W"+label.substring(0, 2);				
-			}
-		}
-		
 		if (currentPage.getUrlNumber() > 0) {
 			label = label + '-' +currentPage.getUrlNumber();
 		}
 		String path = StringHelper.createI18NURL(label);
-		//String path = StringHelper.createI18NURL(label);
 		
 		String url = path;
 		MenuElement sectionPage = getSectionPage(currentPage);		
