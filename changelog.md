@@ -831,3 +831,4 @@ Security in case of vulnerabilities.
   - dynamic filter with title, parent page and collunable
 ### fixed
   - correct bad char in user list (best json encoding)
+  - remove % from url if present in title of the page
