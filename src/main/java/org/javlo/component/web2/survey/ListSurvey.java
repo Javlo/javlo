@@ -144,6 +144,7 @@ public class ListSurvey extends AbstractSurvey implements IAction {
 		ListSurvey comp = (ListSurvey)ComponentHelper.getComponentFromRequest(ctx);
 		List<Question> questions = comp.getAllQuestions(ctx);
 		List<Question> myQuestions = new LinkedList<Question>(); 
+		logger.info("session : "+ctx.getSession().getId());
 		for (Question q : questions) {
 			String rep = rs.getParameter(q.getInputName());
 			if (rep != null) {

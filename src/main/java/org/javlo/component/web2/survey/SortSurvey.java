@@ -174,6 +174,7 @@ public class SortSurvey extends AbstractSurvey implements IAction {
 		SortSurvey comp = (SortSurvey)ComponentHelper.getComponentFromRequest(ctx);
 		List<Question> questions = comp.getAllQuestions(ctx); 
 		List<Question> finalQuestions = new LinkedList<Question>();
+		logger.info("session : "+ctx.getSession().getId());
 		for (Question q : questions) {
 			String rep = rs.getParameter("q"+q.getNumber());
 			if (rep != null) {

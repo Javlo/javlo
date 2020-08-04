@@ -122,6 +122,9 @@ public class SelectSurvey extends AbstractSurvey implements IAction {
 		}
 		Collection<String> selectedList = StringHelper.stringToCollection(selected, ",");
 		List<Question> selectedQuestion = new LinkedList<Question>();
+		
+		logger.info("session : "+ctx.getSession().getId());
+		
 		for (Question q : questions) {
 			if (selectedList.contains(""+q.getNumber())) {
 				q.setResponse(SELECT_VALUE);
