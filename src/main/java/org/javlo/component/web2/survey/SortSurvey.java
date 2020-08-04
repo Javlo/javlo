@@ -13,7 +13,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.RequestService;
 
-public class SortSurvey extends AsbtractSurvey implements IAction {
+public class SortSurvey extends AbstractSurvey implements IAction {
 
 	protected static final String SESSION_NAME = "session_file";
 	protected static final String TITLE_FIELD = "title";

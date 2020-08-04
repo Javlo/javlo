@@ -11,7 +11,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.RequestService;
 
-public class ListSurvey extends AsbtractSurvey implements IAction {
+public class ListSurvey extends AbstractSurvey implements IAction {
 	
 	protected static final String SESSION_NAME = "session_file";
 	protected static final String TITLE_FIELD = "title";

@@ -15,7 +15,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.utils.Cell;
 import org.javlo.utils.XLSTools;
 
-public abstract class AsbtractSurvey extends AbstractPropertiesComponent {
+public abstract class AbstractSurvey extends AbstractPropertiesComponent {
 	
 	static final String STORE_FOLDER_NAME = "survey";
 	
@@ -96,12 +96,14 @@ public abstract class AsbtractSurvey extends AbstractPropertiesComponent {
 	}
 	
 	public static String getDefaultSessionName(ContentContext ctx) throws Exception {
+		String sessionName;
 		MenuElement parentPage = ctx.getCurrentPage().getParent();
 		if (parentPage != null) {
-			return parentPage.getName();
+			sessionName =  parentPage.getName();
 		} else {
-			return ctx.getCurrentPage().getName();
+			sessionName = ctx.getCurrentPage().getName();
 		}
+		return sessionName+'_'+ctx.getRequestContentLanguage();
 	}
 	
 	protected String getSessionName(ContentContext ctx) throws Exception {

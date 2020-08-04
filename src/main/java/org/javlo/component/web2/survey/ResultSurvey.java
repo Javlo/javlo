@@ -7,7 +7,7 @@ import org.javlo.actions.IAction;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 
-public class ResultSurvey extends AsbtractSurvey implements IAction {
+public class ResultSurvey extends AbstractSurvey implements IAction {
 	
 	protected static final String SESSION_NAME = "session_file";
 	protected static final String TITLE_FIELD = "title";

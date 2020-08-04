@@ -42,9 +42,9 @@ public class SurveyGenericForm extends SmartGenericForm {
 			question.setResponse(e.getValue());
 			questions.add(question);
 		}
-		File storeFolder = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), AsbtractSurvey.STORE_FOLDER_NAME));
-		File excelFile = new File(URLHelper.mergePath(storeFolder.getAbsolutePath(), StringHelper.stringToFileName(AsbtractSurvey.getDefaultSessionName(ctx))+".xlsx"));
-		AsbtractSurvey.storeExcel(ctx, excelFile, questions, getPage().getTitle(ctx));
+		File storeFolder = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), AbstractSurvey.STORE_FOLDER_NAME));
+		File excelFile = new File(URLHelper.mergePath(storeFolder.getAbsolutePath(), StringHelper.stringToFileName(AbstractSurvey.getDefaultSessionName(ctx))+".xlsx"));
+		AbstractSurvey.storeExcel(ctx, excelFile, questions, getPage().getTitle(ctx));
 		return 1;
 	}
 
