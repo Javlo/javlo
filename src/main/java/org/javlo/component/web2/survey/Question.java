@@ -9,6 +9,7 @@ public class Question {
 	private static Logger logger = Logger.getLogger(Question.class.getName());
 
 	private int number;
+	private int order = 0;
 	private String label;
 	private List<Response> responses;
 	private Response response;
@@ -20,6 +21,7 @@ public class Question {
 		this.label = q.label;
 		this.responses = new LinkedList<Response>(q.responses);
 		this.response = q.response;
+		this.order = q.order;
 	}
 
 	public int getNumber() {
@@ -79,6 +81,14 @@ public class Question {
 	@Override
 	public String toString() {
 		return "" + number + '.' + label + " >>> " + (response!=null?response.getLabel():"NO RESPONSE");
+	}
+
+	public int getOrder() {
+		return order;
+	}
+
+	public void setOrder(int order) {
+		this.order = order;
 	}
 
 }

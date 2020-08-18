@@ -193,6 +193,12 @@ public class SortSurvey extends AbstractSurvey implements IAction {
 				}
 			}
 		});
+		int order = 1;
+		for (Question question : finalQuestions) {
+			question.setOrder(order);
+			SurveyContext.getInstance(ctx).updateQuestion(question);
+			order++;
+		}
 		SurveyContext.getInstance(ctx).setSelectedQuestions(finalQuestions);
 		comp.store(ctx, questions, comp.getFieldValue(TITLE_FIELD));
 		MenuElement nextPage = comp.getPage().getNextBrother();

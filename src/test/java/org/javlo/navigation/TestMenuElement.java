@@ -17,8 +17,9 @@ public class TestMenuElement extends TestCase {
 		}
 	
 		private MenuElement getRoot(ContentContext ctx) throws Exception {
-			GlobalContext globalContext = GlobalContext.getInstance(request);			
-			return globalContext.getPageIfExist(ctx, "/", true);			
+			GlobalContext globalContext = GlobalContext.getInstance(request);
+			
+			return globalContext.getPageIfExist(ctx, "/", true);		
 		}
 		
 		public void testEquals() throws Exception {

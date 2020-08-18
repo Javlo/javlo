@@ -27,8 +27,7 @@ public class ResultSurvey extends AbstractSurvey implements IAction {
 		if (getPage().getParent() != null) {
 			setFieldValue(SESSION_NAME, StringHelper.createFileName(getPage().getParent().getTitle(ctx)));
 		}
-		return out;
-		
+		return out;		
 	}
 	
 	@Override

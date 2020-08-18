@@ -3,6 +3,7 @@ package org.javlo.component.web2.survey;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,6 +41,11 @@ public abstract class AbstractSurvey extends AbstractPropertiesComponent {
 		sessionQ.setLabel("_session");
 		sessionQ.setResponse(ctx.getSession().getId());
 		questions.add(sessionQ);
+		
+		Question timeQ = new Question();
+		timeQ.setLabel("_time");
+		timeQ.setResponse(StringHelper.renderSortableTime(new Date()));
+		questions.add(timeQ);
 		
 		Cell[][] cells = null;;
 		File sourceFile = null;
