@@ -53,7 +53,7 @@
      </c:if>
      <td class="con1">${ticket.lastUpdateDateLabel}</td>
      <td class="con0">${fn:length(ticket.comments)}</td>     
-     <td class="con1"><a class="status ${ticket.status}" href="${ticketURL}">${ticket.status}</a></td>
+     <td class="con1"><a class="status ${fn:replace(ticket.status,' ', '')}" href="${ticketURL}">${ticket.status}</a></td>
      <c:if test="${globalContext.master}">
      <td class="con0">${ticket.authors}</td>
      <td class="con1">${ticket.context}</td>
