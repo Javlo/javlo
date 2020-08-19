@@ -46,7 +46,7 @@
 				<select id="status" name="status" class="form-control">
 					<option ${ticket.status == 'new'?'selected="selected"':''}>new</option>
 					<option ${ticket.status == 'working'?'selected="selected"':''}>working</option>
-					<option value="onhold" ${ticket.status == 'onhold'?'selected="selected"':''}>on hold</option>
+					<option ${ticket.status == 'on hold'?'selected="selected"':''}>on hold</option>
 					<option ${ticket.status == 'rejected'?'selected="selected"':''}>rejected</option>
 					<option ${ticket.status == 'done'?'selected="selected"':''}>done</option>
 					<option ${ticket.status == 'archived'?'selected="selected"':''}>archived</option>
