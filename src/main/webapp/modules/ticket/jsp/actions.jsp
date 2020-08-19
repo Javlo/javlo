@@ -18,7 +18,7 @@
 		<option ${param.filter_status == 'new'?'selected="selected"':''}>new</option>
 		<option ${param.filter_status == 'working'?'selected="selected"':''}>working</option>
 		<option ${param.filter_status == 'rejected'?'selected="selected"':''}>rejected</option>
-		<option ${param.filter_status == 'onhold'?'selected="selected"':''} value="onhold">on hold</option>
+		<option ${param.filter_status == 'on hold'?'selected="selected"':''}>on hold</option>
 		<option ${param.filter_status == 'done'?'selected="selected"':''}>done</option>
 		<option ${param.filter_status == 'archived'?'selected="selected"':''}>archived</option>
 	</select>
