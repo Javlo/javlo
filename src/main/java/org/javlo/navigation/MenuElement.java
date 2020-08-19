@@ -2997,6 +2997,10 @@
 			}
 			return desc.imageAreaBackground;
 		}
+		
+		public ImageBean getImageBean(ContentContext ctx) throws Exception {
+			return new ImageBean(ctx, getImage(ctx), "standard");
+		}
 	
 		public IImageTitle getImage(ContentContext ctx) throws Exception {
 			PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());

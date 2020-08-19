@@ -241,6 +241,7 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 			} else {
 				String url = URLHelper.createURL(ctx, parentPage);
 				out.println("<h2><a href=\""+url+"\">" + Encode.forHtml(getFieldValue(TITLE_KEY)) + "</a></h2>");
+				out.println("<div class=\"main-image\"><img class=\"img-fluid\" src=\""+parentPage.getImageBean(ctx).getPreviewURL()+"\" /></div>");
 			}
 		}
 
