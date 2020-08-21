@@ -147,7 +147,6 @@ public class ListSurvey extends AbstractSurvey implements IAction {
 		SurveyContext surveyContext = SurveyContext.getInstance(ctx);
 		for (Question q : questions) {
 			String rep = rs.getParameter(q.getInputName());
-			System.out.println(">>>>>>>>> ListSurvey.performSend : rep = "+rep); //TODO: remove debug trace
 			if (rep != null) {
 				q.setResponse(StringHelper.neverEmpty(rep, ""));
 				surveyContext.updateQuestion(q);							
