@@ -66,6 +66,7 @@ import org.javlo.utils.TimeTracker;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.StaticInfo;
 
+import com.graphbuilder.math.func.LgFunction;
 import com.jhlabs.image.ContrastFilter;
 import com.jhlabs.image.CrystallizeFilter;
 import com.jhlabs.image.EdgeFilter;
@@ -87,6 +88,8 @@ public class ImageTransformServlet extends FileServlet {
 	public static final String RESOURCE_TOKEN_KEY = "rstk";
 	
 	public static final String PRELOAD_IMAGE_SUFFIX = "-load";
+	
+	public static final String LARGE_IMAGE_SUFFIX = "-lg";
 	
 	public static final String SMALL_IMAGE_SUFFIX = "-sm";
 	
@@ -548,6 +551,12 @@ public class ImageTransformServlet extends FileServlet {
 			inFileExtention="png";
 		}	
 		
+		boolean largeImage = false;		
+		if (filter.endsWith(LARGE_IMAGE_SUFFIX)) {
+			largeImage = true;
+			filter = filter.substring(0, filter.lastIndexOf(LARGE_IMAGE_SUFFIX));
+		}
+		
 		boolean smallImage = false;		
 		if (filter.endsWith(SMALL_IMAGE_SUFFIX)) {
 			smallImage = true;
@@ -766,6 +775,12 @@ public class ImageTransformServlet extends FileServlet {
 		// resize and border
 		if (layer == null) {
 			if ((height > 0) && (width > 0)) {
+				
+				if (largeImage) {
+					width=width*2;
+					height=height*2;					
+				}
+				
 				if (config.isFraming(device, filter, area)) {
 					// org.javlo.helper.Logger.stepCount("transform",
 					// "start - transformation - 3.1");
@@ -790,6 +805,10 @@ public class ImageTransformServlet extends FileServlet {
 				int ml = config.getMarginLeft(device, filter, area);
 				int mr = config.getMarginRigth(device, filter, area);
 				int mb = config.getMarginBottom(device, filter, area);
+				
+				if (largeImage) {
+					width = width*2;
+				}
 
 				if (config.isCropResize(device, filter, area)) {
 					// org.javlo.helper.Logger.stepCount("transform",
@@ -901,10 +920,14 @@ public class ImageTransformServlet extends FileServlet {
 			filter = originalFilter;
 		}
 		
+		if (largeImage) {
+			filter = originalFilter;
+		}
+		
 		if (smallImage || mobileImage) {
 			img = ImageEngine.resize(img, img.getWidth()/2, img.getHeight()/2, config.getBGColor(device, filter, area), true);
 			filter = originalFilter;
-		}
+		}		
 
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 7");

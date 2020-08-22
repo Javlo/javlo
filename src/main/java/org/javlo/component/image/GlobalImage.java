@@ -286,7 +286,9 @@ public class GlobalImage extends Image implements IImageFilter {
 			}
 		}
 		String smURL = URLHelper.createTransformURL(ctx, ctx.getCurrentPage(), ctx.getCurrentTemplate(), getResourceURL(ctx, getFileName()), getFilter(ctx)+ImageTransformServlet.MOBILE_IMAGE_SUFFIX, this);
+		String lgURL = URLHelper.createTransformURL(ctx, ctx.getCurrentPage(), ctx.getCurrentTemplate(), getResourceURL(ctx, getFileName()), getFilter(ctx)+ImageTransformServlet.LARGE_IMAGE_SUFFIX, this);
 		ctx.getRequest().setAttribute("smURL", smURL);
+		ctx.getRequest().setAttribute("lgURL", lgURL);
 		ctx.getRequest().setAttribute("largeURL", getPreviewURL(ctx, getLargeFilter(ctx)));
 		ctx.getRequest().setAttribute("media", this);
 		ctx.getRequest().setAttribute("shortDate", StringHelper.renderShortDate(ctx, getDate()));

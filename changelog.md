@@ -826,6 +826,7 @@ Security in case of vulnerabilities.
  ## [2.1.2.6] - 13/06/2020
  ### Added
   - Survey new component and API  
+  - lg image for srcset
  ### Modified
   - status in debug note + title of debug note ticket with more info
   - dynamic filter with title, parent page and collunable
