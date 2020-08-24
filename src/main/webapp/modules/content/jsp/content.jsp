@@ -203,7 +203,7 @@ for (IContentVisualComponent comp : components) {
       	%><%if (comp.getComponentCssClass(ctx) != null && comp.getComponentCssClass(ctx).trim().length() > 0) {sep=true;%><span class="sep">-</span><%}%><span class="renderer" title="<%=comp.getCurrentRenderer(ctx)%>"><%=comp.getCurrentRenderer(ctx)%></span><%}
       	if (comp.isRealContent(ctx)) {if(sep) {%><span class="sep">-</span><%}%><span class="realcontent" title="${i18n.edit['component.realcontent']}">${i18n.edit['component.realcontent']}</span><%}
       	if (comp.isContentCachable(ctx)) {if(sep) {%><span class="sep">-</span><%}%><span class="contentcache" title="cache">cache</span><%}
-      	if (comp.getRenderer(ctx)!=null) {if(sep) {%><span class="sep">-</span><%}%><span class="renderer" title="r:${getRenderer(ctx)}">r:${getRenderer(ctx)</span><%}
+      	if (comp.getRenderer(ctx)!=null) {if(sep) {%><span class="sep">-</span><%}%><span class="renderer" title="r:${comp.getRenderer(ctx)}">r:${comp.getRenderer(ctx)</span><%}
       	
       	%>
       </div>
