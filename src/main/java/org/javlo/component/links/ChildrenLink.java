@@ -430,6 +430,17 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		} else {
 			children = parentPage.getChildMenuElementsWithVirtual(ctx, false, false);
 		}
+		
+		if (StringHelper.isTrue(ctx.getRequest().getParameter("debug"))) {
+			System.out.println("***************** debug : "+this.getClassName());
+			System.out.println("#children = "+children.size());
+			System.out.println("parentPage = "+parentPage);
+			System.out.println("isContent = "+isContent());
+			System.out.println("currentPageUrl = "+isContent());
+			System.out.println("getRenderer(ctx) = "+URLHelper.createURL(ctx));
+			System.out.println("***************** /debug : "+this.getClassName());
+		}
+		
 		String renderer = getRenderer(ctx);
 		if (renderer != null) {
 			List<ChildLinkBean> childrenList = new LinkedList<ChildLinkBean>();
