@@ -434,7 +434,10 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		if (StringHelper.isTrue(ctx.getRequest().getParameter("debug"))) {
 			System.out.println("***************** debug : "+this.getClassName());
 			System.out.println("#children = "+children.size());
+			System.out.println("getStyle() = "+getStyle());
+			System.out.println("showAll = "+showAll);
 			System.out.println("parentPage = "+parentPage);
+			System.out.println("showOnlyNotVisible = "+showOnlyNotVisible);
 			System.out.println("isContent = "+isContent());
 			System.out.println("currentPageUrl = "+isContent());
 			System.out.println("getRenderer(ctx) = "+URLHelper.createURL(ctx));
