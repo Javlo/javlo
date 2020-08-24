@@ -202,6 +202,7 @@ for (IContentVisualComponent comp : components) {
       	if (comp.getCurrentRenderer(ctx) != null && comp.getCurrentRenderer(ctx).trim().length() > 0) {      		
       	%><%if (comp.getComponentCssClass(ctx) != null && comp.getComponentCssClass(ctx).trim().length() > 0) {sep=true;%><span class="sep">-</span><%}%><span class="renderer" title="<%=comp.getCurrentRenderer(ctx)%>"><%=comp.getCurrentRenderer(ctx)%></span><%}
       	if (comp.isRealContent(ctx)) {if(sep) {%><span class="sep">-</span><%}%><span class="realcontent" title="${i18n.edit['component.realcontent']}">${i18n.edit['component.realcontent']}</span><%}
+      	if (comp.isContentCachable(ctx)) {if(sep) {%><span class="sep">-</span><%}%><span class="contentcache" title="cache">cache</span><%}
       	%>
       </div>
       <div id="tab1<%=inputSuffix%>">
