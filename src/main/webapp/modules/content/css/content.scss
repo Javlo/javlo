@@ -406,6 +406,12 @@ li.line {
 	margin: 0;
 }
 
+@media all and (max-width: 720px) {
+   .column-selection-block {
+	   display: none;
+   }
+}
+
 @media all and (max-width: 1260px) {
 	.cols .col1,.cols .col2,.cols .col3,.cols .col4,.cols .col5,.cols .col6,.cols .col7,.cols .col8,.cols .col9,.cols .col10,.cols .col11,.cols .col12
 		{
