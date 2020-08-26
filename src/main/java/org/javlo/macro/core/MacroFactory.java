@@ -62,6 +62,7 @@ import org.javlo.macro.MergeImagesInGallery;
 import org.javlo.macro.NoClickableImageMacro;
 import org.javlo.macro.NoDashOnImageMacro;
 import org.javlo.macro.PasteCopiedElementInAllLanguageMacro;
+import org.javlo.macro.PublishMacro;
 import org.javlo.macro.RebuitTemplate;
 import org.javlo.macro.RebuitTemplateHtml;
 import org.javlo.macro.ReduceSubtitleLevelMacro;
@@ -219,6 +220,7 @@ public class MacroFactory {
 		macros.add(new LogAsUser());
 		macros.add(new DisplayDashBoard());
 		macros.add(new ResetRecaptcha());
+		macros.add(new PublishMacro());
 		
 		/** macro bean **/
 		initMacroBean(macros);
