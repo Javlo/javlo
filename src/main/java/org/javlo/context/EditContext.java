@@ -573,7 +573,11 @@ public class EditContext implements Serializable {
 		if (getEditUser() == null) {
 			return false;
 		} else {
-			return previewEditionMode;
+			if (!globalContext.isPreviewMode()) {
+				return true;
+			} else {
+				return previewEditionMode;
+			}
 		}
 	}
 

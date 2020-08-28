@@ -433,15 +433,6 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 		
 		if (StringHelper.isTrue(ctx.getRequest().getParameter("debug"))) {
 			System.out.println("***************** debug : "+this.getClassName());
-			System.out.println("#children = "+children.size());
-			System.out.println("getStyle() = "+getStyle());
-			System.out.println("showAll = "+showAll);
-			System.out.println("parentPage = "+parentPage);
-			System.out.println("showOnlyNotVisible = "+showOnlyNotVisible);
-			System.out.println("isContent = "+isContent());
-			System.out.println("currentPageUrl = "+isContent());
-			System.out.println("getRenderer(ctx) = "+URLHelper.createURL(ctx));
-			System.out.println("***************** /debug : "+this.getClassName());
 		}
 		
 		String renderer = getRenderer(ctx);
@@ -454,12 +445,32 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 				}
 				if (lgCtx == null) {
 					lgCtx = ctx;
-				}				
+				}		
+				
+				if (StringHelper.isTrue(ctx.getRequest().getParameter("debug"))) {
+					System.out.println("element = "+element);
+				}
+				
 				if ((element.isVisible(lgCtx) ^ showOnlyNotVisible) || showAll) {
 					ChildLinkBean bean = new ChildLinkBean(lgCtx, element, currentPage);
 					childrenList.add(bean);
 				}
 			}
+			
+			if (StringHelper.isTrue(ctx.getRequest().getParameter("debug"))) {				
+				System.out.println("ctx.getGlobalContext().isAutoSwitchToDefaultLanguage() = "+ctx.getGlobalContext().isAutoSwitchToDefaultLanguage());
+				System.out.println("#children = "+children.size());
+				System.out.println("#childrenList = "+childrenList.size());
+				System.out.println("getStyle() = "+getStyle());
+				System.out.println("showAll = "+showAll);
+				System.out.println("parentPage = "+parentPage);
+				System.out.println("showOnlyNotVisible = "+showOnlyNotVisible);
+				System.out.println("isContent = "+isContent());
+				System.out.println("currentPageUrl = "+isContent());
+				System.out.println("getRenderer(ctx) = "+URLHelper.createURL(ctx));
+				System.out.println("***************** /debug : "+this.getClassName());
+			}			
+			
 			ctx.getRequest().setAttribute("title", getRendererTitle());
 			ctx.getRequest().setAttribute("children", childrenList);
 			ctx.getRequest().setAttribute("popup", isPopup());
