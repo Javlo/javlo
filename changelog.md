@@ -831,6 +831,7 @@ Security in case of vulnerabilities.
  ### Modified
   - status in debug note + title of debug note ticket with more info
   - dynamic filter with title, parent page and collunable
+  - change resize image method
 ### fixed
   - correct bad char in user list (best json encoding)
   - remove % from url if present in title of the page
