@@ -1182,59 +1182,6 @@ public class ImageEngine {
 		return  resizeOp.filter(in, null);
 	}
 	
-	public static BufferedImage _old_resizeImage(BufferedImage in, int width, int height) throws IOException {
-
-		logger.fine("resizeImage with:" + width + " height:" + height);
-
-		int imageWidth = in.getWidth();
-		int imageHeight = in.getHeight();
-
-		int[] pixels = in.getRGB(0, 0, imageWidth, imageHeight, null, 0, imageWidth);
-		int[] outPixels = new int[width * height];
-
-		int nw = Math.max(imageWidth / width + 1, 2);
-		int nh = Math.max(imageHeight / height + 1, 2);
-
-		int idx, i2, j2, argb, cnt;
-		int[] v = new int[3];
-
-		float kw = (float) imageWidth / (float) width;
-		float kh = (float) imageHeight / (float) height;
-
-		float nw2 = nw / 2.0F;
-		float nh2 = nh / 2.0F;
-
-		for (int i = 0; i < height; i++) {
-			for (int j = 0; j < width; j++) {
-				v[0] = v[1] = v[2] = cnt = 0;
-
-				i2 = (int) ((i + 0.5F) * kh - nh2);
-				j2 = (int) ((j + 0.5F) * kw - nw2);
-
-				for (int k = 0; k < nh; k++) {
-					for (int l = 0; l < nw; l++) {
-						idx = (j2 + l) + (i2 + k) * imageWidth;
-
-						if (idx > -1 && idx < pixels.length) {
-							argb = pixels[idx];
-							v[0] += (argb >> 16) & 0xFF;
-							v[1] += (argb >> 8) & 0xFF;
-							v[2] += argb & 0xFF;
-							cnt++;
-						}
-					}
-				}
-
-				outPixels[j + i * width] = 0xFF000000 | ((v[0] / cnt) << 16) | ((v[1] / cnt) << 8) | (v[2] / cnt);
-			}
-		}
-
-		BufferedImage outputImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		outputImage.setRGB(0, 0, width, height, outPixels, 0, width);
-
-		return outputImage;
-	}
-
 	public static BufferedImage web2(BufferedImage image, Color bgColor, int height, int separation) {
 
 		if ((height < 1) || (height > image.getHeight())) {

@@ -316,6 +316,14 @@ public class XMLManipulationHelper {
 		if (messages == null) {
 			messages = new LinkedList<GenericMessage>();
 		}
+		
+		String shortKey = "";
+		if (template.isShortkeyToEdit()) {
+			
+			// "<script type=\"text/javascript\">var _ky = {}; function _tmk (e) { e = e || e; e.which = e.which || e.keyCode; _ky[e.which] = e.type === 'keydown'; if (_ky[17] && _ky[18] && _ky[69]) { document.location.href = \"${info.currentPreviewURL}/\" }  } function adde(el, e, fc) { if (el.attache) { return el.attache('on' + e, fc); } else { return el.addeListener(e, fc, false); } } adde(window, \"keydown\", _tmk); adde(window, \"keyup\", _tmk); </script>";
+			
+			shortKey = "<script type=\"text/javascript\">function _tmc(e){(e=e||event).which=e.which||e.keyCode,_ky[e.which]=\"keydown\"===e.type,_ky[17]&&_ky[18]&&_ky[69]&&(document.location.href=\"${info.preview?info.currentViewURL:info.currentPreviewURL}\")}function addEvent(e,n,t){return e.attachEvent?e.attachEvent(\"on\"+n,t):e.addEventListener(n,t,!1)}var _ky={};addEvent(window,\"keydown\",_tmc),addEvent(window,\"keyup\",_tmc);</script>";
+		}
 
 		int depth = 0;
 		try {
@@ -652,7 +660,7 @@ public class XMLManipulationHelper {
 					if (content.indexOf(HEADER_ZONE) > 0) {
 						remplacement.addReplacement(content.indexOf(HEADER_ZONE), content.indexOf(HEADER_ZONE) + HEADER_ZONE.length(), getHTMLPrefixHead(globalContext, headContext, isMail) + staticHeader);
 					} else {
-						remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getHTMLPrefixHead(globalContext, headContext, isMail) + staticHeader);
+						remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getHTMLPrefixHead(globalContext, headContext, isMail) + staticHeader + shortKey);
 					}
 
 					/** template plugin **/

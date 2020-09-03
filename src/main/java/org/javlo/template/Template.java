@@ -2778,6 +2778,10 @@ public class Template implements Comparable<Template> {
 	public boolean isMailing() {
 		return properties.getBoolean("mailing", getParent().isMailing());
 	}
+	
+	public boolean isShortkeyToEdit() {
+		return properties.getBoolean("key.edit", true);
+	}
 
 	public boolean isOnePage() {
 		return properties.getBoolean("onepage", getParent().isOnePage());
