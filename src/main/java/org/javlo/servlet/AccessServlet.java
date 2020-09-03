@@ -306,6 +306,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 	public void process(HttpServletRequest request, HttpServletResponse response, boolean post) throws ServletException {
 		
+		request.getSession(); // create session		
+		
 		COUNT_ACCESS++;
 
 		//logger.debug("uri : " + request.getRequestURI());
@@ -1222,14 +1224,13 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							}
 						}
 
-						String area = requestService.getParameter("only-area", null);
+						String area = requestService.getParameter("only-area", null);						
 						if (area != null) {
 							getServletContext().getRequestDispatcher("/jsp/view/content_view.jsp?area=" + area).include(request, response);
 						} else {
 							if (ctx.getCurrentPage() != null) {
 								String jspPath = template.getRendererFullName(ctx);
-								int timeTrackerNumber = TimeTracker.start(globalContext.getContextKey(), "render");
-								request.getSession(); // create session
+								int timeTrackerNumber = TimeTracker.start(globalContext.getContextKey(), "render");								
 								getServletContext().getRequestDispatcher(jspPath).include(request, response);
 								TimeTracker.end(globalContext.getContextKey(), "render", timeTrackerNumber);
 								VisitorContext.getInstance(request.getSession()).setPreviousPage(ctx.getCurrentPage().getPageBean(ctx));

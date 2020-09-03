@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.servlet.ServletContext;
+
 import org.apache.commons.fileupload.FileItem;
 import org.javlo.component.core.ComponentContext;
 import org.javlo.component.core.IContentVisualComponent;
@@ -56,6 +58,7 @@ import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.template.Template;
+import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
@@ -1451,9 +1454,10 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 	
 	@Override
-	public BufferedImage filterImage(ContentContextBean ctx, BufferedImage image) {		
+	public BufferedImage filterImage(ServletContext application, ContentContextBean ctx, BufferedImage image) {	
 		try {
-			if (ctx.getCurrentPage().getTemplate() != null && !ctx.getCurrentPage().getTemplate().isMailing()) {				
+			Template template = TemplateFactory.getTemplate(application, ctx, getPage());
+			if (template == null || !template.isMailing()) {
 				return image;
 			}
 		} catch (Exception e) { 

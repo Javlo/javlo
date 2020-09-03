@@ -576,7 +576,21 @@
 			<artifactId>zip4j</artifactId>
 			<version>2.5.0</version>
 		</dependency>
-
+		
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-web -->
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-web</artifactId>
+		    <version>5.2.8.RELEASE</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/com.mortennobel/java-image-scaling -->
+		<dependency>
+		    <groupId>com.mortennobel</groupId>
+		    <artifactId>java-image-scaling</artifactId>
+		    <version>0.8.6</version>
+		</dependency>
+		
 
 	</dependencies>
 

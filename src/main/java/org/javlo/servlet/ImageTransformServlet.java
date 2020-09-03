@@ -478,7 +478,7 @@ public class ImageTransformServlet extends FileServlet {
 				logger.info("write image (folder) : " + fileExtension + " width: " + img.getWidth() + " height: " + img.getHeight());
 
 				if (comp != null && StringHelper.trimAndNullify(comp.getImageFilterKey(ctxb)) != null) {
-					img = ((IImageFilter) comp).filterImage(ctxb, img);
+					img = ((IImageFilter) comp).filterImage(ctx.getServletContext(), ctxb, img);
 				}
 				if (!"png".equals(fileExtension) && !"gif".equals(fileExtension)) {
 					img = ImageEngine.removeAlpha(img);
@@ -951,12 +951,13 @@ public class ImageTransformServlet extends FileServlet {
 				imageType = StringHelper.neverNull(config.getFileExtension(device, filter, area), imageType);
 				
 				if (comp != null && StringHelper.trimAndNullify(comp.getImageFilterKey(ctxb)) != null) {
-					img = ((IImageFilter) comp).filterImage(ctxb, img);
+					img = ((IImageFilter) comp).filterImage(session.getServletContext(), ctxb, img);
 				}
 				
 				if (!"png".equals(imageType) && !"gif".equals(imageType)) {
 					img = ImageEngine.removeAlpha(img);
 				}
+				
 				//ImageIO.write(img, imageType, outImage);
 				ImageEngine.storeImage(img, imageType, outImage);
 				if (metadata != null) {

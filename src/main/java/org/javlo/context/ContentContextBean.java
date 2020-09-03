@@ -13,6 +13,7 @@ public class ContentContextBean {
 	private Device device;
 	private String language;
 	private String contentLanguage;
+	private String contextKey;
 	
 	public ContentContextBean(ContentContext ctx) throws Exception {
 		currentPage=ctx.getCurrentPage().getPageBean(ctx);		
@@ -22,6 +23,7 @@ public class ContentContextBean {
 		renderMode=ctx.getRenderMode();
 		language=ctx.getLanguage();
 		contentLanguage=ctx.getContentLanguage();
+		contextKey=ctx.getGlobalContext().getContextKey();
 	}
 	
 	public ContentContext createContentContext(ContentContext ctx) {
@@ -100,5 +102,13 @@ public class ContentContextBean {
 
 	public void setContentLanguage(String contentLanguage) {
 		this.contentLanguage = contentLanguage;
+	}
+
+	public String getContextKey() {
+		return contextKey;
+	}
+
+	public void setContextKey(String contextKey) {
+		this.contextKey = contextKey;
 	}	
 }

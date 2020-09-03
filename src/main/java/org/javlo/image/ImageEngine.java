@@ -53,6 +53,8 @@ import org.jcodec.common.model.Picture;
 import org.jcodec.scale.AWTUtil;
 
 import com.jhlabs.image.RGBAdjustFilter;
+import com.mortennobel.imagescaling.ResampleFilters;
+import com.mortennobel.imagescaling.ResampleOp;
 
 public class ImageEngine {
 
@@ -1173,6 +1175,14 @@ public class ImageEngine {
 	}
 
 	public static BufferedImage resizeImage(BufferedImage in, int width, int height) throws IOException {
+		logger.fine("resizeImage with:" + width + " height:" + height);
+
+		ResampleOp resizeOp = new ResampleOp(width, height);
+		resizeOp.setFilter(ResampleFilters.getLanczos3Filter());
+		return  resizeOp.filter(in, null);
+	}
+	
+	public static BufferedImage _old_resizeImage(BufferedImage in, int width, int height) throws IOException {
 
 		logger.fine("resizeImage with:" + width + " height:" + height);
 
@@ -1726,18 +1736,18 @@ public class ImageEngine {
 		int topY = p4.getSquare().getY1();
 		int rightX = p4.getSquare().getX3();
 		int bottomY = p4.getSquare().getY3();
-
+		
 		if (crop) {
 			int width = MathHelper.max(p4.getX1(), p4.getX2(), p4.getX3(), p4.getX4()) - MathHelper.min(p4.getX1(), p4.getX2(), p4.getX3(), p4.getX4());
 			int height = MathHelper.max(p4.getY1(), p4.getY2(), p4.getY3(), p4.getY4()) - MathHelper.min(p4.getY1(), p4.getY2(), p4.getY3(), p4.getY4());
 			source = resize(source, width, height, true, false, 0, 0, 0, 0, null, interestX, interestY, true, true);
-		}
-
+		}		
+		
 		BufferedImage tempImage = new BufferedImage(back.getWidth(), back.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
 //		BufferedImage layerX = new BufferedImage(back.getWidth(), back.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
 //		BufferedImage layerY = new BufferedImage(back.getWidth(), back.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
 //		BufferedImage layerXY = new BufferedImage(back.getWidth(), back.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-
+		
 		source = resizeImage(source, rightX - leftX, bottomY - topY);
 
 		// fillImage(source, Color.green);
@@ -2152,14 +2162,13 @@ public class ImageEngine {
 //		BufferedImage image = readWebp(webpFile);
 //		ImageIO.write(image, "png", targetFile);
 		
-		File imageFile = new File("c:/trans/img1.jpg");
+		File imageFile = new File("c:/trans/source2.png");
 		BufferedImage image = ImageIO.read(imageFile);
-		BufferedImage imageWidth = resizeWidth(image, 100, true);
-		image = resizeHeight(image, 100, true);		
-		File targetFile = new File("c:/trans/height_out.png");
-		ImageIO.write(image, "png", targetFile);
-		targetFile = new File("c:/trans/width_out.png");
-		ImageIO.write(imageWidth, "png", targetFile);
+		
+		ImageIO.write(image, "png", new File("c:/trans/image_before.png"));
+		image = resizeImage(image, image.getWidth(), image.getHeight());		
+		ImageIO.write(image, "png", new File("c:/trans/image_afther.png"));
+		
 	}
 
 	public static BufferedImage convertRGBAToIndexed(BufferedImage src) {

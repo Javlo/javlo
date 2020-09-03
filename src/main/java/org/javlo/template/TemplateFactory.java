@@ -11,7 +11,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
@@ -19,10 +18,10 @@ import javax.servlet.ServletContext;
 import org.apache.commons.io.FileUtils;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
+import org.javlo.context.ContentContextBean;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.filter.VisibleDirectoryFilter;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -31,7 +30,6 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.NavigationWithContent;
 import org.javlo.service.ContentService;
 import org.javlo.user.AdminUserSecurity;
-import org.javlo.user.User;
 
 public class TemplateFactory {
 
@@ -380,6 +378,23 @@ public class TemplateFactory {
 		} else {
 			ctx.getRequest().setAttribute(key, template);
 		}
+		return template;
+	}
+	
+	public static Template getTemplate(ServletContext application, ContentContextBean ctxb, MenuElement elem) throws Exception {
+		if (elem == null) {
+			return null;
+		}		
+		Template template = null;
+
+		template = getTemplates(application).get(elem.getTemplateId());
+		if (template == null || !template.exist()) {
+			while (elem.getParent() != null && ((template == null) || (!template.exist()) /*|| (template.getRendererFullName(ctx) == null)*/)) {
+				elem = elem.getParent();
+				template = TemplateFactory.getTemplates(application).get(elem.getTemplateId());
+			}
+		}
+
 		return template;
 	}
 

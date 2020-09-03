@@ -2,7 +2,7 @@
  * Created on 20 aout 2003
  */
 package org.javlo.context;
-
+  
 import java.io.Serializable;
 import java.security.Principal;
 import java.util.Arrays;
