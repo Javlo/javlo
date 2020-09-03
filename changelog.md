@@ -828,6 +828,7 @@ Security in case of vulnerabilities.
   - Survey new component and API  
   - lg image for srcset
   - publish macro
+  - CTRL+ALT+e for edit current page
  ### Modified
   - status in debug note + title of debug note ticket with more info
   - dynamic filter with title, parent page and collunable
