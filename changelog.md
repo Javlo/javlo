@@ -829,6 +829,7 @@ Security in case of vulnerabilities.
   - lg image for srcset
   - publish macro
   - CTRL+ALT+e for edit current page
+  - ticket budget
  ### Modified
   - status in debug note + title of debug note ticket with more info
   - dynamic filter with title, parent page and collunable
