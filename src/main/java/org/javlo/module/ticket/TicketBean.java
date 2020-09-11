@@ -39,8 +39,10 @@ public class TicketBean implements Serializable, Ticket {
 	private Date lastUpdateDate = new Date();
 	private int priority = 1;
 	private String status = "new";
+	private String bstatus = Ticket.BSTATUS_WAIT;
 	private List<Comment> comments = new LinkedList<Comment>();
 	private List<String> users = new LinkedList<String>();
+	private long price = 0;
 
 	public TicketBean() {
 	}
@@ -254,6 +256,22 @@ public class TicketBean implements Serializable, Ticket {
 
 	public void setScreenshot(String screenshot) {
 		this.screenshot = screenshot;
+	}
+
+	public long getPrice() {
+		return price;
+	}
+
+	public void setPrice(long price) {
+		this.price = price;
+	}
+
+	public String getBstatus() {
+		return bstatus;
+	}
+
+	public void setBstatus(String bstatus) {
+		this.bstatus = bstatus;
 	}
 
 }

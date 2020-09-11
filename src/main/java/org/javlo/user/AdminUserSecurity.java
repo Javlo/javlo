@@ -44,6 +44,10 @@ public class AdminUserSecurity implements Serializable {
 	public static final String NAVIGATION_ROLE = "navigation";
 
 	public static final String USER_ROLE = "user";
+	
+	public static final String CUSTOMER_ROLE = "customer";
+	
+	public static final String PROVIDER_ROLE = "provider";
 
 	public static final String ADMIN_USER_ROLE = "admin-user";
 

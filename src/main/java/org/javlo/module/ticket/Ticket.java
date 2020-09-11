@@ -14,7 +14,14 @@ public interface Ticket {
 	public static final String STATUS_DONE = "done";
 	public static final String STATUS_ARCHIVED = "archived";
 	
+	public static final String BSTATUS_ASK = "ask";
+	public static final String BSTATUS_WAIT= "wait";
+	public static final String BSTATUS_VALIDED = "valided";
+	public static final String BSTATUS_REJECTED = "rejedcted";
+	
 	public static final List<String> STATUS = Arrays.asList(new String[] {STATUS_NEW,STATUS_WORKING,STATUS_ONHOLD,STATUS_REJECTED,STATUS_DONE,STATUS_ARCHIVED });
+	
+	public static final List<String> BSTATUS = Arrays.asList(new String[] {BSTATUS_ASK,BSTATUS_WAIT,BSTATUS_VALIDED,BSTATUS_REJECTED});
 	
 	String getTitle();
 
@@ -99,5 +106,10 @@ public interface Ticket {
 	void onUpdate(String login);
 
 	void onRead(String login);
+	
+	/** get price in cent **/
+	public long getPrice();
+	
+	public String getBstatus();
 
 }

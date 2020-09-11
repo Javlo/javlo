@@ -208,6 +208,22 @@ public class TicketAction extends AbstractModuleAction {
 			ctx.getRequest().setAttribute("newTicket", true);
 			return i18nAccess.getText("ticket.message.no-title");
 		}
+		
+		/** Business validation **/
+		if (StringHelper.isDigit(rs.getParameter("proposition"))) {
+			ticket.setPrice(Long.parseLong(rs.getParameter("proposition")));
+			ticket.setBstatus(Ticket.BSTATUS_ASK);
+		}
+		
+		if (ctx.getCurrentUser().isCustomer()) {
+			if (rs.getParameter("bvalid","").equals("yes")) {
+				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("ticket.business.accepted"), GenericMessage.SUCCESS));
+				ticket.setBstatus(Ticket.BSTATUS_VALIDED);
+			} else if (rs.getParameter("bvalid","").equals("no")) {
+				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("ticket.business.refused"), GenericMessage.SUCCESS));
+				ticket.setBstatus(Ticket.BSTATUS_REJECTED);
+			}
+		}
 
 		if (rs.getParameter("delete", null) != null) {
 			ticket.setDeleted(true);

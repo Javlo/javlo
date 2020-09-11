@@ -156,4 +156,14 @@ public class TicketUserWrapper implements Ticket {
 		}
 	}
 
+	@Override
+	public long getPrice() {
+		return wrapped.getPrice();
+	}
+	
+	@Override
+	public String getBstatus() {
+		return wrapped.getBstatus();
+	}
+
 }

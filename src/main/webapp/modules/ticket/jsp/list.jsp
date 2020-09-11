@@ -15,6 +15,9 @@
        <th class="head1">update</th>       
        <th class="head0">#comments</th>
        <th class="head1">status</th>
+       <c:if test="${globalContext.businessTicket}">
+     	  <th class="head0">Budget</th>
+       </c:if>       
        <c:if test="${globalContext.master}">       
        <th class="head0">authors</th>
        <th class="head1">context</th>
@@ -46,7 +49,7 @@
  	 <c:url var="ticketURL" value="${info.currentURL}" context="/">
  	 	<c:param name="id" value="${ticket.id}" />
  	 </c:url>	 
-     <td class="con0"><a class="${ticket.read?'read':'unread'}" href="${ticketURL}">${empty ticket.title ? '?' : ticket.title}</a><span class="hidden">${ticket.message}</span></td>
+     <td class="con0"><a class="${ticket.read?'read':'unread'}" href="${ticketURL}">${empty ticket.title ? '?' : ticket.title}</a><span class="hidden">${ticket.message} ${ticket.id}</span></td>
      <c:if test="${not info.editContext.lightInterface}">
      <td class="con1">${ticket.priority}</td>     
      <td class="con0">${ticket.creationDateLabel}</td>
@@ -54,10 +57,13 @@
      <td class="con1">${ticket.lastUpdateDateLabel}</td>
      <td class="con0">${fn:length(ticket.comments)}</td>     
      <td class="con1"><a class="status ${fn:replace(ticket.status,' ', '')}" href="${ticketURL}">${ticket.status}</a></td>
+     <c:if test="${globalContext.businessTicket}">
+     	  <th class="head0">${ticket.bstatus}</th>
+      </c:if>
      <c:if test="${globalContext.master}">
      <td class="con0">${ticket.authors}</td>
      <td class="con1">${ticket.context}</td>
-     <td class="con0"><a class="share ${ticket.share}" href="${ticketURL}"><c:if test="${empty ticket.share}">none</c:if>${ticket.share}</a></td>
+     <td class="con0"><a class="share ${ticket.share}" href="${ticketURL}"><c:if test="${empty ticket.share}">none</c:if>${ticket.share}</a></td>     
      </c:if>
  </tr>  
  </c:if>   
@@ -74,6 +80,9 @@
       <th class="head1">update</th>       
       <th class="head0">#comments</th>
       <th class="head1 filter">status</th>
+      <c:if test="${globalContext.businessTicket}">
+     	  <th class="head0">Budget</th>
+       </c:if>
       <c:if test="${globalContext.master}">
       <th class="head0 filter">authors</th>
       <th class="head1 filter">context</th>

@@ -4466,4 +4466,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		this.siteLogStack = siteLogStack;
 	}
 	
+	public boolean isBusinessTicket() {
+		return StringHelper.isTrue(getSpecialConfig().getMap().get("ticket.business"));
+	}
+	
 }

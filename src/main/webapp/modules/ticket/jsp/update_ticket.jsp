@@ -66,8 +66,46 @@
 				    <option value="public" ${ticket.share == '"public"'?'selected="selected"':''}>public</option>
 				</select>
 			</div>
+		</c:if>		
+		</div>	
+		<c:if test="${contentContext.globalContext.businessTicket && (contentContext.currentUser.customer || contentContext.currentUser.provider)}">
+		<div class="business-ticket">
+			<fieldset>
+				<legend>${i18n.edit['ticket.business.title']}</legend>
+				<c:if test="${ticket.bstatus == 'wait'}">
+					<c:if test="${contentContext.currentUser.customer}">
+						<div class="alert alert-info">${i18n.edit['ticket.business.status.wait']}</div>
+					</c:if>
+					<c:if test="${contentContext.currentUser.provider}">
+						  <div class="form-group">
+						  		<label>Proposition (&euro;)</label>
+						  		<input type="number" class="form-control" id="proposition" name="proposition" placeholder="">
+						  </div>
+						 
+					</c:if>
+				</c:if>
+				<c:if test="${ticket.bstatus == 'ask'}">
+					<c:if test="${contentContext.currentUser.customer}">
+						<div class="alert alert-info">${i18n.edit['ticket.business.status.proposition']} : ${ticket.price} &euro;</div>
+						<div class="form-group">
+						<label for="bvalid">${i18n.edit['ticket.business.status.reply']}</label>
+						<select id="bvalid" name="bvalid" class="form-control">
+							<option value="">none</option>
+							<option value="yes">${i18n.edit['ticket.business.status.reply.yes']}</option>
+							<option value="no">${i18n.edit['ticket.business.status.reply.no']}</option>
+						</select>
+						</div>
+					</c:if>
+				</c:if>
+				<c:if test="${ticket.bstatus == 'valided'}">
+					<div class="alert alert-success">${i18n.edit['ticket.business.status.valided']} : ${ticket.price} &euro;</div>
+				</c:if>
+				<c:if test="${ticket.bstatus == 'rejedcted'}">
+					<div class="alert alert-danger">${i18n.edit['ticket.business.status.refused']} : ${ticket.price} &euro;</div>
+				</c:if>
+			</fieldset>
+		</div>
 		</c:if>
-</div>	
 	</div>
 	<div class="col-md-5">
 		<strong><div class="authors" title="authors">${ticket.authors}</div></strong>
@@ -90,7 +128,11 @@
 			</div>
 		</c:if>
 	</div>
+	
 </div>
+
+
+
 
 	<input type="hidden" name="webaction" value="ticket.update" />
 	<input type="hidden" name="id" value="${ticket.id}" />	

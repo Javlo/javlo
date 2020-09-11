@@ -163,5 +163,13 @@ public class User implements Principal, Serializable {
 			return login;
 		}
 	}
+	
+	public boolean isCustomer() {
+		return getRoles().contains(AdminUserSecurity.CUSTOMER_ROLE);
+	}
+	
+	public boolean isProvider() {
+		return getRoles().contains(AdminUserSecurity.PROVIDER_ROLE);
+	}
 
 }
