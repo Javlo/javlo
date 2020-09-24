@@ -13,45 +13,55 @@ jQuery(function() {
 			});
 		});
 
-		editor.addButton('textlang', function() {
-			var items = [], defaultLangs = 'fr en nl';
-			var langs = editor.settings.textlang_langs || defaultLangs;
+		editor.ui.registry.addSplitButton('textlang', {
 
-			items.push({
-				text : "",
-				value : REMOVE_VALUE
-			});
-			jQuery.each((langs.split == undefined ? langs : langs.split(' ')), function() {
-				var text = this, value = this;
-				// Allow text=value languages.
-				var values = this.split('=');
-				if (values.length > 1) {
-					text = values[0];
-					value = values[1];
-				}
+	       fetch: function (callback) {
+				var items = [];
+				callback(items);			
+			},
+			onItemAction: function (api, value) {
+        		editor.insertContent(value);
+      		},			
+			onAction: function() {
+				var items = [], defaultLangs = 'fr en nl';
+				var langs = editor.settings.textlang_langs || defaultLangs;
+
 				items.push({
-					text : text,
-					value : value
+					text : "",
+					value : REMOVE_VALUE
 				});
-			});
+				jQuery.each((langs.split == undefined ? langs : langs.split(' ')), function() {
+					var text = this, value = this;
+					// Allow text=value languages.
+					var values = this.split('=');
+					if (values.length > 1) {
+						text = values[0];
+						value = values[1];
+					}
+					items.push({
+						text : text,
+						value : value
+					});
+				});
 
-			return {
-				type : 'listbox',
-				text : 'Language',
-				tooltip : 'Language',
-				values : items,
-				fixedWidth : true,
-				onPostRender : createListBoxChangeHandler(items, 'textlang'),
-				onclick : function(e) {
-					if (e.control.settings.value) {
-						if (e.control.settings.value == REMOVE_VALUE) {
-							removeLang();
-						} else {
-							applyLang(e.control.settings.value);
+				return {
+					type : 'listbox',
+					text : 'Language',
+					tooltip : 'Language',
+					values : items,
+					fixedWidth : true,
+					onPostRender : createListBoxChangeHandler(items, 'textlang'),
+					onclick : function(e) {
+						if (e.control.settings.value) {
+							if (e.control.settings.value == REMOVE_VALUE) {
+								removeLang();
+							} else {
+								applyLang(e.control.settings.value);
+							}
 						}
 					}
-				}
-			};
+				};
+			}
 		});
 
 		function createListBoxChangeHandler(items, formatName) {

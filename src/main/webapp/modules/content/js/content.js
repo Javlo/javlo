@@ -64,8 +64,6 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 		wysiwygCss = staticRootURL+"modules/content/js/tinymce.css";
 	}
 
-	console.log("wysiwygCss = ",wysiwygCss);
-	
 	tinymce.init({
 	    paste_as_text: true
 	});
@@ -88,7 +86,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 	if (fontsize == null) {
 		fontsize = "10px 11px 12px 13px 14px 15px 16px 17px 18px 19px 20px 22px 24px 26px 28px 30px 32px 34px 36px 38px 40px 42px";
 	}
-	
+
 	if (complexity == "middle") {
 		tinymce.init({
 			textlang_langs : contentLanguage,			
@@ -122,8 +120,9 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 		            window : win,
 		            input : field_name
 		        });		    	
-		    },
-		    toolbar: "textlang | undo redo searchreplace | bold italic underline fontsizeselect forecolor backcolor removeformat | charmap nonbreaking | alignleft aligncenter alignright alignjustify | link | bullist numlist outdent indent"
+			},
+			toolbar: "undo redo searchreplace | bold italic underline fontsizeselect forecolor backcolor removeformat | charmap nonbreaking | alignleft aligncenter alignright alignjustify | link | bullist numlist outdent indent"
+		    //toolbar: "textlang | undo redo searchreplace | bold italic underline fontsizeselect forecolor backcolor removeformat | charmap nonbreaking | alignleft aligncenter alignright alignjustify | link | bullist numlist outdent indent"
 		});
 	} if (complexity == "email") {
 		tinymce.init({
@@ -140,7 +139,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 		        "insertdatetime table paste textcolor colorpicker nonbreaking textlang"
 		    ],
 			fontsize_formats: fontsize,
-			 image_advtab: true,
+			image_advtab: true,
 		    fontsize_formats: fontsize,
 		    //paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
 		    file_browser_callback: function(field_name, url, type, win) {		    	
@@ -158,17 +157,22 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 		            window : win,
 		            input : field_name
 		        });		    	
-		    },
-		    toolbar: "textlang | undo redo searchreplace | bold italic underline strikethrough fontsizeselect removeformat | table charmap nonbreaking code | alignleft aligncenter alignright alignjustify | link"
+			},
+			toolbar: "undo redo searchreplace | bold italic underline strikethrough fontsizeselect removeformat | table charmap nonbreaking code | alignleft aligncenter alignright alignjustify | link"
+		    //toolbar: "textlang | undo redo searchreplace | bold italic underline strikethrough fontsizeselect removeformat | table charmap nonbreaking code | alignleft aligncenter alignright alignjustify | link"
 		});
-	} else if (complexity == "high") {		
+	} else if (complexity == "high") {
+
+		var ta = jQuery(cssQuery);
+		console.log("ta = ",ta);
+
 		tinymce.init({
 			textlang_langs : contentLanguage,
 		    selector: cssQuery,		
 		    convert_urls: false,
 		    menubar : false,
 		    nonbreaking_force_tab: true,
-		    theme: "modern",
+		    theme: "silver",
 		    height : "280",
 		    content_css: wysiwygCss,
 		    textcolor_map : ["111111","MyBlack","993300","My Burnt orange"],
@@ -178,8 +182,9 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 		        "insertdatetime media nonbreaking save table directionality",
 		        "emoticons template paste colorpicker nonbreaking textlang"
 		    ],
-		    style_formats: format,
-		    toolbar1: "textlang | styleselect bold italic underline strikethrough fontsizeselect removeformat | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | table charmap nonbreaking code",
+			style_formats: format,
+			toolbar1: "styleselect bold italic underline strikethrough fontsizeselect removeformat | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | table charmap nonbreaking code",
+		    //toolbar1: "textlang | styleselect bold italic underline strikethrough fontsizeselect removeformat | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | table charmap nonbreaking code",
 		    charmap_append: [
 		        [0x2600, 'sun'],
 		        [0x2601, 'cloud'],
@@ -222,7 +227,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 		mode : "specific_textareas",
 		paste_as_text: true,
 		plugins: "textlang paste",
-		theme : "modern",
+		theme : "silver",
 		content_css: wysiwygCss,
 		add_form_submit_trigger: true,	
 		menubar : false,
@@ -235,7 +240,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 		content_css : 'tinymce.css',
 		textlang_langs : contentLanguage,
 		mode : "specific_textareas",
-		theme : "modern",
+		theme : "silver",
 		convert_urls: false,
 		content_css: wysiwygCss,
 		add_form_submit_trigger: true,	

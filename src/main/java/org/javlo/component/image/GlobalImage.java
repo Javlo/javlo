@@ -1398,9 +1398,10 @@ public class GlobalImage extends Image implements IImageFilter {
 			jsFormat = "var format="+format+";";
 		}
 		
+		id = id + StringHelper.getShortRandomId();
 		String[][] paramsLabelText = new String[][] { { "rows", rows }, { "cols", "100" }, { "class", "tinymce-light" }, { "id", id } };
 		out.println(XHTMLHelper.getTextArea(getLabelTextInputName(), getLabel(), paramsLabelText));
-		out.println("<script type=\"text/javascript\">"+jsFormat+jsFontsize+jsWysiwygCss+" jQuery(document).ready(loadWysiwyg('#" + id + "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "', format, fontsize, wysiwygCss));</script>");
+		out.println("<script type=\"text/javascript\">"+jsFormat+jsFontsize+jsWysiwygCss+" function updateWysiwyg"+getId()+"() {console.log('loadwysiwig:"+id+"'); loadWysiwyg('#" + id + "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "', format, fontsize, wysiwygCss)};jQuery(document).ready(updateWysiwyg"+getId()+");</script>");
 		out.println("</div>");
 
 		if (isFloatText(ctx)) {
@@ -1439,6 +1440,8 @@ public class GlobalImage extends Image implements IImageFilter {
 			out.println("</div>");
 		}
 		out.println("</div>");
+		
+		//out.println("<script type=\"text/javascript\">setTimeout(function() { updateWysiwyg"+getId()+"(); }, 1000);</script>");
 
 		out.close();
 		return new String(outStream.toByteArray());

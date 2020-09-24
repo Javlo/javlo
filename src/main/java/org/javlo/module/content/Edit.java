@@ -1495,7 +1495,7 @@ public class Edit extends AbstractModuleAction {
 				path = path + "/" + nodeName;
 
 				/** initial content **/
-				if (needInitContent) {
+				if (needInitContent && globalContext.getSpecialConfig().isContentAddTitle()) {
 					List<ComponentBean> initContent = new LinkedList<ComponentBean>();
 					for (String lg : globalContext.getContentLanguages()) {
 						i18nAccess.requestInit(ctx);

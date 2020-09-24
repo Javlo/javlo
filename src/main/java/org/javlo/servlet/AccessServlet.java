@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipOutputStream;
 
+import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.servlet.ServletException;
@@ -1309,13 +1310,22 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 		boolean smtpConnect = false;
 		if (!StringHelper.isEmpty(staticConfig.getSMTPHost())) {
+			Transport transport = null;
 			try {
 				Session mailSession = MailService.getMailSession(null);
-				Transport transport = mailSession.getTransport("smtp");
+				transport = mailSession.getTransport("smtp");
 				transport.connect(staticConfig.getSMTPHost(), Integer.parseInt(staticConfig.getSMTPPort()), staticConfig.getSMTPUser(), staticConfig.getSMTPPasswordParam());
 				smtpConnect = transport.isConnected();
 			} catch (Throwable t) {
 				t.printStackTrace();
+			} finally {
+				if (transport != null) { 
+					try {
+						transport.close();
+					} catch (MessagingException e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		}
 
