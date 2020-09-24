@@ -834,6 +834,8 @@ Security in case of vulnerabilities.
   - status in debug note + title of debug note ticket with more info
   - dynamic filter with title, parent page and collunable
   - change resize image method
+  - update to tinymce 5.4.1
 ### fixed
   - correct bad char in user list (best json encoding)
   - remove % from url if present in title of the page
+  - close transport on test connection
