@@ -2626,7 +2626,8 @@ public class Template implements Comparable<Template> {
 					absoluteURLCtx.setAbsoluteURL(true);					
 					try {
 						if (logoUrl == null) {
-							logoUrl = URLHelper.createTransformURL(absoluteURLCtx, null, URLHelper.mergePath(staticConfig.getStaticFolder(), newLogo), "logo", getName());
+							//logoUrl = URLHelper.createTransformURL(absoluteURLCtx, null, URLHelper.mergePath(staticConfig.getStaticFolder(), newLogo), "logo", getName());
+							logoUrl = "${info.logoURL}";
 						}
 					} catch (Exception e) {
 						throw new IOException(e);
