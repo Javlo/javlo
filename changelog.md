@@ -835,7 +835,7 @@ Security in case of vulnerabilities.
   - dynamic filter with title, parent page and collunable
   - change resize image method
   - update to tinymce 5.4.1
-  - optimise copy file of template
+  - optimize copy file of template
 ### fixed
   - correct bad char in user list (best json encoding)
   - remove % from url if present in title of the page
