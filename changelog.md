@@ -840,3 +840,5 @@ Security in case of vulnerabilities.
   - correct bad char in user list (best json encoding)
   - remove % from url if present in title of the page
   - close transport on test connection
+## [2.1.2.7] - 28/09/2020
+
