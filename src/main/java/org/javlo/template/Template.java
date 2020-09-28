@@ -3317,10 +3317,10 @@ public class Template implements Comparable<Template> {
 	}
 	
 	public boolean isImportParentComponents() {
-		if (getParent() != null && getParent().isEditable()) {
-			return true;
+		if (getConfig().get("import.parent-components") != null) {
+			return StringHelper.isTrue(getConfig().get("import.parent-components"));
 		} else {
-			return getName().contains("import.parent-components");
+			return getParent().isImportParentComponents();
 		}
 	}
 
