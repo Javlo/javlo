@@ -89,6 +89,8 @@ public class Template implements Comparable<Template> {
 
 	private static final String RAW_CSS_FILE = "raw_css.txt";
 	
+	private static Set<String> FILTER_FILE_EXTENSION = new HashSet<String>(Arrays.asList(new String[] { "html", "htm", "jsp", "js", "css", "scss", "less" }));
+	
 	private static class TemplateComparator implements Comparator<Template> {
 
 		@Override
@@ -132,6 +134,7 @@ public class Template implements Comparable<Template> {
 		private Map<String, List<String>> cssByFolder;
 		private Template template;
 		private TemplateBean parentBean;
+		private boolean importParentComponents = true;
 
 		public TemplateBean() {
 		};
@@ -186,6 +189,7 @@ public class Template implements Comparable<Template> {
 			htmls.add(template.getHTMLFile(ctx.getDevice()));
 			renderers = template.getRenderers();
 			mailing = template.isMailing();
+			importParentComponents = template.isImportParentComponents();
 
 		}
 
@@ -403,6 +407,14 @@ public class Template implements Comparable<Template> {
 
 		public boolean isBootstrap() {
 			return bootstrap;
+		}
+
+		public boolean isImportParentComponents() {
+			return importParentComponents;
+		}
+
+		public void setImportParentComponent(boolean importParentComponents) {
+			this.importParentComponents = importParentComponents;
 		}
 
 	}
@@ -2583,9 +2595,9 @@ public class Template implements Comparable<Template> {
 			logger.info("copy parent template from '" + templateSrc + "' to '" + templateTarget + "'");
 			// FileUtils.copyDirectory(templateSrc, templateTarget, new
 			// WEBFileFilter(this, false, jsp, true), false);
-			ResourceHelper.copyDir(templateSrc, templateTarget, false, new WEBFileFilter(this, false, jsp, true));
-			/** filter html and css **/
-			Iterator<File> files = FileUtils.iterateFiles(templateSrc, new String[] { "html", "htm", "jsp", "js", "css", "scss", "less" }, true);
+			//ResourceHelper.copyDir(templateSrc, templateTarget, false, new WEBFileFilter(this, false, jsp, true));
+			/** filter html and css **/			
+			Collection<File> allFiles = ResourceHelper.getAllFilesList(templateSrc);
 
 			/** plugins **/
 			if (globalContext != null && !parent) {
@@ -2627,25 +2639,48 @@ public class Template implements Comparable<Template> {
 			} else {
 				logger.warning("no template data for : " + this);
 			}
-
+			
+			Iterator<File> files = allFiles.iterator();
+			
+			Set<File> createdFolder = new HashSet<File>();
+			
 			while (files.hasNext()) {
-				File file = files.next();
-				if (!file.getAbsolutePath().contains(".git")) {
-					File targetFile = new File(file.getAbsolutePath().replace(templateSrc.getAbsolutePath(), templateTarget.getAbsolutePath()));
-					if (ctx != null) {
-						try {
-							String fileExt = FilenameUtils.getExtension(file.getName());
-							if (fileExt.equalsIgnoreCase("css") || fileExt.equalsIgnoreCase("scss") || fileExt.equalsIgnoreCase("less") || fileExt.equalsIgnoreCase("sass")) {
-								appendRawCssFile(globalContext, ResourceHelper.loadStringFromFile(file), inRawCssFile);
+				File file = files.next();				
+				String path = ResourceHelper.removePath(file.getAbsolutePath(), templateSrc.getAbsolutePath());	
+				
+				if (!file.getAbsolutePath().contains("/.") && !file.getAbsolutePath().contains("\\.")) { // no copy hidden file and folder					
+					if (!parent || isImportParentComponents() || !path.startsWith('/'+DYNAMIC_COMPONENTS_PROPERTIES_FOLDER)) {						
+						File targetFile = new File(file.getAbsolutePath().replace(templateSrc.getAbsolutePath(), templateTarget.getAbsolutePath()));
+						
+						File folder = targetFile.getParentFile();
+						if (!createdFolder.contains(folder)) {
+							if (!folder.exists()) {
+								folder.mkdirs();
 							}
-							if (fileExt.equalsIgnoreCase("jsp") || fileExt.equalsIgnoreCase("html")) {
-								ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map, ctx.getGlobalContext().getStaticConfig().isCompressJsp());
-							} else {
-								ResourceHelper.filteredFileCopy(file, targetFile, map);
-							}
-						} catch (Exception e) {
-							logger.warning("error on copy file : " + file + " err:" + e.getMessage());
+							createdFolder.add(folder);							
 						}
+						
+						if (ctx != null) {
+							try {
+								String fileExt = FilenameUtils.getExtension(file.getName());
+								if (FILTER_FILE_EXTENSION.contains(fileExt)) {
+									if (fileExt.equalsIgnoreCase("css") || fileExt.equalsIgnoreCase("scss") || fileExt.equalsIgnoreCase("less") || fileExt.equalsIgnoreCase("sass")) {
+										appendRawCssFile(globalContext, ResourceHelper.loadStringFromFile(file), inRawCssFile);
+									}
+									if (fileExt.equalsIgnoreCase("jsp") || fileExt.equalsIgnoreCase("html")) {
+										ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map, ctx.getGlobalContext().getStaticConfig().isCompressJsp());
+									} else {
+										ResourceHelper.filteredFileCopy(file, targetFile, map);
+									}
+								} else {
+									if (file.isFile()) {
+										ResourceHelper.copyFile(file, targetFile, false);
+									}
+								}
+							} catch (Exception e) {
+								logger.warning("error on copy file : " + file + " err:" + e.getMessage());
+							}
+						}					
 					}
 				}
 			}
@@ -2656,7 +2691,7 @@ public class Template implements Comparable<Template> {
 			if (!srcComp.exists()) {
 				srcComp.mkdirs();
 			}
-			FileUtils.copyDirectory(srcComp, componentFolderTarget);
+			//FileUtils.copyDirectory(srcComp, componentFolderTarget);
 
 			/** prepare merging of all sass component class **/
 			if (componentFolderTarget.exists() && componentFolderTarget.isDirectory()) {
@@ -3277,6 +3312,14 @@ public class Template implements Comparable<Template> {
 			return true;
 		} else {
 			return getName().contains("editable");
+		}
+	}
+	
+	public boolean isImportParentComponents() {
+		if (getParent() != null && getParent().isEditable()) {
+			return true;
+		} else {
+			return getName().contains("import.parent-components");
 		}
 	}
 

@@ -517,4 +517,10 @@ public class DefaultTemplate extends Template {
 	public boolean isRemoveEmptyArea() {
 		return true;
 	}
+	
+	@Override
+	public boolean isImportParentComponents() {
+		return true;
+	}
+	
 }
