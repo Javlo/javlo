@@ -2587,7 +2587,7 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
-	protected void importTemplateInWebapp(StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget, Map<String, String> childrenData, boolean compressResource, boolean parent, File inRawCssFile, String logoUrl) throws IOException {
+	protected void importTemplateInWebapp(StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget, Map<String, String> childrenData, boolean compressResource, boolean parent, File inRawCssFile, Boolean importComponents) throws IOException {
 
 		String templateFolder = config.getTemplateFolder();
 		File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolderName()));
@@ -2621,20 +2621,9 @@ public class Template implements Comparable<Template> {
 			if (globalContext != null && globalContext.getTemplateData() != null) {
 				String newLogo = globalContext.getTemplateData().getLogo();
 				if (newLogo != null) {
-					StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-					ContentContext absoluteURLCtx = new ContentContext(ctx);
-					absoluteURLCtx.setAbsoluteURL(true);					
-					try {
-						if (logoUrl == null) {
-							//logoUrl = URLHelper.createTransformURL(absoluteURLCtx, null, URLHelper.mergePath(staticConfig.getStaticFolder(), newLogo), "logo", getName());
-							logoUrl = "${info.logoURL}";
-						}
-					} catch (Exception e) {
-						throw new IOException(e);
-					}
 					String srcLogo = getTemplateData().getLogo();
 					if (srcLogo != null) {
-						map.put(srcLogo, logoUrl);
+						map.put(srcLogo, "${info.logoURL}");
 					}
 				}
 			} else {
@@ -2649,8 +2638,10 @@ public class Template implements Comparable<Template> {
 				File file = files.next();				
 				String path = ResourceHelper.removePath(file.getAbsolutePath(), templateSrc.getAbsolutePath());	
 				
+				System.out.println(">>>>>>>>> Template.importTemplateInWebapp : path = "+path+"(p:"+parent+" isp:"+isImportParentComponents()+" !path:"+!path.startsWith('/'+DYNAMIC_COMPONENTS_PROPERTIES_FOLDER+'/')); //TODO: remove debug trace
 				if (!file.getAbsolutePath().contains("/.") && !file.getAbsolutePath().contains("\\.")) { // no copy hidden file and folder					
-					if (!parent || isImportParentComponents() || !path.startsWith('/'+DYNAMIC_COMPONENTS_PROPERTIES_FOLDER)) {						
+					if (!parent || isImportParentComponents() || !path.startsWith('/'+DYNAMIC_COMPONENTS_PROPERTIES_FOLDER+'/')) {
+						System.out.println(">>>>>>>>> Template.importTemplateInWebapp : COPY"); //TODO: remove debug trace
 						File targetFile = new File(file.getAbsolutePath().replace(templateSrc.getAbsolutePath(), templateTarget.getAbsolutePath()));
 						
 						File folder = targetFile.getParentFile();
@@ -2777,7 +2768,10 @@ public class Template implements Comparable<Template> {
 			}
 			LangHelper.putAllIfNotExist(childrenData, getTemplateDataMap(globalContext));
 			if (getParent().exist()) {
-				getParent().importTemplateInWebapp(config, ctx, globalContext, templateTarget, childrenData, false, true, inRawCssFile, logoUrl);
+				if (importComponents == null) {
+					importComponents = isImportParentComponents();
+				}
+				getParent().importTemplateInWebapp(config, ctx, globalContext, templateTarget, childrenData, false, true, inRawCssFile, importComponents);
 			} else {
 				logger.warning("parent template not found : " + getParent().getName());
 				File indexFile = new File(URLHelper.mergePath(templateTarget.getAbsolutePath(), "index.jsp"));
