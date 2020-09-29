@@ -2637,11 +2637,9 @@ public class Template implements Comparable<Template> {
 			while (files.hasNext()) {
 				File file = files.next();				
 				String path = ResourceHelper.removePath(file.getAbsolutePath(), templateSrc.getAbsolutePath());	
-				
-				System.out.println(">>>>>>>>> Template.importTemplateInWebapp : path = "+path+"(p:"+parent+" isp:"+isImportParentComponents()+" !path:"+!path.startsWith('/'+DYNAMIC_COMPONENTS_PROPERTIES_FOLDER+'/')); //TODO: remove debug trace
+
 				if (!file.getAbsolutePath().contains("/.") && !file.getAbsolutePath().contains("\\.")) { // no copy hidden file and folder					
-					if (!parent || isImportParentComponents() || !path.startsWith('/'+DYNAMIC_COMPONENTS_PROPERTIES_FOLDER+'/')) {
-						System.out.println(">>>>>>>>> Template.importTemplateInWebapp : COPY"); //TODO: remove debug trace
+					if (!parent || importComponents || !path.startsWith('/'+DYNAMIC_COMPONENTS_PROPERTIES_FOLDER+'/')) {
 						File targetFile = new File(file.getAbsolutePath().replace(templateSrc.getAbsolutePath(), templateTarget.getAbsolutePath()));
 						
 						File folder = targetFile.getParentFile();
