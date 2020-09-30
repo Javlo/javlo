@@ -668,7 +668,7 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
-		IContentVisualComponent comp;
+		IContentVisualComponent comp=null;
 		try {
 			comp = getMirrorComponent(ctx);
 			if (comp != null) {
@@ -678,6 +678,12 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		System.out.println(">>>>>>>>> MirrorComponent.isRealContent : context : "+ctx.getGlobalContext().getContextKey()); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> MirrorComponent.isRealContent : FALSE"); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> MirrorComponent.isRealContent : url : "+ctx.getRequest().getRequestURL()); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> MirrorComponent.isRealContent : comp = "+comp); //TODO: remove debug trace
+		
 		return false;
 	}
 	
