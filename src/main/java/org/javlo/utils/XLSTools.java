@@ -211,9 +211,18 @@ public class XLSTools {
 		}
 		
 	}
+	
+	public static Cell[][] getXLSXArray(ContentContext ctx, File xslxFile, String sheetName) throws Exception {
+		InputStream in=null;
+		try {
+			in = new FileInputStream(xslxFile);
+			return getXLSXArray(ctx, in, sheetName);			
+		} finally {
+			ResourceHelper.closeResource(in);
+		}
+	}
 
-	protected static Cell[][] getXLSXArray(ContentContext ctx, File xslxFile, String sheetName) throws Exception {
-		InputStream in = new FileInputStream(xslxFile);
+	public static Cell[][] getXLSXArray(ContentContext ctx, InputStream in, String sheetName) throws Exception {		
 		XSSFWorkbook workbook=null;
 		try {
 			workbook = new XSSFWorkbook(in);
@@ -269,8 +278,7 @@ public class XLSTools {
 			}
 
 			return outArray;
-		} finally {
-			ResourceHelper.closeResource(in);
+		} finally {			
 			if (workbook != null) {
 				workbook.close();
 			}
