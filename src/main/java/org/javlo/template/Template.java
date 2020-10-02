@@ -2598,6 +2598,10 @@ public class Template implements Comparable<Template> {
 			//ResourceHelper.copyDir(templateSrc, templateTarget, false, new WEBFileFilter(this, false, jsp, true));
 			/** filter html and css **/			
 			Collection<File> allFiles = ResourceHelper.getAllFilesList(templateSrc);
+			
+			if (!templateTarget.exists()) {
+				templateTarget.mkdirs();
+			}
 
 			/** plugins **/
 			if (globalContext != null && !parent) {
@@ -2612,7 +2616,7 @@ public class Template implements Comparable<Template> {
 					}
 				}
 			}
-
+			
 			Map<String, String> map = getTemplateDataMap(globalContext);
 			map.put("##BUILD_ID##", getBuildId());
 			if (childrenData != null) {
