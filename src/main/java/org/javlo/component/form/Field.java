@@ -220,6 +220,9 @@ public class Field {
 	}
 
 	public boolean isFilledWidth(String value) {
+		if (StringHelper.isEmpty(value)) {
+			return false;
+		}			
 		List<String> list = getList();
 		if (list.size() == 0) {
 			return getName().length() > 0 && !StringHelper.isEmpty(value);
