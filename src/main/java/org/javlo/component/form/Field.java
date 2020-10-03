@@ -219,10 +219,12 @@ public class Field {
 
 	}
 
-	public boolean isFilledWidth(String value) {
+	public boolean isFilledWidth(String value, boolean firstIsSelection) {
 		if (StringHelper.isEmpty(value)) {
 			return false;
-		}			
+		} else if (firstIsSelection) {
+			return true;
+		}
 		List<String> list = getList();
 		if (list.size() == 0) {
 			return getName().length() > 0 && !StringHelper.isEmpty(value);

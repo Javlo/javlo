@@ -1156,7 +1156,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			
 			if (!update || !field.getType().equals("file")) {
 				//if (!field.isFilledWidth(finalValue) && StringHelper.containsUppercase(key.substring(0, 1))) {
-				if (!field.isFilledWidth(finalValue) && StringHelper.containsUppercase(key.substring(0, 1))) {
+				if (!field.isFilledWidth(finalValue, !field.getType().contains("list")) && StringHelper.containsUppercase(key.substring(0, 1))) {
 					errorKeyFound.add(key);
 					errorFields.add(key);
 					errorFieldList = errorFieldList + errorFieldSep + field.getLabel();
