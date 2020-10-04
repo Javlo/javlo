@@ -715,7 +715,6 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 			page = getMirrorWrapper(ctx, this).getPage();
 		}
 		if (!page.isActive(ctx)) {
-			System.out.println(">>>>>>>>> DynamicComponent.isRealContent : unactive page : "+page.getPath()); //TODO: remove debug trace
 			return false;
 		}
 		try {
@@ -727,7 +726,6 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println(">>>>>>>>> DynamicComponent.isRealContent : error : "+page.getPath()); //TODO: remove debug trace
 		return false;
 	}
 

@@ -4642,22 +4642,13 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 	public boolean isActive() {
 		if (!isInsideTimeRange()) {
-			System.out.println(">>>>>>>>> MenuElement.isActive : time range"); //TODO: remove debug trace
 			return false;
 		}
 		if (isInTrash() || isTrash()) {
-			System.out.println(">>>>>>>>> MenuElement.isActive : trash"); //TODO: remove debug trace
 			return false;
 		} else {
 			MenuElement parent = getParent();
 			if (parent != null && !parent.isActive()) {
-				if (getName().equals("tz_austria_lech_year1")) {
-					System.out.println(">>>>>>>>> MenuElement.isActive : parent active : "+parent); //TODO: remove debug trace
-					if (parent != null) {
-						System.out.println(">>> parent path = "+parent.getPath());
-						System.out.println(">>> parent active = "+parent.isActive());
-						}					
-				}
 				return false;
 			}
 			return active;
