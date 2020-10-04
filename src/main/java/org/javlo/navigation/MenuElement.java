@@ -4651,7 +4651,13 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		} else {
 			MenuElement parent = getParent();
 			if (parent != null && !parent.isActive()) {
-				System.out.println(">>>>>>>>> MenuElement.isActive : parent navtive : "+parent); //TODO: remove debug trace
+				if (getName().equals("tz_austria_lech_year1")) {
+					System.out.println(">>>>>>>>> MenuElement.isActive : parent active : "+parent); //TODO: remove debug trace
+					if (parent != null) {
+						System.out.println(">>> parent path = "+parent.getPath());
+						System.out.println(">>> parent active = "+parent.isActive());
+						}					
+				}
 				return false;
 			}
 			return active;
