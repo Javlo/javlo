@@ -1046,8 +1046,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 	public boolean isActive(ContentContext ctx) {
 		if (isAdmin() && ctx.getCurrentEditUser() == null) {
-			System.out.println(">>>>>>>>> MenuElement.isActive : ERROR PAGE : "+isAdmin()); //TODO: remove debug trace
-			System.out.println(">>>>>>>>> MenuElement.isActive : ctx.getCurrentEditUser() == null = "+ctx.getCurrentEditUser() == null); //TODO: remove debug trace
 			return false;
 		}
 		return isActive();
