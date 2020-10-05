@@ -841,4 +841,8 @@ Security in case of vulnerabilities.
   - remove % from url if present in title of the page
   - close transport on test connection
 ## [2.1.2.7] - 28/09/2020
+### Added
+### Modified
+  - load view nav before preview nav
+### fixed  
 
