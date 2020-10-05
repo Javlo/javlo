@@ -902,7 +902,7 @@ public class ContentContext {
 					if (elem != null) {
 						setCurrentPageCached(elem);
 						globalContext.storeUrl(this, getPath(), elem.getId());
-					} else {
+					} else if (urlFacotry) {
 						globalContext.log(Log.SEVERE, "url", "url not found : " + getPath());
 						elem = globalContext.convertOldURL(this, getPath());
 						if (elem != null) {
