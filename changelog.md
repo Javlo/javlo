@@ -845,4 +845,5 @@ Security in case of vulnerabilities.
 ### Modified
   - load view nav before preview nav
 ### fixed  
+  - don't redirect old url if no urlfactory asked
 
