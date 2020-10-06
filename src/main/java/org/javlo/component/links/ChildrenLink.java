@@ -24,6 +24,7 @@ import org.javlo.helper.XHTMLBootstrapFormBuilder;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
+import org.javlo.navigation.PageBean;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.User;
@@ -189,6 +190,10 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 
 		public MenuElement getPage() {
 			return child;
+		}
+		
+		public PageBean getPageBean() {
+			return new PageBean(ctx, child);
 		}
 
 		public boolean isVisible() {

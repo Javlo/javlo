@@ -5799,7 +5799,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		}
 		return false;
 	}
-
+	
 	@Override
 	public Map<String, Object> getContentAsMap(ContentContext ctx) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, Exception {
 
@@ -5843,14 +5843,25 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		map.put("latestEditor", getLatestEditor());
 
 		List<Map<String, Object>> contentArray = new LinkedList<Map<String, Object>>();
+		Map<String, Object> dynamicComponent = new HashMap<String, Object>();
+		dynamicComponent.put("test", "test-2508");
 		for (String lg : langs) {
 			ContentContext langCtx = ctx.getContextWidthOtherRequestLanguage(lg);
+			langCtx.setArea(null);
 			ContentElementList content = getLocalContent(langCtx);
 			while (content.hasNext(langCtx)) {
-				contentArray.add(content.next(langCtx).getContentAsMap(langCtx));
+				IContentVisualComponent comp = content.next(langCtx);				
+				if (comp instanceof DynamicComponent) {
+					if (dynamicComponent.get(comp.getType()) == null || lg.equals(ctx.getRequestContentLanguage())) {
+						DynamicComponent dynComp = (DynamicComponent)comp;					
+						dynamicComponent.put(dynComp.getType(), dynComp.getContentAsMap(ctx));
+					}
+				}
+				contentArray.add(comp.getContentAsMap(langCtx));
 			}
 		}
 		map.put("content", contentArray);
+		map.put("dynamicComponent", dynamicComponent); // shortcut to access directly to data of a dynamicComponent
 		if (isRestWidthChildren()) {
 			Collection<MenuElement> childrenMenuElement = getChildMenuElements();
 			List<Map<String, Object>> childrenArray = new LinkedList<Map<String, Object>>();

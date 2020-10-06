@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
@@ -850,6 +851,10 @@ public class PageBean implements Serializable {
 		Tracker tracker = Tracker.getTracker(ctx.getGlobalContext(), ctx.getRequest().getSession());
 		String path = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), ctx.getPath());
 		return tracker.getLastYearPathReading(path);
+	}
+	
+	public Map<String, Object> getContentAsMap() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, Exception {
+		return page.getContentAsMap(ctx);
 	}
 
 }
