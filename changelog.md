@@ -846,4 +846,5 @@ Security in case of vulnerabilities.
   - load view nav before preview nav
 ### fixed  
   - don't redirect old url if no urlfactory asked
+  - js content type
 

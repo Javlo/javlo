@@ -683,6 +683,8 @@ public class ResourceHelper {
 			return "video/quicktime";
 		} else if (ext.equals("pdf")) {
 			return "application/pdf";
+		} else if (ext.equals("js")) {
+			return "application/javascript";
 		} else if (ext.equals("css")) {
 			return "text/css";
 		} else if (ext.equals("csv")) {

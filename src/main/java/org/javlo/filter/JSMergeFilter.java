@@ -92,13 +92,12 @@ public class JSMergeFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain next) throws IOException, ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		String path = httpRequest.getServletPath();
-		GlobalContext globalContext = GlobalContext.getInstance(httpRequest);
-		if (path.startsWith('/' + globalContext.getContextKey())) {
-			path = path.replaceFirst('/' + globalContext.getContextKey(), "");
-		}
-
 		String fileName = StringHelper.getFileNameFromPath(path);
 		if (fileName.equals("_all.js") || fileName.equals("_all_rec.js")) {
+			GlobalContext globalContext = GlobalContext.getInstance(httpRequest);
+			if (path.startsWith('/' + globalContext.getContextKey())) {
+				path = path.replaceFirst('/' + globalContext.getContextKey(), "");
+			}
 			File jsFile = new File(ResourceHelper.getRealPath(httpRequest.getSession().getServletContext(), path));
 			if (!jsFile.exists()) {
 				synchronized (this) {
