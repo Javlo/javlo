@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
@@ -73,10 +74,20 @@ public class ImageConfig {
 	private static final String ALL = "all";
 
 	private List<String> filters = new LinkedList<String>();
+	
+	/**
+	 * load default properties for system.
+	 * @param p
+	 */
+	private static void loadDefaultValue(ConfigurationProperties p) {
+		p.addProperty("edit_standard.width", 512);
+		p.addProperty("edit_standard.crop-resize", true);
+	}
 
 	private ImageConfig(File file) {
 		try {
 			properties.load(file);
+			loadDefaultValue(properties);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
