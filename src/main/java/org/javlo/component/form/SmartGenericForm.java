@@ -708,7 +708,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 	}
 
-	protected void importFieldAsExcel(ContentContext ctx) throws Exception {
+	protected boolean importFieldAsExcel(ContentContext ctx) throws Exception {
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		FileItem item = rs.getFileItem(getInputName("form-as-excel"));
 		if (item != null) {
@@ -717,15 +717,18 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				Cell[][] cells = XLSTools.getXLSXArray(ctx, in, null);
 				if (cells.length < 2) {
 					logger.warning("bad form-as-excel file empty");
-					return;
+					return false;
 				}
 				if (cells[0].length != 9) {
 					logger.warning("bad form-as-excel width : " + cells[0].length + " in place of 9.");
-					return;
+					return false;
+				}
+				for (Field field : getFields()) {
+					delField(field.getName());
 				}
 				for (int i = 1; i < cells.length; i++) {
 					if (cells[i].length < 4) {
-						return;
+						return false;
 					} else {
 						int order = i;
 						if (StringHelper.isDigit(cells[i][6].getValue())) {
@@ -750,8 +753,10 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 						}
 					}
 				}
+				return true;
 			}
 		}
+		return false;
 	}
 
 	@Override
@@ -852,17 +857,17 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			store(new Field(fieldName, "", "text", "", "", "text", "", "", pos + 20, 6));
 			ctx.getRequest().setAttribute(getNewFieldKey(), fieldName);
 		}
-
-		store(ctx);
-
-		countCache = null;
-
+		
 		try {
 			importFieldAsExcel(ctx);
 		} catch (Exception e) {
 			logger.warning(e.getMessage());
 		}
+		
+		store(ctx);
 
+		countCache = null;
+		
 		return null;
 	}
 
