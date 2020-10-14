@@ -1,7 +1,6 @@
 package org.javlo.component.form;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -9,6 +8,10 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.Comparator.StringComparator;
 
 public class Field {
+	
+	private static final int SMALL_SIZE = 8;
+	private static final int MEDIUM_SIZE = 32;
+	private static final int LARGE_SIZE = 64;
 
 	public static final class FieldComparator implements Comparator<Field> {
 
@@ -254,6 +257,53 @@ public class Field {
 
 	public void setRole(String role) {
 		this.role = role;
+	}
+	
+	public String getLabelSize() {
+		if (getLabel() == null) {
+			return "e";
+		} else {
+			int size = getLabel().length();
+			if (size > SMALL_SIZE) {
+				if (size > MEDIUM_SIZE) {
+					if (size > LARGE_SIZE) {
+						return "l";
+					} else {
+						return "m";
+					}
+				} else {
+					return "s"; 
+				}
+			} else {
+				return "xs";
+			}
+		}
+	}
+	
+	public String getListLabelSize() {
+		if (getList() == null || getList().size() == 0) {
+			return "e";
+		} else {
+			int size = 0;
+			for (String label : getList()) {
+				if (label.length()>size) {
+					size=label.length();
+				}
+			}
+			if (size > SMALL_SIZE) {
+				if (size > MEDIUM_SIZE) {
+					if (size > LARGE_SIZE) {
+						return "l";
+					} else {
+						return "m";
+					}
+				} else {
+					return "s"; 
+				}
+			} else {
+				return "xs";
+			}
+		}
 	}
 
 }
