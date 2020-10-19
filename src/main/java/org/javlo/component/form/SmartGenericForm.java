@@ -359,7 +359,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			out.println("</div></div></fieldset>");
 		}
 
-		out.println("<div class=\"action-add\"><input type=\"text\" name=\"" + getInputName("new-name") + "\" placeholder=\"field name\" /> <input type=\"submit\" name=\"" + getInputName("add") + "\" value=\"add field\" /></div>");
+		out.println("<div class=\"action-add\"><input type=\"text\" name=\"" + getInputName("new-name") + "\" placeholder=\"field name\" /> <input type=\"submit\" name=\"" + getInputName("add-first") + "\" value=\"add as first\" /> <input type=\"submit\" name=\"" + getInputName("add") + "\" value=\"add as last\" /></div>");
 		if (getFields().size() > 0) {
 			out.println("<table class=\"sTable2\">");
 			String listTitle = "";
@@ -854,7 +854,17 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 		if (rs.getParameter(getInputName("new-name"), "").trim().length() > 0) {
 			String fieldName = StringHelper.createFileName(rs.getParameter(getInputName("new-name"), null));
-			store(new Field(fieldName, "", "text", "", "", "text", "", "", pos + 20, 6));
+			if (rs.getParameter(getInputName("add-first")) != null) {
+				int order = 20;
+				for (Field field : getFields()) {
+					field.setOrder(order);
+					store(field);
+					order+=10;
+				}
+				store(new Field(fieldName, "", "text", "", "", "text", "", "", 10, 6));
+			} else {
+				store(new Field(fieldName, "", "text", "", "", "text", "", "", pos + 10, 6));
+			}
 			ctx.getRequest().setAttribute(getNewFieldKey(), fieldName);
 		}
 		
