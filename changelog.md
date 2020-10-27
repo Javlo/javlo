@@ -843,6 +843,7 @@ Security in case of vulnerabilities.
 ## [2.1.2.7] - 28/09/2020
 ### Added
   - access to dynamiccomponent from contentAsMap method
+  - generic form : add first, add last
 ### Modified
   - load view nav before preview nav
 ### fixed  
