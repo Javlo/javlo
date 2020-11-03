@@ -410,7 +410,7 @@ public class DashboardAction extends AbstractModuleAction {
 			Map<String, MutableInt> resourceDownload = new NeverEmptyMap<>(MutableInt.class);
 			for (DayInfo dayInfo : tracker.getDayInfos(statCtx)) {
 				for (String key : dayInfo.visitPath.keySet()) {
-					if (!key.toString().contains("html") && key.contains(".")) {
+					if (key.startsWith("/media/") || key.startsWith("/resource/")) {
 						resourceDownload.get(key).add(dayInfo.visitPath.get(key));
 					}
 				}
