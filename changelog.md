@@ -844,6 +844,7 @@ Security in case of vulnerabilities.
 ### Added
   - access to dynamiccomponent from contentAsMap method
   - generic form : add first, add last
+  - resources download on dashboard
 ### Modified
   - load view nav before preview nav
 ### fixed  
