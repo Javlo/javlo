@@ -373,13 +373,52 @@ public class DashboardAction extends AbstractModuleAction {
 			Map<String, MutableInt> pagesVisit = new NeverEmptyMap<>(MutableInt.class);
 			for (DayInfo dayInfo : tracker.getDayInfos(statCtx)) {
 				for (String key : dayInfo.visitPath.keySet()) {
-					pagesVisit.get(key).add(dayInfo.visitPath.get(key));
+					if (key.contains("html")) {
+						pagesVisit.get(key).add(dayInfo.visitPath.get(key));
+					}
 				}
 			}
 			ObjectBuilder ajaxMap = LangHelper.object();
 			ListBuilder datas = ajaxMap.list("datas");
 			for (Map.Entry<String, MutableInt> entry : pagesVisit.entrySet()) {
 				String[] d = new String[2];				
+				d[0] = entry.getKey();
+				d[1] = ""+entry.getValue();
+				datas.add(d);
+			}
+			ctx.setAjaxMap(ajaxMap.getMap());
+		} else if (type.equals("resources")) {
+			// Map<String, Integer> ajaxMap = new LinkedHashMap<String,
+			// Integer>();
+			String year = rs.getParameter("y", "" + now.get(Calendar.YEAR));
+			Calendar cal = Calendar.getInstance();
+			cal.set(Calendar.YEAR, Integer.parseInt(year));
+			cal.set(Calendar.MONTH, 11);
+			cal.set(Calendar.DAY_OF_MONTH, 31);
+			cal.set(Calendar.HOUR, 23);
+			cal.set(Calendar.MINUTE, 59);
+			cal.set(Calendar.SECOND, 59);
+			statCtx.setTo(cal.getTime());
+			cal.set(Calendar.YEAR, Integer.parseInt(year));
+			cal.set(Calendar.MONTH, 0);
+			cal.set(Calendar.DAY_OF_MONTH, 1);
+			cal.set(Calendar.HOUR, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			statCtx.setFrom(cal.getTime());
+			
+			Map<String, MutableInt> resourceDownload = new NeverEmptyMap<>(MutableInt.class);
+			for (DayInfo dayInfo : tracker.getDayInfos(statCtx)) {
+				for (String key : dayInfo.visitPath.keySet()) {
+					if (!key.toString().contains("html") && key.contains(".")) {
+						resourceDownload.get(key).add(dayInfo.visitPath.get(key));
+					}
+				}
+			}
+			ObjectBuilder ajaxMap = LangHelper.object();
+			ListBuilder datas = ajaxMap.list("datas");
+			for (Map.Entry<String, MutableInt> entry : resourceDownload.entrySet()) {
+				String[] d = new String[2];
 				d[0] = entry.getKey();
 				d[1] = ""+entry.getValue();
 				datas.add(d);

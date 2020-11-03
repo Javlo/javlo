@@ -736,7 +736,7 @@ public class Tracker {
 	public List<DayInfo> getDayInfos(StatContext statCtx) throws IOException {
 		return getDayInfos(statCtx, persistenceService.dayInfoCache, persistenceService.getTrackingDirectory());
 	}
-
+	
 	public static List<DayInfo> getDayInfos(StatContext statCtx, TimeMap<Long, DayInfo> dayInfoCache, String trackingDir) throws IOException {
 		Calendar from = TimeHelper.convertRemoveAfterDay(TimeHelper.getCalendar(statCtx.getFrom()));
 		Calendar to = TimeHelper.convertRemoveAfterDay(TimeHelper.getCalendar(statCtx.getTo()));

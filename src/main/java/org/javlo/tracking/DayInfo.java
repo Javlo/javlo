@@ -16,7 +16,7 @@ import org.javlo.utils.StructuredProperties;
 
 public class DayInfo {
 	
-	public static final int CURRENT_VERSION = 24;
+	public static final int CURRENT_VERSION = 25;
 
 	private static final String PAGES_VISITS_PREFIX = "path.visits.";
 	private static final String TIME_VISITS_PREFIX = "time.visits.";

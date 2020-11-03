@@ -142,7 +142,6 @@ public class PersistenceService {
 		public void setSize(String size) {
 			this.size = size;
 		}
-		
 
 	}
 
@@ -647,9 +646,8 @@ public class PersistenceService {
 					if (mobile) {
 						dayInfo.pagesCountMobile++;
 					}
-					String path = URLHelper.removeParam(track.getPath());
-
-					if (path.contains("html") && !path.contains("404") && !path.startsWith("/preview") && !path.startsWith("/edit") && !path.startsWith("/ajax") && !path.startsWith("/modules") && !path.startsWith("/wait.html") && !path.startsWith("/status.html") && !path.startsWith("/page")) {
+					String path = URLHelper.removeParam(track.getPath());					
+					if ((!path.contains("404") && !path.startsWith("/preview") && !path.startsWith("/edit") && !path.startsWith("/ajax") && !path.startsWith("/modules") && !path.startsWith("/wait.html") && !path.startsWith("/status.html") && !path.startsWith("/page"))) {
 						if (path.length() > 1 && path.endsWith("/")) {
 							path = path.substring(0, path.length() - 1);
 						}
@@ -696,7 +694,9 @@ public class PersistenceService {
 			dayInfo.store(propFile);
 
 		}
-		if (dayInfoCache != null) {
+		if (dayInfoCache != null)
+
+		{
 			dayInfoCache.put(cal.getTimeInMillis(), dayInfo);
 		}
 		return dayInfo;
@@ -1440,7 +1440,7 @@ public class PersistenceService {
 						}
 					}
 				}
-				
+
 				if (in == null) {
 					root = MenuElement.getInstance(ctx);
 					root.setName("root");
@@ -1874,7 +1874,7 @@ public class PersistenceService {
 				OutputStream out = null;
 				try {
 					out = new FileOutputStream(zipFile);
-					//ZipOutputStream outZip = new ZipOutputStream(out);
+					// ZipOutputStream outZip = new ZipOutputStream(out);
 
 					Set<String> includes = new HashSet<String>();
 					includes.addAll(staticConfig.getBackupIncludePatterns());
@@ -1981,7 +1981,10 @@ public class PersistenceService {
 	}
 
 	public static void main(String[] args) throws Exception {
-		SecureFile.decodeCyptedFile(new File("c:/trans/test.xml"), "fdkjf3ddF32", new ByteArrayOutputStream());
+		boolean test = true;
+
+		System.out.println(test ^ true);
+		System.out.println(test ^ false);
 	}
 
 	public boolean isLoaded() {

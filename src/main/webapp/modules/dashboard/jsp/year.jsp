@@ -233,7 +233,6 @@ jQuery(document).ready(function() {
 
 </table>
 
-
 <script type="text/javascript">
 
 function updateYearForPages(year) {
@@ -261,6 +260,51 @@ function updateYearForPages(year) {
 
 jQuery(document).ready(function() {	
 	updateYearForPages(${info.currentYear});	
+});
+</script>
+
+</div>
+
+<c:url var="resourcesAjaxURL" value="${info.currentAjaxURL}" context="/">
+<c:param name="webaction" value="dashboard.readTracker" />
+<c:param name="type" value="resources" />
+</c:url>
+
+<h3>${i18n.edit['dashboard.title.resources']}</h3>
+
+<div class="content ${not empty lightInterface?'light':''}">
+
+<table cellpadding="0" cellspacing="0" border="0" class="dyntable cell-border compact stripe" id="resourcesAjaxURL">
+
+</table>
+
+<script type="text/javascript">
+
+function updateYearForResources(year) {
+	jQuery.ajax({
+	    url: '${resourcesAjaxURL}&y='+year,
+	    success: function(ajaxData){	    	
+	    	var countrytable = jQuery('#resourcesAjaxURL').DataTable({
+	    		data: ajaxData.datas,
+	    		columns: [
+	    	      { title: "page" },
+	    	      { title: "visit" }
+	    	    ],
+	    	    order: [[ 1, "desc" ]],
+				bDestroy: true,
+				dom: 'Bfrtip',
+				buttons: [
+					'copyHtml5',
+					'excelHtml5',
+					'csvHtml5'
+				]
+	    	  });
+	    }
+	});
+}
+
+jQuery(document).ready(function() {	
+	updateYearForResources(${info.currentYear});	
 });
 </script>
 
