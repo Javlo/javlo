@@ -26,6 +26,7 @@ function generalUpdateYear(year) {
 	updateDaysForTime(year);
 	updateYearForCountries(year);
 	updateYearForPages(year);
+	updateYearForResources(year);
 }
 
 <c:url var="ajaxURL" value="${info.currentAjaxURL}" context="/">
