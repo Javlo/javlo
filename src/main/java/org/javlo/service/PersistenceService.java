@@ -566,7 +566,7 @@ public class PersistenceService {
 		return getTrackDayInfo(cal, globalMem, dayInfoCache, getTrackingDirectory());
 	}
 
-	public synchronized static DayInfo getTrackDayInfo(Calendar cal, Map<String, Object> globalMem, TimeMap<Long, DayInfo> dayInfoCache, String trackingDir) throws IOException {
+	public static DayInfo getTrackDayInfo(Calendar cal, Map<String, Object> globalMem, TimeMap<Long, DayInfo> dayInfoCache, String trackingDir) throws IOException {
 
 		DayInfo dayInfo = null;
 		if (dayInfoCache != null) {
@@ -694,9 +694,7 @@ public class PersistenceService {
 			dayInfo.store(propFile);
 
 		}
-		if (dayInfoCache != null)
-
-		{
+		if (dayInfoCache != null) {
 			dayInfoCache.put(cal.getTimeInMillis(), dayInfo);
 		}
 		return dayInfo;
