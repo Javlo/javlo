@@ -690,7 +690,7 @@ public class PersistenceService {
 				}
 				dayInfo.mostSavePage = ContentService.getPageNameFromPath(maxPage);
 			}
-			logger.info(" - store dayInfo for : " + StringHelper.renderDate(cal.getTime()));
+			logger.info(" - store dayInfo for : " + StringHelper.renderDate(cal.getTime())+" - "+propFile.getCanonicalFile().getCanonicalPath());
 			dayInfo.store(propFile);
 
 		}
