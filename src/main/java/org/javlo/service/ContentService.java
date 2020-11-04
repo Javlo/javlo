@@ -641,7 +641,9 @@ public class ContentService implements IPrintInfo {
 																// || !previewMode
 				if (previewNav == null) {
 					// first step : load view nav
-					getNavigation(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE));
+					if (previewMode) {
+						getNavigation(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE));
+					}
 					synchronized (ctx.getGlobalContext().getLockLoadContent()) {
 						if (previewNav == null) {
 							long startTime = System.currentTimeMillis();
