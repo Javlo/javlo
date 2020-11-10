@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,6 +36,8 @@ import org.javlo.template.Template;
 import org.javlo.template.TemplatePlugin;
 
 public class XMLManipulationHelper {
+	
+	private static Logger logger = Logger.getLogger(XMLManipulationHelper.class.getName());
 
 	private static final Set<String> autoCloseTag = new HashSet<String>(Arrays.asList(new String[] { "input", "meta", "link", "script", "img", "hr", "br" }));
 
@@ -330,7 +333,7 @@ public class XMLManipulationHelper {
 
 			if (jspFile != null) {
 				if (!jspFile.exists()) {
-					System.out.println(">>>>>>>>> XMLManipulationHelper.convertHTMLtoJSP : jspFile = "+jspFile); //TODO: remove debug trace
+					logger.info("create : "+jspFile);
 					jspFile.createNewFile();
 				}
 			}
