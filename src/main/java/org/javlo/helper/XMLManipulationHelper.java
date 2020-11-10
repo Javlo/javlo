@@ -330,6 +330,7 @@ public class XMLManipulationHelper {
 
 			if (jspFile != null) {
 				if (!jspFile.exists()) {
+					System.out.println(">>>>>>>>> XMLManipulationHelper.convertHTMLtoJSP : jspFile = "+jspFile); //TODO: remove debug trace
 					jspFile.createNewFile();
 				}
 			}

@@ -32,6 +32,10 @@ import java.text.Normalizer;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -1009,12 +1013,12 @@ public class StringHelper {
 		}
 		return sum % 9;
 	}
-	
-	public static String replaceFileExtension (String file, String ext) {
+
+	public static String replaceFileExtension(String file, String ext) {
 		if (!file.contains(".")) {
-			return file+'.'+ext;
+			return file + '.' + ext;
 		} else {
-			return file.substring(0, file.lastIndexOf('.'))+ext;
+			return file.substring(0, file.lastIndexOf('.')) + ext;
 		}
 	}
 
@@ -1893,6 +1897,26 @@ public class StringHelper {
 		}
 	}
 
+	public static LocalDate parseInputLocalDate(String inDate) {
+		try {
+			return parseLocalDate(inDate, "yyyy-MM-dd");
+		} catch (Exception e) {
+			return parseLocalDate(inDate, "ddMMyyyy");
+		}
+	}
+
+	public static LocalTime parseInputLocalTime(String inTime) {
+		try {
+			return parseLocalTime(inTime, "HH:mm");
+		} catch (Exception e) {
+			try {
+				return parseLocalTime(inTime, "HH:mm:ss");
+			} catch (Exception e2) {
+				return parseLocalTime(inTime, "HH:mm:ss.SSS");
+			}
+		}
+	}
+
 	public static Date parseInputDateAndTime(String inDate) throws ParseException {
 		try {
 			return parseDate(inDate, "yyyy-MM-dd HH:mm:ss");
@@ -2095,6 +2119,30 @@ public class StringHelper {
 		}
 		SimpleDateFormat format = new SimpleDateFormat(pattern);
 		return format.parse(inDate);
+	}
+
+	public static LocalDate parseLocalDate(String inDate, String pattern) {
+		if (StringHelper.isEmpty(inDate)) {
+			return null;
+		}
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+		return LocalDate.parse(inDate, formatter);
+	}
+
+	public static LocalTime parseLocalTime(String inDate, String pattern) {
+		if (StringHelper.isEmpty(inDate)) {
+			return null;
+		}
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+		return LocalTime.parse(inDate, formatter);
+	}
+
+	public static LocalDateTime parseLocalDateTime(String inDate, String pattern) {
+		if (inDate == null) {
+			return null;
+		}
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+		return LocalDateTime.parse(inDate, formatter);
 	}
 
 	public static Date parseDateOrTime(String inDate) throws ParseException {
@@ -2390,6 +2438,17 @@ public class StringHelper {
 		}
 		return renderDate(date, "dd/MM/yyyy");
 	}
+	
+	public static String renderDate(LocalDateTime date, String pattern) {
+		if (date == null) {
+			return null;
+		}
+		if (pattern == null) {
+			return renderDateAndTime(date);
+		}
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern); 
+		return formatter.format(date);
+	}
 
 	public static String renderDate(Date date, String pattern) {
 		if (date == null) {
@@ -2400,7 +2459,36 @@ public class StringHelper {
 		}
 		SimpleDateFormat format = new SimpleDateFormat(pattern);
 		return format.format(date);
+	}
+	
+	public static String renderDate(LocalTime time, String pattern) {
+		if (time == null) {
+			return null;
+		}
+		if (pattern == null) {
+			return renderTime(time);
+		}
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern); 
+		return formatter.format(time);
 
+	}
+	
+	public static String renderDate(LocalDate date) {
+		if (date == null) {
+			return null;
+		}
+		return renderDate(date, "dd/MM/yyyy");
+	}
+
+	public static String renderDate(LocalDate date, String pattern) {
+		if (date == null) {
+			return null;
+		}
+		if (pattern == null) {
+			return renderDate(date);
+		}
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern); 
+		return formatter.format(date);
 	}
 
 	public static Date parseIso8601(String input) throws java.text.ParseException {
@@ -2627,6 +2715,20 @@ public class StringHelper {
 			return null;
 		}
 		return renderDate(date, "dd/MM/yyyy HH:mm:ss");
+	}
+	
+	public static String renderDateAndTime(LocalDateTime date) {
+		if (date == null) {
+			return null;
+		}
+		return renderDate(date, "dd/MM/yyyy HH:mm:ss");
+	}
+	
+	public static String renderTime(LocalTime time) {
+		if (time == null) {
+			return null;
+		}
+		return renderDate(time, "HH:mm");
 	}
 
 	public static String renderTimeShort(Date date) {
@@ -4292,7 +4394,7 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(">>>>>>>>> StringHelper.main : "+createI18NURL("Réduction d'impôts de 60% (au lieu de 45%) pour tout don fait à une association ou ONG en 2020 !")); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> StringHelper.main : " + createI18NURL("Réduction d'impôts de 60% (au lieu de 45%) pour tout don fait à une association ou ONG en 2020 !")); // TODO: remove debug trace
 	}
 
 	/**
@@ -4320,9 +4422,9 @@ public class StringHelper {
 			return defaultValue;
 		}
 	}
-	
+
 	public static String toJsonValue(String data) {
 		return new Gson().toJson(data);
-	}	
+	}
 
 }

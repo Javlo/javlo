@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,6 +33,8 @@ import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 
 public class TicketService {
+	
+	private static Logger logger = Logger.getLogger(TicketService.class.getName());
 
 	private static final String KEY = TicketService.class.getName();
 
@@ -68,8 +71,13 @@ public class TicketService {
 			return null;
 		}
 		String xml = ResourceHelper.loadStringFromFile(file);
-		TicketBean bean = (TicketBean) ResourceHelper.loadBeanFromXML(xml);
-		return bean;
+		try {
+			TicketBean bean = (TicketBean) ResourceHelper.loadBeanFromXML(xml);
+			return bean;
+		} catch (Exception e) {
+			logger.severe("error on file : "+file+" ("+e.getMessage()+")");
+		}
+		return  null;
 	}
 	
 	public static File getTempImageFile(ContentContext ctx) throws Exception {

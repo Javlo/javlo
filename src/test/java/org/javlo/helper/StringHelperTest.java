@@ -4,6 +4,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -195,6 +198,13 @@ public class StringHelperTest extends TestCase {
 	  date = StringHelper.parseRangeDate(range);
 	  assertEquals(StringHelper.renderDate(date[0]),"02/06/2015");
 	  assertEquals(date.length, 1);
+  }
+  
+  public void testRenderDate() throws ParseException {
+	  Date date = StringHelper.parseDate("10/10/2002");
+	  assertEquals(StringHelper.renderDate(date), "10/10/2002");
+	  LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+	  assertEquals(StringHelper.renderDate(localDate), "10/10/2002");
   }
   
   public void testiIsMail() {
@@ -510,6 +520,20 @@ public class StringHelperTest extends TestCase {
 		assertEquals(StringHelper.renderDate(StringHelper.smartParseDate("27 nov. 1975", "fr")), "27/11/1975");
 		assertEquals(StringHelper.renderDate(StringHelper.smartParseDate("27 november 1975")), "27/11/1975");
 		assertEquals(StringHelper.renderDate(StringHelper.smartParseDate("27 novembre 1975", "fr")), "27/11/1975");
+	}
+	
+	public void testLocalTime() throws ParseException {	
+		LocalDate date = StringHelper.parseInputLocalDate("1975-11-27");
+		assertEquals(date.getDayOfMonth(), 27);
+		assertEquals(date.getMonthValue(), 11);
+		assertEquals(date.getYear(), 1975);
+		LocalTime time = StringHelper.parseInputLocalTime("18:30:12");
+		assertEquals(time.getHour(), 18);
+		assertEquals(time.getMinute(), 30);
+		assertEquals(time.getSecond(), 12);
+		
+		assertNull(StringHelper.parseInputLocalTime(""));
+		assertNull(StringHelper.parseInputLocalTime(null));
 	}
 	
 }
