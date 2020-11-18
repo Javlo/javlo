@@ -850,3 +850,4 @@ Security in case of vulnerabilities.
 ### fixed  
   - don't redirect old url if no urlfactory asked
   - js content type
+  - update security on file servlet
