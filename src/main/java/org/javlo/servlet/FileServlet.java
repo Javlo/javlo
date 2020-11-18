@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.ztatic.StaticInfo;
@@ -141,11 +142,13 @@ public class FileServlet extends HttpServlet {
 					response.sendError(HttpServletResponse.SC_FORBIDDEN);
 					return;
 				} else {
-					Set<String> userRoles = user.getRoles();
-					userRoles.retainAll(roles);
-					if (userRoles.size() == 0) {
-						response.sendError(HttpServletResponse.SC_FORBIDDEN);
-						return;
+					if (!AdminUserSecurity.getInstance().canRole(user, AdminUserSecurity.CONTENT_ROLE)) {
+						Set<String> userRoles = user.getRoles();
+						userRoles.retainAll(roles);
+						if (userRoles.size() == 0) {
+							response.sendError(HttpServletResponse.SC_FORBIDDEN);
+							return;
+						}
 					}
 				}
 			}
