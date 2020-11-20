@@ -489,7 +489,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 	 */
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-
+		
 		MenuElement currentPage = ctx.getCurrentPage();
 		MenuElement parentPage = currentPage;
 		if (isLockParentPage()) {
@@ -597,7 +597,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			}
 			out.println("<div class=\"clear\">&nbsp;</div></div>");
 		}
-
+		
 		return new String(outStream.toByteArray());
 	}
 

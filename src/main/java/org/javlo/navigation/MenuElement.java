@@ -200,6 +200,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		ContactBean contactBean = null;
 		String font = null;
 		String metaHead = null;
+		Map<String, Object> contentAsMap;
 
 		private String forward = null;
 
@@ -530,6 +531,14 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 		public void setForward(String forward) {
 			this.forward = forward;
+		}
+
+		public Map<String, Object> getContentAsMap() {
+			return contentAsMap;
+		}
+
+		public void setContentAsMap(Map<String, Object> contentAsMap) {
+			this.contentAsMap = contentAsMap;
 		}
 
 	}
@@ -5808,6 +5817,12 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			map.put("blocked", "no read access for : " + ctx.getCurrentUser());
 			return map;
 		}
+		
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+
+		if (desc.contentAsMap != null) {
+			return desc.contentAsMap;
+		}
 
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		String lgParam = rs.getParameter("lg", null);
@@ -5870,6 +5885,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			}
 			map.put("children", childrenArray);
 		}
+		desc.contentAsMap = map;
 		return map;
 	}
 

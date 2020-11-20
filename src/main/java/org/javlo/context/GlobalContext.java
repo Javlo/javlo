@@ -365,19 +365,24 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return masterContext;
 	}
 
-	public static GlobalContext getMasterContext(ContentContext ctx) throws IOException {
-		GlobalContext masterContext = getRealInstance(ctx.getRequest().getSession(), StaticConfig.getInstance(ctx.getRequest().getSession()).getMasterContext(), true);
-		PersistenceService persistenceService;
-		try {
-			persistenceService = PersistenceService.getInstance(masterContext);
-			if (!persistenceService.isLoaded()) {
-				Map<String, String> contentAttributeMap = new HashMap<String, String>();
-				ContentContext masterContentContext = new ContentContext(ctx);
-				masterContentContext.setForceGlobalContext(masterContext);
-				persistenceService.load(masterContentContext, ctx.getRenderMode(), contentAttributeMap, null);
+	public GlobalContext getMasterContext(ContentContext ctx) throws IOException {
+		final String KEY = "_masterGlobalContext";
+		GlobalContext masterContext = (GlobalContext)ctx.getServletContext().getAttribute(KEY);
+		if (masterContext == null) {
+			masterContext = getRealInstance(ctx.getRequest().getSession(), StaticConfig.getInstance(ctx.getRequest().getSession()).getMasterContext(), true);
+			PersistenceService persistenceService;
+			try {
+				persistenceService = PersistenceService.getInstance(masterContext);
+				if (!persistenceService.isLoaded()) {
+					Map<String, String> contentAttributeMap = new HashMap<String, String>();
+					ContentContext masterContentContext = new ContentContext(ctx);
+					masterContentContext.setForceGlobalContext(masterContext);
+					persistenceService.load(masterContentContext, ctx.getRenderMode(), contentAttributeMap, null);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+			ctx.getServletContext().setAttribute(KEY, masterContext);
 		}
 		return masterContext;
 	}

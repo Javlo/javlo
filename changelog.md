@@ -847,6 +847,8 @@ Security in case of vulnerabilities.
   - resources download on dashboard
 ### Modified
   - load view nav before preview nav
+  - cache globalContext in application context
+  - cache contentAsMap
 ### fixed  
   - don't redirect old url if no urlfactory asked
   - js content type
