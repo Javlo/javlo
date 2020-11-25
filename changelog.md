@@ -845,6 +845,7 @@ Security in case of vulnerabilities.
   - access to dynamiccomponent from contentAsMap method
   - generic form : add first, add last
   - resources download on dashboard
+  - autocomplete on smartgenericform
 ### Modified
   - load view nav before preview nav
   - cache globalContext in application context
