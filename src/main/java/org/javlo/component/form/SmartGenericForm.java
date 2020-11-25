@@ -252,6 +252,69 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	}
 
 	public static final String TYPE = "smart-generic-form";
+	
+	private String getAutoCompleteHTMLList() {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+		String[] list = new String[] {"off",
+				"on",
+				"name",
+				"given-name",
+				"additional-name",
+				"family-name",
+				"honorific-suffix",
+				"nickname",
+				"email",
+				"username",
+				"new-password",
+				"current-password",
+				"one-time-code",
+				"organization-title",
+				"organization",
+				"street-address",
+				"address-line1",
+				"address-line2",
+				"address-line3",
+				"address-level1",
+				"country",
+				"country-name",
+				"postal-code",
+				"cc-name",
+				"cc-given-name",
+				"cc-additional-name",
+				"cc-family-name",
+				"cc-number",
+				"cc-exp",
+				"cc-exp-month",
+				"cc-exp-year",
+				"cc-csc",
+				"cc-type",
+				"transaction-currency",
+				"transaction-amount",
+				"language",
+				"bday",
+				"bday-day",
+				"bday-month",
+				"bday-year",
+				"sex",
+				"tel",
+				"tel-country-code",
+				"tel-national",
+				"tel-area-code",
+				"tel-local",
+				"tel-extension",
+				"impp",
+				"url",
+				"photo"
+		};
+		out.println("<datalist id=\"autocomplete-list\">");
+		for (String item : list) {
+			out.print("<option value=\""+item+"\">");
+		}
+		out.println("</datalist>");
+		out.close();
+		return new String(outStream.toByteArray());
+	}
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
@@ -361,12 +424,13 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 		out.println("<div class=\"action-add\"><input type=\"text\" name=\"" + getInputName("new-name") + "\" placeholder=\"field name\" /> <input type=\"submit\" name=\"" + getInputName("add-first") + "\" value=\"add as first\" /> <input type=\"submit\" name=\"" + getInputName("add") + "\" value=\"add as last\" /></div>");
 		if (getFields().size() > 0) {
+			out.println(getAutoCompleteHTMLList());
 			out.println("<table class=\"sTable2\">");
 			String listTitle = "";
 			if (isList()) {
 				listTitle = "<td>list</td>";
 			}
-			out.println("<thead><tr><td>name</td><td>label</td><td>condition</td>" + listTitle + "<td>type</td><td>role</td><td>width</td><td>required</td><td>action</td></tr></thead>");
+			out.println("<thead><tr><td>name</td><td>label</td><td>condition</td><td>autocomplete</td>" + listTitle + "<td>type</td><td>role</td><td>width</td><td>required</td><td>action</td></tr></thead>");
 			out.println("<tbody>");
 			List<Field> fields = getFields();
 			for (Field field : fields) {
@@ -396,6 +460,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		out.println("<td class=\"input name\"><input class=\"form-control\" type=\"text\" name=\"" + getInputName("name-" + field.getName()) + "\" value=\"" + field.getName() + "\"/></td>");
 		out.println("<td class=\"input label\"><input class=\"form-control\" type=\"text\" name=\"" + getInputName("label-" + field.getName()) + "\" value=\"" + field.getLabel() + "\"/></td>");
 		out.println("<td class=\"input condition\"><input class=\"form-control\" type=\"text\" name=\"" + getInputName("condition-" + field.getName()) + "\" value=\"" + field.getCondition() + "\"/></td>");
+		out.println("<td class=\"input autocomplete\"><input class=\"form-control\" type=\"text\" name=\"" + getInputName("autocomplete-" + field.getName()) + "\" list=\"autocomplete-list\" value=\"" + field.getAutocomplete() + "\"/></td>");
 		if (isList()) {
 			if (field.getType().equals("radio") || field.getType().equals("list")) {
 				out.println("<td class=\"list\"><textarea class=\"form-control\" name=\"" + getInputName("list-" + field.getName()) + "\">" + StringHelper.collectionToTextarea(field.getList()) + "</textarea></td>");
@@ -452,7 +517,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				if (name.trim().length() > 0) {
 					String value = p.getProperty(key);
 					String[] data = StringUtils.splitPreserveAllTokens(value, Field.SEP);
-					Field field = new Field(name, (String) LangHelper.arrays(data, 0, ""), (String) LangHelper.arrays(data, 1, ""), (String) LangHelper.arrays(data, 9, ""), (String) LangHelper.arrays(data, 8, ""), (String) LangHelper.arrays(data, 2, ""), (String) LangHelper.arrays(data, 3, ""), (String) LangHelper.arrays(data, 5, ""), Integer.parseInt("" + LangHelper.arrays(data, 6, "0")), Integer.parseInt("" + LangHelper.arrays(data, 7, "6")));
+					Field field = new Field(name, (String) LangHelper.arrays(data, 0, ""), (String) LangHelper.arrays(data, 1, ""), (String) LangHelper.arrays(data, 9, ""), (String) LangHelper.arrays(data, 8, ""), (String) LangHelper.arrays(data, 2, ""), (String) LangHelper.arrays(data, 3, ""), (String) LangHelper.arrays(data, 5, ""), Integer.parseInt("" + LangHelper.arrays(data, 6, "0")), Integer.parseInt("" + LangHelper.arrays(data, 7, "6")), (String) LangHelper.arrays(data, 10, ""));
 					fields.add(field);
 				}
 			}
@@ -747,7 +812,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 							// public Field(String name, String label, String type, String role, String
 							// condition, String value, String list, String registeredList, int order, int
 							// width) {
-							Field field = new Field(cells[i][0].getValue(), label, type, "", cond, "", list, regList, order, width);
+							Field field = new Field(cells[i][0].getValue(), label, type, "", cond, "", list, regList, order, width, "");
 							field.setRequire(StringHelper.isTrue(cells[i][8].getValue()));
 							store(field);
 						}
@@ -825,6 +890,8 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				field.setLabel(rs.getParameter(getInputName("label-" + oldName), ""));
 				String cond = rs.getParameter(getInputName("condition-" + oldName), "");
 				field.setCondition(cond);
+				String autocomplete = rs.getParameter(getInputName("autocomplete-" + oldName), "");
+				field.setAutocomplete(autocomplete);
 				field.setType(rs.getParameter(getInputName("type-" + oldName), ""));
 				field.setRole(rs.getParameter(getInputName("role-" + oldName), ""));
 				field.setWidth(Integer.parseInt(rs.getParameter(getInputName("width-" + oldName), "6")));
@@ -861,9 +928,9 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					store(field);
 					order+=10;
 				}
-				store(new Field(fieldName, "", "text", "", "", "text", "", "", 10, 6));
+				store(new Field(fieldName, "", "text", "", "", "text", "", "", 10, 6, ""));
 			} else {
-				store(new Field(fieldName, "", "text", "", "", "text", "", "", pos + 10, 6));
+				store(new Field(fieldName, "", "text", "", "", "text", "", "", pos + 10, 6, ""));
 			}
 			ctx.getRequest().setAttribute(getNewFieldKey(), fieldName);
 		}

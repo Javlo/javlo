@@ -165,7 +165,15 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 	}
 
 	protected double getFieldDoubleValue(String inField) {
-		return Double.parseDouble(properties.getProperty(inField, "0"));
+		try {
+			String dbl = properties.getProperty(inField, "0");
+			if (dbl.contains(",")) {
+				dbl = dbl.replace(",", ".");
+			}
+			return Double.parseDouble(dbl);
+		} catch (NumberFormatException e) {
+			return 0;
+		}
 	}
 
 	protected long getFieldLongValue(String inField) {

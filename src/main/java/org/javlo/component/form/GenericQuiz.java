@@ -163,11 +163,11 @@ public class GenericQuiz extends SmartGenericForm {
 		private String explanation = "";
 
 		public Question(String name, String label, String type, String value, String list) {
-			super(name, label, type, "", "", value, list, "", 0, 12);
+			super(name, label, type, "", "", value, list, "", 0, 12, "");
 		}
 
 		public Question(String label, String type, String value, String list, int order, String response, String explanation) {
-			super(null, label, type, "", "", value, list, "", 0, 12);
+			super(null, label, type, "", "", value, list, "", 0, 12, "");
 			setResponse(response);
 			setExplanation(explanation);
 			setOrder(order);			

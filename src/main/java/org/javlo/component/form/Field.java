@@ -30,6 +30,7 @@ public class Field {
 	private String name;
 	private String label;
 	private String condition = "";
+	private String autocomplete = "";
 	private String type = "text";
 	private String role = "";
 	private String value;
@@ -56,7 +57,7 @@ public class Field {
 	
 	protected static List<? extends Object> FIELD_ROLES = Arrays.asList(new String[] { "", ROLE_COUNT_PART, "user_firstName", "user_lastName", "user_email", "user_gender", "user_birthdate", "user_organization", "user_vat", "user_address", "user_postCode", "user_city", "user_country", "user_phone", "user_mobile", "user_function" });
 	
-	public Field(String name, String label, String type, String role, String condition, String value, String list, String registeredList, int order, int width) {
+	public Field(String name, String label, String type, String role, String condition, String value, String list, String registeredList, int order, int width, String autocomplete) {
 		this.name = name;
 		this.label = label;
 		this.condition = condition;
@@ -66,6 +67,7 @@ public class Field {
 		this.registeredList = registeredList;
 		this.order = order;
 		this.role = role;
+		this.autocomplete = autocomplete;
 		this.setWidth(width);
 	}
 
@@ -103,7 +105,7 @@ public class Field {
 
 	@Override
 	public String toString() {
-		return getLabel() + SEP + getType() + SEP + getValue() + SEP + list + SEP + getOrder() + SEP + getRegisteredList() + SEP + getOrder() + SEP + getWidth() + SEP + getCondition() + SEP +getRole();
+		return getLabel() + SEP + getType() + SEP + getValue() + SEP + list + SEP + getOrder() + SEP + getRegisteredList() + SEP + getOrder() + SEP + getWidth() + SEP + getCondition() + SEP +getRole() + SEP +getAutocomplete();
 	}
 
 	public boolean isRequire() {
@@ -304,6 +306,14 @@ public class Field {
 				return "xs";
 			}
 		}
+	}
+
+	public String getAutocomplete() {
+		return autocomplete;
+	}
+
+	public void setAutocomplete(String autocomplete) {
+		this.autocomplete = autocomplete;
 	}
 
 }
