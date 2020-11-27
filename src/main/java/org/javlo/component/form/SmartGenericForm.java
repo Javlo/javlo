@@ -444,12 +444,12 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 		out.println("<br /><div class=\"row upload\">");
 		out.println("<div class=\"col-sm-2\"><label for=\"" + getInputName("title") + "\">import fields as xlsx</label></div>");
-		out.println("<div class=\"col-sm-8\"><input type=\"file\" name=\"" + getInputName("form-as-excel") + "\" /></div>");
+		out.println("<div class=\"col-sm-6\"><input type=\"file\" name=\"" + getInputName("form-as-excel") + "\" /></div>");
 		
 		String downloadExcelUrl = URLHelper.createActionURL(ctx, getActionGroupName()+".downloadForm", getType()+getId()+".xlsx");
 		downloadExcelUrl = URLHelper.addParam(downloadExcelUrl, IContentVisualComponent.COMP_ID_REQUEST_PARAM, getId());
 		
-		out.println("<div class=\"col-sm-2 align-right\"><a target=\"_blank\" href=\""+downloadExcelUrl+"\">"+StringHelper.stringToFileName(getPage().getTitle(ctx))+"_"+getId()+".xlsx</a></div>");
+		out.println("<div class=\"col-sm-4 align-right\"><a target=\"_blank\" href=\""+downloadExcelUrl+"\">"+StringHelper.stringToFileName(getPage().getTitle(ctx))+"_"+getId()+".xlsx</a></div>");
 		out.println("</div>");
 
 		out.close();
