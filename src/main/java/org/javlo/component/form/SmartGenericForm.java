@@ -34,12 +34,14 @@ import org.javlo.actions.IAction;
 import org.javlo.actions.IEventRegistration;
 import org.javlo.bean.Company;
 import org.javlo.component.core.AbstractVisualComponent;
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IDataContainer;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.InfoBean;
 import org.javlo.helper.BeanHelper;
+import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
@@ -440,9 +442,14 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			out.println("</table>");
 		}
 
-		out.println("<div class=\"row\">");
+		out.println("<br /><div class=\"row upload\">");
 		out.println("<div class=\"col-sm-2\"><label for=\"" + getInputName("title") + "\">import fields as xlsx</label></div>");
-		out.println("<div class=\"col-sm-10\"><input type=\"file\" name=\"" + getInputName("form-as-excel") + "\" /></div>");
+		out.println("<div class=\"col-sm-8\"><input type=\"file\" name=\"" + getInputName("form-as-excel") + "\" /></div>");
+		
+		String downloadExcelUrl = URLHelper.createActionURL(ctx, getActionGroupName()+".downloadForm", getType()+getId()+".xlsx");
+		downloadExcelUrl = URLHelper.addParam(downloadExcelUrl, IContentVisualComponent.COMP_ID_REQUEST_PARAM, getId());
+		
+		out.println("<div class=\"col-sm-2 align-right\"><a target=\"_blank\" href=\""+downloadExcelUrl+"\">"+StringHelper.stringToFileName(getPage().getTitle(ctx))+"_"+getId()+".xlsx</a></div>");
 		out.println("</div>");
 
 		out.close();
@@ -784,7 +791,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					logger.warning("bad form-as-excel file empty");
 					return false;
 				}
-				if (cells[0].length != 9) {
+				if (cells[0].length != 9 && cells[0].length != 10) {
 					logger.warning("bad form-as-excel width : " + cells[0].length + " in place of 9.");
 					return false;
 				}
@@ -814,6 +821,9 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 							// width) {
 							Field field = new Field(cells[i][0].getValue(), label, type, "", cond, "", list, regList, order, width, "");
 							field.setRequire(StringHelper.isTrue(cells[i][8].getValue()));
+							if (cells[i].length>9) {
+								field.setAutocomplete(StringHelper.neverNull(cells[i][9].getValue()));
+							}
 							store(field);
 						}
 					}
@@ -1678,5 +1688,43 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			}
 		}
 		return outData;
+	}
+	
+	public static String performDownloadForm(ContentContext ctx, RequestService rs) throws Exception {
+		SmartGenericForm comp = (SmartGenericForm)ComponentHelper.getComponentFromRequest(ctx);
+		if (comp == null) {
+			logger.severe("component id not found in the URL.");
+			return "component id not found in the URL.";
+		}
+		Cell[][] cells = XLSTools.createArray(10, comp.getFields().size()+1);
+		int y=0;
+		cells[0][y] = new Cell("name", null, cells, 0, y); y++;
+		cells[0][y] = new Cell("label", null, cells, 0, y); y++;
+		cells[0][y] = new Cell("type", null, cells, 0, y); y++;
+		cells[0][y] = new Cell("condition", null, cells, 0, y); y++;
+		cells[0][y] = new Cell("list", null, cells, 0, y); y++;
+		cells[0][y] = new Cell("registered list", null, cells, 0, y); y++;
+		cells[0][y] = new Cell("order", null, cells, 0, y); y++;
+		cells[0][y] = new Cell("width", null, cells, 0, y); y++;
+		cells[0][y] = new Cell("required", null, cells, 0, y); y++;
+		cells[0][y] = new Cell("autocomplete", null, cells, 0, y); y++;
+		
+		int x=1;
+		for (Field field : comp.getFields()) {
+			y=0;
+			cells[x][y] = new Cell(field.getName(), null, cells, x, y); y++;
+			cells[x][y] = new Cell(field.getLabel(), null, cells, x, y); y++;
+			cells[x][y] = new Cell(field.getType(), null, cells, x, y); y++;
+			cells[x][y] = new Cell(field.getCondition(), null, cells, x, y); y++;
+			cells[x][y] = new Cell(StringHelper.collectionToString(field.getList(),","), null, cells, x, y); y++;
+			cells[x][y] = new Cell(field.getRegisteredList(), null, cells, x, y); y++;
+			cells[x][y] = new Cell(""+field.getOrder(), null, cells, x, y); y++;
+			cells[x][y] = new Cell(""+field.getWidth(), null, cells, x, y); y++;
+			cells[x][y] = new Cell(""+field.isRequire(), null, cells, x, y); y++;
+			cells[x][y] = new Cell(field.getAutocomplete(), null, cells, x, y); y++;
+			x++;
+		}
+		XLSTools.writeXLSX(cells, ctx.getResponse().getOutputStream());
+		return null;
 	}
 }
