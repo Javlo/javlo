@@ -311,10 +311,11 @@ public class SocialLocalService {
 	public List<Post> getPost(SocialFilter socialFilter, boolean admin, boolean needCheck, String username, String group, int size, int index) throws Exception {
 		List<Post> outPost = new LinkedList<Post>();
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
+		PreparedStatement st=null;
 		try {
-			String notAdminQuery = "and (adminValid=1 or author='" + username + "')";
+			String notAdminQuery = "and (adminValid=1 or author='?')";
 			if (needCheck) {
-				notAdminQuery = "and ((adminCheck=1 and adminValid=1) or author='" + username + "')";
+				notAdminQuery = "and ((adminCheck=1 and adminValid=1) or author='?')";
 			}
 			if (admin) {
 				notAdminQuery = "";
@@ -326,14 +327,19 @@ public class SocialLocalService {
 			sql = sql + " order by updateTime desc";
 			if (size > 0) {
 				sql = sql + " limit " + size + " offset " + index;
-			}			
-			ResultSet rs = conn.createStatement().executeQuery(sql);
+			}
+			st = conn.prepareStatement(sql);
+			st.setString(1, username);
+			if (needCheck) {
+				st.setString(2, username);
+			}
+			ResultSet rs = st.executeQuery();
 			while (rs.next()) {
 				Post post = rsToPost(conn, rs, username, admin, needCheck);
 				outPost.add(post);
 			}
 		} finally {
-			dataBaseService.releaseConnection(conn);
+			dataBaseService.releaseConnection(st, conn);
 		}
 		return outPost;
 	}
@@ -387,20 +393,27 @@ public class SocialLocalService {
 	public List<Post> getReplies(SocialFilter socialFilter, String username, boolean admin, boolean needCheck, long mainPost) throws Exception {
 		List<Post> workList = new LinkedList<Post>();
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
+		PreparedStatement st=null;
 		try {
-			String notAdminQuery = "and (adminValid=1 or author='" + username + "')";
+			String notAdminQuery = "and (adminValid=1 or author='?')";
 			if (needCheck) {
-				notAdminQuery = "and (adminCheck=1 and adminValid=1 or author='" + username + "')";
+				notAdminQuery = "and (adminCheck=1 and adminValid=1 or author='?')";
 			}
 			if (admin) {
 				notAdminQuery = "";
 			}
-			ResultSet rs = conn.createStatement().executeQuery("select * from post where mainPost='" + mainPost + "' " + notAdminQuery + " order by time asc");
+			st = conn.prepareStatement("select * from post where mainPost='" + mainPost + "' " + notAdminQuery + " order by time asc");
+			st.setString(1,  username);
+			if (needCheck) {
+				st.setString(2,  username);
+			}
+			ResultSet rs = st.executeQuery();
+			
 			while (rs.next()) {
 				workList.add(rsToPost(conn, rs, username, admin, needCheck));
 			}
 		} finally {
-			dataBaseService.releaseConnection(conn);
+			dataBaseService.releaseConnection(st, conn);
 		}
 		Map<Long, Post> masterPost = new HashMap<Long, Post>();
 		for (Post p : workList) {
@@ -574,12 +587,16 @@ public class SocialLocalService {
 
 	public void deletePost(boolean admin, String author, long id) throws Exception {
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
+		Statement st = null;
 		try {
-			Statement st = conn.createStatement();
+			
 			ResultSet rs;
 			if (!admin) {
-				rs = st.executeQuery("select * from post where id=" + id + " and author='" + author + "'");
+				st = conn.prepareStatement("select * from post where id=" + id + " and author='?'");
+				((PreparedStatement)st).setString(1, author);
+				rs = ((PreparedStatement)st).executeQuery();
 			} else {
+				st = conn.createStatement();
 				rs = st.executeQuery("select * from post where id=" + id);
 			}
 			if (rs.next()) {
@@ -588,7 +605,7 @@ public class SocialLocalService {
 				st.execute("delete from post where id=" + id);
 			}
 		} finally {
-			dataBaseService.releaseConnection(conn);
+			dataBaseService.releaseConnection(st, conn);
 		}
 	}
 
