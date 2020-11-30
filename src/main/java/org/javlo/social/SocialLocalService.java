@@ -258,9 +258,6 @@ public class SocialLocalService {
 			//System.out.println("sql = "+sql);
 			st = conn.prepareStatement(sql);
 			st.setString(1, username);
-			if (needCheck) {
-				st.setString(2, username);
-			}
 			ResultSet rs = st.executeQuery();
 			if (rs.next()) {
 				return rs.getLong(1);
@@ -318,9 +315,9 @@ public class SocialLocalService {
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		PreparedStatement st=null;
 		try {
-			String notAdminQuery = "and (adminValid=1 or author='?')";
+			String notAdminQuery = "and (adminValid=1 or author=?)";
 			if (needCheck) {
-				notAdminQuery = "and ((adminCheck=1 and adminValid=1) or author='?')";
+				notAdminQuery = "and ((adminCheck=1 and adminValid=1) or author=?)";
 			}
 			if (admin) {
 				notAdminQuery = "";
@@ -334,10 +331,7 @@ public class SocialLocalService {
 				sql = sql + " limit " + size + " offset " + index;
 			}
 			st = conn.prepareStatement(sql);
-			st.setString(1, username);
-			if (needCheck) {
-				st.setString(2, username);
-			}
+			st.setString(1, username);			
 			ResultSet rs = st.executeQuery();
 			while (rs.next()) {
 				Post post = rsToPost(conn, rs, username, admin, needCheck);
