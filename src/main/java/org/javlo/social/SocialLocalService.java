@@ -406,7 +406,9 @@ public class SocialLocalService {
 				notAdminQuery = "";
 			}
 			st = conn.prepareStatement("select * from post where mainPost='" + mainPost + "' " + notAdminQuery + " order by time asc");
-			st.setString(1,  username);
+			if (!StringHelper.isEmpty(notAdminQuery)) {
+				st.setString(1,  username);
+			}
 			if (needCheck) {
 				st.setString(2,  username);
 			}
