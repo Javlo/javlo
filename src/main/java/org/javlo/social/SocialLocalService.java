@@ -241,11 +241,11 @@ public class SocialLocalService {
 
 	public long getPostListSize(SocialFilter socialFilter, String username, String group, boolean admin, boolean needCheck) throws Exception {
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
+		PreparedStatement st=null;
 		try {
-
-			String notAdminQuery = "and (adminValid=1 or author='" + username + "')";
+			String notAdminQuery = "and (adminValid=1 or author='?')";
 			if (needCheck) {
-				notAdminQuery = "and ((adminCheck=1 and adminValid=1) or author='" + username + "')";
+				notAdminQuery = "and ((adminCheck=1 and adminValid=1) or author='?')";
 			}
 			if (admin) {
 				notAdminQuery = "";
@@ -255,13 +255,18 @@ public class SocialLocalService {
 			if (socialFilter != null && socialFilter.isNoResponse() && admin) {
 				sql = sql + " AND mainpost.adminValid=1 AND (select count(*) from post childPost where childPost.parent=mainpost.id)=0";
 			}
-			System.out.println("sql = "+sql);
-			ResultSet rs = conn.createStatement().executeQuery(sql);
+			//System.out.println("sql = "+sql);
+			st = conn.prepareStatement(sql);
+			st.setString(1, username);
+			if (needCheck) {
+				st.setString(2, username);
+			}
+			ResultSet rs = st.executeQuery();
 			if (rs.next()) {
 				return rs.getLong(1);
 			}
 		} finally {
-			dataBaseService.releaseConnection(conn);
+			dataBaseService.releaseConnection(st, conn);
 		}
 		return -1;
 	}
