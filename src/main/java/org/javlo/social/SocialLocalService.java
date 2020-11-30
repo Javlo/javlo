@@ -409,9 +409,6 @@ public class SocialLocalService {
 			if (!StringHelper.isEmpty(notAdminQuery)) {
 				st.setString(1,  username);
 			}
-			if (needCheck) {
-				st.setString(2,  username);
-			}
 			ResultSet rs = st.executeQuery();
 			
 			while (rs.next()) {
