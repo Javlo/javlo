@@ -257,7 +257,9 @@ public class SocialLocalService {
 			}
 			//System.out.println("sql = "+sql);
 			st = conn.prepareStatement(sql);
-			st.setString(1, username);
+			if (!StringHelper.isEmpty(notAdminQuery)) {
+				st.setString(1, username);
+			}
 			ResultSet rs = st.executeQuery();
 			if (rs.next()) {
 				return rs.getLong(1);
@@ -331,7 +333,9 @@ public class SocialLocalService {
 				sql = sql + " limit " + size + " offset " + index;
 			}
 			st = conn.prepareStatement(sql);
-			st.setString(1, username);			
+			if (!StringHelper.isEmpty(notAdminQuery)) {
+				st.setString(1, username);			
+			}
 			ResultSet rs = st.executeQuery();
 			while (rs.next()) {
 				Post post = rsToPost(conn, rs, username, admin, needCheck);
