@@ -43,10 +43,10 @@ public class SocialLocalService {
 			outService.createDataBase();
 			if (globalContext != null) {
 				globalContext.setAttribute(KEY, outService);
-				
+
 				SocialStat st = outService.getSocialStat(2018);
-				logger.info("social stat 2018 : "+st);
-				
+				logger.info("social stat 2018 : " + st);
+
 			}
 		}
 		return outService;
@@ -117,7 +117,7 @@ public class SocialLocalService {
 		}
 		return outPost;
 	}
-	
+
 	public SocialStat getSocialStat(LocalDate date) throws Exception {
 		SocialStat outStat = new SocialStat();
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
@@ -147,19 +147,19 @@ public class SocialLocalService {
 		}
 		return outStat;
 	}
-	
+
 	public SocialStat getSocialStat(int year) throws Exception {
 		SocialStat outStat = new SocialStat();
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
-		
-		Calendar start = Calendar.getInstance();		
+
+		Calendar start = Calendar.getInstance();
 		start.set(Calendar.YEAR, year);
 		start.set(Calendar.DAY_OF_MONTH, 1);
 		start.set(Calendar.MONTH, 0);
 		start.set(Calendar.HOUR, 0);
 		start.set(Calendar.MINUTE, 0);
 		start.set(Calendar.SECOND, 0);
-		
+
 		Calendar end = Calendar.getInstance();
 		end.set(Calendar.YEAR, year);
 		end.set(Calendar.DAY_OF_MONTH, 31);
@@ -167,7 +167,7 @@ public class SocialLocalService {
 		end.set(Calendar.HOUR, 0);
 		end.set(Calendar.MINUTE, 0);
 		end.set(Calendar.SECOND, 0);
-		
+
 		try {
 			PreparedStatement ps = conn.prepareStatement("select count(distinct author) from post where adminvalid=true AND time > ? AND time < ?");
 			ps.setDate(1, new java.sql.Date(start.getTime().getTime()));
@@ -179,7 +179,7 @@ public class SocialLocalService {
 			ps.close();
 			ps = conn.prepareStatement("select count(*) from post where adminvalid=true AND time > ? and time < ?");
 			ps.setDate(1, new java.sql.Date(start.getTime().getTime()));
-			ps.setDate(2, new java.sql.Date(end.getTime().getTime()));			
+			ps.setDate(2, new java.sql.Date(end.getTime().getTime()));
 			rs = ps.executeQuery();
 			if (rs.next()) {
 				outStat.setTotalPost(rs.getInt(1));
@@ -187,7 +187,7 @@ public class SocialLocalService {
 			ps.close();
 			ps = conn.prepareStatement("select count(*) from post where adminvalid=true AND parent is null AND time > ? and time < ?");
 			ps.setDate(1, new java.sql.Date(start.getTime().getTime()));
-			ps.setDate(2, new java.sql.Date(end.getTime().getTime()));			
+			ps.setDate(2, new java.sql.Date(end.getTime().getTime()));
 			rs = ps.executeQuery();
 			if (rs.next()) {
 				outStat.setTotalMessage(rs.getInt(1));
@@ -233,15 +233,17 @@ public class SocialLocalService {
 		}
 		return filterSQL;
 	}
-	
+
 	public long __getPostListSize(SocialFilter socialFilter, String username, String group, boolean admin, boolean needCheck) throws Exception {
-		//public List<Post> getPost(SocialFilter socialFilter, boolean admin, boolean needCheck, String username, String group, int size, int index) throws Exception {
-		return getPost(socialFilter, admin, needCheck, username, group,-1,-1).size();
+		// public List<Post> getPost(SocialFilter socialFilter, boolean admin, boolean
+		// needCheck, String username, String group, int size, int index) throws
+		// Exception {
+		return getPost(socialFilter, admin, needCheck, username, group, -1, -1).size();
 	}
 
 	public long getPostListSize(SocialFilter socialFilter, String username, String group, boolean admin, boolean needCheck) throws Exception {
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
-		PreparedStatement st=null;
+		PreparedStatement st = null;
 		try {
 			String notAdminQuery = "and (adminValid=1 or author=?)";
 			if (needCheck) {
@@ -255,7 +257,7 @@ public class SocialLocalService {
 			if (socialFilter != null && socialFilter.isNoResponse() && admin) {
 				sql = sql + " AND mainpost.adminValid=1 AND (select count(*) from post childPost where childPost.parent=mainpost.id)=0";
 			}
-			//System.out.println("sql = "+sql);
+			// System.out.println("sql = "+sql);
 			st = conn.prepareStatement(sql);
 			if (!StringHelper.isEmpty(notAdminQuery)) {
 				st.setString(1, username);
@@ -287,7 +289,7 @@ public class SocialLocalService {
 	public long getPostListSize(String group) throws Exception {
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		try {
-			String sql = "select count(id) from post where groupName='" + group + "'";			
+			String sql = "select count(id) from post where groupName='" + group + "'";
 			ResultSet rs = conn.createStatement().executeQuery(sql);
 			if (rs.next()) {
 				return rs.getLong(1);
@@ -315,7 +317,7 @@ public class SocialLocalService {
 	public List<Post> getPost(SocialFilter socialFilter, boolean admin, boolean needCheck, String username, String group, int size, int index) throws Exception {
 		List<Post> outPost = new LinkedList<Post>();
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
-		PreparedStatement st=null;
+		PreparedStatement st = null;
 		try {
 			String notAdminQuery = "and (adminValid=1 or author=?)";
 			if (needCheck) {
@@ -334,7 +336,7 @@ public class SocialLocalService {
 			}
 			st = conn.prepareStatement(sql);
 			if (!StringHelper.isEmpty(notAdminQuery)) {
-				st.setString(1, username);			
+				st.setString(1, username);
 			}
 			ResultSet rs = st.executeQuery();
 			while (rs.next()) {
@@ -362,20 +364,25 @@ public class SocialLocalService {
 
 	private int countReplies(long mainPost, String username, boolean admin, boolean needCheck) throws Exception {
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
+		PreparedStatement st = null;
 		try {
-			String notAdminQuery = "and (adminValid=1 or author='" + username + "')";
+			String notAdminQuery = "and (adminValid=1 or author=?)";
 			if (needCheck) {
-				notAdminQuery = "and (adminCheck=1 and adminValid=1 or author='" + username + "')";
+				notAdminQuery = "and (adminCheck=1 and adminValid=1 or author=?)";
 			}
 			if (admin) {
 				notAdminQuery = "";
 			}
-			ResultSet rs = conn.createStatement().executeQuery("select count(id) from post where mainPost='" + mainPost + "' " + notAdminQuery);
+			st = conn.prepareStatement("select count(id) from post where mainPost='" + mainPost + "' " + notAdminQuery);
+			if (!StringHelper.isEmpty(username)) {
+				st.setString(1, username);
+			}
+			ResultSet rs = st.executeQuery();
 			if (rs.next()) {
 				return rs.getInt(1);
 			}
 		} finally {
-			dataBaseService.releaseConnection(conn);
+			dataBaseService.releaseConnection(st, conn);
 		}
 		return -1;
 	}
@@ -396,7 +403,7 @@ public class SocialLocalService {
 	public List<Post> getReplies(SocialFilter socialFilter, String username, boolean admin, boolean needCheck, long mainPost) throws Exception {
 		List<Post> workList = new LinkedList<Post>();
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
-		PreparedStatement st=null;
+		PreparedStatement st = null;
 		try {
 			String notAdminQuery = "and (adminValid=1 or author='?')";
 			if (needCheck) {
@@ -407,10 +414,10 @@ public class SocialLocalService {
 			}
 			st = conn.prepareStatement("select * from post where mainPost='" + mainPost + "' " + notAdminQuery + " order by time asc");
 			if (!StringHelper.isEmpty(notAdminQuery)) {
-				st.setString(1,  username);
+				st.setString(1, username);
 			}
 			ResultSet rs = st.executeQuery();
-			
+
 			while (rs.next()) {
 				workList.add(rsToPost(conn, rs, username, admin, needCheck));
 			}
@@ -591,12 +598,12 @@ public class SocialLocalService {
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		Statement st = null;
 		try {
-			
+
 			ResultSet rs;
 			if (!admin) {
 				st = conn.prepareStatement("select * from post where id=" + id + " and author='?'");
-				((PreparedStatement)st).setString(1, author);
-				rs = ((PreparedStatement)st).executeQuery();
+				((PreparedStatement) st).setString(1, author);
+				rs = ((PreparedStatement) st).executeQuery();
 			} else {
 				st = conn.createStatement();
 				rs = st.executeQuery("select * from post where id=" + id);
