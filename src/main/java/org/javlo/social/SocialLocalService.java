@@ -374,7 +374,7 @@ public class SocialLocalService {
 				notAdminQuery = "";
 			}
 			st = conn.prepareStatement("select count(id) from post where mainPost='" + mainPost + "' " + notAdminQuery);
-			if (!StringHelper.isEmpty(username)) {
+			if (!StringHelper.isEmpty(notAdminQuery)) {
 				st.setString(1, username);
 			}
 			ResultSet rs = st.executeQuery();
