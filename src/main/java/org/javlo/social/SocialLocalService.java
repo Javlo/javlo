@@ -405,9 +405,9 @@ public class SocialLocalService {
 		Connection conn = dataBaseService.getConnection(DATABASE_NAME);
 		PreparedStatement st = null;
 		try {
-			String notAdminQuery = "and (adminValid=1 or author='?')";
+			String notAdminQuery = "and (adminValid=1 or author=?)";
 			if (needCheck) {
-				notAdminQuery = "and (adminCheck=1 and adminValid=1 or author='?')";
+				notAdminQuery = "and (adminCheck=1 and adminValid=1 or author=?)";
 			}
 			if (admin) {
 				notAdminQuery = "";
