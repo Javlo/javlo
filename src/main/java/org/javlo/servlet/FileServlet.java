@@ -140,7 +140,7 @@ public class FileServlet extends HttpServlet {
 			if (roles.size() > 0) {
 				User user = UserFactory.createUserFactory(request).getCurrentUser(globalContext, request.getSession());
 				if (user == null) {
-					logger.warning("no access to : "+file+"  (roles:"+StringHelper.collectionToString(roles,","));
+					logger.warning("no access to : "+file+"  (roles:"+StringHelper.collectionToString(roles,",")+')');
 					response.sendError(HttpServletResponse.SC_FORBIDDEN);
 					return;
 				} else {
