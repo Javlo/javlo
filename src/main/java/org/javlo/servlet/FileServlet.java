@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.StringHelper;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
@@ -139,6 +140,7 @@ public class FileServlet extends HttpServlet {
 			if (roles.size() > 0) {
 				User user = UserFactory.createUserFactory(request).getCurrentUser(globalContext, request.getSession());
 				if (user == null) {
+					logger.warning("no access to : "+file+"  (roles:"+StringHelper.collectionToString(roles,","));
 					response.sendError(HttpServletResponse.SC_FORBIDDEN);
 					return;
 				} else {
@@ -146,6 +148,7 @@ public class FileServlet extends HttpServlet {
 						Set<String> userRoles = user.getRoles();
 						userRoles.retainAll(roles);
 						if (userRoles.size() == 0) {
+							logger.warning("user:"+user.getLogin()+ " have no access to : "+file);
 							response.sendError(HttpServletResponse.SC_FORBIDDEN);
 							return;
 						}
