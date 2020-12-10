@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 
 import javax.mail.internet.InternetAddress;
 
+import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -521,6 +522,11 @@ public class DefaultTemplate extends Template {
 	@Override
 	public boolean isImportParentComponents() {
 		return true;
+	}
+	
+	@Override
+	public String getDefaultArea() {
+		return ComponentBean.DEFAULT_AREA;
 	}
 	
 }

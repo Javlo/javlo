@@ -3529,7 +3529,16 @@ public class Template implements Comparable<Template> {
 		}
 		return outFonts;
 	}
-
+	
+	public String getDefaultArea() {
+		String defaultArea = properties.getProperty("area.default");
+		if (defaultArea == null) {
+			return getParent().getDefaultArea();
+		} else {
+			return defaultArea;
+		}
+	}
+	
 	public boolean isFake() {
 		return fakeName != null;
 	}

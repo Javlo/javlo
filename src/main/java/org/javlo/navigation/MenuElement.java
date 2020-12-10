@@ -3016,7 +3016,12 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		if (desc.imageLink != null) {
 			return desc.imageLink;
 		}
-		ContentContext specialCtx = ctx.getContextWithArea(ComponentBean.DEFAULT_AREA);
+		String defaultArea = ComponentBean.DEFAULT_AREA;
+		Template template = TemplateFactory.getTemplate(ctx, this);
+		if (template != null) {
+			defaultArea = template.getDefaultArea();
+		}
+		ContentContext specialCtx = ctx.getContextWithArea(defaultArea);
 		IContentComponentsList contentList = getAllContent(specialCtx);
 		IImageTitle bestImageTitle = null;
 		int bestPriority = Integer.MIN_VALUE;
@@ -3074,6 +3079,13 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		if (res != null) {
 			return res;
 		}
+		
+		String defaultArea = ComponentBean.DEFAULT_AREA;
+		Template template = TemplateFactory.getTemplate(ctx, this);
+		if (template != null) {
+			defaultArea = template.getDefaultArea();
+		}
+		
 		res = new LinkedList<IImageTitle>();
 		IContentComponentsList contentList = getAllContent(ctx);
 		while (contentList.hasNext(ctx)) {
@@ -3083,14 +3095,14 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 				if (imageComp.isImageValid(ctx)) {
 					int w = 0;
 					if (!elem.isRepeat()) {
-						if (elem.getArea().equals(ComponentBean.DEFAULT_AREA)) {
+						if (elem.getArea().equals(defaultArea)) {
 							w = 6;
 						} else {
 							w = 4;
 						}
 					} else {
 						if (elem.getPage().equals(this)) {
-							if (elem.getArea().equals(ComponentBean.DEFAULT_AREA)) {
+							if (elem.getArea().equals(defaultArea)) {
 								w = 3;
 							} else {
 								w = 1;

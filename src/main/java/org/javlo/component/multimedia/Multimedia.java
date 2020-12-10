@@ -740,8 +740,10 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 			out.println("   <div class=\"name\">" + media.getName() + "</div>");
 			out.println("   <div class=\"ordre-row\">");
 			out.println("      <div class=\"order-preview\">");
-			String imageURL = URLHelper.createTransformURL(ctx, new File(media.getPath()), "_order");
-			out.println("         <img style=\"background-image: url('"+InfoBean.getCurrentInfoBean(ctx).getViewAjaxLoaderURL()+"');\" width=\"160\" height=\"160\" data-name=\""+media.getName()+"\" src=\"" + imageURL + "\" />");
+			if (media.getPath() != null) {
+				String imageURL = URLHelper.createTransformURL(ctx, new File(media.getPath()), "_order");
+				out.println("         <img style=\"background-image: url('"+InfoBean.getCurrentInfoBean(ctx).getViewAjaxLoaderURL()+"');\" width=\"160\" height=\"160\" data-name=\""+media.getName()+"\" src=\"" + imageURL + "\" />");
+			}
 			out.println("      </div>");
 			out.println("      <div class=\"commands\">");
 			out.println("         <button data-url=\""+ajaxURL+"\" class=\"btn btn-standard btn-first\" data-name=\""+media.getName()+"\">" + i18nAccess.getText("global.first") + "</button>");
