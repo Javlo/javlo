@@ -846,6 +846,7 @@ Security in case of vulnerabilities.
   - generic form : add first, add last
   - resources download on dashboard
   - autocomplete on smartgenericform
+  - default area can be defined in template
 ### Modified
   - load view nav before preview nav
   - cache globalContext in application context
