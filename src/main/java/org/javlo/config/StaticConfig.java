@@ -1078,6 +1078,14 @@ public class StaticConfig extends Observable {
 	public boolean isXSSHeader() {
 		return properties.getBoolean("security.header.xss", true);
 	}
+	
+	/**
+	 * if true, test the roles of the resource, if current user has'nt right role --> return 403
+	 * @return
+	 */
+	public boolean isResourcesSecured() {
+		return properties.getBoolean("security.resources", true);
+	}
 
 	public boolean isLoginWithToken() {
 		return properties.getBoolean("security.login.token", false);

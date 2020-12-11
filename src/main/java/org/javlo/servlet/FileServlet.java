@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
@@ -133,30 +134,32 @@ public class FileServlet extends HttpServlet {
 		}
 
 		/* security */
-		try {
-			ContentContext ctx = ContentContext.getContentContext(request, response);
-			StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
-			List<String> roles = staticInfo.getReadRoles(ctx);
-			if (roles.size() > 0) {
-				User user = UserFactory.createUserFactory(request).getCurrentUser(globalContext, request.getSession());
-				if (user == null) {
-					logger.warning("no access to : "+file+"  (roles:"+StringHelper.collectionToString(roles,",")+')');
-					response.sendError(HttpServletResponse.SC_FORBIDDEN);
-					return;
-				} else {
-					if (!AdminUserSecurity.getInstance().canRole(user, AdminUserSecurity.CONTENT_ROLE)) {
-						Set<String> userRoles = user.getRoles();
-						userRoles.retainAll(roles);
-						if (userRoles.size() == 0) {
-							logger.warning("user:"+user.getLogin()+ " have no access to : "+file);
-							response.sendError(HttpServletResponse.SC_FORBIDDEN);
-							return;
+		if (StaticConfig.getInstance(request.getSession()).isResourcesSecured()) {
+			try {
+				ContentContext ctx = ContentContext.getContentContext(request, response);
+				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
+				List<String> roles = staticInfo.getReadRoles(ctx);
+				if (roles.size() > 0) {
+					User user = UserFactory.createUserFactory(request).getCurrentUser(globalContext, request.getSession());
+					if (user == null) {
+						logger.warning("no access to : " + file + "  (roles:" + StringHelper.collectionToString(roles, ",") + ')');
+						response.sendError(HttpServletResponse.SC_FORBIDDEN);
+						return;
+					} else {
+						if (!AdminUserSecurity.getInstance().canRole(user, AdminUserSecurity.CONTENT_ROLE)) {
+							Set<String> userRoles = user.getRoles();
+							userRoles.retainAll(roles);
+							if (userRoles.size() == 0) {
+								logger.warning("user:" + user.getLogin() + " have no access to : " + file);
+								response.sendError(HttpServletResponse.SC_FORBIDDEN);
+								return;
+							}
 						}
 					}
 				}
+			} catch (Exception e) {
+				throw new IOException(e);
 			}
-		} catch (Exception e) {
-			throw new IOException(e);
 		}
 
 		// Prepare some variables. The ETag is an unique identifier of the file.
