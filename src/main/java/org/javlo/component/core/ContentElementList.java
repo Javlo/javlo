@@ -83,8 +83,7 @@ public class ContentElementList implements IContentComponentsList {
 
 	// private String area;
 
-	private boolean allArea = false; // browse only the content of the current
-										// area.
+	private boolean allArea = false; // browse only the content of the current area.
 
 	private MenuElement page;
 

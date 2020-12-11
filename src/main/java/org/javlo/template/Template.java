@@ -3531,7 +3531,7 @@ public class Template implements Comparable<Template> {
 	}
 	
 	public String getDefaultArea() {
-		String defaultArea = properties.getProperty("area.default");
+		String defaultArea = properties.getProperty("area-role.default");
 		if (defaultArea == null) {
 			return getParent().getDefaultArea();
 		} else {

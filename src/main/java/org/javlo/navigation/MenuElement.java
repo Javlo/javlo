@@ -3021,11 +3021,13 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		if (template != null) {
 			defaultArea = template.getDefaultArea();
 		}
+		
 		ContentContext specialCtx = ctx.getContextWithArea(defaultArea);
 		IContentComponentsList contentList = getAllContent(specialCtx);
+		contentList.setAllArea(false);
 		IImageTitle bestImageTitle = null;
 		int bestPriority = Integer.MIN_VALUE;
-		while (contentList.hasNext(ctx)) {
+		while (contentList.hasNext(specialCtx)) {
 			IContentVisualComponent elem = contentList.next(specialCtx);
 			if ((elem instanceof IImageTitle) && !(elem instanceof ImageBackground) && (!elem.isRepeat())) {
 				IImageTitle imageComp = (IImageTitle) elem;
@@ -3041,7 +3043,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 				}
 			}
 		}
-
+		
 		if (bestImageTitle == null) {
 			/** search on all area **/
 			specialCtx = ctx.getContextWithArea(null);
@@ -3066,6 +3068,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		}
 		if (bestImageTitle != null) {
 			desc.imageLink = new ImageTitleBean(specialCtx, bestImageTitle);
+			System.out.println(">>>>>>>>> MenuElement.getImage : imageLink = "+desc.imageLink.getImageLinkURL(ctx)); //TODO: remove debug trace
 		}
 		return desc.imageLink;
 	}
