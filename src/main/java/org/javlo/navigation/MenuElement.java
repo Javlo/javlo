@@ -3068,7 +3068,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		}
 		if (bestImageTitle != null) {
 			desc.imageLink = new ImageTitleBean(specialCtx, bestImageTitle);
-			System.out.println(">>>>>>>>> MenuElement.getImage : imageLink = "+desc.imageLink.getImageLinkURL(ctx)); //TODO: remove debug trace
 		}
 		return desc.imageLink;
 	}
