@@ -1327,9 +1327,10 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		if (!isValueTranslatable()) {
 			return false;
 		} else {
-			boolean translated = true;
+			boolean translated = false;
 			String newValue="";
-			if (StringHelper.isEmpty(getValue())) {
+			if (!StringHelper.isEmpty(getValue())) {
+				translated = true;
 				newValue = translator.translate(ctx, getValue(), lang, ctx.getRequestContentLanguage());
 				if (newValue == null) {
 					translated=false;
