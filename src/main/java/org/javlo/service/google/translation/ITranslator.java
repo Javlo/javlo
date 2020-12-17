@@ -1,4 +1,4 @@
-package org.javlo.service;
+package org.javlo.service.google.translation;
 
 import org.javlo.context.ContentContext;
 

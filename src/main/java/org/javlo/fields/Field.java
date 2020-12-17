@@ -34,10 +34,10 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.IListItem;
-import org.javlo.service.ITranslator;
 import org.javlo.service.ListService;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
+import org.javlo.service.google.translation.ITranslator;
 import org.owasp.encoder.Encode;
 
 public class Field implements Cloneable, IRestItem, Comparable<Field> {

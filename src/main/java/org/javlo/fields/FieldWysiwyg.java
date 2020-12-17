@@ -14,7 +14,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.module.file.FileAction;
-import org.javlo.service.ITranslator;
+import org.javlo.service.google.translation.ITranslator;
 
 public class FieldWysiwyg extends Field {
 

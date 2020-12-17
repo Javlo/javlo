@@ -56,6 +56,7 @@ import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.google.translation.GoogleTranslateService;
+import org.javlo.service.google.translation.TranslatorFactory;
 import org.javlo.user.User;
 
 public class MacroHelper {
@@ -496,7 +497,7 @@ public class MacroHelper {
 							newComp.setStyle(lgCtx, comp.getStyle());
 							newComp.setColumnSize(comp.getColumnSize());
 							if (translate) {
-								newComp.transflateFrom(lgCtx, GoogleTranslateService.getTranslator(), ctx.getGlobalContext().getDefaultLanguage());
+								newComp.transflateFrom(lgCtx, TranslatorFactory.getTranslator(ctx.getGlobalContext()), ctx.getGlobalContext().getDefaultLanguage());
 							}
 						}
 					}

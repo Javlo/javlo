@@ -17,7 +17,7 @@ import org.javlo.data.rest.IRestItem;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.message.GenericMessage;
 import org.javlo.navigation.MenuElement;
-import org.javlo.service.ITranslator;
+import org.javlo.service.google.translation.ITranslator;
 import org.javlo.utils.SuffixPrefix;
 
 /**

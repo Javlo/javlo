@@ -13,8 +13,8 @@ import org.javlo.helper.LoremIpsumGenerator;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
-import org.javlo.service.ITranslator;
 import org.javlo.service.ReverseLinkService;
+import org.javlo.service.google.translation.ITranslator;
 import org.javlo.utils.SuffixPrefix;
 
 /**

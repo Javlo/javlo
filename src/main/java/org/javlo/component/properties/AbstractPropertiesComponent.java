@@ -17,9 +17,9 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
-import org.javlo.service.ITranslator;
 import org.javlo.service.RequestService;
 import org.javlo.service.exception.ServiceException;
+import org.javlo.service.google.translation.ITranslator;
 
 public abstract class AbstractPropertiesComponent extends AbstractVisualComponent {
 

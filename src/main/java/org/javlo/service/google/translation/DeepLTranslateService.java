@@ -14,20 +14,23 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.utils.JSONMap;
 import org.javlo.utils.TimeMap;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
-public class GoogleTranslateService implements ITranslator {
+public class DeepLTranslateService implements ITranslator {
 
-	private static URL GOOGLE_URL = null;
+	private static URL DEEPL_URL = null;
 	
-	private static final GoogleTranslateService INSTANCE = new GoogleTranslateService();
+	private static final DeepLTranslateService INSTANCE = new DeepLTranslateService();
 
 	private static final Map<String, String> cache = Collections.synchronizedMap(new TimeMap<String, String>(60 * 60 * 24 * 355, 10000));
 
 	private static final URL getGoogleUrl() throws MalformedURLException {
-		if (GOOGLE_URL == null) {
-			GOOGLE_URL = new URL("https://translation.googleapis.com/language/translate/v2");
+		if (DEEPL_URL == null) {
+			DEEPL_URL = new URL("https://api.deepl.com/v2/translate");
 		}
-		return GOOGLE_URL;
+		return DEEPL_URL;
 	}
 	
 	private static String encode(String text) throws UnsupportedEncodingException {
@@ -49,17 +52,15 @@ public class GoogleTranslateService implements ITranslator {
 		String cacheKey = sourceText + sourceLang + targetLang;
 		String translation = cache.get(cacheKey);
 		if (translation == null) {			
-			String query ="q="+encode(sourceText);
-			query+="&source="+encode(sourceLang);
-			query+="&target="+encode(targetLang);
-			query+="&format=text";
-			query+="&key="+encode(apiKey);
-			URL googleURL = new URL (URLHelper.addParams(getGoogleUrl().toString(), query));			
-			String json = NetHelper.readPage(googleURL);			
-			JSONMap data = JSONMap.parseMap(json).getMap("data");
-			List translations = (List)data.get("translations");
-			translation = ""+((JSONMap)translations.get(0)).get("translatedText");
-			translation = translation.replace("</ ", "</"); // strange google change close tag ?
+			String query ="text="+encode(sourceText);
+			query+="&source_lang="+encode(sourceLang);
+			query+="&target_lang="+encode(targetLang);
+			query+="&auth_key="+encode(apiKey);
+			URL deeplURL = new URL (URLHelper.addParams(getGoogleUrl().toString(), query));
+			String json = NetHelper.readPage(deeplURL);
+			JSONParser jsonParser = new JSONParser();
+			JSONObject jsonObject = (JSONObject) jsonParser.parse(json);		
+			translation = ""+((JSONObject)(((JSONArray)jsonObject.get("translations")).get(0))).get("text");
 			cache.put(cacheKey, translation);
 		}
 		return translation;
@@ -80,6 +81,12 @@ public class GoogleTranslateService implements ITranslator {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	public static void main(String[] args) throws Exception {
+		String key = "";
+		String trad = translate("Immanence assure l’installation et l’entretien de sites et applications web basées sur Javlo.", "fr", "en", key);
+		System.out.println(trad);
 	}
 
 

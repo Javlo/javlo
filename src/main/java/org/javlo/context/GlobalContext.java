@@ -1841,6 +1841,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getGoogleApiKey() {
 		return properties.getString("google.api.key", "");
 	}
+	
+	public String getDeepLApiKey() {
+		return properties.getString("deepl.api.key", "");
+	}
 
 	public String getHelpURL() {
 		String url = properties.getString("help-url");
