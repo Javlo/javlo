@@ -313,6 +313,7 @@ public class CatchAllFilter implements Filter {
 			}
 		} else if (shortURI.startsWith("/")) {
 			shortURI = shortURI.substring(1);
+			
 		}
 
 		if (shortURI.length() == globalContext.getStaticConfig().getShortURLSize() + 1 && shortURI.startsWith("U")) {
@@ -367,6 +368,12 @@ public class CatchAllFilter implements Filter {
 			if (ContentContext.getPathPrefix(globalContext, (HttpServletRequest) request) != null && ContentContext.getPathPrefix(globalContext, (HttpServletRequest) request).length() > 0) {
 				cmsURI = cmsURI.replaceFirst("/" + ContentContext.getPathPrefix(globalContext, (HttpServletRequest) request), "");
 			}
+			
+			if ((cmsURI.length() == 0 || cmsURI.equals("/")) && globalContext.getHomePage().length()>1) {
+				NetHelper.sendRedirectTemporarily((HttpServletResponse) response, globalContext.getHomePage());
+				return;
+			}
+			
 			Map<String, String> uriAlias = globalContext.getURIAlias();
 			Collection<Map.Entry<String, String>> entries = uriAlias.entrySet();
 			if (cmsURI.length() > 1) {

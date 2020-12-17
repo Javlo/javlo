@@ -14,7 +14,6 @@ import java.io.Writer;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -321,7 +320,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 		/** init log **/
 		long startTime = System.currentTimeMillis();
-
 		String requestLabel = request.getPathInfo();
 
 		try {
