@@ -5,14 +5,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import org.javlo.context.ContentContext;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
-import org.javlo.utils.JSONMap;
 import org.javlo.utils.TimeMap;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -40,7 +38,7 @@ public class DeepLTranslateService implements ITranslator {
 	/**
 	 * Translate the source text from source to target language.
 	 *
-	 * @param sourceText
+	 * @param sourceText	s
 	 *            source text to be translated
 	 * @param sourceLang
 	 *            source language of the text

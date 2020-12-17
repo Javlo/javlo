@@ -1328,10 +1328,13 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 			return false;
 		} else {
 			boolean translated = true;
-			String newValue = translator.translate(ctx, getValue(), lang, ctx.getRequestContentLanguage());
-			if (newValue == null) {
-				translated=false;
-				newValue = ITranslator.ERROR_PREFIX+getValue();
+			String newValue="";
+			if (StringHelper.isEmpty(getValue())) {
+				newValue = translator.translate(ctx, getValue(), lang, ctx.getRequestContentLanguage());
+				if (newValue == null) {
+					translated=false;
+					newValue = ITranslator.ERROR_PREFIX+getValue();
+				}
 			}
 			setValue(newValue);
 			return translated;
