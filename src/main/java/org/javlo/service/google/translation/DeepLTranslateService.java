@@ -49,6 +49,9 @@ public class DeepLTranslateService implements ITranslator {
 	 * @throws Exception 
 	 */
 	public static String translate(String sourceText, String sourceLang, String targetLang, String apiKey) throws Exception {
+		if (StringHelper.isEmpty(sourceText) || StringHelper.isDigit(sourceText)) {
+			return sourceText;
+		}
 		String cacheKey = sourceText + sourceLang + targetLang;
 		String translation = cache.get(cacheKey);
 		if (translation == null) {			

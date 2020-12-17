@@ -46,6 +46,9 @@ public class GoogleTranslateService implements ITranslator {
 	 * @throws Exception 
 	 */
 	public static String translate(String sourceText, String sourceLang, String targetLang, String apiKey) throws Exception {
+		if (StringHelper.isEmpty(sourceText)) {
+			return "";
+		}
 		String cacheKey = sourceText + sourceLang + targetLang;
 		String translation = cache.get(cacheKey);
 		if (translation == null) {			
