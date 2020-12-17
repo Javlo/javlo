@@ -847,6 +847,7 @@ Security in case of vulnerabilities.
   - resources download on dashboard
   - autocomplete on smartgenericform
   - default area can be defined in template
+  - DeepL translator
 ### Modified
   - load view nav before preview nav
   - cache globalContext in application context
