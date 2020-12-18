@@ -24,25 +24,18 @@ public class ImportAndTranslateDefaultLanguageMacro extends AbstractMacro {
 	
 	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
-
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-
 		ContentContext deftLanguageCtx = new ContentContext(ctx);
 		deftLanguageCtx.setLanguage(globalContext.getDefaultLanguages().iterator().next());
 		deftLanguageCtx.setRequestContentLanguage(globalContext.getDefaultLanguages().iterator().next());
-
 		MenuElement currentPage = ctx.getCurrentPage();
-
 		if (currentPage.isRealContent(ctx)) {
 			logger.info(currentPage.getPath() + " have already content.");
 			return null;
 		}
-
 		MacroHelper.copyLanguageStructure(currentPage, deftLanguageCtx, Arrays.asList(new ContentContext[] { ctx }), true, true);
-
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 		persistenceService.setAskStore(true);
-
 		return null;
 	}
 
@@ -59,7 +52,10 @@ public class ImportAndTranslateDefaultLanguageMacro extends AbstractMacro {
 	@Override
 	public void init(ContentContext ctx) {
 		super.init(ctx);
-		active = !StringHelper.isEmpty(ctx.getGlobalContext().getGoogleApiKey());
+		active = !StringHelper.isEmpty(ctx.getGlobalContext().getSpecialConfig().getTranslatorGoogleApiKey());
+		if (!active) {
+			active = !StringHelper.isEmpty(ctx.getGlobalContext().getSpecialConfig().getTranslatorDeepLApiKey());
+		}
 	}
 	
 	@Override

@@ -496,8 +496,10 @@ public class MacroHelper {
 						if (newComp != null) {
 							newComp.setStyle(lgCtx, comp.getStyle());
 							newComp.setColumnSize(comp.getColumnSize());
-							if (translate) {
-								newComp.transflateFrom(lgCtx, TranslatorFactory.getTranslator(ctx.getGlobalContext()), ctx.getGlobalContext().getDefaultLanguage());
+							if (translate && currentPage.isRealContentAnyLanguage(ctxNoArea)) {
+								newComp.transflateFrom(lgCtx, TranslatorFactory.getTranslator(ctx.getGlobalContext()), ctxNoArea.getRequestContentLanguage());
+							} else if (translate) {
+								logger.warning("content not found : "+currentPage.getPath());
 							}
 						}
 					}

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.javlo.context.ContentContext;
+import org.javlo.service.google.translation.ITranslator;
 
 /**
  * @author pvandermaesen
@@ -21,6 +22,8 @@ public abstract class ComplexPropertiesLink extends AbstractVisualComponent {
 	protected static final String LABEL_KEY = "label";
 
 	protected Properties properties = new Properties();
+
+	protected static final String REVERSE_LINK_KEY = "reverse-link";
 
 	@Override
 	protected void init() throws org.javlo.exception.ResourceNotFoundException {
@@ -38,7 +41,7 @@ public abstract class ComplexPropertiesLink extends AbstractVisualComponent {
 	public String getLinkLabelName() {
 		return LABEL_KEY + ID_SEPARATOR + getId();
 	}
-	
+
 	@Override
 	public void setValue(String inContent) {
 		super.setValue(inContent);
@@ -104,20 +107,47 @@ public abstract class ComplexPropertiesLink extends AbstractVisualComponent {
 			return false;
 		}
 	}
-	
+
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
 		return true;
 	}
-	
+
 	@Override
-	public boolean isRealContent(ContentContext ctx) {	
+	public boolean isRealContent(ContentContext ctx) {
 		return false;
 	}
-	
+
 	@Override
-	public String getFontAwesome() {	
+	public String getFontAwesome() {
 		return "link";
+	}
+
+	@Override
+	protected boolean isValueTranslatable() {
+		return true;
+	}
+
+	@Override
+	public boolean transflateFrom(ContentContext ctx, ITranslator translator, String lang) {
+		if (!isValueTranslatable()) {
+			return false;
+		} else {
+			boolean translated = true;
+			for (Object key : properties.keySet()) {
+				if (!key.equals(REVERSE_LINK_KEY) && !key.equals(LINK_KEY)) {
+					String value = (String) properties.getProperty((String) key);
+					String newValue = translator.translate(ctx, value, lang, ctx.getRequestContentLanguage());
+					properties.setProperty((String) key, newValue);
+					if (newValue == null) {
+						translated = false;
+						newValue = ITranslator.ERROR_PREFIX + getValue();
+					}
+				}
+			}
+			storeProperties();
+			return translated;
+		}
 	}
 
 }

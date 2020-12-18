@@ -53,8 +53,6 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 
 	private static final String TITLE_IMAGE_DESCRIPTION = TITLE + '+' + IMAGE + '+' + DESCRIPTION;
 
-	private static final String REVERSE_LINK_KEY = "reverse-link";
-
 	public static final String TYPE = "internal-link";
 
 	private Date latestValidDate;

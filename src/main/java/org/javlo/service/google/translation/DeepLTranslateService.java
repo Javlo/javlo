@@ -12,6 +12,7 @@ import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.utils.TimeMap;
+import org.jcodec.common.logging.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -47,6 +48,8 @@ public class DeepLTranslateService implements ITranslator {
 	 * @throws Exception 
 	 */
 	public static String translate(String sourceText, String sourceLang, String targetLang, String apiKey) throws Exception {
+		System.out.println(">>>>>>>>> DeepLTranslateService.translate : sourceLang = "+sourceLang); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> DeepLTranslateService.translate : targetLang = "+targetLang); //TODO: remove debug trace
 		if (StringHelper.isEmpty(sourceText) || StringHelper.isDigit(sourceText)) {
 			return sourceText;
 		}
@@ -59,10 +62,14 @@ public class DeepLTranslateService implements ITranslator {
 			query+="&auth_key="+encode(apiKey);
 			URL deeplURL = new URL (URLHelper.addParams(getGoogleUrl().toString(), query));
 			String json = NetHelper.readPage(deeplURL);
-			JSONParser jsonParser = new JSONParser();
-			JSONObject jsonObject = (JSONObject) jsonParser.parse(json);		
-			translation = ""+((JSONObject)(((JSONArray)jsonObject.get("translations")).get(0))).get("text");
-			cache.put(cacheKey, translation);
+			if (json == null) {
+				Logger.error("error read page : "+ deeplURL);
+			} else {
+				JSONParser jsonParser = new JSONParser();
+				JSONObject jsonObject = (JSONObject) jsonParser.parse(json);
+				translation = ""+((JSONObject)(((JSONArray)jsonObject.get("translations")).get(0))).get("text");
+				cache.put(cacheKey, translation);
+			}
 		}
 		return translation;
 	}
@@ -77,7 +84,7 @@ public class DeepLTranslateService implements ITranslator {
 			return text;
 		}
 		try {
-			return translate(text, sourceLang, targetLang, ctx.getGlobalContext().getGoogleApiKey());
+			return translate(text, sourceLang, targetLang, ctx.getGlobalContext().getSpecialConfig().getTranslatorDeepLApiKey());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

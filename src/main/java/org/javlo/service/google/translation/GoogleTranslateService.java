@@ -78,7 +78,7 @@ public class GoogleTranslateService implements ITranslator {
 			return text;
 		}
 		try {
-			return translate(text, sourceLang, targetLang, ctx.getGlobalContext().getGoogleApiKey());
+			return translate(text, sourceLang, targetLang, ctx.getGlobalContext().getSpecialConfig().getTranslatorGoogleApiKey());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

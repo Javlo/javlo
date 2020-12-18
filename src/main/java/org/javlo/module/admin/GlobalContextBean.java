@@ -181,7 +181,7 @@ public class GlobalContextBean {
 		setAdminUserRoles(StringHelper.collectionToString(globalContext.getAdminUserRoles(), ","));
 
 		setGoogleAnalyticsUACCT(globalContext.getGoogleAnalyticsUACCT());
-		setGoogleApiKey(globalContext.getGoogleApiKey());
+		setGoogleApiKey(globalContext.getSpecialConfig().getTranslatorGoogleApiKey());
 		setTags(globalContext.getRAWTags());
 		setBlockPassword(globalContext.getBlockPassword());
 

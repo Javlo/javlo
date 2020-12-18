@@ -95,5 +95,13 @@ public class SpecialConfigBean {
 	public String getMailingRole() {
 		return StringHelper.neverEmpty((String)config.get("mailing.role"), "mailing");
 	}
-
+	
+	public String getTranslatorGoogleApiKey() {
+		return StringHelper.neverNull(config.get("translator.google.api.key"));
+	}
+	
+	public String getTranslatorDeepLApiKey() {
+		return StringHelper.neverNull(config.get("translator.deepl.api.key"));
+	}
+	
 }
