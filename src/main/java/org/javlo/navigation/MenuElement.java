@@ -2435,8 +2435,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 				IContentVisualComponent comp = contentList.next(ctx);
 				if (comp instanceof IDate && ((IDate) comp).isValidDate(ctx)) {
 					IDate dateComp = ((IDate) comp);
-					if (bestDate == null || bestDate.getTime() < dateComp.getDate(ctx).getTime()) {
-						bestDate = dateComp.getDate(ctx);
+					if (dateComp.getDate(ctx) != null) {
+						if (bestDate == null || bestDate.getTime() < dateComp.getDate(ctx).getTime()) {
+							bestDate = dateComp.getDate(ctx);
+						}
 					}
 				}
 			}
