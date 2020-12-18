@@ -1,3 +1,4 @@
+<%@page import="org.javlo.css.CssColor"%>
 <%@page contentType="text/html"
         import="
         org.javlo.context.ContentContext,
@@ -23,3 +24,12 @@ var isPreview = currentURL.indexOf("/preview") >= 0;
 var i18n = [];
 i18n.validation='${i18n.edit['global.validation']}';
 i18n.confirm='${i18n.edit['global.confirm-delete']}';
+
+<%if (ctx.getGlobalContext().getTemplateData().isColorListFilled()) {
+	String sep="";
+	%>
+	var colorList = [<%for (CssColor color : ctx.getGlobalContext().getTemplateData().getColorList()) {if (color!=null) {%><%=sep%>'<%=color%>','<%=color%>'<%sep=",";} }%>];
+	<%
+} else {%>
+   var colorList = null;
+<%}%>

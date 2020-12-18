@@ -65,7 +65,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 	}
 
 	tinymce.init({
-	    paste_as_text: true
+		paste_as_text: true
 	});
 	
 	if (format == null) {
@@ -89,7 +89,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 
 	if (complexity == "middle") {
 		tinymce.init({
-			textlang_langs : contentLanguage,			
+			textlang_langs : contentLanguage,
 		    selector: cssQuery,
 		    convert_urls: false,
 		    menubar : false,
@@ -105,9 +105,9 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 			image_advtab: true,
 		    fontsize_formats: fontsize,
 		    //paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
-		    file_browser_callback: function(field_name, url, type, win) {		    	
-	    	 	jQuery("body").data("fieldName", field_name);	    	 	
-	    	 	var fileURL = chooseFileURL.replace("_TYPE_",type);	    	 	
+		    file_browser_callback: function(field_name, url, type, win) {
+	    	 	jQuery("body").data("fieldName", field_name);
+	    	 	var fileURL = chooseFileURL.replace("_TYPE_",type);
 		    	tinyMCE.activeEditor.windowManager.open({
 		            file : fileURL,
 		            title : 'Select resource',
@@ -162,12 +162,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 		    //toolbar: "textlang | undo redo searchreplace | bold italic underline strikethrough fontsizeselect removeformat | table charmap nonbreaking code | alignleft aligncenter alignright alignjustify | link"
 		});
 	} else if (complexity == "high") {
-
-		var ta = jQuery(cssQuery);
-		console.log("ta = ",ta);
-
-		tinymce.init({
-			textlang_langs : contentLanguage,
+		var tinyConfig = {textlang_langs : contentLanguage,
 		    selector: cssQuery,		
 		    convert_urls: false,
 		    menubar : false,
@@ -175,7 +170,6 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 		    theme: "silver",
 		    height : "280",
 		    content_css: wysiwygCss,
-		    textcolor_map : ["111111","MyBlack","993300","My Burnt orange"],
 		    plugins: [
 		        "advlist autolink lists link image charmap print preview hr anchor pagebreak",
 		        "searchreplace wordcount visualblocks visualchars code fullscreen",
@@ -183,7 +177,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 		        "emoticons template paste colorpicker nonbreaking textlang"
 		    ],
 			style_formats: format,
-			toolbar1: "styleselect bold italic underline strikethrough fontsizeselect removeformat | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | table charmap nonbreaking code",
+			toolbar1: "styleselect bold italic underline strikethrough fontsizeselect removeformat | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | table charmap nonbreaking code",
 		    //toolbar1: "textlang | styleselect bold italic underline strikethrough fontsizeselect removeformat | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | table charmap nonbreaking code",
 		    charmap_append: [
 		        [0x2600, 'sun'],
@@ -195,14 +189,14 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 		        [0x0110, 'Latin Capital Letter D With Stroke'],
 		        [0x0111, 'Latin Small Letter D With Stroke'],
 		        [0x0160, 'Latin Capital Letter S Hacek'],
-		        [0x0161, 'Latin Small Letter S Hacek']		        		
+		        [0x0161, 'Latin Small Letter S Hacek']
 		      ],
 		    image_advtab: true,
 		    fontsize_formats: fontsize,
 		    //paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6,table,tr,th,td,ul,ol,li,p,a,div",
-		    file_browser_callback: function(field_name, url, type, win) {		    	
-	    	 	jQuery("body").data("fieldName", field_name);	    	 	
-	    	 	var fileURL = chooseFileURL.replace("_TYPE_",type);	    	 	
+		    file_browser_callback: function(field_name, url, type, win) {
+	    	 	jQuery("body").data("fieldName", field_name);
+	    	 	var fileURL = chooseFileURL.replace("_TYPE_",type);
 		    	tinyMCE.activeEditor.windowManager.open({
 		            file : fileURL,
 		            title : 'Select resource',
@@ -219,8 +213,12 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 		    templates: [
 		        {title: 'Test template 1', content: 'Test 1'},
 		        {title: 'Test template 2', content: 'Test 2'}
-		    ]
-		});	
+			]
+		}
+		if (colorList != null) {
+			tinyConfig.color_map=colorList;
+		}
+		tinymce.init(tinyConfig);	
 	} else if (complexity == "soft") {
 		tinyMCE.init({
 		textlang_langs : contentLanguage,

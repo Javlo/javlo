@@ -301,6 +301,15 @@ public class TemplateData {
 	public void setColorList(Color color, int i) {
 		this.colorList[i] = CssColor.getInstance(color);
 	}
+	
+	public boolean isColorListFilled() {
+		for (int i = 0; i < colorList.length; i++) {
+			if (colorList[i] != null) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public Color getBackground() {
 		return background;

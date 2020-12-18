@@ -18,7 +18,16 @@
 <jsp:include page="template_data.jsp?name=link&value=${currentContext.templateData.link}&style=color" />
 <jsp:include page="template_data.jsp?name=componentBackground&value=${currentContext.templateData.componentBackground}&style=color" />
 <jsp:include page="template_data.jsp?name=special&value=${currentContext.templateData.special}&style=color" />
-<c:if test="${param.colorList}">
+<c:if test="${param.colorMessages}">
+<h2>Message</h2>
+<jsp:include page="template_data.jsp?name=messagePrimary&value=${currentContext.templateData.messagePrimary}&style=color" />
+<jsp:include page="template_data.jsp?name=messageSecondary&value=${currentContext.templateData.messageSecondary}&style=color" />
+<jsp:include page="template_data.jsp?name=messageSuccess&value=${currentContext.templateData.messageSuccess}&style=color" />
+<jsp:include page="template_data.jsp?name=messageDanger&value=${currentContext.templateData.messageDanger}&style=color" />
+<jsp:include page="template_data.jsp?name=messageWarning&value=${currentContext.templateData.messageWarning}&style=color" />
+<jsp:include page="template_data.jsp?name=messageInfo&value=${currentContext.templateData.messageInfo}&style=color" />
+</c:if>
+
 <div class="row">	
 	<div class="col-xs-4">
 	<label>color list</label>
@@ -30,16 +39,7 @@
 		</div>
 	</div>	
 </div>
-</c:if>
-<c:if test="${param.colorMessages}">
-<h2>Message</h2>
-<jsp:include page="template_data.jsp?name=messagePrimary&value=${currentContext.templateData.messagePrimary}&style=color" />
-<jsp:include page="template_data.jsp?name=messageSecondary&value=${currentContext.templateData.messageSecondary}&style=color" />
-<jsp:include page="template_data.jsp?name=messageSuccess&value=${currentContext.templateData.messageSuccess}&style=color" />
-<jsp:include page="template_data.jsp?name=messageDanger&value=${currentContext.templateData.messageDanger}&style=color" />
-<jsp:include page="template_data.jsp?name=messageWarning&value=${currentContext.templateData.messageWarning}&style=color" />
-<jsp:include page="template_data.jsp?name=messageInfo&value=${currentContext.templateData.messageInfo}&style=color" />
-</c:if>
+
 </div><div class="col-md-4">
 <div class="form-group">
 	<label for="logo">logo : </label>
