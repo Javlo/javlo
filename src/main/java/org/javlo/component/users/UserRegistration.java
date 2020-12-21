@@ -65,7 +65,7 @@ import org.javlo.ztatic.StaticInfoBean;
 
 public class UserRegistration extends MapComponent implements IAction {
 
-	private static final String ADMIN = "administrators";
+	private static final String ADMIN = StringHelper.asBase64("administrators".getBytes());
 
 	public static final String TYPE = "user-registration";
 
