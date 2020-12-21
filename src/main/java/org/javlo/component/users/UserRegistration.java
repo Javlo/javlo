@@ -65,7 +65,9 @@ import org.javlo.ztatic.StaticInfoBean;
 
 public class UserRegistration extends MapComponent implements IAction {
 
-	private static final String ADMIN = StringHelper.asBase64("administrators".getBytes());
+	private static final String ADMIN = "administrators";
+	
+	private static final String ADMIN_64 = StringHelper.asBase64(ADMIN.getBytes());
 
 	public static final String TYPE = "user-registration";
 
@@ -423,7 +425,7 @@ public class UserRegistration extends MapComponent implements IAction {
 	}
 
 	protected boolean isAdminRegistration() {
-		return getField(FIELD_SCOPE, ADMIN).equals(ADMIN);
+		return getField(FIELD_SCOPE, ADMIN_64).equals(ADMIN);
 	}
 
 	@Override
@@ -439,13 +441,13 @@ public class UserRegistration extends MapComponent implements IAction {
 		Map<String, String> selection = new HashMap<String, String>();
 		selection.put(ADMIN, i18nAccess.getText("user.registration.admin", "Administrator"));
 		selection.put("visitors", i18nAccess.getText("user.registration.visotors", "Visitors"));
-		out.println(XHTMLHelper.getInputOneSelect(getContentName(), selection, getField(FIELD_SCOPE, ADMIN), "form-control"));
+		out.println(XHTMLHelper.getInputOneSelect(getContentName(), selection, getField(FIELD_SCOPE, ADMIN_64), "form-control"));
 		out.println("</div>");
 		out.println("<div class=\"radio\">");
 
 		Collection<String> roles = getFieldList(FIELD_SELECTED_ROLES);
 		EditContext editContext = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
-		if (getField(FIELD_SCOPE, ADMIN).equals(ADMIN)) {
+		if (getField(FIELD_SCOPE, ADMIN_64).equals(ADMIN)) {
 			out.println("<h3>" + i18nAccess.getText("user.roles.default", "default roles") + "</h3>");
 			for (String role : editContext.getDefaultAdminUserRoles()) {
 				out.println("<label class=\"checkbox-inline\"><input type=\"checkbox\" name=\"" + getInputName(role) + "\" " + (roles.contains(role) ? "checked=\"checked\"" : "") + ">" + role + "</label>");
@@ -472,7 +474,7 @@ public class UserRegistration extends MapComponent implements IAction {
 		setField(FIELD_SCOPE, rs.getParameter(getContentName()));
 		Collection<String> roles = new LinkedList<String>();
 		Collection<String> possibleRoles;
-		if (getField(FIELD_SCOPE, ADMIN).equals(ADMIN)) {
+		if (getField(FIELD_SCOPE, ADMIN_64).equals(ADMIN)) {
 			EditContext editContext = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
 			possibleRoles = editContext.getAdminUserRoles();
 		} else {
