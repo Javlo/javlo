@@ -84,13 +84,13 @@ public class UserRegistration extends MapComponent implements IAction {
 	protected void init(ComponentBean bean, ContentContext ctx) throws Exception {
 		super.init(bean, ctx);
 		if (getValue().trim().length() == 0) {
-			setValue(ADMIN); // admin registration by default.
+			setValue(ADMIN_64); // admin registration by default.
 		}
 	}
 
 	@Override
 	public String getRenderer(ContentContext ctx) {
-		if (getValue().equals(ADMIN)) {
+		if (getValue().equals(ADMIN_64)) {
 			return null;
 		} else {
 			return super.getRenderer(ctx);
