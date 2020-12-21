@@ -533,7 +533,7 @@ public class UserAction extends AbstractModuleAction {
 				if (StringHelper.isEmpty(link)) {
 					String errorId = StringHelper.getDateRandomId();
 					logger.severe("["+errorId+"] link could not be generated. [page:"+regPage+"]");
-					return "technical error : "+errorId;
+					return "technical error (page registration not found) : "+errorId;
 				}
 				
 				String mailBody = XHTMLHelper.createUserMail(ctx, "/images/font/lock.png", body, "", link, i18nAccess.getViewText("user.change-password"), "");

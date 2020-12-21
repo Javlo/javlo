@@ -18,7 +18,14 @@ public abstract class MapComponent extends AbstractVisualComponent {
 	}
 
 	private Map<String, String> getMapData() {
-		return StringHelper.stringToMap(getValue());
+		Map<String, String> outMap;
+		try {
+			outMap = StringHelper.stringToMap(getValue());
+		} catch (Throwable t) {
+			logger.severe("error on parsing : "+getValue());
+			throw t;
+		}
+		return outMap;
 	}
 
 	protected void setField(String field, String value) {
