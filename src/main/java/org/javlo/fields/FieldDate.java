@@ -145,6 +145,9 @@ public class FieldDate extends Field implements IDate {
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) {
+		if (StringHelper.isEmpty(getDate())) {
+			return "";
+		}
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 
