@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.text.WordUtils;
@@ -23,15 +24,17 @@ import org.javlo.utils.CSVFactory;
  */
 public class BeanHelper {
 
+	private static Logger logger = Logger.getLogger(BeanHelper.class.getName());
+
 	public class Bean1 {
 		String login;
 
 		String password;
 
 		String email;
-		
+
 		private int age = 0;
-		
+
 		private double distance;
 
 		/**
@@ -98,7 +101,7 @@ public class BeanHelper {
 		String login;
 
 		String password;
-		
+
 		private int age = 0;
 
 		/**
@@ -148,11 +151,16 @@ public class BeanHelper {
 					String name = method.getName().substring(3);
 					name = StringHelper.firstLetterLower(name);
 					if (method.getParameterTypes().length == 0) {
-						String value = (String) method.invoke(bean, (Object[]) null);
-						if (value == null) {
-							value = "";
+						try {
+							String value = (String) method.invoke(bean, (Object[]) null);
+							if (value == null) {
+								value = "";
+							}
+							res.put(name, value);
+						} catch (Throwable t) {
+							logger.severe("error on call : " + method.getName());
+							throw t;
 						}
-						res.put(name, value);
 					}
 				}
 			}
@@ -231,7 +239,7 @@ public class BeanHelper {
 		int notFound = 0;
 		while (keys.hasNext()) {
 			Object key = keys.next();
-			
+
 			String mapKey = keyPrefix + key + keySuffix;
 			if (map.get(mapKey) instanceof String) {
 				String name = (String) key;
@@ -299,10 +307,10 @@ public class BeanHelper {
 		}
 		return notFound;
 	}
-	
+
 	public static void resetBoolean(Object bean) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		for (Method m : bean.getClass().getMethods()) {
-			if (m.getName().startsWith("set") && m.getParameterTypes().length==1) {
+			if (m.getName().startsWith("set") && m.getParameterTypes().length == 1) {
 				if (m.getParameterTypes()[0].equals(Boolean.class)) {
 					m.invoke(bean, false);
 				}
@@ -323,11 +331,11 @@ public class BeanHelper {
 	public static int copy(Map map, Object bean, boolean resetBoolean) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		Iterator keys = map.keySet().iterator();
 		int notFound = 0;
-		
+
 		if (resetBoolean) {
 			resetBoolean(bean);
 		}
-		
+
 		while (keys.hasNext()) {
 			Object key = keys.next();
 			if (map.get(key) instanceof String) {
@@ -616,10 +624,10 @@ public class BeanHelper {
 			return null;
 		}
 	}
-	
-	public static String replaceValueInText (String text, Object bean, String prefix, String suffix) {
+
+	public static String replaceValueInText(String text, Object bean, String prefix, String suffix) {
 		for (String label : getAllLabels(bean)) {
-			text = text.replace(prefix+label+suffix, ""+getProperty(bean, label));
+			text = text.replace(prefix + label + suffix, "" + getProperty(bean, label));
 		}
 		return text;
 	}
