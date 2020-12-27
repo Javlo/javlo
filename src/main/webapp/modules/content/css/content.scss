@@ -232,6 +232,14 @@ body.right-admin #page-404 {
 	display: none;
 }
 
+.btn-color {
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	border-radius: 3px;
+	margin-left: 5px;
+}
+
 body.ajax-loading {
 	.btn .text {
 		display: none;

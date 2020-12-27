@@ -1149,7 +1149,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 
 	public boolean initContent(ContentContext ctx) throws Exception {
 		String initVal = getInitValue();
-		if (StringHelper.isEmpty(initVal)) {
+		if (initVal == null) {
 			initVal = getLabel(ctx, new Locale(ctx.getRequestContentLanguage()));
 		}
 		if (getValue() == null || getValue().trim().length() == 0) {
