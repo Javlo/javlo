@@ -848,6 +848,7 @@ Security in case of vulnerabilities.
   - autocomplete on smartgenericform
   - default area can be defined in template
   - DeepL translator
+  - field color
 ### Modified
   - load view nav before preview nav
   - cache globalContext in application context
