@@ -469,7 +469,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		out.println("<td class=\"input condition\"><input class=\"form-control\" type=\"text\" name=\"" + getInputName("condition-" + field.getName()) + "\" value=\"" + field.getCondition() + "\"/></td>");
 		out.println("<td class=\"input autocomplete\"><input class=\"form-control\" type=\"text\" name=\"" + getInputName("autocomplete-" + field.getName()) + "\" list=\"autocomplete-list\" value=\"" + field.getAutocomplete() + "\"/></td>");
 		if (isList()) {
-			if (field.getType().equals("radio") || field.getType().equals("list")) {
+			if (field.isNeedList()) {
 				out.println("<td class=\"list\"><textarea class=\"form-control\" name=\"" + getInputName("list-" + field.getName()) + "\">" + StringHelper.collectionToTextarea(field.getList()) + "</textarea></td>");
 			} else if (field.getType().equals("registered-list")) {
 				out.println("<td class=\"list\"><input class=\"form-control\" name=\"" + getInputName("registered-list-" + field.getName()) + "\" placeholder=\"list name\" value=\"" + field.getRegisteredList() + "\"/></td>");
@@ -563,7 +563,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 	public boolean isList() {
 		for (Field field : getFields()) {
-			if (field.getType().contains("list") || field.getType().contains("radio")) {
+			if (field.isNeedList()) {
 				return true;
 			}
 		}
