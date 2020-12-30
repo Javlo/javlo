@@ -14,7 +14,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.image.GlobalImage;
-import org.javlo.component.list.FreeTextList;
+import org.javlo.component.list.DataList;
 import org.javlo.component.text.WysiwygParagraph;
 import org.javlo.component.title.Heading;
 import org.javlo.component.title.SubTitle;
@@ -96,7 +96,7 @@ public class DocxUtils {
 			if (isList(cssClass)) {
 				if (listBean == null) {
 					listBean = new ComponentBean();
-					listBean.setType(FreeTextList.TYPE);
+					listBean.setType(DataList.TYPE);
 					listBean.setValue("");
 				}
 				if (listBean.getValue().length() == 0) {

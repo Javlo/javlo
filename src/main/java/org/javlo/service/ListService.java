@@ -14,6 +14,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.NotImplementedException;
+import org.javlo.component.core.ComponentFactory;
+import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.list.DataList;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
@@ -24,12 +27,15 @@ import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.UserFactory;
 import org.javlo.user.UserInfo;
+import org.javlo.utils.TimeMap;
 
 public class ListService {
 
 	public static final String SPECIAL_LIST_VIEW_USERS = "view-users";
 
 	Map<String, List<IListItem>> localLists = new Hashtable<String, List<IListItem>>();
+	
+	Map<String, List<IListItem>> listCache = new TimeMap<>(30);
 
 	private static final Map<String, List<IListItem>> hardNodeCache = new HashMap<String, List<IListItem>>();
 
@@ -210,8 +216,19 @@ public class ListService {
 	}
 
 	public List<IListItem> getList(ContentContext ctx, String name) throws IOException, Exception {
-		List<IListItem> outList = getNavigationList(ctx, name);
+		List<IListItem> outList = listCache.get(name);
+		if (outList != null)  {
+			return outList; 
+		}
+		
+		outList = getNavigationList(ctx, name);
 		if (outList != null) {
+			listCache.put(name, outList);
+			return outList;
+		}
+		outList = getContentList(ctx, name);
+		if (outList != null) {
+			listCache.put(name, outList);
 			return outList;
 		}
 		outList = localLists.get(name);
@@ -230,7 +247,7 @@ public class ListService {
 			}
 		}
 		if (outList != null) {
-			Collections.sort(outList, new OrderList());
+			Collections.sort(outList, new OrderList());			
 		} else if (name.contains("-")) {
 			String[] numbers = name.split("-");
 			try {
@@ -241,6 +258,7 @@ public class ListService {
 					for (int i = start; i <= end; i++) {
 						numberedList.add(new ListItem("" + i, "" + i));
 					}
+					listCache.put(name, numberedList);
 					return numberedList;
 				}
 			} catch (Exception e) {
@@ -254,6 +272,7 @@ public class ListService {
 		if (outList == null) {
 			outList = ctx.getGlobalContext().getAllTaxonomy(ctx).getList(ctx, name);
 		}
+		listCache.put(name, outList);
 		return outList;
 	}
 
@@ -313,6 +332,16 @@ public class ListService {
 			}
 			return outList;
 		}
+	}
+	
+	public List<IListItem> getContentList(ContentContext ctx, String name) throws Exception {
+		List<IContentVisualComponent> comps = (List<IContentVisualComponent>) ComponentFactory.getAllComponentsFromContext(ctx);
+		for (IContentVisualComponent c : comps) {
+			if (c instanceof DataList) {
+				return ((DataList)c).getList(ctx);
+			}
+		}
+		return null;
 	}
 
 	public void addList(String name, Collection<String> list) {

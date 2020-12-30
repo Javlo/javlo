@@ -10,7 +10,7 @@ import org.javlo.component.image.GlobalImage;
 import org.javlo.component.image.ImageBackground;
 import org.javlo.component.links.ExternalLink;
 import org.javlo.component.links.PageReferenceComponent;
-import org.javlo.component.list.FreeTextList;
+import org.javlo.component.list.DataList;
 import org.javlo.component.text.Paragraph;
 import org.javlo.component.text.XHTML;
 import org.javlo.component.title.Title;
@@ -58,7 +58,7 @@ public class ConvertToCurrentVersion {
 		}
 		if (bean.getType().equals("list")) {
 			convertion++;
-			bean.setType(FreeTextList.TYPE);
+			bean.setType(DataList.TYPE);
 			bean.setModify(true);
 		}
 		if (bean.getType().equals("important-message")) {

@@ -1,14 +1,24 @@
 package org.javlo.component.form;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
+import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.Comparator.StringComparator;
+import org.javlo.service.IListItem;
+import org.javlo.service.ListService;
 
 public class Field {
 	
+	private static Logger logger = Logger.getLogger(Field.class.getName());
+
 	private static final int SMALL_SIZE = 8;
 	private static final int MEDIUM_SIZE = 32;
 	private static final int LARGE_SIZE = 64;
@@ -34,7 +44,8 @@ public class Field {
 	private String type = "text";
 	private String role = "";
 	private String value;
-	private String list = "";
+	private List<String> list = Collections.EMPTY_LIST;
+	private String rawList = null;
 	private String registeredList = "";
 	private int order = 0;
 	private int width = 12;
@@ -46,7 +57,7 @@ public class Field {
 	private static final String TYPE_NUMBER = "number";
 
 	public static final String STATIC_TEXT = "static-text";
-	
+
 	public static final String STATIC_TITLE = "static-title";
 
 	public static final String TYPE_VAT = "vat";
@@ -54,21 +65,38 @@ public class Field {
 	protected static List<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "large-text", "yes-no", "true-false", TYPE_EMAIL, TYPE_NUMBER, "radio", "list", "list-multi", "registered-list", "file", "validation", STATIC_TEXT, STATIC_TITLE, TYPE_VAT, "hidden" });
 
 	public static String ROLE_COUNT_PART = "count-participants";
-	
+
 	protected static List<? extends Object> FIELD_ROLES = Arrays.asList(new String[] { "", ROLE_COUNT_PART, "user_firstName", "user_lastName", "user_email", "user_gender", "user_birthdate", "user_organization", "user_vat", "user_address", "user_postCode", "user_city", "user_country", "user_phone", "user_mobile", "user_function" });
-	
-	public Field(String name, String label, String type, String role, String condition, String value, String list, String registeredList, int order, int width, String autocomplete) {
+
+	public Field(ContentContext ctx, String name, String label, String type, String role, String condition, String value, String list, String registeredList, int order, int width, String autocomplete) {
 		this.name = name;
 		this.label = label;
 		this.condition = condition;
 		this.type = type;
 		this.value = value;
-		this.list = list;
+		this.rawList = StringHelper.collectionToTextarea(StringHelper.stringToCollection(list));
 		this.registeredList = registeredList;
 		this.order = order;
 		this.role = role;
 		this.autocomplete = autocomplete;
 		this.setWidth(width);
+		if (ctx != null && list.startsWith(">")) {
+			String listName = list.substring(1);
+			try {
+				List<IListItem> items = ListService.getInstance(ctx).getList(ctx, listName);
+				if (items != null) {
+					this.list = new LinkedList<>();
+					for (IListItem i : items) {
+						this.list.add(i.getValue());
+						
+					}
+				} else {
+					logger.warning("list not found : "+listName);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public String getLabel() {
@@ -105,7 +133,7 @@ public class Field {
 
 	@Override
 	public String toString() {
-		return getLabel() + SEP + getType() + SEP + getValue() + SEP + list + SEP + getOrder() + SEP + getRegisteredList() + SEP + getOrder() + SEP + getWidth() + SEP + getCondition() + SEP +getRole() + SEP +getAutocomplete();
+		return getLabel() + SEP + getType() + SEP + getValue() + SEP + StringHelper.replaceCR(rawList, StringHelper.DEFAULT_LIST_SEPARATOR) + SEP + getOrder() + SEP + getRegisteredList() + SEP + getOrder() + SEP + getWidth() + SEP + getCondition() + SEP + getRole() + SEP + getAutocomplete();
 	}
 
 	public boolean isRequire() {
@@ -128,12 +156,18 @@ public class Field {
 	}
 
 	public List<String> getList() {
-		List<String> outList = StringHelper.stringToCollection(list);
-		return outList;
+		if (list == Collections.EMPTY_LIST) {
+			list = StringHelper.textToList(rawList);
+		}
+		return list;
 	}
 
-	public void setList(String list) {
-		this.list = StringHelper.replaceCR(list, StringHelper.DEFAULT_LIST_SEPARATOR);
+	public void setRawList(String rawList) {
+		this.rawList = rawList;
+	}
+
+	public String getRawList() {
+		return rawList;
 	}
 
 	public Integer getOrder() {
@@ -151,7 +185,7 @@ public class Field {
 	public List<? extends Object> getFieldTypes() {
 		return FIELD_TYPES;
 	}
-	
+
 	public List<? extends Object> getFieldRoles() {
 		return FIELD_ROLES;
 	}
@@ -248,7 +282,7 @@ public class Field {
 			return StringHelper.isMail(value);
 		} else if (getType().equals(TYPE_NUMBER)) {
 			return StringHelper.isDigit(value);
-		}  else {
+		} else {
 			return true;
 		}
 	}
@@ -260,7 +294,7 @@ public class Field {
 	public void setRole(String role) {
 		this.role = role;
 	}
-	
+
 	public String getLabelSize() {
 		if (getLabel() == null) {
 			return "e";
@@ -274,22 +308,22 @@ public class Field {
 						return "m";
 					}
 				} else {
-					return "s"; 
+					return "s";
 				}
 			} else {
 				return "xs";
 			}
 		}
 	}
-	
+
 	public String getListLabelSize() {
 		if (getList() == null || getList().size() == 0) {
 			return "e";
 		} else {
 			int size = 0;
 			for (String label : getList()) {
-				if (label.length()>size) {
-					size=label.length();
+				if (label.length() > size) {
+					size = label.length();
 				}
 			}
 			if (size > SMALL_SIZE) {
@@ -300,7 +334,7 @@ public class Field {
 						return "m";
 					}
 				} else {
-					return "s"; 
+					return "s";
 				}
 			} else {
 				return "xs";
@@ -315,7 +349,7 @@ public class Field {
 	public void setAutocomplete(String autocomplete) {
 		this.autocomplete = autocomplete;
 	}
-	
+
 	public boolean isNeedList() {
 		return getType().startsWith("list") || getType().equals("radio");
 	}

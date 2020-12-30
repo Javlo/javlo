@@ -196,11 +196,12 @@ public class RequestService {
 		return parameterMap;
 	}
 	
-	Map<String, Object> parameterForAttributeMap = null;
+	Map<String, String> parameterForAttributeMap = null;
+	Map<String, Map<String,String>> parameterForAttributesMap = null;
 
-	public Map<String, Object> getParameterForAttributeMap() {
+	public Map<String, String> getParameterForAttributeMap() {
 		if (parameterForAttributeMap == null) {
-			Map<String, Object> outMap = new HashMap<String, Object>();
+			Map<String, String> outMap = new HashMap<>();
 
 			for (Map.Entry<String, String[]> entry : parameters.entrySet()) {
 				if (entry.getValue().length > 0) {
@@ -212,6 +213,27 @@ public class RequestService {
 		}
 
 		return parameterForAttributeMap;
+	}
+	
+	public Map<String,Map<String,String>> getParameterForAttributesMap() {
+		if (parameterForAttributesMap == null) {
+			Map<String, Map<String,String>> outMap = new HashMap<>();
+
+			for (Map.Entry<String, String[]> entry : parameters.entrySet()) {
+				if (entry.getValue().length > 0) {
+					Map<String,String> entryMap = new HashMap<>();
+					for (String value : entry.getValue()) {
+						entryMap.put(value, value);
+					}
+					outMap.put(entry.getKey(), entryMap);
+				}				
+			}
+			
+			
+			parameterForAttributesMap = outMap;
+		}
+
+		return parameterForAttributesMap;
 	}
 
 	public Map<String, String[]> getParametersMap() {

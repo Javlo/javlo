@@ -194,10 +194,6 @@ public class FreeTextList extends AbstractVisualComponent {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String newContent = requestService.getParameter(getContentName(), null);
 		String sepValue = requestService.getParameter(getSeparatorInputName(), "");
-		if (sepValue.length() > 0) {
-			sepValue = "" + sepValue.charAt(0);
-		}
-
 		if (newContent != null) {
 			if (sepValue.length() > 0) {
 				newContent = '{' + sepValue + '}' + newContent;

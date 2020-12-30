@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.javlo.component.links.WeekChildrenLink;
-import org.javlo.component.list.FreeTextList;
+import org.javlo.component.list.DataList;
 import org.javlo.component.meta.DateComponent;
 import org.javlo.component.meta.LocationComponent;
 import org.javlo.component.title.SubTitle;
@@ -62,10 +62,10 @@ public class CreateWeekHereMacro extends AbstractMacro {
 						parentId = MacroHelper.addContent(lg, weekPage, parentId, SubTitle.TYPE, "3", "", ctx.getCurrentEditUser());
 						parentId = MacroHelper.addContent(lg, weekPage, parentId, DateComponent.TYPE, null, "", ctx.getCurrentEditUser());
 						parentId = MacroHelper.addContent(lg, weekPage, parentId, LocationComponent.TYPE, null, "", ctx.getCurrentEditUser());
-						parentId = MacroHelper.addContent(lg, weekPage, parentId, FreeTextList.TYPE, null, "", ctx.getCurrentEditUser());
+						parentId = MacroHelper.addContent(lg, weekPage, parentId, DataList.TYPE, null, "", ctx.getCurrentEditUser());
 						parentId = MacroHelper.addContent(lg, weekPage, parentId, DateComponent.TYPE, null, "", ctx.getCurrentEditUser());
 						parentId = MacroHelper.addContent(lg, weekPage, parentId, LocationComponent.TYPE, null, "", ctx.getCurrentEditUser());
-						parentId = MacroHelper.addContent(lg, weekPage, parentId, FreeTextList.TYPE, null, "", ctx.getCurrentEditUser());
+						parentId = MacroHelper.addContent(lg, weekPage, parentId, DataList.TYPE, null, "", ctx.getCurrentEditUser());
 					}
 				} else {
 					MacroHelper.createPageStructure(ctx, weekPage, weekStructure, false);

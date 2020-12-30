@@ -42,6 +42,7 @@ org.javlo.component.text.Text
 org.javlo.component.text.WysiwygParagraph
 org.javlo.component.text.FullWysiwygParagraph
 org.javlo.component.list.FreeTextList
+org.javlo.component.list.DataList
 org.javlo.component.text.ContactText
 org.javlo.component.core.DebugNote
 org.javlo.component.files.CSVArrayComponent

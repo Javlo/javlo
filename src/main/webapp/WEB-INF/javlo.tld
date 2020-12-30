@@ -13,7 +13,7 @@
         <attribute>
             <name>value</name>
             <required>true</required>
-            <description>the URI</description>            
+            <description>the URI</description>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
          <attribute>

@@ -61,6 +61,8 @@ import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.CaptchaService;
 import org.javlo.service.ContentService;
+import org.javlo.service.IListItem;
+import org.javlo.service.ListService;
 import org.javlo.service.RequestService;
 import org.javlo.service.document.DataDocument;
 import org.javlo.service.document.DataDocumentService;
@@ -182,33 +184,33 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		return getLocalConfig(false).getProperty(RECAPTCHASECRETKEY, null);
 	}
 
-//	public int getCountSubscription(ContentContext ctx) throws Exception {
-//		if (countCache == null) {
-//			File file = getFile(ctx);
-//			if (!file.exists()) {
-//				countCache = 0;
-//			} else {
-//				BufferedReader reader = new BufferedReader(new FileReader(file));
-//				try {
-//					int countLine = 0;
-//					String read = reader.readLine();
-//					while (read != null) {
-//						countLine++;
-//						read = reader.readLine();
-//					}
-//					countCache = countLine - 1;
-//				} finally {
-//					ResourceHelper.closeResource(reader);
-//				}
-//			}
-//		}
-//		return countCache;
-//	}
+	// public int getCountSubscription(ContentContext ctx) throws Exception {
+	// if (countCache == null) {
+	// File file = getFile(ctx);
+	// if (!file.exists()) {
+	// countCache = 0;
+	// } else {
+	// BufferedReader reader = new BufferedReader(new FileReader(file));
+	// try {
+	// int countLine = 0;
+	// String read = reader.readLine();
+	// while (read != null) {
+	// countLine++;
+	// read = reader.readLine();
+	// }
+	// countCache = countLine - 1;
+	// } finally {
+	// ResourceHelper.closeResource(reader);
+	// }
+	// }
+	// }
+	// return countCache;
+	// }
 
 	public int getCountSubscription(ContentContext ctx) throws Exception {
 		if (countCache == null) {
 			Field countField = null;
-			for (Field field : getFields()) {
+			for (Field field : getFields(ctx)) {
 				if (field.getRole().equals(Field.ROLE_COUNT_PART)) {
 					countField = field;
 				}
@@ -254,64 +256,14 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	}
 
 	public static final String TYPE = "smart-generic-form";
-	
+
 	private String getAutoCompleteHTMLList() {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		String[] list = new String[] {"off",
-				"on",
-				"name",
-				"given-name",
-				"additional-name",
-				"family-name",
-				"honorific-suffix",
-				"nickname",
-				"email",
-				"username",
-				"new-password",
-				"current-password",
-				"one-time-code",
-				"organization-title",
-				"organization",
-				"street-address",
-				"address-line1",
-				"address-line2",
-				"address-line3",
-				"address-level1",
-				"country",
-				"country-name",
-				"postal-code",
-				"cc-name",
-				"cc-given-name",
-				"cc-additional-name",
-				"cc-family-name",
-				"cc-number",
-				"cc-exp",
-				"cc-exp-month",
-				"cc-exp-year",
-				"cc-csc",
-				"cc-type",
-				"transaction-currency",
-				"transaction-amount",
-				"language",
-				"bday",
-				"bday-day",
-				"bday-month",
-				"bday-year",
-				"sex",
-				"tel",
-				"tel-country-code",
-				"tel-national",
-				"tel-area-code",
-				"tel-local",
-				"tel-extension",
-				"impp",
-				"url",
-				"photo"
-		};
+		String[] list = new String[] { "off", "on", "name", "given-name", "additional-name", "family-name", "honorific-suffix", "nickname", "email", "username", "new-password", "current-password", "one-time-code", "organization-title", "organization", "street-address", "address-line1", "address-line2", "address-line3", "address-level1", "country", "country-name", "postal-code", "cc-name", "cc-given-name", "cc-additional-name", "cc-family-name", "cc-number", "cc-exp", "cc-exp-month", "cc-exp-year", "cc-csc", "cc-type", "transaction-currency", "transaction-amount", "language", "bday", "bday-day", "bday-month", "bday-year", "sex", "tel", "tel-country-code", "tel-national", "tel-area-code", "tel-local", "tel-extension", "impp", "url", "photo" };
 		out.println("<datalist id=\"autocomplete-list\">");
 		for (String item : list) {
-			out.print("<option value=\""+item+"\">");
+			out.print("<option value=\"" + item + "\">");
 		}
 		out.println("</datalist>");
 		out.close();
@@ -353,7 +305,8 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		String csvLink = URLHelper.createResourceURL(ctx, URLHelper.mergePath("/", staticConfig.getStaticFolder(), FOLDER, getLocalConfig(false).getProperty("filename", "")));
 		String xlsxLink = FilenameUtils.removeExtension(csvLink) + ".xlsx";
 		out.println("</div><div class=\"col-sm-2\"><a href=\"" + xlsxLink + "\">[XSLX]</a> - <a href=\"" + csvLink + "\">[CSV]</a></div>");
-//		out.println(div(a("[XSLX]").attr("href", xlsxLink),span(" - "),a("[CSV]").attr("href", csvLink)).withClass("col-sm-2").render());
+		// out.println(div(a("[XSLX]").attr("href", xlsxLink),span(" -
+		// "),a("[CSV]").attr("href", csvLink)).withClass("col-sm-2").render());
 		out.println("</div>");
 
 		out.println("<div class=\"row\"><div class=\"col-sm-2\">");
@@ -425,7 +378,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 
 		out.println("<div class=\"action-add\"><input type=\"text\" name=\"" + getInputName("new-name") + "\" placeholder=\"field name\" /> <input type=\"submit\" name=\"" + getInputName("add-first") + "\" value=\"add as first\" /> <input type=\"submit\" name=\"" + getInputName("add") + "\" value=\"add as last\" /></div>");
-		if (getFields().size() > 0) {
+		if (getFields(ctx).size() > 0) {
 			out.println(getAutoCompleteHTMLList());
 			out.println("<table class=\"sTable2\">");
 			String listTitle = "";
@@ -434,7 +387,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			}
 			out.println("<thead><tr><td>name</td><td>label</td><td>condition</td><td>autocomplete</td>" + listTitle + "<td>type</td><td>role</td><td>width</td><td>required</td><td>action</td></tr></thead>");
 			out.println("<tbody>");
-			List<Field> fields = getFields();
+			List<Field> fields = getFields(ctx);
 			for (Field field : fields) {
 				out.println(getEditXHTML(ctx, field));
 			}
@@ -445,11 +398,11 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		out.println("<br /><div class=\"row upload\">");
 		out.println("<div class=\"col-sm-2\"><label for=\"" + getInputName("title") + "\">import fields as xlsx</label></div>");
 		out.println("<div class=\"col-sm-6\"><input type=\"file\" name=\"" + getInputName("form-as-excel") + "\" /></div>");
-		
-		String downloadExcelUrl = URLHelper.createActionURL(ctx, getActionGroupName()+".downloadForm", getType()+getId()+".xlsx");
+
+		String downloadExcelUrl = URLHelper.createActionURL(ctx, getActionGroupName() + ".downloadForm", getType() + getId() + ".xlsx");
 		downloadExcelUrl = URLHelper.addParam(downloadExcelUrl, IContentVisualComponent.COMP_ID_REQUEST_PARAM, getId());
-		
-		out.println("<div class=\"col-sm-4 align-right\"><a target=\"_blank\" href=\""+downloadExcelUrl+"\">"+StringHelper.stringToFileName(getPage().getTitle(ctx))+"_"+getId()+".xlsx</a></div>");
+
+		out.println("<div class=\"col-sm-4 align-right\"><a target=\"_blank\" href=\"" + downloadExcelUrl + "\">" + StringHelper.stringToFileName(getPage().getTitle(ctx)) + "_" + getId() + ".xlsx</a></div>");
 		out.println("</div>");
 
 		out.close();
@@ -470,7 +423,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		out.println("<td class=\"input autocomplete\"><input class=\"form-control\" type=\"text\" name=\"" + getInputName("autocomplete-" + field.getName()) + "\" list=\"autocomplete-list\" value=\"" + field.getAutocomplete() + "\"/></td>");
 		if (isList()) {
 			if (field.isNeedList()) {
-				out.println("<td class=\"list\"><textarea class=\"form-control\" name=\"" + getInputName("list-" + field.getName()) + "\">" + StringHelper.collectionToTextarea(field.getList()) + "</textarea></td>");
+				out.println("<td class=\"list\"><textarea class=\"form-control\" name=\"" + getInputName("list-" + field.getName()) + "\">" + field.getRawList() + "</textarea></td>");
 			} else if (field.getType().equals("registered-list")) {
 				out.println("<td class=\"list\"><input class=\"form-control\" name=\"" + getInputName("registered-list-" + field.getName()) + "\" placeholder=\"list name\" value=\"" + field.getRegisteredList() + "\"/></td>");
 			} else {
@@ -504,16 +457,25 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		return new String(outStream.toByteArray());
 	}
 
-	protected Field getField(String fieldName) {
-		for (Field field : getFields()) {
+	protected Field getField(ContentContext ctx, String fieldName) {
+		for (Field field : getFields(ctx)) {
 			if (field.getName().equalsIgnoreCase(fieldName)) {
 				return field;
 			}
 		}
 		return null;
 	}
-
+	
+	@Deprecated
+	/**
+	 * use fields directly
+	 * @return
+	 */
 	public synchronized List<Field> getFields() {
+		return getFields(null);
+	}
+
+	public synchronized List<Field> getFields(ContentContext ctx) {
 		List<Field> fields = new LinkedList<Field>();
 		Properties p = getLocalConfig(false);
 
@@ -524,15 +486,14 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				if (name.trim().length() > 0) {
 					String value = p.getProperty(key);
 					String[] data = StringUtils.splitPreserveAllTokens(value, Field.SEP);
-					Field field = new Field(name, (String) LangHelper.arrays(data, 0, ""), (String) LangHelper.arrays(data, 1, ""), (String) LangHelper.arrays(data, 9, ""), (String) LangHelper.arrays(data, 8, ""), (String) LangHelper.arrays(data, 2, ""), (String) LangHelper.arrays(data, 3, ""), (String) LangHelper.arrays(data, 5, ""), Integer.parseInt("" + LangHelper.arrays(data, 6, "0")), Integer.parseInt("" + LangHelper.arrays(data, 7, "6")), (String) LangHelper.arrays(data, 10, ""));
+					Field field = new Field(ctx, name, (String) LangHelper.arrays(data, 0, ""), (String) LangHelper.arrays(data, 1, ""), (String) LangHelper.arrays(data, 9, ""), (String) LangHelper.arrays(data, 8, ""), (String) LangHelper.arrays(data, 2, ""), (String) LangHelper.arrays(data, 3, ""), (String) LangHelper.arrays(data, 5, ""), Integer.parseInt("" + LangHelper.arrays(data, 6, "0")), Integer.parseInt("" + LangHelper.arrays(data, 7, "6")), (String) LangHelper.arrays(data, 10, ""));
 					fields.add(field);
 				}
 			}
 		}
 		Collections.sort(fields, new Field.FieldComparator());
 		int currentWidth = 0;
-		Field lastField = null;
-		boolean firstSetted = false;
+		Field lastField = null;		
 		for (Field field : fields) {
 			if (!field.getType().equals("hidden")) {
 				if (currentWidth == 0) {
@@ -553,7 +514,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	}
 
 	public boolean isFile() {
-		for (Field field : getFields()) {
+		for (Field field : getFields(null)) {
 			if (field.getType().equals("file")) {
 				return true;
 			}
@@ -562,7 +523,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	}
 
 	public boolean isList() {
-		for (Field field : getFields()) {
+		for (Field field : getFields(null)) {
 			if (field.isNeedList()) {
 				return true;
 			}
@@ -628,6 +589,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		ctx.getRequest().setAttribute("formCode", code);
 		String eventLimistStr = localConfig.getProperty("event.limit");
 		ctx.getRequest().setAttribute("openEvent", true);
+		ctx.getRequest().setAttribute("fields", getFields(ctx));
 		if (StringHelper.isDigit(eventLimistStr)) {
 			int maxSubscription = Integer.parseInt(eventLimistStr);
 			if (maxSubscription > 0) {
@@ -701,7 +663,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 
 		if (ctx.getCurrentUser() != null) {
-			for (Field field : getFields()) {
+			for (Field field : getFields(ctx)) {
 				if (field.getRole().startsWith("user_") && StringHelper.isEmpty(rs.getParameter(field.getName()))) {
 					String userAttribute = field.getRole().substring("user_".length());
 					userAttribute = userAttribute.substring(0, 1).toUpperCase() + userAttribute.substring(1);
@@ -795,7 +757,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					logger.warning("bad form-as-excel width : " + cells[0].length + " in place of 9.");
 					return false;
 				}
-				for (Field field : getFields()) {
+				for (Field field : getFields(ctx)) {
 					delField(field.getName());
 				}
 				for (int i = 1; i < cells.length; i++) {
@@ -819,9 +781,9 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 							// public Field(String name, String label, String type, String role, String
 							// condition, String value, String list, String registeredList, int order, int
 							// width) {
-							Field field = new Field(cells[i][0].getValue(), label, type, "", cond, "", list, regList, order, width, "");
+							Field field = new Field(ctx, cells[i][0].getValue(), label, type, "", cond, "", list, regList, order, width, "");
 							field.setRequire(StringHelper.isTrue(cells[i][8].getValue()));
-							if (cells[i].length>9) {
+							if (cells[i].length > 9) {
 								field.setAutocomplete(StringHelper.neverNull(cells[i][9].getValue()));
 							}
 							store(field);
@@ -886,7 +848,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 
 		int pos = 10;
-		for (Field field : getFields()) {
+		for (Field field : getFields(ctx)) {
 			field.setOrder(pos);
 			pos = pos + 10;
 			String oldName = field.getName();
@@ -910,7 +872,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				}
 				String listValue = rs.getParameter(getInputName("list-" + oldName), null);
 				if (listValue != null) {
-					field.setList(listValue);
+					field.setRawList(listValue);
 				}
 				String registeredListValue = rs.getParameter(getInputName("registered-list-" + oldName), null);
 				if (registeredListValue != null) {
@@ -933,28 +895,28 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			String fieldName = StringHelper.createFileName(rs.getParameter(getInputName("new-name"), null));
 			if (rs.getParameter(getInputName("add-first")) != null) {
 				int order = 20;
-				for (Field field : getFields()) {
+				for (Field field : getFields(ctx)) {
 					field.setOrder(order);
 					store(field);
-					order+=10;
+					order += 10;
 				}
-				store(new Field(fieldName, "", "text", "", "", "text", "", "", 10, 6, ""));
+				store(new Field(ctx, fieldName, "", "text", "", "", "text", "", "", 10, 6, ""));
 			} else {
-				store(new Field(fieldName, "", "text", "", "", "text", "", "", pos + 10, 6, ""));
+				store(new Field(ctx, fieldName, "", "text", "", "", "text", "", "", pos + 10, 6, ""));
 			}
 			ctx.getRequest().setAttribute(getNewFieldKey(), fieldName);
 		}
-		
+
 		try {
 			importFieldAsExcel(ctx);
 		} catch (Exception e) {
 			logger.warning(e.getMessage());
 		}
-		
+
 		store(ctx);
 
 		countCache = null;
-		
+
 		return null;
 	}
 
@@ -1038,7 +1000,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				if (allData.size() >= editLineNumber) {
 					Map<String, String> oldData = allData.get(editLineNumber);
 					for (Map.Entry<String, String> entry : data.entrySet()) {
-						Field field = getField(entry.getKey());
+						Field field = getField(ctx, entry.getKey());
 						if (field != null && field.getType().equals("file") && StringHelper.isEmpty(entry.getValue())) {
 							data.put(entry.getKey(), oldData.get(entry.getKey()));
 						}
@@ -1067,7 +1029,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	protected InternetAddress getConfirmToEmail(ContentContext ctx) {
 		String emailConformField = getLocalConfig(false).getProperty("mail.confirm.field", null);
 		if (emailConformField == null) {
-			for (Field field : getFields()) {
+			for (Field field : getFields(ctx)) {
 				if (field.getType().equals("email") && emailConformField == null) {
 					emailConformField = field.getName();
 				}
@@ -1222,7 +1184,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 
 		Map<String, String> dataDoc = new HashMap<>();
-		for (Field field : comp.getFields()) {
+		for (Field field : comp.getFields(ctx)) {
 			String key = field.getName();
 
 			Object value = params.get(key);
@@ -1245,18 +1207,19 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			} else {
 				dataDoc.put(StringHelper.firstLetterLower(key), "" + value);
 			}
-			
+
 			if (!update || !field.getType().equals("file")) {
-				//if (!field.isFilledWidth(finalValue) && StringHelper.containsUppercase(key.substring(0, 1))) {
+				// if (!field.isFilledWidth(finalValue) &&
+				// StringHelper.containsUppercase(key.substring(0, 1))) {
 				if (!field.isFilledWidth(finalValue, !field.getType().contains("list")) && StringHelper.containsUppercase(key.substring(0, 1))) {
 					errorKeyFound.add(key);
 					errorFields.add(key);
 					errorFieldList = errorFieldList + errorFieldSep + field.getLabel();
 					errorFieldSep = ",";
-					if (badFormatFound) {						
+					if (badFormatFound) {
 						GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.generic", "please check all fields.") + errorFieldList + ')', GenericMessage.ERROR);
 						request.setAttribute("msg", msg);
-					} else {						
+					} else {
 						GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.required", "please could you fill all required fields.") + errorFieldList + ')', GenericMessage.ERROR);
 						request.setAttribute("msg", msg);
 					}
@@ -1270,7 +1233,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 						if (company == null) {
 							errorVAT = true;
 						} else {
-							for (Field f : comp.getFields()) {
+							for (Field f : comp.getFields(ctx)) {
 								if (f.getName().equalsIgnoreCase("adresse") || f.getName().equalsIgnoreCase("address") && StringHelper.isEmpty(f.getValue())) {
 									f.setValue(company.getAddress());
 								}
@@ -1300,16 +1263,17 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				}
 			}
 
-//			if (!StringHelper.isEmpty(field.getRegisteredList())) {
-//				List<IListItem> list = ListService.getInstance(ctx).getList(ctx, field.getRegisteredList());
-//				if (list != null) {
-//					for (IListItem item : list) {
-//						if (item.getKey().equals(finalValue)) {
-//							finalValue = finalValue+" ("+item.getValue()+')';
-//						}
-//					}
-//				}
-//			}
+			// if (!StringHelper.isEmpty(field.getRegisteredList())) {
+			// List<IListItem> list = ListService.getInstance(ctx).getList(ctx,
+			// field.getRegisteredList());
+			// if (list != null) {
+			// for (IListItem item : list) {
+			// if (item.getKey().equals(finalValue)) {
+			// finalValue = finalValue+" ("+item.getValue()+')';
+			// }
+			// }
+			// }
+			// }
 
 			if (ctx.getCurrentUser() != null) {
 				adminMailData.put("user", ctx.getCurrentUser().getLogin());
@@ -1503,7 +1467,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 						if (email != null && email.length() > 0) {
 							InternetAddress to = comp.getConfirmToEmail(ctx);
 							if (to != null) {
-								for (Field field : comp.getFields()) {
+								for (Field field : comp.getFields(ctx)) {
 									email = email.replace("${field." + field.getName() + "}", rs.getParameter(field.getName(), ""));
 								}
 								email = email.replace("${registrationID}", registrationID);
@@ -1689,39 +1653,59 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 		return outData;
 	}
-	
+
 	public static String performDownloadForm(ContentContext ctx, RequestService rs) throws Exception {
-		SmartGenericForm comp = (SmartGenericForm)ComponentHelper.getComponentFromRequest(ctx);
+		SmartGenericForm comp = (SmartGenericForm) ComponentHelper.getComponentFromRequest(ctx);
 		if (comp == null) {
 			logger.severe("component id not found in the URL.");
 			return "component id not found in the URL.";
 		}
-		Cell[][] cells = XLSTools.createArray(10, comp.getFields().size()+1);
-		int y=0;
-		cells[0][y] = new Cell("name", null, cells, 0, y); y++;
-		cells[0][y] = new Cell("label", null, cells, 0, y); y++;
-		cells[0][y] = new Cell("type", null, cells, 0, y); y++;
-		cells[0][y] = new Cell("condition", null, cells, 0, y); y++;
-		cells[0][y] = new Cell("list", null, cells, 0, y); y++;
-		cells[0][y] = new Cell("registered list", null, cells, 0, y); y++;
-		cells[0][y] = new Cell("order", null, cells, 0, y); y++;
-		cells[0][y] = new Cell("width", null, cells, 0, y); y++;
-		cells[0][y] = new Cell("required", null, cells, 0, y); y++;
-		cells[0][y] = new Cell("autocomplete", null, cells, 0, y); y++;
-		
-		int x=1;
-		for (Field field : comp.getFields()) {
-			y=0;
-			cells[x][y] = new Cell(field.getName(), null, cells, x, y); y++;
-			cells[x][y] = new Cell(field.getLabel(), null, cells, x, y); y++;
-			cells[x][y] = new Cell(field.getType(), null, cells, x, y); y++;
-			cells[x][y] = new Cell(field.getCondition(), null, cells, x, y); y++;
-			cells[x][y] = new Cell(StringHelper.collectionToString(field.getList(),","), null, cells, x, y); y++;
-			cells[x][y] = new Cell(field.getRegisteredList(), null, cells, x, y); y++;
-			cells[x][y] = new Cell(""+field.getOrder(), null, cells, x, y); y++;
-			cells[x][y] = new Cell(""+field.getWidth(), null, cells, x, y); y++;
-			cells[x][y] = new Cell(""+field.isRequire(), null, cells, x, y); y++;
-			cells[x][y] = new Cell(field.getAutocomplete(), null, cells, x, y); y++;
+		Cell[][] cells = XLSTools.createArray(10, comp.getFields(ctx).size() + 1);
+		int y = 0;
+		cells[0][y] = new Cell("name", null, cells, 0, y);
+		y++;
+		cells[0][y] = new Cell("label", null, cells, 0, y);
+		y++;
+		cells[0][y] = new Cell("type", null, cells, 0, y);
+		y++;
+		cells[0][y] = new Cell("condition", null, cells, 0, y);
+		y++;
+		cells[0][y] = new Cell("list", null, cells, 0, y);
+		y++;
+		cells[0][y] = new Cell("registered list", null, cells, 0, y);
+		y++;
+		cells[0][y] = new Cell("order", null, cells, 0, y);
+		y++;
+		cells[0][y] = new Cell("width", null, cells, 0, y);
+		y++;
+		cells[0][y] = new Cell("required", null, cells, 0, y);
+		y++;
+		cells[0][y] = new Cell("autocomplete", null, cells, 0, y);
+		y++;
+
+		int x = 1;
+		for (Field field : comp.getFields(ctx)) {
+			y = 0;
+			cells[x][y] = new Cell(field.getName(), null, cells, x, y);
+			y++;
+			cells[x][y] = new Cell(field.getLabel(), null, cells, x, y);
+			y++;
+			cells[x][y] = new Cell(field.getType(), null, cells, x, y);
+			y++;
+			cells[x][y] = new Cell(field.getCondition(), null, cells, x, y);
+			y++;
+			cells[x][y] = new Cell(StringHelper.collectionToString(field.getList(), ","), null, cells, x, y);
+			y++;
+			cells[x][y] = new Cell(field.getRegisteredList(), null, cells, x, y);
+			y++;
+			cells[x][y] = new Cell("" + field.getOrder(), null, cells, x, y);
+			y++;
+			cells[x][y] = new Cell("" + field.getWidth(), null, cells, x, y);
+			y++;
+			cells[x][y] = new Cell("" + field.isRequire(), null, cells, x, y);
+			y++;
+			cells[x][y] = new Cell(field.getAutocomplete(), null, cells, x, y);
+			y++;
 			x++;
 		}
 		XLSTools.writeXLSX(cells, ctx.getResponse().getOutputStream());

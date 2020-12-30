@@ -30,7 +30,7 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.component.image.Image;
 import org.javlo.component.links.ExternalLink;
-import org.javlo.component.list.FreeTextList;
+import org.javlo.component.list.DataList;
 import org.javlo.component.meta.DateComponent;
 import org.javlo.component.multimedia.Video;
 import org.javlo.component.text.Paragraph;
@@ -95,7 +95,7 @@ public class ContentHelper {
 				}
 			} else if (tag.getName().equalsIgnoreCase("ul")) {
 				String content = removeTag(tag.getInside(html));
-				newBean = new ComponentBean(FreeTextList.TYPE, content, lg);
+				newBean = new ComponentBean(DataList.TYPE, content, lg);
 			} else if (tag.getName().equalsIgnoreCase("img")) {
 				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 				PrintStream out = new PrintStream(outStream);
@@ -300,7 +300,7 @@ public class ContentHelper {
 									}
 									out.close();
 									value = new String(outStream.toByteArray());
-									bean = new ComponentBean(FreeTextList.TYPE, value, lang);
+									bean = new ComponentBean(DataList.TYPE, value, lang);
 								}
 							} else if (node.getName().endsWith(":image")) {
 								if (node.getAttributeValue("xlink:href") != null) {
