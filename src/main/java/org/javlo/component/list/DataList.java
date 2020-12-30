@@ -88,7 +88,7 @@ public class DataList extends AbstractVisualComponent {
 		finalCode.append(" rows=\"" + (Math.max(countLine(),4) + 1) + "\">");
 		String value = getValue();
 		if (getNameValue().length() > 0) {
-			value = value.substring(3);
+			value = value.substring(value.indexOf('}')+1);
 		}
 		finalCode.append(value);
 		finalCode.append("</textarea>");
@@ -101,9 +101,6 @@ public class DataList extends AbstractVisualComponent {
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String newContent = requestService.getParameter(getContentName(), null);
 		String sepValue = requestService.getParameter(getNameInputName(), "");
-		if (sepValue.length() > 0) {
-			sepValue = "" + sepValue.charAt(0);
-		}
 
 		if (newContent != null) {
 			if (sepValue.length() > 0) {

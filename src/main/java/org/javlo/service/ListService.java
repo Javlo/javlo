@@ -35,7 +35,7 @@ public class ListService {
 
 	Map<String, List<IListItem>> localLists = new Hashtable<String, List<IListItem>>();
 	
-	Map<String, List<IListItem>> listCache = new TimeMap<>(30);
+	Map<String, List<IListItem>> listCache = new TimeMap<>(15);
 
 	private static final Map<String, List<IListItem>> hardNodeCache = new HashMap<String, List<IListItem>>();
 
@@ -338,7 +338,9 @@ public class ListService {
 		List<IContentVisualComponent> comps = (List<IContentVisualComponent>) ComponentFactory.getAllComponentsFromContext(ctx);
 		for (IContentVisualComponent c : comps) {
 			if (c instanceof DataList) {
-				return ((DataList)c).getList(ctx);
+				if (((DataList)c).getNameValue().equals(name)) {
+					return ((DataList)c).getList(ctx);
+				}
 			}
 		}
 		return null;
