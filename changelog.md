@@ -849,6 +849,7 @@ Security in case of vulnerabilities.
   - default area can be defined in template
   - DeepL translator
   - field color
+  - DataList Component
 ### Modified
   - load view nav before preview nav
   - cache globalContext in application context
