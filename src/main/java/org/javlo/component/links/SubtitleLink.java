@@ -68,7 +68,7 @@ public class SubtitleLink extends AbstractVisualComponent {
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
 		ctx = ctx.getContextWithArea(getMainArea(ctx));
-		MenuElement myPage = getPage();
+		MenuElement myPage = ctx.getCurrentPage();
 		ContentElementList content = myPage.getContent(ctx);
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
