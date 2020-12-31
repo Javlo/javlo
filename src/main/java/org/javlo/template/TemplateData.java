@@ -37,6 +37,7 @@ public class TemplateData {
 	private boolean searchMenu = false;
 	private boolean jssearchMenu = false;
 	private boolean dropdownMenu = false;
+	private boolean fixSidebar = false;
 	private boolean small;
 	private boolean large;
 
@@ -197,6 +198,7 @@ public class TemplateData {
 			setDropdownMenu(StringHelper.isTrue(map.get("dropdown")));
 			setLarge(StringHelper.isTrue(map.get("large")));
 			setSmall(StringHelper.isTrue(map.get("small")));
+			setFixSidebar(StringHelper.isTrue(map.get("sideBar")));
 		}
 	}
 	
@@ -232,6 +234,7 @@ public class TemplateData {
 		outData.put("small", ""+isSmall());
 		outData.put("jssearch", ""+isJssearchMenu());
 		outData.put("search", ""+isSearchMenu());
+		outData.put("fixSidebar", ""+isFixSidebar());
 		
 		String colors = "";
 		String sep = "";
@@ -577,6 +580,14 @@ public class TemplateData {
 
 	public void setLoginMenu(boolean login) {
 		this.loginMenu = login;
+	}
+
+	public boolean isFixSidebar() {
+		return fixSidebar;
+	}
+
+	public void setFixSidebar(boolean fixSidebar) {
+		this.fixSidebar = fixSidebar;
 	}
 
 }

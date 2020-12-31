@@ -763,7 +763,7 @@ public class AdminAction extends AbstractModuleAction {
 		td.setSpecial(StringHelper.parseColor(requestService.getParameter("special", "" + td.getSpecial())));
 		td.setFontText(requestService.getParameter("fontText", "" + td.getFontText()));
 		td.setFontHeading(requestService.getParameter("fontHeading", "" + td.getFontHeading()));
-		td.setFixMenu(StringHelper.isTrue(requestService.getParameter("fixMenu", null)));
+		td.setFixMenu(StringHelper.isTrue(requestService.getParameter("fixMenu", null)));		
 		td.setLargeMenu(StringHelper.isTrue(requestService.getParameter("largeMenu", null)));
 		td.setLoginMenu(StringHelper.isTrue(requestService.getParameter("loginMenu", null)));
 		td.setSearchMenu(StringHelper.isTrue(requestService.getParameter("searchMenu", null)));
@@ -771,6 +771,7 @@ public class AdminAction extends AbstractModuleAction {
 		td.setDropdownMenu(StringHelper.isTrue(requestService.getParameter("dropdownMenu", null)));
 		td.setLarge(StringHelper.isTrue(requestService.getParameter("large", null)));
 		td.setSmall(StringHelper.isTrue(requestService.getParameter("small", null)));
+		td.setFixSidebar(StringHelper.isTrue(requestService.getParameter("fixSidebar", null)));
 
 		/** message **/
 		td.setMessagePrimary(StringHelper.parseColor(requestService.getParameter("messagePrimary", "" + td.getMessagePrimary())));

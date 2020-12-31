@@ -2174,6 +2174,7 @@ public class Template implements Comparable<Template> {
 		params += "&_menujssearch=" + ctx.getGlobalContext().getTemplateData().isJssearchMenu();
 		params += "&_menudropdown=" + ctx.getGlobalContext().getTemplateData().isDropdownMenu();
 		params += "&_menulogin=" + ctx.getGlobalContext().getTemplateData().isLoginMenu();
+		params += "&_fixsidebar=" + ctx.getGlobalContext().getTemplateData().isFixSidebar();
 		String templateParams = getHTMLFileParams(ctx.getDevice());
 		if (templateParams != null) {
 			params = params + '&' + templateParams;

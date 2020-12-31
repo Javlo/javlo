@@ -86,6 +86,10 @@
 	<label><input type="checkbox" name="small" id="small-content" ${currentContext.templateData.small?'checked="checked"':""} onchange="document.getElementById('large-content').checked=false;" />
 	${i18n.edit['admin.template.small']}</label>
 </div>
+<div class="checkbox">	
+	<label><input type="checkbox" name="fixSidebar" ${currentContext.templateData.fixSidebar?'checked="checked"':""} />
+	${i18n.edit['admin.template.fix-sidebar']}</label>
+</div>
 </div></div>
 
 <script>

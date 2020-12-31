@@ -100,7 +100,7 @@
 <form id="form-page-properties" action="${info.currentURL}" method="post" enctype="multipart/form-data">
 
 <div>
-	<input type="hidden" name="webaction" value="updateGlobalContext" />
+	<input type="hidden" name="webaction" value="admin.updateGlobalContext" />
 	<input type="hidden" name="name" value="${page.name}" />
 	<input type="hidden" name="context" value="${currentContext.key}" />
 </div>
