@@ -850,6 +850,7 @@ Security in case of vulnerabilities.
   - DeepL translator
   - field color
   - DataList Component
+  - fix sidebar
 ### Modified
   - load view nav before preview nav
   - cache globalContext in application context
