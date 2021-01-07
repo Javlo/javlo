@@ -1,6 +1,7 @@
 package org.javlo.component.web2.survey;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,10 +21,19 @@ public class ListSurvey extends AbstractSurvey implements IAction {
 	protected static final String FIELD_LABEL_SEND = "sendlabel";
 
 	public static final String TYPE = "list-survey";
+	
+	private static final String RANDOM_STYLE = "random";
+	
+	private static String[] STYLES = new String[] {"stay order", RANDOM_STYLE};
 
 	@Override
 	public String getType() {
 		return TYPE;
+	}
+	
+	@Override
+	public String[] getStyleList(ContentContext ctx) {
+		return STYLES;
 	}
 	
 	private static final List<String> FIELDS = Arrays.asList(new String[] {SESSION_NAME, TITLE_FIELD, QUESTION_FIELD, RESPONSE_FIELD, FIELD_LABEL_SEND});
@@ -89,6 +99,9 @@ public class ListSurvey extends AbstractSurvey implements IAction {
 			}	
 		}
 		
+		if (getStyle().equals(RANDOM_STYLE)) {
+			Collections.shuffle(outQuestion);
+		}
 		
 		return outQuestion;
 	}
