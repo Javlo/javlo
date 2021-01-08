@@ -35,6 +35,14 @@ public class Question {
 	public String getLabel() {
 		return label;
 	}
+	
+	public String getDisplayLabel() {
+		if (label == null) {
+			return null;
+		} else {
+			return label.replaceAll("\\[.*\\]", "").trim();
+		}
+	}
 
 	public void setLabel(String label) {
 		this.label = label;
