@@ -1448,7 +1448,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				monthFilter = null;
 			}
 		}
-
+		
 		List<SmartPageBean> pageBeans = new LinkedList<SmartPageBean>();
 		Collection<Calendar> allMonths = new LinkedList<Calendar>();
 		Collection<String> allMonthsKeys = new HashSet<String>();

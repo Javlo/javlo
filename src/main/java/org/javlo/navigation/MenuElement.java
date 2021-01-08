@@ -2459,7 +2459,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		if (contentDate != null) {
 			return contentDate;
 		} else {
-			return getModificationDate(ctx);
+			return getCreationDate();
 		}
 	}
 
@@ -3420,9 +3420,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		} else {
 			pageDate = getRealModificationDate(ctx);
 		}
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(pageDate);
 		if (isRootChildrenAssociation()) {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(pageDate);
 			for (MenuElement child : getChildMenuElements()) {
 				Calendar childCat = Calendar.getInstance();
 				childCat.setTime(child.getModificationDate(ctx));
@@ -3430,8 +3430,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 					cal = childCat;
 				}
 			}
+			pageDate = cal.getTime();
 		}
-		return cal.getTime();
+		return pageDate;
 	}
 
 	/**
@@ -3802,11 +3803,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	}
 
 	public Date getRealModificationDate(ContentContext ctx) throws ParseException, Exception {
-		if (ctx != null && getContentByType(ctx, PageReferenceComponent.TYPE, false).size() > 0) {
-			return ctx.getGlobalContext().getPublishDate();
-		} else {
-			return modificationDate;
-		}
+		return modificationDate;
 	}
 
 	public Map<String, String> getReplacement() {

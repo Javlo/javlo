@@ -1,6 +1,7 @@
 package org.javlo.component.links;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Collection;
@@ -989,6 +990,10 @@ public class SmartPageBean {
 		} else {
 			return null;
 		}
+	}
+	
+	public String getContentDateNeverNull() throws FileNotFoundException, IOException, Exception {
+		return StringHelper.renderShortDate(ctx, page.getContentDateNeverNull(ctx));
 	}
 	
 }
