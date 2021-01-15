@@ -82,7 +82,15 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		}		
 		
 		public String getValue() {
-			return Field.this.getValue();
+			String value = Field.this.getValue();
+			if (StringHelper.isEmpty(value)) {
+				try {
+					return getReferenceValue(ctx);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			return value;
 		}
 		
 		public String getText() {
