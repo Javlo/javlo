@@ -6,6 +6,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -22,7 +25,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
 
 public class TimeHelper {
-	
+
 	public static final Date NO_DATE = new Date(0);
 
 	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TimeHelper.class.getName());
@@ -60,7 +63,7 @@ public class TimeHelper {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * check if date is after other date.
 	 */
@@ -151,7 +154,7 @@ public class TimeHelper {
 	public static boolean betweenInDay(Date date, Date start, Date end) {
 		return isAfterOrEqualForDay(date, start) && isBeforeOrEqualForDay(date, end);
 	}
-	
+
 	public static Calendar getCalendar(Date date) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
@@ -343,6 +346,20 @@ public class TimeHelper {
 			e.printStackTrace();
 		}
 		return age;
+	}
+
+	public static LocalDate convertToLocalDateViaInstant(Date dateToConvert) {
+		if (dateToConvert == null) {
+			return null;
+		}
+		return dateToConvert.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+	}
+	
+	public static LocalDateTime convertToLocalDateTimeViaInstant(Date dateToConvert) {
+		if (dateToConvert == null) {
+			return null;
+		}
+		return dateToConvert.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 	}
 
 }

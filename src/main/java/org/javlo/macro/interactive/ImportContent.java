@@ -11,10 +11,14 @@ import java.util.logging.Logger;
 import org.apache.commons.fileupload.FileItem;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.ComponentFactory;
+import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ContentHelper;
+import org.javlo.helper.MacroHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -23,6 +27,9 @@ import org.javlo.macro.core.IInteractiveMacro;
 import org.javlo.message.MessageRepository;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+import org.javlo.utils.Cell;
+import org.javlo.utils.StructuredProperties;
+import org.javlo.utils.XLSTools;
 
 public class ImportContent implements IInteractiveMacro, IAction {
 
@@ -66,6 +73,9 @@ public class ImportContent implements IInteractiveMacro, IAction {
 	public static String performImport(RequestService rs, ContentContext ctx, EditContext editCtx, ContentService content, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 
 		String encoding = rs.getParameter("encoding", ContentContext.CHARACTER_ENCODING);
+		if (StringHelper.isEmpty(encoding)) {
+			encoding = ContentContext.CHARACTER_ENCODING;
+		}
 
 		Collection<FileItem> items = rs.getAllFileItem();
 		for (FileItem fileItem : items) {
@@ -78,6 +88,43 @@ public class ImportContent implements IInteractiveMacro, IAction {
 					newBeans = ContentHelper.createContentWithHTML(html, ctx.getRequestContentLanguage());
 				} else if (StringHelper.getFileExtension(fileItem.getName()).equalsIgnoreCase("odt")) {
 					newBeans = ContentHelper.createContentFromODT(GlobalContext.getInstance(ctx.getRequest()), in, fileItem.getName(), ctx.getRequestContentLanguage());
+				} else if (StringHelper.getFileExtension(fileItem.getName()).equalsIgnoreCase("xlsx")) {
+					Cell[][] array = XLSTools.getXLSXArray(ctx, in, null);
+					System.out.println(">>>>>>>>> ImportContent.performImport : ctx.getCurrentTemplate().getName() = " + ctx.getCurrentTemplate().getName()); // TODO: remove debug trace
+					for (int i = 0; i < array.length; i++) {
+						String val = array[i][0].getValue();
+						if (!StringHelper.isEmpty(val)) {
+							String compType = val.trim();
+							System.out.println(">>>>>>>>> ImportContent.performImport : compType = " + compType); // TODO: remove debug trace
+							IContentVisualComponent comp = null;
+							for (IContentVisualComponent compItem : ComponentFactory.getGlobalContextComponent(ctx, ctx.getCurrentTemplate())) {
+								System.out.println(">>>>>>>>> ImportContent.performImport : compItem.getType() = " + compItem.getType()); // TODO: remove debug trace
+								if (compItem.getType().equals(compType)) {
+									System.out.println(">>>>>>>>> ImportContent.performImport : FOUND = " + compItem.getType()); // TODO: remove debug trace
+									comp = compItem;
+								}
+							}
+							IContentVisualComponent prevComp = null;
+							if (comp != null) {
+								if (comp instanceof DynamicComponent) {
+									DynamicComponent dynComp = (DynamicComponent) comp;
+									StructuredProperties p = dynComp.getProperties();
+									for (int j = 1; j < array[0].length; j++) {
+										if (!StringHelper.isEmpty(array[0][j].getValue()) && array[i].length > j && !StringHelper.isEmpty(array[i][j].getValue())) {
+											p.setProperty("field."+array[0][j].getValue()+".value", array[i][j].getValue());
+										}
+									}
+									dynComp.setProperties(p);
+									dynComp.storeProperties();
+								} else {
+									comp.setValue(array[i][1].getValue());
+								}
+								System.out.println(">>>>>>>>> ImportContent.performImport : comp.getType() = " + comp.getType()); // TODO: remove debug trace
+								MacroHelper.addContent(ctx.getRequestContentLanguage(), ctx.getCurrentPage(), prevComp != null ? prevComp.getId() : "0", comp.getType(), comp.getValue(ctx), ctx.getCurrentEditUser());
+								prevComp = comp;
+							}
+						}
+					}
 				}
 				if (newBeans != null) {
 					logger.info("import file : " + newBeans.size() + " components.");
@@ -152,12 +199,12 @@ public class ImportContent implements IInteractiveMacro, IAction {
 	public String getIcon() {
 		return "fa fa-cogs";
 	}
-	
+
 	@Override
 	public String getUrl() {
 		return null;
 	}
-	
+
 	@Override
 	public int getPriority() {
 		return DEFAULT_PRIORITY;

@@ -160,6 +160,23 @@ public class ComponentFactory {
 			}
 		}
 	}
+	
+	public static DynamicComponent getDynamicComponents(ContentContext ctx, String type) throws Exception {
+		ContentContext noAreaCtx = ctx.getContextWithArea(null);
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
+		MenuElement root = content.getNavigation(noAreaCtx);
+		ContentElementList pageContent = root.getContent(noAreaCtx);
+		for (MenuElement page : root.getAllChildrenList()) {
+			pageContent = page.getContent(noAreaCtx);
+			while (pageContent.hasNext(noAreaCtx)) {
+				IContentVisualComponent comp = pageContent.next(noAreaCtx);
+				if (comp instanceof DynamicComponent && comp.getType().equals(type)) {
+					return (DynamicComponent)comp;
+				}
+			}
+		}
+		return null;
+	}
 
 	public static List<DynamicComponent> getAllDynamicComponents(ContentContext ctx) throws Exception {
 		ContentContext noAreaCtx = ctx.getContextWithArea(null);
@@ -519,6 +536,10 @@ public class ComponentFactory {
 		}
 		return outComp;
 	}
+	
+	public static List<IContentVisualComponent> getGlobalContextComponent(ContentContext ctx, Template template) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+		return getGlobalContextComponent(ctx, Integer.MAX_VALUE, template);
+	}
 
 	public static List<IContentVisualComponent> getGlobalContextComponent(ContentContext ctx, int complexityLevel) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 		return getGlobalContextComponent(ctx, complexityLevel, null);
@@ -633,7 +654,6 @@ public class ComponentFactory {
 						listWithoutEmptyTitle.add(title);
 					}
 					title = null;
-
 				}
 				if (comp.getComplexityLevel() <= IContentVisualComponent.COMPLEXITY_STANDARD || !uiContext.isLight()) {
 					listWithoutEmptyTitle.add(comp);
