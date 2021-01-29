@@ -1889,6 +1889,10 @@ public class StringHelper {
 	public static Date parseDate(String inDate) throws ParseException {
 		return parseDate(inDate, "dd/MM/yyyy");
 	}
+	
+	public static Date parseExcelDate(String inDate) throws ParseException {
+		return parseDate(inDate, "MM/dd/yy");
+	}
 
 	public static Date parseInputDate(String inDate) throws ParseException {
 		try {
@@ -1974,10 +1978,10 @@ public class StringHelper {
 	public static Date parseDate(String inDate, char sep) throws ParseException {
 		Date outDate = null;
 		try {
-			outDate = StringHelper.parseDate(inDate, "dd" + sep + "MM" + sep + "yyyy");
+			outDate = StringHelper.parseDate(inDate, "dd" + sep + "MM" + sep + "yy");
 		} catch (ParseException e) {
 			try {
-				outDate = StringHelper.parseDate(inDate, "dd" + sep + "MM" + sep + "yy");
+				outDate = StringHelper.parseDate(inDate, "dd" + sep + "MM" + sep + "yyyy");
 			} catch (ParseException e1) {
 				outDate = StringHelper.parseDate(inDate, "yyyy" + sep + "MM" + sep + "dd");
 			}
@@ -2057,6 +2061,11 @@ public class StringHelper {
 							SimpleDateFormat format = new SimpleDateFormat("dd MMMMM yyyy", new Locale(lang));
 							outDate = format.parse(inDate);
 						} catch (ParseException e1) {
+							try {
+								SimpleDateFormat format = new SimpleDateFormat("dd MM yy", new Locale(lang));
+								outDate = format.parse(inDate);
+							} catch (ParseException e2) {
+							}
 						}
 					}
 				}

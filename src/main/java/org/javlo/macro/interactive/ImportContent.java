@@ -3,7 +3,9 @@ package org.javlo.macro.interactive;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.text.ParseException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -17,6 +19,8 @@ import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.fields.Field;
+import org.javlo.fields.FieldDate;
 import org.javlo.helper.ContentHelper;
 import org.javlo.helper.MacroHelper;
 import org.javlo.helper.NetHelper;
@@ -90,17 +94,13 @@ public class ImportContent implements IInteractiveMacro, IAction {
 					newBeans = ContentHelper.createContentFromODT(GlobalContext.getInstance(ctx.getRequest()), in, fileItem.getName(), ctx.getRequestContentLanguage());
 				} else if (StringHelper.getFileExtension(fileItem.getName()).equalsIgnoreCase("xlsx")) {
 					Cell[][] array = XLSTools.getXLSXArray(ctx, in, null);
-					System.out.println(">>>>>>>>> ImportContent.performImport : ctx.getCurrentTemplate().getName() = " + ctx.getCurrentTemplate().getName()); // TODO: remove debug trace
 					for (int i = 0; i < array.length; i++) {
 						String val = array[i][0].getValue();
 						if (!StringHelper.isEmpty(val)) {
 							String compType = val.trim();
-							System.out.println(">>>>>>>>> ImportContent.performImport : compType = " + compType); // TODO: remove debug trace
 							IContentVisualComponent comp = null;
 							for (IContentVisualComponent compItem : ComponentFactory.getGlobalContextComponent(ctx, ctx.getCurrentTemplate())) {
-								System.out.println(">>>>>>>>> ImportContent.performImport : compItem.getType() = " + compItem.getType()); // TODO: remove debug trace
 								if (compItem.getType().equals(compType)) {
-									System.out.println(">>>>>>>>> ImportContent.performImport : FOUND = " + compItem.getType()); // TODO: remove debug trace
 									comp = compItem;
 								}
 							}
@@ -110,8 +110,19 @@ public class ImportContent implements IInteractiveMacro, IAction {
 									DynamicComponent dynComp = (DynamicComponent) comp;
 									StructuredProperties p = dynComp.getProperties();
 									for (int j = 1; j < array[0].length; j++) {
-										if (!StringHelper.isEmpty(array[0][j].getValue()) && array[i].length > j && !StringHelper.isEmpty(array[i][j].getValue())) {
-											p.setProperty("field."+array[0][j].getValue()+".value", array[i][j].getValue());
+										
+										Field field = dynComp.getField(ctx, array[0][j].getValue());
+										if (field != null) {
+											if (!StringHelper.isEmpty(array[0][j].getValue()) && array[i].length > j && !StringHelper.isEmpty(array[i][j].getValue())) {
+												String value = array[i][j].getValue();
+												if (field instanceof FieldDate) {
+													Date date = StringHelper.parseExcelDate(value);
+													value = StringHelper.renderDate(date);
+												}
+												p.setProperty("field."+array[0][j].getValue()+".value", value);
+											}
+										} else {
+											logger.warning("field not found : "+array[0][j].getValue()+" (component:"+dynComp.getType()+')');
 										}
 									}
 									dynComp.setProperties(p);
@@ -119,7 +130,6 @@ public class ImportContent implements IInteractiveMacro, IAction {
 								} else {
 									comp.setValue(array[i][1].getValue());
 								}
-								System.out.println(">>>>>>>>> ImportContent.performImport : comp.getType() = " + comp.getType()); // TODO: remove debug trace
 								MacroHelper.addContent(ctx.getRequestContentLanguage(), ctx.getCurrentPage(), prevComp != null ? prevComp.getId() : "0", comp.getType(), comp.getValue(ctx), ctx.getCurrentEditUser());
 								prevComp = comp;
 							}
@@ -208,6 +218,11 @@ public class ImportContent implements IInteractiveMacro, IAction {
 	@Override
 	public int getPriority() {
 		return DEFAULT_PRIORITY;
+	}
+	
+	public static void main(String[] args) throws ParseException {
+		Date date = StringHelper.parseExcelDate("2/19/13");
+		System.out.println(">>>>>>>>> ImportContent.main : date = "+StringHelper.renderDate(date)); //TODO: remove debug trace
 	}
 
 }
