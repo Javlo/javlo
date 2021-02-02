@@ -379,10 +379,11 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 		try {
 			page = getMirrorPage(ctx);
 			if (page != null) {
-				return page.getImage(ctx).getPriority(ctx);
-			} else {
-				return 0;
+				if (page.getImage(ctx) != null) {
+					return 1;
+				}
 			}
+			return 0;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return 0;

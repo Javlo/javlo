@@ -16,6 +16,8 @@ import java.util.Set;
 public class NeverEmptyMap<K, V> implements Map<K, V> {
 
 	private Class<V> clazz;
+	
+	private Class<K> clazzKey = null;
 
 	private final Map<K, V> internalMap;
 
@@ -25,6 +27,15 @@ public class NeverEmptyMap<K, V> implements Map<K, V> {
 	public NeverEmptyMap(Class defaultInstance) {
 		internalMap = new HashMap<K, V>();
 		clazz = defaultInstance;
+	}
+	
+	/**
+	 * set the default time of the attribute live in second
+	 */
+	public NeverEmptyMap(Class clazzKey, Class defaultInstance) {
+		internalMap = new HashMap<K, V>();
+		this.clazz = defaultInstance;
+		this.clazzKey = clazzKey;
 	}
 
 	public NeverEmptyMap(Map<K, V> internalMap) {
@@ -75,9 +86,34 @@ public class NeverEmptyMap<K, V> implements Map<K, V> {
 		}
 		return null;
 	}
+	
+	private K newKeyInstance(Object value) {
+		if (clazzKey == null) {
+			return (K)value;
+		}
+		if (Number.class.isAssignableFrom(clazzKey) && value.getClass() == String.class) {
+			if (clazzKey == Integer.class || clazzKey == Long.class) {
+				value = Long.parseLong((String)value);
+			} else {
+				value = Double.parseDouble((String)value);
+			}
+		}
+		if (clazzKey == Integer.class) {
+			return (K) new Integer(((Number)value).intValue());
+		} else if (clazzKey == Float.class) {
+			return (K) new Float(((Number)value).floatValue());
+		} else if (clazzKey == Double.class) {
+			return (K) new Double(((Number)value).doubleValue());
+		} else if (clazzKey == Long.class) {
+			return (K) new Long(((Number)value).longValue());
+		} else {
+			return (K)value;
+		}
+	}
 
 	@Override
-	public V get(Object key) {
+	public V get(Object inKey) {
+		K key = newKeyInstance(inKey);
 		V val = internalMap.get(key);
 		if (val == null) {
 			val = newInstance();
@@ -97,7 +133,8 @@ public class NeverEmptyMap<K, V> implements Map<K, V> {
 	}
 
 	@Override
-	public V put(K key, V value) {
+	public V put(K inKey, V value) {
+		K key = newKeyInstance(inKey);
 		return internalMap.put(key, value);
 	}
 
@@ -123,13 +160,15 @@ public class NeverEmptyMap<K, V> implements Map<K, V> {
 	}
 
 	public static void main(String[] args) {
-		NeverEmptyMap<String, Integer> map = new NeverEmptyMap<String, Integer>(Integer.class);
-		System.out.println("##### NeverEmptyMap.main : patrick = " + map.get("patrick"));
-		System.out.println("##### NeverEmptyMap.main : barbara = " + map.get("barbara"));
-		map.put("patrick", map.get("patrick")+1);
-		System.out.println("##### NeverEmptyMap.main : patrick = " + map.get("patrick"));
-		System.out.println("##### NeverEmptyMap.main : barbara = " + map.get("barbara"));
+		NeverEmptyMap<Long, Integer> map = new NeverEmptyMap<Long, Integer>(Long.class, Integer.class);
+		Long l = new Long(125);
 		
+		System.out.println(Number.class.isAssignableFrom(Long.class));
+		
+		map.put(l, 9);
+		System.out.println(map.get(l));
+		System.out.println(map.get(125));
+		System.out.println(map.get("125"));
 	}
 
 }
