@@ -461,13 +461,15 @@ public class ImageHelper {
 //		createImage(javloFile, 200, 900);
 //		createImage(javloFile, 100, 900);
 		
-		File vid = new File("c:/trans/image_test/test.mp4");
-		BufferedImage img = getBestImageFromVideo(vid);
+//		File vid = new File("c:/trans/image_test/test.mp4");
+//		BufferedImage img = getBestImageFromVideo(vid);
+//		
+//		ImageEngine.storeImage(img, new File("c:/trans/test.jpg"));
+//		ImageEngine.storeImage(img, new File("c:/trans/test.png"));
+//		ImageEngine.storeImage(img, new File("c:/trans/test.tiff"));
+//		ImageEngine.storeImage(img, new File("c:/trans/test.gif"));
 		
-		ImageEngine.storeImage(img, new File("c:/trans/test.jpg"));
-		ImageEngine.storeImage(img, new File("c:/trans/test.png"));
-		ImageEngine.storeImage(img, new File("c:/trans/test.tiff"));
-		ImageEngine.storeImage(img, new File("c:/trans/test.gif"));
+		getBestImageFromVideo(new File("C:\\trans\\mytille_coci\\mytille_coci.mp4"));
 		
 	}
 
@@ -567,7 +569,7 @@ public class ImageHelper {
 
 		int numberOfFrame = dtm.getTotalFrames();
 		
-		int FRAME_SIZE = 24;
+		int FRAME_SIZE = 6;
 
 		BufferedImage bestImage = null;	
 		int bestScore = 0;
@@ -581,7 +583,6 @@ public class ImageHelper {
 				bestImage = image;
 			}
 		}
-		
 		return bestImage;
 	}
 
