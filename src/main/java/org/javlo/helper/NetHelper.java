@@ -561,6 +561,10 @@ public class NetHelper {
 		conn.connect();
 		return conn.getDate();
 	}
+	
+	public static void setJsonContentType(HttpServletResponse response) {
+		response.setContentType("application/json");
+	}
 
 	/**
 	 * read a page a put content in a Stream.
