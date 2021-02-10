@@ -854,7 +854,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 		out.print("<tr class=\"filtered" + (num % 2 == 0 ? " odd" : " even") + "\">");
 		out.print("<td><input type=\"hidden\" name=\"" + getPageDisplayedId(page) + "\" value=\"1\" /><input type=\"checkbox\" name=\"" + getPageId(page) + "\" value=\"" + page.getId() + "\"" + checked + "/></td>");
-		out.print("<td class=\"label\"><a data-toggle=\"tooltip\" data-placement=\"right\" title=\"" + NavigationHelper.getBreadCrumb(ctx, page) + "\" href=\"" + editPageURL + "\">" + page.getFullLabel(ctx) + "</a></td>");
+		
+		out.print("<td class=\"label\"><a data-toggle=\"tooltip\" data-placement=\"right\" title=\"" + XHTMLHelper.stringToAttribute(NavigationHelper.getBreadCrumb(ctx, page)) + "\" href=\"" + editPageURL + "\">" + page.getFullLabel(ctx) + "</a></td>");
 		out.print("<td>" + StringHelper.neverNull(StringHelper.renderLightDate(page.getContentDate(ctx))) + "</td>");
 		out.println("<td>" + StringHelper.renderLightDate(page.getModificationDate(ctx)) + "</td><td>" + StringHelper.neverNull(page.getRealContentLanguage(ctx)) + "</td>");
 		String contentCode = "";
