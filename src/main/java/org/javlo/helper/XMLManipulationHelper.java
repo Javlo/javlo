@@ -306,13 +306,13 @@ public class XMLManipulationHelper {
 	private static int convertHTMLtoJSP(GlobalContext globalContext, Template template, I18nAccess i18nAccess, File htmlFile, File jspFile, Map<String, String> options, List<String> areas, List<String> resources, List<TemplatePlugin> templatePlugins, List<GenericMessage> messages, List<String> ids, boolean isMail, String fontIncluding) throws IOException {
 
 		String templateVersion = StringHelper.getRandomId();
-
+		
 		if (fontIncluding.contains("##BASE_URI##")) {
 			fontIncluding = fontIncluding.replace("##BASE_URI##", "${info.rootTemplateURL}");
 		} else {
-			fontIncluding = FontHelper.loadFont(fontIncluding);
+			//fontIncluding = FontHelper.loadFont(fontIncluding);
 		}
-
+		
 		if (resources == null) {
 			resources = new LinkedList<String>();
 		}
@@ -550,7 +550,6 @@ public class XMLManipulationHelper {
 						tags[i].getAttributes().put("id", "<%=ctx.getCurrentPage().getHtmlSectionId(ctx)%>");
 					}
 					String renderBodyAsDiv = tags[i].renderOpen();
-
 					String openBodyCode = "<c:if test=\"${not contentContext.pageAssociation}\">" + renderBodyAsBody + "</c:if><c:if test=\"${contentContext.pageAssociation}\">" + renderBodyAsDiv + "</c:if>";
 					if (htmlFile.getName().contains("pdf") || isMail) {
 						fontIncluding = "";

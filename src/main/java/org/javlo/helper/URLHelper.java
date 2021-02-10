@@ -1291,7 +1291,7 @@ public class URLHelper extends ElementaryURLHelper {
 		String urlLC = url.toLowerCase().trim();
 		return urlLC.startsWith("http://") || urlLC.startsWith("https://") || urlLC.startsWith("ftp://") || urlLC.startsWith("file://") || urlLC.startsWith("//");
 	}
-
+	
 	public static String mergePath(String... paths) {
 		String outPath = "";
 		for (String path : paths) {

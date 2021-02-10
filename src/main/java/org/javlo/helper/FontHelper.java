@@ -24,7 +24,7 @@ public class FontHelper {
 						String fontIncluding = links[i].substring(indexHttp);
 						String url = fontIncluding.substring(0, fontIncluding.indexOf("\""));
 						String style = NetHelper.readPageGet(new URL(url));
-						style = style.replace("}", "  -fs-pdf-font-embed: embed;\n  -fs-pdf-font-encoding: Identity-H;\n}");						
+						style = style.replace("}", "  -fs-pdf-font-embed: embed;\n  -fs-pdf-font-encoding: Identity-H;\n}");
 						outStr = outStr + style;
 					}
 				}
