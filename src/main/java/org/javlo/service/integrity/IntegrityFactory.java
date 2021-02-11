@@ -101,10 +101,8 @@ public class IntegrityFactory {
 				int maxErrorLevel = 0;
 				for (IIntegrityChecker checker : outFactory.getAllChecker(ctx)) {
 					try {
-						if ((ctx.getCurrentTemplate() != null && !ctx.getCurrentTemplate().isMailing())
-								|| checker.isApplicableForMailing(ctx)) {
-							if (ctx.getCurrentPage().isRealContent(ctx)
-									&& !checker.checkPage(ctx, ctx.getCurrentPage())) {
+						if ((ctx.getCurrentTemplate() != null && !ctx.getCurrentTemplate().isMailing()) || checker.isApplicableForMailing(ctx)) {
+							if (ctx.getCurrentPage() != null && ctx.getCurrentPage().isRealContent(ctx) && !checker.checkPage(ctx, ctx.getCurrentPage())) {
 								if (checker.getLevel(ctx) > maxErrorLevel) {
 									maxErrorLevel = checker.getLevel(ctx);
 								}
