@@ -211,7 +211,7 @@ public class XHTMLNavigationHelper {
 		if (filter) {
 			out.println("<div class=\"row\"><div class=\"col-sm-3\"><input type=\"text\" data-filtered=\""+id+"\" class=\"form-control filter max-width\" placeholder=\"filter...\" /></div><div class=\"col-sm-9\">");
 		}
-		out.println("<select class=\"form-control max-width\" name=\"" + id + "\" id=\"" + id + "\">");
+		out.println("<select class=\"form-control max-width\" name=\"" + id + "\" id=\"" + id + "\"><option></option>");
 		MenuElement elem = rootPage;		
 		for (MenuElement page : elem.getAllChildrenList()) {
 			if ((currentValue != null) && (currentValue.equals(page.getPath()))) {

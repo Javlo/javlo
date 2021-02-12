@@ -96,7 +96,7 @@ public class ExtendedColor extends Color {
 	
 	public static void main(String[] args) {
 		ExtendedColor c = ExtendedColor.decode("#123456aFF");
-		System.out.println(">>>>>>>>> ExtendedColor.main : c     = "+c); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> ExtendedColor.main : c     = "+c.getHTMLCode()); //TODO: remove debug trace
 		System.out.println(">>>>>>>>> ExtendedColor.main : alpha = "+c.getAlpha()); //TODO: remove debug trace
 	}
 
