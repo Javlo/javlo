@@ -432,6 +432,10 @@ public class PageBean implements Serializable {
 	public String getSubTitle() throws Exception {
 		return page.getSubTitle(ctx);
 	}
+	
+	public String getLabel() throws Exception {
+		return page.getLabel(ctx);
+	}
 
 	public String getTitleOrSubtitle() {
 		try {
