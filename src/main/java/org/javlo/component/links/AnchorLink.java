@@ -142,14 +142,10 @@ public class AnchorLink extends ComplexPropertiesLink {
 
 	@Override
 	public String performEdit(ContentContext ctx) {
-
 		RequestService requestSercice = RequestService.getInstance(ctx.getRequest());
-
 		String link = requestSercice.getParameter(getLinkName(), "");
 		String label = requestSercice.getParameter(getLinkLabelName(), link);
-
 		if (link.trim().length() > 0) {
-
 			try {
 				String linkIdStr = properties.getProperty(LINK_KEY, "");
 				String oldLabel = properties.getProperty(LABEL_KEY, "");
@@ -163,7 +159,6 @@ public class AnchorLink extends ComplexPropertiesLink {
 				e.printStackTrace();
 			}
 		}
-		
 		return null;
 	}
 

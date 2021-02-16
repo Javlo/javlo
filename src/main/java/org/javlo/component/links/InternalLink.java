@@ -101,7 +101,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 			out.println("</div>");
 			
 			out.println("<div class=\"col-md-3\">");
-			out.println("<label for=\""+getLinkLabelName()+"\">"+i18nAccess.getText("component.link.id", "page id")+"</label>");
+			out.println("<label for=\""+getLinkName()+"\">"+i18nAccess.getText("component.link.id", "page id")+"</label>");
 			String value="";
 			if (!StringHelper.isEmpty(getLinkId())) {
 				value = getLinkId(); 

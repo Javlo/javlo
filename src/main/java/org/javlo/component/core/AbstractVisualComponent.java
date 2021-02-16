@@ -2553,7 +2553,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected String getPreviewAttributes(ContentContext ctx) {
-		return getPrefixCssClass(ctx, getComponentCssClass(ctx)) + getSpecialPreviewCssId(ctx);
+		return getPrefixCssClass(ctx, contructViewStyle(ctx)) + getSpecialPreviewCssId(ctx);
 	}
 
 	/**
@@ -2578,11 +2578,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		ctx.getRequest().setAttribute("compid", getForcedId(ctx));
 		ctx.getRequest().setAttribute("renderer", getCurrentRenderer(ctx));
 		ctx.getRequest().setAttribute("previewAttributes", getPreviewAttributes(ctx));
-		ctx.getRequest().setAttribute("previewCSS", getPreviewCssClass(ctx, getComponentCssClass(ctx)));
+		ctx.getRequest().setAttribute("previewCSS", getPreviewCssClass(ctx, contructViewStyle(ctx)));
 		ctx.getRequest().setAttribute("previewClass", getPreviewCssClass(ctx, null));
 		ctx.getRequest().setAttribute("previewID", getPreviewCssId(ctx));
 		ctx.getRequest().setAttribute("cssStyle", getCSSStyle(ctx));
-		ctx.getRequest().setAttribute("cssClass", getComponentCssClass(ctx));
+		ctx.getRequest().setAttribute("cssClass", contructViewStyle(ctx));
 		ctx.getRequest().setAttribute("manualCssClass", getManualCssClass());
 		if (!AbstractVisualComponent.isMirrorWrapped(ctx, this)) {
 			ctx.getRequest().setAttribute(MIRROR_WRAPPED, false);
