@@ -67,17 +67,17 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 	public String getRenderer() {
 		return "/jsp/macros/create-article.jsp";
 	}
-	
+
 	@Override
-	public String getInfo(ContentContext ctx) {	
+	public String getInfo(ContentContext ctx) {
 		return null;
 	}
-	
+
 	@Override
 	public String getModalSize() {
 		return LARGE_MODAL_SIZE;
 	}
-	
+
 	@Override
 	public String getIcon() {
 		return "fa fa-file-text-o";
@@ -176,8 +176,8 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 							ContentService content = ContentService.getInstance(ctx.getRequest());
 							MenuElement page = content.getNavigation(ctx).searchChildFromName(ctx.getRequest().getParameter("page"));
 							ContentContext noAreaCtx = ctx.getContextWithArea(null);
-							ContentElementList contentList = page.getContent(noAreaCtx);						
-							Map<String,String> parents = new HashMap<String, String>();
+							ContentElementList contentList = page.getContent(noAreaCtx);
+							Map<String, String> parents = new HashMap<String, String>();
 							while (contentList.hasNext(noAreaCtx)) {
 								IContentVisualComponent comp = contentList.next(noAreaCtx);
 								if (!comp.isRepeat()) {
@@ -287,8 +287,7 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 				// ctx.getResponse());
 
 				/*
-				 * ctx.setClosePopup(true); if (newURL != null) {
-				 * ctx.setParentURL(newURL); }
+				 * ctx.setClosePopup(true); if (newURL != null) { ctx.setParentURL(newURL); }
 				 */
 			}
 		} catch (Exception e) {
@@ -312,12 +311,11 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 	public boolean isInterative() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean haveRight(ContentContext ctx, String action) {
 		return ctx.getCurrentEditUser() != null;
 	}
-	
 
 	@Override
 	public boolean isActive() {
@@ -327,12 +325,12 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 	@Override
 	public void init(ContentContext ctx) {
 	}
-	
+
 	@Override
 	public String getUrl() {
 		return null;
 	}
-	
+
 	@Override
 	public int getPriority() {
 		return DEFAULT_PRIORITY;

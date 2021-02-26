@@ -32,5 +32,7 @@ public interface IContainer extends IContentVisualComponent {
 	public IContainer getCloseComponent(ContentContext ctx);
 	
 	public IContainer getOpenComponent(ContentContext ctx);
+	
+	public String getXHTMLCode(ContentContext ctx);
 
 }

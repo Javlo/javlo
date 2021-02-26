@@ -851,6 +851,7 @@ Security in case of vulnerabilities.
   - field color
   - DataList Component
   - fix sidebar
+  - add class on area if container
 ### Modified
   - load view nav before preview nav
   - cache globalContext in application context
@@ -860,3 +861,4 @@ Security in case of vulnerabilities.
   - don't redirect old url if no urlfactory asked
   - js content type
   - update security on file servlet
+  - remove "null" from area class

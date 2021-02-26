@@ -205,7 +205,10 @@ if (elems != null) {%><%=elems.getSufixXHTMLCode(ctx)
 	}
 }
 	while (!containers.empty()) {
-		%><%=containers.pop().getCloseCode(ctx)%><%
+		IContainer container = (IContainer)containers.pop();
+		container.setOpen(ctx, false);
+		%><%=container.getXHTMLCode(ctx)%><%
+		container.setOpen(ctx, true);
 	}
 	if (languageChange) {
 		%></div><%

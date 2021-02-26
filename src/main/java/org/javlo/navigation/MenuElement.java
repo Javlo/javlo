@@ -34,6 +34,7 @@ import org.javlo.bean.Link;
 import org.javlo.cache.ICache;
 import org.javlo.cache.MapCache;
 import org.javlo.comparator.MenuElementPriorityComparator;
+import org.javlo.component.container.IContainer;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentFactory;
@@ -201,6 +202,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		String font = null;
 		String metaHead = null;
 		Map<String, Object> contentAsMap;
+		Map<String, String> areaAsMap = new HashMap();
 
 		private String forward = null;
 
@@ -5752,6 +5754,36 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		}
 		desc.event = Event.NO_EVENT;
 		return null;
+	}
+	
+	public String getAreaClass(ContentContext ctx, String area) throws Exception {
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+		String clazz = desc.areaAsMap.get(area);
+		if (clazz == null) {
+			ContentContext ctxArea = ctx.getContextWithArea(area);
+			ContentElementList content = getContent(ctx);
+			Boolean firstContainer = null;
+			boolean containContainer = false;
+			while (content.hasNext(ctxArea)) {
+				IContentVisualComponent comp = content.next(ctxArea);
+				if (comp instanceof IContainer) {
+					if (firstContainer == null) {
+						firstContainer = true;
+					}
+					containContainer = true;
+				} else if (firstContainer == null) {
+					firstContainer = false;
+				}
+			}
+			clazz = "";
+			if (firstContainer != null && firstContainer) {
+				clazz = "area-contain-container area-contain-container-first";
+			} else if (containContainer) {
+				clazz = "area-contain-container area-contain-container-not-first";
+			}
+			desc.areaAsMap.put(area, clazz);
+		}
+		return clazz;
 	}
 
 	/**

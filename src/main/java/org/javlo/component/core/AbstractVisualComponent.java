@@ -1517,7 +1517,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		
 		if (this instanceof IContainer) {
 			IContainer container = (IContainer)this;
-			if (!container.isOpen(ctx)) {
+			if (!container.isOpen(ctx) && container.getOpenComponent(ctx) != null) {
 				colSize = container.getOpenComponent(ctx).getColumnSize();
 				ctx.setColumnableDepth(ctx.getColumnableDepth()-1);
 				if (ctx.getColumnableDepth()<0) {
@@ -1588,7 +1588,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		int columnSize = getColumnSize();
 		if (this instanceof IContainer) {
 			IContainer container = (IContainer)this;
-			if (!container.isOpen(ctx)) {
+			if (!container.isOpen(ctx) && container.getOpenComponent(ctx) != null) {
 				columnSize = container.getOpenComponent(ctx).getColumnSize();
 			} else {
 				return "";
@@ -2436,7 +2436,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public String getXHTMLCode(ContentContext ctx) {
 		try {
-
 			if (isNeedDelete(ctx)) {
 				return "";
 			}
@@ -2538,9 +2537,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					}
 					return content;
 				}
-
 			}
-
 		} catch (Exception e) {
 			DebugListening.getInstance().sendError(ctx, e, "error in component : " + getType());
 			e.printStackTrace();
