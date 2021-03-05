@@ -32,7 +32,7 @@ public class MailingThread extends Thread {
 	 */
 	protected static Logger logger = Logger.getLogger(MailingThread.class.getName());
 
-	private static final long SLEEP_BETWEEN_MAILING = 2000;
+	public static long SLEEP_BETWEEN_MAILING = 2000;
 
 	//ServletContext application;
 	
@@ -82,6 +82,7 @@ public class MailingThread extends Thread {
 		mailOut.println("from : " + mailing.getFrom());
 		mailOut.println("sent? : " + mailing.isSend());
 		mailOut.println("config : " + mailConfig);
+		mailOut.println("Time between 2 mails : " + SLEEP_BETWEEN_MAILING +" sec.");
 		mailOut.println("");
 		mailOut.println("");
 		mailOut.println("receivers detail :");
@@ -146,7 +147,7 @@ public class MailingThread extends Thread {
 			
 			MailService mailingManager = MailService.getInstance(mailConfig);
 			
-			logger.info("send mailling '" + mailing.getSubject() + "' config:" + mailConfig+ " DKIM ? "+(dkimBean != null));
+			logger.info("send mailling '" + mailing.getSubject() + "' config:" + mailConfig+ " DKIM ? "+(dkimBean != null)+ " (Time between 2 mails : "+SLEEP_BETWEEN_MAILING+")");
 			int countSending = 0;
 			while (to != null) {				
 				String data = "mailing=" + mailing.getId() + "&to=" + to;

@@ -41,7 +41,7 @@ public class EditInfoBean {
 	
 	public String getCopiedPage() throws Exception {
 		ContentContext copiedCtx = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).getContextForCopy(ctx);
-		if (copiedCtx == null) {
+		if (copiedCtx == null || copiedCtx.getCurrentPage() == null) {
 			return null;
 		} else {
 			return copiedCtx.getCurrentPage().getName();

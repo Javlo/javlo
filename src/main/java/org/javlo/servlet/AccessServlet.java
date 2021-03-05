@@ -235,6 +235,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 		StaticConfig staticConfig = StaticConfig.getInstance(getServletContext());
 		
+		MailingThread.SLEEP_BETWEEN_MAILING = staticConfig.getMailingTimebetweenTwoSend();
+		
 		LoggerHelper.changeLogLevel(staticConfig.getAllLogLevel().getName());
 		
 		MaxLoginService.getInstance().setMaxErrorLoginByHours(staticConfig.getMaxErrorLoginByHour());
