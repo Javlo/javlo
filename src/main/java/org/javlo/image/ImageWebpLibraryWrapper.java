@@ -33,15 +33,16 @@ public class ImageWebpLibraryWrapper {
 		Process process;
 		try {
 			process = new ProcessBuilder(converterPath, "-q", "" + quality, imageFile.getAbsolutePath(), "-o", targetFile.getAbsolutePath()).start();
-			if (imageFile.length() > 1 * 1024 * 1024) {
-				if (imageFile.length() > 5 * 1024 * 1024) {
-					process.waitFor(10, TimeUnit.SECONDS);
-				} else {
-					process.waitFor(4, TimeUnit.SECONDS);
-				}
-			} else {
-				process.waitFor(1, TimeUnit.SECONDS);
-			}
+//			if (imageFile.length() > 1 * 1024 * 1024) {
+//				if (imageFile.length() > 5 * 1024 * 1024) {
+//					process.waitFor(10, TimeUnit.SECONDS);
+//				} else {
+//					process.waitFor(4, TimeUnit.SECONDS);
+//				}
+//			} else {
+//				process.waitFor(1, TimeUnit.SECONDS);
+//			}
+			process.waitFor(10, TimeUnit.SECONDS);
 			if (process.exitValue() == 0) {
 				// Success
 				printProcessOutput(process.getInputStream(), System.out);
