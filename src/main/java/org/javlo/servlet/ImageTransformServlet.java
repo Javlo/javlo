@@ -946,10 +946,9 @@ public class ImageTransformServlet extends FileServlet {
 			OutputStream outImage = transFile.getOutputStream();
 
 			try {
+				imageType = StringHelper.neverNull(config.getFileExtension(device, filter, area), imageType);
 				logger.info("write image : " + imageType + " width: " + img.getWidth() + " height: " + img.getHeight());
 
-				imageType = StringHelper.neverNull(config.getFileExtension(device, filter, area), imageType);
-				
 				if (comp != null && StringHelper.trimAndNullify(comp.getImageFilterKey(ctxb)) != null) {
 					img = ((IImageFilter) comp).filterImage(session.getServletContext(), ctxb, img);
 				}

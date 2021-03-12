@@ -852,6 +852,7 @@ Security in case of vulnerabilities.
   - DataList Component
   - fix sidebar
   - add class on area if container
+  - image automatic convertion to webp format
 ### Modified
   - load view nav before preview nav
   - cache globalContext in application context

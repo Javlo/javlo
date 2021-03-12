@@ -437,6 +437,9 @@ public class StringHelper {
 		if (transliteration == null) {
 			Properties prop = new Properties();
 			InputStream in = StringHelper.class.getClassLoader().getResourceAsStream("/data/transliteration.properties");
+			if (in == null) {
+				return Collections.EMPTY_MAP;
+			}
 			try {
 				prop.load(in);
 			} catch (IOException e) {

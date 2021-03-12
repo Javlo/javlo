@@ -47,6 +47,7 @@ import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.batik.util.SVGConstants;
 import org.apache.commons.io.FileUtils;
 import org.javlo.helper.MathHelper;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.jcodec.codecs.vpx.VP8Decoder;
 import org.jcodec.common.model.Picture;
@@ -57,6 +58,8 @@ import com.mortennobel.imagescaling.ResampleFilters;
 import com.mortennobel.imagescaling.ResampleOp;
 
 public class ImageEngine {
+	
+	public static String WEBP_CONVERTER = null;
 
 	public static boolean DISPLAY_FOCUS = false;
 
@@ -137,6 +140,10 @@ public class ImageEngine {
 	}
 
 	public static void storeImage(BufferedImage img, String ext, OutputStream outImage) throws IOException {
+		if (ext.equalsIgnoreCase("webp") && WEBP_CONVERTER == null) {
+			ext = "jpg";
+		}
+		
 		if (ext.equalsIgnoreCase("jpg") || ext.equalsIgnoreCase("jpeg")) {
 			if (img.getType() != BufferedImage.TYPE_3BYTE_BGR) {
 				img = removeAlpha(img);
@@ -145,7 +152,26 @@ public class ImageEngine {
 			}
 			// writeJPEG2000(img, outImage);
 		}
-		ImageIO.write(img, ext, outImage);
+		if (ext.equalsIgnoreCase("webp")) {
+			String randomSuffix = StringHelper.getRandomId();
+			File tempImageSource =  File.createTempFile("webp_temp_"+randomSuffix, ".png");
+			File tempImageTarget =  File.createTempFile("webp_temp_"+randomSuffix, ".webp");
+			try {
+				ImageIO.write(img, "png", tempImageSource);
+				ImageWebpLibraryWrapper webp = new ImageWebpLibraryWrapper(WEBP_CONVERTER);
+				webp.convertToWebP(tempImageSource, tempImageTarget, 75);
+				ResourceHelper.writeFileToStream(tempImageTarget, outImage);
+			} finally {
+				if (tempImageSource.exists()) {
+					tempImageSource.delete();
+				}
+				if (tempImageTarget.exists()) {
+					tempImageTarget.delete();
+				}
+			}
+		} else {
+			ImageIO.write(img, ext, outImage);
+		}
 		return;
 	}
 
@@ -2112,6 +2138,10 @@ public class ImageEngine {
 		File imageFile = new File("c:/trans/source2.png");
 		BufferedImage image = ImageIO.read(imageFile);
 		
+		ImageWebpLibraryWrapper webp = new ImageWebpLibraryWrapper("C:\\opt\\libwebp-1.2.0-windows-x64\\bin\\cwebp.exe");
+		webp.convertToWebP(imageFile, new File("c:/trans/source2.webp"),75);
+		ImageIO.write(image, "jpg", new File("c:/trans/image_before.jpg"));
+		
 		ImageIO.write(image, "png", new File("c:/trans/image_before.png"));
 		image = resizeImage(image, image.getWidth(), image.getHeight());		
 		ImageIO.write(image, "png", new File("c:/trans/image_afther.png"));
@@ -2147,4 +2177,8 @@ public class ImageEngine {
 		IndexColorModel icm2 = new IndexColorModel(8, size, reds, greens, blues, pixel);
 		return new BufferedImage(icm2, raster, image.isAlphaPremultiplied(), null);
 	}
+	
+	/** webp **/
+	
+	
 }

@@ -67,6 +67,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.XMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.i18n.RequestI18nAccess;
+import org.javlo.image.ImageEngine;
 import org.javlo.macro.ClearDataAccessCount;
 import org.javlo.mailing.MailService;
 import org.javlo.mailing.MailingThread;
@@ -236,6 +237,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		StaticConfig staticConfig = StaticConfig.getInstance(getServletContext());
 		
 		MailingThread.SLEEP_BETWEEN_MAILING = staticConfig.getMailingTimebetweenTwoSend();
+		
+		ImageEngine.WEBP_CONVERTER = staticConfig.getWebpEncoder();
 		
 		LoggerHelper.changeLogLevel(staticConfig.getAllLogLevel().getName());
 		
