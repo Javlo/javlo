@@ -48,6 +48,7 @@ public class ImageWebpLibraryWrapper {
 				printProcessOutput(process.getInputStream(), System.out);
 				return true;
 			} else {
+				logger.severe("error on : "+imageFile);
 				printProcessOutput(process.getErrorStream(), System.err);
 				return false;
 			}
