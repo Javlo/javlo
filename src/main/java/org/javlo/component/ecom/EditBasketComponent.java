@@ -71,12 +71,9 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 		ctx.getRequest().setAttribute("totalNoVAT", basket.getTotalString(ctx, false));
 		ctx.getRequest().setAttribute("total", basket.getTotalString(ctx, true));
 		ctx.getRequest().setAttribute("promo", !StringHelper.isEmpty(getFieldValue(PROMO_KEY)));
-		System.out.println(">>>>>>>>> EditBasketComponent.prepareView : basket.getDeliveryZone() = "+basket.getDeliveryZone()); //TODO: remove debug trace
 		if (basket.getDeliveryZone() != null) {
 			double delivery = basket.getDelivery(ctx, true);
-			System.out.println(">>>>>>>>> EditBasketComponent.prepareView : delivery = "+delivery); //TODO: remove debug trace
 			if (delivery > 0) {
-				System.out.println(">>>>>>>>> EditBasketComponent.prepareView : Basket.renderPrice(ctx, delivery, basket.getCurrencyCode()) = "+Basket.renderPrice(ctx, delivery, basket.getCurrencyCode())); //TODO: remove debug trace
 				ctx.getRequest().setAttribute("deliveryStr", Basket.renderPrice(ctx, delivery, basket.getCurrencyCode()));
 			}
 		}

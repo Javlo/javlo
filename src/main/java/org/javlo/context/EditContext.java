@@ -269,7 +269,18 @@ public class EditContext implements Serializable {
 		if (contextForCopy == null) {
 			return null;
 		} else {
-			return contextForCopy.createContentContext(ctx);
+			ContentContext out = contextForCopy.createContentContext(ctx);
+			try {
+				if (out.getCurrentPage() == null) {
+					contextForCopy = null;
+					out = null;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				contextForCopy = null;
+				out = null;
+			}
+			return out;
 		}
 	}
 

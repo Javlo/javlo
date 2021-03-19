@@ -71,6 +71,7 @@ import org.javlo.macro.SortChildren;
 import org.javlo.macro.UndeletePage;
 import org.javlo.macro.UnlinkMirrorComponent;
 import org.javlo.macro.UpDateMacro;
+import org.javlo.macro.UpdateTemplate;
 import org.javlo.macro.ValidAllChildren;
 import org.javlo.macro.bean.MacroGoHome;
 import org.javlo.macro.interactive.ChangeImageFilter;
@@ -213,6 +214,7 @@ public class MacroFactory {
 		macros.add(new InitContentMacro());
 		macros.add(new ImportMysqlDataBase());
 		macros.add(new CommitTemplate());
+		macros.add(new UpdateTemplate());		
 		macros.add(new RebuitTemplate());
 		macros.add(new RebuitTemplateHtml());
 		macros.add(new CleanStaticInfoPersistence());

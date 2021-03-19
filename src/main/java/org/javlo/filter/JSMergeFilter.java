@@ -105,6 +105,8 @@ public class JSMergeFilter implements Filter {
 						mimifyFolder(globalContext, jsFile);
 					}
 				}
+			} else {
+				logger.severe("not found : "+jsFile);
 			}
 		}
 		next.doFilter(request, response);

@@ -1944,6 +1944,10 @@ public class StringHelper {
 	public static String renderInputDate(Date inDate) throws ParseException {
 		return renderDate(inDate, "yyyy-MM-dd");
 	}
+	
+	public static String renderInputDate(LocalDate inDate) throws ParseException {
+		return renderDate(inDate, "yyyy-MM-dd");
+	}
 
 	/**
 	 * null save parse int.

@@ -1559,7 +1559,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (isColumnable(ctx) && columnSize >= 0 && columnSize != getColumnMaxSize(ctx)) {
 			try {
 				Template tpl = ctx.getCurrentTemplate();
-				colPrefix = "<" + tpl.getColumnableRowTag() + " style=\"" + tpl.getColumnableRowStyle() + "\" class=\"" + tpl.getColumnableRowClass() + " component-row-" + getType() + "\">";
+				colPrefix = "<" + tpl.getColumnableRowTag() + " style=\"" + tpl.getColumnableRowStyle() + "\" class=\"" + tpl.getColumnableRowClass() + " component-row component-row-" + getType() + "\">";
 				String firstClass = "columnalbe-first-col ";
 				if (!StringHelper.isEmpty(tpl.getColumnableRowTagIn())) {
 					colPrefix = colPrefix + '<' + tpl.getColumnableRowTagIn() + '>';
@@ -1568,7 +1568,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					colPrefix = "";
 					firstClass = "";
 				}
-				
 				int currentSize = ctx.getColumnableSize(ctx.getColumnableDepth());
 				int leftSize = getColumnMaxSize(ctx)-currentSize;
 				

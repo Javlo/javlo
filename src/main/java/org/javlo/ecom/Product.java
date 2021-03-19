@@ -22,6 +22,7 @@ public class Product {
 		private String name;
 		private String description;
 		private String imageURL;
+		private String page;
 		private int quantity = 1;
 
 		public ProductBean() {
@@ -123,6 +124,14 @@ public class Product {
 
 		public void setWeight(double weight) {
 			this.weight = weight;
+		}
+
+		public String getPage() {
+			return page;
+		}
+
+		public void setPage(String page) {
+			this.page = page;
 		}
 
 	}
@@ -291,7 +300,9 @@ public class Product {
 	}
 
 	public ProductBean getBean() {
-		return new ProductBean(getId(), getPrice(), getReduction(), getVAT(), getCurrencyCode(), getName(), getShortDescription(), getImageURL(), getQuantity(), getWeight());
+		ProductBean bean = new ProductBean(getId(), getPrice(), getReduction(), getVAT(), getCurrencyCode(), getName(), getShortDescription(), getImageURL(), getQuantity(), getWeight());
+		bean.setPage(comp.getPage().getName());
+		return bean;
 	}
 
 	public void setPrice(double price) {

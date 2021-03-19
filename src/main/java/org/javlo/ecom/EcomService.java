@@ -13,11 +13,16 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.ecom.ProductComponent;
 import org.javlo.config.StaticConfig;
+import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.ecom.Product.ProductBean;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.service.ContentService;
 import org.javlo.utils.CSVFactory;
 import org.javlo.utils.TimeMap;
 
@@ -188,6 +193,26 @@ public class EcomService {
 		for (PayementExternalService service : getExternalService()) {
 			if (service.getName().equals(name)) {
 				return service;
+			}
+		}
+		return null;
+	}
+	
+	public List<ProductBean> getProducts(ContentContext ctx) throws Exception {
+		List<ProductBean> out = new LinkedList<>();
+		List<IContentVisualComponent> comps = ContentService.getInstance(ctx.getGlobalContext()).getComponentByType(ctx, ProductComponent.TYPE);
+		for(IContentVisualComponent comp : comps) {
+			out.add(new Product((ProductComponent)comp).getBean());
+		}
+		return out;
+	}
+	
+	public ProductBean getProducts(ContentContext ctx, String id) throws Exception {
+		List<IContentVisualComponent> comps = ContentService.getInstance(ctx.getGlobalContext()).getComponentByType(ctx, ProductComponent.TYPE);
+		for(IContentVisualComponent comp : comps) {
+			ProductBean bean = new Product((ProductComponent)comp).getBean();
+			if (bean.getId().equals(id)) {
+				return bean;
 			}
 		}
 		return null;

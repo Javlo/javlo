@@ -69,6 +69,7 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		ctx.getRequest().setAttribute("closeBox", isCloseBox());
 		ctx.getRequest().setAttribute("titleBox", getTitle());
 		ctx.getRequest().setAttribute("footerBox", getFooter());
+		//ctx.getRequest().setAttribute("closeRow", isCloseRow(ctx));
 		ImageBackground bg = getBackgroundImage(ctx);
 		if (bg != null) {
 			ctx.getRequest().setAttribute("backgroundImage", new ImageBean(ctx, bg, "background"));

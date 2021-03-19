@@ -27,6 +27,8 @@ import org.javlo.service.RequestService;
 public class ProductComponent extends AbstractPropertiesComponent implements IAction {
 
 	static final List<String> FIELDS = Arrays.asList(new String[] { "name", "price", "vat", "promo", "currency", "offset", "weight", "production", "basket-page" });
+	
+	public static final String TYPE = "product";
 
 	@Override
 	public String getHeader() {
@@ -44,7 +46,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 	}
 
 	public String getType() {
-		return "product";
+		return TYPE;
 	}
 
 	public String getName() {
@@ -234,7 +236,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 				String Qid = "product-" + StringHelper.getRandomId();
 				if (price>0) {
 					out.println("<label for=\"" + Qid + "\"><span>" + i18nAccess.getViewText("ecom.quantity") + "</span></label>");
-					out.println("<input class=\"form-control digit\" id=\"" + Qid + "\" type=\"text\" name=\"quantity\" value=\"" + getOffset() + "\" maxlength=\"3\"/>");
+					out.println("<input class=\"form-control digit\" id=\"" + Qid + "\" type=\"number\" min=\"1\" name=\"quantity\" value=\"" + getOffset() + "\" maxlength=\"3\"/>");
 				} else {
 					out.println("<div><input type=\"hidden\" name=\"quantity\" value=\"1\" /></div>");
 				}

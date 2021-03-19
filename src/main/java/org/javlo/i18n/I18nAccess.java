@@ -33,6 +33,7 @@ import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ConfigHelper;
+import org.javlo.helper.MapHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -68,15 +69,14 @@ public class I18nAccess implements Serializable {
 
 	public static final String KEY_NOT_FOUND = "[KEY NOT FOUND";
 
-	private static final Map<String, Map<String, String>> countries = Collections
-			.synchronizedMap(new HashMap<String, Map<String, String>>());
+	private static final Map<String, Map<String, String>> countries = Collections.synchronizedMap(new HashMap<String, Map<String, String>>());
 
 	public static I18nAccess getInstance(ContentContext ctx) throws ServiceException, Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		I18nAccess i18n = getInstance(ctx.getRequest());
-		i18n.initEdit(globalContext, ctx.getRequest().getSession());		
-		if (ctx.getRenderMode() == ContentContext.EDIT_MODE || ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {			
-			ModulesContext moduleContext = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext);	
+		i18n.initEdit(globalContext, ctx.getRequest().getSession());
+		if (ctx.getRenderMode() == ContentContext.EDIT_MODE || ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
+			ModulesContext moduleContext = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext);
 			i18n.setCurrentModule(globalContext, ctx.getRequest().getSession(), moduleContext.getCurrentModule());
 		}
 		i18n.changeViewLanguage(ctx);
@@ -106,8 +106,7 @@ public class I18nAccess implements Serializable {
 	 * @throws IOException
 	 * @throws ConfigurationException
 	 */
-	public static final I18nAccess getInstance(GlobalContext globalContext, HttpSession session)
-			throws FileNotFoundException, IOException {
+	public static final I18nAccess getInstance(GlobalContext globalContext, HttpSession session) throws FileNotFoundException, IOException {
 		I18nAccess i18nAccess = (I18nAccess) session.getAttribute(SESSION_KEY);
 		if (i18nAccess == null || !i18nAccess.getContextKey().equals(globalContext.getContextKey())) {
 			i18nAccess = new I18nAccess(globalContext);
@@ -144,10 +143,10 @@ public class I18nAccess implements Serializable {
 	private Properties contextEdit = null;
 
 	private ReadOnlyMultiMap propViewMap = null;
-	
-	private Map<String,String> calendarViewMap = null;
-	
-	private Map<String,String> calendarEditMap = null;
+
+	private Map<String, String> calendarViewMap = null;
+
+	private Map<String, String> calendarEditMap = null;
 
 	private final Object lockViewMap = new Object();
 
@@ -181,8 +180,7 @@ public class I18nAccess implements Serializable {
 
 	private Map<String, String> requestMap = Collections.EMPTY_MAP;
 
-	public synchronized void setCurrentModule(GlobalContext globalContext, HttpSession session, Module currentModule)
-			throws IOException {
+	public synchronized void setCurrentModule(GlobalContext globalContext, HttpSession session, Module currentModule) throws IOException {
 		if (this.currentModule == null || !currentModule.getName().equals(this.currentModule.getName())) {
 			this.currentModule = currentModule;
 			moduleEdit = currentModule.loadEditI18n(globalContext, session);
@@ -282,26 +280,29 @@ public class I18nAccess implements Serializable {
 		}
 		return text;
 	}
-	
+
 	public Map getCountries() throws Exception {
-		Map outCountries = countries.get(viewLg);
-			if (outCountries == null) {		
-				String fileName = I18N_COUNTRIES_FILE_NAME + viewLg + ".properties";
-				InputStream stream = servletContext.getResourceAsStream(fileName);
-				try {
-					if (stream != null) {
-						Properties countries = new Properties();
-						countries.load(stream);
-						outCountries = countries;
-					}
-				} finally {
-					ResourceHelper.closeResource(stream);
+		String lg = viewLg;
+		Map outCountries = countries.get(lg);
+		if (outCountries == null) {
+			String fileName = I18N_COUNTRIES_FILE_NAME + lg + ".properties";
+			InputStream stream = servletContext.getResourceAsStream(fileName);
+			try {
+				if (stream != null) {
+					Properties countries = new Properties();
+					countries.load(stream);
+					outCountries = countries;
 				}
-				if (outCountries == null) {
-					outCountries = Countries.getCountriesList(viewLg);					
-				}
+			} finally {
+				ResourceHelper.closeResource(stream);
 			}
-			countries.put(viewLg, outCountries);
+			if (outCountries == null) {
+				outCountries = Countries.getCountriesList(viewLg);
+			}
+
+			outCountries = MapHelper.sortByValue(outCountries);
+			countries.put(lg, outCountries);
+		}
 		return outCountries;
 	}
 
@@ -310,12 +311,12 @@ public class I18nAccess implements Serializable {
 		if (outCountries == null) {
 			Template template = ctx.getCurrentTemplate();
 			if (template != null) {
-				File i18nFile = new File (URLHelper.mergePath(template.getWorkTemplateRealPath(ctx.getGlobalContext()), "/i18n/countries_"+viewLg+".properties"));
+				File i18nFile = new File(URLHelper.mergePath(template.getWorkTemplateRealPath(ctx.getGlobalContext()), "/i18n/countries_" + viewLg + ".properties"));
 				if (i18nFile.exists()) {
 					outCountries = ResourceHelper.loadProperties(i18nFile);
-				}					
+				}
 			}
-			if (outCountries == null) {		
+			if (outCountries == null) {
 				String fileName = I18N_COUNTRIES_FILE_NAME + viewLg + ".properties";
 				InputStream stream = servletContext.getResourceAsStream(fileName);
 				try {
@@ -328,7 +329,7 @@ public class I18nAccess implements Serializable {
 					ResourceHelper.closeResource(stream);
 				}
 				if (outCountries == null) {
-					outCountries = Countries.getCountriesList(viewLg);					
+					outCountries = Countries.getCountriesList(viewLg);
 				}
 			}
 			countries.put(viewLg, outCountries);
@@ -386,12 +387,15 @@ public class I18nAccess implements Serializable {
 	}
 
 	public static void main(String[] args) {
-		ConfigurationProperties propEditMap = new ConfigurationProperties();
+		String[] countryCodes = Locale.getISOCountries();
 
-		propEditMap.addProperty("test", "patrick");
-		propEditMap.clearProperty("test");
-		propEditMap.addProperty("test", "catherine");
-		System.out.println("val=" + propEditMap.getProperty("test"));
+		for (String countryCode : countryCodes) {
+
+			Locale obj = new Locale("", countryCode);
+
+			System.out.println("Country Code = " + obj.getCountry() + ", Country Name = " + obj.getDisplayCountry());
+
+		}
 
 	}
 
@@ -522,49 +526,51 @@ public class I18nAccess implements Serializable {
 		}
 		return text;
 	}
-	
+
 	/**
 	 * return trad for calendar
+	 * 
 	 * @return
 	 */
-	public Map<String,String> getCalendarView() {
+	public Map<String, String> getCalendarView() {
 		// calendar
 		if (calendarViewMap == null) {
-			synchronized(this) {
+			synchronized (this) {
 				if (calendarViewMap == null) {
 					calendarViewMap = new HashMap();
 					Calendar cal = Calendar.getInstance();
 					Locale locale = new Locale(viewLg, "BE");
-					for (int i=1; i<=7; i++) {
+					for (int i = 1; i <= 7; i++) {
 						cal.set(Calendar.DAY_OF_WEEK, i);
-						calendarViewMap.put("calendar.day.short."+i, cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, locale));
-						calendarViewMap.put("calendar.day.long."+i, cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, locale));
+						calendarViewMap.put("calendar.day.short." + i, cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, locale));
+						calendarViewMap.put("calendar.day.long." + i, cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, locale));
 					}
 				}
-			}			
+			}
 		}
 		return calendarViewMap;
 	}
-	
+
 	/**
 	 * return trad for calendar
+	 * 
 	 * @return
 	 */
-	public Map<String,String> getCalendarEdit() {
+	public Map<String, String> getCalendarEdit() {
 		// calendar
 		if (calendarEditMap == null) {
-			synchronized(this) {
+			synchronized (this) {
 				if (calendarEditMap == null) {
 					calendarEditMap = new HashMap();
-					Calendar cal = Calendar.getInstance();					
+					Calendar cal = Calendar.getInstance();
 					Locale locale = new Locale(viewLg, "BE");
-					for (int i=1; i<=7; i++) {
+					for (int i = 1; i <= 7; i++) {
 						cal.set(Calendar.DAY_OF_WEEK, i);
-						calendarEditMap.put("calendar.day.short."+i, cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, locale));
-						calendarEditMap.put("calendar.day.long."+i, cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, locale));
+						calendarEditMap.put("calendar.day.short." + i, cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, locale));
+						calendarEditMap.put("calendar.day.long." + i, cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, locale));
 					}
 				}
-			}			
+			}
 		}
 		return calendarEditMap;
 	}
@@ -585,7 +591,7 @@ public class I18nAccess implements Serializable {
 					// propViewMap.addMap(new ReadOnlyPropertiesConfigurationMap(localPropView,
 					// displayKey));
 					propViewMap.addMap(localPropView.getProperties());
-				}				
+				}
 			}
 			if (templateView != null && (!templateViewImported || createPropViewMap)) {
 				propViewMap.addMap(templateView);
@@ -746,7 +752,7 @@ public class I18nAccess implements Serializable {
 		viewLg = newViewLg;
 
 		propViewMap = null;
-		
+
 		calendarViewMap = null;
 		// propEditMap = null;
 	}
@@ -775,8 +781,7 @@ public class I18nAccess implements Serializable {
 		updateTemplate(ctx, ctx.getRenderMode());
 	}
 
-	private synchronized void updateTemplate(ContentContext ctx, int mode)
-			throws IOException, ServiceException, Exception {
+	private synchronized void updateTemplate(ContentContext ctx, int mode) throws IOException, ServiceException, Exception {
 
 		String latestTemplateId = latestViewTemplateId;
 		String latestTemplateLang = latestViewTemplateLang;
@@ -795,8 +800,7 @@ public class I18nAccess implements Serializable {
 					lg = globalContext.getEditLanguage(ctx.getRequest().getSession());
 				}
 
-				if (template != null && template.getId() != null
-						&& (!latestTemplateId.equals(template.getId()) || !latestTemplateLang.equals(lg))) {
+				if (template != null && template.getId() != null && (!latestTemplateId.equals(template.getId()) || !latestTemplateLang.equals(lg))) {
 					propViewMap = null;
 					latestTemplateId = template.getId();
 					latestTemplateLang = lg;

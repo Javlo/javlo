@@ -318,6 +318,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		//logger.debug("uri : " + request.getRequestURI());
 		
 		if (DEBUG) {
+			logger.info("AccessServlet : uri : "+request.getRequestURI());
 			LocalLogger.log("AccessServlet : uri : "+request.getRequestURI());
 		}
 
@@ -684,6 +685,10 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			if (ctx.getCurrentPage() != null) {
 				ctx.getCurrentPage().updateLinkedData(ctx);
 			}
+			
+			
+			localLogger.stepCount("execute action", "1");
+			
 			MenuElement elem = content.getNavigation(ctx).getNoErrorFreeCurrentPage(ctx);
 			/** INIT TEMPLATE **/
 			if (ctx.getCurrentTemplate() == null || action != null) {
@@ -697,6 +702,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				}
 			}
 			Template template = ctx.getCurrentTemplate();
+			
+			localLogger.stepCount("execute action", "2");
 
 			if (!ctx.isAsViewMode()) {
 				IntegrityFactory.getInstance(ctx);
@@ -733,6 +740,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						}
 					}
 				}
+				localLogger.stepCount("execute action", "3");
 			}
 
 			if (logger.isDebugEnabled()) {
