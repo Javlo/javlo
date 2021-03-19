@@ -858,8 +858,11 @@ Security in case of vulnerabilities.
   - cache globalContext in application context
   - cache contentAsMap
   - DynamicCompoent Field >> value return reference value if empty
+  - getProduct ecom method
+  - smart deploy template
 ### fixed  
   - don't redirect old url if no urlfactory asked
   - js content type
   - update security on file servlet
   - remove "null" from area class
+  - remove internal countries list
