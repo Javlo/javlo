@@ -3,6 +3,7 @@ package org.javlo.component.ecom;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
+import org.javlo.actions.EcomStatus;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
@@ -71,20 +72,20 @@ public class TransferOrderComponent extends AbstractOrderComponent implements IA
 		basket.setStep(Basket.FINAL_STEP);		
 		basket.setStatus(Basket.STATUS_WAIT_PAY);
 		BasketPersistenceService.getInstance(globalContext).storeBasket(basket);
-		
+
 		AbstractOrderComponent comp = (AbstractOrderComponent) ComponentHelper.getComponentFromRequest(ctx);
-		
-		String msg = XHTMLHelper.textToXHTML(comp.getConfirmationEmail(ctx,basket));
-		
+		String msg = XHTMLHelper.textToXHTML(comp.getConfirmationEmail(ctx,basket));		
 		msg = "<p>" + i18nAccess.getViewText("ecom.basket-confirmed") + "</p><p>" + msg + "</p>";
 		
-		comp.sendConfirmationEmail(ctx, basket);
-		ctx.getRequest().setAttribute("msg", msg);		
-		
-		basket.payAll(ctx);
-		basket.reset(ctx);
-		
-		NetHelper.sendMailToAdministrator(globalContext, "basket confirmed with transfert : "+globalContext.getContextKey(), basket.getAdministratorEmail(ctx));
+		EcomStatus status = basket.payAll(ctx);
+		if (!status.isError()) {
+			comp.sendConfirmationEmail(ctx, basket);
+			ctx.getRequest().setAttribute("msg", msg);
+			NetHelper.sendMailToAdministrator(globalContext, "basket confirmed with transfert : "+globalContext.getContextKey(), basket.getAdministratorEmail(ctx));
+			basket.reset(ctx);
+		} else {
+			NetHelper.sendMailToAdministrator(globalContext, "ERROR: basket NOT confirmed with transfert : "+globalContext.getContextKey(), basket.getAdministratorEmail(ctx));
+		}
 		
 		return null;	
 	}

@@ -655,11 +655,14 @@ public class InfoBean {
 			if (popupPage != null) {
 				return popupPage.getPageBean(ctx);
 			}
-			return getCurrentPage().getPageBean(ctx);
+			MenuElement cp = getCurrentPage();
+			if (cp != null) {
+				return cp.getPageBean(ctx);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
 		}
+		return null;
 	}
 
 	/**

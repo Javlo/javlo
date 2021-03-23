@@ -8,14 +8,21 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
+import org.javlo.actions.EcomStatus;
+import org.javlo.actions.IEcomListner;
 import org.javlo.context.ContentContext;
 import org.javlo.ecom.Product.ProductBean;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.message.GenericMessage;
+import org.javlo.message.MessageRepository;
 import org.javlo.module.ecom.DeliveryPrice;
 
 public class Basket implements Serializable {
+	
+	private static Logger logger = Logger.getLogger(Basket.class.getName());
 
 	public static final int START_STEP = 1;
 	public static final int REGISTRATION_STEP = 2;
@@ -143,10 +150,30 @@ public class Basket implements Serializable {
 		return ctx.getRequest().getSession().getAttribute(KEY) != null;
 	}
 
-	public void payAll(ContentContext ctx) {
+	public EcomStatus payAll(ContentContext ctx) {
 		for (Product product : products) {
 			product.pay(ctx);
 		}
+		IEcomListner list;
+		try {
+			list = ctx.getGlobalContext().getStaticConfig().getEcomLister();
+			EcomStatus status = list.onConfirmBasket(ctx, this);
+			if (status != null) {
+				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+				if (status.isError()) {
+					logger.severe(status.getMessage());
+					messageRepository.setGlobalMessage(new GenericMessage(status.getMessage(), GenericMessage.ERROR));
+				} else {
+					logger.info(status.getMessage());
+					messageRepository.setGlobalMessage(new GenericMessage(status.getMessage(), GenericMessage.INFO));
+				}
+			}
+			return status;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
 	}
 
 	public void reserve(ContentContext ctx) {

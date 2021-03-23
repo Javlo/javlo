@@ -31,7 +31,9 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.javlo.actions.DefaultEcomLister;
 import org.javlo.actions.DefaultGeneralLister;
+import org.javlo.actions.IEcomListner;
 import org.javlo.actions.IGeneralListner;
 import org.javlo.bean.InstallBean;
 import org.javlo.context.ContentContext;
@@ -108,6 +110,8 @@ public class StaticConfig extends Observable {
 	private boolean foundFile = false;
 	
 	private IGeneralListner generalListner;
+	
+	private IEcomListner ecomListner;
 
 	private static class FolderBean {
 		String thread = null;
@@ -2232,6 +2236,18 @@ public class StaticConfig extends Observable {
 	
 	public String getNewsPageName() {
 		return properties.getString("page.news", "news");
+	}
+	
+	public IEcomListner getEcomLister() throws SecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
+		if (ecomListner == null) {
+			String generalListerClass = properties.getString("ecomlister.class", null);
+			if (generalListerClass == null) {
+				ecomListner = new DefaultEcomLister();
+			} else {
+				ecomListner = (IEcomListner) Class.forName(generalListerClass.trim()).newInstance();
+			}
+		}
+		return ecomListner;
 	}
 	
 	public IGeneralListner getGeneralLister() throws SecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {

@@ -34,15 +34,15 @@ public class UpdateTemplate extends AbstractMacro {
 				}
 			}
 		}
-		for (File file : allFiles) {
-			if (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("scss")) {
-				File cssFile = new File(StringHelper.getFileNameWithoutExtension(file.getAbsolutePath())+".css");
-				if (cssFile.exists() && cssFile.lastModified() < olderModifDate) {
-					logger.info("delete : "+cssFile);
-					cssFile.delete();
-				}
-			}
-		}
+//		for (File file : allFiles) {
+//			if (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("scss")) {
+//				File cssFile = new File(StringHelper.getFileNameWithoutExtension(file.getAbsolutePath())+".css");
+//				if (cssFile.exists() && cssFile.lastModified() < olderModifDate) {
+//					logger.info("delete : "+cssFile);
+//					cssFile.delete();
+//				}
+//			}
+//		}
 		return null;
 	}
 
