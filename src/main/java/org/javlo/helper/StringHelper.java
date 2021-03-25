@@ -4378,7 +4378,6 @@ public class StringHelper {
 				break;
 			case '/':
 				// if (b == '<') {
-				sb.append('\\');
 				// }
 				sb.append(c);
 				break;
@@ -4443,5 +4442,11 @@ public class StringHelper {
 	public static String toJsonValue(String data) {
 		return new Gson().toJson(data);
 	}
+	
+	public static String camelToSnake(final String camelStr) {
+		String ret = camelStr.replaceAll("([A-Z]+)([A-Z][a-z])", "$1_$2").replaceAll("([a-z])([A-Z])", "$1_$2");
+		return ret.toLowerCase();
+	}
+
 
 }

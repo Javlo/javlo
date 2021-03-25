@@ -14,6 +14,7 @@ public class Product {
 
 	public static final class ProductBean implements Serializable {
 		private String id;
+		private String pageId;
 		private double price;
 		private double reduction;
 		private double vat;
@@ -22,14 +23,15 @@ public class Product {
 		private String name;
 		private String description;
 		private String imageURL;
-		private String page;
 		private int quantity = 1;
+		private String language;
 
 		public ProductBean() {
 		};
 
-		public ProductBean(String id, double price, double reduction, double vat, String currencyCode, String name, String description, String imageURL, int quantity, double weight) {
+		public ProductBean(String id, String pageId, String lg, double price, double reduction, double vat, String currencyCode, String name, String description, String imageURL, int quantity, double weight) {
 			this.id = id;
+			this.pageId = pageId;
 			this.price = price;
 			this.currencyCode = currencyCode;
 			this.name = name;
@@ -126,12 +128,20 @@ public class Product {
 			this.weight = weight;
 		}
 
-		public String getPage() {
-			return page;
+		public String getPageId() {
+			return pageId;
 		}
 
-		public void setPage(String page) {
-			this.page = page;
+		public void setPageId(String pageId) {
+			this.pageId = pageId;
+		}
+
+		public String getLanguage() {
+			return language;
+		}
+
+		public void setLanguage(String language) {
+			this.language = language;
 		}
 
 	}
@@ -300,8 +310,7 @@ public class Product {
 	}
 
 	public ProductBean getBean() {
-		ProductBean bean = new ProductBean(getId(), getPrice(), getReduction(), getVAT(), getCurrencyCode(), getName(), getShortDescription(), getImageURL(), getQuantity(), getWeight());
-		bean.setPage(comp.getPage().getName());
+		ProductBean bean = new ProductBean(getId(), comp.getPage().getId(), comp.getComponentBean().getLanguage(), getPrice(), getReduction(), getVAT(), getCurrencyCode(), getName(), getShortDescription(), getImageURL(), getQuantity(), getWeight());
 		return bean;
 	}
 

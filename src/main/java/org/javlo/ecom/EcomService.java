@@ -22,6 +22,7 @@ import org.javlo.ecom.Product.ProductBean;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.utils.CSVFactory;
 import org.javlo.utils.TimeMap;
@@ -207,12 +208,38 @@ public class EcomService {
 		return out;
 	}
 	
+	public List<ProductBean> getProductsAllLanguages(ContentContext ctx) throws Exception {
+		List<ProductBean> out = new LinkedList<>();
+		for (String lg : ctx.getGlobalContext().getContentLanguages()) {
+			ContentContext lgCtx = new ContentContext(ctx);
+			ctx.setAllLanguage(lg);
+			List<IContentVisualComponent> comps = ContentService.getInstance(ctx.getGlobalContext()).getComponentByType(lgCtx, ProductComponent.TYPE);
+			for(IContentVisualComponent comp : comps) {
+				out.add(new Product((ProductComponent)comp).getBean());
+			}
+		}
+		return out;
+	}
+	
 	public ProductBean getProducts(ContentContext ctx, String id) throws Exception {
 		List<IContentVisualComponent> comps = ContentService.getInstance(ctx.getGlobalContext()).getComponentByType(ctx, ProductComponent.TYPE);
 		for(IContentVisualComponent comp : comps) {
 			ProductBean bean = new Product((ProductComponent)comp).getBean();
 			if (bean.getId().equals(id)) {
 				return bean;
+			}
+		}
+		return null;
+	}
+	
+	public ProductBean getProductsOnPage(ContentContext ctx, String pageId) throws Exception {
+		ContentService contentService = ContentService.getInstance(ctx.getGlobalContext());
+		
+		MenuElement page = contentService.getNavigation(ctx).searchChildFromId(pageId);
+		if (page != null) {
+			List<IContentVisualComponent> comps = page.getContentByType(ctx, ProductComponent.TYPE);
+			if (comps.size() > 0) {
+				return new Product((ProductComponent)comps.get(0)).getBean();
 			}
 		}
 		return null;
