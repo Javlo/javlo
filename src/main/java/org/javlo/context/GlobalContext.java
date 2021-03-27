@@ -60,6 +60,7 @@ import org.javlo.component.form.GenericForm;
 import org.javlo.config.StaticConfig;
 import org.javlo.data.taxonomy.TaxonomyService;
 import org.javlo.data.taxonomy.TaxonomyServiceAgregation;
+import org.javlo.ecom.EcomConfig;
 import org.javlo.helper.ContentHelper;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ElementaryURLHelper;
@@ -4459,6 +4460,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	
 	public boolean isBusinessTicket() {
 		return StringHelper.isTrue(getSpecialConfig().getMap().get("ticket.business"));
+	}
+	
+	public EcomConfig getEcomConfig() {
+		return new EcomConfig(this);
 	}
 	
 }

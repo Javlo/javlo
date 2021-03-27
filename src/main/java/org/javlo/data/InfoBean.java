@@ -881,7 +881,7 @@ public class InfoBean {
 	}
 
 	public PageBean getParent() {
-		if (getCurrentPage().getParent() != null) {
+		if (getCurrentPage() != null && getCurrentPage().getParent() != null) {
 			try {
 				return getCurrentPage().getParent().getPageBean(ctx);
 			} catch (Exception e) {

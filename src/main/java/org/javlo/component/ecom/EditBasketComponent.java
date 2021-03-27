@@ -3,10 +3,14 @@
  */
 package org.javlo.component.ecom;
 
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 
+import org.javlo.actions.EcomStatus;
 import org.javlo.actions.IAction;
+import org.javlo.actions.ListerException;
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.ecom.Basket;
@@ -67,6 +71,7 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 		if (basket.getUserReduction() > 0) {
 			ctx.getRequest().setAttribute("userReduction",  '-'+StringHelper.renderDoubleAsPercentage(basket.getUserReduction()));
 		}
+		ctx.getRequest().setAttribute("deliveryDates", ctx.getGlobalContext().getStaticConfig().getEcomLister().getDeliveryDate(ctx, basket));
 		ctx.getRequest().setAttribute("basket", basket);
 		ctx.getRequest().setAttribute("totalNoVAT", basket.getTotalString(ctx, false));
 		ctx.getRequest().setAttribute("total", basket.getTotalString(ctx, true));
@@ -111,7 +116,7 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 		return null;
 	}
 
-	public static String performRegistration(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
+	public static String performRegistration(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws SecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, ListerException {
 		Basket basket = Basket.getInstance(ctx);
 
 		if (rs.getParameter("back", null) != null) {
@@ -133,25 +138,43 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 
 		String vta = rs.getParameter("vat", "").trim();
 		String company = rs.getParameter("organization", "").trim();
+		
+		basket.setFirstName(firstName);
+		basket.setLastName(lastName);
+		basket.setContactEmail(email);
+		basket.setContactPhone(phone);
+		basket.setCountry(country);
+		basket.setAddress(address);
+		basket.setZip(zip);
+		basket.setCity(city);
+		basket.setVATNumber(vta);
+		basket.setOrganization(company);
+		basket.setNoShipping(noShipping);
+		if (!StringHelper.isEmpty(rs.getParameter("deliveryDate"))) {
+			try {
+				basket.setDeliveryDate(StringHelper.parseInputDate(rs.getParameter("deliveryDate")));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+			
+		
+		EcomStatus status = ctx.getGlobalContext().getStaticConfig().getEcomLister().onConfirmBasket(ctx, basket);
+		if (status.isError()) {
+			return status.getMessage();
+		}
 
 		if (firstName.length() == 0 || lastName.length() == 0 || email.length() == 0 || country.length() == 0 || address.length() == 0 || zip.length() == 0 || city.length() == 0) {
-			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("global.compulsory-field"), GenericMessage.ERROR));
+			String msg = i18nAccess.getViewText("global.compulsory-field");
+			if (!StringHelper.isEmpty(status.getMessage())) {
+				msg = status.getMessage();
+			}
+			messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
 		} else {
 			if (!StringHelper.isMail(email)) {
 				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("mailing.error.email"), GenericMessage.ERROR));
 			} else {
-				basket.setFirstName(firstName);
-				basket.setLastName(lastName);
-				basket.setContactEmail(email);
-				basket.setContactPhone(phone);
-				basket.setCountry(country);
-				basket.setAddress(address);
-				basket.setZip(zip);
-				basket.setCity(city);
 				basket.setStep(Basket.ORDER_STEP);
-				basket.setVATNumber(vta);
-				basket.setOrganization(company);
-				basket.setNoShipping(noShipping);
 			}
 		}
 

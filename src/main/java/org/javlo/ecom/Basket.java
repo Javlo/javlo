@@ -66,6 +66,7 @@ public class Basket implements Serializable {
 	private String user;
 	private String transfertAddressLogin = "";
 	private String description;
+	private Date deliveryDate;
 	private boolean presumptiveFraud = false;
 	private double userReduction = 0;
 	private boolean noShipping = false;
@@ -154,10 +155,10 @@ public class Basket implements Serializable {
 		for (Product product : products) {
 			product.pay(ctx);
 		}
-		IEcomListner list;
+		IEcomListner ecomListner;
 		try {
-			list = ctx.getGlobalContext().getStaticConfig().getEcomLister();
-			EcomStatus status = list.onConfirmBasket(ctx, this);
+			ecomListner = ctx.getGlobalContext().getStaticConfig().getEcomLister();
+			EcomStatus status = ecomListner.onConfirmPayment(ctx, this);
 			if (status != null) {
 				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 				if (status.isError()) {
@@ -711,6 +712,14 @@ public class Basket implements Serializable {
 
 	public void setNoShipping(boolean noShipping) {
 		this.noShipping = noShipping;
+	}
+
+	public Date getDeliveryDate() {
+		return deliveryDate;
+	}
+
+	public void setDeliveryDate(Date deliveryDate) {
+		this.deliveryDate = deliveryDate;
 	}
 
 }
