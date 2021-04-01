@@ -65,7 +65,9 @@ public class Basket implements Serializable {
 	private String info;
 	private String user;
 	private String transfertAddressLogin = "";
+	private String securityKey = StringHelper.getRandomIdBase64();
 	private String description;
+	private String transactionId;
 	private Date deliveryDate;
 	private boolean presumptiveFraud = false;
 	private double userReduction = 0;
@@ -197,7 +199,7 @@ public class Basket implements Serializable {
 			}
 		}
 		products.add(product);
-		
+		resetSecurityKey();
 	}
 
 	public void removeProduct(String id) {
@@ -208,6 +210,7 @@ public class Basket implements Serializable {
 				iter.remove();
 			}
 		}
+		resetSecurityKey();
 	}
 
 	public int getProductCount() {
@@ -429,6 +432,7 @@ public class Basket implements Serializable {
 
 	public void setProducts(List<Product> products) {		
 		this.products = products;
+		resetSecurityKey();
 	}
 
 	public int getStep() {
@@ -720,6 +724,22 @@ public class Basket implements Serializable {
 
 	public void setDeliveryDate(Date deliveryDate) {
 		this.deliveryDate = deliveryDate;
+	}
+	
+	private void resetSecurityKey() {
+		securityKey = StringHelper.getRandomIdBase64();
+	}
+
+	public String getSecurityKey() {
+		return securityKey;
+	}
+
+	public String getTransactionId() {
+		return transactionId;
+	}
+
+	public void setTransactionId(String transactionId) {
+		this.transactionId = transactionId;
 	}
 
 }

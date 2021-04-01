@@ -132,6 +132,7 @@ org.javlo.component.container.ShowTemplateComponent
 org.javlo.component.ecom.ProductComponent
 org.javlo.component.ecom.EditBasketComponent
 org.javlo.component.ecom.PaypalOrderComponent
+org.javlo.component.ecom.StripeOrderComponent
 org.javlo.component.ecom.TransferOrderComponent
 
 --content.title.web2

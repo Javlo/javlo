@@ -1292,6 +1292,17 @@ public class URLHelper extends ElementaryURLHelper {
 		return urlLC.startsWith("http://") || urlLC.startsWith("https://") || urlLC.startsWith("ftp://") || urlLC.startsWith("file://") || urlLC.startsWith("//");
 	}
 	
+	public static boolean isJavascriptLink(String link) {
+		if (StringHelper.getFileExtension(link).equalsIgnoreCase("js")) {
+			return true;
+		} else {
+			if (!isAbsoluteURL(link)) {
+				return false;
+			}
+			return extractHost(link).toLowerCase().startsWith("js.");
+		}
+	}
+	
 	public static String mergePath(String... paths) {
 		String outPath = "";
 		for (String path : paths) {
@@ -1626,6 +1637,11 @@ public class URLHelper extends ElementaryURLHelper {
 		} else {
 			return url + anchor;
 		}
+	}
+	
+	public static void main(String[] args) {
+		String enc = URLEncoder.encode("{{id}}");
+		System.out.println(enc);
 	}
 
 }

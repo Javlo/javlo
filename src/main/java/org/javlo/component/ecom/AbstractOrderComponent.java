@@ -1,10 +1,12 @@
 package org.javlo.component.ecom;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -20,6 +22,7 @@ import org.javlo.ecom.Basket;
 import org.javlo.ecom.Product;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.NetHelper;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -91,26 +94,27 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 		PrintStream out = new PrintStream(outStream);
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		
-		out.println("<table class=\"table\" id=\"basket-details\">");
+		String cellStyle="font-size: 14px;";
+		
+		out.println("<table class=\"table\" id=\"basket-details\" style=\"width: 100%\">");
 		out.println("<thead>");
 		out.println("<tr>");
-		out.println("<td>"+i18nAccess.getViewText("ecom.product")+"</td>");
-		out.println("<td>"+i18nAccess.getViewText("ecom.quantity")+"</td>");
-		out.println("<td>"+i18nAccess.getViewText("ecom.total_evat")+"</td>");
-		out.println("<td>"+i18nAccess.getViewText("ecom.total_vat")+"</td>");
+		out.println("<th style=\""+cellStyle+"\">"+i18nAccess.getViewText("ecom.product")+"</th>");
+		out.println("<th style=\""+cellStyle+"\">"+i18nAccess.getViewText("ecom.quantity")+"</th>");
+		out.println("<th style=\""+cellStyle+"\">"+i18nAccess.getViewText("ecom.total_evat")+"</th>");
+		out.println("<th>"+i18nAccess.getViewText("ecom.total_vat")+"</th>");
 		out.println("</tr>");
 		out.println("</thead>");		
 		
 		for (Product product : basket.getProducts()) {
 			out.println("<tr>");
-			out.println("<td>"+product.getName()+"</td>");
-			out.println("<td>"+product.getQuantity()+"</td>");
+			out.println("<td style=\""+cellStyle+"\">"+product.getName()+"</td>");
+			out.println("<td style=\""+cellStyle+"\">"+product.getQuantity()+"</td>");
 			double total = product.getPrice()*product.getQuantity();
-			out.println("<td>"+Basket.renderPrice(ctx,total/(1+product.getVAT()),product.getCurrencyCode())+"</td>");
-			out.println("<td>"+Basket.renderPrice(ctx,total,product.getCurrencyCode())+"</td>");			
+			out.println("<td style=\""+cellStyle+"\">"+Basket.renderPrice(ctx,total/(1+product.getVAT()),product.getCurrencyCode())+"</td>");
+			out.println("<td style=\""+cellStyle+"\">"+Basket.renderPrice(ctx,total,product.getCurrencyCode())+"</td>");
 			out.println("</tr>");
 		}
-		
 		out.println("</table>");
 		
 		out.close();
@@ -143,7 +147,8 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 			params.put("lastName", StringHelper.toHTMLAttribute(basket.getLastName()));
 			params.put("basketSize", ""+basket.getSize());
 			params.put("basketId", ""+basket.getId());
-			String basketTable = URLEncoder.encode(renderBasket(ctx, basket), ContentContext.CHARACTER_ENCODING);			
+			
+			String basketTable = URLEncoder.encode(renderBasket(ctx, basket), ContentContext.CHARACTER_ENCODING);
 			params.put("basketTable", basketTable);
 			params.put("address", StringHelper.toHTMLAttribute(basket.getAddress()));
 			params.put("city", StringHelper.toHTMLAttribute(basket.getCity()));
@@ -166,6 +171,7 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 			pageURL = URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.PAGE_MODE), page.getPath(), params);
 			try {
 				email = NetHelper.readPageForMailing(new URL(pageURL));
+				ResourceHelper.writeStringToFile(new File("c:/trans/email.html"), email);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -194,6 +200,11 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 		
 	}
 	
-	
+	public static void main(String[] args) throws UnsupportedEncodingException {
+		String HMTL = "<table><tr><td>test</td></tr></table>";
+		String basketTable = URLEncoder.encode(HMTL, ContentContext.CHARACTER_ENCODING);
+		System.out.println(basketTable);
+	}
 
 }
+

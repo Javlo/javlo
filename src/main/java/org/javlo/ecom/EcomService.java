@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.ecom.ProductComponent;
+import org.javlo.component.image.IImageTitle;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -203,7 +204,13 @@ public class EcomService {
 		List<ProductBean> out = new LinkedList<>();
 		List<IContentVisualComponent> comps = ContentService.getInstance(ctx.getGlobalContext()).getComponentByType(ctx, ProductComponent.TYPE);
 		for(IContentVisualComponent comp : comps) {
-			out.add(new Product((ProductComponent)comp).getBean());
+			Product product = new Product((ProductComponent)comp);
+			MenuElement page = comp.getPage();
+			IImageTitle img = page.getImage(ctx);
+			if (img != null) {
+				product.setImage(ctx, img);
+			}
+			out.add(product.getBean());
 		}
 		return out;
 	}

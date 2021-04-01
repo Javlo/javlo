@@ -1213,13 +1213,15 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (resources != null && template != null) {
 			List<String> linkResource = StringHelper.stringToCollection(resources, ",");
 			List<String> outResource = new LinkedList<String>();
-			for (String uri : linkResource) {
-				if (uri.startsWith("/")) {
+			for (String url : linkResource) {
+				if (url.startsWith("/")) {
 					try {
-						outResource.add(URLHelper.createStaticTemplateURLWithoutContext(ctx, template, uri));
+						outResource.add(URLHelper.createStaticTemplateURLWithoutContext(ctx, template, url));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+				} else {
+					outResource.add(url);
 				}
 			}
 			return outResource;
@@ -3363,12 +3365,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	 */
 	public boolean isEditOnCreate(ContentContext ctx) {
 		return ctx.getGlobalContext().getStaticConfig().isEditOnCreate();
-	}
-
-	public static void main(String[] args) {
-		String cr = "/jsp/test.jsp?p=test";
-		cr = cr.substring(0, cr.indexOf('?'));
-		System.out.println(cr);
 	}
 
 	@Override

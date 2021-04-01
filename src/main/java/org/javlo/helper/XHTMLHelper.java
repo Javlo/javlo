@@ -1968,7 +1968,7 @@ public class XHTMLHelper {
 	public static String renderHeaderResourceInsertionWithoutalreadyTest(ContentContext ctx, String resource) {
 		if (StringHelper.getFileExtension(resource).equalsIgnoreCase("css")) {
 			return "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + URLHelper.createStaticURL(ctx, resource) + "\" />";
-		} else if (StringHelper.getFileExtension(resource).equalsIgnoreCase("js")) {
+		} else if (URLHelper.isJavascriptLink(resource)) {
 			return "<script src=\"" + URLHelper.createStaticURL(ctx, resource) + "\" type=\"text/javascript\"></script>";
 		} else {
 			return "<!-- resource type not identified : " + resource + " -->";
@@ -1979,7 +1979,7 @@ public class XHTMLHelper {
 		if (!alreadyInserted(ctx, resource)) {
 			if (StringHelper.getFileExtension(resource).equalsIgnoreCase("css")) {
 				return "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + URLHelper.createStaticURL(ctx, resource) + "\" />";
-			} else if (StringHelper.getFileExtension(resource).equalsIgnoreCase("js")) {
+			} else if (URLHelper.isJavascriptLink(resource)) {
 				alreadyClosedIfOpen(ctx, resource); // close </script>
 				return "<script src=\"" + URLHelper.createStaticURL(ctx, resource) + "\" type=\"text/javascript\"></script>";
 			} else {
@@ -2171,7 +2171,10 @@ public class XHTMLHelper {
 			} catch (Exception e) {
 				logger.warning(e.getMessage());
 			}
-			xhtml = xhtml.replace("${param." + param + "}", XHTMLHelper.textToXHTML(decodedParam, ctx.getGlobalContext()));
+			if (!StringHelper.isHTMLText(decodedParam)) {
+				decodedParam = XHTMLHelper.textToXHTML(decodedParam, ctx.getGlobalContext());
+			}
+			xhtml = xhtml.replace("${param." + param + "}", decodedParam);
 		}
 
 		InfoBean infoBean = InfoBean.getCurrentInfoBean(ctx.getRequest());

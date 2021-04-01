@@ -576,21 +576,26 @@
 			<artifactId>zip4j</artifactId>
 			<version>2.5.0</version>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-web -->
 		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-web</artifactId>
-		    <version>5.2.8.RELEASE</version>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>5.2.8.RELEASE</version>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/com.mortennobel/java-image-scaling -->
 		<dependency>
-		    <groupId>com.mortennobel</groupId>
-		    <artifactId>java-image-scaling</artifactId>
-		    <version>0.8.6</version>
+			<groupId>com.mortennobel</groupId>
+			<artifactId>java-image-scaling</artifactId>
+			<version>0.8.6</version>
 		</dependency>
-		
+
+		<dependency>
+			<groupId>com.stripe</groupId>
+			<artifactId>stripe-java</artifactId>
+			<version>20.44.0</version>
+		</dependency>
 
 	</dependencies>
 
@@ -639,7 +644,7 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>

@@ -753,6 +753,8 @@ public class NetHelper {
 		}
 		return userAgent.contains("robo");
 	}
+	
+	
 
 	public static List<VisualResource> extractImage(URL inURL, String content, boolean needSize) {
 		if (content == null) {

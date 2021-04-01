@@ -252,7 +252,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 			out.close();
 			return new String(outStream.toByteArray());
 		} else {
-			return "";
+			return "<div class=\"alert alert-danger\">"+getType()+" : offset not found.</div>";
 		}
 	}
 

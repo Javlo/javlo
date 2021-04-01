@@ -1436,6 +1436,23 @@ public class StringHelper {
 			return countSep < 2;
 		}
 	}
+	
+	public static boolean isHTMLText(String text) {
+		if (text == null) {
+			return false;
+		} else {
+			Pattern pattern = Pattern.compile("<(?!!)(?!/)\\s*([a-zA-Z0-9]+)(.*?)>");
+			Matcher matcher = pattern.matcher(text);
+			return matcher.find();
+		}
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(isHTMLText("test"));
+		System.out.println(isHTMLText("test > grand"));
+		System.out.println(isHTMLText("test > <p>grand</p>"));
+		System.out.println(isHTMLText("<table></table>"));
+	}
 
 	/**
 	 * return true if the filename in a html image).
@@ -4407,10 +4424,6 @@ public class StringHelper {
 		}
 		sb.append('"');
 		return sb.toString();
-	}
-
-	public static void main(String[] args) {
-		System.out.println(">>>>>>>>> StringHelper.main : " + createI18NURL("Réduction d'impôts de 60% (au lieu de 45%) pour tout don fait à une association ou ONG en 2020 !")); // TODO: remove debug trace
 	}
 
 	/**

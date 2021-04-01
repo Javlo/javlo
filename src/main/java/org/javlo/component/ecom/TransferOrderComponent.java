@@ -3,7 +3,6 @@ package org.javlo.component.ecom;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import org.eclipse.collections.impl.parallel.AbstractProcedureCombiner;
 import org.javlo.actions.EcomStatus;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.IContentVisualComponent;
