@@ -860,6 +860,7 @@ Security in case of vulnerabilities.
   - DynamicCompoent Field >> value return reference value if empty
   - getProduct ecom method
   - smart deploy template
+  - add layout as css class
 ### fixed  
   - don't redirect old url if no urlfactory asked
   - js content type
