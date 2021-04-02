@@ -2044,7 +2044,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (!StringHelper.isEmpty(getManualCssClass())) {
 			cssClass += ' '+getManualCssClass();
 		}
-		if (cssClass.trim().length() > 0) {
+		if (getLayout() != null && !StringHelper.isEmpty(getLayout().getCssClass())) {
+			cssClass = getLayout().getCssClass().trim()+' '+cssClass.trim();
+		}
+		System.out.println(">>>>>>>>> AbstractVisualComponent.getPrefixCssClass : cssClass = "+cssClass); //TODO: remove debug trace
+		cssClass = cssClass.trim();
+		if (cssClass.length() > 0) {
 			return " class=\"" + cssClass + "\"";
 		} else {
 			return "";

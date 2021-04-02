@@ -156,4 +156,41 @@ public class ComponentLayout {
 		return outStyle.toString();
 	}
 	
+	/**
+	 * get the layout as css style.
+	 * 
+	 * @return
+	 */
+	public String getCssClass() {
+		StringBuffer outStyle = new StringBuffer();
+		
+		outStyle.append("as-layout ");
+		
+		if (isLeft()) {
+			outStyle.append("align-left ");
+		} else if (isRight()) {
+			outStyle.append("align-right ");
+		} else if (isCenter()) {
+			outStyle.append("align-center ");
+		} else if (isJustify()) {
+			outStyle.append("align-justify ");
+		}
+		if (isBold()) {
+			outStyle.append("font-bold ");
+		}
+		if (isItalic()) {
+			outStyle.append("font-italic ");
+		}
+		if (!StringHelper.isEmpty(font)) {
+			outStyle.append("font-specific ");
+		}
+		if (isUnderline()) {
+			outStyle.append("text-decoration-underline");
+		}
+		if (isLineThrough()) {
+			outStyle.append("text-decoration-line-through ");
+		}
+		return outStyle.toString();
+	}
+	
 }
