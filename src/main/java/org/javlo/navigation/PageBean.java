@@ -153,6 +153,15 @@ public class PageBean implements Serializable {
 		}
 	}
 	
+	public String getLayout() throws Exception {
+		if (page.getLayouts(ctx) == null || page.getLayouts(ctx).size() == 0) {
+			return null;
+		} else {
+			return page.getLayouts(ctx).get(0);
+		}
+	}
+	
+	
 	public List<String> getLayouts() throws Exception {
 		return page.getLayouts(ctx);
 	}

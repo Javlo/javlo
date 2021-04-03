@@ -4020,7 +4020,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		List<String> outLayouts = new LinkedList<String>();
 		Collection<IContentVisualComponent> layoutComps = getContentByType(lgDefaultCtx, Layouts.TYPE);
 		for (IContentVisualComponent comp : layoutComps) {
-			outLayouts.addAll(StringHelper.stringToCollection(comp.getValue(lgDefaultCtx), ","));
+			Layouts layouts = (Layouts)comp;
+			outLayouts.addAll(layouts.getLayouts());
 		}
 		if (outLayouts.size() == 0) {
 			desc.layouts = Collections.emptyList();
