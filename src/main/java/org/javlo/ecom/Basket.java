@@ -68,6 +68,7 @@ public class Basket implements Serializable {
 	private String securityKey = StringHelper.getRandomIdBase64();
 	private String description;
 	private String transactionId;
+	private String deliveryInstructions;
 	private Date deliveryDate;
 	private boolean presumptiveFraud = false;
 	private double userReduction = 0;
@@ -588,6 +589,9 @@ public class Basket implements Serializable {
 		if (getOrganization() != null && getOrganization().trim().length() > 0) {
 			out.println("  Organization : " + getOrganization());
 		}
+		if (getDeliveryInstructions() != null && getDeliveryInstructions().trim().length() > 0) {
+			out.println("  Delivery Instructions : " + getOrganization());
+		}
 		if (getVATNumber() != null && getVATNumber().trim().length() > 0) {
 			out.println("  VAT Number : " + getVATNumber());
 		}
@@ -634,6 +638,9 @@ public class Basket implements Serializable {
 		out.println("  country : " + getCountry());
 		if (getOrganization() != null && getOrganization().trim().length() > 0) {
 			out.println("  Organization : " + getOrganization());
+		}
+		if (getDeliveryInstructions() != null && getDeliveryInstructions().trim().length() > 0) {
+			out.println("  Delivery Instructions : " + getOrganization());
 		}
 		if (getVATNumber() != null && getVATNumber().trim().length() > 0) {
 			out.println("  VAT Number : " + getVATNumber());
@@ -740,6 +747,14 @@ public class Basket implements Serializable {
 
 	public void setTransactionId(String transactionId) {
 		this.transactionId = transactionId;
+	}
+
+	public String getDeliveryInstructions() {
+		return deliveryInstructions;
+	}
+
+	public void setDeliveryInstructions(String deliveryInstructions) {
+		this.deliveryInstructions = deliveryInstructions;
 	}
 
 }

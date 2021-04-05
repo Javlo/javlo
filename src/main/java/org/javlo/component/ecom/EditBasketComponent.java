@@ -149,6 +149,7 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 		basket.setCity(city);
 		basket.setVATNumber(vta);
 		basket.setOrganization(company);
+		basket.setDeliveryInstructions(rs.getParameter("deliveryInstructions"));
 		basket.setNoShipping(noShipping);
 		if (!StringHelper.isEmpty(rs.getParameter("deliveryDate"))) {
 			try {
