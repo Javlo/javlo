@@ -35,6 +35,8 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,8 +67,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.javlo.component.list.DataList;
 import org.javlo.component.list.FreeTextList;
+import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.Comparator.StringComparator;
@@ -111,7 +113,9 @@ public class StringHelper {
 
 	public static final String[][] TXT2HTML = { { " ?", "&nbsp;?" }, { " !", "&nbsp;!" }, { "\u00c1", "&Aacute;" }, { "\u00e1", "&aacute;" }, { "\u00c0", "&Agrave;" }, { "\u00e0", "&agrave;" }, { "\u00e7", "&ccedil;" }, { "\u00c7", "&Ccedil;" }, { "\u00c9", "&Eacute;" }, { "\u00e9", "&eacute;" }, { "\u00c8", "&Egrave;" }, { "\u00e8", "&egrave;" }, { "\u00ca", "&Ecirc;" }, { "\u00ea", "&ecirc;" }, { "\u00cf", "&Iuml;" }, { "\u00ef", "&iuml;" }, { "\u00f9", "&ugrave;" }, { "\u00d9", "&Ugrave;" }, { "\u2019", "'" }, { "\u00D6", "&Ouml;" }, { "\u00F6", "&ouml;" } };
 
-	public static SimpleDateFormat RFC822DATEFORMAT = new SimpleDateFormat("EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z", Locale.US);
+	public static final String RFC822DATEPATTERN = "EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z";
+	
+	public static SimpleDateFormat RFC822DATEFORMAT = new SimpleDateFormat(RFC822DATEPATTERN, Locale.US);
 
 	private static final String EU_ACCEPTABLE_CHAR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.\u0443\u0435\u0438\u0448\u0449\u043a\u0441\u0434\u0437\u0446\u044c\u044f\u0430\u043e\u0436\u0433\u0442\u043d\u0432\u043c\u0447\u044e\u0439\u044a\u044d\u0444\u0445\u043f\u0440\u043b\u0431\u044b\u0423\u0415\u0418\u0428\u0429\u041a\u0421\u0414\u0417\u0426\u042c\u042f\u0410\u041e\u0416\u0413\u0422\u041d\u0412\u041c\u0427\u042e\u0419\u042a\u042d\u0424\u0425\u041f\u0420\u041b\u0411\u03c2\u03b5\u03c1\u03c4\u03c5\u03b8\u03b9\u03bf\u03c0\u03b1\u03c3\u03b4\u03c6\u03b3\u03b7\u03be\u03ba\u03bb\u03b6\u03c7\u03c8\u03c9\u03b2\u03bd\u03bc\u0395\u03a1\u03a4\u03a5\u0398\u0399\u039f\u03a0\u0391\u03a3\u03a6\u0393\u0397\u039e\u039a\u039b\u0396\u03a7\u03a8\u03a9\u0392\u039d\u039c";
 
@@ -1448,10 +1452,13 @@ public class StringHelper {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(isHTMLText("test"));
-		System.out.println(isHTMLText("test > grand"));
-		System.out.println(isHTMLText("test > <p>grand</p>"));
-		System.out.println(isHTMLText("<table></table>"));
+		LocalDate  date = LocalDate.now();
+		System.out.println(renderDateAsRFC822String(date));
+		
+//		Set<String> allZones = ZoneId.getAvailableZoneIds();
+//		for (String z : allZones) {
+//			System.out.println(z);
+//		}
 	}
 
 	/**
@@ -2573,6 +2580,30 @@ public class StringHelper {
 			return null;
 		}
 		return RFC822DATEFORMAT.format(date);
+	}
+	
+	public static String renderDateAsRFC822String(LocalDateTime date) {
+		if (date == null) {
+			return null;
+		}
+		ZoneId zoneId = ZoneId.of( StaticConfig.ZONE_DATE_TIME );
+		ZonedDateTime zdt = date.atZone( zoneId );
+		return renderDateAsRFC822String(zdt);
+	}
+	
+	public static String renderDateAsRFC822String(ZonedDateTime date) {
+		if (date == null) {
+			return null;
+		}
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(RFC822DATEPATTERN).withLocale(Locale.ENGLISH);
+		return date.format(formatter);
+	}
+	
+	public static String renderDateAsRFC822String(LocalDate date) {
+		if (date == null) {
+			return null;
+		}
+		return renderDateAsRFC822String(date.atStartOfDay());
 	}
 
 	public static String renderDateWithDefaultValue(Date date, String defaultValue) {

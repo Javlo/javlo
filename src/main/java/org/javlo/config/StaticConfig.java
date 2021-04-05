@@ -62,6 +62,8 @@ import org.javlo.utils.ConfigurationProperties;
 import org.javlo.ztatic.FileCache;
 
 public class StaticConfig extends Observable {
+	
+	public static String ZONE_DATE_TIME = "Europe/Brussels";
 
 	public static String WEB_PLATFORM = "web";
 	public static String MAILING_PLATFORM = "mailing";
@@ -323,6 +325,10 @@ public class StaticConfig extends Observable {
 			}
 			if (application != null) {
 				application.setAttribute(KEY, this);
+			}
+			
+			if (getZoneDateTime() != null) {
+				ZONE_DATE_TIME = getZoneDateTime();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -2265,6 +2271,11 @@ public class StaticConfig extends Observable {
 	public String getWebpEncoder() {
 		return properties.getString("image.webp.encoder", null);
 	}
+	
+	public String getZoneDateTime() {
+		return properties.getString("calendar.zone", null);
+	}
+
 	
 	public static void main(String[] args) {
 		System.out.println(">>>>>>>>> StaticConfig.main : getJavloHome = "+getJavloHome()); //TODO: remove debug trace

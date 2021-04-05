@@ -2685,10 +2685,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 				Collection<String> resources = comp.getExternalResources(ctx);
 				if (resources != null) {
 					for (String res : resources) {
-						if (outResources.contains(res)) {
-							// TODO: check if this line can be removed
-							// outResources.remove(res);
-						}
 						if (!outResources.contains(res)) {
 							outResources.add(res);
 						}
