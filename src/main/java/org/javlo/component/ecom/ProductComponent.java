@@ -14,6 +14,7 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.ecom.Basket;
+import org.javlo.ecom.EcomConfig;
 import org.javlo.ecom.Product;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -25,8 +26,12 @@ import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 
 public class ProductComponent extends AbstractPropertiesComponent implements IAction {
+	
+	private static final long MAX_STOCK = 999999;
 
-	static final List<String> FIELDS = Arrays.asList(new String[] { "name", "price", "vat", "promo", "currency", "offset", "weight", "production", "basket-page" });
+	static final List<String> FIELDS_STOCK = Arrays.asList(new String[] { "name", "price", "vat", "promo", "currency", "offset", "weight", "production", "basket-page", "html" });
+	
+	static final List<String> FIELDS_NOSTOCK = Arrays.asList(new String[] { "name", "price", "vat", "promo", "currency", "basket-page", "html" });
 	
 	public static final String TYPE = "product";
 
@@ -37,7 +42,14 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 	@Override
 	public List<String> getFields(ContentContext ctx) throws Exception {
-		return FIELDS;
+		EcomConfig config = ctx.getGlobalContext().getEcomConfig();
+		if (config.isStock()) {
+			System.out.println(">>>>>>>>> ProductComponent.getFields : STOCK"); //TODO: remove debug trace
+			return FIELDS_STOCK;
+		} else {
+			System.out.println(">>>>>>>>> ProductComponent.getFields : NOT STOCK"); //TODO: remove debug trace
+			return FIELDS_NOSTOCK;
+		}
 	}
 
 	@Override
@@ -73,12 +85,19 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 		return getFieldValue("basket-page", "");
 	}
 
-	public long getOffset() {
+	public long getOffset(ContentContext ctx) {
+		if (!ctx.getGlobalContext().getEcomConfig().isStock()) {
+			return 1;
+		}
 		return getFieldLongValue("offset");
 	}
 
 	public long getWeight() {
 		return getFieldLongValue("weight");
+	}
+	
+	public String getHtml() {
+		return getFieldValue("html","");
 	}
 
 	public long getProduction() {
@@ -87,6 +106,9 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 	public long getRealStock(ContentContext ctx) {
 		try {
+			if (!ctx.getGlobalContext().getEcomConfig().isStock()) {
+				return MAX_STOCK;
+			}
 			loadViewData(ctx);
 			String value = getViewData(ctx).getProperty("stock");
 			return Long.valueOf(value);
@@ -99,6 +121,9 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 	public long getVirtualStock(ContentContext ctx) {
 		try {
+			if (!ctx.getGlobalContext().getEcomConfig().isStock()) {
+				return MAX_STOCK;
+			}
 			loadViewData(ctx);
 			String value = getViewData(ctx).getProperty("virtual");
 			return Long.valueOf(value);
@@ -129,19 +154,20 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
-
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 
 		List<String> fields = getFields(ctx);
-
 		out.println("<div class=\"edit\" style=\"padding: 3px;\"><div class=\"row\">");
 
 		for (String field : fields) {
 			renderField(ctx, out, field, getRowSize(field), getFieldValue(field));
 		}
-		renderField(ctx, out, "stock", 1, getRealStock(ctx));
-		renderField(ctx, out, "virtual", 1, getVirtualStock(ctx));
+		
+		if (ctx.getGlobalContext().getEcomConfig().isStock()) {
+			renderField(ctx, out, "stock", 1, getRealStock(ctx));
+			renderField(ctx, out, "virtual", 1, getVirtualStock(ctx));
+		}
 
 		out.println("</div></div>");
 
@@ -191,7 +217,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		if (getOffset() > 0) {
+		if (getOffset(ctx) > 0) {
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 			PrintStream out = new PrintStream(outStream);
 
@@ -231,12 +257,12 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 //			out.println("</div>");
 
 			out.println("<div class=\"line list-group-item stock d-flex justify-content-between form-inline\">");
-			if (getVirtualStock(ctx) > getOffset()) {
+			if (getVirtualStock(ctx) > getOffset(ctx)) {
 
 				String Qid = "product-" + StringHelper.getRandomId();
 				if (price>0) {
 					out.println("<label for=\"" + Qid + "\"><span>" + i18nAccess.getViewText("ecom.quantity") + "</span></label>");
-					out.println("<input class=\"form-control digit\" id=\"" + Qid + "\" type=\"number\" min=\"1\" name=\"quantity\" value=\"" + getOffset() + "\" maxlength=\"3\"/>");
+					out.println("<input class=\"form-control digit\" id=\"" + Qid + "\" type=\"number\" min=\"1\" name=\"quantity\" value=\"" + getOffset(ctx) + "\" maxlength=\"3\"/>");
 				} else {
 					out.println("<div><input type=\"hidden\" name=\"quantity\" value=\"1\" /></div>");
 				}
@@ -248,6 +274,8 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 			out.println("</div>");
 
 			out.println("</form>");
+			
+			out.println(getHtml());
 
 			out.close();
 			return new String(outStream.toByteArray());
@@ -295,7 +323,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 				if (quantity != null) {
 					int quantityValue = Integer.parseInt(quantity);
 
-					quantityValue = quantityValue - (quantityValue % (int) pComp.getOffset());
+					quantityValue = quantityValue - (quantityValue % (int) pComp.getOffset(ctx));
 					product.setQuantity(quantityValue);
 
 					Basket basket = Basket.getInstance(ctx);

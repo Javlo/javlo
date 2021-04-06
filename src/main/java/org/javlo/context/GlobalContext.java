@@ -940,6 +940,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public final Object RELEASE_CACHE = new Object();
 
+	private EcomConfig ecomConfig;
+
 	public long getAccountSize() {
 		if (accountSize == null) {
 			File file = new File(getDataFolder());
@@ -4463,7 +4465,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 	
 	public EcomConfig getEcomConfig() {
-		return new EcomConfig(this);
+		if (ecomConfig == null) {
+			ecomConfig = new EcomConfig(this);
+		}
+		return ecomConfig;
 	}
 	
 }
