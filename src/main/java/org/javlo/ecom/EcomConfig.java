@@ -13,11 +13,11 @@ public class EcomConfig {
 	}
 	
 	public boolean isStock() {
-		return StringHelper.isTrue(specialConfig.getMap().get("ecom.stock"));
+		return StringHelper.isTrue(specialConfig.get("ecom.stock", null));
 	}
 	
 	public boolean isDeliveryuDate() {
-		return StringHelper.isTrue(specialConfig.getMap().get("ecom.delivery.date"));
+		return StringHelper.isTrue(specialConfig.get("ecom.delivery.date", null));
 	}
 
 }

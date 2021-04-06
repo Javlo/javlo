@@ -45,11 +45,11 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 	}
 
 	private static String getPublicKey(ContentContext ctx) {
-		return (String) ctx.getGlobalContext().getSpecialConfig().getMap().get("stripe.key.public");
+		return (String) ctx.getGlobalContext().getSpecialConfig().get("stripe.key.public", null);
 	}
 
 	private static String getPrivateKey(ContentContext ctx) {
-		return (String) ctx.getGlobalContext().getSpecialConfig().getMap().get("stripe.key.private");
+		return (String) ctx.getGlobalContext().getSpecialConfig().get("stripe.key.private", null);
 	}
 
 	@Override

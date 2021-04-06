@@ -499,7 +499,7 @@ public class MacroHelper {
 							if (translate && currentPage.isRealContentAnyLanguage(ctxNoArea)) {
 								newComp.transflateFrom(lgCtx, TranslatorFactory.getTranslator(ctx.getGlobalContext()), ctxNoArea.getRequestContentLanguage());
 							} else if (translate) {
-								logger.warning("content not found : "+currentPage.getPath());
+								logger.warning("content not found : " + currentPage.getPath());
 							}
 						}
 					}
@@ -723,35 +723,56 @@ public class MacroHelper {
 		session.setAttribute(MACRO_DATE_KEY, date);
 	}
 
-	public static MenuElement createArticlePageName(ContentContext ctx, MenuElement monthPage) throws Exception {
-		if ((monthPage != null) && (monthPage.getParent() != null) && (monthPage.getParent().getParent() != null)) {
-			MenuElement groupPage = monthPage.getParent().getParent();
-			String[] splittedName = monthPage.getName().split("-");
+	public static MenuElement createArticlePageName(ContentContext ctx, MenuElement parentPage) throws Exception {
+		if ((parentPage != null) && (parentPage.getParent() != null) && (parentPage.getParent().getParent() != null)) {
+
+			String[] splittedName = parentPage.getName().split("-");
 			String year = null;
 			String mount = null;
-			if (splittedName.length >= 2) {
+			MenuElement groupPage = null;
+			System.out.println(">>>>>>>>> MacroHelper.createArticlePageName : splittedName = "+splittedName); //TODO: remove debug trace
+			if (splittedName.length <= 2) {
+				year = splittedName[splittedName.length - 1];
+			} else {
 				year = splittedName[splittedName.length - 2];
 				mount = splittedName[splittedName.length - 1];
+				groupPage = parentPage.getParent().getParent();
 			}
+			
+			System.out.println(">>>>>>>>> MacroHelper.createArticlePageName : year = "+year); //TODO: remove debug trace
+
+			if (StringHelper.isDigit(mount)) {
+				int m = Integer.parseInt(mount);
+				if (m < 1 || m > 12) {
+					mount = null;
+				}
+			} else {
+				mount = null;
+			}
+
+			if (mount == null) {
+				groupPage = parentPage.getParent();
+			}
+
 			try {
 				Integer.parseInt(year);
 			} catch (Throwable t) {
 				year = null;
 			}
-			if (year != null && mount != null) {
+			if (year != null) {
 
 				ContentService content = ContentService.getInstance(ctx.getRequest());
 
 				int maxNumber = 1;
 
 				MenuElement root = content.getNavigation(ctx);
-				String pageName = groupPage.getName() + "-" + year + "-" + mount + "-" + maxNumber;
+				String pageName = groupPage.getName() + "-" + year + (mount != null ? "-" + mount : "") + "-" + maxNumber;
 				while (root.searchChildFromName(pageName) != null) {
 					maxNumber++;
-					pageName = groupPage.getName() + "-" + year + "-" + mount + "-" + maxNumber;
+					pageName = groupPage.getName() + "-" + year + "-" + (mount != null ? "-" + mount : "") + "-" + maxNumber;
 				}
 
-				MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, monthPage.getName(), pageName, true);
+				MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, parentPage.getName(), pageName, true);
 				newPage.setVisible(true);
 
 				return newPage;
@@ -759,12 +780,12 @@ public class MacroHelper {
 			} else {
 				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 				String msg = i18nAccess.getText("action.add.new-news-today");
-				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
+				MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg + " [" + parentPage.getName() + "]", GenericMessage.ERROR));
 			}
 		} else {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 			String msg = i18nAccess.getText("action.add.new-news-today");
-			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
+			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg + " [" + parentPage.getName() + "]", GenericMessage.ERROR));
 		}
 
 		return null;

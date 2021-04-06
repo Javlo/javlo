@@ -680,10 +680,10 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			}
 		}
 
-		if (!StringHelper.isEmpty(ctx.getGlobalContext().getSpecialConfig().getMap().get(RECAPTCHAKEY)) && !StringHelper.isEmpty(ctx.getGlobalContext().getSpecialConfig().getMap().get(RECAPTCHASECRETKEY))) {
+		if (!StringHelper.isEmpty(ctx.getGlobalContext().getSpecialConfig().get(RECAPTCHAKEY,null)) && !StringHelper.isEmpty(ctx.getGlobalContext().getSpecialConfig().get(RECAPTCHASECRETKEY, null))) {
 			if (StringHelper.isEmpty(getRecaptchaKey())) {
-				getLocalConfig(false).setProperty(RECAPTCHAKEY, "" + ctx.getGlobalContext().getSpecialConfig().getMap().get(RECAPTCHAKEY));
-				getLocalConfig(false).setProperty(RECAPTCHASECRETKEY, "" + ctx.getGlobalContext().getSpecialConfig().getMap().get(RECAPTCHASECRETKEY));
+				getLocalConfig(false).setProperty(RECAPTCHAKEY, "" + ctx.getGlobalContext().getSpecialConfig().get(RECAPTCHAKEY, null));
+				getLocalConfig(false).setProperty(RECAPTCHASECRETKEY, "" + ctx.getGlobalContext().getSpecialConfig().get(RECAPTCHASECRETKEY, null));
 			}
 		}
 

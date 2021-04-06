@@ -104,4 +104,13 @@ public class SpecialConfigBean {
 		return StringHelper.neverNull(config.get("translator.deepl.api.key"));
 	}
 	
+	public String get(String key, String defaultValue) {
+		String value = (String)config.get(key);
+		if (value == null) {
+			return defaultValue;
+		} else {
+			return value;
+		}
+	}
+	
 }

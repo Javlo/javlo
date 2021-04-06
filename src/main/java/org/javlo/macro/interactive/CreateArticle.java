@@ -116,10 +116,11 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 
 		return null;
 	}
-
+	
 	public static String performCreate(RequestService rs, EditContext editCtx, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		String pageName = rs.getParameter("root", null);
 		String date = rs.getParameter("date", null);
+		boolean widthMonth = StringHelper.isTrue(ctx.getGlobalContext().getSpecialConfig().get("macro.create-article.month", "true"));
 
 		boolean create = rs.getParameter("create", null) != null;
 		boolean duplicate = rs.getParameter("duplicate", null) != null;
@@ -166,11 +167,15 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 				}
 				String yearPageName = rootPage.getName() + "-" + cal.get(Calendar.YEAR);
 				MenuElement yearPage = MacroHelper.addPageIfNotExist(ctxLg, rootPage.getName(), yearPageName, true);
-				MacroHelper.createMonthStructure(ctxLg, yearPage);
-				String mountPageName = MacroHelper.getMonthPageName(ctxLg, yearPage.getName(), articleDate);
-				MenuElement mountPage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctxLg).searchChildFromName(mountPageName);
-				if (mountPage != null) {
-					newPage = MacroHelper.createArticlePageName(ctx, mountPage);
+				MenuElement parentPage = yearPage;
+				if (widthMonth) {
+					MacroHelper.createMonthStructure(ctxLg, yearPage);
+					String mountPageName = MacroHelper.getMonthPageName(ctxLg, yearPage.getName(), articleDate);
+					parentPage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctxLg).searchChildFromName(mountPageName);
+				}
+				
+				if (parentPage != null) {
+					newPage = MacroHelper.createArticlePageName(ctx, parentPage);
 					if (newPage != null) {
 						if (duplicate) {
 							ContentService content = ContentService.getInstance(ctx.getRequest());
@@ -261,7 +266,7 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 						}
 					}
 				} else {
-					message = "mount page not found : " + mountPageName;
+					message = "parent page not found.";
 				}
 			} else {
 				message = pageName + " not found.";
