@@ -18,6 +18,7 @@ import org.javlo.ecom.EcomConfig;
 import org.javlo.ecom.Product;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -29,9 +30,9 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 	
 	private static final long MAX_STOCK = 999999;
 
-	static final List<String> FIELDS_STOCK = Arrays.asList(new String[] { "name", "price", "vat", "promo", "currency", "offset", "weight", "production", "basket-page", "html" });
+	static final List<String> FIELDS_STOCK = Arrays.asList(new String[] { "name", "price", "vat", "promo", "currency", "offset", "weight", "production", "basket-page", "html", "html_view", "html_add"  });
 	
-	static final List<String> FIELDS_NOSTOCK = Arrays.asList(new String[] { "name", "price", "vat", "promo", "currency", "basket-page", "html" });
+	static final List<String> FIELDS_NOSTOCK = Arrays.asList(new String[] { "name", "price", "vat", "promo", "currency", "basket-page", "html_view", "html_add" });
 	
 	public static final String TYPE = "product";
 
@@ -94,8 +95,12 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 		return getFieldLongValue("weight");
 	}
 	
-	public String getHtml() {
-		return getFieldValue("html","");
+	public String getHtmlView(ContentContext ctx) throws Exception {
+		return XHTMLHelper.replaceJSTLData(ctx, getFieldValue("html_view",""));
+	}
+	
+	public String getHtmlAdd(ContentContext ctx) {
+		return XHTMLHelper.replaceJSTLData(ctx, getFieldValue("html_add",""));
 	}
 
 	public long getProduction() {
@@ -273,7 +278,11 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 			out.println("</form>");
 			
-			out.println(getHtml());
+			if (StringHelper.isEmpty(ctx.getRequest().getParameter("cid"))) {
+				out.println(getHtmlView(ctx));
+			} else {
+				out.println(getHtmlAdd(ctx));
+			}
 
 			out.close();
 			return new String(outStream.toByteArray());
