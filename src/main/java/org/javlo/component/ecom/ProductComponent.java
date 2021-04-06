@@ -44,10 +44,8 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 	public List<String> getFields(ContentContext ctx) throws Exception {
 		EcomConfig config = ctx.getGlobalContext().getEcomConfig();
 		if (config.isStock()) {
-			System.out.println(">>>>>>>>> ProductComponent.getFields : STOCK"); //TODO: remove debug trace
 			return FIELDS_STOCK;
 		} else {
-			System.out.println(">>>>>>>>> ProductComponent.getFields : NOT STOCK"); //TODO: remove debug trace
 			return FIELDS_NOSTOCK;
 		}
 	}
