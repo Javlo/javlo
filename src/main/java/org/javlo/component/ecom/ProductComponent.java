@@ -99,7 +99,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 		return XHTMLHelper.replaceJSTLData(ctx, getFieldValue("html_view",""));
 	}
 	
-	public String getHtmlAdd(ContentContext ctx) {
+	public String getHtmlAdd(ContentContext ctx) throws Exception {
 		return XHTMLHelper.replaceJSTLData(ctx, getFieldValue("html_add",""));
 	}
 
