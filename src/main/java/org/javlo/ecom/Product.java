@@ -6,9 +6,9 @@ import org.javlo.component.ecom.ProductComponent;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.component.image.ImageTitleBean;
 import org.javlo.context.ContentContext;
-import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.owasp.encoder.Encode;
 
 public class Product {
 
@@ -66,6 +66,14 @@ public class Product {
 
 		public String getName() {
 			return name;
+		}
+		
+		public String getEspaceName() {
+			return Encode.forHtmlAttribute(name);
+		}
+		
+		public String getAttributeName() {
+			return StringHelper.doubleQutotes(name);
 		}
 
 		public void setName(String name) {
@@ -305,8 +313,7 @@ public class Product {
 	}
 
 	public static void main(String[] args) {
-		Product product = new Product(null);
-		System.out.println(ResourceHelper.storeBeanFromXML(product.getBean()));
+		System.out.println(">> "+StringHelper.doubleQutotes("l'iliade"));
 	}
 
 	public ProductBean getBean() {

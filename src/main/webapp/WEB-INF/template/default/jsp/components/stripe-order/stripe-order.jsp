@@ -4,7 +4,7 @@
   <button id="stripe-checkout-button-${compid}"
   class="btn btn-primary btn-stripe btn-pay mt-3 mb-3"
   ${basket.step!=3?'disabled':''}>${vi18n['ecom.pay']}</button>
-  </c:if>
+  
  
   <script>
   document.addEventListener("DOMContentLoaded", function(event) { 
@@ -32,3 +32,4 @@
      });
   })
   </script>
+  </c:if>

@@ -147,6 +147,8 @@ public class Basket implements Serializable {
 
 	public void reset(ContentContext ctx) {
 		ctx.getRequest().setAttribute("reset", "true");
+		// remove from session, but put in request for the latest display
+		ctx.getRequest().setAttribute(KEY, this);
 		ctx.getRequest().getSession().removeAttribute(KEY);
 	}
 

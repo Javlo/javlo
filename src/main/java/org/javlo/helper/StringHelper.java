@@ -488,6 +488,16 @@ public class StringHelper {
 			return outStr.toString();
 		}
 	}
+	
+	public static String doubleQutotes(String text) {
+		if (text == null) {
+			return null;
+		} else {
+			text = text.replace("\"", "\"\"");
+			text = text.replace("'", "''");
+			return text;
+		}
+	}
 
 	public static String removeSpecialChars(String text) {
 		Set<Character> okChar = getISOAcceptableChars();
