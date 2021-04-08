@@ -10,6 +10,8 @@ import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.XHTMLHelper;
+import org.javlo.service.ReverseLinkService;
 import org.javlo.utils.ConfigurationProperties;
 
 /**
@@ -152,6 +154,8 @@ public class FAQComponent extends AbstractVisualComponent {
 		List<FAQItem> items = new LinkedList<FAQItem>();
 		Title firstTitle = null;
 		
+		ReverseLinkService rls = ReverseLinkService.getInstance(ctx.getGlobalContext());
+		
 		String[] lines = getValue().split("\\r\\n|\\n|\\r");
 		FAQItem lastItem = null;
 		for (String line : lines) {
@@ -170,7 +174,10 @@ public class FAQComponent extends AbstractVisualComponent {
 			} else if (line.startsWith("a:") || line.startsWith("A:")) {
 				if (lastItem instanceof Question) {
 					Question question = (Question) lastItem;
-					question.setAnswer(line.substring(2));
+					String answer = line.substring(2);
+					answer = rls.replaceLink(ctx, this, answer);
+					answer = XHTMLHelper.autoLink(answer);
+					question.setAnswer(answer);
 				}
 			} else if (lastItem != null) {
 				lastItem.appendLine(line);
