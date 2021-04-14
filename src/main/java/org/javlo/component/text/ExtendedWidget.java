@@ -18,6 +18,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import io.bit3.jsass.CompilationException;
+
 /**
  * @author pvandermaesen
  */
@@ -47,7 +49,14 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 		String css = getFieldValue("css");
 		String style = "";
 		if (css != null && css.contains("{")) {
-			style = "<style>"+CSSParser.prefixAllQueries('.'+getSpecificCssClass(ctx), getFieldValue("css"))+"</style>";
+			try {
+				style = "<style>"+CSSParser.prefixAllQueries('.'+getSpecificCssClass(ctx), getFieldValue("css"))+"</style>";
+			} catch (CompilationException e) {
+				String randomId = StringHelper.getRandomId();
+				logger.severe("ERROR "+randomId+" : "+e.getMessage());
+				e.printStackTrace();
+				style = "<div class=\"alert alert-danger\">error ["+randomId+"] : "+e.getMessage()+"</div>";
+			}
 		}
 		String xhtml = getFieldValue("xhtml");
 		String errorMsg = "<strong>Error : NO SCRIPLET</strong>";
