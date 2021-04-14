@@ -490,7 +490,9 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					String[] data = StringUtils.splitPreserveAllTokens(value, Field.SEP);
 					String label = (String) LangHelper.arrays(data, 0, "");
 					try {
-						label = ReverseLinkService.getInstance(ctx.getGlobalContext()).replaceLink(ctx, this, label);
+						if (ctx != null && label.length() > 0) {
+							label = ReverseLinkService.getInstance(ctx.getGlobalContext()).replaceLink(ctx, this, label);
+						}
 					} catch (Exception e) { 
 						e.printStackTrace();
 					}
