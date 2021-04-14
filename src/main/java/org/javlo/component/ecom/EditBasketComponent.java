@@ -134,6 +134,7 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 		String phone = rs.getParameter("phone", "").trim();
 		String country = rs.getParameter("country", "").trim();
 		String address = rs.getParameter("address", "").trim();
+		String box = rs.getParameter("box", "").trim();
 		String zip = rs.getParameter("zip", "").trim();
 		String city = rs.getParameter("city", "").trim();
 		boolean noShipping = rs.getParameter("noshipping", null) != null;
@@ -147,11 +148,13 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 		basket.setContactPhone(phone);
 		basket.setCountry(country);
 		basket.setAddress(address);
+		basket.setBox(box);
 		basket.setZip(zip);
 		basket.setCity(city);
 		basket.setVATNumber(vta);
 		basket.setOrganization(company);
 		basket.setDeliveryInstructions(rs.getParameter("deliveryInstructions"));
+		basket.setGiftMessage(rs.getParameter("giftMessage"));		
 		basket.setNoShipping(noShipping);
 		if (!StringHelper.isEmpty(rs.getParameter("deliveryDate"))) {
 			try {

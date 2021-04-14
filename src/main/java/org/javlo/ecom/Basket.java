@@ -59,6 +59,7 @@ public class Basket implements Serializable {
 	private String organization = "";
 	private String vatNumber = "";
 	private String address = "";
+	private String box = "";
 	private String country = null;
 	private String zip;
 	private String city;
@@ -69,6 +70,7 @@ public class Basket implements Serializable {
 	private String description;
 	private String transactionId;
 	private String deliveryInstructions;
+	private String giftMessage;
 	private Date deliveryDate;
 	private boolean presumptiveFraud = false;
 	private double userReduction = 0;
@@ -590,6 +592,7 @@ public class Basket implements Serializable {
 		out.println("  email : " + getContactEmail());
 		out.println("  phone : " + getContactPhone());
 		out.println("  adress : " + getAddress());
+		out.println("  box : " + getBox());
 		out.println("  zip : " + getZip());
 		out.println("  city : " + getCity());
 		out.println("  country : " + getCountry());
@@ -597,7 +600,10 @@ public class Basket implements Serializable {
 			out.println("  Organization : " + getOrganization());
 		}
 		if (getDeliveryInstructions() != null && getDeliveryInstructions().trim().length() > 0) {
-			out.println("  Delivery Instructions : " + getOrganization());
+			out.println("  Delivery Instructions : " + getDeliveryInstructions());
+		}
+		if (getGiftMessage() != null && getGiftMessage().trim().length() > 0) {
+			out.println("  Gift message : " + getGiftMessage());
 		}
 		if (getVATNumber() != null && getVATNumber().trim().length() > 0) {
 			out.println("  VAT Number : " + getVATNumber());
@@ -640,6 +646,7 @@ public class Basket implements Serializable {
 		out.println("  email : " + getContactEmail());
 		out.println("  phone : " + getContactPhone());
 		out.println("  adress : " + getAddress());
+		out.println("  box : " + getBox());
 		out.println("  zip : " + getZip());
 		out.println("  city : " + getCity());
 		out.println("  country : " + getCountry());
@@ -647,7 +654,10 @@ public class Basket implements Serializable {
 			out.println("  Organization : " + getOrganization());
 		}
 		if (getDeliveryInstructions() != null && getDeliveryInstructions().trim().length() > 0) {
-			out.println("  Delivery Instructions : " + getOrganization());
+			out.println("  Delivery Instructions : " + getDeliveryInstructions());
+		}
+		if (getGiftMessage() != null && getGiftMessage().trim().length() > 0) {
+			out.println("  gift messsage : " + getGiftMessage());
 		}
 		if (getVATNumber() != null && getVATNumber().trim().length() > 0) {
 			out.println("  VAT Number : " + getVATNumber());
@@ -762,6 +772,22 @@ public class Basket implements Serializable {
 
 	public void setDeliveryInstructions(String deliveryInstructions) {
 		this.deliveryInstructions = deliveryInstructions;
+	}
+
+	public String getGiftMessage() {
+		return giftMessage;
+	}
+
+	public void setGiftMessage(String giftMessage) {
+		this.giftMessage = giftMessage;
+	}
+
+	public String getBox() {
+		return box;
+	}
+
+	public void setBox(String box) {
+		this.box = box;
 	}
 
 }
