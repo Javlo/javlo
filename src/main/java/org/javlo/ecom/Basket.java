@@ -120,6 +120,9 @@ public class Basket implements Serializable {
 	public static Basket getInstance(ContentContext ctx) {
 		Basket basket = (Basket) ctx.getRequest().getSession().getAttribute(KEY);
 		if (basket == null) {
+			basket = (Basket) ctx.getRequest().getAttribute(GHOST_BASKET_KEY);
+		}
+		if (basket == null) {
 			basket = new Basket();
 			for (PayementExternalService service : EcomService.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).getExternalService()) {
 				String url = service.getURL();
