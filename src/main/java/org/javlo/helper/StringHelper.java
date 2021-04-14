@@ -2630,7 +2630,7 @@ public class StringHelper {
 	}
 
 	public static String renderDouble(double value, int precision) {
-		return renderDouble(value, precision, ',');
+		return renderDouble(value, precision, '.');
 	}
 
 	public static String renderDouble(double value, Locale locale) {
