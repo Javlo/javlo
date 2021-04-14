@@ -77,6 +77,8 @@ public class Basket implements Serializable {
 	private int step = START_STEP;
 
 	public static final String KEY = "basket";
+	
+	public static final String GHOST_BASKET_KEY = "ghostBasket";
 
 	public static class PayementServiceBean {
 		private PayementExternalService service;
@@ -148,7 +150,7 @@ public class Basket implements Serializable {
 	public void reset(ContentContext ctx) {
 		ctx.getRequest().setAttribute("reset", "true");
 		// remove from session, but put in request for the latest display
-		ctx.getRequest().setAttribute(KEY, this);
+		ctx.getRequest().setAttribute(GHOST_BASKET_KEY, this);
 		ctx.getRequest().getSession().removeAttribute(KEY);
 	}
 
