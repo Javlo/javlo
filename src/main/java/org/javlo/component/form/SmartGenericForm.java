@@ -64,9 +64,11 @@ import org.javlo.service.ContentService;
 import org.javlo.service.IListItem;
 import org.javlo.service.ListService;
 import org.javlo.service.RequestService;
+import org.javlo.service.ReverseLinkService;
 import org.javlo.service.document.DataDocument;
 import org.javlo.service.document.DataDocumentService;
 import org.javlo.service.event.Event;
+import org.javlo.service.exception.ServiceException;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.UserFactory;
@@ -486,7 +488,13 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				if (name.trim().length() > 0) {
 					String value = p.getProperty(key);
 					String[] data = StringUtils.splitPreserveAllTokens(value, Field.SEP);
-					Field field = new Field(ctx, name, (String) LangHelper.arrays(data, 0, ""), (String) LangHelper.arrays(data, 1, ""), (String) LangHelper.arrays(data, 9, ""), (String) LangHelper.arrays(data, 8, ""), (String) LangHelper.arrays(data, 2, ""), (String) LangHelper.arrays(data, 3, ""), (String) LangHelper.arrays(data, 5, ""), Integer.parseInt("" + LangHelper.arrays(data, 6, "0")), Integer.parseInt("" + LangHelper.arrays(data, 7, "6")), (String) LangHelper.arrays(data, 10, ""));
+					String label = (String) LangHelper.arrays(data, 0, "");
+					try {
+						label = ReverseLinkService.getInstance(ctx.getGlobalContext()).replaceLink(ctx, this, label);
+					} catch (Exception e) { 
+						e.printStackTrace();
+					}
+					Field field = new Field(ctx, name, label, (String) LangHelper.arrays(data, 1, ""), (String) LangHelper.arrays(data, 9, ""), (String) LangHelper.arrays(data, 8, ""), (String) LangHelper.arrays(data, 2, ""), (String) LangHelper.arrays(data, 3, ""), (String) LangHelper.arrays(data, 5, ""), Integer.parseInt("" + LangHelper.arrays(data, 6, "0")), Integer.parseInt("" + LangHelper.arrays(data, 7, "6")), (String) LangHelper.arrays(data, 10, ""));
 					fields.add(field);
 				}
 			}
