@@ -2319,7 +2319,8 @@ public class XHTMLHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(textToXHTMLWidthParagraph("patrick\\nbarbara"));
+		String params = "page:test|".substring("page:test|".indexOf("|")+1);
+		System.out.println(params);
 	}
 
 	public static String textToXHTMLNewWin(String text) {
@@ -2613,9 +2614,13 @@ public class XHTMLHelper {
 					if (!hrefValue.startsWith("#") && !hrefValue.startsWith("${")) {
 						if (hrefValue.startsWith("page:")) {
 							String pageName = hrefValue.substring("page:".length());
+							String params = "";
+							if (pageName.contains("|")) {
+								params = pageName.substring(pageName.indexOf("|")+1);
+							}
 							ContentContext pageContext = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
 							pageContext.setFormat("html");
-							tag.getAttributes().put("href", URLHelper.createURLFromPageName(pageContext, pageName));
+							tag.getAttributes().put("href", URLHelper.createURLFromPageName(pageContext, pageName)+params);
 						} else if (hrefValue.toLowerCase().startsWith("rss")) {
 							String channel = "";
 							if (hrefValue.contains(":")) {
