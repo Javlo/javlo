@@ -310,7 +310,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 					String link = getSpecialLink();
 					link = XHTMLHelper.replaceJSTLData(ctx, link);
 					link = XHTMLHelper.replaceLinks(ctx, link);
-					out.println("<span class=\"special-link\">link</span>");
+					out.println("<span class=\"special-link\">"+link+"</span>");
 				}
 				
 				out.println("</div>");
