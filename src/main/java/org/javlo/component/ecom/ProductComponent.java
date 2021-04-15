@@ -68,6 +68,11 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 		return getFieldValue("description");
 	}
 	
+	@Override
+	public String getPageDescription(ContentContext ctx) {
+		return getDescription();
+	}
+	
 	public String getSpecialLink() {
 		return getFieldValue("special_link");
 	}
