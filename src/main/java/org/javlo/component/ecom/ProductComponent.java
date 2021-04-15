@@ -239,6 +239,12 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 		}
 	}
 
+	public static void main(String[] args) {
+		double test =34.2;
+		
+		System.out.println(">> "+StringHelper.renderDouble(test, 2));
+	}
+	
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		if (getOffset(ctx) > 0) {
@@ -272,7 +278,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 			double price = getPrice();
 			out.println("<div class=\"line list-group-item price d-flex justify-content-between\">");
 			if (price > 0) {
-				out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.price") + "</span> <span class=\"price\">" + price + "&nbsp;" + getCurrencyHtml(getCurrency()) + "</span>");
+				out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.price") + "</span> <span class=\"price\">" + StringHelper.renderDouble(price, 2) + "&nbsp;" + getCurrencyHtml(getCurrency()) + "</span>");
 			} else {
 				out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.gift") + "&nbsp; (" +getCurrencyHtml(getCurrency()) + ")</span> <span class=\"price\"><input class=\"form-control digit\" name=\"price\" type=\"number\" min=\"2\" value=\"\" /></span>");
 			}
