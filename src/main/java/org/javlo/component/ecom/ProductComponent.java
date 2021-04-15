@@ -299,7 +299,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 				String Qid = "product-" + StringHelper.getRandomId();
 				if (price>0) {
-					out.println("<label for=\"" + Qid + "\"><span>" + i18nAccess.getViewText("ecom.quantity") + "</span></label>");
+					out.println("<label class=\"quantity-label\" for=\"" + Qid + "\"><span>" + i18nAccess.getViewText("ecom.quantity") + "</span></label>");
 					out.println("<input class=\"form-control digit\" id=\"" + Qid + "\" type=\"number\" min=\"1\" name=\"quantity\" value=\"" + getOffset(ctx) + "\" maxlength=\"3\"/>");
 				} else {
 					out.println("<div><input type=\"hidden\" name=\"quantity\" value=\"1\" /></div>");
