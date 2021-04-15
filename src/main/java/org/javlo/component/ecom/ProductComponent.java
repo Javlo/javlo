@@ -30,9 +30,9 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 	
 	private static final long MAX_STOCK = 999999;
 
-	static final List<String> FIELDS_STOCK = Arrays.asList(new String[] { "name", "price", "vat", "promo", "currency", "offset", "weight", "production", "basket-page", "html", "html_view", "html_add"  });
+	static final List<String> FIELDS_STOCK = Arrays.asList(new String[] { "name", "description", "price", "special_link", "vat", "promo", "currency", "offset", "weight", "production", "basket-page", "html", "html_view", "html_add"  });
 	
-	static final List<String> FIELDS_NOSTOCK = Arrays.asList(new String[] { "name", "price", "vat", "promo", "currency", "basket-page", "html_view", "html_add" });
+	static final List<String> FIELDS_NOSTOCK = Arrays.asList(new String[] { "name", "description", "price", "special_link", "vat", "promo", "currency", "basket-page", "html_view", "html_add" });
 	
 	public static final String TYPE = "product";
 
@@ -62,6 +62,14 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 	public String getName() {
 		return getFieldValue("name");
+	}
+	
+	public String getDescription() {
+		return getFieldValue("description");
+	}
+	
+	public String getSpecialLink() {
+		return getFieldValue("special_link");
 	}
 
 	public double getPrice() {
@@ -250,10 +258,12 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 			out.println("<input type=\"hidden\" name=\"cid\" value=\"" + getId() + "\" />");
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 
-			out.println("<div class=\"list-group\"><div class=\"line list-group-item name\">");
-			out.println("<span>" + getName() + "</span>");
-			out.println("</div>");
-
+			if (!StringHelper.isEmpty(getName())) {
+				out.println("<div class=\"list-group\"><div class=\"line list-group-item name\">");
+				out.println("<h2>" + getName() + "</h2>");
+				out.println("</div>");
+			}
+			
 			double price = getPrice();
 			out.println("<div class=\"line list-group-item price d-flex justify-content-between\">");
 			if (price > 0) {
@@ -262,6 +272,12 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 				out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.gift") + "&nbsp; (" +getCurrencyHtml(getCurrency()) + ")</span> <span class=\"price\"><input class=\"form-control digit\" name=\"price\" type=\"number\" min=\"2\" value=\"\" /></span>");
 			}
 			out.println("</div>");
+			
+			if (!StringHelper.isEmpty(getDescription())) {
+				out.println("<div class=\"list-group\"><div class=\"line list-group-item description\">");
+				out.println("<p>" + getDescription() + "</p>");
+				out.println("</div>");
+			}
 
 //			out.println("<div class=\"line list-group-item stock d-flex justify-content-between\">");
 //			out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.stock") + "</span> <span class=\"stock\">"+getRealStock(ctx)+"</span>");
@@ -278,6 +294,13 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 					out.println("<div><input type=\"hidden\" name=\"quantity\" value=\"1\" /></div>");
 				}
 				out.println("<span class=\"buy\"><input class=\"btn btn-default btn-primary buy\" type=\"submit\" name=\"buy\" value=\"" + i18nAccess.getViewText("ecom.buy") + "\" /></span>");
+				
+				if(!StringHelper.isEmpty(getSpecialLink())) {
+					String link = getSpecialLink();
+					link = XHTMLHelper.replaceJSTLData(ctx, link);
+					out.println("<span class=\"special-link\">link</span>");
+				}
+				
 				out.println("</div>");
 			} else {
 				out.println("<span class=\"soldout\">" + i18nAccess.getViewText("ecom.soldout") + "</span>");
