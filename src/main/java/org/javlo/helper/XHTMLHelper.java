@@ -2624,7 +2624,6 @@ public class XHTMLHelper {
 							hrefValue = URLHelper.createRSSURL(ctx, channel);
 							tag.getAttributes().put("href", hrefValue);							
 						} else if (!StringHelper.isURL(hrefValue) && (!StringHelper.isMailURL(hrefValue)) && !hrefValue.contains("${") && !ResourceHelper.isResourceURL(ctx, hrefValue) && !ResourceHelper.isTransformURL(ctx, hrefValue)) {
-							System.out.println("href="+hrefValue + "rsr?:"+ResourceHelper.isResourceURL(ctx,  hrefValue));
 							String url = URLHelper.removeParam(hrefValue);
 							String params = URLHelper.getParamsAsString(hrefValue);
 							url = URLHelper.createURLCheckLg(ctx, url);
