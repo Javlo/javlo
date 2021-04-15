@@ -217,6 +217,14 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 		return msg;
 	}
+	
+	private static final String getCurrencyHtml(String cur) {
+		if (cur.equalsIgnoreCase("eur")) {
+			return "&euro;";
+		} else {
+			return cur;
+		}
+	}
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
@@ -249,9 +257,9 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 			double price = getPrice();
 			out.println("<div class=\"line list-group-item price d-flex justify-content-between\">");
 			if (price > 0) {
-				out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.price") + "</span> <span class=\"price\">" + price + "&nbsp;" + getCurrency() + "</span>");
+				out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.price") + "</span> <span class=\"price\">" + price + "&nbsp;" + getCurrencyHtml(getCurrency()) + "</span>");
 			} else {
-				out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.gift") + "&nbsp; (" + getCurrency() + ")</span> <span class=\"price\"><input class=\"form-control digit\" name=\"price\" type=\"number\" min=\"2\" value=\"\" /></span>");
+				out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.gift") + "&nbsp; (" +getCurrencyHtml(getCurrency()) + ")</span> <span class=\"price\"><input class=\"form-control digit\" name=\"price\" type=\"number\" min=\"2\" value=\"\" /></span>");
 			}
 			out.println("</div>");
 
