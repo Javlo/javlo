@@ -269,8 +269,9 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 			out.println("<input type=\"hidden\" name=\"cid\" value=\"" + getId() + "\" />");
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 
+			out.println("<div class=\"list-group\">");
 			if (!StringHelper.isEmpty(getName())) {
-				out.println("<div class=\"list-group\"><div class=\"line list-group-item name\">");
+				out.println("<div class=\"line list-group-item name\">");
 				out.println("<h2>" + getName() + "</h2>");
 				out.println("</div>");
 			}
@@ -285,7 +286,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 			out.println("</div>");
 			
 			if (!StringHelper.isEmpty(getDescription())) {
-				out.println("<div class=\"list-group\"><div class=\"line list-group-item description\">");
+				out.println("<div class=\"line list-group-item description\">");
 				out.println("<p>" + getDescription() + "</p>");
 				out.println("</div>");
 			}
