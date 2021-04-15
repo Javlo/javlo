@@ -1561,7 +1561,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (isColumnable(ctx) && columnSize >= 0 && columnSize != getColumnMaxSize(ctx)) {
 			try {
 				Template tpl = ctx.getCurrentTemplate();
-				colPrefix = "<" + tpl.getColumnableRowTag() + " style=\"" + tpl.getColumnableRowStyle() + "\" class=\"" + tpl.getColumnableRowClass() + " component-row component-row-" + getType() + "\">";
+				colPrefix = "<div class=\"component-row-wrapper\"><" + tpl.getColumnableRowTag() + " style=\"" + tpl.getColumnableRowStyle() + "\" class=\"" + tpl.getColumnableRowClass() + " component-row component-row-" + getType() + "\">";
 				String firstClass = "columnalbe-first-col ";
 				if (!StringHelper.isEmpty(tpl.getColumnableRowTagIn())) {
 					colPrefix = colPrefix + '<' + tpl.getColumnableRowTagIn() + '>';
@@ -1599,7 +1599,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			Template tpl;
 			try {
 				tpl = ctx.getCurrentTemplate();
-				colSuffix = "</" + tpl.getColumnableRowTag() + "> <!-- close row : "+getId()+" -->";
+				colSuffix = "</" + tpl.getColumnableRowTag() + "> </div><!-- close row : "+getId()+" -->";
 				if (!StringHelper.isEmpty(tpl.getColumnableRowTagIn())) {
 					colSuffix = "</" + tpl.getColumnableRowTagIn() + '>' + colSuffix;
 				}
