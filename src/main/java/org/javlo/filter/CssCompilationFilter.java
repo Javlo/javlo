@@ -68,8 +68,11 @@ public class CssCompilationFilter implements Filter {
 						cssFile.getParentFile().mkdirs();
 					}
 					File tempCssFile = new File(cssFile.getAbsolutePath() + ".__TEMP.css");
-					if (lessFile.exists()) {
-						if (compile(lessFile, tempCssFile, globalContext.getStaticConfig().isProd())) {
+					boolean sass = false;
+					if (sassFile.exists()) {
+						sass = true;
+						StaticConfig staticConfig = StaticConfig.getInstance(httpRequest.getSession().getServletContext());
+						if (compileSass(staticConfig.isProd(), sassFile, tempCssFile)) {
 							// try {
 							// Thread.sleep(5 * 1000); // check why on linux we need
 							// // the sleep.
@@ -77,10 +80,8 @@ public class CssCompilationFilter implements Filter {
 							// e.printStackTrace();
 							// }
 						}
-					}
-					if (sassFile.exists()) {
-						StaticConfig staticConfig = StaticConfig.getInstance(httpRequest.getSession().getServletContext());
-						if (compileSass(staticConfig.isProd(), sassFile, tempCssFile)) {
+					} else if (lessFile.exists()) {
+						if (compile(lessFile, tempCssFile, globalContext.getStaticConfig().isProd())) {
 							// try {
 							// Thread.sleep(5 * 1000); // check why on linux we need
 							// // the sleep.
@@ -92,7 +93,7 @@ public class CssCompilationFilter implements Filter {
 					if (!tempCssFile.renameTo(cssFile)) {
 						logger.severe("error : rename file:" + tempCssFile + " to " + cssFile);
 					} else {
-						logger.info("compile css ("+(System.currentTimeMillis()-startTime)/1000+" sec.) : "+cssFile);
+						logger.info("compile "+(sass?"sass":"less")+" ("+(System.currentTimeMillis()-startTime)/1000+" sec.) : "+cssFile);
 					}
 				}
 			}
