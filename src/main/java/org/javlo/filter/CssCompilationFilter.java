@@ -33,8 +33,6 @@ import io.bit3.jsass.context.FileContext;
 
 public class CssCompilationFilter implements Filter {
 
-	private static final Object COMPILE_CSS_LOCK = new Object();
-
 	private static Logger logger = Logger.getLogger(CssCompilationFilter.class.getName());
 
 	@Override
@@ -62,7 +60,7 @@ public class CssCompilationFilter implements Filter {
 			}
 		}
 		if (compileFile) {
-			synchronized (COMPILE_CSS_LOCK) {
+			synchronized (globalContext) {
 				if (!cssFile.exists()) {
 					if (!globalContext.getContextKey().equals(globalContext.getSourceContextKey())) {
 						lessFile = new File(StringUtils.replaceOnce(lessFile.getAbsolutePath(), File.separator + globalContext.getSourceContextKey() + File.separator, File.separator + globalContext.getContextKey() + File.separator));
