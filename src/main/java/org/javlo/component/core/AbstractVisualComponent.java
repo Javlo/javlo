@@ -3507,11 +3507,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 		String value = prop.getProperty(key);
 		if (value == null) {
-			prop.setProperty(key, value);
+			prop.setProperty(key, StringHelper.neverNull(defaultValue));
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			try {
 				prop.store(out, "add key : "+key);
 				setValue(out.toString(ContentContext.CHARACTER_ENCODING));
+				setModify();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
