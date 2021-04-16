@@ -17,6 +17,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -32,6 +33,8 @@ import io.bit3.jsass.context.FileContext;
 
 public class CssCompilationFilter implements Filter {
 
+	private static final Object COMPILE_CSS_LOCK = new Object();
+
 	private static Logger logger = Logger.getLogger(CssCompilationFilter.class.getName());
 
 	@Override
@@ -42,7 +45,8 @@ public class CssCompilationFilter implements Filter {
 		if (path.startsWith('/' + globalContext.getContextKey())) {
 			path = path.replaceFirst('/' + globalContext.getContextKey(), "");
 		}
-		//File cssFile = new File(httpRequest.getSession().getServletContext().getRealPath(path));
+		// File cssFile = new
+		// File(httpRequest.getSession().getServletContext().getRealPath(path));
 		File cssFile = new File(ResourceHelper.getRealPath(httpRequest.getSession().getServletContext(), path));
 		boolean compileFile = !cssFile.exists();
 		File lessFile = new File(cssFile.getAbsolutePath().substring(0, cssFile.getAbsolutePath().length() - 4) + ".less");
@@ -56,29 +60,38 @@ public class CssCompilationFilter implements Filter {
 					compileFile = true;
 				}
 			}
-		} else {
-			if (!globalContext.getContextKey().equals(globalContext.getSourceContextKey())) {
-				lessFile = new File(StringUtils.replaceOnce(lessFile.getAbsolutePath(), File.separator + globalContext.getSourceContextKey() + File.separator, File.separator + globalContext.getContextKey() + File.separator));
-				cssFile.getParentFile().mkdirs();
-			}
-			if (lessFile.exists()) {
-				if (compile(lessFile, cssFile, globalContext.getStaticConfig().isProd())) {
-					try {
-						Thread.sleep(5 * 1000); // check why on linux we need
-												// the sleep.
-					} catch (InterruptedException e) {
-						e.printStackTrace();
+		}
+		if (compileFile) {
+			synchronized (COMPILE_CSS_LOCK) {
+				if (!cssFile.exists()) {
+					if (!globalContext.getContextKey().equals(globalContext.getSourceContextKey())) {
+						lessFile = new File(StringUtils.replaceOnce(lessFile.getAbsolutePath(), File.separator + globalContext.getSourceContextKey() + File.separator, File.separator + globalContext.getContextKey() + File.separator));
+						cssFile.getParentFile().mkdirs();
 					}
-				}
-			}
-			if (sassFile.exists()) {
-				StaticConfig staticConfig = StaticConfig.getInstance(httpRequest.getSession().getServletContext());
-				if (compileSass(staticConfig.isProd(), sassFile, cssFile)) {
-					try {
-						Thread.sleep(5 * 1000); // check why on linux we need
-												// the sleep.
-					} catch (InterruptedException e) {
-						e.printStackTrace();
+					File tempCssFile = new File(cssFile.getAbsolutePath() + ".__TEMP.css");
+					if (lessFile.exists()) {
+						if (compile(lessFile, tempCssFile, globalContext.getStaticConfig().isProd())) {
+							// try {
+							// Thread.sleep(5 * 1000); // check why on linux we need
+							// // the sleep.
+							// } catch (InterruptedException e) {
+							// e.printStackTrace();
+							// }
+						}
+					}
+					if (sassFile.exists()) {
+						StaticConfig staticConfig = StaticConfig.getInstance(httpRequest.getSession().getServletContext());
+						if (compileSass(staticConfig.isProd(), sassFile, tempCssFile)) {
+							// try {
+							// Thread.sleep(5 * 1000); // check why on linux we need
+							// // the sleep.
+							// } catch (InterruptedException e) {
+							// e.printStackTrace();
+							// }
+						}
+					}
+					if (!tempCssFile.renameTo(cssFile)) {
+						logger.severe("error : rename file:" + tempCssFile + " to " + cssFile);
 					}
 				}
 			}
@@ -86,30 +99,29 @@ public class CssCompilationFilter implements Filter {
 		next.doFilter(request, response);
 	}
 
-
 	private static boolean compileSass(boolean prod, File in, File out) throws IOException {
-		URI inputFile = in.toURI();	    	    
-	    if (!out.exists()) {
-	    	out.createNewFile();
-	    }
+		URI inputFile = in.toURI();
+		if (!out.exists()) {
+			out.createNewFile();
+		}
 
-	    Compiler compiler = new Compiler();
-	    Options options = new Options();
-	    if (!prod) {
-	    	options.setSourceComments(true);
-	    	options.setSourceMapContents(true);
-	    	options.setSourceMapEmbed(true);
-	    }
-	    try {
-	      FileContext context = new FileContext(inputFile, null, options);
-	      Output output = compiler.compile(context);	      
-	      ResourceHelper.writeStringToFile(out, output.getCss());
-	      
-	    } catch (CompilationException e) {
-	      throw new IOException(e);
-	    }
-	    
-	    return true;
+		Compiler compiler = new Compiler();
+		Options options = new Options();
+		if (!prod) {
+			options.setSourceComments(true);
+			options.setSourceMapContents(true);
+			options.setSourceMapEmbed(true);
+		}
+		try {
+			FileContext context = new FileContext(inputFile, null, options);
+			Output output = compiler.compile(context);
+			ResourceHelper.writeStringToFile(out, output.getCss());
+
+		} catch (CompilationException e) {
+			throw new IOException(e);
+		}
+
+		return true;
 	}
 
 	private static Writer createOutputWriter(String filename) throws IOException {
@@ -126,7 +138,7 @@ public class CssCompilationFilter implements Filter {
 		FileOutputStream out = null;
 		try {
 			lessCompiler.setEncoding(ContentContext.CHARACTER_ENCODING);
-			//lessCompiler.setCompress(compress);
+			// lessCompiler.setCompress(compress);
 			String cssContent = lessCompiler.compile(lessFile);
 			out = new FileOutputStream(cssFile);
 			ResourceHelper.writeStringToStream(cssContent, out, ContentContext.CHARACTER_ENCODING);
@@ -154,9 +166,9 @@ public class CssCompilationFilter implements Filter {
 		File sassFile = new File("C:/opt/tomcat8/webapps/javlo/wktp/bootstrap-4.0.0/sexy/scss/bootstrap.scss");
 		File lessFile = new File("c:/trans/test.less");
 		File cssFile = new File("c:/trans/test_sass.css");
-		//compileSass(sassFile, cssFile);
+		// compileSass(sassFile, cssFile);
 		cssFile = new File("c:/trans/test_less.css");
-		System.out.println("sassFile file exist : "+sassFile.exists());
+		System.out.println("sassFile file exist : " + sassFile.exists());
 		compileSass(false, sassFile, cssFile);
 	}
 
