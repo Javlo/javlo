@@ -922,5 +922,14 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	
 	public void setGroup(String grp);
 	
+	/**
+	 * transform the value of the component in a config properties file.
+	 * If key not found a entry is created in the content.
+	 * @param key the key of the config field
+	 * @param defaultValue the default value of the config field, this value is inserd in the config data if key not found.
+	 * @return the value of the config field, defaultValue if key not found.
+	 */
+	public String getConfigInValue(String key, String defaultValue);
+	
 	
 }

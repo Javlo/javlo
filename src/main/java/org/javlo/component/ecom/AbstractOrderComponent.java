@@ -153,6 +153,7 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 			params.put("address", StringHelper.toHTMLAttribute(basket.getAddress()));
 			params.put("city", StringHelper.toHTMLAttribute(basket.getCity()));
 			params.put("zip", basket.getZip());
+			params.put("postcode", basket.getZip());
 			params.put("country", StringHelper.toHTMLAttribute(new Locale(ctx.getRequestContentLanguage(), basket.getCountry()).getDisplayCountry(ctx.getLocale())));
 			params.put("currencyCode", ""+basket.getCurrencyCode());
 			if (basket.getOrganization() != null && basket.getOrganization().trim().length() > 0) {
@@ -171,7 +172,6 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 			pageURL = URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.PAGE_MODE), page.getPath(), params);
 			try {
 				email = NetHelper.readPageForMailing(new URL(pageURL));
-				ResourceHelper.writeStringToFile(new File("c:/trans/email.html"), email);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -180,7 +180,7 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 		InternetAddress bcc = null;
 		String bccString = getData().getProperty("mail.bcc");
 		if(bccString  != null && StringHelper.isMail(bccString)) {
-			bcc = new InternetAddress(getData().getProperty("mail.bcc"));
+			bcc = new InternetAddress(bccString);
 		}
 //		InternetAddress from;
 //		String fromString = getData().getProperty("mail.from");

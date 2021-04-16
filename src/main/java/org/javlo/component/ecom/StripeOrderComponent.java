@@ -87,7 +87,7 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 		}
 
 		basket.setStep(Basket.FINAL_STEP);
-		basket.setStatus(Basket.STATUS_WAIT_PAY);
+		basket.setStatus(Basket.STATUS_VALIDED);
 		basket.setTransactionId(session.getId());
 		BasketPersistenceService.getInstance(ctx.getGlobalContext()).storeBasket(basket);
 
@@ -99,10 +99,10 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 		if (!status.isError()) {
 			comp.sendConfirmationEmail(ctx, basket);
 			ctx.getRequest().setAttribute("msg", msg);
-			NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "basket confirmed with transfert : " + ctx.getGlobalContext().getContextKey(), basket.getAdministratorEmail(ctx));
+			NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "basket confirmed with stripe : " + ctx.getGlobalContext().getContextKey(), basket.getAdministratorEmail(ctx));
 			basket.reset(ctx);
 		} else {
-			NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "ERROR: basket NOT confirmed with transfert : " + ctx.getGlobalContext().getContextKey(), basket.getAdministratorEmail(ctx));
+			NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "ERROR: basket NOT confirmed with stripe : " + ctx.getGlobalContext().getContextKey(), basket.getAdministratorEmail(ctx));
 		}
 
 		MessageRepository messageRepository = MessageRepository.getInstance(ctx);

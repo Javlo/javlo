@@ -163,7 +163,6 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 				e.printStackTrace();
 			}
 		}
-			
 		
 		EcomStatus status = ctx.getGlobalContext().getStaticConfig().getEcomLister().onConfirmBasket(ctx, basket);
 		if (status.isError()) {

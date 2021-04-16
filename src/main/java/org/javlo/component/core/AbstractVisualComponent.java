@@ -86,6 +86,7 @@ import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 import org.javlo.utils.DebugListening;
+import org.javlo.utils.StructuredProperties;
 import org.javlo.utils.SuffixPrefix;
 import org.owasp.encoder.Encode;
 
@@ -3492,6 +3493,32 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	public void setLocalMessage(GenericMessage localMessage) {
 		this.localMessage = localMessage;
+	}
+	
+	public String getConfigInValue(String key, String defaultValue) {
+		StructuredProperties prop = new StructuredProperties();
+		StringReader sr = new StringReader(getValue());
+		try {
+			prop.load(sr);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			sr.close();
+		}
+		String value = prop.getProperty(key);
+		if (value == null) {
+			prop.setProperty(key, value);
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			try {
+				prop.store(out, "add key : "+key);
+				setValue(out.toString(ContentContext.CHARACTER_ENCODING));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return defaultValue;
+		} else {
+			return value;
+		}
 	}
 
 }
