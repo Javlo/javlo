@@ -62,6 +62,7 @@ public class CssCompilationFilter implements Filter {
 		if (compileFile) {
 			synchronized (globalContext) {
 				if (!cssFile.exists()) {
+					long startTime = System.currentTimeMillis();
 					if (!globalContext.getContextKey().equals(globalContext.getSourceContextKey())) {
 						lessFile = new File(StringUtils.replaceOnce(lessFile.getAbsolutePath(), File.separator + globalContext.getSourceContextKey() + File.separator, File.separator + globalContext.getContextKey() + File.separator));
 						cssFile.getParentFile().mkdirs();
@@ -90,6 +91,8 @@ public class CssCompilationFilter implements Filter {
 					}
 					if (!tempCssFile.renameTo(cssFile)) {
 						logger.severe("error : rename file:" + tempCssFile + " to " + cssFile);
+					} else {
+						logger.info("compile css ("+(System.currentTimeMillis()-startTime)/1000+" sec.) : "+cssFile);
 					}
 				}
 			}
