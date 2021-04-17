@@ -202,6 +202,7 @@ public class Basket implements Serializable {
 
 	public void addProduct(Product product) {
 		setValid(false);
+		step = START_STEP;
 		for (Product item : products) {
 			if (item.getName().equals(product.getName()) && item.getPrice() == product.getPrice()) {
 				item.setQuantity(item.getQuantity() + product.getQuantity());

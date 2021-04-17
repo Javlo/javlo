@@ -189,6 +189,7 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 	public static String performReset(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		Basket basket = Basket.getInstance(ctx);
 		basket.reset(ctx);
+		ctx.getRequest().setAttribute("manual-reset", true);
 		return null;
 	}
 
