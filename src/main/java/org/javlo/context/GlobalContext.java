@@ -71,6 +71,7 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.io.AppendableTextFile;
 import org.javlo.io.TransactionFile;
 import org.javlo.mailing.DKIMBean;
@@ -1785,6 +1786,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	
 	public String getOwnerAddress() {
 		return properties.getString("owner.address", "");
+	}
+	
+	public String getOwnerAddressHtml() {
+		return XHTMLHelper.textToXHTML(properties.getString("owner.address", ""));
 	}
 	
 	public void setOwnerAddress(String add) {		
