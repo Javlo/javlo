@@ -75,6 +75,13 @@ public class Basket implements Serializable {
 	private boolean presumptiveFraud = false;
 	private double userReduction = 0;
 	private boolean noShipping = false;
+	
+	private String billingName;
+	private String billingAddress;
+	private String billingPostcode;
+	private String billingCity;
+	private String billingCountry;
+	private String billingVat;
 
 	private int step = START_STEP;
 
@@ -789,6 +796,54 @@ public class Basket implements Serializable {
 
 	public void setBox(String box) {
 		this.box = box;
+	}
+
+	public String getBillingName() {
+		return billingName;
+	}
+
+	public void setBillingName(String billingName) {
+		this.billingName = billingName;
+	}
+
+	public String getBillingAddress() {
+		return billingAddress;
+	}
+
+	public void setBillingAddress(String billingAdress) {
+		this.billingAddress = billingAdress;
+	}
+
+	public String getBillingPostcode() {
+		return billingPostcode;
+	}
+
+	public void setBillingPostcode(String billingPostcode) {
+		this.billingPostcode = billingPostcode;
+	}
+
+	public String getBillingCity() {
+		return billingCity;
+	}
+
+	public void setBillingCity(String billingCity) {
+		this.billingCity = billingCity;
+	}
+
+	public String getBillingCountry() {
+		return billingCountry;
+	}
+
+	public void setBillingCountry(String billingCountry) {
+		this.billingCountry = billingCountry;
+	}
+
+	public String getBillingVat() {
+		return billingVat;
+	}
+
+	public void setBillingVat(String billingVat) {
+		this.billingVat = billingVat;
 	}
 
 }
