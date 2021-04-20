@@ -314,7 +314,8 @@ public class Product {
 	}
 
 	public String getTotalString() {
-		return StringHelper.renderPrice(getTotal(), getCurrencyCode());
+		//return StringHelper.renderPrice(getTotal(), getCurrencyCode());
+		return Basket.renderPrice(lang, getTotal(), getCurrencyCode());
 	}
 
 	public static void main(String[] args) {
