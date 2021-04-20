@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 import org.javlo.actions.EcomStatus;
@@ -117,14 +118,18 @@ public class Basket implements Serializable {
 	public static void setInstance(ContentContext ctx, Basket basket) {
 		ctx.getRequest().getSession().setAttribute(KEY, basket);
 	}
-
+	
 	public static String renderPrice(ContentContext ctx, double price, String currency) {
+		return renderPrice(ctx.getRequestContentLanguage(), price, currency);
+	}
+
+	public static String renderPrice(String lang, double price, String currency) {
 		if (currency == null || currency.equalsIgnoreCase("EUR")) {
 			currency = "&euro;";
 		} else if (currency.equalsIgnoreCase("USD")) {
 			currency = "$";
 		}
-		return StringHelper.renderDouble(price, ctx.getLocale()) + ' ' + currency;
+		return StringHelper.renderDouble(price, new Locale(lang)) + ' ' + currency;
 	}
 
 	public static Basket getInstance(ContentContext ctx) {

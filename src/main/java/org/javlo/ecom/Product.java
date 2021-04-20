@@ -2,6 +2,7 @@ package org.javlo.ecom;
 
 import java.io.Serializable;
 
+import org.javlo.component.ecom.EditBasketComponent;
 import org.javlo.component.ecom.ProductComponent;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.component.image.ImageTitleBean;
@@ -158,6 +159,9 @@ public class Product {
 
 	public Product(ProductComponent comp) {
 		this.comp = comp;
+		if (comp != null && comp.getComponentBean() != null) {
+			this.lang = comp.getComponentBean().getLanguage();
+		}
 	}
 
 	public void reserve(ContentContext ctx) {
@@ -182,6 +186,7 @@ public class Product {
 	private int quantity = 1;
 	private double price = 0;
 	private String fakeName = "no-name";
+	private String lang = "en";
 
 	public String getName() {
 		if (comp == null) {
@@ -301,7 +306,7 @@ public class Product {
 	}
 
 	public String getPriceString() {
-		return StringHelper.renderPrice(getPrice(), getCurrencyCode());
+		return Basket.renderPrice(lang, getPrice(), getCurrencyCode());
 	}
 
 	public String getReductionString() {
