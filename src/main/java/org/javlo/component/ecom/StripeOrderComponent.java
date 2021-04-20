@@ -124,11 +124,11 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 		basket.setStep(Basket.FINAL_STEP);
 		basket.setStatus(Basket.STATUS_VALIDED);
 		basket.setTransactionId(session.getId());
+		basket.setPaymentType("cc");
 		BasketPersistenceService.getInstance(ctx.getGlobalContext()).storeBasket(basket);
 
 		EcomStatus status = basket.payAll(ctx);
 		if (!status.isError()) {
-			basket.setPaymentType("cc");
 			AbstractOrderComponent comp = (AbstractOrderComponent) ComponentHelper.getComponentFromRequest(ctx);
 			String msg = XHTMLHelper.textToXHTML(comp.getConfirmationEmail(ctx, basket));
 			msg = "<p>" + i18nAccess.getViewText("ecom.basket-confirmed") + "</p><p>" + msg + "</p>";
@@ -229,11 +229,11 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 			basket.setStep(Basket.FINAL_STEP);
 			basket.setStatus(Basket.STATUS_VALIDED);
 			basket.setTransactionId(paymentIntent.getId());
+			basket.setPaymentType("bancontact");
 			BasketPersistenceService.getInstance(ctx.getGlobalContext()).storeBasket(basket);
 
 			EcomStatus status = basket.payAll(ctx);
-			if (!status.isError()) {
-				basket.setPaymentType("bancontact");
+			if (!status.isError()) {				
 				AbstractOrderComponent comp = (AbstractOrderComponent) ComponentHelper.getComponentFromRequest(ctx);
 				String msg = XHTMLHelper.textToXHTML(comp.getConfirmationEmail(ctx, basket));
 				msg = "<p>" + i18nAccess.getViewText("ecom.basket-confirmed") + "</p><p>" + msg + "</p>";
