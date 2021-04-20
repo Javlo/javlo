@@ -2,8 +2,12 @@
 %>
 <c:if test="${basket.step==3 || !contentContext.asViewMode}">
   <button id="stripe-checkout-button-${compid}"
-  class="btn btn-primary btn-stripe btn-pay mt-3 mb-3"
-  ${basket.step!=3?'disabled':''}>${vi18n['ecom.pay']}</button>
+  class="btn btn-primary btn-stripe btn-pay btn-cc mt-3 mb-3"
+  ${basket.step!=3?'disabled':''}>${vi18n['ecom.pay.cc']}</button>
+  
+  <button id="stripe-checkout-button-bancontact-${compid}"
+  class="btn btn-primary btn-stripe btn-pay btn-bancontact mt-3 mb-3"
+  ${basket.step!=3?'disabled':''}>${vi18n['ecom.pay.bancontact']}</button>
   
  
   <script>
@@ -30,6 +34,32 @@
         console.error("Error:", error);
       });
      });
+    
+    <c:if test="${bancontact}">
+    /* bancontact */
+    var checkoutButton = document.getElementById("stripe-checkout-button-bancontact-${compid}");
+    checkoutButton.addEventListener("click", function () {
+  	  //Redirects to Bancontact website or app
+  	  stripe.confirmBancontactPayment(
+  	    '${PAYMENT_INTENT_CLIENT_SECRET}',
+  	    {
+  	      payment_method: {
+  	        billing_details: {
+  	          name: "${name}"
+  	        }
+  	      },
+  	      return_url: '${bancontactSuccessURL}',
+  	    }
+  	  ).then(function(result) {
+  	    if (result.error) {
+  	      console.log("error : ",result.error);
+  	    }
+  	  });
+    });    
+    </c:if>
+    
   })
   </script>
+   
+  
   </c:if>

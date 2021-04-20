@@ -71,6 +71,7 @@ public class Basket implements Serializable {
 	private String transactionId;
 	private String deliveryInstructions;
 	private String giftMessage;
+	private String PaymentType;
 	private Date deliveryDate;
 	private boolean presumptiveFraud = false;
 	private double userReduction = 0;
@@ -593,6 +594,9 @@ public class Basket implements Serializable {
 		out.println("Step : " + getStep());
 		out.println("Size : " + getSize());
 		out.println("Status : " + getStatus());
+		if (getPaymentType() != null && getOrganization().trim().length() > 0) {
+			out.println("  Organization : " + getOrganization());
+		}
 		out.println("");
 		out.println("User:");
 		out.println("  firstName : " + getFirstName());
@@ -669,6 +673,9 @@ public class Basket implements Serializable {
 		}
 		if (getVATNumber() != null && getVATNumber().trim().length() > 0) {
 			out.println("  VAT Number : " + getVATNumber());
+		}
+		if (getPaymentType() != null && getPaymentType().trim().length() > 0) {
+			out.println("  Payment Type : " + getPaymentType());
 		}
 		out.println("");
 		out.println("Product :");
@@ -844,6 +851,14 @@ public class Basket implements Serializable {
 
 	public void setBillingVat(String billingVat) {
 		this.billingVat = billingVat;
+	}
+
+	public String getPaymentType() {
+		return PaymentType;
+	}
+
+	public void setPaymentType(String PaymentType) {
+		this.PaymentType = PaymentType;
 	}
 
 }
