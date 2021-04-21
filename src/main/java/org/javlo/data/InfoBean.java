@@ -549,7 +549,12 @@ public class InfoBean {
 		}
 	}
 
+	@Deprecated
 	public String getPageID() {
+		return getCurrentPage().getId();
+	}
+	
+	public String getPageId() {
 		return getCurrentPage().getId();
 	}
 

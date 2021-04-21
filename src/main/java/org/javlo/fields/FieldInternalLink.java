@@ -7,6 +7,7 @@ import java.util.Locale;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.XHTMLNavigationHelper;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
@@ -21,6 +22,7 @@ public class FieldInternalLink extends Field {
 
 		private String internalLink = null;
 		private String linkLabel = null;
+		private String param;
 
 		public String getLink() {
 			return internalLink;
@@ -38,19 +40,50 @@ public class FieldInternalLink extends Field {
 			this.linkLabel = linkLabel;
 		}
 
+		public String getParam() {
+			return param;
+		}
+
+		public void setParam(String param) {
+			this.param = param;
+		}
+
 	}
 
 	protected FieldBean newFieldBean(ContentContext ctx) {
 		InternalLinkBean bean = new InternalLinkBean(ctx);		
-		if (!StringHelper.isEmpty(getCurrentLink())) {
-			bean.setLink(URLHelper.createURL(ctx.getContentContextForInternalLink(), getCurrentLink()));			
-		}
 		bean.setLinkLabel(getCurrentLabel());
+		if (!StringHelper.isEmpty(getCurrentLink())) {
+			String url = createLink(ctx);
+			bean.setLink(url);
+		}
+		bean.setParam(getCurrentParam());
 		return bean;
+	}
+	
+	protected String createLink(ContentContext ctx) {
+		String param = getCurrentParam();
+		String url = URLHelper.createURL(ctx.getContentContextForInternalLink(), getCurrentLink());
+		if (!StringHelper.isEmpty(param)) {
+			if (url.contains("?")) {
+				param = param.replace('?', '&');
+			}
+			try {
+				param = XHTMLHelper.replaceJSTLData(ctx, param);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			url += param;
+		}
+		return url;
 	}
 	
 	protected String getCurrentLabel() {
 		return properties.getProperty("field." + getUnicName() + ".value.label", "");
+	}
+	
+	protected String getCurrentParam() {
+		return properties.getProperty("field." + getUnicName() + ".value.param", "");
 	}
 
 	protected String getCurrentLink() {
@@ -81,6 +114,11 @@ public class FieldInternalLink extends Field {
 		out.println("<label for=\"" + getInputLabelName() + "\">" + getLabelLabel() + " : </label>");
 		out.println("<input class=\"form-control\" id=\"" + getInputLabelName() + "\" name=\"" + getInputLabelName() + "\" value=\"" + StringHelper.neverNull(getCurrentLabel()) + "\"/>");
 		out.println("</div>");
+		
+		out.println("<div class=\"line\">");
+		out.println("<label for=\"" + getInputParamName() + "\">" + getParamLabel() + " : </label>");
+		out.println("<input class=\"form-control\" id=\"" + getInputParamName() + "\" name=\"" + getInputParamName() + "\" value=\"" + StringHelper.neverNull(getCurrentParam()) + "\"/>");
+		out.println("</div>");
 
 		out.println("</fieldset>");
 
@@ -91,6 +129,10 @@ public class FieldInternalLink extends Field {
 	@Override
 	public String getInputLabelName() {
 		return getName() + "-label-" + getId();
+	}
+	
+	public String getInputParamName() {
+		return getName() + "-param-" + getId();
 	}
 
 	public String getInputLinkName() {
@@ -103,6 +145,10 @@ public class FieldInternalLink extends Field {
 
 	protected String getLinkLabel() {
 		return getI18nAccess().getText("global.link");
+	}
+	
+	protected String getParamLabel() {
+		return getI18nAccess().getText("global.param", "params");
 	}
 
 	/* values */
@@ -129,7 +175,7 @@ public class FieldInternalLink extends Field {
 
 		if (label.trim().length() > 0) {
 			out.println("<span class=\"" + getType() + "\">");
-			out.println("<a href=\"" + URLHelper.createURL(ctx.getContentContextForInternalLink(), getCurrentLink()) + "\">" + label + "</a>");
+			out.println("<a href=\"" + createLink(ctx) + "\">" + label + "</a>");
 			out.println("</span>");
 		}
 
@@ -151,8 +197,13 @@ public class FieldInternalLink extends Field {
 
 		String newLink = requestService.getParameter(getInputLinkName(), "");
 		if (!newLink.equals(getCurrentLink())) {
-
 			setCurrentLink(newLink);
+			modify = true;
+		}
+		
+		String newParam = requestService.getParameter(getInputParamName(), "");
+		if (!newLink.equals(getCurrentParam())) {
+			setCurrentParam(newParam);
 			modify = true;
 		}
 
@@ -166,6 +217,11 @@ public class FieldInternalLink extends Field {
 	protected void setCurrentLink(String link) {
 		properties.setProperty("field." + getUnicName() + ".value.link", link);
 	}
+	
+	protected void setCurrentParam(String link) {
+		properties.setProperty("field." + getUnicName() + ".value.param", link);
+	}
+
 
 	protected void setCurrentLinkErrorMessage(String message) {
 		properties.setProperty("field." + getUnicName() + ".message.link", message);
