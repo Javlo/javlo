@@ -17,6 +17,7 @@ public class Product {
 		private String id;
 		private String pageId;
 		private double price;
+		private String priceString;
 		private double reduction;
 		private double vat;
 		private double weight;
@@ -30,10 +31,11 @@ public class Product {
 		public ProductBean() {
 		};
 
-		public ProductBean(String id, String pageId, String lg, double price, double reduction, double vat, String currencyCode, String name, String description, String imageURL, int quantity, double weight) {
+		public ProductBean(String id, String pageId, String lg, double price, String priceString, double reduction, double vat, String currencyCode, String name, String description, String imageURL, int quantity, double weight) {
 			this.id = id;
 			this.pageId = pageId;
 			this.price = price;
+			this.priceString = priceString;
 			this.currencyCode = currencyCode;
 			this.name = name;
 			this.description = description;
@@ -151,6 +153,14 @@ public class Product {
 
 		public void setLanguage(String language) {
 			this.language = language;
+		}
+
+		public String getPriceString() {
+			return priceString;
+		}
+
+		public void setPriceString(String priceString) {
+			this.priceString = priceString;
 		}
 
 	}
@@ -323,7 +333,7 @@ public class Product {
 	}
 
 	public ProductBean getBean() {
-		ProductBean bean = new ProductBean(getId(), comp.getPage().getId(), comp.getComponentBean().getLanguage(), getPrice(), getReduction(), getVAT(), getCurrencyCode(), getName(), getShortDescription(), getImageURL(), getQuantity(), getWeight());
+		ProductBean bean = new ProductBean(getId(), comp.getPage().getId(), comp.getComponentBean().getLanguage(), getPrice(), getPriceString(), getReduction(), getVAT(), getCurrencyCode(), getName(), getShortDescription(), getImageURL(), getQuantity(), getWeight());
 		return bean;
 	}
 
