@@ -200,6 +200,7 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 			SessionCreateParams params = SessionCreateParams.builder().addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD).setMode(SessionCreateParams.Mode.PAYMENT).setSuccessUrl(successURL).setCancelUrl(errorURL).setCustomerEmail(basket.getContactEmail()).addAllLineItem(collect).build();
 
 			Session session = Session.create(params);
+			session.setClientReferenceId(basket.getId());
 			
 			System.out.println();
 			System.out.println("session:");
