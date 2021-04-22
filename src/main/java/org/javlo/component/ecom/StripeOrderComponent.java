@@ -259,7 +259,7 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 
 		try {
 			event = ApiResource.GSON.fromJson(payload, Event.class);
-		} catch (JsonSyntaxException e) {
+		} catch (JsonSyntaxException e) { 
 			logger.warning("invalid payload : " + e.getMessage());
 			// Invalid payload
 			ctx.getResponse().setStatus(400);
