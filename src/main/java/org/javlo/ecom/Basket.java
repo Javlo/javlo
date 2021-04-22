@@ -4,6 +4,7 @@ import java.beans.Transient;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -778,6 +779,10 @@ public class Basket implements Serializable {
 
 	public Date getDeliveryDate() {
 		return deliveryDate;
+	}
+	
+	public String getDeliveryInputDate() throws ParseException {
+		return StringHelper.renderInputDate(deliveryDate);
 	}
 
 	public void setDeliveryDate(Date deliveryDate) {

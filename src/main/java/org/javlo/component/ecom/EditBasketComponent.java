@@ -156,6 +156,15 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 		basket.setDeliveryInstructions(rs.getParameter("deliveryInstructions"));
 		basket.setGiftMessage(rs.getParameter("giftMessage"));		
 		basket.setNoShipping(noShipping);
+		
+		/** billing **/
+		basket.setBillingName(rs.getParameter("billingName"));
+		basket.setBillingAddress(rs.getParameter("billingAddress"));
+		basket.setBillingCity(rs.getParameter("billingCity"));
+		basket.setBillingCountry(rs.getParameter("billingCountry"));
+		basket.setBillingPostcode(rs.getParameter("billingPostcode"));
+		basket.setBillingVat(rs.getParameter("billingVat"));
+		
 		if (!StringHelper.isEmpty(rs.getParameter("deliveryDate"))) {
 			try {
 				basket.setDeliveryDate(StringHelper.parseInputDate(rs.getParameter("deliveryDate")));
