@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.IOUtils;
 import org.javlo.actions.EcomStatus;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.IContentVisualComponent;
@@ -25,9 +26,15 @@ import org.javlo.service.RequestService;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.stripe.Stripe;
+import com.stripe.model.Event;
+import com.stripe.model.EventDataObjectDeserializer;
 import com.stripe.model.PaymentIntent;
+import com.stripe.model.PaymentMethod;
+import com.stripe.model.StripeObject;
 import com.stripe.model.checkout.Session;
+import com.stripe.net.ApiResource;
 import com.stripe.param.PaymentIntentCreateParams;
 import com.stripe.param.checkout.SessionCreateParams;
 import com.stripe.param.checkout.SessionCreateParams.LineItem;
@@ -221,6 +228,9 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 	public static String performSuccessBancontact(ContentContext ctx, RequestService rs) throws Exception {
 		Basket basket = Basket.getInstance(ctx);
 		PaymentIntent paymentIntent = PaymentIntent.retrieve(rs.getParameter("id"));
+		
+		System.out.println(paymentIntent); //TODO: remove debug trace
+		
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 		if (paymentIntent == null || paymentIntent.getAmount() != Math.round(basket.getTotal(ctx, true)*100)) {
 			logger.warning("error on bancontact return : "+paymentIntent);
@@ -233,7 +243,7 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 			BasketPersistenceService.getInstance(ctx.getGlobalContext()).storeBasket(basket);
 
 			EcomStatus status = basket.payAll(ctx);
-			if (!status.isError()) {				
+			if (!status.isError()) {
 				AbstractOrderComponent comp = (AbstractOrderComponent) ComponentHelper.getComponentFromRequest(ctx);
 				String msg = XHTMLHelper.textToXHTML(comp.getConfirmationEmail(ctx, basket));
 				msg = "<p>" + i18nAccess.getViewText("ecom.basket-confirmed") + "</p><p>" + msg + "</p>";
@@ -249,5 +259,48 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("ecom.reception-message"), GenericMessage.INFO));
 		}
 		return null;
+	}
+	
+	public static String performWebhook(ContentContext ctx, RequestService rs) throws Exception {
+		String payload = IOUtils.toString(ctx.getRequest().getReader());
+		  Event event = null;
+
+		  try {
+		      event = ApiResource.GSON.fromJson(payload, Event.class);
+		  } catch (JsonSyntaxException e) {
+			logger.warning("invalid payload : "+e.getMessage());
+		    // Invalid payload
+		    ctx.getResponse().setStatus(400);
+		    return "";
+		  }
+
+		  // Deserialize the nested object inside the event
+		  EventDataObjectDeserializer dataObjectDeserializer = event.getDataObjectDeserializer();
+		  StripeObject stripeObject = null;
+		  if (dataObjectDeserializer.getObject().isPresent()) {
+		    stripeObject = dataObjectDeserializer.getObject().get();
+		  } else {
+		    // Deserialization failed, probably due to an API version mismatch.
+		    // Refer to the Javadoc documentation on `EventDataObjectDeserializer` for
+		    // instructions on how to handle this case, or return an error here.
+		  }
+
+		  // Handle the event
+		  switch (event.getType()) {
+		    case "payment_intent.succeeded":
+		      PaymentIntent paymentIntent = (PaymentIntent) stripeObject;
+		      System.out.println("PaymentIntent was successful!");
+		      break;
+		    case "payment_method.attached":
+		      PaymentMethod paymentMethod = (PaymentMethod) stripeObject;
+		      System.out.println("PaymentMethod was attached to a Customer!");
+		      break;
+		    // ... handle other event types
+		    default:
+		      System.out.println("Unhandled event type: " + event.getType());
+		  }
+
+		  ctx.getResponse().setStatus(200);
+		  return "";
 	}
 }
