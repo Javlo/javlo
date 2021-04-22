@@ -346,6 +346,11 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 	}
 	
 	@Override
+	public int getLabelLevel(ContentContext ctx) {	
+		return 1;
+	}
+	
+	@Override
 	public String getTextTitle(ContentContext ctx) {
 		return getName();
 	}
