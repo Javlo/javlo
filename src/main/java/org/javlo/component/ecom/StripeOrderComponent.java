@@ -28,6 +28,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.stripe.Stripe;
+import com.stripe.model.Charge;
 import com.stripe.model.Event;
 import com.stripe.model.EventDataObjectDeserializer;
 import com.stripe.model.PaymentIntent;
@@ -283,9 +284,10 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 		// Handle the event
 		switch (event.getType()) {
 		case "charge.succeeded":
-			PaymentIntent paymentIntent = (PaymentIntent) stripeObject;
-			System.out.println(">>>>>>>>> StripeOrderComponent.performWebhook : paymentIntent.getId() = "+paymentIntent.getId()); //TODO: remove debug
-			System.out.println(">>>>>>>>> StripeOrderComponent.performWebhook : paymentIntent.getAmount() = "+paymentIntent.getAmount()); //TODO: remove debug
+			Charge charge = (Charge) stripeObject;
+			System.out.println(charge);
+			System.out.println(">>>>>>>>> StripeOrderComponent.performWebhook : paymentIntent.getId() = "+charge.getId()); //TODO: remove debug
+			System.out.println(">>>>>>>>> StripeOrderComponent.performWebhook : paymentIntent.getAmount() = "+charge.getAmount()); //TODO: remove debug
 			System.out.println("PaymentIntent was successful!");
 			break;
 		case "payment_method.attached":
