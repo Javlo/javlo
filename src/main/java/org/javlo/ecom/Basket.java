@@ -78,6 +78,7 @@ public class Basket implements Serializable {
 	private boolean presumptiveFraud = false;
 	private double userReduction = 0;
 	private boolean noShipping = false;
+	private String componentId;
 	
 	private String billingName;
 	private String billingAddress;
@@ -876,6 +877,14 @@ public class Basket implements Serializable {
 
 	public void setPaymentIntent(String paymentIntent) {
 		this.paymentIntent = paymentIntent;
+	}
+
+	public String getComponentId() {
+		return componentId;
+	}
+
+	public void setComponentId(String componentId) {
+		this.componentId = componentId;
 	}
 
 }

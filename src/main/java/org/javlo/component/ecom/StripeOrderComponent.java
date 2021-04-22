@@ -22,6 +22,7 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 
 import com.google.gson.Gson;
@@ -101,51 +102,6 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 
 	}
 
-	public static String performSuccess(ContentContext ctx, RequestService rs, I18nAccess i18nAccess) throws Exception {
-		Basket basket = Basket.getInstance(ctx);
-
-		Session session = Session.retrieve(rs.getParameter("session_id"));
-
-		if (session == null) {
-			return "session not found.";
-		}
-
-		String bkey = rs.getParameter("bkey");
-		if (!bkey.equals(basket.getSecurityKey())) {
-			NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "ERROR: security error bad security key : " + ctx.getGlobalContext().getContextKey(), basket.getAdministratorEmail(ctx));
-			return "security error.";
-		}
-
-		if (basket.getCurrencyCode() == null) {
-			logger.severe("currency not found.");
-			return i18nAccess.getViewText("ecom.message.error");
-		}
-
-		basket.setStep(Basket.FINAL_STEP);
-		basket.setStatus(Basket.STATUS_VALIDED);
-		basket.setTransactionId(session.getId());
-		basket.setPaymentType("cc");
-		BasketPersistenceService.getInstance(ctx.getGlobalContext()).storeBasket(basket);
-
-		EcomStatus status = basket.payAll(ctx);
-		if (!status.isError()) {
-			AbstractOrderComponent comp = (AbstractOrderComponent) ComponentHelper.getComponentFromRequest(ctx);
-			String msg = XHTMLHelper.textToXHTML(comp.getConfirmationEmail(ctx, basket));
-			msg = "<p>" + i18nAccess.getViewText("ecom.basket-confirmed") + "</p><p>" + msg + "</p>";
-			comp.sendConfirmationEmail(ctx, basket);
-			ctx.getRequest().setAttribute("msg", msg);
-			NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "basket confirmed with stripe : " + ctx.getGlobalContext().getContextKey(), basket.getAdministratorEmail(ctx));
-			basket.reset(ctx);
-		} else {
-			NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "ERROR: basket NOT confirmed with stripe : " + ctx.getGlobalContext().getContextKey(), basket.getAdministratorEmail(ctx));
-		}
-
-		MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("ecom.reception-message"), GenericMessage.INFO));
-
-		return null;
-	}
-
 	public static String performError(ContentContext ctx, RequestService rs, I18nAccess i18n) throws Exception {
 		/*
 		 * Session session = Session.retrieve(rs.getParameter("session_id")); Customer
@@ -200,12 +156,58 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 			Session session = Session.create(params);
 			session.setClientReferenceId(basket.getId());
 			basket.setPaymentIntent(session.getPaymentIntent());
+			basket.setComponentId(comp.getId());
 			BasketPersistenceService.getInstance(ctx.getGlobalContext()).storeBasket(basket);
 			responseData = new HashMap<String, String>();
 			responseData.put("id", session.getId());
 		}
 		ctx.getResponse().getWriter().print(gson.toJson(responseData));
 		ctx.setStopRendering(true);
+
+		return null;
+	}
+	
+	public static String performSuccess(ContentContext ctx, RequestService rs, I18nAccess i18nAccess) throws Exception {
+		Basket basket = Basket.getInstance(ctx);
+
+		Session session = Session.retrieve(rs.getParameter("session_id"));
+
+		if (session == null) {
+			return "session not found.";
+		}
+
+		String bkey = rs.getParameter("bkey");
+		if (!bkey.equals(basket.getSecurityKey())) {
+			NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "ERROR: security error bad security key : " + ctx.getGlobalContext().getContextKey(), basket.getAdministratorEmail(ctx));
+			return "security error.";
+		}
+
+		if (basket.getCurrencyCode() == null) {
+			logger.severe("currency not found.");
+			return i18nAccess.getViewText("ecom.message.error");
+		}
+
+		basket.setStep(Basket.FINAL_STEP);
+		basket.setStatus(Basket.STATUS_VALIDED);
+		basket.setTransactionId(session.getId());
+		basket.setPaymentType("cc");
+		BasketPersistenceService.getInstance(ctx.getGlobalContext()).storeBasket(basket);
+
+//		EcomStatus status = basket.payAll(ctx);
+//		if (!status.isError()) {
+//			AbstractOrderComponent comp = (AbstractOrderComponent) ComponentHelper.getComponentFromRequest(ctx);
+//			String msg = XHTMLHelper.textToXHTML(comp.getConfirmationEmail(ctx, basket));
+//			msg = "<p>" + i18nAccess.getViewText("ecom.basket-confirmed") + "</p><p>" + msg + "</p>";
+//			comp.sendConfirmationEmail(ctx, basket);
+//			ctx.getRequest().setAttribute("msg", msg);
+//			NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "basket confirmed with stripe : " + ctx.getGlobalContext().getContextKey(), basket.getAdministratorEmail(ctx));
+//			basket.reset(ctx);
+//		} else {
+//			NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "ERROR: basket NOT confirmed with stripe : " + ctx.getGlobalContext().getContextKey(), basket.getAdministratorEmail(ctx));
+//		}
+
+		MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("ecom.reception-message"), GenericMessage.INFO));
 
 		return null;
 	}
@@ -278,14 +280,30 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 			// instructions on how to handle this case, or return an error here.
 		}
 
-		System.out.println(">>>> EVENT <<<<");
-		System.out.println(event);
-
 		// Handle the event
 		switch (event.getType()) {
 		case "charge.succeeded":
 			Charge charge = (Charge) stripeObject;
 			Basket basket = BasketPersistenceService.getInstance(ctx.getGlobalContext()).getBasketByPaymentIndent(charge.getPaymentIntent());
+			EcomStatus status = basket.payAll(ctx);
+			if (!status.isError()) {
+				I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
+				AbstractOrderComponent comp =  null;				
+				if (basket.getComponentId() != null) {
+					ContentService content = ContentService.getInstance(ctx.getRequest());
+					comp = (AbstractOrderComponent)content.getComponent(ctx, (basket.getComponentId()));
+				} else {
+					logger.severe("comp id not found : "+basket.getComponentId());
+				}
+				String msg = XHTMLHelper.textToXHTML(comp.getConfirmationEmail(ctx, basket));
+				msg = "<p>" + i18nAccess.getViewText("ecom.basket-confirmed") + "</p><p>" + msg + "</p>";
+				comp.sendConfirmationEmail(ctx, basket);
+				ctx.getRequest().setAttribute("msg", msg);
+				NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "basket confirmed with stripe : " + ctx.getGlobalContext().getContextKey(), basket.getAdministratorEmail(ctx));
+				basket.reset(ctx);
+			} else {
+				NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "ERROR: basket NOT confirmed with stripe : " + ctx.getGlobalContext().getContextKey(), basket.getAdministratorEmail(ctx));
+			}
 			System.out.println(">>>>>>>>> StripeOrderComponent.performWebhook : basket = "+basket); //TODO: remove debug trace
 			System.out.println(">>>>>>>>> StripeOrderComponent.performWebhook : paymentIntent.getId() = "+charge.getId()); //TODO: remove debug
 			System.out.println(">>>>>>>>> StripeOrderComponent.performWebhook : paymentIntent.getAmount() = "+charge.getAmount()); //TODO: remove debug
