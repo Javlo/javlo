@@ -60,7 +60,7 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 	private static String getPrivateKey(ContentContext ctx) {
 		return (String) ctx.getGlobalContext().getSpecialConfig().get("stripe.key.private", null);
 	}
-	
+
 	private boolean isBancontact(ContentContext ctx) {
 		return StringHelper.isTrue(ctx.getGlobalContext().getSpecialConfig().get("stripe.bancontact", null), true);
 	}
@@ -77,32 +77,24 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 
 		ctx.getRequest().setAttribute("createSessionUrl", url);
 		ctx.getRequest().setAttribute("bancontact", isBancontact(ctx));
-		
+
 		Basket basket = Basket.getInstance(ctx);
 		// bancontact
 		if (isBancontact(ctx) && basket.getStep() == Basket.ORDER_STEP) {
 			synchronized (Stripe.class) {
-				// Set your secret key. Remember to switch to your live secret key in production.
+				// Set your secret key. Remember to switch to your live secret key in
+				// production.
 				// See your keys here: https://dashboard.stripe.com/apikeys
-				Stripe.apiKey =  getPrivateKey(ctx);
-				PaymentIntentCreateParams params =
-				  PaymentIntentCreateParams.builder()
-				    .setAmount(Math.round(basket.getTotal(ctx, true)*100))
-				    .setCurrency(basket.getCurrencyCode())
-				    .addPaymentMethodType("bancontact")
-				    .setPaymentMethodOptions(
-				          PaymentIntentCreateParams.PaymentMethodOptions.builder()
-				          .putExtraParam("bancontact[preferred_language]", ctx.getRequestContentLanguage())
-				          .build())
-				    .build();
+				Stripe.apiKey = getPrivateKey(ctx);
+				PaymentIntentCreateParams params = PaymentIntentCreateParams.builder().setAmount(Math.round(basket.getTotal(ctx, true) * 100)).setCurrency(basket.getCurrencyCode()).addPaymentMethodType("bancontact").setPaymentMethodOptions(PaymentIntentCreateParams.PaymentMethodOptions.builder().putExtraParam("bancontact[preferred_language]", ctx.getRequestContentLanguage()).build()).build();
 				PaymentIntent paymentIntent = PaymentIntent.create(params);
 				urlParam.clear();
 				urlParam.put("webaction", TYPE + ".successBancontact");
 				urlParam.put(IContentVisualComponent.COMP_ID_REQUEST_PARAM, getId());
-				String bancontactSuccessURL = URLHelper.createURL(ctx.getContextForAbsoluteURL(), ctx.getPath(), urlParam)+"&id="+paymentIntent.getId();
+				String bancontactSuccessURL = URLHelper.createURL(ctx.getContextForAbsoluteURL(), ctx.getPath(), urlParam) + "&id=" + paymentIntent.getId();
 				ctx.getRequest().setAttribute("PAYMENT_INTENT_CLIENT_SECRET", paymentIntent.getClientSecret());
 				ctx.getRequest().setAttribute("bancontactSuccessURL", bancontactSuccessURL);
-				ctx.getRequest().setAttribute("name", basket.getFirstName()+' '+basket.getLastName());
+				ctx.getRequest().setAttribute("name", basket.getFirstName() + ' ' + basket.getLastName());
 			}
 		}
 
@@ -110,13 +102,13 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 
 	public static String performSuccess(ContentContext ctx, RequestService rs, I18nAccess i18nAccess) throws Exception {
 		Basket basket = Basket.getInstance(ctx);
-		
+
 		Session session = Session.retrieve(rs.getParameter("session_id"));
 
 		if (session == null) {
 			return "session not found.";
 		}
-		
+
 		String bkey = rs.getParameter("bkey");
 		if (!bkey.equals(basket.getSecurityKey())) {
 			NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "ERROR: security error bad security key : " + ctx.getGlobalContext().getContextKey(), basket.getAdministratorEmail(ctx));
@@ -154,50 +146,48 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 	}
 
 	public static String performError(ContentContext ctx, RequestService rs, I18nAccess i18n) throws Exception {
-		/*Session session = Session.retrieve(rs.getParameter("session_id"));
-		Customer customer = Customer.retrieve(session.getCustomer());*/
-		
-		Map<String,String> params = new HashMap<>();
-		/*params.put("[stripe] session_id", session.getId());
-		params.put("[stripe] client reference id", session.getClientReferenceId());
-		params.put("[stripe] customer", session.getCustomer());
-		params.put("[stripe] customer email", session.getCustomerEmail());*/
+		/*
+		 * Session session = Session.retrieve(rs.getParameter("session_id")); Customer
+		 * customer = Customer.retrieve(session.getCustomer());
+		 */
+
+		Map<String, String> params = new HashMap<>();
+		/*
+		 * params.put("[stripe] session_id", session.getId());
+		 * params.put("[stripe] client reference id", session.getClientReferenceId());
+		 * params.put("[stripe] customer", session.getCustomer());
+		 * params.put("[stripe] customer email", session.getCustomerEmail());
+		 */
 		params.put("[basket] id", Basket.getInstance(ctx).getId());
 		params.put("[basket] contact email", Basket.getInstance(ctx).getContactEmail());
-		
+
 		String content = XHTMLHelper.createAdminMail("error on payment validation", null, params, "https://stripe.com", "stripe", null);
-		
-		NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "error payment validation : "+StringHelper.renderTime(new Date()), content);
-		
+
+		NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "error payment validation : " + StringHelper.renderTime(new Date()), content);
+
 		return i18n.getViewText("ecom.error.payment");
 	}
 
 	private static LineItem toLineItem(Product product) {
-		return SessionCreateParams.LineItem.builder().setQuantity(1L)
-				.setPriceData(SessionCreateParams.LineItem.PriceData.builder()
-				.setCurrency(product.getCurrencyCode())
-				.setUnitAmount(Math.round(product.getPrice() * 100))
-				.setProductData(SessionCreateParams.LineItem.PriceData.ProductData.builder()
-						.setName(product.getName())
-						.build()).build()).build();
+		return SessionCreateParams.LineItem.builder().setQuantity(1L).setPriceData(SessionCreateParams.LineItem.PriceData.builder().setCurrency(product.getCurrencyCode()).setUnitAmount(Math.round(product.getPrice() * 100)).setProductData(SessionCreateParams.LineItem.PriceData.ProductData.builder().setName(product.getName()).build()).build()).build();
 	}
 
 	public static String performCreateSession(ContentContext ctx, RequestService rs) throws Exception {
 		final GsonBuilder builder = new GsonBuilder();
 		final Gson gson = builder.create();
-		ctx.getResponse().setContentType("application/json");		
-		
+		ctx.getResponse().setContentType("application/json");
+
 		IContentVisualComponent comp = ComponentHelper.getComponentFromRequest(ctx);
 		Basket basket = Basket.getInstance(ctx);
 
 		Map<String, String> urlParam = new HashMap<>();
 		urlParam.put("webaction", TYPE + ".success");
 		urlParam.put(IContentVisualComponent.COMP_ID_REQUEST_PARAM, comp.getId());
-		
+
 		urlParam.put("bkey", Basket.getInstance(ctx).getSecurityKey());
-		String successURL = URLHelper.createURL(ctx.getContextForAbsoluteURL(), ctx.getPath(), urlParam)+"&session_id={CHECKOUT_SESSION_ID}";
+		String successURL = URLHelper.createURL(ctx.getContextForAbsoluteURL(), ctx.getPath(), urlParam) + "&session_id={CHECKOUT_SESSION_ID}";
 		urlParam.clear();
-		urlParam.put("webaction", TYPE + ".error");		
+		urlParam.put("webaction", TYPE + ".error");
 		String errorURL = URLHelper.createURL(ctx.getContextForAbsoluteURL(), ctx.getPath(), urlParam);
 
 		List<LineItem> collect = Basket.getInstance(ctx).getProducts().stream().map(product -> toLineItem(product)).collect(Collectors.toList());
@@ -206,13 +196,7 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 		synchronized (Stripe.class) {
 			Stripe.apiKey = getPrivateKey(ctx);
 
-			SessionCreateParams params = SessionCreateParams.builder()
-				.addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
-				.setMode(SessionCreateParams.Mode.PAYMENT)
-				.setSuccessUrl(successURL)
-				.setCancelUrl(errorURL)
-				.setCustomerEmail(basket.getContactEmail())
-				.addAllLineItem(collect).build();
+			SessionCreateParams params = SessionCreateParams.builder().addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD).setMode(SessionCreateParams.Mode.PAYMENT).setSuccessUrl(successURL).setCancelUrl(errorURL).setCustomerEmail(basket.getContactEmail()).addAllLineItem(collect).build();
 
 			Session session = Session.create(params);
 
@@ -224,16 +208,16 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 
 		return null;
 	}
-	
+
 	public static String performSuccessBancontact(ContentContext ctx, RequestService rs) throws Exception {
 		Basket basket = Basket.getInstance(ctx);
 		PaymentIntent paymentIntent = PaymentIntent.retrieve(rs.getParameter("id"));
-		
-		System.out.println(paymentIntent); //TODO: remove debug trace
-		
+
+		System.out.println(paymentIntent); // TODO: remove debug trace
+
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
-		if (paymentIntent == null || paymentIntent.getAmount() != Math.round(basket.getTotal(ctx, true)*100)) {
-			logger.warning("error on bancontact return : "+paymentIntent);
+		if (paymentIntent == null || paymentIntent.getAmount() != Math.round(basket.getTotal(ctx, true) * 100)) {
+			logger.warning("error on bancontact return : " + paymentIntent);
 			return i18nAccess.getViewText("ecom.message.error");
 		} else {
 			basket.setStep(Basket.FINAL_STEP);
@@ -260,51 +244,61 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 		}
 		return null;
 	}
-	
+
 	public static String performWebhook(ContentContext ctx, RequestService rs) throws Exception {
+		ctx.setStopRendering(true);
 		String payload = IOUtils.toString(ctx.getRequest().getReader());
-		  Event event = null;
+		
+		if (StringHelper.isEmpty(payload)) {
+			ctx.getResponse().setStatus(400);
+			logger.warning("body not found.");
+			return "body not found.";
+		}
+		
+		Event event = null;
 
-		  try {
-		      event = ApiResource.GSON.fromJson(payload, Event.class);
-		  } catch (JsonSyntaxException e) {
-			logger.warning("invalid payload : "+e.getMessage());
-		    // Invalid payload
-		    ctx.getResponse().setStatus(400);
-		    return "";
-		  }
+		try {
+			event = ApiResource.GSON.fromJson(payload, Event.class);
+		} catch (JsonSyntaxException e) {
+			logger.warning("invalid payload : " + e.getMessage());
+			// Invalid payload
+			ctx.getResponse().setStatus(400);
+			return "";
+		}
 
-		  // Deserialize the nested object inside the event
-		  EventDataObjectDeserializer dataObjectDeserializer = event.getDataObjectDeserializer();
-		  StripeObject stripeObject = null;
-		  if (dataObjectDeserializer.getObject().isPresent()) {
-		    stripeObject = dataObjectDeserializer.getObject().get();
-		  } else {
-		    // Deserialization failed, probably due to an API version mismatch.
-		    // Refer to the Javadoc documentation on `EventDataObjectDeserializer` for
-		    // instructions on how to handle this case, or return an error here.
-		  }
-		  
-		  System.out.println(">>>> EVENT <<<<");
-		  System.out.println(event);
+		// Deserialize the nested object inside the event
+		EventDataObjectDeserializer dataObjectDeserializer = event.getDataObjectDeserializer();
+		StripeObject stripeObject = null;
+		if (dataObjectDeserializer.getObject().isPresent()) {
+			stripeObject = dataObjectDeserializer.getObject().get();
+		} else {
+			// Deserialization failed, probably due to an API version mismatch.
+			// Refer to the Javadoc documentation on `EventDataObjectDeserializer` for
+			// instructions on how to handle this case, or return an error here.
+		}
 
-		  // Handle the event
-		  switch (event.getType()) {
-		    case "payment_intent.succeeded":
-		      PaymentIntent paymentIntent = (PaymentIntent) stripeObject;
-		      System.out.println("PaymentIntent was successful!");
-		      break;
-		    case "payment_method.attached":
-		      PaymentMethod paymentMethod = (PaymentMethod) stripeObject;
-		      System.out.println("PaymentMethod was attached to a Customer!");
-		      break;
-		    // ... handle other event types
-		    default:
-		      System.out.println("Unhandled event type: " + event.getType());
-		  }
+		System.out.println(">>>> EVENT <<<<");
+		System.out.println(event);
 
-		  ctx.getResponse().setStatus(200);
-		  ctx.setStopRendering(true);
-		  return "";
+		// Handle the event
+		switch (event.getType()) {
+		case "charge.succeeded":
+			PaymentIntent paymentIntent = (PaymentIntent) stripeObject;
+			System.out.println(">>>>>>>>> StripeOrderComponent.performWebhook : paymentIntent.getId() = "+paymentIntent.getId()); //TODO: remove debug
+			System.out.println(">>>>>>>>> StripeOrderComponent.performWebhook : paymentIntent.getAmount() = "+paymentIntent.getAmount()); //TODO: remove debug
+			System.out.println("PaymentIntent was successful!");
+			break;
+		case "payment_method.attached":
+			PaymentMethod paymentMethod = (PaymentMethod) stripeObject;
+			System.out.println("PaymentMethod was attached to a Customer!");
+			break;
+		// ... handle other event types
+		default:
+			System.out.println("Unhandled event type: " + event.getType());
+		}
+
+		ctx.getResponse().setStatus(200);
+
+		return "";
 	}
 }
