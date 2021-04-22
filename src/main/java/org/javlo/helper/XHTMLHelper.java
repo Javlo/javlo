@@ -2321,6 +2321,9 @@ public class XHTMLHelper {
 	public static void main(String[] args) {
 		String params = "page:test|".substring("page:test|".indexOf("|")+1);
 		System.out.println(params);
+		
+		String pageName = "test|user=me";
+		System.out.println(pageName.substring(0,pageName.indexOf("|")));
 	}
 
 	public static String textToXHTMLNewWin(String text) {
@@ -2617,6 +2620,7 @@ public class XHTMLHelper {
 							String params = "";
 							if (pageName.contains("|")) {
 								params = pageName.substring(pageName.indexOf("|")+1);
+								pageName = hrefValue.substring(0,pageName.indexOf("|"));
 							}
 							ContentContext pageContext = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
 							pageContext.setFormat("html");
