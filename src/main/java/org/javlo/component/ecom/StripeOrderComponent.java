@@ -301,6 +301,7 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 		  }
 
 		  ctx.getResponse().setStatus(200);
+		  ctx.setStopRendering(true);
 		  return "";
 	}
 }
