@@ -70,6 +70,7 @@ public class Basket implements Serializable {
 	private String securityKey = StringHelper.getRandomIdBase64();
 	private String description;
 	private String transactionId;
+	private String paymentIntent;
 	private String deliveryInstructions;
 	private String giftMessage;
 	private String PaymentType;
@@ -682,6 +683,9 @@ public class Basket implements Serializable {
 		if (getPaymentType() != null && getPaymentType().trim().length() > 0) {
 			out.println("  Payment Type : " + getPaymentType());
 		}
+		if (getPaymentIntent() != null && getPaymentIntent().trim().length() > 0) {
+			out.println("  Payment intent : " + getPaymentIntent());
+		}
 		out.println("");
 		out.println("Product :");
 		for (ProductBean product : getProductsBean()) {
@@ -864,6 +868,14 @@ public class Basket implements Serializable {
 
 	public void setPaymentType(String PaymentType) {
 		this.PaymentType = PaymentType;
+	}
+
+	public String getPaymentIntent() {
+		return paymentIntent;
+	}
+
+	public void setPaymentIntent(String paymentIntent) {
+		this.paymentIntent = paymentIntent;
 	}
 
 }

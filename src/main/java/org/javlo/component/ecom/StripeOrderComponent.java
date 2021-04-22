@@ -196,18 +196,11 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 		HashMap<String, String> responseData;
 		synchronized (Stripe.class) {
 			Stripe.apiKey = getPrivateKey(ctx);
-
 			SessionCreateParams params = SessionCreateParams.builder().addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD).setMode(SessionCreateParams.Mode.PAYMENT).setSuccessUrl(successURL).setCancelUrl(errorURL).setCustomerEmail(basket.getContactEmail()).addAllLineItem(collect).build();
-
 			Session session = Session.create(params);
 			session.setClientReferenceId(basket.getId());
-			
-			System.out.println();
-			System.out.println("session:");
-			System.out.println(session);
-			System.out.println();
-			
-
+			basket.setPaymentIntent(session.getPaymentIntent());
+			BasketPersistenceService.getInstance(ctx.getGlobalContext()).storeBasket(basket);
 			responseData = new HashMap<String, String>();
 			responseData.put("id", session.getId());
 		}
@@ -292,7 +285,8 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 		switch (event.getType()) {
 		case "charge.succeeded":
 			Charge charge = (Charge) stripeObject;
-			System.out.println(charge);
+			Basket basket = BasketPersistenceService.getInstance(ctx.getGlobalContext()).getBasketByPaymentIndent(charge.getPaymentIntent());
+			System.out.println(">>>>>>>>> StripeOrderComponent.performWebhook : basket = "+basket); //TODO: remove debug trace
 			System.out.println(">>>>>>>>> StripeOrderComponent.performWebhook : paymentIntent.getId() = "+charge.getId()); //TODO: remove debug
 			System.out.println(">>>>>>>>> StripeOrderComponent.performWebhook : paymentIntent.getAmount() = "+charge.getAmount()); //TODO: remove debug
 			System.out.println("PaymentIntent was successful!");

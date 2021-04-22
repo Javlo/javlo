@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 
 public class BasketPersistenceService {
@@ -63,6 +64,18 @@ public class BasketPersistenceService {
 			baskets = loadBaskets();
 		}
 		return baskets.values();
+	}
+	
+	public Basket getBasketByPaymentIndent(String paymentIndent) {
+		if (StringHelper.isEmpty(paymentIndent)) {
+			return null;
+		}
+		for (Basket b : getAllBaskets()) {
+			if (b.getPaymentIntent() != null && b.getPaymentIntent().equals(paymentIndent)) {
+				return b;
+			}
+		}
+		return null;
 	}
 
 	public synchronized void storeBasket(Basket basket) throws IOException {
