@@ -23,4 +23,9 @@ public class DefaultEcomLister implements IEcomListner {
 		return null;
 	}
 
+	@Override
+	public EcomStatus onPaymentProcessorEvent(EcomEvent event) {
+		return EcomStatus.VALID;
+	}
+
 }

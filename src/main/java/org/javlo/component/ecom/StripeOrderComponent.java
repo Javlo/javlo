@@ -7,8 +7,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
+import org.javlo.actions.EcomEvent;
 import org.javlo.actions.EcomStatus;
 import org.javlo.actions.IAction;
+import org.javlo.actions.IEcomListner;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.ecom.Basket;
@@ -33,7 +35,6 @@ import com.stripe.model.Charge;
 import com.stripe.model.Event;
 import com.stripe.model.EventDataObjectDeserializer;
 import com.stripe.model.PaymentIntent;
-import com.stripe.model.PaymentMethod;
 import com.stripe.model.StripeObject;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.ApiResource;
@@ -284,7 +285,17 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 		switch (event.getType()) {
 		case "charge.succeeded":
 			Charge charge = (Charge) stripeObject;
+			System.out.println(charge);
 			Basket basket = BasketPersistenceService.getInstance(ctx.getGlobalContext()).getBasketByPaymentIndent(charge.getPaymentIntent());
+			if (basket == null) {
+				logger.info("basket not found : " + charge.getPaymentIntent());
+				IEcomListner ecomListner = ctx.getGlobalContext().getStaticConfig().getEcomLister();
+				EcomStatus status = ecomListner.onPaymentProcessorEvent(new EcomEvent(charge.getPaymentIntent(), true, null));
+				if (status.isError()) {
+					ctx.getResponse().setStatus(400);
+				}
+				return "";
+			}
 			EcomStatus status = basket.payAll(ctx);
 			if (!status.isError()) {
 				I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
@@ -309,11 +320,6 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 			System.out.println(">>>>>>>>> StripeOrderComponent.performWebhook : paymentIntent.getAmount() = "+charge.getAmount()); //TODO: remove debug
 			System.out.println("PaymentIntent was successful!");
 			break;
-		case "payment_method.attached":
-			PaymentMethod paymentMethod = (PaymentMethod) stripeObject;
-			System.out.println("PaymentMethod was attached to a Customer!");
-			break;
-		// ... handle other event types
 		default:
 			System.out.println("Unhandled event type: " + event.getType());
 		}

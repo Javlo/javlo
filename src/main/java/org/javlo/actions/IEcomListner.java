@@ -13,5 +13,7 @@ public interface IEcomListner {
 	public EcomStatus onConfirmPayment(ContentContext ctx, Basket basket) throws ListerException;
 	
 	public List<Date> getDeliveryDate(ContentContext ctx, Basket basket);
+	
+	public EcomStatus onPaymentProcessorEvent(EcomEvent event);
 
 }
