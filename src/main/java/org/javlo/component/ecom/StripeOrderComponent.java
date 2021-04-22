@@ -280,6 +280,10 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 			// Refer to the Javadoc documentation on `EventDataObjectDeserializer` for
 			// instructions on how to handle this case, or return an error here.
 		}
+		
+		System.out.println("<<< EVENT >>>");
+		System.out.println(event);
+		System.out.println("");
 
 		// Handle the event
 		switch (event.getType()) {
