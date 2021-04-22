@@ -284,6 +284,8 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 		System.out.println("<<< EVENT >>>");
 		System.out.println(event);
 		System.out.println("");
+		
+		System.out.println(">>>>>>>>> StripeOrderComponent.performWebhook : event.getType() = "+event.getType()); //TODO: remove debug trace
 
 		// Handle the event
 		switch (event.getType()) {
