@@ -91,6 +91,7 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 				Stripe.apiKey = getPrivateKey(ctx);
 				PaymentIntentCreateParams params = PaymentIntentCreateParams.builder().setAmount(Math.round(basket.getTotal(ctx, true) * 100)).setCurrency(basket.getCurrencyCode()).addPaymentMethodType("bancontact").setPaymentMethodOptions(PaymentIntentCreateParams.PaymentMethodOptions.builder().putExtraParam("bancontact[preferred_language]", ctx.getRequestContentLanguage()).build()).build();
 				PaymentIntent paymentIntent = PaymentIntent.create(params);
+				System.out.println(">>>>>>>>> StripeOrderComponent.prepareView : paymentIntent.getId() = "+paymentIntent.getId()); //TODO: remove debug trace
 				basket.setPaymentIntentBancontact(paymentIntent.getId());
 				BasketPersistenceService.getInstance(ctx.getGlobalContext()).storeBasket(basket);
 				urlParam.clear();
@@ -102,7 +103,6 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 				ctx.getRequest().setAttribute("name", basket.getFirstName() + ' ' + basket.getLastName());
 			}
 		}
-
 	}
 
 	public static String performError(ContentContext ctx, RequestService rs, I18nAccess i18n) throws Exception {
@@ -283,15 +283,16 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 			// instructions on how to handle this case, or return an error here.
 		}
 		
-		System.out.println("<<< EVENT >>>");
-		System.out.println(event);
-		System.out.println("");
-		
+//		System.out.println("<<< EVENT >>>");
+//		System.out.println(event);
+//		System.out.println("");
+//		
 		System.out.println(">>>>>>>>> StripeOrderComponent.performWebhook : event.getType() = "+event.getType()); //TODO: remove debug trace
 
 		// Handle the event
 		switch (event.getType()) {
 		case "charge.succeeded":
+		//case "payment_intent.succeeded":
 			Charge charge = (Charge) stripeObject;
 			System.out.println(charge);
 			Basket basket = BasketPersistenceService.getInstance(ctx.getGlobalContext()).getBasketByPaymentIndent(charge.getPaymentIntent());
