@@ -875,11 +875,13 @@ public class URLHelper extends ElementaryURLHelper {
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
 				String value = (String) params.get(key);
-				finalURL.append(sep);
-				finalURL.append(key);
-				finalURL.append('=');
-				finalURL.append(URLEncoder.encode(value));
-				sep = '&';
+				if (value != null) {
+					finalURL.append(sep);
+					finalURL.append(key);
+					finalURL.append('=');
+					finalURL.append(URLEncoder.encode(value));
+					sep = '&';
+				}
 			}
 		}
 		return createURL(ctx, finalURL.toString());

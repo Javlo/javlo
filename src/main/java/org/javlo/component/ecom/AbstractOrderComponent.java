@@ -169,12 +169,15 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 			if (basket.getVATNumber() != null && basket.getVATNumber().trim().length() > 0) {
 				params.put("vat",basket.getVATNumber());
 			}
-			params.putAll(new ReadOnlyPropertiesMap(getData()));
-			pageURL = URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.PAGE_MODE), page.getPath(), params);
-			try {
-				email = NetHelper.readPageForMailing(new URL(pageURL));
-			} catch (Exception e) {
-				e.printStackTrace();
+			
+			if (page != null) {
+				try {
+					params.putAll(new ReadOnlyPropertiesMap(getData()));
+					pageURL = URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.PAGE_MODE), page.getPath(), params);
+					email = NetHelper.readPageForMailing(new URL(pageURL));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		
