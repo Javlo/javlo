@@ -147,6 +147,7 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 			params.put("lastName", StringHelper.toHTMLAttribute(basket.getLastName()));
 			params.put("basketSize", ""+basket.getSize());
 			params.put("basketId", ""+basket.getId());
+			params.put("invoiceHash", basket.getInvoiceHash());
 			
 			String basketTable = URLEncoder.encode(renderBasket(ctx, basket), ContentContext.CHARACTER_ENCODING);
 			params.put("basketTable", basketTable);

@@ -283,16 +283,11 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 			// instructions on how to handle this case, or return an error here.
 		}
 		
-//		System.out.println("<<< EVENT >>>");
-//		System.out.println(event);
-//		System.out.println("");
-//		
 		// Handle the event
 		switch (event.getType()) {
 		case "charge.succeeded":
 		//case "payment_intent.succeeded":
 			Charge charge = (Charge) stripeObject;
-			System.out.println(charge);
 			Basket basket = BasketPersistenceService.getInstance(ctx.getGlobalContext()).getBasketByPaymentIndent(charge.getPaymentIntent());
 			if (basket == null) {
 				logger.info("basket not found : " + charge.getPaymentIntent());

@@ -3,6 +3,10 @@ package org.javlo.actions;
 public class EcomStatus {
 
 	public static EcomStatus VALID = new EcomStatus(false);
+	
+	private String message;
+	private boolean error = false;
+	private String invoiceHash;
 
 	public EcomStatus() {
 	}
@@ -16,10 +20,6 @@ public class EcomStatus {
 		this.message = message;
 		this.error = error;
 	}
-
-	private String message;
-	private boolean error = false;
-
 	public String getMessage() {
 		return message;
 	}
@@ -34,6 +34,14 @@ public class EcomStatus {
 
 	public void setError(boolean error) {
 		this.error = error;
+	}
+
+	public String getInvoiceHash() {
+		return invoiceHash;
+	}
+
+	public void setInvoiceHash(String invoiceHash) {
+		this.invoiceHash = invoiceHash;
 	}
 
 }

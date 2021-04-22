@@ -75,6 +75,7 @@ public class Basket implements Serializable {
 	private String deliveryInstructions;
 	private String giftMessage;
 	private String PaymentType;
+	private String invoiceHash;
 	private Date deliveryDate;
 	private boolean presumptiveFraud = false;
 	private double userReduction = 0;
@@ -196,6 +197,7 @@ public class Basket implements Serializable {
 					logger.info(status.getMessage());
 					messageRepository.setGlobalMessage(new GenericMessage(status.getMessage(), GenericMessage.INFO));
 				}
+				setInvoiceHash(status.getInvoiceHash());
 			}
 			return status;
 		} catch (Exception e) {
@@ -691,6 +693,9 @@ public class Basket implements Serializable {
 		if (getPaymentIntentBancontact() != null && getPaymentIntentBancontact().trim().length() > 0) {
 			out.println("  Payment intent : " + getPaymentIntentBancontact());
 		}
+		if (getInvoiceHash() != null && getInvoiceHash().trim().length() > 0) {
+			out.println("  Invoice Hash : " + getInvoiceHash());
+		}
 		out.println("");
 		out.println("Product :");
 		for (ProductBean product : getProductsBean()) {
@@ -897,6 +902,14 @@ public class Basket implements Serializable {
 
 	public void setPaymentIntentBancontact(String paymentIntentBancontact) {
 		this.paymentIntentBancontact = paymentIntentBancontact;
+	}
+
+	public String getInvoiceHash() {
+		return invoiceHash;
+	}
+
+	public void setInvoiceHash(String invoiceHash) {
+		this.invoiceHash = invoiceHash;
 	}
 
 }
