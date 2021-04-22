@@ -71,7 +71,10 @@ public class BasketPersistenceService {
 			return null;
 		}
 		for (Basket b : getAllBaskets()) {
-			if (b.getPaymentIntent() != null && b.getPaymentIntent().equals(paymentIndent)) {
+			if (b.getPaymentIntentCreditCard() != null && b.getPaymentIntentCreditCard().equals(paymentIndent)) {
+				return b;
+			}
+			if (b.getPaymentIntentBancontact() != null && b.getPaymentIntentBancontact().equals(paymentIndent)) {
 				return b;
 			}
 		}

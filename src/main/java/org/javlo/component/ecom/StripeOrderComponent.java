@@ -91,6 +91,8 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 				Stripe.apiKey = getPrivateKey(ctx);
 				PaymentIntentCreateParams params = PaymentIntentCreateParams.builder().setAmount(Math.round(basket.getTotal(ctx, true) * 100)).setCurrency(basket.getCurrencyCode()).addPaymentMethodType("bancontact").setPaymentMethodOptions(PaymentIntentCreateParams.PaymentMethodOptions.builder().putExtraParam("bancontact[preferred_language]", ctx.getRequestContentLanguage()).build()).build();
 				PaymentIntent paymentIntent = PaymentIntent.create(params);
+				basket.setPaymentIntentBancontact(paymentIntent.getId());
+				BasketPersistenceService.getInstance(ctx.getGlobalContext()).storeBasket(basket);
 				urlParam.clear();
 				urlParam.put("webaction", TYPE + ".successBancontact");
 				urlParam.put(IContentVisualComponent.COMP_ID_REQUEST_PARAM, getId());
@@ -156,8 +158,7 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 			SessionCreateParams params = SessionCreateParams.builder().addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD).setMode(SessionCreateParams.Mode.PAYMENT).setSuccessUrl(successURL).setCancelUrl(errorURL).setCustomerEmail(basket.getContactEmail()).addAllLineItem(collect).build();
 			Session session = Session.create(params);
 			session.setClientReferenceId(basket.getId());
-			basket.setPaymentIntent(session.getPaymentIntent());
-			System.out.println(">>>>>>>>> StripeOrderComponent.performCreateSession : basket.getPaymentIntent() = "+basket.getPaymentIntent()); //TODO: remove debug trace
+			basket.setPaymentIntentCreditCard(session.getPaymentIntent());
 			basket.setComponentId(comp.getId());
 			BasketPersistenceService.getInstance(ctx.getGlobalContext()).storeBasket(basket);
 			responseData = new HashMap<String, String>();

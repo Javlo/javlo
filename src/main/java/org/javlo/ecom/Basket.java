@@ -70,7 +70,8 @@ public class Basket implements Serializable {
 	private String securityKey = StringHelper.getRandomIdBase64();
 	private String description;
 	private String transactionId;
-	private String paymentIntent;
+	private String paymentIntentCreditCard;
+	private String paymentIntentBancontact;
 	private String deliveryInstructions;
 	private String giftMessage;
 	private String PaymentType;
@@ -684,8 +685,11 @@ public class Basket implements Serializable {
 		if (getPaymentType() != null && getPaymentType().trim().length() > 0) {
 			out.println("  Payment Type : " + getPaymentType());
 		}
-		if (getPaymentIntent() != null && getPaymentIntent().trim().length() > 0) {
-			out.println("  Payment intent : " + getPaymentIntent());
+		if (getPaymentIntentCreditCard() != null && getPaymentIntentCreditCard().trim().length() > 0) {
+			out.println("  Payment intent : " + getPaymentIntentCreditCard());
+		}
+		if (getPaymentIntentBancontact() != null && getPaymentIntentBancontact().trim().length() > 0) {
+			out.println("  Payment intent : " + getPaymentIntentBancontact());
 		}
 		out.println("");
 		out.println("Product :");
@@ -871,20 +875,28 @@ public class Basket implements Serializable {
 		this.PaymentType = PaymentType;
 	}
 
-	public String getPaymentIntent() {
-		return paymentIntent;
-	}
-
-	public void setPaymentIntent(String paymentIntent) {
-		this.paymentIntent = paymentIntent;
-	}
-
 	public String getComponentId() {
 		return componentId;
 	}
 
 	public void setComponentId(String componentId) {
 		this.componentId = componentId;
+	}
+
+	public String getPaymentIntentCreditCard() {
+		return paymentIntentCreditCard;
+	}
+
+	public void setPaymentIntentCreditCard(String paymentIntentCreditCard) {
+		this.paymentIntentCreditCard = paymentIntentCreditCard;
+	}
+
+	public String getPaymentIntentBancontact() {
+		return paymentIntentBancontact;
+	}
+
+	public void setPaymentIntentBancontact(String paymentIntentBancontact) {
+		this.paymentIntentBancontact = paymentIntentBancontact;
 	}
 
 }
