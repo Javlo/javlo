@@ -94,7 +94,7 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 		PrintStream out = new PrintStream(outStream);
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		
-		String cellStyle="font-size: 14px;";
+		String cellStyle="font-size: 14px; text-align: center;";
 		
 		out.println("<table class=\"table\" id=\"basket-details\" style=\"width: 100%\">");
 		out.println("<thead>");

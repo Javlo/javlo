@@ -91,7 +91,6 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 				Stripe.apiKey = getPrivateKey(ctx);
 				PaymentIntentCreateParams params = PaymentIntentCreateParams.builder().setAmount(Math.round(basket.getTotal(ctx, true) * 100)).setCurrency(basket.getCurrencyCode()).addPaymentMethodType("bancontact").setPaymentMethodOptions(PaymentIntentCreateParams.PaymentMethodOptions.builder().putExtraParam("bancontact[preferred_language]", ctx.getRequestContentLanguage()).build()).build();
 				PaymentIntent paymentIntent = PaymentIntent.create(params);
-				System.out.println(">>>>>>>>> StripeOrderComponent.prepareView : paymentIntent.getId() = "+paymentIntent.getId()); //TODO: remove debug trace
 				basket.setPaymentIntentBancontact(paymentIntent.getId());
 				basket.setComponentId(getId());
 				BasketPersistenceService.getInstance(ctx.getGlobalContext()).storeBasket(basket);
@@ -288,8 +287,6 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 //		System.out.println(event);
 //		System.out.println("");
 //		
-		System.out.println(">>>>>>>>> StripeOrderComponent.performWebhook : event.getType() = "+event.getType()); //TODO: remove debug trace
-
 		// Handle the event
 		switch (event.getType()) {
 		case "charge.succeeded":
@@ -300,7 +297,7 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 			if (basket == null) {
 				logger.info("basket not found : " + charge.getPaymentIntent());
 				IEcomListner ecomListner = ctx.getGlobalContext().getStaticConfig().getEcomLister();
-				EcomStatus status = ecomListner.onPaymentProcessorEvent(new EcomEvent(charge.getPaymentIntent(), true, null));
+				EcomStatus status = ecomListner.onPaymentProcessorEvent(ctx, new EcomEvent(charge.getPaymentIntent(), true, null));
 				if (status.isError()) {
 					ctx.getResponse().setStatus(400);
 				}
@@ -324,11 +321,7 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 				basket.reset(ctx);
 			} else {
 				NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "ERROR: basket NOT confirmed with stripe : " + ctx.getGlobalContext().getContextKey(), basket.getAdministratorEmail(ctx));
-			}
-			System.out.println(">>>>>>>>> StripeOrderComponent.performWebhook : basket = "+basket); //TODO: remove debug trace
-			System.out.println(">>>>>>>>> StripeOrderComponent.performWebhook : paymentIntent.getId() = "+charge.getId()); //TODO: remove debug
-			System.out.println(">>>>>>>>> StripeOrderComponent.performWebhook : paymentIntent.getAmount() = "+charge.getAmount()); //TODO: remove debug
-			System.out.println("PaymentIntent was successful!");
+			}			
 			break;
 		default:
 			System.out.println("Unhandled event type: " + event.getType());

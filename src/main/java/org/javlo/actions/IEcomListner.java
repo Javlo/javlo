@@ -14,6 +14,6 @@ public interface IEcomListner {
 	
 	public List<Date> getDeliveryDate(ContentContext ctx, Basket basket);
 	
-	public EcomStatus onPaymentProcessorEvent(EcomEvent event);
+	public EcomStatus onPaymentProcessorEvent(ContentContext ctx, EcomEvent event);
 
 }
