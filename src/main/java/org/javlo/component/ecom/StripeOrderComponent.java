@@ -93,6 +93,7 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 				PaymentIntent paymentIntent = PaymentIntent.create(params);
 				System.out.println(">>>>>>>>> StripeOrderComponent.prepareView : paymentIntent.getId() = "+paymentIntent.getId()); //TODO: remove debug trace
 				basket.setPaymentIntentBancontact(paymentIntent.getId());
+				basket.setComponentId(getId());
 				BasketPersistenceService.getInstance(ctx.getGlobalContext()).storeBasket(basket);
 				urlParam.clear();
 				urlParam.put("webaction", TYPE + ".successBancontact");
