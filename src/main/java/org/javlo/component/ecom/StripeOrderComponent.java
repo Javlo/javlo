@@ -157,6 +157,7 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 			Session session = Session.create(params);
 			session.setClientReferenceId(basket.getId());
 			basket.setPaymentIntent(session.getPaymentIntent());
+			System.out.println(">>>>>>>>> StripeOrderComponent.performCreateSession : basket.getPaymentIntent() = "+basket.getPaymentIntent()); //TODO: remove debug trace
 			basket.setComponentId(comp.getId());
 			BasketPersistenceService.getInstance(ctx.getGlobalContext()).storeBasket(basket);
 			responseData = new HashMap<String, String>();
@@ -225,23 +226,23 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 			return i18nAccess.getViewText("ecom.message.error");
 		} else {
 			basket.setStep(Basket.FINAL_STEP);
-			basket.setStatus(Basket.STATUS_VALIDED);
+			//basket.setStatus(Basket.STATUS_VALIDED);
 			basket.setTransactionId(paymentIntent.getId());
 			basket.setPaymentType("bancontact");
 			BasketPersistenceService.getInstance(ctx.getGlobalContext()).storeBasket(basket);
 
-			EcomStatus status = basket.payAll(ctx);
-			if (!status.isError()) {
-				AbstractOrderComponent comp = (AbstractOrderComponent) ComponentHelper.getComponentFromRequest(ctx);
-				String msg = XHTMLHelper.textToXHTML(comp.getConfirmationEmail(ctx, basket));
-				msg = "<p>" + i18nAccess.getViewText("ecom.basket-confirmed") + "</p><p>" + msg + "</p>";
-				comp.sendConfirmationEmail(ctx, basket);
-				ctx.getRequest().setAttribute("msg", msg);
-				NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "basket confirmed with stripe : " + ctx.getGlobalContext().getContextKey(), basket.getAdministratorEmail(ctx));
-				basket.reset(ctx);
-			} else {
-				NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "ERROR: basket NOT confirmed with stripe : " + ctx.getGlobalContext().getContextKey(), basket.getAdministratorEmail(ctx));
-			}
+//			EcomStatus status = basket.payAll(ctx);
+//			if (!status.isError()) {
+//				AbstractOrderComponent comp = (AbstractOrderComponent) ComponentHelper.getComponentFromRequest(ctx);
+//				String msg = XHTMLHelper.textToXHTML(comp.getConfirmationEmail(ctx, basket));
+//				msg = "<p>" + i18nAccess.getViewText("ecom.basket-confirmed") + "</p><p>" + msg + "</p>";
+//				comp.sendConfirmationEmail(ctx, basket);
+//				ctx.getRequest().setAttribute("msg", msg);
+//				NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "basket confirmed with stripe : " + ctx.getGlobalContext().getContextKey(), basket.getAdministratorEmail(ctx));
+//				basket.reset(ctx);
+//			} else {
+//				NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "ERROR: basket NOT confirmed with stripe : " + ctx.getGlobalContext().getContextKey(), basket.getAdministratorEmail(ctx));
+//			}
 
 			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("ecom.reception-message"), GenericMessage.INFO));
