@@ -313,6 +313,11 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 					link = XHTMLHelper.replaceLinks(ctx, link);
 					out.println("<span class=\"special-link\">"+link+"</span>");
 				}
+
+				String dinfo = i18nAccess.getViewText("ecom.delivery-info", "");
+				if (!StringHelper.isEmpty(dinfo)) {
+					out.println("<div class=\"delivery-info\">"+dinfo+"</div>");
+				}
 				
 				out.println("</div>");
 			} else {
