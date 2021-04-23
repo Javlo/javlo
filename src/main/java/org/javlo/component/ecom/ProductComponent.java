@@ -354,6 +354,11 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 	public String getTextTitle(ContentContext ctx) {
 		return getName();
 	}
+	
+	@Override
+	public String getTextLabel(ContentContext ctx) {
+		return getName();
+	}
 
 	public static String performBuy(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 
