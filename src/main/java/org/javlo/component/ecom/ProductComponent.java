@@ -287,7 +287,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 			
 			if (!StringHelper.isEmpty(getDescription())) {
 				out.println("<div class=\"line list-group-item description\">");
-				out.println("<p>" + getDescription() + "</p>");
+				out.println("<p>" + XHTMLHelper.textToXHTML(getDescription()) + "</p>");
 				out.println("</div>");
 			}
 
