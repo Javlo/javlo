@@ -129,7 +129,7 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 	}
 
 	private static LineItem toLineItem(Product product) {
-		return SessionCreateParams.LineItem.builder().setQuantity(1L).setPriceData(SessionCreateParams.LineItem.PriceData.builder().setCurrency(product.getCurrencyCode()).setUnitAmount(Math.round(product.getPrice() * 100)).setProductData(SessionCreateParams.LineItem.PriceData.ProductData.builder().setName(product.getName()).build()).build()).build();
+		return SessionCreateParams.LineItem.builder().setQuantity((long)product.getQuantity()).setPriceData(SessionCreateParams.LineItem.PriceData.builder().setCurrency(product.getCurrencyCode()).setUnitAmount(Math.round(product.getPrice() * 100)).setProductData(SessionCreateParams.LineItem.PriceData.ProductData.builder().setName(product.getName()).build()).build()).build();
 	}
 
 	public static String performCreateSession(ContentContext ctx, RequestService rs) throws Exception {
