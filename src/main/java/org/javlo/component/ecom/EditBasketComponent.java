@@ -121,13 +121,6 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 	public static String performRegistration(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws SecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, ListerException {
 		Basket basket = Basket.getInstance(ctx);
 
-		if (rs.getParameter("back", null) != null) {
-			if (basket.getStep() > 1) {
-				basket.setStep(basket.getStep() - 1);
-			}
-			return null;
-		}
-
 		String firstName = rs.getParameter("firstName", "").trim();
 		String lastName = rs.getParameter("lastName", "").trim();
 		String email = rs.getParameter("email", "").trim();
@@ -165,12 +158,21 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 		basket.setBillingPostcode(rs.getParameter("billingPostcode"));
 		basket.setBillingVat(rs.getParameter("billingVat"));
 		
+		
+		
 		if (!StringHelper.isEmpty(rs.getParameter("deliveryDate"))) {
 			try {
 				basket.setDeliveryDate(StringHelper.parseInputDate(rs.getParameter("deliveryDate")));
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
+		}
+		
+		if (rs.getParameter("back", null) != null) {
+			if (basket.getStep() > 1) {
+				basket.setStep(basket.getStep() - 1);
+			}
+			return null;
 		}
 		
 		EcomStatus status = ctx.getGlobalContext().getStaticConfig().getEcomLister().onConfirmBasket(ctx, basket);
