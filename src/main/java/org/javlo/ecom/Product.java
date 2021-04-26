@@ -2,7 +2,6 @@ package org.javlo.ecom;
 
 import java.io.Serializable;
 
-import org.javlo.component.ecom.EditBasketComponent;
 import org.javlo.component.ecom.ProductComponent;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.component.image.ImageTitleBean;

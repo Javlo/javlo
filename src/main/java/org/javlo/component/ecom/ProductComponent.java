@@ -16,6 +16,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.ecom.Basket;
 import org.javlo.ecom.EcomConfig;
 import org.javlo.ecom.Product;
+import org.javlo.ecom.Product.ProductBean;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
@@ -26,7 +27,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 
-public class ProductComponent extends AbstractPropertiesComponent implements IAction {
+public class ProductComponent extends AbstractPropertiesComponent implements IAction, IProductContainer {
 	
 	private static final long MAX_STOCK = 999999;
 
@@ -407,6 +408,10 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 		}
 
 		return null;
+	}
+	
+	public ProductBean getProductBean(ContentContext ctx) {
+		return new Product(this).getBean();
 	}
 
 }

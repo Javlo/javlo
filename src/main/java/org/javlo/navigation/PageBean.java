@@ -23,7 +23,6 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.image.ExtendedColor;
 import org.javlo.module.content.Edit;
-import org.javlo.navigation.MenuElement.PageDescription;
 import org.javlo.service.ContentService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.template.Template;

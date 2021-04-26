@@ -165,6 +165,7 @@ public class MailService {
 					finalProps.put("mail.smtp.socketFactory.class","javax.net.ssl.SSLSocketFactory");
 				} else if (Integer.parseInt(mailing.getSMTPPort()) == 587) {
 					finalProps.put("mail.smtp.starttls.enable","true");
+					finalProps.put("mail.smtp.auth", "true");
 //					finalProps.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 //					finalProps.put("mail.smtp.socketFactory.fallback", "false");
 				}
@@ -709,32 +710,7 @@ public class MailService {
 	}
 
 	public static void main(String[] args) throws Exception {
-//		EMail testmail = new EMail();
-//		MailConfig mailConfig = new MailConfig(ResourceHelper.loadProperties(new File("c:/trans/mailconfig.properties")));
-//		MailService mailService = MailService.getInstance(mailConfig);
-//		
-//		testmail.setSender(new InternetAddress("test@javlo.org"));
-//		testmail.addRecipient(new InternetAddress("p@noctis.be"));
-//		testmail.setHtml(true);
-//		testmail.setSubject("test content with attach : "+StringHelper.renderTime(new Date()));
-//		testmail.setContent("<h2>TEST MAIL</h2><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc aliquet vitae mi in tempor. Donec ullamcorper ut sem quis condimentum. Sed posuere turpis vel ante volutpat molestie id sed arcu. Praesent iaculis porta magna consectetur ultricies. Aliquam quis ex blandit dolor volutpat congue. Nunc tincidunt, dui ac ultrices posuere, nulla quam sollicitudin purus, nec ornare sem lacus vel est. Sed lorem enim, semper et lacinia euismod, pellentesque non urna. Morbi iaculis sodales elit condimentum cursus. Nullam dolor metus, viverra at nunc nec, mollis dignissim dolor. Quisque suscipit metus semper, luctus augue quis, consequat odio. Nam mattis, metus vitae sagittis tincidunt, ante elit laoreet risus, et laoreet ante enim eu mauris. Lorem ipsum dolor sit amet, consectetur adipiscing elit. </p>");
-//		
-//		ICal ical = new ICal(true);
-//		ical.setSummary("test organizer : "+StringHelper.renderDate(new Date()));
-//		Calendar cal = Calendar.getInstance();
-//		cal = TimeHelper.convertRemoveAfterHour(cal);
-//		ical.setStartDate(cal.getTime());
-//		cal.add(1, Calendar.HOUR);
-//		ical.setEndDate(cal.getTime());
-//		ical.addAttendee(new InternetAddress("pvandermaesen@noctis.be", "Patrick Vandermaesen"));
-//		ical.setOrganizer(new InternetAddress("info@javlo.org", "Javlo.org"));
-//		ResourceHelper.writeStringToFile(new File("c:/trans/ical.ics"), ical.storeToString());
-//		
-//		testmail.addAttachement("test.ics", new StringInputStream(ical.storeToString()));
-//		
-//		mailService.sendMail(testmail);
-		
-		MailConfig mailConfig = new MailConfig("proxy.javlo.org", 25, null, null);
+		MailConfig mailConfig = new MailConfig("smtp.office365.com", 587, "", "");
 		Transport t = getMailTransport(mailConfig);
 		System.out.println("t = "+t.isConnected());
 		

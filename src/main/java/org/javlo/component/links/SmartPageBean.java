@@ -19,13 +19,12 @@ import org.javlo.bean.DateBean;
 import org.javlo.bean.Link;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
-import org.javlo.component.core.IDataContainer;
-import org.javlo.component.form.SmartGenericForm;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.component.links.PageReferenceComponent.PageEvent;
 import org.javlo.component.meta.Tags;
 import org.javlo.context.ContentContext;
 import org.javlo.data.taxonomy.TaxonomyDisplayBean;
+import org.javlo.ecom.Product.ProductBean;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.TimeHelper;
 import org.javlo.helper.URLHelper;
@@ -996,4 +995,7 @@ public class SmartPageBean {
 		return StringHelper.renderShortDate(ctx, page.getContentDateNeverNull(ctx));
 	}
 	
+	public ProductBean getProduct() throws Exception {
+		return page.getProduct(ctx);
+	}
 }
