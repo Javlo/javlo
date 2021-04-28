@@ -561,7 +561,7 @@ public class ContentElementList implements IContentComponentsList {
 	@Override
 	public void initialize(ContentContext ctx) {
 
-		if (repeatContentElements != null && repeatContentElements.size() > 0) {
+		if (!ctx.isPreviewEditionMode() && repeatContentElements != null && repeatContentElements.size() > 0) {
 
 			LinkedList<IContentVisualComponent> newContentElements = new LinkedList<IContentVisualComponent>();
 

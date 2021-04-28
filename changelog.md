@@ -861,6 +861,7 @@ Security in case of vulnerabilities.
   - getProduct ecom method
   - smart deploy template
   - add layout as css class 
+  - don't display reapeat componet in preview edit mode.
 ### fixed  
   - don't redirect old url if no urlfactory asked
   - js content type
@@ -868,3 +869,4 @@ Security in case of vulnerabilities.
   - remove "null" from area class
   - remove internal countries list
   - scss, less compilator synchronized
+  - preview button on layer optimisation
