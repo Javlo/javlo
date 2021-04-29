@@ -2379,9 +2379,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return null;
 		}
 	}
+	
+	protected boolean isStyleHidden(ContentContext ctx) {
+		return HIDDEN.equals(getStyle());
+	}
 
 	protected String renderViewXHTMLCode(ContentContext ctx) throws Exception {
-		if (HIDDEN.equals(getStyle()) || isDisplayHidden()) {
+		if (isStyleHidden(ctx) || isDisplayHidden()) {
 			if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isPreviewEditionMode() && !ctx.isPreviewOnly()) {
 				String prefix = "";
 				String suffix = "";

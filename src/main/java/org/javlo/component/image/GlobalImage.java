@@ -89,7 +89,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	public static final String IMAGE_FILTER = "image-filter";
 
 	static final String DATE = "date";
-	
+
 	static final String LINK_KEY = "link";
 
 	public static final String TYPE = "global-image";
@@ -223,7 +223,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 
 	@Override
-	public String getImageHash(ContentContextBean ctx) {		
+	public String getImageHash(ContentContextBean ctx) {
 		String hash = "" + getFileName().hashCode();
 		if (getWidth(ctx) < 0) {
 			return hash;
@@ -250,20 +250,20 @@ public class GlobalImage extends Image implements IImageFilter {
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		// ctx.setCurrentTemplate(null); // reset template
-		
+
 		ContentContextBean ctxBean = ctx.getBean();
-		
+
 		if (!ctx.getCurrentTemplate().isMailing() && !ctx.getDevice().isPdf()) {
 			clearSize(ctxBean);
 		}
 		super.prepareView(ctx);
-		
+
 		String url = getURL(ctx);
 		if (url != null && url.startsWith('/' + ctx.getGlobalContext().getStaticConfig().getStaticFolder())) {
 			url = URLHelper.createMediaURL(ctx, url);
 		}
 		ctx.getRequest().setAttribute("url", url);
-		
+
 		String link = getLink();
 		link = URLHelper.convertLink(ctx, link);
 		ctx.getRequest().setAttribute("link", link);
@@ -281,15 +281,15 @@ public class GlobalImage extends Image implements IImageFilter {
 			ctx.getRequest().setAttribute("loadURL", URLHelper.createMediaURL(ctx, getResourceURL(ctx, getFileName())));
 		} else {
 			String previewURL = getPreviewURL(ctx, getFilter(ctx));
-			ctx.getRequest().setAttribute("previewURL", previewURL);			
+			ctx.getRequest().setAttribute("previewURL", previewURL);
 			if (ctx.isAjax() || ctx.isContentStatic() || ctx.isOnlyArea() || (ctx.getDevice() != null && ctx.getDevice().isPdf())) {
-				ctx.getRequest().setAttribute("loadURL", previewURL);	
+				ctx.getRequest().setAttribute("loadURL", previewURL);
 			} else {
-				ctx.getRequest().setAttribute("loadURL", getPreviewURL(ctx, getFilter(ctx)+ImageTransformServlet.PRELOAD_IMAGE_SUFFIX));
+				ctx.getRequest().setAttribute("loadURL", getPreviewURL(ctx, getFilter(ctx) + ImageTransformServlet.PRELOAD_IMAGE_SUFFIX));
 			}
 		}
-		String smURL = URLHelper.createTransformURL(ctx, ctx.getCurrentPage(), ctx.getCurrentTemplate(), getResourceURL(ctx, getFileName()), getFilter(ctx)+ImageTransformServlet.MOBILE_IMAGE_SUFFIX, this);
-		String lgURL = URLHelper.createTransformURL(ctx, ctx.getCurrentPage(), ctx.getCurrentTemplate(), getResourceURL(ctx, getFileName()), getFilter(ctx)+ImageTransformServlet.LARGE_IMAGE_SUFFIX, this);
+		String smURL = URLHelper.createTransformURL(ctx, ctx.getCurrentPage(), ctx.getCurrentTemplate(), getResourceURL(ctx, getFileName()), getFilter(ctx) + ImageTransformServlet.MOBILE_IMAGE_SUFFIX, this);
+		String lgURL = URLHelper.createTransformURL(ctx, ctx.getCurrentPage(), ctx.getCurrentTemplate(), getResourceURL(ctx, getFileName()), getFilter(ctx) + ImageTransformServlet.LARGE_IMAGE_SUFFIX, this);
 		ctx.getRequest().setAttribute("smURL", smURL);
 		ctx.getRequest().setAttribute("lgURL", lgURL);
 		ctx.getRequest().setAttribute("largeURL", getPreviewURL(ctx, getLargeFilter(ctx)));
@@ -300,11 +300,11 @@ public class GlobalImage extends Image implements IImageFilter {
 			ctx.getRequest().setAttribute("label", getTitle());
 		}
 		ctx.getRequest().setAttribute("location", getLocation(ctx));
-		ctx.getRequest().setAttribute("filter", getFilter(ctx));		
+		ctx.getRequest().setAttribute("filter", getFilter(ctx));
 
 		if (!getFilter(ctx).equals(RAW_FILTER)) {
-			int width = getWidth(ctxBean);		
-			if (width >= 0) {			
+			int width = getWidth(ctxBean);
+			if (width >= 0) {
 				ctx.getRequest().setAttribute("imageWidth", width);
 			} else {
 				ctx.getRequest().removeAttribute("imageWidth");
@@ -328,13 +328,27 @@ public class GlobalImage extends Image implements IImageFilter {
 	protected boolean isLabel() {
 		return !isMeta();
 	}
+	
+	@Override
+	protected boolean isStyleHidden(ContentContext ctx) {
+		if (ctx.isPreviewEditionMode()) {
+			return false;
+		} else {
+			return super.isStyleHidden(ctx);
+		}
+	}
+
+	protected boolean isHiddenImage(ContentContext ctx) {
+		String filter = getStyle();
+		return HIDDEN.equals(filter);
+	}
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 
 		if (ctx.getRequest().getParameter("path") != null) {
 			String path = ctx.getRequest().getParameter("path");
-			if (StringHelper.getFileExtension(path).length()>0) {
+			if (StringHelper.getFileExtension(path).length() > 0) {
 				setLink(path);
 			} else {
 				String newFolder = URLHelper.removeStaticFolderPrefix(ctx, path);
@@ -439,7 +453,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 
 		if (userInterfaceContext.isMinimalInterface()) {
-			finalCode.append("<input type=\"hidden\" name=\""+getDirInputName()+"\" value=\""+folder+"\" />");
+			finalCode.append("<input type=\"hidden\" name=\"" + getDirInputName() + "\" value=\"" + folder + "\" />");
 		} else if ((getDirList(ctx, getFileDirectory(ctx)) != null) && (getDirList(ctx, getFileDirectory(ctx)).length > 0)) {
 			finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\"><label for=\"" + getDirInputName() + "\">");
 			finalCode.append(getDirLabelTitle(ctx));
@@ -466,8 +480,6 @@ public class GlobalImage extends Image implements IImageFilter {
 			}
 			finalCode.append("</div>");
 		}
-
-		
 
 		/* filter */
 		Template currentTemplate = ctx.getCurrentTemplate();
@@ -670,11 +682,11 @@ public class GlobalImage extends Image implements IImageFilter {
 	public Date getDate() throws ParseException {
 		return StringHelper.parseDateOrTime(properties.getProperty(DATE, ""));
 	}
-	
+
 	public String getDisplayDate() throws ParseException {
 		Date date = getDate();
 		if (date != null) {
-			return StringHelper.renderDate(date);			
+			return StringHelper.renderDate(date);
 		}
 		return null;
 	}
@@ -716,7 +728,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	String getFileXHTMLInputNameOver() {
 		return "image_name_over" + ID_SEPARATOR + getId();
 	}
-	
+
 	protected String getFilter(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		return properties.getProperty(IMAGE_FILTER, globalContext.getDefaultImageFilter());
@@ -792,16 +804,33 @@ public class GlobalImage extends Image implements IImageFilter {
 		return "image_name_select_over" + ID_SEPARATOR + getId();
 	}
 
+	@Override
+	public String getRenderer(ContentContext ctx) {
+		if (ctx.isPreviewEditionMode() && isHiddenImage(ctx)) {
+			return null;
+		} else {
+			return super.getRenderer(ctx);
+		}
+	}
+
 	/**
 	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
 	 */
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-
-		String filter = getFilter(ctx);
-		if (HIDDEN.equals(filter)) {
-			return "";
+		if (isHiddenImage(ctx) && ctx.isPreviewEditionMode()) {
+			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+			PrintStream out = new PrintStream(outStream);
+			out.println("<div "+getPreviewAttributes(ctx)+">");
+			out.println("<div class=\"_preview-hidden\">");
+			out.println("<img style=\"max-height: 80px; max-width: 80px;\" src=\"" + getPreviewURL(ctx, "standard") + "\" /> [HIDDEN "+getType()+"]");
+			out.println("</div>");
+			out.println("</div>");
+			out.close();
+			return new String(outStream.toByteArray());
+			
 		}
+		String filter = getFilter(ctx);
 		StringBuffer res = new StringBuffer();
 		if ((getValue() != null) && (getValue().trim().length() > 0)) {
 			String fileLink = getResourceURL(ctx, getFileName());
@@ -889,18 +918,18 @@ public class GlobalImage extends Image implements IImageFilter {
 
 	/*
 	 * @Override public void init(ComponentBean bean, ContentContext ctx) throws
-	 * Exception { super.init(bean, ctx); boolean isImported = isImported(ctx);
-	 * if (isImported) { ContentContext pageCtx =
-	 * ctx.getContextOnPage(getPage()); if (pageCtx.getCurrentPage() != null) {
-	 * String localImportFolder = getImportFolderPath(pageCtx); if
-	 * (!localImportFolder.equals(getDirSelected())) { File imageSrc =
-	 * getFile(ctx); if (!imageSrc.exists()) {
-	 * logger.warning("file not found : " + imageSrc); } else { try {
-	 * setDirSelected(localImportFolder); File imageTarget = getFile(ctx);
-	 * ResourceHelper.writeFileToFile(imageSrc, imageTarget); storeProperties();
-	 * setModify(); // SharedContentService.getInstance(ctx).clearCache(ctx);
-	 * PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
-	 * } catch (Throwable t) { logger.severe("error on copy image : "+imageSrc);
+	 * Exception { super.init(bean, ctx); boolean isImported = isImported(ctx); if
+	 * (isImported) { ContentContext pageCtx = ctx.getContextOnPage(getPage()); if
+	 * (pageCtx.getCurrentPage() != null) { String localImportFolder =
+	 * getImportFolderPath(pageCtx); if
+	 * (!localImportFolder.equals(getDirSelected())) { File imageSrc = getFile(ctx);
+	 * if (!imageSrc.exists()) { logger.warning("file not found : " + imageSrc); }
+	 * else { try { setDirSelected(localImportFolder); File imageTarget =
+	 * getFile(ctx); ResourceHelper.writeFileToFile(imageSrc, imageTarget);
+	 * storeProperties(); setModify(); //
+	 * SharedContentService.getInstance(ctx).clearCache(ctx);
+	 * PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true); }
+	 * catch (Throwable t) { logger.severe("error on copy image : "+imageSrc);
 	 * t.printStackTrace(); } } } } } }
 	 */
 
@@ -927,7 +956,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		String title = requestService.getParameter(getInputNameTitle(), null);
 		String translationOf = requestService.getParameter(getInputNameTranslation(), null);
 		String embedCode = requestService.getParameter(getEmbedCodeName(), null);
-		String auto = requestService.getParameter(getTextAutoInputName(), null);		
+		String auto = requestService.getParameter(getTextAutoInputName(), null);
 
 		if (requestService.getParameter(getFirstTextInputName(), null) != null) {
 			setTextAuto(StringHelper.isTrue(auto));
@@ -937,9 +966,9 @@ public class GlobalImage extends Image implements IImageFilter {
 		setSecondText(requestService.getParameter(getSecondTextInputName(), ""));
 
 		String label = requestService.getParameter(getLabelXHTMLInputName(), null);
-		
+
 		String textLabel = requestService.getParameter(getLabelTextInputName(), null);
-		
+
 		if (label != null && !label.equals(getLabel())) {
 			StaticInfo staticInfo = getStaticInfo(ctx);
 			if (staticInfo != null && StringHelper.isEmpty(staticInfo.getTitle(ctx))) {
@@ -1062,7 +1091,7 @@ public class GlobalImage extends Image implements IImageFilter {
 				msg = I18nAccess.getInstance(ctx).getText("content.image.width-noext", "Image 'width' need unity like px or %.");
 			}
 		}
-		
+
 		if (isModify()) {
 			setWidth(ctx, -1);
 			setHeight(ctx, -1);
@@ -1150,7 +1179,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	public int getHeight() {
 		return Integer.parseInt(properties.getProperty("height", "-1"));
 	}
-	
+
 	private void clearSize(ContentContextBean ctxBean) {
 		properties.remove(getWidthKey(ctxBean));
 		properties.remove(getHeightKey(ctxBean));
@@ -1185,7 +1214,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			return null;
 		}
 	}
-	
+
 	private String getHeightKey(ContentContextBean ctx) {
 		Device device = ctx.getDevice();
 		try {
@@ -1198,28 +1227,28 @@ public class GlobalImage extends Image implements IImageFilter {
 			} else {
 				return "height-" + device.getCode() + '-' + pageId;
 			}
-		} catch (Exception e) {			
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 
-	public int getWidth(ContentContextBean ctx) {		
+	public int getWidth(ContentContextBean ctx) {
 		String width = properties.getProperty(getWidthKey(ctx));
 		if (width == null) {
 			return -1;
 		} else {
-			return Integer.parseInt(width);	
-		}		
+			return Integer.parseInt(width);
+		}
 	}
-	
+
 	public int getHeight(ContentContextBean ctx) {
 		String height = properties.getProperty(getHeightKey(ctx));
 		if (height == null) {
 			return -1;
-		}		
+		}
 		return Integer.parseInt(height);
-	}	
+	}
 
 	public String getFirstText() {
 		return properties.getProperty("first-text", getLabel());
@@ -1252,7 +1281,8 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 	}
 
-	public void setWidth(ContentContext ctx, int width) throws Exception {		if (getWidth(ctx.getBean()) != width) {
+	public void setWidth(ContentContext ctx, int width) throws Exception {
+		if (getWidth(ctx.getBean()) != width) {
 			properties.setProperty(getWidthKey(ctx.getBean()), "" + width);
 			setModify();
 		}
@@ -1294,7 +1324,7 @@ public class GlobalImage extends Image implements IImageFilter {
 				int intHeight = Integer.parseInt(height);
 				if (intHeight != image.getHeight()) {
 					image.setModify();
-					image.setHeight(ctx,intHeight);
+					image.setHeight(ctx, intHeight);
 				}
 			}
 			if (width != null && width.trim().length() > 0) {
@@ -1379,29 +1409,29 @@ public class GlobalImage extends Image implements IImageFilter {
 		if (!isFloatText(ctx)) {
 			rows = "9";
 		}
-		
+
 		String wysiwygCss = getConfig(ctx).getProperty("wysiwyg-css", null);
 		String jsWysiwygCss = "var wysiwygCss=null;";
 		if (wysiwygCss != null) {
-			jsWysiwygCss = "var wysiwygCss='"+URLHelper.createStaticTemplateURL(ctx, wysiwygCss)+"';";
+			jsWysiwygCss = "var wysiwygCss='" + URLHelper.createStaticTemplateURL(ctx, wysiwygCss) + "';";
 		}
-		
+
 		String fontsize = getConfig(ctx).getProperty("fontsize", null);
 		String jsFontsize = "var fontsize=null;";
-		if(fontsize != null) {
-			jsFontsize = "var fontsize="+fontsize+";";
+		if (fontsize != null) {
+			jsFontsize = "var fontsize=" + fontsize + ";";
 		}
-		
+
 		String format = getConfig(ctx).getProperty("format", null);
 		String jsFormat = "var format=null;";
-		if(format != null) {
-			jsFormat = "var format="+format+";";
+		if (format != null) {
+			jsFormat = "var format=" + format + ";";
 		}
-		
+
 		id = id + StringHelper.getShortRandomId();
 		String[][] paramsLabelText = new String[][] { { "rows", rows }, { "cols", "100" }, { "class", "tinymce-light" }, { "id", id } };
 		out.println(XHTMLHelper.getTextArea(getLabelTextInputName(), getLabel(), paramsLabelText));
-		out.println("<script type=\"text/javascript\">"+jsFormat+jsFontsize+jsWysiwygCss+" function updateWysiwyg"+getId()+"() {console.log('loadwysiwig:"+id+"'); loadWysiwyg('#" + id + "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "', format, fontsize, wysiwygCss)};jQuery(document).ready(updateWysiwyg"+getId()+");</script>");
+		out.println("<script type=\"text/javascript\">" + jsFormat + jsFontsize + jsWysiwygCss + " function updateWysiwyg" + getId() + "() {console.log('loadwysiwig:" + id + "'); loadWysiwyg('#" + id + "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "', format, fontsize, wysiwygCss)};jQuery(document).ready(updateWysiwyg" + getId() + ");</script>");
 		out.println("</div>");
 
 		if (isFloatText(ctx)) {
@@ -1440,8 +1470,9 @@ public class GlobalImage extends Image implements IImageFilter {
 			out.println("</div>");
 		}
 		out.println("</div>");
-		
-		//out.println("<script type=\"text/javascript\">setTimeout(function() { updateWysiwyg"+getId()+"(); }, 1000);</script>");
+
+		// out.println("<script type=\"text/javascript\">setTimeout(function() {
+		// updateWysiwyg"+getId()+"(); }, 1000);</script>");
 
 		out.close();
 		return new String(outStream.toByteArray());
@@ -1455,15 +1486,15 @@ public class GlobalImage extends Image implements IImageFilter {
 			return "" + getWidth(ctx);
 		}
 	}
-	
+
 	@Override
-	public BufferedImage filterImage(ServletContext application, ContentContextBean ctx, BufferedImage image) {	
+	public BufferedImage filterImage(ServletContext application, ContentContextBean ctx, BufferedImage image) {
 		try {
 			Template template = TemplateFactory.getTemplate(application, ctx, getPage());
 			if (template == null || !template.isMailing()) {
 				return image;
 			}
-		} catch (Exception e) { 
+		} catch (Exception e) {
 			e.printStackTrace();
 			return image;
 		}
@@ -1472,7 +1503,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			return image;
 		} else {
 			reloadProperties();
-			if (getHeight(ctx)>0) {
+			if (getHeight(ctx) > 0) {
 				return ImageEngine.resizeWidth(image, getWidth(ctx), false);
 			} else {
 				return ImageEngine.resize(image, getWidth(ctx), getHeight(ctx), null, true);
@@ -1513,21 +1544,21 @@ public class GlobalImage extends Image implements IImageFilter {
 	public boolean isLocal(ContentContext ctx) {
 		return isImported(ctx);
 	}
-	
+
 	@Override
 	public String getErrorMessage(ContentContext ctx) {
-		if (!StringHelper.isEmpty(getLabel())) {			
+		if (!StringHelper.isEmpty(getLabel())) {
 			try {
-				XMLManipulationHelper.searchAllTag("<div>"+getLabel()+"</div>", true);
+				XMLManipulationHelper.searchAllTag("<div>" + getLabel() + "</div>", true);
 			} catch (BadXMLException e) {
 				return Encode.forHtml(e.getMessage());
-			}			
+			}
 		}
 		return null;
 	}
-	
+
 	@Override
-	public String getFontAwesome() {	
+	public String getFontAwesome() {
 		return "picture-o";
 	}
 }
