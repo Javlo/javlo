@@ -241,6 +241,7 @@ public class UserRegistration extends MapComponent implements IAction {
 
 		String emailLogin = rs.getParameter("email-login", null);
 		if (emailLogin != null) {
+			emailLogin = emailLogin.trim();
 			login = emailLogin;
 			email = emailLogin;
 		}
