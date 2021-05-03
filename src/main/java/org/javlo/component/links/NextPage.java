@@ -49,7 +49,7 @@ public class NextPage extends ComplexPropertiesLink {
 		if (!isHidden(ctx)) {
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 			PrintStream out = new PrintStream(outStream);
-			out.println("<a href=\""+nextPage.getUrl()+"\" class=\"btn btn-secondary\">"+ctx.getRequest().getAttribute("label")+"</a>");
+			out.println("<a href=\""+nextPage.getUrl()+"\" class=\"btn btn-primary\">"+ctx.getRequest().getAttribute("label")+"</a>");
 			out.close();
 			return new String(outStream.toByteArray());
 		} else {
