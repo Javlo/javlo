@@ -380,9 +380,9 @@ public class Edit extends AbstractModuleAction {
 			if (user == null) {
 				return false;
 			}
-			if (user.getRoles().contains(AdminUserSecurity.CONTRIBUTOR_ROLE)) {
-				return page.getCreator().equals(user.getLogin());
-			}
+//			if (user.getRoles().contains(AdminUserSecurity.CONTRIBUTOR_ROLE)) {
+//				return page.getCreator().equals(user.getLogin());
+//			}
 			ContentService.getInstance(globalContext);
 			if (page.getEditorRoles().size() > 0) {
 				if (!adminUserSecurity.haveRight(adminUserFactory.getCurrentUser(globalContext, ctx.getRequest().getSession()), AdminUserSecurity.FULL_CONTROL_ROLE)) {
