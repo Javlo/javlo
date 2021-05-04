@@ -204,6 +204,19 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 		return null;
 	}
 
+	
+	public static String performUpdate(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
+		Basket basket = Basket.getInstance(ctx);
+		for (Product p : basket.getProducts()) {
+			String quantity = rs.getParameter("q-"+p.getId());
+			if (StringHelper.isDigit(quantity)) {
+				p.setQuantity(Integer.parseInt(quantity));
+			}
+		}
+		
+		return null;
+	}
+
 	public static String performBack(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		Basket basket = Basket.getInstance(ctx);
 		if (basket.getStep() > 1) {
