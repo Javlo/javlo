@@ -82,6 +82,7 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 		ctx.getRequest().setAttribute("bancontact", isBancontact(ctx));
 
 		Basket basket = Basket.getInstance(ctx);
+		basket.setLock(true);
 		// bancontact
 		if (isBancontact(ctx) && basket.getStep() == Basket.ORDER_STEP) {
 			synchronized (Stripe.class) {

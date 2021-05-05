@@ -3,10 +3,13 @@
  */
 package org.javlo.helper;
 
+import java.beans.PropertyVetoException;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.logging.Logger;
@@ -181,6 +184,19 @@ public class DebugHelper {
 		}
 	}
 	
+	/**
+	 * return the caller of the current method
+	 * @return
+	 */
+	public static String getSpecificCaller(int count) {
+		Exception e = new Exception();
+		if (e.getStackTrace().length>count) {
+			return e.getStackTrace()[count].toString();
+		} else { 
+			return "unknow";
+		}
+	}
+	
 	public static String getCaller(int count) {
 		Exception e = new Exception();		
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -190,6 +206,18 @@ public class DebugHelper {
 		}
 		out.close();
 		return new String(outStream.toByteArray());
+	}
+	
+	public static void test() {
+		System.out.println(DebugHelper.getSpecificCaller(3));
+	}
+	
+	public static void test2() {
+		test();
+	}
+
+	public static void main(String[] args) throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException, PropertyVetoException, ParseException {
+		test2();
 	}
 
 }

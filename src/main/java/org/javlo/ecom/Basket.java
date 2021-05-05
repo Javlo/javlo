@@ -23,7 +23,7 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.ecom.DeliveryPrice;
 
 public class Basket implements Serializable {
-	
+
 	private static Logger logger = Logger.getLogger(Basket.class.getName());
 
 	public static final int START_STEP = 1;
@@ -82,7 +82,7 @@ public class Basket implements Serializable {
 	private double userReduction = 0;
 	private boolean noShipping = false;
 	private String componentId;
-	
+
 	private String billingName;
 	private String billingAddress;
 	private String billingPostcode;
@@ -90,10 +90,12 @@ public class Basket implements Serializable {
 	private String billingCountry;
 	private String billingVat;
 
+	private boolean lock = false;
+
 	private int step = START_STEP;
 
 	public static final String KEY = "basket";
-	
+
 	public static final String GHOST_BASKET_KEY = "ghostBasket";
 
 	public static class PayementServiceBean {
@@ -123,7 +125,7 @@ public class Basket implements Serializable {
 	public static void setInstance(ContentContext ctx, Basket basket) {
 		ctx.getRequest().getSession().setAttribute(KEY, basket);
 	}
-	
+
 	public static String renderPrice(ContentContext ctx, double price, String currency) {
 		return renderPrice(ctx.getRequestContentLanguage(), price, currency);
 	}
@@ -205,7 +207,7 @@ public class Basket implements Serializable {
 			e.printStackTrace();
 			return null;
 		}
-		
+
 	}
 
 	public void reserve(ContentContext ctx) {
@@ -220,16 +222,18 @@ public class Basket implements Serializable {
 	}
 
 	public void addProduct(Product product) {
-		setValid(false);
-		step = START_STEP;
-		for (Product item : products) {
-			if (item.getName().equals(product.getName()) && item.getPrice() == product.getPrice()) {
-				item.setQuantity(item.getQuantity() + product.getQuantity());
-				return;
+		if (!isLock()) {
+			setValid(false);
+			step = START_STEP;
+			for (Product item : products) {
+				if (item.getName().equals(product.getName()) && item.getPrice() == product.getPrice()) {
+					item.setQuantity(item.getQuantity() + product.getQuantity());
+					return;
+				}
 			}
+			products.add(product);
+			resetSecurityKey();
 		}
-		products.add(product);
-		resetSecurityKey();
 	}
 
 	public void removeProduct(String id) {
@@ -460,7 +464,7 @@ public class Basket implements Serializable {
 		this.info = info;
 	}
 
-	public void setProducts(List<Product> products) {		
+	public void setProducts(List<Product> products) {
 		this.products = products;
 		resetSecurityKey();
 	}
@@ -639,7 +643,7 @@ public class Basket implements Serializable {
 			out.println("   " + product);
 		}
 		out.println("");
-		out.println("TOTAL : "+total);
+		out.println("TOTAL : " + total);
 		out.println("Shiping VAT : " + getDelivery(null, valid));
 		out.println("");
 		out.println("Current Time : " + StringHelper.renderSortableTime(new Date()));
@@ -780,7 +784,7 @@ public class Basket implements Serializable {
 	public Date getDeliveryDate() {
 		return deliveryDate;
 	}
-	
+
 	public String getDeliveryInputDate() throws ParseException {
 		return StringHelper.renderInputDate(deliveryDate);
 	}
@@ -788,7 +792,7 @@ public class Basket implements Serializable {
 	public void setDeliveryDate(Date deliveryDate) {
 		this.deliveryDate = deliveryDate;
 	}
-	
+
 	private void resetSecurityKey() {
 		securityKey = StringHelper.getRandomIdBase64();
 	}
@@ -915,6 +919,14 @@ public class Basket implements Serializable {
 
 	public void setInvoiceHash(String invoiceHash) {
 		this.invoiceHash = invoiceHash;
+	}
+
+	public boolean isLock() {
+		return lock;
+	}
+
+	public void setLock(boolean lock) {
+		this.lock = lock;
 	}
 
 }

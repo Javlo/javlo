@@ -29,11 +29,11 @@ import org.javlo.user.UserInfo;
  * @author pvandermaesen
  */
 public class EditBasketComponent extends AbstractPropertiesComponent implements IAction {
-	
+
 	private static final String PROMO_VALUE = "promo-value";
 	private static final String PROMO_KEY = "promo-key";
 	private static final String SHIPPING_MESSAGE = "shipping-message";
-	
+
 	static final List<String> FIELDS = Arrays.asList(new String[] { SHIPPING_MESSAGE, PROMO_KEY, PROMO_VALUE });
 
 	@Override
@@ -67,16 +67,16 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 			}
 		}
 
-		ctx.getRequest().setAttribute("reduction", reduction);		
+		ctx.getRequest().setAttribute("reduction", reduction);
 		if (basket.getUserReduction() > 0) {
-			ctx.getRequest().setAttribute("userReduction",  '-'+StringHelper.renderDoubleAsPercentage(basket.getUserReduction()));
+			ctx.getRequest().setAttribute("userReduction", '-' + StringHelper.renderDoubleAsPercentage(basket.getUserReduction()));
 		}
 		ctx.getRequest().setAttribute("deliveryDates", ctx.getGlobalContext().getStaticConfig().getEcomLister().getDeliveryDate(ctx, basket));
 		ctx.getRequest().setAttribute("basket", basket);
 		ctx.getRequest().setAttribute("totalNoVAT", basket.getTotalString(ctx, false));
 		ctx.getRequest().setAttribute("total", basket.getTotalString(ctx, true));
 		ctx.getRequest().setAttribute("value", StringHelper.renderDouble(basket.getTotal(ctx, true), 2));
-		ctx.getRequest().setAttribute("tax", StringHelper.renderDouble(basket.getTotal(ctx, true)-basket.getTotal(ctx, false), 2));
+		ctx.getRequest().setAttribute("tax", StringHelper.renderDouble(basket.getTotal(ctx, true) - basket.getTotal(ctx, false), 2));
 		ctx.getRequest().setAttribute("promo", !StringHelper.isEmpty(getFieldValue(PROMO_KEY)));
 		if (basket.getDeliveryZone() != null) {
 			double delivery = basket.getDelivery(ctx, true);
@@ -103,16 +103,16 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 
 	public static String performConfirm(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		Basket basket = Basket.getInstance(ctx);
-		String promoCode = ctx.getRequest().getParameter("promo-code");		
+		String promoCode = ctx.getRequest().getParameter("promo-code");
 		if (promoCode != null && promoCode.trim().length() > 0) {
-			EditBasketComponent comp = (EditBasketComponent)ComponentHelper.getComponentFromRequest(ctx);
-			if (promoCode.equals(comp.getFieldValue(PROMO_KEY))) {				
+			EditBasketComponent comp = (EditBasketComponent) ComponentHelper.getComponentFromRequest(ctx);
+			if (promoCode.equals(comp.getFieldValue(PROMO_KEY))) {
 				basket.setStep(Basket.REGISTRATION_STEP);
-				basket.setUserReduction(Double.parseDouble(comp.getFieldValue(PROMO_VALUE))/100);
+				basket.setUserReduction(Double.parseDouble(comp.getFieldValue(PROMO_VALUE)) / 100);
 			} else {
 				return "wrong promo code.";
-			}			
-		} else {			
+			}
+		} else {
 			basket.setStep(Basket.REGISTRATION_STEP);
 		}
 		return null;
@@ -134,7 +134,7 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 
 		String vta = rs.getParameter("vat", "").trim();
 		String company = rs.getParameter("organization", "").trim();
-		
+
 		basket.setFirstName(firstName);
 		basket.setLastName(lastName);
 		basket.setContactEmail(email);
@@ -147,9 +147,9 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 		basket.setVATNumber(vta);
 		basket.setOrganization(company);
 		basket.setDeliveryInstructions(rs.getParameter("deliveryInstructions"));
-		basket.setGiftMessage(rs.getParameter("giftMessage"));		
+		basket.setGiftMessage(rs.getParameter("giftMessage"));
 		basket.setNoShipping(noShipping);
-		
+
 		/** billing **/
 		basket.setBillingName(rs.getParameter("billingName"));
 		basket.setBillingAddress(rs.getParameter("billingAddress"));
@@ -157,9 +157,7 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 		basket.setBillingCountry(rs.getParameter("billingCountry"));
 		basket.setBillingPostcode(rs.getParameter("billingPostcode"));
 		basket.setBillingVat(rs.getParameter("billingVat"));
-		
-		
-		
+
 		if (!StringHelper.isEmpty(rs.getParameter("deliveryDate"))) {
 			try {
 				basket.setDeliveryDate(StringHelper.parseInputDate(rs.getParameter("deliveryDate")));
@@ -167,14 +165,14 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 				e.printStackTrace();
 			}
 		}
-		
+
 		if (rs.getParameter("back", null) != null) {
 			if (basket.getStep() > 1) {
 				basket.setStep(basket.getStep() - 1);
 			}
 			return null;
 		}
-		
+
 		EcomStatus status = ctx.getGlobalContext().getStaticConfig().getEcomLister().onConfirmBasket(ctx, basket);
 		if (status.isError()) {
 			return status.getMessage();
@@ -204,16 +202,16 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 		return null;
 	}
 
-	
 	public static String performUpdate(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		Basket basket = Basket.getInstance(ctx);
-		for (Product p : basket.getProducts()) {
-			String quantity = rs.getParameter("q-"+p.getId());
-			if (StringHelper.isDigit(quantity)) {
-				p.setQuantity(Integer.parseInt(quantity));
+		if (!basket.isLock()) {
+			for (Product p : basket.getProducts()) {
+				String quantity = rs.getParameter("q-" + p.getId());
+				if (StringHelper.isDigit(quantity)) {
+					p.setQuantity(Integer.parseInt(quantity));
+				}
 			}
 		}
-		
 		return null;
 	}
 
@@ -239,11 +237,10 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 	public List<String> getFields(ContentContext ctx) throws Exception {
 		return FIELDS;
 	}
-	
+
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
 	}
-
 
 }
