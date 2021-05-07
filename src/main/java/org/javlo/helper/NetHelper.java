@@ -18,6 +18,7 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.NoRouteToHostException;
+import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
@@ -85,7 +86,7 @@ import net.sf.uadetector.service.UADetectorServiceFactory;
 public class NetHelper {
 
 	public static final String JAVLO_USER_AGENT = "Mozilla/5.0 bot Javlo/" + IVersion.VERSION;
-	
+
 	public static final String MOZILLA_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:63.0) Gecko/20100101 Firefox/63.0";
 
 	private static boolean INIT_HTTPS = false;
@@ -126,7 +127,7 @@ public class NetHelper {
 	}
 
 	public static String readPageGet(URLConnection conn, boolean checkReturnCode) throws Exception {
-//		nocheckCertificatHttps();
+		// nocheckCertificatHttps();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		InputStream in = null;
 		try {
@@ -440,10 +441,10 @@ public class NetHelper {
 			if (userToken != null) {
 				url = new URL(URLHelper.addParam(url.toString(), IUserFactory.TOKEN_PARAM, userToken));
 			}
-			
+
 			String query = StringHelper.neverNull(url.getQuery(), "");
 			url = removeParams(url);
-			
+
 			if (mailing && (url.getQuery() == null || !url.getQuery().contains(ContentContext.FORCE_ABSOLUTE_URL))) {
 				url = new URL(URLHelper.addParam(url.toString(), ContentContext.FORCE_ABSOLUTE_URL, "true"));
 			}
@@ -561,7 +562,7 @@ public class NetHelper {
 		conn.connect();
 		return conn.getDate();
 	}
-	
+
 	public static void setJsonContentType(HttpServletResponse response) {
 		response.setContentType("application/json");
 	}
@@ -753,8 +754,6 @@ public class NetHelper {
 		}
 		return userAgent.contains("robo");
 	}
-	
-	
 
 	public static List<VisualResource> extractImage(URL inURL, String content, boolean needSize) {
 		if (content == null) {
@@ -1752,6 +1751,14 @@ public class NetHelper {
 
 	}
 
+	public static boolean testPort(String host, int port) {
+		try (Socket ignored = new Socket(host, port)) {
+			return false;
+		} catch (IOException ignored) {
+			return true;
+		}
+	}
+
 	public static boolean insertEtag(ContentContext ctx, MenuElement page) throws Exception {
 		if (page == null) {
 			return false;
@@ -1814,7 +1821,8 @@ public class NetHelper {
 	}
 
 	public static void main(String[] args) throws Exception {
-		System.out.println(">>>>>>>>> NetHelper.main : mobile : " + isMobile("Mozilla/5.0 (Android 8.0.0; Mobile; rv:62.0) Gecko/62.0 Firefox/62.0")); // TODO: remove debug trace
+		System.out.println(">>> localhost 8080 > "+testPort("localhost", 8080));
+		System.out.println(">>> localhost 80   > "+testPort("localhost", 80));
 	}
 
 }

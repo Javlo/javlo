@@ -6,6 +6,7 @@ package org.javlo.component.ecom;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.javlo.actions.EcomStatus;
@@ -17,6 +18,7 @@ import org.javlo.ecom.Basket;
 import org.javlo.ecom.Product;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.TimeHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
@@ -160,6 +162,18 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 
 		if (!StringHelper.isEmpty(rs.getParameter("deliveryDate"))) {
 			try {
+				
+				Date deliveryDate = StringHelper.parseInputDate(rs.getParameter("deliveryDate"));
+				boolean found = false;
+				for (Date possibleDate : ctx.getGlobalContext().getStaticConfig().getEcomLister().getDeliveryDate(ctx, basket)) {
+					if (TimeHelper.isEqualForDay(possibleDate, deliveryDate)) {
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					return i18nAccess.getViewText("ecom.error.bad-delivery-date");
+				}
 				basket.setDeliveryDate(StringHelper.parseInputDate(rs.getParameter("deliveryDate")));
 			} catch (ParseException e) {
 				e.printStackTrace();
