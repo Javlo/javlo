@@ -1,8 +1,10 @@
 package org.javlo.component.web2.survey;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.javlo.helper.StringHelper;
 import org.javlo.utils.Cell;
@@ -10,6 +12,8 @@ import org.javlo.utils.NeverEmptyMap;
 import org.javlo.utils.XLSTools;
 
 public class SurveyAverage {
+	
+	private static Logger logger = Logger.getLogger(SurveyAverage.class.getName());
 
 	public static String extractKey(String title) {
 		title = title.substring(title.indexOf('_') + 1);
@@ -17,6 +21,12 @@ public class SurveyAverage {
 	}
 
 	public static Map<String, Double> average(Cell[][] cells) {
+
+		if (cells.length == 0 || cells[0].length == 0) {
+			logger.warning("empty array.");
+			return Collections.EMPTY_MAP;
+		}
+
 		Map<String, Integer> total = new NeverEmptyMap<>(String.class, Integer.class);
 		Map<String, Integer> count = new NeverEmptyMap<>(String.class, Integer.class);
 		for (int i = 0; i < cells[0].length; i++) {
@@ -34,6 +44,7 @@ public class SurveyAverage {
 		for (String key : total.keySet()) {
 			out.put(key.trim().toLowerCase(), (double) total.get(key) / (double) count.get(key));
 		}
+
 		return out;
 	}
 

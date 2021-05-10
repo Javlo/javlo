@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -56,9 +57,31 @@ public class XLSTools {
 		}
 		return out;
 	}
-	
+
 	public static Cell[][] getArray(ContentContext ctx, File file) throws Exception {
 		return getArray(ctx, file, null);
+	}
+
+	public static Cell[][] getArray(ContentContext ctx, URL url) throws Exception {
+		return getArray(ctx, url, null);
+	}
+
+	public static Cell[][] getArray(ContentContext ctx, URL url, String sheetNames) throws Exception {
+		Cell[][] outArray = null;
+		if (outArray == null) {
+			InputStream in = url.openStream();
+			try {
+				if (StringHelper.getFileExtension(url.getFile()).equalsIgnoreCase("xlsx")) {
+					outArray = getXLSXArray(ctx, in, sheetNames);
+				} else if (StringHelper.getFileExtension(url.getFile()).equalsIgnoreCase("xls")) {
+					logger.severe("bad file format : xls work only with file and not with url.");
+				}
+				optimizeRowSpan(outArray);
+			} finally {
+				in.close();
+			}
+		}
+		return outArray;
 	}
 
 	public static Cell[][] getArray(ContentContext ctx, File file, String sheetNames) throws Exception {
@@ -202,37 +225,37 @@ public class XLSTools {
 		}
 		return outArray;
 	}
-	
+
 	public static String cleanSheetName(String sheetName) {
 		if (sheetName != null) {
 			return WorkbookUtil.createSafeSheetName(sheetName);
 		} else {
 			return null;
 		}
-		
+
 	}
-	
+
 	public static Cell[][] getXLSXArray(ContentContext ctx, File xslxFile, String sheetName) throws Exception {
-		InputStream in=null;
+		InputStream in = null;
 		try {
 			in = new FileInputStream(xslxFile);
-			return getXLSXArray(ctx, in, sheetName);			
+			return getXLSXArray(ctx, in, sheetName);
 		} finally {
 			ResourceHelper.closeResource(in);
 		}
 	}
 
-	public static Cell[][] getXLSXArray(ContentContext ctx, InputStream in, String sheetName) throws Exception {		
-		XSSFWorkbook workbook=null;
+	public static Cell[][] getXLSXArray(ContentContext ctx, InputStream in, String sheetName) throws Exception {
+		XSSFWorkbook workbook = null;
 		try {
 			workbook = new XSSFWorkbook(in);
-			
+
 			int sheetIndex = 0;
 			if (sheetName != null) {
-				sheetName = cleanSheetName(sheetName);				
+				sheetName = cleanSheetName(sheetName);
 				sheetIndex = workbook.getSheetIndex(sheetName);
 			}
-			if (sheetIndex<0) {
+			if (sheetIndex < 0) {
 				return null;
 			}
 			XSSFSheet sheet = workbook.getSheetAt(sheetIndex);
@@ -278,7 +301,7 @@ public class XLSTools {
 			}
 
 			return outArray;
-		} finally {			
+		} finally {
 			if (workbook != null) {
 				workbook.close();
 			}
@@ -319,16 +342,16 @@ public class XLSTools {
 		HSSFWorkbook workbook = null;
 		try {
 			workbook = new HSSFWorkbook(in);
-			
+
 			int sheetIndex = 0;
 			if (sheetName != null) {
 				sheetName = cleanSheetName(sheetName);
 				sheetIndex = workbook.getSheetIndex(sheetName);
 			}
-			if (sheetIndex<0) {
+			if (sheetIndex < 0) {
 				return null;
 			}
-			
+
 			HSSFSheet sheet = workbook.getSheetAt(sheetIndex);
 
 			Iterator<Row> rowIterator = sheet.iterator();
@@ -383,9 +406,9 @@ public class XLSTools {
 	}
 
 	protected static String renderCell(String content) {
-//		if (content.trim().length() == 0) {
-//			content = "&nbsp;";
-//		}
+		// if (content.trim().length() == 0) {
+		// content = "&nbsp;";
+		// }
 		return XHTMLHelper.autoLink(content);
 	}
 
@@ -419,9 +442,9 @@ public class XLSTools {
 			workbook.close();
 		}
 	}
-	
+
 	public static void writeXLSX(Cell[][] array, OutputStream out) throws IOException {
-		writeXLSX(array,out,null,null);
+		writeXLSX(array, out, null, null);
 	}
 
 	public static void writeXLSX(Cell[][] array, OutputStream out, File sourceFile, String sheetName) throws IOException {
@@ -434,17 +457,17 @@ public class XLSTools {
 				workbook = new XSSFWorkbook(in);
 			} finally {
 				in.close();
-			}				
+			}
 		}
-		
+
 		try {
 			XSSFSheet sheet;
-			if (sheetName == null) {			
+			if (sheetName == null) {
 				sheet = workbook.createSheet();
 			} else {
 				sheetName = cleanSheetName(sheetName);
 				int sheedIndex = workbook.getSheetIndex(sheetName);
-				if (sheedIndex>=0) {
+				if (sheedIndex >= 0) {
 					workbook.removeSheetAt(sheedIndex);
 				}
 				sheet = workbook.createSheet(sheetName);
