@@ -45,7 +45,6 @@ public class ListSurvey extends AbstractSurvey implements IAction {
 			setFieldValue(SESSION_NAME, StringHelper.createFileName(getPage().getParent().getTitle(ctx)));
 		}
 		return out;
-		
 	}
 	
 	@Override
