@@ -114,7 +114,7 @@ public class StringHelper {
 	public static final String[][] TXT2HTML = { { " ?", "&nbsp;?" }, { " !", "&nbsp;!" }, { "\u00c1", "&Aacute;" }, { "\u00e1", "&aacute;" }, { "\u00c0", "&Agrave;" }, { "\u00e0", "&agrave;" }, { "\u00e7", "&ccedil;" }, { "\u00c7", "&Ccedil;" }, { "\u00c9", "&Eacute;" }, { "\u00e9", "&eacute;" }, { "\u00c8", "&Egrave;" }, { "\u00e8", "&egrave;" }, { "\u00ca", "&Ecirc;" }, { "\u00ea", "&ecirc;" }, { "\u00cf", "&Iuml;" }, { "\u00ef", "&iuml;" }, { "\u00f9", "&ugrave;" }, { "\u00d9", "&Ugrave;" }, { "\u2019", "'" }, { "\u00D6", "&Ouml;" }, { "\u00F6", "&ouml;" } };
 
 	public static final String RFC822DATEPATTERN = "EEE', 'dd' 'MMM' 'yyyy' 'HH:mm:ss' 'Z";
-	
+
 	public static SimpleDateFormat RFC822DATEFORMAT = new SimpleDateFormat(RFC822DATEPATTERN, Locale.US);
 
 	private static final String EU_ACCEPTABLE_CHAR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.\u0443\u0435\u0438\u0448\u0449\u043a\u0441\u0434\u0437\u0446\u044c\u044f\u0430\u043e\u0436\u0433\u0442\u043d\u0432\u043c\u0447\u044e\u0439\u044a\u044d\u0444\u0445\u043f\u0440\u043b\u0431\u044b\u0423\u0415\u0418\u0428\u0429\u041a\u0421\u0414\u0417\u0426\u042c\u042f\u0410\u041e\u0416\u0413\u0422\u041d\u0412\u041c\u0427\u042e\u0419\u042a\u042d\u0424\u0425\u041f\u0420\u041b\u0411\u03c2\u03b5\u03c1\u03c4\u03c5\u03b8\u03b9\u03bf\u03c0\u03b1\u03c3\u03b4\u03c6\u03b3\u03b7\u03be\u03ba\u03bb\u03b6\u03c7\u03c8\u03c9\u03b2\u03bd\u03bc\u0395\u03a1\u03a4\u03a5\u0398\u0399\u039f\u03a0\u0391\u03a3\u03a6\u0393\u0397\u039e\u039a\u039b\u0396\u03a7\u03a8\u03a9\u0392\u039d\u039c";
@@ -488,7 +488,7 @@ public class StringHelper {
 			return outStr.toString();
 		}
 	}
-	
+
 	public static String doubleQutotes(String text) {
 		if (text == null) {
 			return null;
@@ -1450,7 +1450,7 @@ public class StringHelper {
 			return countSep < 2;
 		}
 	}
-	
+
 	public static boolean isHTMLText(String text) {
 		if (text == null) {
 			return false;
@@ -1459,16 +1459,6 @@ public class StringHelper {
 			Matcher matcher = pattern.matcher(text);
 			return matcher.find();
 		}
-	}
-	
-	public static void main(String[] args) {
-		LocalDate  date = LocalDate.now();
-		System.out.println(renderDateAsRFC822String(date));
-		
-//		Set<String> allZones = ZoneId.getAvailableZoneIds();
-//		for (String z : allZones) {
-//			System.out.println(z);
-//		}
 	}
 
 	/**
@@ -1926,7 +1916,7 @@ public class StringHelper {
 	public static Date parseDate(String inDate) throws ParseException {
 		return parseDate(inDate, "dd/MM/yyyy");
 	}
-	
+
 	public static Date parseExcelDate(String inDate) throws ParseException {
 		return parseDate(inDate, "MM/dd/yy");
 	}
@@ -1978,7 +1968,7 @@ public class StringHelper {
 	public static String renderInputDate(Date inDate) throws ParseException {
 		return renderDate(inDate, "yyyy-MM-dd");
 	}
-	
+
 	public static String renderInputDate(LocalDate inDate) throws ParseException {
 		return renderDate(inDate, "yyyy-MM-dd");
 	}
@@ -2045,6 +2035,54 @@ public class StringHelper {
 
 	public static Date smartParseDate(String inDate) {
 		return smartParseDate(inDate, "en");
+	}
+
+	public static void main(String[] args) {
+		System.out.println(smartParseTime("10:15"));
+		System.out.println(smartParseTime("6:15"));
+		System.out.println(smartParseTime("6h"));
+		System.out.println(smartParseTime("6h15"));
+		System.out.println(smartParseTime("06h15"));
+	}
+
+	public static LocalTime smartParseTime(String inTime) {
+		try {
+			return parseLocalTime(inTime, "HH:mm");
+		} catch (Exception e) {
+			try {
+				return parseLocalTime(inTime, "H:mm");
+			} catch (Exception e1) {
+				try {
+					return parseLocalTime(inTime, "HH:mm:ss");
+				} catch (Exception e2) {
+					try {
+						return parseLocalTime(inTime, "HH:mm:ss.SSS");
+					} catch (Exception e3) {
+						try {
+							return parseLocalTime(inTime, "HH'h'mm");
+						} catch (Exception e4) {
+							try {
+								return parseLocalTime(inTime, "H'h'mm");
+							} catch (Exception e5) {
+								try {
+									return parseLocalTime(inTime, "H'h'");
+								} catch (Exception e6) {
+									try {
+										return parseLocalTime(inTime, "H'h'm");
+									} catch (Exception e7) {
+										try {
+											return parseLocalTime(inTime, "H");
+										} catch (Exception e8) {
+											return parseLocalTime(inTime, "HH");
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	public static Date smartParseDate(String inDate, String lang) {
@@ -2489,7 +2527,7 @@ public class StringHelper {
 		}
 		return renderDate(date, "dd/MM/yyyy");
 	}
-	
+
 	public static String renderDate(LocalDateTime date, String pattern) {
 		if (date == null) {
 			return null;
@@ -2497,7 +2535,7 @@ public class StringHelper {
 		if (pattern == null) {
 			return renderDateAndTime(date);
 		}
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern); 
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
 		return formatter.format(date);
 	}
 
@@ -2511,7 +2549,7 @@ public class StringHelper {
 		SimpleDateFormat format = new SimpleDateFormat(pattern);
 		return format.format(date);
 	}
-	
+
 	public static String renderDate(LocalTime time, String pattern) {
 		if (time == null) {
 			return null;
@@ -2519,11 +2557,11 @@ public class StringHelper {
 		if (pattern == null) {
 			return renderTime(time);
 		}
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern); 
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
 		return formatter.format(time);
 
 	}
-	
+
 	public static String renderDate(LocalDate date) {
 		if (date == null) {
 			return null;
@@ -2538,7 +2576,7 @@ public class StringHelper {
 		if (pattern == null) {
 			return renderDate(date);
 		}
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern); 
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
 		return formatter.format(date);
 	}
 
@@ -2591,16 +2629,16 @@ public class StringHelper {
 		}
 		return RFC822DATEFORMAT.format(date);
 	}
-	
+
 	public static String renderDateAsRFC822String(LocalDateTime date) {
 		if (date == null) {
 			return null;
 		}
-		ZoneId zoneId = ZoneId.of( StaticConfig.ZONE_DATE_TIME );
-		ZonedDateTime zdt = date.atZone( zoneId );
+		ZoneId zoneId = ZoneId.of(StaticConfig.ZONE_DATE_TIME);
+		ZonedDateTime zdt = date.atZone(zoneId);
 		return renderDateAsRFC822String(zdt);
 	}
-	
+
 	public static String renderDateAsRFC822String(ZonedDateTime date) {
 		if (date == null) {
 			return null;
@@ -2608,7 +2646,7 @@ public class StringHelper {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(RFC822DATEPATTERN).withLocale(Locale.ENGLISH);
 		return date.format(formatter);
 	}
-	
+
 	public static String renderDateAsRFC822String(LocalDate date) {
 		if (date == null) {
 			return null;
@@ -2791,14 +2829,14 @@ public class StringHelper {
 		}
 		return renderDate(date, "dd/MM/yyyy HH:mm:ss");
 	}
-	
+
 	public static String renderDateAndTime(LocalDateTime date) {
 		if (date == null) {
 			return null;
 		}
 		return renderDate(date, "dd/MM/yyyy HH:mm:ss");
 	}
-	
+
 	public static String renderTime(LocalTime time) {
 		if (time == null) {
 			return null;
@@ -4496,11 +4534,10 @@ public class StringHelper {
 	public static String toJsonValue(String data) {
 		return new Gson().toJson(data);
 	}
-	
+
 	public static String camelToSnake(final String camelStr) {
 		String ret = camelStr.replaceAll("([A-Z]+)([A-Z][a-z])", "$1_$2").replaceAll("([a-z])([A-Z])", "$1_$2");
 		return ret.toLowerCase();
 	}
-
 
 }

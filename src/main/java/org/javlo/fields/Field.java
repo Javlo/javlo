@@ -727,6 +727,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	
 	public int getWidthEdit() {
 		String widthEdit = getPropertyValue("width-edit", null);
+		widthEdit = StringHelper.trimAndNullify(widthEdit);
 		if (widthEdit == null || !StringHelper.isDigit(widthEdit)) {
 			return 12;
 		} else {
