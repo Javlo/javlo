@@ -349,7 +349,6 @@ public class InfoBean {
 			e.printStackTrace();
 			return null;
 		}
-
 	}
 
 	public String getDate() {

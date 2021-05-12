@@ -2,6 +2,8 @@ package org.javlo.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -30,6 +32,8 @@ import org.javlo.context.ContentContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
+
+import net.sf.jasperreports.engine.export.oasis.CellStyle;
 
 public class XLSTools {
 
@@ -245,6 +249,64 @@ public class XLSTools {
 		}
 	}
 
+	public static Map<String, Cell[][]> getArrayXSLXAllSheet(ContentContext ctx, InputStream in) throws IOException {
+		XSSFWorkbook workbook = null;
+		Map<String, Cell[][]> out = new HashMap<>();
+		try {
+			workbook = new XSSFWorkbook(in);
+			for (int sheetIndex = 0; sheetIndex < workbook.getNumberOfSheets(); sheetIndex++) {
+				String sheetName = cleanSheetName(workbook.getSheetName(sheetIndex));
+				XSSFSheet sheet = workbook.getSheetAt(sheetIndex);
+				Iterator<Row> rowIterator = sheet.iterator();
+				int w = 0;
+				int h = 0;
+				while (rowIterator.hasNext()) {
+					h++;
+					Row row = rowIterator.next();
+					if (row.getLastCellNum() > w) {
+						w = row.getLastCellNum();
+					}
+				}
+
+				Cell[][] outArray = new Cell[h][];
+				for (int y = 0; y < h; y++) {
+					outArray[y] = new Cell[w];
+					for (int x = 0; x < w; x++) {
+						outArray[y][x] = new Cell(null, null, outArray, x, y);
+						if (sheet.getRow(y) != null && sheet.getRow(y).getCell(x) != null) {
+							if (sheet.getRow(y).getCell(x).getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
+								outArray[y][x].setDoubleValue(sheet.getRow(y).getCell(x).getNumericCellValue());
+							}
+							outArray[y][x].setValue(renderCell(readExcelCell(ctx, sheet.getRow(y).getCell(x))));
+						}
+					}
+				}
+
+				for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
+					CellRangeAddress cellRange = sheet.getMergedRegion(i);
+					for (int x = cellRange.getFirstColumn(); x <= cellRange.getLastColumn(); x++) {
+						for (int y = cellRange.getFirstRow(); y <= cellRange.getLastRow(); y++) {
+							if (x > cellRange.getFirstColumn()) {
+								outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].setColSpan(outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].getColSpan() + 1);
+								outArray[y][x] = null;
+							}
+							if (y > cellRange.getFirstRow()) {
+								outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].setRowSpan(outArray[cellRange.getFirstRow()][cellRange.getFirstColumn()].getRowSpan() + 1);
+								outArray[y][x] = null;
+							}
+						}
+					}
+				}
+				out.put(sheetName, outArray);
+			}
+		} finally {
+			if (workbook != null) {
+				workbook.close();
+			}
+		}
+		return out;
+	}
+
 	public static Cell[][] getXLSXArray(ContentContext ctx, InputStream in, String sheetName) throws Exception {
 		XSSFWorkbook workbook = null;
 		try {
@@ -447,6 +509,43 @@ public class XLSTools {
 		writeXLSX(array, out, null, null);
 	}
 
+	public static void writeXLSX(Map<String, Cell[][]> arrays, OutputStream out) throws IOException {
+		XSSFWorkbook workbook = new XSSFWorkbook();;
+		try {
+			for (Map.Entry<String, Cell[][]> scheets : arrays.entrySet()) {
+				String sheetName = scheets.getKey();
+				XSSFSheet sheet;
+				sheetName = cleanSheetName(sheetName);
+				sheet = workbook.createSheet(sheetName);
+				int rowNum = 0;
+				for (Cell[] row : scheets.getValue()) {
+					XSSFRow excelRow = sheet.createRow(rowNum);
+					rowNum++;
+					int cellNum = 0;
+					for (Cell cell : row) {
+						XSSFCell excelCell = excelRow.createCell(cellNum);
+						if (cell == null) {
+							excelCell.setCellType(HSSFCell.CELL_TYPE_BLANK);
+						} else {
+							try {
+								excelCell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
+								excelCell.setCellValue(Long.parseLong(cell.getValue()));
+							} catch (NumberFormatException e) {
+								excelCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+								excelCell.setCellValue(cell.getValue());
+							}
+						}
+						cellNum++;
+					}
+				}
+			}
+			workbook.write(out);
+		} finally {
+			workbook.close();
+		}
+
+	}
+
 	public static void writeXLSX(Cell[][] array, OutputStream out, File sourceFile, String sheetName) throws IOException {
 		XSSFWorkbook workbook;
 		if (sourceFile == null || !sourceFile.exists() || sourceFile.getTotalSpace() == 0) {
@@ -499,25 +598,19 @@ public class XLSTools {
 		}
 	}
 
-	public static void main(String[] args) {
-		// File test = new File("C:/trans/member.csv");
-		//
-		//
-		//
-		// try {
-		// CSVFactory csvFactory = new CSVFactory(test);
-		// FileOutputStream out = new FileOutputStream(new
-		// File("c:/trans/out.xlsx"));
-		// XLSTools.writeXLSX(XLSTools.getCellArray(csvFactory.getArray()),
-		// out);
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
-
-		String value = "143152014916634422045";
-		System.out.println("***** XLSTools.main : long = " + Long.decode(value)); // TODO:
-																					// remove
-																					// debug
-																					// trace
+	public static void main(String[] args) throws Exception {
+		Cell[][] testArray = new Cell[2][];
+		testArray[0] = new Cell[2];
+		testArray[1] = new Cell[2];
+		testArray[0][0] = new Cell("test 0 0", null, testArray, 0, 0);
+		testArray[1][0] = new Cell("test 1 0", null, testArray, 1, 0);
+		testArray[0][1] = new Cell("test 0 1", null, testArray, 0, 1);
+		testArray[1][1] = new Cell("test 1 0", null, testArray, 1, 0);
+		Map<String,Cell[][]> dataMap = new HashMap<>();
+		dataMap.put("test sheet", testArray);
+		dataMap.put("test sheet 2", testArray);
+		OutputStream out = new FileOutputStream("c:/trans/out_test_multisheet.xlsx");
+		writeXLSX(dataMap, out);
+		out.close();
 	}
 }
