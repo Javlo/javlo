@@ -3,11 +3,11 @@
 <c:if test="${basket.step==3 || !contentContext.asViewMode}">
   <button id="stripe-checkout-button-${compid}"
   class="btn btn-primary btn-stripe btn-pay btn-cc mt-3 mb-3"
-  ${basket.step!=3?'disabled':''}>${vi18n['ecom.pay.cc']}</button>
+  ${basket.step!=3?'disabled':''}>${vi18n['ecom.pay.cc']}<span class="pay-obligation">${vi18n['ecom.pay.obligation']}</span></button>
   
   <button id="stripe-checkout-button-bancontact-${compid}"
   class="btn btn-primary btn-stripe btn-pay btn-bancontact mt-3 mb-3"
-  ${basket.step!=3?'disabled':''}>${vi18n['ecom.pay.bancontact']}</button>
+  ${basket.step!=3?'disabled':''}>${vi18n['ecom.pay.bancontact']}<span class="pay-obligation">${vi18n['ecom.pay.obligation']}</span></button>
   
  
   <script>
