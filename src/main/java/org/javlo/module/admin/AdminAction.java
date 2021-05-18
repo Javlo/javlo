@@ -780,7 +780,7 @@ public class AdminAction extends AbstractModuleAction {
 		td.setMessageDanger(StringHelper.parseColor(requestService.getParameter("messageDanger", "" + td.getMessageDanger())));
 		td.setMessageWarning(StringHelper.parseColor(requestService.getParameter("messageWarning", "" + td.getMessageWarning())));
 		td.setMessageInfo(StringHelper.parseColor(requestService.getParameter("messageInfo", "" + td.getMessageInfo())));
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < TemplateData.COLOR_LIST_SIZE; i++) {
 			td.setColorList(StringHelper.parseColor(requestService.getParameter("colorList" + i, null)), i);
 		}
 		MailService.resetInstance();

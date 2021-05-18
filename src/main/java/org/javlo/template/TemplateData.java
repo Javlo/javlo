@@ -8,6 +8,9 @@ import org.javlo.css.CssColor;
 import org.javlo.helper.StringHelper;
 
 public class TemplateData {
+	
+	public static final int COLOR_LIST_SIZE = 12;
+	
 	public static final TemplateData EMPTY = new TemplateData();
 	private CssColor background = null;
 	private CssColor componentBackground = null;
@@ -26,7 +29,7 @@ public class TemplateData {
 	private CssColor messageDanger = null;
 	private CssColor messageWarning = null;
 	private CssColor messageInfo = null;
-	private CssColor[] colorList = new CssColor[6];
+	private CssColor[] colorList = new CssColor[COLOR_LIST_SIZE];
 	private String toolsServer = null;
 	private String logo = null;
 	private String fontText = null;
