@@ -241,7 +241,7 @@ public class TemplateData {
 		
 		String colors = "";
 		String sep = "";
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < TemplateData.COLOR_LIST_SIZE; i++) {
 			colors+=sep;
 			colors+=StringHelper.colorToHexStringNotNull(getColorList()[i]);
 			sep = ",";
