@@ -208,7 +208,7 @@ public class MailingThread extends Thread {
 
 	@Override
 	public synchronized void run() {
-		logger.info("START MAILING");
+		logger.info("START MAILING (SLEEP_BETWEEN_MAILING_SEC:"+SLEEP_BETWEEN_MAILING_SEC*1000+")");
 		try {
 			while (!stop) {
 				try {
@@ -243,6 +243,8 @@ public class MailingThread extends Thread {
 											logger.info("mailing not send : " + currentMailing);
 										}
 										currentMailing.close(mailingStaticConfig);
+									} else {
+										logger.info("to time to send mailing : "+currentMailing+ "(send before:"+StringHelper.renderTime(currentMailing.getSendDate())+')');
 									}
 								} catch (Throwable t) {
 									t.printStackTrace();
