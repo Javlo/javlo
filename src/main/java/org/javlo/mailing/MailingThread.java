@@ -219,7 +219,7 @@ public class MailingThread extends Thread {
 					}
 					synchronized (ResourceHelper.SYNCHRO_RESOURCE) {
 						List<Mailing> mailing = getMailingList();
-						logger.info("mailing to send : "+mailing.size());
+						logger.fine("mailing to send : "+mailing.size());
 						if (mailing.size() > 0) {
 							for (Mailing currentMailing : mailing) {
 								try {
