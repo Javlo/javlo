@@ -725,7 +725,7 @@ public class StaticConfig extends Observable {
 	}
 	
 	public long getMailingTimebetweenTwoMailing() {
-		return properties.getLong("mailing.time-between-two-mailing.second", 20*60);
+		return properties.getLong("mailing.time-between-two-mailing.second", 60);
 	}
 
 	public long getMailingTimebetweenTwoSend() {
