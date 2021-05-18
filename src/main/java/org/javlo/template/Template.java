@@ -2281,7 +2281,7 @@ public class Template implements Comparable<Template> {
 				Color backgroundColor = Color.decode('#' + background);
 				templateData.setBackground(backgroundColor);
 			}
-			for (int i = 0; i < 6; i++) {
+			for (int i = 0; i < TemplateData.COLOR_LIST_SIZE; i++) {
 				String color = properties.getString("data.color.colorList" + i, null);
 				if (!StringHelper.isEmpty(color)) {
 					templateData.setColorList(Color.decode('#' + color), i);
