@@ -215,8 +215,9 @@ public class MailService {
 					password=null;
 				}
 				transport.connect(mailConfig.getSMTPHost(), mailConfig.getSMTPPortInt(), mailConfig.getLogin(), password);
+				logger.info("transport connected.");
 			} catch (MessagingException e) {
-				logger.severe(e.getMessage());
+				logger.severe("error connection smtp : " + e.getMessage());
 				
 				e.printStackTrace();
 				
