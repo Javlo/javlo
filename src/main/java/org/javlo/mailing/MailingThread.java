@@ -247,6 +247,7 @@ public class MailingThread extends Thread {
 										logger.info("to time to send mailing : "+currentMailing+ "(send before:"+StringHelper.renderTime(currentMailing.getSendDate())+')');
 									}
 								} catch (Throwable t) {
+									logger.severe(t.getMessage());
 									t.printStackTrace();
 									currentMailing.setErrorMessage(t.getMessage());
 									currentMailing.store(mailingStaticConfig);
