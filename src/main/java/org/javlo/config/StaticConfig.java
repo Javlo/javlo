@@ -724,8 +724,12 @@ public class StaticConfig extends Observable {
 		return properties.getString("file-folder", "VFS");
 	}
 	
+	public long getMailingTimebetweenTwoMailing() {
+		return properties.getLong("mailing.time-between-two-mailing.second", 20*60);
+	}
+
 	public long getMailingTimebetweenTwoSend() {
-		return properties.getLong("mailing.time-between-to-send.second", 20*60);
+		return properties.getLong("mailing.time-between-two-send.second", 20);
 	}
 
 	public String getImageCacheFolder() {

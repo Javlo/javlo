@@ -61,7 +61,8 @@ public class ViewActions implements IAction {
 		try {
 			ContentContext ctx = ContentContext.getContentContext(request, response);
 			GlobalContext globalContext = GlobalContext.getInstance(request);
-			String lang = request.getParameter("lg");			
+			String lang = request.getParameter("lg");
+			System.out.println(">>>>>>>>> ViewActions.performLanguage : lang = "+lang); //TODO: remove debug trace
 			if (lang != null) {				
 				if (globalContext.getLanguages().contains(lang) && !StringHelper.isTrue(request.getParameter("content"))) {
 					ctx.setAllLanguage(lang);
@@ -76,7 +77,7 @@ public class ViewActions implements IAction {
 					I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, request.getSession());
 					i18nAccess.changeViewLanguage(ctx);
 					String url = URLHelper.createURL(ctx);
-					NetHelper.sendRedirectTemporarily(response, url);					
+					NetHelper.sendRedirectTemporarily(response, url);
 				}
 			}
 		} catch (Exception e) {

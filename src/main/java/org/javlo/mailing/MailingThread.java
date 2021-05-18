@@ -32,7 +32,9 @@ public class MailingThread extends Thread {
 	 */
 	protected static Logger logger = Logger.getLogger(MailingThread.class.getName());
 
-	public static long SLEEP_BETWEEN_MAILING = 2000;
+	public static long SLEEP_BETWEEN_MAILING_SEC = 30;
+	
+	public static long SLEEP_BETWEEN_MAIL_SEC = 20;
 
 	//ServletContext application;
 	
@@ -82,7 +84,7 @@ public class MailingThread extends Thread {
 		mailOut.println("from : " + mailing.getFrom());
 		mailOut.println("sent? : " + mailing.isSend());
 		mailOut.println("config : " + mailConfig);
-		mailOut.println("Time between 2 mails : " + SLEEP_BETWEEN_MAILING +" sec.");
+		mailOut.println("Time between 2 mails : " + SLEEP_BETWEEN_MAILING_SEC +" sec.");
 		mailOut.println("");
 		mailOut.println("");
 		mailOut.println("receivers detail :");
@@ -147,7 +149,7 @@ public class MailingThread extends Thread {
 			
 			MailService mailingManager = MailService.getInstance(mailConfig);
 			
-			logger.info("send mailling '" + mailing.getSubject() + "' config:" + mailConfig+ " DKIM ? "+(dkimBean != null)+ " (Time between 2 mails : "+SLEEP_BETWEEN_MAILING+")");
+			logger.info("send mailling '" + mailing.getSubject() + "' config:" + mailConfig+ " DKIM ? "+(dkimBean != null)+ " (Time between 2 mails : "+SLEEP_BETWEEN_MAIL_SEC+")");
 			int countSending = 0;
 			while (to != null) {				
 				String data = "mailing=" + mailing.getId() + "&to=" + to;
@@ -184,10 +186,10 @@ public class MailingThread extends Thread {
 					mailing.setErrorMessage(ex.getMessage()+" [to="+to+"]");
 				}
 				mailing.onMailSent(to, error);
-				if (countSending%20!=0) {
+				if (countSending<=5) {
 					Thread.sleep(20);
 				} else {
-					Thread.sleep(1000);
+					Thread.sleep(SLEEP_BETWEEN_MAIL_SEC);
 				}
 				to = mailing.getNextReceiver();
 			}
@@ -211,12 +213,13 @@ public class MailingThread extends Thread {
 			while (!stop) {
 				try {
 					try {
-						Thread.sleep(SLEEP_BETWEEN_MAILING);
+						Thread.sleep(SLEEP_BETWEEN_MAILING_SEC*1000);
 					} catch (InterruptedException e) {
 						logger.warning(e.getMessage());
 					}
 					synchronized (ResourceHelper.SYNCHRO_RESOURCE) {
 						List<Mailing> mailing = getMailingList();
+						logger.info("mailing to send : "+mailing.size());
 						if (mailing.size() > 0) {
 							for (Mailing currentMailing : mailing) {
 								try {
