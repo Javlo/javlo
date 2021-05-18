@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -36,7 +35,6 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 
-import org.apache.tools.ant.filters.StringInputStream;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.external.agitos.dkim.Canonicalization;
@@ -45,10 +43,8 @@ import org.javlo.external.agitos.dkim.SMTPDKIMMessage;
 import org.javlo.external.agitos.dkim.SigningAlgorithm;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
-import org.javlo.helper.TimeHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
-import org.javlo.service.calendar.ICal;
 
 /**
  * This class, working in a singleton mode, is a utility for sending mail
