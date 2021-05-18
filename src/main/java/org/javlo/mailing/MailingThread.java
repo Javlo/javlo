@@ -84,7 +84,7 @@ public class MailingThread extends Thread {
 		mailOut.println("from : " + mailing.getFrom());
 		mailOut.println("sent? : " + mailing.isSend());
 		mailOut.println("config : " + mailConfig);
-		mailOut.println("Time between 2 mails : " + SLEEP_BETWEEN_MAILING_SEC +" sec.");
+		mailOut.println("Time between 2 mails : " + SLEEP_BETWEEN_MAIL_SEC +" sec.");
 		mailOut.println("");
 		mailOut.println("");
 		mailOut.println("receivers detail :");
@@ -186,10 +186,10 @@ public class MailingThread extends Thread {
 					mailing.setErrorMessage(ex.getMessage()+" [to="+to+"]");
 				}
 				mailing.onMailSent(to, error);
-				if (countSending<=5) {
+				if (countSending<=3) {
 					Thread.sleep(20);
 				} else {
-					Thread.sleep(SLEEP_BETWEEN_MAIL_SEC);
+					Thread.sleep(SLEEP_BETWEEN_MAIL_SEC*1000);
 				}
 				to = mailing.getNextReceiver();
 			}
@@ -208,7 +208,7 @@ public class MailingThread extends Thread {
 
 	@Override
 	public synchronized void run() {
-		logger.info("START MAILING (SLEEP_BETWEEN_MAILING_SEC:"+SLEEP_BETWEEN_MAILING_SEC*1000+")");
+		logger.info("START MAILING (SLEEP_BETWEEN_MAILING_SEC:"+SLEEP_BETWEEN_MAILING_SEC+")");
 		try {
 			while (!stop) {
 				try {
