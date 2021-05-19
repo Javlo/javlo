@@ -40,6 +40,7 @@ import org.javlo.macro.core.IMacro;
 import org.javlo.macro.core.MacroFactory;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.admin.AdminAction;
 import org.javlo.module.admin.MacroBean;
 import org.javlo.module.content.Edit;
 import org.javlo.module.core.ModuleException;
@@ -1708,6 +1709,10 @@ public class InfoBean {
 
 	public String getLogoUrl() throws Exception {
 		String logo = ctx.getGlobalContext().getTemplateData().getLogo();
+		File logoPath = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), AdminAction.LOGO_PATH, "logo_"+ctx.getLanguage()+".png"));
+		if (logoPath.exists()) {
+			logo = URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), AdminAction.LOGO_PATH, "logo_"+ctx.getLanguage()+".png");
+		}
 		if (logo == null || logo.equals("null")) {
 			return null;
 		} else {
@@ -1717,6 +1722,10 @@ public class InfoBean {
 
 	public String getLogoRawUrl() throws Exception {
 		String logo = ctx.getGlobalContext().getTemplateData().getLogo();
+		File logoPath = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), AdminAction.LOGO_PATH, "logo_"+ctx.getLanguage()+".png"));
+		if (logoPath.exists()) {
+			logo = URLHelper.mergePath(AdminAction.LOGO_PATH, "logo_"+ctx.getLanguage()+".png");
+		}
 		if (logo == null || logo.equals("null")) {
 			return null;
 		} else {

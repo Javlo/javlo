@@ -48,7 +48,7 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 		final String filePrefix = "<%@ taglib uri=\"http://java.sun.com/jsp/jstl/core\" prefix=\"c\"%><%@ taglib prefix=\"fn\" uri=\"http://java.sun.com/jsp/jstl/functions\"%><%@ taglib uri=\"/WEB-INF/javlo.tld\" prefix=\"jv\"%>";
 		String css = getFieldValue("css");
 		String style = "";
-		if (css != null && css.contains("{")) {
+		if (!StringHelper.isEmpty(css)) {
 			try {
 				style = "<style>"+CSSParser.prefixAllQueries('.'+getSpecificCssClass(ctx), getFieldValue("css"))+"</style>";
 			} catch (CompilationException e) {
