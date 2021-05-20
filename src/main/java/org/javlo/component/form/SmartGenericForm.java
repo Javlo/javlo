@@ -808,6 +808,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
+		performColumnable(ctx);
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		getLocalConfig(false).setProperty("title", rs.getParameter(getInputName("title"), ""));
 		getLocalConfig(false).setProperty("filename", rs.getParameter(getInputName("filename"), ""));
@@ -1725,4 +1726,10 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		XLSTools.writeXLSX(cells, ctx.getResponse().getOutputStream());
 		return null;
 	}
+	
+	@Override
+	protected boolean getColumnableDefaultValue() {
+		return true;
+	}
+
 }

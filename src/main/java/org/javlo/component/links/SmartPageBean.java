@@ -36,7 +36,9 @@ import org.javlo.navigation.data.PageContentMap;
 import org.javlo.service.event.Event;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
+import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
+import org.javlo.user.User;
 import org.owasp.encoder.Encode;
 
 public class SmartPageBean {
@@ -158,6 +160,15 @@ public class SmartPageBean {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+		}
+	}
+	
+	public String getAuthors() {
+		User user = AdminUserFactory.createAdminUserFactory(ctx.getGlobalContext(), ctx.getSession()).getUser(page.getCreator());
+		if (user != null) {
+			return user.getUserInfo().getFirstName() + user.getUserInfo().getLastName();
+		} else {
+			return page.getCreator();
 		}
 	}
 
