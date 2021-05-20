@@ -220,7 +220,9 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 		Basket basket = Basket.getInstance(ctx);
 		PaymentIntent paymentIntent = PaymentIntent.retrieve(rs.getParameter("id"));
 
-		//System.out.println(paymentIntent); // TODO: remove debug trace
+		System.out.println(">>>>>>>>> StripeOrderComponent.performSuccessBancontact : paymentIntent = "+paymentIntent); //TODO: remove debug trace
+		
+		System.out.println(">>>>>>>>> StripeOrderComponent.performSuccessBancontact : status = "+paymentIntent.getStatus()); //TODO: remove debug tracepaymentIntent.getStatus()
 
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 		if (paymentIntent == null || paymentIntent.getAmount() != Math.round(basket.getTotal(ctx, true) * 100)) {
