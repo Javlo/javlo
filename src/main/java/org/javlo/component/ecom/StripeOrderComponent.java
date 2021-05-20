@@ -311,7 +311,13 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 				comp.sendConfirmationEmail(ctx, basket);
 				ctx.getRequest().setAttribute("msg", msg);
 				NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "basket confirmed with stripe : " + ctx.getGlobalContext().getContextKey(), basket.getAdministratorEmail(ctx));
-				basket.reset(ctx);
+				
+				basket.setStatus(Basket.STATUS_VALIDED);
+				basket.setStep(Basket.FINAL_STEP);
+				BasketPersistenceService.getInstance(ctx.getGlobalContext()).storeBasket(basket);
+				Basket.setInstance(ctx, basket);
+				basket.payAll(ctx);
+				comp.sendConfirmationEmail(ctx, basket);
 			} else {
 				NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "ERROR: basket NOT confirmed with stripe : " + ctx.getGlobalContext().getContextKey(), basket.getAdministratorEmail(ctx));
 			}			
