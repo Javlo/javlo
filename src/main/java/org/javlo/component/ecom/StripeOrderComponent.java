@@ -219,13 +219,8 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 	public static String performSuccessBancontact(ContentContext ctx, RequestService rs) throws Exception {
 		Basket basket = Basket.getInstance(ctx);
 		PaymentIntent paymentIntent = PaymentIntent.retrieve(rs.getParameter("id"));
-
-		System.out.println(">>>>>>>>> StripeOrderComponent.performSuccessBancontact : paymentIntent = "+paymentIntent); //TODO: remove debug trace
-		
-		System.out.println(">>>>>>>>> StripeOrderComponent.performSuccessBancontact : status = "+paymentIntent.getStatus()); //TODO: remove debug tracepaymentIntent.getStatus()
-
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
-		if (paymentIntent == null || paymentIntent.getAmount() != Math.round(basket.getTotal(ctx, true) * 100)) {
+		if (paymentIntent == null || paymentIntent.getAmount() != Math.round(basket.getTotal(ctx, true) * 100) || !paymentIntent.getStatus().equalsIgnoreCase("succeeded")) {
 			logger.warning("error on bancontact return : " + paymentIntent);
 			return i18nAccess.getViewText("ecom.message.error");
 		} else {
