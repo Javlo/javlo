@@ -43,5 +43,10 @@ public class EcomStatus {
 	public void setInvoiceHash(String invoiceHash) {
 		this.invoiceHash = invoiceHash;
 	}
+	
+	@Override
+	public String toString() {
+		return "error:"+isError()+" message:"+message;
+	}
 
 }

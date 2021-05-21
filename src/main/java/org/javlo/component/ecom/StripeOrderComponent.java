@@ -279,6 +279,7 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 		if (dataObjectDeserializer.getObject().isPresent()) {
 			stripeObject = dataObjectDeserializer.getObject().get();
 		} else {
+			logger.severe("Deserialization failed");
 			// Deserialization failed, probably due to an API version mismatch.
 			// Refer to the Javadoc documentation on `EventDataObjectDeserializer` for
 			// instructions on how to handle this case, or return an error here.
@@ -291,7 +292,7 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 			Charge charge = (Charge) stripeObject;
 			Basket basket = BasketPersistenceService.getInstance(ctx.getGlobalContext()).getBasketByPaymentIndent(charge.getPaymentIntent());
 			if (basket == null) {
-				logger.info("basket not found : " + charge.getPaymentIntent());
+				logger.severe("basket not found : " + charge.getPaymentIntent());
 				IEcomListner ecomListner = ctx.getGlobalContext().getStaticConfig().getEcomLister();
 				EcomStatus status = ecomListner.onPaymentProcessorEvent(ctx, new EcomEvent(charge.getPaymentIntent(), true, null));
 				if (status.isError()) {
@@ -300,6 +301,9 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 				return "";
 			}
 			EcomStatus status = basket.payAll(ctx);
+			
+			logger.info("webhook basket status : "+status);
+			
 			if (!status.isError()) {
 				I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 				AbstractOrderComponent comp =  null;				
@@ -318,7 +322,6 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 				basket.setStatus(Basket.STATUS_VALIDED);
 				basket.setStep(Basket.FINAL_STEP);
 				Basket.setInstance(ctx, basket);
-				basket.payAll(ctx);
 				BasketPersistenceService.getInstance(ctx.getGlobalContext()).storeBasket(basket);
 				comp.sendConfirmationEmail(ctx, basket);
 			} else {
