@@ -82,9 +82,10 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 		ctx.getRequest().setAttribute("bancontact", isBancontact(ctx));
 
 		Basket basket = Basket.getInstance(ctx);
-		basket.setLock(true);
+		
 		// bancontact
 		if (isBancontact(ctx) && basket.getStep() == Basket.ORDER_STEP) {
+			basket.setLock(true);
 			synchronized (Stripe.class) {
 				// Set your secret key. Remember to switch to your live secret key in
 				// production.
@@ -321,6 +322,9 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 				
 				basket.setStatus(Basket.STATUS_VALIDED);
 				basket.setStep(Basket.FINAL_STEP);
+				
+				System.out.println(">>>>>>>>> StripeOrderComponent.performWebhook : lock : "+basket.isLock()); //TODO: remove debug trace
+				
 				Basket.setInstance(ctx, basket);
 				BasketPersistenceService.getInstance(ctx.getGlobalContext()).storeBasket(basket);
 				comp.sendConfirmationEmail(ctx, basket);
