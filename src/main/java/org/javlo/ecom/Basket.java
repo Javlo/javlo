@@ -234,6 +234,8 @@ public class Basket implements Serializable {
 			}
 			products.add(product);
 			resetSecurityKey();
+		} else {
+			logger.warning("basket lock can't add : "+product.getName());
 		}
 	}
 
