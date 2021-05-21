@@ -197,6 +197,7 @@ public class Basket implements Serializable {
 					logger.severe(status.getMessage());
 					messageRepository.setGlobalMessage(new GenericMessage(status.getMessage(), GenericMessage.ERROR));
 				} else {
+					setLock(false);
 					logger.info(status.getMessage());
 					messageRepository.setGlobalMessage(new GenericMessage(status.getMessage(), GenericMessage.INFO));
 				}
