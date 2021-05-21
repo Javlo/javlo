@@ -174,14 +174,9 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 	public static String performSuccess(ContentContext ctx, RequestService rs, I18nAccess i18nAccess) throws Exception {
 		Basket basket = Basket.getInstance(ctx);
 
-		Session session = Session.retrieve(rs.getParameter("session_id"));
-
-		if (session == null) {
-			return "session not found.";
-		}
-
 		String bkey = rs.getParameter("bkey");
 		if (!bkey.equals(basket.getSecurityKey())) {
+			logger.severe("bad bkey : "+bkey);
 			NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "ERROR: security error bad security key : " + ctx.getGlobalContext().getContextKey(), basket.getAdministratorEmail(ctx));
 			return "security error.";
 		}
@@ -193,7 +188,7 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 
 		basket.setStep(Basket.FINAL_STEP);
 		basket.setStatus(Basket.STATUS_VALIDED);
-		basket.setTransactionId(session.getId());
+		basket.setTransactionId(rs.getParameter("session_id"));
 		basket.setPaymentType("cc");
 		basket.setLock(false);
 		BasketPersistenceService.getInstance(ctx.getGlobalContext()).storeBasket(basket);
@@ -218,6 +213,9 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 	}
 
 	public static String performSuccessBancontact(ContentContext ctx, RequestService rs) throws Exception {
+		
+		System.out.println(">>>>>>>>> StripeOrderComponent.performSuccessBancontact : 1"); //TODO: remove debug trace
+		
 		Basket basket = Basket.getInstance(ctx);
 		PaymentIntent paymentIntent = PaymentIntent.retrieve(rs.getParameter("id"));
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
@@ -229,6 +227,9 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 			//basket.setStatus(Basket.STATUS_VALIDED);
 			basket.setTransactionId(paymentIntent.getId());
 			basket.setPaymentType("bancontact");
+			
+			System.out.println(">>>>>>>>> StripeOrderComponent.performSuccessBancontact : UNLOCK"); //TODO: remove debug trace
+			
 			basket.setLock(false);
 			BasketPersistenceService.getInstance(ctx.getGlobalContext()).storeBasket(basket);
 
