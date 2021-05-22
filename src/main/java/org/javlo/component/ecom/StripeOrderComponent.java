@@ -215,8 +215,6 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 
 	public static String performSuccessBancontact(ContentContext ctx, RequestService rs) throws Exception {
 		
-		System.out.println(">>>>>>>>> StripeOrderComponent.performSuccessBancontact : 1"); //TODO: remove debug trace
-		
 		Basket basket = Basket.getInstance(ctx);
 		PaymentIntent paymentIntent = PaymentIntent.retrieve(rs.getParameter("id"));
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
@@ -228,8 +226,6 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 			//basket.setStatus(Basket.STATUS_VALIDED);
 			basket.setTransactionId(paymentIntent.getId());
 			basket.setPaymentType("bancontact");
-			
-			System.out.println(">>>>>>>>> StripeOrderComponent.performSuccessBancontact : UNLOCK"); //TODO: remove debug trace
 			
 			basket.setLock(false);
 			BasketPersistenceService.getInstance(ctx.getGlobalContext()).storeBasket(basket);
@@ -322,8 +318,6 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 				
 				basket.setStatus(Basket.STATUS_VALIDED);
 				basket.setStep(Basket.FINAL_STEP);
-				
-				System.out.println(">>>>>>>>> StripeOrderComponent.performWebhook : lock : "+basket.isLock()); //TODO: remove debug trace
 				
 				Basket.setInstance(ctx, basket);
 				BasketPersistenceService.getInstance(ctx.getGlobalContext()).storeBasket(basket);
