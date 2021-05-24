@@ -1553,6 +1553,15 @@ public class InfoBean {
 			return null;
 		}
 	}
+	
+	public PageBean getPageByName(String name) {
+		try {
+			return getRoot().getPage().searchChildFromName(name).getPageBean(ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	public PageBean getRegistrationPage() throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
