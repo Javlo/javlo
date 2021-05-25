@@ -854,6 +854,7 @@ Security in case of vulnerabilities.
   - add class on area if container
   - image automatic convertion to webp format
   - next page component
+  - cookies types
 ### Modified
   - load view nav before preview nav
   - cache globalContext in application context
