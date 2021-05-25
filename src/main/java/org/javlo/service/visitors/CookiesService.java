@@ -1,6 +1,7 @@
 package org.javlo.service.visitors;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +47,7 @@ public class CookiesService {
 			outService = new CookiesService();
 			session.setAttribute(SESSION_KEY, outService);
 		}
-		if (ctx.getRequest().getAttribute("SESSION_KEY") == null) {
+		if (ctx.getRequest().getAttribute(SESSION_KEY) == null) {
 			outService.refresh(ctx);
 		}
 
@@ -56,7 +57,7 @@ public class CookiesService {
 	public void refresh(ContentContext ctx) {
 		try {
 			if (ctx.getCurrentTemplate() != null) {
-				ctx.getRequest().setAttribute("SESSION_KEY",this);
+				ctx.getRequest().setAttribute(SESSION_KEY,this);
 				if (ctx.getGlobalContext().isCookies()) {
 					Cookie cookie = NetHelper.getCookie(ctx.getRequest(), ctx.getCurrentTemplate().getCookiesMessageName());
 					if (cookie != null) {
@@ -74,7 +75,7 @@ public class CookiesService {
 					
 					Cookie cookiesTypeAccepted = NetHelper.getCookie(ctx.getRequest(), ctx.getCurrentTemplate().getCookiesTypeName());
 					if (cookiesTypeAccepted != null) {
-						acceptedTypes = StringHelper.stringToCollection(cookiesTypeAccepted.getValue(), ",");
+						acceptedTypes = StringHelper.stringToCollection(cookiesTypeAccepted.getValue(), "-");
 						cookiesHidden = true;
 					}
 				} else {
@@ -110,15 +111,24 @@ public class CookiesService {
 	}
 
 	public Map<String, String> getAcceptedTypes() {
-		if (accepted) {
-			return KeyMap.stringInstance; 
-		} else {
+		if (accepted == null) {			
 			return new ListMapValueValue<String>(acceptedTypes);
+		} else if (accepted) {
+			return KeyMap.stringInstance;
+		} else {
+			return Collections.EMPTY_MAP;
 		}
 	}
 
 	public void setAcceptedTypes(List<String> acceptedTypes) {
+		if (acceptedTypes != null) {
+			cookiesHidden = true;
+		}
 		this.acceptedTypes = acceptedTypes;
+	}
+	
+	public void reset(ContentContext ctx) {
+		ctx.getSession().removeAttribute(SESSION_KEY);
 	}
 
 }

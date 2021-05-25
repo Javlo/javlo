@@ -17,6 +17,17 @@ $focus-ring: 0px 0px 0px 2px $light;
     color: #777;
 	font-family: Helvetica;
 
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.9);
+    text-align: center;
+    transition: bottom 1s;
+    -webkit-transition: bottom 1s;
+    min-height: 90px;
+    z-index: 1;
+
 	.btn_cookies {
 		border: 1px #999 solid;
 		border-radius: 3px;
