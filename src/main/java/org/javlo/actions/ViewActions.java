@@ -319,12 +319,7 @@ public class ViewActions implements IAction {
 		
 		VisitorsMessageService.getInstance(ctx.getRequest().getSession()).markAsDisplayed("cookies");
 		
-		Cookie cookie = new Cookie(ctx.getCurrentTemplate().getCookiesMessageName(), "2");
-		cookie.setPath("/");
-		cookie.setMaxAge(60*60*24*365); // 1 year
-		ctx.getResponse().addCookie(cookie);
-		
-		cookie = new Cookie(ctx.getCurrentTemplate().getCookiesTypeName(), StringHelper.collectionToString(acceptedType, ","));		
+		Cookie cookie = new Cookie(ctx.getCurrentTemplate().getCookiesTypeName(), StringHelper.collectionToString(acceptedType, ","));		
 		cookie.setPath("/");
 		cookie.setMaxAge(60*60*24*365); // 1 year
 		ctx.getResponse().addCookie(cookie);

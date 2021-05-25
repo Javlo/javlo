@@ -340,7 +340,7 @@ public class I18nAccess implements Serializable {
 	public Map<String, String> getEdit() {
 
 		if (displayKey) {
-			return new KeyMap<String>();
+			return KeyMap.stringInstance;
 		}
 
 		boolean createPropEditMap = false;
@@ -578,7 +578,7 @@ public class I18nAccess implements Serializable {
 	public Map<String, String> getView() {
 
 		if (displayKey) {
-			return new KeyMap<String>();
+			return KeyMap.stringInstance;
 		}
 
 		boolean createPropViewMap = false;

@@ -1,12 +1,14 @@
 package org.javlo.utils;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * wrap a list for use as map with. Key is the position in the List (modulo size of the list)
+ * wrap a list for use as map. key and value as the same and it is the value found in the list.
  * 
  * @author Patrick Vandermaesen
  * 
@@ -121,6 +123,14 @@ public class ListMapValueValue<K> implements Map<K, K> {
 		} else {
 			return null;
 		}
-	} 
+	}
+	
+	public static void main(String[] args) {
+		List<String> test = Arrays.asList(new String[] { "test1", "test2"});
+		Map<String,String> map = new ListMapValueValue<>(test);
+		System.out.println("#map = "+map.size());
+		System.out.println("map.get('test1') = "+map.get("test1"));
+		System.out.println("map.get('test3') = "+map.get("test3"));
+	}
 
 }

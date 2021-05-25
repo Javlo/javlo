@@ -12,6 +12,8 @@ import java.util.Set;
  * @param <K>
  */
 public class KeyMap<K> implements Map<K, K> {
+	
+	public static KeyMap<String> stringInstance = new KeyMap<String>();
 
 	@Override
 	public int size() {

@@ -3,6 +3,7 @@ package org.javlo.service.visitors;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
@@ -10,6 +11,8 @@ import javax.servlet.http.HttpSession;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.utils.KeyMap;
+import org.javlo.utils.ListMapValueValue;
 
 public class CookiesService {
 
@@ -68,6 +71,12 @@ public class CookiesService {
 					if (acceptedTypesCookie != null && !StringHelper.isEmpty(acceptedTypesCookie.getValue())) {
 						setAcceptedTypes(StringHelper.stringToCollection(acceptedTypesCookie.getValue(), ","));
 					}
+					
+					Cookie cookiesTypeAccepted = NetHelper.getCookie(ctx.getRequest(), ctx.getCurrentTemplate().getCookiesTypeName());
+					if (cookiesTypeAccepted != null) {
+						acceptedTypes = StringHelper.stringToCollection(cookiesTypeAccepted.getValue(), ",");
+						cookiesHidden = true;
+					}
 				} else {
 					cookiesHidden = true;
 				}
@@ -100,8 +109,12 @@ public class CookiesService {
 		return COOKIES_TYPES;
 	}
 
-	public List<String> getAcceptedTypes() {
-		return acceptedTypes;
+	public Map<String, String> getAcceptedTypes() {
+		if (accepted) {
+			return KeyMap.stringInstance; 
+		} else {
+			return new ListMapValueValue<String>(acceptedTypes);
+		}
 	}
 
 	public void setAcceptedTypes(List<String> acceptedTypes) {
