@@ -1,70 +1,80 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
-%><%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"
-%><%@ taglib uri="/WEB-INF/javlo.tld" prefix="jv"
-%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib
+	prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><%@ taglib
+	prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%><%@ taglib
+	uri="/WEB-INF/javlo.tld" prefix="jv"%>
 
 <link rel="stylesheet" href="${info.rootTemplateURL}/cookies.css" />
 
-<div id="cookies-message" style="position: relative; z-index: 100; font-size: 14px;">
-	<div id="cookies-popup-plus" style="position: fixed; top: 0; left: 0; overflow: scroll; height: 100vh; width: 100vw; background-color: #fff; z-index: 100; display: none;">
-		<div class="close-popup-cookies" style="float:right; margin-top: 15px; margin-right: 15px;">
-		<a href="#" onclick="hideCookiesPopup()">
-		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-			<path d="M1.293 1.293a1 1 0 0 1 1.414 0L8 6.586l5.293-5.293a1 1 0 1 1 1.414 1.414L9.414 8l5.293 5.293a1 1 0 0 1-1.414 1.414L8 9.414l-5.293 5.293a1 1 0 0 1-1.414-1.414L6.586 8 1.293 2.707a1 1 0 0 1 0-1.414z"/>
-		</svg> 
-		</a>
-		</div>
-		<div class="logo-popup-cookies" style="float:left; margin-top: 15px; margin-left: 15px;">
-			<img src="${info.logoRawUrl}" style="max-height: 50px; max-width: 250px;" />
-		</div>
-		
-		<div id="cookies_subselection">			
-			<div style="border: 1px #ddd solid; border-radius: 3px; background-color: #eee; width: 60%; min-width: 320px; margin: 80px auto; padding: 15px;">
-				<h2 class="cookie-main-title">
-					${vi18n['cookies.banner.title']} 
-				</h2>
-				<p class="intro" style="text-align: justify;">${vi18n['cookies.banner.intro']}</p>	
+<div id="cookies-message" style="z-index: 100; font-size: 14px;">
+	<div style="position: relative;">
+		<div id="cookies-popup-plus"
+			style="position: fixed; top: 0; left: 0; overflow: scroll; height: 100vh; width: 100vw; background-color: #fff; z-index: 100; display: none;">
+			<div class="close-popup-cookies"
+				style="float: right; margin-top: 15px; margin-right: 15px;">
+				<a href="#" onclick="hideCookiesPopup()"> <svg
+						xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+						fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+			<path
+							d="M1.293 1.293a1 1 0 0 1 1.414 0L8 6.586l5.293-5.293a1 1 0 1 1 1.414 1.414L9.414 8l5.293 5.293a1 1 0 0 1-1.414 1.414L8 9.414l-5.293 5.293a1 1 0 0 1-1.414-1.414L6.586 8 1.293 2.707a1 1 0 0 1 0-1.414z" />
+		</svg>
+				</a>
+			</div>
+			<div class="logo-popup-cookies"
+				style="float: left; margin-top: 15px; margin-left: 15px;">
+				<img src="${info.logoRawUrl}"
+					style="max-height: 50px; max-width: 250px;" />
+			</div>
 
-				<form id="_cookies_type_form" method="post" action="${info.currentURL}">
-					<input type="hidden" name="webaction" value="view.acceptcookiestype" />
+			<div id="cookies_subselection">
+				<div
+					style="border: 1px #ddd solid; border-radius: 3px; background-color: #eee; width: 60%; min-width: 320px; margin: 80px auto; padding: 15px;">
+					<h2 class="cookie-main-title">${vi18n['cookies.banner.title']}
+					</h2>
+					<p class="intro" style="text-align: justify;">${vi18n['cookies.banner.intro']}</p>
 
-					<label class="toggle" for="_cookies_technic">
-						<input type="checkbox" class="toggle__input" id="_cookies_technic" checked disabled />					
-						<span class="toggle-track">
-							<span class="toggle-indicator">
+					<form id="_cookies_type_form" method="post"
+						action="${info.currentURL}">
+						<input type="hidden" name="webaction"
+							value="view.acceptcookiestype" /> <label class="toggle"
+							for="_cookies_technic"> <input type="checkbox"
+							class="toggle__input" id="_cookies_technic" checked disabled />
+							<span class="toggle-track"> <span class="toggle-indicator">
 							</span>
-						</span>
-						${vi18n["cookies.type.technic"]}
-					</label>
-
-					<c:forEach var="type" items="${globalContext.cookiesTypes}">						
-						<label class="toggle" for="_cookies_${type}">
-							<input type="checkbox" class="toggle__input" id="_cookies_${type}" name="cookies_${type}" />					
-							<span class="toggle-track">
-								<span class="toggle-indicator">
-								</span>
-							</span>
-							<c:set var="i18nkey" value="cookies.type.${type}" />
-							${vi18n[i18nkey]}
+						</span> ${vi18n["cookies.type.technic"]}
 						</label>
-					</c:forEach>
 
-					<div class="cookies-actions" style="display: flex; justify-content: end;">
-						<button class="btn_cookies btn_secondary" type="submit">${vi18n['cookies.banner.submit']}</button>
-						<button class="btn_cookies btn_secondary" type="submit" name="refuse" value="true">${vi18n['cookies.banner.refuse']}</button>
-						<button class="btn_cookies btn_primary" type="submit" name="accept" value="true">${vi18n['cookies.banner.accept']}</button>						
-					</div>
+						<c:forEach var="type" items="${globalContext.cookiesTypes}">
+							<label class="toggle" for="_cookies_${type}"> <input
+								type="checkbox" class="toggle__input" id="_cookies_${type}"
+								name="cookies_${type}" /> <span class="toggle-track"> <span
+									class="toggle-indicator"> </span>
+							</span> <c:set var="i18nkey" value="cookies.type.${type}" />
+								${vi18n[i18nkey]}
+							</label>
+						</c:forEach>
+
+						<div class="cookies-actions"
+							style="display: flex; justify-content: end;">
+							<button class="btn_cookies btn_secondary" type="submit">${vi18n['cookies.banner.submit']}</button>
+							<button class="btn_cookies btn_secondary" type="submit"
+								name="refuse" value="true">${vi18n['cookies.banner.refuse']}</button>
+							<button class="btn_cookies btn_primary" type="submit"
+								name="accept" value="true">${vi18n['cookies.banner.accept']}</button>
+						</div>
 
 					</form>
-		</div>
-		<div id="cookies-popup-content" style="width: 60%; min-width: 320px; margin: 60px auto;">
-			<div style="text-align: center; margin: 15px;">
-				<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
-					<path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
+				</div>
+				<div id="cookies-popup-content"
+					style="width: 60%; min-width: 320px; margin: 60px auto;">
+					<div style="text-align: center; margin: 15px;">
+						<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+							fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
+					<path
+								d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z" />
 				  </svg>
+					</div>
+				</div>
 			</div>
-		</div>
 		</div>
 	</div>
 
@@ -72,9 +82,12 @@
 		<p>${i18n.view['cookies.message']}</p>
 		<div class="actions">
 			<form action="${info.currentURL}" method="post">
-				<c:if test="${not empty globalContext.cookiesPolicyUrl}"><a class="btn btn-sm btn-secondary" target="_blank" href="#" onclick="return showCookiesPopup();">${i18n.view['global.more']}</a></c:if>
-				<button type="button" name="webaction" value="view.refusecookies" class="btn btn-sm btn-secondary" onclick="return refuseCookie();">${i18n.view['cookies.refuse']}</button>
-				<button type="button" name="webaction" value="view.acceptcookies" class="btn btn-sm btn-primary" onclick="return acceptCookie();">${i18n.view['cookies.accept']}</button>
+				<a class="btn_cookies" target="_blank" href="#"
+					onclick="return showCookiesPopup();">${i18n.view['global.more']}</a>
+				<button type="button" name="webaction" value="view.refusecookies"
+					class="btn_cookies" onclick="return refuseCookie();">${i18n.view['cookies.refuse']}</button>
+				<button type="button" name="webaction" value="view.acceptcookies"
+					class="btn_cookies btn_primary" onclick="return acceptCookie();">${i18n.view['cookies.accept']}</button>
 			</form>
 		</div>
 	</div>
@@ -166,11 +179,9 @@ function actionCookie(action) {
 }
 
 <c:if test="${not empty globalContext.cookiesPolicyUrl}">
-	showCookiesPopup();
 	fetch("${globalContext.cookiesPolicyUrl}?only-area=content").then(function (response) {
 		return response.text();
 	}).then(function (html) {
-		console.log("htmlCookie=",html);
 		document.getElementById('cookies-popup-content').innerHTML=html;
 	});
 </c:if>

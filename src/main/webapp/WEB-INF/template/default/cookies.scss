@@ -5,7 +5,7 @@ $highContrastModeSupport: solid 2px transparent;
 
 $speed: 1;
 
-$dark: #333;
+$dark: #555;
 $mid: #aaa;
 $light: #bbb;
 
@@ -14,19 +14,22 @@ $track-background: $mid;
 $focus-ring: 0px 0px 0px 2px $light;
 
 #cookies-message {
-
-    color: #333;
+    color: #777;
 	font-family: Helvetica;
 
 	.btn_cookies {
-		border: 1px #ccc solid;
+		border: 1px #999 solid;
 		border-radius: 3px;
 		padding: 5px 15px ;
 		margin-left: 15px;
+		color: #999;
+		text-decoration: none;
+		background-color: transparent;
+		text-transform: lowercase;
 	}
 
 	.btn_cookies:hover {
-		border: 1px #ddd solid;
+		border: 1px #026b9c solid;
 	}
 
 	.btn_primary {
@@ -34,6 +37,11 @@ $focus-ring: 0px 0px 0px 2px $light;
 		border: 1px #026b9c solid;
 		color: #fff;
 	}
+
+	.btn_primary:hover {
+		border: 1px #ddd solid;
+	}
+
 
 	// Toggle specific styles
 	.toggle {
@@ -122,5 +130,4 @@ $focus-ring: 0px 0px 0px 2px $light;
 			border-radius: 0;
 		}
 	}
-
 }
