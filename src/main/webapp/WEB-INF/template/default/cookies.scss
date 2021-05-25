@@ -27,6 +27,10 @@ $focus-ring: 0px 0px 0px 2px $light;
     -webkit-transition: bottom 1s;
     min-height: 90px;
 	z-index: 1;
+	
+	#cookies-message-inside-wrapper {
+		text-align: center;
+	}
 
 	.btn_cookies {
 		border: 1px #999 solid;
