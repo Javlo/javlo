@@ -1746,7 +1746,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getCookiesPolicyUrl() {
 		return properties.getString("security.cookies.url", null);
 	}
-
+	
 	public void setCookiesPolicyUrl(String url) {
 		properties.setProperty("security.cookies.url", url);
 		save();

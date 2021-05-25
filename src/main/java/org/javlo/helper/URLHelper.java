@@ -214,7 +214,7 @@ public class URLHelper extends ElementaryURLHelper {
 		GlobalContext globalContext = ctx.getGlobalContext();
 		String fullFileName = URLHelper.mergePath(globalContext.getDataFolder(), url);
 
-		if (StringHelper.isURLFile(url)) {						
+		if (StringHelper.isURLFile(url)) {
 			try {
 				return FileUtils.readFileToString(new File(fullFileName));
 			} catch (IOException e) {
