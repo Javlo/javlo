@@ -1,12 +1,26 @@
 package org.javlo.service.visitors;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
 import org.javlo.context.ContentContext;
 import org.javlo.helper.NetHelper;
+import org.javlo.helper.StringHelper;
 
 public class CookiesService {
+
+	public static final String COOKIES_TYPE_TECH = "technic";
+	public static final String COOKIES_TYPE_ANAL = "analytics";
+	public static final String COOKIES_TYPE_SOCIAL = "social";
+	public static final String COOKIES_TYPE_MEDIA = "media";
+	public static final String COOKIES_TYPE_PERSO = "personalization";
+	public static final String COOKIES_TYPE_PUB = "pub";
+	
+	public static final List<String> COOKIES_TYPES = Arrays.asList(new String[] {COOKIES_TYPE_ANAL, COOKIES_TYPE_SOCIAL, COOKIES_TYPE_MEDIA, COOKIES_TYPE_PERSO, COOKIES_TYPE_PUB});
 
 	public static final int ALWAYS_STATUS = 9;
 	public static final int NOCHOICE_STATUS = 2;
@@ -15,6 +29,8 @@ public class CookiesService {
 	public static final int REFUSED_STATUS = 0;
 
 	private Boolean accepted = null;
+	
+	private List<String> acceptedTypes = new LinkedList<>();
 
 	private boolean cookiesHidden = false;
 
@@ -48,6 +64,10 @@ public class CookiesService {
 						}
 						cookiesHidden = true;
 					}
+					Cookie acceptedTypesCookie = NetHelper.getCookie(ctx.getRequest(), ctx.getCurrentTemplate().getCookiesTypeName());
+					if (acceptedTypesCookie != null && !StringHelper.isEmpty(acceptedTypesCookie.getValue())) {
+						setAcceptedTypes(StringHelper.stringToCollection(acceptedTypesCookie.getValue(), ","));
+					}
 				} else {
 					cookiesHidden = true;
 				}
@@ -74,6 +94,18 @@ public class CookiesService {
 			return false;
 		}
 		return accepted == null;
+	}
+	
+	public List<String> getCookiesTypes() {
+		return COOKIES_TYPES;
+	}
+
+	public List<String> getAcceptedTypes() {
+		return acceptedTypes;
+	}
+
+	public void setAcceptedTypes(List<String> acceptedTypes) {
+		this.acceptedTypes = acceptedTypes;
 	}
 
 }

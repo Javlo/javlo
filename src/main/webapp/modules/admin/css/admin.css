@@ -131,3 +131,21 @@ a.nav {
 	font-size: 1.4em;
 	padding: 0 3px 0 3px;
 }
+
+.cookies-types {
+	display: flex;
+	flex-wrap: wrap;
+	border: 1px #cccccc solid;
+	border-radius: 3px;
+	padding: 5px 15px;
+}
+
+.cookies-types .checkbox {
+	display: block;
+	width: 30%;
+	margin-top: 10px;
+	margin-right: 3%;
+	margin-left: 0;
+	margin-bottom: 0;
+	white-space: nowrap; 
+}

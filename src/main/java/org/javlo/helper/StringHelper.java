@@ -4084,7 +4084,7 @@ public class StringHelper {
 	 * @return
 	 */
 	public static Color parseColor(String color) {
-		if (StringHelper.isEmpty(color)) {
+		if (StringHelper.isEmpty(color) || color.equalsIgnoreCase("null")) {
 			return null;
 		}
 		try {

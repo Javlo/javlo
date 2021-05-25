@@ -6,6 +6,8 @@ package org.javlo.actions;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -287,11 +289,42 @@ public class ViewActions implements IAction {
 			return "template not found.";
 		}
 		VisitorsMessageService.getInstance(ctx.getRequest().getSession()).markAsDisplayed("cookies");
-		Cookie cookie = new Cookie(ctx.getCurrentTemplate().getCookiesMessageName(), "1");		
-//		String path = ctx.getCurrentTemplate().getCookiesMessagePath();
-//		if (path == null) {
-//			path = URLHelper.createStaticURL(ctx,"/");
-//		}		
+		Cookie cookie = new Cookie(ctx.getCurrentTemplate().getCookiesMessageName(), "1");
+		cookie.setPath("/");
+		cookie.setMaxAge(60*60*24*365); // 1 year
+		ctx.getResponse().addCookie(cookie);
+		CookiesService.getInstance(ctx).setAccepted(true);
+		return null;
+	}
+	
+	public static String performAcceptCookiesType(ContentContext ctx, RequestService rs) throws Exception {
+		if (ctx.getCurrentTemplate() == null) {
+			return "template not found.";
+		}
+		
+		if (StringHelper.isTrue(rs.getParameter("accept"))) {
+			return performAcceptCookies(ctx);
+		}
+		
+		if (StringHelper.isTrue(rs.getParameter("refuse"))) {
+			return performRefuseCookies(ctx);
+		}
+		
+		List<String> acceptedType = new LinkedList<>();
+		for (String type : CookiesService.COOKIES_TYPES) {
+			if (rs.getParameter("cookies_"+type) != null) {
+				acceptedType.add(type);
+			}
+		}
+		
+		VisitorsMessageService.getInstance(ctx.getRequest().getSession()).markAsDisplayed("cookies");
+		
+		Cookie cookie = new Cookie(ctx.getCurrentTemplate().getCookiesMessageName(), "2");
+		cookie.setPath("/");
+		cookie.setMaxAge(60*60*24*365); // 1 year
+		ctx.getResponse().addCookie(cookie);
+		
+		cookie = new Cookie(ctx.getCurrentTemplate().getCookiesTypeName(), StringHelper.collectionToString(acceptedType, ","));		
 		cookie.setPath("/");
 		cookie.setMaxAge(60*60*24*365); // 1 year
 		ctx.getResponse().addCookie(cookie);

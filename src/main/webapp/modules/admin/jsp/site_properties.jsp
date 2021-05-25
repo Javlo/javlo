@@ -310,7 +310,18 @@
 	${i18n.edit['admin.form.cookies']}</label>	
 </div>
 
-<div class="form-group">		
+<c:if test="${currentContext.cookies}">
+	<div class="cookies-types">
+	<c:forEach var="type" items="${cookiesService.cookiesTypes}">
+		<div class="checkbox">
+			<label><input type="checkbox" id="cookies_${type}" name="cookies_${type}" ${currentContext.isCookiesType(type)?'checked="checked"':""} />
+			${i18n.view['cookies.type.${type}']} [${type}]</label>	
+		</div>
+	</c:forEach>
+	</div>
+</c:if>
+
+<div class="form-group">
 	<label for="cookies-url">${i18n.edit['admin.form.cookies.url']}</label>
 	<input class="form-control" type="text" id="cookies-url" name="cookies-url" value="${currentContext.cookiesPolicyUrl}" />	
 </div>

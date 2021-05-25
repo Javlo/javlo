@@ -61,6 +61,7 @@ import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.log.LogService;
 import org.javlo.service.shared.SharedContentService;
+import org.javlo.service.visitors.CookiesService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateData;
 import org.javlo.template.TemplateFactory;
@@ -492,7 +493,7 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setOwnerNumber(requestService.getParameter("owner.number", ""));
 					currentGlobalContext.setOwnerPhone(requestService.getParameter("owner.phone", ""));
 					currentGlobalContext.setOwnerEmail(requestService.getParameter("owner.email", ""));
-
+					
 					try {
 						currentGlobalContext.setURLFactory(requestService.getParameter("urlfactory", ""));
 					} catch (Exception e1) {
@@ -553,6 +554,16 @@ public class AdminAction extends AbstractModuleAction {
 					
 					currentGlobalContext.setCookies(StringHelper.isTrue(requestService.getParameter("cookies", null), false));
 					currentGlobalContext.setCookiesPolicyUrl(requestService.getParameter("cookies-url", null));
+					
+					/** cookies types **/
+					List<String> cookiesList = new LinkedList<>();
+					for (String type : CookiesService.COOKIES_TYPES) {
+						System.out.println(">>>>>>>>> AdminAction.performUpdateGlobalContext : "+StringHelper.isTrue(requestService.getParameter("cookies_"+type))); //TODO: remove debug trace
+						if (StringHelper.isTrue(requestService.getParameter("cookies_"+type))) {
+							cookiesList.add(type);
+						}
+					}
+					currentGlobalContext.setCookiesTypes(cookiesList);
 
 					currentGlobalContext.setPortail(StringHelper.isTrue(requestService.getParameter("security-portail", "")));
 

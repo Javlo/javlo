@@ -707,7 +707,7 @@ public class MailService {
 	}
 
 	public static void main(String[] args) throws Exception {
-		MailConfig mailConfig = new MailConfig("smtp.office365.com", 587, "", "");
+		MailConfig mailConfig = new MailConfig("mailgater.fediap.be", 25, "FKVMAILB@nuvem.intra", "##PWD##");
 		Transport t = getMailTransport(mailConfig);
 		System.out.println("t = "+t.isConnected());
 		

@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -22,7 +23,10 @@ import org.javlo.service.ContentService;
 import org.javlo.template.TemplateData;
 import org.javlo.utils.ListMapValueValue;
 
+//TODO: remove off attribute and replace with call to globalContext
 public class GlobalContextBean {
+	
+	private GlobalContext globalContext;
 
 	public static final class SortOnKey implements Comparator<GlobalContextBean> {
 		@Override
@@ -136,7 +140,8 @@ public class GlobalContextBean {
 	public GlobalContextBean(ContentContext ctx, GlobalContext globalContext, HttpSession session) throws NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
 		if (globalContext == null) {
 			return;
-		}			
+		}
+		this.globalContext = globalContext;
 		setKey(globalContext.getContextKey());
 		setFolder(globalContext.getFolder());
 		setAdministrator(globalContext.getAdministrator());
@@ -997,6 +1002,22 @@ public class GlobalContextBean {
 
 	public void setOwnerEmail(String ownerEmail) {
 		this.ownerEmail = ownerEmail;
+	}
+	
+	public boolean isCookiesType(String type) {
+		if (type == null) {
+			return false;
+		}
+		return this.globalContext.getCookiesTypes().contains(type.trim());
+	}
+	
+	public static void main(String[] args) {
+		List<String> test = Arrays.asList(new String[] {"test1", "technics"});
+		System.out.println(test.contains("technics"));
+	}
+	
+	public List<String> getCookiesTypes() {
+		return globalContext.getCookiesTypes();
 	}
 
 }
