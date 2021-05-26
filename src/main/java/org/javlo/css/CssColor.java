@@ -10,13 +10,16 @@ import java.awt.color.ColorSpace;
  */
 public class CssColor extends Color {
 	
+	public static final CssColor CSSWHITE = getInstance(Color.WHITE);
+	public static final CssColor CSSBLACK = getInstance(Color.BLACK);
+	
 	Color color = null;
-
+	
 	public CssColor(int rgb) {
 		super(rgb);
 		color = new Color(rgb);
 	}
-
+	
 	public CssColor(int rgba, boolean hasalpha) {
 		super(rgba, hasalpha);
 		color = new Color(rgba, hasalpha);
@@ -52,6 +55,14 @@ public class CssColor extends Color {
 			return null;
 		}
 		return new CssColor(color.getRGB());
+	}
+	
+	public CssColor getTextColor() {
+		if (color.getRed()+color.getBlue()+color.getGreen()>(255*3)/2) {
+			return CSSBLACK;
+		} else {
+			return CSSWHITE;
+		}
 	}
 	
 	@Override
