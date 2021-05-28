@@ -56,6 +56,7 @@ import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
+import org.javlo.service.ReverseLinkService;
 import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
@@ -297,7 +298,12 @@ public class GlobalImage extends Image implements IImageFilter {
 		ctx.getRequest().setAttribute("shortDate", StringHelper.renderShortDate(ctx, getDate()));
 		if (isMeta() && !isLabel()) {
 			ctx.getRequest().setAttribute("cleanLabel", cleanValue(ctx, getTitle()));
-			ctx.getRequest().setAttribute("label", getTitle());
+			
+			String label = getTitle();
+			label = XHTMLHelper.autoLink(XHTMLHelper.replaceLinks(ctx, XHTMLHelper.replaceJSTLData(ctx,label)),ctx.getGlobalContext());
+			ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(ctx.getGlobalContext());
+			label = reverserLinkService.replaceLink(ctx, this, label);
+			ctx.getRequest().setAttribute("label", label);
 		}
 		ctx.getRequest().setAttribute("location", getLocation(ctx));
 		ctx.getRequest().setAttribute("filter", getFilter(ctx));
@@ -328,7 +334,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	protected boolean isLabel() {
 		return !isMeta();
 	}
-	
+
 	@Override
 	protected boolean isStyleHidden(ContentContext ctx) {
 		if (ctx.isPreviewEditionMode()) {
@@ -821,14 +827,14 @@ public class GlobalImage extends Image implements IImageFilter {
 		if (isHiddenImage(ctx) && ctx.isPreviewEditionMode()) {
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 			PrintStream out = new PrintStream(outStream);
-			out.println("<div "+getPreviewAttributes(ctx)+">");
+			out.println("<div " + getPreviewAttributes(ctx) + ">");
 			out.println("<div class=\"_preview-hidden\">");
-			out.println("<img style=\"max-height: 80px; max-width: 80px;\" src=\"" + getPreviewURL(ctx, "standard") + "\" /> [HIDDEN "+getType()+"]");
+			out.println("<img style=\"max-height: 80px; max-width: 80px;\" src=\"" + getPreviewURL(ctx, "standard") + "\" /> [HIDDEN " + getType() + "]");
 			out.println("</div>");
 			out.println("</div>");
 			out.close();
 			return new String(outStream.toByteArray());
-			
+
 		}
 		String filter = getFilter(ctx);
 		StringBuffer res = new StringBuffer();
