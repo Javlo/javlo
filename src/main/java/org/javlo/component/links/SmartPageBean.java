@@ -39,6 +39,8 @@ import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
+import org.javlo.utils.SmartTimeRange;
+import org.javlo.utils.TimeRange;
 import org.owasp.encoder.Encode;
 
 public class SmartPageBean {
@@ -179,6 +181,15 @@ public class SmartPageBean {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public SmartTimeRange getTimeRange() throws Exception {
+		TimeRange tr = page.getTimeRange(ctx);
+		if (tr == null) {
+			return null;
+		} else {
+			return new SmartTimeRange(ctx, tr);
+		}
 	}
 
 	public String getDescription() {
