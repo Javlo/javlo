@@ -54,7 +54,7 @@
 						</c:forEach>
 
 						<div class="cookies-actions"
-							style="display: flex; justify-content: end;">
+							style="display: flex; justify-content: flex-end; margin-top: 1rem;">
 							<button class="btn_cookies btn_secondary" type="submit">${vi18n['cookies.banner.submit']}</button>
 							<button class="btn_cookies btn_secondary" type="submit"
 								name="refuse" value="true">${vi18n['cookies.banner.refuse']}</button>
