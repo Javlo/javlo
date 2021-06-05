@@ -39,7 +39,11 @@ public abstract class AbstractURLFactory implements IURLFactory {
 	}
 	
 	protected static String staticCleanString(String text) {
-		return StringEscapeUtils.unescapeHtml4(text);
+		if (text==null) {
+			return null;
+		} else {
+			return StringEscapeUtils.unescapeHtml4(text).trim();
+		}
 	}
 	
 	protected String cleanString(String text) {
