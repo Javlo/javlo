@@ -402,9 +402,19 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 					Basket basket = Basket.getInstance(ctx);
 					basket.addProduct(product);
-
+					
 					String msg = i18nAccess.getViewText("ecom.product.add", new String[][] { { "product", pComp.getName() } });
 					messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
+					
+					String redirectPage = comp.getConfig(ctx).getProperty("buy.target-page", null);
+					if (redirectPage != null) {
+						MenuElement targetPage = ctx.getCurrentPage().getRoot().searchChildFromName(redirectPage);
+						if (targetPage == null) {
+							logger.severe("page not found : "+targetPage);
+						} else {
+							ctx.setPath(targetPage.getPath());
+						}
+					}
 				}
 			}
 		}
