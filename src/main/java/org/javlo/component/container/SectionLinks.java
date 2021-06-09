@@ -1,10 +1,10 @@
 package org.javlo.component.container;
 
+import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.axis.utils.ByteArrayOutputStream;
 import org.javlo.bean.Link;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.IContentVisualComponent;

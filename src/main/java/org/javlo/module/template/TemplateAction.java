@@ -1,9 +1,7 @@
 package org.javlo.module.template;
 
-import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -23,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.media.jai.JAI;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -405,12 +402,12 @@ public class TemplateAction extends AbstractModuleAction {
 				ZipManagement.uploadZipTemplate(ctx.getGlobalContext().getStaticConfig().getTemplateFolder(), in, newTemplate.getId());
 				in.close();
 
-				URL imageURL = new URL(template.getImageURL());
-				File visualFile = new File(URLHelper.mergePath(newTemplate.getTemplateRealPath(), newTemplate.getVisualFile()));
-				RenderedImage image = JAI.create("url", imageURL);
-				out = new FileOutputStream(visualFile);
-				JAI.create("encode", image, out, "png", null);
-				out.close();
+//				URL imageURL = new URL(template.getImageURL());
+//				File visualFile = new File(URLHelper.mergePath(newTemplate.getTemplateRealPath(), newTemplate.getVisualFile()));
+//				RenderedImage image = JAI.create("url", imageURL);
+//				out = new FileOutputStream(visualFile);
+//				JAI.create("encode", image, out, "png", null);
+//				out.close();
 
 				messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.imported", new String[][] { { "name", newTemplate.getId() } }), GenericMessage.INFO));
 

@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.lang.mutable.MutableInt;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.utils.NeverEmptyMap;

@@ -8,6 +8,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Locale;
@@ -33,7 +34,6 @@ import com.google.code.geocoder.model.GeocoderAddressComponent;
 import com.google.code.geocoder.model.GeocoderRequest;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.ibm.icu.util.Calendar;
 
 public class LocationService {
 

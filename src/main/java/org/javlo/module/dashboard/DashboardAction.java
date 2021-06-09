@@ -17,7 +17,7 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.mutable.MutableInt;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.core.DebugNote;
 import org.javlo.component.core.IContentVisualComponent;

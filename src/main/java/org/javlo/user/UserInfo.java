@@ -17,7 +17,7 @@ import java.util.Set;
 
 import javax.mail.internet.InternetAddress;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.javlo.helper.LocalLogger;
 import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
@@ -270,7 +270,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	public void setValue(String field, String value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Method[] methods = this.getClass().getMethods();
 		for (Method method : methods) {
-			if (method.getName().equals("set"+StringUtils.capitalise(field))) {
+			if (method.getName().equals("set"+StringUtils.capitalize(field))) {
 				if (method.getParameterCount() == 1 && method.getParameters()[0].getType().equals(String.class)) {
 					method.invoke(this, value);
 				}

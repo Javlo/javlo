@@ -30,15 +30,9 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.RequestService;
-import org.javlo.utils.CSVFactory;
 import org.javlo.utils.Cell;
 import org.javlo.utils.XLSTools;
 import org.javlo.ztatic.StaticInfo;
-
-import com.flickr4java.flickr.activity.Item;
-import com.sun.mail.iap.Response;
-
-import net.sf.jasperreports.engine.export.ooxml.XlsxContentTypesHelper;
 
 public class SearchModuleAction extends AbstractModuleAction {
 

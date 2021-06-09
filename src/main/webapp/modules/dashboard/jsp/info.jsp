@@ -1,5 +1,4 @@
 <%@page import="org.javlo.utils.backup.BackupThread"
-%><%@page import="org.javlo.ztatic.InitInterest"
 %><%@page import="org.javlo.component.core.ComponentBean"
 %><%@page import="org.javlo.navigation.MenuElement"
 %><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -48,10 +47,10 @@
 <li><span class="label">#MenuElement : </span><%=MenuElement.INSTANCE%></li>
 <li><span class="label">#ComponentBean : </span><%=ComponentBean.INSTANCE%></li>
 <li><span class="label">#BackupThread : </span><%=BackupThread.INSTANCE_COUNT%></li>
-<%if (InitInterest.PointThread.INSTANCE>0) {%>
-	<li><span class="label">InitInterest #Thread : </span><%=InitInterest.PointThread.INSTANCE%></li>
-	<li><span class="label">InitInterest #Todo : </span><%=InitInterest.todo.size()%></li>
-<%}%>
+<%-- <%if (InitInterest.PointThread.INSTANCE>0) {%> --%>
+<%-- 	<li><span class="label">InitInterest #Thread : </span><%=InitInterest.PointThread.INSTANCE%></li> --%>
+<%-- 	<li><span class="label">InitInterest #Todo : </span><%=InitInterest.todo.size()%></li> --%>
+<%-- <%}%> --%>
 <li><span class="label">Request/minute (server) : </span>${globalCount.count} (${globalCount.average})</li>
 <li><span class="label">Request/minute (site) : </span>${globalContext.count}</li>
 </ul>

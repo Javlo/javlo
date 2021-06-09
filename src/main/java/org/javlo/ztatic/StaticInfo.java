@@ -49,9 +49,9 @@ import org.javlo.service.location.LocationService;
 import org.javlo.user.User;
 import org.javlo.xml.NodeXML;
 import org.owasp.encoder.Encode;
-import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 public class StaticInfo implements IRestItem {
 
@@ -1025,7 +1025,7 @@ public class StaticInfo implements IRestItem {
 						try {
 							if (ctx.getGlobalContext().getStaticConfig().isAutoFocus() && ctx.isAsPreviewMode()) {
 								logger.info("search point on interest on START : " + getFile() + " [" + ctx.getGlobalContext().getContextKey() + "]");
-								InitInterest.setPointOfInterestWidthThread(ctx, getFile(), getKey(ctx, FOCUS_ZONE_X), getKey(ctx, FOCUS_ZONE_Y));
+								//InitInterest.setPointOfInterestWidthThread(ctx, getFile(), getKey(ctx, FOCUS_ZONE_X), getKey(ctx, FOCUS_ZONE_Y));
 							}
 						} catch (Throwable t) {
 							logger.warning(t.getMessage());
