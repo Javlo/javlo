@@ -1387,9 +1387,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** MAILING FB URI    :  " + staticConfig.getMailingFeedBackURI());
 		out.println("**** MAILING FB CLASSE :  " + staticConfig.getMailingFeedbackClass());
 		out.println("**** MAIL HOST         :  " + staticConfig.getSMTPHost() + ':' + staticConfig.getSMTPPort() + " - [connection valid:" + smtpConnect + ']');
+		out.println("**** MAIL SLEEP 2M     :  " + MailingThread.SLEEP_BETWEEN_MAIL_SEC);
 		
 		out.println("**** SLF4J COM. LOG    :  " + LoggerFactory.getILoggerFactory().getClass().getCanonicalName());
-		
 		
 		out.println("**** ALL LOG LVL       :  " + staticConfig.getAllLogLevel());
 		out.println("**** ACCESS LOG LVL    :  " + staticConfig.getAccessLogLevel());
