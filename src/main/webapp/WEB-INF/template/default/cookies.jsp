@@ -82,12 +82,12 @@
 		<p>${i18n.view['cookies.message']}</p>
 		<div class="actions">
 			<form action="${info.currentURL}" method="post">
-				<a class="btn_cookies" target="_blank" href="#"
-					onclick="return showCookiesPopup();">${i18n.view['global.more']}</a>
-				<button type="button" name="webaction" value="view.refusecookies"
-					class="btn_cookies" onclick="return refuseCookie();">${i18n.view['cookies.refuse']}</button>
 				<button type="button" name="webaction" value="view.acceptcookies"
 					class="btn_cookies btn_primary" onclick="return acceptCookie();">${i18n.view['cookies.accept']}</button>
+				<button type="button" name="webaction" value="view.refusecookies"
+					class="btn_cookies" onclick="return refuseCookie();">${i18n.view['cookies.refuse']}</button>
+				<a class="lnk_cookies" target="_blank" href="#"
+					onclick="return showCookiesPopup();">${i18n.view['cookies.personalize']}</a>
 			</form>
 		</div>
 	</div>

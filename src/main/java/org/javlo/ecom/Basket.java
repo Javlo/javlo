@@ -261,11 +261,12 @@ public class Basket implements Serializable {
 	public double getTotal(ContentContext ctx, boolean vat) {
 		double result = 0;
 		for (Product product : getProducts()) {
-			double vatFactor = 1;
+			double price = product.getPrice();
 			if (!vat) {
-				vatFactor = 1 + product.getVAT();
+				price = price - (price*product.getVAT());
 			}
-			result = result + (product.getPrice() * (1 - product.getReduction()) * product.getQuantity()) / vatFactor;
+			
+			result = result + (price * (1 - product.getReduction()) * product.getQuantity());
 		}
 		result = result * (1 - getUserReduction()) + getDelivery(ctx, vat);
 		return result;

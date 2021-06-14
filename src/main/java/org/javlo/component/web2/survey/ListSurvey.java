@@ -161,9 +161,9 @@ public class ListSurvey extends AbstractSurvey implements IAction {
 			String rep = rs.getParameter(q.getInputName());
 			if (rep != null) {
 				q.setResponse(StringHelper.neverEmpty(rep, ""));
-				surveyContext.updateQuestion(q);							
+				surveyContext.updateQuestion(q);
 				logger.info(""+q);
-			}			
+			}
 		}
 		comp.store(ctx, questions, comp.getFieldValue(TITLE_FIELD));
 		MenuElement nextPage = comp.getPage().getNextBrother();
