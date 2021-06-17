@@ -4540,4 +4540,20 @@ public class StringHelper {
 		return ret.toLowerCase();
 	}
 
+	public static String[] splitAddress(String address) {
+		String[] out = new String[] { "", "" };
+		boolean streetBuilding = true;
+		for (char c : address.toCharArray()) {
+			if (StringHelper.isDigit(c)) {
+				streetBuilding = false;
+			}
+			if (streetBuilding) {
+				out[0] += c;
+			} else {
+				out[1] += c;
+			}
+		}
+		return out;
+	}
+
 }

@@ -129,11 +129,15 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 		String phone = rs.getParameter("phone", "").trim();
 		String country = rs.getParameter("country", "").trim();
 		String address = rs.getParameter("address", "").trim();
+		String number = rs.getParameter("number", "").trim();
+		if (!StringHelper.isEmpty(number)) {
+			address += ' ' + number;
+		}
 		String box = rs.getParameter("box", "").trim();
 		String zip = rs.getParameter("zip", "").trim();
 		String city = rs.getParameter("city", "").trim();
 		boolean noShipping = rs.getParameter("noshipping", null) != null;
-
+		
 		String vta = rs.getParameter("vat", "").trim();
 		String company = rs.getParameter("organization", "").trim();
 
@@ -178,6 +182,11 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
+		}
+		
+		boolean accept = StringHelper.isTrue(rs.getParameter("accept"));
+		if (!accept) {
+			return i18nAccess.getViewText("ecom.error.accept");
 		}
 
 		if (rs.getParameter("back", null) != null) {

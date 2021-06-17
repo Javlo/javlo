@@ -421,6 +421,14 @@ public class Basket implements Serializable {
 	public String getAddress() {
 		return address;
 	}
+	
+	public String getStreet() {
+		return StringHelper.splitAddress(address)[0];
+	}
+	
+	public String getNumber() {
+		return StringHelper.splitAddress(address)[1];
+	}
 
 	public void setAddress(String address) {
 		this.address = address;
@@ -498,42 +506,43 @@ public class Basket implements Serializable {
 	}
 
 	public static void main(String[] args) {
-		Basket basket = new Basket();
-		basket.setInfo("Basket info");
-		basket.setOrganization("Terrieur SA");
-		basket.setFirstName("Alain");
-		basket.setLastName("Terrieur");
-		basket.setAddress("13, Rue de la Folie");
-		basket.setZip("1000");
-		basket.setCity("Bruxelles");
-		basket.setCountry("be");
-		basket.setContactEmail("alain@terrieur.com");
-		basket.setContactPhone("0123456789");
-		List<ProductBean> products = new LinkedList<ProductBean>();
-		ProductBean product = new ProductBean();
-		product.setId("ID-ART-001");
-		product.setName("Article 1");
-		product.setDescription("Short Desc article 1");
-		product.setPrice(12);
-		product.setCurrencyCode("EUR");
-		product.setQuantity(2);
-		product.setVAT(0.21);
-		product.setReduction(0);
-		products.add(product);
-		product = new ProductBean();
-		product.setId("ID-ART-002");
-		product.setName("Article 2");
-		product.setDescription("Short Desc article 2");
-		product.setPrice(25.1);
-		product.setCurrencyCode("EUR");
-		product.setQuantity(3);
-		product.setVAT(0.21);
-		product.setReduction(0);
-		products.add(product);
-
-		System.out.println("TOTAL TVAC  = " + basket.getTotal(null, true));
-		System.out.println("TOTAL HTVAC = " + basket.getTotal(null, false));
-
+//		Basket basket = new Basket();
+//		basket.setInfo("Basket info");
+//		basket.setOrganization("Terrieur SA");
+//		basket.setFirstName("Alain");
+//		basket.setLastName("Terrieur");
+//		basket.setAddress("13, Rue de la Folie");
+//		basket.setZip("1000");
+//		basket.setCity("Bruxelles");
+//		basket.setCountry("be");
+//		basket.setContactEmail("alain@terrieur.com");
+//		basket.setContactPhone("0123456789");
+//		List<ProductBean> products = new LinkedList<ProductBean>();
+//		ProductBean product = new ProductBean();
+//		product.setId("ID-ART-001");
+//		product.setName("Article 1");
+//		product.setDescription("Short Desc article 1");
+//		product.setPrice(12);
+//		product.setCurrencyCode("EUR");
+//		product.setQuantity(2);
+//		product.setVAT(0.21);
+//		product.setReduction(0);
+//		products.add(product);
+//		product = new ProductBean();
+//		product.setId("ID-ART-002");
+//		product.setName("Article 2");
+//		product.setDescription("Short Desc article 2");
+//		product.setPrice(25.1);
+//		product.setCurrencyCode("EUR");
+//		product.setQuantity(3);
+//		product.setVAT(0.21);
+//		product.setReduction(0);
+//		products.add(product);
+//
+//		System.out.println("TOTAL TVAC  = " + basket.getTotal(null, true));
+//		System.out.println("TOTAL HTVAC = " + basket.getTotal(null, false));
+		
+		
 	}
 
 	public List<Product.ProductBean> getProductsBean() {
