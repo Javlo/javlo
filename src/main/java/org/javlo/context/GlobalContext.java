@@ -131,7 +131,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private static final Object LOCK_GLOBAL_CONTEXT_LOAD = new Object();
 
 	private final Object lockDataFile = new Object();
-
+	
 	private final Object lockUrlFile = new Object();
 
 	private final Object lockImportTemplate = new Object();
