@@ -1634,7 +1634,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		String closeComment = "<!-- /close " + getType() + " -->";
+		String closeComment = "<!-- /close comp:" + getType() + " -->";
 		if (isDisplayHidden() && ctx.isAsViewMode()) {
 			return closeComment;
 		}
@@ -3544,9 +3544,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			comp.setPage(getPage());
 			emptyPage = true;
 		}
-		String xhtml = ((AbstractVisualComponent) comp).getPrefixViewXHTMLCode(ctx);
+		String prefix = ((AbstractVisualComponent) comp).getPrefixViewXHTMLCode(ctx);
+		System.out.println(">>>>>>>>> AbstractVisualComponent.renderOtherComponent : prefix = "+prefix); //TODO: remove debug trace
+		String xhtml = prefix;
 		xhtml += ((AbstractVisualComponent) comp).getXHTMLCode(ctx);
-		xhtml += ((AbstractVisualComponent) comp).getSuffixViewXHTMLCode(ctx);
+		String suffix = ((AbstractVisualComponent) comp).getSuffixViewXHTMLCode(ctx);
+		System.out.println(">>>>>>>>> AbstractVisualComponent.renderOtherComponent : suffix = "+suffix); //TODO: remove debug trace
+		xhtml += suffix;
 		AbstractVisualComponent.setForcedId(ctx, null);
 		if (emptyPage) {
 			comp.setPage(null);
