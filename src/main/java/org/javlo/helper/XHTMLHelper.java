@@ -965,7 +965,7 @@ public class XHTMLHelper {
 		content.toArray(contentArray);
 		return getInputOneSelect(name, contentArray, value, js, sort);
 	}
-	
+
 	public static String getInputOneSelect(String name, List<? extends Object> content, String value, String cssClass) {
 		return getInputOneSelect(name, content, value, cssClass, null, true);
 	}
@@ -2319,11 +2319,11 @@ public class XHTMLHelper {
 	}
 
 	public static void main(String[] args) {
-		String params = "page:test|".substring("page:test|".indexOf("|")+1);
+		String params = "page:test|".substring("page:test|".indexOf("|") + 1);
 		System.out.println(params);
-		
+
 		String pageName = "test|user=me";
-		System.out.println(pageName.substring(0,pageName.indexOf("|")));
+		System.out.println(pageName.substring(0, pageName.indexOf("|")));
 	}
 
 	public static String textToXHTMLNewWin(String text) {
@@ -2619,19 +2619,19 @@ public class XHTMLHelper {
 							String pageName = hrefValue.substring("page:".length());
 							String params = "";
 							if (pageName.contains("|")) {
-								params = pageName.substring(pageName.indexOf("|")+1);
-								pageName = hrefValue.substring(0,pageName.indexOf("|"));
+								params = pageName.substring(pageName.indexOf("|") + 1);
+								pageName = hrefValue.substring(0, pageName.indexOf("|"));
 							}
 							ContentContext pageContext = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
 							pageContext.setFormat("html");
-							tag.getAttributes().put("href", URLHelper.createURLFromPageName(pageContext, pageName)+params);
+							tag.getAttributes().put("href", URLHelper.createURLFromPageName(pageContext, pageName) + params);
 						} else if (hrefValue.toLowerCase().startsWith("rss")) {
 							String channel = "";
 							if (hrefValue.contains(":")) {
 								channel = hrefValue.split(":")[1];
 							}
 							hrefValue = URLHelper.createRSSURL(ctx, channel);
-							tag.getAttributes().put("href", hrefValue);							
+							tag.getAttributes().put("href", hrefValue);
 						} else if (!StringHelper.isURL(hrefValue) && (!StringHelper.isMailURL(hrefValue)) && !hrefValue.contains("${") && !ResourceHelper.isResourceURL(ctx, hrefValue) && !ResourceHelper.isTransformURL(ctx, hrefValue)) {
 							String url = URLHelper.removeParam(hrefValue);
 							String params = URLHelper.getParamsAsString(hrefValue);
@@ -2698,7 +2698,7 @@ public class XHTMLHelper {
 
 	public static String cleanHTML(String html) {
 		Document doc = Jsoup.parse(html);
-		//Entities.EscapeMode.xhtml.getMap().put('\u00A0', "#160");
+		// Entities.EscapeMode.xhtml.getMap().put('\u00A0', "#160");
 		doc.outputSettings().escapeMode(EscapeMode.xhtml);
 		return doc.outerHtml();
 	}

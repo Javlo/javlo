@@ -37,10 +37,10 @@ public class XHTML extends AbstractVisualComponent {
 		PrintWriter out = new PrintWriter(writer);
 
 		out.println(getSpecialInputTag());
-		out.println("<textarea class=\"resizable-textarea\" id=\"" + getContentName() + "\" name=\"" + getContentName() + "\"");
+		out.println("<fieldset><legend>XHMTL</legend><textarea class=\"form-control text-editor\" data-mode=\"text/html\" data-ext=\"html\" id=\"" + getContentName() + "\" name=\"" + getContentName() + "\"");
 		out.println(" rows=\"" + (countLine() + 1) + "\">");
 		out.println(XHTMLHelper.escapeXHTML(getValue()));
-		out.println("</textarea>");
+		out.println("</textarea></fieldset>");
 
 		out.close();
 		return writer.toString();

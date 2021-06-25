@@ -3525,5 +3525,33 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return value;
 		}
 	}
+	
+	public String renderOtherComponent(ContentContext ctx, IContentVisualComponent comp) {
+		if (comp == null) {
+			return null;
+		}
+		if (!(comp instanceof AbstractVisualComponent)) {
+			logger.severe("comp is'nt instance of AbstractVisualComponent");
+			return "comp is'nt instance of AbstractVisualComponent";
+		}
+		AbstractVisualComponent.setForcedId(ctx, getId());
+		// comp.prepareView(ctx);
+		ctx.getRequest().setAttribute("nextSame", isNextSame(ctx));
+		ctx.getRequest().setAttribute("previousSame", isPreviousSame(ctx));
+		setContainerPage(ctx, getPage());	
+		boolean emptyPage = false;
+		if (comp.getPage() == null) {
+			comp.setPage(getPage());
+			emptyPage=true;
+		}
+		String xhtml = ((AbstractVisualComponent)comp).getPrefixViewXHTMLCode(ctx);
+		xhtml += ((AbstractVisualComponent)comp).getXHTMLCode(ctx);
+		xhtml += ((AbstractVisualComponent)comp).getSuffixViewXHTMLCode(ctx);
+		AbstractVisualComponent.setForcedId(ctx, null);
+		if (emptyPage) {
+			comp.setPage(null);
+		}
+		return xhtml;
+	}
 
 }

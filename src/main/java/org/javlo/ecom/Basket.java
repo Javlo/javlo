@@ -74,6 +74,8 @@ public class Basket implements Serializable {
 	private String paymentIntentCreditCard;
 	private String paymentIntentBancontact;
 	private String deliveryInstructions;
+	private String giftSender;
+	private String giftReceiver;
 	private String giftMessage;
 	private String PaymentType;
 	private String invoiceHash;
@@ -642,6 +644,12 @@ public class Basket implements Serializable {
 		if (getDeliveryInstructions() != null && getDeliveryInstructions().trim().length() > 0) {
 			out.println("  Delivery Instructions : " + getDeliveryInstructions());
 		}
+		if (getGiftSender() != null && getGiftSender().trim().length() > 0) {
+			out.println("  Gift sender : " + getGiftSender());
+		}
+		if (getGiftReceiver() != null && getGiftReceiver().trim().length() > 0) {
+			out.println("  Gift receiver : " + getGiftReceiver());
+		}
 		if (getGiftMessage() != null && getGiftMessage().trim().length() > 0) {
 			out.println("  Gift message : " + getGiftMessage());
 		}
@@ -695,6 +703,12 @@ public class Basket implements Serializable {
 		}
 		if (getDeliveryInstructions() != null && getDeliveryInstructions().trim().length() > 0) {
 			out.println("  Delivery Instructions : " + getDeliveryInstructions());
+		}
+		if (getGiftSender() != null && getGiftSender().trim().length() > 0) {
+			out.println("  gift sender : " + getGiftSender());
+		}
+		if (getGiftReceiver() != null && getGiftReceiver().trim().length() > 0) {
+			out.println("  gift receiver : " + getGiftReceiver());
 		}
 		if (getGiftMessage() != null && getGiftMessage().trim().length() > 0) {
 			out.println("  gift messsage : " + getGiftMessage());
@@ -940,6 +954,22 @@ public class Basket implements Serializable {
 
 	public void setLock(boolean lock) {
 		this.lock = lock;
+	}
+
+	public String getGiftSender() {
+		return giftSender;
+	}
+
+	public void setGiftSender(String giftSender) {
+		this.giftSender = giftSender;
+	}
+
+	public String getGiftReceiver() {
+		return giftReceiver;
+	}
+
+	public void setGiftReceiver(String giftReceiver) {
+		this.giftReceiver = giftReceiver;
 	}
 
 }

@@ -127,6 +127,7 @@ org.javlo.component.date.CalendarComponent
 org.javlo.component.container.ArrayDisplayComponent
 org.javlo.component.container.ComponentList
 org.javlo.component.container.ShowTemplateComponent
+org.javlo.component.container.DisplayComponent
 
 --content.title.ecom
 

@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 
 import org.javlo.component.column.TableBreak;
 import org.javlo.component.container.IContainer;
+import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.ContentElementList;
@@ -508,7 +509,7 @@ public class ComponentHelper {
 			return ServletHelper.executeJSP(ctx, specialRenderer + "?area=" + areaKey);
 		}
 	}
-
+	
 	public static Map<String, String> getCurrentContextComponentsList(ContentContext ctx) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 

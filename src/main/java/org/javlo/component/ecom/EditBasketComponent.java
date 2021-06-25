@@ -153,6 +153,8 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 		basket.setVATNumber(vta);
 		basket.setOrganization(company);
 		basket.setDeliveryInstructions(rs.getParameter("deliveryInstructions"));
+		basket.setGiftSender(rs.getParameter("giftSender"));
+		basket.setGiftReceiver(rs.getParameter("giftReceiver"));
 		basket.setGiftMessage(rs.getParameter("giftMessage"));
 		basket.setNoShipping(noShipping);
 
