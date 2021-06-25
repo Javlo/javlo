@@ -1634,7 +1634,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		String colSuffix = getColomnableSuffix(ctx);
+		String colSuffix = getColomnableSuffix(ctx) + "<!-- /close "+getType()+" -->";
 		if (isDisplayHidden() && ctx.isAsViewMode()) {
 			return "";
 		}
