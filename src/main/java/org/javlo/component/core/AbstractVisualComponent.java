@@ -3545,11 +3545,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			emptyPage = true;
 		}
 		String prefix = ((AbstractVisualComponent) comp).getPrefixViewXHTMLCode(ctx);
-		System.out.println(">>>>>>>>> AbstractVisualComponent.renderOtherComponent : prefix = "+prefix); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> AbstractVisualComponent.renderOtherComponent : 1.type = "+getType()); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> AbstractVisualComponent.renderOtherComponent : 2.prefix = "+prefix); //TODO: remove debug trace
 		String xhtml = prefix;
 		xhtml += ((AbstractVisualComponent) comp).getXHTMLCode(ctx);
 		String suffix = ((AbstractVisualComponent) comp).getSuffixViewXHTMLCode(ctx);
-		System.out.println(">>>>>>>>> AbstractVisualComponent.renderOtherComponent : suffix = "+suffix); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> AbstractVisualComponent.renderOtherComponent : 3.suffix = "+suffix); //TODO: remove debug trace
 		xhtml += suffix;
 		AbstractVisualComponent.setForcedId(ctx, null);
 		if (emptyPage) {
