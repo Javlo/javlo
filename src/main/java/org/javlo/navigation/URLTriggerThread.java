@@ -1,11 +1,13 @@
 package org.javlo.navigation;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import org.javlo.helper.DebugHelper;
+import org.javlo.helper.ResourceHelper;
 
 public class URLTriggerThread extends Thread {
 	
@@ -34,13 +36,15 @@ public class URLTriggerThread extends Thread {
 		logger.info("START URL TRIGGER on " + urlToTrigger.toString());
 		try {
 			sleepLatch.await(5, TimeUnit.SECONDS); //Delay start to avoid overload
-
-			while (stoppingLatch == null) {				
+			while (stoppingLatch == null) {
+				InputStream in=null;
 				try {
 					//Trig url
-					urlToTrigger.openConnection().getInputStream().close();
+					in = urlToTrigger.openConnection().getInputStream();
 				} catch (Throwable t) {
 					//t.printStackTrace();
+				} finally {
+					ResourceHelper.closeResource(in);
 				}
 				sleepLatch.await(secBetweenTrigger, TimeUnit.SECONDS);
 			}
