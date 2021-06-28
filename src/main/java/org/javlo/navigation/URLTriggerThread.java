@@ -5,6 +5,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+import org.javlo.helper.DebugHelper;
+
 public class URLTriggerThread extends Thread {
 	
 	private static long COUNT = 0;
@@ -19,6 +21,7 @@ public class URLTriggerThread extends Thread {
 
 	public URLTriggerThread(String threadName, int secBetweenTrigger, URL urlToTrigger) {
 		super(threadName);
+		logger.info("create URLTriggerThread : "+threadName+" "+secBetweenTrigger+" "+urlToTrigger+ " caller:"+DebugHelper.getCaller());
 		this.setDaemon(true);
 		this.secBetweenTrigger = secBetweenTrigger;
 		this.urlToTrigger = urlToTrigger;
