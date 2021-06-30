@@ -29,7 +29,7 @@ public class Basket implements Serializable {
 	public static final int START_STEP = 1;
 	public static final int REGISTRATION_STEP = 2;
 	public static final int ORDER_STEP = 3;
-	public static final int CONFIRMATION_STEP = 4;
+	public static final int PAY_STEP = 4;
 	public static final int FINAL_STEP = 5;
 	public static final int ERROR_STEP = 99;
 

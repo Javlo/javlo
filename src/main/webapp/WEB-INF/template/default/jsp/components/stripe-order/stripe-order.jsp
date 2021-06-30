@@ -1,16 +1,18 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%>
-<c:if test="${basket.step==3 || !contentContext.asViewMode}">
-  <button id="stripe-checkout-button-${compid}"
-  class="btn btn-primary btn-stripe btn-pay btn-cc mt-3 mb-3"
-  ${basket.step!=3?'disabled':''}>${vi18n['ecom.pay.cc']}<span class="pay-obligation">${vi18n['ecom.pay.obligation']}</span></button>
-  
-  <button id="stripe-checkout-button-bancontact-${compid}"
-  class="btn btn-primary btn-stripe btn-pay btn-bancontact mt-3 mb-3"
-  ${basket.step!=3?'disabled':''}>${vi18n['ecom.pay.bancontact']}<span class="pay-obligation">${vi18n['ecom.pay.obligation']}</span></button>
-  
- 
-  <script>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<c:if test="${basket.step==4 || !contentContext.asViewMode}">
+	<div class="btn-pay-group">
+		<button id="stripe-checkout-button-${compid}" class="btn btn-outline-primary btn-stripe btn-pay btn-cc mt-3 mb-3 d-flex justify-content-between align-items-center" ${basket.step!=4?'disabled':''}>
+			<jsp:include page="cc.svg" />
+			${vi18n['ecom.pay.cc']}
+		</button>
+
+		<button id="stripe-checkout-button-bancontact-${compid}" class="btn btn-outline-primary btn-stripe btn-pay btn-bancontact mt-3 mb-3 d-flex justify-content-between align-items-center" ${basket.step!=4?'disabled':''}>
+			<jsp:include page="bancontact.svg" />
+			&nbsp;${vi18n['ecom.pay.bancontact']}
+		</button>
+	</div>
+
+	<script>
   document.addEventListener("DOMContentLoaded", function(event) { 
     var stripe = Stripe('${publicKey}');
     var checkoutButton = document.getElementById("stripe-checkout-button-${compid}");
@@ -60,4 +62,4 @@
     
   })
   </script>
-  </c:if>
+</c:if>

@@ -219,6 +219,12 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 
 		return null;
 	}
+	
+	public static String performPay(ContentContext ctx, RequestService rs) throws Exception {
+		Basket basket = Basket.getInstance(ctx);
+		basket.setStep(Basket.PAY_STEP);
+		return null;
+	}
 
 	public static String performReset(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		Basket basket = Basket.getInstance(ctx);
