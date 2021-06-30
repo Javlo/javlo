@@ -108,4 +108,16 @@ public class BasketSmartBean {
 		return basket.getStructutedCommunication();
 	}
 	
+	public String getCustomerFirstName() {
+		return basket.getCustomerFirstName();
+	}
+	
+	public String getCustomerEmail() {
+		return basket.getCustomerEmail();
+	}
+	
+	public String getCustomerPhone() {
+		return basket.getCustomerPhone();
+	}
+	
  }

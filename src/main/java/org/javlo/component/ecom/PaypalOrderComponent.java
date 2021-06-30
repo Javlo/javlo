@@ -141,7 +141,7 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		Basket basket = Basket.getInstance(ctx);
-		if (basket.getStep() != Basket.ORDER_STEP) {
+		if (basket.getStep() != Basket.PAY_STEP) {
 			return "";
 		}
 		return getDirectPayForm(ctx);

@@ -401,6 +401,9 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 					product.setQuantity(quantityValue);
 
 					Basket basket = Basket.getInstance(ctx);
+					if (basket.isLock()) {
+						return i18nAccess.getText("ecom.basket-lock");
+					}
 					basket.addProduct(product);
 					
 					String msg = i18nAccess.getViewText("ecom.product.add", new String[][] { { "product", pComp.getName() } });

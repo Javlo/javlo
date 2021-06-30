@@ -149,6 +149,12 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 			params.put("basketId", ""+basket.getId());
 			params.put("invoiceHash", basket.getInvoiceHash());
 			
+			/** customer **/
+			params.put("customerFirstName", StringHelper.toHTMLAttribute(basket.getCustomerFirstName()));
+			params.put("customerLastName", StringHelper.toHTMLAttribute(basket.getCustomerLastName()));
+			params.put("customerEmail", StringHelper.toHTMLAttribute(basket.getCustomerEmail()));
+			params.put("customerPhone", StringHelper.toHTMLAttribute(basket.getCustomerPhone()));
+			
 			params.put("deliveryDate", StringHelper.renderDate(basket.getDeliveryDate()));
 			params.put("deliveryTime", StringHelper.renderTime(basket.getDeliveryDate()));
 			
@@ -201,7 +207,7 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 //			from = new InternetAddress(ctx.getGlobalContext().getAdministratorEmail());
 //		}	
 		InternetAddress from = new InternetAddress(ctx.getGlobalContext().getAdministratorEmail());
-		InternetAddress to = new InternetAddress(basket.getContactEmail());		
+		InternetAddress to = new InternetAddress(basket.getRealEmail());		
 		if (email == null) {
 			email = getConfirmationEmail(ctx,basket);
 			NetHelper.sendMail(ctx.getGlobalContext(), from, to, null, bcc, subject, email, null, false);

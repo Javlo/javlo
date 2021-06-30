@@ -84,7 +84,7 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 		Basket basket = Basket.getInstance(ctx);
 		
 		// bancontact
-		if (isBancontact(ctx) && basket.getStep() == Basket.ORDER_STEP) {
+		if (isBancontact(ctx) && basket.getStep() == Basket.PAY_STEP) {
 			basket.setLock(true);
 			synchronized (Stripe.class) {
 				// Set your secret key. Remember to switch to your live secret key in
@@ -102,7 +102,7 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 				String bancontactSuccessURL = URLHelper.createURL(ctx.getContextForAbsoluteURL(), ctx.getPath(), urlParam) + "&id=" + paymentIntent.getId();
 				ctx.getRequest().setAttribute("PAYMENT_INTENT_CLIENT_SECRET", paymentIntent.getClientSecret());
 				ctx.getRequest().setAttribute("bancontactSuccessURL", bancontactSuccessURL);
-				ctx.getRequest().setAttribute("name", basket.getFirstName() + ' ' + basket.getLastName());
+				ctx.getRequest().setAttribute("name", basket.getRealFirstName() + ' ' + basket.getRealLastName());
 			}
 		}
 	}

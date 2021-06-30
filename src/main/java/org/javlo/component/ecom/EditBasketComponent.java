@@ -157,6 +157,12 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 		basket.setGiftReceiver(rs.getParameter("giftReceiver"));
 		basket.setGiftMessage(rs.getParameter("giftMessage"));
 		basket.setNoShipping(noShipping);
+		
+		/** customer **/
+		basket.setCustomerFirstName(rs.getParameter("customerFirstName"));
+		basket.setCustomerLastName(rs.getParameter("customerLastName"));
+		basket.setCustomerEmail(rs.getParameter("customerEmail"));
+		basket.setCustomerPhone(rs.getParameter("customerPhone"));
 
 		/** billing **/
 		basket.setBillingName(rs.getParameter("billingName"));
@@ -186,16 +192,16 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 			}
 		}
 		
-		boolean accept = StringHelper.isTrue(rs.getParameter("accept"));
-		if (!accept) {
-			return i18nAccess.getViewText("ecom.error.accept");
-		}
-
 		if (rs.getParameter("back", null) != null) {
 			if (basket.getStep() > 1) {
 				basket.setStep(basket.getStep() - 1);
 			}
 			return null;
+		}
+		
+		boolean accept = StringHelper.isTrue(rs.getParameter("accept"));
+		if (!accept) {
+			return i18nAccess.getViewText("ecom.error.accept");
 		}
 
 		EcomStatus status = ctx.getGlobalContext().getStaticConfig().getEcomLister().onConfirmBasket(ctx, basket);
@@ -242,12 +248,15 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 					p.setQuantity(Integer.parseInt(quantity));
 				}
 			}
+		} else {
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("ecom.basket-lock"), GenericMessage.ALERT));
 		}
 		return null;
 	}
 
 	public static String performBack(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		Basket basket = Basket.getInstance(ctx);
+		basket.setLock(false);
 		if (basket.getStep() > 1) {
 			basket.setStep(basket.getStep() - 1);
 		}

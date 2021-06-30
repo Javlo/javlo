@@ -44,7 +44,7 @@ public class TransferOrderComponent extends AbstractOrderComponent implements IA
 		if (ctx.getRequest().getAttribute("msg") != null) {			
 			return ctx.getRequest().getAttribute("msg").toString();			
 		}
-		if (basket.getStep() != Basket.ORDER_STEP) {
+		if (basket.getStep() != Basket.PAY_STEP) {
 			return "";
 		}
 

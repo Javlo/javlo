@@ -91,6 +91,11 @@ public class Basket implements Serializable {
 	private String billingCity;
 	private String billingCountry;
 	private String billingVat;
+	
+	private String customerFirstName;
+	private String customerLastName;
+	private String customerEmail;
+	private String customerPhone;
 
 	private boolean lock = false;
 
@@ -628,6 +633,12 @@ public class Basket implements Serializable {
 			out.println("  Organization : " + getOrganization());
 		}
 		out.println("");
+		out.println("Customer:");
+		out.println("  firstName : " + getCustomerFirstName());
+		out.println("  lastName : " + getCustomerLastName());
+		out.println("  e-mail : " + getCustomerEmail());
+		out.println("  phone : " + getCustomerPhone());
+		out.println("");
 		out.println("User:");
 		out.println("  firstName : " + getFirstName());
 		out.println("  lastName : " + getLastName());
@@ -688,7 +699,13 @@ public class Basket implements Serializable {
 		out.println("Size : " + getSize());
 		out.println("Status : " + getStatus());
 		out.println("");
-		out.println("User:");
+		out.println("Customer:");
+		out.println("  firstName : " + getCustomerFirstName());
+		out.println("  lastName : " + getCustomerLastName());
+		out.println("  e-mail : " + getCustomerEmail());
+		out.println("  phone : " + getCustomerPhone());
+		out.println("");
+		out.println("Delivery:");
 		out.println("  firstName : " + getFirstName());
 		out.println("  lastName : " + getLastName());
 		out.println("  email : " + getContactEmail());
@@ -970,6 +987,62 @@ public class Basket implements Serializable {
 
 	public void setGiftReceiver(String giftReceiver) {
 		this.giftReceiver = giftReceiver;
+	}
+
+	public String getCustomerFirstName() {
+		return customerFirstName;
+	}
+
+	public void setCustomerFirstName(String customerFirstName) {
+		this.customerFirstName = customerFirstName;
+	}
+
+	public String getCustomerLastName() {
+		return customerLastName;
+	}
+
+	public void setCustomerLastName(String customerLastName) {
+		this.customerLastName = customerLastName;
+	}
+
+	public String getCustomerEmail() {
+		return customerEmail;
+	}
+
+	public void setCustomerEmail(String customerEmail) {
+		this.customerEmail = customerEmail;
+	}
+
+	public String getCustomerPhone() {
+		return customerPhone;
+	}
+
+	public void setCustomerPhone(String customerPhone) {
+		this.customerPhone = customerPhone;
+	}
+	
+	public String getRealFirstName() {
+		if (!StringHelper.isEmpty(getCustomerFirstName())) {
+			return getCustomerFirstName();
+		} else {
+			return getFirstName();
+		}
+	}
+	
+	public String getRealLastName() {
+		if (!StringHelper.isEmpty(getCustomerLastName())) {
+			return getCustomerLastName();
+		} else {
+			return getLastName();
+		}
+	}
+	
+	public String getRealEmail() {
+		if (!StringHelper.isEmpty(getCustomerEmail())) {
+			return getCustomerEmail();
+		} else {
+			return getContactEmail();
+		}
 	}
 
 }

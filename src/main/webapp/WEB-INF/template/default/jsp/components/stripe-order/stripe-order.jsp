@@ -6,10 +6,12 @@
 			${vi18n['ecom.pay.cc']}
 		</button>
 
+		<c:if test="${bancontact}">
 		<button id="stripe-checkout-button-bancontact-${compid}" class="btn btn-outline-primary btn-stripe btn-pay btn-bancontact mt-3 mb-3 d-flex justify-content-between align-items-center" ${basket.step!=4?'disabled':''}>
 			<jsp:include page="bancontact.svg" />
 			&nbsp;${vi18n['ecom.pay.bancontact']}
 		</button>
+		</c:if>
 	</div>
 
 	<script>
