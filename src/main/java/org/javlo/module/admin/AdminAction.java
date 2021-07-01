@@ -558,7 +558,6 @@ public class AdminAction extends AbstractModuleAction {
 					/** cookies types **/
 					List<String> cookiesList = new LinkedList<>();
 					for (String type : CookiesService.COOKIES_TYPES) {
-						System.out.println(">>>>>>>>> AdminAction.performUpdateGlobalContext : "+StringHelper.isTrue(requestService.getParameter("cookies_"+type))); //TODO: remove debug trace
 						if (StringHelper.isTrue(requestService.getParameter("cookies_"+type))) {
 							cookiesList.add(type);
 						}
