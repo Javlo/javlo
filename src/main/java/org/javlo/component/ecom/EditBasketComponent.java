@@ -159,9 +159,12 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 		basket.setNoShipping(noShipping);
 		
 		/** customer **/
+		
+		String customerEmail = rs.getParameter("customerEmail","");
+		
 		basket.setCustomerFirstName(rs.getParameter("customerFirstName"));
 		basket.setCustomerLastName(rs.getParameter("customerLastName"));
-		basket.setCustomerEmail(rs.getParameter("customerEmail"));
+		basket.setCustomerEmail(customerEmail);
 		basket.setCustomerPhone(rs.getParameter("customerPhone"));
 
 		/** billing **/
@@ -171,6 +174,13 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 		basket.setBillingCountry(rs.getParameter("billingCountry"));
 		basket.setBillingPostcode(rs.getParameter("billingPostcode"));
 		basket.setBillingVat(rs.getParameter("billingVat"));
+		
+		if (rs.getParameter("back", null) != null) {
+			if (basket.getStep() > 1) {
+				basket.setStep(basket.getStep() - 1);
+			}
+			return null;
+		}
 
 		if (!StringHelper.isEmpty(rs.getParameter("deliveryDate"))) {
 			try {
@@ -190,33 +200,27 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
+		} else if (rs.getParameter("deliveryDate") != null) {
+			return i18nAccess.getViewText("ecom.error.no-delivery-date");
 		}
 		
-		if (rs.getParameter("back", null) != null) {
-			if (basket.getStep() > 1) {
-				basket.setStep(basket.getStep() - 1);
-			}
-			return null;
-		}
-		
-		boolean accept = StringHelper.isTrue(rs.getParameter("accept"));
-		if (!accept) {
-			return i18nAccess.getViewText("ecom.error.accept");
-		}
-
 		EcomStatus status = ctx.getGlobalContext().getStaticConfig().getEcomLister().onConfirmBasket(ctx, basket);
 		if (status.isError()) {
 			return status.getMessage();
 		}
+		
+		if (!StringHelper.isMail(customerEmail)) {
+			return i18nAccess.getViewText("mailing.error.email");
+		}
 
-		if (firstName.length() == 0 || lastName.length() == 0 || email.length() == 0 || country.length() == 0 || address.length() == 0 || zip.length() == 0 || city.length() == 0) {
+		if (firstName.length() == 0 || lastName.length() == 0 || country.length() == 0 || address.length() == 0 || zip.length() == 0 || city.length() == 0) {
 			String msg = i18nAccess.getViewText("global.compulsory-field");
 			if (!StringHelper.isEmpty(status.getMessage())) {
 				msg = status.getMessage();
 			}
 			messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
 		} else {
-			if (!StringHelper.isMail(email)) {
+			if (!StringHelper.isEmpty(email) && !StringHelper.isMail(email)) {
 				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("mailing.error.email"), GenericMessage.ERROR));
 			} else {
 				basket.setStep(Basket.ORDER_STEP);
@@ -227,6 +231,13 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 	}
 	
 	public static String performPay(ContentContext ctx, RequestService rs) throws Exception {
+		
+		boolean accept = StringHelper.isTrue(rs.getParameter("accept"));
+		if (!accept) {
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
+			return i18nAccess.getViewText("ecom.error.accept");
+		}
+		
 		Basket basket = Basket.getInstance(ctx);
 		basket.setStep(Basket.PAY_STEP);
 		return null;

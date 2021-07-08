@@ -157,7 +157,7 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 		HashMap<String, String> responseData;
 		synchronized (Stripe.class) {
 			Stripe.apiKey = getPrivateKey(ctx);
-			SessionCreateParams params = SessionCreateParams.builder().addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD).setMode(SessionCreateParams.Mode.PAYMENT).setSuccessUrl(successURL).setCancelUrl(errorURL).setCustomerEmail(basket.getContactEmail()).addAllLineItem(collect).build();
+			SessionCreateParams params = SessionCreateParams.builder().addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD).setMode(SessionCreateParams.Mode.PAYMENT).setSuccessUrl(successURL).setCancelUrl(errorURL).setCustomerEmail(basket.getCustomerEmail()).addAllLineItem(collect).build();
 			Session session = Session.create(params);
 			session.setClientReferenceId(basket.getId());
 			basket.setPaymentIntentCreditCard(session.getPaymentIntent());
