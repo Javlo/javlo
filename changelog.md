@@ -864,6 +864,8 @@ Security in case of vulnerabilities.
   - smart deploy template
   - add layout as css class 
   - don't display reapeat componet in preview edit mode.
+  - major update e-commerce process
+  - update cookies management
 ### fixed  
   - don't redirect old url if no urlfactory asked
   - js content type
@@ -872,3 +874,4 @@ Security in case of vulnerabilities.
   - remove internal countries list
   - scss, less compilator synchronized
   - preview button on layer optimisation
+## [2.1.2.8] - 08/07/2021
