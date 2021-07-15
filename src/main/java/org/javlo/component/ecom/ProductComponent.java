@@ -31,9 +31,11 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 	private static final long MAX_STOCK = 999999;
 
-	static final List<String> FIELDS_STOCK = Arrays.asList(new String[] { "name", "description", "price", "special_link", "vat", "promo", "currency", "offset", "weight", "production", "basket-page", "html", "html_view", "html_add" });
+	static final List<String> FIELDS_STOCK = Arrays.asList(new String[] { "name", "description", "price", "special_link", "vat", "promo", "currency", "offset", "weight", "production", "basket-page", "html" });
 
-	static final List<String> FIELDS_NOSTOCK = Arrays.asList(new String[] { "name", "description", "price", "special_link", "vat", "promo", "currency", "basket-page", "html_view", "html_add" });
+	static final List<String> FIELDS_NOSTOCK = Arrays.asList(new String[] { "name", "description", "price", "special_link", "vat", "promo", "currency", "basket-page" });
+
+	static final List<String> FIELDS_I18N = Arrays.asList(new String[] { "price", "special_link", "vat", "promo", "currency", "offset", "weight", "production", "basket-page", "html" });
 
 	public static final String TYPE = "product";
 
@@ -178,12 +180,21 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 		out.println("<div class=\"edit\" style=\"padding: 3px;\"><div class=\"row\">");
 
 		for (String field : fields) {
-			renderField(ctx, out, field, getRowSize(field), getFieldValue(field));
+
+			boolean i18n = FIELDS_I18N.contains(field);
+			ProductComponent comp = this;
+			if (i18n) {
+				comp = (ProductComponent) getReferenceComponent(ctx);
+				if (comp == null) {
+					return "reference component not found, check the page structure in : " + ctx.getGlobalContext().getDefaultLanguage();
+				}
+			}
+			renderField(ctx, out, field, getRowSize(field), comp.getFieldValue(field), i18n);
 		}
 
 		if (ctx.getGlobalContext().getEcomConfig().isStock()) {
-			renderField(ctx, out, "stock", 1, getRealStock(ctx));
-			renderField(ctx, out, "virtual", 1, getVirtualStock(ctx));
+			renderField(ctx, out, "stock", 1, getRealStock(ctx), false);
+			renderField(ctx, out, "virtual", 1, getVirtualStock(ctx), false);
 		}
 
 		out.println("</div></div>");
@@ -193,14 +204,20 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 		return writer.toString();
 	}
 
-	private void renderField(ContentContext ctx, PrintWriter out, String field, int rowSize, Object value) throws Exception {
+	private void renderField(ContentContext ctx, PrintWriter out, String field, int rowSize, Object value, boolean i18n) throws Exception {
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 
 		String fieldId = createKeyWithField(field);
 
 		out.println("<div class=\"col-md-4 col-lg-3\"><div class=\"form-group\">");
 		out.println("<label for=\"" + fieldId + "\">" + i18nAccess.getText("field." + field) + "</label>");
-		out.print("<textarea class=\"form-control\" rows=\"" + rowSize + "\" id=\"" + fieldId + "\" name=\"" + fieldId + "\">");
+
+		String readonly = "";
+		if (i18n && !ctx.getRequestContentLanguage().equals(ctx.getGlobalContext().getDefaultLanguage())) {
+			readonly = " readonly=\"readonly\"";
+		}
+
+		out.print("<textarea class=\"form-control\" rows=\"" + rowSize + "\" id=\"" + fieldId + "\" name=\"" + fieldId + "\"" + readonly + ">");
 		out.print(String.valueOf(value));
 		out.println("</textarea>");
 		out.println("</div></div>");
@@ -250,7 +267,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
 
-		ctx.getRequest().setAttribute("name", getName());
+		ctx.getRequest().setAttribute("productName", getName());
 
 		String action;
 		if (getBasketPage().trim().length() > 0) {
@@ -264,24 +281,27 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 		} else {
 			action = URLHelper.createURL(ctx);
 		}
-		ctx.getRequest().setAttribute("action", action);
-		ctx.getRequest().setAttribute("price", getPrice());
-		ctx.getRequest().setAttribute("priceDisplay", StringHelper.renderDouble(getPrice(), 2));
-		ctx.getRequest().setAttribute("currency", getCurrency());
-		ctx.getRequest().setAttribute("currencyDisplay", getCurrencyHtml(getCurrency()));
-		if (!StringHelper.isEmpty(getDescription())) {
-			ctx.getRequest().setAttribute("description", XHTMLHelper.textToXHTML(getDescription()));
-		}
-		ctx.getRequest().setAttribute("virtualStock", getVirtualStock(ctx));
-		ctx.getRequest().setAttribute("offset", getOffset(ctx));
 
-		if (!StringHelper.isEmpty(getSpecialLink())) {
-			String link = getSpecialLink();
-			link = XHTMLHelper.replaceJSTLData(ctx, link);
-			link = XHTMLHelper.replaceLinks(ctx, link);
-			ctx.getRequest().setAttribute("specialLink", link);
-		}
+		ProductComponent refComp = (ProductComponent) getReferenceComponent(ctx);
+		if (refComp != null) {
+			ctx.getRequest().setAttribute("action", action);
+			ctx.getRequest().setAttribute("price", refComp.getPrice());
+			ctx.getRequest().setAttribute("priceDisplay", StringHelper.renderDouble(refComp.getPrice(), 2));
+			ctx.getRequest().setAttribute("currency", refComp.getCurrency());
+			ctx.getRequest().setAttribute("currencyDisplay", getCurrencyHtml(refComp.getCurrency()));
+			if (!StringHelper.isEmpty(getDescription())) {
+				ctx.getRequest().setAttribute("description", XHTMLHelper.textToXHTML(getDescription()));
+			}
+			ctx.getRequest().setAttribute("virtualStock", refComp.getVirtualStock(ctx));
+			ctx.getRequest().setAttribute("offset", refComp.getOffset(ctx));
 
+			if (!StringHelper.isEmpty(refComp.getSpecialLink())) {
+				String link = refComp.getSpecialLink();
+				link = XHTMLHelper.replaceJSTLData(ctx, link);
+				link = XHTMLHelper.replaceLinks(ctx, link);
+				ctx.getRequest().setAttribute("specialLink", link);
+			}
+		}
 	}
 
 	@Override
@@ -455,6 +475,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 							logger.severe("page not found : " + targetPage);
 						} else {
 							ctx.setPath(targetPage.getPath());
+							comp.prepareView(ctx);
 						}
 					}
 				}

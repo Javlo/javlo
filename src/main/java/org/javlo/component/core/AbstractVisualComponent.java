@@ -51,6 +51,7 @@ import org.javlo.component.column.TableBreak;
 import org.javlo.component.column.TableComponent;
 import org.javlo.component.config.ComponentConfig;
 import org.javlo.component.container.IContainer;
+import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.links.MirrorComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -322,6 +323,25 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			helpURL = URLHelper.mergePath(helpURL + 'v' + IVersion.VERSION.substring(0, 3).replace('.', '_'), globalContext.getEditLanguage(ctx.getRequest().getSession()));
 		}
 		return helpURL;
+	}
+	
+	/**
+	 * search the equivalent component in the default language content.
+	 * 
+	 * @throws Exception
+	 */
+	public IContentVisualComponent getReferenceComponent(ContentContext ctx) throws Exception {
+		if (ctx.getRequestContentLanguage().equals(ctx.getGlobalContext().getDefaultLanguage())) {
+			return this;
+		}
+		int componentPosition = ComponentHelper.getComponentPosition(ctx, this);
+		ContentContext lgCtx = ctx.getContextForDefaultLanguage();
+		IContentVisualComponent refComp = ComponentHelper.getComponentWidthPosition(lgCtx, getPage(), getArea(), getType(), componentPosition);
+		if (refComp == null) {
+			return null;
+		} else {
+			return refComp;
+		}
 	}
 
 	@Override

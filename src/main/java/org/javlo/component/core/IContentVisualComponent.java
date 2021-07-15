@@ -81,6 +81,13 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 * @return
 	 */
 	public String getStyle();
+	
+	/**
+	 * this method is called before rendering the component.
+	 * @param ctx
+	 * @throws Exception
+	 */
+	public void prepareView(ContentContext ctx) throws Exception;
 
 	/**
 	 * the code for view the element in XHTML environment.
