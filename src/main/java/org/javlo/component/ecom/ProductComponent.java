@@ -28,13 +28,13 @@ import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 
 public class ProductComponent extends AbstractPropertiesComponent implements IAction, IProductContainer {
-	
+
 	private static final long MAX_STOCK = 999999;
 
-	static final List<String> FIELDS_STOCK = Arrays.asList(new String[] { "name", "description", "price", "special_link", "vat", "promo", "currency", "offset", "weight", "production", "basket-page", "html", "html_view", "html_add"  });
-	
+	static final List<String> FIELDS_STOCK = Arrays.asList(new String[] { "name", "description", "price", "special_link", "vat", "promo", "currency", "offset", "weight", "production", "basket-page", "html", "html_view", "html_add" });
+
 	static final List<String> FIELDS_NOSTOCK = Arrays.asList(new String[] { "name", "description", "price", "special_link", "vat", "promo", "currency", "basket-page", "html_view", "html_add" });
-	
+
 	public static final String TYPE = "product";
 
 	@Override
@@ -64,16 +64,16 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 	public String getName() {
 		return getFieldValue("name");
 	}
-	
+
 	public String getDescription() {
 		return getFieldValue("description");
 	}
-	
+
 	@Override
 	public String getPageDescription(ContentContext ctx) {
 		return getDescription();
 	}
-	
+
 	public String getSpecialLink() {
 		return getFieldValue("special_link");
 	}
@@ -108,13 +108,13 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 	public long getWeight() {
 		return getFieldLongValue("weight");
 	}
-	
+
 	public String getHtmlView(ContentContext ctx) throws Exception {
-		return XHTMLHelper.replaceJSTLData(ctx, getFieldValue("html_view",""));
+		return XHTMLHelper.replaceJSTLData(ctx, getFieldValue("html_view", ""));
 	}
-	
+
 	public String getHtmlAdd(ContentContext ctx) throws Exception {
-		return XHTMLHelper.replaceJSTLData(ctx, getFieldValue("html_add",""));
+		return XHTMLHelper.replaceJSTLData(ctx, getFieldValue("html_add", ""));
 	}
 
 	public long getProduction() {
@@ -180,7 +180,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 		for (String field : fields) {
 			renderField(ctx, out, field, getRowSize(field), getFieldValue(field));
 		}
-		
+
 		if (ctx.getGlobalContext().getEcomConfig().isStock()) {
 			renderField(ctx, out, "stock", 1, getRealStock(ctx));
 			renderField(ctx, out, "virtual", 1, getVirtualStock(ctx));
@@ -231,7 +231,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 		return msg;
 	}
-	
+
 	private static final String getCurrencyHtml(String cur) {
 		if (cur.equalsIgnoreCase("eur")) {
 			return "&euro;";
@@ -241,11 +241,49 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 	}
 
 	public static void main(String[] args) {
-		double test =34.2;
-		
-		System.out.println(">> "+StringHelper.renderDouble(test, 2));
+		double test = 34.2;
+
+		System.out.println(">> " + StringHelper.renderDouble(test, 2));
 	}
-	
+
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
+
+		ctx.getRequest().setAttribute("name", getName());
+
+		String action;
+		if (getBasketPage().trim().length() > 0) {
+			ContentService content = ContentService.getInstance(ctx.getRequest());
+			MenuElement page = content.getNavigation(ctx).searchChildFromName(getBasketPage());
+			if (page != null) {
+				action = URLHelper.createURL(ctx, page);
+			} else {
+				action = URLHelper.createURL(ctx);
+			}
+		} else {
+			action = URLHelper.createURL(ctx);
+		}
+		ctx.getRequest().setAttribute("action", action);
+		ctx.getRequest().setAttribute("price", getPrice());
+		ctx.getRequest().setAttribute("priceDisplay", StringHelper.renderDouble(getPrice(), 2));
+		ctx.getRequest().setAttribute("currency", getCurrency());
+		ctx.getRequest().setAttribute("currencyDisplay", getCurrencyHtml(getCurrency()));
+		if (!StringHelper.isEmpty(getDescription())) {
+			ctx.getRequest().setAttribute("description", XHTMLHelper.textToXHTML(getDescription()));
+		}
+		ctx.getRequest().setAttribute("virtualStock", getVirtualStock(ctx));
+		ctx.getRequest().setAttribute("offset", getOffset(ctx));
+
+		if (!StringHelper.isEmpty(getSpecialLink())) {
+			String link = getSpecialLink();
+			link = XHTMLHelper.replaceJSTLData(ctx, link);
+			link = XHTMLHelper.replaceLinks(ctx, link);
+			ctx.getRequest().setAttribute("specialLink", link);
+		}
+
+	}
+
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		if (getOffset(ctx) > 0) {
@@ -276,52 +314,53 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 				out.println("<h2>" + getName() + "</h2>");
 				out.println("</div>");
 			}
-			
+
 			double price = getPrice();
 			out.println("<div class=\"line list-group-item price d-flex justify-content-between\">");
 			if (price > 0) {
 				out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.price") + "</span> <span class=\"price\">" + StringHelper.renderDouble(price, 2) + "&nbsp;" + getCurrencyHtml(getCurrency()) + "</span>");
 			} else {
-				out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.gift") + "&nbsp; (" +getCurrencyHtml(getCurrency()) + ")</span> <span class=\"price\"><input class=\"form-control digit\" name=\"price\" type=\"number\" min=\"2\" value=\"\" /></span>");
+				out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.gift") + "&nbsp; (" + getCurrencyHtml(getCurrency()) + ")</span> <span class=\"price\"><input class=\"form-control digit\" name=\"price\" type=\"number\" min=\"2\" value=\"\" /></span>");
 			}
 			out.println("</div>");
-			
+
 			if (!StringHelper.isEmpty(getDescription())) {
 				out.println("<div class=\"line list-group-item description\">");
 				out.println("<p>" + XHTMLHelper.textToXHTML(getDescription()) + "</p>");
 				out.println("</div>");
 			}
 
-//			out.println("<div class=\"line list-group-item stock d-flex justify-content-between\">");
-//			out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.stock") + "</span> <span class=\"stock\">"+getRealStock(ctx)+"</span>");
-//			out.println("</div>");
+			// out.println("<div class=\"line list-group-item stock d-flex
+			// justify-content-between\">");
+			// out.println("<span class=\"label\">" + i18nAccess.getViewText("ecom.stock") +
+			// "</span> <span class=\"stock\">"+getRealStock(ctx)+"</span>");
+			// out.println("</div>");
 
 			out.println("<div class=\"line list-group-item stock d-flex justify-content-between form-inline\">");
 			if (getVirtualStock(ctx) > getOffset(ctx)) {
 
 				String Qid = "product-" + StringHelper.getRandomId();
-				if (price>0) {
+				if (price > 0) {
 					out.println("<label class=\"quantity-label\" for=\"" + Qid + "\"><span>" + i18nAccess.getViewText("ecom.quantity") + "</span></label>");
 					out.println("<input class=\"form-control digit\" id=\"" + Qid + "\" type=\"number\" min=\"1\" name=\"quantity\" value=\"" + getOffset(ctx) + "\" maxlength=\"3\"/>");
 				} else {
 					out.println("<div><input type=\"hidden\" name=\"quantity\" value=\"1\" /></div>");
 				}
-				out.println("<span class=\"buy\"><button class=\"btn btn-default btn-primary buy\" type=\"submit\" name=\"buy\"><svg style=\"vertical-align: baseline;\" xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" fill=\"currentColor\" class=\"bi bi-basket\" viewBox=\"0 0 16 16\">\r\n"
-						+ "  <path d=\"M5.757 1.071a.5.5 0 0 1 .172.686L3.383 6h9.234L10.07 1.757a.5.5 0 1 1 .858-.514L13.783 6H15a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1v4.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 13.5V9a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h1.217L5.07 1.243a.5.5 0 0 1 .686-.172zM2 9v4.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V9H2zM1 7v1h14V7H1zm3 3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3A.5.5 0 0 1 4 10zm2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3A.5.5 0 0 1 6 10zm2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3A.5.5 0 0 1 8 10zm2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 1 .5-.5zm2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 1 .5-.5z\"/>\r\n"
-						+ "</svg> " + i18nAccess.getViewText("ecom.buy") + "</button></span>");
-				
-				if(!StringHelper.isEmpty(getSpecialLink())) {
+				out.println(
+						"<span class=\"buy\"><button class=\"btn btn-default btn-primary buy\" type=\"submit\" name=\"buy\"><svg style=\"vertical-align: baseline;\" xmlns=\"http://www.w3.org/2000/svg\" width=\"14\" height=\"14\" fill=\"currentColor\" class=\"bi bi-basket\" viewBox=\"0 0 16 16\">\r\n" + "  <path d=\"M5.757 1.071a.5.5 0 0 1 .172.686L3.383 6h9.234L10.07 1.757a.5.5 0 1 1 .858-.514L13.783 6H15a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1v4.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 13.5V9a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h1.217L5.07 1.243a.5.5 0 0 1 .686-.172zM2 9v4.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V9H2zM1 7v1h14V7H1zm3 3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3A.5.5 0 0 1 4 10zm2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3A.5.5 0 0 1 6 10zm2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3A.5.5 0 0 1 8 10zm2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 1 .5-.5zm2 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 1 .5-.5z\"/>\r\n" + "</svg> " + i18nAccess.getViewText("ecom.buy") + "</button></span>");
+
+				if (!StringHelper.isEmpty(getSpecialLink())) {
 					String link = getSpecialLink();
 					link = XHTMLHelper.replaceJSTLData(ctx, link);
 					link = XHTMLHelper.replaceLinks(ctx, link);
-					out.println("<span class=\"special-link\">"+link+"</span>");
+					out.println("<span class=\"special-link\">" + link + "</span>");
 				}
 
 				String dinfo = i18nAccess.getViewText("ecom.delivery-info", "");
 				if (!StringHelper.isEmpty(dinfo)) {
-					out.println("<div class=\"delivery-info\">"+dinfo+"</div>");
+					out.println("<div class=\"delivery-info\">" + dinfo + "</div>");
 				}
-				
+
 				out.println("</div>");
 			} else {
 				out.println("<span class=\"soldout\">" + i18nAccess.getViewText("ecom.soldout") + "</span>");
@@ -329,7 +368,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 			out.println("</div>");
 
 			out.println("</form>");
-			
+
 			if (StringHelper.isEmpty(ctx.getRequest().getParameter("cid"))) {
 				out.println(getHtmlView(ctx));
 			} else {
@@ -339,7 +378,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 			out.close();
 			return new String(outStream.toByteArray());
 		} else {
-			return "<div class=\"alert alert-danger\">"+getType()+" : offset not found.</div>";
+			return "<div class=\"alert alert-danger\">" + getType() + " : offset not found.</div>";
 		}
 	}
 
@@ -352,17 +391,17 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 	public String getActionGroupName() {
 		return "products";
 	}
-	
+
 	@Override
-	public int getLabelLevel(ContentContext ctx) {	
+	public int getLabelLevel(ContentContext ctx) {
 		return 1;
 	}
-	
+
 	@Override
 	public String getTextTitle(ContentContext ctx) {
 		return getName();
 	}
-	
+
 	@Override
 	public String getTextLabel(ContentContext ctx) {
 		return getName();
@@ -380,7 +419,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 			if ((comp != null) && (comp instanceof ProductComponent)) {
 				ProductComponent pComp = (ProductComponent) comp;
 				Product product = new Product(pComp);
-				
+
 				if (StringHelper.isDigit(rs.getParameter("price"))) {
 					product.setPrice(Double.parseDouble(rs.getParameter("price")));
 				}
@@ -405,15 +444,15 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 						return i18nAccess.getText("ecom.basket-lock");
 					}
 					basket.addProduct(product);
-					
+
 					String msg = i18nAccess.getViewText("ecom.product.add", new String[][] { { "product", pComp.getName() } });
 					messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
-					
+
 					String redirectPage = comp.getConfig(ctx).getProperty("buy.target-page", null);
 					if (redirectPage != null) {
 						MenuElement targetPage = ctx.getCurrentPage().getRoot().searchChildFromName(redirectPage);
 						if (targetPage == null) {
-							logger.severe("page not found : "+targetPage);
+							logger.severe("page not found : " + targetPage);
 						} else {
 							ctx.setPath(targetPage.getPath());
 						}
@@ -424,7 +463,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 		return null;
 	}
-	
+
 	public ProductBean getProductBean(ContentContext ctx) {
 		return new Product(this).getBean();
 	}
