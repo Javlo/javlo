@@ -22,11 +22,11 @@ if ( user != null ) {
 		  	<div class="panel-body">
 		  	<input type="hidden" name="webaction" value="user.changePassword2Check" />
 			<div class="line form-group">
-				<label for="password"><%=i18nAccess.getViewText ( "form.new-password" )%>:</label>
+				<label for="password"><%=i18nAccess.getViewText ( "form.new-password" )%></label>
 				<div class="input"><input class="form-control" id="password" type="password" name="newpassword" value="" /></div>
 			</div>
 			<div class="line form-group">
-				<label for="password"><%=i18nAccess.getViewText ( "form.new-password2" )%>:</label>
+				<label for="password"><%=i18nAccess.getViewText ( "form.new-password2" )%></label>
 				<div class="input"><input class="form-control" id="password" type="password" name="newpassword2" value="" /></div>
 			</div>		
 			<input class="btn btn-default pull-right" type="submit" value="<%=i18nAccess.getViewText ( "form.submit" )%>" />
