@@ -22,6 +22,7 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.module.admin.AdminAction;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.module.mailing.MailingAction;
 import org.javlo.module.mailing.MailingModuleContext;
@@ -69,6 +70,33 @@ public class URLHelper extends ElementaryURLHelper {
 
 		}
 		return false;
+	}
+	
+	
+	public static String getLogoUrl(ContentContext ctx) throws Exception {
+		String logo = ctx.getGlobalContext().getTemplateData().getLogo();
+		File logoPath = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), AdminAction.LOGO_PATH, "logo_"+ctx.getLanguage()+".png"));
+		if (logoPath.exists()) {
+			logo = URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), AdminAction.LOGO_PATH, "logo_"+ctx.getLanguage()+".png");
+		}
+		if (logo == null || logo.equals("null")) {
+			return null;
+		} else {
+			return URLHelper.createTransformURL(ctx, URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), logo), "logo");
+		}
+	}
+	
+	public static String getLogoRawUrl(ContentContext ctx) throws Exception {
+		String logo = ctx.getGlobalContext().getTemplateData().getLogo();
+		File logoPath = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), AdminAction.LOGO_PATH, "logo_"+ctx.getLanguage()+".png"));
+		if (logoPath.exists()) {
+			logo = URLHelper.mergePath(AdminAction.LOGO_PATH, "logo_"+ctx.getLanguage()+".png");
+		}
+		if (logo == null || logo.equals("null")) {
+			return null;
+		} else {
+			return URLHelper.createResourceURL(ctx, URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), logo));
+		}
 	}
 
 	public static String createAbsoluteViewURL(ContentContext ctx, String uri) throws Exception {

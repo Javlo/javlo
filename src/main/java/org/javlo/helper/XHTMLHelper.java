@@ -2982,19 +2982,20 @@ public class XHTMLHelper {
 				xhtml = xhtml.replace("${action.text}", linkLabel);
 			}
 			xhtml = xhtml.replace("${root}", URLHelper.createURL(ctx.getContextForAbsoluteURL(), "/"));
+			xhtml = xhtml.replace("${logo}", URLHelper.getLogoRawUrl(ctx.getContextForAbsoluteURL()));
 			if (logo == null) {
 				logo = ctx.getGlobalContext().getTemplateData().getLogo();
 				if (logo != null) {
 					logo = URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), logo);
-					xhtml = xhtml.replace("${logo}", URLHelper.createTransformURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE).getContextForAbsoluteURL(), logo, "mail-logo"));
+					xhtml = xhtml.replace("${action.logo}", URLHelper.createTransformURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE).getContextForAbsoluteURL(), logo, "mail-logo"));
 				} else {
-					xhtml = xhtml.replace("${logo}", URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), "/images/font/mail_logo.png"));
+					xhtml = xhtml.replace("${action.logo}", URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), "/images/font/mail_logo.png"));
 				}
 			} else {
 				if (!StringHelper.isURL(logo)) {
-					xhtml = xhtml.replace("${logo}", URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), logo));
+					xhtml = xhtml.replace("${action.logo}", URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), logo));
 				} else {
-					xhtml = xhtml.replace("${logo}", logo);
+					xhtml = xhtml.replace("${action.logo}", logo);
 				}
 			}
 			xhtml = xhtml.replace("${footer}", footer);

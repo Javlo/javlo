@@ -1717,29 +1717,11 @@ public class InfoBean {
 	}
 
 	public String getLogoUrl() throws Exception {
-		String logo = ctx.getGlobalContext().getTemplateData().getLogo();
-		File logoPath = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), AdminAction.LOGO_PATH, "logo_"+ctx.getLanguage()+".png"));
-		if (logoPath.exists()) {
-			logo = URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), AdminAction.LOGO_PATH, "logo_"+ctx.getLanguage()+".png");
-		}
-		if (logo == null || logo.equals("null")) {
-			return null;
-		} else {
-			return URLHelper.createTransformURL(ctx, URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), logo), "logo");
-		}
+		return URLHelper.getLogoUrl(ctx);
 	}
 
 	public String getLogoRawUrl() throws Exception {
-		String logo = ctx.getGlobalContext().getTemplateData().getLogo();
-		File logoPath = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), AdminAction.LOGO_PATH, "logo_"+ctx.getLanguage()+".png"));
-		if (logoPath.exists()) {
-			logo = URLHelper.mergePath(AdminAction.LOGO_PATH, "logo_"+ctx.getLanguage()+".png");
-		}
-		if (logo == null || logo.equals("null")) {
-			return null;
-		} else {
-			return URLHelper.createResourceURL(ctx, URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), logo));
-		}
+		return URLHelper.getLogoRawUrl(ctx);
 	}
 
 	public boolean isCookiesMessage() throws Exception {
