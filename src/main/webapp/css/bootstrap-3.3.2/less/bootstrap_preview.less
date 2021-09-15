@@ -1,83 +1,91 @@
 @import "../font-awesome/css/font-awesome.min.css";
 
 #preview_command {
-	
-.modal-dialog {
-	z-index: 10000;
-}
 
-.max-width {
-	width: 100% !important;
-}
+	.modal-dialog {
+		z-index: 10000;
+	}
 
-/* add pvdm */
-.collapse.show {
-  display: block;
-  visibility: visible;
-}
+	.max-width {
+		width: 100% !important;
+	}
 
-// Core variables and mixins
-@import "variables.less";
-@import "mixins.less";
+	/* add pvdm */
+	.collapse.show {
+		display: block;
+		visibility: visible;
+	}
 
-// Reset and dependencies
-@import "normalize.less";
-// @import "print.less";
-@import "glyphicons.less";
+	// Core variables and mixins
+	@import "variables.less";
+	@import "mixins.less";
 
-// Core CSS
-@import "scaffolding.less";
-@import "type.less";
-@import "code.less";
-@import "rendered_cols.less";
-@import "tables.less";
-@import "forms.less";
-@import "buttons.less";
+	// Reset and dependencies
+	@import "normalize.less";
+	// @import "print.less";
+	@import "glyphicons.less";
 
-// Components
-@import "component-animations.less";
-@import "dropdowns.less";
-@import "button-groups.less";
-@import "input-groups.less";
-@import "navs.less";
-@import "navbar.less";
-@import "breadcrumbs.less";
-// @import "pagination.less";
-// @import "pager.less";
-@import "labels.less";
-@import "badges.less";
-// @import "jumbotron.less";
-@import "thumbnails.less";
-@import "alerts.less";
-// @import "progress-bars.less";
-// @import "media.less";
-@import "list-group.less";
-@import "panels.less";
-@import "responsive-embed.less";
-@import "wells.less";
-@import "close.less";
+	// Core CSS
+	@import "scaffolding.less";
+	@import "type.less";
+	@import "code.less";
+	@import "rendered_cols.less";
+	@import "tables.less";
+	@import "forms.less";
+	@import "buttons.less";
 
-// Components w/ JavaScript
-@import "modals.less";
-@import "tooltip.less";
-@import "popovers.less";
-// @import "carousel.less";
+	// Components
+	@import "component-animations.less";
+	@import "dropdowns.less";
+	@import "button-groups.less";
+	@import "input-groups.less";
+	@import "navs.less";
+	@import "navbar.less";
+	@import "breadcrumbs.less";
+	// @import "pagination.less";
+	// @import "pager.less";
+	@import "labels.less";
+	@import "badges.less";
+	// @import "jumbotron.less";
+	@import "thumbnails.less";
+	@import "alerts.less";
+	// @import "progress-bars.less";
+	// @import "media.less";
+	@import "list-group.less";
+	@import "panels.less";
+	@import "responsive-embed.less";
+	@import "wells.less";
+	@import "close.less";
 
-// Utility classes
-@import "utilities.less";
-@import "responsive-utilities.less";
+	// Components w/ JavaScript
+	@import "modals.less";
+	@import "tooltip.less";
+	@import "popovers.less";
+	// @import "carousel.less";
 
-.btn-group {
-	position: static;
-}
+	// Utility classes
+	@import "utilities.less";
+	@import "responsive-utilities.less";
 
-.header .btn {
-	height: 28px;
-}
+	.btn-group {
+		position: static;
+	}
 
-.panel {
-	border-radius: 0;
-}
+	.header .btn {
+		height: 28px;
+	}
+
+	.panel {
+		border-radius: 0;
+	}
+
+	.btn-languiages {
+		padding: 5px;
+		.list-group-item {
+			padding: 0;
+		}
+
+	}
 
 }
 
@@ -100,4 +108,3 @@ html.edit-preview {
 		font-size: 11px;
 	}
 }
-
