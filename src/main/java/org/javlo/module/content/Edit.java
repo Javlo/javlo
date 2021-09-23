@@ -633,7 +633,7 @@ public class Edit extends AbstractModuleAction {
 		}
 
 		Template inheritedTemplate = null;
-		if (ctx.getCurrentPage().getParent() != null) {
+		if (ctx.getCurrentPage() != null && ctx.getCurrentPage().getParent() != null) {
 			inheritedTemplate = TemplateFactory.getTemplate(ctx, ctx.getCurrentPage().getParent());
 		}
 		if (inheritedTemplate != null) {
