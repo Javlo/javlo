@@ -380,9 +380,9 @@ public class Edit extends AbstractModuleAction {
 			if (user == null) {
 				return false;
 			}
-//			if (user.getRoles().contains(AdminUserSecurity.CONTRIBUTOR_ROLE)) {
-//				return page.getCreator().equals(user.getLogin());
-//			}
+			// if (user.getRoles().contains(AdminUserSecurity.CONTRIBUTOR_ROLE)) {
+			// return page.getCreator().equals(user.getLogin());
+			// }
 			ContentService.getInstance(globalContext);
 			if (page.getEditorRoles().size() > 0) {
 				if (!adminUserSecurity.haveRight(adminUserFactory.getCurrentUser(globalContext, ctx.getRequest().getSession()), AdminUserSecurity.FULL_CONTROL_ROLE)) {
@@ -659,14 +659,16 @@ public class Edit extends AbstractModuleAction {
 		/** check area **/
 		String badArea = "";
 		String sep = "";
-		ComponentBean[] content = ctx.getCurrentPage().getContent();
-		for (ComponentBean componentBean : content) {
-			if (componentBean != null) {
-				Collection<String> areas = ctx.getCurrentTemplate().getAreas();
-				if (!areas.contains(componentBean.getArea())) {
-					if (componentBean.getArea() != null && !badArea.contains(componentBean.getArea())) {
-						badArea = badArea + sep + componentBean.getArea();
-						sep = ",";
+		if (ctx.getCurrentPage() != null) {
+			ComponentBean[] content = ctx.getCurrentPage().getContent();
+			for (ComponentBean componentBean : content) {
+				if (componentBean != null) {
+					Collection<String> areas = ctx.getCurrentTemplate().getAreas();
+					if (!areas.contains(componentBean.getArea())) {
+						if (componentBean.getArea() != null && !badArea.contains(componentBean.getArea())) {
+							badArea = badArea + sep + componentBean.getArea();
+							sep = ",";
+						}
 					}
 				}
 			}
@@ -1424,7 +1426,7 @@ public class Edit extends AbstractModuleAction {
 				newURL = URLHelper.addRawParam(newURL, ElementaryURLHelper.BACK_PARAM_NAME, requestService.getParameter(ElementaryURLHelper.BACK_PARAM_NAME, null));
 			}
 			newURL = messageRepository.forwardMessage(newURL);
-			
+
 			ctx.sendRedirect(newURL);
 		} else {
 			return "bad request structure : 'language' not found.";
