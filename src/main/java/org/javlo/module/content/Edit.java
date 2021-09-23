@@ -599,7 +599,9 @@ public class Edit extends AbstractModuleAction {
 
 		Map<String, String> screenshortParam = new HashMap<String, String>();
 		screenshortParam.put(ContentContext.TAKE_SCREENSHOT, "true");
-		screenshortParam.put(ContentContext.TAKE_SCREENSHOT_PAGE_NAME, ctx.getCurrentPage().getName());
+		if (ctx.getCurrentPage() != null) {
+			screenshortParam.put(ContentContext.TAKE_SCREENSHOT_PAGE_NAME, ctx.getCurrentPage().getName());
+		}
 		ctx.getRequest().setAttribute("takeSreenshotUrl", URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), screenshortParam));
 
 		/** COMPONENT LIST **/
