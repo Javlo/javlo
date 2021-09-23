@@ -552,7 +552,9 @@ public class Edit extends AbstractModuleAction {
 					break;
 				case ContentModuleContext.PAGE_MODE:
 					currentModule.setToolsRenderer("/jsp/actions.jsp?button_edit=true&button_preview=true&button_delete_page=true" + publish);
-					request.setAttribute("page", ctx.getCurrentPage().getPageBean(ctx));
+					if (ctx.getCurrentPage() != null) {
+						request.setAttribute("page", ctx.getCurrentPage().getPageBean(ctx));
+					}
 					request.setAttribute("taxonomySelect", globalContext.getAllTaxonomy(ctx).getSelectHtml(ctx.getCurrentPage().getTaxonomy()));
 					currentModule.setRenderer("/jsp/page_properties.jsp");
 					currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("item.title"));
