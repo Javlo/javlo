@@ -41,6 +41,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.helper.XMLManipulationHelper.TagDescription;
+import org.javlo.helper.Comparator.MenuElementCreationDateComparator;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.utils.DocxUtils;
@@ -467,6 +468,21 @@ public class ContentHelper {
 		}
 		return null;
 	}
+	
+	public static MenuElement createChild(ContentContext ctx, MenuElement parent) {
+		int index = 1;
+		String childPageName = parent.getName()+"_"+index;
+		ContentService content = ContentService.getInstance(ctx.getRequest());
+		while (content.getNavigation(ctx).searchChildFromName(childPageName) != null) {
+			index++;
+			childPageName = parent.getName()+"_"+index;
+		}
+		MenuElement child =  MenuElement.getInstance(ctx);
+		child.setName(childPageName);
+		parent.addChildMenuElement(child);
+		parent.releaseCache();
+		return child;
+	}
 
 	public static void copyPage(ContentContext ctx, MenuElement source, MenuElement target) throws Exception {
 
@@ -496,7 +512,6 @@ public class ContentHelper {
 				}
 			}
 		}
-
 	}
 	
 	public static MenuElement createPage(ContentContext ctx, MenuElement template, MenuElement root, Date date) throws Exception {

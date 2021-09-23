@@ -21,6 +21,7 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.ContentHelper;
 import org.javlo.helper.MacroHelper;
 import org.javlo.helper.MapHelper;
 import org.javlo.helper.NetHelper;
@@ -116,7 +117,7 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 
 		return null;
 	}
-	
+
 	public static String performCreate(RequestService rs, EditContext editCtx, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		String pageName = rs.getParameter("root", null);
 		String date = rs.getParameter("date", null);
@@ -124,6 +125,11 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 
 		boolean create = rs.getParameter("create", null) != null;
 		boolean duplicate = rs.getParameter("duplicate", null) != null;
+		boolean duplicateChildren = rs.getParameter("children", null) != null;
+		if (duplicateChildren) {
+			duplicate = true;
+		}
+
 		String message = null;
 		String newURL = null;
 		String newEditURL = null;
@@ -173,27 +179,49 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 					String mountPageName = MacroHelper.getMonthPageName(ctxLg, yearPage.getName(), articleDate);
 					parentPage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctxLg).searchChildFromName(mountPageName);
 				}
-				
+
 				if (parentPage != null) {
 					newPage = MacroHelper.createArticlePageName(ctx, parentPage);
 					if (newPage != null) {
+						ContentContext noAreaCtx = ctx.getContextWithArea(null);
 						if (duplicate) {
 							ContentService content = ContentService.getInstance(ctx.getRequest());
 							MenuElement page = content.getNavigation(ctx).searchChildFromName(ctx.getRequest().getParameter("page"));
-							ContentContext noAreaCtx = ctx.getContextWithArea(null);
-							ContentElementList contentList = page.getContent(noAreaCtx);
-							Map<String, String> parents = new HashMap<String, String>();
-							while (contentList.hasNext(noAreaCtx)) {
-								IContentVisualComponent comp = contentList.next(noAreaCtx);
-								if (!comp.isRepeat()) {
-									ComponentBean bean = new ComponentBean(comp.getComponentBean());
-									bean.setId(StringHelper.getRandomId());
-									String parent = parents.get(bean.getArea());
-									if (parent == null) {
-										parent = "0";
+							{
+								ContentElementList contentList = page.getContent(noAreaCtx);
+								Map<String, String> parents = new HashMap<String, String>();
+								while (contentList.hasNext(noAreaCtx)) {
+									IContentVisualComponent comp = contentList.next(noAreaCtx);
+									if (!comp.isRepeat()) {
+										ComponentBean bean = new ComponentBean(comp.getComponentBean());
+										bean.setId(StringHelper.getRandomId());
+										String parent = parents.get(bean.getArea());
+										if (parent == null) {
+											parent = "0";
+										}
+										parent = content.createContent(ctx, bean, parent, false);
+										parents.put(bean.getArea(), parent);
 									}
-									parent = content.createContent(ctx, bean, parent, false);
-									parents.put(bean.getArea(), parent);
+								}
+							}
+							if (duplicateChildren) {
+								for (MenuElement child : page.getChildMenuElements()) {
+									MenuElement newChild = ContentHelper.createChild(noAreaCtx, newPage);
+									ContentElementList contentList = child.getContent(noAreaCtx);
+									Map<String, String> parents = new HashMap<String, String>();
+									while (contentList.hasNext(noAreaCtx)) {
+										IContentVisualComponent comp = contentList.next(noAreaCtx);
+										if (!comp.isRepeat()) {
+											ComponentBean bean = new ComponentBean(comp.getComponentBean());
+											bean.setId(StringHelper.getRandomId());
+											String parent = parents.get(bean.getArea());
+											if (parent == null) {
+												parent = "0";
+											}
+											parent = content.createContent(ctx, newChild, bean, parent, false);
+											parents.put(bean.getArea(), parent);
+										}
+									}
 								}
 							}
 							ctx.getCurrentPage().releaseCache();

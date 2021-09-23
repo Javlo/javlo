@@ -730,7 +730,6 @@ public class MacroHelper {
 			String year = null;
 			String mount = null;
 			MenuElement groupPage = null;
-			System.out.println(">>>>>>>>> MacroHelper.createArticlePageName : splittedName = "+splittedName); //TODO: remove debug trace
 			if (splittedName.length <= 2) {
 				year = splittedName[splittedName.length - 1];
 			} else {
@@ -739,8 +738,6 @@ public class MacroHelper {
 				groupPage = parentPage.getParent().getParent();
 			}
 			
-			System.out.println(">>>>>>>>> MacroHelper.createArticlePageName : year = "+year); //TODO: remove debug trace
-
 			if (StringHelper.isDigit(mount)) {
 				int m = Integer.parseInt(mount);
 				if (m < 1 || m > 12) {

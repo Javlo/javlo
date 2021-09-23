@@ -866,7 +866,7 @@ Security in case of vulnerabilities.
   - don't display reapeat componet in preview edit mode.
   - major update e-commerce process
   - update cookies management
-### fixed  
+### fixed
   - don't redirect old url if no urlfactory asked
   - js content type
   - update security on file servlet
@@ -875,3 +875,12 @@ Security in case of vulnerabilities.
   - scss, less compilator synchronized
   - preview button on layer optimisation
 ## [2.1.2.8] - 08/07/2021
+### Added
+  - special renderer, you can render other component in the context of the current component (public String renderOtherComponent(ContentContext ctx, IContentVisualComponent comp) {)
+### Modified
+  - prodcut (ecom) translation of label
+  - product component, link to renderer
+  - create article : duplicate with children
+### fixed
+  - correct the day generator
+  - vat calcul

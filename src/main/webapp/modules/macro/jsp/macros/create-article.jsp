@@ -50,11 +50,15 @@
 </c:if>
 <div class="line">
 	<label for="create">create structure</label>
-	<input type="checkbox" id="create" name="create" checked="checked" onclick="if (jQuery('#create')[0].checked) {jQuery('#duplicate')[0].checked = false}" />
+	<input type="checkbox" id="create" name="create" checked="checked" onclick="if (document.getElementById('create').checked) {document.getElementById('duplicate').checked = false; document.getElementById('children').checked = false;}" />
 </div>
 <div class="line">
-	<label for="duplicate">duplicate current page</label>
-	<input type="checkbox" id="duplicate" name="duplicate" onclick="if (jQuery('#duplicate')[0].checked) {jQuery('#create')[0].checked = false}" />
+	<label for="duplicate">duplicate page</label>
+	<input type="checkbox" id="duplicate" name="duplicate" onclick="if (document.getElementById('duplicate').checked) {document.getElementById('create').checked = false;} if (!document.getElementById('duplicate').checked) {document.getElementById('children').checked = false}" />
+</div>
+<div class="line">
+	<label for="children">duplicate page and children</label>
+	<input type="checkbox" id="children" name="children" onclick="document.getElementById('create').checked = false; document.getElementById('duplicate').checked = true;" />
 </div>
 
 <c:if test="${globalContext.collaborativeMode}">

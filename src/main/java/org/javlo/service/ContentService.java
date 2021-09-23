@@ -292,6 +292,7 @@ public class ContentService implements IPrintInfo {
 		bean.setCookiesDisplayStatus(inBean.getCookiesDisplayStatus());
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		MenuElement elem = NavigationHelper.searchPage(ctx, rs.getParameter("pageContainerID", null));
+		
 		if (elem == null) {
 			elem = ctx.getCurrentPage();
 			if (elem.isChildrenAssociation() && elem.getChildMenuElements().size() > 0) {
