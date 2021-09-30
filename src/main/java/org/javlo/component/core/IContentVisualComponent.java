@@ -938,5 +938,10 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 */
 	public String getConfigInValue(String key, String defaultValue);
 	
-	
+	/**
+	 * force a init.
+	 * @param bean
+	 * @param ctx
+	 */
+	public void forceInit(ComponentBean bean, ContentContext ctx) throws Exception;
 }

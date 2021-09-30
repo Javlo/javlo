@@ -26,7 +26,9 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.files.AbstractFileComponent;
@@ -854,20 +856,24 @@ public class MacroHelper {
 		if (!StringHelper.isTrue("" + componentsType.get("all-languages"))) {
 			lgs = Arrays.asList(new String[] { ctx.getRequestContentLanguage() });
 		}
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService contentService = ContentService.getInstance(ctx.getRequest());
 		for (String lg : lgs) {
 			String parentId = "0";
 			Set<String> keysSet = componentsType.keySet();
 			List<String> keys = new LinkedList<String>();
 			keys.addAll(keysSet);
 			Collections.sort(keys);
+			IContentVisualComponent previousComponent = null;
 			for (String compName : keys) {
 				if (compName.contains(".") && !compName.endsWith(".style") && !compName.endsWith(".list") && !compName.endsWith(".area") && !compName.endsWith(".init-content") && !compName.endsWith(".folder") && !compName.endsWith(".renderer")) {
 					String style = (String) componentsType.get(compName + ".style");
 					boolean asList = StringHelper.isTrue(componentsType.get(compName + ".list"));
 					String area = (String) componentsType.get(compName + ".area");
+					if (area == null) {
+						area = ComponentBean.DEFAULT_AREA;
+					}
 					boolean initContent = StringHelper.isTrue(componentsType.get(compName + ".init-content"));
-
+					
 					String type = StringHelper.split(compName, ".")[1];
 
 					String folder = (String) componentsType.get(compName + ".folder");
@@ -895,27 +901,36 @@ public class MacroHelper {
 					}
 
 					parentId = MacroHelper.addContent(lg, page, parentId, type, style, area, value, asList, ctx.getCurrentEditUser());
-					IContentVisualComponent comp = content.getComponent(ctx, parentId);
+					
+					IContentVisualComponent newComp = contentService.getComponent(ctx, parentId);
+					
+					if (previousComponent != null) {
+						previousComponent.setNextComponent(newComp);
+					}
+					previousComponent = newComp;
+					
+					//IContentVisualComponent comp = content.getComponent(ctx, parentId);
 					if (initContent) {
-						comp.initContent(ctx);
+						newComp.initContent(ctx);
 					}
-					if (comp instanceof AbstractFileComponent) {
-						((AbstractFileComponent) comp).init(comp.getComponentBean(), ctx);
-					}
+
+					newComp.forceInit(newComp.getComponentBean(), ctx);
 
 					String renderer = (String) componentsType.get(compName + ".renderer");
 					if (renderer != null) {
-						comp.setRenderer(ctx, renderer);
+						newComp.setRenderer(ctx, renderer);
 					}
 
 					if (folder != null) {
-						if (comp instanceof AbstractFileComponent) {
-							((AbstractFileComponent) comp).setDirSelected(folder);
+						if (newComp instanceof AbstractFileComponent) {
+							((AbstractFileComponent) newComp).setDirSelected(folder);
 						}
-						if (comp instanceof Multimedia) {
-							((Multimedia) comp).setCurrentRootFolder(ctx, folder);
+						if (newComp instanceof Multimedia) {
+							((Multimedia) newComp).setCurrentRootFolder(ctx, folder);
 						}
 					}
+					
+					page.releaseCache();
 				}
 			}
 		}
@@ -947,10 +962,10 @@ public class MacroHelper {
 				if (tags != null) {
 					parentId = MacroHelper.addContent(lg, newPage, parentId, Tags.TYPE, StringHelper.collectionToString(tags, ";"), ctx.getCurrentEditUser());
 				}
-				if (ctx.getGlobalContext().hasComponent(Heading.class)) {
-					parentId = MacroHelper.addContent(lg, newPage, parentId, Heading.TYPE, "", ctx.getCurrentEditUser());
-				} else {
+				if (ctx.getGlobalContext().hasComponent(Title.class)) {
 					parentId = MacroHelper.addContent(lg, newPage, parentId, Title.TYPE, "", ctx.getCurrentEditUser());
+				} else {
+					parentId = MacroHelper.addContent(lg, newPage, parentId, Heading.TYPE, "", ctx.getCurrentEditUser());
 				}
 				parentId = MacroHelper.addContent(lg, newPage, parentId, Description.TYPE, "", ctx.getCurrentEditUser());
 				parentId = MacroHelper.addContent(lg, newPage, parentId, GlobalImage.TYPE, "", ctx.getCurrentEditUser());

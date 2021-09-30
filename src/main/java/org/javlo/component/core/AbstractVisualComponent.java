@@ -324,7 +324,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 		return helpURL;
 	}
-	
+
 	/**
 	 * search the equivalent component in the default language content.
 	 * 
@@ -2680,6 +2680,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		assert bean != null;
 		setComponentBean(bean);
 		init();
+	}
+
+	@Override
+	public void forceInit(ComponentBean bean, ContentContext ctx) throws Exception {
+		init(bean, ctx);
 	}
 
 	/**
