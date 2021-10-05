@@ -328,6 +328,10 @@ public class FileServlet extends HttpServlet {
 			// Open streams.
 			input = new RandomAccessFile(file, "r");
 			output = response.getOutputStream();
+			
+			if (file.getName().contains("_acao")) {
+				response.setHeader("Access-Control-Allow-Origin", "*");
+			}
 
 			if (ranges.isEmpty() || ranges.get(0) == full) {
 
