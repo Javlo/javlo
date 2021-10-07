@@ -31,9 +31,9 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 	private static final long MAX_STOCK = 999999;
 
-	static final List<String> FIELDS_STOCK = Arrays.asList(new String[] { "name", "description", "price", "special_link", "vat", "promo", "currency", "offset", "weight", "production", "basket-page", "html" });
+	static final List<String> FIELDS_STOCK = Arrays.asList(new String[] { "name", "label", "description", "price", "special_link", "vat", "promo", "currency", "offset", "weight", "production", "basket-page", "html" });
 
-	static final List<String> FIELDS_NOSTOCK = Arrays.asList(new String[] { "name", "description", "price", "special_link", "vat", "promo", "currency", "basket-page" });
+	static final List<String> FIELDS_NOSTOCK = Arrays.asList(new String[] { "name", "label", "description", "price", "special_link", "vat", "promo", "currency", "basket-page" });
 
 	static final List<String> FIELDS_I18N = Arrays.asList(new String[] { "price", "special_link", "vat", "promo", "currency", "offset", "weight", "production", "basket-page", "html" });
 
@@ -65,6 +65,10 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 	public String getName() {
 		return getFieldValue("name");
+	}
+	
+	public String getLabel() {
+		return getFieldValue("label");
 	}
 
 	public String getDescription() {

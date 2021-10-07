@@ -22,6 +22,7 @@ public class Product {
 		private double weight;
 		private String currencyCode;
 		private String name;
+		private String label;
 		private String description;
 		private String imageURL;
 		private int quantity = 1;
@@ -47,7 +48,7 @@ public class Product {
 		
 		@Override
 		public String toString() {
-			return getName()+" ("+getId()+")   Quantity:"+getQuantity()+"   Price:"+getPrice()+"   Reduction:"+getReduction()+"   vat:"+getVAT();
+			return getName()+" ("+getId()+")   Quantity:"+getQuantity()+"   Price:"+getPrice()+"   Reduction:"+getReduction()+"   vat:"+getVAT()+"   label:"+label;
 		}
 
 		public String getId() {
@@ -162,6 +163,17 @@ public class Product {
 			this.priceString = priceString;
 		}
 
+		public String getLabel() {
+			if (label == null) {
+				return name;
+			}
+			return label;
+		}
+
+		public void setLabel(String label) {
+			this.label = label;
+		}
+
 	}
 
 	private final ProductComponent comp;
@@ -202,6 +214,18 @@ public class Product {
 			return fakeName;
 		} else {
 			return comp.getName();
+		}
+	}
+	
+	public String getLabel() {
+		if (comp == null) {
+			return fakeName;
+		} else {
+			String label = comp.getLabel();
+			if (StringHelper.isEmpty(label)) {
+				label = getName();
+			}
+			return label;
 		}
 	}
 	
