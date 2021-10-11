@@ -175,6 +175,13 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 		basket.setBillingPostcode(rs.getParameter("billingPostcode"));
 		basket.setBillingVat(rs.getParameter("billingVat"));
 		
+		/** if VAT number defined >> all fields are needed **/
+		if (!StringHelper.isEmpty(basket.getBillingVat())) {
+			if (StringHelper.isOneEmpty(basket.getBillingName(), basket.getBillingAddress(), basket.getBillingCity(), basket.getBillingPostcode())) {
+				return i18nAccess.getViewText("ecom.error.billing-info");
+			}
+		}
+		
 		if (rs.getParameter("back", null) != null) {
 			if (basket.getStep() > 1) {
 				basket.setStep(basket.getStep() - 1);

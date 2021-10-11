@@ -483,8 +483,11 @@ public class InfoBean {
 	}
 
 	public String getGlobalTitle() {
-		try {
-			return getCurrentPage().getGlobalTitle(ctx);
+		try {if (getCurrentPage() != null) {
+				return getCurrentPage().getGlobalTitle(ctx);
+			} else {
+				return null;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
