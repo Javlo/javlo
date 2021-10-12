@@ -2202,6 +2202,14 @@ public class XHTMLHelper {
 				xhtml = xhtml.replace("${vi18n['" + key + "']}", val);
 			}
 		}
+		i18nKeys = StringHelper.extractItem(xhtml, "${vi18n[\"", "\"]}");
+		if (i18nKeys.size() > 0) {
+			RequestI18nAccess requestI18n = new RequestI18nAccess(ctx, I18nAccess.getInstance(ctx));
+			for (String key : i18nKeys) {
+				String val = requestI18n.get(key);
+				xhtml = xhtml.replace("${vi18n[\"" + key + "\"]}", val);
+			}
+		}
 
 		/*
 		 * for (String key : properties.keySet()) { String jstlStr = "${" +
