@@ -58,6 +58,7 @@ import org.javlo.helper.XMLManipulationHelper.TagDescription;
 import org.javlo.helper.Comparator.DoubleArrayComparator;
 import org.javlo.helper.Comparator.MapEntryComparator;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.i18n.RequestI18nAccess;
 import org.javlo.image.ExtendedColor;
 import org.javlo.message.GenericMessage;
 import org.javlo.navigation.MenuElement;
@@ -2191,6 +2192,17 @@ public class XHTMLHelper {
 				xhtml = xhtml.replace("${" + InfoBean.REQUEST_KEY + "." + param + "}", val);
 			}
 		}
+
+		/** i18n **/
+		Collection<String> i18nKeys = StringHelper.extractItem(xhtml, "${vi18n['", "']}");
+		if (i18nKeys.size() > 0) {
+			RequestI18nAccess requestI18n = new RequestI18nAccess(ctx, I18nAccess.getInstance(ctx));
+			for (String key : i18nKeys) {
+				String val = requestI18n.get(key);
+				xhtml = xhtml.replace("${vi18n['" + key + "']}", val);
+			}
+		}
+
 		/*
 		 * for (String key : properties.keySet()) { String jstlStr = "${" +
 		 * InfoBean.REQUEST_KEY + '.' + key + '}'; if (properties.get(key) != null &&
