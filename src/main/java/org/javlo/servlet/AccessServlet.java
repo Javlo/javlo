@@ -283,7 +283,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		threadManager.start();
 		
 		// set SSL protocos (for smtp)
-		System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
+		System.setProperty("https.protocols", "TLSv1.1,TLSv1.2");
 
 		try {
 			SynchroThread.createInstance(staticConfig.getThreadFolder(), SynchroThread.class);
