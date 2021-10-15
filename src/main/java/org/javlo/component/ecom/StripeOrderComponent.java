@@ -312,7 +312,7 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 				}
 				String msg = XHTMLHelper.textToXHTML(comp.getConfirmationEmail(ctx, basket));
 				msg = "<p>" + i18nAccess.getViewText("ecom.basket-confirmed") + "</p><p>" + msg + "</p>";
-				comp.sendConfirmationEmail(ctx, basket);
+				//comp.sendConfirmationEmail(ctx, basket);
 				ctx.getRequest().setAttribute("msg", msg);
 				NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "basket confirmed with stripe : " + ctx.getGlobalContext().getContextKey(), basket.getAdministratorEmail(ctx));
 				
@@ -322,6 +322,8 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 				Basket.setInstance(ctx, basket);
 				BasketPersistenceService.getInstance(ctx.getGlobalContext()).storeBasket(basket);
 				comp.sendConfirmationEmail(ctx, basket);
+				
+				logger.info("stripe basket valided : "+basket);
 			} else {
 				NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), "ERROR: basket NOT confirmed with stripe : " + ctx.getGlobalContext().getContextKey(), basket.getAdministratorEmail(ctx));
 			}			

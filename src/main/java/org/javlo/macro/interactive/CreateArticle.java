@@ -83,6 +83,10 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 	public String getIcon() {
 		return "fa fa-file-text-o";
 	}
+	
+	protected static boolean isEditPopup() {
+		return false;
+	}
 
 	@Override
 	public String prepare(ContentContext ctx) {
@@ -309,7 +313,7 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 					newEditURL = URLHelper.addParam(newEditURL, "lightEdit", "true");
 					newEditURL = URLHelper.addParam(newEditURL, "area", ComponentBean.DEFAULT_AREA);
 				}
-				if (create) {
+				if (create && isEditPopup() ) {
 					NetHelper.sendRedirectTemporarily(ctx.getResponse(), newEditURL);
 				} else {
 					ctx.setParentURL(newURL);
