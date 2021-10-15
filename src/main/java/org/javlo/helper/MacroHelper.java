@@ -972,6 +972,7 @@ public class MacroHelper {
 				parentId = MacroHelper.addContent(lg, newPage, parentId, WysiwygParagraph.TYPE, "", ctx.getCurrentEditUser());
 			}
 		} else {
+			logger.warning("file found : " + pageStructureName);
 			MacroHelper.createPageStructure(ctx, newPage, pressReleaseStructure, StringHelper.isTrue(pressReleaseStructure.get("fake-content")), date, tags);
 		}
 
