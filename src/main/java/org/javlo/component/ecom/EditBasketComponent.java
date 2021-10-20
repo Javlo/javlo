@@ -54,7 +54,7 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 				IUserInfo iui = ctx.getCurrentUser().getUserInfo();
 				if (iui instanceof UserInfo) {
 					UserInfo ui = (UserInfo) iui;
-					basket.setFirstName(ui.getFirstName());
+					/*basket.setFirstName(ui.getFirstName());
 					basket.setLastName(ui.getLastName());
 					basket.setAddress(ui.getAddress());
 					basket.setZip(ui.getPostCode());
@@ -64,7 +64,12 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 					basket.setContactPhone(ui.getMobile());
 					basket.setTransfertAddressLogin(ctx.getCurrentUser().getLogin());
 					basket.setOrganization(ui.getOrganization());
-					basket.setVATNumber(ui.getVat());
+					basket.setVATNumber(ui.getVat());*/
+					
+					basket.setCustomerFirstName(ui.getFirstName());
+					basket.setCustomerLastName(ui.getLastName());
+					basket.setCustomerEmail(ui.getEmail());
+					basket.setCustomerPhone(ui.getMobile());
 				}
 			}
 		}
