@@ -200,8 +200,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	public void init() throws ServletException {
 		super.init();
 
-		/** reduce cahe on copy bean */
-		
 		System.out.println("");
 		System.out.println("");
 		System.out.println("		    _  ____  _     _     ____");
@@ -211,18 +209,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		System.out.println("		\\____/\\_/ \\|\\__/  \\____/\\____/");
 		System.out.println("");
 		System.out.println("");
-		
-//		org.apache.commons.beanutils.BeanUtils.setDebug(1);
-//		org.apache.commons.beanutils.PropertyUtils.setDebug(1);
-//		Logger logger = Logger.getLogger(org.apache.commons.beanutils.BeanUtils.class.getName());
-//		logger.setLevel(Level.SEVERE);
-//		logger = Logger.getLogger(org.apache.commons.beanutils.BeanUtilsBean.class.getName());
-//		logger.setLevel(Level.SEVERE);
-//		logger = Logger.getLogger(org.apache.commons.beanutils.PropertyUtils.class.getName());
-//		logger.setLevel(Level.SEVERE);
-		
-//		Log log = LogFactory.getLog(org.apache.commons.beanutils.BeanUtilsBean.class);
-//		System.out.println(">>>>>>>>> AccessServlet.init : class = "+log.getClass().getName()); //TODO: remove debug trace
 		
 		/** JSTL Constant **/
 		getServletContext().setAttribute("BACK_PARAM_NAME", ElementaryURLHelper.BACK_PARAM_NAME);
@@ -282,8 +268,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		threadManager.setThreadDir(new File(staticConfig.getThreadFolder()));
 		threadManager.start();
 		
-		// set SSL protocos (for smtp)
-		System.setProperty("https.protocols", "TLSv1.1,TLSv1.2");
+		// set SSL protocol (for smtp)
+		System.setProperty("https.protocols", "TLSv1.2");
 
 		try {
 			SynchroThread.createInstance(staticConfig.getThreadFolder(), SynchroThread.class);
