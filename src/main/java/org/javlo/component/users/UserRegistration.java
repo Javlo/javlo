@@ -314,6 +314,7 @@ public class UserRegistration extends MapComponent implements IAction {
 			}
 			
 			if (isSpam(userInfo)) {
+				logger.warning("spam detected on '"+ctx.getGlobalContext().getContextKey()+"' from ip:"+NetHelper.getIp(ctx.getRequest()));
 				return "do not use link.";
 			}
 
