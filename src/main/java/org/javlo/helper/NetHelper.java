@@ -1824,5 +1824,13 @@ public class NetHelper {
 		System.out.println(">>> localhost 8080 > "+testPort("localhost", 8080));
 		System.out.println(">>> localhost 80   > "+testPort("localhost", 80));
 	}
+	
+	public static String getIp(HttpServletRequest request) {
+		String userIP = request.getHeader("x-real-ip");
+		if (StringHelper.isEmpty(userIP)) {
+			userIP = request.getRemoteAddr();
+		}
+		return userIP;
+	}
 
 }
