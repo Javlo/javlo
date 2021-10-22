@@ -220,6 +220,44 @@ public class UserRegistration extends MapComponent implements IAction {
 			FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).deleteAllFile(ctx.getGlobalContext().getContextKey(), avatarFileName);
 		}
 	}
+	
+	private static final boolean isSpam(String text) {
+		if (text != null) {
+			text = text.toLowerCase();
+			if (text.contains("//")) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static final boolean isSpam(IUserInfo userInfo) {
+		if (isSpam(userInfo.getFirstName())) {
+			return true;
+		}
+		if (isSpam(userInfo.getLastName())) {
+			return true;
+		}
+		if (isSpam(userInfo.getCountry())) {
+			return true;
+		}
+		if (isSpam(userInfo.getLogin())) {
+			return true;
+		}
+		if (userInfo instanceof UserInfo) {
+			UserInfo ui = (UserInfo)userInfo;
+			if (isSpam(ui.getCity())) {
+				return true;
+			}
+			if (isSpam(ui.getMobile())) {
+				return true;
+			}
+			if (isSpam(ui.getAddress())) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public static String performRegister(RequestService rs, GlobalContext globalContext, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 
@@ -273,6 +311,10 @@ public class UserRegistration extends MapComponent implements IAction {
 			if (emailLogin != null) {
 				userInfo.setLogin(emailLogin);
 				userInfo.setEmail(emailLogin);				
+			}
+			
+			if (isSpam(userInfo)) {
+				return "do not use link.";
 			}
 
 			userInfo.setSite(ctx.getGlobalContext().getContextKey());
