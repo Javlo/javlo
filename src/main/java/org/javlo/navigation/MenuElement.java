@@ -2179,7 +2179,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			}
 		}
 		desc.xhtmlDescription = res;
-		return desc.xhtmlDescription;
+		return XHTMLHelper.textToXHTML(desc.xhtmlDescription);
 	}
 
 	/**
