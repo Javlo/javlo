@@ -1,5 +1,6 @@
 package org.javlo.macro;
 
+import java.io.IOException;
 import java.util.Map;
 
 import org.javlo.component.core.ContentElementList;
@@ -7,6 +8,7 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.MacroHelper;
 import org.javlo.helper.NavigationHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -19,6 +21,10 @@ public class DuplicatePage extends AbstractMacro {
 	@Override
 	public String getName() {
 		return "duplicate-page";
+	}
+	
+	private boolean isMirroredContent(ContentContext ctx) throws IOException, Exception {
+		return StringHelper.isTrue(getMacroProperties(ctx).getProperty("content.mirrored"), false);
 	}
 	
 	private void duplicatePage(ContentContext ctx, MenuElement parent, MenuElement page) throws Exception {
@@ -40,7 +46,11 @@ public class DuplicatePage extends AbstractMacro {
 		while (comps.hasNext(noAreaCtx)) {
 			IContentVisualComponent next = comps.next(noAreaCtx);
 			if (!next.isRepeat() || next.getPage().equals(parent)) {
-				parentId = content.createContentMirrorIfNeeded(noAreaCtx.getContextWidthOtherRequestLanguage(next.getComponentBean().getLanguage()), newPage, next, parentId, false);
+				if (isMirroredContent(ctx)) {
+					parentId = content.createContentMirrorIfNeeded(noAreaCtx.getContextWidthOtherRequestLanguage(next.getComponentBean().getLanguage()), newPage, next, parentId, false);
+				} else {
+					parentId = content.createContent(noAreaCtx.getContextWidthOtherRequestLanguage(next.getComponentBean().getLanguage()), newPage, next.getComponentBean(), parentId, false);
+				}
 			}
 		}
 		
