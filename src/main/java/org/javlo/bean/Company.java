@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.javlo.helper.LoggerHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +44,7 @@ public class Company {
 		System.out.println(">>>>>>>>> Company.main : log.isDebugEnabled() = "+logger.isDebugEnabled()); //TODO: remove debug trace
 		System.out.println(">>>>>>>>> Company.main : log = "+log); //TODO: remove debug trace
 		
-		LoggerHelper.changeLogLevel(LoggerHelper.LEVEL_INFO);
+		//LoggerHelper.changeLogLevel(LoggerHelper.LEVEL_INFO);
 		
 		System.out.println(">>>>>>>>> Company.main : log.isDebugEnabled() = "+logger.isDebugEnabled()); //TODO: remove debug trace
 		System.out.println(">>>>>>>>> Company.main : log = "+log); //TODO: remove debug trace
