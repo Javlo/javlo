@@ -881,6 +881,8 @@ Security in case of vulnerabilities.
   - prodcut (ecom) translation of label
   - product component, link to renderer
   - create article : duplicate with children
+  - remove logback for security
+  - update jsoup for security
 ### fixed
   - correct the day generator
   - vat calcul
