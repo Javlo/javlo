@@ -55,7 +55,6 @@ import org.javlo.filter.CatchAllFilter;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.LocalLogger;
-import org.javlo.helper.LoggerHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.RequestHelper;
 import org.javlo.helper.ResourceHelper;
@@ -228,7 +227,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		
 		ImageEngine.WEBP_CONVERTER = staticConfig.getWebpEncoder();
 		
-		LoggerHelper.changeLogLevel(staticConfig.getAllLogLevel().getName());
+		//LoggerHelper.changeLogLevel(staticConfig.getAllLogLevel().getName());
 		
 		MaxLoginService.getInstance().setMaxErrorLoginByHours(staticConfig.getMaxErrorLoginByHour());
 		Integer undoDepth = staticConfig.getUndoDepth();
