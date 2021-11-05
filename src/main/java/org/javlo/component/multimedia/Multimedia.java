@@ -946,7 +946,7 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 	}
 
 	protected List<MultimediaResource> getMultimediaResources(ContentContext ctx) throws Exception {
-		super.prepareView(ctx);
+		//super.prepareView(ctx);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 		Collection<File> mulFiles = getAllMultimediaFiles(ctx);
