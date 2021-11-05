@@ -2,6 +2,7 @@ package org.javlo.macro;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Properties;
 
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
@@ -24,7 +25,11 @@ public class DuplicatePage extends AbstractMacro {
 	}
 	
 	private boolean isMirroredContent(ContentContext ctx) throws IOException, Exception {
-		return StringHelper.isTrue(getMacroProperties(ctx).getProperty("content.mirrored"), false);
+		Properties prop = getMacroProperties(ctx);
+		if (prop == null) {
+			return false;
+		}
+		return StringHelper.isTrue(prop.getProperty("content.mirrored"), false);
 	}
 	
 	private void duplicatePage(ContentContext ctx, MenuElement parent, MenuElement page) throws Exception {
