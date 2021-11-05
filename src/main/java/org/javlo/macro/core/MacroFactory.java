@@ -68,6 +68,7 @@ import org.javlo.macro.RebuitTemplateHtml;
 import org.javlo.macro.ReduceSubtitleLevelMacro;
 import org.javlo.macro.ResetRecaptcha;
 import org.javlo.macro.SortChildren;
+import org.javlo.macro.TransfertComponentBadAreaToContent;
 import org.javlo.macro.UndeletePage;
 import org.javlo.macro.UnlinkMirrorComponent;
 import org.javlo.macro.UpDateMacro;
@@ -184,6 +185,7 @@ public class MacroFactory {
 		macros.add(new DeleteChildrenAndContent());
 		macros.add(new DeleteSameComponent());
 		macros.add(new DeleteComponentBadArea());
+		macros.add(new TransfertComponentBadAreaToContent());
 		macros.add(new UploadGallery());
 		macros.add(new CreateBusinessComponent());
 		macros.add(new ImportExternalPage());
