@@ -165,7 +165,7 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 		
 		/** customer **/
 		
-		String customerEmail = rs.getParameter("customerEmail","");
+		String customerEmail = rs.getParameter("customerEmail",null);
 		
 		basket.setCustomerFirstName(rs.getParameter("customerFirstName"));
 		basket.setCustomerLastName(rs.getParameter("customerLastName"));
@@ -221,7 +221,7 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 			return status.getMessage();
 		}
 		
-		if (!StringHelper.isMail(customerEmail)) {
+		if (customerEmail != null && !StringHelper.isMail(customerEmail)) {
 			return i18nAccess.getViewText("mailing.error.email");
 		}
 
