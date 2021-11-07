@@ -131,7 +131,7 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		out.println("<input type=\"hidden\" name=\"city\" id=\"city\" value=\""+StringEscapeUtils.escapeHtml4(basket.getCity())+"\" />");
 		out.println("<input type=\"hidden\" name=\"zip\" id=\"zip\" value=\""+basket.getZip()+"\" />");
 		out.println("<input type=\"hidden\" name=\"country\" id=\"country\" value=\""+basket.getCountry().toUpperCase()+"\" />");		 
-		out.println("<a href=\"#\" onclick=\"document.getElementById('paypal-form').submit(); return false;\"><img  src=\"https://www.paypal.com/fr_XC/i/btn/btn_xpressCheckout.gif\" align=\"left\" style=\"margin-right:7px;\"></a>");
+		out.println("<a href=\"#\" onclick=\"document.getElementById('paypal-form').submit(); return false;\"><img  src=\"https://www.paypal.com/fr_XC/i/btn/btn_xpressCheckout.gif\"></a>");
 		out.close();
 		BasketPersistenceService basketPersitenceService = BasketPersistenceService.getInstance(ctx.getGlobalContext());
 		basketPersitenceService.storeBasket(basket);
@@ -156,7 +156,7 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		out.println("<input type=\"hidden\" name=\"" + IContentVisualComponent.COMP_ID_REQUEST_PARAM + "\" value=\"" + getId() + "\" />");
 		out.println("<input type=\"hidden\" name=\"webaction\" value=\"paypal.pay\" />");
 		out.println("<input style=\"display: none;\" type=\"submit\" value=\"" + getData().getProperty("button") + "\" />");
-		out.println("<a href=\"#\" onclick=\"document.getElementById('paypal-form').submit(); return false;\"><img  src=\"https://www.paypal.com/fr_XC/i/btn/btn_xpressCheckout.gif\" align=\"left\" style=\"margin-right:7px;\"></a>");
+		out.println("<a href=\"#\" onclick=\"document.getElementById('paypal-form').submit(); return false;\"><img  src=\"https://www.paypal.com/fr_XC/i/btn/btn_xpressCheckout.gif\"></a>");
 		out.println("</fieldset>");
 		out.println("</form>");
 		out.close();
