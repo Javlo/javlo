@@ -239,6 +239,23 @@ public class EcomService {
 		return null;
 	}
 	
+	public List<ProductBean> getActiveProducts(ContentContext ctx) throws Exception {
+		List<ProductBean> out = new LinkedList<>();
+		List<IContentVisualComponent> comps = ContentService.getInstance(ctx.getGlobalContext()).getComponentByType(ctx, ProductComponent.TYPE);
+		for (IContentVisualComponent comp : comps) {
+			Product product = new Product((ProductComponent)comp);
+			MenuElement page = comp.getPage();
+			if (page.isActive(ctx)) {
+				IImageTitle img = page.getImage(ctx);
+				if (img != null) {
+					product.setImage(ctx, img);
+				}
+				out.add(product.getBean());
+			}
+		}
+		return out;
+	}
+	
 	public ProductBean getProductsOnPage(ContentContext ctx, String pageId) throws Exception {
 		ContentService contentService = ContentService.getInstance(ctx.getGlobalContext());
 		
