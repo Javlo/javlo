@@ -45,7 +45,7 @@ public class TransferOrderComponent extends AbstractOrderComponent implements IA
 			return ctx.getRequest().getAttribute("msg").toString();			
 		}
 		if (basket.getStep() != Basket.PAY_STEP) {
-			return "";
+			return "<!-- don't display on step : "+basket.getStep()+"  -->";
 		}
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
