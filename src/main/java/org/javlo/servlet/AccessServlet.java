@@ -873,7 +873,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 					response.setContentType("application/zip; charset=" + ContentContext.CHARACTER_ENCODING);
 					ZipOutputStream outZip = new ZipOutputStream(response.getOutputStream());
 					outZip.setLevel(9);
-					ZipManagement.addFileInZip(outZip, "content.xml", new ByteArrayInputStream(XMLHelper.getPageXML(ctx, elem).getBytes(ContentContext.CHARSET_DEFAULT)));
+					ZipManagement.addFileInZip(outZip, "content.xml", new ByteArrayInputStream(XMLHelper.getPageXML(ctx, elem, requestService.getParameter("lang")).getBytes(ContentContext.CHARSET_DEFAULT)));
 					Collection<Resource> resources = ctx.getCurrentPage().getAllResources(ctx);
 					for (MenuElement page : ctx.getCurrentPage().getAllChildrenList()) {
 						resources.addAll(page.getAllResources(ctx));
@@ -900,7 +900,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				} else if (ctx.getFormat().equalsIgnoreCase("xml")) {
 					response.setContentType("text/xml; charset=" + ContentContext.CHARACTER_ENCODING);
 					Writer out = response.getWriter();
-					out.write(XMLHelper.getPageXML(ctx, elem));
+					out.write(XMLHelper.getPageXML(ctx, elem, requestService.getParameter("lang")));
 				} else if (ctx.getFormat().equalsIgnoreCase("png") || ctx.getFormat().equalsIgnoreCase("jpg")) {
 					if (ctx.getGlobalContext().getStaticConfig().isConvertHTMLToImage()) {
 						logger.warn("convert image convertion : " + request.getRequestURI());

@@ -4,12 +4,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.javlo.actions.IAction;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.navigation.MenuElement;
+import org.javlo.navigation.PageBean;
 import org.javlo.service.RequestService;
 
 public class ListSurvey extends AbstractSurvey implements IAction {
@@ -61,12 +64,19 @@ public class ListSurvey extends AbstractSurvey implements IAction {
 		return sessionName;
 	}
 	
+	public PageBean getPreviousPage(ContentContext ctx) throws Exception {
+		PageBean page = getPage().getPageBean(ctx);
+		return page.getPreviousPage();
+	}
+	
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {	
 		super.prepareView(ctx);
 		ctx.getRequest().setAttribute("title", getFieldValue(TITLE_FIELD));
 		ctx.getRequest().setAttribute("questions", getQuestions(ctx));
 		ctx.getRequest().setAttribute("sendLabel", getFieldValue(FIELD_LABEL_SEND));
+
+		ctx.getRequest().setAttribute("previousLink", URLHelper.createURL(ctx, getPreviousPage(ctx).getPath(), (Map)null));
 	}
 	
 	public List<Question> getQuestions(ContentContext ctx) throws Exception {

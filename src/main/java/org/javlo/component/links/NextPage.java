@@ -21,7 +21,7 @@ public class NextPage extends ComplexPropertiesLink {
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
-		super.prepareView(ctx);		
+		super.prepareView(ctx);
 		String label = getValue().trim();
 		if (StringHelper.isEmpty(label)) {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);

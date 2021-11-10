@@ -877,6 +877,7 @@ Security in case of vulnerabilities.
 ## [2.1.2.8] - 08/07/2021
 ### Added
   - special renderer, you can render other component in the context of the current component (public String renderOtherComponent(ContentContext ctx, IContentVisualComponent comp) {)
+  - update only one language (upload xml content)
 ### Modified
   - prodcut (ecom) translation of label
   - product component, link to renderer

@@ -49,7 +49,6 @@ public class SelectSurvey extends AbstractSurvey implements IAction {
 			setFieldValue(SESSION_NAME, StringHelper.createFileName(getPage().getParent().getTitle(ctx)));
 		}
 		return out;
-		
 	}
 	
 	@Override
@@ -122,9 +121,7 @@ public class SelectSurvey extends AbstractSurvey implements IAction {
 		}
 		Collection<String> selectedList = StringHelper.stringToCollection(selected, ",");
 		List<Question> selectedQuestion = new LinkedList<Question>();
-		
 		logger.info("session : "+ctx.getSession().getId());
-		
 		for (Question q : questions) {
 			if (selectedList.contains(""+q.getNumber())) {
 				q.setResponse(SELECT_VALUE);
@@ -134,11 +131,9 @@ public class SelectSurvey extends AbstractSurvey implements IAction {
 			}
 			logger.info(""+q);
 		}
-		
 		SurveyContext surveyContext = SurveyContext.getInstance(ctx);
 		surveyContext.setAllQuestions(comp.getQuestions(ctx));
 		surveyContext.setSelectedQuestions(selectedQuestion);		
-		
 		comp.store(ctx, questions, comp.getFieldValue(TITLE_FIELD));
 		MenuElement nextPage = comp.getPage().getNextBrother();
 		if (nextPage == null) {

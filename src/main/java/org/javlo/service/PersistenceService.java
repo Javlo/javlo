@@ -646,7 +646,7 @@ public class PersistenceService {
 					if (mobile) {
 						dayInfo.pagesCountMobile++;
 					}
-					String path = URLHelper.removeParam(track.getPath());					
+					String path = URLHelper.removeParam(track.getPath());
 					if ((!path.contains("404") && !path.startsWith("/preview") && !path.startsWith("/edit") && !path.startsWith("/ajax") && !path.startsWith("/modules") && !path.startsWith("/wait.html") && !path.startsWith("/status.html") && !path.startsWith("/page"))) {
 						if (path.length() > 1 && path.endsWith("/")) {
 							path = path.substring(0, path.length() - 1);
@@ -690,7 +690,7 @@ public class PersistenceService {
 				}
 				dayInfo.mostSavePage = ContentService.getPageNameFromPath(maxPage);
 			}
-			logger.info(" - store dayInfo for : " + StringHelper.renderDate(cal.getTime())+" - "+propFile.getCanonicalFile().getCanonicalPath());
+			logger.info(" - store dayInfo for : " + StringHelper.renderDate(cal.getTime()) + " - " + propFile.getCanonicalFile().getCanonicalPath());
 			dayInfo.store(propFile);
 
 		}
@@ -814,7 +814,7 @@ public class PersistenceService {
 		__version = -1;
 	}
 
-	public void insertContent(NodeXML pageXML, MenuElement elem, String defaultLg, boolean releaseID) throws StructureException {
+	public void insertContent(NodeXML pageXML, MenuElement elem, String defaultLg, boolean releaseID, boolean update) throws StructureException {
 		NodeXML contentNode = pageXML.getChild("component");
 		List<ComponentBean> contentList = new LinkedList<ComponentBean>();
 		while (contentNode != null) {
@@ -894,46 +894,62 @@ public class PersistenceService {
 			contentList.add(bean);
 			contentNode = contentNode.getNext("component");
 		}
-
+		
+		if (update) {
+			for (ComponentBean bean : elem.getContent()) {
+				contentList.add(bean);
+			}
+		}
 		ComponentBean[] elemContent = new ComponentBean[contentList.size()];
 		contentList.toArray(elemContent);
 		elem.setContent(elemContent);
 	}
 
-	public MenuElement insertPage(ContentContext ctx, NodeXML pageXML, MenuElement parent, Map<MenuElement, String[]> vparentPreparation, String defaultLg, boolean checkName) throws StructureException, IOException {
+	public MenuElement insertPage(ContentContext ctx, NodeXML pageXML, MenuElement parent, Map<MenuElement, String[]> vparentPreparation, String defaultLg, boolean checkName, boolean updateIfExist) throws StructureException, IOException {
 		GlobalContext globalContext = ctx.getGlobalContext();
 		MenuElement page = MenuElement.getInstance(ctx);
-
+		boolean pageFound = false;
 		String id = pageXML.getAttributeValue("id");
-		while (parent.getRoot().searchChildFromId(id) != null) {
-			id = StringHelper.getRandomId();
+		if (parent.getRoot().searchChildFromId(id) != null) {
+			if (updateIfExist) {
+				page = parent.getRoot().searchChildFromId(id);
+				pageFound = true;
+				if (parent != null) {
+					if (!page.getParent().getId().equals(parent.getId())) {
+						throw new StructureException("bad xml structure : page " + page.getId() + " have bad parent. (" + page.getParent().getId() + " != " + parent.getId() + ") ");
+					}
+				}
+			} else {
+				id = StringHelper.getRandomId();
+			}
 		}
 		DebugHelper.checkStructure(id == null, "no id defined in a page node.");
 		String name = pageXML.getAttributeValue("name");
-		String finalPageName = null;
-		try {
-			finalPageName = URLDecoder.decode(name);
-		} catch (Exception e1) {
-			finalPageName = "error_name_" + StringHelper.getRandomId();
+		if (!pageFound) {
+			String finalPageName = null;
+			try {
+				finalPageName = URLDecoder.decode(name);
+			} catch (Exception e1) {
+				finalPageName = "error_name_" + StringHelper.getRandomId();
+				name = finalPageName;
+				logger.warning("error : " + e1.getMessage());
+				logger.warning("parent : " + parent.getName());
+				logger.warning("new name generated : " + finalPageName);
+				e1.printStackTrace();
+			}
+
+			if (checkName) {
+				int i = 1;
+				while (parent.getRoot().searchChildFromName(finalPageName) != null && i < 10000) {
+					finalPageName = name + "_" + i;
+					i++;
+				}
+				if (i == 10000) {
+					logger.severe("problem on loading page check page : " + name + "  (context:" + globalContext.getContextKey() + ")");
+				}
+			}
 			name = finalPageName;
-			logger.warning("error : " + e1.getMessage());
-			logger.warning("parent : " + parent.getName());
-			logger.warning("new name generated : " + finalPageName);
-			e1.printStackTrace();
 		}
-
-		if (checkName) {
-			int i = 1;
-			while (parent.getRoot().searchChildFromName(finalPageName) != null && i < 10000) {
-				finalPageName = name + "_" + i;
-				i++;
-			}
-			if (i == 10000) {
-				logger.severe("problem on loading page check page : " + name + "  (context:" + globalContext.getContextKey() + ")");
-			}
-		}
-
-		name = finalPageName;
 		DebugHelper.checkStructure(name == null, "no path defined in a page node.");
 		String priority = pageXML.getAttributeValue("priority", "10");
 		DebugHelper.checkStructure(priority == null, "no priority defined in a page node.");
@@ -995,12 +1011,15 @@ public class PersistenceService {
 			}
 		}
 
-		page.setId(id);
-		page.setParent(parent);
-		page.setName(name);
+		if (!pageFound) {
+			page.setId(id);
+			page.setParent(parent);
+			page.setName(name);
+		}
 		page.setPriority(Integer.parseInt(priority));
 		page.setVisible(StringHelper.isTrue(visible));
 		page.setActive(StringHelper.isTrue(pageXML.getAttributeValue("active", null), true));
+		page.setContentLanguage(pageXML.getAttributeValue("contentLanguage", null));
 		page.setHttps(StringHelper.isTrue(https));
 
 		page.setTemplateId(layout);
@@ -1059,13 +1078,19 @@ public class PersistenceService {
 
 		page.setLinkedURL(pageXML.getAttributeValue("linked-url"));
 
-		insertContent(pageXML, page, defaultLg, false);
+		if (pageFound) {
+			page.deleteComponent(page.getContentLanguage());
+		}
 
-		parent.addChildMenuElement(page);
+		insertContent(pageXML, page, defaultLg, false, pageFound);
+
+		if (!pageFound) {
+			parent.addChildMenuElement(page);
+		}
 
 		NodeXML childPage = pageXML.getChild("page");
 		while (childPage != null) {
-			insertPage(ctx, childPage, page, vparentPreparation, defaultLg, checkName);
+			insertPage(ctx, childPage, page, vparentPreparation, defaultLg, checkName, updateIfExist);
 			childPage = childPage.getNext("page");
 		}
 
@@ -1117,6 +1142,7 @@ public class PersistenceService {
 				root.setPriority(Integer.parseInt(page.getAttributeValue("priority")));
 				root.setVisible(StringHelper.isTrue(page.getAttributeValue("visible", "false")));
 				root.setActive(StringHelper.isTrue(page.getAttributeValue("active", "true")));
+				root.setContentLanguage(page.getAttributeValue("contentLanguage", null));
 				root.setIpSecurityErrorPageName(page.getAttributeValue("ipsecpagename"));
 				root.setSeoWeight(StringHelper.parseInt(page.getAttributeValue("seoWeight", null), MenuElement.SEO_HEIGHT_INHERITED));
 				root.setHttps(StringHelper.isTrue(page.getAttributeValue("https", "false")));
@@ -1177,13 +1203,13 @@ public class PersistenceService {
 					root.setValidationDate(parseDate(validationDate));
 				}
 
-				insertContent(page, root, defaultLg, false);
+				insertContent(page, root, defaultLg, false, false);
 				page = page.getChild("page");
 
 				Map<MenuElement, String[]> vparentPreparation = new HashMap<MenuElement, String[]>();
 
 				while (page != null) {
-					insertPage(ctx, page, root, vparentPreparation, defaultLg, false);
+					insertPage(ctx, page, root, vparentPreparation, defaultLg, false, false);
 					page = page.getNext("page");
 				}
 

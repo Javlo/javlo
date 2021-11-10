@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
@@ -770,6 +771,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 	boolean active = true;
 
+	String contentLanguage = null;
+
 	private int seoWeight = SEO_HEIGHT_INHERITED;
 
 	List<MenuElement> virtualParent = new LinkedList<MenuElement>();
@@ -862,7 +865,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 	private Date latestUpdateLinkedData = null;
 
-	public static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MenuElement.class.getName());
+	public static Logger logger = Logger.getLogger(MenuElement.class.getName());
 
 	private String shortURL = null;
 
@@ -1232,8 +1235,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	/**
 	 * count the component of a specific type on the current page.
 	 * 
-	 * @param ctx             the current context.
-	 * @param inComponentType the type of the component
+	 * @param ctx
+	 *            the current context.
+	 * @param inComponentType
+	 *            the type of the component
 	 * @return a count of component.
 	 * @throws Exception
 	 */
@@ -1372,7 +1377,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	/**
 	 * get content for all area
 	 * 
-	 * @param ctx current context
+	 * @param ctx
+	 *            current context
 	 * @return
 	 * @throws Exception
 	 */
@@ -1808,7 +1814,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	/**
 	 * get content of the current area
 	 * 
-	 * @param ctx the content context
+	 * @param ctx
+	 *            the content context
 	 * @return a list of component
 	 */
 	public ContentElementList getContent(ContentContext ctx) throws Exception {
@@ -2301,7 +2308,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	 * @param ctx
 	 * @param componentType
 	 * @param fieldName
-	 * @param defaultValue  value if component or field not found
+	 * @param defaultValue
+	 *            value if component or field not found
 	 * @return
 	 * @throws Exception
 	 */
@@ -2327,7 +2335,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	 * @param ctx
 	 * @param componentType
 	 * @param fieldName
-	 * @param defaultValue  value if component or field not found
+	 * @param defaultValue
+	 *            value if component or field not found
 	 * @return a set of values, empty set if not found.
 	 * @throws Exception
 	 */
@@ -2503,8 +2512,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	/**
 	 * generate a list of navigation element. replace #id with the page id.
 	 * 
-	 * @param startTag insert before path sample : <option value=#id>.
-	 * @param endTag   insert after path : </option>
+	 * @param startTag
+	 *            insert before path sample : <option value=#id>.
+	 * @param endTag
+	 *            insert after path : </option>
 	 * @return a string with XHTML code
 	 * @throws Exception
 	 * @Deprecated use XHTMLHelper.getHTMLChildList
@@ -2619,7 +2630,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		if (template != null) {
 			defaultArea = template.getDefaultArea();
 		}
-		
+
 		ContentContext specialCtx = ctx.getContextWithArea(defaultArea);
 		IContentComponentsList contentList = getAllContent(specialCtx);
 		contentList.setAllArea(false);
@@ -2641,7 +2652,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 				}
 			}
 		}
-		
+
 		if (bestImageTitle == null) {
 			/** search on all area **/
 			specialCtx = ctx.getContextWithArea(null);
@@ -2679,13 +2690,13 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		if (res != null) {
 			return res;
 		}
-		
+
 		String defaultArea = ComponentBean.DEFAULT_AREA;
 		Template template = TemplateFactory.getTemplate(ctx, this);
 		if (template != null) {
 			defaultArea = template.getDefaultArea();
 		}
-		
+
 		res = new LinkedList<IImageTitle>();
 		IContentComponentsList contentList = getAllContent(ctx);
 		while (contentList.hasNext(ctx)) {
@@ -2881,7 +2892,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	/**
 	 * get content of the current area
 	 * 
-	 * @param ctx current context
+	 * @param ctx
+	 *            current context
 	 * @return
 	 * @throws Exception
 	 */
@@ -3292,7 +3304,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	 * check if the current page is a child of a page with id or name give in
 	 * parameter.
 	 * 
-	 * @param page name, id of a page or path of the page.
+	 * @param page
+	 *            name, id of a page or path of the page.
 	 * @return
 	 */
 	public boolean isChildOf(String page) {
@@ -3614,7 +3627,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		List<String> outLayouts = new LinkedList<String>();
 		Collection<IContentVisualComponent> layoutComps = getContentByType(lgDefaultCtx, Layouts.TYPE);
 		for (IContentVisualComponent comp : layoutComps) {
-			Layouts layouts = (Layouts)comp;
+			Layouts layouts = (Layouts) comp;
 			outLayouts.addAll(layouts.getLayouts());
 		}
 		if (outLayouts.size() == 0) {
@@ -3624,7 +3637,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		}
 		return desc.layouts;
 	}
-	
+
 	public ProductBean getProduct(ContentContext ctx) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 		if (desc.product != null) {
@@ -3637,7 +3650,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		}
 		Collection<IContentVisualComponent> productComps = getContentByImplementation(lgDefaultCtx, IProductContainer.class);
 		for (IContentVisualComponent comp : productComps) {
-			desc.product = ((IProductContainer)comp).getProductBean(lgDefaultCtx);
+			desc.product = ((IProductContainer) comp).getProductBean(lgDefaultCtx);
 			return desc.product;
 		}
 		return null;
@@ -3979,7 +3992,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	/**
 	 * check if a page is parent or parent of a parent.
 	 * 
-	 * @param parent a page of the navigation.
+	 * @param parent
+	 *            a page of the navigation.
 	 * @return true if page found in paternity
 	 */
 	public boolean isChildOf(MenuElement parent) {
@@ -4132,7 +4146,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	}
 
 	public boolean isRealContent(ContentContext ctx) throws Exception {
-		//TODO: warning test deadlock on this
+		// TODO: warning test deadlock on this
 		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
 
 			if (!isInsideTimeRange()) {
@@ -4367,11 +4381,16 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	/**
 	 * prepare a content to be added at the end of the rendering
 	 * 
-	 * @param ctx         the current content context
-	 * @param page        the page when the content must be insered
-	 * @param parentComp  the parent component
-	 * @param contentType the type of the component
-	 * @param value       the value of the component
+	 * @param ctx
+	 *            the current content context
+	 * @param page
+	 *            the page when the content must be insered
+	 * @param parentComp
+	 *            the parent component
+	 * @param contentType
+	 *            the type of the component
+	 * @param value
+	 *            the value of the component
 	 * @return the if of the new component
 	 * @throws Exception
 	 */
@@ -4422,8 +4441,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	/**
 	 * remove a component on the page
 	 * 
-	 * @param releaseCache true if you want release the page cache after deleted
-	 *                     component
+	 * @param releaseCache
+	 *            true if you want release the page cache after deleted component
 	 * @return the type of the component, null if not found
 	 */
 	public String removeContent(ContentContext ctx, String id, boolean releaseCache) {
@@ -4527,7 +4546,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	}
 
 	/**
-	 * @param names list of possible name
+	 * @param names
+	 *            list of possible name
 	 * @return
 	 * @Deprecated use NavigationService.getPage(ContentContext, pageKey)
 	 */
@@ -4673,7 +4693,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	}
 
 	/**
-	 * @param parent The parent to set.
+	 * @param parent
+	 *            The parent to set.
 	 */
 	public void setParent(MenuElement parent) {
 		this.parent = parent;
@@ -5368,7 +5389,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		desc.event = Event.NO_EVENT;
 		return null;
 	}
-	
+
 	public String getAreaClass(ContentContext ctx, String area) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 		String clazz = desc.areaAsMap.get(area);
@@ -5466,7 +5487,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		}
 		return false;
 	}
-	
+
 	@Override
 	public Map<String, Object> getContentAsMap(ContentContext ctx) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, Exception {
 
@@ -5475,7 +5496,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			map.put("blocked", "no read access for : " + ctx.getCurrentUser());
 			return map;
 		}
-		
+
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
 		if (desc.contentAsMap != null) {
@@ -5523,10 +5544,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			langCtx.setArea(null);
 			ContentElementList content = getLocalContent(langCtx);
 			while (content.hasNext(langCtx)) {
-				IContentVisualComponent comp = content.next(langCtx);				
+				IContentVisualComponent comp = content.next(langCtx);
 				if (comp instanceof DynamicComponent) {
 					if (dynamicComponent.get(comp.getType()) == null || lg.equals(ctx.getRequestContentLanguage())) {
-						DynamicComponent dynComp = (DynamicComponent)comp;					
+						DynamicComponent dynComp = (DynamicComponent) comp;
 						dynamicComponent.put(dynComp.getType(), dynComp.getContentAsMap(ctx));
 					}
 				}
@@ -5681,7 +5702,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	public void setTaxonomy(Set<String> taxonomy) {
 		this.taxonomy = taxonomy;
 	}
-	
+
 	public boolean isPublic(ContentContext ctx) {
 		boolean outPublic = getName().equals("registration") || getName().startsWith("pb_");
 		MenuElement parent = getParent();
@@ -5721,6 +5742,38 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		InfoBean.updateInfoBean(newCtx);
 		pdfData = XHTMLHelper.replaceJSTLData(newCtx, pdfData);
 		return pdfData;
+	}
+
+	/**
+	 * the content of this page is only for this language (use for import data only)
+	 * 
+	 * @return a language code
+	 */
+	public String getContentLanguage() {
+		return contentLanguage;
+	}
+
+	public void setContentLanguage(String contentLanguage) {
+		this.contentLanguage = contentLanguage;
+	}
+	
+	/**
+	 * delete components 
+	 * @param lang the lang to be deleted (null if all lang)
+	 */
+	public void deleteComponent(String lang) {
+		if (lang == null) {
+			componentBean = new ComponentBean[0];
+		} else {
+			ArrayList<ComponentBean> newList = new ArrayList<>();
+			for (ComponentBean bean : componentBean) {
+				if (!bean.getLanguage().equalsIgnoreCase(lang)) {
+					newList.add(bean);
+				}
+			}
+			componentBean = newList.toArray(new ComponentBean[0]);
+		}
+		releaseCache();
 	}
 
 }

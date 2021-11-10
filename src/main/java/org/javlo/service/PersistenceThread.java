@@ -202,7 +202,7 @@ public class PersistenceThread implements Runnable {
 			}
 			OutputStreamWriter fileWriter = new OutputStreamWriter(fileStream, ContentContext.CHARACTER_ENCODING);
 			try {
-				XMLHelper.storeXMLContent(fileWriter, menuElement, renderMode, localVersion, defaultLg, getGlobalContentMap(), getTaxonomyRoot());
+				XMLHelper.storeXMLContent(fileWriter, menuElement, renderMode, localVersion, getGlobalContentMap(), getTaxonomyRoot());
 				if (isZipStorage()) {
 					SecureFile.createCyptedFile(file, getEncryptKey(), new ByteArrayInputStream(((ByteArrayOutputStream)fileStream).toByteArray()));
 				}
@@ -237,7 +237,7 @@ public class PersistenceThread implements Runnable {
 			FileOutputStream fileStream = new FileOutputStream(file);
 			OutputStreamWriter fileWriter = new OutputStreamWriter(fileStream, ContentContext.CHARACTER_ENCODING);
 			try {
-				XMLHelper.storeXMLContent(fileWriter, menuElement, renderMode, localVersion, defaultLg, getGlobalContentMap(), getTaxonomyRoot());
+				XMLHelper.storeXMLContent(fileWriter, menuElement, renderMode, localVersion, getGlobalContentMap(), getTaxonomyRoot());
 			} finally {
 				fileWriter.close();
 				fileStream.close();

@@ -51,7 +51,6 @@ import org.javlo.component.column.TableBreak;
 import org.javlo.component.column.TableComponent;
 import org.javlo.component.config.ComponentConfig;
 import org.javlo.component.container.IContainer;
-import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.links.MirrorComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -2597,6 +2596,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (logger.isLoggable(Level.FINE)) {
 			logger.fine("load : " + getType() + " on : " + URLHelper.createURL(ctx));
 		}
+		
 		ctx.getRequest().setAttribute("comp", this);
 		ctx.getRequest().setAttribute("compPage", new PageBean(ctx, getPage()));
 		ctx.getRequest().setAttribute("style", getStyle());

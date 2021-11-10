@@ -12,6 +12,11 @@ public class ComponentLayout {
 
 	private String layout = "";
 	private String font = null;
+	
+	public ComponentLayout(ComponentLayout layout) {
+		this.layout = layout.layout;
+		this.font = layout.font;
+	}
 
 	public ComponentLayout(String layout) {
 		if (layout.contains("#")) {

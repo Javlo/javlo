@@ -26,9 +26,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
-import org.javlo.component.core.ComponentFactory;
+import org.javlo.component.core.ComponentLayout;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.files.AbstractFileComponent;
@@ -57,7 +56,6 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.service.PersistenceService;
-import org.javlo.service.google.translation.GoogleTranslateService;
 import org.javlo.service.google.translation.TranslatorFactory;
 import org.javlo.user.User;
 
@@ -498,6 +496,10 @@ public class MacroHelper {
 						if (newComp != null) {
 							newComp.setStyle(lgCtx, comp.getStyle());
 							newComp.setColumnSize(comp.getColumnSize());
+							newComp.setList(comp.isList(ctxNoArea));
+							newComp.setDisplayHidden(comp.isDisplayHidden());
+							newComp.setRepeat(comp.isRepeat());
+							newComp.getComponentBean().setLayout(new ComponentLayout(comp.getComponentBean().getLayout()));
 							if (translate && currentPage.isRealContentAnyLanguage(ctxNoArea)) {
 								newComp.transflateFrom(lgCtx, TranslatorFactory.getTranslator(ctx.getGlobalContext()), ctxNoArea.getRequestContentLanguage());
 							} else if (translate) {

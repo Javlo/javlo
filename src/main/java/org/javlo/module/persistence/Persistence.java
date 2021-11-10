@@ -177,11 +177,15 @@ public class Persistence extends AbstractModuleAction {
 	}
 
 	public static String performImportpage(RequestService requestService, ContentContext ctx, HttpServletRequest request, MenuElement currentPage, I18nAccess i18nAccess) throws Exception {
+		
 		if (!Edit.checkPageSecurity(ctx)) {
+			logger.warning("security error");
 			return null;
 		}
+		
 		String importURL = requestService.getParameter("import-url", null);
 		String importZIP = requestService.getParameter("import-file", null);
+		
 		if (!StringHelper.isEmpty(importZIP)) {
 			int countResources = 0;
 			for (FileItem item : requestService.getAllFileItem()) {
@@ -225,6 +229,13 @@ public class Persistence extends AbstractModuleAction {
 					}
 					zipIn.close();
 					MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("persistence.message.imported", new String[][] { { "countResources", "" + countResources } }), GenericMessage.INFO), false);
+				} else if (StringHelper.getFileExtension(item.getName()).equals("xml")) {
+					InputStream in = item.getInputStream();
+					NodeXML node = XMLFactory.getFirstNode(in);
+					NodeXML pageNode = node.getChild("page");
+					GlobalContext globalContext = GlobalContext.getInstance(request);
+					PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
+					NavigationHelper.importPage(ctx, persistenceService, pageNode, currentPage, ctx.getLanguage(), true);
 				}
 			}
 		} else if (importURL != null) {

@@ -2,11 +2,9 @@ package org.javlo.helper;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 import org.javlo.utils.TimeMap;
 
-import ch.qos.logback.core.encoder.ByteArrayUtil;
 import junit.framework.TestCase;
 
 public class TimeMapTest extends TestCase {

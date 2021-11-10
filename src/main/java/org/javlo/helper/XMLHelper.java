@@ -38,15 +38,15 @@ import org.owasp.encoder.Encode;
  */
 public class XMLHelper {
 
-	public static String getPageXML(ContentContext ctx, MenuElement page) throws Exception {
+	public static String getPageXML(ContentContext ctx, MenuElement page, String lang) throws Exception {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 		out.println("<?xml version=\"1.0\" encoding=\"" + ContentContext.CHARACTER_ENCODING + "\"?>");
-		out.println("<export key=\"" + globalContext.getContextKey() + "\" path=\"" + page.getPath() + "\" version=\""+IVersion.VERSION+"\">");
+		out.println("<export key=\"" + globalContext.getContextKey() + "\" path=\"" + page.getPath() + "\" version=\"" + IVersion.VERSION + "\">");
 		Collection<MenuElement> allCreatePage = new LinkedList<MenuElement>();
-		insertXMLPage(out, allCreatePage, Arrays.asList(new MenuElement[] { page }), ctx.getContentLanguage(), true);
+		insertXMLPage(out, allCreatePage, Arrays.asList(new MenuElement[] { page }), true, lang);
 		ContentContext absoluteURLCtx = new ContentContext(ctx);
 		absoluteURLCtx.setAbsoluteURL(true);
 		out.println("<resources url=\"" + URLHelper.createResourceURL(absoluteURLCtx, page, "/") + "\">");
@@ -61,13 +61,15 @@ public class XMLHelper {
 					if (ctx.getCurrentEditUser() != null || staticInfo.getReadRoles(absoluteURLCtx).size() == 0) {
 						staticInfo.toXML(ctx, out);
 					}
-					//out.println("<resource id=\"" + StringHelper.neverNull(resource.getId()) + "\" uri=\"" + resource.getUri() + "\"/>");
+					// out.println("<resource id=\"" + StringHelper.neverNull(resource.getId()) +
+					// "\" uri=\"" + resource.getUri() + "\"/>");
 				}
 			}
 		}
 		out.println("</resources>");
-		//ContentService content = ContentService.getInstance(ctx.getRequest());
-		//insertMap(out, content.getGlobalMap(ctx), PersistenceService.GLOBAL_MAP_NAME);
+		// ContentService content = ContentService.getInstance(ctx.getRequest());
+		// insertMap(out, content.getGlobalMap(ctx),
+		// PersistenceService.GLOBAL_MAP_NAME);
 		out.println("</export>");
 
 		out.close();
@@ -89,7 +91,7 @@ public class XMLHelper {
 		Collection<String> lgs = globalContext.getContentLanguages();
 		long sitemapMaxsize = ctx.getGlobalContext().getStaticConfig().getSiteMapSizeLimit();
 		Date lastmod = new Date(0);
-		for (MenuElement root : pages) {		
+		for (MenuElement root : pages) {
 			long size = 0;
 			for (MenuElement element : root.getAllChildrenList()) {
 				for (String lg : lgs) {
@@ -135,7 +137,7 @@ public class XMLHelper {
 									if (!StringHelper.isURL(imageURL)) {
 										imageURL = URLHelper.createResourceURL(lgCtx, imageURL);
 									}
-									
+
 									line.append("<image:loc>" + Encode.forXmlAttribute(imageURL) + "</image:loc>");
 									if (!StringHelper.isEmpty(image.getImageDescription(lgCtx))) {
 										line.append("<image:title>" + Encode.forXmlContent(image.getImageDescription(lgCtx)) + "</image:title>");
@@ -146,7 +148,7 @@ public class XMLHelper {
 						}
 						line.append("</url>");
 						size = size + line.toString().getBytes().length;
-						if (i>=0 && (size >= (i - 1) * sitemapMaxsize && size < i * sitemapMaxsize)) {
+						if (i >= 0 && (size >= (i - 1) * sitemapMaxsize && size < i * sitemapMaxsize)) {
 							out.println(line);
 							if (element.getModificationDate(ctx).getTime() > lastmod.getTime()) {
 								lastmod = element.getModificationDate(ctx);
@@ -175,7 +177,7 @@ public class XMLHelper {
 		Collection<String> lgs = globalContext.getContentLanguages();
 		long sitemapMaxsize = ctx.getGlobalContext().getStaticConfig().getSiteMapSizeLimit();
 		Date lastmod = new Date(0);
-		for (MenuElement root : pages) {			
+		for (MenuElement root : pages) {
 			long size = 0;
 			for (MenuElement element : root.getAllChildrenList()) {
 				for (String lg : lgs) {
@@ -261,7 +263,7 @@ public class XMLHelper {
 		} else {
 			out.println("<content>");
 		}
-		insertXMLPage(out, Arrays.asList(new MenuElement[] { menu }), defaultLg);
+		insertXMLPage(out, Arrays.asList(new MenuElement[] { menu }), null);
 		out.println("</content>");
 		out.close();
 
@@ -283,117 +285,132 @@ public class XMLHelper {
 			out.println("</properties>");
 		}
 	}
-	
-	static void insertXMLContent(PrintWriter out, MenuElement page, String defaultLg) throws Exception {
+
+	/**
+	 * insert content as XML in a writer
+	 * 
+	 * @param out
+	 *            the writer
+	 * @param page
+	 *            page exported
+	 * @param lang
+	 *            language exported (if null >> all languages)
+	 * @throws Exception
+	 */
+	static void insertXMLContent(PrintWriter out, MenuElement page, String lang) throws Exception {
 		ComponentBean[] beans = page.getAllLocalContentBean();
 		for (int j = 0; j < beans.length; j++) {
 			if (beans[j] != null) {
-				String id = beans[j].getId();
-				String type = beans[j].getType();
+
 				String language = beans[j].getLanguage();
-				String value = beans[j].getValue();
-				/*
-				 * if (value.startsWith("test renomage")) { System.out.println(
-				 * "***** value = "+value); }
-				 */
-				boolean nolink = beans[j].isNolink();
-				String style = beans[j].getStyle();
-				String inlist = "" + beans[j].isList();
+				if (lang == null || lang.equalsIgnoreCase(language)) {
 
-				out.print("<component id=\"");
-				out.print(id);
-				out.print("\" type=\"");
-				out.print(type);
-				if (StringHelper.isTrue(inlist)) {
-					out.print("\" inlist=\"");
-					out.print(inlist);
-				}
-				String hidden = ""+beans[j].isHidden();
-				if (StringHelper.isTrue(hidden)) {
-					out.print("\" hidden=\"");
-					out.print(hidden);
-				}				
-				if (beans[j].getColumnSize()>=0) {
-					out.print("\" colSize=\"");
-					out.print(beans[j].getColumnSize());
-				}
-				if (!ComponentBean.DEFAULT_AREA.equals(beans[j].getArea())) {
-					out.print("\" area=\"");
-					out.print(beans[j].getArea());
-				}
+					String id = beans[j].getId();
+					String type = beans[j].getType();
+					String value = beans[j].getValue();
+					/*
+					 * if (value.startsWith("test renomage")) { System.out.println(
+					 * "***** value = "+value); }
+					 */
+					boolean nolink = beans[j].isNolink();
+					String style = beans[j].getStyle();
+					String inlist = "" + beans[j].isList();
 
-				out.print("\" language=\"");
-				out.print(language);
+					out.print("<component id=\"");
+					out.print(id);
+					out.print("\" type=\"");
+					out.print(type);
+					if (StringHelper.isTrue(inlist)) {
+						out.print("\" inlist=\"");
+						out.print(inlist);
+					}
+					String hidden = "" + beans[j].isHidden();
+					if (StringHelper.isTrue(hidden)) {
+						out.print("\" hidden=\"");
+						out.print(hidden);
+					}
+					if (beans[j].getColumnSize() >= 0) {
+						out.print("\" colSize=\"");
+						out.print(beans[j].getColumnSize());
+					}
+					if (!ComponentBean.DEFAULT_AREA.equals(beans[j].getArea())) {
+						out.print("\" area=\"");
+						out.print(beans[j].getArea());
+					}
 
-				out.print("\" authors=\"");
-				out.print(StringHelper.neverNull(beans[j].getAuthors()));
+					out.print("\" language=\"");
+					out.print(language);
 
-				out.print("\" creationDate=\"");
-				out.print(StringHelper.renderTime(beans[j].getCreationDate()));
+					out.print("\" authors=\"");
+					out.print(StringHelper.neverNull(beans[j].getAuthors()));
 
-				out.print("\" modificationDate=\"");
-				out.print(StringHelper.renderTime(beans[j].getModificationDate()));
-				
-				if (beans[j].getDeleteDate() != null) {
-					out.print("\" delDate=\"");
-					out.print(StringHelper.renderTime(beans[j].getDeleteDate()));
-				}
-				
-				if (beans[j].getCookiesDisplayStatus()!=CookiesService.ALWAYS_STATUS) {
-					out.print("\" displayCookiesStatus=\"");
-					out.print(beans[j].getCookiesDisplayStatus());
-				}
+					out.print("\" creationDate=\"");
+					out.print(StringHelper.renderTime(beans[j].getCreationDate()));
 
-				if (style != null && style.length() > 0) {
-					out.print("\" style=\"");
-					out.print(StringHelper.toXMLAttribute(style));
+					out.print("\" modificationDate=\"");
+					out.print(StringHelper.renderTime(beans[j].getModificationDate()));
+
+					if (beans[j].getDeleteDate() != null) {
+						out.print("\" delDate=\"");
+						out.print(StringHelper.renderTime(beans[j].getDeleteDate()));
+					}
+
+					if (beans[j].getCookiesDisplayStatus() != CookiesService.ALWAYS_STATUS) {
+						out.print("\" displayCookiesStatus=\"");
+						out.print(beans[j].getCookiesDisplayStatus());
+					}
+
+					if (style != null && style.length() > 0) {
+						out.print("\" style=\"");
+						out.print(StringHelper.toXMLAttribute(style));
+					}
+					if (beans[j].getBackgroundColor() != null && beans[j].getBackgroundColor().trim().length() > 0) {
+						out.print("\" bgcol=\"");
+						out.print(beans[j].getBackgroundColor());
+					}
+					if (beans[j].getManualCssClass() != null && beans[j].getManualCssClass().trim().length() > 0) {
+						out.print("\" css=\"");
+						out.print(beans[j].getManualCssClass());
+					}
+					if (beans[j].getTextColor() != null && beans[j].getTextColor().trim().length() > 0) {
+						out.print("\" txtcol=\"");
+						out.print(beans[j].getTextColor());
+					}
+					if (beans[j].isRepeat()) {
+						out.print("\" repeat=\"true");
+					}
+					if (StringHelper.isTrue(beans[j].isForceCachable())) {
+						out.print("\" forceCachable=\"true");
+					}
+
+					if (nolink) {
+						out.print("\" nolink=\"");
+						out.print(nolink);
+					}
+					if (beans[j].getRenderer() != null) {
+						out.print("\" renderer=\"");
+						out.print(beans[j].getRenderer());
+					}
+					if (beans[j].getLayout() != null) {
+						out.print("\" layout=\"");
+						out.print(beans[j].getLayout().getLayout());
+					}
+					if (beans[j].getHiddenModes() != null && !beans[j].getHiddenModes().isEmpty()) {
+						out.print("\" hiddenModes=\"");
+						out.print(StringHelper.collectionToString(beans[j].getHiddenModes(), ","));
+					}
+					beans[j].setModify(false);
+					out.print("\" >");
+					out.print("<![CDATA[");
+					out.print(value);
+					out.print("]]>");
+					out.println("</component>");
 				}
-				if (beans[j].getBackgroundColor() != null && beans[j].getBackgroundColor().trim().length() > 0) {
-					out.print("\" bgcol=\"");
-					out.print(beans[j].getBackgroundColor());
-				}
-				if (beans[j].getManualCssClass() != null && beans[j].getManualCssClass().trim().length() > 0) {
-					out.print("\" css=\"");
-					out.print(beans[j].getManualCssClass());
-				}
-				if (beans[j].getTextColor() != null && beans[j].getTextColor().trim().length() > 0) {
-					out.print("\" txtcol=\"");
-					out.print(beans[j].getTextColor());
-				}
-				if (beans[j].isRepeat()) {
-					out.print("\" repeat=\"true");
-				}
-				if (StringHelper.isTrue(beans[j].isForceCachable())) {
-					out.print("\" forceCachable=\"true");
-				}
-				
-				if (nolink) {
-					out.print("\" nolink=\"");
-					out.print(nolink);
-				}
-				if (beans[j].getRenderer() != null) {
-					out.print("\" renderer=\"");
-					out.print(beans[j].getRenderer());
-				}
-				if (beans[j].getLayout() != null) {
-					out.print("\" layout=\"");
-					out.print(beans[j].getLayout().getLayout());
-				}
-				if (beans[j].getHiddenModes() != null && !beans[j].getHiddenModes().isEmpty()) {
-					out.print("\" hiddenModes=\"");
-					out.print(StringHelper.collectionToString(beans[j].getHiddenModes(), ","));
-				}
-				beans[j].setModify(false);
-				out.print("\" >");
-				out.print("<![CDATA[");
-				out.print(value);
-				out.print("]]>");
-				out.println("</component>");
 			}
 		}
 	}
 
-	static void insertXMLPage(PrintWriter out, Collection<MenuElement> pageList, Collection<MenuElement> pages, String defaultLg, boolean recu) throws Exception {
+	static void insertXMLPage(PrintWriter out, Collection<MenuElement> pageList, Collection<MenuElement> pages, boolean recu, String lang) throws Exception {
 
 		for (MenuElement page : pages) {
 			if (pageList != null) {
@@ -436,7 +453,7 @@ public class XMLHelper {
 			out.print("<page id=\"");
 			out.print(id);
 			out.print("\" name=\"");
-			
+
 			out.print(StringHelper.toXMLAttribute(name));
 			out.print("\" creationDate=\"");
 			out.print(creationDate);
@@ -462,6 +479,10 @@ public class XMLHelper {
 				out.print("\" visible=\"");
 				out.print(visible);
 			}
+			if (lang!=null) {
+				out.print("\" contentLanguage=\"");
+				out.print(lang);
+			}
 			if (!page.isPageActive()) {
 				out.print("\" active=\"");
 				out.print(page.isActive());
@@ -484,7 +505,7 @@ public class XMLHelper {
 			}
 			if (page.getTaxonomy() != null && page.getTaxonomy().size() > 0) {
 				out.print("\" taxonomy=\"");
-				out.print(StringHelper.collectionToString(page.getTaxonomy()));				
+				out.print(StringHelper.collectionToString(page.getTaxonomy()));
 			}
 			if (page.getIpSecurityErrorPageName() != null) {
 				out.print("\" ipsecpagename=\"");
@@ -518,7 +539,7 @@ public class XMLHelper {
 			if (!valid) {
 				out.print("\" valid=\"");
 				out.print(valid);
-			}			
+			}
 			if (page.isNeedValidation()) {
 				out.print("\" ndval=\"");
 				out.print(page.isNeedValidation());
@@ -526,7 +547,7 @@ public class XMLHelper {
 			if (page.isNoValidation()) {
 				out.print("\" noval=\"");
 				out.print(page.isNoValidation());
-			}			
+			}
 			if (reversedLink.trim().length() > 0) {
 				out.print("\" reversed-link=\"");
 				out.print(StringHelper.toXMLAttribute(StringHelper.arrayToString(StringHelper.readLines(reversedLink), "#")));
@@ -547,10 +568,11 @@ public class XMLHelper {
 				out.print("\" editor-roles=\"");
 				out.print(StringHelper.toXMLAttribute(StringHelper.collectionToString(page.getEditorRoles(), "#")));
 			}
-//			if (page.getFollowers().size() > 0) {
-//				out.print("\" followers=\"");
-//				out.print(StringHelper.toXMLAttribute(StringHelper.collectionToString(page.getFollowers(), "#")));
-//			}
+			// if (page.getFollowers().size() > 0) {
+			// out.print("\" followers=\"");
+			// out.print(StringHelper.toXMLAttribute(StringHelper.collectionToString(page.getFollowers(),
+			// "#")));
+			// }
 
 			/* vparent */
 			List<String> parentId = new LinkedList<String>();
@@ -572,11 +594,10 @@ public class XMLHelper {
 			}
 			out.println("\">");
 
-			if (page.getLinkedURL().trim().length() == 0) { // not save the
-															// remote content
-				insertXMLContent(out, page, defaultLg);
+			if (page.getLinkedURL().trim().length() == 0) { // not save the remote content
+				insertXMLContent(out, page, lang);
 				if (recu) {
-					insertXMLPage(out, pageList, page.getChildMenuElements(), defaultLg, true);
+					insertXMLPage(out, pageList, page.getChildMenuElements(), true, lang);
 				}
 			}
 
@@ -584,18 +605,18 @@ public class XMLHelper {
 		}
 	}
 
-	static void insertXMLPage(PrintWriter out, Collection<MenuElement> pages, String defaultLg) throws Exception {
-		insertXMLPage(out, null, pages, defaultLg, true);
+	static void insertXMLPage(PrintWriter out, Collection<MenuElement> pages, String lang) throws Exception {
+		insertXMLPage(out, null, pages, true, lang);
 	}
-	
+
 	static void insertTaxonomy(PrintWriter out, TaxonomyBean node) throws Exception {
 		String deco = "";
 		if (!StringHelper.isEmpty(node.getDecoration())) {
-			deco = " deco=\""+Encode.forXmlAttribute(node.getDecoration())+"\"";
+			deco = " deco=\"" + Encode.forXmlAttribute(node.getDecoration()) + "\"";
 		}
-		out.println("<taxo name=\""+Encode.forXmlAttribute(node.getName())+"\" id=\""+Encode.forXmlAttribute(node.getId())+"\""+deco+">");
+		out.println("<taxo name=\"" + Encode.forXmlAttribute(node.getName()) + "\" id=\"" + Encode.forXmlAttribute(node.getId()) + "\"" + deco + ">");
 		for (Map.Entry<String, String> label : node.getLabels().entrySet()) {
-			out.println("<label lang=\""+Encode.forXmlAttribute(label.getKey())+"\">"+Encode.forXmlContent(label.getValue())+"</label>");
+			out.println("<label lang=\"" + Encode.forXmlAttribute(label.getKey()) + "\">" + Encode.forXmlContent(label.getValue()) + "</label>");
 		}
 		for (TaxonomyBean child : node.getChildren()) {
 			insertTaxonomy(out, child);
@@ -610,11 +631,11 @@ public class XMLHelper {
 	 *            the contentContext
 	 * @return A string with a xml in.
 	 */
-	public static void storeXMLContent(Writer inOut, MenuElement menu, int renderMode, int version, String defaultLg, Map<String, String> contentMap, TaxonomyBean taxonomyRoot) throws Exception {
+	public static void storeXMLContent(Writer inOut, MenuElement menu, int renderMode, int version, Map<String, String> contentMap, TaxonomyBean taxonomyRoot) throws Exception {
 		PrintWriter out = new PrintWriter(inOut, true);
 		out.println("<?xml version=\"1.0\" encoding=\"" + ContentContext.CHARACTER_ENCODING + "\"?>");
 		out.println("<content cmsversion=\"" + AccessServlet.VERSION + "\" version=\"" + version + "\" date=\"" + PersistenceService.renderDate(new Date()) + "\">");
-		insertXMLPage(out, Arrays.asList(new MenuElement[] { menu }), defaultLg);
+		insertXMLPage(out, Arrays.asList(new MenuElement[] { menu }), null);
 		if (!PersistenceService.STORE_DATA_PROPERTIES) {
 			insertMap(out, contentMap, PersistenceService.GLOBAL_MAP_NAME);
 		}
@@ -624,9 +645,9 @@ public class XMLHelper {
 		out.println("</content>");
 		out.close();
 	}
-	
+
 	public static void main(String[] args) {
-		System.out.println("##### XMLHelper.main : StringHelper.toXMLAttribute(name) = "+StringHelper.toHTMLAttribute("p&p global")); //TODO: remove debug trace
+		System.out.println("##### XMLHelper.main : StringHelper.toXMLAttribute(name) = " + StringHelper.toHTMLAttribute("p&p global")); // TODO: remove debug trace
 	}
 
 }

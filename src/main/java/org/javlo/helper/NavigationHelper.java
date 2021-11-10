@@ -22,6 +22,7 @@ import org.javlo.component.title.SubTitle;
 import org.javlo.context.ContentContext;
 import org.javlo.context.ContentManager;
 import org.javlo.context.GlobalContext;
+import org.javlo.module.admin.AdminAction;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.ConvertToCurrentVersion;
@@ -31,7 +32,7 @@ import org.javlo.xml.NodeXML;
 public class NavigationHelper {
 
 	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(NavigationHelper.class.getName());
-	
+
 	public static final String POPUP_PARAM = "_popupurl";
 
 	public static final boolean canMoveDown(MenuElement elem) {
@@ -118,7 +119,7 @@ public class NavigationHelper {
 		target.setLatestEditor(src.getLatestEditor());
 		target.setPriority(src.getPriority());
 		target.setTemplateId(src.getTemplateId());
-		target.setBreakRepeat(src.isBreakRepeat());		
+		target.setBreakRepeat(src.isBreakRepeat());
 		target.setStartPublishDate(src.getStartPublishDate());
 		target.setEndPublishDate(src.getEndPublishDate());
 		target.setActive(src.isActive());
@@ -242,7 +243,7 @@ public class NavigationHelper {
 		}
 		String version = parent.getAttributeValue("version", "1.0");
 
-		persistenceService.insertContent(pageNode, currentPage, lang, true);
+		persistenceService.insertContent(pageNode, currentPage, lang, true, false);
 		for (ComponentBean data : currentPage.getAllLocalContentBean()) {
 			ConvertToCurrentVersion.convert(ctx, data, version);
 		}
@@ -253,8 +254,7 @@ public class NavigationHelper {
 		while (child != null) {
 			String pageName = child.getAttributeValue("name");
 			if (pageName != null) {
-				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-				MenuElement newPage = persistenceService.insertPage(ctx, child, currentPage, new HashMap<MenuElement, String[]>(), lang, true);
+				MenuElement newPage = persistenceService.insertPage(ctx, child, currentPage, new HashMap<MenuElement, String[]>(), lang, true, true);
 				try {
 					for (ComponentBean data : newPage.getAllLocalContentBean()) {
 						ConvertToCurrentVersion.convert(ctx, data, version);
@@ -271,17 +271,17 @@ public class NavigationHelper {
 		/*
 		 * NodeXML properties = pageNode.getParent().getChild("properties"); if
 		 * (properties != null && properties.getAttributeValue("name",
-		 * "").equals("global")) { NodeXML property =
-		 * properties.getChild("property"); GlobalContext globalContext =
-		 * GlobalContext.getInstance(ctx.getRequest()); ContentService content =
-		 * ContentService.getInstance(globalContext); while (property != null) {
-		 * if (content.getAttribute(ctx, property.getAttributeValue("key")) ==
-		 * null) { // if this key doesn't exist locally -> set in global map
-		 * content.setAttribute(ctx, property.getAttributeValue("key"),
-		 * property.getContent()); } property = property.getNext("property"); }
-		 * }
+		 * "").equals("global")) { NodeXML property = properties.getChild("property");
+		 * GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		 * ContentService content = ContentService.getInstance(globalContext); while
+		 * (property != null) { if (content.getAttribute(ctx,
+		 * property.getAttributeValue("key")) == null) { // if this key doesn't exist
+		 * locally -> set in global map content.setAttribute(ctx,
+		 * property.getAttributeValue("key"), property.getContent()); } property =
+		 * property.getNext("property"); } }
 		 */
-		PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
+		PersistenceService.getInstance(ctx.getGlobalContext()).store(ctx);
+		AdminAction.clearCache(ctx);
 	}
 
 	public static void publishNavigation(ContentContext ctx, MenuElement srcRoot, MenuElement targetRoot) throws Exception {
@@ -314,10 +314,9 @@ public class NavigationHelper {
 			}
 		}
 		for (MenuElement element : needRemove) {
-			targetRoot.removeChild(element);			
+			targetRoot.removeChild(element);
 		}
 	}
-	
 
 	public static void publishOneComponent(ContentContext ctx, String componentId) throws Exception {
 
@@ -513,8 +512,8 @@ public class NavigationHelper {
 		}
 		return outPath;
 	}
-	
-	public static MenuElement searchPage (ContentContext ctx, String idOrNameOrPath) throws Exception { 
+
+	public static MenuElement searchPage(ContentContext ctx, String idOrNameOrPath) throws Exception {
 		if (idOrNameOrPath == null) {
 			return null;
 		}
@@ -525,21 +524,21 @@ public class NavigationHelper {
 			if (page == null) {
 				page = content.getNavigation(ctx).searchChild(ctx, idOrNameOrPath);
 			}
-		} 
+		}
 		return page;
-	} 
-	
+	}
+
 	public static MenuElement getPopupPage(ContentContext ctx) throws Exception {
 		String popupPath = ctx.getRequest().getParameter(POPUP_PARAM);
-		if (popupPath != null && !popupPath.startsWith("http")) {			
-			if (popupPath.length()>3 && popupPath.charAt(3)=='/') {
+		if (popupPath != null && !popupPath.startsWith("http")) {
+			if (popupPath.length() > 3 && popupPath.charAt(3) == '/') {
 				popupPath = popupPath.substring(3);
 				if (popupPath.indexOf('.') >= 0) {
 					popupPath = popupPath.substring(0, popupPath.lastIndexOf('.'));
 				}
 			} else {
 				popupPath = ContentManager.getPath(popupPath);
-				if (popupPath.length()>3 && popupPath.charAt(3)=='/') {
+				if (popupPath.length() > 3 && popupPath.charAt(3) == '/') {
 					popupPath = popupPath.substring(3);
 				}
 			}
@@ -549,10 +548,12 @@ public class NavigationHelper {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * create a new name (numeroted -N) with a page name
-	 * @param page the 'source' page.
+	 * 
+	 * @param page
+	 *            the 'source' page.
 	 * @return a new name (this name not exist in the current context)
 	 */
 	public static final String getNewName(MenuElement page) {
@@ -569,5 +570,5 @@ public class NavigationHelper {
 		}
 		return newPageName;
 	}
-	
+
 }
