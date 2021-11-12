@@ -499,7 +499,7 @@ public class MacroHelper {
 							newComp.setList(comp.isList(ctxNoArea));
 							newComp.setDisplayHidden(comp.isDisplayHidden());
 							newComp.setRepeat(comp.isRepeat());
-							newComp.getComponentBean().setLayout(new ComponentLayout(comp.getComponentBean().getLayout()));
+							newComp.getComponentBean().setLayout(ComponentLayout.getNewInstance(comp.getComponentBean().getLayout()));
 							if (translate && currentPage.isRealContentAnyLanguage(ctxNoArea)) {
 								newComp.transflateFrom(lgCtx, TranslatorFactory.getTranslator(ctx.getGlobalContext()), ctxNoArea.getRequestContentLanguage());
 							} else if (translate) {

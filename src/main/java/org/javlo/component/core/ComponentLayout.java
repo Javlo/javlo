@@ -13,7 +13,15 @@ public class ComponentLayout {
 	private String layout = "";
 	private String font = null;
 	
-	public ComponentLayout(ComponentLayout layout) {
+	public static ComponentLayout getNewInstance(ComponentLayout layout) {
+		if (layout == null) {
+			return null;
+		} else {
+			return new ComponentLayout(layout);
+		}
+	}
+	
+	private ComponentLayout(ComponentLayout layout) {
 		this.layout = layout.layout;
 		this.font = layout.font;
 	}
