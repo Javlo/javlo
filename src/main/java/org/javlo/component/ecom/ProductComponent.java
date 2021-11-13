@@ -490,7 +490,12 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 	}
 
 	public ProductBean getProductBean(ContentContext ctx) {
-		return new Product(this).getBean();
+		try {
+			return new Product(this).getBean(ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }

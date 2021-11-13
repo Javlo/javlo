@@ -93,7 +93,11 @@ public class PaypalOrderComponent extends AbstractOrderComponent implements IAct
 		out.println("<form id=\"paypal-form\" method=\"post\" action=\""+getBaseURL()+"/cgi-bin/webscr\" class=\"place\"><input type=\"hidden\" name=\"cmd\" id=\"cmd\" value=\"_cart\" />");
 		out.println("<input type=\"hidden\" name=\"charset\" id=\"charset\" value=\"utf-8\" />");
 		out.println("<input type=\"hidden\" name=\"upload\" id=\"upload\" value=\"1\" />");
-		out.println("<input type=\"hidden\" name=\"currency_code\" id=\"currency_code\" value=\"" + basket.getCurrencyCode() + "\" />");
+		try {
+			out.println("<input type=\"hidden\" name=\"currency_code\" id=\"currency_code\" value=\"" + basket.getCurrencyCode() + "\" />");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		out.println("<input type=\"hidden\" name=\"business\" id=\"business\" value=\"" + getUserEMail() + "\" />");
 		String returnURL = URLHelper.createURL(ctx.getContextForAbsoluteURL());
 		returnURL = URLHelper.addParam(returnURL, IContentVisualComponent.COMP_ID_REQUEST_PARAM, getId());

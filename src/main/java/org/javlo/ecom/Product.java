@@ -8,6 +8,7 @@ import org.javlo.component.image.ImageTitleBean;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.navigation.MenuElement;
 import org.owasp.encoder.Encode;
 
 public class Product {
@@ -15,6 +16,8 @@ public class Product {
 	public static final class ProductBean implements Serializable {
 		private String id;
 		private String pageId;
+		private String pageTitle;
+		private String pageDescription;
 		private double price;
 		private String priceString;
 		private double reduction;
@@ -31,9 +34,13 @@ public class Product {
 		public ProductBean() {
 		};
 
-		public ProductBean(String id, String pageId, String lg, double price, String priceString, double reduction, double vat, String currencyCode, String name, String description, String imageURL, int quantity, double weight) {
+		public ProductBean(ContentContext ctx, String id, MenuElement page, String lg, double price, String priceString, double reduction, double vat, String currencyCode, String name, String description, String imageURL, int quantity, double weight) throws Exception {
 			this.id = id;
-			this.pageId = pageId;
+			this.pageId = page.getId();
+			if (ctx != null) {
+				this.pageTitle = page.getPageTitle(ctx);
+				this.pageDescription = page.getDescription(ctx).getText();
+			}
 			this.price = price;
 			this.priceString = priceString;
 			this.currencyCode = currencyCode;
@@ -172,6 +179,22 @@ public class Product {
 
 		public void setLabel(String label) {
 			this.label = label;
+		}
+
+		public String getPageTitle() {
+			return pageTitle;
+		}
+
+		public void setPageTitle(String pageTitle) {
+			this.pageTitle = pageTitle;
+		}
+
+		public String getPageDescription() {
+			return pageDescription;
+		}
+
+		public void setPageDescription(String pageDescription) {
+			this.pageDescription = pageDescription;
 		}
 
 	}
@@ -355,8 +378,8 @@ public class Product {
 		System.out.println(">> "+StringHelper.doubleQutotes("l'iliade"));
 	}
 
-	public ProductBean getBean() {
-		ProductBean bean = new ProductBean(getId(), comp.getPage().getId(), comp.getComponentBean().getLanguage(), getPrice(), getPriceString(), getReduction(), getVAT(), getCurrencyCode(), getName(), getShortDescription(), getImageURL(), getQuantity(), getWeight());
+	public ProductBean getBean(ContentContext ctx) throws Exception {
+		ProductBean bean = new ProductBean(ctx, getId(), comp.getPage(), comp.getComponentBean().getLanguage(), getPrice(), getPriceString(), getReduction(), getVAT(), getCurrencyCode(), getName(), getShortDescription(), getImageURL(), getQuantity(), getWeight());
 		return bean;
 	}
 

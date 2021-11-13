@@ -1,7 +1,6 @@
 package org.javlo.component.ecom;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -22,7 +21,6 @@ import org.javlo.ecom.Basket;
 import org.javlo.ecom.Product;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.NetHelper;
-import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
@@ -78,7 +76,11 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 			out.println(getData().get("order.account"));		
 		}
 		out.println("");
-		out.println(getData().get("order.total")+basket.getTotalString(ctx,true));
+		try {
+			out.println(getData().get("order.total")+basket.getTotalString(ctx,true));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		if (getData().get("order.communication") != null && getData().get("order.communication").toString().trim().length() > 0) {
 			out.println(getData().get("order.communication")+basket.getStructutedCommunication());
 		}

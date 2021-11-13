@@ -279,11 +279,11 @@ public class Basket implements Serializable {
 		return result;
 	}
 
-	public String getTotalString(ContentContext ctx, boolean vat) {
+	public String getTotalString(ContentContext ctx, boolean vat) throws Exception {
 		return renderPrice(ctx, getTotal(ctx, vat), getCurrencyCode());
 	}
 
-	public String getVAT(ContentContext ctx) {
+	public String getVAT(ContentContext ctx) throws Exception {
 		return renderPrice(ctx, getTotal(ctx, true) - getTotal(ctx, false), getCurrencyCode());
 	}
 
@@ -358,9 +358,9 @@ public class Basket implements Serializable {
 		this.id = id;
 	}
 
-	public String getCurrencyCode() {
+	public String getCurrencyCode() throws Exception {
 		String currencyCode = null;
-		for (Product.ProductBean product : getProductsBean()) {
+		for (Product.ProductBean product : getProductsBean(null)) {
 			if ((currencyCode != null) && (!currencyCode.equals(product.getCurrencyCode()))) {
 				return null;
 			}
@@ -552,18 +552,18 @@ public class Basket implements Serializable {
 		
 	}
 
-	public List<Product.ProductBean> getProductsBean() {
+	public List<Product.ProductBean> getProductsBean(ContentContext ctx) throws Exception {
 		List<Product.ProductBean> productsBean = new LinkedList<Product.ProductBean>();
 		for (Product product : getProducts()) {
-			productsBean.add(product.getBean());
+			productsBean.add(product.getBean(ctx));
 		}
 		return productsBean;
 	}
 
-	public String getProductsBeanToString() {
+	public String getProductsBeanToString(ContentContext ctx) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		for (Product.ProductBean product : getProductsBean()) {
+		for (Product.ProductBean product : getProductsBean(ctx)) {
 			out.print("[" + product.getQuantity() + "-" + product.getName() + "] ");
 		}
 		out.close();
@@ -624,7 +624,11 @@ public class Basket implements Serializable {
 		out.println("");
 		out.println("id : " + getId());
 		out.println("user : " + getUser());
-		out.println("Currency : " + getCurrencyCode());
+		try {
+			out.println("Currency : " + getCurrencyCode());
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
 		out.println("Date : " + StringHelper.renderSortableTime(getDate()));
 		out.println("Step : " + getStep());
 		out.println("Size : " + getSize());
@@ -670,9 +674,13 @@ public class Basket implements Serializable {
 		out.println("");
 		out.println("Product :");
 		double total = 0;
-		for (ProductBean product : getProductsBean()) {
-			total += product.getPrice();
-			out.println("   " + product);
+		try {
+			for (ProductBean product : getProductsBean(null)) {
+				total += product.getPrice();
+				out.println("   " + product);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		out.println("");
 		out.println("TOTAL : " + total);
@@ -693,7 +701,11 @@ public class Basket implements Serializable {
 		out.println("");
 		out.println("id : " + getId());
 		out.println("user : " + getUser());
-		out.println("Currency : " + getCurrencyCode());
+		try {
+			out.println("Currency : " + getCurrencyCode());
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
 		out.println("Date : " + StringHelper.renderSortableTime(getDate()));
 		out.println("Step : " + getStep());
 		out.println("Size : " + getSize());
@@ -747,18 +759,24 @@ public class Basket implements Serializable {
 		}
 		out.println("");
 		out.println("Product :");
-		for (ProductBean product : getProductsBean()) {
-			out.println("   " + product);
+		try {
+			for (ProductBean product : getProductsBean(null)) {
+				out.println("   " + product);
+			}
+			out.println("");
+			out.println("Shiping VAT : " + StringHelper.renderPrice(getDelivery(ctx, true), getCurrencyCode()));
+			out.println("Shiping HVAT : " + StringHelper.renderPrice(getDelivery(ctx, false), getCurrencyCode()));
+			out.println("");
+			out.println("Total VAT : " + StringHelper.renderPrice(getTotal(ctx, true), getCurrencyCode()));
+			out.println("Total HVAT : " + StringHelper.renderPrice(getTotal(ctx, false), getCurrencyCode()));
+			out.println("");
+			out.println("Current Time : " + StringHelper.renderSortableTime(new Date()));
+			out.println("");
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		out.println("");
-		out.println("Shiping VAT : " + StringHelper.renderPrice(getDelivery(ctx, true), getCurrencyCode()));
-		out.println("Shiping HVAT : " + StringHelper.renderPrice(getDelivery(ctx, false), getCurrencyCode()));
-		out.println("");
-		out.println("Total VAT : " + StringHelper.renderPrice(getTotal(ctx, true), getCurrencyCode()));
-		out.println("Total HVAT : " + StringHelper.renderPrice(getTotal(ctx, false), getCurrencyCode()));
-		out.println("");
-		out.println("Current Time : " + StringHelper.renderSortableTime(new Date()));
-		out.println("");
 
 		out.close();
 		return new String(outStream.toByteArray());

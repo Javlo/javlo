@@ -32,11 +32,11 @@ public class BasketSmartBean {
 		return basket.getId();
 	}
 	
-	public String getTotalExcludingVATString() {
+	public String getTotalExcludingVATString() throws Exception {
 		return StringHelper.renderPrice(basket.getTotal(ctx, false), basket.getCurrencyCode());		 
 	}
 	
-	public String getTotalIncludingVATString() {
+	public String getTotalIncludingVATString() throws Exception {
 		return StringHelper.renderPrice(basket.getTotal(ctx, true), basket.getCurrencyCode());		 
 	}
 	
@@ -52,8 +52,8 @@ public class BasketSmartBean {
 		return basket.getValidationInfo();
 	}
 	
-	public List<ProductBean> getProductsBean() {
-		return basket.getProductsBean();
+	public List<ProductBean> getProductsBean() throws Exception {
+		return basket.getProductsBean(ctx);
 	}
 	
 	public boolean isDeleted() {
@@ -96,8 +96,8 @@ public class BasketSmartBean {
 		return basket.getContactEmail();
 	}
 	
-	public String getProductsBeanToString() {
-		return basket.getProductsBeanToString();
+	public String getProductsBeanToString() throws Exception {
+		return basket.getProductsBeanToString(ctx);
 	}
 	
 	public String getInfo() {

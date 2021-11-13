@@ -87,7 +87,7 @@ public class PaypalConnector {
 		
 		ItemList itemList = new ItemList();
 		List<Item> items = new LinkedList<Item>();
-		for (ProductBean product : basket.getProductsBean()) {
+		for (ProductBean product : basket.getProductsBean(ctx)) {
 			Item item = new Item();
 			item.setName(product.getName());
 			item.setPrice(formatDouble(product.getPrice()));

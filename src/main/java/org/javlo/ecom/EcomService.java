@@ -210,7 +210,7 @@ public class EcomService {
 			if (img != null) {
 				product.setImage(ctx, img);
 			}
-			out.add(product.getBean());
+			out.add(product.getBean(ctx));
 		}
 		return out;
 	}
@@ -222,7 +222,7 @@ public class EcomService {
 			ctx.setAllLanguage(lg);
 			List<IContentVisualComponent> comps = ContentService.getInstance(ctx.getGlobalContext()).getComponentByType(lgCtx, ProductComponent.TYPE);
 			for(IContentVisualComponent comp : comps) {
-				out.add(new Product((ProductComponent)comp).getBean());
+				out.add(new Product((ProductComponent)comp).getBean(ctx));
 			}
 		}
 		return out;
@@ -231,7 +231,7 @@ public class EcomService {
 	public ProductBean getProducts(ContentContext ctx, String id) throws Exception {
 		List<IContentVisualComponent> comps = ContentService.getInstance(ctx.getGlobalContext()).getComponentByType(ctx, ProductComponent.TYPE);
 		for(IContentVisualComponent comp : comps) {
-			ProductBean bean = new Product((ProductComponent)comp).getBean();
+			ProductBean bean = new Product((ProductComponent)comp).getBean(ctx);
 			if (bean.getId().equals(id)) {
 				return bean;
 			}
@@ -250,7 +250,7 @@ public class EcomService {
 				if (img != null) {
 					product.setImage(ctx, img);
 				}
-				out.add(product.getBean());
+				out.add(product.getBean(ctx));
 			}
 		}
 		return out;
@@ -263,7 +263,7 @@ public class EcomService {
 		if (page != null) {
 			List<IContentVisualComponent> comps = page.getContentByType(ctx, ProductComponent.TYPE);
 			if (comps.size() > 0) {
-				return new Product((ProductComponent)comps.get(0)).getBean();
+				return new Product((ProductComponent)comps.get(0)).getBean(ctx);
 			}
 		}
 		return null;
