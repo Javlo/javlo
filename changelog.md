@@ -884,6 +884,7 @@ Security in case of vulnerabilities.
   - create article : duplicate with children
   - remove logback for security
   - update jsoup for security
+  - page title and description insert in product bean
 ### fixed
   - correct the day generator
   - vat calcul
