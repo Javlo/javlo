@@ -2673,6 +2673,8 @@ public class StringHelper {
 
 	public static String renderDouble(double value, Locale locale) {
 		NumberFormat f = NumberFormat.getInstance(locale);
+		f.setMinimumFractionDigits(0);
+		f.setMaximumFractionDigits(2);
 		return f.format(value);
 	}
 

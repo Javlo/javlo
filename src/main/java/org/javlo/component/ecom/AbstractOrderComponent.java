@@ -113,7 +113,7 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 			out.println("<td style=\""+cellStyle+"\">"+product.getName()+"</td>");
 			out.println("<td style=\""+cellStyle+"\">"+product.getQuantity()+"</td>");
 			double total = product.getPrice()*product.getQuantity();
-			out.println("<td style=\""+cellStyle+"\">"+Basket.renderPrice(ctx,total - (total*product.getVAT()),product.getCurrencyCode())+"</td>");
+			out.println("<td style=\""+cellStyle+"\">"+Basket.renderPrice(ctx,total/(1+product.getVAT()) ,product.getCurrencyCode())+"</td>");
 			out.println("<td style=\""+cellStyle+"\">"+Basket.renderPrice(ctx,total,product.getCurrencyCode())+"</td>");
 			out.println("</tr>");
 		}
