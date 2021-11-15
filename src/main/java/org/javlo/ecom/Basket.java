@@ -270,7 +270,8 @@ public class Basket implements Serializable {
 		for (Product product : getProducts()) {
 			double price = product.getPrice();
 			if (!vat) {
-				price = price - (price*product.getVAT());
+				//price = price - (price*product.getVAT());
+				price = price/(1+product.getVAT());
 			}
 			
 			result = result + (price * (1 - product.getReduction()) * product.getQuantity());
