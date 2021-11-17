@@ -362,7 +362,7 @@ public abstract class ElementaryURLHelper {
 		if (!ctx.isInternalURL() && ctx.getGlobalContext().getProxyPathPrefix().length() > 0) {
 			url = URLHelper.mergePath(ctx.getGlobalContext().getProxyPathPrefix(), url);
 		}
-		return url;
+		return Encode.forUri(url);
 	}
 
 	public static String createStaticURL(ContentContext ctx, String inUrl) {
@@ -693,10 +693,7 @@ public abstract class ElementaryURLHelper {
 	 */
 
 	public static void main(String[] args) {
-		System.out.println("***** ElementaryURLHelper.main : getParamsAsString = " + getParamsAsString("http://www.lesoir.be?test=test")); // TODO:
-																																			// remove
-																																			// debug
-																																			// trace
+		System.out.println("encode : "+Encode.forUri("/transform/horizontal/marie-poppies/content/static/images/Photos finales/photo-otium.jpg.webp?test=coucou"));
 	}
 
 	/**

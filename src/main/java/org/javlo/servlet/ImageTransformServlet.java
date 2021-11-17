@@ -45,7 +45,6 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.ExifHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.PDFHelper;
-import org.javlo.helper.RequestHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.SVGHelper;
 import org.javlo.helper.StringHelper;
@@ -66,7 +65,6 @@ import org.javlo.utils.TimeTracker;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.StaticInfo;
 
-import com.graphbuilder.math.func.LgFunction;
 import com.jhlabs.image.ContrastFilter;
 import com.jhlabs.image.CrystallizeFilter;
 import com.jhlabs.image.EdgeFilter;
