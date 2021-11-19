@@ -158,8 +158,9 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 			params.put("customerPhone", StringHelper.toHTMLAttribute(basket.getCustomerPhone()));
 			
 			params.put("deliveryDate", StringHelper.renderDate(basket.getDeliveryDate()));
+			params.put("deliveryDay", StringHelper.renderDay(basket.getDeliveryDate(), ctx.getRequestContentLanguage()));
 			params.put("deliveryTime", StringHelper.renderTime(basket.getDeliveryDate()));
-			params.put("DeliveryInstructions", basket.getDeliveryInstructions());
+			params.put("deliveryInstructions", basket.getDeliveryInstructions());
 			
 			params.put("giftMessage", StringHelper.toHTMLAttribute(basket.getGiftMessage()));
 			params.put("giftSender", StringHelper.toHTMLAttribute(basket.getGiftSender()));

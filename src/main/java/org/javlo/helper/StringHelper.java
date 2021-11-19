@@ -2038,11 +2038,7 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(smartParseTime("10:15"));
-		System.out.println(smartParseTime("6:15"));
-		System.out.println(smartParseTime("6h"));
-		System.out.println(smartParseTime("6h15"));
-		System.out.println(smartParseTime("06h15"));
+		System.out.println(renderDay(new Date(), "fr"));
 	}
 
 	public static LocalTime smartParseTime(String inTime) {
@@ -2537,6 +2533,12 @@ public class StringHelper {
 		}
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
 		return formatter.format(date);
+	}
+	
+	public static String renderDay(Date date, String lang) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", new Locale(lang));
+		sdf.applyPattern("EEEE");
+		return sdf.format(date);
 	}
 
 	public static String renderDate(Date date, String pattern) {
