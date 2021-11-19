@@ -140,8 +140,9 @@ public class ContentContext {
 	
 	private Set<String> mirrorId = new HashSet<>();
 
-	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free) {
+	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free, boolean pageManagement) {
 		ContentContext ctx = new ContentContext();
+		ctx.pageManagement = pageManagement;
 		ctx.setFree(free);
 		init(ctx, request, response);
 		ctx.storeInRequest(request);
@@ -158,12 +159,16 @@ public class ContentContext {
 	 * @throws Exception
 	 */
 	public static ContentContext getFreeContentContext(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ContentContext freeCtx = createContentContext(request, response, true);
+		ContentContext freeCtx = createContentContext(request, response, true, true);
 		return freeCtx;
 	}
 
 	public static ContentContext getContentContext(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		return getContentContext(request, response, true);
+		return getContentContext(request, response, true, true);
+	}
+	
+	public static ContentContext getContentContextNoPageManagement(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		return getContentContext(request, response, true, false);
 	}
 
 	public ContentContext getContentContextForInternalLink() {
@@ -175,6 +180,10 @@ public class ContentContext {
 			return viewContext;
 		}
 	}
+	
+	public static ContentContext getContentContext(HttpServletRequest request, HttpServletResponse response, boolean correctPath) throws Exception {
+		return getContentContext(request, response, correctPath, false);
+	}
 
 	/**
 	 * 
@@ -185,11 +194,11 @@ public class ContentContext {
 	 * @return
 	 * @throws Exception
 	 */
-	public static ContentContext getContentContext(HttpServletRequest request, HttpServletResponse response, boolean correctPath) throws Exception {
+	public static ContentContext getContentContext(HttpServletRequest request, HttpServletResponse response, boolean correctPath, boolean pageManagement) throws Exception {
 		ContentContext ctx = (ContentContext) request.getAttribute(CONTEXT_REQUEST_KEY);
 		try {
 			if (ctx == null) {
-				ctx = createContentContext(request, response, true);
+				ctx = createContentContext(request, response, true, pageManagement);
 				ctx.setFree(false);
 				ctx.correctPath = false;
 
@@ -203,6 +212,8 @@ public class ContentContext {
 			e.printStackTrace();
 			throw e;
 		}
+		
+		ctx.pageManagement = pageManagement;
 
 		GlobalContext globalContext = ctx.getGlobalContext();
 		EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
@@ -507,6 +518,8 @@ public class ContentContext {
 
 	private Map<String, Object> attributes = null;
 
+	private boolean pageManagement = true;
+
 	public ContentContext(ContentContext ctx) {
 		path = ctx.path;
 		language = ctx.language;
@@ -537,6 +550,8 @@ public class ContentContext {
 		ajax = ctx.ajax;
 		scheduledAjaxInsideZone = ctx.scheduledAjaxInsideZone;
 
+		pageManagement = ctx.pageManagement;
+		
 		currentTemplate = ctx.currentTemplate;
 
 		editPreview = ctx.editPreview;
@@ -873,8 +888,20 @@ public class ContentContext {
 		}
 		return null;
 	}
+	
+	private boolean isPageManagement() {
+		if (isActionServlet()) {
+			return false;
+		}
+		return pageManagement;
+	}
 
 	private MenuElement getCurrentPage(boolean urlFacotry) throws Exception {
+		
+		if (!isPageManagement()) {
+			return ContentService.getInstance(getGlobalContext()).getNavigation(this);
+		}
+		
 		MenuElement outPage = getCurrentPageCached();
 		if (outPage == null) {
 			GlobalContext globalContext = getGlobalContext();

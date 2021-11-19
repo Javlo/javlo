@@ -219,7 +219,6 @@ public class CatchAllFilter implements Filter {
 			}
 		}
 
-
 		if (editURI.startsWith("/edit-") || editURI.startsWith("/ajax-") || editURI.startsWith("/preview-edit")) {
 			boolean editPreview = false;
 			if (editURI.startsWith("/preview-edit")) {
