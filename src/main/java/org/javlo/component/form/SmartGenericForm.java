@@ -127,6 +127,10 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 		return dir;
 	}
+	
+	protected boolean acceptLinks(ContentContext ctx) {
+		return StringHelper.isTrue(getConfig(ctx).getProperty("content.links", null), false);
+	}
 
 	protected String getInputEditLineName(ContentContext ctx) throws Exception {
 		return EDIT_LINE_PARAM + '_' + StringSecurityUtil.encode(getId(), ctx.getGlobalContext().getStaticConfig().getSecretKey());
@@ -1197,8 +1201,13 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		Map<String, String> dataDoc = new HashMap<>();
 		for (Field field : comp.getFields(ctx)) {
 			String key = field.getName();
-
+			
 			Object value = params.get(key);
+			
+			if (value != null && value.toString().contains("//") && !comp.acceptLinks(ctx)) {
+				return I18nAccess.getInstance(ctx).getViewText("global.error.content.no-link");
+			}
+			
 			if (specialValues.get(key) != null) {
 				value = specialValues.get(key);
 			}
