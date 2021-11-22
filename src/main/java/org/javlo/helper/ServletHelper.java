@@ -24,6 +24,7 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.service.NotificationService;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserSecurity;
+import org.owasp.encoder.Encode;
 
 public class ServletHelper {
 
@@ -125,7 +126,11 @@ public class ServletHelper {
 		try {
 			Jsp2String jsp2String = new Jsp2String(ctx.getResponse());
 			ctx.getRequest().getRequestDispatcher(url).include(ctx.getRequest(), jsp2String);
-			return jsp2String.toString();
+			String prefix = "";
+			if (!ctx.getGlobalContext().getStaticConfig().isProd()) {
+				prefix = "<!-- execute jsp : "+Encode.forHtmlContent(url)+" -->\r\n";
+			}
+			return prefix+jsp2String.toString();
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.severe(e.getMessage());

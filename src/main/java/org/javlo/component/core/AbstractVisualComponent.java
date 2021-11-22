@@ -2382,7 +2382,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected String executeRenderer(ContentContext ctx, String url) throws ServletException, IOException {
-		if (url != null) {
+		if (url != null) {			
 			ctx.getRequest().setAttribute(COMPONENT_KEY, this);
 			if (!url.startsWith("/")) {
 				url = URLHelper.createJSPComponentURL(ctx.getRequest(), url, getComponentPath());
