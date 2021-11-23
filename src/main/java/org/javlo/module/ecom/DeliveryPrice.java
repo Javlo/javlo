@@ -61,7 +61,7 @@ public class DeliveryPrice {
 			y++;			
 		}		
 		int x = 1;
-		while (!priceList[0][x].getValue().trim().equals(zone) && x < priceList[0].length) {
+		while (!priceList[0][x].getValue().trim().equalsIgnoreCase(zone) && x < priceList[0].length) {
 			x++;
 		}
 		if (priceList[y][0].getDoubleValue() < weight) {

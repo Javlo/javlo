@@ -112,7 +112,11 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 	}
 
 	public long getWeight() {
-		return getFieldLongValue("weight");
+		long w = getFieldLongValue("weight");
+		if (w==0) {
+			return 1;
+		}
+		return w;
 	}
 
 	public String getHtmlView(ContentContext ctx) throws Exception {
