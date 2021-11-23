@@ -33,7 +33,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 	static final List<String> FIELDS_STOCK = Arrays.asList(new String[] { "name", "label", "description", "price", "special_link", "vat", "promo", "currency", "offset", "weight", "production", "basket-page", "html" });
 
-	static final List<String> FIELDS_NOSTOCK = Arrays.asList(new String[] { "name", "label", "description", "price", "special_link", "vat", "promo", "currency", "basket-page" });
+	static final List<String> FIELDS_NOSTOCK = Arrays.asList(new String[] { "name", "label", "description", "price", "special_link", "vat", "promo", "currency", "basket-page", "weight" });
 
 	static final List<String> FIELDS_I18N = Arrays.asList(new String[] { "price", "special_link", "vat", "promo", "currency", "offset", "weight", "production", "basket-page", "html" });
 
@@ -112,11 +112,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 	}
 
 	public long getWeight() {
-		long w = getFieldLongValue("weight");
-		if (w==0) {
-			return 1;
-		}
-		return w;
+		return getFieldLongValue("weight");
 	}
 
 	public String getHtmlView(ContentContext ctx) throws Exception {
