@@ -4,7 +4,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.javlo</groupId>
-	<artifactId>javlo2${artifact.extension}</artifactId>
+	<artifactId>javlo2</artifactId>
 	<version>2.1</version>
 	<packaging>${packaging.type}</packaging>
 	<name>Javlo 2</name>
@@ -283,7 +283,7 @@
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
-			<version>1.14.2</version>
+			<version>1.14.3</version>
 		</dependency>
 
 		<dependency>
@@ -498,7 +498,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.12.0</version>
+			<version>3.5</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.openimaj/faces -->
