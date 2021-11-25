@@ -13,6 +13,7 @@ org.javlo.component.title.MenuTitle
 org.javlo.component.title.GroupTitle
 org.javlo.component.title.WebSiteTitle
 org.javlo.component.title.LinkLabel
+org.javlo.component.meta.MetaDescription
 org.javlo.component.meta.DateComponent
 org.javlo.component.meta.ColorComponent
 org.javlo.component.meta.ToTheTopComponent
