@@ -4,6 +4,7 @@
 package org.javlo.component.meta;
 
 import org.javlo.component.core.AbstractVisualComponent;
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 
 
@@ -35,6 +36,21 @@ public class MetaDescription extends AbstractVisualComponent {
 	@Override
 	public int getSearchLevel() {
 		return SEARCH_LEVEL_HIGH;
+	}
+	
+	@Override
+	public String getFontAwesome() {
+		return "file-code-o";
+	}
+	
+	@Override
+	public String getHexColor() {
+		return META_COLOR;
+	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return IContentVisualComponent.COMPLEXITY_STANDARD;
 	}
 
 }
