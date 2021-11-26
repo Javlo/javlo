@@ -178,8 +178,8 @@ function actionCookie(action) {
 	 document.body.querySelector('#cookies-message').className="cookie-close";
 }
 
-<c:if test="${not empty globalContext.cookiesPolicyUrl}">
-	fetch("${globalContext.cookiesPolicyUrl}?only-area=content").then(function (response) {
+<c:if test="${not empty info.cookiesPolicyUrl}">
+	fetch("${info.cookiesPolicyUrl}?only-area=content").then(function (response) {
 		return response.text();
 	}).then(function (html) {
 		document.getElementById('cookies-popup-content').innerHTML=html;
