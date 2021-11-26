@@ -918,10 +918,12 @@ public class InfoBean {
 		}
 	}
 	
-	public String getCookiesPolicyUrl() {
+	public String getCookiesPolicyUrl() throws Exception {
 		String url = globalContext.getCookiesPolicyUrl();
-		if (url != null) {
+		if (StringHelper.isURL(url)) {
 			return url.replace("#lang#", ctx.getRequestContentLanguage());
+		} else if (url != null) {
+			return URLHelper.replacePageReference(ctx, url);
 		} else {
 			return null;
 		}
