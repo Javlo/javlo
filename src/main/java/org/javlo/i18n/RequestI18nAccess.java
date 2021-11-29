@@ -52,7 +52,11 @@ public class RequestI18nAccess implements Map<String, String> {
 				e.printStackTrace();
 			}
 		}
-		return value;
+		if (ctx.isPreview()) {
+			return "<span class=\"preview-vi18n\" title=\""+key+"\">"+value+"</span>";
+		} else {
+			return value;
+		}
 	}
 
 	@Override
