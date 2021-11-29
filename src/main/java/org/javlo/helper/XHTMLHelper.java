@@ -2196,7 +2196,7 @@ public class XHTMLHelper {
 		/** i18n **/
 		Collection<String> i18nKeys = StringHelper.extractItem(xhtml, "${vi18n['", "']}");
 		if (i18nKeys.size() > 0) {
-			RequestI18nAccess requestI18n = new RequestI18nAccess(ctx, I18nAccess.getInstance(ctx));
+			RequestI18nAccess requestI18n = new RequestI18nAccess(ctx, I18nAccess.getInstance(ctx), true);
 			for (String key : i18nKeys) {
 				String val = requestI18n.get(key);
 				xhtml = xhtml.replace("${vi18n['" + key + "']}", val);
@@ -2204,7 +2204,7 @@ public class XHTMLHelper {
 		}
 		i18nKeys = StringHelper.extractItem(xhtml, "${vi18n[\"", "\"]}");
 		if (i18nKeys.size() > 0) {
-			RequestI18nAccess requestI18n = new RequestI18nAccess(ctx, I18nAccess.getInstance(ctx));
+			RequestI18nAccess requestI18n = new RequestI18nAccess(ctx, I18nAccess.getInstance(ctx), true);
 			for (String key : i18nKeys) {
 				String val = requestI18n.get(key);
 				xhtml = xhtml.replace("${vi18n[\"" + key + "\"]}", val);
