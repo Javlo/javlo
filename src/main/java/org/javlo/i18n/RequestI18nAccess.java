@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
 import org.javlo.service.ReverseLinkService;
 
 /**
@@ -53,7 +54,9 @@ public class RequestI18nAccess implements Map<String, String> {
 			}
 		}
 		if (ctx.isPreview()) {
-			return "<span class=\"preview-vi18n\" title=\""+key+"\">"+value+"</span>";
+			String id="vi18n-"+StringHelper.getRandomId();
+			String jsCopy = "navigator.clipboard.writeText(document.getElementById('\"+id+\"').getAttribute('title'));";
+			return "<span id=\""+id+"\" onclick=\""+jsCopy+"\" class=\"preview-vi18n\" title=\""+key+"\">"+value+"</span>";
 		} else {
 			return value;
 		}
