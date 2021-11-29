@@ -525,10 +525,10 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			}
 
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
-			request.setAttribute("vi18n", new RequestI18nAccess(ctx, i18nAccess));
 			if (ctx.getCurrentPage() != null) {
 				i18nAccess.setRequestMap(ctx.getCurrentPage().getI18n(ctx));
 			}
+			request.setAttribute("vi18n", new RequestI18nAccess(ctx, i18nAccess));
 
 			i18nAccess.requestInit(ctx);
 			ctx.getRequest().setAttribute("list", ListService.getInstance(ctx).getAllList(ctx));
