@@ -172,6 +172,7 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 			params.put("city", StringHelper.toHTMLAttribute(basket.getCity()));
 			params.put("zip", basket.getZip());
 			params.put("postcode", basket.getZip());
+			params.put("phone", basket.getContactPhone());			
 			params.put("country", StringHelper.toHTMLAttribute(new Locale(ctx.getRequestContentLanguage(), basket.getCountry()).getDisplayCountry(ctx.getLocale())));
 			params.put("currencyCode", ""+basket.getCurrencyCode());
 			if (basket.getOrganization() != null && basket.getOrganization().trim().length() > 0) {
