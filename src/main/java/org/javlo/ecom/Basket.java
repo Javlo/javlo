@@ -1058,8 +1058,10 @@ public class Basket implements Serializable {
 	
 	public String getRealEmail() {
 		if (StringHelper.isMail(getCustomerEmail())) {
+			System.out.println(">>>>>>>>> Basket.getRealEmail : getCustomerEmail() = "+getCustomerEmail()); //TODO: remove debug trace
 			return getCustomerEmail();
 		} else {
+			System.out.println(">>>>>>>>> Basket.getRealEmail : getContactEmail() = "+getContactEmail()); //TODO: remove debug trace
 			return getContactEmail();
 		}
 	}
