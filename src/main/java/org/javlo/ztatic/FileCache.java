@@ -57,7 +57,7 @@ public class FileCache {
 		baseDirName = staticConfig.getImageCacheFolder();
 		String realCacheFolder;
 		if (!baseDirName.startsWith("/")) {
-			baseDirName = "/"+baseDirName; // tomcat 8			
+			baseDirName = "/" + baseDirName; // tomcat 8
 			realCacheFolder = ResourceHelper.getRealPath(application, baseDirName);
 		} else {
 			realCacheFolder = baseDirName;
@@ -247,7 +247,7 @@ public class FileCache {
 	}
 
 	public File getFile(String key, String fileName, long latestModificationDate) throws IOException {
-		File file = getFileName(key, fileName);		
+		File file = getFileName(key, fileName);
 		if (latestModificationDate > file.lastModified()) {
 			return null;
 		}
@@ -278,7 +278,7 @@ public class FileCache {
 
 	protected File getCacheDir() {
 		if (baseDir == null) {
-			baseDir = new File(ResourceHelper.getRealPath(application,BASE_DIR));
+			baseDir = new File(ResourceHelper.getRealPath(application, BASE_DIR));
 		}
 		return baseDir;
 	}
@@ -303,15 +303,31 @@ public class FileCache {
 
 		Collection<File> keys = ResourceHelper.getAllDirList(cacheDir);
 
+		int deleted = 0;
+		final String[] extension = new String[] {"webp", "jpg", "png"};
 		for (File file : keys) {
 			// File cacheFile = getFileName(file.getName(), fileName);
-
 			File cacheFile = new File(URLHelper.mergePath(file.getAbsolutePath(), fileName));
-
 			if (cacheFile.exists()) {
+				deleted++;
 				cacheFile.delete();
 			}
+			// filter can change extension
+			for (String ext : extension) {
+				cacheFile = new File(URLHelper.mergePath(file.getAbsolutePath(), fileName+"."+ext));
+				if (cacheFile.exists()) {
+					deleted++;
+					cacheFile.delete();
+				}
+			}
 		}
+
+		logger.info("#files deleted : " + deleted);
+	}
+	
+	public static void main(String[] args) {
+		File file = new File("C:\\opt\\tomcat8 - mariepoppies\\temp\\image-cache\\localhost\\banner\\pc\\banner\\marie-poppies\\none\\static\\images\\fun\\lara-croft-tomb-raider-costume-wallpaper-3.jpg");
+		System.out.println(file.exists());
 	}
 
 	/**
@@ -348,7 +364,7 @@ public class FileCache {
 			e.printStackTrace();
 		}
 
-		File oldCacheDir = new File(ResourceHelper.getRealPath(application,"/_dc_cache"));
+		File oldCacheDir = new File(ResourceHelper.getRealPath(application, "/_dc_cache"));
 		try {
 			FileUtils.deleteDirectory(oldCacheDir);
 		} catch (IOException e) {
@@ -408,8 +424,8 @@ public class FileCache {
 			fileName = "page";
 		}
 		if (low) {
-			fileName = fileName+"_low";
-		}		
+			fileName = fileName + "_low";
+		}
 		File cacheFile = new File(URLHelper.mergePath(getCacheDir().getAbsolutePath(), ctx.getGlobalContext().getContextKey(), "pdf", ctx.getRenderModeKey(ctx.getRenderMode()), page.getName(), ctx.getRequestContentLanguage(), fileName + ".pdf"));
 		File dir = cacheFile.getParentFile();
 		if (!cacheFile.exists()) {

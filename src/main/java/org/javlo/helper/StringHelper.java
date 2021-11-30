@@ -2038,7 +2038,7 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(renderDay(new Date(), "fr"));
+		System.out.println(isFloat("-2.2"));
 	}
 
 	public static LocalTime smartParseTime(String inTime) {
