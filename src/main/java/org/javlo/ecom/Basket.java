@@ -1057,7 +1057,7 @@ public class Basket implements Serializable {
 	}
 	
 	public String getRealEmail() {
-		if (!StringHelper.isEmpty(getCustomerEmail())) {
+		if (StringHelper.isMail(getCustomerEmail())) {
 			return getCustomerEmail();
 		} else {
 			return getContactEmail();

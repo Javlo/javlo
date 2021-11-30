@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -1296,6 +1297,13 @@ public class InfoBean {
 			for (Template template : TemplateFactory.getAllTemplatesFromContext(globalContext)) {
 				templates.add(new TemplateBean(ctx, template));
 			}
+			Collections.sort(templates, new Comparator<TemplateBean>() {
+				@Override
+				public int compare(TemplateBean o1, TemplateBean o2) {
+					return o1.getName().compareTo(o2.getName());
+				}
+			});
+			
 			return templates;
 		} catch (Exception e) {
 			e.printStackTrace();
