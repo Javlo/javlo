@@ -890,3 +890,4 @@ Security in case of vulnerabilities.
 ### fixed
   - correct the day generator
   - vat calcul
+  - delete image in cache with format change
