@@ -172,6 +172,10 @@ public class URLHelper extends ElementaryURLHelper {
 		return createURL(otherContext);
 	}
 	
+	public static String createFileURL(ContentContext ctx, String url, boolean hash) {
+		return createFileURL(ctx, null, url, hash);
+	}
+	
 	public static String createFileURL(ContentContext ctx, String url) {
 		return createMediaURL(ctx, null, url);
 	}
@@ -181,10 +185,18 @@ public class URLHelper extends ElementaryURLHelper {
 	}
 	
 	public static String createMediaURL(ContentContext ctx, String url) {
-		return createMediaURL(ctx, null, url);
+		return createFileURL(ctx, null, url);
+	}
+	
+	public static String createMediaURL(ContentContext ctx, String url, boolean hash) {
+		return createFileURL(ctx, null, url, hash);
 	}
 	
 	public static String createFileURL(ContentContext ctx, MenuElement currentPage, String url) {
+		return createFileURL(ctx, currentPage, url, false);
+	}
+	
+	public static String createFileURL(ContentContext ctx, MenuElement currentPage, String url, boolean hash) {
 		if (url == null) {
 			return null;
 		}
@@ -219,7 +231,10 @@ public class URLHelper extends ElementaryURLHelper {
 					} else {
 						url = createStaticURL(ctx, currentPage, MEDIA + '/' + url);
 					}
-				}				
+				}
+				if (staticInfo != null && hash) {
+					url = URLHelper.addParam(url, "rsrhash", staticInfo.getVersionHash(ctx));
+				}
 			} catch (Exception e) { 
 				e.printStackTrace();
 			}

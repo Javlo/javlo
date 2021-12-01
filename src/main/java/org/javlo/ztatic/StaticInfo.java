@@ -917,7 +917,7 @@ public class StaticInfo implements IRestItem {
 			content.setAttribute(ctx, getKey(ctx, "authors"), authors);
 		}
 	}
-	
+
 	public void resetDate() {
 		date = null;
 	}
@@ -1025,7 +1025,8 @@ public class StaticInfo implements IRestItem {
 						try {
 							if (ctx.getGlobalContext().getStaticConfig().isAutoFocus() && ctx.isAsPreviewMode()) {
 								logger.info("search point on interest on START : " + getFile() + " [" + ctx.getGlobalContext().getContextKey() + "]");
-								//InitInterest.setPointOfInterestWidthThread(ctx, getFile(), getKey(ctx, FOCUS_ZONE_X), getKey(ctx, FOCUS_ZONE_Y));
+								// InitInterest.setPointOfInterestWidthThread(ctx, getFile(), getKey(ctx,
+								// FOCUS_ZONE_X), getKey(ctx, FOCUS_ZONE_Y));
 							}
 						} catch (Throwable t) {
 							logger.warning(t.getMessage());
@@ -1143,7 +1144,7 @@ public class StaticInfo implements IRestItem {
 	public File getFile() {
 		return file;
 	}
-	
+
 	public void resetCRC32() {
 		crc32 = null;
 	}
@@ -1322,7 +1323,7 @@ public class StaticInfo implements IRestItem {
 		}
 		storeReadRoles(ctx);
 	}
-	
+
 	public void addReadRole(ContentContext ctx, Collection<String> roles) {
 		if (readRoles == null || readRoles == Collections.EMPTY_LIST) {
 			readRoles = new LinkedList<String>();
@@ -1352,7 +1353,7 @@ public class StaticInfo implements IRestItem {
 	}
 
 	public String getVersionHash(ContentContext ctx) {
-		return StringHelper.asBase64(getFocusZoneX(ctx) * getFocusZoneY(ctx)) + StringHelper.asBase64(getCRC32());
+		return ""+getFocusZoneX(ctx)+"_"+getFocusZoneY(ctx) +"_"+ StringHelper.asBase64(getCRC32());
 	}
 
 	public Date getExifDate() {
