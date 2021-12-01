@@ -269,6 +269,8 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 			ctx.getResponse().setStatus(400);
 			return "";
 		}
+		
+		System.out.println(">>>>>>>>> StripeOrderComponent.performWebhook : event = "+event); //TODO: remove debug trace
 
 		// Deserialize the nested object inside the event
 		EventDataObjectDeserializer dataObjectDeserializer = event.getDataObjectDeserializer();
