@@ -82,6 +82,7 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 		ctx.getRequest().setAttribute("bancontact", isBancontact(ctx));
 
 		Basket basket = Basket.getInstance(ctx);
+		basket.setLanguage(ctx.getRequestContentLanguage());
 		
 		// bancontact
 		if (isBancontact(ctx) && basket.getStep() == Basket.PAY_STEP) {
@@ -270,8 +271,6 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 			return "";
 		}
 		
-		System.out.println(">>>>>>>>> StripeOrderComponent.performWebhook : event = "+event); //TODO: remove debug trace
-
 		// Deserialize the nested object inside the event
 		EventDataObjectDeserializer dataObjectDeserializer = event.getDataObjectDeserializer();
 		StripeObject stripeObject = null;
@@ -299,6 +298,9 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 				}
 				return "";
 			}
+			
+			ctx.setAllLanguage(basket.getLanguage());
+			
 			EcomStatus status = basket.payAll(ctx);
 			
 			logger.info("webhook basket status : "+status);

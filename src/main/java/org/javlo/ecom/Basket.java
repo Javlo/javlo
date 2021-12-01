@@ -96,6 +96,8 @@ public class Basket implements Serializable {
 	private String customerLastName;
 	private String customerEmail;
 	private String customerPhone;
+	
+	private String language = "EN";
 
 	private boolean lock = false;
 
@@ -1058,12 +1060,18 @@ public class Basket implements Serializable {
 	
 	public String getRealEmail() {
 		if (StringHelper.isMail(getCustomerEmail())) {
-			System.out.println(">>>>>>>>> Basket.getRealEmail : getCustomerEmail() = "+getCustomerEmail()); //TODO: remove debug trace
 			return getCustomerEmail();
 		} else {
-			System.out.println(">>>>>>>>> Basket.getRealEmail : getContactEmail() = "+getContactEmail()); //TODO: remove debug trace
 			return getContactEmail();
 		}
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 
 }
