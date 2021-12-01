@@ -309,7 +309,8 @@ public class StripeOrderComponent extends AbstractOrderComponent implements IAct
 				if (basket.getComponentId() != null) {
 					ContentService content = ContentService.getInstance(ctx.getRequest());
 					comp = (AbstractOrderComponent)content.getComponent(ctx, (basket.getComponentId()));
-				} else {
+				}
+				if (comp == null) {
 					logger.severe("comp id not found : "+basket.getComponentId());
 				}
 				String msg = XHTMLHelper.textToXHTML(comp.getConfirmationEmail(ctx, basket));
