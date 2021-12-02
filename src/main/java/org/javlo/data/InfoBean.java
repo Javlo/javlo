@@ -78,7 +78,7 @@ public class InfoBean {
 	private static final String ts = "" + System.currentTimeMillis();
 
 	public static final String REQUEST_KEY = "info";
-
+getpage
 	//public static final String NEW_SESSION_PARAM = "__new_session";
 
 	private String fakeCurrentURL = null;

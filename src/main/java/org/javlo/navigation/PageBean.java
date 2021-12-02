@@ -87,6 +87,17 @@ public class PageBean implements Serializable {
 			return new PageBean(ctx, parent);
 		}
 	}
+	
+	public PageBean getParentWidthContent() throws Exception {
+		MenuElement parent = page.getParent();
+		while (parent != null) {
+			if (parent.isRealContent(ctx)) {
+				return new PageBean(ctx, parent);
+			}
+			parent = parent.getParent();
+		}
+		return null;
+	}
 
 	public List<PageBean> getParents() {
 		List<PageBean> outParents = new LinkedList<PageBean>();
