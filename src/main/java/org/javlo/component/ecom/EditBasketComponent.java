@@ -121,6 +121,7 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 					basket.setStep(Basket.REGISTRATION_STEP);
 				}
 			} else {
+				System.out.println(">>>>>>>>> EditBasketComponent.checkPromoCode : error : "+checkPromoCode(ctx, false)); //TODO: remove debug trace
 				return i18nAccess.getViewText("ecom.error.promo-code"); 
 			}
 		} else {
@@ -274,6 +275,7 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 
 	public static String performUpdate(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws ServiceException, Exception {
 		Basket basket = Basket.getInstance(ctx);
+		String msg = null;
 		if (!basket.isLock()) {
 			for (Product p : basket.getProducts()) {
 				String quantity = rs.getParameter("q-" + p.getId());
@@ -281,10 +283,11 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 					p.setQuantity(Integer.parseInt(quantity));
 				}
 			}
+			msg = checkPromoCode(ctx, false);
 		} else {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("ecom.basket-lock"), GenericMessage.ALERT));
 		}
-		return checkPromoCode(ctx, false);
+		return msg;
 	}
 
 	public static String performBack(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
