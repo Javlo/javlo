@@ -5,7 +5,6 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.javlo</groupId>
 	<artifactId>javlo2${artifact.extension}</artifactId>
-	<artifactId>javlo2</artifactId>
 	<version>2.1</version>
 	<packaging>${packaging.type}</packaging>
 	<name>Javlo 2</name>
