@@ -501,6 +501,12 @@ public class XLSTools {
 			workbook.close();
 		}
 	}
+	
+	public static void writeXLSX(Cell[][] array, File out) throws IOException {
+		try (FileOutputStream stream = new FileOutputStream(out)) {
+			writeXLSX(array, stream, null, null);	
+		}		
+	}
 
 	public static void writeXLSX(Cell[][] array, OutputStream out) throws IOException {
 		writeXLSX(array, out, null, null);
