@@ -73,8 +73,11 @@ public class DynamicComponentService {
 		List<IFieldContainer> outContainer = (List<IFieldContainer>) ctx.getRequest().getAttribute(REQUEST_KEY);
 		if (outContainer == null) {
 			outContainer = new LinkedList<IFieldContainer>();
-			for (MenuElement child : page.getAllChildrenList()) {				
-				ContentContext ctxWithContent = getContentContextWithDynamicComponent(ctx, child);
+			for (MenuElement child : page.getAllChildrenList()) {
+				ContentContext ctxWithContent = ctx;
+				if (ctx.getGlobalContext().isAutoSwitchToDefaultLanguage()) {
+					ctxWithContent = getContentContextWithDynamicComponent(ctx, child);
+				}
 				if (ctxWithContent != null) {
 					List<IContentVisualComponent> content = child.getContentByImplementation(ctxWithContent, IFieldContainer.class);
 					for (IContentVisualComponent item : content) {
