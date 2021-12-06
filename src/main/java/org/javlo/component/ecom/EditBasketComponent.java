@@ -109,26 +109,30 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 		return ECOM_COLOR;
 	}
 	
-	private static String checkPromoCode (ContentContext ctx) throws ServiceException, Exception {
+	private static String checkPromoCode (ContentContext ctx, boolean nextStep) throws ServiceException, Exception {
 		Basket basket = Basket.getInstance(ctx);
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 		String promoCode = ctx.getRequest().getParameter("promo-code");
 		if (promoCode != null && promoCode.trim().length() > 0) {
 			EditBasketComponent comp = (EditBasketComponent) ComponentHelper.getComponentFromRequest(ctx);
 			if (promoCode.equals(comp.getFieldValue(PROMO_KEY))) {
-				basket.setStep(Basket.REGISTRATION_STEP);
 				basket.setUserReduction(Double.parseDouble(comp.getFieldValue(PROMO_VALUE)) / 100);
+				if (nextStep) {
+					basket.setStep(Basket.REGISTRATION_STEP);
+				}
 			} else {
 				return i18nAccess.getViewText("ecom.error.promo-code"); 
 			}
 		} else {
-			basket.setStep(Basket.REGISTRATION_STEP);
+			if (nextStep) {
+				basket.setStep(Basket.REGISTRATION_STEP);
+			}
 		}
 		return null;
 	}
 
 	public static String performConfirm(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
-		return checkPromoCode(ctx);
+		return checkPromoCode(ctx, true);
 	}
 
 	public static String performRegistration(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws SecurityException, NoSuchMethodException, ClassNotFoundException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, ListerException {
@@ -280,7 +284,7 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 		} else {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("ecom.basket-lock"), GenericMessage.ALERT));
 		}
-		return checkPromoCode(ctx);
+		return checkPromoCode(ctx, false);
 	}
 
 	public static String performBack(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
