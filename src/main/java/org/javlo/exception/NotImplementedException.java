@@ -1,6 +1,6 @@
 package org.javlo.exception;
 
-public class NotImplementedException extends Exception {
+public class NotImplementedException extends RuntimeException {
 	
 	public NotImplementedException() {
 		super();
