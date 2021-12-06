@@ -121,7 +121,6 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 					basket.setStep(Basket.REGISTRATION_STEP);
 				}
 			} else {
-				System.out.println(">>>>>>>>> EditBasketComponent.checkPromoCode : error : "+checkPromoCode(ctx, false)); //TODO: remove debug trace
 				return i18nAccess.getViewText("ecom.error.promo-code"); 
 			}
 		} else {
