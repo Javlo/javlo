@@ -55,7 +55,7 @@ import org.javlo.service.ContentService;
 public class MailService {
 
 	public static final String HIDDEN_DIV = "<div style=\"display:none;width:0px;max-height:0px;overflow:hidden;mso-hide:all;height:0;font-size:0;max-height:0;line-height:0;margin:0 auto;\">";
-	
+
 	public static final String MAILING_ID_MAIL_KEY = "Mailing-ID";
 
 	public static class Attachment {
@@ -132,8 +132,7 @@ public class MailService {
 	}
 
 	/**
-	 * This method is kept to be able to use this class outside a Servlet
-	 * context
+	 * This method is kept to be able to use this class outside a Servlet context
 	 * 
 	 * @param mailConfig
 	 *            config for mailing.
@@ -158,12 +157,13 @@ public class MailService {
 			if (mailing.getSMTPPort() != null) {
 				finalProps.put(MailService.SMTP_PORT_PARAM, mailing.getSMTPPort());
 				if (Integer.parseInt(mailing.getSMTPPort()) == 465) {
-					finalProps.put("mail.smtp.socketFactory.class","javax.net.ssl.SSLSocketFactory");
+					finalProps.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 				} else if (Integer.parseInt(mailing.getSMTPPort()) == 587) {
-					finalProps.put("mail.smtp.starttls.enable","true");
+					finalProps.put("mail.smtp.starttls.enable", "true");
 					finalProps.put("mail.smtp.auth", "true");
-//					finalProps.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-//					finalProps.put("mail.smtp.socketFactory.fallback", "false");
+					// finalProps.put("mail.smtp.socketFactory.class",
+					// "javax.net.ssl.SSLSocketFactory");
+					// finalProps.put("mail.smtp.socketFactory.fallback", "false");
 				}
 			}
 			if (mailing.getLogin() != null) {
@@ -199,44 +199,44 @@ public class MailService {
 	public static final Transport getMailTransport(final MailConfig mailConfig) throws MessagingException {
 		Session mailSession = getMailSession(mailConfig);
 		logger.info("get mail transport [host:" + mailConfig.getSMTPHost() + " port:" + mailConfig.getSMTPPortInt() + " login:" + mailConfig.getLogin() + " pwd:" + !StringHelper.isEmpty(mailConfig.getPassword()) + ']');
-		if (mailConfig.getSMTPPortInt() == 0) { 
+		if (mailConfig.getSMTPPortInt() == 0) {
 			logger.severe("could not send email to port 0.");
 			return null;
 		} else {
 			Transport transport = mailSession.getTransport("smtp");
-			
+
 			try {
 				String password = mailConfig.getPassword();
 				if (StringHelper.isEmpty(password)) {
-					password=null;
+					password = null;
 				}
 				transport.connect(mailConfig.getSMTPHost(), mailConfig.getSMTPPortInt(), mailConfig.getLogin(), password);
 				logger.info("transport connected.");
 			} catch (MessagingException e) {
 				logger.severe("error connection smtp : " + e.getMessage());
-				
+
 				e.printStackTrace();
-				
+
 				System.out.println("");
 				System.out.println("*********************************");
-				System.out.println("* ERROR MAIL TRANSPORT  : "+StringHelper.renderTime(new Date()));
-				System.out.println("* transport : "+transport);
-				System.out.println("* transport connected ? "+transport.isConnected());
-				System.out.println("* getSMTPHost : "+mailConfig.getSMTPHost());
-				System.out.println("* getSMTPPortInt : "+mailConfig.getSMTPPortInt());
-				System.out.println("* getLogin : "+mailConfig.getLogin());
-				System.out.println("* getPassword : "+!StringHelper.isEmpty(mailConfig.getPassword()));
+				System.out.println("* ERROR MAIL TRANSPORT  : " + StringHelper.renderTime(new Date()));
+				System.out.println("* transport : " + transport);
+				System.out.println("* transport connected ? " + transport.isConnected());
+				System.out.println("* getSMTPHost : " + mailConfig.getSMTPHost());
+				System.out.println("* getSMTPPortInt : " + mailConfig.getSMTPPortInt());
+				System.out.println("* getLogin : " + mailConfig.getLogin());
+				System.out.println("* getPassword : " + !StringHelper.isEmpty(mailConfig.getPassword()));
 				System.out.println("*********************************");
 				System.out.println("");
-				
+
 				throw e;
 			}
-			
+
 			return transport;
 		}
 
 	}
-	
+
 	public String sendMail(EMail email) throws MessagingException {
 		return sendMail(null, email.getSender(), email.getRecipients(), email.getCcRecipients(), email.getBccRecipients(), email.getSubject(), email.getContent(), email.getTxtContent(), email.isHtml(), email.getAttachments(), email.getUnsubscribeLink(), email.getDkim(), null);
 	}
@@ -246,8 +246,8 @@ public class MailService {
 	}
 
 	/**
-	 * Send <strong><em>one</em></strong> mail to multiple recipients and
-	 * multiple BCC recipients <em>(in one mail)</em>.
+	 * Send <strong><em>one</em></strong> mail to multiple recipients and multiple
+	 * BCC recipients <em>(in one mail)</em>.
 	 * 
 	 * @param transport
 	 *            transport connection, if null transport is create inside the
@@ -263,8 +263,8 @@ public class MailService {
 	 * @param content
 	 *            the Content of the message
 	 * @param isHTML
-	 *            flag indicating wether the Content is html (<code>true</code>)
-	 *            or text (<code>false</code>)
+	 *            flag indicating wether the Content is html (<code>true</code>) or
+	 *            text (<code>false</code>)
 	 * @throws MessagingException
 	 *             Forwarded exception from javax.mail
 	 * @throws IllegalArgumentException
@@ -306,7 +306,7 @@ public class MailService {
 				}
 			}
 			if (recipients != null) {
-				logger.info("Sending mail with subject: " + subject + " to: " + recipients.size() + " recipients: " + recipientsStr + " DKIM?=" + (dkim != null));
+				logger.info("Sending mail with subject: " + subject + " to: " + recipients.size() + " #cc: " + ccRecipients.size() + " #bcc: " + bccRecipients + " recipients: " + recipientsStr + " DKIM?=" + (dkim != null));
 			}
 			if (msg == null) {
 				msg = new MimeMessage(mailSession);
@@ -393,9 +393,8 @@ public class MailService {
 			}
 
 			/*
-			 * if (isHTML) { msg.addHeader("Content-Type",
-			 * "text/html; charset=\"" + ContentContext.CHARACTER_ENCODING +
-			 * "\""); }
+			 * if (isHTML) { msg.addHeader("Content-Type", "text/html; charset=\"" +
+			 * ContentContext.CHARACTER_ENCODING + "\""); }
 			 */
 
 			msg.saveChanges();
@@ -483,8 +482,8 @@ public class MailService {
 	 * @param content
 	 *            the Content of the message
 	 * @param isHTML
-	 *            flag indicating wether the Content is html (<code>true</code>)
-	 *            or text (<code>false</code>)
+	 *            flag indicating wether the Content is html (<code>true</code>) or
+	 *            text (<code>false</code>)
 	 * @throws MessagingException
 	 *             Forwarded exception from javax.mail
 	 * @throws IllegalArgumentException
@@ -543,8 +542,8 @@ public class MailService {
 	 * @param content
 	 *            the Content of the message
 	 * @param isHTML
-	 *            flag indicating wether the Content is html (<code>true</code>)
-	 *            or text (<code>false</code>)
+	 *            flag indicating wether the Content is html (<code>true</code>) or
+	 *            text (<code>false</code>)
 	 * @throws MessagingException
 	 *             Forwarded exception from javax.mail
 	 * @throws IllegalArgumentException
@@ -565,11 +564,11 @@ public class MailService {
 	public void sendMail(InternetAddress sender, InternetAddress recipient, String subject, String content, boolean isHTML) throws MessagingException {
 		sendMail(null, sender, recipient, (List<InternetAddress>) null, (List<InternetAddress>) null, subject, content, isHTML, null, null);
 	}
-	
+
 	public void sendMail(InternetAddress sender, InternetAddress recipient, String subject, String content, boolean isHTML, DKIMBean dkim) throws MessagingException {
 		sendMail(null, sender, recipient, (List<InternetAddress>) null, (List<InternetAddress>) null, subject, content, isHTML, null, dkim);
 	}
-	
+
 	public void sendMail(GlobalContext globalContext, InternetAddress sender, InternetAddress recipient, String subject, String content, boolean isHTML) throws MessagingException {
 		sendMail(null, sender, recipient, (List<InternetAddress>) null, (List<InternetAddress>) null, subject, content, isHTML, globalContext.getUnsubscribeLink(), globalContext.getDKIMBean());
 	}
@@ -662,8 +661,7 @@ public class MailService {
 				/*
 				 * while (headers.hasMoreElements()) { Header header =
 				 * (Header)headers.nextElement();
-				 * outStr.append(header.getName()+": "+header.getValue()+CRLF);
-				 * }
+				 * outStr.append(header.getName()+": "+header.getValue()+CRLF); }
 				 */
 				outStr.append(_messageToDKIMBody(insideMultipartContent) + CRLF);
 			} else {
@@ -683,42 +681,42 @@ public class MailService {
 		}
 		return outStr.toString();
 	}
-	
-	public static void writeEMLFile(String subject, String body, OutputStream out) throws MessagingException, IOException {		
-			Message message = new MimeMessage(Session.getInstance(System.getProperties()));
-			message.setSubject(subject);			
-			message.setHeader("X-Unsent", "1");
-			message.setHeader("Content-Type", "text/html");
-			MimeBodyPart wrap = new MimeBodyPart();
-			MimeMultipart cover = new MimeMultipart("alternative");
-			MimeBodyPart bp = new MimeBodyPart();
-			String txtContent = StringHelper.html2txt(body);
-			bp.setText(txtContent, ContentContext.CHARACTER_ENCODING);
-			cover.addBodyPart(bp);
-			bp = new MimeBodyPart();
-			bp.setText(body, ContentContext.CHARACTER_ENCODING, "html");
-			cover.addBodyPart(bp);
-			wrap.setContent(cover);
-			MimeMultipart contentMail = new MimeMultipart("related");
-			contentMail.addBodyPart(wrap);
-			message.setContent(contentMail);
-			message.writeTo(out);
-			message.setSentDate(new Date());			
+
+	public static void writeEMLFile(String subject, String body, OutputStream out) throws MessagingException, IOException {
+		Message message = new MimeMessage(Session.getInstance(System.getProperties()));
+		message.setSubject(subject);
+		message.setHeader("X-Unsent", "1");
+		message.setHeader("Content-Type", "text/html");
+		MimeBodyPart wrap = new MimeBodyPart();
+		MimeMultipart cover = new MimeMultipart("alternative");
+		MimeBodyPart bp = new MimeBodyPart();
+		String txtContent = StringHelper.html2txt(body);
+		bp.setText(txtContent, ContentContext.CHARACTER_ENCODING);
+		cover.addBodyPart(bp);
+		bp = new MimeBodyPart();
+		bp.setText(body, ContentContext.CHARACTER_ENCODING, "html");
+		cover.addBodyPart(bp);
+		wrap.setContent(cover);
+		MimeMultipart contentMail = new MimeMultipart("related");
+		contentMail.addBodyPart(wrap);
+		message.setContent(contentMail);
+		message.writeTo(out);
+		message.setSentDate(new Date());
 	}
 
 	public static void main(String[] args) throws Exception {
 		MailConfig mailConfig = new MailConfig("mailgater.fediap.be", 25, "FKVMAILB@nuvem.intra", "##PWD##");
 		Transport t = getMailTransport(mailConfig);
-		System.out.println("t = "+t.isConnected());
-		
+		System.out.println("t = " + t.isConnected());
+
 	}
-	
+
 	public static MenuElement getMailTemplateParentPage(ContentContext ctx) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		return content.getNavigation(ctx).searchChildFromName(ctx.getGlobalContext().getStaticConfig().getMailTemplateParent());
 	}
-	
-	public static List<MenuElement> getMailTemplate(ContentContext ctx) throws Exception {		
+
+	public static List<MenuElement> getMailTemplate(ContentContext ctx) throws Exception {
 		MenuElement mailParent = getMailTemplateParentPage(ctx);
 		if (mailParent == null) {
 			return Collections.EMPTY_LIST;
