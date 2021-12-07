@@ -72,6 +72,10 @@ public class I18nAccess implements Serializable {
 	private static final Map<String, Map<String, String>> countries = Collections.synchronizedMap(new HashMap<String, Map<String, String>>());
 
 	public static I18nAccess getInstance(ContentContext ctx) throws ServiceException, Exception {
+		/** test **/
+		if (ctx == null) {
+			return new I18nAccess(null);
+		}
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		I18nAccess i18n = getInstance(ctx.getRequest());
 		i18n.initEdit(globalContext, ctx.getRequest().getSession());
@@ -94,6 +98,10 @@ public class I18nAccess implements Serializable {
 	 * @throws ConfigurationException
 	 */
 	public static final I18nAccess getInstance(HttpServletRequest request) throws FileNotFoundException, IOException {
+		// for test
+		if (request == null) {
+			return new I18nAccess(null);
+		}
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		I18nAccess i18nAccess = getInstance(globalContext, request.getSession());
 		return i18nAccess;
@@ -194,10 +202,12 @@ public class I18nAccess implements Serializable {
 	}
 
 	private I18nAccess(GlobalContext globalContext) {
-		lock = globalContext.getI18nLock();
-		servletContext = globalContext.getServletContext();
-		i18nResource = I18nResource.getInstance(globalContext);
-		contextKey = globalContext.getContextKey();
+		if (globalContext != null) {
+			lock = globalContext.getI18nLock();
+			servletContext = globalContext.getServletContext();
+			i18nResource = I18nResource.getInstance(globalContext);
+			contextKey = globalContext.getContextKey();
+		}
 	};
 
 	public void changeViewLanguage(ContentContext ctx) throws ServiceException, Exception {

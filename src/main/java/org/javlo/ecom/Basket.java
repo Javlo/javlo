@@ -136,7 +136,11 @@ public class Basket implements Serializable {
 	}
 
 	public static String renderPrice(ContentContext ctx, double price, String currency) {
-		return renderPrice(ctx.getRequestContentLanguage(), price, currency);
+		String lang = "en";
+		if (ctx != null) {
+			lang = ctx.getRequestContentLanguage();
+		}
+		return renderPrice(lang, price, currency);
 	}
 
 	public static String renderPrice(String lang, double price, String currency) {
