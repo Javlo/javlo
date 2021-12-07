@@ -118,9 +118,10 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 		}
 		out.println("<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>");
 		if (basket.getUserReduction() > 0.01) {
-			out.println("<tr><td>&nbsp;</td><td>&nbsp;</td></tr>");
+			out.println("<tr><td>&nbsp;</td><td>&nbsp;</td>");
 			out.println("<th style=\"" + cellStyle + "\">" + i18nAccess.getViewText("ecom.promo") + "</th>");
 			out.println("<td style=\"" + cellStyle + "\">" + StringHelper.renderDoubleAsPercentage(basket.getUserReduction()) + "</td>");
+			out.println("</tr>");
 		}
 		if (basket.getDelivery(ctx, true) > 0.01) {
 			out.println("<tr><td>&nbsp;</td><td>&nbsp;</td>");
