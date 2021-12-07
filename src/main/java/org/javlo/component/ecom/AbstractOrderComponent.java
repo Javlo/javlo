@@ -104,7 +104,7 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 		out.println("<th style=\"" + cellStyle + "\">" + i18nAccess.getViewText("ecom.product") + "</th>");
 		out.println("<th style=\"" + cellStyle + "\">" + i18nAccess.getViewText("ecom.quantity") + "</th>");
 		out.println("<th style=\"" + cellStyle + "\">" + i18nAccess.getViewText("ecom.total_evat") + "</th>");
-		out.println("<th>" + i18nAccess.getViewText("ecom.total_vat") + "</th>");
+		out.println("<th style=\"" + cellStyle + "\">" + i18nAccess.getViewText("ecom.total_vat") + "</th>");
 		out.println("</tr>");
 		out.println("</thead>");
 		for (Product product : basket.getProducts()) {
