@@ -91,12 +91,12 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 		return new String(outStream.toByteArray());
 	}
 	
-	protected static String renderBasket(ContentContext ctx, Basket basket) throws FileNotFoundException, IOException {
+	protected static String renderBasket(ContentContext ctx, Basket basket) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		
-		String cellStyle="font-size: 14px; text-align: center;";
+		String cellStyle="text-align: right;";
 		
 		out.println("<table class=\"table\" id=\"basket-details\" style=\"width: 100%\">");
 		out.println("<thead>");
@@ -110,13 +110,23 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 		
 		for (Product product : basket.getProducts()) {
 			out.println("<tr>");
-			out.println("<td style=\""+cellStyle+"\">"+product.getName()+"</td>");
+			out.println("<td style=\""+cellStyle+"\"><a href=\""+product.getUrl()+"\">"+product.getName()+"</a></td>");
 			out.println("<td style=\""+cellStyle+"\">"+product.getQuantity()+"</td>");
 			double total = product.getPrice()*product.getQuantity();
 			out.println("<td style=\""+cellStyle+"\">"+Basket.renderPrice(ctx,total/(1+product.getVAT()) ,product.getCurrencyCode())+"</td>");
 			out.println("<td style=\""+cellStyle+"\">"+Basket.renderPrice(ctx,total,product.getCurrencyCode())+"</td>");
 			out.println("</tr>");
 		}
+		out.println("<tr><td colsspan=\"4\"></td></tr>");
+		if (basket.getUserReduction()>0.01) {
+			out.println("<tr><td colsspan=\"2\"></td>");
+			out.println("<th style=\""+cellStyle+"\">"+i18nAccess.getViewText("ecom.promo")+"</th>");
+			out.println("<td style=\""+cellStyle+"\">"+StringHelper.renderDoubleAsPercentage(basket.getUserReduction())+"</td>");
+		}
+		out.println("<tr><td colsspan=\"2\"></td>");
+		out.println("<th style=\""+cellStyle+"\">"+i18nAccess.getViewText("ecom.total")+"</th>");
+		out.println("<td style=\""+cellStyle+"\">"+Basket.renderPrice(ctx, basket.getTotal(ctx, true), basket.getCurrencyCode())+"</td>");
+		out.println("</tr>");
 		out.println("</table>");
 		
 		out.close();
