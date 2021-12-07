@@ -116,19 +116,19 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 			out.println("<td style=\"" + cellStyle + "\">" + Basket.renderPrice(ctx, total, product.getCurrencyCode()) + "</td>");
 			out.println("</tr>");
 		}
-		out.println("<tr><td colsspan=\"4\"></td></tr>");
+		out.println("<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>");
 		if (basket.getUserReduction() > 0.01) {
-			out.println("<tr><td colsspan=\"2\"></td>");
+			out.println("<tr><td>&nbsp;</td><td>&nbsp;</td></td>");
 			out.println("<th style=\"" + cellStyle + "\">" + i18nAccess.getViewText("ecom.promo") + "</th>");
 			out.println("<td style=\"" + cellStyle + "\">" + StringHelper.renderDoubleAsPercentage(basket.getUserReduction()) + "</td>");
 		}
 		if (basket.getDelivery(ctx, true) > 0.01) {
-			out.println("<tr><td colsspan=\"2\"></td>");
+			out.println("<tr><td>&nbsp;</td><td>&nbsp;</td>");
 			out.println("<th style=\"" + cellStyle + "\">" + i18nAccess.getViewText("ecom.shipping") + "</th>");
 			out.println("<td style=\"" + cellStyle + "\">" + Basket.renderPrice(ctx, basket.getDelivery(ctx, true), basket.getCurrencyCode()) + "</td>");
 			out.println("</tr>");
 		}
-		out.println("<tr><td colsspan=\"2\"></td>");
+		out.println("<tr><td>&nbsp;</td><td>&nbsp;</td>");
 		out.println("<th style=\"" + cellStyle + "\">" + i18nAccess.getViewText("ecom.total") + "</th>");
 		out.println("<td style=\"" + cellStyle + "\">" + Basket.renderPrice(ctx, basket.getTotal(ctx, true), basket.getCurrencyCode()) + "</td>");
 		out.println("</tr>");
