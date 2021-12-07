@@ -306,7 +306,7 @@ public class MailService {
 				}
 			}
 			if (recipients != null) {
-				logger.info("Sending mail with subject: " + subject + " to: " + recipients.size() + " #cc: " + ccRecipients.size() + " #bcc: " + bccRecipients + " recipients: " + recipientsStr + " DKIM?=" + (dkim != null));
+				logger.info("Sending mail with subject: " + subject + " to: " + recipients.size() + " cc: " + ccRecipients + " bcc: " + bccRecipients + " recipients: " + recipientsStr + " DKIM?=" + (dkim != null));
 			}
 			if (msg == null) {
 				msg = new MimeMessage(mailSession);
