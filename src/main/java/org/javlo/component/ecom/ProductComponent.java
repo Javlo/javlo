@@ -184,7 +184,6 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 		out.println("<div class=\"edit\" style=\"padding: 3px;\"><div class=\"row\">");
 
 		for (String field : fields) {
-
 			boolean i18n = FIELDS_I18N.contains(field);
 			ProductComponent comp = this;
 			if (i18n) {

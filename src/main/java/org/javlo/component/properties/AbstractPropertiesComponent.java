@@ -23,10 +23,19 @@ import org.javlo.service.google.translation.ITranslator;
 
 public abstract class AbstractPropertiesComponent extends AbstractVisualComponent {
 
+	private static final String I18N_SUFFIX = ".i18n";
 	protected Properties properties = new Properties();
 
 	protected String createKeyWithField(String inField) {
 		return getInputName(inField);
+	}
+	
+	/**
+	 * all field value is different on any language, if false, only field end with .i18n is different.
+	 * @return
+	 */
+	protected boolean isAllTranslated() {
+		return true;
 	}
 
 	@Override
@@ -34,7 +43,7 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		super.prepareView(ctx);
 		Map<String, String> fields = new HashMap<String, String>();
 		for (String field : getFields(ctx)) {
-			fields.put(getFieldName(field), getFieldValue(field));
+			fields.put(getFieldName(field), getFieldValue(ctx, field));
 		}
 		ctx.getRequest().setAttribute("fields", fields); // depreciated
 		ctx.getRequest().setAttribute("field", fields);
@@ -67,6 +76,15 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 	protected int getXsSize() {
 		return 6;
 	}
+	
+	protected String getLabel(I18nAccess i18nAccess, String fieldName) {
+		String label = i18nAccess.getText("field." + fieldName, fieldName);
+		if (label.endsWith(I18N_SUFFIX)) {
+			return label.substring(0, label.lastIndexOf(I18N_SUFFIX));
+		} else {
+			return label;
+		}
+	}
 
 	protected void renderField(PrintWriter out, ContentContext ctx, String field) throws ServiceException, Exception {
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
@@ -74,28 +92,35 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		String fieldType = getFieldType(field);
 		out.println("<div class=\"col-md-"+getMdSize()+" col-xs-"+getXsSize()+"\">");
 		out.println("<div class=\"form-group\">");
+		
+		String value = getFieldValue(ctx, fieldName);
+		String readonly = "";
+		if (!isAllTranslated() && !fieldName.endsWith(I18N_SUFFIX) && !ctx.getContentLanguage().equals(ctx.getGlobalContext().getDefaultLanguage())) {
+			readonly = " readonly=\"readonly\"";
+		}
+		
 		if (fieldType.equals("text")) {
 			out.println("<label for=\"" + createKeyWithField(fieldName) + "\">");
-			out.println(i18nAccess.getText("field." + fieldName, fieldName));
+			out.println(getLabel(i18nAccess, fieldName));
 			out.println("</label>");
 			List<Map.Entry<String, String>> choices = getFieldChoice(ctx, fieldName);
 			if (choices == null) {
-				out.print("<textarea class=\"form-control\" rows=\"" + getRowSize(fieldName) + "\" id=\"");
+				out.print("<textarea"+readonly+" class=\"form-control\" rows=\"" + getRowSize(fieldName) + "\" id=\"");
 				out.print(createKeyWithField(field));
 				out.print("\" name=\"");
 				out.print(createKeyWithField(fieldName));
 				out.print("\">");
-				out.print(getFieldValue(fieldName));
+				out.print(value);
 				out.println("</textarea>");
 			} else {
-				out.print("<select class=\"form-control\" id=\"");
+				out.print("<select"+readonly+" class=\"form-control\" id=\"");
 				out.print(createKeyWithField(field));
 				out.print("\" name=\"");
 				out.print(createKeyWithField(fieldName));
 				out.println("\">");
 				for (Map.Entry<String, String> option : choices) {
 					String selected ="";
-					if (option.getKey().equals(getFieldValue(fieldName))) {
+					if (option.getKey().equals(value)) {
 						selected = " selected=\"selected\"";
 					}
 					out.println("<option value=\""+option.getKey()+"\""+selected+">"+option.getValue()+"</option>");
@@ -105,10 +130,10 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		} else if (fieldType.equals("checkbox")) {
 			out.println("<div class=\"checkbox\"><label>");
 			String checked = "";
-			if (getFieldValue(fieldName).length() > 0) {
+			if (getFieldValue(ctx, fieldName).length() > 0) {
 				checked = " checked=\"checked\"";
 			}
-			out.print("<input type=\"checkbox\" id=\"");
+			out.print("<input"+readonly+" type=\"checkbox\" id=\"");
 			out.print(createKeyWithField(field));
 			out.print("\" name=\"");
 			out.print(createKeyWithField(fieldName));
@@ -121,12 +146,12 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 			out.println("<label for=\"" + createKeyWithField(fieldName) + "\">");
 			out.println(i18nAccess.getText("field." + fieldName, fieldName));
 			out.println("</label>");
-			out.print("<input type=\""+fieldType+"\" id=\"");
+			out.print("<input"+readonly+" type=\""+fieldType+"\" id=\"");
 			out.print(createKeyWithField(field));
 			out.print("\" name=\"");
 			out.print(createKeyWithField(fieldName));
 			out.print("\" value=\"");
-			out.print(getFieldValue(fieldName));			
+			out.print(value);
 			out.print("\" />");
 			
 
@@ -186,9 +211,35 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 	}
 
 	public abstract List<String> getFields(ContentContext ctx) throws Exception;
-
+	
+	/**
+	 * work only if all fields is translated
+	 * @param inField
+	 * @return
+	 */
 	protected String getFieldValue(String inField) {
-		return properties.getProperty(getFieldName(inField), "");
+		return getFieldValue((ContentContext)null, inField);
+	}
+
+	protected String getFieldValue(ContentContext ctx, String inField) {
+		String value;
+		if (isAllTranslated() || ctx == null || inField.endsWith(I18N_SUFFIX)) {
+			value = properties.getProperty(getFieldName(inField), "");
+		} else {
+			AbstractPropertiesComponent comp = null;
+			try {
+				comp = (AbstractPropertiesComponent)getReferenceComponent(ctx);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			if (comp == null) {
+				value = "error reference component not found!";
+			} else {
+				value = comp.properties.getProperty(getFieldName(inField), "");
+			}
+		}
+
+		return value;
 	}
 
 	protected String getFieldValue(String inField, String defaultValue) {
@@ -208,7 +259,7 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		List<String> fields = getFields(ctx);
 		if (getRenderer(ctx) != null) {
 			for (String field : fields) {
-				ctx.getRequest().setAttribute(field, getFieldValue(field));
+				ctx.getRequest().setAttribute(field, getFieldValue(ctx, field));
 			}
 			return executeJSP(ctx, getRenderer(ctx));
 		} else {
@@ -217,11 +268,11 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 			out.append(getType());
 			out.append("\"><ul class=\"list-group\">");
 			for (String field : fields) {
-				if (!StringHelper.isEmpty(getFieldValue(field))) {
+				if (!StringHelper.isEmpty(getFieldValue(ctx, field))) {
 					out.append("<li  class=\"list-group-item ");
 					out.append(field);
 					out.append("\">");
-					out.append(getFieldValue(field));
+					out.append(getFieldValue(ctx, field));
 					out.append("</li>");
 				}
 			}
@@ -290,7 +341,7 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 			}
 
 			if (fieldValue != null) {
-				if (!fieldValue.equals(getFieldValue(field))) {
+				if (!fieldValue.equals(getFieldValue(ctx, field))) {
 					setModify();
 					properties.put(field, fieldValue);
 				}
@@ -336,7 +387,7 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 	public boolean isRealContent(ContentContext ctx) {
 		try {
 			for (String field : getFields(ctx)) {
-				String fieldValue = getFieldValue(field);
+				String fieldValue = getFieldValue(ctx, field);
 				if (fieldValue != null && fieldValue.trim().length() > 0) {
 					return true;
 				}
@@ -378,7 +429,7 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 			boolean translated = true;
 			try {
 				for (String field : getFields(ctx)) {
-					String value = StringEscapeUtils.unescapeHtml4(getFieldValue(field));
+					String value = StringEscapeUtils.unescapeHtml4(getFieldValue(ctx, field));
 					String newValue = translator.translate(ctx, value, lang, ctx.getRequestContentLanguage());
 					if (newValue == null) {
 						translated = false;

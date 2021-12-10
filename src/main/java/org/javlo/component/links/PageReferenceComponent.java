@@ -28,6 +28,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.actions.IAction;
+import org.javlo.component.config.ComponentConfig;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComplexPropertiesLink;
 import org.javlo.component.core.ComponentBean;
@@ -348,7 +349,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				}
 			}
 		}
-		
+
 		if (ctx.getRequest().getParameter("lang") != null) {
 			ctx.setAllLanguage(ctx.getRequest().getParameter("lang"));
 		}
@@ -506,6 +507,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		return StringHelper.isTrue(properties.getProperty("popup", null), false);
 	}
 
+	public boolean isRefDefaultLang() {
+		return StringHelper.isTrue(properties.getProperty("refdeflang", null), false);
+	}
+
 	public boolean isDisplayDate() {
 		return StringHelper.isTrue(properties.getProperty("displaydate", null), true);
 	}
@@ -566,7 +571,26 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		PrintStream out = new PrintStream(outStream);
 
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+		
+		String wrapperId = "pageref-wrapper-"+getId();
 
+		out.println("<div class=\"row\"><div class=\"col-sm-8\">");
+		out.println("<div class=\"line\">");
+		out.println("<label for=\"" + getInputNameTitle() + "\">" + i18nAccess.getText("global.title") + " : </label>");
+		out.println("<input type=\"text\" id=\"" + getInputNameTitle() + "\" name=\"" + getInputNameTitle() + "\" value=\"" + getContentTitle() + "\"  />");
+		out.println("</div>");
+		out.println("</div><div class=\"col-sm-4\">");
+		if (!ctx.getContentLanguage().equals(ctx.getGlobalContext().getDefaultLanguage())) {
+			
+			String js = "if(this.checked) {document.getElementById('"+wrapperId+"').classList.add('hidden');} else {document.getElementById('"+wrapperId+"').classList.remove('hidden');}";
+			
+			out.println("<div class=\"line\">");
+			out.println(XHTMLHelper.getCheckbox(getInputRefDefaultLang(), isRefDefaultLang(), js));
+			out.println("<label for=\"" + getInputRefDefaultLang() + "\">" + i18nAccess.getText("content.page-teaser.link-default-language", "popup") + "</label></div>");
+		}
+		out.println("</div></div>");
+
+		out.println("<div id=\""+wrapperId+"\" class=\"" + (isRefDefaultLang() ? "hidden" : "") + "\">");
 		out.println("<div class=\"row\"><div class=\"col-sm-8\">");
 		out.println("<input type=\"hidden\" name=\"" + getCompInputName() + "\" value=\"true\" />");
 
@@ -577,11 +601,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		/* rendering */
 		out.println("<div class=\"col-md-6\">");
-
-		out.println("<div class=\"line\">");
-		out.println("<label for=\"" + getInputNameTitle() + "\">" + i18nAccess.getText("global.title") + " : </label>");
-		out.println("<input type=\"text\" id=\"" + getInputNameTitle() + "\" name=\"" + getInputNameTitle() + "\" value=\"" + getContentTitle() + "\"  />");
-		out.println("</div>");
 
 		if (isUIFullDisplayFirstPage(ctx)) {
 			/* first page full */
@@ -676,7 +695,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		out.println("</div>");
 
 		out.println("<div class=\"row\"><div class=\"col-md-6\">");
-		
+
 		if (isDateRangeSelection(ctx)) {
 			out.println("<div class=\"line-inline\">");
 			out.println("<label>" + i18nAccess.getText("global.from") + " : ");
@@ -685,7 +704,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			out.println("<input type=\"date\" name=\"" + getInputName(END_DATE_KEY) + "\" value=\"" + getEndDate() + "\" /></label>");
 			out.println("</div>");
 		}
-		
+
 		out.println("</div><div class=\"col-md-6\">");
 		/* time selection */
 		if (isUITimeSelection(ctx)) {
@@ -701,7 +720,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 			}
 			out.println("</div>");
 		}
-		
+
 		out.println("</div></div>");
 
 		out.println("</fieldset>");
@@ -758,8 +777,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		String tableID = "table-" + getId();
 		out.println("<div class=\"row\"><div class=\"col-sm-9\"><div class=\"array-filter line\">");
 		String ajaxURL = URLHelper.createExpCompLink(ctx, getId());
-		out.println("<input class=\"input\" type=\"text\" placeholder=\"" + i18nAccess.getText("global.filter") + "\" onkeyup=\"filterPage('" + ajaxURL + "',this.value, '." + tableID + " tbody', '"+ctx.getRequestContentLanguage()+"');\"/>");
-		String resetFilterScript = "jQuery('#comp-" + getId() + " .array-filter .input').val(''); filterPage('" + ajaxURL + "',jQuery('#comp-" + getId() + " .array-filter .input').val(), '." + tableID + " tbody', '"+ctx.getRequestContentLanguage()+"'); return false;";
+		out.println("<input class=\"input\" type=\"text\" placeholder=\"" + i18nAccess.getText("global.filter") + "\" onkeyup=\"filterPage('" + ajaxURL + "',this.value, '." + tableID + " tbody', '" + ctx.getRequestContentLanguage() + "');\"/>");
+		String resetFilterScript = "jQuery('#comp-" + getId() + " .array-filter .input').val(''); filterPage('" + ajaxURL + "',jQuery('#comp-" + getId() + " .array-filter .input').val(), '." + tableID + " tbody', '" + ctx.getRequestContentLanguage() + "'); return false;";
 		out.println("<input type=\"button\" onclick=\"" + resetFilterScript + "\" value=\"" + i18nAccess.getText("global.reset") + "\" />");
 		String allScript = "if (jQuery('#comp-" + getId() + " .array-filter .input').val().indexOf(':all')<0) {jQuery('#comp-" + getId() + " .array-filter .input').val(jQuery('#comp-" + getId() + " .array-filter .input').val()+' :all'); filterPage('" + ajaxURL + "',jQuery('#comp-" + getId() + " .array-filter .input').val(), '." + tableID + " tbody'); return false;}";
 		out.println("<input type=\"button\" onclick=\"" + allScript + "\" value=\"" + i18nAccess.getText("global.all") + "\" />");
@@ -785,7 +804,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		out.print("<div class=\"page-list-container\"><table class=\"");
 		out.print("page-list" + ' ' + tableID);
-		String onlyCheckedScript = "if (jQuery('#comp-" + getId() + " .array-filter .input').val().indexOf(':checked')<0) {jQuery('#comp-" + getId() + " .array-filter .input').val(jQuery('#comp-" + getId() + " .array-filter .input').val()+' :checked'); filterPage('" + ajaxURL + "',jQuery('#comp-" + getId() + " .array-filter .input').val(), '." + tableID + " tbody', '"+ctx.getRequestContentLanguage()+"'); return false;}";
+		String onlyCheckedScript = "if (jQuery('#comp-" + getId() + " .array-filter .input').val().indexOf(':checked')<0) {jQuery('#comp-" + getId() + " .array-filter .input').val(jQuery('#comp-" + getId() + " .array-filter .input').val()+' :checked'); filterPage('" + ajaxURL + "',jQuery('#comp-" + getId() + " .array-filter .input').val(), '." + tableID + " tbody', '" + ctx.getRequestContentLanguage() + "'); return false;}";
 		out.println("\"><thead><tr><th>&nbsp</th><th>" + i18nAccess.getText("global.label") + "</th><th>" + i18nAccess.getText("global.date") + "</th><th>" + i18nAccess.getText("global.modification") + "</th><th>" + i18nAccess.getText("content.page-teaser.language") + "</th><th title=\"" + i18nAccess.getText("content.page-reference.content.help") + "\">" + i18nAccess.getText("content.page-reference.content") + "</th><th>" + i18nAccess.getText("global.select") + " <a href=\"#\" onclick=\"" + onlyCheckedScript + "\">(" + currentSelection.size() + ")</a></th></tr></thead><tbody>");
 
 		int numberOfPage = 16384;
@@ -837,6 +856,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		if (!ctx.isExport()) {
 			out.println("</tbody></table></div></fieldset>");
 		}
+		out.println("</div>");
 		return new String(outStream.toByteArray());
 	}
 
@@ -854,7 +874,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 		out.print("<tr class=\"filtered" + (num % 2 == 0 ? " odd" : " even") + "\">");
 		out.print("<td><input type=\"hidden\" name=\"" + getPageDisplayedId(page) + "\" value=\"1\" /><input type=\"checkbox\" name=\"" + getPageId(page) + "\" value=\"" + page.getId() + "\"" + checked + "/></td>");
-		
+
 		out.print("<td class=\"label\"><a data-toggle=\"tooltip\" data-placement=\"right\" title=\"" + XHTMLHelper.stringToAttribute(NavigationHelper.getBreadCrumb(ctx, page)) + "\" href=\"" + editPageURL + "\">" + page.getFullLabel(ctx) + "</a></td>");
 		out.print("<td>" + StringHelper.neverNull(StringHelper.renderLightDate(page.getContentDate(ctx))) + "</td>");
 		out.println("<td>" + StringHelper.renderLightDate(page.getModificationDate(ctx)) + "</td><td>" + StringHelper.neverNull(page.getRealContentLanguage(ctx)) + "</td>");
@@ -907,6 +927,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	private String getInputPopup() {
 		return "popup_" + getId();
+	}
+
+	private String getInputRefDefaultLang() {
+		return "refdefaultlang_" + getId();
 	}
 
 	private String getInputDisplayDate() {
@@ -1355,6 +1379,25 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		return StringHelper.isTrue(getConfig(ctx).getProperty("redisplay", null), false);
 	}
 
+	protected PageReferenceComponent getRefComponent(ContentContext ctx) {
+		if (isRefDefaultLang()) {
+			PageReferenceComponent comp = null;
+			try {
+				comp = (PageReferenceComponent) getReferenceComponent(ctx);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			if (comp == null) {
+				logger.severe("reference composant not found in " + ctx.getGlobalContext().getDefaultLanguage() + " type:" + getType());
+				return this;
+			} else {
+				return comp;
+			}
+		} else {
+			return this;
+		}
+	}
+
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 
@@ -1383,7 +1426,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		Calendar todayCal = Calendar.getInstance();
 		Calendar pageCal = Calendar.getInstance();
 
-		List<MenuElement> selectedPage = getSelectedPages(ctx, allChildren);
+		List<MenuElement> selectedPage = getRefComponent(ctx).getSelectedPages(ctx, allChildren);
 
 		LocalLogger.stepCount("pageref", "step 3");
 
@@ -1449,13 +1492,13 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				monthFilter = null;
 			}
 		}
-		
+
 		List<SmartPageBean> pageBeans = new LinkedList<SmartPageBean>();
 		Collection<Calendar> allMonths = new LinkedList<Calendar>();
 		Collection<String> allMonthsKeys = new HashSet<String>();
 
-		boolean withEmptyPage = isWidthEmptyPage();
-		boolean intranetMode = isIntranetMode();
+		boolean withEmptyPage = getRefComponent(ctx).isWidthEmptyPage();
+		boolean intranetMode = getRefComponent(ctx).isIntranetMode();
 
 		Integer onlyDepth = null;
 		if (StringHelper.isDigit(getOnlyDepth())) {
@@ -1500,7 +1543,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 												}
 												if (monthFilter == null || TimeHelper.betweenInDay(page.getContentDateNeverNull(lgCtx), startDate.getTime(), endDate.getTime())) {
 													SmartPageBean pageBean = SmartPageBean.getInstance(ctx, lgCtx, page, this);
-													boolean isRedisplay = isRedisplay(ctx);
+													boolean isRedisplay = getRefComponent(ctx).isRedisplay(ctx);
 													boolean isAlreadyDisplayed = pageBean.isAlreadyDisplayed();
 													if (isRedisplay || !isAlreadyDisplayed) {
 														countPage++;
@@ -1524,9 +1567,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		LocalLogger.stepCount("pageref", "step 7");
 
-		if (isDisplayFirstPage() && firstPage != null && ctx.getRequest().getParameter("_wcms_content_path") == null) {
+		if (getRefComponent(ctx).isDisplayFirstPage() && firstPage != null && ctx.getRequest().getParameter("_wcms_content_path") == null) {
 			String path = firstPage.getPath();
-			String pageRendered = executeJSP(ctx, Edit.CONTENT_RENDERER + "?_wcms_content_path=" + path);
+			String pageRendered = getRefComponent(ctx).executeJSP(ctx, Edit.CONTENT_RENDERER + "?_wcms_content_path=" + path);
 			ctx.getRequest().setAttribute("firstPage", pageRendered);
 		} else {
 			ctx.getRequest().removeAttribute("firstPage");
@@ -1555,6 +1598,26 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		}
 
 		LocalLogger.PRINT_TIME = false;
+	}
+
+	@Override
+	public ComponentConfig getConfig(ContentContext ctx) {
+		PageReferenceComponent comp = getRefComponent(ctx);
+		if (comp != this) {
+			return getRefComponent(ctx).getConfig(ctx);
+		} else {
+			return super.getConfig(ctx);
+		}
+	}
+
+	@Override
+	public String getCurrentRenderer(ContentContext ctx) {
+		PageReferenceComponent comp = getRefComponent(ctx);
+		if (comp != this) {
+			return getRefComponent(ctx).getCurrentRenderer(ctx);
+		} else {
+			return super.getCurrentRenderer(ctx);
+		}
 	}
 
 	public static void main(String[] args) {
@@ -1720,6 +1783,12 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 				setModify();
 			}
 
+			boolean refdeflang = StringHelper.isTrue(requestService.getParameter(getInputRefDefaultLang(), "false"));
+			if (isRefDefaultLang() != refdeflang) {
+				setRefDefaultLanguage(refdeflang);
+				setModify();
+			}
+
 			String firstPageNumber = requestService.getParameter(getFirstPageNumberInputName(), "1");
 			if (!firstPageNumber.equals("" + getFirstPageNumber())) {
 				setFirstPageNumber(firstPageNumber);
@@ -1844,6 +1913,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	protected void setEventOnly(boolean onlyEvent) {
 		properties.setProperty(ONLY_EVENT, "" + onlyEvent);
+	}
+
+	protected void setRefDefaultLanguage(boolean onlyEvent) {
+		properties.setProperty("refdeflang", "" + onlyEvent);
 	}
 
 	protected void setDynamicOrder(boolean dynamicOrder) {

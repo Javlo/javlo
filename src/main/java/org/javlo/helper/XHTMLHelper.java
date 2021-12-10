@@ -327,17 +327,22 @@ public class XHTMLHelper {
 
 	public static String getCheckbox(String field, boolean value) throws ResourceNotFoundException {
 
+		return getCheckbox(field, value, null);
+	}
+
+	public static String getCheckbox(String field, boolean value, String onchange) throws ResourceNotFoundException {
 		StringWriter res = new StringWriter();
 		PrintWriter out = new PrintWriter(res);
-
 		String addedTag = "";
 		if (value) {
 			addedTag = addedTag + " checked=\"checked\" ";
 		}
-
+		if (!StringHelper.isEmpty(onchange)) {
+			onchange = " onchange=\"" + onchange + "\"";
+		}
 		out.print("<input id=\"" + field + "\" type=\"checkbox\" name=\"");
 		out.print(field);
-		out.print("\" " + addedTag + "/>");
+		out.print("\" " + addedTag + " " + onchange + " />");
 
 		out.close();
 		return res.toString();

@@ -57,7 +57,6 @@ public class ExcelPropertiesConverter {
 			}
 		}
 		if (keyPos == 0) {
-			System.out.println(">> add : " + key);
 			int width = data[0].length;
 			Cell[][] newData = new Cell[data.length + 1][];
 			for (int i = 0; i < data.length; i++) {
@@ -76,7 +75,7 @@ public class ExcelPropertiesConverter {
 		return data;
 	}
 
-	public static void convertPropertiesToExcel(File dir, File excel) throws IOException {
+	public static void convertPropertiesToExcel(File dir, String prefix, File excel) throws IOException {
 		Cell[][] data = { {} };
 		data[0] = new Cell[1];
 		data[0][0] = new Cell("", null, data, 0, 0);
@@ -84,13 +83,15 @@ public class ExcelPropertiesConverter {
 			if (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("properties")) {
 				String fileName = StringHelper.getFileNameWithoutExtension(file.getName());
 				if (fileName.length() > 3 && fileName.charAt(fileName.length() - 3) == '_') {
-					String lg = fileName.substring(fileName.length() - 2, fileName.length());
-					System.out.println(">>> " + lg + " <<<");
-					Properties prop = new Properties();
-					try (InputStream out = new FileInputStream(file)) {
-						prop.load(out);
-						for (Object key : prop.keySet()) {
-							data = addTrad(data, lg, "" + key, "" + prop.get(key));
+					if (StringHelper.isEmpty(prefix) || fileName.startsWith(prefix)) {
+						String lg = fileName.substring(fileName.length() - 2, fileName.length());
+						System.out.println(">>> convert : " + fileName);
+						Properties prop = new Properties();
+						try (InputStream out = new FileInputStream(file)) {
+							prop.load(out);
+							for (Object key : prop.keySet()) {
+								data = addTrad(data, lg, "" + key, "" + prop.get(key));
+							}
 						}
 					}
 				}
@@ -111,7 +112,7 @@ public class ExcelPropertiesConverter {
 			for (int j = 1; j < data.length; j++) {
 				prop.setProperty(data[j][0].getValue(), data[j][i].getValue());
 			}
-			File propFile = new File(URLHelper.mergePath(dir.getAbsolutePath(), prefix+"_"+lg+".properties" ));
+			File propFile = new File(URLHelper.mergePath(dir.getAbsolutePath(), prefix + "_" + lg + ".properties"));
 			try (OutputStream out = new FileOutputStream(propFile)) {
 				prop.store(out, ExcelPropertiesConverter.class.getName());
 			}
@@ -119,8 +120,12 @@ public class ExcelPropertiesConverter {
 	}
 
 	public static void main(String[] args) throws Exception {
-		//convertPropertiesToExcel(new File("C:\\work\\javlo2\\src\\main\\webapp\\WEB-INF\\i18n"), new File("c:/trans/out_i18n.xlsx"));
-		convertExcelToProperties(new File("c:/trans/out_i18n.xlsx"), "view", new File("C:\\trans\\i18n"));
+		// convertPropertiesToExcel(new
+		// File("C:\\work\\javlo2\\src\\main\\webapp\\WEB-INF\\i18n"), new
+		// File("c:/trans/out_i18n.xlsx"));
+		// convertExcelToProperties(new File("c:/trans/out_i18n.xlsx"), "view", new
+		// File("C:\\trans\\i18n"));
+		convertPropertiesToExcel(new File("C:\\work\\kidoo\\src\\main\\webapp\\WEB-INF\\i18n"), "specific_view", new File("c:/trans/out_i18n.xlsx"));
 	}
 
 }

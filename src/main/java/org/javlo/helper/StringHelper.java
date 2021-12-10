@@ -2038,7 +2038,7 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(isFloat("-2.2"));
+		System.out.println(isMail("p@noctis.be"));
 	}
 
 	public static LocalTime smartParseTime(String inTime) {

@@ -35,10 +35,15 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 
 	private static final String PROMO_VALUE = "promo-value";
 	private static final String PROMO_KEY = "promo-key";
-	private static final String SHIPPING_MESSAGE = "shipping-message";
+	private static final String SHIPPING_MESSAGE = "shipping-message.i18n";
 
 	static final List<String> FIELDS = Arrays.asList(new String[] { SHIPPING_MESSAGE, PROMO_KEY, PROMO_VALUE });
 
+	@Override
+	protected boolean isAllTranslated() {
+		return false;
+	}
+	
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
