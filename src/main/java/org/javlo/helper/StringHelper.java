@@ -4,6 +4,9 @@
 package org.javlo.helper;
 
 import java.awt.Color;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
@@ -4558,6 +4561,12 @@ public class StringHelper {
 			}
 		}
 		return out;
+	}
+	
+	public static void copyInClipbaord(String content) {
+		StringSelection stringSelection = new StringSelection(content);
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		clipboard.setContents(stringSelection, null);
 	}
 
 }
