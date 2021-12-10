@@ -1,6 +1,7 @@
 package org.javlo.ecom;
 
 import java.io.Serializable;
+import java.util.logging.Logger;
 
 import org.javlo.component.ecom.ProductComponent;
 import org.javlo.component.image.IImageTitle;
@@ -12,6 +13,8 @@ import org.javlo.navigation.MenuElement;
 import org.owasp.encoder.Encode;
 
 public class Product {
+	
+	private static Logger logger = Logger.getLogger(Product.class.getName());
 
 	public static final class ProductBean implements Serializable {
 		private String id;
@@ -200,13 +203,14 @@ public class Product {
 	}
 
 	private final ProductComponent comp;
-	private ProductComponent refComp;
+	private final ProductComponent refComp;
 
 	public Product(ProductComponent comp, ProductComponent refComp) {
 		this.comp = comp;
 		if (refComp != null) {
 			this.refComp = refComp;
 		} else {
+			logger.severe("refComp not found.");
 			this.refComp = comp;
 		}
 		if (comp != null && comp.getComponentBean() != null) {
