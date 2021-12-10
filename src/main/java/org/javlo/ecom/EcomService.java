@@ -204,7 +204,7 @@ public class EcomService {
 		List<ProductBean> out = new LinkedList<>();
 		List<IContentVisualComponent> comps = ContentService.getInstance(ctx.getGlobalContext()).getComponentByType(ctx, ProductComponent.TYPE);
 		for(IContentVisualComponent comp : comps) {
-			Product product = new Product((ProductComponent)comp);
+			Product product = new Product((ProductComponent)comp, (ProductComponent)comp.getReferenceComponent(ctx));
 			MenuElement page = comp.getPage();
 			IImageTitle img = page.getImage(ctx);
 			if (img != null) {
@@ -222,7 +222,7 @@ public class EcomService {
 			ctx.setAllLanguage(lg);
 			List<IContentVisualComponent> comps = ContentService.getInstance(ctx.getGlobalContext()).getComponentByType(lgCtx, ProductComponent.TYPE);
 			for(IContentVisualComponent comp : comps) {
-				out.add(new Product((ProductComponent)comp).getBean(ctx));
+				out.add(new Product((ProductComponent)comp, (ProductComponent)comp.getReferenceComponent(ctx)).getBean(ctx));
 			}
 		}
 		return out;
@@ -231,7 +231,7 @@ public class EcomService {
 	public ProductBean getProducts(ContentContext ctx, String id) throws Exception {
 		List<IContentVisualComponent> comps = ContentService.getInstance(ctx.getGlobalContext()).getComponentByType(ctx, ProductComponent.TYPE);
 		for(IContentVisualComponent comp : comps) {
-			ProductBean bean = new Product((ProductComponent)comp).getBean(ctx);
+			ProductBean bean = new Product((ProductComponent)comp, (ProductComponent)comp.getReferenceComponent(ctx)).getBean(ctx);
 			if (bean.getId().equals(id)) {
 				return bean;
 			}
@@ -243,7 +243,7 @@ public class EcomService {
 		List<ProductBean> out = new LinkedList<>();
 		List<IContentVisualComponent> comps = ContentService.getInstance(ctx.getGlobalContext()).getComponentByType(ctx, ProductComponent.TYPE);
 		for (IContentVisualComponent comp : comps) {
-			Product product = new Product((ProductComponent)comp);
+			Product product = new Product((ProductComponent)comp, (ProductComponent)comp.getReferenceComponent(ctx));
 			MenuElement page = comp.getPage();
 			if (page.isActive(ctx)) {
 				IImageTitle img = page.getImage(ctx);
@@ -263,7 +263,7 @@ public class EcomService {
 		if (page != null) {
 			List<IContentVisualComponent> comps = page.getContentByType(ctx, ProductComponent.TYPE);
 			if (comps.size() > 0) {
-				return new Product((ProductComponent)comps.get(0)).getBean(ctx);
+				return new Product((ProductComponent)comps.get(0), (ProductComponent)comps.get(0).getReferenceComponent(ctx)).getBean(ctx);
 			}
 		}
 		return null;

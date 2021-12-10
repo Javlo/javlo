@@ -944,4 +944,8 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 * @param ctx
 	 */
 	public void forceInit(ComponentBean bean, ContentContext ctx) throws Exception;
+	
+	/** reference to the same component in default language */
+	public IContentVisualComponent getReferenceComponent(ContentContext ctx) throws Exception;
+	
 }

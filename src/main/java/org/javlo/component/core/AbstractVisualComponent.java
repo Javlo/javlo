@@ -329,6 +329,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	 * 
 	 * @throws Exception
 	 */
+	@Override
 	public IContentVisualComponent getReferenceComponent(ContentContext ctx) throws Exception {
 		if (ctx.getRequestContentLanguage().equals(ctx.getGlobalContext().getDefaultLanguage())) {
 			return this;
