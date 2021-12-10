@@ -441,7 +441,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 			IContentVisualComponent comp = content.getComponent(ctx, cid);
 			if ((comp != null) && (comp instanceof ProductComponent)) {
 				ProductComponent pComp = (ProductComponent) comp;
-				Product product = new Product(pComp);
+				Product product = new Product(pComp, (ProductComponent)pComp.getReferenceComponent(ctx));
 
 				if (StringHelper.isDigit(rs.getParameter("price"))) {
 					product.setPrice(Double.parseDouble(rs.getParameter("price")));
@@ -488,9 +488,10 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 		return null;
 	}
 
+	@Override
 	public ProductBean getProductBean(ContentContext ctx) {
 		try {
-			return new Product(this).getBean(ctx);
+			return new Product(this, (ProductComponent)getReferenceComponent(ctx)).getBean(ctx);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

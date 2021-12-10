@@ -200,9 +200,15 @@ public class Product {
 	}
 
 	private final ProductComponent comp;
+	private ProductComponent refComp;
 
-	public Product(ProductComponent comp) {
+	public Product(ProductComponent comp, ProductComponent refComp) {
 		this.comp = comp;
+		if (refComp != null) {
+			this.refComp = refComp;
+		} else {
+			this.refComp = comp;
+		}
 		if (comp != null && comp.getComponentBean() != null) {
 			this.lang = comp.getComponentBean().getLanguage();
 		}
@@ -292,17 +298,17 @@ public class Product {
 	}
 
 	public double getWeight() {
-		return comp.getWeight();
+		return refComp.getWeight();
 	}
 
 	public double getPrice() {
-		if (comp == null) {
+		if (refComp == null) {
 			return -1;
 		} else {
-			if (comp.getPrice() == 0) {
+			if (refComp.getPrice() == 0) {
 				return price;
 			} else {
-				return comp.getPrice();
+				return refComp.getPrice();
 			}
 		}
 	}
@@ -321,15 +327,15 @@ public class Product {
 	}
 
 	public double getReduction() {
-		if (comp == null) {
+		if (refComp == null) {
 			return -1;
 		} else {
-			return comp.getReduction();
+			return refComp.getReduction();
 		}
 	}
 
 	public double getVAT() {
-		return comp.getVAT();
+		return refComp.getVAT();
 	}
 
 	public int getQuantity() {
