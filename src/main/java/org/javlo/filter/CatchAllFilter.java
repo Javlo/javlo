@@ -164,6 +164,10 @@ public class CatchAllFilter implements Filter {
 		} else {
 			globalContext.touch();
 		}
+		
+		if (globalContext.isForcedHttps()) {
+			((HttpServletResponse) response).setHeader("Strict-Transport-Security", "max-age=3628800");
+		}
 
 		if (StringHelper.isTrue(request.getParameter(ContentContext.FORWARD_AJAX))) {
 			try {
