@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	version="2.5" metadata-complete="true">
-	
-	 <error-page>
-       <error-code>404</error-code>
-       <location>/error-404.jsp</location>
-     </error-page>
+
+	<error-page>
+		<error-code>404</error-code>
+		<location>/error-404.jsp</location>
+	</error-page>
 
 	<filter>
 		<filter-name>CharsetFilter</filter-name>
@@ -35,7 +36,7 @@
 		<filter-name>cssCompilation</filter-name>
 		<url-pattern>*.css</url-pattern>
 	</filter-mapping>
-	
+
 	<filter>
 		<filter-name>JSMergeFilter</filter-name>
 		<filter-class>org.javlo.filter.JSMergeFilter</filter-class>
@@ -44,7 +45,7 @@
 		<filter-name>JSMergeFilter</filter-name>
 		<url-pattern>*.js</url-pattern>
 	</filter-mapping>
-	
+
 	<filter>
 		<filter-name>CatchAll</filter-name>
 		<filter-class>org.javlo.filter.CatchAllFilter</filter-class>
@@ -53,7 +54,7 @@
 		<filter-name>CatchAll</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	
+
 	<servlet>
 		<servlet-name>DataDocServlet</servlet-name>
 		<servlet-class>org.javlo.servlet.DataDocServlet</servlet-class>
@@ -63,7 +64,7 @@
 		<servlet-name>DataDocServlet</servlet-name>
 		<url-pattern>/datadoc/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>StatusServlet</servlet-name>
 		<servlet-class>org.javlo.servlet.status.StatusServlet</servlet-class>
@@ -83,7 +84,7 @@
 		<servlet-name>AccessServlet</servlet-name>
 		<url-pattern>/view/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet-mapping>
 		<servlet-name>AccessServlet</servlet-name>
 		<url-pattern>/preview/*</url-pattern>
@@ -120,7 +121,7 @@
 		<servlet-name>ProxyServlet</servlet-name>
 		<url-pattern>/proxy/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>mfb</servlet-name>
 		<servlet-class>org.javlo.servlet.MailingFeedback</servlet-class>
@@ -150,7 +151,7 @@
 		<servlet-name>VFSServlet</servlet-name>
 		<url-pattern>/vfs/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>MimeType</servlet-name>
 		<servlet-class>org.javlo.servlet.MimeTypeServlet</servlet-class>
@@ -190,7 +191,7 @@
 	<servlet-mapping>
 		<servlet-name>SiteMapServlet</servlet-name>
 		<url-pattern>/sitemap.json</url-pattern>
-		<url-pattern>/sitemap.xml</url-pattern>		
+		<url-pattern>/sitemap.xml</url-pattern>
 		<url-pattern>/images-sitemap.xml</url-pattern>
 		<url-pattern>/news-sitemap.xml</url-pattern>
 		<url-pattern>/sitemap/*</url-pattern>
@@ -206,12 +207,12 @@
 		<servlet-name>oauth2callback</servlet-name>
 		<url-pattern>/oauth2callback</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet-mapping>
 		<servlet-name>oauth2callback</servlet-name>
 		<url-pattern>/oauth2callback_admin</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet-mapping>
 		<servlet-name>oauth2callback</servlet-name>
 		<url-pattern>/oauth2callback_popup</url-pattern>
@@ -226,7 +227,7 @@
 		<servlet-name>ZIPServlet</servlet-name>
 		<url-pattern>/zip/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>rest</servlet-name>
 		<servlet-class>org.javlo.servlet.RestDataServlet</servlet-class>
@@ -279,7 +280,7 @@
 	<servlet-mapping>
 		<servlet-name>resource</servlet-name>
 		<url-pattern>/resource/*</url-pattern>
-	</servlet-mapping>	
+	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>resource</servlet-name>
 		<url-pattern>/favicon.ico</url-pattern>
@@ -288,8 +289,8 @@
 		<servlet-name>resource</servlet-name>
 		<url-pattern>/robots.txt</url-pattern>
 	</servlet-mapping>
-	
-	
+
+
 	<servlet>
 		<servlet-name>file</servlet-name>
 		<servlet-class>org.javlo.servlet.FileServlet</servlet-class>
@@ -353,7 +354,7 @@
 		<servlet-name>context</servlet-name>
 		<url-pattern>/context/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>webaction</servlet-name>
 		<servlet-class>org.javlo.servlet.WebAction</servlet-class>
@@ -437,10 +438,10 @@
 		<servlet-name>ServletWrapper</servlet-name>
 		<url-pattern>/wrapper/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 
-	<servlet-name>H2Console</servlet-name>
+		<servlet-name>H2Console</servlet-name>
 		<servlet-class>org.h2.server.web.WebServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
@@ -462,5 +463,13 @@
 		</auth-constraint> <user-data-constraint> <transport-guarantee>NONE</transport-guarantee> 
 		</user-data-constraint> </security-constraint> <login-config> <auth-method>BASIC</auth-method> 
 		</login-config> -->
+
+	<session-config>
+		<session-timeout>30</session-timeout>
+		<cookie-config>
+			<http-only>true</http-only>
+			<secure>true</secure>
+		</cookie-config>
+	</session-config>
 
 </web-app>
