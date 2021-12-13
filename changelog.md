@@ -880,6 +880,7 @@ Security in case of vulnerabilities.
   - update only one language (upload xml content)
   - anti spam in genric form
   - insert jsp name in dv mode
+  - security : HSTS
 ### Modified
   - prodcut (ecom) translation of label
   - product component, link to renderer
