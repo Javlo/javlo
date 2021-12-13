@@ -45,16 +45,18 @@ public class DuplicatePage extends AbstractMacro {
 		MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, parent, newPageName, false, false);
 		newPage.setTemplateId(page.getTemplateId());
 		ContentContext noAreaCtx = ctx.getContextWithoutArea();
-		ContentElementList comps = page.getContent(noAreaCtx);
-		
-		String parentId = "0";
-		while (comps.hasNext(noAreaCtx)) {
-			IContentVisualComponent next = comps.next(noAreaCtx);
-			if (!next.isRepeat() || next.getPage().equals(parent)) {
-				if (isMirroredContent(ctx)) {
-					parentId = content.createContentMirrorIfNeeded(noAreaCtx.getContextWidthOtherRequestLanguage(next.getComponentBean().getLanguage()), newPage, next, parentId, false);
-				} else {
-					parentId = content.createContent(noAreaCtx.getContextWidthOtherRequestLanguage(next.getComponentBean().getLanguage()), newPage, next.getComponentBean(), parentId, false);
+		for (String lg : ctx.getGlobalContext().getContentLanguages()) {
+			noAreaCtx.setContentLanguage(lg);
+			ContentElementList comps = page.getContent(noAreaCtx);		
+			String parentId = "0";
+			while (comps.hasNext(noAreaCtx)) {
+				IContentVisualComponent next = comps.next(noAreaCtx);
+				if (!next.isRepeat() || next.getPage().equals(parent)) {
+					if (isMirroredContent(ctx)) {
+						parentId = content.createContentMirrorIfNeeded(noAreaCtx.getContextWidthOtherRequestLanguage(next.getComponentBean().getLanguage()), newPage, next, parentId, false);
+					} else {
+						parentId = content.createContent(noAreaCtx.getContextWidthOtherRequestLanguage(next.getComponentBean().getLanguage()), newPage, next.getComponentBean(), parentId, false);
+					}
 				}
 			}
 		}

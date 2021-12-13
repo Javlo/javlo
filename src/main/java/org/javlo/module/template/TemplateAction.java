@@ -710,6 +710,7 @@ public class TemplateAction extends AbstractModuleAction {
 		}
 
 		String urlStr = rs.getParameter("url", "");
+		
 		if (urlStr.trim().length() > 0) {
 			URL url = new URL(urlStr);
 			InputStream in = url.openConnection().getInputStream();
