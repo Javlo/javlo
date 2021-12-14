@@ -276,7 +276,12 @@ public class ContentService implements IPrintInfo {
 			if (comp != null) {
 				// if mirror to same page --> move mirror
 				if (comp.getPage().getId().equals(sourcePage.getId())) {
+					System.out.println(">>>>>>>>> ContentService.createContent : mirror to translate found"); //TODO: remove debug trace
 					mirrorNeedMoving.put(comp.getId(), (MirrorComponent) ContentService.getInstance(ctx.getGlobalContext()).getComponent(ctx, bean.getId()));
+				} else {
+					System.out.println(">>>>>>>>> ContentService.createContent : comp.getPage() = "+comp.getPage().getPath()); //TODO: remove debug trace
+					System.out.println(">>>>>>>>> ContentService.createContent : ctx.getCurrentPage() = "+ctx.getCurrentPage().getPath()); //TODO: remove debug trace
+					System.out.println(">>>>>>>>> ContentService.createContent : not same page"); //TODO: remove debug trace
 				}
 			} else {
 				logger.warning("component not found : "+compSrcId);
