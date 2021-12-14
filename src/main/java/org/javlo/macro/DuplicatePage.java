@@ -1,6 +1,7 @@
 package org.javlo.macro;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -48,7 +49,7 @@ public class DuplicatePage extends AbstractMacro {
 		newPage.setTemplateId(page.getTemplateId());
 		ContentContext noAreaCtx = ctx.getContextWithoutArea();
 		Map<String,String> compTranslation = new HashMap<>();
-		Map<String, MirrorComponent> outTranslation = new HashMap<>();
+		Map<String, Collection<MirrorComponent>> outTranslation = new HashMap<>();
 		for (String lg : ctx.getGlobalContext().getContentLanguages()) {
 			noAreaCtx.setContentLanguage(lg);
 			ContentElementList comps = page.getContent(noAreaCtx);		
@@ -70,7 +71,9 @@ public class DuplicatePage extends AbstractMacro {
 		for (String id : compTranslation.keySet()) {
 			if (outTranslation.get(id) != null) {
 				System.out.println(">>>>>>>>> DuplicatePage.duplicatePage : translate : "+id+" --> "+compTranslation.get(id)); //TODO: remove debug trace
-				outTranslation.get(id).setValue(compTranslation.get(id));
+				for (MirrorComponent comp : outTranslation.get(id)) {
+					comp.setValue(compTranslation.get(id));
+				}
 			}
 		}
 		

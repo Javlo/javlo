@@ -255,7 +255,7 @@ public class ContentService implements IPrintInfo {
 		return createContent(ctx, page, inBean, parentId, releaseCache, null, null);
 	}
 
-	public String createContent(ContentContext ctx, MenuElement page, ComponentBean inBean, String parentId, boolean releaseCache, MenuElement sourcePage, Map<String, MirrorComponent> mirrorNeedMoving) throws Exception {
+	public String createContent(ContentContext ctx, MenuElement page, ComponentBean inBean, String parentId, boolean releaseCache, MenuElement sourcePage, Map<String, Collection<MirrorComponent>> mirrorNeedMoving) throws Exception {
 		String id = StringHelper.getRandomId();
 		String lg = inBean.getLanguage();
 		if (lg == null) {
@@ -276,8 +276,12 @@ public class ContentService implements IPrintInfo {
 			if (comp != null) {
 				// if mirror to same page --> move mirror
 				if (comp.getPage().getId().equals(sourcePage.getId())) {
-					System.out.println(">>>>>>>>> ContentService.createContent : mirror to translate found"); //TODO: remove debug trace
-					mirrorNeedMoving.put(comp.getId(), (MirrorComponent) ContentService.getInstance(ctx.getGlobalContext()).getComponent(ctx, bean.getId()));
+					System.out.println(">>>>>>>>> ContentService.createContent : mirror to translate found in "+ctx.getContentLanguage()); //TODO: remove debug trace
+					MirrorComponent mComp = (MirrorComponent) ContentService.getInstance(ctx.getGlobalContext()).getComponent(ctx, bean.getId());
+					if (mirrorNeedMoving.get(mComp.getValue()) == null) {
+						mirrorNeedMoving.put(mComp.getValue(), new LinkedList<>());
+					}
+					mirrorNeedMoving.get(mComp.getValue()).add(mComp);
 				} else {
 					System.out.println(">>>>>>>>> ContentService.createContent : comp.getPage() = "+comp.getPage().getPath()); //TODO: remove debug trace
 					System.out.println(">>>>>>>>> ContentService.createContent : ctx.getCurrentPage() = "+ctx.getCurrentPage().getPath()); //TODO: remove debug trace
