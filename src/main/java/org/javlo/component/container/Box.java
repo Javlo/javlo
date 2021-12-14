@@ -309,13 +309,13 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		}
 		boolean close = false;
 		/* auto */
-		if (getColumnSize() == 0) {
+		if (getColumnSize(ctx) == 0) {
 			ctx.setColumnableSize(0, ctx.getColumnableDepth());
 			return true;
 		}
-		ctx.setColumnableSize(ctx.getColumnableSize(ctx.getColumnableDepth()) + getColumnSize(), ctx.getColumnableDepth());
+		ctx.setColumnableSize(ctx.getColumnableSize(ctx.getColumnableDepth()) + getColumnSize(ctx), ctx.getColumnableDepth());
 		if (next != null) {
-			if (ctx.getColumnableSize(ctx.getColumnableDepth()) + next.getColumnSize() > max || next.getColumnSize() < 0 || !next.isColumnable(ctx)) {
+			if (ctx.getColumnableSize(ctx.getColumnableDepth()) + next.getColumnSize(ctx) > max || next.getColumnSize(ctx) < 0 || !next.isColumnable(ctx)) {
 				close = true;
 				ctx.setColumnableSize(0, ctx.getColumnableDepth());
 			}

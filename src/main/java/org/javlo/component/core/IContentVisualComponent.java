@@ -913,7 +913,7 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 * get the size of the column, the column contains the component
 	 * @return
 	 */
-	public int getColumnSize();
+	public int getColumnSize(ContentContext ctx);
 	
 	/**
 	 * set the size of the column, the column contains the component

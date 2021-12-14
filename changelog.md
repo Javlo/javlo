@@ -892,3 +892,4 @@ Security in case of vulnerabilities.
   - correct the day generator
   - vat calcul
   - delete image in cache with format change
+  - column with mirror component correction

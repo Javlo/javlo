@@ -688,6 +688,21 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 	}
 	
 	@Override
+	public int getColumnSize(ContentContext ctx) {
+		IContentVisualComponent mcomp = null;
+		try {
+			mcomp = getMirrorComponent(ctx);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (mcomp != null) {
+			return mcomp.getColumnSize(ctx);
+		}
+		return super.getColumnSize(ctx);
+	}
+	
+	@Override
 	public String getPageDescription(ContentContext ctx) {
 		IContentVisualComponent comp;
 		try {

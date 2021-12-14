@@ -85,7 +85,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		if (getPreviousComponent() == null) {
 			setPreviousComponent(ComponentHelper.getPreviousComponent(this, ctx));
 		}
-		ctx.getRequest().setAttribute("colWidth", getColumnSize());
+		ctx.getRequest().setAttribute("colWidth", getColumnSize(ctx));
 		super.prepareView(ctx);
 	}
 

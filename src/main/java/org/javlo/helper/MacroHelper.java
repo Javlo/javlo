@@ -495,7 +495,7 @@ public class MacroHelper {
 						IContentVisualComponent newComp = contentService.getComponent(lgCtx, parentId);
 						if (newComp != null) {
 							newComp.setStyle(lgCtx, comp.getStyle());
-							newComp.setColumnSize(comp.getColumnSize());
+							newComp.setColumnSize(comp.getColumnSize(ctx));
 							newComp.setList(comp.isList(ctxNoArea));
 							newComp.setDisplayHidden(comp.isDisplayHidden());
 							newComp.setRepeat(comp.isRepeat());
