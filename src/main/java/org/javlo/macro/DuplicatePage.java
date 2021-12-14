@@ -1,11 +1,13 @@
 package org.javlo.macro;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.links.MirrorComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.MacroHelper;
 import org.javlo.helper.NavigationHelper;
@@ -45,6 +47,8 @@ public class DuplicatePage extends AbstractMacro {
 		MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, parent, newPageName, false, false);
 		newPage.setTemplateId(page.getTemplateId());
 		ContentContext noAreaCtx = ctx.getContextWithoutArea();
+		Map<String,String> compTranslation = new HashMap<>();
+		Map<String, MirrorComponent> outTranslation = new HashMap<>();
 		for (String lg : ctx.getGlobalContext().getContentLanguages()) {
 			noAreaCtx.setContentLanguage(lg);
 			ContentElementList comps = page.getContent(noAreaCtx);		
@@ -55,9 +59,15 @@ public class DuplicatePage extends AbstractMacro {
 					if (isMirroredContent(ctx)) {
 						parentId = content.createContentMirrorIfNeeded(noAreaCtx.getContextWidthOtherRequestLanguage(next.getComponentBean().getLanguage()), newPage, next, parentId, false);
 					} else {
-						parentId = content.createContent(noAreaCtx.getContextWidthOtherRequestLanguage(next.getComponentBean().getLanguage()), newPage, next.getComponentBean(), parentId, false);
+						parentId = content.createContent(noAreaCtx.getContextWidthOtherRequestLanguage(next.getComponentBean().getLanguage()), newPage, next.getComponentBean(), parentId, false, page, outTranslation);
+						compTranslation.put(next.getId(), parentId); // old id > new id (for mirror component translation)
 					}
 				}
+			}
+		}
+		for (String id : compTranslation.keySet()) {
+			if (outTranslation.get(id) != null) {
+				outTranslation.get(id).setValue(compTranslation.get(id));
 			}
 		}
 		

@@ -252,6 +252,10 @@ public class ContentService implements IPrintInfo {
 	}
 
 	public String createContent(ContentContext ctx, MenuElement page, ComponentBean inBean, String parentId, boolean releaseCache) throws Exception {
+		return createContent(ctx, page, inBean, parentId, releaseCache, null, null);
+	}
+
+	public String createContent(ContentContext ctx, MenuElement page, ComponentBean inBean, String parentId, boolean releaseCache, MenuElement sourcePage, Map<String, MirrorComponent> mirrorNeedMoving) throws Exception {
 		String id = StringHelper.getRandomId();
 		String lg = inBean.getLanguage();
 		if (lg == null) {
@@ -265,6 +269,20 @@ public class ContentService implements IPrintInfo {
 		}
 		bean.setAuthors(ctx.getCurrentUserId());
 		page.addContent(parentId, bean, releaseCache);
+		
+		if (bean.getType().equals(MirrorComponent.TYPE) && mirrorNeedMoving != null && sourcePage != null) {
+			String compSrcId = bean.getValue();
+			IContentVisualComponent comp = ContentService.getInstance(ctx.getGlobalContext()).getComponent(ctx, compSrcId);
+			if (comp != null) {
+				// if mirror to same page --> move mirror
+				if (comp.getPage().getId().equals(sourcePage.getId())) {
+					mirrorNeedMoving.put(comp.getId(), (MirrorComponent) ContentService.getInstance(ctx.getGlobalContext()).getComponent(ctx, bean.getId()));
+				}
+			} else {
+				logger.warning("component not found : "+compSrcId);
+			}
+		}
+		
 		return id;
 	}
 
@@ -292,7 +310,7 @@ public class ContentService implements IPrintInfo {
 		bean.setCookiesDisplayStatus(inBean.getCookiesDisplayStatus());
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		MenuElement elem = NavigationHelper.searchPage(ctx, rs.getParameter("pageContainerID", null));
-		
+
 		if (elem == null) {
 			elem = ctx.getCurrentPage();
 			if (elem.isChildrenAssociation() && elem.getChildMenuElements().size() > 0) {
@@ -616,11 +634,11 @@ public class ContentService implements IPrintInfo {
 	 * return all the content.
 	 */
 	public MenuElement getNavigation(ContentContext ctx) {
-		
+
 		MenuElement res = null;
 		try {
-				GlobalContext globalContext = ctx.getGlobalContext();
-	
+			GlobalContext globalContext = ctx.getGlobalContext();
+
 			if (ctx.getRenderMode() == ContentContext.TIME_MODE && globalContext.getTimeTravelerContext().getTravelTime() != null) {
 				if (timeTravelerNav == null) {
 					Date timeTravelDate = globalContext.getTimeTravelerContext().getTravelTime();
@@ -687,8 +705,8 @@ public class ContentService implements IPrintInfo {
 				}
 			}
 		} catch (Exception e) {
-			String traceCode = StringHelper.getRandomId();			
-			ctx.getGlobalContext().GLOBAL_ERROR = "["+traceCode+"] error load mode="+ctx.getRenderMode()+"(zip:"+ctx.getGlobalContext().getSpecialConfig().isStorageZipped()+", pwd?:"+!StringHelper.isEmpty(ctx.getGlobalContext().getSpecialConfig().getSecureEncryptPassword())+") ["+e.getMessage()+"]";
+			String traceCode = StringHelper.getRandomId();
+			ctx.getGlobalContext().GLOBAL_ERROR = "[" + traceCode + "] error load mode=" + ctx.getRenderMode() + "(zip:" + ctx.getGlobalContext().getSpecialConfig().isStorageZipped() + ", pwd?:" + !StringHelper.isEmpty(ctx.getGlobalContext().getSpecialConfig().getSecureEncryptPassword()) + ") [" + e.getMessage() + "]";
 			logger.severe(ctx.getGlobalContext().GLOBAL_ERROR);
 			e.printStackTrace();
 			NotificationService.getInstance(ctx.getGlobalContext()).addNotification(ctx.getGlobalContext().GLOBAL_ERROR, GenericMessage.ERROR, ctx.getCurrentUserId(), true);
