@@ -66,11 +66,8 @@ public class DuplicatePage extends AbstractMacro {
 				}
 			}
 		}
-		System.out.println(">>>>>>>>> DuplicatePage.duplicatePage : #outTranslation = "+outTranslation.size()); //TODO: remove debug trace
-		System.out.println(">>>>>>>>> DuplicatePage.duplicatePage : #compTranslation = "+compTranslation.size()); //TODO: remove debug trace
 		for (String id : compTranslation.keySet()) {
 			if (outTranslation.get(id) != null) {
-				System.out.println(">>>>>>>>> DuplicatePage.duplicatePage : translate : "+id+" --> "+compTranslation.get(id)); //TODO: remove debug trace
 				for (MirrorComponent comp : outTranslation.get(id)) {
 					comp.setValue(compTranslation.get(id));
 				}
