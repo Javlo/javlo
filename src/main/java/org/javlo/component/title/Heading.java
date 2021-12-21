@@ -205,6 +205,9 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 			if (style.length() > 0) {
 				style = " style=\"" + style + "\"";
 			}
+			
+			link = URLHelper.replacePageReference(ctx, link);
+			
 			return "<a" + style + " href=\"" + link + "\"" + target + ">" + getTitle(ctx) + "</a>";
 		} else {
 			if (getBackgroundColor() != null && getBackgroundColor().length() > 2 && ctx.getGlobalContext().isMailing()) {
