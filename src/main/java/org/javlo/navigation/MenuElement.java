@@ -5756,10 +5756,12 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	public void setContentLanguage(String contentLanguage) {
 		this.contentLanguage = contentLanguage;
 	}
-	
+
 	/**
-	 * delete components 
-	 * @param lang the lang to be deleted (null if all lang)
+	 * delete components
+	 * 
+	 * @param lang
+	 *            the lang to be deleted (null if all lang)
 	 */
 	public void deleteComponent(String lang) {
 		if (lang == null) {
