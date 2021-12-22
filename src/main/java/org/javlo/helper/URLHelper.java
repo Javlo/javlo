@@ -1613,17 +1613,23 @@ public class URLHelper extends ElementaryURLHelper {
 	 * @throws Exception 
 	 */
 	public static String replacePageReference(ContentContext ctx, String text) throws Exception {
+		text += ' ';
 		Pattern pattern = Pattern.compile("(page:)(.+?)(>| |,|;|:|\\?)");
 		Matcher matcher = pattern.matcher(text);		
 		String outText = text;
 		while (matcher.find()) {
 			String group = matcher.group();
+			System.out.println(">>>>>>>>> URLHelper.replacePageReference : group = "+group); //TODO: remove debug trace
 			group = group.substring(0, group.length()-1);	
 			String pageName = group.replaceFirst("page:", "");
-			ContentContext htmlCtx = ctx.getContextWithOtherFormat("html");
-			outText = outText.replaceAll(group, URLHelper.createURLFromPageName(htmlCtx, pageName));
+			if (ctx != null) { // test
+				ContentContext htmlCtx = ctx.getContextWithOtherFormat("html");
+				outText = outText.replaceAll(group, URLHelper.createURLFromPageName(htmlCtx, pageName));
+			} else {
+				outText = outText.replaceAll(group, "/"+pageName);
+			}
 		}
-		return outText;
+		return outText.substring(0, outText.length()-1); // remove space insered at start for matching
 	}
 	
 	/**
@@ -1685,8 +1691,12 @@ public class URLHelper extends ElementaryURLHelper {
 	}
 	
 	public static void main(String[] args) {
-		String enc = URLEncoder.encode("{{id}}");
-		System.out.println(enc);
+		try {
+			System.out.println(">> "+replacePageReference(null," page:product"));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
