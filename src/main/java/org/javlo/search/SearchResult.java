@@ -366,9 +366,11 @@ public class SearchResult {
 //				if (ctxWithContent != null) {
 					ContentElementList elemList = page.getLocalContentCopy(ctx);
 
-					searchText = inSearchText;
+					this.searchText = inSearchText;
 					int searchLevel = 0;
 					String searchText = StringHelper.createFileName(inSearchText).toLowerCase();
+					
+					System.out.println(">>>>>>>>> SearchResult.searchInPage : searchText = "+searchText); //TODO: remove debug trace
 
 					while (elemList.hasNext(ctx)) {
 						IContentVisualComponent cpt = elemList.next(ctx);
@@ -382,6 +384,10 @@ public class SearchResult {
 							}
 						}
 					}
+					
+					int cptSearchLevel = StringUtils.countMatches(page.getName(), searchText) * IContentVisualComponent.SEARCH_LEVEL_NONE;
+					searchLevel = searchLevel + cptSearchLevel;
+					
 					if (searchLevel != 0) {
 						addResult(ctx, page, inSearchText, page.getName(), page.getFullLabel(ctx), URLHelper.createURL(ctx, page.getPath()), page.getDescriptionAsText(ctx), searchLevel);
 					}
