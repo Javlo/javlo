@@ -370,22 +370,20 @@ public class SearchResult {
 					int searchLevel = 0;
 					String searchText = StringHelper.createFileName(inSearchText).toLowerCase();
 					
-					System.out.println(">>>>>>>>> SearchResult.searchInPage : searchText = "+searchText); //TODO: remove debug trace
-
 					while (elemList.hasNext(ctx)) {
 						IContentVisualComponent cpt = elemList.next(ctx);
 
 						if (componentType == null || componentType.contains(cpt.getType())) {
 							if (cpt.getSearchLevel() > 0) {
 								String compSearchText = StringHelper.createFileName(cpt.getTextForSearch(ctx)).toLowerCase();
-
+								compSearchText = compSearchText.replace(' ','-');
 								int cptSearchLevel = StringUtils.countMatches(compSearchText, searchText) * cpt.getSearchLevel();
 								searchLevel = searchLevel + cptSearchLevel;
 							}
 						}
 					}
 					
-					int cptSearchLevel = StringUtils.countMatches(page.getName(), searchText) * IContentVisualComponent.SEARCH_LEVEL_NONE;
+					int cptSearchLevel = StringUtils.countMatches(page.getName(), searchText) * IContentVisualComponent.SEARCH_LEVEL_HIGH;
 					searchLevel = searchLevel + cptSearchLevel;
 					
 					if (searchLevel != 0) {
