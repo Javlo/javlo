@@ -383,7 +383,7 @@ public class SearchResult {
 						}
 					}
 					
-					int cptSearchLevel = StringUtils.countMatches(page.getName(), searchText) * IContentVisualComponent.SEARCH_LEVEL_HIGH;
+					int cptSearchLevel = StringUtils.countMatches(page.getName(), searchText) * IContentVisualComponent.SEARCH_LEVEL_MIDDLE;
 					searchLevel = searchLevel + cptSearchLevel;
 					
 					if (searchLevel != 0) {
