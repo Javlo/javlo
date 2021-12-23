@@ -174,6 +174,17 @@ public class ComponentHelper {
 	}
 
 	public static void moveComponent(ContentContext ctx, IContentVisualComponent comp, IContentVisualComponent newPrevious, MenuElement targetPage, String area) throws Exception {
+		
+		if (comp == null) {
+			logger.severe("comp null");
+			return;
+		}
+		
+		if (comp.getPage() == null) {
+			logger.warning("page not found in comp : "+comp);
+			return;
+		}
+		
 		comp.getPage().removeContent(ctx, comp.getId());
 		comp.getComponentBean().setArea(area);
 		ComponentBean newComp = comp.getComponentBean();
@@ -201,8 +212,10 @@ public class ComponentHelper {
 			moveComponent(ctx, comp, newPrevious, targetPage, area);
 		} else if (comp instanceof IContainer) {
 			if (!((IContainer) comp).isOpen(ctx)) {
+				System.out.println(">>>>>>>>> ComponentHelper.smartMoveComponent : close"); //TODO: remove debug trace
 				moveComponent(ctx, comp, newPrevious, targetPage, area);
 			} else {
+				System.out.println(">>>>>>>>> ComponentHelper.smartMoveComponent : open"); //TODO: remove debug trace
 				String openType = comp.getType();
 				IContentVisualComponent nextComp = comp;
 				List<IContentVisualComponent> componentToMove = new LinkedList<IContentVisualComponent>();
