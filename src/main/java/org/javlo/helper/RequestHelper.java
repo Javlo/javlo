@@ -4,6 +4,12 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.javlo.context.ContentContext;
+import org.javlo.i18n.I18nAccess;
+import org.javlo.i18n.RequestI18nAccess;
+import org.javlo.service.ListService;
+import org.javlo.service.exception.ServiceException;
+
 public class RequestHelper {
 	
 	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(RequestHelper.class.getName());
@@ -74,6 +80,18 @@ public class RequestHelper {
 	
 	public static final void setJSONType(HttpServletResponse response) {
 		response.setContentType("application/json");
+	}
+	
+	public static final void initRequestAttributes(ContentContext ctx) throws ServiceException, Exception {
+		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
+		if (ctx.getCurrentPage() != null) {
+			i18nAccess.setRequestMap(ctx.getCurrentPage().getI18n(ctx));
+		}
+		ctx.getRequest().setAttribute("vi18n", new RequestI18nAccess(ctx, i18nAccess, false));
+		ctx.getRequest().setAttribute("vi18nAttribute", new RequestI18nAccess(ctx, i18nAccess, true));
+		i18nAccess.requestInit(ctx);
+		ctx.getRequest().setAttribute("list", ListService.getInstance(ctx).getAllList(ctx));
+		ctx.getRequest().setAttribute("sortedList", ListService.getInstance(ctx).getAllListSorted(ctx));
 	}
 
 }

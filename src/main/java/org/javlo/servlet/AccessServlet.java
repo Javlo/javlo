@@ -524,16 +524,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				//logger.debug("device : " + ctx.getDevice());
 			}
 
-			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
-			if (ctx.getCurrentPage() != null) {
-				i18nAccess.setRequestMap(ctx.getCurrentPage().getI18n(ctx));
-			}
-			request.setAttribute("vi18n", new RequestI18nAccess(ctx, i18nAccess, false));
-			request.setAttribute("vi18nAttribute", new RequestI18nAccess(ctx, i18nAccess, true));
-
-			i18nAccess.requestInit(ctx);
-			ctx.getRequest().setAttribute("list", ListService.getInstance(ctx).getAllList(ctx));
-			ctx.getRequest().setAttribute("sortedList", ListService.getInstance(ctx).getAllListSorted(ctx));
+			RequestHelper.initRequestAttributes(ctx);
 
 			/* ******** */
 			/* SECURITY */
@@ -652,7 +643,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			 */
 
 			localLogger.startCount("execute action");
-
+			
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 			if (ctx.getRenderMode() == ContentContext.EDIT_MODE) {
 
 				/*** update module status before action ***/
