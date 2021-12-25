@@ -461,6 +461,10 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 					quantityValue = quantityValue - (quantityValue % (int) pComp.getOffset(ctx));
 					product.setQuantity(quantityValue);
+					
+					if (quantityValue > pComp.getVirtualStock(ctx)) {
+						return i18nAccess.getViewText("ecom.error.no-stock");
+					}
 
 					Basket basket = Basket.getInstance(ctx);
 					if (basket.isLock()) {
