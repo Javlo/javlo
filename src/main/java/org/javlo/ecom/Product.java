@@ -1,19 +1,26 @@
 package org.javlo.ecom;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.mail.internet.InternetAddress;
+
+import org.apache.tools.ant.property.GetProperty;
 import org.javlo.component.ecom.ProductComponent;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.component.image.ImageTitleBean;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.navigation.MenuElement;
 import org.owasp.encoder.Encode;
 
 public class Product {
-	
+
 	private static Logger logger = Logger.getLogger(Product.class.getName());
 
 	public static final class ProductBean implements Serializable {
@@ -55,10 +62,10 @@ public class Product {
 			this.vat = vat;
 			this.weight = weight;
 		}
-		
+
 		@Override
 		public String toString() {
-			return getName()+" ("+getId()+")   Quantity:"+getQuantity()+"   Price:"+getPrice()+"   Reduction:"+getReduction()+"   vat:"+getVAT()+"   label:"+label;
+			return getName() + " (" + getId() + ")   Quantity:" + getQuantity() + "   Price:" + getPrice() + "   Reduction:" + getReduction() + "   vat:" + getVAT() + "   label:" + label;
 		}
 
 		public String getId() {
@@ -80,11 +87,11 @@ public class Product {
 		public String getName() {
 			return name;
 		}
-		
+
 		public String getEspaceName() {
 			return Encode.forHtmlAttribute(name);
 		}
-		
+
 		public String getAttributeName() {
 			return StringHelper.doubleQutotes(name);
 		}
@@ -228,11 +235,31 @@ public class Product {
 		synchronized (comp) {
 			comp.setVirtualStock(ctx, comp.getVirtualStock(ctx) - getQuantity());
 			comp.setRealStock(ctx, comp.getRealStock(ctx) - getQuantity());
+			if (comp.getVirtualStock(ctx) < 1) {
+				
+				logger.warning("no stock available for : "+getLabel());
+				
+				Map<String, String> data = new LinkedHashMap<>();
+				data.put("name", getName());
+				data.put("label", getLabel());
+				data.put("price", getPriceString());
+				data.put("real stock", "" + comp.getRealStock(ctx));
+				data.put("available stock", "" + comp.getVirtualStock(ctx));
+				try {
+					String mailAdminContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), "No stock for : " + getLabel(), data, getPreviewUrl(), "product page >>", null, true);
+					InternetAddress addEmail = new InternetAddress(ctx.getGlobalContext().getAdministratorEmail());
+					NetHelper.sendMail(ctx.getGlobalContext(), addEmail, addEmail, null, null, "No stock for : " + getLabel(), mailAdminContent, "No stock for : " + getLabel(), true);
+				} catch (Exception e) {
+					logger.severe("pay mail error : " + e.getMessage());
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
 	private String id = null;
 	private String url;
+	private String previewUrl;
 	private String shortDescription;
 	private String longDescription;
 	private IImageTitle image;
@@ -249,7 +276,7 @@ public class Product {
 			return comp.getName();
 		}
 	}
-	
+
 	public String getLabel() {
 		if (comp == null) {
 			return fakeName;
@@ -261,7 +288,7 @@ public class Product {
 			return label;
 		}
 	}
-	
+
 	public void setFakeName(String name) {
 		fakeName = name;
 	}
@@ -316,7 +343,7 @@ public class Product {
 			}
 		}
 	}
-	
+
 	public double getReductionPrice() {
 		if (comp == null) {
 			return -1;
@@ -380,12 +407,12 @@ public class Product {
 	}
 
 	public String getTotalString() {
-		//return StringHelper.renderPrice(getTotal(), getCurrencyCode());
+		// return StringHelper.renderPrice(getTotal(), getCurrencyCode());
 		return Basket.renderPrice(lang, getTotal(), getCurrencyCode());
 	}
 
 	public static void main(String[] args) {
-		System.out.println(">> "+StringHelper.doubleQutotes("l'iliade"));
+		System.out.println(">> " + StringHelper.doubleQutotes("l'iliade"));
 	}
 
 	public ProductBean getBean(ContentContext ctx) throws Exception {
@@ -395,6 +422,14 @@ public class Product {
 
 	public void setPrice(double price) {
 		this.price = price;
+	}
+
+	public String getPreviewUrl() {
+		return previewUrl;
+	}
+
+	public void setPreviewUrl(String previewUrl) {
+		this.previewUrl = previewUrl;
 	}
 
 }

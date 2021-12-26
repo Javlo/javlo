@@ -335,9 +335,15 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return this;
 		}
 		int componentPosition = ComponentHelper.getComponentPosition(ctx, this);
+		
+		if (componentPosition == -1) {
+			logger.severe("bad component position : "+componentPosition+"  type="+getType()+"  area="+this.getArea());
+		}
+		
 		ContentContext lgCtx = ctx.getContextForDefaultLanguage();
 		IContentVisualComponent refComp = ComponentHelper.getComponentWidthPosition(lgCtx, getPage(), getArea(), getType(), componentPosition);
 		if (refComp == null) {
+			logger.warning("ref component not found : type="+getType()+"  position="+componentPosition);
 			return null;
 		} else {
 			return refComp;
@@ -3587,5 +3593,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 		return xhtml;
 	}
+	
+	@Override
+	public String toString() {	
+		if (getPage() != null) {
+			return "id:"+getId()+" type:"+getType()+" lang:"+getPage().getContentLanguage()+" page:"+getPage().getName()+" class:"+getClassName()+" hash:"+hashCode();
+		} else {
+			return "id:"+getId()+" type:"+getType()+" class:"+getClassName()+" hash:"+hashCode();
+		}
+	} 
 
 }

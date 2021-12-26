@@ -109,8 +109,8 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 		out.println("</thead>");
 		for (Product product : basket.getProducts()) {
 			out.println("<tr>");
-			//out.println("<td style=\"" + cellStyle + "\"><a href=\"" + product.getUrl() + "\">" + product.getName() + "</a></td>");
-			out.println("<td style=\"" + cellStyle + "\">" + product.getName() + "</td>");
+			out.println("<td style=\"" + cellStyle + "\"><a href=\"" + product.getUrl() + "\">" + product.getName() + "</a></td>");
+			//out.println("<td style=\"" + cellStyle + "\">" + product.getName() + "</td>");
 			out.println("<td style=\"" + cellStyle + "\">" + product.getQuantity() + "</td>");
 			double total = product.getPrice() * product.getQuantity();
 			out.println("<td style=\"" + cellStyle + "\">" + Basket.renderPrice(ctx, total / (1 + product.getVAT()), product.getCurrencyCode()) + "</td>");
@@ -175,7 +175,9 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 			params.put("customerPhone", StringHelper.toHTMLAttribute(basket.getCustomerPhone()));
 
 			params.put("deliveryDate", StringHelper.renderDate(basket.getDeliveryDate()));
-			params.put("deliveryDay", StringHelper.renderDay(basket.getDeliveryDate(), ctx.getRequestContentLanguage()));
+			if (basket.getDeliveryDate() != null) {
+				params.put("deliveryDay", StringHelper.renderDay(basket.getDeliveryDate(), ctx.getRequestContentLanguage()));
+			}
 			params.put("deliveryTime", StringHelper.renderTime(basket.getDeliveryDate()));
 			params.put("deliveryInstructions", basket.getDeliveryInstructions());
 

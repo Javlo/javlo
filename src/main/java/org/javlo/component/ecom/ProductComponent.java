@@ -17,6 +17,7 @@ import org.javlo.ecom.Basket;
 import org.javlo.ecom.EcomConfig;
 import org.javlo.ecom.Product;
 import org.javlo.ecom.Product.ProductBean;
+import org.javlo.helper.DebugHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
@@ -66,7 +67,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 	public String getName() {
 		return getFieldValue("name");
 	}
-	
+
 	public String getLabel() {
 		return getFieldValue("label");
 	}
@@ -108,7 +109,11 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 		if (!ctx.getGlobalContext().getEcomConfig().isStock()) {
 			return 1;
 		}
-		return getFieldLongValue("offset");
+		long offset = getFieldLongValue("offset");
+		if (offset < 1) {
+			offset = 1;
+		}
+		return offset;
 	}
 
 	public long getWeight() {
@@ -132,8 +137,9 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 			if (!ctx.getGlobalContext().getEcomConfig().isStock()) {
 				return MAX_STOCK;
 			}
-			loadViewData(ctx);
-			String value = getViewData(ctx).getProperty("stock");
+			ProductComponent refComp = (ProductComponent) getReferenceComponent(ctx);
+			refComp.loadViewData(ctx);
+			String value = refComp.getViewData(ctx).getProperty("stock");
 			return Long.valueOf(value);
 		} catch (Exception e) {
 			logger.log(Level.FINE, "invalid real stock, setting to zero...");
@@ -146,10 +152,17 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 		try {
 			if (!ctx.getGlobalContext().getEcomConfig().isStock()) {
 				return MAX_STOCK;
+			}			
+			ProductComponent refComp = (ProductComponent) getReferenceComponent(ctx);
+			refComp.loadViewData(ctx);
+			if (refComp != null) {
+				String value = refComp.getViewData(ctx).getProperty("virtual");
+				return Long.valueOf(value);
+			} else {
+				logger.severe("refComp not found.");
+				return -1;
 			}
-			loadViewData(ctx);
-			String value = getViewData(ctx).getProperty("virtual");
-			return Long.valueOf(value);
+
 		} catch (Exception e) {
 			logger.log(Level.FINE, "invalid virtual stock, setting to zero...");
 			setVirtualStock(ctx, 0);
@@ -159,18 +172,21 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 	public void setRealStock(ContentContext ctx, long realStock) {
 		try {
-			getViewData(ctx).setProperty("stock", String.valueOf(realStock));
-			storeViewData(ctx);
-		} catch (IOException e) {
+			ProductComponent refComp = (ProductComponent) getReferenceComponent(ctx);
+			refComp.getViewData(ctx).setProperty("stock", String.valueOf(realStock));
+			refComp.storeViewData(ctx);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void setVirtualStock(ContentContext ctx, long virtualStock) {
+		ProductComponent refComp;
 		try {
-			getViewData(ctx).put("virtual", String.valueOf(virtualStock));
-			storeViewData(ctx);
-		} catch (IOException e) {
+			refComp = (ProductComponent) getReferenceComponent(ctx);
+			refComp.getViewData(ctx).put("virtual", String.valueOf(virtualStock));
+			refComp.storeViewData(ctx);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -196,8 +212,8 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 		}
 
 		if (ctx.getGlobalContext().getEcomConfig().isStock()) {
-			renderField(ctx, out, "stock", 1, getRealStock(ctx), false);
-			renderField(ctx, out, "virtual", 1, getVirtualStock(ctx), false);
+			renderField(ctx, out, "stock", 1, getRealStock(ctx), true);
+			renderField(ctx, out, "virtual", 1, getVirtualStock(ctx), true);
 		}
 
 		out.println("</div></div>");
@@ -295,7 +311,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 			if (!StringHelper.isEmpty(getDescription())) {
 				ctx.getRequest().setAttribute("description", XHTMLHelper.textToXHTML(getDescription()));
 			}
-			ctx.getRequest().setAttribute("virtualStock", refComp.getVirtualStock(ctx));
+			ctx.getRequest().setAttribute("virtualStock", getVirtualStock(ctx));
 			ctx.getRequest().setAttribute("offset", refComp.getOffset(ctx));
 
 			if (!StringHelper.isEmpty(refComp.getSpecialLink())) {
@@ -441,14 +457,15 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 			IContentVisualComponent comp = content.getComponent(ctx, cid);
 			if ((comp != null) && (comp instanceof ProductComponent)) {
 				ProductComponent pComp = (ProductComponent) comp;
-				Product product = new Product(pComp, (ProductComponent)pComp.getReferenceComponent(ctx));
+				Product product = new Product(pComp, (ProductComponent) pComp.getReferenceComponent(ctx));
 
 				if (StringHelper.isDigit(rs.getParameter("price"))) {
 					product.setPrice(Double.parseDouble(rs.getParameter("price")));
 				}
 
 				/* information from page */
-				product.setUrl(URLHelper.createURL(ctx, currentPage.getPath()));
+				product.setUrl(URLHelper.createURL(ctx.getContextForAbsoluteURL(), currentPage));
+				product.setPreviewUrl(URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE).getContextForAbsoluteURL(), currentPage));
 				product.setShortDescription(currentPage.getTitle(ctx));
 				product.setLongDescription(currentPage.getDescriptionAsText(ctx));
 				if (currentPage.getImage(ctx) != null) {
@@ -461,7 +478,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 					quantityValue = quantityValue - (quantityValue % (int) pComp.getOffset(ctx));
 					product.setQuantity(quantityValue);
-					
+
 					if (quantityValue > pComp.getVirtualStock(ctx)) {
 						return i18nAccess.getViewText("ecom.error.no-stock");
 					}
@@ -495,7 +512,7 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 	@Override
 	public ProductBean getProductBean(ContentContext ctx) {
 		try {
-			return new Product(this, (ProductComponent)getReferenceComponent(ctx)).getBean(ctx);
+			return new Product(this, (ProductComponent) getReferenceComponent(ctx)).getBean(ctx);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
