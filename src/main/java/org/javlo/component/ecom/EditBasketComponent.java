@@ -289,7 +289,7 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 				if (StringHelper.isDigit(quantity)) {
 					int q = Integer.parseInt(quantity);
 					if (q > comp.getVirtualStock(ctx)) {
-						return i18nAccess.getViewText("ecom.error.payment");
+						return i18nAccess.getViewText("ecom.error.no-stock");
 					} else {
 						p.setQuantity(q);
 					}
