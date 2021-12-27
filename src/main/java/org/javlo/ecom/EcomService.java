@@ -256,6 +256,7 @@ public class EcomService {
 		return out;
 	}
 	
+
 	public ProductBean getProductsOnPage(ContentContext ctx, String pageId) throws Exception {
 		ContentService contentService = ContentService.getInstance(ctx.getGlobalContext());
 		

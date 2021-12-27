@@ -224,6 +224,10 @@ public class Product {
 			this.lang = comp.getComponentBean().getLanguage();
 		}
 	}
+	
+	public ProductComponent getComponent() {
+		return comp;
+	}
 
 	public void reserve(ContentContext ctx) {
 		synchronized (comp) {

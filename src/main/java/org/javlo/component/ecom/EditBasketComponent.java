@@ -283,8 +283,19 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 		if (!basket.isLock()) {
 			for (Product p : basket.getProducts()) {
 				String quantity = rs.getParameter("q-" + p.getId());
+				ProductComponent comp = p.getComponent();
+				if (comp != null) {
+				
 				if (StringHelper.isDigit(quantity)) {
-					p.setQuantity(Integer.parseInt(quantity));
+					int q = Integer.parseInt(quantity);
+					if (q > comp.getVirtualStock(ctx)) {
+						return i18nAccess.getViewText("ecom.error.payment");
+					} else {
+						p.setQuantity(q);
+					}
+				}
+				} else {
+					logger.severe("component not found for : "+p);
 				}
 			}
 			msg = checkPromoCode(ctx, false);
