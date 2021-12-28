@@ -20,6 +20,11 @@ ctx.setPageAssociation(true);
 boolean interactiveMode = ctx.isInteractiveMode();
 int pageNumber = 1;
 int lastPage = currentPage.getChildMenuElements().size();
+
+if (!ctx.getGlobalContext().getStaticConfig().isProd()) {
+%><!-- page association on : <%=currentPage.getName()%> --><%
+}
+
 String positionStr = " first-page";
 for (MenuElement child : currentPage.getChildMenuElements()) {	
 	Template childTemplate = TemplateFactory.getTemplate(ctx, child);

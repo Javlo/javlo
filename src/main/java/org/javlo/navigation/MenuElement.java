@@ -4156,6 +4156,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			if (!isActive()) {
 				return false;
 			}
+			
+			if (isChildrenAssociation()) {
+				return true;
+			}
 
 			Template template = TemplateFactory.getTemplate(ctx, this);
 
@@ -5155,7 +5159,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	}
 
 	/**
-	 * check if this page is a part of page association
+	 * check if this page is a direct children of page association
 	 * 
 	 * @return
 	 */

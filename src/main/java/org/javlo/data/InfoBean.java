@@ -728,6 +728,7 @@ public class InfoBean {
 		MenuElement page = getCurrentPage();
 
 		List<PageBean> pagePath = new LinkedList<PageBean>();
+		page=page.getParent();
 
 		while (page != null) {			
 			try {

@@ -182,7 +182,7 @@ public class ContentContext {
 	}
 	
 	public static ContentContext getContentContext(HttpServletRequest request, HttpServletResponse response, boolean correctPath) throws Exception {
-		return getContentContext(request, response, correctPath, false);
+		return getContentContext(request, response, correctPath, true);
 	}
 
 	/**
@@ -903,6 +903,7 @@ public class ContentContext {
 		}
 		
 		MenuElement outPage = getCurrentPageCached();
+		outPage = null; // debug
 		if (outPage == null) {
 			GlobalContext globalContext = getGlobalContext();
 			MenuElement root = ContentService.getInstance(globalContext).getNavigation(this);
