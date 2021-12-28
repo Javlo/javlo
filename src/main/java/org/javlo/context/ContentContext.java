@@ -903,7 +903,6 @@ public class ContentContext {
 		}
 		
 		MenuElement outPage = getCurrentPageCached();
-		outPage = null; // debug
 		if (outPage == null) {
 			GlobalContext globalContext = getGlobalContext();
 			MenuElement root = ContentService.getInstance(globalContext).getNavigation(this);
