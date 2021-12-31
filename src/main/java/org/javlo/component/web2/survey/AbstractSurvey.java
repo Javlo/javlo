@@ -29,9 +29,17 @@ public abstract class AbstractSurvey extends AbstractPropertiesComponent {
 		storeFolder.mkdirs();
 	}
 
-	protected void storeExcel(ContentContext ctx, List<Question> questions, String sessionName, String stepName) throws Exception {
+	protected int storeExcel(ContentContext ctx, List<Question> questions, String sessionName, String stepName, Integer line) throws Exception {
 		File excelFile = new File(URLHelper.mergePath(storeFolder.getAbsolutePath(), StringHelper.stringToFileName(sessionName) + ".xlsx"));
-		storeExcel(ctx, excelFile, questions, stepName, null);
+		return  storeExcel(ctx, excelFile, questions, stepName, line);
+	}
+	
+	protected String getDataKey() {
+		return getType()+getId();
+	}
+	
+	protected String getDataKeyLine() {
+		return getType()+getId()+"-line";
 	}
 
 	synchronized static void loadExcel(ContentContext ctx, File excelFile, List<Question> inQuestions, String stepName, int line) throws Exception {
@@ -47,6 +55,9 @@ public abstract class AbstractSurvey extends AbstractPropertiesComponent {
 	}
 
 	synchronized static int storeExcel(ContentContext ctx, File excelFile, List<Question> inQuestions, String stepName, Integer inLine) throws Exception {
+		
+		logger.info("store : "+excelFile+ " line:"+inLine);
+		
 		List<Question> questions = new LinkedList<Question>(inQuestions);
 		Question sessionQ = new Question();
 		sessionQ.setLabel("_session");
@@ -141,8 +152,8 @@ public abstract class AbstractSurvey extends AbstractPropertiesComponent {
 		return getDefaultSessionName(ctx);
 	}
 
-	protected void store(ContentContext ctx, List<Question> questions, String stepName) throws Exception {
-		storeExcel(ctx, questions, getSessionName(ctx), stepName);
+	protected int store(ContentContext ctx, List<Question> questions, String stepName, Integer line) throws Exception {
+		return storeExcel(ctx, questions, getSessionName(ctx), stepName, line);
 	}
 
 	public static void main(String[] args) {

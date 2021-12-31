@@ -292,7 +292,7 @@ public class ViewActions implements IAction {
 		Cookie cookie = new Cookie(ctx.getCurrentTemplate().getCookiesMessageName(), "1");
 		cookie.setPath("/");
 		cookie.setMaxAge(60*60*24*365); // 1 year
-		ctx.getResponse().addCookie(cookie);
+		ctx.getResponse().addCookie(cookie);		
 		CookiesService.getInstance(ctx).setAccepted(true);
 		return null;
 	}

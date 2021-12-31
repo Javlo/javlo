@@ -115,6 +115,9 @@ public class LocalLogger {
 			return;
 		}
 		Long oldTime = (Long) times.get(key);
+		if (oldTime == null) {
+			oldTime = (long)-1;
+		}
 		log(DEBUG, message + " [" + (System.currentTimeMillis() - oldTime.longValue()) + " ms ]");
 	}
 

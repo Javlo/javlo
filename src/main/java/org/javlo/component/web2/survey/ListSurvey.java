@@ -175,7 +175,7 @@ public class ListSurvey extends AbstractSurvey implements IAction {
 				logger.info(""+q);
 			}
 		}
-		comp.store(ctx, questions, comp.getFieldValue(TITLE_FIELD));
+		comp.store(ctx, questions, comp.getFieldValue(TITLE_FIELD), null);
 		MenuElement nextPage = comp.getPage().getNextBrother();
 		if (nextPage == null) {
 			logger.severe("next page not found.");			

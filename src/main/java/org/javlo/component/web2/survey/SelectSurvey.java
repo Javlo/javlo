@@ -3,8 +3,10 @@ package org.javlo.component.web2.survey;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.javlo.actions.IAction;
@@ -13,6 +15,7 @@ import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.RequestService;
+import org.javlo.service.visitors.UserDataService;
 
 public class SelectSurvey extends AbstractSurvey implements IAction {
 	
@@ -66,30 +69,42 @@ public class SelectSurvey extends AbstractSurvey implements IAction {
 	}
 	
 	@Override
-	public void prepareView(ContentContext ctx) throws Exception {	
+	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
+		UserDataService userDataService = UserDataService.getInstance(ctx); 
+		String data1 = userDataService.getUserData(ctx, getDataKey());
+		Map<String,String> data = null;
+		if (!StringHelper.isEmpty(data1)) {
+			data = StringHelper.stringToMap(data1);
+		}
 		ctx.getRequest().setAttribute("title", getFieldValue(TITLE_FIELD));
 		if (getStyle().equals(RANDOM_STYLE)) {
-			List<Question> questions = getQuestions(ctx);
+			List<Question> questions = getQuestions(ctx, data);
 			Collections.shuffle(questions, new Random());
 			ctx.getRequest().setAttribute("questions", questions);
 		} else {
-			ctx.getRequest().setAttribute("questions", getQuestions(ctx));
+			ctx.getRequest().setAttribute("questions", getQuestions(ctx, data));
 		}
 		ctx.getRequest().setAttribute("sendLabel", getFieldValue(FIELD_LABEL_SEND));
 	}
 	
-	public List<Question> getQuestions(ContentContext ctx) {		
+	public List<Question> getQuestions(ContentContext ctx, Map<String, String> inResponses) {
+		if (inResponses == null) {
+			inResponses = Collections.EMPTY_MAP;
+		}
 		List<Response> responses = new LinkedList<Response>();
 		responses.add(new Response(UNSELECT_VALUE, 1));
 		responses.add(new Response(SELECT_VALUE, 2));
 		int num=1;
 		List<Question> outQuestion = new LinkedList<Question>();
-		for (String qstr : StringHelper.textToList(getFieldValue(QUESTION_FIELD))) {			
+		for (String qstr : StringHelper.textToList(getFieldValue(QUESTION_FIELD))) {
 			Question q = new Question();
 			q.setNumber(num);
 			q.setLabel(qstr);
 			q.setResponses(responses);
+			if (inResponses.get(""+q.getNumber()) != null) {
+				q.setResponse(inResponses.get(""+q.getNumber()));
+			}
 			outQuestion.add(q);
 			num++;
 		}
@@ -113,7 +128,7 @@ public class SelectSurvey extends AbstractSurvey implements IAction {
 	
 	public static String performSend(ContentContext ctx, RequestService rs) throws Exception {
 		SelectSurvey comp = (SelectSurvey)ComponentHelper.getComponentFromRequest(ctx);
-		List<Question> questions = comp.getQuestions(ctx);
+		List<Question> questions = comp.getQuestions(ctx, null);
 		String selected = rs.getParameter("selected");		
 		if (selected == null) {
 			logger.severe("param 'selected' not found.");
@@ -122,19 +137,34 @@ public class SelectSurvey extends AbstractSurvey implements IAction {
 		Collection<String> selectedList = StringHelper.stringToCollection(selected, ",");
 		List<Question> selectedQuestion = new LinkedList<Question>();
 		logger.info("session : "+ctx.getSession().getId());
+		Map<String,String> data = new HashMap<>();
 		for (Question q : questions) {
 			if (selectedList.contains(""+q.getNumber())) {
 				q.setResponse(SELECT_VALUE);
 				selectedQuestion.add(q);
+				data.put(""+q.getNumber(), ""+q.getResponse().getNumber());
 			} else {				
 				q.setResponse(UNSELECT_VALUE);
 			}
 			logger.info(""+q);
 		}
 		SurveyContext surveyContext = SurveyContext.getInstance(ctx);
-		surveyContext.setAllQuestions(comp.getQuestions(ctx));
-		surveyContext.setSelectedQuestions(selectedQuestion);		
-		comp.store(ctx, questions, comp.getFieldValue(TITLE_FIELD));
+		surveyContext.setAllQuestions(comp.getQuestions(ctx, null));
+		surveyContext.setSelectedQuestions(selectedQuestion);
+		
+		UserDataService userDataService = UserDataService.getInstance(ctx);
+		
+		Integer line = null;
+		String lineStr = userDataService.getUserData(ctx, comp.getDataKeyLine());
+		if (StringHelper.isDigit(lineStr)) {
+			line = Integer.parseInt(lineStr);
+		}
+		
+		line = comp.store(ctx, questions, comp.getFieldValue(TITLE_FIELD), line);
+		
+		userDataService.addUserData(ctx, comp.getDataKey(), StringHelper.mapToString(data));
+		userDataService.addUserData(ctx, comp.getDataKeyLine(), ""+line);
+		
 		MenuElement nextPage = comp.getPage().getNextBrother();
 		if (nextPage == null) {
 			logger.severe("next page not found.");			
