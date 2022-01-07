@@ -8,17 +8,37 @@
 
 <div class="row">
 <div class="col-md-4">
-<jsp:include page="template_data.jsp?name=background&value=${currentContext.templateData.background}&style=color" />
-<jsp:include page="template_data.jsp?name=backgroundMenu&value=${currentContext.templateData.backgroundMenu}&style=color" />
-<jsp:include page="template_data.jsp?name=backgroundActive&value=${currentContext.templateData.backgroundActive}&style=color" />
-<jsp:include page="template_data.jsp?name=foreground&value=${currentContext.templateData.foreground}&style=color" />
-<jsp:include page="template_data.jsp?name=border&value=${currentContext.templateData.border}&style=color" />
-<%--<jsp:include page="template_data.jsp?name=textMenu&value=${currentContext.templateData.textMenu}&style=color" />--%>
-<jsp:include page="template_data.jsp?name=text&value=${currentContext.templateData.text}&style=color" />
-<jsp:include page="template_data.jsp?name=title&value=${currentContext.templateData.title}&style=color" />
-<jsp:include page="template_data.jsp?name=link&value=${currentContext.templateData.link}&style=color" />
-<jsp:include page="template_data.jsp?name=componentBackground&value=${currentContext.templateData.componentBackground}&style=color" />
-<jsp:include page="template_data.jsp?name=special&value=${currentContext.templateData.special}&style=color" />
+
+<c:set var="color" value="${currentContext.templateData.background}" scope="request" />
+<jsp:include page="template_data.jsp?name=background&style=color" />
+
+<c:set var="color" value="${currentContext.templateData.backgroundMenu}" scope="request" />
+<jsp:include page="template_data.jsp?name=backgroundMenu&style=color" />
+
+<c:set var="color" value="${currentContext.templateData.backgroundActive}" scope="request" />
+<jsp:include page="template_data.jsp?name=backgroundActive&style=color" />
+
+<c:set var="color" value="${currentContext.templateData.foreground}" scope="request" />
+<jsp:include page="template_data.jsp?name=foreground&style=color" />
+
+<c:set var="color" value="${currentContext.templateData.border}" scope="request" />
+<jsp:include page="template_data.jsp?name=border&style=color" />
+
+<c:set var="color" value="${currentContext.templateData.text}" scope="request" />
+<jsp:include page="template_data.jsp?name=text&style=color" />
+
+<c:set var="color" value="${currentContext.templateData.title}" scope="request" />
+<jsp:include page="template_data.jsp?name=title&style=color" />
+
+<c:set var="color" value="${currentContext.templateData.link}" scope="request" />
+<jsp:include page="template_data.jsp?name=link&style=color" />
+
+<c:set var="color" value="${currentContext.templateData.componentBackground}" scope="request" />
+<jsp:include page="template_data.jsp?name=componentBackground&style=color" />
+
+<c:set var="color" value="${currentContext.templateData.special}" scope="request" />
+<jsp:include page="template_data.jsp?name=special&style=color" />
+
 <c:if test="${param.colorMessages}">
 <h2>Message</h2>
 <jsp:include page="template_data.jsp?name=messagePrimary&value=${currentContext.templateData.messagePrimary}&style=color" />

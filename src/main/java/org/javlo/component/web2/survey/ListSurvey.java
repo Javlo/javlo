@@ -2,6 +2,7 @@ package org.javlo.component.web2.survey;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageBean;
 import org.javlo.service.RequestService;
+import org.javlo.service.visitors.UserDataService;
 
 public class ListSurvey extends AbstractSurvey implements IAction {
 	
@@ -64,22 +66,24 @@ public class ListSurvey extends AbstractSurvey implements IAction {
 		return sessionName;
 	}
 	
-	public PageBean getPreviousPage(ContentContext ctx) throws Exception {
-		PageBean page = getPage().getPageBean(ctx);
-		return page.getPreviousPage();
-	}
-	
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {	
 		super.prepareView(ctx);
+		
+		UserDataService userDataService = UserDataService.getInstance(ctx); 
+		String dataRaw = userDataService.getUserData(ctx, getDataKey());
+		Map<String,String> data = null;
+		if (!StringHelper.isEmpty(dataRaw)) {
+			data = StringHelper.stringToMap(dataRaw);
+		}
+		
 		ctx.getRequest().setAttribute("title", getFieldValue(TITLE_FIELD));
-		ctx.getRequest().setAttribute("questions", getQuestions(ctx));
+		ctx.getRequest().setAttribute("questions", getQuestions(ctx, data));
 		ctx.getRequest().setAttribute("sendLabel", getFieldValue(FIELD_LABEL_SEND));
 
-		ctx.getRequest().setAttribute("previousLink", URLHelper.createURL(ctx, getPreviousPage(ctx).getPath(), (Map)null));
 	}
 	
-	public List<Question> getQuestions(ContentContext ctx) throws Exception {
+	public List<Question> getQuestions(ContentContext ctx, Map<String,String> data) throws Exception {
 		
 		int num=1;
 		List<Response> responses = new LinkedList<Response>();
@@ -94,6 +98,9 @@ public class ListSurvey extends AbstractSurvey implements IAction {
 				Question q = new Question(ctxQuestion);
 				q.setResponses(responses);
 				outQuestion.add(q);
+				if (data != null && data.get(""+q.getNumber()) != null) {
+					q.setResponse(data.get(""+q.getNumber()));
+				}
 				num++;
 			}	
 		} else {
@@ -104,6 +111,9 @@ public class ListSurvey extends AbstractSurvey implements IAction {
 				q.setLabel(qstr);
 				q.setResponses(responses);
 				outQuestion.add(q);
+				if (data != null && data.get(""+q.getNumber()) != null) {
+					q.setResponse(data.get(""+q.getNumber()));
+				}
 				num++;
 			}	
 		}
@@ -167,15 +177,28 @@ public class ListSurvey extends AbstractSurvey implements IAction {
 		List<Question> questions = comp.getAllQuestions(ctx); 
 		logger.info("session : "+ctx.getSession().getId());
 		SurveyContext surveyContext = SurveyContext.getInstance(ctx);
+		
+		Map<String,String> dataMap = new HashMap<>();
 		for (Question q : questions) {
 			String rep = rs.getParameter(q.getInputName());
 			if (rep != null) {
 				q.setResponse(StringHelper.neverEmpty(rep, ""));
 				surveyContext.updateQuestion(q);
+				dataMap.put(""+q.getNumber(), ""+q.getResponse().getNumber());
 				logger.info(""+q);
 			}
 		}
-		comp.store(ctx, questions, comp.getFieldValue(TITLE_FIELD), null);
+		
+		UserDataService userDataService = UserDataService.getInstance(ctx);
+		Integer line = null;
+		String lineStr = userDataService.getUserData(ctx, comp.getDataKeyLine());
+		if (StringHelper.isDigit(lineStr)) {
+			line = Integer.parseInt(lineStr);
+		}
+		line = comp.store(ctx, questions, comp.getFieldValue(TITLE_FIELD), line);
+		userDataService.addUserData(ctx, comp.getDataKey(), StringHelper.mapToString(dataMap));
+		userDataService.addUserData(ctx, comp.getDataKeyLine(), ""+line);
+		
 		MenuElement nextPage = comp.getPage().getNextBrother();
 		if (nextPage == null) {
 			logger.severe("next page not found.");			

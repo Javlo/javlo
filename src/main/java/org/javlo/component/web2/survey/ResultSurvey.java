@@ -1,11 +1,13 @@
 package org.javlo.component.web2.survey;
 
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 
 import org.javlo.actions.IAction;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
+import org.javlo.service.visitors.UserDataService;
 
 public class ResultSurvey extends AbstractSurvey implements IAction {
 	
@@ -49,11 +51,21 @@ public class ResultSurvey extends AbstractSurvey implements IAction {
 		super.prepareView(ctx);
 		ctx.getRequest().setAttribute("title", getFieldValue(TITLE_FIELD));
 		ctx.getRequest().setAttribute("questions", SurveyContext.getInstance(ctx).getSelectedQuestions());
+		/* reset data */
+		UserDataService.getInstance(ctx).resetData(ctx);
+		Enumeration attributeName = ctx.getSession().getAttributeNames();
+		while (attributeName.hasMoreElements()) {
+			String name = ""+attributeName.nextElement();
+			if (name.startsWith(SurveyGenericForm.SESSION_EXCEL_KEY)) {
+				ctx.getRequest().getSession().removeAttribute(name);
+			}
+		}
 	}	
+	
 	
 	@Override
 	public String getActionGroupName() {
 		return TYPE;
-	}	
+	}
 
 }

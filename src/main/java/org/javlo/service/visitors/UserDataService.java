@@ -1,11 +1,14 @@
 package org.javlo.service.visitors;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.LinkedList;
 
 import javax.servlet.http.Cookie;
 
 import org.javlo.context.ContentContext;
 import org.javlo.helper.NetHelper;
+import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.utils.TimeMap;
@@ -45,9 +48,8 @@ public class UserDataService {
 			cookie.setPath("/");
 			cookie.setSecure(false);
 			cookie.setVersion(0);
-			cookie.setMaxAge(60*60*24*365); // 1 year
+			cookie.setMaxAge(TIME_IN_MAP);
 			ctx.getResponse().addCookie(cookie);		
-			ctx.getResponse().flushBuffer();
 		}
 		this.data.put(cookie.getValue()+key, inData);
 		store();
@@ -68,6 +70,29 @@ public class UserDataService {
 			}
 			data.store(storageFile);
 		}
+	}
+	
+	/**
+	 * clear all key with a specific prefix 
+	 * @param ctx
+	 * @param prefix the start chars of the key
+	 * @throws Exception 
+	 */
+	public void resetData(ContentContext ctx) throws Exception {
+		Cookie cookie = NetHelper.getCookie(ctx.getRequest(), KEY_COKKIES);
+		Collection<String> toDelete = new LinkedList<>();
+		for (String key: data.keySet()) {
+			if (key.startsWith(cookie.getValue())) {
+				toDelete.add(key);
+			}
+		}
+		for (String key : toDelete) {
+			data.remove(key);
+		}
+		store();
+		SecurityHelper.clearUserCode(ctx);
+		cookie.setMaxAge(0);
+		ctx.getResponse().addCookie(cookie);
 	}
 
 }

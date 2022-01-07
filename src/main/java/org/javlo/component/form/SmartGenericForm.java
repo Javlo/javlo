@@ -69,6 +69,7 @@ import org.javlo.service.document.DataDocument;
 import org.javlo.service.document.DataDocumentService;
 import org.javlo.service.event.Event;
 import org.javlo.service.exception.ServiceException;
+import org.javlo.service.visitors.UserDataService;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.UserFactory;
@@ -127,7 +128,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 		return dir;
 	}
-	
+
 	protected boolean acceptLinks(ContentContext ctx) {
 		return StringHelper.isTrue(getConfig(ctx).getProperty("content.links", null), false);
 	}
@@ -471,10 +472,11 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 		return null;
 	}
-	
+
 	@Deprecated
 	/**
 	 * use fields directly
+	 * 
 	 * @return
 	 */
 	public synchronized List<Field> getFields() {
@@ -497,7 +499,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 						if (ctx != null && label.length() > 0) {
 							label = ReverseLinkService.getInstance(ctx.getGlobalContext()).replaceLink(ctx, this, label);
 						}
-					} catch (Exception e) { 
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 					Field field = new Field(ctx, name, label, (String) LangHelper.arrays(data, 1, ""), (String) LangHelper.arrays(data, 9, ""), (String) LangHelper.arrays(data, 8, ""), (String) LangHelper.arrays(data, 2, ""), (String) LangHelper.arrays(data, 3, ""), (String) LangHelper.arrays(data, 5, ""), Integer.parseInt("" + LangHelper.arrays(data, 6, "0")), Integer.parseInt("" + LangHelper.arrays(data, 7, "6")), (String) LangHelper.arrays(data, 10, ""));
@@ -507,7 +509,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 		Collections.sort(fields, new Field.FieldComparator());
 		int currentWidth = 0;
-		Field lastField = null;		
+		Field lastField = null;
 		for (Field field : fields) {
 			if (!field.getType().equals("hidden")) {
 				if (currentWidth == 0) {
@@ -590,6 +592,15 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			}
 		}
 		return false;
+	}
+
+	protected boolean isFilledFromCookies() {
+		return false;
+	}
+
+	protected String getDataKey() {
+		String prefix = "survey-" + getPage().getParent().getId() + '-';
+		return prefix + getType() + getId();
 	}
 
 	@Override
@@ -676,6 +687,20 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			}
 		}
 
+		Map<String, String> data = null;
+		if (isFilledFromCookies()) {
+			UserDataService userDataService = UserDataService.getInstance(ctx);
+			String data1 = userDataService.getUserData(ctx, getDataKey());
+			if (!StringHelper.isEmpty(data1)) {
+				data = StringHelper.stringToMap(data1);
+				for (Field field : getFields(ctx)) {
+					if (data.get(field.getName()) != null) {
+						field.setValue(data.get(field.getName()));
+					}
+				}
+			}
+		}
+
 		if (ctx.getCurrentUser() != null) {
 			for (Field field : getFields(ctx)) {
 				if (field.getRole().startsWith("user_") && StringHelper.isEmpty(rs.getParameter(field.getName()))) {
@@ -694,7 +719,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			}
 		}
 
-		if (!StringHelper.isEmpty(ctx.getGlobalContext().getSpecialConfig().get(RECAPTCHAKEY,null)) && !StringHelper.isEmpty(ctx.getGlobalContext().getSpecialConfig().get(RECAPTCHASECRETKEY, null))) {
+		if (!StringHelper.isEmpty(ctx.getGlobalContext().getSpecialConfig().get(RECAPTCHAKEY, null)) && !StringHelper.isEmpty(ctx.getGlobalContext().getSpecialConfig().get(RECAPTCHASECRETKEY, null))) {
 			if (StringHelper.isEmpty(getRecaptchaKey())) {
 				getLocalConfig(false).setProperty(RECAPTCHAKEY, "" + ctx.getGlobalContext().getSpecialConfig().get(RECAPTCHAKEY, null));
 				getLocalConfig(false).setProperty(RECAPTCHASECRETKEY, "" + ctx.getGlobalContext().getSpecialConfig().get(RECAPTCHASECRETKEY, null));
@@ -1133,7 +1158,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		result.put("__remote addr", request.getRemoteAddr());
 		result.put("__X-Forwarded-For", request.getHeader("x-forwarded-for"));
 		result.put("__X-Real-IP", request.getHeader("x-real-ip"));
-		result.put("__referer", request.getHeader("referer"));
+		result.put("__referer", StringHelper.removeTag(request.getHeader("referer")));
 		result.put("__agent", request.getHeader("User-Agent"));
 		String registrationID = StringHelper.getShortRandomId();
 		result.put("_registrationID", registrationID);
@@ -1199,15 +1224,25 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 
 		Map<String, String> dataDoc = new HashMap<>();
+		
+		Map<String,String> dataMap = null;
+		if (comp.isFilledFromCookies()) {
+			dataMap = new HashMap<>();
+		}
+		
 		for (Field field : comp.getFields(ctx)) {
-			String key = field.getName();
 			
+			String key = field.getName();
 			Object value = params.get(key);
 			
+			if (dataMap != null) {
+				dataMap.put(key, ""+value);
+			}
+
 			if (value != null && value.toString().contains("//") && !comp.acceptLinks(ctx)) {
 				return I18nAccess.getInstance(ctx).getViewText("global.error.content.no-link");
 			}
-			
+
 			if (specialValues.get(key) != null) {
 				value = specialValues.get(key);
 			}
@@ -1215,7 +1250,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			if (specialValues.get(key) != null) {
 				finalValue = specialValues.get(key);
 			}
-			
+
 			if (rs.getParameterListValues(key) != null && rs.getParameterListValues(key).size() > 1) {
 				finalValue = StringHelper.collectionToString(rs.getParameterListValues(key), ",");
 			}
@@ -1231,7 +1266,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			} else {
 				dataDoc.put(StringHelper.firstLetterLower(key), "" + value);
 			}
-			
+
 			if (!update || !field.getType().equals("file")) {
 				// if (!field.isFilledWidth(finalValue) &&
 				// StringHelper.containsUppercase(key.substring(0, 1))) {
@@ -1315,6 +1350,11 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			}
 			result.put(key, finalValue);
 
+		}
+		
+		if (comp.isFilledFromCookies()) {
+			UserDataService userDataService = UserDataService.getInstance(ctx);
+			userDataService.addUserData(ctx, comp.getDataKey(), StringHelper.mapToString(dataMap));
 		}
 
 		if (fakeFilled) {
@@ -1735,7 +1775,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		XLSTools.writeXLSX(cells, ctx.getResponse().getOutputStream());
 		return null;
 	}
-	
+
 	@Override
 	protected boolean getColumnableDefaultValue() {
 		return true;

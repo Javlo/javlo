@@ -3,8 +3,10 @@ package org.javlo.component.web2.survey;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.javlo.actions.IAction;
 import org.javlo.context.ContentContext;
@@ -12,6 +14,7 @@ import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.RequestService;
+import org.javlo.service.visitors.UserDataService;
 
 public class SortSurvey extends AbstractSurvey implements IAction {
 
@@ -25,6 +28,7 @@ public class SortSurvey extends AbstractSurvey implements IAction {
 	public class BothQuestion {
 		public Question q1;
 		public Question q2;
+		public Integer selectQuestion = null;
 
 		public BothQuestion(Question q1, Question q2) {
 			super();
@@ -47,13 +51,29 @@ public class SortSurvey extends AbstractSurvey implements IAction {
 		public void setQ2(Question q2) {
 			this.q2 = q2;
 		}
+		
+		public Integer getSelectQuestion() {
+			return selectQuestion;
+		}
+		
+		public void setSelectQuestion(Integer selectQuestion) {
+			this.selectQuestion = selectQuestion;
+		}
+		
+		public String getMapKey() {
+			return ""+this.q1.getNumber()+'-'+this.q2.getNumber();
+		}
 
 		@Override
 		public int hashCode() {
+			int select = 0;
+			if (selectQuestion != null) {
+				select = selectQuestion;
+			}
 			if (q1.getNumber() > q2.getNumber()) {
-				return q1.hashCode() + q2.hashCode();
+				return q1.hashCode() + q2.hashCode() + select;
 			} else {
-				return q2.hashCode() + q1.hashCode();
+				return q2.hashCode() + q1.hashCode() + select;
 			}
 		}
 	}
@@ -92,12 +112,25 @@ public class SortSurvey extends AbstractSurvey implements IAction {
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
+		
+		UserDataService userDataService = UserDataService.getInstance(ctx); 
+		String dataRaw = userDataService.getUserData(ctx, getDataKey());
+		
+		Map<String,String> data = null;
+		if (!StringHelper.isEmpty(dataRaw)) {
+			data = StringHelper.stringToMap(dataRaw);
+		}
+		
 		List<BothQuestion> boths = new LinkedList<SortSurvey.BothQuestion>();
 		List<Question> questions = getQuestions(ctx);
+		
 		for (Question q1 : questions) {
 			for (Question q2 : questions) {
 				if (q1.getNumber() > q2.getNumber()) {
 					BothQuestion newBoth = new BothQuestion(q1, q2);
+					if (data != null && StringHelper.isDigit(data.get(newBoth.getMapKey()))) {
+						newBoth.setSelectQuestion(Integer.parseInt(data.get(newBoth.getMapKey())));
+					}
 					boths.add(newBoth);
 				}
 			}
@@ -175,6 +208,18 @@ public class SortSurvey extends AbstractSurvey implements IAction {
 		List<Question> questions = comp.getAllQuestions(ctx); 
 		List<Question> finalQuestions = new LinkedList<Question>();
 		logger.info("session : "+ctx.getSession().getId());
+		
+		Map<String,String> data = new HashMap<String,String>();
+		for (Question q1 : questions) {
+			for (Question q2 : questions) {
+				String key = q1.getNumber()+"-"+q2.getNumber();
+				String rep = rs.getParameter("b"+key);
+				if (!StringHelper.isEmpty(rep)) {
+					data.put(key, rep);
+				}
+			}
+		}
+		
 		for (Question q : questions) {
 			String rep = rs.getParameter("q"+q.getNumber());
 			if (rep != null) {
@@ -200,7 +245,17 @@ public class SortSurvey extends AbstractSurvey implements IAction {
 			order++;
 		}
 		SurveyContext.getInstance(ctx).setSelectedQuestions(finalQuestions);
-		comp.store(ctx, questions, comp.getFieldValue(TITLE_FIELD), null);
+		
+		UserDataService userDataService = UserDataService.getInstance(ctx);
+		Integer line = null;
+		String lineStr = userDataService.getUserData(ctx, comp.getDataKeyLine());
+		if (StringHelper.isDigit(lineStr)) {
+			line = Integer.parseInt(lineStr);
+		}		
+		line = comp.store(ctx, questions, comp.getFieldValue(TITLE_FIELD), line);
+		userDataService.addUserData(ctx, comp.getDataKey(), StringHelper.mapToString(data));
+		userDataService.addUserData(ctx, comp.getDataKeyLine(), ""+line);
+		
 		MenuElement nextPage = comp.getPage().getNextBrother();
 		if (nextPage == null) {
 			logger.severe("next page not found.");			

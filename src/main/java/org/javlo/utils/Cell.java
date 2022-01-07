@@ -1,20 +1,22 @@
 package org.javlo.utils;
 
 public class Cell {
+	public static final Integer DEFAULT_WIDTH = 10;
 	private String value = "";
-	private Double doubleValue = null; 
+	private Double doubleValue = null;
 	private int rowSpan = 1;
 	private int colSpan = 1;
 	private Cell[][] array;
 	private int x;
 	private int y;
+	private int width = DEFAULT_WIDTH;
 
 	public Cell(String value, Double doubleValue, Cell[][] arrays, int x, int y) {
-		this.value = value;
 		this.array = arrays;
 		this.setDoubleValue(doubleValue);
 		this.x = x;
 		this.y = y;
+		setValue(value);
 	}
 
 	public String getValue() {
@@ -22,6 +24,9 @@ public class Cell {
 	}
 
 	public void setValue(String value) {
+		if (value != null) {
+			setControledWidth(value.length());
+		}
 		this.value = value;
 	}
 
@@ -59,6 +64,10 @@ public class Cell {
 
 	public Cell[][] getArray() {
 		return array;
+	}
+
+	public void setArray(Cell[][] inArray) {
+		this.array = inArray;
 	}
 
 	public int getRowTitleWidth() {
@@ -103,5 +112,23 @@ public class Cell {
 
 	public void setDoubleValue(Double doubleValue) {
 		this.doubleValue = doubleValue;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public void setControledWidth(int width) {
+		if (width < 2 || width < this.width) {
+			return;
+		}
+		setWidth(width);
+	}
+
+	public void setWidth(int width) {
+		if (width>255) {
+			return;
+		}
+		this.width = width;
 	}
 }

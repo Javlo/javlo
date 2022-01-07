@@ -9,10 +9,12 @@ import java.util.logging.Logger;
 import org.javlo.component.form.Field;
 import org.javlo.component.form.SmartGenericForm;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.RequestService;
+import org.javlo.service.visitors.UserDataService;
 import org.javlo.utils.Cell;
 import org.javlo.utils.XLSTools;
 
@@ -22,7 +24,7 @@ public class SurveyGenericForm extends SmartGenericForm {
 
 	public static final String TYPE = "survey-generic-form";
 	
-	private static final String SESSION_EXCEL_KEY = "_excel_key";
+	public static final String SESSION_EXCEL_KEY = "_excel_key";
 	
 	@Override
 	public String getType() {
@@ -42,12 +44,33 @@ public class SurveyGenericForm extends SmartGenericForm {
 		return getPage().getNextBrother();
 	}
 	
-	private Integer getExcelLine(ContentContext ctx) {
-		return (Integer)ctx.getRequest().getSession().getAttribute(SESSION_EXCEL_KEY+getId());
+	protected String getDataKeyLine() {
+		return getType()+getId()+"-line";
 	}
 	
-	private void setExcelLine(ContentContext ctx, int excelLine) {
-		ctx.getRequest().getSession().setAttribute(SESSION_EXCEL_KEY+getId(), excelLine);
+	private Integer getExcelLine(ContentContext ctx) throws Exception {
+		
+		UserDataService userDataService = UserDataService.getInstance(ctx);
+		Integer line = null;
+		String lineStr = userDataService.getUserData(ctx, getDataKeyLine());
+		if (StringHelper.isDigit(lineStr)) {
+			line = Integer.parseInt(lineStr);
+		}
+		if (line == null) {
+			line = (Integer)ctx.getRequest().getSession().getAttribute(SESSION_EXCEL_KEY+getId()); 
+		}
+		return line;
+	}
+	
+	private void setExcelLine(ContentContext ctx, int excelLine) throws Exception {
+		UserDataService userDataService = UserDataService.getInstance(ctx);
+		userDataService.addUserData(ctx, getDataKeyLine(), ""+excelLine);
+		ctx.getRequest().getSession().setAttribute(SESSION_EXCEL_KEY+getId(), excelLine); 
+	}
+	
+	@Override
+	protected boolean isFilledFromCookies() {
+		return true;
 	}
 	
 	@Override
@@ -55,6 +78,10 @@ public class SurveyGenericForm extends SmartGenericForm {
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		super.prepareView(ctx);
 		Integer excelLine = getExcelLine(ctx);
+		// if file rested
+		if (!getExcelFile(ctx).exists()) {
+			excelLine = null;
+		}
 		if (excelLine != null) {
 			Cell[][] cells = XLSTools.getArray(ctx, getExcelFile(ctx), getPage().getTitle(ctx));
 			int n=0;
@@ -85,6 +112,12 @@ public class SurveyGenericForm extends SmartGenericForm {
 			questions.add(question);
 			logger.info("question:"+question);
 		}
+		
+//		Question sessionQ = new Question();
+//		sessionQ.setLabel(SecurityHelper.USER_CODE_KEY);
+//		sessionQ.setResponse(SecurityHelper.getUserCode(ctx));
+//		questions.add(sessionQ);
+		
 		File excelFile = getExcelFile(ctx);
 		synchronized(SESSION_EXCEL_KEY) {		
 			int excelLine = AbstractSurvey.storeExcel(ctx, excelFile, questions, getPage().getTitle(ctx), getExcelLine(ctx));

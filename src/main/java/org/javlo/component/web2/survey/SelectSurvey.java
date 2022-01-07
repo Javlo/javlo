@@ -153,15 +153,12 @@ public class SelectSurvey extends AbstractSurvey implements IAction {
 		surveyContext.setSelectedQuestions(selectedQuestion);
 		
 		UserDataService userDataService = UserDataService.getInstance(ctx);
-		
 		Integer line = null;
 		String lineStr = userDataService.getUserData(ctx, comp.getDataKeyLine());
 		if (StringHelper.isDigit(lineStr)) {
 			line = Integer.parseInt(lineStr);
-		}
-		
+		}		
 		line = comp.store(ctx, questions, comp.getFieldValue(TITLE_FIELD), line);
-		
 		userDataService.addUserData(ctx, comp.getDataKey(), StringHelper.mapToString(data));
 		userDataService.addUserData(ctx, comp.getDataKeyLine(), ""+line);
 		

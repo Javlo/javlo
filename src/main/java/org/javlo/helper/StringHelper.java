@@ -2041,7 +2041,7 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(isMail("p@noctis.be"));
+		System.out.println("remove tag : "+removeTag("<a href=\"//test.com\">link</a>"));
 	}
 
 	public static LocalTime smartParseTime(String inTime) {

@@ -2,6 +2,7 @@ package org.javlo.servlet;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -78,7 +79,7 @@ public class ResourceServlet extends HttpServlet {
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		if (StringHelper.isEmpty(request.getServletPath()) || request.getServletPath().equals("/")) {
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
+			return;
 		}
 		GlobalContext globalContext = GlobalContext.getMainInstance(request);
 		if (request.getServletPath().equals("/favicon.ico") || request.getServletPath().equals("/robots.txt")) {
@@ -117,35 +118,39 @@ public class ResourceServlet extends HttpServlet {
 		ContentContext ctx;
 		try {
 			ctx = ContentContext.getContentContext(request, response);
-			//RequestHelper.traceMailingFeedBack(ctx);
+			// RequestHelper.traceMailingFeedBack(ctx);
 		} catch (Exception e1) {
 			e1.printStackTrace();
 			throw new IOException(e1.getMessage());
 		}
-		
+
 		if (ctx.getGlobalContext().isCollaborativeMode() && ctx.getCurrentEditUser() == null) {
-			if (!request.getPathInfo().startsWith('/'+URLHelper.mergePath(staticConfig.getStaticFolder(), AdminAction.LOGO_PATH)+'/')) {
-				logger.warning("unauthorized access to ressource : "+request.getRequestURL());
+			if (!request.getPathInfo().startsWith('/' + URLHelper.mergePath(staticConfig.getStaticFolder(), AdminAction.LOGO_PATH) + '/')) {
+				logger.warning("unauthorized access to ressource : " + request.getRequestURL());
 				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 				return;
 			}
 		}
 		/* TRACKING */
-//		IUserFactory fact = UserFactory.createUserFactory(globalContext, request.getSession());
-//		User user = fact.getCurrentUser(globalContext, ctx.getRequest().getSession());
-//		String userName = null;
-//		if (user != null) {
-//			userName = user.getLogin();
-//		}
-//		try {
-//			Tracker tracker = Tracker.getTracker(globalContext, request.getSession());
-//			Track track = new Track(userName, "view picture", request.getRequestURI(), System.currentTimeMillis(), request.getHeader("referer"), request.getHeader("User-Agent"));
-//			track.setIP(request.getRemoteAddr());
-//			track.setSessionId(request.getSession().getId());
-//			tracker.addTrack(track);
-//		} catch (Exception e2) {
-//			e2.printStackTrace();
-//		}
+		// IUserFactory fact = UserFactory.createUserFactory(globalContext,
+		// request.getSession());
+		// User user = fact.getCurrentUser(globalContext,
+		// ctx.getRequest().getSession());
+		// String userName = null;
+		// if (user != null) {
+		// userName = user.getLogin();
+		// }
+		// try {
+		// Tracker tracker = Tracker.getTracker(globalContext, request.getSession());
+		// Track track = new Track(userName, "view picture", request.getRequestURI(),
+		// System.currentTimeMillis(), request.getHeader("referer"),
+		// request.getHeader("User-Agent"));
+		// track.setIP(request.getRemoteAddr());
+		// track.setSessionId(request.getSession().getId());
+		// tracker.addTrack(track);
+		// } catch (Exception e2) {
+		// e2.printStackTrace();
+		// }
 		/* END TRACKING */
 
 		// TODO: check if that work for caching
@@ -183,7 +188,7 @@ public class ResourceServlet extends HttpServlet {
 				resourceURI = resourceURI.substring(0, resourceURI.lastIndexOf("."));
 			} else {
 				response.setContentType(ResourceHelper.getFileExtensionToMineType(fileExt));
-			}			
+			}
 			if (FilenameUtils.removeExtension(pathInfo).equals(SmartGenericForm.FOLDER)) {
 				File dir = new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder(), SmartGenericForm.FOLDER));
 				StaticInfo info = StaticInfo.getInstance(ctx, dir);
@@ -192,17 +197,18 @@ public class ResourceServlet extends HttpServlet {
 					return;
 				}
 				CSVFactory outCSV = new CSVFactory(new String[0][]);
-				for (File file : ResourceHelper.getAllFilesList(dir)) {					
-					CSVFactory newCSV = new CSVFactory(file);		
-					newCSV.addCol("_filename", file.getName());					
+				for (File file : ResourceHelper.getAllFilesList(dir)) {
+					CSVFactory newCSV = new CSVFactory(file);
+					newCSV.addCol("_filename", file.getName());
 					outCSV = outCSV.merge(newCSV);
 				}
 				response.setContentType(ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(pathInfo)));
 				response.setHeader("Cache-Control", "no-cache");
-				response.setHeader("Accept-Ranges", "bytes");				
+				response.setHeader("Accept-Ranges", "bytes");
 				if (StringHelper.getFileExtension(pathInfo).equals("xls")) {
 					XLSTools.writeXLS(XLSTools.getCellArray(outCSV.getArray()), response.getOutputStream());
-				} if (StringHelper.getFileExtension(pathInfo).equals("xlsx")) {
+				}
+				if (StringHelper.getFileExtension(pathInfo).equals("xlsx")) {
 					XLSTools.writeXLSX(XLSTools.getCellArray(outCSV.getArray()), response.getOutputStream());
 				} else {
 					outCSV.exportCSV(response.getOutputStream());
@@ -218,18 +224,17 @@ public class ResourceServlet extends HttpServlet {
 						return;
 					}
 				}
-				
-//				System.out.println("");
-//				System.out.println("file : "+file);
-//				System.out.println("uri  : "+request.getRequestURI());
-//				Enumeration enumeration = request.getHeaderNames();
-//				while (enumeration.hasMoreElements()) {
-//					String headName = ""+enumeration.nextElement();
-//					System.out.println("   "+headName+" = "+request.getHeader(headName));
-//				}				
-//				System.out.println("");
-				
-				
+
+				// System.out.println("");
+				// System.out.println("file : "+file);
+				// System.out.println("uri : "+request.getRequestURI());
+				// Enumeration enumeration = request.getHeaderNames();
+				// while (enumeration.hasMoreElements()) {
+				// String headName = ""+enumeration.nextElement();
+				// System.out.println(" "+headName+" = "+request.getHeader(headName));
+				// }
+				// System.out.println("");
+
 				if (!json) {
 					if (file.exists()) {
 						StaticInfo.getInstance(ctx, file).addAccess(ctx);
@@ -238,9 +243,9 @@ public class ResourceServlet extends HttpServlet {
 							File csvFile = new File(ResourceHelper.changeExtention(file.getAbsolutePath(), "csv"));
 							File excelFile = new File(URLHelper.mergePath(dataFolder, resourceURI));
 							if (!excelFile.exists()) {
-								csvFile = new File(URLHelper.mergePath(dataFolder, ResourceHelper.changeExtention(resourceURI, "csv")));	
+								csvFile = new File(URLHelper.mergePath(dataFolder, ResourceHelper.changeExtention(resourceURI, "csv")));
 								if (!csvFile.exists()) {
-									csvFile = new File(URLHelper.mergePath(dataFolder, FilenameUtils.removeExtension(resourceURI)));	
+									csvFile = new File(URLHelper.mergePath(dataFolder, FilenameUtils.removeExtension(resourceURI)));
 								}
 								if (!csvFile.exists()) {
 									response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -276,26 +281,45 @@ public class ResourceServlet extends HttpServlet {
 					}
 					String finalName = URLHelper.mergePath(dataFolder, resourceURI);
 					File file = new File(finalName);
-					if (!json) {						
+					if (!json) {
 						response.setContentType(ResourceHelper.getFileExtensionToMineType(fileExt));
 						response.setHeader("Cache-Control", "no-cache");
-						response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, file.lastModified());						
+						response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, file.lastModified());
 						long lastModifiedInBrowser = request.getDateHeader(NetHelper.HEADER_IF_MODIFIED_SINCE);
 						if (file.isFile()) {
 							if (file.lastModified() > 0 && file.lastModified() / 1000 <= lastModifiedInBrowser / 1000) {
 								response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
 							} else {
-								//response.setHeader("Accept-Ranges", "bytes");
-								//response.setHeader("Content-disposition","attachment; filename="+file.getName());
-								response.setHeader("Content-Disposition", "inline; filename="+ file.getName() +";");
+								// response.setHeader("Accept-Ranges", "bytes");
+								// response.setHeader("Content-disposition","attachment;
+								// filename="+file.getName());
+								response.setHeader("Content-Disposition", "inline; filename=" + file.getName() + ";");
 								response.setContentLength((int) file.length());
+								File tempFile = null;
 								try {
-									FileUtils.copyFile(file, response.getOutputStream());
+									/** merde excel sheet if needed **/
+									if (!StringHelper.isEmpty(request.getParameter("_excelReferenceColomn"))) {
+										logger.info("convert excel file : "+file+" on column : "+request.getParameter("_excelReferenceColomn"));
+										tempFile = new File(file.getAbsolutePath() + ".temp-" + StringHelper.getRandomId());										
+										try (OutputStream outTempFile = new FileOutputStream(tempFile)) {
+											XLSTools.structureExcelSheetOnCol(file, request.getParameter("_excelReferenceColomn"), outTempFile);
+											outTempFile.flush();
+										}
+										response.setContentLength((int) tempFile.length());
+										FileUtils.copyFile(tempFile, response.getOutputStream());
+									} else {
+										FileUtils.copyFile(file, response.getOutputStream());
+									}
+									response.getOutputStream().flush();
 								} catch (Exception e) {
-									logger.warning("error on file : "+file);
+									logger.warning("error on file : " + file);
 									response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-									return;
+								} finally {
+									if (tempFile != null && tempFile.exists()) {
+										tempFile.delete();
+									}
 								}
+								return;
 							}
 						}
 					} else {
@@ -313,18 +337,16 @@ public class ResourceServlet extends HttpServlet {
 						outMap.remove("URL");
 						outMap.remove("folder");
 						JSONMap.JSON.toJson(outMap, response.getWriter());
-					}	
+					}
 				}
 			}
 		} catch (Throwable e) {
-			logger.severe("error on : "+ctx.getRequest().getRequestURI());
+			logger.severe("error on : " + ctx.getRequest().getRequestURI());
 			e.printStackTrace();
 		} finally {
 			ResourceHelper.closeResource(fileStream);
-		}		
+		}
 		servletRun--;
 	}
 
 }
-
-
