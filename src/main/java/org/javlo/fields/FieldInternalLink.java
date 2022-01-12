@@ -69,7 +69,8 @@ public class FieldInternalLink extends Field {
 			MenuElement page = ctx.getGlobalContext().getPageIfExist(ctx, getCurrentLink(), false);
 			if (page != null) {
 				url = page.getLinkOn(ctx);
-			} else {
+			}
+			if (url == null) {
 				url = URLHelper.createURL(ctx.getContentContextForInternalLink(), getCurrentLink());
 			}
 			if (!StringHelper.isEmpty(param)) {
