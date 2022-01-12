@@ -9,6 +9,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.XHTMLNavigationHelper;
+import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 
@@ -63,17 +64,28 @@ public class FieldInternalLink extends Field {
 	
 	protected String createLink(ContentContext ctx) {
 		String param = getCurrentParam();
-		String url = URLHelper.createURL(ctx.getContentContextForInternalLink(), getCurrentLink());
-		if (!StringHelper.isEmpty(param)) {
-			if (url.contains("?")) {
-				param = param.replace('?', '&');
+		String url = null;
+		try {
+			MenuElement page = ctx.getGlobalContext().getPageIfExist(ctx, getCurrentLink(), false);
+			if (page != null) {
+				url = page.getLinkOn(ctx);
+			} else {
+				url = URLHelper.createURL(ctx.getContentContextForInternalLink(), getCurrentLink());
 			}
-			try {
-				param = XHTMLHelper.replaceJSTLData(ctx, param);
-			} catch (Exception e) {
-				e.printStackTrace();
+			if (!StringHelper.isEmpty(param)) {
+				if (url.contains("?")) {
+					param = param.replace('?', '&');
+				}
+				try {
+					param = XHTMLHelper.replaceJSTLData(ctx, param);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				url += param;
 			}
-			url += param;
+			
+		} catch (Exception e1) {
+			e1.printStackTrace();
 		}
 		return url;
 	}
