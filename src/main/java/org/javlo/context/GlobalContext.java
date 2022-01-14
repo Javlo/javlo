@@ -131,7 +131,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private static final Object LOCK_GLOBAL_CONTEXT_LOAD = new Object();
 
 	private final Object lockDataFile = new Object();
-	
+
 	private final Object lockUrlFile = new Object();
 
 	private final Object lockImportTemplate = new Object();
@@ -1726,12 +1726,12 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public List<String> getCookiesTypes() {
-		return StringHelper.stringToCollection(properties.getString("cookies.types",""), ",");
+		return StringHelper.stringToCollection(properties.getString("cookies.types", ""), ",");
 	}
-	
+
 	public void setCookiesTypes(List<String> types) {
 		properties.setProperty("cookies.types", StringHelper.collectionToString(types, ","));
-		save(); 
+		save();
 	}
 
 	public boolean isCookies() {
@@ -1746,7 +1746,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getCookiesPolicyUrl() {
 		return properties.getString("security.cookies.url", null);
 	}
-	
+
 	public void setCookiesPolicyUrl(String url) {
 		properties.setProperty("security.cookies.url", url);
 		save();
@@ -1789,6 +1789,50 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public void setOwnerName(String name) {
 		synchronized (properties) {
 			properties.setProperty("owner.name", name);
+			save();
+		}
+	}
+
+	public String getOwnerFacebook() {
+		return properties.getString("owner.facebook", "");
+	}
+
+	public void setOwnerFacebook(String name) {
+		synchronized (properties) {
+			properties.setProperty("owner.facebook", name);
+			save();
+		}
+	}
+
+	public String getOwnerTwitter() {
+		return properties.getString("owner.twitter", "");
+	}
+
+	public void setOwnerTwitter(String name) {
+		synchronized (properties) {
+			properties.setProperty("owner.twitter", name);
+			save();
+		}
+	}
+
+	public String getOwnerLinkedin() {
+		return properties.getString("owner.linkedin", "");
+	}
+
+	public void setOwnerLinkedin(String name) {
+		synchronized (properties) {
+			properties.setProperty("owner.linkedin", name);
+			save();
+		}
+	}
+
+	public String getOwnerInstagram() {
+		return properties.getString("owner.instagram", "");
+	}
+
+	public void setOwnerInstagram(String name) {
+		synchronized (properties) {
+			properties.setProperty("owner.instagram", name);
 			save();
 		}
 	}

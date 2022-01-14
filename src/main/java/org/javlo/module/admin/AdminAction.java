@@ -493,6 +493,10 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setOwnerNumber(requestService.getParameter("owner.number", ""));
 					currentGlobalContext.setOwnerPhone(requestService.getParameter("owner.phone", ""));
 					currentGlobalContext.setOwnerEmail(requestService.getParameter("owner.email", ""));
+					currentGlobalContext.setOwnerTwitter(requestService.getParameter("owner.twitter", ""));
+					currentGlobalContext.setOwnerFacebook(requestService.getParameter("owner.facebook", ""));
+					currentGlobalContext.setOwnerInstagram(requestService.getParameter("owner.instagram", ""));
+					currentGlobalContext.setOwnerLinkedin(requestService.getParameter("owner.linkedin", ""));
 					
 					try {
 						currentGlobalContext.setURLFactory(requestService.getParameter("urlfactory", ""));

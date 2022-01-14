@@ -132,6 +132,10 @@ public class GlobalContextBean {
 	private String ownerNumber;
 	private String ownerPhone;
 	private String ownerEmail;
+	private String ownerFacebook;
+	private String ownerTwitter;
+	private String ownerInstagram;
+	private String ownerLinkedin;
 	
 	private TemplateData templateData = null;
 	
@@ -244,6 +248,10 @@ public class GlobalContextBean {
 		setOwnerNumber(globalContext.getOwnerNumber());
 		setOwnerEmail(globalContext.getOwnerEmail());
 		setOwnerPhone(globalContext.getOwnerPhone());
+		setOwnerTwitter(globalContext.getOwnerTwitter());
+		setOwnerFacebook(globalContext.getOwnerFacebook());
+		setOwnerLinkedin(globalContext.getOwnerLinkedin());
+		setOwnerInstagram(globalContext.getOwnerInstagram());
 		
 		try {
 			setSpecialConfig(ResourceHelper.loadStringFromFile(globalContext.getSpecialConfigFile()));
@@ -1018,6 +1026,38 @@ public class GlobalContextBean {
 	
 	public List<String> getCookiesTypes() {
 		return globalContext.getCookiesTypes();
+	}
+
+	public String getOwnerFacebook() {
+		return ownerFacebook;
+	}
+
+	public void setOwnerFacebook(String ownerFacebook) {
+		this.ownerFacebook = ownerFacebook;
+	}
+
+	public String getOwnerTwitter() {
+		return ownerTwitter;
+	}
+
+	public void setOwnerTwitter(String ownerTwitter) {
+		this.ownerTwitter = ownerTwitter;
+	}
+
+	public String getOwnerInstagram() {
+		return ownerInstagram;
+	}
+
+	public void setOwnerInstagram(String ownerInstagram) {
+		this.ownerInstagram = ownerInstagram;
+	}
+
+	public String getOwnerLinkedin() {
+		return ownerLinkedin;
+	}
+
+	public void setOwnerLinkedin(String ownerLinkedin) {
+		this.ownerLinkedin = ownerLinkedin;
 	}
 
 }

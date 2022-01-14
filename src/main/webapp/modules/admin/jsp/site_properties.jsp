@@ -70,6 +70,15 @@
 		<input class="form-control" type="text" id="owner.name" name="owner.name" value="${currentContext.ownerName}" />	
 	</div>
 	<div class="form-group">		
+		<label for="owner.email">${i18n.edit['admin.form.owner.email']}</label>
+		<input class="form-control" type="email" id="owner.email" name="owner.email" value="${currentContext.ownerEmail}" />	
+	</div>
+	<div class="form-group">		
+		<label for="owner.phone">${i18n.edit['admin.form.owner.phone']}</label>
+		<input class="form-control" type="text" id="owner.phone" name="owner.phone" value="${currentContext.ownerPhone}" />	
+	</div>
+	
+	<div class="form-group">		
 		<label for="owner.address">${i18n.edit['admin.form.owner.address']}</label>
 		<textarea class="form-control" id="owner.address" name="owner.address">${currentContext.ownerAddress}</textarea>	
 	</div>
@@ -78,14 +87,27 @@
 		<label for="owner.number">${i18n.edit['admin.form.owner.number']}</label>
 		<input class="form-control" type="text" id="owner.number" name="owner.number" value="${currentContext.ownerNumber}" />	
 	</div>
+	
 	<div class="form-group">		
-		<label for="owner.email">${i18n.edit['admin.form.owner.email']}</label>
-		<input class="form-control" type="email" id="owner.email" name="owner.email" value="${currentContext.ownerEmail}" />	
+		<label for="owner.twitter">${i18n.edit['admin.form.owner.twitter']}</label>
+		<input class="form-control" type="text" id="owner.twitter" name="owner.twitter" value="${currentContext.ownerTwitter}" />	
 	</div>
+	
 	<div class="form-group">		
-		<label for="owner.phone">${i18n.edit['admin.form.owner.phone']}</label>
-		<input class="form-control" type="text" id="owner.phone" name="owner.phone" value="${currentContext.ownerPhone}" />	
+		<label for="owner.facebook">${i18n.edit['admin.form.owner.facebook']}</label>
+		<input class="form-control" type="text" id="owner.facebook" name="owner.facebook" value="${currentContext.ownerFacebook}" />	
 	</div>
+	
+	<div class="form-group">		
+		<label for="owner.instagram">${i18n.edit['admin.form.owner.instagram']}</label>
+		<input class="form-control" type="text" id="owner.instagram" name="owner.instagram" value="${currentContext.ownerInstagram}" />	
+	</div>
+	
+	<div class="form-group">		
+		<label for="owner.linkedin">${i18n.edit['admin.form.owner.linkedin']}</label>
+		<input class="form-control" type="text" id="owner.instagram" name="owner.linkedin" value="${currentContext.ownerLinkedin}" />	
+	</div>
+	
 	</div></div>
 	</fieldset>
 	
@@ -185,11 +207,6 @@
 	<label for="owner.address">${i18n.edit['admin.form.owner.address']}</label>
 	<textarea class="form-control" id="owner.address" name="owner.address">${currentContext.ownerAddress}</textarea>	
 </div>
-</div><div class="col-sm-6">
-<div class="form-group">		
-	<label for="owner.number">${i18n.edit['admin.form.owner.number']}</label>
-	<input class="form-control" type="text" id="owner.number" name="owner.number" value="${currentContext.ownerNumber}" />	
-</div>
 <div class="form-group">		
 	<label for="owner.email">${i18n.edit['admin.form.owner.email']}</label>
 	<input class="form-control" type="email" id="owner.email" name="owner.email" value="${currentContext.ownerEmail}" />	
@@ -198,6 +215,30 @@
 	<label for="owner.phone">${i18n.edit['admin.form.owner.phone']}</label>
 	<input class="form-control" type="text" id="owner.phone" name="owner.phone" value="${currentContext.ownerPhone}" />	
 </div>
+</div><div class="col-sm-6">
+<div class="form-group">		
+	<label for="owner.number">${i18n.edit['admin.form.owner.number']}</label>
+	<input class="form-control" type="text" id="owner.number" name="owner.number" value="${currentContext.ownerNumber}" />	
+</div>
+<div class="form-group">		
+		<label for="owner.twitter">${i18n.edit['admin.form.owner.twitter']}</label>
+		<input class="form-control" type="text" id="owner.twitter" name="owner.twitter" value="${currentContext.ownerTwitter}" />	
+	</div>
+	
+	<div class="form-group">		
+		<label for="owner.facebook">${i18n.edit['admin.form.owner.facebook']}</label>
+		<input class="form-control" type="text" id="owner.facebook" name="owner.facebook" value="${currentContext.ownerFacebook}" />	
+	</div>
+	
+	<div class="form-group">		
+		<label for="owner.instagram">${i18n.edit['admin.form.owner.instagram']}</label>
+		<input class="form-control" type="text" id="owner.instagram" name="owner.instagram" value="${currentContext.ownerInstagram}" />	
+	</div>
+	
+	<div class="form-group">		
+		<label for="owner.linkedin">${i18n.edit['admin.form.owner.linkedin']}</label>
+		<input class="form-control" type="text" id="owner.instagram" name="owner.linkedin" value="${currentContext.ownerLinkedin}" />	
+	</div>
 </div></div>
 </fieldset>
 
