@@ -138,6 +138,8 @@ public class ContentContext {
 
 	private boolean takeScreenShort = true;
 	
+	private boolean noCache = false;
+	
 	private Set<String> mirrorId = new HashSet<>();
 
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free, boolean pageManagement) {
@@ -2381,6 +2383,14 @@ public class ContentContext {
 
 	public void setColumnableDepth(int columnableDepth) {
 		this.columnableDepth = columnableDepth;
+	}
+
+	public boolean isNoCache() {
+		return noCache;
+	}
+
+	public void setNoCache(boolean noCache) {
+		this.noCache = noCache;
 	}
 
 }

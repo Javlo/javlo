@@ -2524,7 +2524,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					return emptyCode;
 				}
 				ctx.getRequest().setAttribute(COMP_ID_REQUEST_PARAM, getId());
-				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentCachable(ctx) && globalContext.isPreviewMode() && getCookiesDisplayStatus() == CookiesService.ALWAYS_STATUS) {
+				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentCachable(ctx) && !ctx.isNoCache() && globalContext.isPreviewMode() && getCookiesDisplayStatus() == CookiesService.ALWAYS_STATUS) {
 					if (getContentCache(ctx) != null) {
 						return getContentCache(ctx);
 					}
@@ -2534,7 +2534,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 						}
 					}
 				}
-				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentTimeCachable(ctx) && globalContext.isPreviewMode() && getCookiesDisplayStatus() == CookiesService.ALWAYS_STATUS) {
+				if (ctx.getRenderMode() == ContentContext.VIEW_MODE && isContentTimeCachable(ctx) && !ctx.isNoCache() && globalContext.isPreviewMode() && getCookiesDisplayStatus() == CookiesService.ALWAYS_STATUS) {
 					String timeContent = getContentTimeCache(ctx);
 					if (timeContent != null) {
 						return timeContent;
@@ -2555,7 +2555,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 							prepareView(ctx);
 						}
 						content = renderViewXHTMLCode(ctx);
-						setContentCache(ctx, content);
+						if (!ctx.isNoCache()) {
+							setContentCache(ctx, content);
+						}
 					}
 					logger.fine("render content cache '" + getType() + "' : " + (System.currentTimeMillis() - beforeTime) / 1000 + " sec.");
 					return content;
@@ -2569,7 +2571,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 							}
 							content = renderViewXHTMLCode(ctx);
 							logger.fine("render content time cache '" + getType() + "' : " + (System.currentTimeMillis() - beforeTime) / 1000 + " sec.");
-							setContentTimeCache(ctx, content);
+							if (!ctx.isNoCache()) {
+								setContentTimeCache(ctx, content);
+							}
 						}
 					} else {
 						if (getRenderer(ctx) != null) {

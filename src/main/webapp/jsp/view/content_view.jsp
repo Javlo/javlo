@@ -1,3 +1,4 @@
+<%@page import="org.javlo.component.container.Box"%>
 <%@page import="org.javlo.data.InfoBean"%>
 <%@page import="java.util.List"
 %><%@page import="org.javlo.component.core.ComponentFactory"
@@ -206,8 +207,11 @@ if (elems != null) {%><%=elems.getSufixXHTMLCode(ctx)
 }
 	while (!containers.empty()) {
 		IContainer container = (IContainer)containers.pop();
+		ctx.setNoCache(true);
+		container.prepareView(ctx);
 		container.setOpen(ctx, false);
 		%><%=container.getXHTMLCode(ctx)%><%
+		ctx.setNoCache(false);
 		container.setOpen(ctx, true);
 	}
 	if (languageChange) {

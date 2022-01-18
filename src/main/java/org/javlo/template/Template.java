@@ -2077,7 +2077,7 @@ public class Template implements Comparable<Template> {
 		if (renderer == null) {
 			renderer = getParent().getRendererFile(device);
 		} else {
-			if (device != null && !device.isDefault()) {
+			if (device != null && StringHelper.isEmpty(device.getCode()) && !device.isDefault()) {
 				renderer = StringHelper.addSufixToFileName(renderer, '-' + device.getCode());
 			}
 		}
