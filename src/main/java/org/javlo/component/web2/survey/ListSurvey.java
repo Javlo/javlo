@@ -87,15 +87,12 @@ public class ListSurvey extends AbstractSurvey implements IAction {
 			if (StringHelper.isEmpty(userCode)) {
 				userCode = SecurityHelper.getUserCode(ctx);
 			}
-			
 			if (!StringHelper.isEmpty(userCode)) {
-				
 				if (getPage().getNextBrother() != null) {
 					String pdfLink = URLHelper.createURL(ctx.getContextWithOtherFormat("pdf"), getPage().getNextBrother());
 					pdfLink = URLHelper.addParam(pdfLink, "user-code", userCode);
-					ctx.getRequest().setAttribute("pdfLink", pdfLink);
+					ctx.getRequest().setAttribute("resultPdfLink", pdfLink);
 				}
-				
 				if (loadExcel(ctx, getExcelFile(ctx), questions, getFieldValue(TITLE_FIELD), userCode)) {
 					ctx.getRequest().setAttribute("questions", questions);
 				} else {
