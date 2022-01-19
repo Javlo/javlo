@@ -300,7 +300,7 @@ public class ResourceServlet extends HttpServlet {
 									/** merde excel sheet if needed **/
 									if (!StringHelper.isEmpty(request.getParameter("_excelReferenceColomn"))) {
 										logger.info("convert excel file : "+file+" on column : "+request.getParameter("_excelReferenceColomn"));
-										tempFile = new File(file.getAbsolutePath() + ".temp-" + StringHelper.getRandomId());										
+										tempFile = new File(file.getAbsolutePath() + ".temp-" + StringHelper.getRandomId());
 										try (OutputStream outTempFile = new FileOutputStream(tempFile)) {
 											XLSTools.structureExcelSheetOnCol(file, request.getParameter("_excelReferenceColomn"), outTempFile);
 											outTempFile.flush();
@@ -348,5 +348,4 @@ public class ResourceServlet extends HttpServlet {
 		}
 		servletRun--;
 	}
-
 }

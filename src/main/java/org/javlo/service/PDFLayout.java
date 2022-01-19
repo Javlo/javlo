@@ -19,8 +19,8 @@ public class PDFLayout {
 	public static final String LANDSCAPE = "landscape";
 	public static final String PORTRAIT = "portrait";
 
-	private String height = "27.67cm";
-	private String width = "19cm";
+	private String height = "29.67cm";
+	private String width = "21cm";
 	private String backgroundSize = width;
 	private String pageSize = "A4";
 	private String fontFamily = "Verdana, Helvetica, sans-serif";
