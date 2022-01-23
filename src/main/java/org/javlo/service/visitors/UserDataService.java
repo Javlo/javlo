@@ -82,7 +82,7 @@ public class UserDataService {
 		Cookie cookie = NetHelper.getCookie(ctx.getRequest(), KEY_COKKIES);
 		Collection<String> toDelete = new LinkedList<>();
 		for (String key: data.keySet()) {
-			if (key.startsWith(cookie.getValue())) {
+			if (key != null && key.startsWith(cookie.getValue())) {
 				toDelete.add(key);
 			}
 		}

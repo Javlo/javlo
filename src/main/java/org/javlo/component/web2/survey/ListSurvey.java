@@ -86,6 +86,7 @@ public class ListSurvey extends AbstractSurvey implements IAction {
 			String userCode = ctx.getRequest().getParameter("user-code");
 			if (StringHelper.isEmpty(userCode)) {
 				userCode = SecurityHelper.getUserCode(ctx);
+				UserDataService.getInstance(ctx).resetData(ctx);
 			}
 			if (!StringHelper.isEmpty(userCode)) {
 				if (getPage().getNextBrother() != null) {
