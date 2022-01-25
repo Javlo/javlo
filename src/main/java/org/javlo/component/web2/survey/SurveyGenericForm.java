@@ -125,5 +125,9 @@ public class SurveyGenericForm extends SmartGenericForm {
 		
 		return 1;
 	}
+	
+	protected boolean isFormExpire() {
+		return false;
+	}
 
 }
