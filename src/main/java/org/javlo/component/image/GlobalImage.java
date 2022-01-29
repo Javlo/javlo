@@ -829,7 +829,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			PrintStream out = new PrintStream(outStream);
 			out.println("<div " + getPreviewAttributes(ctx) + ">");
 			out.println("<div class=\"_preview-hidden\">");
-			out.println("<img style=\"max-height: 80px; max-width: 80px;\" src=\"" + getPreviewURL(ctx, "standard") + "\" /> ["+getType()+"-" + getStyle() + "]");
+			out.println("<img style=\"max-height: 80px; max-width: 80px;\" src=\"" + getPreviewURL(ctx, "standard") + "\" /> ["+getType()+" > " + getStyle() + "]");
 			out.println("</div>");
 			out.println("</div>");
 			out.close();
