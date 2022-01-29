@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.javlo.context.ContentContext;
 
 public interface IImageTitle extends Serializable {
-
+	
 	public static final String NO_LINK = "#";
 
 	public String getImageDescription(ContentContext ctx);
@@ -21,5 +21,7 @@ public interface IImageTitle extends Serializable {
 	 * @return
 	 */
 	public int getPriority(ContentContext ctx);
+	
+	boolean isMobileOnly(ContentContext ctx);
 
 }

@@ -144,6 +144,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected static final String VALUE_SEPARATOR = "-";
 
 	public static final String HIDDEN = "hidden";
+	
+	public static final String MOBILE_TYPE = "mobile-only";
 
 	private static final List<Integer> DEFAULT_COLUMN_SIZE = new LinkedList<Integer>(Arrays.asList(new Integer[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 }));
 
@@ -484,7 +486,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (ctx.getGlobalContext().getMainContext() != null) {
 			contextKey = ctx.getGlobalContext().getMainContext().getContextKey();
 		}
-		String keySuffix = contextKey + '-' + ctx.getLanguage() + '-' + ctx.getRequestContentLanguage() + '-' + ctx.getRenderMode() + '-' + templateId + '-' + pageId;
+		
+		int mobile=0;
+		if (ctx.getDevice() != null && ctx.getDevice().isMobileDevice()) {
+			mobile=1;
+		}
+		
+		String keySuffix = contextKey + '-' + ctx.getLanguage() + '-' + ctx.getRequestContentLanguage() + '-' + ctx.getRenderMode() + '-' + templateId + '-' + pageId+'-'+mobile;
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		if (requestService.getParameter(CACHE_KEY_SUFFIX_PARAM_NAME, null) != null) {
 			keySuffix = keySuffix + '-' + requestService.getParameter(CACHE_KEY_SUFFIX_PARAM_NAME, null);
@@ -2413,7 +2421,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected boolean isStyleHidden(ContentContext ctx) {
-		return HIDDEN.equals(getStyle());
+		String style = getStyle();
+		return HIDDEN.equals(style) || MOBILE_TYPE.equals(style);
 	}
 
 	protected String renderViewXHTMLCode(ContentContext ctx) throws Exception {

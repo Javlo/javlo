@@ -482,10 +482,8 @@ public class Box extends AbstractVisualComponent implements IContainer {
 
 	@Override
 	public void setOpen(ContentContext ctx, boolean open) {
-		System.out.println(">>>>>>>>> Box.setOpen : open = "+open); //TODO: remove debug trace
 		String newValue = StringHelper.collectionToString(Arrays.asList(new String[] { "" + !open, getTitle(), getFooter() }), ";");
 		setValue(newValue);
-		System.out.println(">>>>>>>>> Box.setOpen : isCloseBox = "+isCloseBox()); //TODO: remove debug trace
 	}
 
 	@Override

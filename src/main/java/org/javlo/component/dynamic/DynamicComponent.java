@@ -32,6 +32,7 @@ import org.javlo.component.core.ISubTitle;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
+import org.javlo.context.ContentContextBean;
 import org.javlo.context.GlobalContext;
 import org.javlo.fields.Field;
 import org.javlo.fields.FieldFactory;
@@ -1229,6 +1230,11 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 				return false;
 			}
 		}
+	}
+	
+	@Override
+	public boolean isMobileOnly(ContentContext ctx) {
+		return false;
 	}
 	
 }

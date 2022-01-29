@@ -1641,5 +1641,10 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 	public List<String> getFields(ContentContext ctx) throws Exception {
 		return Collections.EMPTY_LIST;
 	}
+	
+	@Override
+	public boolean isMobileOnly(ContentContext ctx) {
+		return false;
+	}
 
 }

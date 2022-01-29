@@ -7,7 +7,7 @@ import javax.servlet.ServletContext;
 import org.javlo.context.ContentContextBean;
 
 public interface IImageFilter {
-
+	
 	String getId();
 
 	String getImageFilterKey(ContentContextBean ctx);
@@ -15,5 +15,5 @@ public interface IImageFilter {
 	BufferedImage filterImage(ServletContext application, ContentContextBean ctx, BufferedImage image);
 	
 	String getImageHash(ContentContextBean ctx);
-
+	
 }

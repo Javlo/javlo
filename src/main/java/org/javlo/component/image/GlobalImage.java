@@ -345,8 +345,8 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 
 	protected boolean isHiddenImage(ContentContext ctx) {
-		String filter = getStyle();
-		return HIDDEN.equals(filter);
+		String style = getStyle();
+		return HIDDEN.equals(style) || MOBILE_TYPE.equals(style);
 	}
 
 	@Override
@@ -1567,4 +1567,5 @@ public class GlobalImage extends Image implements IImageFilter {
 	public String getFontAwesome() {
 		return "picture-o";
 	}
+	
 }

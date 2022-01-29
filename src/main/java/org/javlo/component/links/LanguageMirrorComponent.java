@@ -291,4 +291,9 @@ public class LanguageMirrorComponent extends AbstractVisualComponent implements 
 		}
 		return false;
 	}
+	
+	@Override
+	public boolean isMobileOnly(ContentContext ctx) {
+		return false;
+	}
 }
