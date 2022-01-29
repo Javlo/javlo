@@ -881,6 +881,7 @@ Security in case of vulnerabilities.
   - anti spam in genric form
   - insert jsp name in dv mode
   - security : HSTS
+  - can upload different image for mobile
 ### Modified
   - prodcut (ecom) translation of label
   - product component, link to renderer
