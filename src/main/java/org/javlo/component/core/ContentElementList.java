@@ -446,7 +446,7 @@ public class ContentElementList implements IContentComponentsList {
 	private String getTitle(ContentContext ctx, boolean repeat) {
 
 		String res = "";
-		Iterator elems = contentElements.iterator();
+		Iterator<IContentVisualComponent> elems = contentElements.iterator();
 		int maxLabelLevel = 0;
 
 		while (elems.hasNext() && maxLabelLevel < IContentVisualComponent.HIGH_LABEL_LEVEL) {

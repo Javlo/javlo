@@ -3,6 +3,7 @@ package org.javlo.navigation;
 import java.net.URLEncoder;
 import java.util.Collection;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.navigation.PageURL;
 import org.javlo.context.ContentContext;
@@ -38,6 +39,9 @@ public class TitleURLCreator extends AbstractURLFactory {
 			return ((PageURL) comps.iterator().next()).getValue();
 		}
 		String title = currentPage.getLocalTitle(freeCtx);
+		
+		title =  StringEscapeUtils.unescapeHtml4(title);
+		
 		if (currentPage.getUrlNumber() > 0) {
 			title = title + '-' +currentPage.getUrlNumber();
 		}
