@@ -22,10 +22,12 @@ import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.core.DebugNote;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.context.ContentManager;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.StatContext;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.LangHelper;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.LangHelper.ListBuilder;
 import org.javlo.helper.LangHelper.ObjectBuilder;
 import org.javlo.helper.NetHelper;
@@ -373,30 +375,23 @@ public class DashboardAction extends AbstractModuleAction {
 			Map<String, MutableInt> pagesVisit = new NeverEmptyMap<>(MutableInt.class);
 			
 			for (DayInfo dayInfo : tracker.getDayInfos(statCtx)) {
-				for (String key : dayInfo.visitPath.keySet()) {
-					if (globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), key, true) != null) {
-						System.out.println(">>>>>>>>> DashboardAction.performReadTracker : FOUND key = "+key); //TODO: remove debug trace
+				Collection<String> keys = new  LinkedList<>(dayInfo.visitPath.keySet());
+				for (String key : keys) {
+					
+					String path = ContentManager.getPath(key);
+					
+					//LocalLogger.log("key = "+key);
+					
+					if (globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), path, true) != null) {
 						pagesVisit.get(key).add(dayInfo.visitPath.get(key));
 					} else {
-						if (key.startsWith("/")) {
-							key = key.substring(2);
+						if (path.startsWith("/")) {
+							path = path.substring(2);
 						}
-						if (key.contains("/")) {
-							key = key.substring(key.indexOf('/'));
-							if (globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), key, true) != null) {
-								System.out.println(">>>>>>>>> DashboardAction.performReadTracker : 1.FOUND key = "+key); //TODO: remove debug trace
-							}
-						}
-						if (key.startsWith("/")) {
-							key = key.substring(2);
-						}
-						if (key.contains("/")) {
-							key = key.substring(key.indexOf('/'));
-							if (globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), key, true) != null) {
+						if (path.contains("/")) {
+							path = path.substring(path.indexOf('/'));
+							if (globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), path, true) != null) {
 								pagesVisit.get(key).add(dayInfo.visitPath.get(key));
-								System.out.println(">>>>>>>>> DashboardAction.performReadTracker : 2.FOUND key = "+key); //TODO: remove debug trace
-							} else if (key.contains("html")) {
-								System.out.println(">>>>>>>>> DashboardAction.performReadTracker : ERROR : "+key); //TODO: remove debug trace
 							}
 						}
 					}
@@ -434,7 +429,7 @@ public class DashboardAction extends AbstractModuleAction {
 			Map<String, MutableInt> resourceDownload = new NeverEmptyMap<>(MutableInt.class);
 			for (DayInfo dayInfo : tracker.getDayInfos(statCtx)) {
 				for (String key : dayInfo.visitPath.keySet()) {
-					if (key.startsWith("/media/") || key.startsWith("/resource/")) {
+					if (key.contains("/media/") || key.contains("/resource/")) {
 						resourceDownload.get(key).add(dayInfo.visitPath.get(key));
 					}
 				}
