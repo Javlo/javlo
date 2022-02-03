@@ -371,9 +371,10 @@ public class DashboardAction extends AbstractModuleAction {
 			statCtx.setFrom(cal.getTime());
 			
 			Map<String, MutableInt> pagesVisit = new NeverEmptyMap<>(MutableInt.class);
+			
 			for (DayInfo dayInfo : tracker.getDayInfos(statCtx)) {
 				for (String key : dayInfo.visitPath.keySet()) {
-					if (key.contains("html")) {
+					if (ContentService.getPageNameFromPath(key) != null) {
 						pagesVisit.get(key).add(dayInfo.visitPath.get(key));
 					}
 				}
