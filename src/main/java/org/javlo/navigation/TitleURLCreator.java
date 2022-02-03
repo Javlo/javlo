@@ -20,6 +20,10 @@ public class TitleURLCreator extends AbstractURLFactory {
 	protected boolean isWithParent() {
 		return false;
 	}
+	
+	protected boolean isRemoveAccent() {
+		return false;
+	}
 
 	protected String createURLWithoutExt(ContentContext ctx, MenuElement currentPage) throws Exception {
 
@@ -37,6 +41,11 @@ public class TitleURLCreator extends AbstractURLFactory {
 		if (currentPage.getUrlNumber() > 0) {
 			title = title + '-' +currentPage.getUrlNumber();
 		}
+		
+		if (isRemoveAccent()) {
+			title = StringHelper.createASCIIString(title);
+		}
+		
 		String path = URLEncoder.encode(StringHelper.createI18NURL(title), ContentContext.CHARACTER_ENCODING);
 
 		String url = path;

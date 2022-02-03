@@ -2041,7 +2041,7 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("remove tag : "+removeTag("<a href=\"//test.com\">link</a>"));
+		System.out.println(createASCIIString("été"));
 	}
 
 	public static LocalTime smartParseTime(String inTime) {

@@ -374,8 +374,31 @@ public class DashboardAction extends AbstractModuleAction {
 			
 			for (DayInfo dayInfo : tracker.getDayInfos(statCtx)) {
 				for (String key : dayInfo.visitPath.keySet()) {
-					if (ContentService.getPageNameFromPath(key) != null) {
+					if (globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), key, true) != null) {
+						System.out.println(">>>>>>>>> DashboardAction.performReadTracker : FOUND key = "+key); //TODO: remove debug trace
 						pagesVisit.get(key).add(dayInfo.visitPath.get(key));
+					} else {
+						if (key.startsWith("/")) {
+							key = key.substring(2);
+						}
+						if (key.contains("/")) {
+							key = key.substring(key.indexOf('/'));
+							if (globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), key, true) != null) {
+								System.out.println(">>>>>>>>> DashboardAction.performReadTracker : 1.FOUND key = "+key); //TODO: remove debug trace
+							}
+						}
+						if (key.startsWith("/")) {
+							key = key.substring(2);
+						}
+						if (key.contains("/")) {
+							key = key.substring(key.indexOf('/'));
+							if (globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), key, true) != null) {
+								pagesVisit.get(key).add(dayInfo.visitPath.get(key));
+								System.out.println(">>>>>>>>> DashboardAction.performReadTracker : 2.FOUND key = "+key); //TODO: remove debug trace
+							} else if (key.contains("html")) {
+								System.out.println(">>>>>>>>> DashboardAction.performReadTracker : ERROR : "+key); //TODO: remove debug trace
+							}
+						}
 					}
 				}
 			}
