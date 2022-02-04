@@ -27,7 +27,6 @@ import org.javlo.context.GlobalContext;
 import org.javlo.context.StatContext;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.LangHelper;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.LangHelper.ListBuilder;
 import org.javlo.helper.LangHelper.ObjectBuilder;
 import org.javlo.helper.NetHelper;
@@ -37,6 +36,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageBean;
 import org.javlo.service.ContentService;
 import org.javlo.service.NotificationService;
@@ -382,7 +382,9 @@ public class DashboardAction extends AbstractModuleAction {
 					
 					//LocalLogger.log("key = "+key);
 					
-					if (globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), path, true) != null) {
+					MenuElement page = globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), path, true);
+					// no null and no root
+					if (page != null && page.getParent() != null) {
 						pagesVisit.get(key).add(dayInfo.visitPath.get(key));
 					} else {
 						if (path.startsWith("/")) {
