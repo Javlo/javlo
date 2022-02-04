@@ -417,7 +417,7 @@ public class ContentManager {
 	// }
 
 	public static void main(String[] args) {
-		System.out.println("** url = " + getPath("/javlo/sexy/ajax-edit-content/fr/fake/fake-2019/fake-2019-janvier/fake-2019-janvier-4.html"));
+		System.out.println("** url = " + getPath("/nl/augustus/tsjechi%C3%AB-karst"));
 	}
 
 	public static String[] splitPath(String path) {

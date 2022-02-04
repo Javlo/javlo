@@ -237,6 +237,35 @@ public class DashboardAction extends AbstractModuleAction {
 		return statCtx;
 	}
 	
+	public static void main(String[] args) {
+		System.out.println(cleanPath("/fr/test/main.html"));
+		System.out.println(cleanPath("/coucou/test/main.html"));
+	}
+	private static final String cleanPath(String path) {
+		if (path != null && path.length() > 3) {
+			path = StringHelper.trim(path, '/');
+			if (path != null) {
+				String[] splitedPath = StringHelper.split(path, "/");	
+				path = "";
+				for (int i = 0; i < splitedPath.length; i++) {
+					/** remove lang if first **/
+					if (path.length() != 0 || splitedPath[i].length() != 2) {
+						path = path + '/' + splitedPath[i];
+					}
+				}
+			}
+			if (path == null || path.trim().length() == 0) {
+				path = "/";
+			}
+			// remove extension if exist (.html)
+			if (path.indexOf('.') >= 0) {
+				path = path.substring(0, path.lastIndexOf('.'));
+			}
+			return path;
+		}
+		return path;
+	}
+	
 	public static String performReadTracker(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, GlobalContext globalContext, HttpSession session, HttpServletRequest request) throws Exception {
 		String type = rs.getParameter("type", null);
 		if (type == null) {
@@ -378,7 +407,7 @@ public class DashboardAction extends AbstractModuleAction {
 				Collection<String> keys = new  LinkedList<>(dayInfo.visitPath.keySet());
 				for (String key : keys) {
 					
-					String path = ContentManager.getPath(key);
+					String path = cleanPath(key);
 					
 					
 					//LocalLogger.log("key = "+key);
