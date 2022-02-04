@@ -385,9 +385,9 @@ public class DashboardAction extends AbstractModuleAction {
 					
 					MenuElement page = globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), path, true);
 					
-					System.out.println(">>>>>>>>> DashboardAction.performReadTracker : key="+key); //TODO: remove debug trace
-					System.out.println(">>>>>>>>> DashboardAction.performReadTracker : path="+path); //TODO: remove debug trace
-					System.out.println(">>>>>>>>> DashboardAction.performReadTracker : page="+page); //TODO: remove debug trace
+					System.out.println(">>>>>>>>> DashboardAction.performReadTracker : 1.key="+key); //TODO: remove debug trace
+					System.out.println(">>>>>>>>> DashboardAction.performReadTracker : 1.path="+path); //TODO: remove debug trace
+					System.out.println(">>>>>>>>> DashboardAction.performReadTracker : 1.page="+page); //TODO: remove debug trace
 					System.out.println("");
 
 					
@@ -401,6 +401,13 @@ public class DashboardAction extends AbstractModuleAction {
 						if (path.contains("/")) {
 							path = path.substring(path.indexOf('/'));
 							page = globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), path, true);
+							
+							System.out.println(">>>>>>>>> DashboardAction.performReadTracker : 2.key="+key); //TODO: remove debug trace
+							System.out.println(">>>>>>>>> DashboardAction.performReadTracker : 2.path="+path); //TODO: remove debug trace
+							System.out.println(">>>>>>>>> DashboardAction.performReadTracker : 2.page="+page); //TODO: remove debug trace
+							System.out.println("");
+
+							
 							// no root page
 							if (page != null && page.getParent() != null) {
 								pagesVisit.get(key).add(dayInfo.visitPath.get(key));
