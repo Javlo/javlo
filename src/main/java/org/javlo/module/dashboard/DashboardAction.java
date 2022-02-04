@@ -380,9 +380,17 @@ public class DashboardAction extends AbstractModuleAction {
 					
 					String path = ContentManager.getPath(key);
 					
+					
 					//LocalLogger.log("key = "+key);
 					
 					MenuElement page = globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), path, true);
+					
+					System.out.println(">>>>>>>>> DashboardAction.performReadTracker : key="+key); //TODO: remove debug trace
+					System.out.println(">>>>>>>>> DashboardAction.performReadTracker : path="+path); //TODO: remove debug trace
+					System.out.println(">>>>>>>>> DashboardAction.performReadTracker : page="+page); //TODO: remove debug trace
+					System.out.println("");
+
+					
 					// no null and no root
 					if (page != null && page.getParent() != null) {
 						pagesVisit.get(key).add(dayInfo.visitPath.get(key));
