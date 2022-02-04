@@ -385,6 +385,13 @@ public class DashboardAction extends AbstractModuleAction {
 					MenuElement page = globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), path, true);
 					// no null and no root
 					if (page != null && page.getParent() != null) {
+						
+						if (key.endsWith(".ico")) {
+							System.out.println(">>>>>>>>> DashboardAction.performReadTracker : .ICO"); //TODO: remove debug trace
+							System.out.println(">>>>>>>>> DashboardAction.performReadTracker : path = "+path); //TODO: remove debug trace
+							System.out.println(">>>>>>>>> DashboardAction.performReadTracker : page = "+page.getName()); //TODO: remove debug trace
+						}
+												
 						pagesVisit.get(key).add(dayInfo.visitPath.get(key));
 					} else {
 						if (path.startsWith("/")) {
