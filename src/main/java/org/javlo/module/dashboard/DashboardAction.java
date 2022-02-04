@@ -236,7 +236,7 @@ public class DashboardAction extends AbstractModuleAction {
 		statCtx.setFrom(cal.getTime());
 		return statCtx;
 	}
-
+	
 	public static String performReadTracker(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, GlobalContext globalContext, HttpSession session, HttpServletRequest request) throws Exception {
 		String type = rs.getParameter("type", null);
 		if (type == null) {
@@ -385,21 +385,16 @@ public class DashboardAction extends AbstractModuleAction {
 					MenuElement page = globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), path, true);
 					// no null and no root
 					if (page != null && page.getParent() != null) {
-						
-						if (key.endsWith(".ico")) {
-							System.out.println(">>>>>>>>> DashboardAction.performReadTracker : .ICO"); //TODO: remove debug trace
-							System.out.println(">>>>>>>>> DashboardAction.performReadTracker : path = "+path); //TODO: remove debug trace
-							System.out.println(">>>>>>>>> DashboardAction.performReadTracker : page = "+page.getName()); //TODO: remove debug trace
-						}
-												
 						pagesVisit.get(key).add(dayInfo.visitPath.get(key));
 					} else if (path.length()>1) {
 						if (path.startsWith("/")) {
-							path = path.substring(2);
+							path = path.substring(1);
 						}
 						if (path.contains("/")) {
 							path = path.substring(path.indexOf('/'));
-							if (globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), path, true) != null) {
+							page = globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), path, true);
+							// no root page
+							if (page != null && page.getParent() != null) {
 								pagesVisit.get(key).add(dayInfo.visitPath.get(key));
 							}
 						}
