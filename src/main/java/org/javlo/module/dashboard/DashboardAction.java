@@ -393,7 +393,7 @@ public class DashboardAction extends AbstractModuleAction {
 						}
 												
 						pagesVisit.get(key).add(dayInfo.visitPath.get(key));
-					} else {
+					} else if (path.length()>1) {
 						if (path.startsWith("/")) {
 							path = path.substring(2);
 						}
