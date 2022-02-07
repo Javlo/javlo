@@ -1,4 +1,4 @@
-package org.javlo.servlet.servletwrapper;
+package org.javlo.servlet.status.servletwrapper;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.RequestHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.service.RequestService;
 import org.javlo.user.IUserFactory;

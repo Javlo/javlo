@@ -55,6 +55,17 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
+	<filter>
+		<filter-name>logFilter</filter-name>
+		<filter-class>org.javlo.component.thymeleaf.LogFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>logFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+
 	<servlet>
 		<servlet-name>DataDocServlet</servlet-name>
 		<servlet-class>org.javlo.servlet.DataDocServlet</servlet-class>
@@ -419,7 +430,7 @@
 
 	<servlet>
 		<servlet-name>ServletWrapper</servlet-name>
-		<servlet-class>org.javlo.servlet.servletwrapper.ServletWrapperServlet</servlet-class>
+		<servlet-class>org.javlo.servlet.status.servletwrapper.ServletWrapperServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 

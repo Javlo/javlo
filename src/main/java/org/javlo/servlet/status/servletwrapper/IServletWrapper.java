@@ -1,4 +1,4 @@
-package org.javlo.servlet.servletwrapper;
+package org.javlo.servlet.status.servletwrapper;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package org.javlo.servlet.servletwrapper;
+package org.javlo.servlet.status.servletwrapper;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
