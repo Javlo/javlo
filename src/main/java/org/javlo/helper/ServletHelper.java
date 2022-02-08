@@ -1,18 +1,5 @@
 package org.javlo.helper;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.javlo.actions.ActionManager;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
@@ -24,7 +11,20 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.service.NotificationService;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserSecurity;
+import org.javlo.utilThymeleaf.TemplateEngineUtil;
 import org.owasp.encoder.Encode;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.WebContext;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 
 public class ServletHelper {
 
@@ -131,6 +131,37 @@ public class ServletHelper {
 				prefix = "<!-- execute jsp : "+Encode.forHtmlContent(url)+" -->\r\n";
 			}
 			return prefix+jsp2String.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.severe(e.getMessage());
+			return null;
+		}
+	}
+
+	public static final String executeThymeleaf( HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+			System.out.println("******* Thymeleafffff *******");
+
+
+			 //PrintWriter writer = response.getWriter();
+		String option = request.getServletPath();
+
+		try {
+			TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(request.getServletContext());
+			WebContext context = new WebContext(request, response, request.getServletContext());
+			context.setVariable("recipient", "World");
+
+			//engine.process(option, context, response.getWriter());
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			PrintWriter writer = new PrintWriter(stream);
+			engine.process(option, context, writer);
+
+			return new String(stream.toByteArray());
+
+
+
+
+
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.severe(e.getMessage());
