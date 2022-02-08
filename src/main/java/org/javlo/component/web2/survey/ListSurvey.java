@@ -94,7 +94,8 @@ public class ListSurvey extends AbstractSurvey implements IAction {
 					pdfLink = URLHelper.addParam(pdfLink, "user-code", userCode);
 					ctx.getRequest().setAttribute("resultPdfLink", pdfLink);
 				}
-				if (loadExcel(ctx, getExcelFile(ctx), questions, getFieldValue(TITLE_FIELD), userCode)) {
+				String sheet = getFieldValue(TITLE_FIELD);
+				if (loadExcel(ctx, getExcelFile(ctx), questions, sheet, userCode)) {
 					ctx.getRequest().setAttribute("questions", questions);
 				} else {
 					logger.info("info code user not found userCode:"+userCode+ " worksheet:"+getFieldValue(TITLE_FIELD));

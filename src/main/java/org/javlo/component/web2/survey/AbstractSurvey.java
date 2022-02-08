@@ -44,7 +44,7 @@ public abstract class AbstractSurvey extends AbstractPropertiesComponent {
 		super.prepareView(ctx);
 		ctx.getRequest().setAttribute("previousLink", URLHelper.createURL(ctx, getPreviousPage(ctx).getPath(), (Map) null));
 	}
-	
+
 	protected File getExcelFile(ContentContext ctx) throws Exception {
 		return new File(URLHelper.mergePath(storeFolder.getAbsolutePath(), StringHelper.stringToFileName(getSessionName(ctx)) + ".xlsx"));
 	}
@@ -92,7 +92,7 @@ public abstract class AbstractSurvey extends AbstractPropertiesComponent {
 			i++;
 		}
 	}
-	
+
 	synchronized static boolean loadExcel(ContentContext ctx, File excelFile, List<Question> inQuestions, String stepName, String userCode) throws Exception {
 		Cell[][] cells = null;
 		if (excelFile.exists()) {
@@ -100,7 +100,7 @@ public abstract class AbstractSurvey extends AbstractPropertiesComponent {
 		}
 		
 		if (cells == null) {
-			logger.info("error on load : "+excelFile);
+			logger.warning("error on load : "+excelFile);
 			return false;
 		}
 		
@@ -116,17 +116,20 @@ public abstract class AbstractSurvey extends AbstractPropertiesComponent {
 		}
 		
 		if (line > 0) {
-			int i = 0;
 			for (Question question : inQuestions) {
-				question.setResponse(cells[line][i].getValue());
-				i++;
+				
+				for (int j = 0; j < cells[0].length; j++) {
+					if (cells[0][j].getValue().equals(question.getNumber() + "."+question.getLabel())) {
+						question.setResponse(cells[line][j].getValue());
+					}
+				}
 			}
 			return true;
 		} else {
 			return false;
 		}
 	}
-	
+
 	synchronized static int storeExcel(ContentContext ctx, File excelFile, List<Question> inQuestions, String stepName, Integer inLine) throws Exception {
 
 		logger.info("store : " + excelFile + " line:" + inLine);
@@ -222,7 +225,7 @@ public abstract class AbstractSurvey extends AbstractPropertiesComponent {
 			return line;
 		}
 	}
-	
+
 	public static String getDefaultSessionName(ContentContext ctx) throws Exception {
 		String sessionName;
 		MenuElement parentPage = ctx.getCurrentPage().getParent();
@@ -257,7 +260,7 @@ public abstract class AbstractSurvey extends AbstractPropertiesComponent {
 
 		try {
 			boolean result = loadExcel(null, excel, questions, "Evaluation de fonctionnement co", "4,Hyro8GgfQ-");
-			System.out.println(">>>>>>>>> AbstractSurvey.main : result = "+result); //TODO: remove debug trace
+			System.out.println(">>>>>>>>> AbstractSurvey.main : result = " + result); // TODO: remove debug trace
 			for (Question question : questions) {
 				System.out.println(question);
 			}

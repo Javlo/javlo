@@ -309,6 +309,7 @@ public class XLSTools {
 
 	public static Cell[][] getXLSXArray(ContentContext ctx, InputStream in, String sheetName) throws Exception {
 		XSSFWorkbook workbook = null;
+		
 		try {
 			workbook = new XSSFWorkbook(in);
 
@@ -318,6 +319,7 @@ public class XLSTools {
 				sheetIndex = workbook.getSheetIndex(sheetName);
 			}
 			if (sheetIndex < 0) {
+				logger.warning("sheet not found : "+sheetName);
 				return null;
 			}
 			XSSFSheet sheet = workbook.getSheetAt(sheetIndex);
