@@ -108,7 +108,7 @@ public abstract class AbstractSurvey extends AbstractPropertiesComponent {
 		for (int i = 0; i < cells[0].length; i++) {
 			if (cells[0][i].getValue().equals(SecurityHelper.USER_CODE_KEY)) {
 				for (int j = 0; j < cells.length; j++) {
-					if (cells[j][i].getValue().equals(userCode)) {
+					if (cells[j][i] != null && cells[j][i].getValue() != null && cells[j][i].getValue().equals(userCode)) {
 						line = j;
 					}
 				}
