@@ -12,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
@@ -54,6 +55,15 @@ public class CleanHTML implements javax.servlet.Filter {
 						public void write(int b) throws IOException {
 							stream.write(b);
 						}
+
+						@Override
+						public boolean isReady() {
+							return true;
+						}
+
+						@Override
+						public void setWriteListener(WriteListener writeListener) {
+						}
 					};
 				}
 				return servletOutputStream;
@@ -90,7 +100,7 @@ public class CleanHTML implements javax.servlet.Filter {
 				ContentContext ctx;
 				try {
 					ctx = ContentContext.getContentContext((HttpServletRequest)request, (HttpServletResponse) response);
-					doc = Jsoup.parse(in, ContentContext.CHARACTER_ENCODING, URLHelper.createStaticURL(ctx, "/"));					
+					doc = Jsoup.parse(in, ContentContext.CHARACTER_ENCODING, URLHelper.createStaticURL(ctx, "/"));
 					in.close();					
 				} catch (Exception e) {					
 					throw new ServletException(e);
