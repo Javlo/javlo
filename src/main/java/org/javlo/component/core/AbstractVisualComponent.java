@@ -3,46 +3,6 @@
  */
 package org.javlo.component.core;
 
-import java.awt.Color;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.actions.DataAction;
@@ -58,17 +18,9 @@ import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.UserInterfaceContext;
 import org.javlo.exception.ResourceNotFoundException;
-import org.javlo.helper.BeanHelper;
-import org.javlo.helper.ComponentHelper;
-import org.javlo.helper.ConfigHelper;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.ServletHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
-import org.javlo.helper.XMLManipulationHelper;
-import org.javlo.helper.XMLManipulationHelper.BadXMLException;
+import org.javlo.helper.*;
 import org.javlo.helper.Comparator.StringSizeComparator;
+import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ExtendedColor;
 import org.javlo.message.GenericMessage;
@@ -89,6 +41,21 @@ import org.javlo.utils.DebugListening;
 import org.javlo.utils.StructuredProperties;
 import org.javlo.utils.SuffixPrefix;
 import org.owasp.encoder.Encode;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.awt.*;
+import java.io.*;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.List;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class is the first class for component.
@@ -180,6 +147,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	private String group = null;
 
 	private GenericMessage localMessage = null;
+
+
 
 	public String getGroup() {
 		return group;
@@ -2399,23 +2368,37 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected String executeCurrentRenderer(ContentContext ctx) throws ServletException, IOException {
-		return executeRenderer(ctx, getRenderer(ctx));
+		return executeRenderer(ctx, getRenderer(ctx),ctx.getRequest(),ctx.getResponse());
 	}
 
-	protected String executeRenderer(ContentContext ctx, String url) throws ServletException, IOException {
-		if (url != null) {			
+
+
+	protected String executeRenderer(ContentContext ctx, String url, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+
+		if (url != null) {
 			ctx.getRequest().setAttribute(COMPONENT_KEY, this);
 			if (!url.startsWith("/")) {
 				url = URLHelper.createJSPComponentURL(ctx.getRequest(), url, getComponentPath());
 			}
 			logger.fine("execute view jsp in '" + getType() + "' : " + url);
+
 			try {
 				I18nAccess.getInstance(ctx);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			return ServletHelper.executeJSP(ctx, url);
-		} else {
+			if (url.endsWith(".html"))
+			{
+				return ServletHelper.executeThymeleaf(request,response);
+			}
+			else {
+
+				return ServletHelper.executeJSP(ctx, url);
+			}
+
+		}
+		else {
 			return null;
 		}
 	}
