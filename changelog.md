@@ -882,6 +882,8 @@ Security in case of vulnerabilities.
   - insert jsp name in dv mode
   - security : HSTS
   - can upload different image for mobile
+  - mobile and desktop visiblity mode for all components
+  - Servlet 3
 ### Modified
   - prodcut (ecom) translation of label
   - product component, link to renderer
@@ -894,3 +896,7 @@ Security in case of vulnerabilities.
   - vat calcul
   - delete image in cache with format change
   - column with mirror component correction
+## [2.1.3] - 09/01/2022
+### Added
+### Modified
+### fixed

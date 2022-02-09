@@ -866,10 +866,11 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	
 	/**
 	 * component can be hidded in some mode, like view or preview.
-	 * @param mode
+	 * @param mode current mode (view, preview, edit...)
+	 * @param mobile render in mobil mode
 	 * @return
 	 */
-	public boolean isHiddenInMode(int mode);
+	public boolean isHiddenInMode(ContentContext ctx, int mode, Boolean mobile);
 
 	/**
 	 * hide component in display mode

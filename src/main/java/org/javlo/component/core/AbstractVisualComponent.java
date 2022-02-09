@@ -111,12 +111,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected static final String VALUE_SEPARATOR = "-";
 
 	public static final String HIDDEN = "hidden";
-	
+
 	public static final String MOBILE_TYPE = "mobile-only";
 
 	private static final List<Integer> DEFAULT_COLUMN_SIZE = new LinkedList<Integer>(Arrays.asList(new Integer[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 }));
 
 	public static final String FORCE_COMPONENT_ID = "___FORCE_COMPONENT_ID";
+
+	private static final Integer[] ALL_MODES = new Integer[] { ContentContext.MODULE_DESKTOP_SPECIAL_MODE, ContentContext.MODULE_MOBILE_SPECIAL_MODE, ContentContext.VIEW_MODE, ContentContext.PREVIEW_MODE, ContentContext.PAGE_MODE, ContentContext.TIME_MODE };
 
 	private Map<String, Properties> i18nView = Collections.EMPTY_MAP;
 
@@ -147,8 +149,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	private String group = null;
 
 	private GenericMessage localMessage = null;
-
-
 
 	public String getGroup() {
 		return group;
@@ -306,15 +306,15 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return this;
 		}
 		int componentPosition = ComponentHelper.getComponentPosition(ctx, this);
-		
+
 		if (componentPosition == -1) {
-			logger.severe("bad component position : "+componentPosition+"  type="+getType()+"  area="+this.getArea());
+			logger.severe("bad component position : " + componentPosition + "  type=" + getType() + "  area=" + this.getArea());
 		}
-		
+
 		ContentContext lgCtx = ctx.getContextForDefaultLanguage();
 		IContentVisualComponent refComp = ComponentHelper.getComponentWidthPosition(lgCtx, getPage(), getArea(), getType(), componentPosition);
 		if (refComp == null) {
-			logger.warning("ref component not found : type="+getType()+"  position="+componentPosition);
+			logger.warning("ref component not found : type=" + getType() + "  position=" + componentPosition);
 			return null;
 		} else {
 			return refComp;
@@ -455,13 +455,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (ctx.getGlobalContext().getMainContext() != null) {
 			contextKey = ctx.getGlobalContext().getMainContext().getContextKey();
 		}
-		
-		int mobile=0;
+
+		int mobile = 0;
 		if (ctx.getDevice() != null && ctx.getDevice().isMobileDevice()) {
-			mobile=1;
+			mobile = 1;
 		}
-		
-		String keySuffix = contextKey + '-' + ctx.getLanguage() + '-' + ctx.getRequestContentLanguage() + '-' + ctx.getRenderMode() + '-' + templateId + '-' + pageId+'-'+mobile;
+
+		String keySuffix = contextKey + '-' + ctx.getLanguage() + '-' + ctx.getRequestContentLanguage() + '-' + ctx.getRenderMode() + '-' + templateId + '-' + pageId + '-' + mobile;
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		if (requestService.getParameter(CACHE_KEY_SUFFIX_PARAM_NAME, null) != null) {
 			keySuffix = keySuffix + '-' + requestService.getParameter(CACHE_KEY_SUFFIX_PARAM_NAME, null);
@@ -939,10 +939,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser())) {
 			out.println("<div class=\"line\">");
 			out.println("<label>" + i18nAccess.getText("component.display-modes") + "</label>");
-			for (int mode : new int[] { ContentContext.VIEW_MODE, ContentContext.PREVIEW_MODE, ContentContext.PAGE_MODE, ContentContext.TIME_MODE }) {
+			for (int mode : ALL_MODES) {
 				String id = "display-mode-" + mode + "-" + getId();
 				out.println("<label for=\"" + id + "\">");
-				out.println(XHTMLHelper.getCheckbox(id, !isHiddenInMode(mode)));
+				out.println(XHTMLHelper.getCheckbox(id, !isHiddenInMode(ctx, mode, null)));
 				out.println(ContentContext.getRenderModeKey(mode));
 				out.println("</label>");
 			}
@@ -1144,7 +1144,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 		/** display modes **/
 		if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser())) {
-			for (int mode : new int[] { ContentContext.VIEW_MODE, ContentContext.PREVIEW_MODE, ContentContext.PAGE_MODE, ContentContext.TIME_MODE }) {
+			for (int mode : ALL_MODES) {
 				String id = "display-mode-" + mode + "-" + getId();
 				boolean visible = requestService.getParameter(id, null) != null;
 				setHiddenInMode(mode, !visible);
@@ -1563,7 +1563,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 		}
 		if (!ctx.getGlobalContext().getStaticConfig().isProd()) {
-			colPrefix = "<!-- type="+getType()+" isColumnable(ctx)="+isColumnable(ctx)+" - columnSize="+columnSize+" - getColumnMaxSize(ctx)="+getColumnMaxSize(ctx)+" -->";
+			colPrefix = "<!-- type=" + getType() + " isColumnable(ctx)=" + isColumnable(ctx) + " - columnSize=" + columnSize + " - getColumnMaxSize(ctx)=" + getColumnMaxSize(ctx) + " -->";
 		}
 		if (isColumnable(ctx) && columnSize >= 0 && columnSize != getColumnMaxSize(ctx)) {
 			try {
@@ -1622,7 +1622,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 		}
 		if (!ctx.getGlobalContext().getStaticConfig().isProd()) {
-			colSuffix += "<!-- /type="+getType()+" isColumnable(ctx)="+isColumnable(ctx)+" - columnSize="+columnSize+" - getColumnMaxSize(ctx)="+getColumnMaxSize(ctx)+" -->";
+			colSuffix += "<!-- /type=" + getType() + " isColumnable(ctx)=" + isColumnable(ctx) + " - columnSize=" + columnSize + " - getColumnMaxSize(ctx)=" + getColumnMaxSize(ctx) + " -->";
 		}
 		return colSuffix;
 	}
@@ -2368,13 +2368,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected String executeCurrentRenderer(ContentContext ctx) throws ServletException, IOException {
-		return executeRenderer(ctx, getRenderer(ctx),ctx.getRequest(),ctx.getResponse());
+		return executeRenderer(ctx, getRenderer(ctx), ctx.getRequest(), ctx.getResponse());
 	}
 
-
-
 	protected String executeRenderer(ContentContext ctx, String url, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
 
 		if (url != null) {
 			ctx.getRequest().setAttribute(COMPONENT_KEY, this);
@@ -2388,17 +2385,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			if (url.endsWith(".html"))
-			{
-				return ServletHelper.executeThymeleaf(request,response);
-			}
-			else {
+			if (url.endsWith(".html")) {
+				return ServletHelper.executeThymeleaf(request, response);
+			} else {
 
 				return ServletHelper.executeJSP(ctx, url);
 			}
 
-		}
-		else {
+		} else {
 			return null;
 		}
 	}
@@ -2508,7 +2502,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 					return editXHTML;
 				}
 			} else {
-				if (isHiddenInMode(ctx.getRenderMode())) {
+				if (isHiddenInMode(ctx, ctx.getRenderMode(), ctx.isMobile())) {
 					String emptyCode = getEmptyCode(ctx);
 					if (emptyCode == null) {
 						emptyCode = "";
@@ -2605,7 +2599,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (logger.isLoggable(Level.FINE)) {
 			logger.fine("load : " + getType() + " on : " + URLHelper.createURL(ctx));
 		}
-		
+
 		ctx.getRequest().setAttribute("comp", this);
 		ctx.getRequest().setAttribute("compPage", new PageBean(ctx, getPage()));
 		ctx.getRequest().setAttribute("style", getStyle());
@@ -2688,6 +2682,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected void init(ComponentBean bean, ContentContext ctx) throws Exception {
 		assert bean != null;
 		setComponentBean(bean);
+
+		if (componentBean.getHiddenModes() != null && !componentBean.getHiddenModes().contains(ContentContext.MODULE_DESKTOP_SPECIAL_MODE) && !componentBean.getHiddenModes().contains(ContentContext.MODULE_MOBILE_SPECIAL_MODE)) {
+			componentBean.getHiddenModes().add(ContentContext.MODULE_DESKTOP_SPECIAL_MODE);
+			componentBean.getHiddenModes().add(ContentContext.MODULE_MOBILE_SPECIAL_MODE);
+		}
+
 		init();
 	}
 
@@ -3276,10 +3276,20 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return componentBean.getModificationDate();
 	}
 
-	public boolean isHiddenInMode(int mode) {
+	@Override
+	public boolean isHiddenInMode(ContentContext ctx, int mode, Boolean mobile) {
 		if (componentBean.getHiddenModes() == null) {
 			return false;
 		} else {
+			if (!ctx.isPreviewEditionMode()) {
+				if (mobile != null && mobile) {
+					if (!componentBean.getHiddenModes().contains(ContentContext.MODULE_MOBILE_SPECIAL_MODE)) {
+						return true;
+					}
+				} else if (!componentBean.getHiddenModes().contains(ContentContext.MODULE_DESKTOP_SPECIAL_MODE)) {
+					return true;
+				}
+			}
 			return componentBean.getHiddenModes().contains(mode);
 		}
 	}
@@ -3337,7 +3347,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {
-		if (isHiddenInMode(ctx.getRenderMode()) || !AdminUserSecurity.getInstance().canModifyConponent(ctx, getId())) {
+		if (isHiddenInMode(ctx, ctx.getRenderMode(), ctx.isMobile()) || !AdminUserSecurity.getInstance().canModifyConponent(ctx, getId())) {
 			return "";
 		} else {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
@@ -3589,14 +3599,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 		return xhtml;
 	}
-	
+
 	@Override
-	public String toString() {	
+	public String toString() {
 		if (getPage() != null) {
-			return "id:"+getId()+" type:"+getType()+" lang:"+getPage().getContentLanguage()+" page:"+getPage().getName()+" class:"+getClassName()+" hash:"+hashCode();
+			return "id:" + getId() + " type:" + getType() + " lang:" + getPage().getContentLanguage() + " page:" + getPage().getName() + " class:" + getClassName() + " hash:" + hashCode();
 		} else {
-			return "id:"+getId()+" type:"+getType()+" class:"+getClassName()+" hash:"+hashCode();
+			return "id:" + getId() + " type:" + getType() + " class:" + getClassName() + " hash:" + hashCode();
 		}
-	} 
+	}
 
 }
