@@ -203,8 +203,13 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 	}
 
 	@Override
-	public boolean isImageValid(ContentContext ctx) {		
-		return StringHelper.isImage(getFileName());
+	public boolean isImageValid(ContentContext ctx) {
+		if (isHiddenInMode(ctx, ctx.getRenderMode(), ctx.isMobile())) {
+			return false;
+		} else {
+			return StringHelper.isImage(getFileName());			
+		}
+		
 	}
 
 	@Override
