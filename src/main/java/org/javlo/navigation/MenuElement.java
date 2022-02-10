@@ -47,6 +47,7 @@ import org.javlo.component.core.ILink;
 import org.javlo.component.core.IPageRank;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.ecom.IProductContainer;
+import org.javlo.component.image.GlobalImage;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.component.image.ImageBackground;
 import org.javlo.component.image.ImageBean;
@@ -1476,7 +1477,13 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	}
 
 	protected String getCacheKey(ContentContext ctx, String subkey) {
-		String key = this.getClass().getName() + '_' + getId() + '_' + subkey;
+		
+		String deviceStr = "laptop";
+		if (ctx.getDevice() != null) {
+			deviceStr = "dv-"+ctx.getDevice().isMobileDevice();
+		}
+		
+		String key = this.getClass().getName() + '_' + getId() + '_' + subkey+'_'+deviceStr;
 		if (ctx.getGlobalContext().isCollaborativeMode() && ctx.getCurrentEditUser() != null) {
 			key = key + '_' + ctx.getCurrentEditUser().getLogin();
 		}
@@ -2630,6 +2637,11 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		if (template != null) {
 			defaultArea = template.getDefaultArea();
 		}
+		
+		boolean mobileDevice = false;
+		if (ctx.getDevice() != null) {
+			mobileDevice = ctx.getDevice().isMobileDevice();
+		}
 
 		ContentContext specialCtx = ctx.getContextWithArea(defaultArea);
 		IContentComponentsList contentList = getAllContent(specialCtx);
@@ -2640,12 +2652,15 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			IContentVisualComponent elem = contentList.next(specialCtx);
 			if ((elem instanceof IImageTitle) && !(elem instanceof ImageBackground) && (!elem.isRepeat())) {
 				IImageTitle imageComp = (IImageTitle) elem;
+				
+				if (mobileDevice && imageComp.isMobileOnly(specialCtx)) {
+					desc.imageLink = new ImageTitleBean(specialCtx, imageComp);
+					return imageComp;
+				}
+				
 				if (imageComp.isImageValid(specialCtx)) {
 					int priority = imageComp.getPriority(specialCtx);
-					if (priority == 9) {
-						desc.imageLink = new ImageTitleBean(specialCtx, imageComp);
-						return imageComp;
-					} else if (priority > bestPriority) {
+					if (priority > bestPriority) {
 						bestPriority = priority;
 						bestImageTitle = imageComp;
 					}
@@ -2696,7 +2711,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		if (template != null) {
 			defaultArea = template.getDefaultArea();
 		}
-
+		
 		res = new LinkedList<IImageTitle>();
 		IContentComponentsList contentList = getAllContent(ctx);
 		while (contentList.hasNext(ctx)) {
@@ -2721,7 +2736,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 						}
 					}
 					if (w > 0) {
-						res.add(new ImageTitleBean(imageComp.getImageDescription(ctx), imageComp.getResourceURL(ctx), imageComp.getImageLinkURL(ctx), w));
+						res.add(new ImageTitleBean(imageComp.getImageDescription(ctx), imageComp.getResourceURL(ctx), imageComp.getImageLinkURL(ctx), w, imageComp.isMobileOnly(ctx)));
 					}
 				}
 			}
@@ -2734,17 +2749,19 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 					if ((elem instanceof IImageTitle) && (!elem.isRepeat())) {
 						IImageTitle imageComp = (IImageTitle) elem;
 						if (imageComp.isImageValid(ctx)) {
-							res.add(new ImageTitleBean(imageComp.getImageDescription(ctx), imageComp.getResourceURL(ctx), imageComp.getImageLinkURL(ctx)));
+							res.add(new ImageTitleBean(imageComp.getImageDescription(ctx), imageComp.getResourceURL(ctx), imageComp.getImageLinkURL(ctx), imageComp.isMobileOnly(ctx)));
 						}
 					}
 				}
 			}
 		}
+		
 		if (res.size() > 1) {
 			Collections.sort(res, new SortImageTitleByPriority(ctx));
 		} else if (res.size() == 0) {
 			res = Collections.emptyList();
 		}
+		
 		desc.images = res;
 		return desc.images;
 	}

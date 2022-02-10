@@ -22,6 +22,7 @@ import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.core.DebugNote;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.context.ContentManager;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.StatContext;
 import org.javlo.helper.DebugHelper;
@@ -35,6 +36,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageBean;
 import org.javlo.service.ContentService;
 import org.javlo.service.NotificationService;
@@ -234,7 +236,36 @@ public class DashboardAction extends AbstractModuleAction {
 		statCtx.setFrom(cal.getTime());
 		return statCtx;
 	}
-
+	
+	public static void main(String[] args) {
+		System.out.println(cleanPath("/fr/test/main.html"));
+		System.out.println(cleanPath("/coucou/test/main.html"));
+	}
+	private static final String cleanPath(String path) {
+		if (path != null && path.length() > 3) {
+			path = StringHelper.trim(path, '/');
+			if (path != null) {
+				String[] splitedPath = StringHelper.split(path, "/");	
+				path = "";
+				for (int i = 0; i < splitedPath.length; i++) {
+					/** remove lang if first **/
+					if (path.length() != 0 || splitedPath[i].length() != 2) {
+						path = path + '/' + splitedPath[i];
+					}
+				}
+			}
+			if (path == null || path.trim().length() == 0) {
+				path = "/";
+			}
+			// remove extension if exist (.html)
+			if (path.indexOf('.') >= 0) {
+				path = path.substring(0, path.lastIndexOf('.'));
+			}
+			return path;
+		}
+		return path;
+	}
+	
 	public static String performReadTracker(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, GlobalContext globalContext, HttpSession session, HttpServletRequest request) throws Exception {
 		String type = rs.getParameter("type", null);
 		if (type == null) {
@@ -371,10 +402,34 @@ public class DashboardAction extends AbstractModuleAction {
 			statCtx.setFrom(cal.getTime());
 			
 			Map<String, MutableInt> pagesVisit = new NeverEmptyMap<>(MutableInt.class);
+			
 			for (DayInfo dayInfo : tracker.getDayInfos(statCtx)) {
-				for (String key : dayInfo.visitPath.keySet()) {
-					if (key.contains("html")) {
+				Collection<String> keys = new  LinkedList<>(dayInfo.visitPath.keySet());
+				for (String key : keys) {
+					
+					String path = cleanPath(key);
+					
+					
+					//LocalLogger.log("key = "+key);
+					
+					MenuElement page = globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), path, true);
+					
+					// no null and no root
+					if (page != null && page.getParent() != null) {
 						pagesVisit.get(key).add(dayInfo.visitPath.get(key));
+					} else if (path.length()>1) {
+						if (path.startsWith("/")) {
+							path = path.substring(1);
+						}
+						if (path.contains("/")) {
+							path = path.substring(path.indexOf('/'));
+							page = globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), path, true);
+							
+							// no root page
+							if (page != null && page.getParent() != null) {
+								pagesVisit.get(key).add(dayInfo.visitPath.get(key));
+							}
+						}
 					}
 				}
 			}
@@ -410,7 +465,7 @@ public class DashboardAction extends AbstractModuleAction {
 			Map<String, MutableInt> resourceDownload = new NeverEmptyMap<>(MutableInt.class);
 			for (DayInfo dayInfo : tracker.getDayInfos(statCtx)) {
 				for (String key : dayInfo.visitPath.keySet()) {
-					if (key.startsWith("/media/") || key.startsWith("/resource/")) {
+					if (key.contains("/media/") || key.contains("/resource/")) {
 						resourceDownload.get(key).add(dayInfo.visitPath.get(key));
 					}
 				}

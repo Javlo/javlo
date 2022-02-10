@@ -12,6 +12,7 @@ public class ImageTitleBean implements IImageTitle, Serializable {
 	private final String imageURL;
 	private final String imageLink;
 	private final int priority;
+	private boolean mobileOnly = false;
 	
 	public ImageTitleBean(String imageDescription, String imageURL, String imageLink, int priority) {
 		super();
@@ -21,12 +22,30 @@ public class ImageTitleBean implements IImageTitle, Serializable {
 		this.priority = priority;
 	}
 	
+	public ImageTitleBean(String imageDescription, String imageURL, String imageLink, int priority, boolean mobileOnly) {
+		super();
+		this.imageDescription = imageDescription;
+		this.imageURL = imageURL;
+		this.imageLink = imageLink;
+		this.priority = priority;
+		this.mobileOnly = mobileOnly;
+	}
+	
 	public ImageTitleBean(String imageDescription, String imageURL, String imageLink) {
 		super();
 		this.imageDescription = imageDescription;
 		this.imageURL = imageURL;
 		this.imageLink = imageLink;
 		this.priority = 5;
+	}
+	
+	public ImageTitleBean(String imageDescription, String imageURL, String imageLink, boolean mobileOnly) {
+		super();
+		this.imageDescription = imageDescription;
+		this.imageURL = imageURL;
+		this.imageLink = imageLink;
+		this.priority = 5;
+		this.mobileOnly = mobileOnly;
 	}
 	
 	public ImageTitleBean(ContentContext ctx, IImageTitle imageTitle) {
@@ -61,6 +80,13 @@ public class ImageTitleBean implements IImageTitle, Serializable {
 	public int getPriority(ContentContext ctx) {
 		return priority;
 	}
-
 	
+	@Override
+	public boolean isMobileOnly(ContentContext ctx) {
+		return mobileOnly;
+	}
+	
+	public void setMobileOnly(boolean mobileOnly) {
+		this.mobileOnly = mobileOnly;
+	}
 }

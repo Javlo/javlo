@@ -43,7 +43,7 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 	protected boolean isAllTranslated() {
 		return false;
 	}
-	
+
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
@@ -60,18 +60,17 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 				IUserInfo iui = ctx.getCurrentUser().getUserInfo();
 				if (iui instanceof UserInfo) {
 					UserInfo ui = (UserInfo) iui;
-					/*basket.setFirstName(ui.getFirstName());
-					basket.setLastName(ui.getLastName());
-					basket.setAddress(ui.getAddress());
-					basket.setZip(ui.getPostCode());
-					basket.setCity(ui.getCity());
-					basket.setCountry(ui.getCountry());
-					basket.setContactEmail(ui.getEmail());
-					basket.setContactPhone(ui.getMobile());
-					basket.setTransfertAddressLogin(ctx.getCurrentUser().getLogin());
-					basket.setOrganization(ui.getOrganization());
-					basket.setVATNumber(ui.getVat());*/
-					
+					/*
+					 * basket.setFirstName(ui.getFirstName()); basket.setLastName(ui.getLastName());
+					 * basket.setAddress(ui.getAddress()); basket.setZip(ui.getPostCode());
+					 * basket.setCity(ui.getCity()); basket.setCountry(ui.getCountry());
+					 * basket.setContactEmail(ui.getEmail());
+					 * basket.setContactPhone(ui.getMobile());
+					 * basket.setTransfertAddressLogin(ctx.getCurrentUser().getLogin());
+					 * basket.setOrganization(ui.getOrganization());
+					 * basket.setVATNumber(ui.getVat());
+					 */
+
 					basket.setCustomerFirstName(ui.getFirstName());
 					basket.setCustomerLastName(ui.getLastName());
 					basket.setCustomerEmail(ui.getEmail());
@@ -113,8 +112,8 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 	public String getHexColor() {
 		return ECOM_COLOR;
 	}
-	
-	private static String checkPromoCode (ContentContext ctx, boolean nextStep) throws ServiceException, Exception {
+
+	private static String checkPromoCode(ContentContext ctx, boolean nextStep) throws ServiceException, Exception {
 		Basket basket = Basket.getInstance(ctx);
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 		String promoCode = ctx.getRequest().getParameter("promo-code");
@@ -126,7 +125,7 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 					basket.setStep(Basket.REGISTRATION_STEP);
 				}
 			} else {
-				return i18nAccess.getViewText("ecom.error.promo-code"); 
+				return i18nAccess.getViewText("ecom.error.promo-code");
 			}
 		} else {
 			if (nextStep) {
@@ -157,7 +156,7 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 		String zip = rs.getParameter("zip", "").trim();
 		String city = rs.getParameter("city", "").trim();
 		boolean noShipping = rs.getParameter("noshipping", null) != null;
-		
+
 		String vta = rs.getParameter("vat", "").trim();
 		String company = rs.getParameter("organization", "").trim();
 
@@ -177,31 +176,31 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 		basket.setGiftReceiver(rs.getParameter("giftReceiver"));
 		basket.setGiftMessage(rs.getParameter("giftMessage"));
 		basket.setNoShipping(noShipping);
-		
+
 		/** customer **/
-		
-		String customerEmail = rs.getParameter("customerEmail",null);
-		
+		String customerEmail = rs.getParameter("customerEmail", null);
 		basket.setCustomerFirstName(rs.getParameter("customerFirstName"));
 		basket.setCustomerLastName(rs.getParameter("customerLastName"));
 		basket.setCustomerEmail(customerEmail);
 		basket.setCustomerPhone(rs.getParameter("customerPhone"));
 
 		/** billing **/
-		basket.setBillingName(rs.getParameter("billingName"));
-		basket.setBillingAddress(rs.getParameter("billingAddress"));
-		basket.setBillingCity(rs.getParameter("billingCity"));
-		basket.setBillingCountry(rs.getParameter("billingCountry"));
-		basket.setBillingPostcode(rs.getParameter("billingPostcode"));
-		basket.setBillingVat(rs.getParameter("billingVat"));
-		
+		if (StringHelper.isTrue(rs.getParameter("billingCheck"))) {
+			basket.setBillingName(rs.getParameter("billingName"));
+			basket.setBillingAddress(rs.getParameter("billingAddress"));
+			basket.setBillingCity(rs.getParameter("billingCity"));
+			basket.setBillingCountry(rs.getParameter("billingCountry"));
+			basket.setBillingPostcode(rs.getParameter("billingPostcode"));
+			basket.setBillingVat(rs.getParameter("billingVat"));
+		}
+
 		/** if VAT number defined >> all fields are needed **/
 		if (!StringHelper.isEmpty(basket.getBillingVat())) {
 			if (StringHelper.isOneEmpty(basket.getBillingName(), basket.getBillingAddress(), basket.getBillingCity(), basket.getBillingPostcode())) {
 				return i18nAccess.getViewText("ecom.error.billing-info");
 			}
 		}
-		
+
 		if (rs.getParameter("back", null) != null) {
 			if (basket.getStep() > 1) {
 				basket.setStep(basket.getStep() - 1);
@@ -211,7 +210,7 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 
 		if (!StringHelper.isEmpty(rs.getParameter("deliveryDate"))) {
 			try {
-				
+
 				Date deliveryDate = StringHelper.parseInputDate(rs.getParameter("deliveryDate"));
 				boolean found = false;
 				for (Date possibleDate : ctx.getGlobalContext().getStaticConfig().getEcomLister().getDeliveryDate(ctx, basket)) {
@@ -230,12 +229,12 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 		} else if (rs.getParameter("deliveryDate") != null) {
 			return i18nAccess.getViewText("ecom.error.no-delivery-date");
 		}
-		
+
 		EcomStatus status = ctx.getGlobalContext().getStaticConfig().getEcomLister().onConfirmBasket(ctx, basket);
 		if (status.isError()) {
 			return status.getMessage();
 		}
-		
+
 		if (customerEmail != null && !StringHelper.isMail(customerEmail)) {
 			return i18nAccess.getViewText("mailing.error.email");
 		}
@@ -256,15 +255,15 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 
 		return null;
 	}
-	
+
 	public static String performPay(ContentContext ctx, RequestService rs) throws Exception {
-		
+
 		boolean accept = StringHelper.isTrue(rs.getParameter("accept"));
 		if (!accept) {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 			return i18nAccess.getViewText("ecom.error.accept");
 		}
-		
+
 		Basket basket = Basket.getInstance(ctx);
 		basket.setStep(Basket.PAY_STEP);
 		return null;
@@ -285,17 +284,17 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 				String quantity = rs.getParameter("q-" + p.getId());
 				ProductComponent comp = p.getComponent();
 				if (comp != null) {
-				
-				if (StringHelper.isDigit(quantity)) {
-					int q = Integer.parseInt(quantity);
-					if (q > comp.getVirtualStock(ctx)) {
-						return i18nAccess.getViewText("ecom.error.no-stock");
-					} else {
-						p.setQuantity(q);
+
+					if (StringHelper.isDigit(quantity)) {
+						int q = Integer.parseInt(quantity);
+						if (q > comp.getVirtualStock(ctx)) {
+							return i18nAccess.getViewText("ecom.error.no-stock");
+						} else {
+							p.setQuantity(q);
+						}
 					}
-				}
 				} else {
-					logger.severe("component not found for : "+p);
+					logger.severe("component not found for : " + p);
 				}
 			}
 			msg = checkPromoCode(ctx, false);

@@ -247,4 +247,5 @@ public class DebugNote extends AbstractPropertiesComponent {
 		return "bug";
 	}
 
+
 }

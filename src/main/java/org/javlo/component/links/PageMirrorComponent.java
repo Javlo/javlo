@@ -451,4 +451,9 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 	public String getFontAwesome() {	
 		return "clone";
 	}
+	
+	@Override
+	public boolean isMobileOnly(ContentContext ctx) {
+		return false;
+	}
 }

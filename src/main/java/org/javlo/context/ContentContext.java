@@ -83,6 +83,10 @@ public class ContentContext {
 	public static final int TIME_MODE = 7;
 
 	public static final int MODULE_MODE = 8; // view module outside cms context.
+	
+	public static final int MODULE_DESKTOP_SPECIAL_MODE = 1000;
+	
+	public static final int MODULE_MOBILE_SPECIAL_MODE = 1001;
 
 	public static final String FORWARD_PATH_REQUEST_KEY = "forward-path";
 
@@ -137,6 +141,8 @@ public class ContentContext {
 	private boolean stopRendering = false;
 
 	private boolean takeScreenShort = true;
+	
+	private boolean noCache = false;
 	
 	private Set<String> mirrorId = new HashSet<>();
 
@@ -278,6 +284,10 @@ public class ContentContext {
 			return "time";
 		case MODULE_MODE:
 			return "module";
+		case MODULE_DESKTOP_SPECIAL_MODE:
+			return "desktop";
+		case MODULE_MOBILE_SPECIAL_MODE:
+			return "mobile";
 		default:
 			return "unknown";
 		}
@@ -1032,6 +1042,15 @@ public class ContentContext {
 
 	public Device getDevice() {
 		return device;
+	}
+	
+	public boolean isMobile() {
+		Device device = getDevice();
+		if (device == null) {
+			return false;
+		} else {
+			return device.isMobileDevice();
+		}
 	}
 
 	/**
@@ -2381,6 +2400,14 @@ public class ContentContext {
 
 	public void setColumnableDepth(int columnableDepth) {
 		this.columnableDepth = columnableDepth;
+	}
+
+	public boolean isNoCache() {
+		return noCache;
+	}
+
+	public void setNoCache(boolean noCache) {
+		this.noCache = noCache;
 	}
 
 }

@@ -44,7 +44,7 @@ public class UserDataService {
 	public void addUserData(ContentContext ctx, String key, String inData) throws Exception {
 		Cookie cookie = NetHelper.getCookie(ctx.getRequest(), KEY_COKKIES);
 		if (cookie == null) {
-			cookie = new Cookie(KEY_COKKIES, StringHelper.getLargeRandomIdBase64());
+			cookie = new Cookie(KEY_COKKIES, StringHelper.getRandomId()+StringHelper.getRandomId());
 			cookie.setPath("/");
 			cookie.setSecure(false);
 			cookie.setVersion(0);
@@ -82,7 +82,7 @@ public class UserDataService {
 		Cookie cookie = NetHelper.getCookie(ctx.getRequest(), KEY_COKKIES);
 		Collection<String> toDelete = new LinkedList<>();
 		for (String key: data.keySet()) {
-			if (key.startsWith(cookie.getValue())) {
+			if (key != null && key.startsWith(cookie.getValue())) {
 				toDelete.add(key);
 			}
 		}

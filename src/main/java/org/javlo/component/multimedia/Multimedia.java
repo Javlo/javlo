@@ -1488,7 +1488,7 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 
 	@Override
 	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {
-		if (isHiddenInMode(ctx.getRenderMode()) || !AdminUserSecurity.getInstance().canModifyConponent(ctx, getId())) {
+		if (isHiddenInMode(ctx, ctx.getRenderMode(), ctx.isMobile()) || !AdminUserSecurity.getInstance().canModifyConponent(ctx, getId())) {
 			return "";
 		} else {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
@@ -1640,6 +1640,11 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 	@Override
 	public List<String> getFields(ContentContext ctx) throws Exception {
 		return Collections.EMPTY_LIST;
+	}
+	
+	@Override
+	public boolean isMobileOnly(ContentContext ctx) {
+		return false;
 	}
 
 }

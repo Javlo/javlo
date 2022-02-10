@@ -132,7 +132,10 @@ public class Device implements Serializable {
 		return StringHelper.isTrue(pointerDevice);
 	}
 
-	public boolean isMobileDevice() {		
+	public boolean isMobileDevice() {
+		if (devices == null) {
+			return false;
+		}
 		String pointerDevice = devices.get(getCode() + '.' + "mobile");
 
 		if (pointerDevice == null) {

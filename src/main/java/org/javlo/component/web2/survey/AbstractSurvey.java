@@ -45,9 +45,12 @@ public abstract class AbstractSurvey extends AbstractPropertiesComponent {
 		ctx.getRequest().setAttribute("previousLink", URLHelper.createURL(ctx, getPreviousPage(ctx).getPath(), (Map) null));
 	}
 
-	protected int storeExcel(ContentContext ctx, List<Question> questions, String sessionName, String stepName, Integer line) throws Exception {
-		File excelFile = new File(URLHelper.mergePath(storeFolder.getAbsolutePath(), StringHelper.stringToFileName(sessionName) + ".xlsx"));
-		return storeExcel(ctx, excelFile, questions, stepName, line);
+	protected File getExcelFile(ContentContext ctx) throws Exception {
+		return new File(URLHelper.mergePath(storeFolder.getAbsolutePath(), StringHelper.stringToFileName(getSessionName(ctx)) + ".xlsx"));
+	}
+
+	protected int storeExcel(ContentContext ctx, List<Question> questions, String stepName, Integer line) throws Exception {
+		return storeExcel(ctx, getExcelFile(ctx), questions, stepName, line);
 	}
 
 	protected String getDataKey() {
@@ -87,6 +90,43 @@ public abstract class AbstractSurvey extends AbstractPropertiesComponent {
 		for (Question question : inQuestions) {
 			question.setResponse(cells[line][i].getValue());
 			i++;
+		}
+	}
+
+	synchronized static boolean loadExcel(ContentContext ctx, File excelFile, List<Question> inQuestions, String stepName, String userCode) throws Exception {
+		Cell[][] cells = null;
+		if (excelFile.exists()) {
+			cells = XLSTools.getArray(ctx, excelFile, stepName);
+		}
+		
+		if (cells == null) {
+			logger.warning("error on load : "+excelFile);
+			return false;
+		}
+		
+		int line = -1;
+		for (int i = 0; i < cells[0].length; i++) {
+			if (cells[0][i].getValue().equals(SecurityHelper.USER_CODE_KEY)) {
+				for (int j = 0; j < cells.length; j++) {
+					if (cells[j][i] != null && cells[j][i].getValue() != null && cells[j][i].getValue().equals(userCode)) {
+						line = j;
+					}
+				}
+			}
+		}
+		
+		if (line > 0) {
+			for (Question question : inQuestions) {
+				
+				for (int j = 0; j < cells[0].length; j++) {
+					if (cells[0][j].getValue().equals(question.getNumber() + "."+question.getLabel())) {
+						question.setResponse(cells[line][j].getValue());
+					}
+				}
+			}
+			return true;
+		} else {
+			return false;
 		}
 	}
 
@@ -185,7 +225,7 @@ public abstract class AbstractSurvey extends AbstractPropertiesComponent {
 			return line;
 		}
 	}
-	
+
 	public static String getDefaultSessionName(ContentContext ctx) throws Exception {
 		String sessionName;
 		MenuElement parentPage = ctx.getCurrentPage().getParent();
@@ -202,11 +242,11 @@ public abstract class AbstractSurvey extends AbstractPropertiesComponent {
 	}
 
 	protected int store(ContentContext ctx, List<Question> questions, String stepName, Integer line) throws Exception {
-		return storeExcel(ctx, questions, getSessionName(ctx), stepName, line);
+		return storeExcel(ctx, questions, stepName, line);
 	}
 
 	public static void main(String[] args) {
-		File excel = new File("c:/trans/europenclimatefoundation2021_en.xlsx");
+		File excel = new File("c:/trans/gouvernance_bcf_2022_fr.xlsx");
 
 		List<Question> questions = new LinkedList<>();
 		Question q = new Question();
@@ -219,7 +259,8 @@ public abstract class AbstractSurvey extends AbstractPropertiesComponent {
 		questions.add(q);
 
 		try {
-			loadExcel(null, excel, questions, "Demographics", 4);
+			boolean result = loadExcel(null, excel, questions, "Evaluation de fonctionnement co", "4,Hyro8GgfQ-");
+			System.out.println(">>>>>>>>> AbstractSurvey.main : result = " + result); // TODO: remove debug trace
 			for (Question question : questions) {
 				System.out.println(question);
 			}

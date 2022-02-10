@@ -319,7 +319,7 @@ public class LangHelper {
 																		// trace
 		}
 	}
-	
+
 	public static <T> void clearWeekReferenceCollection(Collection<WeakReference<T>> col) {
 		Iterator<WeakReference<T>> it = col.iterator();
 		while (it.hasNext()) {
@@ -328,8 +328,8 @@ public class LangHelper {
 			}
 		}
 	}
-	
-	public static <K,T> void clearWeekReferenceMap(Map<K, WeakReference<T>> map) {
+
+	public static <K, T> void clearWeekReferenceMap(Map<K, WeakReference<T>> map) {
 		Iterator<Map.Entry<K, WeakReference<T>>> it = map.entrySet().iterator();
 		while (it.hasNext()) {
 			if (it.next().getValue().get() == null) {
@@ -337,7 +337,7 @@ public class LangHelper {
 			}
 		}
 	}
-	
+
 	public static <E> List<E> getModifiableList(List<E> list) {
 		if (list == null || list == Collections.emptyList() || list == Collections.EMPTY_LIST) {
 			return new LinkedList<E>();
@@ -345,7 +345,7 @@ public class LangHelper {
 			return list;
 		}
 	}
-	
+
 	public static <E> List<E> createList(E... items) {
 		List<E> out = new LinkedList<>();
 		for (E i : items) {
@@ -353,24 +353,39 @@ public class LangHelper {
 		}
 		return out;
 	}
-	
+
 	/**
 	 * compare two objects with one of them null.
+	 * 
 	 * @param obj1
 	 * @param obj2
 	 * @return null if two objects != null
 	 */
 	public static Integer compareNull(Object obj1, Object obj2) {
-		  if (obj1 == null && obj2 == null)  {
-			  return 0;
-		  } else {
-			  if (obj1 == null) {
-				  return 1;
-			  } else if (obj2 == null) {
-				  return -1;
-			  }
-		  }
-		  return null;
+		if (obj1 == null && obj2 == null) {
+			return 0;
+		} else {
+			if (obj1 == null) {
+				return 1;
+			} else if (obj2 == null) {
+				return -1;
+			}
+		}
+		return null;
 	}
-	
+
+	public static boolean isTrue(Object obj) {
+		if (obj == null) {
+			return false;
+		} else if (obj instanceof Boolean) {
+			return (Boolean) obj;
+		} else if (obj instanceof Integer) {
+			return ((Integer) obj) != 0;
+		} else if (obj instanceof Long) {
+			return ((Long) obj) != 0;
+		}else {
+			return StringHelper.isTrue(obj.toString());
+		}
+	}
+
 }

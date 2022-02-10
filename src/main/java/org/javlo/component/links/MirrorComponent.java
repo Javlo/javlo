@@ -24,6 +24,7 @@ import org.javlo.component.core.ISubTitle;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.context.ContentContext;
+import org.javlo.context.ContentContextBean;
 import org.javlo.fields.Field;
 import org.javlo.fields.IFieldContainer;
 import org.javlo.helper.NetHelper;
@@ -749,5 +750,20 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 	public String getFontAwesome() {	
 		return "clone";
 	}
+
+	@Override
+	public boolean isMobileOnly(ContentContext ctx) {
+		IContentVisualComponent comp;
+		try {
+			comp = getMirrorComponent(ctx);
+			if (comp != null && comp instanceof IImageTitle) {
+				return ((IImageTitle)comp).isMobileOnly(ctx);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+		}
+	
 
 }

@@ -66,6 +66,7 @@ import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.ElementaryURLHelper.Code;
 import org.javlo.helper.LangHelper;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.ServletHelper;
@@ -2063,12 +2064,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 								for (MenuElement menuElement : ContentService.getInstance(ctx.getRequest()).getNavigation(lgCtx).getAllChildrenList()) {
 									String pageURL = urlCreator.createURL(lgCtx, menuElement);
 									String pageKeyURL = urlCreator.createURLKey(pageURL);
-									if (pageURL.contains("informatie")) {
-										log(Log.TEMPORARY, "url", "url=" + url + "  pageURL=" + pageURL + "  pageKeyURL=" + pageKeyURL);
-									}
 									if (pageKeyURL.contains(".")) {
 										pageKeyURL = pageKeyURL.substring(0, pageKeyURL.lastIndexOf("."));
 									}
+									
 									localViewPages.put(pageKeyURL, menuElement);
 								}
 							}

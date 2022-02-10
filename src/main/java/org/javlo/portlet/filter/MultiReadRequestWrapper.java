@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.servlet.ReadListener;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -154,6 +155,20 @@ public class MultiReadRequestWrapper extends javax.servlet.http.HttpServletReque
 					is.close();
 				}
 			}
+		}
+
+		@Override
+		public boolean isFinished() {
+			return true;
+		}
+
+		@Override
+		public boolean isReady() {
+			return true;
+		}
+
+		@Override
+		public void setReadListener(ReadListener readListener) {
 		}
 	}
 }

@@ -273,5 +273,10 @@ public class WysiwygParagraph extends AbstractVisualComponent implements IImageT
 	protected boolean getColumnableDefaultValue() {
 		return true;
 	}
+	
+	@Override
+	public boolean isMobileOnly(ContentContext ctx) {
+		return false;
+	}
 
 }

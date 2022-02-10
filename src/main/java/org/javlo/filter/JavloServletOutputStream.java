@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -96,5 +97,14 @@ class JavloServletOurputStream extends ServletOutputStream {
 		} else {
 			throw new IOException("closed"); //$NON-NLS-1$
 		}
+	}
+
+	@Override
+	public boolean isReady() {
+		return true;
+	}
+
+	@Override
+	public void setWriteListener(WriteListener writeListener) {
 	}
 }

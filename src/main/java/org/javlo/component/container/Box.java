@@ -19,9 +19,10 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.service.RequestService;
 
 public class Box extends AbstractVisualComponent implements IContainer {
-
+	
+	
 	private static final String TYPE = "box";
-
+	
 	protected String getCloseBoxInputName() {
 		return "close_box_" + getId();
 	}
@@ -66,7 +67,7 @@ public class Box extends AbstractVisualComponent implements IContainer {
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		ctx.getRequest().setAttribute("closeBox", isCloseBox());
+		ctx.getRequest().setAttribute(CLOSE_BOX_ATTRIBUTE, isCloseBox());
 		ctx.getRequest().setAttribute("titleBox", getTitle());
 		ctx.getRequest().setAttribute("footerBox", getFooter());
 		//ctx.getRequest().setAttribute("closeRow", isCloseRow(ctx));
@@ -403,7 +404,8 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		}
 	}
 
-	protected boolean isCloseBox() {
+	public boolean isCloseBox() {
+		
 		if (getValue().contains(";")) {
 			return StringHelper.isTrue(StringHelper.stringToCollection(getValue(), ";").get(0));
 		} else {

@@ -1,18 +1,5 @@
 package org.javlo.helper;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.javlo.actions.ActionManager;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
@@ -24,7 +11,20 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.service.NotificationService;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserSecurity;
+import org.javlo.utilThymeleaf.TemplateEngineUtil;
 import org.owasp.encoder.Encode;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.WebContext;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 
 public class ServletHelper {
 
@@ -70,7 +70,7 @@ public class ServletHelper {
 		}
 
 		// String[] actions = requestService.getParameterValues("webaction", null);
-		
+
 		if (forceAction != null) {
 			actions.add(forceAction);
 		}
@@ -109,7 +109,7 @@ public class ServletHelper {
 
 		NotificationService notifService = NotificationService.getInstance(globalContext);
 		AdminUserSecurity userSecurity = AdminUserSecurity.getInstance();
-		ctx.getRequest().setAttribute("notificationSize", notifService.getUnreadNotificationSize(ctx.getCurrentUserId(), userSecurity.isAdmin(ctx.getCurrentEditUser()),99));
+		ctx.getRequest().setAttribute("notificationSize", notifService.getUnreadNotificationSize(ctx.getCurrentUserId(), userSecurity.isAdmin(ctx.getCurrentEditUser()), 99));
 
 		String errorMsg = moduleContext.getCurrentModule().getAction().prepare(ctx, moduleContext);
 		if (errorMsg != null) {
@@ -128,9 +128,33 @@ public class ServletHelper {
 			ctx.getRequest().getRequestDispatcher(url).include(ctx.getRequest(), jsp2String);
 			String prefix = "";
 			if (!ctx.getGlobalContext().getStaticConfig().isProd()) {
-				prefix = "<!-- execute jsp : "+Encode.forHtmlContent(url)+" -->\r\n";
+				prefix = "<!-- execute jsp : " + Encode.forHtmlContent(url) + " -->\r\n";
 			}
-			return prefix+jsp2String.toString();
+			return prefix + jsp2String.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.severe(e.getMessage());
+			return null;
+		}
+	}
+
+	public static final String executeThymeleaf(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("******* Thymeleafffff *******");
+
+		// PrintWriter writer = response.getWriter();
+		String option = request.getServletPath();
+
+		try {
+			TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(request.getSession().getServletContext());
+			WebContext context = new WebContext(request, response, request.getSession().getServletContext());
+			context.setVariable("recipient", "World");
+
+			// engine.process(option, context, response.getWriter());
+			ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			PrintWriter writer = new PrintWriter(stream);
+			engine.process(option, context, writer);
+
+			return new String(stream.toByteArray());
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.severe(e.getMessage());
@@ -143,9 +167,9 @@ public class ServletHelper {
 		request.getSession().getServletContext().getRequestDispatcher("/jsp/view/error/blocked.jsp").include(request, response);
 		return;
 	}
-	
+
 	public static final String getContextKey(URL url) {
-		String realPath = url.getPath(); 
+		String realPath = url.getPath();
 		if (realPath != null && realPath.startsWith("/")) {
 			realPath = realPath.substring(1);
 		}
@@ -155,16 +179,16 @@ public class ServletHelper {
 			return StringHelper.stringToFileName(url.getHost().toLowerCase());
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		try {
-			System.out.println("***** ServletHelper.main : 1."+getContextKey(new URL("http://localhost:8080/test")));
-			System.out.println("***** ServletHelper.main : 2."+getContextKey(new URL("http://localhost:8080/")));
-			System.out.println("***** ServletHelper.main : 3."+getContextKey(new URL("http://www.javlo.org/")));
+			System.out.println("***** ServletHelper.main : 1." + getContextKey(new URL("http://localhost:8080/test")));
+			System.out.println("***** ServletHelper.main : 2." + getContextKey(new URL("http://localhost:8080/")));
+			System.out.println("***** ServletHelper.main : 3." + getContextKey(new URL("http://www.javlo.org/")));
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} //TODO: remove debug trace
+		} // TODO: remove debug trace
 	}
 
 }

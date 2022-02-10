@@ -1086,6 +1086,14 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 		return null;
 	}
+	
+	/**
+	 * check if form is expired (too much time for submit)
+	 * @return
+	 */
+	protected boolean isFormExpire() {
+		return true;
+	}
 
 	public static String performSubmit(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -1096,7 +1104,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		boolean eventClose = comp.isClose(ctx);
 
 		String code = rs.getParameter("_form-code", "");
-		if (!comp.cacheForm.containsKey(code) && !comp.isCaptcha(ctx)) {
+		if (comp.isFormExpire() && !comp.cacheForm.containsKey(code) && !comp.isCaptcha(ctx)) {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 			GenericMessage msg = new GenericMessage(i18nAccess.getViewText("error.bad-from-version", "This form has experied, try again."), GenericMessage.ERROR);
 			request.setAttribute("msg", msg);
@@ -1270,7 +1278,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			if (!update || !field.getType().equals("file")) {
 				// if (!field.isFilledWidth(finalValue) &&
 				// StringHelper.containsUppercase(key.substring(0, 1))) {
-				if (!field.isFilledWidth(finalValue, !field.getType().equals("list")) && StringHelper.containsUppercase(key.substring(0, 1))) {
+				if (!field.isFilledWidth(finalValue, !field.getType().equals("list")) && StringHelper.containsUppercase(key.substring(0, 1)) && StringHelper.isEmpty(field.getCondition())) {
 					errorKeyFound.add(key);
 					errorFields.add(key);
 					errorFieldList = errorFieldList + errorFieldSep + field.getLabel();

@@ -726,11 +726,14 @@ public class InfoBean {
 	public List<PageBean> getPagePath() {
 
 		MenuElement page = getCurrentPage();
+		if (page == null) {
+			return Collections.emptyList();
+		}
 
 		List<PageBean> pagePath = new LinkedList<PageBean>();
 		page=page.getParent();
 
-		while (page != null) {			
+		while (page != null) {
 			try {
 				pagePath.add(0, page.getPageBean(ctx));
 			} catch (Exception e) {

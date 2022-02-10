@@ -328,5 +328,10 @@ public class SimpleVideo extends AbstractFileComponent implements IReverseLinkCo
 	public String getFontAwesome() {	
 		return "video-camera";
 	}
+	
+	@Override
+	public boolean isMobileOnly(ContentContext ctx) {
+		return false;
+	}
 
 }

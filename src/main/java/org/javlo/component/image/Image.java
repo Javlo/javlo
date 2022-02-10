@@ -35,7 +35,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		if (superList != null && superList.length > 0) {
 			return superList;
 		} else {
-			return new String[] { STYLE_CENTER, "image-left", "image-right", HIDDEN };
+			return new String[] { STYLE_CENTER, "image-left", "image-right", HIDDEN, MOBILE_TYPE };
 		}
 	}
 
@@ -203,8 +203,12 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 	}
 
 	@Override
-	public boolean isImageValid(ContentContext ctx) {		
-		return StringHelper.isImage(getFileName());
+	public boolean isImageValid(ContentContext ctx) {
+		if (isHiddenInMode(ctx, ctx.getRenderMode(), ctx.isMobile())) {
+			return false;
+		} else {
+			return StringHelper.isImage(getFileName());			
+		}		
 	}
 
 	@Override
@@ -404,5 +408,10 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 	@Override
 	public String getFontAwesome() {	
 		return "picture-o";
+	}
+	
+	@Override
+	public boolean isMobileOnly(ContentContext ctx) {
+		return getStyle().equals(MOBILE_TYPE);
 	}
 }

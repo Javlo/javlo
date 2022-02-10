@@ -16,6 +16,7 @@ import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.component.image.ImageBean;
 import org.javlo.context.ContentContext;
+import org.javlo.context.ContentContextBean;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.MacroHelper;
 import org.javlo.helper.StringHelper;
@@ -742,5 +743,10 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 	@Override
 	public String getFontAwesome() {	
 		return "list";
+	}
+
+	@Override
+	public boolean isMobileOnly(ContentContext ctx) {
+		return false;
 	}
 }

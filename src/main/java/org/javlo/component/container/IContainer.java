@@ -9,6 +9,8 @@ public interface IContainer extends IContentVisualComponent {
 	
 	public static String CLOSE_CONTAINER_CODE = "</div>";
 	
+	public static final String CLOSE_BOX_ATTRIBUTE = "closeBox";
+	
 	public String getId();
 	
 	public boolean isOpen(ContentContext ctx);

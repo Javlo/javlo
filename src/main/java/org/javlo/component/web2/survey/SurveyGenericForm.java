@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 import org.javlo.component.form.Field;
 import org.javlo.component.form.SmartGenericForm;
 import org.javlo.context.ContentContext;
-import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.navigation.MenuElement;
@@ -125,6 +124,10 @@ public class SurveyGenericForm extends SmartGenericForm {
 		}
 		
 		return 1;
+	}
+	
+	protected boolean isFormExpire() {
+		return false;
 	}
 
 }

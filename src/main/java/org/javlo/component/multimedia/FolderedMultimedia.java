@@ -26,6 +26,7 @@ import org.javlo.component.image.IImageTitle;
 import org.javlo.component.meta.TimeRangeComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
+import org.javlo.context.ContentContextBean;
 import org.javlo.context.GlobalContext;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.ElementaryURLHelper;
@@ -979,6 +980,11 @@ public class FolderedMultimedia extends TimeRangeComponent implements IImageTitl
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
+	
+	@Override
+	public boolean isMobileOnly(ContentContext ctx) {
+		return false;
 	}
 
 }

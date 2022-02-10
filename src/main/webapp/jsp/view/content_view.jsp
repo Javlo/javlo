@@ -1,3 +1,4 @@
+<%@page import="org.javlo.component.container.Box"%>
 <%@page import="org.javlo.data.InfoBean"%>
 <%@page import="java.util.List"
 %><%@page import="org.javlo.component.core.ComponentFactory"
@@ -197,7 +198,7 @@ String xhtmlCode = elem.getXHTMLCode(ctx);
 if (!elem.isDisplayable(ctx)) {
 	I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 	xhtmlCode = elem.getEmptyXHTMLCode(ctx);	
-}%></c:if><%if (!elem.isHiddenInMode(ctx.getRenderMode())) {%><%=elem.isVisibleFromCookies(ctx)?elem.getPrefixViewXHTMLCode(ctx):""%><%=xhtmlCode%><%=elem.isVisibleFromCookies(ctx)?elem.getSuffixViewXHTMLCode(ctx):""%><%}
+}%></c:if><%if (!elem.isHiddenInMode(ctx, ctx.getRenderMode(), ctx.isMobile())) {%><%=elem.isVisibleFromCookies(ctx)?elem.getPrefixViewXHTMLCode(ctx):""%><%=xhtmlCode%><%=elem.isVisibleFromCookies(ctx)?elem.getSuffixViewXHTMLCode(ctx):""%><%}
 previousElem = elem;
 if (elems != null) {%><%=elems.getSufixXHTMLCode(ctx)
 %><%}%><%
@@ -206,8 +207,11 @@ if (elems != null) {%><%=elems.getSufixXHTMLCode(ctx)
 }
 	while (!containers.empty()) {
 		IContainer container = (IContainer)containers.pop();
+		ctx.setNoCache(true);
+		container.prepareView(ctx);
 		container.setOpen(ctx, false);
 		%><%=container.getXHTMLCode(ctx)%><%
+		ctx.setNoCache(false);
 		container.setOpen(ctx, true);
 	}
 	if (languageChange) {
