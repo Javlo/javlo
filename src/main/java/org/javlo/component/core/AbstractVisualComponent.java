@@ -3284,10 +3284,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			if (!ctx.isPreviewEditionMode()) {
 				if (mobile != null) {
 					if (mobile) {
-						if (!componentBean.getHiddenModes().contains(ContentContext.MODULE_MOBILE_SPECIAL_MODE)) {
+						if (componentBean.getHiddenModes().contains(ContentContext.MODULE_MOBILE_SPECIAL_MODE)) {
 							return true;
 						}
-					} else if (!componentBean.getHiddenModes().contains(ContentContext.MODULE_DESKTOP_SPECIAL_MODE)) {
+					} else if (componentBean.getHiddenModes().contains(ContentContext.MODULE_DESKTOP_SPECIAL_MODE)) {
 						return true;
 					}
 				}
