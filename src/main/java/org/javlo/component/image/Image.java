@@ -208,8 +208,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 			return false;
 		} else {
 			return StringHelper.isImage(getFileName());			
-		}
-		
+		}		
 	}
 
 	@Override

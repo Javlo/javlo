@@ -3282,12 +3282,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return false;
 		} else {
 			if (!ctx.isPreviewEditionMode()) {
-				if (mobile != null && mobile) {
-					if (!componentBean.getHiddenModes().contains(ContentContext.MODULE_MOBILE_SPECIAL_MODE)) {
+				if (mobile != null) {
+					if (mobile) {
+						if (!componentBean.getHiddenModes().contains(ContentContext.MODULE_MOBILE_SPECIAL_MODE)) {
+							return true;
+						}
+					} else if (!componentBean.getHiddenModes().contains(ContentContext.MODULE_DESKTOP_SPECIAL_MODE)) {
 						return true;
 					}
-				} else if (!componentBean.getHiddenModes().contains(ContentContext.MODULE_DESKTOP_SPECIAL_MODE)) {
-					return true;
 				}
 			}
 			return componentBean.getHiddenModes().contains(mode);
