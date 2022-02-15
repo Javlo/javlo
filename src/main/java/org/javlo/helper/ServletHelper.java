@@ -148,10 +148,10 @@ public class ServletHelper {
 		try {
 			System.out.println(option+"******* Engine break 1 *******");
 
-			TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(request.getServletContext());
+			TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(request.getSession().getServletContext());
 			System.out.println( engine + "******* Engine break 2 *******");
 
-			WebContext context = new WebContext(request, response, request.getServletContext());
+			WebContext context = new WebContext(request, response, request.getSession().getServletContext());
 			System.out.println( context + "******* Engine break 4 *******");
 			context.setVariable("recipient", "World");
 
