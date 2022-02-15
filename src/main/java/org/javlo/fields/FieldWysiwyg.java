@@ -122,6 +122,10 @@ public class FieldWysiwyg extends Field {
 		}
 		return super.getDisplayValue(ctx, locale);
 	}
+	
+	public String getXHTMLValue() {
+		return getValue();
+	}
 
 	@Override
 	public String getType() {
