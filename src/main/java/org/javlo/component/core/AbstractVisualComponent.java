@@ -2371,7 +2371,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return executeRenderer(ctx, getRenderer(ctx), ctx.getRequest(), ctx.getResponse());
 	}
 
-	protected String executeRenderer(ContentContext ctx, String url, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected String executeRenderer(ContentContext ctx, String url,HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		if (url != null) {
 			ctx.getRequest().setAttribute(COMPONENT_KEY, this);

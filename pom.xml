@@ -180,6 +180,7 @@
 
 
 
+
 		<dependency>
 			<groupId>com.jhlabs</groupId>
 			<artifactId>filters</artifactId>
@@ -248,6 +249,11 @@
 			<artifactId>junit</artifactId>
 			<version>4.13.2</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.thymeleaf</groupId>
+			<artifactId>thymeleaf</artifactId>
+			<version>3.0.0.RELEASE</version>
 		</dependency>
 
 		<dependency>
