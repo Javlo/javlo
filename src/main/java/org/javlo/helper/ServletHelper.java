@@ -138,32 +138,43 @@ public class ServletHelper {
 		}
 	}
 
-	public static final String executeThymeleaf(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public static final String executeThymeleaf(HttpServletRequest request, HttpServletResponse response, String url) throws ServletException, IOException {
 		System.out.println("******* Thymeleafffff *******");
 
-		// PrintWriter writer = response.getWriter();
-		String option = request.getServletPath();
+		//PrintWriter writer = response.getWriter();
+
+
+
 
 
 		try {
-			System.out.println(option+"******* Engine break 1 *******");
 
-			TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(request.getSession().getServletContext());
-			System.out.println( engine + "******* Engine break 2 *******");
 
-			WebContext context = new WebContext(request, response, request.getSession().getServletContext());
-			System.out.println( context + "******* Engine break 4 *******");
+
+			System.out.println(url+" ******* Engine break 1 *******");
+
+			TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(request.getServletContext());
+
+
+			System.out.println( engine + " ******* Engine break 2 *******");
+
+			WebContext context = new WebContext(request, response, request.getServletContext());
+			System.out.println( context + " ******* Engine break 4 *******");
 			context.setVariable("recipient", "World");
 
 			// engine.process(option, context, response.getWriter());
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			PrintWriter writer = new PrintWriter(stream);
-			System.out.println( writer + "******* Engine break 3 *******");
-			engine.process(option, context, writer);
+			System.out.println( writer+ " ******* Engine break 3 *******");
+
+			engine.process(url,context, writer);
+
 
 
 
 			return new String(stream.toByteArray());
+
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.severe(e.getMessage());

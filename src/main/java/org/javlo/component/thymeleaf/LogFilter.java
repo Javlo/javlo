@@ -1,4 +1,4 @@
-package org.javlo.component.thymeleaf;
+/*package org.javlo.component.thymeleaf;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +19,9 @@ public class LogFilter implements Filter {
          System.out.println("LogFilter init!");
      }
 
-     */
+ */
+
+     /*
     public void init(FilterConfig fConfig) throws ServletException {
         this.context = fConfig.getServletContext();
         this.context.log("AuthenticationFilter initialized");
@@ -60,9 +62,10 @@ public class LogFilter implements Filter {
 
         chain.doFilter(request,response);
 
-        */
+
     }
 
 
 
 }
+*/

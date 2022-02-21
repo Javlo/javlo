@@ -1,49 +1,5 @@
 package org.javlo.template;
 
-import java.awt.Color;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.naming.ConfigurationException;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
@@ -54,12 +10,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.filter.PropertiesFilter;
-import org.javlo.helper.LangHelper;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
-import org.javlo.helper.XMLManipulationHelper;
+import org.javlo.helper.*;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.helper.filefilter.HTMLFileFilter;
 import org.javlo.i18n.I18nAccess;
@@ -72,12 +23,26 @@ import org.javlo.rendering.Device;
 import org.javlo.service.IListItem;
 import org.javlo.service.ListService;
 import org.javlo.service.exception.ServiceException;
-import org.javlo.utils.ConfigurationProperties;
-import org.javlo.utils.ListAsMap;
-import org.javlo.utils.ListMapValueValue;
-import org.javlo.utils.ReadOnlyPropertiesConfigurationMap;
-import org.javlo.utils.StructuredConfigurationProperties;
-import org.javlo.utils.TimeMap;
+import org.javlo.utilThymeleaf.TemplateEngineUtil;
+import org.javlo.utils.*;
+import org.thymeleaf.TemplateEngine;
+
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.naming.ConfigurationException;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
+import java.awt.*;
+import java.io.*;
+import java.text.ParseException;
+import java.util.List;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 public class Template implements Comparable<Template> {
 
@@ -2594,10 +2559,18 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
-	protected void importTemplateInWebapp(StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget, Map<String, String> childrenData, boolean compressResource, boolean parent, File inRawCssFile, Boolean importComponents, boolean clear) throws IOException {
+	protected void importTemplateInWebapp( StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget, Map<String, String> childrenData, boolean compressResource, boolean parent, File inRawCssFile, Boolean importComponents, boolean clear) throws IOException {
 
 		String templateFolder = config.getTemplateFolder();
+
+
+
+
+		//System.out.println(engine+"importTemplateInWebApp engine");
+		//System.out.println(request+"importTemplateInWebApp Request");
+
 		File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolderName()));
+
 		if (templateSrc.exists()) {
 			logger.info("copy parent template from '" + templateSrc + "' to '" + templateTarget + "'");
 			// FileUtils.copyDirectory(templateSrc, templateTarget, new
@@ -2647,7 +2620,7 @@ public class Template implements Comparable<Template> {
 			while (files.hasNext()) {
 				File file = files.next();
 				File targetFile = new File(file.getAbsolutePath().replace(templateSrc.getAbsolutePath(), templateTarget.getAbsolutePath()));
-				
+
 				if (clear || file.lastModified() > targetFile.lastModified()) {
 					if (!clear) {
 						logger.info("update file " + targetFile);
@@ -2699,7 +2672,7 @@ public class Template implements Comparable<Template> {
 
 			/** prepare merging of all sass component class **/
 			if (componentFolderTarget.exists() && componentFolderTarget.isDirectory()) {
-				Iterator<File> cssFiles = FileUtils.iterateFiles(componentFolderTarget, new String[] { "css", "scss" }, true);
+				Iterator<File> cssFiles = FileUtils.iterateFiles(componentFolderTarget, new String[]{"css", "scss"}, true);
 				Collection<File> fixedFiles = new LinkedList<>();
 				while (cssFiles.hasNext()) {
 					File file = cssFiles.next();
@@ -2761,7 +2734,7 @@ public class Template implements Comparable<Template> {
 
 		/** clean file **/
 		if (clear) {
-			Iterator<File> targetFiles = FileUtils.iterateFiles(templateTarget, new String[] { "scss" }, true);
+			Iterator<File> targetFiles = FileUtils.iterateFiles(templateTarget, new String[]{"scss"}, true);
 			while (targetFiles.hasNext()) {
 				File targetFile = targetFiles.next();
 				try {
@@ -2796,6 +2769,21 @@ public class Template implements Comparable<Template> {
 				ResourceHelper.writeStringToFile(indexFile, content);
 			}
 		}
+
+
+		// Clear Template Thymeleaf  Cache
+
+
+
+		TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(ctx.getServletContext());
+
+		if (engine != null) {
+			engine.clearTemplateCache();
+
+		}
+
+
+
 	}
 
 	public boolean isAlternativeTemplate(ContentContext ctx) {
