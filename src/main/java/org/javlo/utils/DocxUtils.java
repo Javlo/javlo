@@ -1,15 +1,28 @@
 package org.javlo.utils;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.javlo.component.core.ComponentBean;
@@ -17,8 +30,6 @@ import org.javlo.component.image.GlobalImage;
 import org.javlo.component.list.DataList;
 import org.javlo.component.text.WysiwygParagraph;
 import org.javlo.component.title.Heading;
-import org.javlo.component.title.SubTitle;
-import org.javlo.component.title.Title;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.URLHelper;
@@ -75,7 +86,7 @@ public class DocxUtils {
 		}
 		return false;
 	}
-	
+
 	public static List<ComponentBean> extractContent(GlobalContext globalContext, InputStream in, String resourceFolder) throws XDocConverterException, IOException {
 		Options options = Options.getFrom(DocumentKind.DOCX).to(ConverterTypeTo.XHTML);
 		IConverter converter = ConverterRegistry.getRegistry().getConverter(options);
@@ -145,5 +156,71 @@ public class DocxUtils {
 		}
 		return outContent;
 	}
+
+	public static void main(String[] args) throws IOException {
+		File docxFile = new File("c:/trans/modele de convention.docx");
+		Map<String, String> tokens = new HashMap<>();
+		tokens.put("${company.name}", "Ma Myrtille à moi !");
+		tokens.put("${company.web}", "https://lescontesdemyrtille.be/");
+		replaceTokens(docxFile.getAbsolutePath(), tokens);
+	}
+
+	public static void replaceTokens(String docxFile, Map<String, String> tokens) throws IOException {
+		Path zipFilePath = Paths.get(docxFile);
+		try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, null)) {
+
+//			Files.walkFileTree(fs.getPath("/"), new SimpleFileVisitor<Path>() {
+//				@Override
+//				public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
+//					System.out.println(path);
+//					return FileVisitResult.CONTINUE;
+//				}
+//			});
+
+			Path source = fs.getPath("/word/document.xml");
+			Path temp = fs.getPath("/word/document.xml.temp");
+			if (!Files.exists(source)) {
+				System.out.println("not found : " + source);
+			}
+
+			// if (Files.exists(temp)) {
+			// throw new IOException("temp file exists, generate another name");
+			// }
+			Files.move(source, temp);
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(Files.newInputStream(temp))); BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(source)))) {
+				String line;
+				while ((line = br.readLine()) != null) {
+					for (Map.Entry<String, String> token : tokens.entrySet()) {
+						line = line.replace(token.getKey(), token.getValue());
+					}
+					bw.write(line);
+					bw.newLine();
+				}
+			}
+			Files.delete(temp);
+		}
+	}
+
+	// public static void replaceTokens(File docxFile, Map<String, String> tokens)
+	// throws IOException {
+	// ZipFile zipFile = new ZipFile("C:/test.zip");
+	//
+	// Enumeration<? extends ZipEntry> entries = zipFile.entries();
+	//
+	// while (entries.hasMoreElements()) {
+	// ZipEntry entry = entries.nextElement();
+	// if (entry.getName().endsWith("document.xml")) {
+	// InputStream stream = zipFile.getInputStream(entry);
+	// String document = ResourceHelper.writeStreamToString(stream, "UTF-8");
+	// for (Map.Entry<String,String> token : tokens.entrySet()) {
+	// document = document.replace(token.getKey(), token.getValue());
+	// }
+	// entry.get
+	// }
+	// }
+	//
+	// zipFile.close();
+	//
+	// }
 
 }
