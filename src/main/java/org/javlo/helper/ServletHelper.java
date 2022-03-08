@@ -141,7 +141,7 @@ public class ServletHelper {
 	public static final String executeThymeleaf(HttpServletRequest request, HttpServletResponse response, String url) throws ServletException, IOException {
 		System.out.println("******* Thymeleafffff *******");
 
-		//PrintWriter writer = response.getWriter();
+
 
 
 
@@ -151,21 +151,21 @@ public class ServletHelper {
 
 
 
-			System.out.println(url+" ******* Engine break 1 *******");
+			//System.out.println(url+" ******* Engine break 1 *******");
 
 			TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(request.getServletContext());
 
 
-			System.out.println( engine + " ******* Engine break 2 *******");
+			//System.out.println( engine + " ******* Engine break 2 *******");
 
 			WebContext context = new WebContext(request, response, request.getServletContext());
-			System.out.println( context + " ******* Engine break 4 *******");
+			//System.out.println( context + " ******* Engine break 4 *******");
 			context.setVariable("recipient", "World");
 
 			// engine.process(option, context, response.getWriter());
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			PrintWriter writer = new PrintWriter(stream);
-			System.out.println( writer+ " ******* Engine break 3 *******");
+			//System.out.println( writer+ " ******* Engine break 3 *******");
 
 			engine.process(url,context, writer);
 
