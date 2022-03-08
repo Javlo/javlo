@@ -4528,5 +4528,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		return ecomConfig;
 	}
+	
+	public String getCanonicalHost() {
+		return getSpecialConfig().get("canonical.host", null);
+	}
 
 }

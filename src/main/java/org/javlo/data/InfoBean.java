@@ -228,18 +228,19 @@ public class InfoBean {
 	}
 
 	public String getCurrentCanonicalURL() throws Exception {
-		
 		if (!StringHelper.isEmpty(getCurrentPage().getForward(ctx))) {
 			return getCurrentPage().getForward(ctx);
 		}
-		
 		ContentContext robotCtx = new ContentContext(ctx);
 		MenuElement popupPage = NavigationHelper.getPopupPage(ctx);
 		if (popupPage != null) {
 			robotCtx.setCurrentPageCached(popupPage);
 		}
 		robotCtx.setDevice(Device.getFakeDevice("robot"));
-		robotCtx.setAbsoluteURL(true);		
+		robotCtx.setAbsoluteURL(true);
+		if (ctx.getGlobalContext().getCanonicalHost() != null) {
+			robotCtx.setHostName(ctx.getGlobalContext().getCanonicalHost());
+		}
 		return URLHelper.createURL(robotCtx);
 	}
 
