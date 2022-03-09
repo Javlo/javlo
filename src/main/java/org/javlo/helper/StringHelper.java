@@ -2482,6 +2482,10 @@ public class StringHelper {
 		if (date == null) {
 			return "";
 		}
+		
+		if (ctx == null) {
+			return renderDate(date);
+		}
 
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 
