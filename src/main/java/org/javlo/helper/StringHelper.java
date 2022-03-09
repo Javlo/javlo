@@ -2741,14 +2741,19 @@ public class StringHelper {
 		if (date == null) {
 			return "";
 		}
-
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		
+		String manualDateFormat = null;
+		Locale locale = Locale.ENGLISH;
+		if (ctx != null) {
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			manualDateFormat = globalContext.getFullDateFormat();
+			locale = new Locale(ctx.getContextRequestLanguage());
+		}
 		DateFormat dateFormat;
-		String manualDateFormat = globalContext.getFullDateFormat();
 		if (manualDateFormat != null && manualDateFormat.trim().length() > 0) {
-			dateFormat = new SimpleDateFormat(manualDateFormat, new Locale(ctx.getContextRequestLanguage()));
+			dateFormat = new SimpleDateFormat(manualDateFormat, locale);
 		} else {
-			dateFormat = DateFormat.getDateInstance(DateFormat.FULL, new Locale(ctx.getContextRequestLanguage()));
+			dateFormat = DateFormat.getDateInstance(DateFormat.FULL, locale);
 		}
 
 		return dateFormat.format(date);
