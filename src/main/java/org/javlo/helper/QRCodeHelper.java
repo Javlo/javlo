@@ -16,10 +16,22 @@ public class QRCodeHelper {
 		return out;
 	}
 	
+	public static OutputStream createUrlCode(String url, OutputStream out) {
+		return createUrlCode(url, out, null);
+	}
+	
+	public static OutputStream createUrlCode(String url, OutputStream out, Integer size) {
+		if (size == null) {
+			size = 512;
+		}
+		QRCode.from(url).to(ImageType.PNG).withSize(size,size).writeTo(out);
+		return out;
+	}
+	
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		File outPng = new File("c:/trans/qrcode.png");
-		BankTransfert transfert = new BankTransfert("BE72000000001616", "BPOTBEB1", 2,"croix rouge", "aide au dev.", null);
-		System.out.println(transfert);
-		createTransfertCode(transfert, new FileOutputStream(outPng)).close();
+//		BankTransfert transfert = new BankTransfert("BE72000000001616", "BPOTBEB1", 2,"croix rouge", "aide au dev.", null);
+//		System.out.println(transfert);
+		createUrlCode("http://www.javlo.org", new FileOutputStream(outPng)).close();
 	}
 }

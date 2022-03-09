@@ -1,11 +1,13 @@
 package org.javlo.utils;
 
+import java.beans.PropertyVetoException;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -20,14 +22,19 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.component.list.DataList;
@@ -36,7 +43,9 @@ import org.javlo.component.title.Heading;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.service.RequestService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -161,9 +170,48 @@ public class DocxUtils {
 		return outContent;
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
+		try {
+			performFillDocument(null, null);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public static String performFillDocument(ContentContext ctx, RequestService rs) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException, PropertyVetoException, Exception {
+		File docxFile = new File("C:\\Users\\user\\data\\kidoo\\data-ctx\\data-localhost\\static\\files\\dynamic\\reisovereenkomst-indicamp-wip.docx");
+
+		// Map<String, String> tokens = new HashMap<>();
+		// tokens.put("${company.name}", "Ma Myrtille à moi !");
+		// tokens.put("${company.web}", "https://lescontesdemyrtille.be/");
+		// replaceTokens(docxFile.getAbsolutePath(), tokens);
+
+		String xml = DocxUtils.getDocxXmlContent(docxFile.getAbsolutePath());
+		System.out.println(">>>>>>>>> DocxUtils.main : #xml = " + xml.length()); // TODO: remove debug trace
+		// xml = xml.replace("{{firstname}}", "Patrick aime l'été");
+
+		// ResourceHelper.writeStringToFile(new File("c:/trans/doc.xml"), xml);
+
+		// System.out.println(xml);
+
+		File docxFileTarget = new File("c:/trans/REISOVEREENKOMST INDICAMP WIP_target.docx");
+		if (docxFileTarget.exists()) {
+			docxFileTarget.delete();
+		}
+
+		ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
+		DocxUtils.writeDocxXmlContent(docxFile.getAbsolutePath(), xml, outBytes);
+		System.out.println(">>>>>>>>> DocxUtils.main : #outBytes = " + outBytes.size()); // TODO: remove debug trace
+		outBytes.flush();
+		ResourceHelper.writeStreamToFile(new ByteArrayInputStream(outBytes.toByteArray()), new File("c:/trans/response.docx"));
+
+		return null;
+	}
+
+	public static void _main(String[] args) throws IOException {
 		// File docxFile = new File("c:/trans/modele de convention.docx");
-		File docxFile = new File("c:/trans/REISOVEREENKOMST INDICAMP WIP.docx");
+		File docxFile = new File("C:\\Users\\user\\data\\kidoo\\data-ctx\\data-localhost\\static\\files\\dynamic\\reisovereenkomst-indicamp-wip.docx");
 
 		// Map<String, String> tokens = new HashMap<>();
 		// tokens.put("${company.name}", "Ma Myrtille à moi !");
@@ -171,20 +219,69 @@ public class DocxUtils {
 		// replaceTokens(docxFile.getAbsolutePath(), tokens);
 
 		String xml = getDocxXmlContent(docxFile.getAbsolutePath());
-		xml = xml.replace("{{firstname}}", "Patrick aime l'été");
+		System.out.println(">>>>>>>>> DocxUtils.main : #xml = " + xml.length()); // TODO: remove debug trace
+		// xml = xml.replace("{{firstname}}", "Patrick aime l'été");
 
-		System.out.println(xml);
-		
+		// ResourceHelper.writeStringToFile(new File("c:/trans/doc.xml"), xml);
+
+		// System.out.println(xml);
+
 		File docxFileTarget = new File("c:/trans/REISOVEREENKOMST INDICAMP WIP_target.docx");
 		if (docxFileTarget.exists()) {
 			docxFileTarget.delete();
 		}
 
-		FileOutputStream out = new FileOutputStream(docxFileTarget);
-		
-		writeDocxXmlContent(docxFile.getAbsolutePath(), xml, out);
-		
-		out.close();
+		ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
+		DocxUtils.writeDocxXmlContent(docxFile.getAbsolutePath(), xml, outBytes);
+		System.out.println(">>>>>>>>> DocxUtils.main : #outBytes = " + outBytes.size()); // TODO: remove debug trace
+		outBytes.flush();
+		ResourceHelper.writeStreamToFile(new ByteArrayInputStream(outBytes.toByteArray()), new File("c:/trans/response.docx"));
+
+		// FileOutputStream out = new FileOutputStream(docxFileTarget);
+		//
+		// writeDocxXmlContent(docxFile.getAbsolutePath(), xml, out);
+		//
+		// out.close();
+		//
+		// readDocxFile(docxFile);
+
+		// String content = "<w:r w:rsidR=\"00514593\" w:rsidRPr=\"00514593\">\r\n"
+		// + " <w:rPr>\r\n"
+		// + " <w:rFonts w:ascii=\"Filson Pro Regular\"\r\n"
+		// + " w:hAnsi=\"Filson Pro Regular\" />\r\n"
+		// + " <w:color w:val=\"5DBDB1\" />\r\n"
+		// + " <w:sz w:val=\"22\" />\r\n"
+		// + " <w:szCs w:val=\"22\" />\r\n"
+		// + " <w:lang w:val=\"nl-BE\" />\r\n"
+		// + " </w:rPr>\r\n"
+		// + " <w:t>{{</w:t>\r\n"
+		// + " </w:r>\r\n"
+		// + " <w:proofErr w:type=\"spellStart\" />\r\n"
+		// + " <w:r w:rsidR=\"00514593\" w:rsidRPr=\"00514593\">\r\n"
+		// + " <w:rPr>\r\n"
+		// + " <w:rFonts w:ascii=\"Filson Pro Regular\"\r\n"
+		// + " w:hAnsi=\"Filson Pro Regular\" />\r\n"
+		// + " <w:color w:val=\"5DBDB1\" />\r\n"
+		// + " <w:sz w:val=\"22\" />\r\n"
+		// + " <w:szCs w:val=\"22\" />\r\n"
+		// + " <w:lang w:val=\"nl-BE\" />\r\n"
+		// + " </w:rPr>\r\n"
+		// + " <w:t>parent.firstname</w:t>\r\n"
+		// + " </w:r>\r\n"
+		// + " <w:proofErr w:type=\"spellEnd\" />\r\n"
+		// + " <w:r w:rsidR=\"00514593\" w:rsidRPr=\"00514593\">\r\n"
+		// + " <w:rPr>\r\n"
+		// + " <w:rFonts w:ascii=\"Filson Pro Regular\"\r\n"
+		// + " w:hAnsi=\"Filson Pro Regular\" />\r\n"
+		// + " <w:color w:val=\"5DBDB1\" />\r\n"
+		// + " <w:sz w:val=\"22\" />\r\n"
+		// + " <w:szCs w:val=\"22\" />\r\n"
+		// + " <w:lang w:val=\"nl-BE\" />\r\n"
+		// + " </w:rPr>\r\n"
+		// + " <w:t>}}</w:t>\r\n"
+		// + " </w:r>\r\n";
+		//
+		// System.out.println(cleanTokensDocx(content));
 
 	}
 
@@ -193,12 +290,13 @@ public class DocxUtils {
 		try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, null)) {
 			Path source = fs.getPath("/word/document.xml");
 			try (InputStream in = Files.newInputStream(source);) {
-				return ResourceHelper.writeStreamToString(in, "UTF-8");
+				return cleanTokensDocx(ResourceHelper.writeStreamToString(in, "UTF-8"));
 			}
 		}
 	}
 
-	public static void writeDocxXmlContent(String docxFile, String xml, OutputStream out) throws IOException {
+	public static void _writeDocxXmlContent(String docxFile, String xml, OutputStream out) throws IOException {
+		System.out.println("WRITE 1.1 : " + docxFile);
 		Path zipFilePath = Paths.get(docxFile);
 		ZipOutputStream zipOut = new ZipOutputStream(out);
 		try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, null)) {
@@ -207,25 +305,45 @@ public class DocxUtils {
 				public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
 					ZipEntry zipEntry = new ZipEntry(path.toString().substring(1));
 					zipOut.putNextEntry(zipEntry);
-					if (path.getFileName().toString().endsWith("/document.xml")) {
+					if (path.toString().endsWith("/document.xml")) {
 						try (InputStream is = Files.newInputStream(path)) {
 							zipOut.write(xml.getBytes(), 0, xml.getBytes().length);
 						}
 					} else {
 						try (InputStream is = Files.newInputStream(path)) {
 							int length;
-							int size=0;
-							byte[] bytes = new byte[1024];
+							byte[] bytes = new byte[2048];
 							while ((length = is.read(bytes)) >= 0) {
-								size+=length;
 								zipOut.write(bytes, 0, length);
 							}
-							System.out.println(path +" : "+size);
 						}
 					}
+					zipOut.flush();
 					return FileVisitResult.CONTINUE;
 				}
 			});
+		}
+		zipOut.close();
+	}
+
+	public static void writeDocxXmlContent(String docxFile, String xml, OutputStream out) throws IOException {
+		ZipOutputStream zipOut = new ZipOutputStream(out);
+		try (FileInputStream fis = new FileInputStream(docxFile); BufferedInputStream bis = new BufferedInputStream(fis); ZipInputStream zis = new ZipInputStream(bis)) {
+			ZipEntry zipEntry;
+			while ((zipEntry = zis.getNextEntry()) != null) {
+				zipOut.putNextEntry(zipEntry);
+				if (xml != null && zipEntry.getName().endsWith("/document.xml")) {
+					ResourceHelper.writeStringToStream(xml, zipOut, "UTF-8");
+//					zipOut.write(xml.getBytes(), 0, xml.getBytes().length);
+				} else {
+					int length;
+					byte[] bytes = new byte[2048];
+					while ((length = zis.read(bytes)) >= 0) {
+						zipOut.write(bytes, 0, length);
+					}
+				}
+				zipOut.flush();
+			}
 		}
 		zipOut.close();
 	}
@@ -265,6 +383,45 @@ public class DocxUtils {
 			}
 			Files.delete(temp);
 		}
+	}
+
+	public static List<XWPFParagraph> readDocxFile(File file) throws IOException {
+		FileInputStream fis = null;
+		XWPFDocument document = null;
+		try {
+			fis = new FileInputStream(file.getAbsolutePath());
+			document = new XWPFDocument(fis);
+			return document.getParagraphs();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			ResourceHelper.closeResource(document, fis);
+		}
+	}
+
+	public static String cleanTokensDocx(String content) {
+		int openPos = content.indexOf("{{<");
+		while (openPos > 0) {
+			int closePos = content.indexOf(">}}");
+			if (closePos > openPos) {
+				int contentPos = content.indexOf("<w:t>", openPos);
+				if (contentPos < closePos) {
+					String realContent = content.substring(contentPos + 5, content.indexOf("</w:t>", contentPos));
+					String newContent = StringHelper.replaceBloc(content, "", "<w:r ", "</w:r>", openPos);
+					content = StringHelper.replaceBloc(newContent, "", "<w:r ", "</w:r>", closePos - (content.length() - newContent.length()));
+					content = content.replace('>' + realContent + '<', ">{{" + realContent + "}}<");
+				} else {
+					openPos = -1;
+				}
+				if (openPos > 0) {
+					openPos = content.indexOf("{{<");
+				}
+			} else {
+				openPos = -1;
+			}
+		}
+		return content;
 	}
 
 	// public static void replaceTokens(File docxFile, Map<String, String> tokens)

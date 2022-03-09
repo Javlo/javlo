@@ -2041,7 +2041,8 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(createASCIIString("été"));
+		String content = "<p>barbara</p><p>patrick</p><p>catherine</p>";
+		System.out.println(replaceBloc(content, "VDM", "<p>", "</p>", 20));
 	}
 
 	public static LocalTime smartParseTime(String inTime) {
@@ -3663,6 +3664,33 @@ public class StringHelper {
 			endIndex = text.indexOf(suffix);
 		}
 		return items;
+	}
+	
+	/**
+	 * replace a bloc, between two prefix and suffix and with char pos inside.
+	 * @param content
+	 * @param newBloc
+	 * @param prefix
+	 * @param suffix
+	 * @param insidePosition
+	 * @return
+	 */
+	public static String replaceBloc(String content, String newBloc, String prefix, String suffix, int insidePosition) {
+		int prefixPos = content.indexOf(prefix);
+		int suffixPos = content.indexOf(suffix);
+		while (suffixPos >= 0 && suffixPos < prefixPos) {
+			suffixPos = content.indexOf(suffix, suffixPos+suffix.length());
+		}
+		while (prefixPos >= 0 && suffixPos >= 0) {
+			if (prefixPos < insidePosition && suffixPos > insidePosition) {
+				return content.substring(0,prefixPos)+newBloc+content.substring(suffixPos+suffix.length());
+			}
+			prefixPos = content.indexOf(prefix, prefixPos+prefix.length());
+			while (suffixPos >= 0 && suffixPos < prefixPos) {
+				suffixPos = content.indexOf(suffix, suffixPos+suffix.length());
+			}
+		}
+		return null;
 	}
 
 	/**
