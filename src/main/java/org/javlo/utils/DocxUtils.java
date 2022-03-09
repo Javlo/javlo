@@ -331,8 +331,9 @@ public class DocxUtils {
 		try (FileInputStream fis = new FileInputStream(docxFile); BufferedInputStream bis = new BufferedInputStream(fis); ZipInputStream zis = new ZipInputStream(bis)) {
 			ZipEntry zipEntry;
 			while ((zipEntry = zis.getNextEntry()) != null) {
-				zipOut.putNextEntry(zipEntry);
-				if (xml != null && zipEntry.getName().endsWith("/document.xml")) {
+				ZipEntry newZipEntry = new ZipEntry(zipEntry.getName());
+				zipOut.putNextEntry(newZipEntry);
+				if (xml != null && newZipEntry.getName().endsWith("/document.xml")) {
 					ResourceHelper.writeStringToStream(xml, zipOut, "UTF-8");
 //					zipOut.write(xml.getBytes(), 0, xml.getBytes().length);
 				} else {
