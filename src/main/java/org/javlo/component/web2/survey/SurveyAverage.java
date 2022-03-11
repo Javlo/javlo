@@ -12,7 +12,7 @@ import org.javlo.utils.NeverEmptyMap;
 import org.javlo.utils.XLSTools;
 
 public class SurveyAverage {
-	
+
 	private static Logger logger = Logger.getLogger(SurveyAverage.class.getName());
 
 	public static String extractKey(String title) {
@@ -20,7 +20,7 @@ public class SurveyAverage {
 		return title.trim();
 	}
 
-	public static Map<String, Double> average(Cell[][] cells) {
+	public static Map<String, Double> average(Cell[][] cells, boolean underscore, int maxSizeLabel, String labelSeparator) {
 
 		if (cells.length == 0 || cells[0].length == 0) {
 			logger.warning("empty array.");
@@ -30,7 +30,7 @@ public class SurveyAverage {
 		Map<String, Integer> total = new NeverEmptyMap<>(String.class, Integer.class);
 		Map<String, Integer> count = new NeverEmptyMap<>(String.class, Integer.class);
 		for (int i = 0; i < cells[0].length; i++) {
-			if (cells[0][i] != null && cells[0][i].getValue() != null && !cells[0][i].getValue().startsWith("_") && cells[0][i].getValue().contains("_")) {
+			if (cells[0][i] != null && cells[0][i].getValue() != null && !cells[0][i].getValue().startsWith("_") && (!underscore || cells[0][i].getValue().contains("_"))) {
 				String key = extractKey(cells[0][i].getValue());
 				for (int j = 1; j < cells.length; j++) {
 					if (StringHelper.isDigit(cells[j][i].getValue())) {
@@ -42,15 +42,16 @@ public class SurveyAverage {
 		}
 		Map<String, Double> out = new HashMap<>();
 		for (String key : total.keySet()) {
-			out.put(key.trim().toLowerCase(), (double) total.get(key) / (double) count.get(key));
+			out.put(StringHelper.setLineSeparator(key.trim().toLowerCase(), maxSizeLabel, labelSeparator), (double) total.get(key) / (double) count.get(key));
 		}
 
 		return out;
 	}
 
 	public static void main(String[] args) throws Exception {
-		Cell[][] cells = XLSTools.getArray(null, new File("c:/trans/a_test.xlsx"));
-		Map<String, Double> average = average(cells);
+		// Cell[][] cells = XLSTools.getArray(null, new File("c:/trans/a_test.xlsx"));
+		Cell[][] cells = XLSTools.getArray(null, new File("c:/trans/gouvernance_bcf_2022_fr_2.xlsx"), "list survey");
+		Map<String, Double> average = average(cells, false, 25, "#");
 		for (Map.Entry<String, Double> a : average.entrySet()) {
 			System.out.println(a.getKey() + " = " + a.getValue());
 		}

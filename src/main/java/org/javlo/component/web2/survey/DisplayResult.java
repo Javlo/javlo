@@ -1,6 +1,7 @@
 package org.javlo.component.web2.survey;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Map;
 
 import org.javlo.actions.IAction;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.MapHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -18,7 +20,10 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 
 	protected static final String TITLE_FIELD = "title";
 	protected static final String FILE_NAME = "file";
+	protected static final String FILE_NAME_2 = "file2";
+	protected static final String FILE_NAME_3 = "file3";
 	protected static final String LENCIONI = "lencioni";
+	protected static final String AVERAGE = "average";
 
 	public static final String TYPE = "display-result";
 
@@ -27,7 +32,7 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 		return TYPE;
 	}
 
-	private static final List<String> FIELDS = Arrays.asList(new String[] { TITLE_FIELD, FILE_NAME });
+	private static final List<String> FIELDS = Arrays.asList(new String[] { TITLE_FIELD, FILE_NAME, FILE_NAME_2, FILE_NAME_3});
 
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {
@@ -39,31 +44,67 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 	public List<String> getFields(ContentContext ctx) throws Exception {
 		return FIELDS;
 	}
+	
+	private static Cell[][] loadCells(ContentContext ctx, String filePath) throws MalformedURLException, Exception {
+		String sheet = null;
+		if (filePath.contains("#")) {
+			sheet = filePath.split("\\#")[1];
+			filePath = filePath.split("\\#")[0];
+		}
+		Cell[][] cells;
+		if (filePath.toLowerCase().startsWith("http")) {
+			cells = XLSTools.getArray(null, new URL(filePath), sheet);
+		} else {
+			File file;
+			if (ctx != null) {
+				file = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), filePath));
+			} else {
+				file = new File(filePath);
+			}
+			if (!file.exists()) {
+				logger.warning("file not found : "+file);
+				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+				messageRepository.setGlobalMessage(new GenericMessage("file not found : " + file, GenericMessage.ERROR));
+				return null;
+			} else {
+				logger.info("load:"+file+"  sheet:"+sheet);
+				cells = XLSTools.getArray(ctx, file, sheet);
+			}
+		}
+		return cells;
+	}
+	
+	public static void main(String[] args) {
+		try {
+			String filePath = "c:/trans/gouvernance_bcf_2022_fr_2.xlsx#list survey";
+			Cell[][] cells = loadCells(null, filePath);
+			System.out.println(">>>>>>>>> DisplayResult.main : #cells = "+cells.length); //TODO: remove debug trace
+			Map<String, Double> average = SurveyAverage.average(cells, false, 25, "#");
+			System.out.println(">>>>>>>>> DisplayResult.main : #average = "+average.size()); //TODO: remove debug trace
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
 		ctx.getRequest().setAttribute("title", getFieldValue(TITLE_FIELD));
-
-		String filePath = getFieldValue(FILE_NAME);
-		Cell[][] cells;
-		if (filePath.toLowerCase().startsWith("http")) {
-			cells = XLSTools.getArray(null, new URL(filePath));
-		} else {
-			File file = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), filePath));
-			if (!file.exists()) {
-				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
-				messageRepository.setGlobalMessage(new GenericMessage("file not found : " + file, GenericMessage.ERROR));
-				return;
-			} else {
-				cells = XLSTools.getArray(null, file);
+		Cell[][] cells = loadCells(ctx, getFieldValue(FILE_NAME));
+		
+		if (cells != null) {
+			if (getCurrentRenderer(ctx).contains(LENCIONI) || getCurrentRenderer(ctx).contains(AVERAGE)) {
+				Map<String, Double> average = SurveyAverage.average(cells, getCurrentRenderer(ctx).contains(LENCIONI), getCurrentRenderer(ctx).contains(LENCIONI)?999:50, "#");
+				average = MapHelper.sortByValue(average,false);
+				ctx.getRequest().setAttribute("average", average);
+				double globalAverage = 0;
+				for (Double value : average.values()) {
+					globalAverage += value;
+				}
+				ctx.getRequest().setAttribute("participants", cells.length);
+				ctx.getRequest().setAttribute("globalAverage", globalAverage/cells.length);
 			}
 		}
-		if (getCurrentRenderer(ctx).contains(LENCIONI)) {
-			Map<String, Double> average = SurveyAverage.average(cells);
-			ctx.getRequest().setAttribute("average", average);
-		}
-
 	}
 
 	@Override

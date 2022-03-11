@@ -180,7 +180,8 @@ public class DocxUtils {
 	}
 
 	public static String performFillDocument(ContentContext ctx, RequestService rs) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException, PropertyVetoException, Exception {
-		File docxFile = new File("C:\\Users\\user\\data\\kidoo\\data-ctx\\data-localhost\\static\\files\\dynamic\\reisovereenkomst-indicamp-wip.docx");
+		//File docxFile = new File("C:\\Users\\user\\data\\kidoo\\data-ctx\\data-localhost\\static\\files\\dynamic\\reisovereenkomst-indicamp-wip.docx");
+		File docxFile = new File("C:\\trans\\reisovereenkomst-indicamp-wip.docx");
 
 		// Map<String, String> tokens = new HashMap<>();
 		// tokens.put("${company.name}", "Ma Myrtille à moi !");
@@ -189,7 +190,7 @@ public class DocxUtils {
 
 		String xml = DocxUtils.getDocxXmlContent(docxFile.getAbsolutePath());
 		System.out.println(">>>>>>>>> DocxUtils.main : #xml = " + xml.length()); // TODO: remove debug trace
-		// xml = xml.replace("{{firstname}}", "Patrick aime l'été");
+		xml = xml.replace("{{parent.firstname}}", "Patrick aime l'été");
 
 		// ResourceHelper.writeStringToFile(new File("c:/trans/doc.xml"), xml);
 
@@ -245,43 +246,43 @@ public class DocxUtils {
 		//
 		// readDocxFile(docxFile);
 
-		// String content = "<w:r w:rsidR=\"00514593\" w:rsidRPr=\"00514593\">\r\n"
-		// + " <w:rPr>\r\n"
-		// + " <w:rFonts w:ascii=\"Filson Pro Regular\"\r\n"
-		// + " w:hAnsi=\"Filson Pro Regular\" />\r\n"
-		// + " <w:color w:val=\"5DBDB1\" />\r\n"
-		// + " <w:sz w:val=\"22\" />\r\n"
-		// + " <w:szCs w:val=\"22\" />\r\n"
-		// + " <w:lang w:val=\"nl-BE\" />\r\n"
-		// + " </w:rPr>\r\n"
-		// + " <w:t>{{</w:t>\r\n"
-		// + " </w:r>\r\n"
-		// + " <w:proofErr w:type=\"spellStart\" />\r\n"
-		// + " <w:r w:rsidR=\"00514593\" w:rsidRPr=\"00514593\">\r\n"
-		// + " <w:rPr>\r\n"
-		// + " <w:rFonts w:ascii=\"Filson Pro Regular\"\r\n"
-		// + " w:hAnsi=\"Filson Pro Regular\" />\r\n"
-		// + " <w:color w:val=\"5DBDB1\" />\r\n"
-		// + " <w:sz w:val=\"22\" />\r\n"
-		// + " <w:szCs w:val=\"22\" />\r\n"
-		// + " <w:lang w:val=\"nl-BE\" />\r\n"
-		// + " </w:rPr>\r\n"
-		// + " <w:t>parent.firstname</w:t>\r\n"
-		// + " </w:r>\r\n"
-		// + " <w:proofErr w:type=\"spellEnd\" />\r\n"
-		// + " <w:r w:rsidR=\"00514593\" w:rsidRPr=\"00514593\">\r\n"
-		// + " <w:rPr>\r\n"
-		// + " <w:rFonts w:ascii=\"Filson Pro Regular\"\r\n"
-		// + " w:hAnsi=\"Filson Pro Regular\" />\r\n"
-		// + " <w:color w:val=\"5DBDB1\" />\r\n"
-		// + " <w:sz w:val=\"22\" />\r\n"
-		// + " <w:szCs w:val=\"22\" />\r\n"
-		// + " <w:lang w:val=\"nl-BE\" />\r\n"
-		// + " </w:rPr>\r\n"
-		// + " <w:t>}}</w:t>\r\n"
-		// + " </w:r>\r\n";
-		//
-		// System.out.println(cleanTokensDocx(content));
+		 String content = "<w:r w:rsidR=\"00514593\" w:rsidRPr=\"00514593\">\r\n"
+		 + " <w:rPr>\r\n"
+		 + " <w:rFonts w:ascii=\"Filson Pro Regular\"\r\n"
+		 + " w:hAnsi=\"Filson Pro Regular\" />\r\n"
+		 + " <w:color w:val=\"5DBDB1\" />\r\n"
+		 + " <w:sz w:val=\"22\" />\r\n"
+		 + " <w:szCs w:val=\"22\" />\r\n"
+		 + " <w:lang w:val=\"nl-BE\" />\r\n"
+		 + " </w:rPr>\r\n"
+		 + " <w:t>{{</w:t>\r\n"
+		 + " </w:r>\r\n"
+		 + " <w:proofErr w:type=\"spellStart\" />\r\n"
+		 + " <w:r w:rsidR=\"00514593\" w:rsidRPr=\"00514593\">\r\n"
+		 + " <w:rPr>\r\n"
+		 + " <w:rFonts w:ascii=\"Filson Pro Regular\"\r\n"
+		 + " w:hAnsi=\"Filson Pro Regular\" />\r\n"
+		 + " <w:color w:val=\"5DBDB1\" />\r\n"
+		 + " <w:sz w:val=\"22\" />\r\n"
+		 + " <w:szCs w:val=\"22\" />\r\n"
+		 + " <w:lang w:val=\"nl-BE\" />\r\n"
+		 + " </w:rPr>\r\n"
+		 + " <w:t>parent.firstname</w:t>\r\n"
+		 + " </w:r>\r\n"
+		 + " <w:proofErr w:type=\"spellEnd\" />\r\n"
+		 + " <w:r w:rsidR=\"00514593\" w:rsidRPr=\"00514593\">\r\n"
+		 + " <w:rPr>\r\n"
+		 + " <w:rFonts w:ascii=\"Filson Pro Regular\"\r\n"
+		 + " w:hAnsi=\"Filson Pro Regular\" />\r\n"
+		 + " <w:color w:val=\"5DBDB1\" />\r\n"
+		 + " <w:sz w:val=\"22\" />\r\n"
+		 + " <w:szCs w:val=\"22\" />\r\n"
+		 + " <w:lang w:val=\"nl-BE\" />\r\n"
+		 + " </w:rPr>\r\n"
+		 + " <w:t>}}</w:t>\r\n"
+		 + " </w:r>\r\n";
+		
+		 System.out.println(cleanTokensDocx(content));
 
 	}
 

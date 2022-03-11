@@ -2041,8 +2041,12 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		String content = "<p>barbara</p><p>patrick</p><p>catherine</p>";
-		System.out.println(replaceBloc(content, "VDM", "<p>", "</p>", 20));
+//		String content = "<p>barbara</p><p>patrick</p><p>catherine</p>";
+//		System.out.println(replaceBloc(content, "VDM", "<p>", "</p>", 20));
+		
+		//String text = "Le fait de simplmement penser fait de nous des êtes incroyablement improbable au sein du Cosmos.";
+		String text ="la présence des directions de pôles aide les pôles dans la mise en place de leur mission grâce à la vue transversale obtenue lors du comdir ";
+		System.out.println(setLineSeparator(text, 40, "#"));
 	}
 
 	public static LocalTime smartParseTime(String inTime) {
@@ -4573,6 +4577,25 @@ public class StringHelper {
 		} catch (NumberFormatException e) {
 			return defaultValue;
 		}
+	}
+	
+	public static String setLineSeparator(String text, int maxSize, String lineSeparator) {
+		StringBuffer out = new StringBuffer();
+		int pos=0;
+		for(char c : text.toCharArray()) {
+			if (c != ' ') {
+				out.append(c);
+			} else {
+				if (pos>maxSize) {
+					out.append(lineSeparator);
+					pos=0;
+				} else {
+					out.append(c);
+				}
+			}
+			pos++;
+		}
+		return out.toString();
 	}
 
 	public static String toJsonValue(String data) {
