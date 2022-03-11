@@ -10,6 +10,7 @@ import java.util.Map;
 import org.javlo.actions.IAction;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.MapHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -32,7 +33,7 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 		return TYPE;
 	}
 
-	private static final List<String> FIELDS = Arrays.asList(new String[] { TITLE_FIELD, FILE_NAME, FILE_NAME_2, FILE_NAME_3});
+	private static final List<String> FIELDS = Arrays.asList(new String[] { TITLE_FIELD, FILE_NAME, FILE_NAME_2, FILE_NAME_3 });
 
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {
@@ -44,8 +45,13 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 	public List<String> getFields(ContentContext ctx) throws Exception {
 		return FIELDS;
 	}
-	
+
 	private static Cell[][] loadCells(ContentContext ctx, String filePath) throws MalformedURLException, Exception {
+		
+		if (StringHelper.isEmpty(filePath)) {
+			return null;
+		}
+		
 		String sheet = null;
 		if (filePath.contains("#")) {
 			sheet = filePath.split("\\#")[1];
@@ -62,25 +68,25 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 				file = new File(filePath);
 			}
 			if (!file.exists()) {
-				logger.warning("file not found : "+file);
+				logger.warning("file not found : " + file);
 				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 				messageRepository.setGlobalMessage(new GenericMessage("file not found : " + file, GenericMessage.ERROR));
 				return null;
 			} else {
-				logger.info("load:"+file+"  sheet:"+sheet);
+				logger.info("load:" + file + "  sheet:" + sheet);
 				cells = XLSTools.getArray(ctx, file, sheet);
 			}
 		}
 		return cells;
 	}
-	
+
 	public static void main(String[] args) {
 		try {
 			String filePath = "c:/trans/gouvernance_bcf_2022_fr_2.xlsx#list survey";
 			Cell[][] cells = loadCells(null, filePath);
-			System.out.println(">>>>>>>>> DisplayResult.main : #cells = "+cells.length); //TODO: remove debug trace
+			System.out.println(">>>>>>>>> DisplayResult.main : #cells = " + cells.length); // TODO: remove debug trace
 			Map<String, Double> average = SurveyAverage.average(cells, false, 25, "#");
-			System.out.println(">>>>>>>>> DisplayResult.main : #average = "+average.size()); //TODO: remove debug trace
+			System.out.println(">>>>>>>>> DisplayResult.main : #average = " + average.size()); // TODO: remove debug trace
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -90,20 +96,30 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
 		ctx.getRequest().setAttribute("title", getFieldValue(TITLE_FIELD));
-		Cell[][] cells = loadCells(ctx, getFieldValue(FILE_NAME));
-		
-		if (cells != null) {
-			if (getCurrentRenderer(ctx).contains(LENCIONI) || getCurrentRenderer(ctx).contains(AVERAGE)) {
-				Map<String, Double> average = SurveyAverage.average(cells, getCurrentRenderer(ctx).contains(LENCIONI), getCurrentRenderer(ctx).contains(LENCIONI)?999:50, "#");
-				average = MapHelper.sortByValue(average,false);
-				ctx.getRequest().setAttribute("average", average);
-				double globalAverage = 0;
-				for (Double value : average.values()) {
-					globalAverage += value;
+		int i=0;
+		Map<String, Double> ref = null;
+		for (Cell[][] cells : new Cell[][][] { loadCells(ctx, getFieldValue(FILE_NAME)), loadCells(ctx, getFieldValue(FILE_NAME_2)), loadCells(ctx, getFieldValue(FILE_NAME_3)) }) {
+			if (cells != null) {
+				boolean lencioni = getCurrentRenderer(ctx).contains(LENCIONI);
+				if (lencioni || getCurrentRenderer(ctx).contains(AVERAGE)) {
+					Map<String, Double> average = SurveyAverage.average(cells, lencioni, lencioni ? 999 : 50, "#");
+					if (i==0) {
+						ref = average;
+						ctx.getRequest().setAttribute("average", MapHelper.sortByValue(average, false));
+					} else {
+						ctx.getRequest().setAttribute("average"+(i+1), MapHelper.sameSorting(average, ref));
+					}
+					double globalAverage = 0;
+					for (Double value : average.values()) {
+						globalAverage += value;
+					}
+					if (i==0) {
+						ctx.getRequest().setAttribute("participants", cells.length);
+						ctx.getRequest().setAttribute("globalAverage", globalAverage / cells.length);
+					}
 				}
-				ctx.getRequest().setAttribute("participants", cells.length);
-				ctx.getRequest().setAttribute("globalAverage", globalAverage/cells.length);
 			}
+			i++;
 		}
 	}
 

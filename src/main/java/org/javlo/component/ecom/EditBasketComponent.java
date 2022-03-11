@@ -284,7 +284,6 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 				String quantity = rs.getParameter("q-" + p.getId());
 				ProductComponent comp = p.getComponent();
 				if (comp != null) {
-
 					if (StringHelper.isDigit(quantity)) {
 						int q = Integer.parseInt(quantity);
 						if (q > comp.getVirtualStock(ctx)) {
@@ -297,6 +296,7 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 					logger.severe("component not found for : " + p);
 				}
 			}
+			basket.cleanBasket();
 			msg = checkPromoCode(ctx, false);
 		} else {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("ecom.basket-lock"), GenericMessage.ALERT));

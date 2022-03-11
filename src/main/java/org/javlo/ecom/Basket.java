@@ -234,6 +234,18 @@ public class Basket implements Serializable {
 	public List<Product> getProducts() {
 		return products;
 	}
+	
+	public void cleanBasket() {
+		List<Product> toClean = new LinkedList<>();
+		for (Product item : products) {
+			if (item.getQuantity() == 0) {
+				toClean.add(item);
+			}
+		}
+		for (Product item : toClean) {
+			removeProduct(item.getId());
+		}
+	}
 
 	public void addProduct(Product product) {
 		if (!isLock()) {
