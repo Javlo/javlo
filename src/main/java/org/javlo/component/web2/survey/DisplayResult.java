@@ -14,6 +14,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
+import org.javlo.utils.CSVFactory;
 import org.javlo.utils.Cell;
 import org.javlo.utils.XLSTools;
 
@@ -59,7 +60,11 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 		}
 		Cell[][] cells;
 		if (filePath.toLowerCase().startsWith("http")) {
-			cells = XLSTools.getArray(null, new URL(filePath), sheet);
+			if (StringHelper.getFileExtension(filePath).equalsIgnoreCase("xlsx") || StringHelper.getFileExtension(filePath).equalsIgnoreCase("xls ")) {
+				cells = XLSTools.getArray(null, new URL(filePath), sheet);
+			} else {
+				cells = CSVFactory.loadContentAsCell(new File(filePath));
+			}
 		} else {
 			File file;
 			if (ctx != null) {
@@ -74,7 +79,11 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 				return null;
 			} else {
 				logger.info("load:" + file + "  sheet:" + sheet);
-				cells = XLSTools.getArray(ctx, file, sheet);
+				if (StringHelper.getFileExtension(filePath).equalsIgnoreCase("xlsx") || StringHelper.getFileExtension(filePath).equalsIgnoreCase("xls ")) {
+					cells = XLSTools.getArray(ctx, file, sheet);
+				} else {
+					cells = CSVFactory.loadContentAsCell(file);
+				}
 			}
 		}
 		return cells;
@@ -82,7 +91,7 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 
 	public static void main(String[] args) {
 		try {
-			String filePath = "c:/trans/gouvernance_bcf_2022_fr_2.xlsx#list survey";
+			String filePath = "c:/trans/resa_demo_2022_p1.csv";
 			Cell[][] cells = loadCells(null, filePath);
 			System.out.println(">>>>>>>>> DisplayResult.main : #cells = " + cells.length); // TODO: remove debug trace
 			Map<String, Double> average = SurveyAverage.average(cells, false, 25, "#");

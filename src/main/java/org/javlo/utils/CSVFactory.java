@@ -341,6 +341,32 @@ public class CSVFactory {
 			}
 		}
 	}
+	
+	public static Cell[][] loadContentAsCell(File file) throws IOException {
+		InputStream in = null;
+		try {
+			in = new FileInputStream(file);
+			return loadContentAsCell(in);
+		} finally {
+			if (in != null) {
+				ResourceHelper.closeResource(in);
+			}
+		}
+	}
+	
+	public static Cell[][] loadContentAsCell(InputStream in) throws IOException {
+		InputStreamReader reader = new InputStreamReader(in, ContentContext.CHARACTER_ENCODING);
+		CSVParser csvParser = new CSVParser(reader);		
+		String[][] content = csvParser.getAllValues();
+		Cell[][] outCells = new Cell[content.length][];
+		for(int i=0; i<content.length; i++) {
+			outCells[i] = new Cell[content[i].length];
+			for(int j=0; j<content[i].length; j++) {
+				outCells[i][j] = new Cell(content[i][j], null, outCells, i, j);
+			}
+		}
+		return outCells;
+	}
 
 	public static List<String> loadTitle(File file) throws IOException {
 		InputStream in = null;
