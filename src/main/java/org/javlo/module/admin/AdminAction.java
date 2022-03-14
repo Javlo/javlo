@@ -703,6 +703,8 @@ public class AdminAction extends AbstractModuleAction {
 					}
 
 					currentGlobalContext.setBlockPassword(requestService.getParameter("block-password", ""));
+					
+					/** TODO: Naceur : récupérer la valeur CSP **/
 
 					/** macro **/
 					MacroFactory.getInstance(ctx).clear(ctx);

@@ -165,6 +165,13 @@ public class CatchAllFilter implements Filter {
 			globalContext.touch();
 		}
 		
+		/** globalcontext not null **/
+		
+		if (StringHelper.isEmpty(globalContext.getSecurityCsp())) {
+			/** TODO: NACEUR - set CSP in header */
+		}
+		
+		
 		if (globalContext.isForcedHttps()) {
 			((HttpServletResponse) response).setHeader("Strict-Transport-Security", "max-age=3628800");
 		}

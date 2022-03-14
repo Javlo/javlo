@@ -660,6 +660,8 @@
 	<input class="form-control" type="text" id="block-password" name="block-password" value="${currentContext.blockPassword}" />	
 </div>
 
+<!-- TODO: Naceur ajouter l'input  -->
+
 </div><div class="col-sm-6">
 
 <div class="checkbox">		

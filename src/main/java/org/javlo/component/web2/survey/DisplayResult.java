@@ -94,8 +94,14 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 			String filePath = "c:/trans/resa_demo_2022_p1.csv";
 			Cell[][] cells = loadCells(null, filePath);
 			System.out.println(">>>>>>>>> DisplayResult.main : #cells = " + cells.length); // TODO: remove debug trace
-			Map<String, Double> average = SurveyAverage.average(cells, false, 25, "#");
+			Map<String, Double> average = SurveyAverage.average(cells, false, 50, "#");
+			average = MapHelper.sameSorting(average, average);
 			System.out.println(">>>>>>>>> DisplayResult.main : #average = " + average.size()); // TODO: remove debug trace
+			for (Cell[] cells2 : cells) {
+				for (int i = 0; i < cells2.length; i++) {
+					System.out.println(cells2[i]);
+				}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

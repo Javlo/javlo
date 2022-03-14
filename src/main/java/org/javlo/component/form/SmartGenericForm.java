@@ -1171,6 +1171,8 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		String registrationID = StringHelper.getShortRandomId();
 		result.put("_registrationID", registrationID);
 		result.put("_event-close", "" + comp.isClose(ctx));
+		result.put("_compid", "" + comp.getId());
+		
 		result.put(USER_FIELD, StringHelper.neverNull(ctx.getCurrentUserId(), ""));
 		result.put(VALIDED, "false");
 		String fakeField = comp.getLocalConfig(false).getProperty("field.fake", "fake");

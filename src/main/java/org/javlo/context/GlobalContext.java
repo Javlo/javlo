@@ -4532,5 +4532,16 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getCanonicalHost() {
 		return getSpecialConfig().get("canonical.host", null);
 	}
+	
+	public String getSecurityCsp() {
+		return properties.getString("security.csp");
+	}
+	
+	public void setSecurityCsp(String csp) {
+		synchronized (properties) {
+			properties.setProperty("security.csp", csp);
+			save();
+		}
+	}
 
 }

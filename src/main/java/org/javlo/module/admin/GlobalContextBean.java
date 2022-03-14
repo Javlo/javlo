@@ -137,6 +137,8 @@ public class GlobalContextBean {
 	private String ownerInstagram;
 	private String ownerLinkedin;
 	
+	private String securityCsp;
+	
 	private TemplateData templateData = null;
 	
 	private List<String> quietArea = Collections.EMPTY_LIST;
@@ -293,6 +295,8 @@ public class GlobalContextBean {
 		if (globalContext.getDMZServerIntra() != null) {
 			setDMZServerIntra(globalContext.getDMZServerIntra().toString());
 		}
+		
+		setSecurityCsp(globalContext.getSecurityCsp());
 
 	}
 
@@ -1059,5 +1063,15 @@ public class GlobalContextBean {
 	public void setOwnerLinkedin(String ownerLinkedin) {
 		this.ownerLinkedin = ownerLinkedin;
 	}
+
+	public String getSecurityCsp() {
+		return securityCsp;
+	}
+
+	public void setSecurityCsp(String securityCsp) {
+		this.securityCsp = securityCsp;
+	}
+	
+	
 
 }
