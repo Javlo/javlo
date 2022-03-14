@@ -27,6 +27,7 @@ import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections4.map.LinkedMap;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -311,7 +312,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		// ""))).withClass("form-group")).withClass("col-sm-8").render());
 		String csvLink = URLHelper.createResourceURL(ctx, URLHelper.mergePath("/", staticConfig.getStaticFolder(), FOLDER, getLocalConfig(false).getProperty("filename", "")));
 		String xlsxLink = FilenameUtils.removeExtension(csvLink) + ".xlsx";
-		out.println("</div><div class=\"col-sm-2\"><a href=\"" + xlsxLink + "\">[XSLX]</a> - <a href=\"" + csvLink + "\">[CSV]</a></div>");
+		out.println("</div><div class=\"col-sm-2\"><a href=\"" + xlsxLink + "\">[XSLX]</a> - <a href=\"" + csvLink + "\">[CSV]</a><label style=\"float: right\">&nbsp;" + XHTMLHelper.getCheckbox(getInputName("store-label"), isStoreLabel()) + " store label</label></div>");
 		// out.println(div(a("[XSLX]").attr("href", xlsxLink),span(" -
 		// "),a("[CSV]").attr("href", csvLink)).withClass("col-sm-2").render());
 		out.println("</div>");
@@ -414,6 +415,10 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 		out.close();
 		return new String(outStream.toByteArray());
+	}
+
+	private boolean isStoreLabel() {
+		return StringHelper.isTrue(getLocalConfig(false).getProperty("store.label", null), false);
 	}
 
 	private String getEditXHTML(ContentContext ctx, Field field) {
@@ -875,6 +880,8 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		getLocalConfig(false).setProperty("doc-link", rs.getParameter(getInputName("doc-link"), ""));
 		getLocalConfig(false).setProperty("doc-category", rs.getParameter(getInputName("doc-category"), ""));
 
+		getLocalConfig(false).setProperty("store.label", rs.getParameter(getInputName("store-label"), ""));
+
 		if (isCaptcha()) {
 			getLocalConfig(false).setProperty("label.captcha", rs.getParameter(getInputName("label-captcha"), ""));
 			getLocalConfig(false).setProperty("error.captcha", rs.getParameter(getInputName("error.captcha"), ""));
@@ -1086,9 +1093,10 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 		return null;
 	}
-	
+
 	/**
 	 * check if form is expired (too much time for submit)
+	 * 
 	 * @return
 	 */
 	protected boolean isFormExpire() {
@@ -1159,7 +1167,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		InfoBean.getCurrentInfoBean(ctx); // create info bean if not exist
 		subject = XHTMLHelper.replaceJSTLData(ctx, subject);
 		Map<String, Object> params = rs.getParameterMap();
-		Map<String, String> result = new HashMap<String, String>();
+		Map<String, String> result = new LinkedMap<String, String>();
 		List<String> errorFields = new LinkedList<String>();
 		result.put("__registration time", StringHelper.renderSortableTime(new Date()));
 		result.put("__local addr", request.getLocalAddr());
@@ -1358,7 +1366,12 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				adminMailData.put(field.getLabel() + " (" + key + ") ", finalValue);
 				userMailData.put(field.getLabel() + MailService.HIDDEN_DIV + key + "</div>", finalValue);
 			}
-			result.put(key, finalValue);
+			
+			if (comp.isStoreLabel()) {
+				result.put(field.getLabel(), finalValue);
+			} else {
+				result.put(key, finalValue);
+			}
 
 		}
 		

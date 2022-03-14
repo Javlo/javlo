@@ -24,6 +24,8 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 	protected static final String FILE_NAME = "file";
 	protected static final String FILE_NAME_2 = "file2";
 	protected static final String FILE_NAME_3 = "file3";
+	protected static final String MAX_VALUE = "max";
+	protected static final String MIN_VALUE = "min";
 	protected static final String LENCIONI = "lencioni";
 	protected static final String AVERAGE = "average";
 
@@ -34,7 +36,7 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 		return TYPE;
 	}
 
-	private static final List<String> FIELDS = Arrays.asList(new String[] { TITLE_FIELD, FILE_NAME, FILE_NAME_2, FILE_NAME_3 });
+	private static final List<String> FIELDS = Arrays.asList(new String[] { TITLE_FIELD, FILE_NAME, FILE_NAME_2, FILE_NAME_3, MAX_VALUE, MIN_VALUE });
 
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {
@@ -113,6 +115,15 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 		ctx.getRequest().setAttribute("title", getFieldValue(TITLE_FIELD));
 		int i=0;
 		Map<String, Double> ref = null;
+		
+		if (StringHelper.isDigit(getFieldValue(MAX_VALUE))) {
+			ctx.getRequest().setAttribute("max", getFieldValue(MAX_VALUE));
+		}
+		
+		if (StringHelper.isDigit(getFieldValue(MIN_VALUE))) {
+			ctx.getRequest().setAttribute("min", getFieldValue(MIN_VALUE));
+		}
+		
 		for (Cell[][] cells : new Cell[][][] { loadCells(ctx, getFieldValue(FILE_NAME)), loadCells(ctx, getFieldValue(FILE_NAME_2)), loadCells(ctx, getFieldValue(FILE_NAME_3)) }) {
 			if (cells != null) {
 				boolean lencioni = getCurrentRenderer(ctx).contains(LENCIONI);
