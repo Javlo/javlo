@@ -86,20 +86,28 @@ public class QRCodeServlet extends HttpServlet {
 			} else if (category.equals("data")) {
 				data = (String)ctx.getGlobalContext().getTimeAttribute(splittedFile[0]);
 			} else if (category.equals("page")) {
-				String url = request.getPathInfo().replace("/page", "");
-				int qrSize = ctx.getCurrentTemplate().getQRCodeSize();
+				String url = request.getPathInfo().replaceFirst("/page/", "");
+				String lg = url.substring(0,2);
+				url = url.substring(2);
 				ByteArrayOutputStream out = new ByteArrayOutputStream();
 				
 				ContentContext pageCtx = new ContentContext(ctx);
 				pageCtx.setAbsoluteURL(true);
+				pageCtx.setAllLanguage(lg);
+				
 				pageCtx.setPath(url);
 				MenuElement page = ctx.getCurrentPage();
+				
+				if (page.isRoot()) {
+					logger.warning("page root ? : "+url);
+				}
+				
 				if (page == null) {
 					logger.warning("page not found : "+url);
 					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 					return;
 				} else {
-					String shortUrl = URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), page.getShortURL(ctx));
+					String shortUrl = URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), pageCtx.getCurrentPage().getShortLanguageURL(pageCtx));
 					QRCode.from(shortUrl).to(ImageType.PNG).withSize(1024+74,1024+74).writeTo(out); //74 = estimation of margin
 					BufferedImage image = ImageIO.read(new ByteArrayInputStream(out.toByteArray()));
 					//image = removeBorder(image);

@@ -1036,9 +1036,9 @@ public class ContentService implements IPrintInfo {
 					shortURLMap.put(root.getShortURL(ctx), root);
 				}
 				for (MenuElement child : root.getAllChildrenList()) {
-					if (child.isShortURL()) {
+					//if (child.isShortURL()) {
 						shortURLMap.put(child.getShortURL(ctx), child);
-					}
+					//}
 				}
 			}
 			return shortURLMap.get(shortURL);
