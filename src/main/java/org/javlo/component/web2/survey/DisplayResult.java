@@ -124,6 +124,7 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 			ctx.getRequest().setAttribute("min", getFieldValue(MIN_VALUE));
 		}
 		
+		
 		for (Cell[][] cells : new Cell[][][] { loadCells(ctx, getFieldValue(FILE_NAME)), loadCells(ctx, getFieldValue(FILE_NAME_2)), loadCells(ctx, getFieldValue(FILE_NAME_3)) }) {
 			if (cells != null) {
 				boolean lencioni = getCurrentRenderer(ctx).contains(LENCIONI);
@@ -135,18 +136,19 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 					} else {
 						ctx.getRequest().setAttribute("average"+(i+1), MapHelper.sameSorting(average, ref));
 					}
-					double globalAverage = 0;
-					for (Double value : average.values()) {
-						globalAverage += value;
-					}
 					if (i==0) {
+						double globalAverage = 0;
+						for (Double value : average.values()) {
+							globalAverage += value;
+						}
 						ctx.getRequest().setAttribute("participants", cells.length);
-						ctx.getRequest().setAttribute("globalAverage", StringHelper.renderDouble(globalAverage / cells.length, 1));
+						ctx.getRequest().setAttribute("globalAverage", StringHelper.renderDouble(globalAverage / average.size(), 1));
 					}
 				}
 			}
 			i++;
 		}
+		
 	}
 
 	@Override
