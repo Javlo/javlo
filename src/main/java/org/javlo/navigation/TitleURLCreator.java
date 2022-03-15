@@ -50,7 +50,7 @@ public class TitleURLCreator extends AbstractURLFactory {
 			title = StringHelper.createASCIIString(title);
 		}
 		
-		String path = URLEncoder.encode(StringHelper.removeSpecialChars(StringHelper.createI18NURL(title)), ContentContext.CHARACTER_ENCODING);
+		String path = URLEncoder.encode(StringHelper.createI18NURL(StringHelper.removeSpecialChars(title)), ContentContext.CHARACTER_ENCODING);
 
 		String url = path;
 		if (isWithParent()) {
