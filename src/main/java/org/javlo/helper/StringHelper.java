@@ -445,6 +445,7 @@ public class StringHelper {
 			Properties prop = new Properties();
 			InputStream in = StringHelper.class.getClassLoader().getResourceAsStream("/data/transliteration.properties");
 			if (in == null) {
+				logger.warning("transliteration file not found.");
 				return Collections.EMPTY_MAP;
 			}
 			try {
@@ -518,7 +519,7 @@ public class StringHelper {
 		for (Character c : replacement.keySet()) {
 			text = StringUtils.replace(text, "" + c, replacement.get(c));
 		}
-		return text;
+		return removeDuplicateToken(text, "_");
 	}
 
 	private static String createCleanName(String fileName, String acceptableCharacters, char defaultReplaceChar) {
@@ -1100,6 +1101,17 @@ public class StringHelper {
 			outExt = path.substring(slashIndex + 1, path.length());
 		}
 		return outExt;
+	}
+
+	public static String removeDuplicateToken(String text, String token) {
+		if (text == null || StringHelper.isEmpty(token)) {
+			return text;
+		} else {
+			while (text.contains(token + token)) {
+				text = text.replace(token + token, token);
+			}
+		}
+		return text;
 	}
 
 	public static String getLanguageFromFileName(String filename) {
@@ -2041,12 +2053,13 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-//		String content = "<p>barbara</p><p>patrick</p><p>catherine</p>";
-//		System.out.println(replaceBloc(content, "VDM", "<p>", "</p>", 20));
-		
-		//String text = "Le fait de simplmement penser fait de nous des êtes incroyablement improbable au sein du Cosmos.";
-		String text ="la présence des directions de pôles aide les pôles dans la mise en place de leur mission grâce à la vue transversale obtenue lors du comdir ";
-		System.out.println(setLineSeparator(text, 40, "#"));
+		// String content = "<p>barbara</p><p>patrick</p><p>catherine</p>";
+		// System.out.println(replaceBloc(content, "VDM", "<p>", "</p>", 20));
+
+		// String text = "Le fait de simplmement penser fait de nous des êtes
+		// incroyablement improbable au sein du Cosmos.";
+		String text = "la __présence des directions de pôles aide les pôles dans _______la mise en place de leur mission grâce à la vue transversale obtenue lors du comdir ";
+		System.out.println(removeDuplicateToken(text, "_"));
 	}
 
 	public static LocalTime smartParseTime(String inTime) {
@@ -2486,7 +2499,7 @@ public class StringHelper {
 		if (date == null) {
 			return "";
 		}
-		
+
 		if (ctx == null) {
 			return renderDate(date);
 		}
@@ -2546,7 +2559,7 @@ public class StringHelper {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
 		return formatter.format(date);
 	}
-	
+
 	public static String renderDay(Date date, String lang) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", new Locale(lang));
 		sdf.applyPattern("EEEE");
@@ -2749,7 +2762,7 @@ public class StringHelper {
 		if (date == null) {
 			return "";
 		}
-		
+
 		String manualDateFormat = null;
 		Locale locale = Locale.ENGLISH;
 		if (ctx != null) {
@@ -3678,9 +3691,10 @@ public class StringHelper {
 		}
 		return items;
 	}
-	
+
 	/**
 	 * replace a bloc, between two prefix and suffix and with char pos inside.
+	 * 
 	 * @param content
 	 * @param newBloc
 	 * @param prefix
@@ -3692,15 +3706,15 @@ public class StringHelper {
 		int prefixPos = content.indexOf(prefix);
 		int suffixPos = content.indexOf(suffix);
 		while (suffixPos >= 0 && suffixPos < prefixPos) {
-			suffixPos = content.indexOf(suffix, suffixPos+suffix.length());
+			suffixPos = content.indexOf(suffix, suffixPos + suffix.length());
 		}
 		while (prefixPos >= 0 && suffixPos >= 0) {
 			if (prefixPos < insidePosition && suffixPos > insidePosition) {
-				return content.substring(0,prefixPos)+newBloc+content.substring(suffixPos+suffix.length());
+				return content.substring(0, prefixPos) + newBloc + content.substring(suffixPos + suffix.length());
 			}
-			prefixPos = content.indexOf(prefix, prefixPos+prefix.length());
+			prefixPos = content.indexOf(prefix, prefixPos + prefix.length());
 			while (suffixPos >= 0 && suffixPos < prefixPos) {
-				suffixPos = content.indexOf(suffix, suffixPos+suffix.length());
+				suffixPos = content.indexOf(suffix, suffixPos + suffix.length());
 			}
 		}
 		return null;
@@ -4578,17 +4592,17 @@ public class StringHelper {
 			return defaultValue;
 		}
 	}
-	
+
 	public static String setLineSeparator(String text, int maxSize, String lineSeparator) {
 		StringBuffer out = new StringBuffer();
-		int pos=0;
-		for(char c : text.toCharArray()) {
+		int pos = 0;
+		for (char c : text.toCharArray()) {
 			if (c != ' ') {
 				out.append(c);
 			} else {
-				if (pos>maxSize) {
+				if (pos > maxSize) {
 					out.append(lineSeparator);
-					pos=0;
+					pos = 0;
 				} else {
 					out.append(c);
 				}
@@ -4622,7 +4636,7 @@ public class StringHelper {
 		}
 		return out;
 	}
-	
+
 	public static void copyInClipbaord(String content) {
 		StringSelection stringSelection = new StringSelection(content);
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
