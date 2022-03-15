@@ -96,7 +96,7 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 			String filePath = "c:/trans/resa_demo_2022_p1.csv";
 			Cell[][] cells = loadCells(null, filePath);
 			System.out.println(">>>>>>>>> DisplayResult.main : #cells = " + cells.length); // TODO: remove debug trace
-			Map<String, Double> average = SurveyAverage.average(cells, false, 50, "#");
+			Map<String, Double> average = SurveyAverage.average(cells, false, 200, "#");
 			average = MapHelper.sameSorting(average, average);
 			System.out.println(">>>>>>>>> DisplayResult.main : #average = " + average.size()); // TODO: remove debug trace
 			for (Cell[] cells2 : cells) {
@@ -129,7 +129,7 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 			if (cells != null) {
 				boolean lencioni = getCurrentRenderer(ctx).contains(LENCIONI);
 				if (lencioni || getCurrentRenderer(ctx).contains(AVERAGE)) {
-					Map<String, Double> average = SurveyAverage.average(cells, lencioni, lencioni ? 999 : 50, "#");
+					Map<String, Double> average = SurveyAverage.average(cells, lencioni, lencioni ? 999 : 80, "#");
 					if (i==0) {
 						ref = average;
 						ctx.getRequest().setAttribute("average", MapHelper.sortByValue(average, false));
