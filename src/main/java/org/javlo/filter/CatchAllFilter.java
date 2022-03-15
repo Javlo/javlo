@@ -341,6 +341,8 @@ public class CatchAllFilter implements Filter {
 						}
 						NetHelper.sendRedirectTemporarily((HttpServletResponse) response, newURL);
 						return;
+					} else {
+						logger.warning("bad short url code : "+shortURI);
 					}
 				}
 			} catch (Exception e1) {
