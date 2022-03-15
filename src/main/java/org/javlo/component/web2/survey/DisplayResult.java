@@ -36,7 +36,7 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 		return TYPE;
 	}
 
-	private static final List<String> FIELDS = Arrays.asList(new String[] { TITLE_FIELD, FILE_NAME, FILE_NAME_2, FILE_NAME_3, MAX_VALUE, MIN_VALUE });
+	private static final List<String> FIELDS = Arrays.asList(new String[] { TITLE_FIELD, FILE_NAME, FILE_NAME_2, FILE_NAME_3, MIN_VALUE, MAX_VALUE });
 
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {
@@ -141,7 +141,7 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 					}
 					if (i==0) {
 						ctx.getRequest().setAttribute("participants", cells.length);
-						ctx.getRequest().setAttribute("globalAverage", globalAverage / cells.length);
+						ctx.getRequest().setAttribute("globalAverage", StringHelper.renderDouble(globalAverage / cells.length, 1));
 					}
 				}
 			}
