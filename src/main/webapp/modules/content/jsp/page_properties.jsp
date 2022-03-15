@@ -122,7 +122,16 @@
 	<label>${i18n.edit['item.creator']}</label>
 	<span>${page.creator}</span>
 </div>
-</div></div>
+</div>
+
+<div class="qrcode col-sm-4">
+	<div class="line">
+		<label><a href="${info.shortURL}" target="_blank">short url</a></label>
+		<a href="${info.qrCodeURL}" target="_blank">QR Code</a>
+	</div>
+</div>
+
+</div>
 <div class="row">
 <div class="col-sm-4">
 <div class="line">
@@ -328,10 +337,6 @@
 	</fieldset>
 
 </c:if>
-
-<div class="qrcode">
-	<a href="${info.qrCodeURL}" target="_blank">QR Code</a>
-</div>
 
 </div>
 </div>
