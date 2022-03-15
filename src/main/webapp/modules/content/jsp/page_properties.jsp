@@ -328,6 +328,11 @@
 	</fieldset>
 
 </c:if>
+
+<div class="qrcode">
+	<a href="${info.qrCodeURL}" target="_blank">QR Code</a>
+</div>
+
 </div>
 </div>
 

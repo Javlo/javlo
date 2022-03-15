@@ -1005,6 +1005,15 @@ public class InfoBean {
 			return null;
 		}
 	}
+	
+	public String getQrCodeURL() {
+		try {
+			return URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), "/qrcode/page/"+ctx.getPath());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	public String getShortLanguageURL() {
 		try {

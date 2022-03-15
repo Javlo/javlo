@@ -17,6 +17,8 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.ILink;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.URLHelper;
+import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 
 import net.glxn.qrgen.QRCode;
@@ -47,7 +49,7 @@ public class QRCodeServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 
 		String[] splittedPath = StringUtils.split(request.getPathInfo(), "/");
-		if (splittedPath.length != 2) {
+		if (splittedPath.length < 2) {
 			logger.warning("bad request structure : " + request.getPathInfo());
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
@@ -56,11 +58,7 @@ public class QRCodeServlet extends HttpServlet {
 		String category = splittedPath[0];
 		String file = splittedPath[1];
 		String[] splittedFile = StringUtils.split(file, ".");
-		if (splittedFile.length != 2) {
-			logger.warning("bad file structure : " + file);
-			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			return;
-		}
+		
 		try {
 			ContentContext ctx = ContentContext.getContentContext(request, response);
 			
@@ -87,6 +85,26 @@ public class QRCodeServlet extends HttpServlet {
 				data = ((ILink) comp).getURL(ctx);
 			} else if (category.equals("data")) {
 				data = (String)ctx.getGlobalContext().getTimeAttribute(splittedFile[0]);
+			} else if (category.equals("page")) {
+				String url = request.getPathInfo().replace("/page", "");
+				int qrSize = ctx.getCurrentTemplate().getQRCodeSize();
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				
+				ContentContext pageCtx = new ContentContext(ctx);
+				pageCtx.setAbsoluteURL(true);
+				pageCtx.setPath(url);
+				MenuElement page = ctx.getCurrentPage();
+				if (page == null) {
+					logger.warning("page not found : "+url);
+					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+					return;
+				} else {
+					String shortUrl = URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), page.getShortURL(ctx));
+					QRCode.from(shortUrl).to(ImageType.PNG).withSize(1024+74,1024+74).writeTo(out); //74 = estimation of margin
+					BufferedImage image = ImageIO.read(new ByteArrayInputStream(out.toByteArray()));
+					//image = removeBorder(image);
+					ImageIO.write(image, "png", response.getOutputStream());
+				}
 			}
 
 			if (data != null) {				
