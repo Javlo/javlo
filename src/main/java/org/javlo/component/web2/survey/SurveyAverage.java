@@ -42,7 +42,8 @@ public class SurveyAverage {
 		}
 		Map<String, Double> out = new HashMap<>();
 		for (String key : total.keySet()) {
-			out.put(StringHelper.setLineSeparator(key.trim().toLowerCase(), maxSizeLabel, labelSeparator), (double) total.get(key) / (double) count.get(key));
+			//out.put(StringHelper.setLineSeparator(key.trim().toLowerCase(), maxSizeLabel, labelSeparator), (double) total.get(key) / (double) count.get(key));
+			out.put(StringHelper.setLineSeparator(key.trim(), maxSizeLabel, labelSeparator), (double) total.get(key) / (double) count.get(key));
 		}
 
 		return out;

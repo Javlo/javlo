@@ -115,16 +115,12 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 		ctx.getRequest().setAttribute("title", getFieldValue(TITLE_FIELD));
 		int i=0;
 		Map<String, Double> ref = null;
-		
 		if (StringHelper.isDigit(getFieldValue(MAX_VALUE))) {
 			ctx.getRequest().setAttribute("max", getFieldValue(MAX_VALUE));
 		}
-		
 		if (StringHelper.isDigit(getFieldValue(MIN_VALUE))) {
 			ctx.getRequest().setAttribute("min", getFieldValue(MIN_VALUE));
 		}
-		
-		
 		for (Cell[][] cells : new Cell[][][] { loadCells(ctx, getFieldValue(FILE_NAME)), loadCells(ctx, getFieldValue(FILE_NAME_2)), loadCells(ctx, getFieldValue(FILE_NAME_3)) }) {
 			if (cells != null) {
 				boolean lencioni = getCurrentRenderer(ctx).contains(LENCIONI);
@@ -148,7 +144,6 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 			}
 			i++;
 		}
-		
 	}
 
 	@Override
