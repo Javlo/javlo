@@ -662,6 +662,11 @@
 
 <!-- TODO: Naceur ajouter l'input  -->
 
+	<div class="form-group">
+		<label for="content-security-policy">${i18n.edit['admin.form.content-security-policy']}</label>
+		<input class="form-control" type="text" id="content-security-policy" name="content-security-policy" value="${currentContext.contentsecuritypolicy}" />
+	</div>
+
 </div><div class="col-sm-6">
 
 <div class="checkbox">		
