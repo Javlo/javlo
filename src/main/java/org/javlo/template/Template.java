@@ -2644,7 +2644,7 @@ public class Template implements Comparable<Template> {
 											appendRawCssFile(globalContext, ResourceHelper.loadStringFromFile(file), inRawCssFile);
 										}
 										if (fileExt.equalsIgnoreCase("jsp") || fileExt.equalsIgnoreCase("html")) {
-											ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map, ctx.getGlobalContext().getStaticConfig().isCompressJsp());
+											ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map, ctx.getGlobalContext().getStaticConfig().isCompressJsp(),  ctx.getGlobalContext().getStaticConfig().isHighSecure());
 										} else {
 											ResourceHelper.filteredFileCopy(file, targetFile, map);
 										}

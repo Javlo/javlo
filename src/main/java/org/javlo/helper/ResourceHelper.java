@@ -390,7 +390,7 @@ public class ResourceHelper {
 	}
 
 	public static void filteredFileCopyEscapeScriplet(File file1, File file2, Map<String, String> filter,
-			boolean compress) throws IOException {
+			boolean compress, boolean secure) throws IOException {
 		if (!file2.exists()) {
 			file2.getParentFile().mkdirs();
 			file2.createNewFile();
@@ -399,9 +399,11 @@ public class ResourceHelper {
 		}
 		String content = FileUtils.readFileToString(file1);
 
-		String errorMsg = "<strong>Error : no scripled in template.</strong>";
-		content = content.replace("<%", errorMsg);
-		content = content.replace(errorMsg + '@', "<%@");
+		if (secure) {
+			String errorMsg = "<strong>Error : no scripled in template in high secure mode.</strong>";
+			content = content.replace("<%", errorMsg);
+			content = content.replace(errorMsg + '@', "<%@");
+		}
 
 		List<String> keys = new LinkedList<String>(filter.keySet());
 		// sort because big key must be replaced before little key.

@@ -664,7 +664,7 @@
 
 	<div class="form-group">
 		<label for="content-security-policy">${i18n.edit['admin.form.content-security-policy']}</label>
-		<input class="form-control" type="text" id="content-security-policy" name="content-security-policy" value="${currentContext.contentsecuritypolicy}" />
+		<input class="form-control" type="text" id="content-security-policy" name="content-security-policy" value="${currentContext.securityCsp}" />
 	</div>
 
 </div><div class="col-sm-6">
