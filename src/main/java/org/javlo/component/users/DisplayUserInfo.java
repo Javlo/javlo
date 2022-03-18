@@ -46,6 +46,10 @@ public class DisplayUserInfo extends AbstractVisualComponent implements IAction 
 			ctx.getRequest().setAttribute("userToDisplay", user);
 		}
 	}
+	
+	protected boolean getColumnableDefaultValue() {
+		return true;
+	}
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
