@@ -3007,7 +3007,10 @@ public class XHTMLHelper {
 				xhtml = xhtml.replace("${action.text}", linkLabel);
 			}
 			xhtml = xhtml.replace("${root}", URLHelper.createURL(ctx.getContextForAbsoluteURL(), "/"));
-			xhtml = xhtml.replace("${logo}", URLHelper.getLogoRawUrl(ctx.getContextForAbsoluteURL()));
+			String logoUrl = URLHelper.getLogoRawUrl(ctx.getContextForAbsoluteURL());
+			if (logoUrl != null) {
+				xhtml = xhtml.replace("${logo}", logoUrl);
+			}
 			if (logo == null) {
 				logo = ctx.getGlobalContext().getTemplateData().getLogo();
 				if (logo != null) {
