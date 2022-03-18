@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.javlo.context.ContentContext;
 import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.utils.CollectionAsMap;
@@ -170,6 +171,10 @@ public class User implements Principal, Serializable {
 	
 	public boolean isProvider() {
 		return getRoles().contains(AdminUserSecurity.PROVIDER_ROLE);
+	}
+	
+	public void loadAvatar(ContentContext ctx) {
+		
 	}
 
 }

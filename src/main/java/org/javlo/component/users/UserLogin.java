@@ -87,7 +87,7 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 		SocialService.getInstance(ctx).prepare(ctx);
 		if (ctx.getCurrentUser() != null) {
 			ctx.getRequest().setAttribute("user", ctx.getCurrentUser());
-			ctx.getRequest().setAttribute("userInfoMap", ctx.getCurrentUser().getUserInfo());			
+			ctx.getRequest().setAttribute("userInfoMap", ctx.getCurrentUser().getUserInfo());
 			Collection<String> imageURL = new LinkedList<String>();
 			String userFolderName = ctx.getGlobalContext().getUserFolder(ctx.getCurrentUser());
 			if (userFolderName != null) {
@@ -107,7 +107,7 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 			if (email == null) {
 				email = ctx.getGlobalContext().getEmailFromToken(rs.getParameter("createToken"));
 			}
-			logger.info("email found with token : "+email);
+			logger.info("email found with token : " + email);
 			if (email != null) {
 				ctx.getRequest().setAttribute("newEmail", email);
 				setForcedRenderer(ctx, "/jsp/components/user-login/create-with-token.jsp");
@@ -133,9 +133,9 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 		}
 		return null;
 	}
-	
+
 	public static String performDeleteimage(RequestService rs, ContentContext ctx, GlobalContext globalContext, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
-		File imageFile = new File (URLHelper.mergePath(ctx.getGlobalContext().getUserFolder(ctx.getCurrentUser()), StringHelper.getFileNameFromPath(rs.getParameter("file"))));
+		File imageFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getUserFolder(ctx.getCurrentUser()), StringHelper.getFileNameFromPath(rs.getParameter("file"))));
 		if (imageFile.exists()) {
 			imageFile.delete();
 		}
@@ -192,11 +192,11 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 				}
 				email = login;
 			}
-		} else {		
+		} else {
 			login = rs.getParameter("login", rs.getParameter("email", "").trim()).trim();
 			email = rs.getParameter("email", null);
 			if (!StringHelper.isEmpty(comp.getFieldValue(UserLogin.VALIDATION)) && !StringHelper.isTrue(rs.getParameter("valid"))) {
-				return i18nAccess.getViewText("registration.error.check", "Please check : ")+'"'+comp.getFieldValue(UserLogin.VALIDATION)+'"';
+				return i18nAccess.getViewText("registration.error.check", "Please check : ") + '"' + comp.getFieldValue(UserLogin.VALIDATION) + '"';
 			}
 		}
 		IUserFactory userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), session);
@@ -208,7 +208,8 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 			return i18nAccess.getViewText("registration.error.email", "Please enter a valid email.");
 		} else if (userFactory.getUser(login) != null) {
 			return i18nAccess.getViewText("registration.error.login_allreadyexist", "user already exists.");
-		} if (userFactory.getUserByEmail(email) != null) {
+		}
+		if (userFactory.getUserByEmail(email) != null) {
 			return i18nAccess.getViewText("registration.error.email_alreadyexist", "email already exists.");
 		} else if (!password.equals(password2)) {
 			return i18nAccess.getViewText("registration.error.password_notsame", "2 passwords must be the same.");
@@ -269,7 +270,7 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 	public static String performUpdate(RequestService rs, GlobalContext globalContext, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		IUserFactory userFactory;
 		userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
-		
+
 		User user = ctx.getCurrentUser();
 		IUserInfo userInfo = user.getUserInfo();
 
@@ -299,39 +300,37 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 			}
 		}
 		
-		for (FileItem fileItem : rs.getAllFileItem()) {
-			if (StringHelper.isImage(fileItem.getName())) {
-				File image = new File(URLHelper.mergePath(globalContext.getUserFolder(ctx.getCurrentUser()), fileItem.getName()));
-				if (!image.exists()) {
-					image.getParentFile().mkdirs();
-					image.createNewFile();
-					InputStream in = null;
-					try {
-						in = fileItem.getInputStream();
-						ResourceHelper.writeStreamToFile(in, image);
-					} finally {
-						ResourceHelper.closeResource(in);
-					}
-				}
-			}
-		}		
-		
+		UserRegistration.uploadFile(ctx);
+
+//		for (FileItem fileItem : rs.getAllFileItem()) {
+//			System.out.println(">>>>>>>>> UserLogin.performUpdate : fileItem.getName() = "+fileItem.getName()); //TODO: remove debug trace
+//			if (StringHelper.isImage(fileItem.getName())) {
+//				InputStream in = null;
+//				try {
+//					in = fileItem.getInputStream();
+//					UserFactory.uploadNewAvatar(ctx, ctx.getCurrentUser().getLogin(), in);
+//				} finally {
+//					ResourceHelper.closeResource(in);
+//				}
+//			}
+//		}
+
 		userInfo.setRoles(newRoles);
 		/* save password */
 		String pwd = userInfo.getPassword();
 		IContentVisualComponent comp = ComponentHelper.getComponentFromRequest(ctx);
-		if (comp==null) {
+		if (comp == null) {
 			return "component not found.";
 		}
 		List<String> fields = comp.extractFieldsFromRenderer(ctx);
 		if (fields != null && fields.size() > 0) {
-			Map<String,String> allValues = new HashMap<String, String>();
+			Map<String, String> allValues = new HashMap<String, String>();
 			for (String field : fields) {
 				allValues.put(field, StringHelper.neverNull(rs.getParameter(field)));
 				BeanHelper.copy(allValues, userInfo, false);
 			}
 		} else {
-			BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo, false);	
+			BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo, false);
 		}
 		/* restore password */
 		userInfo.setPassword(pwd);
@@ -351,7 +350,7 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_ADMIN);
 	}
-	
+
 	@Override
 	public String getFontAwesome() {
 		return "user-circle";

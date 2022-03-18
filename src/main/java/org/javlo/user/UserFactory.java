@@ -3,6 +3,7 @@
  */
 package org.javlo.user;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
 import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -37,6 +39,7 @@ import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.image.ImageHelper;
 import org.javlo.io.TransactionFile;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -69,7 +72,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	private String userInfoFile = null;
 
 	private static Map<String, IUserInfo> changePasswordReference = new TimeMap<String, IUserInfo>();
-	
+
 	protected List<IUserInfo> userInfoList = null; // TODO: create a external
 	// application scope class
 
@@ -152,13 +155,14 @@ public class UserFactory implements IUserFactory, Serializable {
 			}
 		}
 	}
-	
+
 	@Override
 	public User adminFakeLogin(HttpServletRequest request, String login) {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		User user = getUser(login);
 		if (user != null) {
-			UserSecurity.storeShadowUser(request.getSession());;
+			UserSecurity.storeShadowUser(request.getSession());
+			;
 			user.setContext(globalContext.getContextKey());
 			request.getSession().setAttribute(getSessionKey(), user);
 		}
@@ -245,21 +249,20 @@ public class UserFactory implements IUserFactory, Serializable {
 	/**
 	 * public User getCurrentUser(HttpSession session) { User user = (User)
 	 * session.getAttribute(SESSION_KEY); String globalContextKey =
-	 * GlobalContext.getSessionContextKey(session); if (globalContextKey != null
-	 * && user != null) { if (user.getContext().equals(globalContextKey)) {
-	 * return user; } else { if (AdminUserSecurity.getInstance().isGod(user)) {
-	 * return user; } try {
-	 * EditContext.getInstance(GlobalContext.getInstance(session,
+	 * GlobalContext.getSessionContextKey(session); if (globalContextKey != null &&
+	 * user != null) { if (user.getContext().equals(globalContextKey)) { return
+	 * user; } else { if (AdminUserSecurity.getInstance().isGod(user)) { return
+	 * user; } try { EditContext.getInstance(GlobalContext.getInstance(session,
 	 * globalContextKey), session).setEditUser(null); } catch (Exception e) {
 	 * e.printStackTrace(); } logger.info("remove user '"+user.getLogin()+ "'
-	 * context does'nt match."); session.removeAttribute(SESSION_KEY); return
-	 * null; } } return user; }
+	 * context does'nt match."); session.removeAttribute(SESSION_KEY); return null;
+	 * } } return user; }
 	 **/
 	public User getCurrentUser(GlobalContext globalContext, HttpSession session) {
 		User user = (User) session.getAttribute(getSessionKey());
 		return user;
 	}
-	
+
 	protected String getFileName() {
 		return URLHelper.mergePath(dataFolder, userInfoFile);
 	}
@@ -293,17 +296,17 @@ public class UserFactory implements IUserFactory, Serializable {
 
 	@Override
 	public User login(HttpServletRequest request, String token) {
-		logger.info("try login with token token = "+token);
+		logger.info("try login with token token = " + token);
 		if (token == null || token.trim().length() == 0) {
 			return null;
 		}
 
 		GlobalContext globalContext = GlobalContext.getInstance(request);
-		
+
 		if (!globalContext.getStaticConfig().isLoginWithToken()) {
 			return null;
 		}
-		
+
 		User outUser = null;
 		List<IUserInfo> users = getUserInfoList();
 		for (IUserInfo user : users) {
@@ -316,7 +319,7 @@ public class UserFactory implements IUserFactory, Serializable {
 			request.getSession().setAttribute(getSessionKey(), outUser);
 		}
 		if (outUser != null) {
-			logger.info("user logged with token : "+outUser.getLogin());
+			logger.info("user logged with token : " + outUser.getLogin());
 		} else {
 			logger.info("fail login with token.");
 		}
@@ -441,7 +444,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	public boolean isStandardStorage() {
 		return true;
 	}
-	
+
 	@Override
 	public String getSessionKey() {
 		return "currentUser";
@@ -453,9 +456,9 @@ public class UserFactory implements IUserFactory, Serializable {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		MaxLoginService maxLoginService = MaxLoginService.getInstance();
 		if (!maxLoginService.isLoginAuthorised(globalContext)) {
-			
-			logger.severe("to many login request : "+request.getRequestURL());
-			
+
+			logger.severe("to many login request : " + request.getRequestURL());
+
 			I18nAccess i18nAccess;
 			try {
 				i18nAccess = I18nAccess.getInstance(request);
@@ -463,7 +466,7 @@ public class UserFactory implements IUserFactory, Serializable {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			//request.getSession().removeAttribute(SESSION_KEY);
+			// request.getSession().removeAttribute(SESSION_KEY);
 			return null;
 		}
 		EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
@@ -672,7 +675,7 @@ public class UserFactory implements IUserFactory, Serializable {
 				try {
 					out.close();
 				} catch (IOException e1) {
-//					LocalLogger.log(e1);
+					// LocalLogger.log(e1);
 				}
 			}
 		}
@@ -696,13 +699,13 @@ public class UserFactory implements IUserFactory, Serializable {
 					}
 					unlockStore();
 				} catch (Exception e) {
-//					LocalLogger.log(e);
+					// LocalLogger.log(e);
 				}
 			}
 		}
 
 	}
-	
+
 	private void updateUserInfoNoStore(IUserInfo userInfo) throws IOException {
 		synchronized (lock) {
 			userInfo.setModificationDate(new Date());
@@ -714,7 +717,7 @@ public class UserFactory implements IUserFactory, Serializable {
 						BeanHelper.copyBean(userInfo, currentUserInfo);
 					}
 				} catch (Exception e) {
-//					LocalLogger.log(e);
+					// LocalLogger.log(e);
 				}
 			}
 		}
@@ -756,7 +759,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	public String getTokenCreateIfNotExist(User user) throws IOException {
 		String token = user.getUserInfo().getToken();
 		if (StringHelper.isEmpty(token)) {
-			token = URLEncoder.encode(StringHelper.getRandomIdBase64()+StringHelper.encryptPasswordSHA256(user.getLogin()),ContentContext.CHARACTER_ENCODING);
+			token = URLEncoder.encode(StringHelper.getRandomIdBase64() + StringHelper.encryptPasswordSHA256(user.getLogin()), ContentContext.CHARACTER_ENCODING);
 			user.getUserInfo().setToken(token);
 			updateUserInfo(user.getUserInfo());
 			store();
@@ -764,12 +767,12 @@ public class UserFactory implements IUserFactory, Serializable {
 		return token;
 	}
 
-	public static InternetAddress getInternetAddress (User user) {
+	public static InternetAddress getInternetAddress(User user) {
 		if (user == null) {
 			return null;
 		} else {
 			return getInternetAddress(user.getUserInfo());
-		}		
+		}
 	}
 
 	public static InternetAddress getInternetAddress(IUserInfo userinfo) {
@@ -797,14 +800,28 @@ public class UserFactory implements IUserFactory, Serializable {
 			User user = userFactory.getUser(login);
 			InternetAddress add = getInternetAddress(user);
 			if (add == null && ctx.getGlobalContext().isCollaborativeMode()) {
-				user = adminUserFactory .getUser(login);
+				user = adminUserFactory.getUser(login);
 				add = getInternetAddress(user);
 			}
 			if (add != null) {
 				outAdd.add(add);
 			}
- 		}
+		}
 		return outAdd;
 	}
-	
+
+	public static void uploadNewAvatar(ContentContext ctx, String userName, InputStream in) throws IOException {
+		BufferedImage image = ImageIO.read(in);
+		if (image != null) {
+			image = ImageHelper.resize(image, 1024);
+			File imageFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getUserFolder(ctx.getCurrentUser()), "avatar.jpg"));
+			if (!imageFile.exists()) {
+				imageFile.getParentFile().mkdirs();
+				imageFile.createNewFile();
+			}
+			ImageIO.write(image, "jpg", imageFile);
+			logger.info("new avatar uploaded : "+imageFile);
+		}
+	}
+
 }

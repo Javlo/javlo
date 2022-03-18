@@ -303,21 +303,20 @@ public class URLHelper extends ElementaryURLHelper {
 		if (userInfo.getAvatarURL() != null && userInfo.getAvatarURL().trim().length() > 0) {
 			return userInfo.getAvatarURL();
 		}
-
-		String url = mergePath(ctx.getGlobalContext().getStaticConfig().getAvatarFolder(), userInfo.getLogin().toLowerCase() + ".png");
+		String url = mergePath(ctx.getGlobalContext().getStaticConfig().getAvatarFolder(), userInfo.getUserFolder() + ".png");
 		File avatarFile = new File(mergePath(ctx.getGlobalContext().getDataFolder(), url));
 		if (avatarFile.exists()) {
 			try {
-				return createTransformURL(ctx, url, "avatar");
+				return URLHelper.addParam(createTransformURL(ctx, url, "avatar"), "fd", ""+avatarFile.lastModified());
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		} else {
-			url = mergePath(ctx.getGlobalContext().getStaticConfig().getAvatarFolder(), userInfo.getLogin().toLowerCase() + ".jpg");
+			url = mergePath(ctx.getGlobalContext().getStaticConfig().getAvatarFolder(), userInfo.getUserFolder() + ".jpg");
 			avatarFile = new File(mergePath(ctx.getGlobalContext().getDataFolder(), url));
 			if (avatarFile.exists()) {
 				try {
-					return createTransformURL(ctx, url, "avatar");
+					return URLHelper.addParam(createTransformURL(ctx, url, "avatar"), "fd", ""+avatarFile.lastModified());
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}

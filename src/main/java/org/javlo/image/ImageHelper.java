@@ -42,15 +42,8 @@ import org.jcodec.common.DemuxerTrack;
 import org.jcodec.common.DemuxerTrackMeta;
 import org.jcodec.common.Format;
 import org.jcodec.common.JCodecUtil;
-import org.jcodec.common.io.FileChannelWrapper;
-import org.jcodec.common.io.NIOUtils;
-import org.jcodec.common.io.SeekableByteChannel;
-import org.jcodec.common.model.ColorSpace;
 import org.jcodec.common.model.Picture;
-import org.jcodec.containers.mp4.demuxer.MP4DemuxerTrackMeta;
 import org.jcodec.scale.AWTUtil;
-import org.jcodec.scale.ColorUtil;
-import org.jcodec.scale.Transform;
 
 /**
  * @author pvanderm

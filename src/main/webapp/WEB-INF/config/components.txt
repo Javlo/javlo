@@ -130,6 +130,7 @@ org.javlo.component.container.ArrayDisplayComponent
 org.javlo.component.container.ComponentList
 org.javlo.component.container.ShowTemplateComponent
 org.javlo.component.container.DisplayComponent
+org.javlo.component.users.DisplayUserInfo
 
 --content.title.ecom
 

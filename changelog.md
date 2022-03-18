@@ -898,5 +898,7 @@ Security in case of vulnerabilities.
   - column with mirror component correction
 ## [2.1.3] - 09/01/2022
 ### Added
+  - security csp
 ### Modified
+  - conserve parameters on redirect
 ### fixed

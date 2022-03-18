@@ -186,7 +186,7 @@ public class UserRegistration extends MapComponent implements IAction {
 
 	}
 
-	protected static void uploadFile(ContentContext ctx) throws IOException {
+	public static void uploadFile(ContentContext ctx) throws IOException {
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		FileItem userFile = rs.getFileItem("userFile");
 		if (userFile != null && userFile.getSize() > 0) {
@@ -200,7 +200,7 @@ public class UserRegistration extends MapComponent implements IAction {
 				ResourceHelper.safeClose(in);
 			}
 		}
-		String avatarFileName = ctx.getCurrentUserId() + ".png";
+		String avatarFileName = ctx.getCurrentUser().getUserInfo().getUserFolder() + ".png";
 		File avatarFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getAvatarFolder(), avatarFileName));
 		if (StringHelper.isTrue(rs.getParameter("deleteAvatar", null))) {
 			avatarFile.delete();

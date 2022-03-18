@@ -370,6 +370,13 @@ public class CatchAllFilter implements Filter {
 					String pattern2 = entry.getValue();
 					if (!pattern1.contains("*")) {
 						if (cmsURI.equals(pattern1)) {
+							if (httpRequest.getQueryString() != null && httpRequest.getQueryString().length() > 0) {
+								if (pattern2.contains("?")) {
+									pattern2 += '&'+httpRequest.getQueryString();
+								} else {
+									pattern2 += '?'+httpRequest.getQueryString();
+								}
+							}
 							logger.info("manual redirect : " + pattern1 + " --> " + pattern2);
 							if (DEBUG) {
 								LocalLogger.log("1.sendRedirectPermanently");
@@ -390,6 +397,13 @@ public class CatchAllFilter implements Filter {
 								LocalLogger.log("2.sendRedirectPermanently");
 								LocalLogger.log("pattern1 : " + pattern1);
 								LocalLogger.log("newURL : " + newURL);
+							}
+							if (httpRequest.getQueryString() != null && httpRequest.getQueryString().length() > 0) {
+								if (newURL.contains("?")) {
+									newURL += '&'+httpRequest.getQueryString();
+								} else {
+									newURL += '?'+httpRequest.getQueryString();
+								}
 							}
 							NetHelper.sendRedirectPermanently((HttpServletResponse) response, newURL);
 							return;
