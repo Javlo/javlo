@@ -742,5 +742,19 @@ public class MailService {
 			}
 		}
 	}
+	
+	/**
+	 * get the default mail receiver.
+	 * @param ctx
+	 * @param email
+	 * @return if email is a email return it
+	 */
+	public static String getDefaultReceiverEmail(ContentContext ctx, String email) {
+		if (StringHelper.isMail(email)) {
+			return email;
+		} else {
+			return ctx.getGlobalContext().getAdministratorEmail();
+		}
+	}
 
 }

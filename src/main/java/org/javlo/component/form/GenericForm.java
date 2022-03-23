@@ -328,8 +328,6 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 
 	public static String performSubmit(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-		System.out.println(">>>>>>>>> GenericForm.performSubmit : SUBMIT  "); //TODO: remove debug trace
-		
 		RequestService rs = RequestService.getInstance(request);
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		ContentService content = ContentService.getInstance(request);
@@ -552,7 +550,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			}
 
 			if (comp.isSendEmail() && !fakeFilled) {
-				String emailFrom = comp.getLocalConfig(false).getProperty("mail.from", StringHelper.neverEmpty(globalContext.getAdministratorEmail(), StaticConfig.getInstance(request.getSession()).getSiteEmail()));				
+				String emailFrom = comp.getLocalConfig(false).getProperty("mail.from", StringHelper.neverEmpty(globalContext.getAdministratorEmail(), StaticConfig.getInstance(request.getSession()).getSiteEmail()));
 				String emailFromField = comp.getLocalConfig(false).getProperty("mail.from.field", null);
 				if (emailFromField != null && rs.getParameter(emailFromField, "") != null) {
 					String tmpEmail = rs.getParameter(emailFromField, "");
@@ -564,6 +562,8 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 						logger.warning(e.getMessage());
 					}
 				}
+				
+				emailFrom = MailService.getDefaultSenderEmail(ctx, emailFrom);
 
 				String emailTo = null;
 				String emailToField = comp.getLocalConfig(false).getProperty("mail.to.field", null);
