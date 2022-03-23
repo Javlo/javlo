@@ -724,5 +724,23 @@ public class MailService {
 			return mailParent.getChildMenuElements();
 		}
 	}
+	
+	/**
+	 * get the default mail sender.
+	 * @param ctx
+	 * @param email
+	 * @return if email is a email return it
+	 */
+	public static String getDefaultSenderEmail(ContentContext ctx, String email) {
+		if (StringHelper.isMail(email)) {
+			return email;
+		} else {
+			if (StringHelper.isMail(ctx.getGlobalContext().getSMTPUser())) {
+				return ctx.getGlobalContext().getSMTPUser();
+			} else {
+				return ctx.getGlobalContext().getAdministratorEmail();
+			}
+		}
+	}
 
 }

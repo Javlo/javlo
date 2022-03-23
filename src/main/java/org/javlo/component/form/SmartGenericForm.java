@@ -1385,16 +1385,15 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 
 		if (errorFields.size() == 0) {
-
 			logger.info(adminMailData.toString());
-
 			int lineNumber = -1;
 			if (comp.isStorage()) {
 				lineNumber = comp.storeResult(ctx, result);
 			}
-
 			if (comp.isSendEmail() && !fakeFilled) {
 				String emailFrom = comp.getLocalConfig(false).getProperty("mail.from", StaticConfig.getInstance(request.getSession()).getSiteEmail());
+				emailFrom = MailService.getDefaultSenderEmail(ctx, MailService.getDefaultSenderEmail(ctx,  emailFrom));
+
 				String emailFromField = comp.getLocalConfig(false).getProperty("mail.from.field", null);
 				if (emailFromField != null && rs.getParameter(emailFromField, "") != null) {
 					String tmpEmail = rs.getParameter(emailFromField, "");
