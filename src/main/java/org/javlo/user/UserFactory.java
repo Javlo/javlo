@@ -824,4 +824,9 @@ public class UserFactory implements IUserFactory, Serializable {
 		}
 	}
 
+	@Override
+	public String checkUserAviability(ContentContext ctx, String login) {
+		return null;
+	}
+
 }

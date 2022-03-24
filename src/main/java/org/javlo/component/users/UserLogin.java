@@ -203,6 +203,11 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 		String password = rs.getParameter("password", "").trim();
 		String password2 = rs.getParameter("passwordbis", "").trim();
 		ctx.getRequest().setAttribute("userInfoMap", new RequestParameterMap(ctx.getRequest()));
+		
+		String msg = userFactory.checkUserAviability(ctx, login);
+		if (msg != null) {
+			return msg;
+		}
 
 		if (email != null && !PatternHelper.MAIL_PATTERN.matcher(email).matches()) {
 			return i18nAccess.getViewText("registration.error.email", "Please enter a valid email.");

@@ -61,6 +61,14 @@ public interface IUserFactory {
 	public abstract List<IUserInfo> getUserInfoForRoles(String[] inRoles);
 	
 	public abstract String getTokenCreateIfNotExist(User user)  throws IOException;
+	
+	/**
+	 * check the login is available
+	 * @param ctx
+	 * @param login
+	 * @return null if ok, error message otherwise
+	 */
+	public abstract String checkUserAviability(ContentContext ctx, String login);
 
 	/**
 	 * get all roles of the user.

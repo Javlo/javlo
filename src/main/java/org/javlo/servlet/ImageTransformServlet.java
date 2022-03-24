@@ -866,6 +866,16 @@ public class ImageTransformServlet extends FileServlet {
 				img = ImageEngine.web2(img, null, config.getWeb2Height(device, filter, area), config.getWeb2Separation(device, filter, area));
 			}
 		}
+		
+		if (config.isBluringBorder(device, filter, area)) {
+			Color bg = config.getBluringBorderBgColor(device, originalFilter, area);
+			if (bg == null) {
+				bg = Color.white;
+			}
+			int borderWidth = config.getBluringBorderWidth(device, originalFilter, area);
+			Integer direction = config.getBluringBorderWidth(device, originalFilter, area);
+			img = ImageEngine.addBlurBorder(img,bg , borderWidth, direction);
+		}
 
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 6");

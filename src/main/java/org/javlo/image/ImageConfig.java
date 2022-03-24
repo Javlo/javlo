@@ -634,6 +634,38 @@ public class ImageConfig {
 		String key = getKey(device, filter, area, "web2.separation");
 		return properties.getInt(key, device != null ? getWeb2Separation(null, ALL, null) : -1);
 	}
+	
+	public boolean isBluringBorder(Device device, String filter, String area) {
+		String key = getKey(device, filter, area, "bluring-border");
+		return properties.getBoolean(key, device != null ? isBluringBorder(null, ALL, null) : false);
+	}
+	
+	public int getBluringBorderWidth(Device device, String filter, String area) {
+		String key = getKey(device, filter, area, "bluring-border.width");
+		return properties.getInt(key, device != null ? getBluringBorderWidth(null, ALL, null) : 50);
+	}
+	
+	public Integer getBluringBorderDirection(Device device, String filter, String area) {
+		String key = getKey(device, filter, area, "bluring-border.direction");
+		return properties.getInt(key, device != null ? getBluringBorderDirection(null, ALL, null) : null);
+	}
+	
+	public Color getBluringBorderBgColor(Device device, String filter, String area) {
+		String key = getKey(device, filter, area, "bluring-border.background-color");
+		String deviceValue = properties.getString(key, properties.getString(getKey(null, ALL, null, "bluring-border.background-color"), null));
+		if (deviceValue != null && !deviceValue.equals("-1") && !deviceValue.equals("transparent")) {
+			try {
+				return Color.decode(deviceValue);
+			} catch (NumberFormatException e) {
+				logger.warning("bad bluring border BG color found in image config file ( filter: " + filter + ", device: " + deviceValue + " area :" + area + " ) : " + deviceValue);
+				return null;
+			}
+		} else {
+			return null;
+		}
+	}
+	
+	
 
 	public ProjectionConfig getProjection(GlobalContext globalContext, Template template, Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "projection.polygon");

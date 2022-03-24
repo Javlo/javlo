@@ -58,7 +58,7 @@ import com.mortennobel.imagescaling.ResampleFilters;
 import com.mortennobel.imagescaling.ResampleOp;
 
 public class ImageEngine {
-	
+
 	public static String WEBP_CONVERTER = null;
 
 	public static boolean DISPLAY_FOCUS = false;
@@ -78,26 +78,22 @@ public class ImageEngine {
 		BufferedImage outImage = ImageIO.read(file);
 		return outImage;
 	}
-	
+
 	public static BufferedImage loadImage(InputStream in) throws IOException {
 		BufferedImage outImage = ImageIO.read(in);
 		return outImage;
 	}
-	
+
 	public static void drain(InputStream inputStream, OutputStream outputStream) {
-	    try
-	    {
-	        byte[] buf=new byte[1024];
-	        int count;
-	        while ((count=inputStream.read(buf)) != -1)
-	        {
-	            outputStream.write(buf, 0, count);
-	        }
-	    }
-	    catch (IOException e)
-	    {
-	        throw new RuntimeException(e);
-	    }
+		try {
+			byte[] buf = new byte[1024];
+			int count;
+			while ((count = inputStream.read(buf)) != -1) {
+				outputStream.write(buf, 0, count);
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public static byte[] readBytesFully(InputStream in) {
@@ -120,9 +116,9 @@ public class ImageEngine {
 		Picture picture;
 		try (FileInputStream in = new FileInputStream(file)) {
 			byte[] bytes = readBytesFully(in);
-			ByteBuffer buffer = ByteBuffer.wrap(bytes);			
+			ByteBuffer buffer = ByteBuffer.wrap(bytes);
 			picture = decoder.decodeFrame(buffer, null);
-		}		 
+		}
 		return AWTUtil.toBufferedImage(picture);
 	}
 
@@ -143,7 +139,7 @@ public class ImageEngine {
 		if (ext.equalsIgnoreCase("webp") && WEBP_CONVERTER == null) {
 			ext = "jpg";
 		}
-		
+
 		if (ext.equalsIgnoreCase("jpg") || ext.equalsIgnoreCase("jpeg")) {
 			if (img.getType() != BufferedImage.TYPE_3BYTE_BGR) {
 				img = removeAlpha(img);
@@ -154,8 +150,8 @@ public class ImageEngine {
 		}
 		if (ext.equalsIgnoreCase("webp")) {
 			String randomSuffix = StringHelper.getRandomId();
-			File tempImageSource =  File.createTempFile("webp_temp_"+randomSuffix, ".png");
-			File tempImageTarget =  File.createTempFile("webp_temp_"+randomSuffix, ".webp");
+			File tempImageSource = File.createTempFile("webp_temp_" + randomSuffix, ".png");
+			File tempImageTarget = File.createTempFile("webp_temp_" + randomSuffix, ".webp");
 			try {
 				ImageIO.write(img, "png", tempImageSource);
 				ImageWebpLibraryWrapper webp = new ImageWebpLibraryWrapper(WEBP_CONVERTER);
@@ -522,9 +518,12 @@ public class ImageEngine {
 	/**
 	 * get a color in a image, coord can be out of the image size.
 	 * 
-	 * @param image a standard java image
-	 * @param x     if < 0 -> get 0 id > width -> get width-1
-	 * @param y     if < 0 -> get 0 id > length -> get length-1
+	 * @param image
+	 *            a standard java image
+	 * @param x
+	 *            if < 0 -> get 0 id > width -> get width-1
+	 * @param y
+	 *            if < 0 -> get 0 id > length -> get length-1
 	 * @return the color of a pixel
 	 */
 	public static int getColor(BufferedImage image, int x, int y) {
@@ -544,9 +543,12 @@ public class ImageEngine {
 	/**
 	 * set a color in a image, coord can be out of the image size.
 	 * 
-	 * @param image a standard java image
-	 * @param x     if < 0 -> get 0 id > width -> get width-1
-	 * @param y     if < 0 -> get 0 id > length -> get length-1
+	 * @param image
+	 *            a standard java image
+	 * @param x
+	 *            if < 0 -> get 0 id > width -> get width-1
+	 * @param y
+	 *            if < 0 -> get 0 id > length -> get length-1
 	 * @return the color of a pixel
 	 */
 	public static void setColor(BufferedImage image, int x, int y, Color color) {
@@ -683,7 +685,7 @@ public class ImageEngine {
 	public static BufferedImage resizeWidth(BufferedImage bi, int width, boolean hq) {
 		return resizeWidth(bi, width, 0, 0, 0, 0, null, hq);
 	}
-	
+
 	public static BufferedImage resizeHeight(BufferedImage bi, int height, boolean hq) {
 		return resizeHeight(bi, height, 0, 0, 0, 0, null, hq);
 	}
@@ -712,7 +714,7 @@ public class ImageEngine {
 		}
 		return image;
 	}
-	
+
 	public static BufferedImage resizeHeight(BufferedImage bi, int height, int mt, int mr, int ml, int mb, Color bgColor, boolean hq) {
 		int width = Math.round(bi.getWidth() * ((float) height / (float) bi.getHeight()));
 		height = Math.round(bi.getHeight() * ((float) width / (float) bi.getWidth()));
@@ -800,7 +802,6 @@ public class ImageEngine {
 						rgb = mixedColor(bg, new Color(rgb), 0.35f).getRGB();
 						// rgb = Color.blue.getRGB();
 					}
-
 				}
 				imgNew.setRGB(x, y, rgb);
 			}
@@ -950,8 +951,10 @@ public class ImageEngine {
 		int realInterestX = (interestX * source.getWidth()) / 1000;
 		int realInterestY = (interestY * source.getHeight()) / 1000;
 
-//		System.out.println(">>>>>>>>> ImageEngine.centerInterest : realInterestX = "+realInterestX); //TODO: remove debug trace
-//		System.out.println(">>>>>>>>> ImageEngine.centerInterest : realInterestY = "+realInterestY); //TODO: remove debug trace
+		// System.out.println(">>>>>>>>> ImageEngine.centerInterest : realInterestX =
+		// "+realInterestX); //TODO: remove debug trace
+		// System.out.println(">>>>>>>>> ImageEngine.centerInterest : realInterestY =
+		// "+realInterestY); //TODO: remove debug trace
 
 		if (DISPLAY_FOCUS) {
 			mark(source, interestX, interestY);
@@ -1030,18 +1033,28 @@ public class ImageEngine {
 	/**
 	 * resize a picture
 	 * 
-	 * @param source     the source image
-	 * @param inWidth    new with
-	 * @param inHeight   new height
-	 * @param cropResize true if image must be croped or false if image must be
-	 *                   deformed
-	 * @param mt         margin top
-	 * @param ml         margin left
-	 * @param mr         margin right
-	 * @param mb         margin bottom
-	 * @param bgColor    background color (for margin and alpha)
-	 * @param interestX  x position of the interest zone in the picture
-	 * @param interestY  y position of the interest zone in the picture
+	 * @param source
+	 *            the source image
+	 * @param inWidth
+	 *            new with
+	 * @param inHeight
+	 *            new height
+	 * @param cropResize
+	 *            true if image must be croped or false if image must be deformed
+	 * @param mt
+	 *            margin top
+	 * @param ml
+	 *            margin left
+	 * @param mr
+	 *            margin right
+	 * @param mb
+	 *            margin bottom
+	 * @param bgColor
+	 *            background color (for margin and alpha)
+	 * @param interestX
+	 *            x position of the interest zone in the picture
+	 * @param interestY
+	 *            y position of the interest zone in the picture
 	 * @return a resized image
 	 */
 	public static BufferedImage resize(BufferedImage source, int inWidth, int inHeight, boolean cropResize, boolean addBorder, int mt, int ml, int mr, int mb, Color bgColor, int interestX, int interestY, boolean focusZone, boolean hq) {
@@ -1085,13 +1098,14 @@ public class ImageEngine {
 			}
 			source = outImage;
 		} else if (focusZone) {
-//			source = centerInterest(source, interestX, interestY, inWidth, inHeight);
-//			try {
-//				storeImage(source, new File("c:/trans/focus/out_"+interestX+'_'+interestY+"_zentered.jpg"));
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
+			// source = centerInterest(source, interestX, interestY, inWidth, inHeight);
+			// try {
+			// storeImage(source, new
+			// File("c:/trans/focus/out_"+interestX+'_'+interestY+"_zentered.jpg"));
+			// } catch (IOException e) {
+			// // TODO Auto-generated catch block
+			// e.printStackTrace();
+			// }
 		}
 
 		BufferedImage workImage;
@@ -1108,12 +1122,13 @@ public class ImageEngine {
 			}
 		}
 
-//		try {
-//			storeImage(workImage, new File("c:/trans/focus/out_"+interestX+'_'+interestY+"_work.jpg"));
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		// try {
+		// storeImage(workImage, new
+		// File("c:/trans/focus/out_"+interestX+'_'+interestY+"_work.jpg"));
+		// } catch (IOException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 
 		// repositioning the image
 		int realInterestX = (interestX * workImage.getWidth()) / 1000;
@@ -1205,9 +1220,9 @@ public class ImageEngine {
 
 		ResampleOp resizeOp = new ResampleOp(width, height);
 		resizeOp.setFilter(ResampleFilters.getLanczos3Filter());
-		return  resizeOp.filter(in, null);
+		return resizeOp.filter(in, null);
 	}
-	
+
 	public static BufferedImage web2(BufferedImage image, Color bgColor, int height, int separation) {
 
 		if ((height < 1) || (height > image.getHeight())) {
@@ -1441,8 +1456,10 @@ public class ImageEngine {
 
 	/**
 	 *
-	 * @param img            Image to modify
-	 * @param sepiaIntensity From 0-255, 30 produces nice results
+	 * @param img
+	 *            Image to modify
+	 * @param sepiaIntensity
+	 *            From 0-255, 30 produces nice results
 	 * @throws Exception
 	 */
 	public static void applySepiaFilter(BufferedImage img, int sepiaIntensity) {
@@ -1513,7 +1530,8 @@ public class ImageEngine {
 	 * 
 	 * @param c1
 	 * @param c2
-	 * @param tolerance difference between two colors 0 >> 3*255
+	 * @param tolerance
+	 *            difference between two colors 0 >> 3*255
 	 * @return
 	 */
 	public static boolean equalColor(Color c1, Color c2, int tolerance) {
@@ -1669,11 +1687,17 @@ public class ImageEngine {
 	/**
 	 * combine two color with transparency
 	 * 
-	 * @param c1    front color
-	 * @param c2    back color
-	 * @param alpha transparency (0>1)
+	 * @param c1
+	 *            front color
+	 * @param c2
+	 *            back color
+	 * @param alpha
+	 *            transparency (0>1)
 	 */
 	public static Color combineColor(Color c1, Color c2, float alpha) {
+		if (alpha > 1) {
+			throw new IllegalArgumentException("alpha must be bteween 0 and 1. alpha=" + alpha);
+		}
 		float red = ((float) c1.getRed() / 255) * alpha + ((float) c2.getRed() / 255) * (1 - alpha);
 		float green = ((float) c1.getGreen() / 255) * alpha + ((float) c2.getGreen() / 255) * (1 - alpha);
 		float blue = ((float) c1.getBlue() / 255) * alpha + ((float) c2.getBlue() / 255) * (1 - alpha);
@@ -1683,8 +1707,10 @@ public class ImageEngine {
 	/**
 	 * combine two color with transparency on first
 	 * 
-	 * @param c1 front color
-	 * @param c2 back color
+	 * @param c1
+	 *            front color
+	 * @param c2
+	 *            back color
 	 */
 	public static Color combineColor(Color color1, Color color2) {
 		return combineColor(color1, color2, ((float) color1.getAlpha()) / 255);
@@ -1709,18 +1735,21 @@ public class ImageEngine {
 		int topY = p4.getSquare().getY1();
 		int rightX = p4.getSquare().getX3();
 		int bottomY = p4.getSquare().getY3();
-		
+
 		if (crop) {
 			int width = MathHelper.max(p4.getX1(), p4.getX2(), p4.getX3(), p4.getX4()) - MathHelper.min(p4.getX1(), p4.getX2(), p4.getX3(), p4.getX4());
 			int height = MathHelper.max(p4.getY1(), p4.getY2(), p4.getY3(), p4.getY4()) - MathHelper.min(p4.getY1(), p4.getY2(), p4.getY3(), p4.getY4());
 			source = resize(source, width, height, true, false, 0, 0, 0, 0, null, interestX, interestY, true, true);
-		}		
-		
+		}
+
 		BufferedImage tempImage = new BufferedImage(back.getWidth(), back.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-//		BufferedImage layerX = new BufferedImage(back.getWidth(), back.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-//		BufferedImage layerY = new BufferedImage(back.getWidth(), back.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-//		BufferedImage layerXY = new BufferedImage(back.getWidth(), back.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-		
+		// BufferedImage layerX = new BufferedImage(back.getWidth(), back.getHeight(),
+		// BufferedImage.TYPE_4BYTE_ABGR);
+		// BufferedImage layerY = new BufferedImage(back.getWidth(), back.getHeight(),
+		// BufferedImage.TYPE_4BYTE_ABGR);
+		// BufferedImage layerXY = new BufferedImage(back.getWidth(), back.getHeight(),
+		// BufferedImage.TYPE_4BYTE_ABGR);
+
 		source = resizeImage(source, rightX - leftX, bottomY - topY);
 
 		// fillImage(source, Color.green);
@@ -1792,22 +1821,25 @@ public class ImageEngine {
 	private static void writeColorWithFloatCoord(BufferedImage image, BufferedImage layerx, BufferedImage layery, BufferedImage layerxy, Color c, double x, double y) {
 		int basicX = (int) Math.floor(x);
 		int basicY = (int) Math.floor(y);
-//		float alphaX = (float) x - basicX;
-//		float alphaY = (float) y - basicY;		
+		// float alphaX = (float) x - basicX;
+		// float alphaY = (float) y - basicY;
 		image.setRGB(basicX, basicY, c.getRGB());
 
-//		if (basicX + 1 < image.getWidth()) {
-//			finalColor = new Color(c.getRed(), c.getGreen(), c.getBlue(), 255*Math.abs(alphaX - alphaY) / 4);
-//			layerx.setRGB(basicX + 1, basicY, finalColor.getRGB());
-//		}
-//		if (basicY + 1 < image.getHeight()) {
-//			finalColor = new Color(c.getRed(), c.getGreen(), c.getBlue(), Math.abs(alphaY - alphaX) / 4);
-//			layery.setRGB(basicX, basicY + 1, finalColor.getRGB());
-//		}
-//		if (basicY + 1 < image.getHeight() && basicX + 1 < image.getWidth()) {
-//			finalColor = new Color(c.getRed(), c.getGreen(), c.getBlue(), (alphaX + alphaY) / 2);
-//			layerxy.setRGB(basicX + 1, basicY + 1, finalColor.getRGB());
-//		}
+		// if (basicX + 1 < image.getWidth()) {
+		// finalColor = new Color(c.getRed(), c.getGreen(), c.getBlue(),
+		// 255*Math.abs(alphaX - alphaY) / 4);
+		// layerx.setRGB(basicX + 1, basicY, finalColor.getRGB());
+		// }
+		// if (basicY + 1 < image.getHeight()) {
+		// finalColor = new Color(c.getRed(), c.getGreen(), c.getBlue(), Math.abs(alphaY
+		// - alphaX) / 4);
+		// layery.setRGB(basicX, basicY + 1, finalColor.getRGB());
+		// }
+		// if (basicY + 1 < image.getHeight() && basicX + 1 < image.getWidth()) {
+		// finalColor = new Color(c.getRed(), c.getGreen(), c.getBlue(), (alphaX +
+		// alphaY) / 2);
+		// layerxy.setRGB(basicX + 1, basicY + 1, finalColor.getRGB());
+		// }
 	}
 
 	/**
@@ -1888,9 +1920,12 @@ public class ImageEngine {
 	 * 
 	 * @param image
 	 * @param backgroundColors
-	 * @param size             size of border (in %)
-	 * @param degradedSize     degraded size bewteen background and image
-	 * @param position         1:top 2: right 3:bottom 4:left
+	 * @param size
+	 *            size of border (in %)
+	 * @param degradedSize
+	 *            degraded size bewteen background and image
+	 * @param position
+	 *            1:top 2: right 3:bottom 4:left
 	 * @return
 	 */
 	public static BufferedImage addTransparanceBorder(BufferedImage image, Color backgroundColors, int size, int degradedSize, int position) {
@@ -2016,136 +2051,103 @@ public class ImageEngine {
 		return newImage;
 	}
 
-//	public static void writeJPEG2000(BufferedImage image, File file) throws IOException {
-//		OutputStream out = new FileOutputStream(file);
-//		try {
-//			writeJPEG2000(image, out);
-//		} finally {
-//			ResourceHelper.closeResource(out);
-//		}
-//	}
-//
-//	public static void writeJPEG2000(BufferedImage image, OutputStream out) throws IOException {
-//		Iterator<ImageWriter> writers = ImageIO.getImageWritersBySuffix("jp2");
-//		ImageWriter writer = writers.next();
-//		J2KImageWriteParam writeParams = (J2KImageWriteParam) writer.getDefaultWriteParam();
-//		writeParams.setLossless(false);
-//		writeParams.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-//		writeParams.setCompressionType("JPEG2000");
-//		// writeParams.setFilter(J2KImageWriteParam.FILTER_97);
-//		writeParams.setCompressionQuality(0.5f);
-//		writeParams.setEncodingRate(0.5f);
-//		ImageOutputStream ios = ImageIO.createImageOutputStream(out);
-//		writer.setOutput(ios);
-//		writer.write(null, new IIOImage(image, null, null), writeParams);
-//		writer.dispose();
-//	}
+	// public static void writeJPEG2000(BufferedImage image, File file) throws
+	// IOException {
+	// OutputStream out = new FileOutputStream(file);
+	// try {
+	// writeJPEG2000(image, out);
+	// } finally {
+	// ResourceHelper.closeResource(out);
+	// }
+	// }
+	//
+	// public static void writeJPEG2000(BufferedImage image, OutputStream out)
+	// throws IOException {
+	// Iterator<ImageWriter> writers = ImageIO.getImageWritersBySuffix("jp2");
+	// ImageWriter writer = writers.next();
+	// J2KImageWriteParam writeParams = (J2KImageWriteParam)
+	// writer.getDefaultWriteParam();
+	// writeParams.setLossless(false);
+	// writeParams.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+	// writeParams.setCompressionType("JPEG2000");
+	// // writeParams.setFilter(J2KImageWriteParam.FILTER_97);
+	// writeParams.setCompressionQuality(0.5f);
+	// writeParams.setEncodingRate(0.5f);
+	// ImageOutputStream ios = ImageIO.createImageOutputStream(out);
+	// writer.setOutput(ios);
+	// writer.write(null, new IIOImage(image, null, null), writeParams);
+	// writer.dispose();
+	// }
+
+	private static int getBorderDistance(BufferedImage image, int x, int y, int width, Integer dir) {
+		int outD = Integer.MAX_VALUE;
+		if (dir == null || dir == 1) {
+			int d = y - width;
+			if (d < outD) {
+				outD = d;
+			}
+		}
+		if (dir == null || dir == 2) {
+			int d = image.getWidth() - width - x;
+			if (d < outD) {
+				outD = d;
+			}
+		}
+		if (dir == null || dir == 3) {
+			int d = image.getHeight() - width - y;
+			if (d < outD) {
+				outD = d;
+			}
+		}
+		if (dir == null || dir == 4) {
+			int d = x - width;
+			if (d < outD) {
+				outD = d;
+			}
+		}
+		return outD;
+	}
+
+	/**
+	 * 
+	 * @param image
+	 * @param bg
+	 * @param with
+	 * @param direction
+	 *            null=all 1=top 2=right 3=bottom 4=left
+	 * @return
+	 */
+	public static BufferedImage addBlurBorder(BufferedImage image, Color bg, int width, Integer direction) {
+		if (bg == null) {
+			return image;
+		}
+		BufferedImage imgNew = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+		for (int x = 0; x < image.getWidth(); x++) {
+			for (int y = 0; y < image.getHeight(); y++) {
+				int bd = getBorderDistance(image, x, y, width, direction);
+				float blurFactor = (float)1;
+				int blurSize = (int)Math.round(width*blurFactor);
+				if (Math.abs(bd) < blurSize) {
+					float alpha = 1-(float)(bd+blurSize)/(float)(blurSize*2);
+					Color newCol = combineColor(bg, new Color(image.getRGB(x, y)), alpha);
+					imgNew.setRGB(x, y, newCol.getRGB());
+				} else {
+					if (bd < 0) {
+						imgNew.setRGB(x, y, bg.getRGB());
+					} else {
+						imgNew.setRGB(x, y, image.getRGB(x, y));
+					}
+				}
+			}
+		}
+		return imgNew;
+	}
 
 	public static void main(String[] args) throws Exception {
-
-//		InputStream in = new FileInputStream(new File("c:/trans/yin-yang-solid.svg"));		
-//		BufferedImage img = loadSvg(in);				
-//		in.close();
-//		
-//		ContrastFilter imageFilter = new ContrastFilter();
-//		imageFilter.setContrast((float)0.001);
-//		imageFilter.setBrightness((float)0.001);
-//		img = imageFilter.filter(img, null); 
-//		//img = luminosity(img);
-//		
-//		img = resizeHeight(img, 50, null, true);
-//		
-//		ImageIO.write(img, "png", new File("c:/trans/yy.png"));
-//		
-//		File svgDir = new File("C:\\trans\\fonts\\svgs\\regular");
-//		for (File svg : svgDir.listFiles()) {
-//			if (svg.getName().endsWith(".svg")) {
-//				System.out.println(svg);
-//				InputStream in = new FileInputStream(svg);		
-//				BufferedImage img = loadSvg(in);				
-//				in.close();
-//				
-//				for (int y = 0; y < img.getHeight(); y += 1) {
-//					for (int x = 0; x < img.getWidth(); x += 1) {
-//						Color c = new Color(img.getRGB(x, y), true);
-//						Color newCol = new Color(160, 160, 160, c.getAlpha());
-//						img.setRGB(x, y, newCol.getRGB());
-//					}
-//				}
-//					 
-//				
-////				RescaleOp rescaleOp = new RescaleOp(0.2f, 5, null);
-////				rescaleOp.filter(img, img); 
-//				
-////				ContrastFilter imageFilter = new ContrastFilter();
-////				imageFilter.setContrast((float)0.001);
-////				imageFilter.setBrightness((float)0.001);
-////				img = imageFilter.filter(img, null); 
-//				//img = luminosity(img);
-//				
-//				img = resizeHeight(img, 50, null, true);
-//				
-//				ImageIO.write(img, "png", new File("C:\\work\\javlo2\\src\\main\\webapp\\images\\font\\"+svg.getName().replace(".svg", ".png")));
-//			}
-//		}
-
-		// System.out.println("data : "+getGoogleResultTitleSize("patrick est là"));
-		// System.out.println("data : "+getGoogleResultTitleSize("Hot Women | Sexy Women
-		// Pics | Hot Ladies - theChive"));
-
-		// System.out.println("***** ImageEngine.main : START"); // TODO: remove
-		// File catFile = new File("c:/trans/catherine.JPG");
-		// BufferedImage cat = ImageIO.read(catFile);
-		// File anneFile = new File("c:/trans/anne.JPG");
-		// BufferedImage anne = ImageIO.read(anneFile);
-		// File blackFile = new File("c:/trans/black.JPG");
-		// BufferedImage black = ImageIO.read(blackFile);
-		// File whileFile = new File("c:/trans/white.JPG");
-		// BufferedImage white = ImageIO.read(whileFile);
-		//
-		// GainFilter filter = new GainFilter();
-		// filter.setGain(0.8f);
-		// filter.setBias(0.8f);
-		// anne = filter.filter(anne, null);
-		// ImageIO.write (anne, "jpg", new File("c:/trans/anne_out.jpg"));
-		//
-		//
-		// System.out.println(">>>>>>>>> ImageEngine.main : anne =
-		// "+getColorLight(anne)); //TODO: remove debug trace
-		// System.out.println(">>>>>>>>> ImageEngine.main : catherine =
-		// "+getColorLight(cat)); //TODO: remove debug trace
-		// System.out.println(">>>>>>>>> ImageEngine.main : black =
-		// "+getColorLight(black)); //TODO: remove debug trace
-		// System.out.println(">>>>>>>>> ImageEngine.main : white =
-		// "+getColorLight(white)); //TODO: remove debug trace
-
-//		File layerFile = new File("c:/trans/title3.png");
-//		File imageFile = new File("c:/trans/img2.jpg");
-//		File targetFile = new File("c:/trans/title3_out.png");
-//
-//		BufferedImage layerImage = ImageIO.read(layerFile);
-//		BufferedImage image = ImageIO.read(imageFile);
-//
-//		BufferedImage outImage = projectionImage(layerImage, null, image, new Polygon4(203, 0, 296, 0, 296, 111, 203, 111), 1, true, 500, 500);
-//		ImageIO.write(outImage, "png", targetFile);
-		
-		
-//		File webpFile = new File("c:/trans/test.webp");
-//		File targetFile = new File("c:/trans/test_webp.png");
-//		BufferedImage image = readWebp(webpFile);
-//		ImageIO.write(image, "png", targetFile);
-		
-		File imageFile = new File("c:/trans/source2.png");
+		File imageFile = new File("c:/trans/short_hair.png");
 		BufferedImage image = ImageIO.read(imageFile);
-		
-		ImageWebpLibraryWrapper webp = new ImageWebpLibraryWrapper("C:\\opt\\libwebp-1.2.0-windows-x64\\bin\\cwebp.exe");
-		webp.convertToWebP(imageFile, new File("c:/trans/source2.webp"),75);
-		ImageIO.write(image, "jpg", new File("c:/trans/image_before.jpg"));
-		
-		ImageIO.write(image, "png", new File("c:/trans/image_before.png"));
-		image = resizeImage(image, image.getWidth(), image.getHeight());		
-		ImageIO.write(image, "png", new File("c:/trans/image_afther.png"));
-		
+		image = addBlurBorder(image, Color.WHITE, 80, null);
+		ImageIO.write(image, "png", new File("c:/trans/short_hair_out.png"));
 	}
 
 	public static BufferedImage convertRGBAToIndexed(BufferedImage src) {
@@ -2177,8 +2179,7 @@ public class ImageEngine {
 		IndexColorModel icm2 = new IndexColorModel(8, size, reds, greens, blues, pixel);
 		return new BufferedImage(icm2, raster, image.isAlphaPremultiplied(), null);
 	}
-	
+
 	/** webp **/
-	
-	
+
 }

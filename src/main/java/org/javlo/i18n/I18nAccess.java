@@ -397,15 +397,22 @@ public class I18nAccess implements Serializable {
 	}
 
 	public static void main(String[] args) {
-		String[] countryCodes = Locale.getISOCountries();
-
-		for (String countryCode : countryCodes) {
-
-			Locale obj = new Locale("", countryCode);
-
-			System.out.println("Country Code = " + obj.getCountry() + ", Country Name = " + obj.getDisplayCountry());
-
+		Map<String,String> balises = new HashMap<>();
+		balises.put("test", "patrick");
+		String text = "ceci est ${test} qui fait un test.";
+		Collection<?> keys =  balises.keySet();
+		for (Object name : keys) {
+			if (name != null) {
+				String baliseName = name.toString();
+				String value = balises.get(name);
+				System.out.println(">>>>>>>>> I18nAccess.main : value = "+value); //TODO: remove debug trace
+				if (value != null) {
+					text = text.replaceAll(START_BALISE + baliseName + END_BALISE, value.toString());
+				}
+			}
+			
 		}
+		System.out.println(text);
 
 	}
 
@@ -658,10 +665,16 @@ public class I18nAccess implements Serializable {
 	 */
 	public String getViewText(String key, Map<?, ?> balises) {
 		String text = getContentViewText(key);
-		Collection<?> keys = balises.entrySet();
+		Collection<?> keys = balises.keySet();
 		for (Object name : keys) {
-			String baliseName = (String) name;
-			text = text.replaceAll(START_BALISE + baliseName + END_BALISE, (String) balises.get(baliseName));
+			if (name != null) {
+				Object value = balises.get(name);
+				String baliseName = name.toString();
+				if (value != null) {
+					text = text.replaceAll(START_BALISE + baliseName + END_BALISE, value.toString());
+				}
+			}
+			
 		}
 		return text;
 	}
