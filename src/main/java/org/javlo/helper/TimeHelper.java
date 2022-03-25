@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -319,6 +320,23 @@ public class TimeHelper {
 		return (int) Math.round(distMili);
 	}
 
+	public static void main(String[] args) {
+		Date d1 = new Date();
+		Date d2 = new Date();
+		System.out.println(">>>>>>>>> TimeHelper.main : d1 <-> s2 = " + getDaysDistance(d1, d2)); // TODO: remove debug trace
+	}
+
+	/**
+	 * get the distance between 2 dates in day
+	 * 
+	 * @param date1
+	 * @param date2
+	 * @return
+	 */
+	public static long getDaysDistance(LocalDate date1, LocalDate date2) {
+		return ChronoUnit.DAYS.between(date1, date2);
+	}
+
 	public static int getAge(Date born) {
 		int age = 0;
 		try {
@@ -354,7 +372,7 @@ public class TimeHelper {
 		}
 		return dateToConvert.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 	}
-	
+
 	public static LocalDateTime convertToLocalDateTimeViaInstant(Date dateToConvert) {
 		if (dateToConvert == null) {
 			return null;
