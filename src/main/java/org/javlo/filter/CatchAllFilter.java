@@ -371,6 +371,16 @@ public class CatchAllFilter implements Filter {
 					if (!pattern1.contains("*")) {
 						if (cmsURI.equals(pattern1)) {
 							if (httpRequest.getQueryString() != null && httpRequest.getQueryString().length() > 0) {
+								
+//								String query = httpRequest.getQueryString();
+//								Map<String,String> params = URLHelper.getParams(query);
+//								String newQuery = "";
+//								String sep = "";
+//								for (Map.Entry<String, String> entryParam : params) {
+//									newQuery += sep+entryParam.getKey()+"="+URLEncoder
+//									sep = "?";
+//								}
+								
 								if (pattern2.contains("?")) {
 									pattern2 += '&'+httpRequest.getQueryString();
 								} else {
