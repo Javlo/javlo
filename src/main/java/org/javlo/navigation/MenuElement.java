@@ -5622,7 +5622,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 	public boolean isLayout() {
 		MenuElement parent = getParent();
-		if (parent != null && getName().equals(LAYOUTS_PREFIX + parent.getName())) {
+		if (parent != null && getName().startsWith(LAYOUTS_PREFIX)) {
 			return true;
 		} else {
 			return false;
