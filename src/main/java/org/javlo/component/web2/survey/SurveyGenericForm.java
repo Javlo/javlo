@@ -106,9 +106,6 @@ public class SurveyGenericForm extends SmartGenericForm {
 
 	@Override
 	protected int storeResult(ContentContext ctx, Map<String, String> data) throws Exception {
-		
-		XLSTools.test();
-		
 		List<Question> questions = new LinkedList<Question>();
 		logger.info("session : " + ctx.getSession().getId());
 		for (Map.Entry<String, String> e : data.entrySet()) {
