@@ -18,12 +18,16 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -137,22 +141,16 @@ public class XLSTools {
 		}
 		HSSFDataFormatter formatter = new HSSFDataFormatter(locale);
 		String outCell;
-		if (cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
-			switch (cell.getCachedFormulaResultType()) {
-			case HSSFCell.CELL_TYPE_STRING:
+		if (cell.getCellType() == CellType.FORMULA) {
+			if (cell.getCachedFormulaResultType() == CellType.STRING) {
 				outCell = cell.getStringCellValue();
-				break;
-			case HSSFCell.CELL_TYPE_NUMERIC:
+			} else if (cell.getCachedFormulaResultType() == CellType.NUMERIC) {
 				outCell = StringHelper.renderDouble(cell.getNumericCellValue(), locale);
-				break;
-			case HSSFCell.CELL_TYPE_BOOLEAN:
+			} else if (cell.getCachedFormulaResultType() == CellType.BOOLEAN) {
 				outCell = "" + cell.getBooleanCellValue();
-				break;
-			default:
+			} else {
 				outCell = "?";
-				break;
 			}
-
 		} else {
 			try {
 				outCell = formatter.formatCellValue(cell);
@@ -179,20 +177,15 @@ public class XLSTools {
 	private static String readExcelCell(ContentContext ctx, HSSFCell cell) {
 		HSSFDataFormatter formatter = new HSSFDataFormatter(new Locale(ctx.getRequestContentLanguage()));
 		String outCell;
-		if (cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
-			switch (cell.getCachedFormulaResultType()) {
-			case HSSFCell.CELL_TYPE_STRING:
+		if (cell.getCellType() == CellType.FORMULA) {
+			if (cell.getCachedFormulaResultType() == CellType.STRING) {
 				outCell = cell.getStringCellValue();
-				break;
-			case HSSFCell.CELL_TYPE_NUMERIC:
+			} else if (cell.getCachedFormulaResultType() == CellType.NUMERIC) {
 				outCell = StringHelper.renderDouble(cell.getNumericCellValue(), new Locale(ctx.getRequestContentLanguage()));
-				break;
-			case HSSFCell.CELL_TYPE_BOOLEAN:
+			} else if (cell.getCachedFormulaResultType() == CellType.BOOLEAN) {
 				outCell = "" + cell.getBooleanCellValue();
-				break;
-			default:
+			} else {
 				outCell = "?";
-				break;
 			}
 		} else {
 			outCell = formatter.formatCellValue(cell);
@@ -232,6 +225,7 @@ public class XLSTools {
 
 	public static String cleanSheetName(String sheetName) {
 		if (sheetName != null) {
+			sheetName = sheetName.trim();
 			return WorkbookUtil.createSafeSheetName(sheetName);
 		} else {
 			return null;
@@ -240,12 +234,16 @@ public class XLSTools {
 	}
 
 	public static Cell[][] getXLSXArray(ContentContext ctx, File xslxFile, String sheetName) throws Exception {
-		InputStream in = null;
-		try {
-			in = new FileInputStream(xslxFile);
-			return getXLSXArray(ctx, in, sheetName);
-		} finally {
-			ResourceHelper.closeResource(in);
+		if (!xslxFile.exists()) {
+			logger.warning("file not found : " + xslxFile);
+			return null;
+		}
+		try (InputStream in = new FileInputStream(xslxFile)) {
+			Cell[][] cells = getXLSXArray(ctx, in, sheetName);
+			if (cells == null) {
+				logger.warning("sheet or file not load error : " + xslxFile + " [sheet:" + sheetName + "]");
+			}
+			return cells;
 		}
 	}
 
@@ -274,7 +272,7 @@ public class XLSTools {
 					for (int x = 0; x < w; x++) {
 						outArray[y][x] = new Cell(null, null, outArray, x, y);
 						if (sheet.getRow(y) != null && sheet.getRow(y).getCell(x) != null) {
-							if (sheet.getRow(y).getCell(x).getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
+							if (sheet.getRow(y).getCell(x).getCellType() == CellType.NUMERIC) {
 								outArray[y][x].setDoubleValue(sheet.getRow(y).getCell(x).getNumericCellValue());
 							}
 							outArray[y][x].setValue(renderCell(readExcelCell(ctx, sheet.getRow(y).getCell(x))));
@@ -309,9 +307,9 @@ public class XLSTools {
 
 	public static Cell[][] getXLSXArray(ContentContext ctx, InputStream in, String sheetName) throws Exception {
 		XSSFWorkbook workbook = null;
-		
+
 		try {
-			workbook = new XSSFWorkbook(in);
+			workbook = (XSSFWorkbook) WorkbookFactory.create(in);
 
 			int sheetIndex = 0;
 			if (sheetName != null) {
@@ -319,7 +317,7 @@ public class XLSTools {
 				sheetIndex = workbook.getSheetIndex(sheetName);
 			}
 			if (sheetIndex < 0) {
-				logger.warning("sheet not found : "+sheetName);
+				logger.warning("sheet not found : " + sheetName);
 				return null;
 			}
 			XSSFSheet sheet = workbook.getSheetAt(sheetIndex);
@@ -340,7 +338,7 @@ public class XLSTools {
 				for (int x = 0; x < w; x++) {
 					outArray[y][x] = new Cell(null, null, outArray, x, y);
 					if (sheet.getRow(y) != null && sheet.getRow(y).getCell(x) != null) {
-						if (sheet.getRow(y).getCell(x).getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
+						if (sheet.getRow(y).getCell(x).getCellType() == CellType.NUMERIC) {
 							outArray[y][x].setDoubleValue(sheet.getRow(y).getCell(x).getNumericCellValue());
 						}
 						outArray[y][x].setValue(renderCell(readExcelCell(ctx, sheet.getRow(y).getCell(x))));
@@ -447,7 +445,9 @@ public class XLSTools {
 	 * link all scheet with "synchroCol" col as referent
 	 * 
 	 * @param excelFile
-	 * @param referenceColomn, the title of the column with linked code between line if different sheet.
+	 * @param referenceColomn,
+	 *            the title of the column with linked code between line if different
+	 *            sheet.
 	 * @throws Exception
 	 */
 	public static void structureExcelSheetOnCol(File excelFile, String referenceColomn, OutputStream out) throws Exception {
@@ -544,7 +544,7 @@ public class XLSTools {
 				for (int x = 0; x < w; x++) {
 					outArray[y][x] = new Cell(null, null, outArray, x, y);
 					if (sheet.getRow(y) != null && sheet.getRow(y).getCell(x) != null) {
-						if (sheet.getRow(y).getCell(x).getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
+						if (sheet.getRow(y).getCell(x).getCellType() == CellType.NUMERIC) {
 							outArray[y][x].setDoubleValue(sheet.getRow(y).getCell(x).getNumericCellValue());
 						}
 						outArray[y][x].setValue(renderCell(ctx, readExcelCell(ctx, sheet.getRow(y).getCell(x))));
@@ -597,13 +597,13 @@ public class XLSTools {
 				for (Cell cell : row) {
 					HSSFCell excelCell = excelRow.createCell(cellNum);
 					if (cell == null) {
-						excelCell.setCellType(HSSFCell.CELL_TYPE_BLANK);
+						excelCell.setCellType(CellType.BLANK);
 					} else {
 						try {
-							excelCell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
+							excelCell.setCellType(CellType.NUMERIC);
 							excelCell.setCellValue(Integer.parseInt(cell.getValue()));
 						} catch (NumberFormatException e) {
-							excelCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+							excelCell.setCellType(CellType.STRING);
 							excelCell.setCellValue(cell.getValue());
 						}
 					}
@@ -654,16 +654,16 @@ public class XLSTools {
 					for (Cell cell : row) {
 						XSSFCell excelCell = excelRow.createCell(cellNum);
 						if (cell == null) {
-							excelCell.setCellType(HSSFCell.CELL_TYPE_BLANK);
+							excelCell.setCellType(CellType.BLANK);
 						} else {
 							if (maxWidths[j] < cell.getWidth()) {
 								maxWidths[j] = cell.getWidth();
 							}
 							try {
-								excelCell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
+								excelCell.setCellType(CellType.NUMERIC);
 								excelCell.setCellValue(Long.parseLong(cell.getValue()));
 							} catch (NumberFormatException e) {
-								excelCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+								excelCell.setCellType(CellType.STRING);
 								excelCell.setCellValue(cell.getValue());
 							}
 						}
@@ -687,16 +687,17 @@ public class XLSTools {
 		if (sourceFile == null || !sourceFile.exists() || sourceFile.getTotalSpace() == 0) {
 			workbook = new XSSFWorkbook();
 		} else {
-			InputStream in = new FileInputStream(sourceFile);
-			try {
-				workbook = new XSSFWorkbook(in);
-			} finally {
-				in.close();
+			try (InputStream in = new FileInputStream(sourceFile)) {
+				try {
+					workbook = (XSSFWorkbook) WorkbookFactory.create(in);
+				} catch (Exception e) {
+					throw new IOException(e);
+				}
 			}
 		}
 
 		try {
-			XSSFSheet sheet;
+			XSSFSheet sheet = null;
 			if (sheetName == null) {
 				sheet = workbook.createSheet();
 			} else {
@@ -720,32 +721,44 @@ public class XLSTools {
 				for (Cell cell : row) {
 					XSSFCell excelCell = excelRow.createCell(cellNum);
 					if (cell == null) {
-						excelCell.setCellType(HSSFCell.CELL_TYPE_BLANK);
+						excelCell.setCellType(CellType.BLANK);
 					} else {
 						if (maxWidths[j] < cell.getWidth()) {
 							maxWidths[j] = cell.getWidth();
 						}
 						try {
-							excelCell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
+							excelCell.setCellType(CellType.NUMERIC);
 							excelCell.setCellValue(Long.parseLong(cell.getValue()));
 						} catch (NumberFormatException e) {
-							excelCell.setCellType(HSSFCell.CELL_TYPE_STRING);
+							excelCell.setCellType(CellType.STRING);
 							excelCell.setCellValue(cell.getValue());
 						}
 					}
 					cellNum++;
 				}
 			}
-			for (int i = 0; i < array[0].length; i++) {
-				sheet.autoSizeColumn(i, true);
+			if (sheet != null) {
+				for (int i = 0; i < array[0].length; i++) {
+					sheet.autoSizeColumn(i, true);
+				}
 			}
 			workbook.write(out);
 		} finally {
 			workbook.close();
 		}
+
+	}
+	
+	public static void main(String[] args) throws Exception {
+		test2();
+	}
+	
+	public static void test2() throws Exception {
+		File excelFile = new File("C:\\trans\\cfe_valeurs_2022_fr.xlsx");
+		Cell[][] cells = getArray(null, excelFile, "Evaluation");
 	}
 
-	public static void main(String[] args) throws Exception {
+	public static void test() throws Exception {
 		// Cell[][] testArray = new Cell[2][];
 		// testArray[0] = new Cell[2];
 		// testArray[1] = new Cell[2];
@@ -760,14 +773,27 @@ public class XLSTools {
 		// writeXLSX(dataMap, out);
 		// out.close();
 
-		File excelFile = new File("C:\\Users\\user\\data\\javlo\\data-ctx\\data-humind\\static\\survey\\ev_demo_fr.xlsx");
-		File excelOutFile = new File("C:\\Users\\user\\data\\javlo\\data-ctx\\data-humind\\static\\survey\\ev_demo_fr_2.xlsx");
-		File excelOutFile3 = new File("C:\\Users\\user\\data\\javlo\\data-ctx\\data-humind\\static\\survey\\ev_demo_fr_3.xlsx");
-		try (OutputStream out = new FileOutputStream(excelOutFile)) {
-			structureExcelSheetOnCol(excelFile, "__userCode", out);
+		File excelFile = new File("C:\\trans\\cfe.xlsx");
+		Cell[][] cells = getArray(null, excelFile, "liste de valeurs");
+		Cell[][] newCells = cells;
+		newCells = new Cell[cells.length + 1][];
+		for (int i = 0; i < cells.length; i++) {
+			Cell[] cl = cells[i];
+			newCells[i] = new Cell[cl.length];
+			for (int j = 0; j < cl.length; j++) {
+				Cell c = cl[j];
+				newCells[i][j] = c;
+			}
 		}
-		try (OutputStream out = new FileOutputStream(excelOutFile3)) {
-			structureExcelSheetOnCol(excelFile, null, out);
+		newCells[cells.length] = new Cell[cells[cells.length - 1].length];
+		for (int j = 0; j < cells[cells.length - 1].length; j++) {
+			Cell c = cells[cells.length - 1][j];
+			Cell nc = new Cell("69", c.getDoubleValue(), newCells, cells.length, j);
+			newCells[cells.length][j] = nc;
+		}
+		File outFIle = new File("c:/trans/out.xlsx");
+		try (OutputStream out = new FileOutputStream(outFIle)) {
+			writeXLSX(newCells, out, excelFile, "liste de valeurs");
 		}
 	}
 }

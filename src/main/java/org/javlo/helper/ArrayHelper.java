@@ -10,6 +10,7 @@ import java.util.Locale;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -64,20 +65,15 @@ public class ArrayHelper {
 			lg = ctx.getRequestContentLanguage();
 		}
 		String outCell;
-		if (cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
-			switch (cell.getCachedFormulaResultType()) {
-			case HSSFCell.CELL_TYPE_STRING:
+		if (cell.getCellType() == CellType.FORMULA) {
+			if (cell.getCachedFormulaResultType() == CellType.STRING) {
 				outCell = cell.getStringCellValue();
-				break;
-			case HSSFCell.CELL_TYPE_NUMERIC:
+			} else if (cell.getCachedFormulaResultType() == CellType.NUMERIC) {
 				outCell = StringHelper.renderDouble(cell.getNumericCellValue(), new Locale(lg));
-				break;
-			case HSSFCell.CELL_TYPE_BOOLEAN:
+			} else if (cell.getCachedFormulaResultType() == CellType.BOOLEAN) {
 				outCell = "" + cell.getBooleanCellValue();
-				break;
-			default:
+			} else {
 				outCell = "?";
-				break;
 			}
 		} else {
 			HSSFDataFormatter formatter = new HSSFDataFormatter(new Locale(lg));
@@ -134,13 +130,13 @@ public class ArrayHelper {
 			for (Cell title : cells[0]) {
 				if (title != null) {
 					if (maxRowSpan < title.getRowSpan()) {
-						System.out.println(">>>>>>>>> ArrayHelper.getTitles : title = "+title.getValue()); //TODO: remove debug trace
+						System.out.println(">>>>>>>>> ArrayHelper.getTitles : title = " + title.getValue()); // TODO: remove debug trace
 						maxRowSpan = title.getRowSpan();
 					}
 				}
 			}
-			System.out.println(">>>>>>>>> ArrayHelper.getTitles : maxRowSpan = "+maxRowSpan); //TODO: remove debug trace
-			for (Cell title : cells[maxRowSpan-1]) {
+			System.out.println(">>>>>>>>> ArrayHelper.getTitles : maxRowSpan = " + maxRowSpan); // TODO: remove debug trace
+			for (Cell title : cells[maxRowSpan - 1]) {
 				String t = "";
 				if (title != null) {
 					int addCellTitlePos = title.getRowSpan();
@@ -151,7 +147,7 @@ public class ArrayHelper {
 						subTitle = cells[addCellTitlePos][p];
 						t = t + " - " + subTitle;
 					}
-					
+
 				}
 				titles.add(t);
 				p++;

@@ -18,6 +18,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -255,10 +256,10 @@ public class ArrayFileComponent extends GenericFile {
 		ctx.getRequest().setAttribute("summary", getLabel());
 
 		Cell[][] array = getArray(ctx);
-		if (array.length>0 && array[0].length>0) {
+		if (array.length > 0 && array[0].length > 0) {
 			if (array[0][0] != null && array[0][0].getValue() != null) {
-				ctx.getRequest().setAttribute("legend", array[0][0].getValue());	
-			}			
+				ctx.getRequest().setAttribute("legend", array[0][0].getValue());
+			}
 		}
 		ctx.getRequest().setAttribute("colHead", "th");
 		ctx.getRequest().setAttribute("rowHead", "th");
@@ -330,20 +331,15 @@ public class ArrayFileComponent extends GenericFile {
 		}
 		HSSFDataFormatter formatter = new HSSFDataFormatter(new Locale(lg));
 		String outCell;
-		if (cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
-			switch (cell.getCachedFormulaResultType()) {
-			case HSSFCell.CELL_TYPE_STRING:
+		if (cell.getCellType() == CellType.FORMULA) {
+			if (cell.getCachedFormulaResultType() == CellType.STRING) {
 				outCell = cell.getStringCellValue();
-				break;
-			case HSSFCell.CELL_TYPE_NUMERIC:
+			} else if (cell.getCachedFormulaResultType() == CellType.NUMERIC) {
 				outCell = StringHelper.renderDouble(cell.getNumericCellValue(), new Locale(lg));
-				break;
-			case HSSFCell.CELL_TYPE_BOOLEAN:
+			} else if (cell.getCachedFormulaResultType() == CellType.BOOLEAN) {
 				outCell = "" + cell.getBooleanCellValue();
-				break;
-			default:
+			} else {
 				outCell = "?";
-				break;
 			}
 		} else {
 			outCell = formatter.formatCellValue(cell);
@@ -362,24 +358,21 @@ public class ArrayFileComponent extends GenericFile {
 	private static String readExcelCell(ContentContext ctx, HSSFCell cell) {
 		HSSFDataFormatter formatter = new HSSFDataFormatter(new Locale(ctx.getRequestContentLanguage()));
 		String outCell;
-		if (cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
-			switch (cell.getCachedFormulaResultType()) {
-			case HSSFCell.CELL_TYPE_STRING:
+
+		if (cell.getCellType() == CellType.FORMULA) {
+			if (cell.getCachedFormulaResultType() == CellType.STRING) {
 				outCell = cell.getStringCellValue();
-				break;
-			case HSSFCell.CELL_TYPE_NUMERIC:
+			} else if (cell.getCachedFormulaResultType() == CellType.NUMERIC) {
 				outCell = StringHelper.renderDouble(cell.getNumericCellValue(), new Locale(ctx.getRequestContentLanguage()));
-				break;
-			case HSSFCell.CELL_TYPE_BOOLEAN:
+			} else if (cell.getCachedFormulaResultType() == CellType.BOOLEAN) {
 				outCell = "" + cell.getBooleanCellValue();
-				break;
-			default:
+			} else {
 				outCell = "?";
-				break;
 			}
 		} else {
 			outCell = formatter.formatCellValue(cell);
 		}
+
 		if (cell.getHyperlink() != null) {
 			String target = "";
 			String url = cell.getHyperlink().getAddress();
@@ -547,7 +540,7 @@ public class ArrayFileComponent extends GenericFile {
 					}
 				}
 			}
-			
+
 			for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
 				CellRangeAddress cellRange = sheet.getMergedRegion(i);
 				for (int x = cellRange.getFirstColumn(); x <= cellRange.getLastColumn(); x++) {
@@ -931,9 +924,9 @@ public class ArrayFileComponent extends GenericFile {
 		}
 
 	}
-	
+
 	@Override
-	public String getFontAwesome() {	
+	public String getFontAwesome() {
 		return "table";
 	}
 

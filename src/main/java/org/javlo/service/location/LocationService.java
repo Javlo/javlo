@@ -18,7 +18,6 @@ import java.util.zip.ZipFile;
 
 import javax.servlet.ServletContext;
 
-import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
@@ -49,47 +48,47 @@ public class LocationService {
 	private static final Map<String, IpGeoLocationBean> ipPositionCache = Collections.synchronizedMap(new TimeMap<>(60 * 60 * 24 * 30, 10000000));
 	
 	public static void main(String[] args) throws MalformedURLException, IOException {
-		downloadRemoteIP2File(new File("c:/trans/"), "https://www.ip2location.com/download?token=Wseyn0nNMiML1q254HQBvJx1VMhcWhsISdpVfQIsbj91xz2j5T6p4MyepuLxIHEw&file=DB1ACLIPV6");
+//		downloadRemoteIP2File(new File("c:/trans/"), "https://www.ip2location.com/download?token=Wseyn0nNMiML1q254HQBvJx1VMhcWhsISdpVfQIsbj91xz2j5T6p4MyepuLxIHEw&file=DB1ACLIPV6");
 	}
 	
-	private static File downloadRemoteIP2File(File folder, String url) throws MalformedURLException, IOException {
-		File downloadFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), "ip2-downloaded-data.zip"));
-		File finFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), "ip2-downloaded-data.bin"));
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.MONTH, -1);
-		if (url != null && (!finFile.exists() || finFile.lastModified() < cal.getTimeInMillis())) {
-			downloadFile.getParentFile().mkdirs();
-			ResourceHelper.writeUrlToFile(new URL(url), downloadFile);
-			ZipFile zipFile = ZipHelper.openZipFile(downloadFile);
-			Enumeration<? extends ZipEntry> entries = zipFile.entries();
-			while (entries.hasMoreElements()) {
-				ZipEntry entry = entries.nextElement();
-				if (StringHelper.getFileExtension(entry.getName()).equalsIgnoreCase("bin")) {
-					InputStream in = zipFile.getInputStream(entry);
-					ResourceHelper.writeStreamToFile(in, finFile);
-					in.close();
-					Logger.info("create file : "+finFile);
-				}
-			}
-			zipFile.close();
-			downloadFile.delete();
-			Logger.info("file updated : " + finFile + " (url:" + url + ")");
-		}
-		return finFile;
-	}
+//	private static File downloadRemoteIP2File(File folder, String url) throws MalformedURLException, IOException {
+//		File downloadFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), "ip2-downloaded-data.zip"));
+//		File finFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), "ip2-downloaded-data.bin"));
+//		Calendar cal = Calendar.getInstance();
+//		cal.add(Calendar.MONTH, -1);
+//		if (url != null && (!finFile.exists() || finFile.lastModified() < cal.getTimeInMillis())) {
+//			downloadFile.getParentFile().mkdirs();
+//			ResourceHelper.writeUrlToFile(new URL(url), downloadFile);
+//			ZipFile zipFile = ZipHelper.openZipFile(downloadFile);
+//			Enumeration<? extends ZipEntry> entries = zipFile.entries();
+//			while (entries.hasMoreElements()) {
+//				ZipEntry entry = entries.nextElement();
+//				if (StringHelper.getFileExtension(entry.getName()).equalsIgnoreCase("bin")) {
+//					InputStream in = zipFile.getInputStream(entry);
+//					ResourceHelper.writeStreamToFile(in, finFile);
+//					in.close();
+//					Logger.info("create file : "+finFile);
+//				}
+//			}
+//			zipFile.close();
+//			downloadFile.delete();
+//			Logger.info("file updated : " + finFile + " (url:" + url + ")");
+//		}
+//		return finFile;
+//	}
 
 	public static synchronized void init(ServletContext application) throws MalformedURLException, IOException {
-		if (ipDbFile == null) {
-			StaticConfig staticConfig = StaticConfig.getInstance(application);
-			// check url on all mounts
-			File downloadFile = downloadRemoteIP2File(new File(application.getRealPath("/WEB-INF/data/")), staticConfig.getIP2LocationURL());
-			if (downloadFile.exists()) {
-				ipDbFile = downloadFile;
-			} else {
-				ipDbFile = new File(application.getRealPath("/WEB-INF/data/ip2-local-data.bin"));
-			}
-			
-		}
+//		if (ipDbFile == null) {
+//			StaticConfig staticConfig = StaticConfig.getInstance(application);
+//			// check url on all mounts
+//			File downloadFile = downloadRemoteIP2File(new File(application.getRealPath("/WEB-INF/data/")), staticConfig.getIP2LocationURL());
+//			if (downloadFile.exists()) {
+//				ipDbFile = downloadFile;
+//			} else {
+//				ipDbFile = new File(application.getRealPath("/WEB-INF/data/ip2-local-data.bin"));
+//			}
+//			
+//		}
 	}
 
 	public static Location getLocation(double longitude, double latitude, String lg) throws IOException {

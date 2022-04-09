@@ -12,6 +12,7 @@ import java.util.Map;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -206,19 +207,22 @@ public abstract class AbstractSurvey extends AbstractPropertiesComponent {
 			}
 			i++;
 		}
-		File tempFile = new File(excelFile.getAbsolutePath() + ".temp");
-		OutputStream out = new FileOutputStream(tempFile);
-		try {
+		File tempFile = new File(excelFile.getAbsolutePath() + ".temp.xlsx");
+		try (OutputStream out = new FileOutputStream(tempFile)) {
 			XLSTools.writeXLSX(newCells, out, sourceFile, stepName);
-			if (tempFile.exists()) {
-				// check if tempFile is a valid XLSXFile, if not throw exception
-				XLSTools.getArray(ctx, tempFile);
-				excelFile.delete();
-				tempFile.renameTo(excelFile);
-			}
-		} finally {
-			out.close();
 		}
+		
+		if (tempFile.exists()) {
+			// check if tempFile is a valid XLSXFile, if not throw exception
+			XLSTools.getArray(ctx, tempFile);
+			excelFile.delete();
+			if (!tempFile.renameTo(excelFile)) {
+				logger.severe("fail to rename : "+tempFile);
+			}
+		} else {
+			logger.warning("file not found : "+tempFile);
+		}
+		
 		if (inLine == null) {
 			return cells.length;
 		} else {
@@ -246,27 +250,33 @@ public abstract class AbstractSurvey extends AbstractPropertiesComponent {
 	}
 
 	public static void main(String[] args) {
-		File excel = new File("c:/trans/gouvernance_bcf_2022_fr.xlsx");
-
-		List<Question> questions = new LinkedList<>();
-		Question q = new Question();
-		q.setLabel("Seniority");
-		q.setNumber(0);
-		questions.add(q);
-		q = new Question();
-		q.setLabel("Role");
-		q.setNumber(1);
-		questions.add(q);
-
-		try {
-			boolean result = loadExcel(null, excel, questions, "Evaluation de fonctionnement co", "4,Hyro8GgfQ-");
-			System.out.println(">>>>>>>>> AbstractSurvey.main : result = " + result); // TODO: remove debug trace
-			for (Question question : questions) {
-				System.out.println(question);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		
+		File tempFile = new File("C:\\Users\\user\\data\\javlo\\data-ctx\\data-humind\\static\\survey\\cfe_valeurs_2022_fr.xlsx.temp");
+		File excelFile = new File("C:\\Users\\user\\data\\javlo\\data-ctx\\data-humind\\static\\survey\\cfe_valeurs_2022_fr.xlsx");
+		tempFile.renameTo(excelFile);
+		System.out.println(">>>>>>>>> AbstractSurvey.main : tempFile = "+tempFile); //TODO: remove debug trace
+		
+//		File excel = new File("c:/trans/gouvernance_bcf_2022_fr.xlsx");
+//
+//		List<Question> questions = new LinkedList<>();
+//		Question q = new Question();
+//		q.setLabel("Seniority");
+//		q.setNumber(0);
+//		questions.add(q);
+//		q = new Question();
+//		q.setLabel("Role");
+//		q.setNumber(1);
+//		questions.add(q);
+//
+//		try {
+//			boolean result = loadExcel(null, excel, questions, "Evaluation de fonctionnement co", "4,Hyro8GgfQ-");
+//			System.out.println(">>>>>>>>> AbstractSurvey.main : result = " + result); // TODO: remove debug trace
+//			for (Question question : questions) {
+//				System.out.println(question);
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 
 		// File excel = new File("c:/trans/questions.xlsx");
 

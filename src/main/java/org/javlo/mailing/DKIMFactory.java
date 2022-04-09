@@ -3,8 +3,8 @@ package org.javlo.mailing;
 import java.io.File;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.util.Base64;
 
-import org.apache.xmlbeans.impl.util.Base64;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -34,7 +34,7 @@ public class DKIMFactory {
 			File privateFile = getPrivateKeyFile(globalContext);
 			privateFile.getParentFile().mkdirs();			
 			ResourceHelper.writeBytesToFile(getPrivateKeyFile(globalContext), keyPair.getPrivate().getEncoded());
-			ResourceHelper.writeBytesToFile(getPublicKeyFile(globalContext), Base64.encode(keyPair.getPublic().getEncoded()));
+			ResourceHelper.writeStringToFile(getPublicKeyFile(globalContext), Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
