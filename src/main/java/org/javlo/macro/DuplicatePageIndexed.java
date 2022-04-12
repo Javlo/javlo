@@ -67,7 +67,7 @@ public class DuplicatePageIndexed extends AbstractMacro implements IInteractiveM
 					if (isMirroredContent(ctx)) {
 						parentId = content.createContentMirrorIfNeeded(noAreaCtx.getContextWidthOtherRequestLanguage(next.getComponentBean().getLanguage()), newPage, next, parentId, false);
 					} else {
-						ComponentBean bean = next.getComponentBean();
+						ComponentBean bean = new ComponentBean(next.getComponentBean());
 						bean.setValue(replaceIndex(bean.getValue(), index));
 						parentId = content.createContent(noAreaCtx.getContextWidthOtherRequestLanguage(next.getComponentBean().getLanguage()), newPage, bean, parentId, false, page, outTranslation);
 						compTranslation.put(next.getId(), parentId); // old id > new id (for mirror component translation)
