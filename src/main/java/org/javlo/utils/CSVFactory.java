@@ -343,14 +343,11 @@ public class CSVFactory {
 	}
 	
 	public static Cell[][] loadContentAsCell(File file) throws IOException {
-		InputStream in = null;
-		try {
-			in = new FileInputStream(file);
+		if (!file.exists() || file.length() == 0) {
+			return null;
+		}
+		try (InputStream in = new FileInputStream(file)) {
 			return loadContentAsCell(in);
-		} finally {
-			if (in != null) {
-				ResourceHelper.closeResource(in);
-			}
 		}
 	}
 	

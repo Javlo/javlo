@@ -548,6 +548,10 @@ public class NavigationHelper {
 		}
 		return null;
 	}
+	
+	public static final String getNewName(MenuElement page) {
+		return getNewName(page, null);
+	}
 
 	/**
 	 * create a new name (numeroted -N) with a page name
@@ -556,14 +560,20 @@ public class NavigationHelper {
 	 *            the 'source' page.
 	 * @return a new name (this name not exist in the current context)
 	 */
-	public static final String getNewName(MenuElement page) {
-		String baseName = page.getName();
-		if (page.getName().contains("-")) {
-			baseName = page.getName().substring(0, page.getName().lastIndexOf('-'));
+	public static final String getNewName(MenuElement page, String suggestedName) {
+		if (suggestedName == null) {
+			suggestedName = page.getName();
+		}
+		MenuElement root = page.getRoot();
+		if (root.searchChildFromName(suggestedName) == null) {
+			return suggestedName;
+		}
+		String baseName = suggestedName;
+		if (suggestedName.contains("-")) {
+			baseName = suggestedName.substring(0, suggestedName.lastIndexOf('-'));
 		}
 		String newPageName = baseName + "-1";
 		int index = 2;
-		MenuElement root = page.getRoot();
 		while (root.searchChildFromName(newPageName) != null) {
 			newPageName = baseName + '-' + index;
 			index++;

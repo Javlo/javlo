@@ -44,6 +44,7 @@ import org.javlo.macro.DetectAllComponentsType;
 import org.javlo.macro.DownDateMacro;
 import org.javlo.macro.DuplicateChildren;
 import org.javlo.macro.DuplicatePage;
+import org.javlo.macro.DuplicatePageIndexed;
 import org.javlo.macro.EncryptPasswordComponent;
 import org.javlo.macro.EncryptVisitorsPasswordMacro;
 import org.javlo.macro.FileInListMacro;
@@ -131,6 +132,7 @@ public class MacroFactory {
 		macros.add(new DeleteComponent());
 		macros.add(new AddChildMacro());
 		macros.add(new DuplicatePage());
+		macros.add(new DuplicatePageIndexed());
 		macros.add(new CreateChildren());
 		macros.add(new ImportContent());
 		macros.add(new SmartImport());
