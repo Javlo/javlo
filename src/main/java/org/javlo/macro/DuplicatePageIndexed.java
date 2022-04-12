@@ -146,6 +146,7 @@ public class DuplicatePageIndexed extends AbstractMacro implements IInteractiveM
 		for (int i = from; i <= to; i++) {
 			duplicatePage(ctx, null, currentPage, i);
 		}
+		ctx.setClosePopup(true);
 		return null;
 	}
 
