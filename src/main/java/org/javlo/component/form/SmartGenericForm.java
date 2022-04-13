@@ -2,6 +2,7 @@ package org.javlo.component.form;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -62,14 +63,11 @@ import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.CaptchaService;
 import org.javlo.service.ContentService;
-import org.javlo.service.IListItem;
-import org.javlo.service.ListService;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.service.document.DataDocument;
 import org.javlo.service.document.DataDocumentService;
 import org.javlo.service.event.Event;
-import org.javlo.service.exception.ServiceException;
 import org.javlo.service.visitors.UserDataService;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
@@ -313,8 +311,21 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		String csvLink = URLHelper.createResourceURL(ctx, URLHelper.mergePath("/", staticConfig.getStaticFolder(), FOLDER, getLocalConfig(false).getProperty("filename", "")));
 		String xlsxLink = FilenameUtils.removeExtension(csvLink) + ".xlsx";
 		out.println("</div><div class=\"col-sm-2\"><a href=\"" + xlsxLink + "\">[XSLX]</a> - <a href=\"" + csvLink + "\">[CSV]</a><label style=\"float: right\">&nbsp;" + XHTMLHelper.getCheckbox(getInputName("store-label"), isStoreLabel()) + " store label</label></div>");
+		out.println("<div class=\"col-sm-2\"><button class=\"btn btn-default btn-xs\" type=\"submit\" name=\"reset-file\" value=\""+ getLocalConfig(false).getProperty("filename", "")+"\">reset</button></div>");
 		// out.println(div(a("[XSLX]").attr("href", xlsxLink),span(" -
 		// "),a("[CSV]").attr("href", csvLink)).withClass("col-sm-2").render());
+		out.println("</div>");
+		
+		File file = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getStaticFolder(), GenericForm.DYNAMIC_FORM_RESULT_FOLDER, getLocalConfig(false).getProperty("filename", "")));
+		out.println("<div class=\"backup-file-list\">");
+		for (File f : ResourceHelper.getAllFiles(file.getParentFile(), new FileFilter() {
+			@Override
+			public boolean accept(File pathname) {
+				return pathname.getName().startsWith(file.getName());
+			}
+		})) {
+			out.print("<span class=\"backup-file\" style=\"font-size: 0.8em; display: inline-block; margin-left: 15px; font-style: italic;\">"+f.getName()+"</span>");
+		}
 		out.println("</div>");
 
 		out.println("<div class=\"row\"><div class=\"col-sm-2\">");
@@ -935,6 +946,21 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					field.setOrder(field.getOrder() + 15);
 				}
 				store(field);
+			}
+		}
+		
+		String resetFile = rs.getParameter("reset-file");
+		if (!StringHelper.isEmpty(resetFile)) {
+			File file = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getStaticFolder(), GenericForm.DYNAMIC_FORM_RESULT_FOLDER, resetFile));
+			if (file.exists()) {
+				File newFile = new File(file.getAbsoluteFile()+"_"+StringHelper.renderFileTime(new Date()));
+				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+				if (file.renameTo(newFile)) {
+					messageRepository.setGlobalMessage(new GenericMessage("file reset, backup file created : "+newFile, GenericMessage.INFO));
+				} else {
+					messageRepository.setGlobalMessage(new GenericMessage("error on reset, backup file not created : "+newFile, GenericMessage.ERROR));
+				}
+				ctx.setClosePopup(true);
 			}
 		}
 
