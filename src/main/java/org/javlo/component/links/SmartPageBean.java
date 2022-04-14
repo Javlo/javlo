@@ -486,6 +486,34 @@ public class SmartPageBean {
 			return null;
 		}
 	}
+	
+	public String getFirstTag() {
+		try {
+			Collection<String> tags = getTags();
+			if (tags.size() > 0) {
+				return tags.iterator().next();
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public String getFirstTagLabel() {
+		try {
+			Collection<String> tags = getTagsLabel();
+			if (tags.size() > 0) {
+				return tags.iterator().next();
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	public Collection<String> getTagsLabel() {
 		ContentContext tagCtx = new ContentContext(lgCtx);
@@ -499,7 +527,7 @@ public class SmartPageBean {
 			}
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 			for (String tag : page.getTags(tagCtx)) {
-				tags.add(i18nAccess.getViewText("tag." + tag));
+				tags.add(i18nAccess.getViewText("tag." + tag, tag));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
