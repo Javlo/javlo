@@ -2053,13 +2053,8 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) {
-		// String content = "<p>barbara</p><p>patrick</p><p>catherine</p>";
-		// System.out.println(replaceBloc(content, "VDM", "<p>", "</p>", 20));
-
-		// String text = "Le fait de simplmement penser fait de nous des êtes
-		// incroyablement improbable au sein du Cosmos.";
-		String text = "la __présence des directions de pôles aide les pôles dans _______la mise en place de leur mission grâce à la vue transversale obtenue lors du comdir ";
-		System.out.println(removeDuplicateToken(text, "_"));
+		String str = "J'aime l'été quand je vois la maîtrise de l’œuvre.";
+		System.out.println(removeAccents(str));
 	}
 
 	public static LocalTime smartParseTime(String inTime) {
@@ -2341,8 +2336,17 @@ public class StringHelper {
 		tmpOut.toArray(out);
 		return out;
 	}
+	
+	public static String createComparableString(String text) {
+		text = removeAccents(text);
+		text = text.replace("'", "");
+		text = text.replace("\"", "");
+		return text;
+	}
 
 	public static String removeAccents(String textWithAccent) {
+		textWithAccent = textWithAccent.replace("œ", "oe");
+		textWithAccent = textWithAccent.replace("’", "'");
 		String normalizeFileName = Normalizer.normalize(textWithAccent, Normalizer.Form.NFD);
 		return normalizeFileName.replaceAll("[^\\p{ASCII}]", "");
 	}

@@ -92,21 +92,55 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 	}
 
 	public static void main(String[] args) {
+		
+		File file1 = new File("C:/Users/user/data/javlo/data-ctx/data-humind/static/dynamic-form-result/resa/confiance/resa_promo_035_2022_autoeval_fin.csv");
+		File file2 = new File("C:/Users/user/data/javlo/data-ctx/data-humind/static/dynamic-form-result/resa/confiance/resa_promo_035_2022_autoeval_debut.csv");
+		
+		int i=0;
+		Map<String, Double> ref = null;
 		try {
-			String filePath = "c:/trans/resa_demo_2022_p1.csv";
-			Cell[][] cells = loadCells(null, filePath);
-			System.out.println(">>>>>>>>> DisplayResult.main : #cells = " + cells.length); // TODO: remove debug trace
-			Map<String, Double> average = SurveyAverage.average(cells, false, 200, "#");
-			average = MapHelper.sameSorting(average, average);
-			System.out.println(">>>>>>>>> DisplayResult.main : #average = " + average.size()); // TODO: remove debug trace
-			for (Cell[] cells2 : cells) {
-				for (int i = 0; i < cells2.length; i++) {
-					System.out.println(cells2[i]);
+			for (Cell[][] cells : new Cell[][][] { loadCells(null,file1.getAbsolutePath()), loadCells(null, file2.getAbsolutePath()) }) {
+				if (cells != null) {
+					
+					
+						Map<String, Double> average = SurveyAverage.average(cells, false, false ? 999 : 80, "#");
+						System.out.println("----------------------------------------------");
+						System.out.println("# "+average.size());
+						for (Map.Entry<String, Double> e : average.entrySet()) {
+							System.out.println("> "+e.getValue()+" - "+e.getKey());
+						}
+						if (ref != null) {
+							average = MapHelper.sameSortingNormilized(average, ref);
+						}
+						
+						ref=average;
 				}
 			}
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		
+		
+//		try {
+//			String filePath = "c:/trans/resa_demo_2022_p1.csv";
+//			Cell[][] cells = loadCells(null, filePath);
+//			System.out.println(">>>>>>>>> DisplayResult.main : #cells = " + cells.length); // TODO: remove debug trace
+//			Map<String, Double> average = SurveyAverage.average(cells, false, 200, "#");
+//			average = MapHelper.sameSorting(average, average);
+//			System.out.println(">>>>>>>>> DisplayResult.main : #average = " + average.size()); // TODO: remove debug trace
+//			for (Cell[] cells2 : cells) {
+//				for (int i = 0; i < cells2.length; i++) {
+//					System.out.println(cells2[i]);
+//				}
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	@Override
@@ -126,11 +160,19 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 				boolean lencioni = getCurrentRenderer(ctx).contains(LENCIONI);
 				if (lencioni || getCurrentRenderer(ctx).contains(AVERAGE)) {
 					Map<String, Double> average = SurveyAverage.average(cells, lencioni, lencioni ? 999 : 80, "#");
+					average = MapHelper.sortByValue(average, false);
+					for (Map.Entry<String, Double> e : average.entrySet()) {
+						System.out.println("> "+e.getValue()+" - "+e.getKey());
+					}
 					if (i==0) {
 						ref = average;
-						ctx.getRequest().setAttribute("average", MapHelper.sortByValue(average, false));
+						ctx.getRequest().setAttribute("average", average);
 					} else {
-						ctx.getRequest().setAttribute("average"+(i+1), MapHelper.sameSorting(average, ref));
+						ctx.getRequest().setAttribute("average"+(i+1), MapHelper.sameSortingNormilized(average, ref));
+					}
+					average = MapHelper.sameSortingNormilized(average, ref);
+					for (Map.Entry<String, Double> e : average.entrySet()) {
+						System.out.println("> "+e.getValue()+" - "+e.getKey());
 					}
 					if (i==0) {
 						double globalAverage = 0;

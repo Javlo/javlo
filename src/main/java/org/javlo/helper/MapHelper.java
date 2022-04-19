@@ -7,8 +7,11 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class MapHelper {
+	
+	private static Logger logger = Logger.getLogger(MapHelper.class.getName());
 
 	private MapHelper() {
 	}
@@ -51,7 +54,40 @@ public class MapHelper {
 	public static <K, V extends Comparable<? super V>> Map<K, V> sameSorting(Map<K, V> map, Map<K, V> reference) {
 		Map<K, V> result = new LinkedHashMap<K, V>();
 		for (K key : reference.keySet()) {
-			result.put(key, map.get(key));
+			V val = map.get(key);
+			if (val == null) {
+				logger.severe("key not found : "+key);
+			}
+			result.put(key, val);
+		}
+		return result;
+	}
+	
+	/**
+	 * sort map with the same sorting than other map and remove key not found in reference.
+	 * @param <String>
+	 * @param <V>
+	 * @param map map to sort
+	 * @param reference ordered map with key order reference
+	 * @return new ordered map with same order than reference
+	 */
+	public static <V extends Comparable<? super V>> Map<String, V> sameSortingNormilized(Map<String, V> map, Map<String, V> reference) {
+		Map<String, V> refNormalized = new LinkedHashMap<String, V>();
+		for (Map.Entry<String, V> e : reference.entrySet()) {
+			refNormalized.put(StringHelper.createComparableString(e.getKey().trim()), e.getValue());
+		}
+		Map<String, String> mapNormalizedRef = new LinkedHashMap<String, String>();
+		for (Map.Entry<String, V> e : map.entrySet()) {
+			mapNormalizedRef.put(StringHelper.createComparableString(e.getKey().trim()), e.getKey());
+		}
+		Map<String, V> result = new LinkedHashMap<String, V>();
+		for (String key : refNormalized.keySet()) {
+			String realKey =  mapNormalizedRef.get(key);
+			V val =  map.get(realKey);
+			if (val == null) {
+				logger.severe("key not found : "+key+" ["+realKey+"]");
+			}
+			result.put(key, val);
 		}
 		return result;
 	}
