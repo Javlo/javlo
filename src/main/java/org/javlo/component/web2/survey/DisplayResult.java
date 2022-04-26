@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -160,6 +161,7 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 				boolean lencioni = getCurrentRenderer(ctx).contains(LENCIONI);
 				if (lencioni || getCurrentRenderer(ctx).contains(AVERAGE)) {
 					Map<String, Double> average = SurveyAverage.average(cells, lencioni, lencioni ? 999 : 80, "#");
+					Map<String, Double> averageNotSort = new LinkedHashMap<String, Double>(average);
 					average = MapHelper.sortByValue(average, false);
 					for (Map.Entry<String, Double> e : average.entrySet()) {
 						System.out.println("> "+e.getValue()+" - "+e.getKey());
@@ -167,8 +169,10 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 					if (i==0) {
 						ref = average;
 						ctx.getRequest().setAttribute("average", average);
+						ctx.getRequest().setAttribute("averageNotSort", averageNotSort);
 					} else {
 						ctx.getRequest().setAttribute("average"+(i+1), MapHelper.sameSortingNormilized(average, ref));
+						ctx.getRequest().setAttribute("averageNotSort"+(i+1), averageNotSort);
 					}
 					average = MapHelper.sameSortingNormilized(average, ref);
 					for (Map.Entry<String, Double> e : average.entrySet()) {
