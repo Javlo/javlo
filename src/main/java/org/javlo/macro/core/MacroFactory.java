@@ -98,6 +98,7 @@ import org.javlo.macro.interactive.SmartImport;
 import org.javlo.macro.interactive.SocialShare;
 import org.javlo.macro.interactive.UpdateUserRole;
 import org.javlo.macro.interactive.UploadGallery;
+import org.javlo.macro.interactive.module.TaxonomyMacroModule;
 
 import CleanResourceNameMacro.CleanResourceImageMacro;
 
@@ -227,6 +228,7 @@ public class MacroFactory {
 		macros.add(new DisplayDashBoard());
 		macros.add(new ResetRecaptcha());
 		macros.add(new PublishMacro());
+		macros.add(new TaxonomyMacroModule());
 		
 		/** macro bean **/
 		initMacroBean(macros);
