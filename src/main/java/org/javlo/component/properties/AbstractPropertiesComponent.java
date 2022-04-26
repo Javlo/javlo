@@ -44,6 +44,8 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		Map<String, String> fields = new HashMap<String, String>();
 		for (String field : getFields(ctx)) {
 			fields.put(getFieldName(field), getFieldValue(ctx, field));
+			String fieldName = StringHelper.snakeToCamel(getFieldName(field));
+			fields.put(fieldName, getFieldValue(ctx, field));
 		}
 		ctx.getRequest().setAttribute("fields", fields); // depreciated
 		ctx.getRequest().setAttribute("field", fields);

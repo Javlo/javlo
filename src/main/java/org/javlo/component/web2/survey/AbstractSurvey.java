@@ -12,7 +12,6 @@ import java.util.Map;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
-import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;

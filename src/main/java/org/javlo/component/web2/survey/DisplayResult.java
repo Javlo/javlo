@@ -25,6 +25,9 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 	protected static final String FILE_NAME = "file";
 	protected static final String FILE_NAME_2 = "file2";
 	protected static final String FILE_NAME_3 = "file3";
+	protected static final String FILE_TITLE = "file-title";
+	protected static final String FILE_TITLE_2 = "file-title-2";
+	protected static final String FILE_TITLE_3 = "file--title-3";
 	protected static final String MAX_VALUE = "max";
 	protected static final String MIN_VALUE = "min";
 	protected static final String LENCIONI = "lencioni";
@@ -37,7 +40,7 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 		return TYPE;
 	}
 
-	private static final List<String> FIELDS = Arrays.asList(new String[] { TITLE_FIELD, FILE_NAME, FILE_NAME_2, FILE_NAME_3, MIN_VALUE, MAX_VALUE });
+	private static final List<String> FIELDS = Arrays.asList(new String[] { TITLE_FIELD, FILE_NAME, FILE_NAME_2, FILE_NAME_3, FILE_TITLE, FILE_TITLE_2, FILE_TITLE_3, MIN_VALUE, MAX_VALUE });
 
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {
