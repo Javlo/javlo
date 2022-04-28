@@ -1,7 +1,7 @@
 package org.javlo.utils;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,7 +25,7 @@ public class NeverEmptyMap<K, V> implements Map<K, V> {
 	 * set the default time of the attribute live in second
 	 */
 	public NeverEmptyMap(Class defaultInstance) {
-		internalMap = new HashMap<K, V>();
+		internalMap = new LinkedHashMap<K, V>();
 		clazz = defaultInstance;
 	}
 	
@@ -33,7 +33,7 @@ public class NeverEmptyMap<K, V> implements Map<K, V> {
 	 * set the default time of the attribute live in second
 	 */
 	public NeverEmptyMap(Class clazzKey, Class defaultInstance) {
-		internalMap = new HashMap<K, V>();
+		internalMap = new LinkedHashMap<K, V>();
 		this.clazz = defaultInstance;
 		this.clazzKey = clazzKey;
 	}

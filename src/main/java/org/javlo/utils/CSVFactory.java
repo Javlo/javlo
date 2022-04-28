@@ -404,17 +404,17 @@ public class CSVFactory {
 		return outMaps;
 	}
 
-	public static void storeContentAsMap(File file, List<Map<String, String>> content) throws IOException {
+	public static void storeContentAsMap(File file, List<Map<String, String>> content, boolean sort) throws IOException {
 		Writer out = null;
 		try {
 			out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), ContentContext.CHARACTER_ENCODING));
-			storeContentAsMap(out, content);
+			storeContentAsMap(out, content, sort);
 		} finally {
 			ResourceHelper.closeResource(out);
 		}
 	}
 
-	private static void storeContentAsMap(Writer out, List<Map<String, String>> content) throws IOException {
+	private static void storeContentAsMap(Writer out, List<Map<String, String>> content, boolean sort) throws IOException {
 		if (content.size() == 0) {
 			return;
 		}
@@ -427,7 +427,9 @@ public class CSVFactory {
 			}
 		}
 
-		Collections.sort(keys);
+		if (sort) {
+			Collections.sort(keys);
+		}
 		String[][] rawContent = new String[content.size() + 1][keys.size()];
 		for (int j = 0; j < rawContent[0].length; j++) {
 			rawContent[0][j] = keys.get(j);

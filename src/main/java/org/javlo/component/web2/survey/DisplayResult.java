@@ -163,16 +163,22 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 			if (cells != null) {
 				boolean lencioni = getCurrentRenderer(ctx).contains(LENCIONI);
 				if (lencioni || getCurrentRenderer(ctx).contains(AVERAGE)) {
-					Map<String, Double> average = SurveyAverage.average(cells, lencioni, lencioni ? 999 : 80, "#");
-					Map<String, Double> averageNotSort = new LinkedHashMap<String, Double>(average);
+					Map<String, Double> averageNotSort = SurveyAverage.average(cells, lencioni, lencioni ? 999 : 80, "#");
+					Map<String, Double> average = new LinkedHashMap<String, Double>(averageNotSort);
+					
 					average = MapHelper.sortByValue(average, false);
-					for (Map.Entry<String, Double> e : average.entrySet()) {
-						System.out.println("> "+e.getValue()+" - "+e.getKey());
-					}
+//					for (Map.Entry<String, Double> e : average.entrySet()) {
+//						System.out.println("> "+e.getValue()+" - "+e.getKey());
+//					}
 					if (i==0) {
 						ref = average;
 						ctx.getRequest().setAttribute("average", average);
 						ctx.getRequest().setAttribute("averageNotSort", averageNotSort);
+						
+						for (Map.Entry<String, Double> key : averageNotSort.entrySet()) {
+							System.out.println("4.key = "+key.getKey());
+						}
+						
 					} else {
 						ctx.getRequest().setAttribute("average"+(i+1), MapHelper.sameSortingNormilized(average, ref));
 						ctx.getRequest().setAttribute("averageNotSort"+(i+1), averageNotSort);

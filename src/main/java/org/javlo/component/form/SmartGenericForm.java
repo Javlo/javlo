@@ -28,7 +28,6 @@ import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.collections4.map.LinkedMap;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -692,7 +691,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					Map<String, String> line = data.get(validLine);
 					line.put(VALIDED, "true");
 				}
-				CSVFactory.storeContentAsMap(csvFile, data);
+				CSVFactory.storeContentAsMap(csvFile, data, false);
 
 				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 				GenericMessage msg = new GenericMessage(I18nAccess.getInstance(ctx).getViewText("form.confirm", "data is confirmed."), GenericMessage.INFO);
@@ -1034,7 +1033,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 	private int lineNumber = -1;
 
-	protected int storeResult(ContentContext ctx, Map<String, String> data) throws Exception {
+	protected int storeResult(ContentContext ctx, Map<String, String> data, boolean sort) throws Exception {
 		synchronized (LOCK_ACCESS_FILE) {
 			File file = getFile(ctx);
 			if (lineNumber < 0) {
@@ -1080,12 +1079,12 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					}
 					allData.set(editLineNumber, data);
 				}
-				CSVFactory.storeContentAsMap(getFile(ctx), allData);
+				CSVFactory.storeContentAsMap(getFile(ctx), allData, sort);
 			} else {
 				if (newTitleFound) {
 					List<Map<String, String>> newData = CSVFactory.loadContentAsMap(file);
 					newData.add(data);
-					CSVFactory.storeContentAsMap(file, newData);
+					CSVFactory.storeContentAsMap(file, newData, sort);
 				} else {
 					CSVFactory.appendContentAsMap(file, data);
 				}
@@ -1193,7 +1192,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		InfoBean.getCurrentInfoBean(ctx); // create info bean if not exist
 		subject = XHTMLHelper.replaceJSTLData(ctx, subject);
 		Map<String, Object> params = rs.getParameterMap();
-		Map<String, String> result = new LinkedMap<String, String>();
+		Map<String, String> result = new LinkedHashMap<String, String>();
 		List<String> errorFields = new LinkedList<String>();
 		result.put("__registration time", StringHelper.renderSortableTime(new Date()));
 		result.put("__local addr", request.getLocalAddr());
@@ -1414,7 +1413,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			logger.info(adminMailData.toString());
 			int lineNumber = -1;
 			if (comp.isStorage()) {
-				lineNumber = comp.storeResult(ctx, result);
+				lineNumber = comp.storeResult(ctx, result, !comp.isStoreLabel());
 			}
 			if (comp.isSendEmail() && !fakeFilled) {
 				String emailFrom = comp.getLocalConfig(false).getProperty("mail.from", StaticConfig.getInstance(request.getSession()).getSiteEmail());
