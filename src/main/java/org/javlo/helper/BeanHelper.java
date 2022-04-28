@@ -523,7 +523,7 @@ public class BeanHelper {
 			Map map = bean2Map(object);
 			allMap.add(map);
 		}
-		CSVFactory.storeContentAsMap(file, allMap);
+		CSVFactory.storeContentAsMap(file, allMap, true);
 	}
 
 	public static Object[] getAllValues(Object bean) {

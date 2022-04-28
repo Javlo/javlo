@@ -263,7 +263,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 			if (newTitleFound) {
 				List<Map<String, String>> newData = CSVFactory.loadContentAsMap(file);
 				newData.add(data);
-				CSVFactory.storeContentAsMap(file, newData);
+				CSVFactory.storeContentAsMap(file, newData, true);
 			} else {
 				CSVFactory.appendContentAsMap(file, data);
 			}
