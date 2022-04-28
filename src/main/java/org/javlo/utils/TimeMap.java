@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -29,6 +30,8 @@ import org.javlo.servlet.IVersion;
  * @param <V>
  */
 public class TimeMap<K, V> implements Map<K, V> {
+
+	private static Logger logger = Logger.getLogger(TimeMap.class.getName());
 
 	private final Map<K, V> internalMap;
 	private final Map<K, Calendar> internalTimeMap = new HashMap<K, Calendar>();
@@ -277,8 +280,12 @@ public class TimeMap<K, V> implements Map<K, V> {
 				cal.setTimeInMillis(time);
 				internalTimeMap.put((K) key, cal);
 				int orderPos = Integer.parseInt(storeVal.get(2));
-				if (orderPos>=0) {
+				if (orderPos >= 0 && orderPos < ordreArray.length) {
 					ordreArray[orderPos] = key.toString();
+				} else {
+					if (orderPos >= ordreArray.length) {
+						logger.warning("orderPos bigger than array : " + orderPos + " [" + prop.getProperty(key.toString()) + ']');
+					}
 				}
 			}
 		}
