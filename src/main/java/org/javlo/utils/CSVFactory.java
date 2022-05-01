@@ -9,7 +9,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -23,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -395,7 +394,7 @@ public class CSVFactory {
 			return new LinkedList<Map<String, String>>();
 		}
 		for (int i = 1; i < content.length; i++) {
-			Map<String, String> line = new HashMap<String, String>();
+			Map<String, String> line = new LinkedHashMap<String, String>();
 			for (int j = 0; j < Math.min(content[i].length, content[0].length); j++) {
 				line.put(content[0][j], content[i][j]);
 			}
@@ -445,13 +444,15 @@ public class CSVFactory {
 		printer.writeln(rawContent);
 	}
 
-	public static void appendContentAsMap(File file, Map<String, String> content) throws IOException {
+	public static void appendContentAsMap(File file, Map<String, String> content, boolean sort) throws IOException {
 		if (content.size() == 0) {
 			return;
 		}
 		List<String> titles = loadTitle(file);
 
-		Collections.sort(titles);
+		if (sort) {
+			Collections.sort(titles);
+		}
 		String[] rawContent = new String[titles.size()];
 		for (int i = 0; i < titles.size(); i++) {
 			rawContent[i] = StringHelper.neverNull(content.get(titles.get(i)));

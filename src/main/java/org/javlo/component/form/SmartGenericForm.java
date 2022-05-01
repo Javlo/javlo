@@ -1086,7 +1086,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 					newData.add(data);
 					CSVFactory.storeContentAsMap(file, newData, sort);
 				} else {
-					CSVFactory.appendContentAsMap(file, data);
+					CSVFactory.appendContentAsMap(file, data, sort);
 				}
 				lineNumber++;
 			}

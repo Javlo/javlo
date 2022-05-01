@@ -180,13 +180,15 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 						}
 						
 					} else {
-						ctx.getRequest().setAttribute("average"+(i+1), MapHelper.sameSortingNormilized(average, ref));
-						ctx.getRequest().setAttribute("averageNotSort"+(i+1), averageNotSort);
+						if (ref != null) {
+							ctx.getRequest().setAttribute("average"+(i+1), MapHelper.sameSortingNormilized(average, ref));
+							ctx.getRequest().setAttribute("averageNotSort"+(i+1), averageNotSort);
+							average = MapHelper.sameSortingNormilized(average, ref);
+						} else {
+							logger.severe("ref not found.");
+						}
 					}
-					average = MapHelper.sameSortingNormilized(average, ref);
-					for (Map.Entry<String, Double> e : average.entrySet()) {
-						System.out.println("> "+e.getValue()+" - "+e.getKey());
-					}
+					
 					if (i==0) {
 						double globalAverage = 0;
 						for (Double value : average.values()) {

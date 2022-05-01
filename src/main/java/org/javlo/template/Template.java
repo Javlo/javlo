@@ -1797,7 +1797,6 @@ public class Template implements Comparable<Template> {
 
 	private final List<File> getMacroFile(GlobalContext globalContext) throws IOException {
 		String templateFolder = getWorkTemplateFolder();
-
 		String path = URLHelper.mergePath(URLHelper.mergePath(templateFolder, getFolder(globalContext)), MACRO_FOLDER);
 		File dynCompDir = new File(path);
 		if (!dynCompDir.exists()) {
@@ -1808,9 +1807,13 @@ public class Template implements Comparable<Template> {
 	}
 
 	public Properties getMacroProperties(GlobalContext globalContext, String macroKey) throws IOException {
+		System.out.println(">>>>>>>>> Template.getMacroProperties : start"); //TODO: remove debug trace
 		synchronized (globalContext.getLockImportTemplate()) {
 			List<File> macroFiles = getMacroFile(globalContext);
 			for (File pFile : macroFiles) {
+				System.out.println(">>>>>>>>> Template.getMacroProperties : pFile = "+pFile); //TODO: remove debug trace
+				System.out.println(">>>>>>>>> Template.getMacroProperties : "+pFile.getName()+".equals("+macroKey + ".properties");
+				System.out.println(">>>>>>>>> Template.getMacroProperties : ? = "+pFile.getName().equals(macroKey + ".properties")); //TODO: remove debug trace
 				if (pFile.getName().equals(macroKey + ".properties")) {
 					Properties prop = new Properties();
 					InputStream in = new FileInputStream(pFile);

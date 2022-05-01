@@ -34,7 +34,6 @@ public class SurveyAverage {
 				String key = extractKey(cells[0][i].getValue());
 				for (int j = 1; j < cells.length; j++) {
 					if (StringHelper.isDigit(cells[j][i].getValue())) {
-						System.out.println(">>>>>>>>> SurveyAverage.average 1.key = "+key); //TODO: remove debug trace
 						total.put(key, total.get(key).intValue() + Integer.parseInt(cells[j][i].getValue()));
 						count.put(key, count.get(key).intValue() + 1);
 					}
@@ -43,15 +42,9 @@ public class SurveyAverage {
 		}
 		Map<String, Double> out = new LinkedHashMap<>();
 		for (String key : total.keySet()) {
-			System.out.println(">>>>>>>>> SurveyAverage.average 2.key = "+key); //TODO: remove debug trace
 			//out.put(StringHelper.setLineSeparator(key.trim().toLowerCase(), maxSizeLabel, labelSeparator), (double) total.get(key) / (double) count.get(key));
 			out.put(StringHelper.setLineSeparator(key.trim(), maxSizeLabel, labelSeparator), (double) total.get(key) / (double) count.get(key));
 		}
-		
-		for (String key : out.keySet()) {
-			System.out.println(">>>>>>>>> SurveyAverage.average 3.key = "+key); //TODO: remove debug trace
-		}
-
 		return out;
 	}
 
