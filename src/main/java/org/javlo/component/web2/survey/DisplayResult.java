@@ -194,7 +194,7 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 						for (Double value : average.values()) {
 							globalAverage += value;
 						}
-						ctx.getRequest().setAttribute("participants", cells.length);
+						ctx.getRequest().setAttribute("participants", cells.length-1);
 						ctx.getRequest().setAttribute("globalAverage", StringHelper.renderDouble(globalAverage / average.size(), 1));
 					}
 				}
