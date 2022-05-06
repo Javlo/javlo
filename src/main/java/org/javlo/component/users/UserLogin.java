@@ -112,6 +112,14 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 				ctx.getRequest().setAttribute("newEmail", email);
 				setForcedRenderer(ctx, "/jsp/components/user-login/create-with-token.jsp");
 			}
+			
+
+			String pwtoken = rs.getParameter("pwtoken");
+			String userName = ctx.getGlobalContext().getChangePasswordTokenUser(pwtoken, false);
+			if (pwtoken != null) {
+				ctx.getRequest().setAttribute("userName", userName);
+				setForcedRenderer(ctx, "/jsp/components/user-login/changepwd.jsp");
+			}
 		}
 	}
 

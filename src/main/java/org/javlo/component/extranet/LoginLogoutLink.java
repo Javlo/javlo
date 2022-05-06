@@ -43,6 +43,7 @@ public class LoginLogoutLink extends AbstractVisualComponent {
 		IUserFactory userFactory;
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String pwtoken = requestService.getParameter("pwtoken");
+		
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		if (pwtoken == null) {
 			if (getStyle().equals(VISITOR)) {

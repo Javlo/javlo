@@ -3662,9 +3662,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return token;
 	}
 
-	public String getChangePasswordTokenUser(String token) {
+	public String getChangePasswordTokenUser(String token, boolean remove) {
 		String user = changePasswordToken.get(token);
-		if (user != null) {
+		if (user != null && remove) {
 			changePasswordToken.remove(token);
 		}
 		return user;

@@ -533,7 +533,7 @@ public class UserAction extends AbstractModuleAction {
 				if (StringHelper.isEmpty(link)) {
 					String errorId = StringHelper.getDateRandomId();
 					logger.severe("["+errorId+"] link could not be generated. [page:"+regPage+"]");
-					return "technical error (page registration not found) : "+errorId;
+					return "technical error (page registration not found) : "+errorId+" [page:"+regPage+"]";
 				}
 				
 				String mailBody = XHTMLHelper.createUserMail(ctx, "/images/font/lock.png", body, "", link, i18nAccess.getViewText("user.change-password"), "");
@@ -551,7 +551,7 @@ public class UserAction extends AbstractModuleAction {
 		String token = rs.getParameter("token", null);
 		String pwd1 = rs.getParameter("password", null);
 		String pwd2 = rs.getParameter("password2", null);
-		String userName = globalContext.getChangePasswordTokenUser(token);
+		String userName = globalContext.getChangePasswordTokenUser(token, true);
 
 		if (userName == null) {
 			return i18nAccess.getViewText("user.message.password-bad-token");

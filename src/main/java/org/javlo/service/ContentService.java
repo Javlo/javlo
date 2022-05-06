@@ -33,7 +33,6 @@ import org.javlo.data.InfoBean;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.StringHelper;
-import org.javlo.helper.Comparator.MenuElementCreationDateComparator;
 import org.javlo.i18n.I18nResource;
 import org.javlo.message.GenericMessage;
 import org.javlo.module.core.IPrintInfo;
