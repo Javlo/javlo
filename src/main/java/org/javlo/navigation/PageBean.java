@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
@@ -878,6 +879,10 @@ public class PageBean implements Serializable {
 	
 	public Map<String, Object> getContentAsMap() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, Exception {
 		return page.getContentAsMap(ctx);
+	}
+	
+	public Set<String> getTaxonomy() {
+		return page.getTaxonomy();
 	}
 
 }
