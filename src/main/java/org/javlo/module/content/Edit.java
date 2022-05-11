@@ -555,7 +555,9 @@ public class Edit extends AbstractModuleAction {
 					if (ctx.getCurrentPage() != null) {
 						request.setAttribute("page", ctx.getCurrentPage().getPageBean(ctx));
 					}
-					request.setAttribute("taxonomySelect", globalContext.getAllTaxonomy(ctx).getSelectHtml(ctx.getCurrentPage().getTaxonomy()));
+					if (globalContext.getAllTaxonomy(ctx) != null) {
+						request.setAttribute("taxonomySelect", globalContext.getAllTaxonomy(ctx).getSelectHtml(ctx.getCurrentPage().getTaxonomy()));
+					}
 					currentModule.setRenderer("/jsp/page_properties.jsp");
 					currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("item.title"));
 					break;
