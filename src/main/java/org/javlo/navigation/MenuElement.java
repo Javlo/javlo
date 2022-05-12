@@ -3727,7 +3727,15 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 		TimeRangeComponent comp = getTimeRangeComponent(ctx);
 		if (comp != null) {
-			desc.timeRange = new TimeRange(comp.getStartDate(ctx), comp.getEndDate(ctx));
+			Date startDate = comp.getStartDate(ctx);
+			if (startDate == null) {
+				startDate = getContentDateNeverNull(ctx);
+			}
+			Date endDate = comp.getEndDate(ctx);
+			if (endDate == null) {
+				endDate = startDate;
+			}
+			desc.timeRange = new TimeRange(startDate, endDate);
 		} else {
 			Date contentDate = getContentDateNeverNull(ctx);
 			desc.timeRange = new TimeRange(contentDate, contentDate);
