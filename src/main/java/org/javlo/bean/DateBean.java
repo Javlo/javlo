@@ -32,6 +32,9 @@ public class DateBean {
 	}
 	
 	public String getDayText() {
+		if (date == null) {
+			return null;
+		}
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
 		return calendar.getDisplayName( Calendar.DAY_OF_WEEK ,Calendar.LONG, new Locale(ctx.get().getRequestContentLanguage()));
