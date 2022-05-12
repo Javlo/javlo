@@ -3704,7 +3704,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		ContentElementList contentList = getAllContent(localCtx);
 		while (contentList.hasNext(localCtx)) {
 			IContentVisualComponent comp = contentList.next(localCtx);
-			if (comp.getType() == TimeRangeComponent.TYPE || comp.getType() == EventDefinitionComponent.TYPE || comp instanceof TimeRangeComponent) {
+			if (comp instanceof TimeRangeComponent) {
 				return (TimeRangeComponent) comp;
 			}
 		}

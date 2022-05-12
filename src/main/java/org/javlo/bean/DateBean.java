@@ -31,6 +31,13 @@ public class DateBean {
 		return calendar.get(Calendar.DAY_OF_WEEK);
 	}
 	
+	public int getMonthDay() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		return calendar.get(Calendar.DAY_OF_MONTH);
+	}
+
+	
 	public String getDayText() {
 		if (date == null) {
 			return null;
