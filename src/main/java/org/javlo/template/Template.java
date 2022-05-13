@@ -43,7 +43,6 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 public class Template implements Comparable<Template> {
 
 	public static final String PREVIEW_EDIT_CODE = "#PREVIEW-EDIT#";
@@ -1150,43 +1149,50 @@ public class Template implements Comparable<Template> {
 		if (dynamicsComponents == null) {
 			synchronized (globalContext.getLockImportTemplate()) {
 				if (dynamicsComponents == null) {
+
+					List<String> activeComps = getDynamicComponentList();
+
 					List<File> files = getComponentFile(globalContext);
 					List<Properties> outProperties = new LinkedList<Properties>();
 					Pattern fieldPattern = Pattern.compile("\\$\\{field.*?\\}");
 					for (File file : files) {
 						if (StringHelper.isProperties(file.getName())) {
-							Properties prop = new Properties();
-							InputStream in = new FileInputStream(file);
-							Reader inReader = new InputStreamReader(in, ContentContext.CHARACTER_ENCODING);
-							try {
-								prop.load(inReader);
-							} finally {
-								ResourceHelper.closeResource(in);
-								ResourceHelper.closeResource(inReader);
-							}
-							outProperties.add(prop);
-						} else if (StringHelper.isHTMLStatic(file.getName())) {
-							/* load dynamic component from HTML */
-							logger.info("load dynamic component html : " + file);
-							String html = ResourceHelper.loadStringFromFile(file);
-							Properties properties = new Properties();
-							if (html.contains(PREVIEW_EDIT_CODE)) {
-								properties.setProperty("component.wrapped", "false");
-							}
-							properties.setProperty("component.type", StringHelper.getFileNameWithoutExtension(file.getName()));
-							properties.setProperty("component.renderer", ResourceHelper.removePath(file.getAbsolutePath(), getFolder(globalContext)));
-							Matcher matcher = fieldPattern.matcher(html);
-							int i = 0;
-							while (matcher.find()) {
-								i++;
-								String field = matcher.group();
-								String[] data = field.substring(2, field.length() - 1).split("\\.");
-								if (data.length >= 3) {
-									properties.setProperty("field." + data[2] + ".order", "" + i);
-									properties.setProperty("field." + data[2] + ".type", data[1]);
+							if (activeComps == null || activeComps.contains(StringHelper.getFileNameWithoutExtension(file.getName()))) {
+								Properties prop = new Properties();
+								InputStream in = new FileInputStream(file);
+								Reader inReader = new InputStreamReader(in, ContentContext.CHARACTER_ENCODING);
+								try {
+									prop.load(inReader);
+								} finally {
+									ResourceHelper.closeResource(in);
+									ResourceHelper.closeResource(inReader);
 								}
+								outProperties.add(prop);
 							}
-							outProperties.add(properties);
+						} else if (StringHelper.isHTMLStatic(file.getName())) {
+							if (activeComps == null || activeComps.contains(StringHelper.getFileNameWithoutExtension(file.getName()))) {
+								/* load dynamic component from HTML */
+								logger.info("load dynamic component html : " + file);
+								String html = ResourceHelper.loadStringFromFile(file);
+								Properties properties = new Properties();
+								if (html.contains(PREVIEW_EDIT_CODE)) {
+									properties.setProperty("component.wrapped", "false");
+								}
+								properties.setProperty("component.type", StringHelper.getFileNameWithoutExtension(file.getName()));
+								properties.setProperty("component.renderer", ResourceHelper.removePath(file.getAbsolutePath(), getFolder(globalContext)));
+								Matcher matcher = fieldPattern.matcher(html);
+								int i = 0;
+								while (matcher.find()) {
+									i++;
+									String field = matcher.group();
+									String[] data = field.substring(2, field.length() - 1).split("\\.");
+									if (data.length >= 3) {
+										properties.setProperty("field." + data[2] + ".order", "" + i);
+										properties.setProperty("field." + data[2] + ".type", data[1]);
+									}
+								}
+								outProperties.add(properties);
+							}
 						}
 					}
 					dynamicsComponents = outProperties;
@@ -1807,13 +1813,13 @@ public class Template implements Comparable<Template> {
 	}
 
 	public Properties getMacroProperties(GlobalContext globalContext, String macroKey) throws IOException {
-		System.out.println(">>>>>>>>> Template.getMacroProperties : start"); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> Template.getMacroProperties : start"); // TODO: remove debug trace
 		synchronized (globalContext.getLockImportTemplate()) {
 			List<File> macroFiles = getMacroFile(globalContext);
 			for (File pFile : macroFiles) {
-				System.out.println(">>>>>>>>> Template.getMacroProperties : pFile = "+pFile); //TODO: remove debug trace
-				System.out.println(">>>>>>>>> Template.getMacroProperties : "+pFile.getName()+".equals("+macroKey + ".properties");
-				System.out.println(">>>>>>>>> Template.getMacroProperties : ? = "+pFile.getName().equals(macroKey + ".properties")); //TODO: remove debug trace
+				System.out.println(">>>>>>>>> Template.getMacroProperties : pFile = " + pFile); // TODO: remove debug trace
+				System.out.println(">>>>>>>>> Template.getMacroProperties : " + pFile.getName() + ".equals(" + macroKey + ".properties");
+				System.out.println(">>>>>>>>> Template.getMacroProperties : ? = " + pFile.getName().equals(macroKey + ".properties")); // TODO: remove debug trace
 				if (pFile.getName().equals(macroKey + ".properties")) {
 					Properties prop = new Properties();
 					InputStream in = new FileInputStream(pFile);
@@ -2562,15 +2568,12 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
-	protected void importTemplateInWebapp( StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget, Map<String, String> childrenData, boolean compressResource, boolean parent, File inRawCssFile, Boolean importComponents, boolean clear) throws IOException {
+	protected void importTemplateInWebapp(StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget, Map<String, String> childrenData, boolean compressResource, boolean parent, File inRawCssFile, Boolean importComponents, boolean clear) throws IOException {
 
 		String templateFolder = config.getTemplateFolder();
 
-
-
-
-		//System.out.println(engine+"importTemplateInWebApp engine");
-		//System.out.println(request+"importTemplateInWebApp Request");
+		// System.out.println(engine+"importTemplateInWebApp engine");
+		// System.out.println(request+"importTemplateInWebApp Request");
 
 		File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolderName()));
 
@@ -2647,7 +2650,7 @@ public class Template implements Comparable<Template> {
 											appendRawCssFile(globalContext, ResourceHelper.loadStringFromFile(file), inRawCssFile);
 										}
 										if (fileExt.equalsIgnoreCase("jsp") || fileExt.equalsIgnoreCase("html")) {
-											ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map, ctx.getGlobalContext().getStaticConfig().isCompressJsp(),  ctx.getGlobalContext().getStaticConfig().isHighSecure());
+											ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map, ctx.getGlobalContext().getStaticConfig().isCompressJsp(), ctx.getGlobalContext().getStaticConfig().isHighSecure());
 										} else {
 											ResourceHelper.filteredFileCopy(file, targetFile, map);
 										}
@@ -2675,7 +2678,7 @@ public class Template implements Comparable<Template> {
 
 			/** prepare merging of all sass component class **/
 			if (componentFolderTarget.exists() && componentFolderTarget.isDirectory()) {
-				Iterator<File> cssFiles = FileUtils.iterateFiles(componentFolderTarget, new String[]{"css", "scss"}, true);
+				Iterator<File> cssFiles = FileUtils.iterateFiles(componentFolderTarget, new String[] { "css", "scss" }, true);
 				Collection<File> fixedFiles = new LinkedList<>();
 				while (cssFiles.hasNext()) {
 					File file = cssFiles.next();
@@ -2737,7 +2740,7 @@ public class Template implements Comparable<Template> {
 
 		/** clean file **/
 		if (clear) {
-			Iterator<File> targetFiles = FileUtils.iterateFiles(templateTarget, new String[]{"scss"}, true);
+			Iterator<File> targetFiles = FileUtils.iterateFiles(templateTarget, new String[] { "scss" }, true);
 			while (targetFiles.hasNext()) {
 				File targetFile = targetFiles.next();
 				try {
@@ -2773,10 +2776,7 @@ public class Template implements Comparable<Template> {
 			}
 		}
 
-
-		// Clear Template Thymeleaf  Cache
-
-
+		// Clear Template Thymeleaf Cache
 
 		TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(ctx.getServletContext());
 
@@ -2784,8 +2784,6 @@ public class Template implements Comparable<Template> {
 			engine.clearTemplateCache();
 
 		}
-
-
 
 	}
 
@@ -3402,7 +3400,7 @@ public class Template implements Comparable<Template> {
 	public String getCookiesMessageName() {
 		return properties.getString("acceptcookies.name", "acceptcookies");
 	}
-	
+
 	public String getCookiesTypeName() {
 		return properties.getString("acceptcookies.typename", "acceptcookiesType");
 	}
@@ -3550,21 +3548,30 @@ public class Template implements Comparable<Template> {
 		return fakeName != null;
 	}
 
+	public List<String> getDynamicComponentList() {
+		String comps = properties.getString("dynamic.components", null);
+		if (comps != null) {
+			return StringHelper.stringToCollection(comps, ",");
+		} else {
+			return null;
+		}
+	}
+
 	public static void main(String[] args) throws IOException {
 		File file1 = new File("C:\\work\\template\\marie-poppies\\scss\\javlo\\mutimedia.scss");
 		File file2 = new File("C:\\opt\\tomcat8\\webapps\\javlo2\\wktp\\marie-poppies\\marie-poppies\\scss\\javlo\\mutimedia.scss");
-		
-		System.out.println("file1 exist : "+file1.exists());
-		
-		System.out.println("file1.lastModified() = "+file1.lastModified());
-		System.out.println("file2.lastModified() = "+file2.lastModified());
-		
+
+		System.out.println("file1 exist : " + file1.exists());
+
+		System.out.println("file1.lastModified() = " + file1.lastModified());
+		System.out.println("file2.lastModified() = " + file2.lastModified());
+
 		if (file1.lastModified() > file2.lastModified()) {
 			System.out.println("COPY");
 		} else {
 			System.out.println("NO COPY");
 		}
-		
+
 	}
 
 }

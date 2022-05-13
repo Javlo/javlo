@@ -899,6 +899,7 @@ Security in case of vulnerabilities.
 ## [2.1.3] - 09/01/2022
 ### Added
   - security csp
+  - filter dynamic component
 ### Modified
   - conserve parameters on redirect
 ### fixed
