@@ -360,11 +360,15 @@ public class TaxonomyService {
 		}
 		for (String taxo : filter.getTaxonomy()) {
 			TaxonomyBean bean = getTaxonomyBeanMap().get(taxo);
+			boolean found = false;
 			while (bean != null) {
 				if (!container.getTaxonomy().contains(bean.getName())) {
-					return false;
+					found=true;
 				}
 				bean = bean.getParent();
+			}
+			if (!found) {
+				return false;
 			}
 		}
 		return true;
