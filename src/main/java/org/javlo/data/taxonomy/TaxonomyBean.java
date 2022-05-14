@@ -188,6 +188,7 @@ public class TaxonomyBean {
 			if (parent.getName().equals(id)) {
 				return true;
 			}
+			parent = parent.getParent();
 		}
 		return false;
 	}
