@@ -358,17 +358,14 @@ public class TaxonomyService {
 		if (filter.getTaxonomy() == null || filter.getTaxonomy().size() == 0) {
 			return false;
 		}
-		for (String taxo : filter.getTaxonomy()) {
+		for (String taxo : container.getTaxonomy()) {
 			TaxonomyBean bean = getTaxonomyBeanMap().get(taxo);
-			boolean found = false;
-			while (bean != null) {
-				if (container.getTaxonomy().contains(bean.getName())) {
-					found=true;
+			for (String fTaxo : filter.getTaxonomy()) {
+				if (!fTaxo.equals(bean.getName())) {
+					if (!bean.hasParent(fTaxo)) {
+						return false;
+					}
 				}
-				bean = bean.getParent();
-			}
-			if (!found) {
-				return false;
 			}
 		}
 		return true;

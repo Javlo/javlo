@@ -181,6 +181,16 @@ public class TaxonomyBean {
 		}
 		return false;
 	}
+	
+	public boolean hasParent(String id) {
+		TaxonomyBean parent = getParent();
+		while (parent != null) {
+			if (parent.getName().equals(id)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public TaxonomyBean getParent() {
 		return parent;
