@@ -334,6 +334,34 @@ public class TaxonomyService {
 			return !Collections.disjoint(allCont1, filter.getTaxonomy());
 		}
 	}
+	
+	/**
+	 * check if a taxonomy group match
+	 * @param container
+	 * @param filter
+	 * @return
+	 */
+	public boolean isMatchAll(ITaxonomyContainer container, ITaxonomyContainer filter) {
+		if (container == null || filter == null) {
+			return true;
+		}
+		if (container.getTaxonomy() == null || container.getTaxonomy().size() == 0) {
+			if (filter.getTaxonomy() == null || filter.getTaxonomy().size() == 0) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		if (filter.getTaxonomy() == null || filter.getTaxonomy().size() == 0) {
+			return false;			
+		}
+		for (String taxo : filter.getTaxonomy()) {
+			if (!container.getTaxonomy().contains(taxo)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	/**
 	 * convert list of taxonomybean id to a list of taxonomybean instance.

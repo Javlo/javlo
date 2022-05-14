@@ -122,7 +122,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 											if (textUndefinedOrMatch && taxonomy.size()>0) {
 												StaticInfoBean staticInfoBean = new StaticInfoBean(ctx, file);
 												TaxonomyService taxonomyService = TaxonomyService.getInstance(ctx);
-												if (taxonomyService.isMatch(staticInfoBean, this)) {
+												if (taxonomyService.isMatchAll(staticInfoBean, this)) {
 													matchScore = matchScore + 1;
 												} else {
 													return 0;
