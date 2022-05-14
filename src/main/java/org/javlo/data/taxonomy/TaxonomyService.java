@@ -337,39 +337,39 @@ public class TaxonomyService {
 		}
 	}
 
-	/**
-	 * check if a taxonomy group match
-	 * 
-	 * @param container
-	 * @param filter
-	 * @return
-	 */
-	public boolean isMatchAll(ITaxonomyContainer container, ITaxonomyContainer filter) {
-		if (container == null || filter == null) {
-			return true;
-		}
-		if (container.getTaxonomy() == null || container.getTaxonomy().size() == 0) {
-			if (filter.getTaxonomy() == null || filter.getTaxonomy().size() == 0) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-		if (filter.getTaxonomy() == null || filter.getTaxonomy().size() == 0) {
-			return false;
-		}
-		for (String taxo : container.getTaxonomy()) {
-			TaxonomyBean bean = getTaxonomyBeanMap().get(taxo);
-			for (String fTaxo : filter.getTaxonomy()) {
-				if (!fTaxo.equals(bean.getName())) {
-					if (!bean.hasParent(fTaxo)) {
-						return false;
-					}
-				}
-			}
-		}
-		return true;
-	}
+//	/**
+//	 * check if a taxonomy group match
+//	 * 
+//	 * @param container
+//	 * @param filter
+//	 * @return
+//	 */
+//	public boolean isMatchAll(ITaxonomyContainer container, ITaxonomyContainer filter) {
+//		if (container == null || filter == null) {
+//			return true;
+//		}
+//		if (container.getTaxonomy() == null || container.getTaxonomy().size() == 0) {
+//			if (filter.getTaxonomy() == null || filter.getTaxonomy().size() == 0) {
+//				return true;
+//			} else {
+//				return false;
+//			}
+//		}
+//		if (filter.getTaxonomy() == null || filter.getTaxonomy().size() == 0) {
+//			return false;
+//		}
+//		for (String taxo : container.getTaxonomy()) {
+//			TaxonomyBean bean = getTaxonomyBeanMap().get(taxo);
+//			for (String fTaxo : filter.getTaxonomy()) {
+//				if (!fTaxo.equals(bean.getName())) {
+//					if (!bean.hasParent(fTaxo)) {
+//						return false;
+//					}
+//				}
+//			}
+//		}
+//		return true;
+//	}
 
 	/**
 	 * convert list of taxonomybean id to a list of taxonomybean instance.
@@ -483,6 +483,19 @@ public class TaxonomyService {
 
 	public String getContext() {
 		return context;
+	}
+	
+	public static void main(String[] args) {
+		Set<String> taxoList1 = new HashSet<>();
+		taxoList1.add("travaux");
+		taxoList1.add("femme");		
+		TaxonomyContainerBean taxo1 = new TaxonomyContainerBean(taxoList1);
+		Set<String> taxoList2 = new HashSet<>();
+		//taxoList2.add("travaux");
+		taxoList2.add("femme");		
+		TaxonomyContainerBean taxo2 = new TaxonomyContainerBean(taxoList2);
+//		System.out.println(">>>>>>>>> TaxonomyService.main : match ALL = "+is); //TODO: remove debug trace
+		
 	}
 
 }
