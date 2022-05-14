@@ -362,7 +362,7 @@ public class TaxonomyService {
 			TaxonomyBean bean = getTaxonomyBeanMap().get(taxo);
 			boolean found = false;
 			while (bean != null) {
-				if (!container.getTaxonomy().contains(bean.getName())) {
+				if (container.getTaxonomy().contains(bean.getName())) {
 					found=true;
 				}
 				bean = bean.getParent();
