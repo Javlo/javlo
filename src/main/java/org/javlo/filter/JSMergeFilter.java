@@ -72,7 +72,7 @@ public class JSMergeFilter implements Filter {
 						out.println("/**** " + jsFilePart.getName() + " ****/");
 						out.println("");
 					}
-					out.println(ResourceHelper.loadStringFromFile(jsFilePart));
+					out.println('{'+ResourceHelper.loadStringFromFile(jsFilePart)+'}');
 				}
 			}
 			out.flush();
