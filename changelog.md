@@ -900,6 +900,7 @@ Security in case of vulnerabilities.
 ### Added
   - security csp
   - filter dynamic component
+  - tom-select plugin
 ### Modified
   - conserve parameters on redirect
 ### fixed
