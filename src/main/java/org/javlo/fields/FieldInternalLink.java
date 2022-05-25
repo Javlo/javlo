@@ -196,6 +196,8 @@ public class FieldInternalLink extends Field {
 			out.println("<span class=\"" + getType() + "\">");
 			out.println("<a href=\"" + createLink(ctx) + "\">" + label + "</a>");
 			out.println("</span>");
+		} else {
+			out.println("<!-- no label on internal-link : "+getId()+" -->");
 		}
 
 		out.close();
