@@ -2577,7 +2577,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return "";
 		}
 	}
-
+	
 	protected Object getLock(ContentContext ctx) {
 		return this;
 	}

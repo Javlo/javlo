@@ -1429,8 +1429,10 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 						logger.warning(e.getMessage());
 					}
 				}
-				String emailTo = comp.getLocalConfig(false).getProperty("mail.to", globalContext.getAdministratorEmail());
-				emailTo = MailService.getDefaultReceiverEmail(ctx, MailService.getDefaultSenderEmail(ctx,  emailFrom));
+				String emailTo = comp.getLocalConfig(false).getProperty("mail.to", null);
+				if (!StringHelper.isMail(emailTo)) {
+					emailTo = MailService.getDefaultReceiverEmail(ctx, MailService.getDefaultSenderEmail(ctx,  emailFrom));
+				}
 				String emailCC = comp.getLocalConfig(false).getProperty("mail.cc", null);
 				String emailBCC = comp.getLocalConfig(false).getProperty("mail.bcc", null);
 				MailService mailService = null;
