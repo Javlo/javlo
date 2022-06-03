@@ -104,6 +104,10 @@ public class SpecialConfigBean {
 		return StringHelper.neverNull(config.get("translator.deepl.api.key"));
 	}
 	
+	public String getMailFrom() {
+		return StringHelper.neverNull(config.get("mail.from"));
+	}
+	
 	public String get(String key, String defaultValue) {
 		String value = (String)config.get(key);
 		if (value == null) {

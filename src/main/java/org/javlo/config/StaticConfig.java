@@ -1163,7 +1163,7 @@ public class StaticConfig extends Observable {
 	public String getSMTPUser() {
 		return properties.getString(SMTP_USER_PARAM, null);
 	}
-
+	
 	public List<IMacro> getSpecialMacros() {
 		List<IMacro> specialMacro = new LinkedList<IMacro>();
 		String macroRaw = properties.getString("class.macro");

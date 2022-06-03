@@ -2015,6 +2015,18 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getMailingSenders() {
 		return properties.getString("mailing.senders", "");
 	}
+	
+	public String getMailFrom() {
+		String mailFrom = getSpecialConfig().getMailFrom();
+		if (StringHelper.isMail(mailFrom)) {
+			return mailFrom;
+		}
+		mailFrom = getMailingSenders();
+		if (StringHelper.isMail(mailFrom)) {
+			return mailFrom;
+		}
+		return getAdministratorEmail();
+	}
 
 	public Date getMailingStartTime() {
 		String timeStr = properties.getString("mailing.start-time", "9:30:00");
