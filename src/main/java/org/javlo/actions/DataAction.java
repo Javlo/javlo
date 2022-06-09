@@ -92,7 +92,6 @@ import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 import org.javlo.utils.MemoryBean;
 import org.javlo.ztatic.StaticInfo;
-import org.python.antlr.ast.Continue;
 
 public class DataAction implements IAction {
 
@@ -103,6 +102,13 @@ public class DataAction implements IAction {
 	@Override
 	public String getActionGroupName() {
 		return "data";
+	}
+	
+	public static String performNotificationsAsRead(RequestService rs, ContentContext ctx, GlobalContext globalContext, NotificationService notif, User user, HttpSession session) throws ParseException {
+		if (user != null) {
+			notif.markAllAsRead(user.getLogin());
+		}
+		return null;
 	}
 
 	/**

@@ -3,6 +3,7 @@ package org.javlo.service;
 import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -76,6 +77,10 @@ public class NotificationService {
 			return GenericMessage.getTypeLabel(getType());
 		}
 
+		public String getBootstrapIcon() {
+			return GenericMessage.getBootstrapIcon(getType());
+		}
+
 		public void setType(int type) {
 			this.type = type;
 		}
@@ -86,6 +91,10 @@ public class NotificationService {
 
 		public void setCreationDate(Date creationDate) {
 			this.creationDate = creationDate;
+		}
+
+		public String getDiplayCreationDate() {
+			return StringHelper.renderTime(getCreationDate());
 		}
 
 		public String getUserId() {
@@ -192,7 +201,7 @@ public class NotificationService {
 			for (Notification notif : notifications) {
 				if (notif != null) {
 					if (currentTime - notif.getCreationDate().getTime() > NOTIFICATION_MAX_AGE) {
-						mustBeRemoved.remove(notif);					
+						mustBeRemoved.remove(notif);
 					}
 				}
 			}
@@ -217,7 +226,23 @@ public class NotificationService {
 		return false;
 	}
 
+	public void markAllAsRead(String userId) {
+		System.out.println(">>>>>>>>> NotificationService.markAllAsRead : userId = "+userId); //TODO: remove debug trace
+		List<WeakReference<Notification>> markAsRead = allReadyReaded.get(userId);
+		synchronized (notifications) {
+			for (Notification notif : notifications) {
+				if (notif.getReceiver() == null || notif.getReceiver().equals(userId) || notif.getUserId().equals(USER_SYSTEM)) {
+					System.out.println(">>>>>>>>> NotificationService.markAllAsRead : noctif = "+notif.getMessage()); //TODO: remove debug trace
+					markAsRead.add(new WeakReference<NotificationService.Notification>(notif));
+				}
+			}
+		}
+	}
+
 	public List<NotificationContainer> getNotifications(String userId, boolean admin, int maxSize, boolean markRead) {
+		if (userId == null) {
+			return Collections.emptyList();
+		}
 		cleanList();
 		List<WeakReference<Notification>> markAsRead = allReadyReaded.get(userId);
 		List<NotificationContainer> outNotif = new LinkedList<NotificationContainer>();
@@ -259,9 +284,9 @@ public class NotificationService {
 		}
 		return outNotif;
 	}
-	
+
 	public int size() {
-		if (notifications ==  null) {
+		if (notifications == null) {
 			return -1;
 		}
 		return notifications.size();
@@ -288,7 +313,7 @@ public class NotificationService {
 	}
 
 	public static void notifExternalService(ContentContext ctx, String message, int type, String inURL, String userId, boolean admin) {
-		notifExternalService(ctx,message,type,inURL,userId,admin,null);
+		notifExternalService(ctx, message, type, inURL, userId, admin, null);
 	}
 
 	public static void notifExternalService(ContentContext ctx, String message, int type, String inURL, String userId, boolean admin, Collection<String> targetUsers) {
@@ -319,7 +344,7 @@ public class NotificationService {
 				NetHelper.postJsonRequest(new URL(url), null, header, JSONMap.JSON.toJson(json));
 			} catch (Exception e1) {
 				e1.printStackTrace();
-			}			
+			}
 		}
 	}
 
@@ -333,8 +358,8 @@ public class NotificationService {
 	 * @param type
 	 *            the type of the message (same type than GenericMessage)
 	 * @param userId
-	 *            a notification can be specific for a user or for everybody
-	 *            (userId null)
+	 *            a notification can be specific for a user or for everybody (userId
+	 *            null)
 	 */
 	public void addNotification(String message, String url, int type, String userId, boolean admin) {
 		addNotification(message, url, type, userId, userId, admin);

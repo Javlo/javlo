@@ -36,12 +36,12 @@ import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
+import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IInteractiveMacro;
 import org.javlo.macro.core.IMacro;
 import org.javlo.macro.core.MacroFactory;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
-import org.javlo.module.admin.AdminAction;
 import org.javlo.module.admin.MacroBean;
 import org.javlo.module.content.Edit;
 import org.javlo.module.core.ModuleException;
@@ -69,6 +69,7 @@ import org.javlo.user.IUserInfo;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.utils.HtmlPart;
+import org.joda.time.LocalTime;
 import org.owasp.encoder.Encode;
 
 public class InfoBean {
@@ -657,6 +658,18 @@ public class InfoBean {
 			}
 		}
 		return ctx.getCurrentUserId();
+	}
+	
+	public String getUserEmail() {
+		User user = ctx.getCurrentUser();
+		if (user == null) {
+			return "";
+		} else {
+			if (StringHelper.isMail(ctx.getCurrentUser().getUserInfo().getEmail())) {
+				return ctx.getCurrentUser().getUserInfo().getEmail();
+			}
+		}
+		return null;
 	}
 
 	public PageBean getPage() {
@@ -2058,6 +2071,22 @@ public class InfoBean {
 	
 	public String getDefaultEmailSender() {
 		return ctx.getGlobalContext().getAdministratorEmail();
+	}
+	
+	public String getMarkAllReadNotificationUrl() {
+		return URLHelper.createActionURL(ctx, "data.notificationsAsRead");
+	}
+	
+	public String getHello() throws ServiceException, Exception {
+		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
+		LocalTime time = LocalTime.now();
+		if (time.getHourOfDay() >= 18 && time.getHourOfDay() <= 2) {
+			return i18nAccess.getViewText("global.hello.evening");
+		} else if (time.getHourOfDay() >= 12 && time.getHourOfDay() < 18) {
+			return i18nAccess.getViewText("global.hello.afthernoon");
+		} else {
+			return i18nAccess.getViewText("global.hello.morning");
+		}
 	}
 	
 }

@@ -8,6 +8,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.i18n.RequestI18nAccess;
 import org.javlo.service.ListService;
+import org.javlo.service.NotificationService;
 import org.javlo.service.exception.ServiceException;
 
 public class RequestHelper {
@@ -92,6 +93,7 @@ public class RequestHelper {
 		i18nAccess.requestInit(ctx);
 		ctx.getRequest().setAttribute("list", ListService.getInstance(ctx).getAllList(ctx));
 		ctx.getRequest().setAttribute("sortedList", ListService.getInstance(ctx).getAllListSorted(ctx));
+		ctx.getRequest().setAttribute("notifications", NotificationService.getInstance(ctx.getGlobalContext()).getNotifications(ctx.getCurrentUserId(), false, 99, false));
+		ctx.getRequest().setAttribute("unreadNotificationSize", NotificationService.getInstance(ctx.getGlobalContext()).getUnreadNotificationSize(ctx.getCurrentUserId(), false, 99));
 	}
-
 }

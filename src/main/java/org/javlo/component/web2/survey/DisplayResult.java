@@ -159,6 +159,16 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 		if (StringHelper.isDigit(getFieldValue(MIN_VALUE))) {
 			ctx.getRequest().setAttribute("min", getFieldValue(MIN_VALUE));
 		}
+		
+		if (!StringHelper.isURL(getFieldValue(FILE_NAME))) {
+			File file = new File(getFieldValue(FILE_NAME));
+			if (!file.exists()) {
+				logger.warning("file not found : "+file);
+				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+				messageRepository.setGlobalMessage(new GenericMessage("file not found : "+getFieldValue(FILE_NAME), GenericMessage.ERROR));
+			}
+		}
+		
 		for (Cell[][] cells : new Cell[][][] { loadCells(ctx, getFieldValue(FILE_NAME)), loadCells(ctx, getFieldValue(FILE_NAME_2)), loadCells(ctx, getFieldValue(FILE_NAME_3)) }) {
 			if (cells != null) {
 				boolean lencioni = getCurrentRenderer(ctx).contains(LENCIONI);

@@ -25,15 +25,15 @@ public class UpdateTemplate extends AbstractMacro {
 		logger.info("template : "+template.getName());
 		template.importTemplateInWebapp(ctx.getGlobalContext().getStaticConfig(), ctx, false);
 		template.reload();		
-		Collection<File> allFiles = ResourceHelper.getAllFilesList(new File(template.getWorkTemplateRealPath(ctx.getGlobalContext())));
-		long olderModifDate = 0;
-		for (File file : allFiles) {
-			if (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("scss")) {
-				if (file.lastModified() > olderModifDate) {
-					olderModifDate = file.lastModified();
-				}
-			}
-		}
+//		Collection<File> allFiles = ResourceHelper.getAllFilesList(new File(template.getWorkTemplateRealPath(ctx.getGlobalContext())));
+//		long olderModifDate = 0;
+//		for (File file : allFiles) {
+//			if (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("scss")) {
+//				if (file.lastModified() > olderModifDate) {
+//					olderModifDate = file.lastModified();
+//				}
+//			}
+//		}
 //		for (File file : allFiles) {
 //			if (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("scss")) {
 //				File cssFile = new File(StringHelper.getFileNameWithoutExtension(file.getAbsolutePath())+".css");

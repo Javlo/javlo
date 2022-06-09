@@ -154,6 +154,28 @@ public class GenericMessage {
 			return null;
 		}
 	}
+	
+	public static String getBootstrapIcon(int type) {
+		switch (type) {
+		case ERROR:
+			return "bi bi-exclamation-triangle";
+
+		case INFO:
+			return "bi bi-info-circle";
+
+		case HELP:
+			return "bi bi-question-circle";
+
+		case ALERT:
+			return "bi bi-exclamation-circle";
+
+		case SUCCESS:
+			return "bi bi-check-lg";
+
+		default:
+			return null;
+		}
+	}
 
 	public String getBootstrapType() {
 		switch (type) {

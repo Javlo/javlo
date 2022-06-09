@@ -44,7 +44,7 @@ import com.beust.jcommander.ParameterException;
 public class PageBean implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
+	
 	/*
 	 * private PageDescription info; private String url; private String path;
 	 * private boolean selected = false; private boolean lastSelected = false;

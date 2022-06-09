@@ -608,7 +608,7 @@ public class XMLManipulationHelper {
 				/* form action */
 				if (tags[i].getName().equalsIgnoreCase("form")) {
 					String actionValue = attributes.get("action");
-					if ((actionValue != null) && (!StringHelper.isURL(actionValue))) {
+					if ((actionValue != null) && (!StringHelper.isURL(actionValue)) && !actionValue.contains("${")) {
 						attributes.put("action", "<%=URLHelper.createURL(ctx,\"" + actionValue + "\")%>");
 						remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].toString());
 					}

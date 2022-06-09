@@ -594,6 +594,10 @@ public class URLHelper extends ElementaryURLHelper {
 		return createStaticURL(ctx, null, URLHelper.mergePath(templateFullPath, url), true);
 	}
 	
+	public static String createActionURL(ContentContext ctx, String action) {
+		return createActionURL(ctx, action, "/");
+	}
+	
 	public static String createActionURL(ContentContext ctx, String action, String inUrl) { 
 		return createStaticURL(ctx, mergePath("webaction",action,inUrl));
 	}

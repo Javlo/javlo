@@ -2557,6 +2557,8 @@ public class Template implements Comparable<Template> {
 					logger.info("copy template from '" + templateSrc + "' to '" + templateTgt + "'");
 					if (clear) {
 						FileUtils.deleteDirectory(templateTgt);
+					} else {
+						rebuildTemplate(ctx, false);
 					}
 					//importTemplateInWebapp(config, ctx, globalContext, templateTgt, null, true, false, getRawCssFile(globalContext), null, clear);
 					importTemplateInWebapp(config, ctx, globalContext, templateTgt, null, true, false, null, clear);
@@ -2752,17 +2754,17 @@ public class Template implements Comparable<Template> {
 		// }
 
 		/** clean file **/
-		if (clear) {
-			Iterator<File> targetFiles = FileUtils.iterateFiles(templateTarget, new String[] { "scss" }, true);
-			while (targetFiles.hasNext()) {
-				File targetFile = targetFiles.next();
-				try {
-					XHTMLHelper.removeComment(targetFile);
-				} catch (Exception e) {
-					logger.warning("error on copy file : " + targetFile + " err:" + e.getMessage());
-				}
-			}
-		}
+//		if (clear) {
+//			Iterator<File> targetFiles = FileUtils.iterateFiles(templateTarget, new String[] { "scss" }, true);
+//			while (targetFiles.hasNext()) {
+//				File targetFile = targetFiles.next();
+//				try {
+//					XHTMLHelper.removeComment(targetFile);
+//				} catch (Exception e) {
+//					logger.warning("error on copy file : " + targetFile + " err:" + e.getMessage());
+//				}
+//			}
+//		}
 		
 		LocalLogger.stepCount(LOG_KEY, "clean file");
 
