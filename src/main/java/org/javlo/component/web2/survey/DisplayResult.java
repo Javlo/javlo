@@ -150,8 +150,7 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		ctx.getRequest().setAttribute("title", getFieldValue(TITLE_FIELD));
-		int i=0;
+		ctx.getRequest().setAttribute("title", getFieldValue(TITLE_FIELD));		
 		Map<String, Double> ref = null;
 		if (StringHelper.isDigit(getFieldValue(MAX_VALUE))) {
 			ctx.getRequest().setAttribute("max", getFieldValue(MAX_VALUE));
@@ -173,10 +172,12 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 		if (cellsFile1==null || cellsFile1.length==0) {
 			logger.warning("no result in : "+getFieldValue(FILE_NAME));
 		}
-		
+		int i=0;
 		for (Cell[][] cells : new Cell[][][] { cellsFile1, loadCells(ctx, getFieldValue(FILE_NAME_2)), loadCells(ctx, getFieldValue(FILE_NAME_3)) }) {
 			if (cells != null) {
 				boolean lencioni = getCurrentRenderer(ctx).contains(LENCIONI);
+				System.out.println(">>>>>>>>> DisplayResult.prepareView : lencioni = "+lencioni); //TODO: remove debug trace
+				System.out.println(">>>>>>>>> DisplayResult.prepareView : i = "+i); //TODO: remove debug trace
 				if (lencioni || getCurrentRenderer(ctx).contains(AVERAGE)) {
 					Map<String, Double> averageNotSort = SurveyAverage.average(cells, lencioni, lencioni ? 999 : 80, "#");
 					Map<String, Double> average = new LinkedHashMap<String, Double>(averageNotSort);
@@ -187,6 +188,7 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 //					}
 					if (i==0) {
 						ref = average;
+						System.out.println(">>>>>>>>> DisplayResult.prepareView : #average = "+average.size()); //TODO: remove debug trace
 						ctx.getRequest().setAttribute("average", average);
 						ctx.getRequest().setAttribute("averageNotSort", averageNotSort);
 						
