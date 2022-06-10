@@ -32,6 +32,9 @@ public class SurveyAverage {
 		for (int i = 0; i < cells[0].length; i++) {
 			if (cells[0][i] != null && cells[0][i].getValue() != null && !cells[0][i].getValue().startsWith("_") && (!underscore || cells[0][i].getValue().contains("_"))) {
 				String key = extractKey(cells[0][i].getValue());
+				if (underscore) {
+					key = key.toLowerCase();
+				}
 				for (int j = 1; j < cells.length; j++) {
 					if (StringHelper.isDigit(cells[j][i].getValue())) {
 						total.put(key, total.get(key).intValue() + Integer.parseInt(cells[j][i].getValue()));

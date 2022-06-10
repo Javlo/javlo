@@ -161,7 +161,7 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 		}
 		
 		if (!StringHelper.isURL(getFieldValue(FILE_NAME))) {
-			File file = new File(getFieldValue(FILE_NAME));
+			File file = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), getFieldValue(FILE_NAME)));
 			if (!file.exists()) {
 				logger.warning("file not found : "+file);
 				MessageRepository messageRepository = MessageRepository.getInstance(ctx);

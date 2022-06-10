@@ -42,7 +42,9 @@ public abstract class AbstractSurvey extends AbstractPropertiesComponent {
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		ctx.getRequest().setAttribute("previousLink", URLHelper.createURL(ctx, getPreviousPage(ctx).getPath(), (Map) null));
+		if (getPreviousPage(ctx) != null) {
+			ctx.getRequest().setAttribute("previousLink", URLHelper.createURL(ctx, getPreviousPage(ctx).getPath(), (Map) null));
+		}
 	}
 
 	protected File getExcelFile(ContentContext ctx) throws Exception {
