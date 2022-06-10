@@ -169,7 +169,12 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 			}
 		}
 		
-		for (Cell[][] cells : new Cell[][][] { loadCells(ctx, getFieldValue(FILE_NAME)), loadCells(ctx, getFieldValue(FILE_NAME_2)), loadCells(ctx, getFieldValue(FILE_NAME_3)) }) {
+		Cell[][] cellsFile1 = loadCells(ctx, getFieldValue(FILE_NAME));
+		if (cellsFile1==null || cellsFile1.length==0) {
+			logger.warning("no result in : "+getFieldValue(FILE_NAME));
+		}
+		
+		for (Cell[][] cells : new Cell[][][] { cellsFile1, loadCells(ctx, getFieldValue(FILE_NAME_2)), loadCells(ctx, getFieldValue(FILE_NAME_3)) }) {
 			if (cells != null) {
 				boolean lencioni = getCurrentRenderer(ctx).contains(LENCIONI);
 				if (lencioni || getCurrentRenderer(ctx).contains(AVERAGE)) {
