@@ -254,7 +254,6 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		super.prepareView(ctx);
 		
 		List<String> taxonomyIds = StringHelper.stringToCollection(getFieldValue("taxonomy"), ",");
-		
 		FileFilter filter = FileFilter.getInstance(ctx, taxonomyIds);
 		filter.setTags(getTags());
 		filter.setExt(StringHelper.stringToCollection(getFieldValue("ext"), ","));
@@ -273,6 +272,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 			maxSize = 1000;
 		}
 		ctx.getRequest().setAttribute("files", getFileList(ctx, filter,  maxSize, display));
+		
 		
 		
 		if (taxonomyIds.size()>0) {
