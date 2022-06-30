@@ -22,7 +22,6 @@ import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.core.DebugNote;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
-import org.javlo.context.ContentManager;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.StatContext;
 import org.javlo.helper.DebugHelper;
@@ -367,7 +366,9 @@ public class DashboardAction extends AbstractModuleAction {
 			Map<String, MutableInt> languageVisit = new NeverEmptyMap<>(MutableInt.class);
 			for (DayInfo dayInfo : tracker.getDayInfos(statCtx)) {
 				for (String key : dayInfo.languageVisit.keySet()) {
-					languageVisit.get(key).add(dayInfo.languageVisit.get(key));
+					if (ctx.getGlobalContext().getLanguages().contains(key)) {
+						languageVisit.get(key).add(dayInfo.languageVisit.get(key));
+					}
 				}
 			}
 			ObjectBuilder ajaxMap = LangHelper.object();
