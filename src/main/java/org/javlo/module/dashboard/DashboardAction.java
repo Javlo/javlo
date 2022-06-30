@@ -372,7 +372,7 @@ public class DashboardAction extends AbstractModuleAction {
 			ObjectBuilder ajaxMap = LangHelper.object();
 			ListBuilder datas = ajaxMap.list("datas");
 			for (Map.Entry<String, MutableInt> entry : languageVisit.entrySet()) {
-				if (ctx.getGlobalContext().getLanguages().contains(entry.getKey())) {
+				if (ctx.getGlobalContext().getContentLanguages().contains(entry.getKey())) {
 					String[] d = new String[2];				
 					d[0] = entry.getKey();
 					d[1] = ""+entry.getValue();
@@ -582,8 +582,10 @@ public class DashboardAction extends AbstractModuleAction {
 			ListBuilder datas = ajaxMap.list("datas");
 			ListBuilder labels = ajaxMap.list("labels");
 			for (Entry<String, Integer> lang : languages) {
-				labels.add(lang.getKey());
-				datas.add(lang.getValue());
+				if (ctx.getGlobalContext().getContentLanguages().contains(lang.getKey())) {
+					labels.add(lang.getKey());
+					datas.add(lang.getValue());
+				}
 			}
 			ctx.setAjaxMap(ajaxMap.getMap());
 		} else if (type.equals("referer")) {
