@@ -366,15 +366,13 @@ public class DashboardAction extends AbstractModuleAction {
 			Map<String, MutableInt> languageVisit = new NeverEmptyMap<>(MutableInt.class);
 			for (DayInfo dayInfo : tracker.getDayInfos(statCtx)) {
 				for (String key : dayInfo.languageVisit.keySet()) {
-					if (ctx.getGlobalContext().getLanguages().contains(key)) {
-						languageVisit.get(key).add(dayInfo.languageVisit.get(key));
-					}
+					languageVisit.get(key).add(dayInfo.languageVisit.get(key));
 				}
 			}
 			ObjectBuilder ajaxMap = LangHelper.object();
 			ListBuilder datas = ajaxMap.list("datas");
 			for (Map.Entry<String, MutableInt> entry : languageVisit.entrySet()) {
-				if (entry.getKey().length()<6) {
+				if (ctx.getGlobalContext().getLanguages().contains(entry.getKey())) {
 					String[] d = new String[2];				
 					d[0] = entry.getKey();
 					d[1] = ""+entry.getValue();
