@@ -493,7 +493,8 @@ body.edit-preview ._empty_area span {
 	#preview_command img, #preview_command div, #preview_command a,
 	#preview_command span, #preview_command input, #preview_command fieldset,
 	#preview_command legend, #preview_command form, #preview_command select,
-	#preview_command option, #preview_command .navigation, #preview_command .badge, #preview_command .badge:before, #preview_command .badge:after {
+	#preview_command option, #preview_command .btn, #preview_command .navigation, #preview_command .badge, 
+	#preview_command .badge:before, #preview_command .badge:after {
 	margin: 0;
 	border: 0 none;
 	padding: 0;
@@ -518,9 +519,11 @@ body.edit-preview ._empty_area span {
 	min-width: 0;
 	max-height: none;
 	max-width: none;
-	-moz-box-sizing: inherit;
 	opacity: 1;
 	filter: alpha(opacity = 100);
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
 }
 
 #message-container .notification {
@@ -676,7 +679,7 @@ body.edit-preview ._empty_area span {
 
 #preview_command fieldset.closable .closable_action.open {
 	border: 2px #B1B1B1 solid;
-	height: 6px; /
+	height: 6px; 
 	width: 6px;
 	top: 2px;
 }
@@ -698,7 +701,7 @@ body.edit-preview ._empty_area span {
 }
 
 #preview_command h4 {
-	margin: 6px 0 6px; 0;
+	margin: 6px 0 6px 0;
 	font-size: 12px;
 	font-weight: bold;
 }
@@ -790,7 +793,8 @@ body.edit-preview ._empty_area span {
 
 #preview_command #pc_edit_mode_button {
 	background-image: url('../../images/icons/edit.png');
-	float: right; margin 2px 2px 0 0;
+	float: right; 
+	margin: 2px 2px 0 0;
 	font-size: 0;
 	font-size: 0px;
 	border: 0 none;

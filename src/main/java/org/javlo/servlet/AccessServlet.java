@@ -243,11 +243,11 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 		LocalLogger.SPECIAL_LOG_FILE = new File(staticConfig.getSpecialLogFile());
 		
-		try {
-			LocationService.init(getServletContext());
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
+//		try {
+//			LocationService.init(getServletContext());
+//		} catch (Exception e1) {
+//			e1.printStackTrace();
+//		}
 		
 		writeInfo(System.out);
 

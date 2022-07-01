@@ -3353,14 +3353,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (isHiddenInMode(ctx, ctx.getRenderMode(), ctx.isMobile()) || !AdminUserSecurity.getInstance().canModifyConponent(ctx, getId())) {
 			return "";
 		} else {
-			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 			String prefix = "";
 			String suffix = "";
 			if (!isWrapped(ctx)) {
 				prefix = getForcedPrefixViewXHTMLCode(ctx);
 				suffix = getForcedSuffixViewXHTMLCode(ctx);
 			}
-			return prefix + "<span class=\"" + EDIT_CLASS + "\">" + getType() + "</span>" + i18nAccess.getText("content." + getType(), getType()) + "</span>" + suffix;
+			return prefix + "<span class=\"" + EDIT_CLASS + "\">" + getComponentLabel(ctx, ctx.getGlobalContext().getEditLanguage(ctx.getSession())) + "</span>" + suffix;
 		}
 	}
 

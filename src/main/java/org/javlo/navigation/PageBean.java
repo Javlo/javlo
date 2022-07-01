@@ -598,7 +598,7 @@ public class PageBean implements Serializable {
 	public MenuElement getPage() {
 		return page;
 	}
-
+	
 	public int getDepth() {
 		return page.getDepth();
 	}

@@ -659,9 +659,15 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 	public boolean isContent() {
 		return getValue().contains(CONTENT);
 	}
+	
+	@Override
+	protected boolean getColumnableDefaultValue() {
+		return true;
+	}
 
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
+		performColumnable(ctx);
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		if (requestService.getParameter("comp-" + getId(), null) == null) {
 			return null;

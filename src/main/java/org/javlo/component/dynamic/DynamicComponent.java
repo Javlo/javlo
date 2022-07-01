@@ -412,9 +412,8 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	}
 	
 	protected boolean getColumnableDefaultValue() {
-		return true;
+		return StringHelper.isTrue(properties.getProperty("component.columnable", null), true);
 	}
-	
 
 	private String getDynamicRenderer(ContentContext ctx) {
 		String deviceRenderer = properties.getProperty("component.renderer." + ctx.getDevice().getCode());
