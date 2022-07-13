@@ -14,6 +14,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.fields.Field;
 import org.javlo.fields.FieldImage;
+import org.javlo.helper.StringHelper;
 import org.javlo.utils.StructuredProperties;
 
 /**
@@ -34,8 +35,6 @@ public class StaticMapComponent extends DynamicComponent implements IAction {
 	
 	@Override
 	protected void init() throws ResourceNotFoundException {	
-		
-		System.out.println(">>>>>>>>> StaticMapComponent.init : START"); //TODO: remove debug trace
 		
 		super.init();
 		
@@ -64,7 +63,7 @@ public class StaticMapComponent extends DynamicComponent implements IAction {
 			} else if (field.getName().equals("points")) {
 				Properties prop = new Properties();
 				prop.load(new StringReader(field.getValue()));
-				ctx.getRequest().setAttribute("points", prop);
+				ctx.getRequest().setAttribute("points", StringHelper.textToMap(field.getValue()));
 			} else {
 				ctx.getRequest().setAttribute(field.getName(), field.getValue());
 			}

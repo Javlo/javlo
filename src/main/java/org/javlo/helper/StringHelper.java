@@ -2052,9 +2052,9 @@ public class StringHelper {
 		return smartParseDate(inDate, "en");
 	}
 
-	public static void main(String[] args) {
-		System.out.println("camelToSnake = " + snakeToCamel("main-title"));
-		System.out.println("camelToSnake = " + camelToSnake("mainTitle"));
+	public static void main(String[] args) throws IOException {
+		Map<String,String> map = textToMap("name=Patrick");
+		System.out.println("name="+map.get("name"));
 	}
 
 	public static LocalTime smartParseTime(String inTime) {
@@ -4292,6 +4292,25 @@ public class StringHelper {
 			if (entry.length == 2) {
 				outMap.put(entry[0], entry[1]);
 			}
+		}
+		return outMap;
+	}
+	
+	public static Map<String, String> textToMap(String encodedMap) throws IOException {
+		if (StringHelper.isEmpty(encodedMap)) {
+			return Collections.emptyMap();
+		}
+		Map<String, String> outMap = new HashMap<String, String>();
+		BufferedReader reader = new BufferedReader(new StringReader(encodedMap));
+		String line = reader.readLine();
+		while (line != null) {
+			int equalIndex = line.indexOf("=");
+			if (equalIndex>0) {
+				String key = line.substring(0, equalIndex).trim();
+				String value = line.substring(equalIndex+1).trim();
+				outMap.put(key, value);
+			}
+			line = reader.readLine();
 		}
 		return outMap;
 	}
