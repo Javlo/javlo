@@ -124,7 +124,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 		}
 	}
 
-	private StructuredProperties properties = null;
+	protected StructuredProperties properties = null;
 
 	private Properties configProperties = null;
 

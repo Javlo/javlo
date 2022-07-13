@@ -2180,6 +2180,4 @@ public class ImageEngine {
 		return new BufferedImage(icm2, raster, image.isAlphaPremultiplied(), null);
 	}
 
-	/** webp **/
-
 }

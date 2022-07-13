@@ -184,7 +184,7 @@ public class StructuredProperties extends Properties {
 					latestKeyPrefix = keyPrefix;
 				}
 
-				String val = (String) get(key);
+				String val = ""+get(key);
 				key = saveConvert((String) key, true, escUnicode);
 				/*
 				 * No need to escape embedded and trailing spaces for value, hence pass false to flag.

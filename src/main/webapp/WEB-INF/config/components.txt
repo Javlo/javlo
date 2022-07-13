@@ -167,6 +167,7 @@ org.javlo.component.web2.IMComponent
 org.javlo.component.web2.TaxonomySessionComponent
 org.javlo.component.web2.ChooseBaseContext
 org.javlo.component.web2.QuizzParty
+org.javlo.component.web2.StaticMapComponent
 org.javlo.component.web2.survey.ListSurvey
 org.javlo.component.web2.survey.SelectSurvey
 org.javlo.component.web2.survey.SortSurvey

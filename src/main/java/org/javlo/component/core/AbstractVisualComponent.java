@@ -2737,9 +2737,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public boolean isFirstRepeated() {
-
 		IContentVisualComponent previousComp = getPreviousComponent();
-
 		while (previousComp != null && previousComp.getArea().equals(getArea())) {
 			if (!previousComp.isRepeat()) {
 				return false;
@@ -2747,7 +2745,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 			previousComp = previousComp.getPreviousComponent();
 		}
-
 		return true;
 	}
 
