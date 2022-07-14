@@ -26,6 +26,7 @@ import javax.naming.ConfigurationException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
@@ -37,6 +38,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.rest.IRestItem;
 import org.javlo.helper.ExifHelper;
+import org.javlo.helper.PDFHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -598,6 +600,16 @@ public class StaticInfo implements IRestItem {
 			setTitle(ctx, metadata.get("title"));
 			setAuthors(ctx, StringHelper.mergeString(" - ", metadata.get("xmpDM:artist"), metadata.get("xmpDM:composer")));
 			setDescription(ctx, StringHelper.mergeString(" - ", metadata.get("xmpDM:genre"), metadata.get("xmpDM:album")));
+		}
+		
+		if (StringHelper.isPDF(getFile().getName())) {
+			PDDocumentInformation data = PDFHelper.getPdfMeta(getFile());
+			if (data != null) {
+				setTitle(ctx, data.getTitle());
+				setAuthors(ctx, data.getAuthor());
+				setDescription(ctx, data.getSubject());
+				setDate(ctx, data.getCreationDate().getTime());
+			}
 		}
 
 	}

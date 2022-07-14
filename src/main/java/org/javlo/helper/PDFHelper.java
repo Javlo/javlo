@@ -2,24 +2,19 @@ package org.javlo.helper;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.net.URL;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPageTree;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
-import org.w3c.dom.Document;
-import org.xhtmlrenderer.pdf.ITextRenderer;
-import org.xhtmlrenderer.resource.FSEntityResolver;
 
 public class PDFHelper {
 
@@ -77,6 +72,24 @@ public class PDFHelper {
 		return -1;
 	}
 	
+	public static PDDocumentInformation getPdfMeta(File pdfFile) throws IOException {
+		PDDocument doc = PDDocument.load(pdfFile);
+		if (doc == null) {
+			return null;
+		} else {
+			return doc.getDocumentInformation();
+		}
+	}
+	
+	public static String getPdfTitle(File pdfFile) throws IOException {
+		PDDocumentInformation data = getPdfMeta(pdfFile);
+		if (data == null) {
+			return null;
+		} else {
+			return data.getTitle();
+		}
+	}
+	
 	public static void main(String[] args) throws Exception {
 //        ITextRenderer renderer = new ITextRenderer();
 //        String content="<html><head><style>\n" +
@@ -105,12 +118,8 @@ public class PDFHelper {
 //		pdfRenderer.setDocument(doc,null);
 //		pdfRenderer.layout();
 //		renderer.createPDF(new FileOutputStream("c:/trans/test_url.pdf"));
-		File testPdf = new File("c:/trans/test_image.pdf");		
-		int p=1;
-		for (BufferedImage image : getPDFImages(testPdf)) {
-			ImageIO.write(image, "jpg", new File("c:/trans/outpdf/outpdf-"+p+".jpg"));
-			p++;
-		}
+		File testPdf = new File("c:/trans/KCE_313B_Rapport_Performance_2019_Rapport FR.pdf");
+		System.out.println("title = "+getPdfTitle(testPdf));
     }
 
 }
