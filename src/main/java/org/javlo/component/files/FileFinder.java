@@ -109,6 +109,10 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 														matchScore = matchScore + 2;
 														found = true;
 													}
+													if (StringHelper.containsNoCase(file.getAuthors(ctx), t)) {
+														matchScore = matchScore + 1;
+														found = true;
+													}
 													if (matchScore == 0) {
 														textUndefinedOrMatch = false;
 													}				
@@ -272,8 +276,6 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 			maxSize = 1000;
 		}
 		ctx.getRequest().setAttribute("files", getFileList(ctx, filter,  maxSize, display));
-		
-		
 		
 		if (taxonomyIds.size()>0) {
 			List<TaxonomyDisplayBean> beans = new LinkedList<>();
