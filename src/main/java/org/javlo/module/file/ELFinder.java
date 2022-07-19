@@ -250,7 +250,7 @@ public abstract class ELFinder {
 	private void updateFile(String content, String fileHash, Map<String, Object> apiResponse) throws IOException {
 		ELFile file = hashToFile(fileHash);
 		if (file.getFile().exists()) {
-			if (content != null) {
+			if (!StringHelper.isEmpty(content)) {
 				ResourceHelper.writeStringToFile(file.getFile(), content, ContentContext.CHARACTER_ENCODING);
 				apiResponse.put("changed", printFiles(Arrays.asList(new ELFile[] { file })));
 			}
