@@ -161,6 +161,7 @@ public class TaxonomyAction extends AbstractModuleAction {
 		String text = rs.getParameter("text");
 		if (!StringHelper.isEmpty(text)) {
 			ts.importText(text);
+			PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 			return null;
 		} else {
 			return "bad parameter : need 'text'.";
