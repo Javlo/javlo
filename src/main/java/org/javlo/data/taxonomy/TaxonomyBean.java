@@ -82,10 +82,10 @@ public class TaxonomyBean {
 		return labels;
 	}
 
-	// public void setLabels(Map<String, String> labels) {
-	// pathLabels = null;
-	// this.labels = labels;
-	// }
+	public void setLabels(Map<String, String> labels) {
+		pathLabels = null;
+		this.labels = labels;
+	}
 
 	public boolean updateLabel(String lang, String label) {
 		pathLabels = null;
@@ -160,6 +160,7 @@ public class TaxonomyBean {
 	}
 
 	public TaxonomyBean addChild(TaxonomyBean newChild, String previousId) {
+		newChild.setParent(this);
 		int ind = 0;
 		if (previousId != null) {
 			for (TaxonomyBean child : getChildren()) {

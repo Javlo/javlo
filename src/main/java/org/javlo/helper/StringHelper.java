@@ -4314,6 +4314,31 @@ public class StringHelper {
 		}
 		return outMap;
 	}
+	
+	public static Map<String, String> textToMap(String encodedMap, String sep) throws IOException {
+		if (StringHelper.isEmpty(encodedMap)) {
+			return Collections.emptyMap();
+		}
+		Map<String, String> outMap = new HashMap<String, String>();
+		List<String> listText = stringToCollection(encodedMap, sep);
+		for (String line : listText) {
+			int equalIndex = line.indexOf("=");
+			if (equalIndex>0) {
+				String key = line.substring(0, equalIndex).trim();
+				String value = line.substring(equalIndex+1).trim();
+				outMap.put(key, value);
+			}
+		}
+		return outMap;
+	}
+	
+	public static String mapToText(Map<String,String> map, String sep) throws IOException {
+		List<String> outList = new LinkedList<>();
+		for (Map.Entry<String,String> e : map.entrySet()) {
+			outList.add(e.getKey()+'='+e.getValue());
+		}
+		return StringHelper.collectionToString(outList, sep);
+	}
 
 	/**
 	 * Test if the value is included in the range.

@@ -1,8 +1,10 @@
 package org.javlo.data.taxonomy;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.StringReader;
 import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -90,6 +94,9 @@ public class TaxonomyService {
 		child.updateLabel("en", "first child");
 		child.updateLabel("fr", "second child");
 		child.addChildAsFirst(new TaxonomyBean("3_2", "subchild 2"));
+		TaxonomyBean schild = new TaxonomyBean("3_3", "subchild 3");
+		child.addChildAsFirst(schild);
+		schild.addChildAsFirst(new TaxonomyBean("3_3_1", "subsubchild 1"));
 	}
 
 	public TaxonomyBean getRoot() {
@@ -337,39 +344,40 @@ public class TaxonomyService {
 		}
 	}
 
-//	/**
-//	 * check if a taxonomy group match
-//	 * 
-//	 * @param container
-//	 * @param filter
-//	 * @return
-//	 */
-//	public boolean isMatchAll(ITaxonomyContainer container, ITaxonomyContainer filter) {
-//		if (container == null || filter == null) {
-//			return true;
-//		}
-//		if (container.getTaxonomy() == null || container.getTaxonomy().size() == 0) {
-//			if (filter.getTaxonomy() == null || filter.getTaxonomy().size() == 0) {
-//				return true;
-//			} else {
-//				return false;
-//			}
-//		}
-//		if (filter.getTaxonomy() == null || filter.getTaxonomy().size() == 0) {
-//			return false;
-//		}
-//		for (String taxo : container.getTaxonomy()) {
-//			TaxonomyBean bean = getTaxonomyBeanMap().get(taxo);
-//			for (String fTaxo : filter.getTaxonomy()) {
-//				if (!fTaxo.equals(bean.getName())) {
-//					if (!bean.hasParent(fTaxo)) {
-//						return false;
-//					}
-//				}
-//			}
-//		}
-//		return true;
-//	}
+	// /**
+	// * check if a taxonomy group match
+	// *
+	// * @param container
+	// * @param filter
+	// * @return
+	// */
+	// public boolean isMatchAll(ITaxonomyContainer container, ITaxonomyContainer
+	// filter) {
+	// if (container == null || filter == null) {
+	// return true;
+	// }
+	// if (container.getTaxonomy() == null || container.getTaxonomy().size() == 0) {
+	// if (filter.getTaxonomy() == null || filter.getTaxonomy().size() == 0) {
+	// return true;
+	// } else {
+	// return false;
+	// }
+	// }
+	// if (filter.getTaxonomy() == null || filter.getTaxonomy().size() == 0) {
+	// return false;
+	// }
+	// for (String taxo : container.getTaxonomy()) {
+	// TaxonomyBean bean = getTaxonomyBeanMap().get(taxo);
+	// for (String fTaxo : filter.getTaxonomy()) {
+	// if (!fTaxo.equals(bean.getName())) {
+	// if (!bean.hasParent(fTaxo)) {
+	// return false;
+	// }
+	// }
+	// }
+	// }
+	// return true;
+	// }
 
 	/**
 	 * convert list of taxonomybean id to a list of taxonomybean instance.
@@ -484,18 +492,157 @@ public class TaxonomyService {
 	public String getContext() {
 		return context;
 	}
-	
+
+	public String exportAsText() {
+		return exportAsText(root, "");
+	}
+
+	public void importText(String text) {
+		Pattern patternId = Pattern.compile("(.*?)\\|");
+		Pattern patternName = Pattern.compile("\\|(.*?)\\[");
+		Pattern patternLabels = Pattern.compile("\\[(.*?)\\]");
+		BufferedReader reader = new BufferedReader(new StringReader(text));
+		String line;
+		try {
+			line = reader.readLine();
+			int lineNumber = 0;
+			int latestDepth = 0;
+			TaxonomyBean latestNode = null;
+			while (line != null) {
+				lineNumber++;
+				TaxonomyBean bean = new TaxonomyBean();
+
+				int depth = 0;
+				while (line.startsWith("-")) {
+					line = line.substring(1);
+					depth++;
+				}
+				
+				if (!line.contains("[")) {
+					line += "[]";
+				}
+
+				Matcher matcher = patternId.matcher(line);
+				if (matcher.find()) {
+					bean.setId(matcher.group(1));
+					if (bean.getId().equals("?")) {
+						bean.setId(StringHelper.getRandomId());
+					}
+				} else {
+					logger.severe("error id import taxonomy on line " + lineNumber + " : " + line);
+				}
+
+				matcher = patternName.matcher(line);
+				if (matcher.find()) {
+					bean.setName(matcher.group(1));
+				} else {
+					logger.severe("error name import taxonomy on line " + lineNumber + " : " + line);
+				}
+
+				matcher = patternLabels.matcher(line);
+				if (matcher.find()) {
+					bean.setLabels(StringHelper.textToMap(matcher.group(1)));
+				}
+
+				if (lineNumber == 1) {
+					root = bean;
+				} else {
+					if (depth > latestDepth) {
+						latestNode.addChild(bean, null);
+					} else if (depth < latestDepth) {
+							latestNode.getParent().addChild(bean, null);
+					} else {
+						latestNode.getParent().addChild(bean, latestNode.getId());
+					}
+				}
+
+				latestDepth = depth;
+				latestNode = bean;
+
+				line = reader.readLine();
+
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static String exportAsText(TaxonomyBean bean, String prefix) {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+
+		out.print(prefix + bean.getId() + '|' + bean.getName());
+		if (bean.getLabels().size() > 0) {
+			out.print('[');
+			try {
+				out.print(StringHelper.mapToText(bean.getLabels(), ","));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			out.println(']');
+		} else {
+			out.println("");
+		}
+
+		prefix += "-";
+		for (TaxonomyBean child : bean.getChildren()) {
+			out.print(exportAsText(child, prefix));
+		}
+
+		out.close();
+		return new String(outStream.toByteArray());
+	}
+
+	public void reset() {
+		root = new TaxonomyBean("0", "root");
+	}
+
 	public static void main(String[] args) {
-		Set<String> taxoList1 = new HashSet<>();
-		taxoList1.add("travaux");
-		taxoList1.add("femme");		
-		TaxonomyContainerBean taxo1 = new TaxonomyContainerBean(taxoList1);
-		Set<String> taxoList2 = new HashSet<>();
-		//taxoList2.add("travaux");
-		taxoList2.add("femme");		
-		TaxonomyContainerBean taxo2 = new TaxonomyContainerBean(taxoList2);
-//		System.out.println(">>>>>>>>> TaxonomyService.main : match ALL = "+is); //TODO: remove debug trace
+		TaxonomyService taxo = new TaxonomyService();
+		taxo.createDebugStructure();
+		String text = taxo.exportAsText();
+		System.out.println(text);
+		System.out.println("***");
+		taxo.reset();
+		taxo.importText(text);
+		System.out.println(text);
+	}
+	
+	public static void _main(String[] args) {
+		String line = "0|root[]";
+		Pattern patternId = Pattern.compile("(.*?)\\|");
+		Pattern patternName = Pattern.compile("\\|(.*?)\\[");
+		Pattern patternLabels = Pattern.compile("\\[(.*?)\\]");
 		
+		Matcher matcher = patternId.matcher(line);
+		if (matcher.find()) {
+			System.out.println("id:"+matcher.group(1));
+		} else {
+			logger.severe("error id import taxonomy on line : " + line);
+		}
+		
+	}
+
+	public static void __main(String[] args) {
+		String line = "0|root[]";
+		Matcher matcher = Pattern.compile("\\[(.*?)\\]").matcher(line);
+		if (matcher.find()) {
+			System.out.println(matcher.group(1));
+		} else {
+			System.out.println("NOT FOUND.");
+		}
+		matcher = Pattern.compile("(.*?)\\|").matcher(line);
+		if (matcher.find()) {
+			System.out.println("> " + matcher.group(1));
+		} else {
+			System.out.println("NOT FOUND.");
+		}
+		matcher = Pattern.compile("\\|(.*?)\\[").matcher(line);
+		if (matcher.find()) {
+			System.out.println("> " + matcher.group(1));
+		} else {
+			System.out.println("NOT FOUND.");
+		}
 	}
 
 }

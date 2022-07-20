@@ -3,6 +3,7 @@ package org.javlo.module.taxonomy;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpSession;
 
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.context.ContentContext;
@@ -18,6 +19,7 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.exception.ServiceException;
+import org.javlo.user.AdminUserSecurity;
 
 public class TaxonomyAction extends AbstractModuleAction {
 	
@@ -31,7 +33,14 @@ public class TaxonomyAction extends AbstractModuleAction {
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
 		String msg = super.prepare(ctx, modulesContext);
-		TaxonomyService.getInstance(ctx);		
+		TaxonomyService ts = TaxonomyService.getInstance(ctx);
+		if (StringHelper.isEmpty(ctx.getRequest().getAttribute("page"))) {
+			ctx.getRequest().setAttribute("page", "main");
+			ModulesContext dashboardContext = ModulesContext.getInstance(ctx.getSession(), ctx.getGlobalContext());
+			dashboardContext.getCurrentModule().restoreAll();
+		} else {
+			ctx.getRequest().setAttribute("text", ts.exportAsText());
+		}
 		return msg;
 	}
 	
@@ -129,5 +138,32 @@ public class TaxonomyAction extends AbstractModuleAction {
 		messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("taxonomy.updated", "Taxonomy tree is updated."), GenericMessage.INFO));		
 		return null;
 	}
-
+	
+	public static String performMainPage(RequestService rs, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		ModulesContext dashboardContext = ModulesContext.getInstance(session, ctx.getGlobalContext());
+		dashboardContext.getCurrentModule().restoreAll();
+		return null;
+	}
+	
+	public static String performText(RequestService rs, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		ModulesContext dashboardContext = ModulesContext.getInstance(session, ctx.getGlobalContext());
+		dashboardContext.getCurrentModule().clearAllBoxes();
+		dashboardContext.getCurrentModule().setRenderer("/jsp/text.jsp");
+		ctx.getRequest().setAttribute("page", "text");
+		return null;
+	}
+	
+	public static String performUpdate(ContentContext ctx, RequestService rs) throws Exception {
+		if (ctx.getCurrentEditUser() == null || !ctx.getCurrentEditUser().validForRoles(AdminUserSecurity.CONTENT_ROLE)) {
+			return "security error";
+		}
+		TaxonomyService ts = TaxonomyService.getInstance(ctx);
+		String text = rs.getParameter("text");
+		if (!StringHelper.isEmpty(text)) {
+			ts.importText(text);
+			return null;
+		} else {
+			return "bad parameter : need 'text'.";
+		}
+	}
 }
