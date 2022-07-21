@@ -153,7 +153,7 @@ public class TaxonomyAction extends AbstractModuleAction {
 		return null;
 	}
 	
-	public static String performUpdate(ContentContext ctx, RequestService rs) throws Exception {
+	public static String performUpdateText(ContentContext ctx, RequestService rs) throws Exception {
 		if (ctx.getCurrentEditUser() == null || !ctx.getCurrentEditUser().validForRoles(AdminUserSecurity.CONTENT_ROLE)) {
 			return "security error";
 		}

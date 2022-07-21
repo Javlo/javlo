@@ -3,7 +3,7 @@
 <div class="content">
 text
 <form>
-<input type="hidden" name="webaction" value="taxonomy.update" />
+<input type="hidden" name="webaction" value="taxonomy.updatetext" />
 <textarea class="form-control" rows="20" name="text">${text}</textarea>
 <br />
 <button class="btn btn-primary pull-right" type="submit">update</button>

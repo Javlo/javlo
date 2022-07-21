@@ -240,6 +240,7 @@ public class TaxonomyService {
 		synchronized (taxonomyBeanMap) {
 			taxonomyBeanMap.clear();
 			taxonomyBeanPathMap.clear();
+			taxonomyDisplayBeanPathMap.clear();
 			options = null;
 		}
 	}
@@ -562,6 +563,9 @@ public class TaxonomyService {
 				line = reader.readLine();
 
 			}
+			
+			clearCache();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -595,6 +599,7 @@ public class TaxonomyService {
 
 	public void reset() {
 		root = new TaxonomyBean("0", "root");
+		clearCache();
 	}
 
 	public static void main(String[] args) {
