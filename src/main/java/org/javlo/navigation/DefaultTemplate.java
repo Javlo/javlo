@@ -529,4 +529,9 @@ public class DefaultTemplate extends Template {
 		return ComponentBean.DEFAULT_AREA;
 	}
 	
+	@Override
+	public List<String> getDynamicComponentList() {
+		return null;
+	}
+	
 }

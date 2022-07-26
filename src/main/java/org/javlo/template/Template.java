@@ -3613,7 +3613,7 @@ public class Template implements Comparable<Template> {
 		if (comps != null) {
 			return StringHelper.stringToCollection(comps, ",");
 		} else {
-			return null;
+			return getParent().getDynamicComponentList();
 		}
 	}
 
