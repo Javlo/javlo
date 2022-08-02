@@ -27,6 +27,8 @@ import org.javlo.helper.Comparator.MapEntryComparator;
 import org.javlo.service.IListItem;
 import org.jcodec.common.StringUtils;
 
+import com.google.gson.Gson;
+
 public class TaxonomyService {
 
 	private static Logger logger = Logger.getLogger(TaxonomyService.class.getName());
@@ -493,6 +495,11 @@ public class TaxonomyService {
 	public String getContext() {
 		return context;
 	}
+	
+	public String getAsJson() {
+		String json = new Gson().toJson(getRoot());
+		return json;
+	}
 
 	public String exportAsText() {
 		return exportAsText(root, "");
@@ -605,12 +612,8 @@ public class TaxonomyService {
 	public static void main(String[] args) {
 		TaxonomyService taxo = new TaxonomyService();
 		taxo.createDebugStructure();
-		String text = taxo.exportAsText();
-		System.out.println(text);
-		System.out.println("***");
-		taxo.reset();
-		taxo.importText(text);
-		System.out.println(text);
+		String json = taxo.getAsJson();
+		System.out.println(json);
 	}
 	
 	public static void _main(String[] args) {

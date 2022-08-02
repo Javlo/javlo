@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.Transient;
+
 import org.javlo.helper.StringHelper;
 
 public class TaxonomyBean {
@@ -12,7 +14,7 @@ public class TaxonomyBean {
 	private String id;
 	private String name;
 	private String decoration;
-	private TaxonomyBean parent;
+	private transient TaxonomyBean parent;
 	private List<TaxonomyBean> children = new LinkedList<TaxonomyBean>();
 	private Map<String, String> labels = new HashMap<String, String>();
 	private Map<String, String> pathLabels = null;
