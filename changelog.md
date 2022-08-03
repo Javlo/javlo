@@ -903,4 +903,5 @@ Security in case of vulnerabilities.
   - tom-select plugin
 ### Modified
   - conserve parameters on redirect
+  - use name or id in place of number for change name of duplicate url
 ### fixed
