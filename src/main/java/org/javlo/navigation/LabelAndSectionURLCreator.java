@@ -96,10 +96,16 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 		url = '/' + url;
 		
 		String baseURL = url;
-		int i=1;
-		while (this.addAndCheckExistURL(currentPage, url)) {
-			url = baseURL+'_'+i;
-			i++;
+		if (this.addAndCheckExistURL(currentPage, url)) {
+			url = baseURL+'_'+currentPage.getName();
+			if (this.addAndCheckExistURL(currentPage, url)) {
+				url = baseURL+'_'+currentPage.getId();
+				int i=1;
+				while (this.addAndCheckExistURL(currentPage, url)) {
+					url = baseURL+'_'+i;
+					i++;
+				}
+			}
 		}
 		
 		if (isWithId()) {

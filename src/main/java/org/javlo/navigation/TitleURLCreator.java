@@ -38,7 +38,7 @@ public class TitleURLCreator extends AbstractURLFactory {
 		if (comps.size() > 0) {
 			return ((PageURL) comps.iterator().next()).getValue();
 		}
-		String title = currentPage.getLocalTitle(freeCtx);
+		String title = StringHelper.removeCR(currentPage.getLocalTitle(freeCtx));
 		
 		title =  StringEscapeUtils.unescapeHtml4(title);
 		
@@ -60,10 +60,17 @@ public class TitleURLCreator extends AbstractURLFactory {
 		}
 		
 		String baseURL = url;
-		int i=1;
-		while (this.addAndCheckExistURL(currentPage, url)) {
-			url = baseURL+'_'+i;
-			i++;
+		
+		if (this.addAndCheckExistURL(currentPage, url)) {
+			url = baseURL+'_'+currentPage.getName();
+			if (this.addAndCheckExistURL(currentPage, url)) {
+				url = baseURL+'_'+currentPage.getId();
+				int i=1;
+				while (this.addAndCheckExistURL(currentPage, url)) {
+					url = baseURL+'_'+i;
+					i++;
+				}
+			}
 		}
 
 		return url;
