@@ -2140,9 +2140,9 @@ public class ImageEngine {
 	}
 
 	public static void main(String[] args) throws Exception {
-		File imageFile = new File("c:/trans/image.webp");
+		File imageFile = new File("c:/trans/short_hair_alpha.png");
 		BufferedImage image = ImageIO.read(imageFile);
-		image = addBlurBorder(image, Color.WHITE, 80, null);
+		//image = addBlurBorder(image, Color.WHITE, 80, null);
 		ImageIO.write(image, "webp", new File("c:/trans/webp_test.webp"));
 	}
 
