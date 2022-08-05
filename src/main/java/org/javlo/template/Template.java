@@ -1108,6 +1108,45 @@ public class Template implements Comparable<Template> {
 		}
 		return outCSS;
 	}
+	
+	public Map<String, List<String>> getHtmlByFolder(String filter) throws IOException {
+		if (dir == null) {
+			return Collections.EMPTY_MAP;
+		}
+		Map<String, List<String>> outHtml = new LinkedHashMap<String, List<String>>();
+		config.getTemplateFolder();
+		Collection<File> file = ResourceHelper.getAllFiles(dir, null);
+		for (File cssFile : file) {
+			String ext = StringHelper.neverNull(StringHelper.getFileExtension(cssFile.getName())).toLowerCase();
+			if (ext.equals("html")) {
+				String cssFileName = cssFile.getAbsolutePath().replace(cssFile.getParentFile().getAbsolutePath(), "");
+				boolean add = true;
+				if (!StringHelper.isEmpty(filter)) {
+					String content = ResourceHelper.loadStringFromFile(cssFile);
+					if (!content.toLowerCase().contains(filter.toLowerCase())) {
+						add = false;
+					}
+				}
+				if (add) {
+					String cssFolder = cssFile.getParentFile().getAbsolutePath().replace(dir.getAbsolutePath(), "");
+					List<String> css = outHtml.get(cssFolder);
+					if (css == null) {
+						css = new LinkedList<String>();
+						outHtml.put(cssFolder, css);
+					}
+					cssFileName = cssFileName.replace("\\", "/");
+					if (cssFileName.startsWith("/")) {
+						cssFileName = cssFileName.substring(1);
+					}
+					css.add(cssFileName);
+				}
+			}
+		}
+		for (List<String> files : outHtml.values()) {
+			Collections.sort(files);
+		}
+		return outHtml;
+	}
 
 	protected Map<String, List<String>> getCSSByFolder() throws IOException {
 		return getCSSByFolder(null);

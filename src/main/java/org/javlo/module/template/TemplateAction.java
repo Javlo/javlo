@@ -188,8 +188,10 @@ public class TemplateAction extends AbstractModuleAction {
 				module.restoreAll();
 			} else {
 				Map<String, List<String>> folders = template.getCSSByFolder(ctx.getRequest().getParameter("search"));
+				Map<String, List<String>> htmlFolders = template.getHtmlByFolder(ctx.getRequest().getParameter("search"));
 				ctx.getRequest().setAttribute("currentTemplate", new Template.TemplateBean(ctx, template));
 				ctx.getRequest().setAttribute("cssFolder", folders);
+				ctx.getRequest().setAttribute("htmlFolder", htmlFolders);
 				params.put("templateid", templateName);
 				FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest());
 				fileModuleContext.clear();
