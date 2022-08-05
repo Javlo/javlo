@@ -901,6 +901,7 @@ Security in case of vulnerabilities.
   - security csp
   - filter dynamic component
   - tom-select plugin
+  - webp image format
 ### Modified
   - conserve parameters on redirect
   - use name or id in place of number for change name of duplicate url

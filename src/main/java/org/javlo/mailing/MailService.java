@@ -705,9 +705,14 @@ public class MailService {
 	}
 
 	public static void main(String[] args) throws Exception {
-		MailConfig mailConfig = new MailConfig("mailgater.fediap.be", 25, "FKVMAILB@nuvem.intra", "##PWD##");
+		MailConfig mailConfig = new MailConfig("ssl0.ovh.net",587, "formulaires@centralecredithypothecaire.be", "2qc5s4qSd65*");
 		Transport t = getMailTransport(mailConfig);
 		System.out.println("t = " + t.isConnected());
+
+		MailService mailService = MailService.getInstance(mailConfig);
+		mailService.sendMail(t, new InternetAddress("formulaires@centralecredithypothecaire.be"),  new InternetAddress("alessio.ferrari@phidac.com"), new InternetAddress("patrick@andromede.be"), new InternetAddress("arnaud@andromede.be"), "test mail smtp cch : "+new Date(), "mail de test 2", "mail de test 2", false, null);
+		
+		
 
 	}
 

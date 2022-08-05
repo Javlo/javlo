@@ -136,10 +136,6 @@ public class ImageEngine {
 	}
 
 	public static void storeImage(BufferedImage img, String ext, OutputStream outImage) throws IOException {
-		if (ext.equalsIgnoreCase("webp") && WEBP_CONVERTER == null) {
-			ext = "jpg";
-		}
-
 		if (ext.equalsIgnoreCase("jpg") || ext.equalsIgnoreCase("jpeg")) {
 			if (img.getType() != BufferedImage.TYPE_3BYTE_BGR) {
 				img = removeAlpha(img);
@@ -148,7 +144,7 @@ public class ImageEngine {
 			}
 			// writeJPEG2000(img, outImage);
 		}
-		if (ext.equalsIgnoreCase("webp")) {
+		if (ext.equalsIgnoreCase("webp") && WEBP_CONVERTER != null) {
 			String randomSuffix = StringHelper.getRandomId();
 			File tempImageSource = File.createTempFile("webp_temp_" + randomSuffix, ".png");
 			File tempImageTarget = File.createTempFile("webp_temp_" + randomSuffix, ".webp");
@@ -2144,10 +2140,10 @@ public class ImageEngine {
 	}
 
 	public static void main(String[] args) throws Exception {
-		File imageFile = new File("c:/trans/short_hair.png");
+		File imageFile = new File("c:/trans/image.webp");
 		BufferedImage image = ImageIO.read(imageFile);
 		image = addBlurBorder(image, Color.WHITE, 80, null);
-		ImageIO.write(image, "png", new File("c:/trans/short_hair_out.png"));
+		ImageIO.write(image, "webp", new File("c:/trans/webp_test.webp"));
 	}
 
 	public static BufferedImage convertRGBAToIndexed(BufferedImage src) {

@@ -1596,6 +1596,7 @@ public class StringHelper {
 		res = res || fileExtension.equalsIgnoreCase("jpeg");
 		res = res || fileExtension.equalsIgnoreCase("gif");
 		res = res || fileExtension.equalsIgnoreCase("png");
+		res = res || fileExtension.equalsIgnoreCase("webp");
 		return res;
 	}
 

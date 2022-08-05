@@ -422,7 +422,7 @@ public abstract class ElementaryURLHelper {
 		ImageConfig imageConfig = ImageConfig.getInstance(ctx.getGlobalContext(),  ctx.getRequest().getSession(), template);
 		String ext = imageConfig.getFileExtension(ctx.getDevice(), filter, ctx.getArea());
 		if (StringHelper.isEmpty(ext)) {
-			ext = "jpg";
+			ext = "webp";
 		}
 		
 		String currentExt = StringHelper.getFileExtension(url);
