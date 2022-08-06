@@ -117,18 +117,18 @@ public class DocxUtils {
 			String text = item.text().trim();
 			ComponentBean bean = new ComponentBean();
 			/* text */
-			if (isList(cssClass)) {
-				if (listBean == null) {
-					listBean = new ComponentBean();
-					listBean.setType(DataList.TYPE);
-					listBean.setValue("");
-				}
-				if (listBean.getValue().length() == 0) {
-					listBean.setValue(text);
-				} else {
-					listBean.setValue(listBean.getValue() + "\n" + text);
-				}
-			} else {
+//			if (isList(cssClass)) {
+//				if (listBean == null) {
+//					listBean = new ComponentBean();
+//					listBean.setType(DataList.TYPE);
+//					listBean.setValue("");
+//				}
+//				if (listBean.getValue().length() == 0) {
+//					listBean.setValue(text);
+//				} else {
+//					listBean.setValue(listBean.getValue() + "\n" + text);
+//				}
+//			} else {
 				if (listBean != null) {
 					outContent.add(listBean);
 					listBean = null;
@@ -157,7 +157,7 @@ public class DocxUtils {
 					bean.setType(GlobalImage.TYPE);
 					bean.setValue(new String(outStream.toByteArray()));
 				}
-			}
+//			}
 
 			if (bean.getType() != null && bean.getType().length() > 0) {
 				outContent.add(bean);
