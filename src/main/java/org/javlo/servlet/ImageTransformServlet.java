@@ -263,7 +263,7 @@ public class ImageTransformServlet extends FileServlet {
 
 	private static final Map<String, Object> imageTransforming = new ConcurrentHashMap<String, Object>();
 
-	private static final String DEFAULT_IMAGE_TYPE = "png";
+	private static final String DEFAULT_IMAGE_TYPE = "webp";
 
 	public static final String LOCAL_TEMPLATE_SUFFIX = "-local";
 
