@@ -301,12 +301,14 @@ public class ImageHelper {
 	public static final String getImageExtensionToManType(String ext) {
 		if (ext != null) {
 			ext = ext.trim().toLowerCase();
-			if (ext.equals("gif")) {
-				return "image/GIF";
+			if (ext.equals("webp")) {
+				return "image/webp";
 			} else if (ext.equals("png")) {
 				return "image/GIF";
 			} else if ((ext.equals("jpg")) || (ext.equals("jpeg"))) {
 				return "image/JPEG";
+			} else if (ext.equals("gif")) {
+				return "image/GIF";
 			}
 		}
 		return null;

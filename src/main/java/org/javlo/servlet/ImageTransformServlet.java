@@ -255,7 +255,7 @@ public class ImageTransformServlet extends FileServlet {
 
 	static final String MINETYPES_DIR = "/images/minetypes";
 
-	static final String[] IMAGES_EXT = { "jpg", "jpeg", "png", "gif" };
+	static final String[] IMAGES_EXT = { "jpg", "jpeg", "png", "gif", "webp" };
 
 	static final Set<String> IMAGES_EXT_SET = new TreeSet<String>(Arrays.asList(IMAGES_EXT));
 
@@ -467,8 +467,9 @@ public class ImageTransformServlet extends FileServlet {
 			String dir = ImageHelper.createSpecialDirectory(ctx.getBean(), globalContext.getContextKey(), filter, area, deviceCode, template, comp, imageParam);
 
 			String fileExtension = config.getFileExtension(ctx.getDevice(), filter, area);
+			
 			if (fileExtension == null) {
-				fileExtension = "jpg";
+				fileExtension = DEFAULT_IMAGE_TYPE;
 			}
 			OutputStream outImage = fc.saveFile(dir, imageName);
 
@@ -478,7 +479,7 @@ public class ImageTransformServlet extends FileServlet {
 				if (comp != null && StringHelper.trimAndNullify(comp.getImageFilterKey(ctxb)) != null) {
 					img = ((IImageFilter) comp).filterImage(ctx.getServletContext(), ctxb, img);
 				}
-				if (!"png".equals(fileExtension) && !"gif".equals(fileExtension)) {
+				if (!"png".equals(fileExtension) && !"gif".equals(fileExtension) && !"webp".equals(fileExtension)) {
 					img = ImageEngine.removeAlpha(img);
 				}
 				if (config.isHighQuality(ctx.getDevice(), filter, area) && fileExtension.equals("jpg")) {
@@ -1158,20 +1159,8 @@ public class ImageTransformServlet extends FileServlet {
 					staticInfo = StaticInfo.getInstance(ctx, newFile);
 				}
 			}
-			ImageConfig config = ImageConfig.getInstance(globalContext, request.getSession(), template);
-			
 			ImageConfig.ImageParameters imageParam = new ImageConfig.ImageParameters(request);
-
-			String fileExtension = config.getFileExtension(ctx.getDevice(), filter, area);
-			if (fileExtension == null) {
-				fileExtension = StringHelper.getFileExtension(imageName);
-			}
-			if (StringHelper.isImageExtension(fileExtension)) {
-				response.setContentType(ImageHelper.getImageExtensionToManType(fileExtension));
-			} else {
-				response.setContentType(ImageHelper.getImageExtensionToManType(DEFAULT_IMAGE_TYPE));
-			}
-
+			
 			if (staticInfo != null) {
 				if (AdminUserFactory.createUserFactory(GlobalContext.getMainInstance(ctx.getRequest()), request.getSession()).getCurrentUser(request.getSession()) == null) {
 					if (!staticInfo.canRead(ctx, UserFactory.createUserFactory(globalContext, request.getSession()).getCurrentUser(globalContext, request.getSession()), request.getParameter(RESOURCE_TOKEN_KEY))) {
