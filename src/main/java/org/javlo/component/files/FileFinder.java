@@ -64,20 +64,23 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 
 		public static FileFilter getInstance(ContentContext ctx, Collection<String> rootTaxonomy) {
 			FileFilter outFilter = new FileFilter();
-			outFilter.text = ctx.getRequest().getParameter("text");	
+			outFilter.text = ctx.getRequest().getParameter("text");
 			outFilter.root = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getFileFolder()));
 			String[] taxonomy = ctx.getRequest().getParameterValues("taxonomy");
-			if (taxonomy != null) {
+			
+			if (taxonomy != null && taxonomy.length > 0) {
 				outFilter.taxonomy = new HashSet<String>(Arrays.asList(taxonomy));
-				if (outFilter.taxonomy.size() == 0) {
-					outFilter.taxonomy.addAll(rootTaxonomy);					
-				}				
+			} else {
+				outFilter.taxonomy = new HashSet<String>();
+			}
+			if (outFilter.taxonomy.size() == 0) {
+				outFilter.taxonomy.addAll(rootTaxonomy);
 			}
 			return outFilter;
 		}
-		
+
 		public boolean isActive() {
-			return !StringHelper.isEmpty(text) || taxonomy.size()>0;
+			return !StringHelper.isEmpty(text) || taxonomy.size() > 0;
 		}
 
 		public int match(ContentContext ctx, StaticInfo file) throws Exception {
@@ -94,7 +97,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 									if (tags.size() == 0 || !Collections.disjoint(file.getTags(ctx), tags)) {
 										if (file.getFile().getCanonicalPath().startsWith(getRoot().getCanonicalPath())) {
 											boolean textUndefinedOrMatch = true;
-											if (!StringHelper.isEmpty(text)) {												
+											if (!StringHelper.isEmpty(text)) {
 												for (String t : text.split(" ")) {
 													boolean found = false;
 													if (StringHelper.containsNoCase(file.getTitle(ctx), t)) {
@@ -104,7 +107,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 													if (StringHelper.containsNoCase(file.getFile().getAbsolutePath(), t)) {
 														matchScore = matchScore + 4;
 														found = true;
-													}												
+													}
 													if (StringHelper.containsNoCase(file.getDescription(ctx), t)) {
 														matchScore = matchScore + 2;
 														found = true;
@@ -115,7 +118,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 													}
 													if (matchScore == 0) {
 														textUndefinedOrMatch = false;
-													}				
+													}
 													if (!found) {
 														matchScore = 0;
 														textUndefinedOrMatch = false;
@@ -123,7 +126,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 													}
 												}
 											}
-											if (textUndefinedOrMatch && taxonomy.size()>0) {
+											if (textUndefinedOrMatch && taxonomy.size() > 0) {
 												StaticInfoBean staticInfoBean = new StaticInfoBean(ctx, file);
 												TaxonomyService taxonomyService = TaxonomyService.getInstance(ctx);
 												if (taxonomyService.isAllMatch(staticInfoBean, this)) {
@@ -200,30 +203,32 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		// Set<String> ref = new HashSet<String>();
 		boolean filterActive = filter.isActive();
 		for (File file : ResourceHelper.getAllFiles(filter.getRoot(), null)) {
-			StaticInfo info = StaticInfo.getInstance(ctx, file);
-			
-			int matchScore = filter.match(ctx, info);
-			if (matchScore>0 || (defaultFound && !filterActive)) {
-				StaticInfo.ReferenceBean refBean = info.getReferenceBean(ctx);				
-				FileBean fileBean = null;
-				if (refBean != null) {
-					fileBean = fileWithRef.get(refBean.getReference());
-					if (fileBean != null) {
-						fileBean.addTranslation(new FileBean(ctx, file, refBean.getLanguage()));						
+			if (filter.acceptDirectory || file.isFile()) {
+				StaticInfo info = StaticInfo.getInstance(ctx, file);
+				int matchScore = filter.match(ctx, info);
+				if (matchScore > 0 || (defaultFound && !filterActive)) {
+					StaticInfo.ReferenceBean refBean = info.getReferenceBean(ctx);
+					FileBean fileBean = null;
+					if (refBean != null) {
+						fileBean = fileWithRef.get(refBean.getReference());
+						if (fileBean != null) {
+							fileBean.addTranslation(new FileBean(ctx, file, refBean.getLanguage()));
+						}
 					}
-				}
-				if (fileBean == null) {
-					if (refBean == null) {
-						fileBean = new FileBean(ctx, info);
-					} else {
-						fileBean = new FileBean(ctx, file, ctx.getRequestContentLanguage());
-						fileWithRef.put(refBean.getReference(), fileBean);
-						fileBean.addTranslation(new FileBean(ctx, file, refBean.getLanguage()));
-					}
-					outFileList.add(fileBean);
-					fileBean.setWeight(matchScore);
-					if (outFileList.size()>=max) {
-						break;
+					if (fileBean == null) {
+						if (refBean == null) {
+							fileBean = new FileBean(ctx, info);
+						} else {
+							fileBean = new FileBean(ctx, file, ctx.getRequestContentLanguage());
+							fileWithRef.put(refBean.getReference(), fileBean);
+							fileBean.addTranslation(new FileBean(ctx, file, refBean.getLanguage()));
+						}
+						
+						outFileList.add(fileBean);
+						fileBean.setWeight(matchScore);
+						if (outFileList.size() >= max) {
+							break;
+						}
 					}
 				}
 			}
@@ -256,7 +261,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		
+
 		List<String> taxonomyIds = StringHelper.stringToCollection(getFieldValue("taxonomy"), ",");
 		FileFilter filter = FileFilter.getInstance(ctx, taxonomyIds);
 		filter.setTags(getTags());
@@ -266,7 +271,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		ctx.getRequest().setAttribute("filter", filter);
 		boolean display = StringHelper.isTrue(getFieldValue("display"));
 		ctx.getRequest().setAttribute("display", display);
-		
+
 		int maxSize = 10;
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		if (rs.getParameter("max", "").equals("100")) {
@@ -275,14 +280,13 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		if (rs.getParameter("max", "").equals("1000")) {
 			maxSize = 1000;
 		}
-		ctx.getRequest().setAttribute("files", getFileList(ctx, filter,  maxSize, display));
-		
-		if (taxonomyIds.size()>0) {
+		ctx.getRequest().setAttribute("files", getFileList(ctx, filter, maxSize, display));
+		if (taxonomyIds.size() > 0) {
 			List<TaxonomyDisplayBean> beans = new LinkedList<>();
 			TaxonomyService ts = TaxonomyService.getInstance(ctx);
-			for(String id : taxonomyIds) {
+			for (String id : taxonomyIds) {
 				TaxonomyBean b = ts.getTaxonomyBean(id);
-				if (b!=null) {
+				if (b != null) {
 					beans.add(new TaxonomyDisplayBean(ctx, b));
 				}
 			}
@@ -327,10 +331,10 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		String staticLinkURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		String linkToResources = "<a class=\"browse-link btn btn-default btn-xs\" href=\"" + staticLinkURL + "\">" + i18nAccess.getText("content.goto-static") + "</a>";
-		
+
 		if (ctx.getGlobalContext().getAllTaxonomy(ctx).isActive()) {
-			String taxoName = createKeyWithField("taxonomy");			
-			out.println("<label for=\""+getFieldValue("taxonomy")+"\">"+i18nAccess.getText("taxonomy") + "</label>");
+			String taxoName = createKeyWithField("taxonomy");
+			out.println("<label for=\"" + getFieldValue("taxonomy") + "\">" + i18nAccess.getText("taxonomy") + "</label>");
 			out.println(ctx.getGlobalContext().getAllTaxonomy(ctx).getSelectHtml(taxoName, "form-control chosen-select", StringHelper.stringToSet(getFieldValue("taxonomy"), ","), true));
 			out.println("<hr />");
 		}
@@ -360,10 +364,10 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		out.println("<label for=\"" + createKeyWithField("noext") + "\">refused files</label>");
 		out.println("<input type=\"text\" name=\"" + createKeyWithField("noext") + "\" value=\"" + getFieldValue("noext") + "\" />");
 		out.println("</div>");
-		
+
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + createKeyWithField("display") + "\">display results by default</label>");
-		out.println("<input type=\"checkbox\" name=\"" + createKeyWithField("display") + "\" value=\"true\" "+(StringHelper.isTrue(getFieldValue("display"))?" checked=\"checked\"":"")+"/>");
+		out.println("<input type=\"checkbox\" name=\"" + createKeyWithField("display") + "\" value=\"true\" " + (StringHelper.isTrue(getFieldValue("display")) ? " checked=\"checked\"" : "") + "/>");
 		out.println("</div>");
 		out.close();
 		return new String(outStream.toByteArray());
@@ -406,9 +410,9 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
 	}
-	
+
 	@Override
-	public String getFontAwesome() {	
+	public String getFontAwesome() {
 		return "files-o";
 	}
 

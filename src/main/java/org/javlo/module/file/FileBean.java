@@ -234,11 +234,18 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 		return staticInfo.getLocation(ctx);
 	}
 
-	public String getDate() {
+	public String getDateTime() {
 		if (staticInfo == null) {
 			return null;
 		}
 		return StringHelper.renderTime(staticInfo.getDate(ctx));
+	}
+	
+	public String getDate() {
+		if (staticInfo == null) {
+			return null;
+		}
+		return StringHelper.renderDate(staticInfo.getDate(ctx));
 	}
 
 	public String getManualDate() {
