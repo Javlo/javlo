@@ -1330,8 +1330,9 @@ public class ContentContext {
 		this.isAbsoluteURL = isAbsoluteURL;
 	}
 
-	public void setAjax(boolean ajax) {
+	public ContentContext setAjax(boolean ajax) {
 		this.ajax = ajax;
+		return this;
 	}
 
 	/**

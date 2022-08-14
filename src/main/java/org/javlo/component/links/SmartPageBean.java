@@ -544,7 +544,7 @@ public class SmartPageBean {
 			return null;
 		}
 	}
-
+	
 	public String getTitleForAttribute() {
 		display();
 		try {

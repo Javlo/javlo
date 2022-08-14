@@ -72,6 +72,8 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	protected String site = null;
 	protected String idNumber;
 	protected String nickname;
+	protected String health;
+	protected String food;
 	protected String[] preferredLanguage = new String[0];
 	protected Set<String> roles = new HashSet<String>();
 	protected Date creationDate = new Date();
@@ -695,5 +697,21 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
+	}
+	
+	public String getHealth() {
+		return health;
+	}
+	
+	public void setHealth(String health) {
+		this.health = health;
+	}
+	
+	public String getFood() {
+		return food;
+	}
+	
+	public void setFood(String food) {
+		this.food = food;
 	}
 }

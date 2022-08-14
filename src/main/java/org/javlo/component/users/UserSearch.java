@@ -15,6 +15,7 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.BeanHelper;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
@@ -24,9 +25,14 @@ import org.javlo.service.IListItem;
 import org.javlo.service.ListService;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
+import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
+import org.javlo.user.UserFactory;
 import org.javlo.user.UserInfo;
+import org.javlo.user.UserInfoWrapper;
 import org.javlo.ztatic.StaticInfo;
+
+import com.google.gson.Gson;
 
 public class UserSearch extends AbstractVisualComponent implements IAction {
 
@@ -41,20 +47,27 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 	public boolean isUnique() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean isDefaultValue(ContentContext ctx) {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isDisplayable(ContentContext ctx) throws Exception {
 		return true;
 	}
-	
+
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
+		String searchUrl = URLHelper.createActionURL(ctx.setAjax(true), TYPE + ".ajaxsearch", "/");
+		ctx.getRequest().setAttribute("searchUrl", searchUrl);
+	}
+
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		
+
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 
 		ListService listService = ListService.getInstance(ctx);
@@ -65,7 +78,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		
+
 		out.println("<h2>user search</h2>");
 
 		if (!ctx.getDevice().getCode().equals("pdf")) {
@@ -203,14 +216,12 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 	}
 
 	private static String renderList(ContentContext ctx, Collection<UserInfo> users, String emails, List<IListItem> countries, List<IListItem> functions, List<IListItem> organizations) throws Exception {
-		
-		
-		
+
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		out.println("<div class=\"user-list\">");		
+		out.println("<div class=\"user-list\">");
 		int i = 0;
-		
+
 		if (ctx.getCurrentTemplate().isPDFRenderer()) {
 			ContentContext pdfCtx = new ContentContext(ctx);
 			pdfCtx.setFormat("pdf");
@@ -322,7 +333,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 		return new String(outStream.toByteArray());
 	}
 
-	public static String performSearch(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
+	public static String performSearch(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		String text = rs.getParameter("text", "").trim();
 		String country = rs.getParameter("country", "").trim();
 		String domain = rs.getParameter("domain", "").trim();
@@ -346,6 +357,31 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 			}
 		}
 		ctx.getRequest().setAttribute("users", result);
+		return null;
+	}
+
+	public synchronized static String performAjaxsearch(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		String text = rs.getParameter("text", "").trim();
+		String country = rs.getParameter("country", "").trim();
+		String domain = rs.getParameter("domain", "").trim();
+		String role = rs.getParameter("role", "").trim();
+		IUserFactory userFactory = UserFactory.createUserFactory(ctx.getRequest());
+		List<IUserInfo> users = userFactory.getUserInfoList();
+		List<UserInfoWrapper> result = new LinkedList<>();
+		for (IUserInfo user : users) {
+			if (BeanHelper.beanToString(user).toLowerCase().contains(text.toLowerCase()) || StringHelper.isEmpty(text)) {
+				if (country.length() == 0 || ((UserInfo) user).getCountry().equals(country)) {
+					if (domain.length() == 0 || ((UserInfo) user).getFunction().contains(domain)) {
+						if (role.length() == 0 || ((UserInfo) user).getRoles().contains(role)) {
+							result.add(new UserInfoWrapper(ctx, user));
+						}
+					}
+				}
+			}
+		}
+		String json = new Gson().toJson(result);
+		ResourceHelper.writeStringToStream(json, ctx.getResponse().getOutputStream(), ContentContext.CHARACTER_ENCODING);
+		ctx.setStopRendering(true);
 		return null;
 	}
 
