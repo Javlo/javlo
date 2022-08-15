@@ -360,7 +360,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		out.println("<input type=\"text\" name=\"" + createKeyWithField("ext") + "\" value=\"" + getFieldValue("ext") + "\" />");
 		out.println("</div>");
 
-		out.println("<div class=\"line\">");
+		out.println("<div class=\"line\">");	
 		out.println("<label for=\"" + createKeyWithField("noext") + "\">refused files</label>");
 		out.println("<input type=\"text\" name=\"" + createKeyWithField("noext") + "\" value=\"" + getFieldValue("noext") + "\" />");
 		out.println("</div>");
