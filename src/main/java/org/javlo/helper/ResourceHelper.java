@@ -719,6 +719,8 @@ public class ResourceHelper {
 			return "application/vnd.oasis.opendocument.spreadsheet";
 		} else if (ext.equals("ics")) {
 			return "text/calendar";
+		} else if (ext.equals("json")) {
+			return "application/json";
 		}
 		return "application/octet-stream";
 	}
