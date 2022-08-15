@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -380,6 +382,13 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 				}
 			}
 		}
+		Collections.sort(result, new Comparator<UserInfoWrapper>() {
+			@Override
+			public int compare(UserInfoWrapper o1, UserInfoWrapper o2) {
+				return o1.getUserInfo().getFirstName().compareTo(o2.getUserInfo().getFirstName());
+			}
+		});
+		
 		String json = new Gson().toJson(result);
 		ResourceHelper.writeStringToStream(json, ctx.getResponse().getOutputStream(), ContentContext.CHARACTER_ENCODING);
 		ctx.setStopRendering(true);
