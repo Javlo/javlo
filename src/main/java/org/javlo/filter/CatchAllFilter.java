@@ -427,6 +427,9 @@ public class CatchAllFilter implements Filter {
 			}
 			if (staticFile.exists() && staticFile.isFile() && response instanceof HttpServletResponse) {
 				HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+				if (staticFile.getName().contains("_acao")) {
+					httpServletResponse.setHeader("Access-Control-Allow-Origin", "*");
+				}
 				httpServletResponse.setContentType(ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(staticFile.getName())));
 				httpServletResponse.setHeader("Accept-Ranges", "bytes");
 				httpServletResponse.setDateHeader("Last-Modified", staticFile.lastModified());
