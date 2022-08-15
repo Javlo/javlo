@@ -429,6 +429,7 @@ public class CatchAllFilter implements Filter {
 				HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 				if (staticFile.getName().contains("_acao")) {
 					httpServletResponse.setHeader("Access-Control-Allow-Origin", "*");
+					httpServletResponse.setHeader("Access-Control-Allow-Methods", "*");
 				}
 				httpServletResponse.setContentType(ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(staticFile.getName())));
 				httpServletResponse.setHeader("Accept-Ranges", "bytes");
