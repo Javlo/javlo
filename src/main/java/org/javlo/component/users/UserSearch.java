@@ -63,6 +63,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 		super.prepareView(ctx);
 		String searchUrl = URLHelper.createActionURL(ctx.setAjax(true), TYPE + ".ajaxsearch", "/");
 		ctx.getRequest().setAttribute("searchUrl", searchUrl);
+		ctx.getRequest().setAttribute("showAll", StringHelper.isTrue(getValue()));
 	}
 
 	@Override
