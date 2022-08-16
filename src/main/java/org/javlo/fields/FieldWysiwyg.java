@@ -45,11 +45,6 @@ public class FieldWysiwyg extends Field {
 		return value;
 	}
 	
-	@Override
-	public String getXHTMLValue() {
-		return getValue();
-	}
-
 	public String getText() {
 		return getValue();
 	}
@@ -128,6 +123,7 @@ public class FieldWysiwyg extends Field {
 		return super.getDisplayValue(ctx, locale);
 	}
 	
+	@Override
 	public String getXHTMLValue() {
 		return getValue();
 	}
