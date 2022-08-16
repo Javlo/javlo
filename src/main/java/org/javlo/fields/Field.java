@@ -102,7 +102,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		}
 		
 		public String getXHTMLValue() {
-			return XHTMLHelper.textToXHTML(Field.this.getValue());
+			return Field.this.getXHTMLValue();
 		}
 		
 		public List<String> getValues() {
@@ -689,6 +689,10 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 			key = createKey("value-" + getCurrentLocale());
 		}
 		return properties.getProperty(key);
+	}
+	
+	public String getXHTMLValue() {
+		return XHTMLHelper.textToXHTML(getValue());
 	}
 	
 	public String getInitValue() {

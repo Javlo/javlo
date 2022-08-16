@@ -44,6 +44,11 @@ public class FieldWysiwyg extends Field {
 		setValue(value);
 		return value;
 	}
+	
+	@Override
+	public String getXHTMLValue() {
+		return getValue();
+	}
 
 	public String getText() {
 		return getValue();
