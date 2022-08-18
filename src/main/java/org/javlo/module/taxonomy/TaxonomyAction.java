@@ -81,7 +81,7 @@ public class TaxonomyAction extends AbstractModuleAction {
 			boolean updateItem = false;
 			String name = rs.getParameter("name-"+bean.getId(), "");
 			if (name.length() > 0) {
-				String newName = StringHelper.createFileName(name);
+				String newName = cleanName(name);
 				newName = newName.replace("-", "_");
 				if (!name.equals(newName)) {
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("taxonomy.update.bad-name", "Name of node is updated but name was changed, because your name was unvalid."), GenericMessage.ALERT));
@@ -139,6 +139,16 @@ public class TaxonomyAction extends AbstractModuleAction {
 		return null;
 	}
 	
+	private static String cleanName(String name) {
+		String newName = StringHelper.createFileName(name);
+		if (name.startsWith("#")) {
+			newName = '#'+newName.substring(1);
+		} else if (name.startsWith(">")) {
+			newName = '>'+newName.substring(1);
+		}
+		return name;
+	}
+
 	public static String performMainPage(RequestService rs, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		ModulesContext dashboardContext = ModulesContext.getInstance(session, ctx.getGlobalContext());
 		dashboardContext.getCurrentModule().restoreAll();

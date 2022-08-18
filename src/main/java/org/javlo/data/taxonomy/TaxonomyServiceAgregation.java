@@ -82,7 +82,7 @@ public class TaxonomyServiceAgregation {
 	public String getSelectHtml(String name, String cssClass, Collection<String> selection, boolean multiple) {
 		Map<String, TaxonomyBean> beans = new HashMap<String, TaxonomyBean>();
 		for (TaxonomyService taxonomyService : services) {			
-			beans.putAll(taxonomyService.getTaxonomyBeanMap());
+			beans.putAll(taxonomyService.getTaxonomyBeanMap(true));
 		}
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);

@@ -41,7 +41,8 @@ public class TaxonomyService {
 
 	private String context;
 
-	private Map<String, TaxonomyBean> taxonomyBeanMap = new HashMap<String, TaxonomyBean>();
+	private Map<String, TaxonomyBean> taxonomyBeanMapNotResolved = new HashMap<String, TaxonomyBean>();
+	private Map<String, TaxonomyBean> taxonomyBeanMapResolved = new HashMap<String, TaxonomyBean>();
 	private Map<String, TaxonomyBean> taxonomyBeanPathMap = new HashMap<String, TaxonomyBean>();
 	private Map<String, TaxonomyDisplayBean> taxonomyDisplayBeanPathMap = new HashMap<String, TaxonomyDisplayBean>();
 	private List<Map.Entry<String, String>> options = null;
@@ -125,6 +126,22 @@ public class TaxonomyService {
 		return outBean;
 	}
 
+	/**
+	 * get all source bean, key of map is target name (start with '>')
+	 * 
+	 * @return
+	 */
+	public Map<String, TaxonomyBean> getAllSources() {
+		Map<String, TaxonomyBean> out = new HashMap<String, TaxonomyBean>();
+		for (TaxonomyBean bean : root.getChildren()) {
+			if (bean.isSource()) {
+				String targetKey = '>' + bean.getName().substring(1);
+				out.put(targetKey, bean);
+			}
+		}
+		return out;
+	}
+
 	private boolean recDeleteBean(TaxonomyBean currentBean, String id) {
 		Iterator<TaxonomyBean> ite = currentBean.getChildren().iterator();
 		boolean deleted = false;
@@ -158,25 +175,45 @@ public class TaxonomyService {
 		return false;
 	}
 
-	public boolean delete(String id) {
-		synchronized (taxonomyBeanMap) {
-			boolean del;
-			if (root.getId().equals(id)) {
-				del = true;
-				root = new TaxonomyBean(StringHelper.getRandomId(), "root");
-			} else {
-				del = recDeleteBean(root, id);
-			}
-			clearCache();
-			return del;
+	public synchronized boolean delete(String id) {
+		boolean del;
+		if (root.getId().equals(id)) {
+			del = true;
+			root = new TaxonomyBean(StringHelper.getRandomId(), "root");
+		} else {
+			del = recDeleteBean(root, id);
+		}
+		clearCache();
+		return del;
+	}
+
+	private Map<String, TaxonomyBean> getTaxonomyMap(boolean resolveLink) {
+		if (resolveLink) {
+			return taxonomyBeanMapResolved;
+		} else {
+			return taxonomyBeanMapNotResolved;
 		}
 	}
 
-	private void fillMap(TaxonomyBean currentBean) {
+	private void fillMap(Map<String, TaxonomyBean> sources, TaxonomyBean currentBean, boolean resolveLink) {
+		Map<String, TaxonomyBean> taxonomyBeanMap = getTaxonomyMap(resolveLink);
+		System.out.println(">>>>>>>>> TaxonomyService.fillMap : #taxonomyBeanMap = "+taxonomyBeanMap.size()); //TODO: remove debug trace
+		if (resolveLink) {
+			TaxonomyBean sourceBean = sources.get(currentBean.getName());
+			if (currentBean.isTarget() && sourceBean == null) {
+				logger.severe("ref. not found : " + currentBean.getName());
+				currentBean.setName(currentBean.getName() + " ERROR REF. NOT FOUND.");
+			}
+			if (sourceBean != null) {
+				TaxonomyBean newBean = sourceBean.duplicate(currentBean.getParent(), currentBean.getId());				
+				System.out.println(">>>>>>>>> TaxonomyService.fillMap : newBean = " + newBean.getName() + " - " + newBean.getId()); // TODO: remove debug trace
+				currentBean = newBean;
+			}
+		}
 		taxonomyBeanMap.put(currentBean.getId(), currentBean);
 		Iterator<TaxonomyBean> ite = currentBean.getChildren().iterator();
 		while (ite.hasNext()) {
-			fillMap(ite.next());
+			fillMap(sources, ite.next(), resolveLink);
 		}
 	}
 
@@ -222,15 +259,21 @@ public class TaxonomyService {
 		return taxonomyDisplayBeanPathMap;
 	}
 
-	public TaxonomyBean getTaxonomyBean(String id) {
-		return getTaxonomyBeanMap().get(id);
+	public TaxonomyBean getTaxonomyBean(String id, boolean resolveLink) {
+		return getTaxonomyBeanMap(resolveLink).get(id);
 	}
 
 	public Map<String, TaxonomyBean> getTaxonomyBeanMap() {
+		return getTaxonomyBeanMap(false);
+	}
+
+	public Map<String, TaxonomyBean> getTaxonomyBeanMap(boolean resolveLink) {
+		Map<String, TaxonomyBean> taxonomyBeanMap = getTaxonomyMap(resolveLink);
 		if (taxonomyBeanMap.size() == 0) {
-			synchronized (taxonomyBeanMap) {
+			synchronized (this) {
+				taxonomyBeanMap = getTaxonomyMap(resolveLink);
 				if (taxonomyBeanMap.size() == 0) {
-					fillMap(root);
+					fillMap(getAllSources(), root, resolveLink);
 				}
 				options = null;
 			}
@@ -238,13 +281,12 @@ public class TaxonomyService {
 		return taxonomyBeanMap;
 	}
 
-	public void clearCache() {
-		synchronized (taxonomyBeanMap) {
-			taxonomyBeanMap.clear();
-			taxonomyBeanPathMap.clear();
-			taxonomyDisplayBeanPathMap.clear();
-			options = null;
-		}
+	public synchronized void clearCache() {
+		taxonomyBeanMapNotResolved.clear();
+		taxonomyBeanMapResolved.clear();
+		taxonomyBeanPathMap.clear();
+		taxonomyDisplayBeanPathMap.clear();
+		options = null;
 	}
 
 	public String getSelectHtml() {
@@ -495,7 +537,7 @@ public class TaxonomyService {
 	public String getContext() {
 		return context;
 	}
-	
+
 	public String getAsJson() {
 		String json = new Gson().toJson(getRoot());
 		return json;
@@ -525,7 +567,7 @@ public class TaxonomyService {
 					line = line.substring(1);
 					depth++;
 				}
-				
+
 				if (!line.contains("[")) {
 					line += "[]";
 				}
@@ -558,7 +600,7 @@ public class TaxonomyService {
 					if (depth > latestDepth) {
 						latestNode.addChild(bean, null);
 					} else if (depth < latestDepth) {
-							latestNode.getParent().addChild(bean, null);
+						latestNode.getParent().addChild(bean, null);
 					} else {
 						latestNode.getParent().addChild(bean, latestNode.getId());
 					}
@@ -570,9 +612,9 @@ public class TaxonomyService {
 				line = reader.readLine();
 
 			}
-			
+
 			clearCache();
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -615,20 +657,20 @@ public class TaxonomyService {
 		String json = taxo.getAsJson();
 		System.out.println(json);
 	}
-	
+
 	public static void _main(String[] args) {
 		String line = "0|root[]";
 		Pattern patternId = Pattern.compile("(.*?)\\|");
 		Pattern patternName = Pattern.compile("\\|(.*?)\\[");
 		Pattern patternLabels = Pattern.compile("\\[(.*?)\\]");
-		
+
 		Matcher matcher = patternId.matcher(line);
 		if (matcher.find()) {
-			System.out.println("id:"+matcher.group(1));
+			System.out.println("id:" + matcher.group(1));
 		} else {
 			logger.severe("error id import taxonomy on line : " + line);
 		}
-		
+
 	}
 
 	public static void __main(String[] args) {

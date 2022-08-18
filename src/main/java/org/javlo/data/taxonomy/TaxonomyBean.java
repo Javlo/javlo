@@ -5,8 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.Transient;
-
 import org.javlo.helper.StringHelper;
 
 public class TaxonomyBean {
@@ -20,6 +18,20 @@ public class TaxonomyBean {
 	private Map<String, String> pathLabels = null;
 
 	public TaxonomyBean() {
+	}
+	
+	public TaxonomyBean duplicate (TaxonomyBean parent, String prefixId) {
+		TaxonomyBean newBean = new TaxonomyBean(prefixId+id, name, parent);
+		newBean.labels = labels;
+		newBean.id = prefixId+id;
+		newBean.decoration = decoration;
+		for (TaxonomyBean child : children) {
+			newBean.children.add(child.duplicate(newBean, prefixId));
+		}
+		if (newBean.getName().startsWith("#")) {
+			newBean.name = newBean.name.substring(1);
+		}
+		return newBean;
 	}
 
 	public TaxonomyBean(String id, String name, TaxonomyBean parent) {
@@ -235,6 +247,14 @@ public class TaxonomyBean {
 
 	public void setDecoration(String decoration) {
 		this.decoration = decoration;
+	}
+	
+	public boolean isSource() {
+		return name.startsWith("#");
+	}
+	
+	public boolean isTarget() {
+		return name.startsWith(">");
 	}
 
 }

@@ -285,7 +285,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 			List<TaxonomyDisplayBean> beans = new LinkedList<>();
 			TaxonomyService ts = TaxonomyService.getInstance(ctx);
 			for (String id : taxonomyIds) {
-				TaxonomyBean b = ts.getTaxonomyBean(id);
+				TaxonomyBean b = ts.getTaxonomyBean(id, true);
 				if (b != null) {
 					beans.add(new TaxonomyDisplayBean(ctx, b));
 				}

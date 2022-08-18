@@ -76,7 +76,7 @@ public class TaxonomySessionComponent extends AbstractPropertiesComponent implem
 		super.prepareView(ctx);
 		List<Map.Entry<String,TaxonomyDisplayBean>> values = new LinkedList<Map.Entry<String,TaxonomyDisplayBean>>();
 		TaxonomyService taxoService = TaxonomyService.getInstance(ctx);
-		TaxonomyBean taxoBean = taxoService.getTaxonomyBean(getFieldValue(TAXONOMY));
+		TaxonomyBean taxoBean = taxoService.getTaxonomyBean(getFieldValue(TAXONOMY), true);
 		if (taxoBean != null) {
 			for (TaxonomyBean bean : taxoBean.getAllChildren()) {
 				values.add(new AbstractMap.SimpleEntry(bean.getId(), new TaxonomyDisplayBean(ctx, bean)));
@@ -99,7 +99,7 @@ public class TaxonomySessionComponent extends AbstractPropertiesComponent implem
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		TaxonomyService taxoService = TaxonomyService.getInstance(ctx);
-		TaxonomyBean taxoBean = taxoService.getTaxonomyBean(getFieldValue(TAXONOMY));
+		TaxonomyBean taxoBean = taxoService.getTaxonomyBean(getFieldValue(TAXONOMY), true);
 		if (taxoBean == null) {
 			if (ctx.isAsPreviewMode()) {
 				return "<div class=\"error\">taxonomy node not found : "+getFieldValue(TAXONOMY)+"</div>";
