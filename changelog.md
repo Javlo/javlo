@@ -902,6 +902,7 @@ Security in case of vulnerabilities.
   - filter dynamic component
   - tom-select plugin
   - webp image format
+  - taxonomy with reference
 ### Modified
   - conserve parameters on redirect
   - use name or id in place of number for change name of duplicate url
