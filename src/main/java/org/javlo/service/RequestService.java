@@ -1,5 +1,7 @@
 package org.javlo.service;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Arrays;
@@ -18,6 +20,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileCleaningTracker;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.portlet.filter.MultiReadRequestWrapper;
 import org.owasp.encoder.Encode;
 
@@ -327,6 +330,17 @@ public class RequestService {
 	
 	public boolean removeParameter(String name) {
 		return parameters.remove(name) != null;
+	}
+	
+	public String getBody() throws IOException {
+		BufferedReader reader = request.getReader();
+		String out = "";
+		String line = reader.readLine();
+		while (line != null) {
+			out+=line;
+			line = reader.readLine();
+		}
+		return out;
 	}
 
 }

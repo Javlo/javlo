@@ -32,6 +32,7 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 	protected static final String MIN_VALUE = "min";
 	protected static final String LENCIONI = "lencioni";
 	protected static final String AVERAGE = "average";
+	protected static final String NOSORT = "not-sort#checkbox";
 
 	public static final String TYPE = "display-result";
 
@@ -182,7 +183,10 @@ public class DisplayResult extends AbstractSurvey implements IAction {
 					Map<String, Double> averageNotSort = SurveyAverage.average(cells, lencioni, lencioni ? 999 : 80, "#");
 					Map<String, Double> average = new LinkedHashMap<String, Double>(averageNotSort);
 					
-					average = MapHelper.sortByValue(average, false);
+					if (!StringHelper.isTrue(getFieldValue(NOSORT), false)) {
+						average = MapHelper.sortByValue(average, false);
+					}
+
 //					for (Map.Entry<String, Double> e : average.entrySet()) {
 //						System.out.println("> "+e.getValue()+" - "+e.getKey());
 //					}
