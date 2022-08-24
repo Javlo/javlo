@@ -197,7 +197,6 @@ public class TaxonomyService {
 
 	private void fillMap(Map<String, TaxonomyBean> sources, TaxonomyBean currentBean, boolean resolveLink) {
 		Map<String, TaxonomyBean> taxonomyBeanMap = getTaxonomyMap(resolveLink);
-		System.out.println(">>>>>>>>> TaxonomyService.fillMap : #taxonomyBeanMap = "+taxonomyBeanMap.size()); //TODO: remove debug trace
 		if (resolveLink) {
 			TaxonomyBean sourceBean = sources.get(currentBean.getName());
 			if (currentBean.isTarget() && sourceBean == null) {
@@ -205,8 +204,7 @@ public class TaxonomyService {
 				currentBean.setName(currentBean.getName() + " ERROR REF. NOT FOUND.");
 			}
 			if (sourceBean != null) {
-				TaxonomyBean newBean = sourceBean.duplicate(currentBean.getParent(), currentBean.getId());				
-				System.out.println(">>>>>>>>> TaxonomyService.fillMap : newBean = " + newBean.getName() + " - " + newBean.getId()); // TODO: remove debug trace
+				TaxonomyBean newBean = sourceBean.duplicate(currentBean.getParent(), currentBean.getId());
 				currentBean = newBean;
 			}
 		}
