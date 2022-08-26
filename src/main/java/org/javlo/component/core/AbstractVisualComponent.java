@@ -684,7 +684,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		
 		out.println("<div class=\"column-selection-block\"><div class=\"column-selection\">");
 		out.println("<label for=\"" + (getInputNameColomnStyle()) + "\"  style=\"width: " + size + "%\" >");
-		out.println(i18nAccess.getText("align.vertical"));
+		out.println(i18nAccess.getText("align.vertical")+"<br /><br />");
 		Map<String,String> option = new LinkedHashMap<>();
 		option.put("", "");
 		option.put("top", i18nAccess.getText("align.vertical.top", "top"));
