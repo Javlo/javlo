@@ -684,12 +684,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		
 		out.println("<div class=\"column-selection-block\"><div class=\"column-selection\">");
 		out.println("<label for=\"" + (getInputNameColomnStyle()) + "\"  style=\"width: " + size + "%\" >");
-		out.println(i18nAccess.getViewText("align.vertical"));
+		out.println(i18nAccess.getText("align.vertical"));
 		Map<String,String> option = new LinkedHashMap<>();
 		option.put("", "");
-		option.put("top", i18nAccess.getViewText("align.vertical.top", "top"));
-		option.put("middle", i18nAccess.getViewText("align.vertical.middle", "middle"));
-		option.put("bottom", i18nAccess.getViewText("align.vertical.bottom", "bottom"));
+		option.put("top", i18nAccess.getText("align.vertical.top", "top"));
+		option.put("middle", i18nAccess.getText("align.vertical.middle", "middle"));
+		option.put("bottom", i18nAccess.getText("align.vertical.bottom", "bottom"));
 		out.println(XHTMLHelper.getDropDownFromMap(getInputNameColomnStyle(), option, getComponentBean().getColumnStyle(), null, false, null));
 		out.println("</label>");
 		for (Integer colSize : getColumnSizes(ctx)) {
