@@ -622,6 +622,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public int getColumnSize(ContentContext ctx) {
 		return componentBean.getColumnSize();
 	}
+	
+	@Override
+	public String getColumnStyle(ContentContext ctx) {
+		return componentBean.getColumnStyle();
+	}
 
 	public void setColumnSize(int size) {
 		if (componentBean.getColumnSize() != size) {
@@ -629,9 +634,20 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			setModify();
 		}
 	}
+	
+	public void setColumnStyle(String style) {
+		if (!StringHelper.neverNull(style).equals(StringHelper.neverNull(componentBean.getColumnStyle()))) {
+			componentBean.setColumnStyle(style);
+			setModify();
+		}
+	}
 
 	protected String getInputNameColomn() {
 		return getInputName("_columnSize");
+	}
+	
+	protected String getInputNameColomnStyle() {
+		return getInputName("_columnStyle");
 	}
 
 	protected String drawColumn(ContentContext ctx, int size) {
@@ -656,13 +672,32 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected String getColumn(ContentContext ctx) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
+		
+		int size = Math.round(100 / (getColumnSizes(ctx).size()+1));
+		
+		I18nAccess i18nAccess=null;
+		try {
+			i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		out.println("<div class=\"column-selection-block\"><div class=\"column-selection\">");
+		out.println("<label for=\"" + (getInputNameColomnStyle()) + "\"  style=\"width: " + size + "%\" >");
+		out.println(i18nAccess.getViewText("align.vertical"));
+		Map<String,String> option = new LinkedHashMap<>();
+		option.put("", "");
+		option.put("top", i18nAccess.getViewText("align.vertical.top", "top"));
+		option.put("middle", i18nAccess.getViewText("align.vertical.middle", "middle"));
+		option.put("bottom", i18nAccess.getViewText("align.vertical.bottom", "bottom"));
+		out.println(XHTMLHelper.getDropDownFromMap(getInputNameColomnStyle(), option, getComponentBean().getColumnStyle(), null, false, null));
+		out.println("</label>");
 		for (Integer colSize : getColumnSizes(ctx)) {
 			String cssClass = "";
 			if (getColumnSize(ctx) == colSize) {
 				cssClass = " class=\"active\" ";
 			}
-			out.println("<label" + cssClass + " for=\"" + (getInputNameColomn() + colSize) + "\"  style=\"width: " + Math.round(100 / getColumnSizes(ctx).size()) + "%\" >");
+			out.println("<label" + cssClass + " for=\"" + (getInputNameColomn() + colSize) + "\"  style=\"width: " + size + "%\" >");
 			out.println("<div class=\"select-col select-col-" + colSize + "\">");
 			String select = "";
 			if (getColumnSize(ctx) == colSize) {
@@ -1580,7 +1615,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				int currentSize = ctx.getColumnableSize(ctx.getColumnableDepth());
 				int leftSize = getColumnMaxSize(ctx) - currentSize;
 
-				colPrefix = colPrefix + "<" + tpl.getColumnableColTag() + " style=\"" + tpl.getColumnableColStyle(getColumnSize(ctx)) + "\" class=\"" + firstClass + tpl.getColumnableColClass(getColumnSize(ctx), currentSize, leftSize) + "\">";
+				colPrefix = colPrefix + "<" + tpl.getColumnableColTag() + " style=\"" + tpl.getColumnableColStyle(getColumnSize(ctx)) + "\" class=\"" + firstClass + tpl.getColumnableColClass(getColumnSize(ctx), currentSize, leftSize, getColumnStyle(ctx)) + "\">";
 				if (!StringHelper.isEmpty(tpl.getColumnableColTagIn())) {
 					colPrefix = colPrefix + '<' + tpl.getColumnableColTagIn() + " class=\"" + tpl.getColumnableClassTagIn() + "\" style=\"" + tpl.getColumnableStyleTagIn() + "\">";
 				}
@@ -2959,6 +2994,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			if (StringHelper.isDigit(newWidth)) {
 				setColumnSize(Integer.parseInt(newWidth));
 			}
+			setColumnStyle(rs.getParameter(getInputNameColomnStyle(), ""));
+			
+			System.out.println(">>>>>>>>> AbstractVisualComponent.performColumnable : "+getColumnStyle(ctx)); //TODO: remove debug trace
+			
 		}
 	}
 

@@ -948,5 +948,7 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	
 	/** reference to the same component in default language */
 	public IContentVisualComponent getReferenceComponent(ContentContext ctx) throws Exception;
+
+	public String getColumnStyle(ContentContext ctx);
 	
 }

@@ -863,6 +863,9 @@ public class PersistenceService {
 			if (contentNode.getAttributeValue("colSize", null) != null) {
 				bean.setColumnSize(Integer.parseInt(contentNode.getAttributeValue("colSize", null)));
 			}
+			if (contentNode.getAttributeValue("colStyle", null) != null) {
+				bean.setColumnStyle(contentNode.getAttributeValue("colStyle", null));
+			}
 			bean.setBackgroundColor(contentNode.getAttributeValue("bgcol", null));
 			bean.setManualCssClass(contentNode.getAttributeValue("css", null));
 			bean.setTextColor(contentNode.getAttributeValue("txtcol", null));

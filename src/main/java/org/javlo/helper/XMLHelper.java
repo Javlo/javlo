@@ -333,6 +333,10 @@ public class XMLHelper {
 						out.print("\" colSize=\"");
 						out.print(beans[j].getColumnSize());
 					}
+					if (beans[j].getColumnStyle() != null) {
+						out.print("\" colStyle=\"");
+						out.print(beans[j].getColumnStyle());
+					}
 					if (!ComponentBean.DEFAULT_AREA.equals(beans[j].getArea())) {
 						out.print("\" area=\"");
 						out.print(beans[j].getArea());

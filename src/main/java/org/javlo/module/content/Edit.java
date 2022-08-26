@@ -451,7 +451,7 @@ public class Edit extends AbstractModuleAction {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 
-		if (currentPage.isBlocked()) {
+		if (currentPage != null && currentPage.isBlocked()) {
 			if (!currentPage.getBlocker().equals(adminUserFactory.getCurrentUser(globalContext, ctx.getRequest().getSession()).getName())) {
 				return false;
 			}

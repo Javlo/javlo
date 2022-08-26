@@ -41,6 +41,7 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 	private ComponentLayout layout = null;
 	private String manualCssClass = null; 
 	private int columnSize = -1;
+	private String columnStyle = null;
 
 	private boolean repeat = false;
 	private boolean forceCachable = false;
@@ -332,6 +333,14 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 
 	public void setForceCachable(boolean forceCachable) {
 		this.forceCachable = forceCachable;
+	}
+
+	public String getColumnStyle() {
+		return columnStyle;
+	}
+
+	public void setColumnStyle(String columnStyle) {
+		this.columnStyle = columnStyle;
 	}
 
 }
