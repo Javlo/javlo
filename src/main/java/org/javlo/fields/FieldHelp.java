@@ -11,7 +11,7 @@ public class FieldHelp extends Field {
 	public String getEditXHTMLCode(ContentContext ctx, boolean search) {
 		return "<div class=\"alert alert-info\" role=\"alert\">"+XHTMLHelper.autoLink(getValue(), ctx.getGlobalContext()) +"</div>";
 	}
-
+	
 	/**
 	 * return the value "displayable"
 	 * 
@@ -26,5 +26,9 @@ public class FieldHelp extends Field {
 	@Override
 	public String getType() {
 		return "help";
+	}
+	
+	public boolean process(ContentContext ctx) {
+		return true;
 	}
 }
