@@ -9,7 +9,7 @@ public class FieldHelp extends Field {
 
 	@Override
 	public String getEditXHTMLCode(ContentContext ctx, boolean search) {
-		return "<div class=\"alert alert-info\" role=\"alert\">"+XHTMLHelper.autoLink(getLabel(), ctx.getGlobalContext()) +"</div>";
+		return "<div class=\"alert alert-info\" role=\"alert\">"+XHTMLHelper.autoLink(getValue(), ctx.getGlobalContext()) +"</div>";
 	}
 
 	/**
