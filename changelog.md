@@ -903,6 +903,7 @@ Security in case of vulnerabilities.
   - tom-select plugin
   - webp image format
   - taxonomy with reference
+  - column style (vertical-align top - middle - bottom)
 ### Modified
   - conserve parameters on redirect
   - use name or id in place of number for change name of duplicate url
