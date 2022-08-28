@@ -819,7 +819,7 @@ public class XMLManipulationHelper {
 
 			// src url
 			int urlIndex = content.indexOf("url(");
-			while (urlIndex >= 0) {
+			while (urlIndex >= 0 && !content.contains("url(#")) {
 				int closeIndex = content.substring(urlIndex).indexOf(')') + urlIndex;
 				String url = content.substring(urlIndex + 4, closeIndex).trim();
 				if (url.startsWith("'")) {
