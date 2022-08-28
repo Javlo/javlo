@@ -1065,7 +1065,7 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 				resource.setAbsolutePreviewURL(absolutePreviewURL);
 
 				if (isRenderInfo(ctx)) {
-					if (!StringHelper.isEmpty(resource.getURL())) {
+					if (!StringHelper.isEmpty(resource.getPreviewURL())) {
 						allResource.add(resource);
 					}
 				}
