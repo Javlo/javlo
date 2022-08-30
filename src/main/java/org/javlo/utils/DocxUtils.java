@@ -8,6 +8,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -100,6 +101,63 @@ public class DocxUtils {
 		return false;
 	}
 
+	public static void main(String[] args) throws XDocConverterException, FileNotFoundException, IOException {
+		File file = new File("c:/trans/test_javlo2.docx");
+		List<ComponentBean> beans = extractContent(null, new FileInputStream(file), "c:/trans/import");
+		for (ComponentBean componentBean : beans) {
+			System.out.println("--------------------");
+			System.out.println(componentBean.getValue());
+		}
+	}
+
+	private static String cleanDocxList(String content) {
+		if (content == null) {
+			return null;
+		}
+		content = content.trim();
+		if (content.startsWith("•")) {
+			return content.substring(1).trim();
+		}
+		if (content.startsWith("o")) {
+			return content.substring(1).trim();
+		}
+		for (int i = 1; i < 9999; i++) {
+			if (content.startsWith(i + ".")) {
+				return content.substring(content.indexOf('.') + 1).trim();
+			}
+		}
+		for (char i = 'a'; i < 'z'; i++) {
+			if (content.startsWith(i + ".")) {
+				return content.substring(content.indexOf('.') + 1).trim();
+			}
+		}
+		return content;
+	}
+
+	private static int getDocxListDepth(String content) {
+		if (content == null) {
+			return 0;
+		}
+		content = content.trim();
+		if (content.startsWith("•")) {
+			return 1;
+		}
+		if (content.startsWith("o")) {
+			return 2;
+		}
+		for (int i = 1; i < 9999; i++) {
+			if (content.startsWith(i + ".")) {
+				return 1;
+			}
+		}
+		for (char i = 'a'; i < 'z'; i++) {
+			if (content.startsWith(i + ".")) {
+				return 2;
+			}
+		}
+		return 0;
+	}
+
 	public static List<ComponentBean> extractContent(GlobalContext globalContext, InputStream in, String resourceFolder) throws XDocConverterException, IOException {
 		Options options = Options.getFrom(DocumentKind.DOCX).to(ConverterTypeTo.XHTML);
 		IConverter converter = ConverterRegistry.getRegistry().getConverter(options);
@@ -111,76 +169,80 @@ public class DocxUtils {
 
 		Document doc = Jsoup.parse(new ByteArrayInputStream(out.toByteArray()), ContentContext.CHARACTER_ENCODING, "/");
 
-		ComponentBean listBean = null;
+		ComponentBean latestBean = null;
+		int listDepth = 0;
 		for (Element item : doc.select("img,p")) {
 			String cssClass = item.attr("class");
 			String text = item.text().trim();
 			ComponentBean bean = new ComponentBean();
-			/* text */
-//			if (isList(cssClass)) {
-//				if (listBean == null) {
-//					listBean = new ComponentBean();
-//					listBean.setType(DataList.TYPE);
-//					listBean.setValue("");
-//				}
-//				if (listBean.getValue().length() == 0) {
-//					listBean.setValue(text);
-//				} else {
-//					listBean.setValue(listBean.getValue() + "\n" + text);
-//				}
-//			} else {
-				if (listBean != null) {
-					outContent.add(listBean);
-					listBean = null;
-				}
-				if (text.trim().length() > 0 && item.tagName().equals("p")) {
-					int titleLevel = getTitleLevel(cssClass);
-					if (titleLevel == 0) {
-						bean.setType(WysiwygParagraph.TYPE);
-						bean.setValue(text);
+			if (listDepth > 0 && latestBean != null && getDocxListDepth(text) == 0) {
+				latestBean.setValue(latestBean.getValue() + "</li></ul>");
+				listDepth = 0;
+			}
+			if (text.trim().length() > 0 && item.tagName().equals("p")) {
+				int titleLevel = getTitleLevel(cssClass);
+				if (titleLevel == 0) {
+					if (latestBean != null && latestBean.getType() == WysiwygParagraph.TYPE) {
+						bean = latestBean;
 					} else {
-						bean.setType(Heading.TYPE);
-						text = StringEscapeUtils.unescapeXml(StringEscapeUtils.escapeHtml4(text));
-						bean.setValue("text=" + text + "\ndepth=" + titleLevel);
+						bean.setType(WysiwygParagraph.TYPE);
 					}
-				} else if (item.tagName().equals("img") && item.attr("src") != null && item.attr("src").trim().length() > 0) {
-					ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-					PrintStream outPrint = new PrintStream(outStream);
-					String folder = item.attr("src");
-					outPrint.println("dir=" + URLHelper.mergePath(resourceFolder, new File(folder).getParentFile().getPath()));
-					outPrint.println("file-name=" + new File(folder).getName());
-					outPrint.println(GlobalImage.IMAGE_FILTER + "=full");
-					if (item.attr("alt") != null) {
-						outPrint.println("label=" + item.attr("alt"));
+					int localListDepth = getDocxListDepth(text);
+					if (localListDepth == listDepth) {
+						if (localListDepth > 0) {
+							text = "</li>\n<li>" + cleanDocxList(text);
+						}
+					} else {
+						if (localListDepth > listDepth) {
+							text = "\n<ul><li>" + cleanDocxList(text);
+						} else if (localListDepth < listDepth) {
+							if (localListDepth == 0) {
+								text = "</li></ul>" + text;
+							} else {
+								text = "</li></ul>\n<li>" + cleanDocxList(text);
+							}
+						}
 					}
-					outPrint.close();
-					bean.setType(GlobalImage.TYPE);
-					bean.setValue(new String(outStream.toByteArray()));
+					listDepth = localListDepth;
+					bean.setValue(StringHelper.neverEmpty(bean.getValue(), "") + text);
+				} else {
+					listDepth = 0;
+					if (listDepth > 0) {
+						latestBean.setValue(latestBean.getValue() + "</ul>");
+					}
+					bean.setType(Heading.TYPE);
+					text = StringEscapeUtils.unescapeXml(StringEscapeUtils.escapeHtml4(text));
+					bean.setValue("text=" + text + "\ndepth=" + titleLevel);
 				}
-//			}
-
+			} else if (item.tagName().equals("img") && item.attr("src") != null && item.attr("src").trim().length() > 0) {
+				listDepth = 0;
+				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+				PrintStream outPrint = new PrintStream(outStream);
+				String folder = item.attr("src");
+				outPrint.println("dir=" + URLHelper.mergePath(resourceFolder, new File(folder).getParentFile().getPath()));
+				outPrint.println("file-name=" + new File(folder).getName());
+				outPrint.println(GlobalImage.IMAGE_FILTER + "=full");
+				if (item.attr("alt") != null) {
+					outPrint.println("label=" + item.attr("alt"));
+				}
+				outPrint.close();
+				bean.setType(GlobalImage.TYPE);
+				bean.setValue(new String(outStream.toByteArray()));
+			}
 			if (bean.getType() != null && bean.getType().length() > 0) {
-				outContent.add(bean);
+				if (bean != latestBean) {
+					outContent.add(bean);
+				}
+				latestBean = bean;
 				bean = new ComponentBean();
 			}
-		}
-		if (listBean != null) {
-			outContent.add(listBean);
 		}
 		return outContent;
 	}
 
-	public static void main(String[] args) {
-		try {
-			performFillDocument(null, null);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
 	public static String performFillDocument(ContentContext ctx, RequestService rs) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException, PropertyVetoException, Exception {
-		//File docxFile = new File("C:\\Users\\user\\data\\kidoo\\data-ctx\\data-localhost\\static\\files\\dynamic\\reisovereenkomst-indicamp-wip.docx");
+		// File docxFile = new
+		// File("C:\\Users\\user\\data\\kidoo\\data-ctx\\data-localhost\\static\\files\\dynamic\\reisovereenkomst-indicamp-wip.docx");
 		File docxFile = new File("C:\\trans\\reisovereenkomst-indicamp-wip.docx");
 
 		// Map<String, String> tokens = new HashMap<>();
@@ -246,43 +308,10 @@ public class DocxUtils {
 		//
 		// readDocxFile(docxFile);
 
-		 String content = "<w:r w:rsidR=\"00514593\" w:rsidRPr=\"00514593\">\r\n"
-		 + " <w:rPr>\r\n"
-		 + " <w:rFonts w:ascii=\"Filson Pro Regular\"\r\n"
-		 + " w:hAnsi=\"Filson Pro Regular\" />\r\n"
-		 + " <w:color w:val=\"5DBDB1\" />\r\n"
-		 + " <w:sz w:val=\"22\" />\r\n"
-		 + " <w:szCs w:val=\"22\" />\r\n"
-		 + " <w:lang w:val=\"nl-BE\" />\r\n"
-		 + " </w:rPr>\r\n"
-		 + " <w:t>{{</w:t>\r\n"
-		 + " </w:r>\r\n"
-		 + " <w:proofErr w:type=\"spellStart\" />\r\n"
-		 + " <w:r w:rsidR=\"00514593\" w:rsidRPr=\"00514593\">\r\n"
-		 + " <w:rPr>\r\n"
-		 + " <w:rFonts w:ascii=\"Filson Pro Regular\"\r\n"
-		 + " w:hAnsi=\"Filson Pro Regular\" />\r\n"
-		 + " <w:color w:val=\"5DBDB1\" />\r\n"
-		 + " <w:sz w:val=\"22\" />\r\n"
-		 + " <w:szCs w:val=\"22\" />\r\n"
-		 + " <w:lang w:val=\"nl-BE\" />\r\n"
-		 + " </w:rPr>\r\n"
-		 + " <w:t>parent.firstname</w:t>\r\n"
-		 + " </w:r>\r\n"
-		 + " <w:proofErr w:type=\"spellEnd\" />\r\n"
-		 + " <w:r w:rsidR=\"00514593\" w:rsidRPr=\"00514593\">\r\n"
-		 + " <w:rPr>\r\n"
-		 + " <w:rFonts w:ascii=\"Filson Pro Regular\"\r\n"
-		 + " w:hAnsi=\"Filson Pro Regular\" />\r\n"
-		 + " <w:color w:val=\"5DBDB1\" />\r\n"
-		 + " <w:sz w:val=\"22\" />\r\n"
-		 + " <w:szCs w:val=\"22\" />\r\n"
-		 + " <w:lang w:val=\"nl-BE\" />\r\n"
-		 + " </w:rPr>\r\n"
-		 + " <w:t>}}</w:t>\r\n"
-		 + " </w:r>\r\n";
-		
-		 System.out.println(cleanTokensDocx(content));
+		String content = "<w:r w:rsidR=\"00514593\" w:rsidRPr=\"00514593\">\r\n" + " <w:rPr>\r\n" + " <w:rFonts w:ascii=\"Filson Pro Regular\"\r\n" + " w:hAnsi=\"Filson Pro Regular\" />\r\n" + " <w:color w:val=\"5DBDB1\" />\r\n" + " <w:sz w:val=\"22\" />\r\n" + " <w:szCs w:val=\"22\" />\r\n" + " <w:lang w:val=\"nl-BE\" />\r\n" + " </w:rPr>\r\n" + " <w:t>{{</w:t>\r\n" + " </w:r>\r\n" + " <w:proofErr w:type=\"spellStart\" />\r\n" + " <w:r w:rsidR=\"00514593\" w:rsidRPr=\"00514593\">\r\n" + " <w:rPr>\r\n" + " <w:rFonts w:ascii=\"Filson Pro Regular\"\r\n" + " w:hAnsi=\"Filson Pro Regular\" />\r\n" + " <w:color w:val=\"5DBDB1\" />\r\n" + " <w:sz w:val=\"22\" />\r\n" + " <w:szCs w:val=\"22\" />\r\n" + " <w:lang w:val=\"nl-BE\" />\r\n" + " </w:rPr>\r\n" + " <w:t>parent.firstname</w:t>\r\n" + " </w:r>\r\n" + " <w:proofErr w:type=\"spellEnd\" />\r\n" + " <w:r w:rsidR=\"00514593\" w:rsidRPr=\"00514593\">\r\n" + " <w:rPr>\r\n" + " <w:rFonts w:ascii=\"Filson Pro Regular\"\r\n"
+				+ " w:hAnsi=\"Filson Pro Regular\" />\r\n" + " <w:color w:val=\"5DBDB1\" />\r\n" + " <w:sz w:val=\"22\" />\r\n" + " <w:szCs w:val=\"22\" />\r\n" + " <w:lang w:val=\"nl-BE\" />\r\n" + " </w:rPr>\r\n" + " <w:t>}}</w:t>\r\n" + " </w:r>\r\n";
+
+		System.out.println(cleanTokensDocx(content));
 
 	}
 
@@ -336,7 +365,7 @@ public class DocxUtils {
 				zipOut.putNextEntry(newZipEntry);
 				if (xml != null && newZipEntry.getName().endsWith("/document.xml")) {
 					ResourceHelper.writeStringToStream(xml, zipOut, "UTF-8");
-//					zipOut.write(xml.getBytes(), 0, xml.getBytes().length);
+					// zipOut.write(xml.getBytes(), 0, xml.getBytes().length);
 				} else {
 					int length;
 					byte[] bytes = new byte[2048];

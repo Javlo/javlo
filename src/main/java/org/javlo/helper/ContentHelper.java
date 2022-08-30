@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -23,6 +24,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.xmlgraphics.image.loader.ImageManager;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ContentElementList;
@@ -48,6 +51,9 @@ import org.javlo.utils.UnclosableInputStream;
 import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
 import org.javlo.ztatic.IStaticContainer;
+
+import fr.opensagres.poi.xwpf.converter.xhtml.XHTMLConverter;
+import fr.opensagres.poi.xwpf.converter.xhtml.XHTMLOptions;
 
 
 public class ContentHelper {
@@ -337,26 +343,27 @@ public class ContentHelper {
 		return outBeans;
 	}
 
-	public static List<ComponentBean> createContentFromDocx(GlobalContext gc, InputStream in, String name, String lang) throws Exception {
+	public static List<ComponentBean> createContentFromDocx(ContentContext ctx, InputStream in, MenuElement page, String name, String lang) throws Exception {
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		ResourceHelper.writeStreamToStream(in, out);
 
 		ZipInputStream zipIn = new ZipInputStream(new ByteArrayInputStream(out.toByteArray()));
 		ZipEntry entry = zipIn.getNextEntry();
-		String baseStaticFolder = URLHelper.mergePath(gc.getStaticConfig().getImportFolder(), name);
-		;
+		
+		String importFolder = AbstractVisualComponent.getImportFolderPath(ctx, page);
+		String baseStaticFolder = URLHelper.mergePath(importFolder, name);
 
 		// import static images
 		while (entry != null) {
-			if (gc != null && StringHelper.isImage(entry.getName())) {
-				importZipEntryToDataFolder(gc, entry, zipIn, URLHelper.mergePath(gc.getStaticConfig().getImageFolder(), baseStaticFolder));
+			if (ctx != null && StringHelper.isImage(entry.getName())) {
+				importZipEntryToDataFolder(ctx.getGlobalContext(), entry, zipIn, URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getImageFolder(), baseStaticFolder));
 			}
 			entry = zipIn.getNextEntry();
 		}
 
 		// import content
-		List<ComponentBean> beans = DocxUtils.extractContent(gc, new ByteArrayInputStream(out.toByteArray()), baseStaticFolder);
+		List<ComponentBean> beans = DocxUtils.extractContent(ctx.getGlobalContext(), new ByteArrayInputStream(out.toByteArray()), baseStaticFolder);
 		for (ComponentBean bean : beans) {
 			bean.setLanguage(lang);
 		}
@@ -564,5 +571,4 @@ public class ContentHelper {
 		}
 		return comps;
 	}
-
 }

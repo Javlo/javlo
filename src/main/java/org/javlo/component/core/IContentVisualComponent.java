@@ -951,4 +951,10 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 
 	public String getColumnStyle(ContentContext ctx);
 	
+	/**
+	 * clean resources.  By default remove import folder
+	 * @return
+	 */
+	public boolean cleanResources(ContentContext ctx);
+	
 }

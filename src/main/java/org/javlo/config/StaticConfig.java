@@ -903,6 +903,10 @@ public class StaticConfig extends Observable {
 		}
 		return folderBean.share;
 	}
+	
+	public boolean isRemoveImportOnDeletePage() {
+		return properties.getBoolean("import.clear-on-delete", false);
+	}
 
 	public boolean isCreateContentOnImportImage() {
 		return properties.getBoolean("import.image.content", false);

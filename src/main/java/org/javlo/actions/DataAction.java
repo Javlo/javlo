@@ -539,7 +539,10 @@ public class DataAction implements IAction {
 	}
 
 	public static final String createImportFolder(MenuElement inPage) throws Exception {
-		MenuElement page = inPage.getRootOfChildrenAssociation();
+		MenuElement page = inPage;
+		if (inPage.isChildrenAssociation()) {
+			page = inPage.getRootOfChildrenAssociation();
+		}
 		if (page == null) {
 			page = inPage;
 		}
@@ -616,9 +619,9 @@ public class DataAction implements IAction {
 						ctx.setNeedRefresh(true);
 					} else if (StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("docx") && config.isSharedImportDocument()) {
 						InputStream in = item.getInputStream();
-						Collection<ComponentBean> beans = ContentHelper.createContentFromDocx(gc, in, item.getName(), ctx.getRequestContentLanguage());
-						in.close();
 						MenuElement page = ctx.getCurrentPage();
+						Collection<ComponentBean> beans = ContentHelper.createContentFromDocx(ctx, in, page, item.getName(), ctx.getRequestContentLanguage());
+						in.close();
 						ContentContext contentCtx = new ContentContext(ctx);
 						if (ctx.getCurrentPage().isChildrenOfAssociation() && !content) {
 							PageAssociationBean pageAssociation = new PageAssociationBean(ctx, ctx.getCurrentPage().getRootOfChildrenAssociation());

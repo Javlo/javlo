@@ -3,6 +3,7 @@
  */
 package org.javlo.component.core;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.actions.DataAction;
@@ -236,6 +237,33 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public String getFileDirectory(ContentContext ctx) {
+		throw null;
+	}
+
+	@Override
+	public boolean cleanResources(ContentContext ctx) {
+		if (ctx.getGlobalContext().getStaticConfig().isRemoveImportOnDeletePage()) {
+			System.out.println(">>>>>>>>> AbstractVisualComponent.cleanResources : CLEAN"); //TODO: remove debug trace
+			String filesDir = getFileDirectory(ctx);
+			if (StringHelper.isEmpty(filesDir)) {
+				return false;
+			}
+			try {
+				File dirFile = new File(ElementaryURLHelper.mergePath(filesDir, getImportFolderPath(ctx)));
+				if (dirFile.exists()) {
+					boolean out = ResourceHelper.deleteFolder(dirFile);
+					logger.info("delete ["+out+"] : "+dirFile);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else {
+			System.out.println(">>>>>>>>> AbstractVisualComponent.cleanResources : NOT CLEAN"); //TODO: remove debug trace
+		}
+		return false;
 	}
 
 	@Override
@@ -622,7 +650,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public int getColumnSize(ContentContext ctx) {
 		return componentBean.getColumnSize();
 	}
-	
+
 	@Override
 	public String getColumnStyle(ContentContext ctx) {
 		return componentBean.getColumnStyle();
@@ -634,7 +662,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			setModify();
 		}
 	}
-	
+
 	public void setColumnStyle(String style) {
 		if (!StringHelper.neverNull(style).equals(StringHelper.neverNull(componentBean.getColumnStyle()))) {
 			componentBean.setColumnStyle(style);
@@ -645,7 +673,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected String getInputNameColomn() {
 		return getInputName("_columnSize");
 	}
-	
+
 	protected String getInputNameColomnStyle() {
 		return getInputName("_columnStyle");
 	}
@@ -672,20 +700,20 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	protected String getColumn(ContentContext ctx) {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
-		
-		int size = Math.round(100 / (getColumnSizes(ctx).size()+1));
-		
-		I18nAccess i18nAccess=null;
+
+		int size = Math.round(100 / (getColumnSizes(ctx).size() + 1));
+
+		I18nAccess i18nAccess = null;
 		try {
 			i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		out.println("<div class=\"column-selection-block\"><div class=\"column-selection\">");
 		out.println("<label for=\"" + (getInputNameColomnStyle()) + "\"  style=\"width: " + size + "%\" >");
-		out.println(i18nAccess.getText("align.vertical")+"<br /><br />");
-		Map<String,String> option = new LinkedHashMap<>();
+		out.println(i18nAccess.getText("align.vertical") + "<br /><br />");
+		Map<String, String> option = new LinkedHashMap<>();
 		option.put("", "");
 		option.put("top", i18nAccess.getText("align.vertical.top", "top"));
 		option.put("middle", i18nAccess.getText("align.vertical.middle", "middle"));
@@ -2406,7 +2434,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return executeRenderer(ctx, getRenderer(ctx), ctx.getRequest(), ctx.getResponse());
 	}
 
-	protected String executeRenderer(ContentContext ctx, String url,HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected String executeRenderer(ContentContext ctx, String url, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		if (url != null) {
 			ctx.getRequest().setAttribute(COMPONENT_KEY, this);
@@ -2612,7 +2640,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return "";
 		}
 	}
-	
+
 	protected Object getLock(ContentContext ctx) {
 		return this;
 	}
@@ -2995,9 +3023,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				setColumnSize(Integer.parseInt(newWidth));
 			}
 			setColumnStyle(rs.getParameter(getInputNameColomnStyle(), ""));
-			
-			System.out.println(">>>>>>>>> AbstractVisualComponent.performColumnable : "+getColumnStyle(ctx)); //TODO: remove debug trace
-			
 		}
 	}
 

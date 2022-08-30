@@ -571,10 +571,6 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		return "encoding" + ID_SEPARATOR + getId();
 	}
 
-	public String getFileDirectory(ContentContext ctx) {
-		throw new NotImplementedException("getFileDirectory");
-	}
-
 	protected String[] getFileList(String directory) {
 		return getFileList(directory, null);
 	}

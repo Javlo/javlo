@@ -45,7 +45,7 @@ public class ImportedFileSharedContentProvider extends LocalFileSharedContentPro
 			if (page == null) {
 				page = ctx.getCurrentPage();
 			}
-			String importFolder = DataAction.createImportFolder( page);						
+			String importFolder = DataAction.createImportFolder( page);
 			if (category.endsWith(importFolder)) {				
 				return true;
 			}

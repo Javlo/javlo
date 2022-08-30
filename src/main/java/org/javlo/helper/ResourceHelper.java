@@ -2026,18 +2026,20 @@ public class ResourceHelper {
 		}
 	}
 
-	public static void deleteFolder(File folder) {
+	public static boolean deleteFolder(File folder) {
+		boolean out = false;
 		File[] files = folder.listFiles();
 		if (files != null) { // some JVMs return null for empty dirs
 			for (File f : files) {
 				if (f.isDirectory()) {
 					deleteFolder(f);
 				} else {
-					f.delete();
+					out = f.delete();
 				}
 			}
 		}
-		folder.delete();
+		out = folder.delete();
+		return out;
 	}
 
 	public static String mimifyJS(String js) {

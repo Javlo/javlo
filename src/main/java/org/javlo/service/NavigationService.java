@@ -167,6 +167,7 @@ public class NavigationService {
 		if (elem.getParent() != null) {			
 			for (IContentVisualComponent comp : elem.getAllLanguageContent(ctx)) {
 				comp.delete(ctx);
+				comp.cleanResources(ctx);
 			}
 			elem.getParent().removeChild(elem);			
 		}

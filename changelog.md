@@ -904,6 +904,7 @@ Security in case of vulnerabilities.
   - webp image format
   - taxonomy with reference
   - column style (vertical-align top - middle - bottom)
+  - delete import file on page delete (add in static config : import.clear-on-delete=true)
 ### Modified
   - conserve parameters on redirect
   - use name or id in place of number for change name of duplicate url

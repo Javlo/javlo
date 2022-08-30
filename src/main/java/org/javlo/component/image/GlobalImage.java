@@ -853,13 +853,11 @@ public class GlobalImage extends Image implements IImageFilter {
 			boolean openLink = false;
 			if (getLink().trim().length() > 0) {
 				if (!getLink().trim().equals(NO_LINK)) {
-
 					String cssLinkClass = "";
 					String linkType = StringHelper.getPathType(getLink(), "");
 					if (linkType.length() > 0) {
 						cssLinkClass = " class=\"" + linkType + "\"";
 					}
-
 					if (!getLink().contains("/")) { // considered as page name
 						res.append("<a" + cssLinkClass + " rel=\"" + getConfig(ctx).getProperty("rel", "shadowbox") + "\" href=\"" + URLHelper.createURLFromPageName(ctx, getLink().replace(".html", "")) + "\">");
 					} else {
@@ -890,15 +888,12 @@ public class GlobalImage extends Image implements IImageFilter {
 				res.append(URLHelper.createTransformLongDescURL(ctx, fileLink));
 			}
 			res.append("\" /><span class=\"layer\">&nbsp;</span>");
-
 			if (openLink) {
 				res.append("</a>");
 			}
-
 			if (StringHelper.CR2BR(getLabel()).trim().length() > 0) {
 				res.append("<div class=\"label\">" + StringHelper.CR2BR(getLabel()) + "</div>");
 			}
-
 			res.append(XHTMLHelper.renderSpecialLink(ctx, ctx.getRequestContentLanguage(), fileLink, getStaticInfo(ctx)));
 			res.append("</div></div>");
 		} else {
