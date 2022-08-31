@@ -4,6 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.logging.Logger;
 
@@ -176,6 +178,18 @@ public class FieldNumber extends Field {
 			setValue("" + min);
 		}
 		return true;
+	}
+	
+	@Override
+	public String getFormatedValue(ContentContext ctx) {
+		String value = getValue();
+		if (StringHelper.isDigit(value)) {
+			double number = Double.parseDouble(value);			
+			DecimalFormat df = (DecimalFormat) NumberFormat.getNumberInstance(ctx.getLocale());
+			return df.format(number);
+		} else {
+			return value;
+		}
 	}
 
 }

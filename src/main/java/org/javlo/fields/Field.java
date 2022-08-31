@@ -93,6 +93,18 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 			return value;
 		}
 		
+		public String getFormatedValue() throws Exception {
+			String value = Field.this.getReferenceFormatedValue(ctx);
+			if (StringHelper.isEmpty(value)) {
+				try {
+					return getReferenceValue(ctx);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			return value;
+		}
+		
 		public String getText() {
 			return StringHelper.removeTag(StringHelper.removeCR(getValue()));
 		}
@@ -270,6 +282,10 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	 */
 	Field() {
 	};
+
+	public String getFormatedValue(ContentContext ctx) {
+		return getValue();
+	}
 
 	public Field newInstance(IContentVisualComponent inComp) {
 		Field newInstance;
@@ -478,6 +494,19 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 			DynamicComponent refComp = getReferenceComponent(ctx);
 			if (refComp != null) {
 				return refComp.getField(ctx, getName()).getValue();
+			}
+		}
+		return null;
+	}
+	
+	protected String getReferenceFormatedValue(ContentContext ctx) throws Exception {
+		String value = getFormatedValue(ctx);
+		if (!StringHelper.isEmpty(value)) {
+			return value;
+		} else if (!isI18n()) {
+			DynamicComponent refComp = getReferenceComponent(ctx);
+			if (refComp != null) {
+				return refComp.getField(ctx, getName()).getFormatedValue(ctx);
 			}
 		}
 		return null;
