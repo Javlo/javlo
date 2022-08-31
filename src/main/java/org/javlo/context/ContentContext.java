@@ -1102,7 +1102,7 @@ public class ContentContext {
 	}
 
 	public Locale getLocale() {
-		return new Locale(getRequestContentLanguage());
+		return new Locale(getRequestContentLanguage(), getLocalCountry());
 	}
 
 	/**
@@ -2409,6 +2409,10 @@ public class ContentContext {
 
 	public void setNoCache(boolean noCache) {
 		this.noCache = noCache;
+	}
+	
+	public String getLocalCountry() {
+		return getGlobalContext().getLocaleCountry();
 	}
 
 }

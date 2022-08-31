@@ -2283,10 +2283,10 @@ public class StaticConfig extends Observable {
 	public String getZoneDateTime() {
 		return properties.getString("calendar.zone", null);
 	}
-
 	
-	public static void main(String[] args) {
-		System.out.println(">>>>>>>>> StaticConfig.main : getJavloHome = "+getJavloHome()); //TODO: remove debug trace
+	public String getLocaleCountry() {
+		return properties.getString("locale.country", "be");
 	}
+
 
 }

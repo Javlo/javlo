@@ -4554,5 +4554,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			save();
 		}
 	}
+	
+	public String getLocaleCountry() {
+		return getStaticConfig().getLocaleCountry();
+	}
 
 }
