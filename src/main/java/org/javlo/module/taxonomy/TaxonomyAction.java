@@ -97,7 +97,8 @@ public class TaxonomyAction extends AbstractModuleAction {
 				}
 			}			
 			if (!StringHelper.isEmpty(rs.getParameter("newname-"+bean.getId(), null))) {
-				String newName = cleanName(rs.getParameter("newname-"+bean.getId(), null));
+				String nName = rs.getParameter("newname-"+bean.getId(), null);
+				String newName = cleanName(nName);
 				if (!nName.equals(newName)) {
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("taxonomy.create.bad-name", "Node is create but name was changed, because your name was unvalid."), GenericMessage.ALERT));
 				}
