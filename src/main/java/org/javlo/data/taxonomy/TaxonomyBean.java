@@ -1,6 +1,7 @@
 package org.javlo.data.taxonomy;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -20,16 +21,28 @@ public class TaxonomyBean {
 	public TaxonomyBean() {
 	}
 	
-	public TaxonomyBean duplicate (TaxonomyBean parent, String prefixId) {
+	public TaxonomyBean duplicateForLink (TaxonomyBean parent, String prefixId) {
 		TaxonomyBean newBean = new TaxonomyBean(prefixId+id, name, parent);
 		newBean.labels = labels;
 		newBean.id = prefixId+id;
 		newBean.decoration = decoration;
 		for (TaxonomyBean child : children) {
-			newBean.children.add(child.duplicate(newBean, prefixId));
+			child.setParent(newBean);
+			newBean.children.add(child.duplicateForLink(newBean, prefixId));
 		}
 		if (newBean.getName().startsWith("#")) {
 			newBean.name = newBean.name.substring(1);
+		}
+		return newBean;
+	}
+	
+	public TaxonomyBean duplicate () {
+		TaxonomyBean newBean = new TaxonomyBean(id, name, parent);
+		newBean.labels = labels;
+		newBean.decoration = decoration;
+		for (TaxonomyBean child : children) {
+			child.setParent(newBean);
+			newBean.children.add(child.duplicate());
 		}
 		return newBean;
 	}
@@ -255,6 +268,17 @@ public class TaxonomyBean {
 	
 	public boolean isTarget() {
 		return name.startsWith(">");
+	}
+	
+	public boolean removeChild(String id) {
+		Iterator<TaxonomyBean> childrenIte = children.iterator();
+		while(childrenIte.hasNext()) {
+			if (childrenIte.next().getId().equals(id)) {
+				childrenIte.remove();
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

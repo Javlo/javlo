@@ -106,6 +106,11 @@ public class TaxonomyService {
 		return root;
 	}
 
+	public TaxonomyBean getLinkedRoot() {
+		System.out.println(">>>>>>>>> TaxonomyService.getLinkedRoot : START"); // TODO: remove debug trace
+		return getTaxonomyBean("0", true);
+	}
+
 	public boolean isActive() {
 		return root.getChildren().size() > 0;
 	}
@@ -195,8 +200,9 @@ public class TaxonomyService {
 		}
 	}
 
-	private void fillMap(Map<String, TaxonomyBean> sources, TaxonomyBean currentBean, boolean resolveLink) {
+	private void fillMap(Map<String, TaxonomyBean> sources, List<TaxonomyBean> tobeDeleted, TaxonomyBean currentBean, boolean resolveLink) {
 		if (resolveLink && currentBean.isSource()) {
+			tobeDeleted.add(currentBean);
 			return;
 		}
 		Map<String, TaxonomyBean> taxonomyBeanMap = getTaxonomyMap(resolveLink);
@@ -207,14 +213,24 @@ public class TaxonomyService {
 				currentBean.setName(currentBean.getName() + " ERROR REF. NOT FOUND.");
 			}
 			if (sourceBean != null) {
-				TaxonomyBean newBean = sourceBean.duplicate(currentBean.getParent(), currentBean.getId());
+				TaxonomyBean newBean = sourceBean.duplicateForLink(currentBean.getParent(), currentBean.getId());
+				
+				// replace bean in parent
+				int pos=0;
+				for (TaxonomyBean child : currentBean.getParent().getChildren()) {
+					if (child.getId().equals(currentBean.getId())) {
+						currentBean.getParent().setName("child replaced");
+						currentBean.getParent().getChildren().set(pos, newBean);
+					}
+					pos++;
+				}
 				currentBean = newBean;
 			}
 		}
 		taxonomyBeanMap.put(currentBean.getId(), currentBean);
-		Iterator<TaxonomyBean> ite = currentBean.getChildren().iterator();
+		Iterator<TaxonomyBean> ite = currentBean.getChildren().iterator();		
 		while (ite.hasNext()) {
-			fillMap(sources, ite.next(), resolveLink);
+			fillMap(sources, tobeDeleted, ite.next(), resolveLink);
 		}
 	}
 
@@ -274,7 +290,14 @@ public class TaxonomyService {
 			synchronized (this) {
 				taxonomyBeanMap = getTaxonomyMap(resolveLink);
 				if (taxonomyBeanMap.size() == 0) {
-					fillMap(getAllSources(), root, resolveLink);
+					TaxonomyBean root = resolveLink ? this.root.duplicate() : this.root;
+					root.setName("MYROOT");
+					List<TaxonomyBean> toBeDeleted = new LinkedList<>();
+					fillMap(getAllSources(),toBeDeleted, root, resolveLink);
+					
+					for (TaxonomyBean taxonomyBean : toBeDeleted) {
+						taxonomyBean.getParent().removeChild(taxonomyBean.getId());
+					}
 				}
 				options = null;
 			}
@@ -541,6 +564,11 @@ public class TaxonomyService {
 
 	public String getAsJson() {
 		String json = new Gson().toJson(getRoot());
+		return json;
+	}
+
+	public String getAsJsonLinked() {
+		String json = new Gson().toJson(getLinkedRoot());
 		return json;
 	}
 
