@@ -927,6 +927,9 @@ public class ContentService implements IPrintInfo {
 	}
 
 	public synchronized int duplicateKeys(String oldKeyPrefix, String newKeyPrefix) {
+		if (previewGlobalMap == null) {
+			return 0;
+		}
 		Collection<String> keys = previewGlobalMap.keySet();
 		Collection<String> toBeModified = new LinkedList<String>();
 		int c = 0;
