@@ -170,7 +170,7 @@ public class CalendarBean {
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.YEAR, year);
 		cal.set(Calendar.MONTH, month);
-		SimpleDateFormat format = new SimpleDateFormat("MMMM yyyy", new Locale(ctx.getContextLanguage()));
+		SimpleDateFormat format = new SimpleDateFormat("MMMM yyyy", ctx.getLocale());
 		return format.format(cal.getTime());
 	}
 

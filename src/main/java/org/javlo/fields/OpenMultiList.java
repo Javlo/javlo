@@ -85,7 +85,7 @@ public class OpenMultiList extends Field {
 		Collections.sort(values, new JavaHelper.MapEntriesSortOnValue());
 		out.println("<div class=\"form-group field-"+getName()+"\">");
 		out.println(getEditLabelCode());
-		out.println("<div class=\"row\"><div class=\""+LABEL_CSS+"\"><label for=\"" + getInputName() + "\">" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label></div>");
+		out.println("<div class=\"row\"><div class=\""+LABEL_CSS+"\"><label for=\"" + getInputName() + "\">" + getLabel(ctx, ctx.getLocale()) + " : </label></div>");
 		if (!ctx.isVisualMode()) {
 			out.println("<div class=\"col-sm-5\">");
 			out.println("<div class=\"form-check form-check-inline\">");

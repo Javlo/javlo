@@ -832,9 +832,9 @@ public class PageBean implements Serializable {
 		if (ctx.isAsModifyMode()) {
 			locale = new Locale(ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession()));
 		} else {
-			locale = new Locale(ctx.getLanguage());
+			locale = ctx.getLocale();
 		}
-		Locale lg = new Locale(ctx.getRequestContentLanguage());
+		Locale lg = ctx.getLocale();
 		return lg.getDisplayName(locale);
 	}
 	

@@ -107,7 +107,7 @@ public class FieldExternalLink extends MetaField implements ILink {
 
 		
 		out.println("<div class=\"form-group\"><fieldset>");
-		out.println("<legend>" + getUserLabel(ctx, new Locale(ctx.getRequestContentLanguage())) + "</legend>");
+		out.println("<legend>" + getUserLabel(ctx, ctx.getLocale()) + "</legend>");
 		out.println("<div class=\"row\"><div class=\"col-sm-6\">");
 		out.println("<div class=\"row form-group\"><div class=\"col-sm-2\">");
 		out.println("<label for=\"" + getInputLinkName() + "\">" + getLinkLabel() + " : </label></div>");

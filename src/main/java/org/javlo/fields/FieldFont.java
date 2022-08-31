@@ -24,7 +24,7 @@ public class FieldFont extends Field {
 	}
 	
 	protected String getPreviewCode(ContentContext ctx, boolean title) throws Exception {			
-		return getDisplayValue(ctx, new Locale(ctx.getContextRequestLanguage()));
+		return getDisplayValue(ctx, ctx.getLocale());
 	}
 	
 	@Override
@@ -40,10 +40,10 @@ public class FieldFont extends Field {
 			out.println(getEditLabelCode());	
 			String label=null;;
 			if (search) {
-				label = getSearchLabel(ctx, new Locale(ctx.getContextRequestLanguage()));
+				label = getSearchLabel(ctx, ctx.getLocale());
 			}
 			if (StringHelper.isEmpty(label)) {
-				label = getLabel(ctx, new Locale(ctx.getContextRequestLanguage()));
+				label = getLabel(ctx, ctx.getLocale());
 			}
 			out.println("<label class=\"col-form-label\" for=\"" + getInputName() + "\">" + label + " : </label>");
 			String readOnlyHTML = "";

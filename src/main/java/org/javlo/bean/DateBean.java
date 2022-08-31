@@ -44,7 +44,7 @@ public class DateBean {
 		}
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
-		return calendar.getDisplayName( Calendar.DAY_OF_WEEK ,Calendar.LONG, new Locale(ctx.get().getRequestContentLanguage()));
+		return calendar.getDisplayName( Calendar.DAY_OF_WEEK ,Calendar.LONG, ctx.get().getLocale());
 	}
 
 	public int getMonth() {
@@ -56,7 +56,7 @@ public class DateBean {
 	public String getMonthText() {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
-		return calendar.getDisplayName( Calendar.MONTH ,Calendar.LONG, new Locale(ctx.get().getRequestContentLanguage()));
+		return calendar.getDisplayName( Calendar.MONTH ,Calendar.LONG, ctx.get().getLocale());
 	}
 
 	public int getYear() {

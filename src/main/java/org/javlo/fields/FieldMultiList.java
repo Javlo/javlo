@@ -33,7 +33,7 @@ public class FieldMultiList extends Field {
 			return "list not found !";
 		}
 		
-		Collection<Map.Entry<String, String>> valuesCol = getList(ctx, getListName(), new Locale(ctx.getContextLanguage())).entrySet();
+		Collection<Map.Entry<String, String>> valuesCol = getList(ctx, getListName(), ctx.getLocale()).entrySet();
 		Collection<Map.Entry<String, String>> values = valuesCol;
 		if (values.size() == 0) {
 			return "";
@@ -42,7 +42,7 @@ public class FieldMultiList extends Field {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 		out.println("<div class=\"form-row\"><div class=\""+LABEL_CSS+"\">");
-		out.println("<label>" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label></div>");
+		out.println("<label>" + getLabel(ctx, ctx.getLocale()) + " : </label></div>");
 		out.println(getEditLabelCode());
 		out.println("<div class=\""+VALUE_SIZE+"\">");
 
@@ -108,7 +108,7 @@ public class FieldMultiList extends Field {
 		String value = getValue();
 		out.println("<ul>");
 		for (String item : value.split(";")) {
-			out.println("<li>" + getList(ctx, getListName(), new Locale(ctx.getRequestContentLanguage())).get(item) + "</li>");
+			out.println("<li>" + getList(ctx, getListName(), ctx.getLocale()).get(item) + "</li>");
 		}
 		out.println("</ul>");
 		out.close();

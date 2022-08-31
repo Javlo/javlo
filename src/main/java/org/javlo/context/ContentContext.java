@@ -145,6 +145,8 @@ public class ContentContext {
 	private boolean noCache = false;
 	
 	private Set<String> mirrorId = new HashSet<>();
+	
+	private Locale locale = null;
 
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free, boolean pageManagement) {
 		ContentContext ctx = new ContentContext();
@@ -1102,7 +1104,10 @@ public class ContentContext {
 	}
 
 	public Locale getLocale() {
-		return new Locale(getRequestContentLanguage(), getLocalCountry());
+		if (locale == null) {
+			locale = new Locale(getRequestContentLanguage(), getLocalCountry());
+		}
+		return locale;
 	}
 
 	/**

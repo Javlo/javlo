@@ -119,7 +119,7 @@ public class FieldInternalLink extends Field {
 		PrintWriter out = new PrintWriter(writer);
 
 		out.println("<fieldset>");
-		out.println("<legend>" + getUserLabel(ctx, new Locale(ctx.getRequestContentLanguage())) + "</legend>");
+		out.println("<legend>" + getUserLabel(ctx, ctx.getLocale()) + "</legend>");
 
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getInputLinkName() + "\">" + getLinkLabel() + " : </label>");

@@ -233,7 +233,7 @@ public class ListService {
 		}
 		outList = localLists.get(name);
 		if (outList == null) {
-			outList = ctx.getCurrentTemplate().getAllList(ctx.getGlobalContext(), new Locale(ctx.getRequestContentLanguage())).get(name);
+			outList = ctx.getCurrentTemplate().getAllList(ctx.getGlobalContext(), ctx.getLocale()).get(name);
 			if (outList == null) {
 				ContentService content = ContentService.getInstance(ctx.getRequest());
 				MenuElement page = content.getNavigation(ctx).searchChildFromName(name);

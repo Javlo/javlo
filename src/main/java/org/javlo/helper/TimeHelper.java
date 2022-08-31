@@ -238,7 +238,7 @@ public class TimeHelper {
 			locale = new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()));
 		} else {
 			dateFormatString = i18nAccess.getContentViewText("date.full", (String) null);
-			locale = new Locale(ctx.getRequestContentLanguage());
+			locale = ctx.getLocale();
 		}
 
 		DateFormat dateFormat;

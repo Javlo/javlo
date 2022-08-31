@@ -79,7 +79,7 @@ public class FieldSound extends FieldFile {
 		if ((getValue() != null && getValue().trim().length() == 0) || getCurrentFile() == null || getCurrentFile().trim().length() == 0) {
 			return "";
 		}		
-		return getDisplayValue(ctx, new Locale(ctx.getContextRequestLanguage()));
+		return getDisplayValue(ctx, ctx.getLocale());
 	}
 	
 	public String getFileURL(ContentContext ctx) {

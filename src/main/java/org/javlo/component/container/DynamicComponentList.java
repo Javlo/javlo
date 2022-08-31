@@ -265,7 +265,7 @@ public class DynamicComponentList extends AbstractPropertiesComponent {
 					boolean display = true;
 					List<Field> fields = container.getFields(ctx);				
 					for (Field field : fields) {
-						if (!fieldMatch(ctx, field.getName(), field.getReference(ctx).getValue(new Locale(ctx.getRequestContentLanguage())))) {
+						if (!fieldMatch(ctx, field.getName(), field.getReference(ctx).getValue(ctx.getLocale()))) {
 							display = false;
 						}
 					}

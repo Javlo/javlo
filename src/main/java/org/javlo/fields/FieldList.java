@@ -45,7 +45,7 @@ public class FieldList extends Field {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 		
-		Collection<Map.Entry<String, String>> valuesCol = getList(ctx, getListName(), new Locale(ctx.getContextLanguage())).entrySet();
+		Collection<Map.Entry<String, String>> valuesCol = getList(ctx, getListName(), ctx.getLocale()).entrySet();
 		Collection<Map.Entry<String, String>> values = valuesCol;
 		if (values.size() == 0) {
 			return "<div class=\"alert alert-danger\" role=\"alert\">Error on field '"+getName()+"' list empty or not found : "+getListName()+"</div>";
@@ -53,7 +53,7 @@ public class FieldList extends Field {
 
 		out.println("<div class=\"form-group\">");
 		out.println(getEditLabelCode());
-		out.println("<div class=\"row field-"+getName()+"\"><div class=\""+LABEL_CSS+"\"><label for=\"" + getInputName() + "\">" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label></div>");
+		out.println("<div class=\"row field-"+getName()+"\"><div class=\""+LABEL_CSS+"\"><label for=\"" + getInputName() + "\">" + getLabel(ctx, ctx.getLocale()) + " : </label></div>");
 		out.println("<div class=\""+VALUE_SIZE+"\"><select class=\"form-control\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");
 		
 		if (isFirstEmpty()) {

@@ -49,7 +49,7 @@ public class FieldDate extends Field implements IDate {
 			if (format == null) {
 				return getShortDate();
 			} else {
-				SimpleDateFormat dateFormat = new SimpleDateFormat(format, new Locale(ctx.getRequestContentLanguage()));
+				SimpleDateFormat dateFormat = new SimpleDateFormat(format, ctx.getLocale());
 				Date date = FieldDate.this.getDate(ctx);
 				if (date == null) {
 					return null;
@@ -137,7 +137,7 @@ public class FieldDate extends Field implements IDate {
 				cal.set(Calendar.MONTH, i);
 				values.put(""+i, format.format(cal.getTime()));
 			}
-			return renderSelect(ctx, getSearchLabel(ctx, new Locale(ctx.getContextRequestLanguage())), "", values, false, "field-"+getName());
+			return renderSelect(ctx, getSearchLabel(ctx, ctx.getLocale()), "", values, false, "field-"+getName());
 		} else {
 			return"bad search type : "+getSearchType();
 		}
@@ -160,7 +160,7 @@ public class FieldDate extends Field implements IDate {
 		if (format == null) {
 			out.println(XHTMLHelper.textToXHTML(displayStr));
 		} else {
-			SimpleDateFormat dateFormat = new SimpleDateFormat(format, new Locale(ctx.getRequestContentLanguage()));
+			SimpleDateFormat dateFormat = new SimpleDateFormat(format, ctx.getLocale());
 			out.println(dateFormat.format(getDate()));			
 		}
 

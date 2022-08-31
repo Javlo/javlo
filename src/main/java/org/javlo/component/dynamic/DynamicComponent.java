@@ -295,7 +295,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 			if (field != null) {
 				field.setLast(ite.hasNext());
 				if (field.getTranslation() != null) {
-					field.setCurrentLocale(new Locale(ctx.getRequestContentLanguage()));
+					field.setCurrentLocale(ctx.getLocale());
 				}
 				if (field.isDiplayedInList(ctx) || !asList) {
 					if (field.isViewDisplayed() && field.isPertinent(ctx)) {

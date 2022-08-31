@@ -433,7 +433,7 @@ public class ComponentHelper {
 					values.add(comp.getArea());
 					List<Field> fields = dcomp.getFields(ctx);
 					for (Field field : fields) {
-						values.add(field.getValue(new Locale(ctx.getRequestContentLanguage())));
+						values.add(field.getValue(ctx.getLocale()));
 					}
 					String[] row = new String[values.size()];
 					int i = 0;

@@ -1885,7 +1885,7 @@ public class XHTMLHelper {
 					}
 					if (content.contentExistForContext(localCtx)) {
 
-						Locale currentLg = new Locale(ctx.getRequestContentLanguage());
+						Locale currentLg = ctx.getLocale();
 						Locale targetLg = new Locale(lg);
 
 						writer.write("<li " + cssClass + "><a " + lgcode + "title=\"" + targetLg.getDisplayLanguage(currentLg) + "\" href=\"" + URLHelper.createURL(localCtx) + "\"><span>" + lg + "</span></a></li>");

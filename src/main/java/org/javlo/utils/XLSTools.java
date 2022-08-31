@@ -137,7 +137,7 @@ public class XLSTools {
 	private static String readExcelCell(ContentContext ctx, XSSFCell cell) {
 		Locale locale = Locale.ENGLISH;
 		if (ctx != null) {
-			locale = new Locale(ctx.getRequestContentLanguage());
+			locale = ctx.getLocale();
 		}
 		HSSFDataFormatter formatter = new HSSFDataFormatter(locale);
 		String outCell;
@@ -175,13 +175,13 @@ public class XLSTools {
 	}
 
 	private static String readExcelCell(ContentContext ctx, HSSFCell cell) {
-		HSSFDataFormatter formatter = new HSSFDataFormatter(new Locale(ctx.getRequestContentLanguage()));
+		HSSFDataFormatter formatter = new HSSFDataFormatter(ctx.getLocale());
 		String outCell;
 		if (cell.getCellType() == CellType.FORMULA) {
 			if (cell.getCachedFormulaResultType() == CellType.STRING) {
 				outCell = cell.getStringCellValue();
 			} else if (cell.getCachedFormulaResultType() == CellType.NUMERIC) {
-				outCell = StringHelper.renderDouble(cell.getNumericCellValue(), new Locale(ctx.getRequestContentLanguage()));
+				outCell = StringHelper.renderDouble(cell.getNumericCellValue(), ctx.getLocale());
 			} else if (cell.getCachedFormulaResultType() == CellType.BOOLEAN) {
 				outCell = "" + cell.getBooleanCellValue();
 			} else {

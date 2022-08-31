@@ -357,7 +357,7 @@ public class InfoBean {
 
 	public String getDate() {
 		try {
-			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()), getCurrentPage().getContentDateNeverNull(ctx), globalContext.getShortDateFormat());
+			return StringHelper.renderDate(ctx.getLocale(), getCurrentPage().getContentDateNeverNull(ctx), globalContext.getShortDateFormat());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -366,7 +366,7 @@ public class InfoBean {
 
 	public String getMediumDate() {
 		try {
-			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()), getCurrentPage().getContentDateNeverNull(ctx), globalContext.getMediumDateFormat());
+			return StringHelper.renderDate(ctx.getLocale(), getCurrentPage().getContentDateNeverNull(ctx), globalContext.getMediumDateFormat());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -375,7 +375,7 @@ public class InfoBean {
 
 	public String getFullDate() {
 		try {
-			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()), getCurrentPage().getContentDateNeverNull(ctx), globalContext.getFullDateFormat());
+			return StringHelper.renderDate(ctx.getLocale(), getCurrentPage().getContentDateNeverNull(ctx), globalContext.getFullDateFormat());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -384,7 +384,7 @@ public class InfoBean {
 
 	public String getNowDate() {
 		try {
-			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()), new Date(), globalContext.getShortDateFormat());
+			return StringHelper.renderDate(ctx.getLocale(), new Date(), globalContext.getShortDateFormat());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -393,7 +393,7 @@ public class InfoBean {
 
 	public String getNowMediumDate() {
 		try {
-			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()), new Date(), globalContext.getMediumDateFormat());
+			return StringHelper.renderDate(ctx.getLocale(), new Date(), globalContext.getMediumDateFormat());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -402,7 +402,7 @@ public class InfoBean {
 
 	public String getNowFullDate() {
 		try {
-			return StringHelper.renderDate(new Locale(ctx.getRequestContentLanguage()), new Date(), globalContext.getFullDateFormat());
+			return StringHelper.renderDate(ctx.getLocale(), new Date(), globalContext.getFullDateFormat());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -514,9 +514,9 @@ public class InfoBean {
 		if (ctx.isAsModifyMode()) {
 			locale = new Locale(ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession()));
 		} else {
-			locale = new Locale(ctx.getLanguage());
+			locale = ctx.getLocale();
 		}
-		Locale lg = new Locale(ctx.getRequestContentLanguage());
+		Locale lg = ctx.getLocale();
 		return lg.getDisplayName(locale);
 	}
 

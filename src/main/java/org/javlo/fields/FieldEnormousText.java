@@ -16,7 +16,7 @@ public class FieldEnormousText extends Field {
 		PrintWriter out = new PrintWriter(writer);		
 
 		out.println("<div class=\"line\">");
-		out.println("<label for=\"" + getInputName() + "\">" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label>");
+		out.println("<label for=\"" + getInputName() + "\">" + getLabel(ctx, ctx.getLocale()) + " : </label>");
 		out.print("<textarea class=\"form-control\" rows=\"30\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\">");
 		out.print(StringHelper.neverNull(getValue()));
 		out.println("</textarea>");

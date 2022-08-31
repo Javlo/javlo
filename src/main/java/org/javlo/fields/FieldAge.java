@@ -33,7 +33,7 @@ public class FieldAge extends FieldDate {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		out.println("<div class=\"row\"><div class=\"col-sm-4 align-middle\">");		
-		out.println("	<label class=\"col-form-label\" for=\"" + getInputName() + "\">" + getSearchLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label>");
+		out.println("	<label class=\"col-form-label\" for=\"" + getInputName() + "\">" + getSearchLabel(ctx, ctx.getLocale()) + " : </label>");
 		out.println("</div><div class=\"col-sm-8\"><input type=\"hidden\" name=\""+getInputName()+"\" value=\"1\" />");
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		out.println("<div class=\"form-group form-inline-2 text-right\">");

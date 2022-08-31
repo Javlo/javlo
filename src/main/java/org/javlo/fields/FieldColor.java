@@ -29,10 +29,10 @@ public class FieldColor extends Field {
 		String label = null;
 		;
 		if (search) {
-			label = getSearchLabel(ctx, new Locale(ctx.getContextRequestLanguage()));
+			label = getSearchLabel(ctx, ctx.getLocale());
 		}
 		if (StringHelper.isEmpty(label)) {
-			label = getLabel(ctx, new Locale(ctx.getContextRequestLanguage()));
+			label = getLabel(ctx, ctx.getLocale());
 		}
 		out.println("	<label class=\"col-form-label\" for=\"" + getInputName() + "\">" + label + " : </label>");
 		String readOnlyHTML = "";

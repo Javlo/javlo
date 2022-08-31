@@ -356,14 +356,14 @@ public class ArrayFileComponent extends GenericFile {
 	}
 
 	private static String readExcelCell(ContentContext ctx, HSSFCell cell) {
-		HSSFDataFormatter formatter = new HSSFDataFormatter(new Locale(ctx.getRequestContentLanguage()));
+		HSSFDataFormatter formatter = new HSSFDataFormatter(ctx.getLocale());
 		String outCell;
 
 		if (cell.getCellType() == CellType.FORMULA) {
 			if (cell.getCachedFormulaResultType() == CellType.STRING) {
 				outCell = cell.getStringCellValue();
 			} else if (cell.getCachedFormulaResultType() == CellType.NUMERIC) {
-				outCell = StringHelper.renderDouble(cell.getNumericCellValue(), new Locale(ctx.getRequestContentLanguage()));
+				outCell = StringHelper.renderDouble(cell.getNumericCellValue(), ctx.getLocale());
 			} else if (cell.getCachedFormulaResultType() == CellType.BOOLEAN) {
 				outCell = "" + cell.getBooleanCellValue();
 			} else {

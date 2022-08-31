@@ -2529,7 +2529,7 @@ public class StringHelper {
 			if (dateFormatString == null && globalContext.getShortDateFormat().trim().length() > 0) {
 				dateFormatString = globalContext.getShortDateFormat();
 			}
-			locale = new Locale(ctx.getRequestContentLanguage());
+			locale = ctx.getLocale();
 		}
 
 		DateFormat dateFormat;
@@ -2756,7 +2756,7 @@ public class StringHelper {
 		if (manualDateFormat != null && manualDateFormat.trim().length() > 0) {
 			dateFormat = new SimpleDateFormat(manualDateFormat);
 		} else {
-			dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, new Locale(ctx.getContextRequestLanguage()));
+			dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, ctx.getLocale());
 		}
 
 		return dateFormat.format(date);
@@ -2789,7 +2789,7 @@ public class StringHelper {
 		if (date == null) {
 			return "";
 		}
-		DateFormat dateFormat = new SimpleDateFormat("MMM yyyy", new Locale(ctx.getContextRequestLanguage()));
+		DateFormat dateFormat = new SimpleDateFormat("MMM yyyy", ctx.getLocale());
 		return dateFormat.format(date);
 	}
 
@@ -2826,10 +2826,10 @@ public class StringHelper {
 		if (manualDateFormat != null && manualDateFormat.trim().length() > 0) {
 			dateFormat = new SimpleDateFormat(manualDateFormat);
 		} else {
-			dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, new Locale(ctx.getContextRequestLanguage()));
+			dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, ctx.getLocale());
 		}
 
-		DateFormat dayFormat = new SimpleDateFormat("EEEE", new Locale(ctx.getContextRequestLanguage()));
+		DateFormat dayFormat = new SimpleDateFormat("EEEE", ctx.getLocale());
 
 		return dayFormat.format(date) + ' ' + dateFormat.format(date);
 	}
@@ -2930,7 +2930,7 @@ public class StringHelper {
 			locale = new Locale(globalContext.getEditLanguage(ctx.getRequest().getSession()));
 		} else {
 			dateFormatString = i18nAccess.getContentViewText("date.full", (String) null);
-			locale = new Locale(ctx.getRequestContentLanguage());
+			locale = ctx.getLocale();
 		}
 
 		DateFormat dateFormat;

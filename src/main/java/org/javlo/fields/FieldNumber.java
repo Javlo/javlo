@@ -68,7 +68,7 @@ public class FieldNumber extends Field {
 			if (!StringHelper.isEmpty(getUnity(ctx))) {
 				unity = "<span class=\"\">(" + getUnity(ctx) + ")</span>";
 			}
-			out.println("	<label class=\"col-form-label\" for=\"" + getInputName() + "\">" + getSearchLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " " + unity + " : </label>");
+			out.println("	<label class=\"col-form-label\" for=\"" + getInputName() + "\">" + getSearchLabel(ctx, ctx.getLocale()) + " " + unity + " : </label>");
 			out.println("</div><div class=\"col-sm-8\"><input type=\"hidden\" name=\"" + getInputName() + "\" value=\"1\" />");
 			RequestService rs = RequestService.getInstance(ctx.getRequest());
 			out.println("<div class=\"form-group form-inline-2 text-right\">");
@@ -122,7 +122,7 @@ public class FieldNumber extends Field {
 		out.println("<div class=\"row\"><div class=\"" + LABEL_CSS + "\">");
 		out.println(getEditLabelCode());
 		boolean isUnity = !StringHelper.isEmpty(getUnity(ctx));
-		out.println("<label for=\"" + getInputName() + "\">" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label></div><div class=\"" + (isUnity ? SMALL_VALUE_SIZE : VALUE_SIZE) + "\">");
+		out.println("<label for=\"" + getInputName() + "\">" + getLabel(ctx, ctx.getLocale()) + " : </label></div><div class=\"" + (isUnity ? SMALL_VALUE_SIZE : VALUE_SIZE) + "\">");
 		String readOnlyHTML = "";
 		if (isReadOnly()) {
 			readOnlyHTML = " readonly=\"readonly\"";

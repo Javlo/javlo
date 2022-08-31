@@ -26,7 +26,7 @@ public class FieldSmallText extends Field {
 		PrintWriter out = new PrintWriter(writer);
 
 		out.println("<div class=\"form-group " + getType() + "\">");
-		out.println("<label for=\"" + getInputName() + "\">" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + " : </label>");
+		out.println("<label for=\"" + getInputName() + "\">" + getLabel(ctx, ctx.getLocale()) + " : </label>");
 		String readOnlyHTML = "";
 		if (isReadOnly()) {
 			readOnlyHTML = " readonly=\"readonly\"";

@@ -1411,7 +1411,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 		Calendar backDate = getBackDateNullIfUndefined(ctx);
 
-		SimpleDateFormat format = new SimpleDateFormat(MOUNT_FORMAT, new Locale(ctx.getRequestContentLanguage()));
+		SimpleDateFormat format = new SimpleDateFormat(MOUNT_FORMAT, ctx.getLocale());
 
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement menu = content.getNavigation(ctx);

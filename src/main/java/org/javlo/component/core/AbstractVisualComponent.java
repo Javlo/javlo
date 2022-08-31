@@ -1458,7 +1458,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		Collection<String> lgs = globalContext.getContentLanguages();
 		for (String lg : lgs) {
 			Locale locale = new Locale(lg);
-			sufixPreffix = new SuffixPrefix("<span lang=\"" + locale.getLanguage() + "\">", "</span>", locale.getDisplayLanguage(new Locale(ctx.getRequestContentLanguage())));
+			sufixPreffix = new SuffixPrefix("<span lang=\"" + locale.getLanguage() + "\">", "</span>", locale.getDisplayLanguage(ctx.getLocale()));
 			out.add(sufixPreffix);
 		}
 		return out;
@@ -1882,7 +1882,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		Collection<String> lgs = globalContext.getContentLanguages();
 		for (String lg : lgs) {
 			Locale locale = new Locale(lg);
-			sufixPreffix = new SuffixPrefix("<span lang=\"" + locale.getLanguage() + "\">", "</span>", locale.getDisplayLanguage(new Locale(ctx.getRequestContentLanguage())));
+			sufixPreffix = new SuffixPrefix("<span lang=\"" + locale.getLanguage() + "\">", "</span>", locale.getDisplayLanguage(ctx.getLocale()));
 			out.add(sufixPreffix);
 		}
 		return out;

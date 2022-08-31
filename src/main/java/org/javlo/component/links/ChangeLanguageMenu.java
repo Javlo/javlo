@@ -117,7 +117,7 @@ public class ChangeLanguageMenu extends AbstractVisualComponent {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 			String label = (new Locale(lg)).getDisplayLanguage(new Locale(lg));
 			label = i18nAccess.getAllText("lang."+lg, label);
-			String translatedLabel = (new Locale(lg)).getDisplayLanguage(new Locale(ctx.getLanguage()));
+			String translatedLabel = (new Locale(lg)).getDisplayLanguage(ctx.getLocale());
 			String url = URLHelper.createURL(lgCtx);			
 			LanguageBean bean = new LanguageBean();
 			bean.setLanguage(lg);

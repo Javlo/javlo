@@ -408,7 +408,7 @@ public class RSSReader extends ComplexPropertiesLink {
 				contentThread.start();
 			} else {
 				GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-				cachedContent = getRSSContent(new SimpleDateFormat(globalContext.getMediumDateFormat(), new Locale(ctx.getRequestContentLanguage())), getRule(), getComponentCssClass(ctx));
+				cachedContent = getRSSContent(new SimpleDateFormat(globalContext.getMediumDateFormat(), ctx.getLocale()), getRule(), getComponentCssClass(ctx));
 			}
 		}
 		return cachedContent;

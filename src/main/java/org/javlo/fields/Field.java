@@ -62,7 +62,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 
 		public FieldBean(ContentContext ctx) {
 			this.ctx = ctx;
-			this.contentLocale = new Locale(ctx.getRequestContentLanguage());
+			this.contentLocale = ctx.getLocale();
 		}
 
 		public String getId() {
@@ -463,7 +463,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	 * @throws Exception
 	 */
 	protected String getReferenceFieldView(ContentContext ctx) throws Exception {
-		return "<div class=\"slave-field line form-group\"><label>" + getLabel(ctx, new Locale(ctx.getContextRequestLanguage())) + "</label>" + getViewXHTMLCode(ctx) + "</div>";
+		return "<div class=\"slave-field line form-group\"><label>" + getLabel(ctx, ctx.getLocale()) + "</label>" + getViewXHTMLCode(ctx) + "</div>";
 	}
 
 	protected String referenceEditCode(ContentContext ctx) throws Exception {
@@ -535,10 +535,10 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		out.println(getEditLabelCode());	
 		String label=null;;
 		if (search) {
-			label = getSearchLabel(ctx, new Locale(ctx.getContextRequestLanguage()));
+			label = getSearchLabel(ctx, ctx.getLocale());
 		}
 		if (StringHelper.isEmpty(label)) {
-			label = getLabel(ctx, new Locale(ctx.getContextRequestLanguage()));
+			label = getLabel(ctx, ctx.getLocale());
 		}
 		out.println("	<label class=\"col-form-label\" for=\"" + getInputName() + "\">" + label + " : </label>");
 		String readOnlyHTML = "";
@@ -560,7 +560,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	}
 
 	public String getFieldPrefix(ContentContext ctx) {
-		Locale locale = new Locale(ctx.getRequestContentLanguage());
+		Locale locale = ctx.getLocale();
 		String prefix = properties.getProperty("field." + getUnicName() + ".prefix", getDefaultPrefix());
 		if (isLabelDisplayed()) {
 			return prefix + "<div class=\"label "+getUnicName()+"\">" + StringHelper.neverNull(getUserLabel(ctx, locale)) + "</div>";
@@ -980,7 +980,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	}
 	
 	protected String getUnity(ContentContext ctx) {
-		return getUnity(ctx, new Locale(ctx.getContextRequestLanguage()));
+		return getUnity(ctx, ctx.getLocale());
 	}
 	
 	protected String getSearchLabel(ContentContext ctx, Locale locale) {
@@ -1192,7 +1192,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	public boolean initContent(ContentContext ctx) throws Exception {
 		String initVal = getInitValue();
 		if (initVal == null) {
-			initVal = getLabel(ctx, new Locale(ctx.getRequestContentLanguage()));
+			initVal = getLabel(ctx, ctx.getLocale());
 		}
 		if (getValue() == null || getValue().trim().length() == 0) {
 			setValue(initVal);
@@ -1249,7 +1249,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 			Collections.sort(values, new JavaHelper.MapEntriesSortOnValue());
 		}
 		if (label == null) {
-			label = getLabel(ctx, new Locale(ctx.getContextRequestLanguage()));
+			label = getLabel(ctx, ctx.getLocale());
 		}
 
 		out.println("<div class=\"form-group "+StringHelper.neverNull(cssClass)+"\">");

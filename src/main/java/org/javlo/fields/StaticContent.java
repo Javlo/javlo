@@ -17,7 +17,7 @@ public class StaticContent extends Field {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 		out.println("<" + getTag() + " class=\"" + getType() + ' ' + getName() + ' ' + getCSSClass() + "\">");
-		out.println(XHTMLHelper.textToXHTML(StringHelper.neverNull(getLabel(ctx, new Locale(ctx.getRequestContentLanguage())))));
+		out.println(XHTMLHelper.textToXHTML(StringHelper.neverNull(getLabel(ctx, ctx.getLocale()))));
 		out.println("</" + getTag() + ">");
 
 		out.close();
