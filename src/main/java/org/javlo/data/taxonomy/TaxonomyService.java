@@ -196,6 +196,9 @@ public class TaxonomyService {
 	}
 
 	private void fillMap(Map<String, TaxonomyBean> sources, TaxonomyBean currentBean, boolean resolveLink) {
+		if (resolveLink && currentBean.isSource()) {
+			return;
+		}
 		Map<String, TaxonomyBean> taxonomyBeanMap = getTaxonomyMap(resolveLink);
 		if (resolveLink) {
 			TaxonomyBean sourceBean = sources.get(currentBean.getName());
