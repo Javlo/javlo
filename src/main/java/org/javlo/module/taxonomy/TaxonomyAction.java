@@ -82,7 +82,6 @@ public class TaxonomyAction extends AbstractModuleAction {
 			String name = rs.getParameter("name-"+bean.getId(), "");
 			if (name.length() > 0) {
 				String newName = cleanName(name);
-				newName = newName.replace("-", "_");
 				if (!name.equals(newName)) {
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("taxonomy.update.bad-name", "Name of node is updated but name was changed, because your name was unvalid."), GenericMessage.ALERT));
 				}
@@ -98,9 +97,7 @@ public class TaxonomyAction extends AbstractModuleAction {
 				}
 			}			
 			if (!StringHelper.isEmpty(rs.getParameter("newname-"+bean.getId(), null))) {
-				String nName = rs.getParameter("newname-"+bean.getId(), null);
-				String newName = StringHelper.createFileName(nName);
-				newName = newName.replace("-", "_");
+				String newName = cleanName(rs.getParameter("newname-"+bean.getId(), null));
 				if (!nName.equals(newName)) {
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("taxonomy.create.bad-name", "Node is create but name was changed, because your name was unvalid."), GenericMessage.ALERT));
 				}
@@ -139,6 +136,11 @@ public class TaxonomyAction extends AbstractModuleAction {
 		return null;
 	}
 	
+	public static void main(String[] args) {
+		System.out.println(cleanName("#coucou"));
+		System.out.println(cleanName("patrick été coucou"));
+	}
+	
 	private static String cleanName(String name) {
 		String newName = StringHelper.createFileName(name);
 		if (name.startsWith("#")) {
@@ -146,7 +148,8 @@ public class TaxonomyAction extends AbstractModuleAction {
 		} else if (name.startsWith(">")) {
 			newName = '>'+newName.substring(1);
 		}
-		return name;
+		newName = newName.replace("-", "_");
+		return newName;
 	}
 
 	public static String performMainPage(RequestService rs, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
