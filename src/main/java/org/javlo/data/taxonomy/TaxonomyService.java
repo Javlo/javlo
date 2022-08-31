@@ -107,7 +107,6 @@ public class TaxonomyService {
 	}
 
 	public TaxonomyBean getLinkedRoot() {
-		System.out.println(">>>>>>>>> TaxonomyService.getLinkedRoot : START"); // TODO: remove debug trace
 		return getTaxonomyBean("0", true);
 	}
 
