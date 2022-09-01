@@ -290,7 +290,6 @@ public class TaxonomyService {
 				taxonomyBeanMap = getTaxonomyMap(resolveLink);
 				if (taxonomyBeanMap.size() == 0) {
 					TaxonomyBean root = resolveLink ? this.root.duplicate() : this.root;
-					root.setName("MYROOT");
 					List<TaxonomyBean> toBeDeleted = new LinkedList<>();
 					fillMap(getAllSources(),toBeDeleted, root, resolveLink);
 					
