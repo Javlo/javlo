@@ -58,7 +58,10 @@ public class PDFHelper {
 		return out;
 	}
 	
-	public static int getPDFPageSize(File pdfFile) {		
+	public static int getPDFPageSize(File pdfFile) {
+		if (pdfFile == null || !pdfFile.isFile()) {
+			return -1;
+		}
 		PDDocument doc = null;
 		try {
 			doc = PDDocument.load(pdfFile);
