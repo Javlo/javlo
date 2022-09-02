@@ -584,7 +584,7 @@ public class XMLManipulationHelper {
 						previewCode = previewCode + "<img class=\"empty_image\" alt=\"\" style=\"height: 0; width: 0; margin:0; padding: 0;\" width=\"0\" height=\"0\" src=\"<%=URLHelper.createStaticURL(ctx, globalContext.getStaticConfig().getMailingFeedBackURI())%>\" /> ";
 					}
 
-					String footerResourceIndlue = "<!-- comp resources --><%for (String uri : currentPage.getExternalResources(ctx)) {%><%=XHTMLHelper.renderHeaderResourceInsertion(ctx, uri)%><%}%>";
+					String footerResourceIndlue = "<!-- comp resources --><%for (String uri : currentPage.getExternalResources(ctx)) {%><%=XHTMLHelper.renderHeaderResourceInsertion(ctx, uri, \""+template.getBuildId()+"\")%><%}%><!-- /comp resources -->";
 					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart() - 1, footerResourceIndlue + "<%=ctx.getGlobalContext().getFooterBloc()%>" + previewCode);
 				}
 
