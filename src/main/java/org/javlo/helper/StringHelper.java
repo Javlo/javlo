@@ -2799,6 +2799,13 @@ public class StringHelper {
 		nf.setGroupingUsed(false);
 		return nf.format(n);
 	}
+	
+	public static String renderNumber(long n, int size) {
+		NumberFormat nf = NumberFormat.getInstance();
+		nf.setMinimumIntegerDigits(size);
+		nf.setGroupingUsed(false);
+		return nf.format(n);
+	}
 
 	public static String renderOnlyTime(Date date) {
 		if (date == null) {

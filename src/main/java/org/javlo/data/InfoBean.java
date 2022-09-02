@@ -1992,7 +1992,7 @@ public class InfoBean {
 	
 	public String[] getLongDays() {
 		String[] days = new String[8];
-		Locale locale = new Locale(getUserLanguage());
+		Locale locale = ctx.getLocale();
 		Calendar cal = Calendar.getInstance(locale);
 		for (int i=1; i<=7; i++) {
 			cal.set(Calendar.DAY_OF_WEEK, i);
