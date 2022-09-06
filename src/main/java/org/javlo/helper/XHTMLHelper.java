@@ -3038,7 +3038,7 @@ public class XHTMLHelper {
 			if (!StringHelper.isEmpty(logoUrl)) {
 				xhtml = xhtml.replace("${logo}", logoUrl);
 			} else {
-				xhtml = xhtml.replace("${logo}", BASE64_CIRCLE);
+				xhtml = xhtml.replace("${logo}", "#");
 			}
 			if (logo == null) {
 				logo = ctx.getGlobalContext().getTemplateData().getLogo();
