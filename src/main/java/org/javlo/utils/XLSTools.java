@@ -612,6 +612,7 @@ public class XLSTools {
 			}
 			workbook.write(out);
 		} finally {
+			out.flush();
 			workbook.close();
 		}
 	}
