@@ -2054,8 +2054,7 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) throws IOException {
-		Map<String,String> map = textToMap("name=Patrick");
-		System.out.println("name="+map.get("name"));
+		System.out.println(renderTimeInSecond(10000));
 	}
 
 	public static LocalTime smartParseTime(String inTime) {
