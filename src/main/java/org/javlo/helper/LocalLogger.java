@@ -18,15 +18,15 @@ import org.javlo.io.AppendableTextFile;
  * @author pvandermaesen
  */
 public class LocalLogger {
-	
+
 	public static File SPECIAL_LOG_FILE = null;
 
 	public static boolean PRINT_TIME = false;
-	
+
 	public static boolean ERROR_ON_INIT = false;
 
 	private static AppendableTextFile specialLogFile = null;
-	
+
 	private static long crono = System.currentTimeMillis();
 	private static long latestStep = System.currentTimeMillis();
 
@@ -44,9 +44,9 @@ public class LocalLogger {
 	public final static int WARNING = 2;
 	public final static int ERROR = 3;
 	public final static int DEBUG = 4;
-	
+
 	public static void init(ServletContext application) {
-		
+
 	}
 
 	static String getMessageTypeLabel(int type) {
@@ -104,9 +104,9 @@ public class LocalLogger {
 	public static void forceStepCount(String key, String message) {
 		Long oldTime = (Long) times.get(key);
 		if (oldTime == null) {
-			System.out.println("key not found : "+key);
+			System.out.println("key not found : " + key);
 		} else {
-			log(DEBUG, '(' + key + ") " + message + " [" + (System.currentTimeMillis() - oldTime.longValue()) + " ms ]");
+			log(DEBUG, "[FSTEP-COUNT] - "+'(' + key + ") " + message + " [" + (System.currentTimeMillis() - oldTime.longValue()) + " ms ]");
 		}
 	}
 
@@ -116,10 +116,10 @@ public class LocalLogger {
 		}
 		Long oldTime = (Long) times.get(key);
 		if (oldTime == null) {
-			oldTime = (long)-1;
+			oldTime = (long) -1;
 		}
-		
-		log(DEBUG, "[STEP-COUNT] - "+message + " [" + StringHelper.renderTimeInSecond(System.currentTimeMillis() - oldTime.longValue()) + " ms ]");
+
+		log(DEBUG, "[STEP-COUNT] - " + message + " [" + StringHelper.renderTimeInSecond(System.currentTimeMillis() - oldTime.longValue()) + " ms ]");
 	}
 
 	public static void endCount(String key, String message) {
@@ -128,10 +128,10 @@ public class LocalLogger {
 		}
 		Long oldTime = (Long) times.get(key);
 		if (oldTime == null) {
-			System.out.println("key not found : "+key);
+			System.out.println("key not found : " + key);
 		} else {
 			times.remove(key);
-			log(DEBUG, message + " [" + (System.currentTimeMillis() - oldTime.longValue()) + " ms ]");
+			log(DEBUG, "[END-COUNT] - " + message + " [" + (System.currentTimeMillis() - oldTime.longValue()) + " ms ]");
 		}
 	}
 
@@ -140,13 +140,13 @@ public class LocalLogger {
 			specialLogFile.close();
 		}
 	}
-	
+
 	public static final void log(boolean print, String text) {
 		if (print) {
 			log(text);
 		}
 	}
-	
+
 	public static final void logStack(boolean print) {
 		if (print) {
 			StringWriter out = new StringWriter();
@@ -172,16 +172,16 @@ public class LocalLogger {
 			ERROR_ON_INIT = true;
 		}
 	}
-	
+
 	public static final void cronoStart() {
 		log("");
 		crono = System.currentTimeMillis();
 		latestStep = crono;
 	}
-	
+
 	public static final void cronoStep(String name) {
 		long currentStep = System.currentTimeMillis();
-		log("CRONO : "+name+" - "+StringHelper.renderTimeInSecond(currentStep-latestStep)+" (total:"+StringHelper.renderTimeInSecond(currentStep-crono)+")");
+		log("CRONO : " + name + " - " + StringHelper.renderTimeInSecond(currentStep - latestStep) + " (total:" + StringHelper.renderTimeInSecond(currentStep - crono) + ")");
 		latestStep = currentStep;
 	}
 }
