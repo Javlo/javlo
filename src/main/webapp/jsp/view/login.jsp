@@ -26,7 +26,7 @@ if ( user == null ) {
 	%><%if ( request.getParameter("pwtoken") != null ) {%><div class="message"><p class="alert alert-info"><%=i18nAccess.getViewText ( "login.change-password" )%></p></div><%}
 	%><%if ( request.getParameter("resetpwd") != null ) {%><div class="message"><p class="alert alert-info"><%=i18nAccess.getViewText ( "user.message.email-for-reset" )%></p></div><%}
 	%><%if (request.getParameter("pwtoken") == null && request.getParameter("resetpwd") == null) {%>	
-	<form name="login" method="post" action="${info.currentURL}">		
+	<form name="login" method="post" action="${info.currentURL}">
 		<div class="panel panel-default">
 		  	<div class="panel-body">
 			<div class="line form-group">
@@ -51,8 +51,8 @@ if ( user == null ) {
 			    <div class="input"><input class="form-control" id="email" type="text" name="email" value="" /></div>
 			</div>			
 			<div class="pull-right">
-			<a class="btn btn-default" href="${info.currentURL}"><%=i18nAccess.getViewText ( "global.cancel" )%></a>						
-			<input class="btn btn-primary" type="submit" value="<%=i18nAccess.getViewText ( "form.submit" )%>" />			
+			<a class="btn btn-default" href="${info.currentURL}"><%=i18nAccess.getViewText ( "global.cancel" )%></a>
+			<input class="btn btn-primary" type="submit" value="<%=i18nAccess.getViewText ( "form.submit" )%>" />
 			</div>
 			</div>
 		</div>		

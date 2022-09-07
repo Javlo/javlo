@@ -1991,11 +1991,11 @@ public class InfoBean {
 	}
 	
 	public String[] getLongDays() {
-		String[] days = new String[8];
+		String[] days = new String[7];
 		Locale locale = ctx.getLocale();
 		Calendar cal = Calendar.getInstance(locale);
-		for (int i=1; i<=7; i++) {
-			cal.set(Calendar.DAY_OF_WEEK, i);
+		for (int i=1; i<7; i++) {
+			cal.set(Calendar.DAY_OF_WEEK, i+1);
 			days[i]=cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG_FORMAT, locale);
 		}
 		return days;
@@ -2062,7 +2062,13 @@ public class InfoBean {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(Calendar.SUNDAY);
+		Locale locale = new Locale("FR", "BE");
+		
+		Calendar cal = Calendar.getInstance(locale);
+		for (int i=0; i<7; i++) {
+			cal.set(Calendar.DAY_OF_WEEK, i+1);
+			System.out.println(cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT_FORMAT, locale));
+		}
 	}
 	
 	public String getForwardUrl() throws Exception {

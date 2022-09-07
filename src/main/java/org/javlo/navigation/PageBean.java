@@ -884,5 +884,5 @@ public class PageBean implements Serializable {
 	public Set<String> getTaxonomy() {
 		return page.getTaxonomy();
 	}
-
+	
 }
