@@ -118,7 +118,8 @@ public class LocalLogger {
 		if (oldTime == null) {
 			oldTime = (long)-1;
 		}
-		log(DEBUG, "[STEP-COUNT] - "+message + " [" + (System.currentTimeMillis() - oldTime.longValue()) + " ms ]");
+		
+		log(DEBUG, "[STEP-COUNT] - "+message + " [" + StringHelper.renderTimeInSecond(System.currentTimeMillis() - oldTime.longValue()) + " ms ]");
 	}
 
 	public static void endCount(String key, String message) {
