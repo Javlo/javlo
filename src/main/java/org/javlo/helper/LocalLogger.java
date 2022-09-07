@@ -106,7 +106,7 @@ public class LocalLogger {
 		if (oldTime == null) {
 			System.out.println("key not found : " + key);
 		} else {
-			log(DEBUG, "[FSTEP-COUNT] - "+'(' + key + ") " + message + " [" + StringHelper.renderTimeInSecond(System.currentTimeMillis() - oldTime.longValue()) + " sec ]");
+			log(DEBUG, "[FSTEP-COUNT] - ["+key+"] - " + '(' + key + ") " + message + " [" + StringHelper.renderTimeInSecond(System.currentTimeMillis() - oldTime.longValue()) + " sec ]");
 		}
 	}
 
@@ -119,7 +119,7 @@ public class LocalLogger {
 			oldTime = (long) -1;
 		}
 
-		log(DEBUG, "[STEP-COUNT] - " + message + " [" + StringHelper.renderTimeInSecond(System.currentTimeMillis() - oldTime.longValue()) + " sec ]");
+		log(DEBUG, "[STEP-COUNT] - ["+key+"] - " + message + " [" + StringHelper.renderTimeInSecond(System.currentTimeMillis() - oldTime.longValue()) + " sec ]");
 	}
 
 	public static void endCount(String key, String message) {
@@ -131,7 +131,7 @@ public class LocalLogger {
 			System.out.println("key not found : " + key);
 		} else {
 			times.remove(key);
-			log(DEBUG, "[END-COUNT] - " + message + " [" + StringHelper.renderTimeInSecond(System.currentTimeMillis() - oldTime.longValue()) + " sec ]");
+			log(DEBUG, "[END-COUNT] - ["+key+"] - " + message + " [" + StringHelper.renderTimeInSecond(System.currentTimeMillis() - oldTime.longValue()) + " sec ]");
 		}
 	}
 
