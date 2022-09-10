@@ -905,7 +905,12 @@ Security in case of vulnerabilities.
   - taxonomy with reference
   - column style (vertical-align top - middle - bottom)
   - delete import file on page delete (add in static config : import.clear-on-delete=true)
+  - IFirstRequestListner
 ### Modified
   - conserve parameters on redirect
   - use name or id in place of number for change name of duplicate url
+### fixed
+## [2.1.4] - 10/09/2022
+### Added
+### Modified
 ### fixed

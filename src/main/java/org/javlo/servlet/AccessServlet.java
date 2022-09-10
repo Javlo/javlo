@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
@@ -107,6 +108,7 @@ import org.javlo.utils.DebugListening;
 import org.javlo.utils.DoubleOutputStream;
 import org.javlo.utils.TimeTracker;
 import org.javlo.utils.backup.BackupThread;
+import org.javlo.utils.request.IFirstRequestListner;
 import org.javlo.ztatic.FileCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,7 +134,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	MailingThread mailingThread = null;
 
 	ThreadManager threadManager = null;
-
+	
+	private static Set<String> FIRST_REQUEST_SET = new HashSet<>();
 	/**
 	 * create a static logger.
 	 */
@@ -302,7 +305,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		request.getSession(); // create session		
 		
 		COUNT_ACCESS++;
-
+		
 		//logger.debug("uri : " + request.getRequestURI());
 		
 		if (DEBUG) {
@@ -336,6 +339,19 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		ContentContext ctx = null;
 		try {
 			ctx = ContentContext.getContentContext(request, response);
+			
+			if (!FIRST_REQUEST_SET.contains(globalContext.getContextKey())) {
+				synchronized(FIRST_REQUEST_SET) {
+					if (!FIRST_REQUEST_SET.contains(globalContext.getContextKey())) {
+						FIRST_REQUEST_SET.add(globalContext.getContextKey());
+						IFirstRequestListner firstRequestListner = staticConfig.getFirstRequestLister(); 
+						if (firstRequestListner != null) {
+							firstRequestListner.execute(ctx);
+						}
+					}
+				}
+			}
+			
 			if (globalContext.getStaticConfig().isOauthView()) {
 				SocialService.getInstance(ctx).prepare(ctx);
 			}
@@ -1358,6 +1374,11 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** SEARCH ENGINE     :  " + staticConfig.getSearchEngineClassName());
 		try {
 			out.println("**** GENERAL LISTNER   :  " + staticConfig.getGeneralLister().getClass());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			out.println("**** FIRST REQ. LIST.  :  " + staticConfig.getFirstRequestLister());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

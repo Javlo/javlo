@@ -59,6 +59,8 @@ import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
 import org.javlo.user.UserInfo;
 import org.javlo.utils.ConfigurationProperties;
+import org.javlo.utils.request.IFirstRequestListner;
+import org.javlo.utils.request.IFirstRequestListner;
 import org.javlo.ztatic.FileCache;
 
 public class StaticConfig extends Observable {
@@ -2287,6 +2289,16 @@ public class StaticConfig extends Observable {
 	public String getLocaleCountry() {
 		return properties.getString("locale.country", "be");
 	}
-
-
+	
+	public IFirstRequestListner getFirstRequestLister() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		String firstRequestClass = properties.getString("listner.first-request", null);
+		logger.info("first request lister : "+firstRequestClass);
+		if (firstRequestClass == null) {
+			return null;
+		} else {
+			Class c = Class.forName(firstRequestClass);
+			return (IFirstRequestListner)c.newInstance();
+		}
+	}
+	
 }
