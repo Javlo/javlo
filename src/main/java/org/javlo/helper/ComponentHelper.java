@@ -97,6 +97,11 @@ public class ComponentHelper {
 		if (compId != null) {
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			comp = content.getComponent(ctx, compId);
+			if (comp == null) {
+				logger.severe("component not found : "+compId);
+			}
+		} else {
+			logger.severe("comp id not found [paramName="+paramName+"]");
 		}
 		return comp;
 	}
