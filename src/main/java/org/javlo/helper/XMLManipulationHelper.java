@@ -323,7 +323,15 @@ public class XMLManipulationHelper {
 		String shortKey = "";
 		if (template.isShortkeyToEdit()) {
 			shortKey = "<c:if test=\"${!contentContext.asPageMode}\">";
-			shortKey += "<script type=\"text/javascript\">function _tmc(e){(e=e||event).which=e.which||e.keyCode,_ky[e.which]=\"keydown\"===e.type,_ky[17]&&_ky[18]&&_ky[69]&&(document.location.href=\"${info.preview?info.currentViewURL:info.currentPreviewURL}\")}function addEvent(e,n,t){return e.attachEvent?e.attachEvent(\"on\"+n,t):e.addEventListener(n,t,!1)}var _ky={};addEvent(window,\"keydown\",_tmc),addEvent(window,\"keyup\",_tmc);</script>";
+			shortKey += "<script type=\"text/javascript\">"
+					+ "function _tmc(e){"
+					+ "(e=e||event).which=e.which||e.keyCode,_ky[e.which]=\"keydown\"===e.type,_ky[17]&&_ky[18]&&_ky[74]&&(document.location.href=\"${info.preview?info.currentViewURL:info.currentPreviewURL}\")"
+					+ "}"
+					+ "function addEvent(e,n,t){"
+					+ "return e.attachEvent?e.attachEvent(\"on\"+n,t):e.addEventListener(n,t,!1)"
+					+ "}"
+					+ "var _ky={};addEvent(window,\"keydown\",_tmc),addEvent(window,\"keyup\",_tmc);"
+					+ "</script>";
 			shortKey += "</c:if>";
 		}
 

@@ -913,4 +913,5 @@ Security in case of vulnerabilities.
 ## [2.1.4] - 10/09/2022
 ### Added
 ### Modified
+  - change ctrl+alt+e by ctrl+alt+j (because 'euro' problem on Belgian Keyboard)
 ### fixed
