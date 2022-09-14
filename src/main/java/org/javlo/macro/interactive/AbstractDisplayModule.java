@@ -27,15 +27,17 @@ public abstract class AbstractDisplayModule implements IInteractiveMacro, IActio
 			
 			ModulesContext modulesContext = ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());
 			Module module = modulesContext.getModule(getName());
-			
+
 			ctx.getRequest().setAttribute("currentModule", module);
+			ctx.getRequest().setAttribute("params", getParams(ctx));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		
-		
 		return null;
+	}
+	
+	public String getParams(ContentContext ctx) {
+		return "";
 	}
 
 	@Override

@@ -23,6 +23,7 @@
 <c:if test="${not empty macroRenderer}">
 
 <div class="macro-interface">
+<!-- include ${macroRenderer} -->
 <jsp:include page="${macroRenderer}"></jsp:include>
 </div>
 

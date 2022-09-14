@@ -62,6 +62,7 @@ import org.javlo.user.RoleWrapper;
 import org.javlo.utils.ReadOnlyPropertiesConfigurationMap;
 import org.javlo.utils.StructuredProperties;
 import org.javlo.ztatic.FileCache;
+import org.testng.IModuleFactory;
 
 public class TemplateAction extends AbstractModuleAction {
 
@@ -180,6 +181,11 @@ public class TemplateAction extends AbstractModuleAction {
 
 		Map<String, String> params = new HashMap<String, String>();
 		String templateName = requestService.getParameter("templateid", null);
+		if (templateName == null) {
+			templateName = (String)ctx.getRequest().getAttribute("templateid");
+		}
+		
+		System.out.println(">>>>>>>>> TemplateAction.prepare : templateName = "+templateName); //TODO: remove debug trace
 
 		if (templateName != null) {
 			Template template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(templateName);
@@ -187,6 +193,10 @@ public class TemplateAction extends AbstractModuleAction {
 				msg = "template not found : " + templateName;
 				module.restoreAll();
 			} else {
+				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+				
+				System.out.println(">>>>>>>>> TemplateAction.prepare : EDIT TEMPLATE"); //TODO: remove debug trace
+				
 				Map<String, List<String>> folders = template.getCSSByFolder(ctx.getRequest().getParameter("search"));
 				Map<String, List<String>> htmlFolders = template.getHtmlByFolder(ctx.getRequest().getParameter("search"));
 				ctx.getRequest().setAttribute("currentTemplate", new Template.TemplateBean(ctx, template));
@@ -197,7 +207,6 @@ public class TemplateAction extends AbstractModuleAction {
 				fileModuleContext.clear();
 				fileModuleContext.setRoot(template.getTemplateRealPath());
 				fileModuleContext.setTitle("<a href=\"" + URLHelper.createModuleURL(ctx, ctx.getPath(), TemplateContext.NAME, params) + "\">" + template.getId() + "</a>");
-				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 
 				ImageConfig imageConfig = ImageConfig.getNewInstance(globalContext, ctx.getRequest().getSession(), template);
 				ImageConfig parentImageConfig = ImageConfig.getNewInstance(globalContext, ctx.getRequest().getSession(), template.getParent());
@@ -260,16 +269,22 @@ public class TemplateAction extends AbstractModuleAction {
 		}
 		return msg;
 	}
-
-	public String performGoEditTemplate(ServletContext application, HttpServletRequest request, ContentContext ctx, RequestService requestService, Module module, I18nAccess i18nAccess) throws Exception {
+	
+	public String selectTemplateForEdit(ContentContext ctx, String id) throws Exception {
+		
+		ctx.getRequest().setAttribute("templateid", id);
+		
 		String msg = null;
-		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("templateid", null));
+		Module module = ModulesContext.getInstance(ctx.getSession(), ctx.getGlobalContext()).getCurrentModule();
+		
+		RequestService rs = RequestService.getInstance(ctx.getRequest());
+		Template template = TemplateFactory.getDiskTemplate(ctx.getServletContext(), id);
 		if (template == null) {
-			msg = "template not found : " + requestService.getParameter("templateid", null);
+			msg = "template not found : " + id;
 			module.clearAllBoxes();
 			module.restoreAll();
 		} else {
-			request.setAttribute("currentTemplate", new Template.TemplateBean(ctx, template));
+			ctx.getRequest().setAttribute("currentTemplate", new Template.TemplateBean(ctx, template));
 			module.setRenderer(null);
 			// module.setToolsRenderer(null);
 			module.clearAllBoxes();
@@ -278,9 +293,14 @@ public class TemplateAction extends AbstractModuleAction {
 			} catch (BadXMLException e) {
 				e.printStackTrace();
 			}
+			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 			module.createMainBox("edit_template", i18nAccess.getText("template.edit.title") + " : " + template.getName(), "/jsp/edit_template.jsp", false);
 		}
 		return msg;
+	}
+
+	public String performGoEditTemplate(ServletContext application, HttpServletRequest request, ContentContext ctx, RequestService requestService, Module module, I18nAccess i18nAccess) throws Exception {
+		return selectTemplateForEdit(ctx, requestService.getParameter("templateid", null));
 	}
 
 	public String performEditTemplate(ServletContext application, StaticConfig staticConfig, ContentContext ctx, RequestService requestService, Module module, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
