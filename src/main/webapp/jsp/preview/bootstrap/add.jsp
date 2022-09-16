@@ -7,7 +7,7 @@
 ContentContext ctx = ContentContext.getContentContext(request, response);
 ContentContext editCtx = new ContentContext(ctx);
 editCtx.setRenderMode(ContentContext.EDIT_MODE);
-if (ctx.getGlobalContext().getStaticConfig().isAddButton()) {
+//if (ctx.getGlobalContext().getStaticConfig().isAddButton()) {
 	
 %>
 <c:if test="${not empty info.editUser}">
@@ -51,8 +51,9 @@ if (ctx.getGlobalContext().getStaticConfig().isAddButton()) {
 </c:if>	
 </c:forEach></div>
 
-<a role="button" class="action prvCollapse" href="#addMacros" aria-expanded="false" aria-controls="addMacros"><i class="fa fa-pencil-square" aria-hidden="true"></i></a>
+<c:if test="${userInterface.minimalInterface}"><a role="button" class="action prvCollapse" href="#addMacros" aria-expanded="false" aria-controls="addMacros"><i class="fa fa-pencil-square" aria-hidden="true"></i></a></c:if>
 <div class="direct-action">
+	<c:if test="$userInterface.minimalInterface}">
 	<form id="pc_form" action="${info.currentURL}" method="post">
 		<div class="pc_line">
 			<input type="hidden" name="webaction" value="edit.previewedit" />
@@ -66,10 +67,31 @@ if (ctx.getGlobalContext().getStaticConfig().isAddButton()) {
 			</c:if>
 		</div>
 	</form>
-	<%
+	</c:if><%
 	String readOnlyClass = "access";
 	boolean rightOnPage = Edit.checkPageSecurity(ctx);	
 	if (rightOnPage) {%>
+	
+	<form id="add_copy_page" action="${info.currentURL}" method="post">
+		<div class="pc_line">
+			<input type="hidden" name="webaction" value="edit.copypage" />
+				<button class="action btn-wait-loading" type="submit" title="${i18n.edit['preview.label.copy-page']}">
+					<i class="fa fa-clone" aria-hidden="true"></i></button>
+		</div>
+	</form>
+	
+	<form id="add_paste_page" action="${info.currentURL}" method="post" class="${empty info.contextForCopy || !info.page.pageLocalEmpty || info.page.childrenAssociation?'disabled':''}">
+		<div class="pc_line">
+			<c:if test="${!(empty info.contextForCopy || !info.page.pageLocalEmpty || info.page.childrenAssociation)}">
+			<input type="hidden" name="webaction" value="edit.pastepage" />
+				<button class="action btn-wait-loading" type="submit" title="${i18n.edit['preview.label.paste-page']}">
+					<i class="fa fa-clipboard" aria-hidden="true"></i></button>
+		</c:if><c:if test="${empty info.contextForCopy || !info.page.pageLocalEmpty || info.page.childrenAssociation}">
+		<div class="action"><i class="fa fa-clipboard" aria-hidden="true"></i></div>
+		</c:if>
+		</div>
+	</form>
+	
 	<form id="pc_del_page_form" class="<%=readOnlyClass%>"
 		action="${info.currentURL}" method="post">
 		<div>
@@ -92,7 +114,9 @@ if (ctx.getGlobalContext().getStaticConfig().isAddButton()) {
 	<c:url var="logoutURL" value="<%=URLHelper.createURL(ctx)%>" context="/">
 		<c:param name="edit-logout" value="true" />
 	</c:url>
+	 <c:if test="${userInterface.minimalInterface}">
 	<a class="action btn-logout" title="${i18n.edit['global.logout']}" href="${logoutURL}"><i class="fa fa-sign-out" aria-hidden="true"></i></a>
+	</c:if>
 </div>
 </div></c:if>
 <c:if test="${empty info.editUser}">
@@ -106,4 +130,4 @@ if (ctx.getGlobalContext().getStaticConfig().isAddButton()) {
 </form>
 </div>
 </c:if>
-<%}%>
+<%//}%>

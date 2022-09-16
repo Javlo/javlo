@@ -2,5 +2,5 @@ package org.javlo.servlet;
 
 public interface IVersion {
 	public static final String NAME = "Javlo2";
-	public static final String VERSION = "2.1.4.0 / B0";
+	public static final String VERSION = "2.1.4.0 / B1";
 }

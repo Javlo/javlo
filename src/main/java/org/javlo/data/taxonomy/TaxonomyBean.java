@@ -210,6 +210,17 @@ public class TaxonomyBean {
 		return false;
 	}
 	
+	public boolean hasAllChild(String id) {
+		for (TaxonomyBean bean : children) {
+			if (bean.getId().equals(id)) {
+				return true;
+			} else {
+				return bean.hasAllChild(id);
+			}
+		}
+		return false;
+	}
+	
 	public boolean hasParent(String id) {
 		TaxonomyBean parent = getParent();
 		while (parent != null) {

@@ -909,6 +909,7 @@ Security in case of vulnerabilities.
 ### Modified
   - conserve parameters on redirect
   - use name or id in place of number for change name of duplicate url
+  - interface preview simplication
 ### fixed
 ## [2.1.4] - 10/09/2022
 ### Added
