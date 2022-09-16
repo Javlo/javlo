@@ -114,50 +114,7 @@
 							aria-hidden="true"></span>${i18n.edit['preview.label.not-edit-page']}</a>
 					</div>
 				</c:if></li>
-			<c:if test="${!pdf && userInterface.mailing  && !contentContext.asTimeMode}">				
-				<li><c:url var="url" value="<%=URLHelper.createURL(editCtx)%>"
-						context="/">
-						<c:param name="module" value="mailing"></c:param>
-						<c:param name="previewEdit" value="true"></c:param>
-						<c:param name="wizardStep" value="2"></c:param>
-						<c:param name="box" value="sendwizard"></c:param>
-						<c:param name="webaction" value="mailing.wizard"></c:param>
-					</c:url>
-					<form>
-						<div class="btn-group">
-						<c:if test="${userInterface.sendMailing}">
-						<c:set var="tooltip" value="" />
-						<c:if test="${i18n.edit['command.mailing.tooltip'] != 'command.mailing.tooltip'}">
-							<c:set var="tooltip" value='data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'command.mailing.tooltip\']}"' />
-						</c:if>
-						<button ${tooltip} class="btn btn-default btn-sm btn-send btn-color btn-wait-loading"
-							type="<%=accessType%>"
-							value="${i18n.edit['preview.label.mailing']}"
-							onclick="editPreview.openModal('${i18n.edit['preview.label.mailing']}','${url}'); return false;">
-							<span class="glyphicon glyphicon-send" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.mailing']}</span>
-						</button>
-						</c:if>
-					<c:url var="url" value="<%=URLHelper.createURL(editCtx)%>"
-						context="/">
-						<c:param name="module" value="mailing"></c:param>
-						<c:param name="wizardStep" value="4"></c:param>
-						<c:param name="webaction" value="mailing.wizard"></c:param>
-						<c:param name="box" value="sendwizard"></c:param>												
-						<c:param name="previewEdit" value="true"></c:param>
-					</c:url>
-					<c:set var="tooltip" value='' />
-					<c:if test="${i18n.edit['command.export.tooltip'] != 'command.export.tooltip'}">
-							<c:set var="tooltip" value='data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'command.export.tooltip\']}"' />
-					</c:if>
-						<button ${tooltip} class="btn btn-default btn-sm btn-export btn-color btn-wait-loading"
-							type="<%=accessType%>"
-							value="${i18n.edit['preview.label.export-mailing']}"
-							onclick="editPreview.openModal('${i18n.edit['preview.label.export-mailing']}','${url}'); return false;">
-							<span class="glyphicon glyphicon-export" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.export-mailing']}</span>
-						</button>
-						</div>
-					</form></li>				
-			</c:if>			
+						
 			<c:if test="${pdf}">
 				<li>
 				<li><c:url var="lowPDFURL" value="${info.currentPDFURL}" context="/">

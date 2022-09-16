@@ -2,6 +2,12 @@
     color: #D31996 !important;;
 }
 
+#preview_command .add {
+	i {
+		color: #D31996;
+	}
+}
+
 #preview_command .btn.active {
 	color: #333333 !important;
 }
