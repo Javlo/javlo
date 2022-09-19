@@ -30,8 +30,6 @@ public class MacroAction extends AbstractModuleAction {
 
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext moduleContext) throws Exception {
-
-		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		MacroFactory macroFactory = MacroFactory.getInstance(ctx);
 		MacroModuleContext macroContext = MacroModuleContext.getInstance(ctx.getRequest());
