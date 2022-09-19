@@ -1,12 +1,13 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><div class="content css">
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+%><c:set var="templateid" value="${param.templateid}" /><c:if test="${not empty currentTemplate}"><c:set var="templateid" value="${currentTemplate.name}" /></c:if><div class="content css">
 
 	<div class="row">
 		<div class="col-md-3">
-
 			<div class="file-filter">
 				<form id="form-css-template" action="${info.currentURL}" method="post">
 					<div class="form-group">
-						<input type="hidden" name="templateid" value="${param.templateid}" />
+						<input type="hidden" name="templateid" value="${templateid}" />
 						<input type="hidden" name="html" value="${param.html}" />
 						<input type="hidden" name="webaction" value="template.editHTML" />
 						<input type="text" name="search" value="${param.search}" placeholder="search..." id="input-filter" class="form-control" />
@@ -26,7 +27,7 @@
 								<c:set var="file" value="${folder.key}/${html}" />
 								<c:url var="htmlUrl" value="${info.currentURL}" context="/">
 									<c:param name="html" value="${file}" />
-									<c:param name="templateid" value="${currentTemplate.name}" />
+									<c:param name="templateid" value="${templateid}" />
 									<c:param name="webaction" value="editHTml" />
 									<c:param name="search" value="${param.search}" />
 								</c:url>
@@ -44,7 +45,7 @@
 
 				<div>
 					<input type="hidden" name="webaction" value="editHTML" />
-					<input type="hidden" name="templateid" value="${currentTemplate.name}" />
+					<input type="hidden" name="templateid" value="${templateid}" />
 				</div>
 
 				<div class="action top">
@@ -70,4 +71,3 @@
 		</div>
 	</div>
 </div>
-

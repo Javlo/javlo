@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -62,9 +63,10 @@ import org.javlo.user.RoleWrapper;
 import org.javlo.utils.ReadOnlyPropertiesConfigurationMap;
 import org.javlo.utils.StructuredProperties;
 import org.javlo.ztatic.FileCache;
-import org.testng.IModuleFactory;
 
 public class TemplateAction extends AbstractModuleAction {
+	
+	private static Logger logger = Logger.getLogger(TemplateAction.class.getName());
 
 	@Override
 	public String getActionGroupName() {
@@ -137,8 +139,9 @@ public class TemplateAction extends AbstractModuleAction {
 
 		RoleWrapper roleWrapper = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession()).getRoleWrapper(ctx, ctx.getCurrentEditUser());
 
-		String webaction = StringHelper.neverNull(ctx.getRequest().getParameter("webaction"));
-		if (templateContext.getCurrentLink().equals("hierarchy") && (!webaction.equals("template.goEditTemplate") || ctx.getRequest().getParameter("back") != null)) {
+		boolean editTemplate = StringHelper.isTrue(ctx.getRequest().getAttribute("editTemplate"));
+		
+		if (templateContext.getCurrentLink().equals("hierarchy") && (!editTemplate || ctx.getRequest().getParameter("back") != null)) {
 			Map<String, TemplateHierarchy> templatesH = new HashMap<String, TemplateHierarchy>();
 			List<TemplateHierarchy> rootTemplateH = new LinkedList<TemplateHierarchy>();
 			for (Template template : allTemplate) {
@@ -180,12 +183,11 @@ public class TemplateAction extends AbstractModuleAction {
 		ctx.getRequest().setAttribute("fromAdmin", moduleContext.getFromModule() != null && moduleContext.getFromModule().getName().equals("admin"));
 
 		Map<String, String> params = new HashMap<String, String>();
+		
 		String templateName = requestService.getParameter("templateid", null);
 		if (templateName == null) {
 			templateName = (String)ctx.getRequest().getAttribute("templateid");
 		}
-		
-		System.out.println(">>>>>>>>> TemplateAction.prepare : templateName = "+templateName); //TODO: remove debug trace
 
 		if (templateName != null) {
 			Template template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(templateName);
@@ -194,8 +196,6 @@ public class TemplateAction extends AbstractModuleAction {
 				module.restoreAll();
 			} else {
 				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-				
-				System.out.println(">>>>>>>>> TemplateAction.prepare : EDIT TEMPLATE"); //TODO: remove debug trace
 				
 				Map<String, List<String>> folders = template.getCSSByFolder(ctx.getRequest().getParameter("search"));
 				Map<String, List<String>> htmlFolders = template.getHtmlByFolder(ctx.getRequest().getParameter("search"));
@@ -273,11 +273,11 @@ public class TemplateAction extends AbstractModuleAction {
 	public String selectTemplateForEdit(ContentContext ctx, String id) throws Exception {
 		
 		ctx.getRequest().setAttribute("templateid", id);
+		ctx.getRequest().setAttribute("editTemplate", true);
 		
 		String msg = null;
 		Module module = ModulesContext.getInstance(ctx.getSession(), ctx.getGlobalContext()).getCurrentModule();
 		
-		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		Template template = TemplateFactory.getDiskTemplate(ctx.getServletContext(), id);
 		if (template == null) {
 			msg = "template not found : " + id;
@@ -481,6 +481,7 @@ public class TemplateAction extends AbstractModuleAction {
 		template.clearRenderer(ctx);
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.commited", new String[][] { { "name", requestService.getParameter("templateid", null) } }), GenericMessage.INFO));
 		I18nAccess.getInstance(ctx).resetViewLanguage(ctx);
+		ctx.setClosePopup(true);
 		return null;
 	}
 
@@ -493,6 +494,7 @@ public class TemplateAction extends AbstractModuleAction {
 		}
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.commited", new String[][] { { "name", requestService.getParameter("templateid", null) } }), GenericMessage.INFO));
 		I18nAccess.getInstance(ctx).resetViewLanguage(ctx);
+		ctx.setClosePopup(true);
 		return null;
 	}
 
@@ -671,6 +673,7 @@ public class TemplateAction extends AbstractModuleAction {
 		String css = rs.getParameter("css", null);
 		Template template = TemplateFactory.getTemplates(application).get(rs.getParameter("templateid", ""));
 		if (template == null) {
+			logger.severe("template not found : "+rs.getParameter("templateid", ""));
 			return "template not found";
 		} else {
 			// store new value

@@ -17,10 +17,21 @@
 jQuery(document).ready(function() {
 	var language = "${info.editLanguage}";
 	changeFooter();
+	
+	if (document.getElementById("footer") != null) {
+		var footerTop = jQuery("#footer").offset().top;
+	} else {
+		if (window.parent != null && window.parent.document != null  && window.parent.document.getElementById("preview-modal-frame") != null) {
+			var footerTop = window.parent.document.getElementById("preview-modal-frame").offsetHeight;
+		} else {
+			var footerTop = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+		}
+	}
+	
 	jQuery('#fileManager').elfinder({
 		url : '${info.staticRootURL eq "/"?"":info.staticRootURL}${currentModule.path}/jsp/connector.jsp${not empty changeRoot?"?changeRoot=true":""}${params}',
 		lang : '${info.editLanguage}',
-		height: jQuery("#footer").offset().top - jQuery("#fileManager").offset().top - (jQuery(".maincontent .left").outerHeight(true) - jQuery(".maincontent .left").height()),
+		height: footerTop - jQuery("#fileManager").offset().top - (jQuery(".maincontent .left").outerHeight(true) - jQuery(".maincontent .left").height()),
 		handlers: {	
 			open: function(event) { ajaxRequest("${info.currentURL}?webaction=updateBreadcrumb${not empty changeRoot?"&changeRoot=true":""}${params}"); }
 		},

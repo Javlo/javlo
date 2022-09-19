@@ -1,8 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<c:forEach var="js" items="${currentModule.JS}">
-<script type="text/javascript" src="<jv:url value='${js}?ts=${info.ts}' />"></script></c:forEach>
+<c:forEach var="js" items="${currentModule.JS}"><script type="text/javascript" src="<jv:url value='${js}?ts=${info.ts}' />"></script></c:forEach>
 
 <h2>[display_module.jsp] include : ${module.currentRenderer}${params}</h2>
 

@@ -11,17 +11,21 @@ public class TemplateMacroModule extends AbstractDisplayModule {
 
 	@Override
 	public String getName() {
-		return "edit-template";
+		return "template";
 	}
 	
 	@Override
 	public String prepare(ContentContext ctx) {
+		String out = null;
 		try {
+			((TemplateAction)getModuleAction(ctx)).selectTemplateForEdit(ctx, ctx.getCurrentPage().getTemplateIdOnInherited(ctx));
+			out = super.prepare(ctx);
+			ctx.getRequest().setAttribute("forceActionBar", true);
 			((TemplateAction)getModuleAction(ctx)).selectTemplateForEdit(ctx, ctx.getCurrentPage().getTemplateIdOnInherited(ctx));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return super.prepare(ctx);
+		return out;
 	}
 
 	@Override

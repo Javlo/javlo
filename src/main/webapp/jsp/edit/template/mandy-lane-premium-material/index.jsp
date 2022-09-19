@@ -290,6 +290,11 @@
 			</c:if>
 			<div class="left">
 
+				<!-- ?modulesContext = ${not empty modulesContext} -->
+				<!-- ?modulesContext.currentModule = ${not empty modulesContext.currentModule} -->
+				<!-- currentModule = ${currentModule} -->
+				<!-- currentModule.name = ${currentModule.name} -->
+				<!-- currentM4odule.renderer = ${currentModule.renderer} -->
 				<div id="message-container">
 				
 					<c:if test="${not empty globalContext.globalError}">

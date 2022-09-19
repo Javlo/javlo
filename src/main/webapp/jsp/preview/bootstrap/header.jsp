@@ -235,7 +235,7 @@
 						<c:param name="module" value="ticket"></c:param>
 						<c:param name="previewEdit" value="true"></c:param>
 					</c:url>
-					<form>
+					<form class="tooltip-form">
 						<c:set var="tooltip" value="" />
 						<c:if test="${i18n.edit['preview.label.ticket.tooltip'] != 'preview.label.ticket.tooltip'}">
 							<c:set var="tooltip" value=' data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'preview.label.ticket.tooltip\']}"' />

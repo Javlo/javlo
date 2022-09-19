@@ -43,6 +43,9 @@
 <c:if test="${not empty param.templateid}">
 <a class="action-button ajax" href="${info.currentURL}?webaction=template.commit&webaction=file.browse&templateid=${param.templateid}&from-module=template"><span>${i18n.edit['template.action.commit']}</span></a>
 <a class="action-button ajax" href="${info.currentURL}?webaction=template.commitChildren&webaction=file.browse&templateid=${param.templateid}&from-module=template"><span>${i18n.edit['template.action.commit-children']}</span></a>
+
+<a class="action-button" href="${info.currentURL}?webaction=template.goEditTemplate&templateid=${param.templateid}&module=template">back edit template</a>
+
 </c:if>
 
 <form id="form-sorted" action="${info.currentURL}" method="get" class="js-submit">

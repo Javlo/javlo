@@ -114,7 +114,7 @@ public class FileAction extends AbstractModuleAction {
 
 		String editFileName = ctx.getRequest().getParameter("editFile");
 		if (ctx.getRequest().getParameter("path") != null) {
-			fileModuleContext.setPath(ctx.getRequest().getParameter("path"));			
+			fileModuleContext.setPath(ctx.getRequest().getParameter("path"));
 		}
 		updateBreadCrumb(RequestService.getInstance(ctx.getRequest()), ctx, EditContext.getInstance(globalContext, ctx.getRequest().getSession()), modulesContext, modulesContext.getCurrentModule(), fileModuleContext, false, null);
 		if (editFileName != null) {
@@ -126,7 +126,7 @@ public class FileAction extends AbstractModuleAction {
 				if (editFile.exists()) {
 					ctx.getRequest().setAttribute("fileFound", true);
 					StaticInfo staticInfo = StaticInfo.getInstance(ctx, editFile);
-					ctx.getRequest().setAttribute("imageURL", staticInfo.getURL(ctx));					
+					ctx.getRequest().setAttribute("imageURL", staticInfo.getURL(ctx));
 				} else {
 					logger.warning("file not found : " + editFile);
 					ctx.getRequest().setAttribute("fileFound", false);
