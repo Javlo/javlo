@@ -481,7 +481,6 @@ public class TemplateAction extends AbstractModuleAction {
 		template.clearRenderer(ctx);
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.commited", new String[][] { { "name", requestService.getParameter("templateid", null) } }), GenericMessage.INFO));
 		I18nAccess.getInstance(ctx).resetViewLanguage(ctx);
-		ctx.setClosePopup(true);
 		return null;
 	}
 
@@ -493,8 +492,7 @@ public class TemplateAction extends AbstractModuleAction {
 			child.clearRenderer(ctx);
 		}
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.commited", new String[][] { { "name", requestService.getParameter("templateid", null) } }), GenericMessage.INFO));
-		I18nAccess.getInstance(ctx).resetViewLanguage(ctx);
-		ctx.setClosePopup(true);
+		I18nAccess.getInstance(ctx).resetViewLanguage(ctx);		
 		return null;
 	}
 
