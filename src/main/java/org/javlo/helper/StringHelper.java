@@ -2798,7 +2798,7 @@ public class StringHelper {
 		nf.setGroupingUsed(false);
 		return nf.format(n);
 	}
-	
+
 	public static String renderNumber(long n, int size) {
 		NumberFormat nf = NumberFormat.getInstance();
 		nf.setMinimumIntegerDigits(size);
@@ -3881,6 +3881,73 @@ public class StringHelper {
 		}
 	}
 
+	public static String escapeString(String field, boolean escapeDoubleQuotes) {
+		StringBuilder sBuilder = new StringBuilder(field.length() * 11 / 10);
+
+		int stringLength = field.length();
+
+		for (int i = 0; i < stringLength; ++i) {
+			char c = field.charAt(i);
+
+			switch (c) {
+			case 0: /* Must be escaped for 'mysql' */
+				sBuilder.append('\\');
+				sBuilder.append('0');
+
+				break;
+
+			case '\n': /* Must be escaped for logs */
+				sBuilder.append('\\');
+				sBuilder.append('n');
+
+				break;
+
+			case '\r':
+				sBuilder.append('\\');
+				sBuilder.append('r');
+
+				break;
+
+			case '\\':
+				sBuilder.append('\\');
+				sBuilder.append('\\');
+
+				break;
+
+			case '\'':
+				sBuilder.append('\\');
+				sBuilder.append('\'');
+
+				break;
+
+			case '"': /* Better safe than sorry */
+				if (escapeDoubleQuotes) {
+					sBuilder.append('\\');
+				}
+
+				sBuilder.append('"');
+
+				break;
+
+			case '\032': /* This gives problems on Win32 */
+				sBuilder.append('\\');
+				sBuilder.append('Z');
+
+				break;
+
+			case '\u00a5':
+			case '\u20a9':
+				// escape characters interpreted as backslash by mysql
+				// fall through
+
+			default:
+				sBuilder.append(c);
+			}
+		}
+
+		return sBuilder.toString();
+	}
+
 	/**
 	 * clean path, remove double "/" and replace "\" by "/"
 	 * 
@@ -4302,7 +4369,7 @@ public class StringHelper {
 		}
 		return outMap;
 	}
-	
+
 	public static Map<String, String> textToMap(String encodedMap) throws IOException {
 		if (StringHelper.isEmpty(encodedMap)) {
 			return Collections.emptyMap();
@@ -4312,16 +4379,16 @@ public class StringHelper {
 		String line = reader.readLine();
 		while (line != null) {
 			int equalIndex = line.indexOf("=");
-			if (equalIndex>0) {
+			if (equalIndex > 0) {
 				String key = line.substring(0, equalIndex).trim();
-				String value = line.substring(equalIndex+1).trim();
+				String value = line.substring(equalIndex + 1).trim();
 				outMap.put(key, value);
 			}
 			line = reader.readLine();
 		}
 		return outMap;
 	}
-	
+
 	public static Map<String, String> textToMap(String encodedMap, String sep) throws IOException {
 		if (StringHelper.isEmpty(encodedMap)) {
 			return Collections.emptyMap();
@@ -4330,19 +4397,19 @@ public class StringHelper {
 		List<String> listText = stringToCollection(encodedMap, sep);
 		for (String line : listText) {
 			int equalIndex = line.indexOf("=");
-			if (equalIndex>0) {
+			if (equalIndex > 0) {
 				String key = line.substring(0, equalIndex).trim();
-				String value = line.substring(equalIndex+1).trim();
+				String value = line.substring(equalIndex + 1).trim();
 				outMap.put(key, value);
 			}
 		}
 		return outMap;
 	}
-	
-	public static String mapToText(Map<String,String> map, String sep) throws IOException {
+
+	public static String mapToText(Map<String, String> map, String sep) throws IOException {
 		List<String> outList = new LinkedList<>();
-		for (Map.Entry<String,String> e : map.entrySet()) {
-			outList.add(e.getKey()+'='+e.getValue());
+		for (Map.Entry<String, String> e : map.entrySet()) {
+			outList.add(e.getKey() + '=' + e.getValue());
 		}
 		return StringHelper.collectionToString(outList, sep);
 	}
@@ -4679,7 +4746,7 @@ public class StringHelper {
 	/* Function to convert snake case to camel case */
 	public static String snakeToCamel(String str) {
 		// Capitalize first letter of string
-		//str = str.substring(0, 1).toUpperCase() + str.substring(1);
+		// str = str.substring(0, 1).toUpperCase() + str.substring(1);
 
 		// Convert to StringBuilder
 		StringBuilder builder = new StringBuilder(str);
