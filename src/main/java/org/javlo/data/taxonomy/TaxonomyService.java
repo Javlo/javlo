@@ -213,21 +213,26 @@ public class TaxonomyService {
 			}
 			if (sourceBean != null) {
 				TaxonomyBean newBean = sourceBean.duplicateForLink(currentBean.getParent(), currentBean.getId());
-				
 				// replace bean in parent
-				int pos=0;
-				for (TaxonomyBean child : currentBean.getParent().getChildren()) {
-					if (child.getId().equals(currentBean.getId())) {
-						currentBean.getParent().setName("child replaced");
-						currentBean.getParent().getChildren().set(pos, newBean);
+				int pos = 0;
+				if (newBean.getChildren().size() > 0) {
+					List<TaxonomyBean> parentChildren = new LinkedList<>(currentBean.getParent().getChildren());
+					for (TaxonomyBean child : parentChildren) {
+						if (child.getId().equals(currentBean.getId())) {
+							currentBean.getParent().getChildren().set(pos, newBean.getChildren().get(newBean.getChildren().size()-1));
+							for (int i=newBean.getChildren().size()-2; i>=0; i--) {
+								currentBean.getParent().getChildren().add(pos, newBean.getChildren().get(i));
+							}
+						}
+						pos++;
 					}
-					pos++;
 				}
 				currentBean = newBean;
 			}
 		}
 		taxonomyBeanMap.put(currentBean.getId(), currentBean);
-		Iterator<TaxonomyBean> ite = currentBean.getChildren().iterator();		
+		List<TaxonomyBean> children = new LinkedList<>(currentBean.getChildren());
+		Iterator<TaxonomyBean> ite = children.iterator();
 		while (ite.hasNext()) {
 			fillMap(sources, tobeDeleted, ite.next(), resolveLink);
 		}
@@ -291,8 +296,8 @@ public class TaxonomyService {
 				if (taxonomyBeanMap.size() == 0) {
 					TaxonomyBean root = resolveLink ? this.root.duplicate() : this.root;
 					List<TaxonomyBean> toBeDeleted = new LinkedList<>();
-					fillMap(getAllSources(),toBeDeleted, root, resolveLink);
-					
+					fillMap(getAllSources(), toBeDeleted, root, resolveLink);
+
 					for (TaxonomyBean taxonomyBean : toBeDeleted) {
 						taxonomyBean.getParent().removeChild(taxonomyBean.getId());
 					}
