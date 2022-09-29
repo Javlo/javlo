@@ -28,6 +28,12 @@ import org.javlo.image.ImageSize;
 import org.javlo.io.TransactionFile;
 import org.javlo.ztatic.StaticInfo.Position;
 
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.Tag;
+
 public class ExifHelper {
 
 	private static Logger logger = Logger.getLogger(ExifHelper.class.getName());
@@ -95,7 +101,7 @@ public class ExifHelper {
 			logger.warning("file not found : " + jpegImageFile);
 			return;
 		}
-		OutputStream os = null;		
+		OutputStream os = null;
 		try {
 			TiffOutputSet outputSet = null;
 
@@ -127,10 +133,10 @@ public class ExifHelper {
 			os = new FileOutputStream(dst);
 			os = new BufferedOutputStream(os);
 
-			new ExifRewriter().updateExifMetadataLossless(jpegImageFile, os, outputSet);			
+			new ExifRewriter().updateExifMetadataLossless(jpegImageFile, os, outputSet);
 		} finally {
 			ResourceHelper.closeResource(os);
-			//IoUtils.closeQuietly(arg0, arg1);(arg0, arg1);(canThrow, os);
+			// IoUtils.closeQuietly(arg0, arg1);(arg0, arg1);(canThrow, os);
 		}
 	}
 
@@ -165,13 +171,41 @@ public class ExifHelper {
 			}
 			os = new FileOutputStream(dst);
 			os = new BufferedOutputStream(os);
-			new ExifRewriter().updateExifMetadataLossless(jpegImageFile, os, outputSet);			
+			new ExifRewriter().updateExifMetadataLossless(jpegImageFile, os, outputSet);
 		} finally {
-			ResourceHelper.closeResource(os);			
+			ResourceHelper.closeResource(os);
 		}
 	}
 
-	public static ImageSize getExifSize(InputStream in) {
+	public static ImageSize getExifSize(InputStream in) throws IOException {
+		Metadata metadata;
+		try {
+			metadata = ImageMetadataReader.readMetadata(in);
+		} catch (ImageProcessingException e) {
+			throw new IOException(e);
+		}
+		Integer width = null;
+		Integer height = null;
+		if (metadata != null) {
+			for (Directory directory : metadata.getDirectories()) {
+				for (Tag tag : directory.getTags()) {
+					if (!tag.getTagName().toLowerCase().contains("exif")) {
+						if (tag.getTagName().toLowerCase().contains("width")) {
+							width = StringHelper.extractNumber(tag.getDescription());
+						} else if (tag.getTagName().toLowerCase().contains("height")) {
+							height = StringHelper.extractNumber(tag.getDescription());
+						}
+					}
+				}
+			}
+		}
+		if (width != null && height != null) {
+			return new ImageSize(width, height);
+		}
+		return null;
+	}
+
+	public static ImageSize _getExifSize(InputStream in) {
 		try {
 			final ImageMetadata metadata = Imaging.getMetadata(in, "test.jpg");
 			if (metadata instanceof JpegImageMetadata) {
@@ -181,7 +215,9 @@ public class ExifHelper {
 					ImageSize imageSize = new ImageSize(0, 0);
 					boolean width = false;
 					boolean height = false;
-					for (TiffField tag : jpegMetadata.getExif().getAllFields()) {						
+					for (TiffField tag : jpegMetadata.getExif().getAllFields()) {
+						System.out.println(">>>>>>>>> ExifHelper.getExifSize : tag.getTagName() = " + tag.getTagName() + " = " + tag.getValue()); // TODO: remove debug trace
+
 						if (tag.getTagName().equalsIgnoreCase("ExifImageWidth")) {
 							if (tag.getValue() instanceof Integer) {
 								imageSize.setWidth((Integer) tag.getValue());
@@ -202,8 +238,8 @@ public class ExifHelper {
 						}
 					}
 				}
-			} 
-		} catch (Exception e) {		
+			}
+		} catch (Exception e) {
 		}
 		return null;
 	}

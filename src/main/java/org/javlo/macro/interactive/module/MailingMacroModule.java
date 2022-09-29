@@ -3,28 +3,28 @@ package org.javlo.macro.interactive.module;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.context.ContentContext;
 import org.javlo.macro.interactive.AbstractDisplayModule;
-import org.javlo.module.taxonomy.TaxonomyAction;
+import org.javlo.module.mailing.MailingAction;
 
-public class TaxonomyMacroModule extends AbstractDisplayModule {
+public class MailingMacroModule extends AbstractDisplayModule {
 	
-	private TaxonomyAction action = null;
+	private MailingAction action = null;
 
 	@Override
 	public String getName() {
-		return "taxonomy";
+		return "mailing";
 	}
 
 	@Override
 	protected AbstractModuleAction getModuleAction(ContentContext ctx) {
 		if (action == null) {
-			action = new TaxonomyAction();
+			action = new MailingAction();
 		}
 		return action;
 	}
 	
 	@Override
-	public String getIcon() {	
-		return "<i class=\"fa fa-sitemap\" aria-hidden=\"true\"></i>";
+	public String getIcon() {
+		return "<i class=\"fa fa-envelope-o\" aria-hidden=\"true\"></i>";
 	}
 
 }

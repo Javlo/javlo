@@ -1036,6 +1036,22 @@ public class StringHelper {
 		return sum % 9;
 	}
 
+	/**
+	 * extract only number of a alpha numeric string
+	 * 
+	 * @param text
+	 * @return 23 from "23px", null from "animal".
+	 */
+	public static Integer extractNumber(String text) {
+		final StringBuffer numericString = new StringBuffer();
+		text.chars().filter(c -> isDigit((char) c)).forEach(c -> numericString.append((char) c));
+		if (numericString.length() == 0) {
+			return null;
+		} else {
+			return Integer.parseInt(numericString.toString());
+		}
+	}
+
 	public static String replaceFileExtension(String file, String ext) {
 		if (!file.contains(".")) {
 			return file + '.' + ext;
@@ -2054,7 +2070,8 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) throws IOException {
-		System.out.println(renderTimeInSecond(10000));
+		System.out.println(extractNumber("23px"));
+		System.out.println(extractNumber("animal"));
 	}
 
 	public static LocalTime smartParseTime(String inTime) {

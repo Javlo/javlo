@@ -913,6 +913,8 @@ Security in case of vulnerabilities.
 ### fixed
 ## [2.1.4] - 10/09/2022
 ### Added
+  - open mailing marcro
 ### Modified
   - change ctrl+alt+e by ctrl+alt+j (because 'euro' problem on Belgian Keyboard)
 ### fixed
+  - read exif size of picture

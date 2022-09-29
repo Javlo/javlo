@@ -388,6 +388,7 @@ public class ImageHelper {
 			// }
 			// }
 			if (size == null) {
+				System.out.println(">>>>>>>>> ImageHelper.getImageSize : LOAD IMAGE"); //TODO: remove debug trace
 				BufferedImage image = ImageIO.read(file);
 				size = new ImageSize(image.getWidth(), image.getHeight());
 			}

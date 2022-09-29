@@ -1648,6 +1648,12 @@ public class StaticInfo implements IRestItem {
 			return imageSize;
 		}
 	}
+	
+	public static void main(String[] args) throws IOException {
+		File image = new File("c:/trans/image.jpg");
+		ImageSize size = ImageHelper.getImageSize(image);
+		System.out.println(">>>>>>>>> StaticInfo.main : size = "+size); //TODO: remove debug trace
+	}
 
 	@Override
 	public Map<String, Object> getContentAsMap(ContentContext ctx) throws Exception {

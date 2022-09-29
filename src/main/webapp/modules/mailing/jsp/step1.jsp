@@ -7,6 +7,13 @@
 			<input type="hidden" name="box" value="${box.name}" />
 			<c:if test="${contentContext.editPreview}"><input type="hidden" name="previewEdit" value="true" /></c:if>
 		</div>
+		
+		<div class="action">
+			<div class="btn-group pull-right">
+				<button type="submit" class="btn btn-default" name="wizardStep" value="4">export</button>
+				<button type="submit" class="btn btn-primary" name="next">next</button>
+			</div>
+		</div>
 
 		<div id="gallery" class="gallery main-template main">
 			<div id="gridview" class="thumbview">
@@ -21,13 +28,6 @@
 						</li>
 					</c:forEach>
 				</ul>
-			</div>
-		</div>
-		
-		<div class="action">
-			<div class="btn-group pull-right">
-				<button type="submit" class="btn btn-default btn-color" name="wizardStep" value="4">export</button>
-				<button type="submit" class="btn btn-primary btn-color" name="next">next</button>
 			</div>
 		</div>
 		

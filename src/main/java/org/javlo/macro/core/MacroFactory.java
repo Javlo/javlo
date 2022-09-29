@@ -97,6 +97,7 @@ import org.javlo.macro.interactive.SmartImport;
 import org.javlo.macro.interactive.SocialShare;
 import org.javlo.macro.interactive.UpdateUserRole;
 import org.javlo.macro.interactive.UploadGallery;
+import org.javlo.macro.interactive.module.MailingMacroModule;
 import org.javlo.macro.interactive.module.TaxonomyMacroModule;
 import org.javlo.macro.interactive.module.TemplateMacroModule;
 
@@ -229,6 +230,7 @@ public class MacroFactory {
 		macros.add(new PublishMacro());
 		macros.add(new TaxonomyMacroModule());
 		macros.add(new TemplateMacroModule());
+		macros.add(new MailingMacroModule());
 		
 		/** macro bean **/
 		initMacroBean(macros);

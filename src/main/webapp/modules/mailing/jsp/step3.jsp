@@ -8,6 +8,12 @@
 			<input type="hidden" name="box" value="sendwizard" />
 			<c:if test="${contentContext.editPreview}"><input type="hidden" name="previewEdit" value="true" /></c:if>
 		</div>
+
+		<div class="action pull-right btn-group">
+			<button type="submit" class="btn btn-default" name="previous">Previous</button>	
+			<button type="submit" class="btn btn-primary " name="send">Send</button>
+		</div>
+		
 		<h4>${confirmMessage}</h4>
 		<ul id="mail-list">
 			<c:forEach var="email" items="${mailing.allRecipients}">
@@ -20,10 +26,12 @@
 			</div>
 		</c:if>
 		</div>
+		
 		<div class="action pull-right btn-group">
 			<button type="submit" class="btn btn-default" name="previous">Previous</button>	
-			<button type="submit" class="btn btn-primary btn-color " name="send">Send</button>					
+			<button type="submit" class="btn btn-primary " name="send">Send</button>
 		</div>
+		
 	</form>
 	
 	<script type="text/javascript">
