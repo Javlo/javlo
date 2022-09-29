@@ -1625,7 +1625,8 @@ public class StaticInfo implements IRestItem {
 			return imageSize;
 		} else {
 			try {
-				String key = getKey(ctx, "imageSize-" + ctx.getRequestContentLanguage());
+				//String key = getKey(ctx, "imageSize-" + ctx.getRequestContentLanguage());
+				String key = getKey(ctx, "imageSize");
 				ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 				String imageSizeRAW = content.getAttribute(ctx, key, null);
 				if (imageSizeRAW != null) {
@@ -1705,3 +1706,4 @@ public class StaticInfo implements IRestItem {
 	}
 
 }
+
