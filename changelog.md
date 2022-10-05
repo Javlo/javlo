@@ -914,6 +914,7 @@ Security in case of vulnerabilities.
 ## [2.1.4] - 10/09/2022
 ### Added
   - open mailing marcro
+  - epub converter + login from template
 ### Modified
   - change ctrl+alt+e by ctrl+alt+j (because 'euro' problem on Belgian Keyboard)
 ### fixed
