@@ -68,6 +68,11 @@ public class DefaultTemplate extends Template {
 	public String getLoginFile(ContentContext ctx) {
 		return null;
 	}
+	
+	@Override
+	protected String getRelativeLoginFile(ContentContext ctx) {
+		return null;
+	}
 
 	@Override
 	public String getMenuRenderer(Device device) {

@@ -1593,9 +1593,13 @@ public class Template implements Comparable<Template> {
 
 		return deviceRenderer;
 	}
+	
+	protected String getRelativeLoginFile(ContentContext ctx) {
+		return properties.getString("login.jsp", getParent().getRelativeLoginFile(ctx));
+	}
 
 	public String getLoginFile(ContentContext ctx) {
-		String deviceRenderer = properties.getString("login.jsp", getParent().getLoginFile(ctx));
+		String deviceRenderer = getRelativeLoginFile(ctx);
 		if (deviceRenderer != null) {
 			return URLHelper.mergePath(getLocalTemplateTargetFolder(ctx.getGlobalContext()), deviceRenderer);
 		} else {
