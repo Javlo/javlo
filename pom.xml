@@ -600,12 +600,21 @@
 			<artifactId>webp-imageio</artifactId>
 			<version>0.1.6</version>
 		</dependency>
-		
+
+		<!-- https://mvnrepository.com/artifact/org.eclipse.mylyn.docs/org.eclipse.mylyn.docs.epub.core -->
 		<dependency>
-  <groupId>com.drewnoakes</groupId>
-  <artifactId>metadata-extractor</artifactId>
-  <version>2.18.0</version>
-</dependency>
+			<groupId>org.eclipse.mylyn.docs</groupId>
+			<artifactId>org.eclipse.mylyn.docs.epub.core</artifactId>
+			<version>4.0.6</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/net.sourceforge.htmlcleaner/htmlcleaner -->
+		<dependency>
+			<groupId>net.sourceforge.htmlcleaner</groupId>
+			<artifactId>htmlcleaner</artifactId>
+			<version>2.26</version>
+		</dependency>
+
 
 	</dependencies>
 
@@ -856,4 +865,4 @@
 			</build>
 		</profile>
 	</profiles>
-	</project>
+</project>
