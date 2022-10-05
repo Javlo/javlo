@@ -1170,6 +1170,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								if (ctx.getCurrentUser() == null) {
 									if (ctx.getCurrentTemplate().getLoginFile(ctx) != null) {
 										String loginPage = ctx.getCurrentTemplate().getLoginFile(ctx);
+										System.out.println(">>>>>>>>> AccessServlet.process : forward : "+ctx.getCurrentTemplate().getLoginFile(ctx)); //TODO: remove debug trace
 										RequestDispatcher view = request.getRequestDispatcher(loginPage);
 										view.forward(request, response);
 									} else {
