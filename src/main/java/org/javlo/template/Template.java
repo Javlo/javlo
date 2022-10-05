@@ -90,7 +90,7 @@ public class Template implements Comparable<Template> {
 
 	private static final String FONT_REFERENCE_FILE = "fonts_reference.properties";
 
-//	private static final String RAW_CSS_FILE = "raw_css.txt";
+	// private static final String RAW_CSS_FILE = "raw_css.txt";
 
 	private static Set<String> FILTER_FILE_EXTENSION = new HashSet<String>(Arrays.asList(new String[] { "html", "htm", "jsp", "js", "css", "scss", "less" }));
 
@@ -1108,7 +1108,7 @@ public class Template implements Comparable<Template> {
 		}
 		return outCSS;
 	}
-	
+
 	public Map<String, List<String>> getHtmlByFolder(String filter) throws IOException {
 		if (dir == null) {
 			return Collections.EMPTY_MAP;
@@ -1344,13 +1344,15 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
-//	private File getRawCssFile(GlobalContext globalContext) {
-//		return new File(URLHelper.mergePath(getWorkTemplateRealPath(globalContext), RAW_CSS_FILE));
-//	}
+	// private File getRawCssFile(GlobalContext globalContext) {
+	// return new File(URLHelper.mergePath(getWorkTemplateRealPath(globalContext),
+	// RAW_CSS_FILE));
+	// }
 
-//	private String getRawCss(GlobalContext globalContext, File file) throws IOException {
-//		return ResourceHelper.loadStringFromFile(file);
-//	}
+	// private String getRawCss(GlobalContext globalContext, File file) throws
+	// IOException {
+	// return ResourceHelper.loadStringFromFile(file);
+	// }
 
 	private void appendRawCssFile(GlobalContext globalContext, String data, File file) throws IOException {
 		PrintWriter out = null;
@@ -1370,19 +1372,19 @@ public class Template implements Comparable<Template> {
 	private String getFontIncluding(GlobalContext globalContext) throws Exception {
 		String outIncluding = "";
 		Map<?, ?> fontList = getFontReference(globalContext);
-//		if (isAutoFontIncluding()) {
-//			outIncluding = "";
-//			String cssRaw = getRawCss(globalContext, getRawCssFile(globalContext));
-//			Set<Object> included = new HashSet<>();
-//			for (Object key : fontList.keySet()) {
-//				if (cssRaw != null && cssRaw.toString().contains(key.toString())) {
-//					if (!included.contains(key)) {
-//						outIncluding += fontList.get(key);
-//						included.add(key);
-//					}
-//				}
-//			}
-//		}
+		// if (isAutoFontIncluding()) {
+		// outIncluding = "";
+		// String cssRaw = getRawCss(globalContext, getRawCssFile(globalContext));
+		// Set<Object> included = new HashSet<>();
+		// for (Object key : fontList.keySet()) {
+		// if (cssRaw != null && cssRaw.toString().contains(key.toString())) {
+		// if (!included.contains(key)) {
+		// outIncluding += fontList.get(key);
+		// included.add(key);
+		// }
+		// }
+		// }
+		// }
 		if (globalContext.getTemplateData().getFontHeading() != null && fontList.get(globalContext.getTemplateData().getFontHeading()) != null) {
 			outIncluding += fontList.get(globalContext.getTemplateData().getFontHeading());
 		}
@@ -1392,10 +1394,10 @@ public class Template implements Comparable<Template> {
 		return outIncluding;
 	}
 
-//	private boolean isAutoFontIncluding() {
-//		return properties.getBoolean("font.auto-including", false);
-//	}
-//
+	// private boolean isAutoFontIncluding() {
+	// return properties.getBoolean("font.auto-including", false);
+	// }
+	//
 	public String getHomeRenderer(GlobalContext globalContext) {
 		if (getHTMLHomeFile() == null) {
 			return null;
@@ -1588,7 +1590,17 @@ public class Template implements Comparable<Template> {
 		if (!StringHelper.getFileExtension(deviceRenderer).equalsIgnoreCase("html")) {
 			throw new SecurityException("template main html file must be a '.html' file.");
 		}
+
 		return deviceRenderer;
+	}
+
+	public String getLoginFile(ContentContext ctx) {
+		String deviceRenderer = properties.getString("login.jsp", getParent().getLoginFile(ctx));
+		if (deviceRenderer != null) {
+			return URLHelper.mergePath(getLocalTemplateTargetFolder(ctx.getGlobalContext()), deviceRenderer);
+		} else {
+			return null;
+		}
 	}
 
 	public String getHTMLFileParams(Device device) {
@@ -2640,7 +2652,8 @@ public class Template implements Comparable<Template> {
 					} else {
 						rebuildTemplate(ctx, false);
 					}
-					//importTemplateInWebapp(config, ctx, globalContext, templateTgt, null, true, false, getRawCssFile(globalContext), null, clear);
+					// importTemplateInWebapp(config, ctx, globalContext, templateTgt, null, true,
+					// false, getRawCssFile(globalContext), null, clear);
 					importTemplateInWebapp(config, ctx, globalContext, templateTgt, null, true, false, null, clear);
 					logger.info("import template : " + getName() + " in " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - startTime));
 				} else {
@@ -2654,9 +2667,9 @@ public class Template implements Comparable<Template> {
 	protected void importTemplateInWebapp(StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget, Map<String, String> childrenData, boolean compressResource, boolean parent, Boolean importComponents, boolean clear) throws IOException {
 
 		String templateFolder = config.getTemplateFolder();
-		
+
 		final String LOG_KEY = "import templte";
-		
+
 		LocalLogger.startCount(LOG_KEY);
 
 		// System.out.println(engine+"importTemplateInWebApp engine");
@@ -2693,9 +2706,9 @@ public class Template implements Comparable<Template> {
 			LocalLogger.stepCount(LOG_KEY, "plugin");
 
 			Map<String, String> map = getTemplateDataMap(globalContext);
-			
+
 			LocalLogger.stepCount(LOG_KEY, "getTemplateDataMap");
-			
+
 			map.put("##BUILD_ID##", getBuildId());
 			if (childrenData != null) {
 				map.putAll(childrenData);
@@ -2737,9 +2750,11 @@ public class Template implements Comparable<Template> {
 								try {
 									String fileExt = FilenameUtils.getExtension(file.getName());
 									if (FILTER_FILE_EXTENSION.contains(fileExt)) {
-//										if (fileExt.equalsIgnoreCase("css") || fileExt.equalsIgnoreCase("scss") || fileExt.equalsIgnoreCase("less") || fileExt.equalsIgnoreCase("sass")) {
-//											appendRawCssFile(globalContext, ResourceHelper.loadStringFromFile(file), inRawCssFile);
-//										}
+										// if (fileExt.equalsIgnoreCase("css") || fileExt.equalsIgnoreCase("scss") ||
+										// fileExt.equalsIgnoreCase("less") || fileExt.equalsIgnoreCase("sass")) {
+										// appendRawCssFile(globalContext, ResourceHelper.loadStringFromFile(file),
+										// inRawCssFile);
+										// }
 										if (fileExt.equalsIgnoreCase("jsp") || fileExt.equalsIgnoreCase("html")) {
 											ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map, ctx.getGlobalContext().getStaticConfig().isCompressJsp(), ctx.getGlobalContext().getStaticConfig().isHighSecure());
 										} else {
@@ -2758,7 +2773,7 @@ public class Template implements Comparable<Template> {
 					}
 				}
 			}
-			
+
 			LocalLogger.stepCount(LOG_KEY, "while (files.hasNext()) {");
 
 			/** import context **/
@@ -2801,7 +2816,7 @@ public class Template implements Comparable<Template> {
 					ResourceHelper.closeResource(outSassImport);
 				}
 			}
-			
+
 			LocalLogger.stepCount(LOG_KEY, "import context");
 
 		} else {
@@ -2834,18 +2849,20 @@ public class Template implements Comparable<Template> {
 		// }
 
 		/** clean file **/
-//		if (clear) {
-//			Iterator<File> targetFiles = FileUtils.iterateFiles(templateTarget, new String[] { "scss" }, true);
-//			while (targetFiles.hasNext()) {
-//				File targetFile = targetFiles.next();
-//				try {
-//					XHTMLHelper.removeComment(targetFile);
-//				} catch (Exception e) {
-//					logger.warning("error on copy file : " + targetFile + " err:" + e.getMessage());
-//				}
-//			}
-//		}
-		
+		// if (clear) {
+		// Iterator<File> targetFiles = FileUtils.iterateFiles(templateTarget, new
+		// String[] { "scss" }, true);
+		// while (targetFiles.hasNext()) {
+		// File targetFile = targetFiles.next();
+		// try {
+		// XHTMLHelper.removeComment(targetFile);
+		// } catch (Exception e) {
+		// logger.warning("error on copy file : " + targetFile + " err:" +
+		// e.getMessage());
+		// }
+		// }
+		// }
+
 		LocalLogger.stepCount(LOG_KEY, "clean file");
 
 		deployId = StringHelper.getRandomId();
@@ -2861,7 +2878,9 @@ public class Template implements Comparable<Template> {
 				if (importComponents == null) {
 					importComponents = isImportParentComponents();
 				}
-				//getParent().importTemplateInWebapp(config, ctx, globalContext, templateTarget, childrenData, false, true, inRawCssFile, importComponents, clear);
+				// getParent().importTemplateInWebapp(config, ctx, globalContext,
+				// templateTarget, childrenData, false, true, inRawCssFile, importComponents,
+				// clear);
 				getParent().importTemplateInWebapp(config, ctx, globalContext, templateTarget, childrenData, false, true, importComponents, clear);
 			} else {
 				logger.warning("parent template not found : " + getParent().getName());
@@ -2873,7 +2892,7 @@ public class Template implements Comparable<Template> {
 				ResourceHelper.writeStringToFile(indexFile, content);
 			}
 		}
-		
+
 		LocalLogger.stepCount(LOG_KEY, "parent");
 
 		// Clear Template Thymeleaf Cache
@@ -2883,7 +2902,7 @@ public class Template implements Comparable<Template> {
 		if (engine != null) {
 			engine.clearTemplateCache();
 		}
-		
+
 		LocalLogger.stepCount(LOG_KEY, "clearTemplateCache");
 
 	}

@@ -63,6 +63,11 @@ public class DefaultTemplate extends Template {
 	public String getHTMLFile() {
 		return "index.html";
 	}
+	
+	@Override
+	public String getLoginFile(ContentContext ctx) {
+		return null;
+	}
 
 	@Override
 	public String getMenuRenderer(Device device) {

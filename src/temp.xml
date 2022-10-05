@@ -1,0 +1,2984 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document
+	xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas"
+	xmlns:cx="http://schemas.microsoft.com/office/drawing/2014/chartex"
+	xmlns:cx1="http://schemas.microsoft.com/office/drawing/2015/9/8/chartex"
+	xmlns:cx2="http://schemas.microsoft.com/office/drawing/2015/10/21/chartex"
+	xmlns:cx3="http://schemas.microsoft.com/office/drawing/2016/5/9/chartex"
+	xmlns:cx4="http://schemas.microsoft.com/office/drawing/2016/5/10/chartex"
+	xmlns:cx5="http://schemas.microsoft.com/office/drawing/2016/5/11/chartex"
+	xmlns:cx6="http://schemas.microsoft.com/office/drawing/2016/5/12/chartex"
+	xmlns:cx7="http://schemas.microsoft.com/office/drawing/2016/5/13/chartex"
+	xmlns:cx8="http://schemas.microsoft.com/office/drawing/2016/5/14/chartex"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:aink="http://schemas.microsoft.com/office/drawing/2016/ink"
+	xmlns:am3d="http://schemas.microsoft.com/office/drawing/2017/model3d"
+	xmlns:o="urn:schemas-microsoft-com:office:office"
+	xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+	xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math"
+	xmlns:v="urn:schemas-microsoft-com:vml"
+	xmlns:wp14="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing"
+	xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"
+	xmlns:w10="urn:schemas-microsoft-com:office:word"
+	xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+	xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"
+	xmlns:w15="http://schemas.microsoft.com/office/word/2012/wordml"
+	xmlns:w16cex="http://schemas.microsoft.com/office/word/2018/wordml/cex"
+	xmlns:w16cid="http://schemas.microsoft.com/office/word/2016/wordml/cid"
+	xmlns:w16="http://schemas.microsoft.com/office/word/2018/wordml"
+	xmlns:w16sdtdh="http://schemas.microsoft.com/office/word/2020/wordml/sdtdatahash"
+	xmlns:w16se="http://schemas.microsoft.com/office/word/2015/wordml/symex"
+	xmlns:wpg="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup"
+	xmlns:wpi="http://schemas.microsoft.com/office/word/2010/wordprocessingInk"
+	xmlns:wne="http://schemas.microsoft.com/office/word/2006/wordml"
+	xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape"
+	mc:Ignorable="w14 w15 w16se w16cid w16 w16cex w16sdtdh wp14">
+	<w:body>
+		<w:p w14:paraId="085011B5" w14:textId="520D0B3B"
+			w:rsidR="00142D52" w:rsidRPr="004D7C62" w:rsidRDefault="00142D52">
+			<w:pPr>
+				<w:rPr>
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r>
+				<w:rPr>
+					<w:noProof />
+				</w:rPr>
+				<w:drawing>
+					<wp:anchor distT="0" distB="0" distL="114300"
+						distR="114300" simplePos="0" relativeHeight="251658240"
+						behindDoc="1" locked="0" layoutInCell="1" allowOverlap="1"
+						wp14:anchorId="33D75C0B" wp14:editId="73E9DAD9">
+						<wp:simplePos x="0" y="0" />
+						<wp:positionH relativeFrom="column">
+							<wp:posOffset>-10795</wp:posOffset>
+						</wp:positionH>
+						<wp:positionV relativeFrom="paragraph">
+							<wp:posOffset>1905</wp:posOffset>
+						</wp:positionV>
+						<wp:extent cx="965200" cy="965200" />
+						<wp:effectExtent l="0" t="0" r="0" b="0" />
+						<wp:wrapTight wrapText="bothSides">
+							<wp:wrapPolygon edited="0">
+								<wp:start x="0" y="0" />
+								<wp:lineTo x="0" y="21316" />
+								<wp:lineTo x="21316" y="21316" />
+								<wp:lineTo x="21316" y="0" />
+								<wp:lineTo x="0" y="0" />
+							</wp:wrapPolygon>
+						</wp:wrapTight>
+						<wp:docPr id="1" name="Afbeelding 1" />
+						<wp:cNvGraphicFramePr>
+							<a:graphicFrameLocks
+								xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
+								noChangeAspect="1" />
+						</wp:cNvGraphicFramePr>
+						<a:graphic
+							xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+							<a:graphicData
+								uri="http://schemas.openxmlformats.org/drawingml/2006/picture">
+								<pic:pic
+									xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
+									<pic:nvPicPr>
+										<pic:cNvPr id="1" name="Afbeelding 1" />
+										<pic:cNvPicPr />
+									</pic:nvPicPr>
+									<pic:blipFill>
+										<a:blip r:embed="rId10" cstate="print">
+											<a:extLst>
+												<a:ext uri="{28A0092B-C50C-407E-A947-70E740481C1C}">
+													<a14:useLocalDpi
+														xmlns:a14="http://schemas.microsoft.com/office/drawing/2010/main"
+														val="0" />
+												</a:ext>
+											</a:extLst>
+										</a:blip>
+										<a:stretch>
+											<a:fillRect />
+										</a:stretch>
+									</pic:blipFill>
+									<pic:spPr>
+										<a:xfrm>
+											<a:off x="0" y="0" />
+											<a:ext cx="965200" cy="965200" />
+										</a:xfrm>
+										<a:prstGeom prst="rect">
+											<a:avLst />
+										</a:prstGeom>
+									</pic:spPr>
+								</pic:pic>
+							</a:graphicData>
+						</a:graphic>
+						<wp14:sizeRelH relativeFrom="page">
+							<wp14:pctWidth>0</wp14:pctWidth>
+						</wp14:sizeRelH>
+						<wp14:sizeRelV relativeFrom="page">
+							<wp14:pctHeight>0</wp14:pctHeight>
+						</wp14:sizeRelV>
+					</wp:anchor>
+				</w:drawing>
+			</w:r>
+			<w:r w:rsidR="004D7C62" w:rsidRPr="004D7C62">
+				<w:rPr>
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:tab />
+			</w:r>
+			<w:r w:rsidR="004D7C62" w:rsidRPr="004D7C62">
+				<w:rPr>
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:tab />
+			</w:r>
+			<w:r w:rsidR="004D7C62" w:rsidRPr="004D7C62">
+				<w:rPr>
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:tab />
+			</w:r>
+			<w:r w:rsidR="004D7C62" w:rsidRPr="004D7C62">
+				<w:rPr>
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:tab />
+			</w:r>
+			<w:r w:rsidR="004D7C62" w:rsidRPr="004D7C62">
+				<w:rPr>
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:tab />
+			</w:r>
+			<w:r w:rsidR="004D7C62" w:rsidRPr="004D7C62">
+				<w:rPr>
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:tab />
+			</w:r>
+			<w:r w:rsidR="004D7C62" w:rsidRPr="004D7C62">
+				<w:rPr>
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:tab />
+			</w:r>
+			<w:r w:rsidR="004D7C62" w:rsidRPr="004D7C62">
+				<w:rPr>
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:tab />
+			</w:r>
+			<w:r w:rsidR="004D7C62" w:rsidRPr="009C7D98">
+				<w:rPr>
+					<w:color w:val="174489" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>Asse,</w:t>
+			</w:r>
+			<w:r w:rsidR="004D7C62" w:rsidRPr="004D7C62">
+				<w:rPr>
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> </w:t>
+			</w:r>
+			<w:r w:rsidR="004D7C62" w:rsidRPr="004D7C62">
+				<w:rPr>
+					<w:color w:val="5DBDB1" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>//date</w:t>
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="229DE339" w14:textId="77777777"
+			w:rsidR="004D7C62" w:rsidRDefault="004D7C62" w:rsidP="003F7BEF">
+			<w:pPr>
+				<w:ind w:right="480" />
+				<w:jc w:val="center" />
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:b />
+					<w:bCs />
+					<w:color w:val="174489" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+		</w:p>
+		<w:p w14:paraId="36E0A2FA" w14:textId="77777777"
+			w:rsidR="004D7C62" w:rsidRDefault="004D7C62" w:rsidP="003F7BEF">
+			<w:pPr>
+				<w:ind w:right="480" />
+				<w:jc w:val="center" />
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:b />
+					<w:bCs />
+					<w:color w:val="174489" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+		</w:p>
+		<w:p w14:paraId="3ED9577E" w14:textId="77777777"
+			w:rsidR="004D7C62" w:rsidRDefault="004D7C62" w:rsidP="003F7BEF">
+			<w:pPr>
+				<w:ind w:right="480" />
+				<w:jc w:val="center" />
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:b />
+					<w:bCs />
+					<w:color w:val="174489" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+		</w:p>
+		<w:p w14:paraId="602E4F26" w14:textId="77777777"
+			w:rsidR="004D7C62" w:rsidRDefault="004D7C62" w:rsidP="003F7BEF">
+			<w:pPr>
+				<w:ind w:right="480" />
+				<w:jc w:val="center" />
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:b />
+					<w:bCs />
+					<w:color w:val="174489" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+		</w:p>
+		<w:p w14:paraId="252CAAA3" w14:textId="32FE4874"
+			w:rsidR="003F7BEF" w:rsidRDefault="00142D52" w:rsidP="003F7BEF">
+			<w:pPr>
+				<w:ind w:right="480" />
+				<w:jc w:val="center" />
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:b />
+					<w:bCs />
+					<w:color w:val="174489" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r w:rsidRPr="003F7BEF">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:b />
+					<w:bCs />
+					<w:color w:val="174489" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>REISOVEREENKOMST</w:t>
+			</w:r>
+			<w:r w:rsidR="003F7BEF">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:b />
+					<w:bCs />
+					<w:color w:val="174489" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> </w:t>
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="5B35FE4C" w14:textId="6569C162"
+			w:rsidR="00142D52" w:rsidRPr="003F7BEF" w:rsidRDefault="00142D52"
+			w:rsidP="003F7BEF">
+			<w:pPr>
+				<w:ind w:right="480" />
+				<w:jc w:val="center" />
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:b />
+					<w:bCs />
+					<w:color w:val="174489" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r w:rsidRPr="003F7BEF">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:b />
+					<w:bCs />
+					<w:color w:val="174489" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>INDICAMP ZOMER 2022</w:t>
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="0B42FDA8" w14:textId="35CEF9EF"
+			w:rsidR="00142D52" w:rsidRPr="003F7BEF" w:rsidRDefault="00142D52">
+			<w:pPr>
+				<w:rPr>
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+		</w:p>
+		<w:p w14:paraId="31F4DC08" w14:textId="19A9E963"
+			w:rsidR="00142D52" w:rsidRPr="003F7BEF" w:rsidRDefault="00142D52">
+			<w:pPr>
+				<w:rPr>
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+		</w:p>
+		<w:p w14:paraId="252D7530" w14:textId="77777777"
+			w:rsidR="00E94E42" w:rsidRPr="004D7C62" w:rsidRDefault="00E94E42">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Medium"
+						w:hAnsi="Filson Pro Medium" />
+					<w:color w:val="174489" />
+					<w:u w:val="single" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r w:rsidRPr="004D7C62">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Medium"
+						w:hAnsi="Filson Pro Medium" />
+					<w:color w:val="174489" />
+					<w:u w:val="single" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>De deelnemer </w:t>
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="75D6F42D" w14:textId="77777777"
+			w:rsidR="00E94E42" w:rsidRPr="005E5AB8" w:rsidRDefault="00E94E42">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="13" />
+					<w:szCs w:val="13" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+		</w:p>
+		<w:p w14:paraId="1E8E15F2" w14:textId="45207BC8"
+			w:rsidR="00E94E42" w:rsidRPr="00D70A53" w:rsidRDefault="00E94E42">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r w:rsidRPr="00D70A53">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>Naam :</w:t>
+			</w:r>
+			<w:r w:rsidR="009F56AA" w:rsidRPr="00D70A53">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> </w:t>
+			</w:r>
+			<w:r w:rsidR="004501FE" w:rsidRPr="0074690E">
+				<w:rPr>
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>${</w:t>
+			</w:r>
+			<w:r w:rsidR="009F56AA" w:rsidRPr="0074690E">
+				<w:rPr>
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>firstname</w:t>
+			</w:r>
+			<w:r w:rsidR="004501FE" w:rsidRPr="0074690E">
+				<w:rPr>
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>}</w:t>
+			</w:r>
+			<w:r w:rsidR="009F1324" w:rsidRPr="0074690E">
+				<w:rPr>
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> :firstname {{firstname}} &lt;firstname&gt; *firstname* $firstname</w:t>
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="4B526E4F" w14:textId="0CA911F1"
+			w:rsidR="00E94E42" w:rsidRPr="000A2F95" w:rsidRDefault="00E94E42">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve">Voornaam : </w:t>
+			</w:r>
+			<w:r w:rsidR="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>{{</w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidR="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>lastname</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidR="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>}}</w:t>
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="7F7AD278" w14:textId="649A1B0B"
+			w:rsidR="003F7BEF" w:rsidRPr="000A2F95" w:rsidRDefault="00E94E42">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve">Geboortedatum : </w:t>
+			</w:r>
+			<w:r w:rsidR="008D1482" w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>//</w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>birth</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> date participant</w:t>
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="266B4392" w14:textId="7D605C83"
+			w:rsidR="00142D52" w:rsidRPr="000A2F95" w:rsidRDefault="003F7BEF">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>Rijksregisternummer:</w:t>
+			</w:r>
+			<w:r w:rsidR="00142D52" w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> </w:t>
+			</w:r>
+			<w:r w:rsidR="008D1482" w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>//</w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>national</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> </w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>number</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> participant</w:t>
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="3DCA7BB3" w14:textId="4812C88C"
+			w:rsidR="00E94E42" w:rsidRPr="000A2F95" w:rsidRDefault="00E94E42">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve">Straat en nummer : </w:t>
+			</w:r>
+			<w:r w:rsidR="008D1482" w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>//</w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>street</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> name </w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>and</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> </w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>number</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> participant</w:t>
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="2910A291" w14:textId="11826267"
+			w:rsidR="00E94E42" w:rsidRPr="000A2F95" w:rsidRDefault="00E94E42">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve">Postcode : </w:t>
+			</w:r>
+			<w:r w:rsidR="008D1482" w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>//zip code participant</w:t>
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="798C50C8" w14:textId="7B89C26B"
+			w:rsidR="00E94E42" w:rsidRPr="000A2F95" w:rsidRDefault="00E94E42">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>Stad :</w:t>
+			</w:r>
+			<w:r w:rsidR="008D1482" w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> </w:t>
+			</w:r>
+			<w:r w:rsidR="008D1482" w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>//</w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>city</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> participant</w:t>
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="03DECD84" w14:textId="6CE6470C"
+			w:rsidR="00E94E42" w:rsidRPr="000A2F95" w:rsidRDefault="00E94E42">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve">Email : </w:t>
+			</w:r>
+			<w:r w:rsidR="008D1482" w:rsidRPr="000A2F95">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>//e-mail participant</w:t>
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="69D286B2" w14:textId="10826C92"
+			w:rsidR="00E94E42" w:rsidRPr="00EA6297" w:rsidRDefault="00E94E42">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve">Telefoonnummer : </w:t>
+			</w:r>
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>//</w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>phone</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> </w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>number</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> participant</w:t>
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="41E7A7D8" w14:textId="77777777"
+			w:rsidR="00E94E42" w:rsidRPr="003F7BEF" w:rsidRDefault="00E94E42">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+		</w:p>
+		<w:p w14:paraId="7419FF8D" w14:textId="2B2A4269"
+			w:rsidR="00E94E42" w:rsidRPr="004D7C62" w:rsidRDefault="00E94E42">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Medium"
+						w:hAnsi="Filson Pro Medium" />
+					<w:color w:val="174489" />
+					<w:u w:val="single" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r w:rsidRPr="004D7C62">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Medium"
+						w:hAnsi="Filson Pro Medium" />
+					<w:color w:val="174489" />
+					<w:u w:val="single" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>Indien de deelnemer minderjarig is</w:t>
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="6B4D3726" w14:textId="0C49ABD0"
+			w:rsidR="00E94E42" w:rsidRPr="005E5AB8" w:rsidRDefault="00E94E42">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="13" />
+					<w:szCs w:val="13" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+		</w:p>
+		<w:p w14:paraId="0150F98C" w14:textId="79E11F29"
+			w:rsidR="00E94E42" w:rsidRPr="00EA6297" w:rsidRDefault="00E94E42">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve">Naam van de ouder/voogd : </w:t>
+			</w:r>
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve">//name </w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>parent</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> or </w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>parental</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> </w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>guardian</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+		</w:p>
+		<w:p w14:paraId="69B036AE" w14:textId="7097A296"
+			w:rsidR="00E94E42" w:rsidRPr="00EA6297" w:rsidRDefault="00E94E42">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve">Voornaam van de ouder/voogd : </w:t>
+			</w:r>
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve">//first name </w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>parent</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> or </w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>parental</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> </w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>guardian</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+		</w:p>
+		<w:p w14:paraId="74BF4E91" w14:textId="0B3E004D"
+			w:rsidR="00E94E42" w:rsidRPr="00EA6297" w:rsidRDefault="00E94E42">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve">Telefoonnummer van de ouder/voogd : </w:t>
+			</w:r>
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>//</w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>phone</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> </w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>number</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> </w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>parent</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> or </w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>parental</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> </w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>guardian</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+		</w:p>
+		<w:p w14:paraId="494B5D6B" w14:textId="7C208BCD"
+			w:rsidR="00E94E42" w:rsidRPr="00EA6297" w:rsidRDefault="00E94E42">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve">e-mail van de ouder/voogd : </w:t>
+			</w:r>
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve">//e-mail </w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>parent</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> or </w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>parental</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> </w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>guardian</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+		</w:p>
+		<w:p w14:paraId="663E58B1" w14:textId="312FEC11"
+			w:rsidR="00E94E42" w:rsidRPr="003F7BEF" w:rsidRDefault="00E94E42">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+		</w:p>
+		<w:p w14:paraId="4FF209C2" w14:textId="77F1AF5D"
+			w:rsidR="00E94E42" w:rsidRPr="004D7C62" w:rsidRDefault="00E94E42">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Medium"
+						w:hAnsi="Filson Pro Medium" />
+					<w:color w:val="174489" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+		</w:p>
+		<w:p w14:paraId="62A198B6" w14:textId="588E2062"
+			w:rsidR="00E94E42" w:rsidRPr="004D7C62" w:rsidRDefault="008D1482">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Medium"
+						w:hAnsi="Filson Pro Medium" />
+					<w:color w:val="174489" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r w:rsidRPr="004D7C62">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Medium"
+						w:hAnsi="Filson Pro Medium" />
+					<w:color w:val="174489" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>Heeft</w:t>
+			</w:r>
+			<w:r w:rsidR="00E94E42" w:rsidRPr="004D7C62">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Medium"
+						w:hAnsi="Filson Pro Medium" />
+					<w:color w:val="174489" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> zich in</w:t>
+			</w:r>
+			<w:r w:rsidRPr="004D7C62">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Medium"
+						w:hAnsi="Filson Pro Medium" />
+					<w:color w:val="174489" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>geschreven</w:t>
+			</w:r>
+			<w:r w:rsidR="00E94E42" w:rsidRPr="004D7C62">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Medium"
+						w:hAnsi="Filson Pro Medium" />
+					<w:color w:val="174489" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> voor het JEKA-</w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidR="00E94E42" w:rsidRPr="004D7C62">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Medium"
+						w:hAnsi="Filson Pro Medium" />
+					<w:color w:val="174489" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>Indicamp</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidR="00E94E42" w:rsidRPr="004D7C62">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Medium"
+						w:hAnsi="Filson Pro Medium" />
+					<w:color w:val="174489" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> : </w:t>
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="6460F6E4" w14:textId="4C090C9C"
+			w:rsidR="00E94E42" w:rsidRPr="005E5AB8" w:rsidRDefault="00E94E42">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="13" />
+					<w:szCs w:val="13" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+		</w:p>
+		<w:p w14:paraId="6A0178B5" w14:textId="0958E57C"
+			w:rsidR="00E94E42" w:rsidRPr="00EA6297" w:rsidRDefault="00E94E42">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="en-US" />
+				</w:rPr>
+			</w:pPr>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="en-US" />
+				</w:rPr>
+				<w:t>Bestemming</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="en-US" />
+				</w:rPr>
+				<w:t xml:space="preserve"> : </w:t>
+			</w:r>
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="en-US" />
+				</w:rPr>
+				<w:t>//destination of chosen camp</w:t>
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="7FF225E1" w14:textId="7CBBD605"
+			w:rsidR="00E94E42" w:rsidRPr="00EA6297" w:rsidRDefault="00E94E42">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="en-US" />
+				</w:rPr>
+			</w:pPr>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="en-US" />
+				</w:rPr>
+				<w:t>Periode</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="en-US" />
+				</w:rPr>
+				<w:t xml:space="preserve"> : </w:t>
+			</w:r>
+			<w:r w:rsidR="008D1482" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="en-US" />
+				</w:rPr>
+				<w:t>//travel dates of chosen camp</w:t>
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="1AAA40E0" w14:textId="760F2407"
+			w:rsidR="008D1482" w:rsidRPr="00EA6297" w:rsidRDefault="008D1482">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="en-US" />
+				</w:rPr>
+			</w:pPr>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="en-US" />
+				</w:rPr>
+				<w:t>Leeftijdscategorie</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="en-US" />
+				</w:rPr>
+				<w:t xml:space="preserve"> : </w:t>
+			</w:r>
+			<w:r w:rsidR="00762084" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="en-US" />
+				</w:rPr>
+				<w:t>//age category of chosen camp</w:t>
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="044EEADE" w14:textId="21120849"
+			w:rsidR="00E94E42" w:rsidRPr="00EA6297" w:rsidRDefault="00E94E42">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="en-US" />
+				</w:rPr>
+			</w:pPr>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="en-US" />
+				</w:rPr>
+				<w:t>Volledig</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="en-US" />
+				</w:rPr>
+				<w:t xml:space="preserve"> </w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="en-US" />
+				</w:rPr>
+				<w:t>kampprijs</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="en-US" />
+				</w:rPr>
+				<w:t xml:space="preserve"> : </w:t>
+			</w:r>
+			<w:r w:rsidR="00762084" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="en-US" />
+				</w:rPr>
+				<w:t>//full camp price of chosen camp</w:t>
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="53D2962F" w14:textId="414F086A"
+			w:rsidR="00762084" w:rsidRPr="00EA6297" w:rsidRDefault="00762084">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="en-US" />
+				</w:rPr>
+			</w:pPr>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="en-US" />
+				</w:rPr>
+				<w:t>Korting</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="en-US" />
+				</w:rPr>
+				<w:t xml:space="preserve"> via voucher : </w:t>
+			</w:r>
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="en-US" />
+				</w:rPr>
+				<w:t>//amount of reduction on camp price via voucher</w:t>
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="44335A95" w14:textId="6DA437F9"
+			w:rsidR="00E94E42" w:rsidRPr="00762084" w:rsidRDefault="00E94E42">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:lang w:val="en-US" />
+				</w:rPr>
+			</w:pPr>
+		</w:p>
+		<w:p w14:paraId="5DAC5D58" w14:textId="20ACD3F1"
+			w:rsidR="00E94E42" w:rsidRPr="00762084" w:rsidRDefault="00E94E42">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:lang w:val="en-US" />
+				</w:rPr>
+			</w:pPr>
+		</w:p>
+		<w:p w14:paraId="052DF040" w14:textId="0B886649"
+			w:rsidR="00E94E42" w:rsidRPr="00EA6297" w:rsidRDefault="000225F4">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>JEKA-</w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>Indicamp</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> bevestig</w:t>
+			</w:r>
+			<w:r w:rsidR="00762084" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>t</w:t>
+			</w:r>
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> </w:t>
+			</w:r>
+			<w:r w:rsidR="00762084" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve">reeds een bedrag van € </w:t>
+			</w:r>
+			<w:r w:rsidR="00762084" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>//</w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidR="00762084" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>already</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidR="00762084" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> </w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidR="00762084" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>paid</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidR="00762084" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> advance</w:t>
+			</w:r>
+			<w:r w:rsidR="00762084" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> te hebben</w:t>
+			</w:r>
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> ontvangen </w:t>
+			</w:r>
+			<w:r w:rsidR="00762084" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>als</w:t>
+			</w:r>
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> voorschot</w:t>
+			</w:r>
+			<w:r w:rsidR="0028641C" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>.</w:t>
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="4E9823F9" w14:textId="30DE781B"
+			w:rsidR="0028641C" w:rsidRPr="00EA6297" w:rsidRDefault="0028641C"
+			w:rsidP="0028641C">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve">Er blijft een restsaldo van € </w:t>
+			</w:r>
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>//(</w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>total</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> </w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>price</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> camp – </w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>paid</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> advance – </w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>reduction</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="5DBDB1" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> voucher)</w:t>
+			</w:r>
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> te betalen tegen uiterlijk 1 juni 2022</w:t>
+			</w:r>
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:i />
+					<w:iCs />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>(*)</w:t>
+			</w:r>
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>.</w:t>
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="517BADE4" w14:textId="26FF4E2F"
+			w:rsidR="0028641C" w:rsidRPr="005E5AB8" w:rsidRDefault="0028641C"
+			w:rsidP="0028641C">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="13" />
+					<w:szCs w:val="13" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+		</w:p>
+		<w:p w14:paraId="703380B6" w14:textId="791D36A2"
+			w:rsidR="00BC0513" w:rsidRPr="00177551" w:rsidRDefault="00BC0513">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Book"
+						w:hAnsi="Filson Pro Book" />
+					<w:i />
+					<w:iCs />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r w:rsidRPr="00177551">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Book"
+						w:hAnsi="Filson Pro Book" />
+					<w:i />
+					<w:iCs />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve">(*) </w:t>
+			</w:r>
+			<w:r w:rsidR="0028641C" w:rsidRPr="00177551">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Book"
+						w:hAnsi="Filson Pro Book" />
+					<w:i />
+					<w:iCs />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>de voucherkorting werd reeds verrekend</w:t>
+			</w:r>
+			<w:r w:rsidRPr="00177551">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Book"
+						w:hAnsi="Filson Pro Book" />
+					<w:i />
+					<w:iCs />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve">. </w:t>
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="7E702494" w14:textId="5327C25F"
+			w:rsidR="000225F4" w:rsidRPr="003F7BEF" w:rsidRDefault="000225F4">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+		</w:p>
+		<w:p w14:paraId="1073883B" w14:textId="2453ECF5"
+			w:rsidR="00177551" w:rsidRDefault="000225F4" w:rsidP="00840972">
+			<w:pPr>
+				<w:jc w:val="both" />
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:i />
+					<w:iCs />
+					<w:color w:val="174489" />
+					<w:sz w:val="20" />
+					<w:szCs w:val="20" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r w:rsidRPr="003F7BEF">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:i />
+					<w:iCs />
+					<w:color w:val="174489" />
+					<w:sz w:val="20" />
+					<w:szCs w:val="20" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve">Bij ondertekening van </w:t>
+			</w:r>
+			<w:r w:rsidR="00A357F2" w:rsidRPr="003F7BEF">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:i />
+					<w:iCs />
+					<w:color w:val="174489" />
+					<w:sz w:val="20" />
+					<w:szCs w:val="20" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>deze overeenkomst</w:t>
+			</w:r>
+			<w:r w:rsidRPr="003F7BEF">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:i />
+					<w:iCs />
+					<w:color w:val="174489" />
+					<w:sz w:val="20" />
+					<w:szCs w:val="20" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> verklaar</w:t>
+			</w:r>
+			<w:r w:rsidR="00177551">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:i />
+					<w:iCs />
+					<w:color w:val="174489" />
+					<w:sz w:val="20" />
+					<w:szCs w:val="20" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>t</w:t>
+			</w:r>
+			<w:r w:rsidRPr="003F7BEF">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:i />
+					<w:iCs />
+					<w:color w:val="174489" />
+					<w:sz w:val="20" />
+					<w:szCs w:val="20" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> de deelnemer en/of zijn ouders of voogd zich akkoord met de contractuele bepalingen</w:t>
+			</w:r>
+			<w:r w:rsidR="00177551">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:i />
+					<w:iCs />
+					<w:color w:val="174489" />
+					<w:sz w:val="20" />
+					<w:szCs w:val="20" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> zoals beschreven op de pagina’s </w:t>
+			</w:r>
+			<w:r w:rsidR="00840972">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:i />
+					<w:iCs />
+					<w:color w:val="174489" />
+					<w:sz w:val="20" />
+					<w:szCs w:val="20" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve">2 tot en met 18 </w:t>
+			</w:r>
+			<w:r w:rsidR="00177551">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:i />
+					<w:iCs />
+					<w:color w:val="174489" />
+					<w:sz w:val="20" />
+					<w:szCs w:val="20" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>van deze overeenkomst.</w:t>
+			</w:r>
+			<w:r w:rsidRPr="003F7BEF">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:i />
+					<w:iCs />
+					<w:color w:val="174489" />
+					<w:sz w:val="20" />
+					<w:szCs w:val="20" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> </w:t>
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="1DD446FF" w14:textId="16DE34E2"
+			w:rsidR="000225F4" w:rsidRPr="003F7BEF" w:rsidRDefault="00177551">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:i />
+					<w:iCs />
+					<w:color w:val="174489" />
+					<w:sz w:val="20" />
+					<w:szCs w:val="20" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:i />
+					<w:iCs />
+					<w:color w:val="174489" />
+					<w:sz w:val="20" />
+					<w:szCs w:val="20" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>D</w:t>
+			</w:r>
+			<w:r w:rsidR="004B1E8D" w:rsidRPr="003F7BEF">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:i />
+					<w:iCs />
+					<w:color w:val="174489" />
+					<w:sz w:val="20" />
+					<w:szCs w:val="20" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve">e </w:t>
+			</w:r>
+			<w:r w:rsidR="004B1E8D" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Medium"
+						w:hAnsi="Filson Pro Medium" />
+					<w:i />
+					<w:iCs />
+					<w:color w:val="174489" />
+					<w:sz w:val="20" />
+					<w:szCs w:val="20" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve">kampregels </w:t>
+			</w:r>
+			<w:r>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:i />
+					<w:iCs />
+					<w:color w:val="174489" />
+					<w:sz w:val="20" />
+					<w:szCs w:val="20" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>worden</w:t>
+			</w:r>
+			<w:r w:rsidR="004B1E8D" w:rsidRPr="003F7BEF">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:i />
+					<w:iCs />
+					<w:color w:val="174489" />
+					<w:sz w:val="20" />
+					<w:szCs w:val="20" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> uiterlijk </w:t>
+			</w:r>
+			<w:r>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:i />
+					<w:iCs />
+					<w:color w:val="174489" />
+					<w:sz w:val="20" />
+					<w:szCs w:val="20" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve">op 01/05/2022 </w:t>
+			</w:r>
+			<w:r w:rsidR="004B1E8D" w:rsidRPr="003F7BEF">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:i />
+					<w:iCs />
+					<w:color w:val="174489" />
+					<w:sz w:val="20" />
+					<w:szCs w:val="20" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve">toegezonden </w:t>
+			</w:r>
+			<w:r>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:i />
+					<w:iCs />
+					<w:color w:val="174489" />
+					<w:sz w:val="20" />
+					<w:szCs w:val="20" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>via aparte e-mail.</w:t>
+			</w:r>
+			<w:r w:rsidR="004B1E8D" w:rsidRPr="003F7BEF">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:i />
+					<w:iCs />
+					<w:color w:val="174489" />
+					<w:sz w:val="20" />
+					<w:szCs w:val="20" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> </w:t>
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="2B2B2EA0" w14:textId="00288A24"
+			w:rsidR="00E94E42" w:rsidRPr="003F7BEF" w:rsidRDefault="00E94E42">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+		</w:p>
+		<w:p w14:paraId="5099BE7E" w14:textId="3FDBD2D0"
+			w:rsidR="00E94E42" w:rsidRPr="00EA6297" w:rsidRDefault="004B1E8D">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve">In dubbel opgemaakt en ondertekend </w:t>
+			</w:r>
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:tab />
+			</w:r>
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:tab />
+			</w:r>
+			<w:r w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:tab />
+				<w:t xml:space="preserve"> </w:t>
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="254BD1BE" w14:textId="4EDFDE2D"
+			w:rsidR="004B1E8D" w:rsidRPr="00EA6297" w:rsidRDefault="004B1E8D">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+		</w:p>
+		<w:p w14:paraId="5ABB11D0" w14:textId="061EC761"
+			w:rsidR="004B1E8D" w:rsidRDefault="005E5AB8">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r>
+				<w:rPr>
+					<w:noProof />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:drawing>
+					<wp:anchor distT="0" distB="0" distL="114300"
+						distR="114300" simplePos="0" relativeHeight="251659264"
+						behindDoc="0" locked="0" layoutInCell="1" allowOverlap="1"
+						wp14:anchorId="07B26540" wp14:editId="518A8136">
+						<wp:simplePos x="0" y="0" />
+						<wp:positionH relativeFrom="column">
+							<wp:posOffset>3265805</wp:posOffset>
+						</wp:positionH>
+						<wp:positionV relativeFrom="paragraph">
+							<wp:posOffset>141605</wp:posOffset>
+						</wp:positionV>
+						<wp:extent cx="1934511" cy="631190" />
+						<wp:effectExtent l="0" t="0" r="0" b="3810" />
+						<wp:wrapNone />
+						<wp:docPr id="2" name="Afbeelding 2"
+							descr="Afbeelding met pijl&#xA;&#xA;Automatisch gegenereerde beschrijving" />
+						<wp:cNvGraphicFramePr>
+							<a:graphicFrameLocks
+								xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
+								noChangeAspect="1" />
+						</wp:cNvGraphicFramePr>
+						<a:graphic
+							xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+							<a:graphicData
+								uri="http://schemas.openxmlformats.org/drawingml/2006/picture">
+								<pic:pic
+									xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
+									<pic:nvPicPr>
+										<pic:cNvPr id="2" name="Afbeelding 2"
+											descr="Afbeelding met pijl&#xA;&#xA;Automatisch gegenereerde beschrijving" />
+										<pic:cNvPicPr />
+									</pic:nvPicPr>
+									<pic:blipFill rotWithShape="1">
+										<a:blip r:embed="rId11" cstate="print">
+											<a:extLst>
+												<a:ext uri="{28A0092B-C50C-407E-A947-70E740481C1C}">
+													<a14:useLocalDpi
+														xmlns:a14="http://schemas.microsoft.com/office/drawing/2010/main"
+														val="0" />
+												</a:ext>
+											</a:extLst>
+										</a:blip>
+										<a:srcRect l="-1102" t="31526" r="1102" b="35847" />
+										<a:stretch />
+									</pic:blipFill>
+									<pic:spPr bwMode="auto">
+										<a:xfrm>
+											<a:off x="0" y="0" />
+											<a:ext cx="1934511" cy="631190" />
+										</a:xfrm>
+										<a:prstGeom prst="rect">
+											<a:avLst />
+										</a:prstGeom>
+										<a:ln>
+											<a:noFill />
+										</a:ln>
+										<a:extLst>
+											<a:ext uri="{53640926-AAD7-44D8-BBD7-CCE9431645EC}">
+												<a14:shadowObscured
+													xmlns:a14="http://schemas.microsoft.com/office/drawing/2010/main" />
+											</a:ext>
+										</a:extLst>
+									</pic:spPr>
+								</pic:pic>
+							</a:graphicData>
+						</a:graphic>
+						<wp14:sizeRelH relativeFrom="page">
+							<wp14:pctWidth>0</wp14:pctWidth>
+						</wp14:sizeRelH>
+						<wp14:sizeRelV relativeFrom="page">
+							<wp14:pctHeight>0</wp14:pctHeight>
+						</wp14:sizeRelV>
+					</wp:anchor>
+				</w:drawing>
+			</w:r>
+			<w:r w:rsidR="004B1E8D" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>De deelnemer / ouder of voogd</w:t>
+			</w:r>
+			<w:r w:rsidR="004B1E8D" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:tab />
+			</w:r>
+			<w:r w:rsidR="004B1E8D" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:tab />
+			</w:r>
+			<w:r w:rsidR="004B1E8D" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:tab />
+			</w:r>
+			<w:r w:rsidR="004B1E8D" w:rsidRPr="00EA6297">
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:tab />
+				<w:t xml:space="preserve">voor JEKA vzw </w:t>
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="25AB3E13" w14:textId="6A09696F"
+			w:rsidR="00EA6297" w:rsidRDefault="00EA6297">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+		</w:p>
+		<w:p w14:paraId="01BFD989" w14:textId="3808FE6A"
+			w:rsidR="00EA6297" w:rsidRDefault="00EA6297">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+		</w:p>
+		<w:p w14:paraId="4C14F157" w14:textId="5A7B765D"
+			w:rsidR="00EA6297" w:rsidRDefault="00EA6297">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+		</w:p>
+		<w:p w14:paraId="2B1352DB" w14:textId="77777777"
+			w:rsidR="005E5AB8" w:rsidRDefault="00EA6297" w:rsidP="00EA6297">
+			<w:pPr>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:tab />
+			</w:r>
+			<w:r>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:tab />
+			</w:r>
+			<w:r>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:tab />
+			</w:r>
+			<w:r>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:tab />
+			</w:r>
+			<w:r>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:tab />
+			</w:r>
+			<w:r>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:tab />
+			</w:r>
+			<w:r>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:tab />
+			</w:r>
+			<w:r>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:tab />
+			</w:r>
+		</w:p>
+		<w:p w14:paraId="0649160A" w14:textId="77777777"
+			w:rsidR="005E5AB8" w:rsidRDefault="005E5AB8" w:rsidP="005E5AB8">
+			<w:pPr>
+				<w:ind w:left="4248" w:firstLine="708" />
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+		</w:p>
+		<w:p w14:paraId="21800998" w14:textId="6B48D796"
+			w:rsidR="004D6C5B" w:rsidRDefault="00EA6297" w:rsidP="00D70A53">
+			<w:pPr>
+				<w:ind w:left="4956" w:firstLine="708" />
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+			</w:pPr>
+			<w:r>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve">Didier </w:t>
+			</w:r>
+			<w:proofErr w:type="spellStart" />
+			<w:r>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t>Droyers</w:t>
+			</w:r>
+			<w:proofErr w:type="spellEnd" />
+			<w:r>
+				<w:rPr>
+					<w:rFonts w:ascii="Filson Pro Regular"
+						w:hAnsi="Filson Pro Regular" />
+					<w:color w:val="174489" />
+					<w:sz w:val="22" />
+					<w:szCs w:val="22" />
+					<w:lang w:val="nl-BE" />
+				</w:rPr>
+				<w:t xml:space="preserve"> </w:t>
+			</w:r>
+		</w:p>
+		<w:sectPr w:rsidR="004D6C5B">
+			<w:footerReference w:type="even" r:id="rId12" />
+			<w:footerReference w:type="default" r:id="rId13" />
+			<w:pgSz w:w="11906" w:h="16838" />
+			<w:pgMar w:top="1417" w:right="1417" w:bottom="1417"
+				w:left="1417" w:header="708" w:footer="708" w:gutter="0" />
+			<w:cols w:space="708" />
+			<w:docGrid w:linePitch="360" />
+		</w:sectPr>
+	</w:body>
+</w:document>

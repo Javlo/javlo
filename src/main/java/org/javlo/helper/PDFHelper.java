@@ -43,7 +43,7 @@ public class PDFHelper {
 			doc = PDDocument.load(pdfFile);
 			PDFRenderer pdfRenderer = new PDFRenderer(doc);			
 			PDPageTree pages = doc.getDocumentCatalog().getPages();
-			for (int p=1; p<=pages.getCount(); p++) {
+			for (int p=0; p<pages.getCount(); p++) {
 				if (pages.getCount() > 0) {
 					out.add(pdfRenderer.renderImageWithDPI(p, 300, ImageType.RGB));
 				}
