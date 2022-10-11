@@ -180,6 +180,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 		ctx.getRequest().setAttribute("ext", StringHelper.getFileExtension(getFileName()).toLowerCase());
 		ctx.getRequest().setAttribute("size", StringHelper.getFileSize(fullName));
 		ctx.getRequest().setAttribute("filter", FILTER);
+		ctx.getRequest().setAttribute("isLabel", !StringHelper.isEmpty(getLabel()));
 		if (getLabel().trim().length() == 0) {
 			ctx.getRequest().setAttribute("label", getFileName());
 		} else {
