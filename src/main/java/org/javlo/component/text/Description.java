@@ -169,6 +169,11 @@ public class Description extends AbstractVisualComponent {
 	}
 	
 	@Override
+	protected boolean getColumnableDefaultValue() {
+		return true;
+	}
+	
+	@Override
 	public boolean transflateFrom(ContentContext ctx, ITranslator translator, String lang) {
 		if (!isValueTranslatable()) {
 			return false;
