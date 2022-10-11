@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IReverseLinkComponent;
+import org.javlo.component.image.IImageTitle;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -25,7 +26,7 @@ import org.javlo.ztatic.StaticInfo;
 /**
  * @author pvandermaesen
  */
-public class GenericFile extends AbstractFileComponent implements IReverseLinkComponent {
+public class GenericFile extends AbstractFileComponent implements IReverseLinkComponent, IImageTitle {
 
 	public static final String TYPE = "file";
 
@@ -330,6 +331,31 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 	protected String getMainFolder(ContentContext ctx) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		return staticConfig.getFileFolderName();
+	}
+
+	@Override
+	public String getImageDescription(ContentContext ctx) {
+		return getLabel();
+	}
+
+	@Override
+	public String getImageLinkURL(ContentContext ctx) {
+		return null;
+	}
+
+	@Override
+	public boolean isImageValid(ContentContext ctx) {
+		return StringHelper.isPDF(getFileName());
+	}
+
+	@Override
+	public int getPriority(ContentContext ctx) {
+		return 1;
+	}
+
+	@Override
+	public boolean isMobileOnly(ContentContext ctx) {
+		return false;
 	}
 
 }
