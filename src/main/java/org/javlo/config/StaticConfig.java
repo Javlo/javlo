@@ -361,7 +361,7 @@ public class StaticConfig extends Observable {
 	}
 	
 	public boolean isPageTrash() {
-		return properties.getBoolean("page.trash", false);
+		return properties.getBoolean("page.trash", true);
 	}
 
 	public Level getAccessLogLevel() {
