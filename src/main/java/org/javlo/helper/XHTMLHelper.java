@@ -62,7 +62,6 @@ import org.javlo.i18n.RequestI18nAccess;
 import org.javlo.image.ExtendedColor;
 import org.javlo.message.GenericMessage;
 import org.javlo.navigation.MenuElement;
-import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
 import org.javlo.service.IListItem;
 import org.javlo.service.RequestService;
@@ -74,9 +73,8 @@ import org.javlo.utils.SuffixPrefix;
 import org.javlo.ztatic.StaticInfo;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Entities;
 import org.jsoup.nodes.Entities.EscapeMode;
-import org.jsoup.safety.Whitelist;
+import org.jsoup.safety.Safelist;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import com.itextpdf.text.DocumentException;
@@ -2611,7 +2609,7 @@ public class XHTMLHelper {
 	}
 
 	public static String safeHTML(String html) {
-		return Jsoup.clean(html, Whitelist.relaxed());
+		return Jsoup.clean(html, Safelist.relaxed());
 	}
 
 	// public static void expandCSSImports(File css) throws IOException {
