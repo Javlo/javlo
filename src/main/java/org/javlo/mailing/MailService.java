@@ -705,7 +705,7 @@ public class MailService {
 	}
 
 	public static void main(String[] args) throws Exception {
-		MailConfig mailConfig = new MailConfig("ssl0.ovh.net",587, "formulaires@centralecredithypothecaire.be", "2qc5s4qSd65*");
+		MailConfig mailConfig = new MailConfig("ssl0.ovh.net",587, "formulaires@centralecredithypothecaire.be", "##PWD##");
 		Transport t = getMailTransport(mailConfig);
 		System.out.println("t = " + t.isConnected());
 
