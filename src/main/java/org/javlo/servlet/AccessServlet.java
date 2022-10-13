@@ -303,7 +303,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	}
 
 	public void process(HttpServletRequest request, HttpServletResponse response, boolean post) throws ServletException {
-
 		request.getSession(); // create session
 
 		COUNT_ACCESS++;
@@ -1170,9 +1169,13 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								if (ctx.getCurrentUser() == null) {
 									if (ctx.getCurrentTemplate().getLoginFile(ctx) != null) {
 										String loginPage = ctx.getCurrentTemplate().getLoginFile(ctx);
-										System.out.println(">>>>>>>>> AccessServlet.process : forward : "+loginPage); //TODO: remove debug trace
-										RequestDispatcher view = request.getRequestDispatcher(loginPage);
-										view.forward(request, response);
+										//System.out.println(">>>>>>>>> AccessServlet.process : forward : "+loginPage); //TODO: remove debug trace
+										//RequestDispatcher view = request.getRequestDispatcher(loginPage);
+										
+										getServletContext().getRequestDispatcher(loginPage).include(request, response);
+										return;
+										
+										//view.forward(request, response);
 									} else {
 										ctx.setSpecialContentRenderer("/jsp/view/login.jsp");
 									}
@@ -1202,6 +1205,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 									while (parent != null) {
 										parent = parent.getParent();
 									}
+									logger.info("no access to : "+request.getRequestURL());
 									response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 									ctx.setSpecialContentRenderer("/jsp/view/no_access.jsp");
 								}
