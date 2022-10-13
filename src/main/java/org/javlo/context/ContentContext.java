@@ -59,6 +59,8 @@ public class ContentContext {
 	public static final String PREVIEW_ONLY_MODE = "__preview_only_mode";
 
 	public static final String PREVIEW_EDIT_PARAM = "previewEdit";
+	
+	private static final String INPUT_TRACKING_KEY = "_jikey";
 
 	private static final String HOST_DEFINED_SITE = "____host-defined-site";
 
@@ -192,6 +194,14 @@ public class ContentContext {
 	public static ContentContext getContentContext(HttpServletRequest request, HttpServletResponse response, boolean correctPath) throws Exception {
 		return getContentContext(request, response, correctPath, true);
 	}
+	
+	public String getInputTrackingKey() {
+		return getInputTrackingKey(getRequest().getSession());
+	}
+	
+	public static String getInputTrackingKey(HttpSession session) {
+		return (String)session.getAttribute(INPUT_TRACKING_KEY);
+	}
 
 	/**
 	 * 
@@ -209,6 +219,10 @@ public class ContentContext {
 				ctx = createContentContext(request, response, true, pageManagement);
 				ctx.setFree(false);
 				ctx.correctPath = false;
+				
+				if (request.getParameter(INPUT_TRACKING_KEY) != null) {
+					request.getSession().setAttribute(INPUT_TRACKING_KEY, request.getParameter(INPUT_TRACKING_KEY));
+				}
 
 			} else {
 				ctx.setRequest(request);

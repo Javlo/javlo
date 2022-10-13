@@ -704,6 +704,18 @@ public class MailService {
 		message.setSentDate(new Date());
 	}
 
+	public static void main(String[] args) throws Exception {
+		MailConfig mailConfig = new MailConfig("ssl0.ovh.net",587, "formulaires@centralecredithypothecaire.be", "2qc5s4qSd65*");
+		Transport t = getMailTransport(mailConfig);
+		System.out.println("t = " + t.isConnected());
+
+		MailService mailService = MailService.getInstance(mailConfig);
+		mailService.sendMail(t, new InternetAddress("formulaires@centralecredithypothecaire.be"),  new InternetAddress("alessio.ferrari@phidac.com"), new InternetAddress("patrick@andromede.be"), new InternetAddress("arnaud@andromede.be"), "test mail smtp cch : "+new Date(), "mail de test 2", "mail de test 2", false, null);
+		
+		
+
+	}
+
 	public static MenuElement getMailTemplateParentPage(ContentContext ctx) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		return content.getNavigation(ctx).searchChildFromName(ctx.getGlobalContext().getStaticConfig().getMailTemplateParent());

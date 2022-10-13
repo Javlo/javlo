@@ -319,6 +319,8 @@ public class PersistenceService {
 		outTrack.append(track.getUserAgent());
 		outTrack.append(",");
 		outTrack.append(track.getRange());
+		outTrack.append(",");
+		outTrack.append(track.getInputTrackingKey());
 		return outTrack.toString();
 	}
 

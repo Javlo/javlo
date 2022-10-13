@@ -75,6 +75,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Entities.EscapeMode;
 import org.jsoup.safety.Safelist;
+import org.jsoup.select.Elements;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import com.itextpdf.text.DocumentException;
@@ -2369,11 +2370,9 @@ public class XHTMLHelper {
 	}
 
 	public static void main(String[] args) {
-		String params = "page:test|".substring("page:test|".indexOf("|") + 1);
-		System.out.println(params);
-
-		String pageName = "test|user=me";
-		System.out.println(pageName.substring(0, pageName.indexOf("|")));
+		String html = "<h2><p>&nbsp;\r\n"
+				+ "<div id=\"ConnectiveDocSignExtentionInstalled\" data-extension-version=\"1.0.4\"></div></h2>";
+		System.out.println(cleanHTML(html));
 	}
 
 	public static String textToXHTMLNewWin(String text) {
@@ -2748,6 +2747,13 @@ public class XHTMLHelper {
 
 	public static String cleanHTML(String html) {
 		Document doc = Jsoup.parse(html);
+		
+		// clean plugin injection
+		Elements items = doc.select("#ConnectiveDocSignExtentionInstalled");
+		if (items != null && items.size() > 0) {
+			items.remove();
+		}
+		
 		// Entities.EscapeMode.xhtml.getMap().put('\u00A0', "#160");
 		doc.outputSettings().escapeMode(EscapeMode.xhtml);
 		return doc.outerHtml();

@@ -101,6 +101,7 @@ public class Tracker {
 		Track track = new Track(userName, action, request.getRequestURI(), System.currentTimeMillis(), request.getHeader("Referer"), request.getHeader("User-Agent"), request.getHeader("Range"));
 		track.setIP(ContentContext.getRealRemoteIp(request, StaticConfig.getInstance(request.getSession()).isAnonymisedTracking()));
 		track.setSessionId(request.getSession().getId());
+		track.setInputTrackingKey(ContentContext.getInputTrackingKey(request.getSession()));
 		tracker.addTrack(track);
 	}
 

@@ -25,6 +25,7 @@ public class Track implements Comparable<Track> {
 	boolean view = false;
 	
 	String sessionId;
+	String inputTrackingKey;
 	String IP;
 	long time;
 	
@@ -55,7 +56,14 @@ public class Track implements Comparable<Track> {
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
     }
-
+    
+    public String getInputTrackingKey() {
+		return inputTrackingKey;
+	}
+    
+    public void setInputTrackingKey(String inputTrackingKey) {
+		this.inputTrackingKey = inputTrackingKey;
+	}
 
 	/**
 	 * @param userName current user name
