@@ -2746,6 +2746,9 @@ public class XHTMLHelper {
 	}
 
 	public static String cleanHTML(String html) {
+		if (html == null) {
+			return null;
+		}
 		Document doc = Jsoup.parse(html);
 		
 		// clean plugin injection
