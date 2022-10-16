@@ -72,6 +72,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.hwpf.extractor.WordExtractor;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.javlo.actions.DataAction;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.IContentVisualComponent;
@@ -100,6 +101,9 @@ import org.owasp.encoder.Encode;
 import com.google.gson.JsonElement;
 
 import ch.simschla.minify.adapter.Minifier;
+import fr.opensagres.poi.xwpf.converter.core.FileURIResolver;
+import fr.opensagres.poi.xwpf.converter.xhtml.XHTMLConverter;
+import fr.opensagres.poi.xwpf.converter.xhtml.XHTMLOptions;
 
 public class ResourceHelper {
 
@@ -2048,8 +2052,26 @@ public class ResourceHelper {
 		minifier.minify(new ByteArrayInputStream(js.getBytes()), out, ContentContext.CHARSET_DEFAULT, null);
 		return new String(out.toByteArray());
 	}
+	
+	public static void docx2html(File docx, File html) throws IOException {
+		InputStream in= new FileInputStream(docx);
+        XWPFDocument document = new XWPFDocument(in);
+        in.close();
+
+        XHTMLOptions options = XHTMLOptions.create().URIResolver(new FileURIResolver(new File(html.getParentFile().getAbsolutePath())));
+        OutputStream out = new FileOutputStream(html);
+        XHTMLConverter.getInstance().convert(document, out, options);
+        out.close();
+        
+	}
 
 	public static void main(String[] args) throws IOException {
+		
+		File docx = new File("c:/trans/test_javlo2.docx");
+		File html = new File("c:/trans/test_javlo2.html");
+		docx2html(docx, html);
+		System.out.println("done : "+html);
+		
 //		File file = new File("c:/trans/changelog.txt");
 //		File target = new File("c:/trans/changelog.md");
 //
@@ -2078,7 +2100,7 @@ public class ResourceHelper {
 //		}
 //		out.close();
 
-		System.out.println(">>>>>>>>> ResourceHelper.mimifyJS : " + mimifyJS("var    js='test'; \njs='test2';")); // TODO: remove debug trace
+		//System.out.println(">>>>>>>>> ResourceHelper.mimifyJS : " + mimifyJS("var    js='test'; \njs='test2';")); // TODO: remove debug trace
 
 	}
 

@@ -90,16 +90,20 @@ public class TaxonomyService {
 	}
 
 	private void createDebugStructure() {
+		TaxonomyBean geo = root.addChildAsFirst(new TaxonomyBean("0", "#geo"));
+		geo.addChildAsFirst(new TaxonomyBean("0-1", "be"));
+		geo.addChildAsFirst(new TaxonomyBean("0-2", "fr"));
 		root.addChildAsFirst(new TaxonomyBean("1", "child 1"));
 		root.addChildAsFirst(new TaxonomyBean("2", "child 2"));
 		TaxonomyBean child = root.addChildAsFirst(new TaxonomyBean("3", "child 3"));
-		child.addChildAsFirst(new TaxonomyBean("3_1", "subchild 1"));
+		child.addChildAsFirst(new TaxonomyBean("3_1", "subchild 3 > 1"));
 		child.updateLabel("en", "first child");
 		child.updateLabel("fr", "second child");
-		child.addChildAsFirst(new TaxonomyBean("3_2", "subchild 2"));
-		TaxonomyBean schild = new TaxonomyBean("3_3", "subchild 3");
+		child.addChildAsFirst(new TaxonomyBean("3_2", "subchild 3 > 2"));
+		TaxonomyBean schild = new TaxonomyBean("3_3", "subchild 3 > 3");
+		schild.addChildAsFirst(new TaxonomyBean("3_3_1", ">geo"));
 		child.addChildAsFirst(schild);
-		schild.addChildAsFirst(new TaxonomyBean("3_3_1", "subsubchild 1"));
+		schild.addChildAsFirst(new TaxonomyBean("3_3_2", "subsubchild 3 > 3 > 1"));
 	}
 
 	public TaxonomyBean getRoot() {
@@ -219,9 +223,11 @@ public class TaxonomyService {
 					List<TaxonomyBean> parentChildren = new LinkedList<>(currentBean.getParent().getChildren());
 					for (TaxonomyBean child : parentChildren) {
 						if (child.getId().equals(currentBean.getId())) {
-							currentBean.getParent().getChildren().set(pos, newBean.getChildren().get(newBean.getChildren().size()-1));
-							for (int i=newBean.getChildren().size()-2; i>=0; i--) {
+							currentBean.getParent().getChildren().set(pos, newBean.getChildren().get(newBean.getChildren().size() - 1));
+							newBean.getChildren().get(newBean.getChildren().size() - 1).setParent(currentBean.getParent());
+							for (int i = newBean.getChildren().size() - 2; i >= 0; i--) {
 								currentBean.getParent().getChildren().add(pos, newBean.getChildren().get(i));
+								newBean.getChildren().get(i).setParent(currentBean.getParent());
 							}
 						}
 						pos++;
@@ -356,6 +362,15 @@ public class TaxonomyService {
 		}
 		return true;
 	}
+	
+	public boolean isAllMatch(ITaxonomyContainer container, ITaxonomyContainer filter, int depth) {
+		for (String taxonomy : filter.getTaxonomy()) {
+			if (!isMatch(container, new TaxonomyContainerBean(taxonomy), depth)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	/**
 	 * add all parent of the selection in the filter
@@ -375,15 +390,48 @@ public class TaxonomyService {
 		}
 		return !Collections.disjoint(container.getTaxonomy(), newFilter);
 	}
+	
+	public int getDepth(TaxonomyBean bean) {
+		if (bean == null) {
+			return -1;
+		}
+		int depth = 0;
+		while (bean.getParent() != null) {
+			bean = bean.getParent();
+			depth++;
+		}
+		return depth;
+	}
+
+	public ITaxonomyContainer addParentsToContainer(ITaxonomyContainer container, int minDepth) {
+		if (container.getTaxonomy() == null || container.getTaxonomy().size() == 0) {
+			return container;
+		} else {
+			Set<String> allTaxo = new HashSet<String>();
+			for (String taxo : container.getTaxonomy()) {
+				TaxonomyBean bean = getTaxonomyBeanMap().get(taxo);
+				while (getDepth(bean)>=minDepth) {
+					allTaxo.add(bean.getId());
+					bean = bean.getParent();
+				}
+			}
+			return new TaxonomyContainerBean(allTaxo);
+		}
+	}
+	
+	public boolean isMatch(ITaxonomyContainer container, ITaxonomyContainer filter) {
+		return isMatch(container, filter, 1);
+	}
 
 	/**
 	 * check if a taxonomy group match
 	 * 
 	 * @param container
 	 * @param filter
+	 * @param minDepth : min depth of the latest node (0=root, 1=child of root...)
 	 * @return
 	 */
-	public boolean isMatch(ITaxonomyContainer container, ITaxonomyContainer filter) {
+	public boolean isMatch(ITaxonomyContainer container, ITaxonomyContainer filter, int minDepth) {
 		if (container == null || filter == null) {
 			return true;
 		}
@@ -400,19 +448,21 @@ public class TaxonomyService {
 		if (!Collections.disjoint(container.getTaxonomy(), filter.getTaxonomy())) {
 			return true;
 		} else {
-			Set<String> allCont1 = new HashSet<String>(container.getTaxonomy());
-			for (String id : container.getTaxonomy()) {
-				TaxonomyBean bean = getTaxonomyBeanMap().get(id);
-				if (bean != null && bean.getParent() != null) {
-					while (bean.getParent().getParent() != null) {
-						bean = bean.getParent();
-						allCont1.add(bean.getId());
-					}
-				} else {
-					logger.warning("taxonomy bean not found : " + id);
-				}
-			}
-			return !Collections.disjoint(allCont1, filter.getTaxonomy());
+
+			//			Set<String> allCont1 = new HashSet<String>(container.getTaxonomy());
+//			for (String id : container.getTaxonomy()) {
+//				TaxonomyBean bean = getTaxonomyBeanMap().get(id);
+//				if (bean != null && bean.getParent() != null) {
+//					while (bean.getParent().getParent() != null) {
+//						bean = bean.getParent();
+//						allCont1.add(bean.getId());
+//					}
+//				} else {
+//					logger.warning("taxonomy bean not found : " + id);
+//				}
+//			}
+			//ITaxonomyContainer filterParents = addParentsToContainer(filter, minDepth);
+			return !Collections.disjoint(addParentsToContainer(container, minDepth).getTaxonomy(), filter.getTaxonomy());
 		}
 	}
 
@@ -685,9 +735,47 @@ public class TaxonomyService {
 
 	public static void main(String[] args) {
 		TaxonomyService taxo = new TaxonomyService();
-		taxo.createDebugStructure();
-		String json = taxo.getAsJson();
-		System.out.println(json);
+		taxo.createDebugStructure();		
+
+		int i = 0;
+		for (TaxonomyBean bean : taxo.getRoot().getAllChildren()) {
+			System.out.println("> "+(i++)+" = "+bean.getName()+" id="+bean.getId());
+		}
+		System.out.println("");
+		i = 0;
+		for (TaxonomyBean bean : taxo.getLinkedRoot().getAllChildren()) {
+			System.out.println("> "+(i++)+" = "+bean.getName()+" id="+bean.getId()+" path="+bean.getPath());
+		}
+		
+		System.out.println("");
+
+		TaxonomyBean child = taxo.getRoot().getAllChildren().get(0);
+		TaxonomyBean subChild = taxo.getRoot().getAllChildren().get(1);
+		TaxonomyBean subChild2 = taxo.getRoot().getAllChildren().get(3);
+		TaxonomyBean subSubChild = taxo.getRoot().getAllChildren().get(2);
+		TaxonomyBean otherChild = taxo.getRoot().getAllChildren().get(5);
+		
+		System.out.println("subChild    = "+subChild.getName());
+		System.out.println("subChild2   = "+subChild2.getName());
+		System.out.println("subSubChild = "+subSubChild.getName());
+		System.out.println("otherChild  = "+otherChild.getName());
+		System.out.println("");
+
+		System.out.println("true="+taxo.isMatch(new TaxonomyContainerBean(subSubChild.getId()), new TaxonomyContainerBean(subChild.getId())));
+		System.out.println("false="+taxo.isMatch(new TaxonomyContainerBean(subChild.getId()), new TaxonomyContainerBean(otherChild.getId())));
+		System.out.println("-");
+		System.out.println("true="+taxo.isMatch(new TaxonomyContainerBean(subChild.getId()), new TaxonomyContainerBean(subChild.getId(), otherChild.getId())));
+		System.out.println("false="+taxo.isAllMatch(new TaxonomyContainerBean(child.getId()), new TaxonomyContainerBean(subChild.getId(), otherChild.getId())));
+		System.out.println("-");
+		
+		
+		System.out.println(">>>>>>>>> TaxonomyService.main : child.getId() = "+child.getId()); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> TaxonomyService.main : subChild.getParent().getId() = "+subChild.getParent().getId()); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> TaxonomyService.main : subChild2.getParent().getId() = "+subChild2.getParent().getId()); //TODO: remove debug trace
+		System.out.println("-");
+		System.out.println("true = "+taxo.isMatch(new TaxonomyContainerBean(subChild.getId()), new TaxonomyContainerBean(child.getId())));
+		System.out.println("true = "+taxo.isMatch(new TaxonomyContainerBean(subChild2.getId()), new TaxonomyContainerBean(child.getId())));
+		System.out.println("true = "+taxo.isAllMatch(new TaxonomyContainerBean(subChild.getId(), subChild2.getId()), new TaxonomyContainerBean(child.getId())));
 	}
 
 	public static void _main(String[] args) {

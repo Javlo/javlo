@@ -65,6 +65,9 @@ public class TaxonomyBean {
 	}
 
 	public void setId(String id) {
+		if (StringHelper.isEmpty(id)) {
+			id = StringHelper.getRandomId();
+		}
 		this.id = id;
 	}
 

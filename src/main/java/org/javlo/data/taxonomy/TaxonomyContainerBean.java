@@ -1,5 +1,6 @@
 package org.javlo.data.taxonomy;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,13 +10,15 @@ public class TaxonomyContainerBean implements ITaxonomyContainer {
 	
 	private Set<String> taxonomy = new HashSet<String>();
 	
-	public TaxonomyContainerBean(String taxonomy) {
-		if (taxonomy != null) {
-			this.taxonomy.add(taxonomy);
+	public TaxonomyContainerBean(String... taxonomy) {
+		for (String taxo : taxonomy) {
+			if (taxo != null) {
+				this.taxonomy.add(taxo);
+			}
 		}
 	}
 
-	public TaxonomyContainerBean(Set<String> taxonomy) {		
+	public TaxonomyContainerBean(Collection<String> taxonomy) {		
 		this.taxonomy.addAll(taxonomy);
 	}
 
