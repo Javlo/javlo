@@ -652,6 +652,22 @@ public class ResourceHelper {
 		}
 		return outContent;
 	}
+	
+	public static final String getMineTypeToFileExtension(String mineType) {
+		mineType = mineType.trim().toLowerCase();
+		if (mineType.equals("image/gif")) {
+			return "gif";
+		} else if (mineType.equals("image/png")) {
+			return "png";
+		} else if (mineType.equals("image/webp")) {
+			return "webp";
+		} else if (mineType.equals("image/jpg") || mineType.equals("image/jpeg")) {
+			return "jpg";
+		} else if (mineType.equals("application/xml")) {
+			return "xml";
+		}
+		return ".bin";
+	}
 
 	public static final String getFileExtensionToMineType(String ext) {
 		ext = ext.trim().toLowerCase();
@@ -659,6 +675,8 @@ public class ResourceHelper {
 			return "image/GIF";
 		} else if (ext.equals("png")) {
 			return "image/PNG";
+		} else if (ext.equals("webp")) {
+			return "image/webp";
 		} else if (ext.equals("xml")) {
 			return "application/xml";
 		} else if (ext.equals("ico")) {
@@ -725,6 +743,8 @@ public class ResourceHelper {
 			return "text/calendar";
 		} else if (ext.equals("json")) {
 			return "application/json";
+		} else if (ext.equals("epub")) {
+			return "application/epub+zip";
 		}
 		return "application/octet-stream";
 	}

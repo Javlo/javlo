@@ -932,6 +932,11 @@ public class URLHelper extends ElementaryURLHelper {
 		}
 		return createURL(ctx, finalURL.toString());
 	}
+	
+	public static String createStaticFileUrl(ContentContext ctx, File file) {
+		String relativeURL = file.getAbsolutePath().replace(ctx.getGlobalContext().getStaticFolder(), "");
+		return createStaticURL(ctx,relativeURL);
+	}
 
 	public static String createStaticURL(ContentContext ctx, String path, Map params) {
 		StringBuffer finalURL = new StringBuffer();

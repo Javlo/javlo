@@ -1185,6 +1185,8 @@ public class Template implements Comparable<Template> {
 		File configFile = new File(path);
 		if (configFile.exists()) {
 			return ResourceHelper.loadProperties(configFile);
+		} else {
+			logger.warning("file not found : "+configFile);
 		}
 		return null;
 	}

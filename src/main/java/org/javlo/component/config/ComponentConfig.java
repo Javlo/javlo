@@ -45,7 +45,7 @@ public class ComponentConfig {
 				return ComponentConfig.EMPTY_INSTANCE;
 			}
 			synchronized (globalContext.getLockImportTemplate()) {
-				String key = KEY + '-' + templateId + '-' + type;				
+				String key = KEY + '-' + templateId + '-' + type;
 				outCfg = (ComponentConfig) globalContext.getAttribute(key);
 				if (outCfg == null) {
 					outCfg = new ComponentConfig(ctx, currentTemplate, type);

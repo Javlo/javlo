@@ -1053,6 +1053,12 @@ public class StringHelper {
 	}
 
 	public static String replaceFileExtension(String file, String ext) {
+		if (ext == null) {
+			return file;
+		}
+		if (!ext.startsWith(".")) {
+			ext = '.'+ext;
+		}
 		if (!file.contains(".")) {
 			return file + '.' + ext;
 		} else {
