@@ -28,6 +28,11 @@ public class EpubConverterComponent extends AbstractVisualComponent implements I
 		return TYPE;
 	}
 	
+	@Override
+	public boolean isRealContent(ContentContext ctx) {
+		return true;
+	}
+	
 	public static File getEpubFolder(ContentContext ctx) {
 		File dir = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(),TYPE));
 		if (!dir.exists()) {
