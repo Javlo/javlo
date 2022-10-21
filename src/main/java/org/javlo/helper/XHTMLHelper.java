@@ -74,6 +74,7 @@ import org.javlo.ztatic.StaticInfo;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Entities.EscapeMode;
+import org.jsoup.parser.Parser;
 import org.jsoup.safety.Safelist;
 import org.jsoup.select.Elements;
 import org.xhtmlrenderer.pdf.ITextRenderer;
@@ -2373,6 +2374,10 @@ public class XHTMLHelper {
 		String html = "<h2><p>&nbsp;\r\n"
 				+ "<div id=\"ConnectiveDocSignExtentionInstalled\" data-extension-version=\"1.0.4\"></div></h2>";
 		System.out.println(cleanHTML(html));
+		System.out.println("");
+		html = "Patrick";
+		System.out.println(cleanHTML(html));
+		System.out.println("");
 	}
 
 	public static String textToXHTMLNewWin(String text) {
@@ -2749,7 +2754,7 @@ public class XHTMLHelper {
 		if (html == null) {
 			return null;
 		}
-		Document doc = Jsoup.parse(html);
+		Document doc = Jsoup.parse(html, "", Parser.xmlParser());
 		
 		// clean plugin injection
 		Elements items = doc.select("#ConnectiveDocSignExtentionInstalled");
