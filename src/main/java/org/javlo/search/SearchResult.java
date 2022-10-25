@@ -177,7 +177,7 @@ public class SearchResult {
 		 * @return
 		 */
 		public String getUrl() {
-			return url;
+			return URLHelper.addParam(url, "mark-text", getSearchRequest());
 		}
 
 		/**
