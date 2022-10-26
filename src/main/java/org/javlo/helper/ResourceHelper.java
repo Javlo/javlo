@@ -922,6 +922,9 @@ public class ResourceHelper {
 	}
 
 	public static boolean isResourceURL(ContentContext ctx, String url) {
+		if (ctx == null) {
+			return url.endsWith(".doc");
+		}
 		String startURL = URLHelper.createResourceURL(ctx, "/");
 		String fileURL = URLHelper.createFileURL(ctx, "/");
 		String shortURL = URLHelper.createStaticURL(ctx, ElementaryURLHelper.IMG_SERVLET_PATH);
@@ -929,6 +932,11 @@ public class ResourceHelper {
 	}
 
 	public static boolean isTransformURL(ContentContext ctx, String url) throws Exception {
+		
+		if (ctx == null) {
+			return url.contains("/transform");
+		}
+		
 		final String FAKE_FILTER = "___FAKE_FILTER___";
 		String startURL = URLHelper.createTransformURL(ctx, "/", FAKE_FILTER);
 		if (startURL.contains(FAKE_FILTER)) {

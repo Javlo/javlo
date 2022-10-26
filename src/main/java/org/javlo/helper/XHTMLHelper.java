@@ -2656,8 +2656,9 @@ public class XHTMLHelper {
 	 * @param content
 	 * @return
 	 * @throws Exception
+	 * @link Deprecated
 	 */
-	public static String replaceLinks(ContentContext ctx, String content) throws Exception {
+	public static String replaceLinkSearchAllTag(ContentContext ctx, String content) throws Exception {
 		String outContent = content;
 		TagDescription[] tags = XMLManipulationHelper.searchAllTag(outContent, false);
 		StringRemplacementHelper remplacement = new StringRemplacementHelper();
@@ -2669,15 +2670,13 @@ public class XHTMLHelper {
 			if (tag.getName().equalsIgnoreCase("script")) {
 				script = true;
 				closeScriptPosition = tag.getCloseEnd();
-			}
-			
-			if (script) {
-				if (tag.getCloseStart() > closeScriptPosition) {
+			} else if (script) {
+				if (tag.getCloseStart() > closeScriptPosition && !tag.getName().equalsIgnoreCase("script")) {
 					script = false;
 				}
 			}
-			
-			//System.out.println(">>>>>>>>> XHTMLHelper.replaceLinks : script = "+script+"  tag:"+tag.getName()); //TODO: remove debug trace
+
+			System.out.println(">>>>>>>>> XHTMLHelper.replaceLinks : 2.script = " + script + "  tag:" + tag.getName() + " end:" + tag.getCloseEnd()); // TODO: remove debug trace
 			if (!script) {
 				if (tag.getName().equalsIgnoreCase("a") || tag.getName().equalsIgnoreCase("area")) {
 					String hrefValue = tag.getAttributes().get("href");
@@ -2691,21 +2690,34 @@ public class XHTMLHelper {
 									params = pageName.substring(pageName.indexOf("|") + 1);
 									pageName = hrefValue.substring(0, pageName.indexOf("|"));
 								}
-								ContentContext pageContext = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
-								pageContext.setFormat("html");
-								tag.getAttributes().put("href", URLHelper.createURLFromPageName(pageContext, pageName) + params);
+
+								if (ctx == null) {
+									tag.getAttributes().put("href", "[TEST]-page:" + pageName);
+								} else {
+									ContentContext pageContext = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
+									pageContext.setFormat("html");
+									tag.getAttributes().put("href", URLHelper.createURLFromPageName(pageContext, pageName) + params);
+								}
 							} else if (hrefValue.toLowerCase().startsWith("rss")) {
 								String channel = "";
 								if (hrefValue.contains(":")) {
 									channel = hrefValue.split(":")[1];
 								}
-								hrefValue = URLHelper.createRSSURL(ctx, channel);
-								tag.getAttributes().put("href", hrefValue);
+								if (ctx == null) {
+									tag.getAttributes().put("href", "[TEST]-rss");
+								} else {
+									hrefValue = URLHelper.createRSSURL(ctx, channel);
+									tag.getAttributes().put("href", hrefValue);
+								}
 							} else if (!StringHelper.isURL(hrefValue) && (!StringHelper.isMailURL(hrefValue)) && !hrefValue.contains("${") && !ResourceHelper.isResourceURL(ctx, hrefValue) && !ResourceHelper.isTransformURL(ctx, hrefValue)) {
 								String url = URLHelper.removeParam(hrefValue);
 								String params = URLHelper.getParamsAsString(hrefValue);
-								url = URLHelper.createURLCheckLg(ctx, url);
-								tag.getAttributes().put("href", URLHelper.addParams(url, params));
+								if (ctx == null) {
+									tag.getAttributes().put("href", "[TEST]-url:" + url);
+								} else {
+									url = URLHelper.createURLCheckLg(ctx, url);
+									tag.getAttributes().put("href", URLHelper.addParams(url, params));
+								}
 							}
 							remplacement.addReplacement(tag.getOpenStart(), tag.getOpenEnd() + 1, tag.toString());
 						}
@@ -2731,6 +2743,92 @@ public class XHTMLHelper {
 
 		outContent = remplacement.start(outContent);
 		return outContent;
+	}
+
+	/**
+	 * replace link in xhtml with createURL call.
+	 * 
+	 * @param ctx
+	 * @param content
+	 * @return
+	 * @throws Exception
+	 */
+	public static String replaceLinks(ContentContext ctx, String html) throws Exception {
+		Document doc = Jsoup.parse(html, "", Parser.xmlParser());
+		doc.getElementsByAttribute("href").forEach(item -> {
+			try {
+				String hrefValue = item.attr("href");
+				if (hrefValue != null) {
+					hrefValue = hrefValue.trim();
+					if (!hrefValue.startsWith("#") && !hrefValue.startsWith("${")) {
+						if (hrefValue.startsWith("page:")) {
+							String pageName = hrefValue.substring("page:".length());
+							String params = "";
+							if (pageName.contains("|")) {
+								params = pageName.substring(pageName.indexOf("|") + 1);
+								pageName = hrefValue.substring(0, pageName.indexOf("|"));
+							}
+
+							if (ctx == null) {
+								item.attr("href", "[TEST]-page:" + pageName);
+							} else {
+								ContentContext pageContext = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
+								pageContext.setFormat("html");
+								item.attr("href", URLHelper.createURLFromPageName(pageContext, pageName) + params);
+							}
+						} else if (hrefValue.toLowerCase().startsWith("rss")) {
+							String channel = "";
+							if (hrefValue.contains(":")) {
+								channel = hrefValue.split(":")[1];
+							}
+							if (ctx == null) {
+								item.attr("href", "[TEST]-rss");
+							} else {
+								hrefValue = URLHelper.createRSSURL(ctx, channel);
+								item.attr("href", hrefValue);
+							}
+						} else if (!StringHelper.isURL(hrefValue) && (!StringHelper.isMailURL(hrefValue)) && !hrefValue.contains("${") && !ResourceHelper.isResourceURL(ctx, hrefValue) && !ResourceHelper.isTransformURL(ctx, hrefValue)) {
+							String url = URLHelper.removeParam(hrefValue);
+							String params = URLHelper.getParamsAsString(hrefValue);
+							if (ctx == null) {
+								item.attr("href", "[TEST]-url:" + url);
+							} else {
+								url = URLHelper.createURLCheckLg(ctx, url);
+								item.attr("href", URLHelper.addParams(url, params));
+							}
+						}
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+
+		doc.getElementsByAttribute("src").forEach(item -> {
+			try {
+				String src = item.attr("src");
+				if (src != null) {
+					if (!StringHelper.isURL(src) && !src.startsWith("${")) { // relative path
+						if (ctx == null) {
+							item.attr("src", "[TEST]-src:"+src);
+						} else {
+						String urlPrefix = URLHelper.mergePath("/", ctx.getRequest().getContextPath(), ctx.getPathPrefix(), "/");
+						if (src.startsWith(urlPrefix)) {
+							InfoBean info = InfoBean.getCurrentInfoBean(ctx);
+							src = URLHelper.mergePath(info.getHostURLPrefix(), src);
+						} else {
+							src = URLHelper.createResourceURL(ctx, src);
+						}
+						item.attr("src", src);
+						}
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+		doc.outputSettings().escapeMode(EscapeMode.xhtml);
+		return doc.html();
 	}
 
 	public static void compressCSS(File targetFile) throws IOException {

@@ -28,6 +28,15 @@ public class XHTMLHelperTest extends TestCase {
 		assertEquals(XHTMLHelper.replaceOutTag("<p class=\"test\">table</p>", "test", "replace"), "<p class=\"test\">table</p>");		
 	}
 	
+	public void testReplaceLink() throws Exception {
+		assertEquals(XHTMLHelper.replaceLinks(null, "<a href=\"test\">test</a>"), "<a href=\"[TEST]-url:test\">test</a>");
+		assertEquals(XHTMLHelper.replaceLinks(null, "<script>var a=\"<a href='mailto:test@test.com'>test</a>\";</script><a href=\"test\">test</a>"), "<script>var a=\"<a href=\"mailto:test@test.com\">test</a>\";</script><a href=\"[TEST]-url:test\">test</a>");
+		assertEquals(XHTMLHelper.replaceLinks(null, "<script src=\"http://cdn.com/script.js\"></script><script>var a=\"<a href='mailto:test@test.com'>test</a>\";</script><a href=\"test\">test</a>"), "<script src=\"http://cdn.com/script.js\"></script><script>var a=\"<a href=\"mailto:test@test.com\">test</a>\";</script><a href=\"[TEST]-url:test\">test</a>");
+		assertEquals(XHTMLHelper.replaceLinks(null, "<a href=\"page:test\">test</a>"), "<a href=\"[TEST]-page:test\">test</a>");
+		assertEquals(XHTMLHelper.replaceLinks(null, "<a href=\"page:test\">test</a><a href=\"mailto:info@javlo.org\">mail</a>"), "<a href=\"[TEST]-page:test\">test</a><a href=\"mailto:info@javlo.org\">mail</a>");
+		assertEquals(XHTMLHelper.replaceLinks(null, "<img src=\"test.jpg\">"), "<img src=\"[TEST]-src:test.jpg\" />");
+	}
+	
 //	public void testToHTML() {
 //		System.out.println("XHTMLHelper.textToXHTML(\"line1\\\\nline2\") = "+XHTMLHelper.textToXHTML("line1\\nline2"));
 //		assertEquals(XHTMLHelper.textToXHTML("line1\\nline2"), "line1<br />line2");
