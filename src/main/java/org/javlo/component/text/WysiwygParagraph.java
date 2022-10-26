@@ -104,16 +104,11 @@ public class WysiwygParagraph extends AbstractVisualComponent implements IImageT
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-
-		if (!getStyle().equals(RAW_STYLE)) {
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			String text = XHTMLHelper.autoLink(XHTMLHelper.replaceLinks(ctx, XHTMLHelper.replaceJSTLData(ctx, getValue())), globalContext);
-			ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
-			text = reverserLinkService.replaceLink(ctx, this, text);
-			ctx.getRequest().setAttribute("text", text);
-		} else {
-			ctx.getRequest().setAttribute("text", getValue());
-		}
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		String text = XHTMLHelper.autoLink(XHTMLHelper.replaceLinks(ctx, XHTMLHelper.replaceJSTLData(ctx, getValue())), globalContext);
+		ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
+		text = reverserLinkService.replaceLink(ctx, this, text);
+		ctx.getRequest().setAttribute("text", text);
 	}
 
 	@Override
@@ -277,5 +272,5 @@ public class WysiwygParagraph extends AbstractVisualComponent implements IImageT
 	public boolean isMobileOnly(ContentContext ctx) {
 		return false;
 	}
-	
+
 }

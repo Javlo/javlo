@@ -20,6 +20,10 @@ import org.jsoup.select.Elements;
  */
 public class XHTML extends AbstractVisualComponent {
 
+	public static final String RAW_STYLE = "raw";
+
+	private static final String[] STYLES = new String[] { "parsed", RAW_STYLE };
+
 	public static final String TYPE = "xhtml";
 
 	public static final String XHTML_RESOURCE_FOLDER = "_xhtml_resources";
@@ -58,18 +62,18 @@ public class XHTML extends AbstractVisualComponent {
 	}
 
 	/*
-	 * @Override public String getPrefixViewXHTMLCode(ContentContext ctx) {
-	 * return ""; }
+	 * @Override public String getPrefixViewXHTMLCode(ContentContext ctx) { return
+	 * ""; }
 	 * 
-	 * @Override public String getSuffixViewXHTMLCode(ContentContext ctx) {
-	 * return ""; }
+	 * @Override public String getSuffixViewXHTMLCode(ContentContext ctx) { return
+	 * ""; }
 	 */
 
 	@Override
 	public String getType() {
 		return TYPE;
 	}
-	
+
 	@Override
 	public String getHeaderContent(ContentContext ctx) {
 		String xhtml = getValue();
@@ -82,17 +86,20 @@ public class XHTML extends AbstractVisualComponent {
 		}
 	}
 
-
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		String xhtml = getValue();
-		if (xhtml.toLowerCase().contains("<body")) {
-			Document doc = Jsoup.parse(xhtml);
-			Elements body = doc.select("body");
-			xhtml = body.html();
+		if (!getStyle().equals(RAW_STYLE)) {
+			return getValue();
+		} else {
+			String xhtml = getValue();
+			if (xhtml.toLowerCase().contains("<body")) {
+				Document doc = Jsoup.parse(xhtml);
+				Elements body = doc.select("body");
+				xhtml = body.html();
+			}
+			xhtml = ReverseLinkService.getInstance(ctx.getGlobalContext()).replaceLink(ctx, null, xhtml);
+			return XHTMLHelper.replaceLinks(ctx, XHTMLHelper.replaceJSTLData(ctx, xhtml));
 		}
-		xhtml = ReverseLinkService.getInstance(ctx.getGlobalContext()).replaceLink(ctx, null, xhtml);
-		return XHTMLHelper.replaceLinks(ctx, XHTMLHelper.replaceJSTLData(ctx, xhtml));
 	}
 
 	@Override
@@ -101,32 +108,32 @@ public class XHTML extends AbstractVisualComponent {
 			return true;
 		} else {
 			if (cachable == null) {
-				cachable = !getValue().contains("${");				
+				cachable = !getValue().contains("${");
 			}
 			return cachable;
 		}
 	}
-	
+
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
 		return !StringHelper.isEmpty(getValue());
 	}
-	
+
 	@Override
 	protected boolean isXML() {
 		return true;
 	}
-	
+
 	@Override
-	public String getFontAwesome() {	
+	public String getFontAwesome() {
 		return "code";
 	}
-	
+
 	@Override
 	protected boolean getColumnableDefaultValue() {
 		return true;
 	}
-	
+
 	@Override
 	public String getStyleLabel(ContentContext ctx) {
 		return "mode";
@@ -135,11 +142,10 @@ public class XHTML extends AbstractVisualComponent {
 	public String[] getStyleList(ContentContext ctx) {
 		return STYLES;
 	}
-	
+
 	@Override
 	public String[] getStyleLabelList(ContentContext ctx) {
 		return STYLES;
 	}
 
-	
 }
