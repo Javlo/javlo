@@ -284,6 +284,11 @@ public class WysiwygParagraph extends AbstractVisualComponent implements IImageT
 	public boolean isMobileOnly(ContentContext ctx) {
 		return false;
 	}
+	
+	@Override
+	public String getStyleLabel(ContentContext ctx) {
+		return "mode";
+	}
 
 	public String[] getStyleList(ContentContext ctx) {
 		return STYLES;
