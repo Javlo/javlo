@@ -1828,12 +1828,12 @@ public class Template implements Comparable<Template> {
 		return properties.getString("no-image.file", getParent().getNoImage()); 
 	}
 	
-	public String getNoImageUrl(ContentContext ctx) throws Exception {
+	public String getNoImageUrl(ContentContext ctx, String filter) throws Exception {
 		String noImage = getNoImage();
 		if (noImage == null) {
 			return null;
 		} else {
-			return URLHelper.createTransformLocalTemplateURL(ctx, getName(), "standard", noImage);
+			return URLHelper.createTransformLocalTemplateURL(ctx, getName(), filter, noImage);
 		}
 	}
 

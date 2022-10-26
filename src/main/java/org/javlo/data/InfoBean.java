@@ -1930,14 +1930,7 @@ public class InfoBean {
 	}
 
 	public String getNoImageUrl() throws Exception {
-		Template template = ctx.getCurrentTemplate();
-		if (template != null) {
-			String noImageUrl = template.getNoImageUrl(ctx);
-			if (noImageUrl != null) {
-				return noImageUrl;
-			}
-		}
-		return URLHelper.createTransformURL(ctx, "/noimage.png", "standard");
+		return URLHelper.createNoImageUrl(ctx, "standard");
 	}
 
 	public boolean isArchive() {

@@ -1706,5 +1706,16 @@ public class URLHelper extends ElementaryURLHelper {
 			e.printStackTrace();
 		}
 	}
+	
+	public static String createNoImageUrl(ContentContext ctx, String filter) throws Exception {
+		Template template = ctx.getCurrentTemplate();
+		if (template != null) {
+			String noImageUrl = template.getNoImageUrl(ctx, "standard");
+			if (noImageUrl != null) {
+				return noImageUrl;
+			}
+		}
+		return URLHelper.createTransformURL(ctx, "/noimage.png", "standard");
+	}
 
 }
