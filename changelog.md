@@ -917,5 +917,6 @@ Security in case of vulnerabilities.
   - epub converter + login from template
 ### Modified
   - change ctrl+alt+e by ctrl+alt+j (because 'euro' problem on Belgian Keyboard)
+  - replace link with jsoup
 ### fixed
   - read exif size of picture
