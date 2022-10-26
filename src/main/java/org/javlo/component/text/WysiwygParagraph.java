@@ -34,6 +34,10 @@ public class WysiwygParagraph extends AbstractVisualComponent implements IImageT
 
 	public static final String TYPE = "wysiwyg-paragraph";
 
+	public static final String RAW_STYLE = "raw";
+
+	private static final String[] STYLES = new String[] { "parsed", RAW_STYLE };
+
 	private String title = null;
 
 	private String subtitle = null;
@@ -54,8 +58,7 @@ public class WysiwygParagraph extends AbstractVisualComponent implements IImageT
 		StringBuffer finalCode = new StringBuffer();
 		finalCode.append(getDebugHeader(ctx));
 		finalCode.append(getSpecialInputTag());
-		finalCode.append(
-				"<textarea class=\"tinymce-light\" id=\"" + getContentName() + "\" name=\"" + getContentName() + "\"");
+		finalCode.append("<textarea class=\"tinymce-light\" id=\"" + getContentName() + "\" name=\"" + getContentName() + "\"");
 		finalCode.append(" rows=\"25\">");
 
 		String hostPrefix = InfoBean.getCurrentInfoBean(ctx).getAbsoluteURLPrefix();
@@ -90,10 +93,7 @@ public class WysiwygParagraph extends AbstractVisualComponent implements IImageT
 			jsFormat = "var format=" + format + ";";
 		}
 
-		finalCode.append("<script type=\"text/javascript\">" + jsFormat + jsFontsize + jsWysiwygCss
-				+ "jQuery(document).ready(loadWysiwyg('#" + getContentName() + "','" + getEditorComplexity(ctx) + "','"
-				+ chooseImageURL + "', format, fontsize, wysiwygCss));loadWysiwyg('#" + getContentName() + "','"
-				+ getEditorComplexity(ctx) + "','" + chooseImageURL + "', format, fontsize, wysiwygCss)</script>");
+		finalCode.append("<script type=\"text/javascript\">" + jsFormat + jsFontsize + jsWysiwygCss + "jQuery(document).ready(loadWysiwyg('#" + getContentName() + "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "', format, fontsize, wysiwygCss));loadWysiwyg('#" + getContentName() + "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "', format, fontsize, wysiwygCss)</script>");
 		return finalCode.toString();
 	}
 
@@ -110,12 +110,16 @@ public class WysiwygParagraph extends AbstractVisualComponent implements IImageT
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		String text = XHTMLHelper.autoLink(XHTMLHelper.replaceLinks(ctx, XHTMLHelper.replaceJSTLData(ctx, getValue())),
-				globalContext);
-		ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
-		text = reverserLinkService.replaceLink(ctx, this, text);
-		ctx.getRequest().setAttribute("text", text);
+
+		if (!getStyle().equals(RAW_STYLE)) {
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			String text = XHTMLHelper.autoLink(XHTMLHelper.replaceLinks(ctx, XHTMLHelper.replaceJSTLData(ctx, getValue())), globalContext);
+			ReverseLinkService reverserLinkService = ReverseLinkService.getInstance(globalContext);
+			text = reverserLinkService.replaceLink(ctx, this, text);
+			ctx.getRequest().setAttribute("text", text);
+		} else {
+			ctx.getRequest().setAttribute("text", getValue());
+		}
 	}
 
 	@Override
@@ -156,9 +160,9 @@ public class WysiwygParagraph extends AbstractVisualComponent implements IImageT
 				this.subtitleLevel = i;
 			}
 		}
-		
+
 		Elements images = doc.getElementsByTag("img");
-		if (images.size()>0) {
+		if (images.size() > 0) {
 			this.imageDescription = images.get(0).attr("alt");
 			this.imageUrl = ResourceHelper.extractResourcePathFromURL(ctx, images.get(0).attr("src"));
 		}
@@ -204,11 +208,13 @@ public class WysiwygParagraph extends AbstractVisualComponent implements IImageT
 	}
 
 	/*
-	 * @Override public String getPrefixViewXHTMLCode(ContentContext ctx) { if (ctx.isAsViewMode() && getValue().contains("</p>")) { return "";
-	 * } else { return super.getPrefixViewXHTMLCode(ctx); } }
+	 * @Override public String getPrefixViewXHTMLCode(ContentContext ctx) { if
+	 * (ctx.isAsViewMode() && getValue().contains("</p>")) { return ""; } else {
+	 * return super.getPrefixViewXHTMLCode(ctx); } }
 	 * 
-	 * @Override public String getSuffixViewXHTMLCode(ContentContext ctx) { if (ctx.isAsViewMode() && getValue().contains("</p>")) { return "";
-	 * } else { return super.getSuffixViewXHTMLCode(ctx); } }
+	 * @Override public String getSuffixViewXHTMLCode(ContentContext ctx) { if
+	 * (ctx.isAsViewMode() && getValue().contains("</p>")) { return ""; } else {
+	 * return super.getSuffixViewXHTMLCode(ctx); } }
 	 */
 
 	@Override
@@ -273,10 +279,14 @@ public class WysiwygParagraph extends AbstractVisualComponent implements IImageT
 	protected boolean getColumnableDefaultValue() {
 		return true;
 	}
-	
+
 	@Override
 	public boolean isMobileOnly(ContentContext ctx) {
 		return false;
+	}
+
+	public String[] getStyleList(ContentContext ctx) {
+		return STYLES;
 	}
 
 }
