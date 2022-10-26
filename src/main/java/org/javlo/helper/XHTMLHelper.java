@@ -2667,7 +2667,7 @@ public class XHTMLHelper {
 
 		for (TagDescription tag : tags) {
 			if (tag.getName().equalsIgnoreCase("script")) {
-				script = !script;
+				script = true;
 				closeScriptPosition = tag.getCloseEnd();
 			}
 			
@@ -2677,7 +2677,7 @@ public class XHTMLHelper {
 				}
 			}
 			
-			System.out.println(">>>>>>>>> XHTMLHelper.replaceLinks : script = "+script+"  tag:"+tag.getName()); //TODO: remove debug trace
+			//System.out.println(">>>>>>>>> XHTMLHelper.replaceLinks : script = "+script+"  tag:"+tag.getName()); //TODO: remove debug trace
 			if (!script) {
 				if (tag.getName().equalsIgnoreCase("a") || tag.getName().equalsIgnoreCase("area")) {
 					String hrefValue = tag.getAttributes().get("href");
