@@ -2758,7 +2758,7 @@ public class XHTMLHelper {
 		doc.getElementsByAttribute("href").forEach(item -> {
 			try {
 				String hrefValue = item.attr("href");
-				if (hrefValue != null) {
+				if (hrefValue != null && !hrefValue.startsWith("\\")) {
 					hrefValue = hrefValue.trim();
 					if (!hrefValue.startsWith("#") && !hrefValue.startsWith("${")) {
 						if (hrefValue.startsWith("page:")) {

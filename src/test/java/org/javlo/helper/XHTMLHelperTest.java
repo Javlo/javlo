@@ -30,7 +30,7 @@ public class XHTMLHelperTest extends TestCase {
 	
 	public void testReplaceLink() throws Exception {
 		assertEquals(XHTMLHelper.replaceLinks(null, "<a href=\"test\">test</a>"), "<a href=\"[TEST]-url:test\">test</a>");
-		assertEquals(XHTMLHelper.replaceLinks(null, "<script>var a=\"<a href='mailto:test@test.com'>test</a>\";</script><a href=\"test\">test</a>"), "<script>var a=\"<a href=\"mailto:test@test.com\">test</a>\";</script><a href=\"[TEST]-url:test\">test</a>");
+		assertEquals(XHTMLHelper.replaceLinks(null, "<script>var a=\"<a href=\\\"mailto:test@test.com\\\">test<\\/a>\";</script><a href=\\\"mailto:test@test.com\\\">test</a>"), "<script>var a=\"<a href=\"mailto:test@test.com\">test</a>\";</script><a href=\"[TEST]-url:test\">test</a>");
 		assertEquals(XHTMLHelper.replaceLinks(null, "<script src=\"http://cdn.com/script.js\"></script><script>var a=\"<a href='mailto:test@test.com'>test</a>\";</script><a href=\"test\">test</a>"), "<script src=\"http://cdn.com/script.js\"></script><script>var a=\"<a href=\"mailto:test@test.com\">test</a>\";</script><a href=\"[TEST]-url:test\">test</a>");
 		assertEquals(XHTMLHelper.replaceLinks(null, "<a href=\"page:test\">test</a>"), "<a href=\"[TEST]-page:test\">test</a>");
 		assertEquals(XHTMLHelper.replaceLinks(null, "<a href=\"page:test\">test</a><a href=\"mailto:info@javlo.org\">mail</a>"), "<a href=\"[TEST]-page:test\">test</a><a href=\"mailto:info@javlo.org\">mail</a>");
