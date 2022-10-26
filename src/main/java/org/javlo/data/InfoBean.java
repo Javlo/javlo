@@ -1929,7 +1929,14 @@ public class InfoBean {
 		}
 	}
 
-	public String getNoImageURL() throws Exception {
+	public String getNoImageUrl() throws Exception {
+		Template template = ctx.getCurrentTemplate();
+		if (template != null) {
+			String noImageUrl = template.getNoImageUrl(ctx);
+			if (noImageUrl != null) {
+				return noImageUrl;
+			}
+		}
 		return URLHelper.createTransformURL(ctx, "/noimage.png", "standard");
 	}
 

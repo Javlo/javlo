@@ -115,6 +115,11 @@ public class DefaultTemplate extends Template {
 		}
 		return config.getRealPath(getLocalWorkTemplateFolder());
 	}
+	
+	@Override
+	public String getNoImage() {
+		return null;
+	}
 
 	@Override
 	public String getLocalWorkMailingTemplateFolder() {

@@ -1823,6 +1823,19 @@ public class Template implements Comparable<Template> {
 	public String getImageFiltersRAW() {
 		return properties.getString("images-filter", getParent().getImageFiltersRAW());
 	}
+	
+	public String getNoImage() {
+		return properties.getString("no-image.file", getParent().getNoImage()); 
+	}
+	
+	public String getNoImageUrl(ContentContext ctx) throws Exception {
+		String noImage = getNoImage();
+		if (noImage == null) {
+			return null;
+		} else {
+			return URLHelper.createTransformLocalTemplateURL(ctx, getName(), "standard", noImage);
+		}
+	}
 
 	public String getDefaultImageFilter() {
 		List<String> filters = getImageFilters();
@@ -1911,13 +1924,9 @@ public class Template implements Comparable<Template> {
 	}
 
 	public Properties getMacroProperties(GlobalContext globalContext, String macroKey) throws IOException {
-		System.out.println(">>>>>>>>> Template.getMacroProperties : start"); // TODO: remove debug trace
 		synchronized (globalContext.getLockImportTemplate()) {
 			List<File> macroFiles = getMacroFile(globalContext);
 			for (File pFile : macroFiles) {
-				System.out.println(">>>>>>>>> Template.getMacroProperties : pFile = " + pFile); // TODO: remove debug trace
-				System.out.println(">>>>>>>>> Template.getMacroProperties : " + pFile.getName() + ".equals(" + macroKey + ".properties");
-				System.out.println(">>>>>>>>> Template.getMacroProperties : ? = " + pFile.getName().equals(macroKey + ".properties")); // TODO: remove debug trace
 				if (pFile.getName().equals(macroKey + ".properties")) {
 					Properties prop = new Properties();
 					InputStream in = new FileInputStream(pFile);
@@ -2623,7 +2632,6 @@ public class Template implements Comparable<Template> {
 					File scss = new File(StringHelper.replaceFileExtension(f.getAbsolutePath(), ".scss"));
 					File less = new File(StringHelper.replaceFileExtension(f.getAbsolutePath(), ".less"));
 					if (less.exists() || scss.exists()) {
-						System.out.println(">>>>>>>>> Template.rebuildTemplateCss : DELETE : " + f); // TODO: remove debug trace
 						f.delete();
 						outCount++;
 					}
