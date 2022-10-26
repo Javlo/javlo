@@ -333,30 +333,33 @@ a.action-button::first-letter,
     left: -9999px;
 }
 
-.radio-inline,
-.checkbox-inline{
-    display: inline-block;
-    position: relative;
-    max-width: 100%;
-    width: fit-content;
-    border: 1px solid var(--grey-3);
-    padding: 5px 10px;
-    color: black;
-    cursor: pointer;
-    border-radius: 4px;
-	margin-right:5px!important;
-	input[type="radio"]{
+.btn-check {
+	display: inline-block;
+	margin-right: 0.5em;
+	margin-bottom: 0.5em;
+	input {
 		position: absolute;
 		left: -9999px;
 	}
-	&:before{
-		content: "h";
-	}
-	&:checked{
+	input:checked + label, label:hover {
 		border: 1px solid var(--blue-100);  /* Rester coché quand le choix est sélectionné - MARCHE PAS*/
+		background-color: var(--blue-100);
+		color: #fff;
 	}
-	&:hover{
-		border: 1px solid var(--blue-100);
+	label {
+	    display: inline-block;
+	    position: relative;
+	    max-width: 100%;
+	    width: fit-content;
+	    border: 1px solid var(--grey-3);
+	    padding: 5px 10px;
+	    color: black;
+	    cursor: pointer;
+	    border-radius: 4px;
+		margin-right:5px!important;
+		&:before{
+			content: "h";
+		}
 	}
 }
 

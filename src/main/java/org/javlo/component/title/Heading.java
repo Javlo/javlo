@@ -64,7 +64,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		int depth = getDepth(ctx);
 		for (int i = 1; i < 7; i++) {
 			String id = "depth-" + getId() + '-' + i;
-			depthHTML = depthHTML + "<div class\"btn-check\"><input id=\""+id+"\" type=\"radio\" value=\"" + i + "\" name=\"" + getInputName(DEPTH) + "\"" + (depth == i ? " checked=\"checked\"" : "") + "/>";
+			depthHTML = depthHTML + "<div class=\"btn-check\"><input id=\""+id+"\" type=\"radio\" value=\"" + i + "\" name=\"" + getInputName(DEPTH) + "\"" + (depth == i ? " checked=\"checked\"" : "") + "/>";
 			depthHTML = depthHTML + "<label for=\""+id+"\" class=\"radio-inline\">" + i + "</label></div>";
 
 		}
