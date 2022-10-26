@@ -288,5 +288,10 @@ public class WysiwygParagraph extends AbstractVisualComponent implements IImageT
 	public String[] getStyleList(ContentContext ctx) {
 		return STYLES;
 	}
+	
+	@Override
+	public String[] getStyleLabelList(ContentContext ctx) {
+		return STYLES;
+	}
 
 }
