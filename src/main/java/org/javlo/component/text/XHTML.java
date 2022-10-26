@@ -127,4 +127,19 @@ public class XHTML extends AbstractVisualComponent {
 		return true;
 	}
 	
+	@Override
+	public String getStyleLabel(ContentContext ctx) {
+		return "mode";
+	}
+
+	public String[] getStyleList(ContentContext ctx) {
+		return STYLES;
+	}
+	
+	@Override
+	public String[] getStyleLabelList(ContentContext ctx) {
+		return STYLES;
+	}
+
+	
 }

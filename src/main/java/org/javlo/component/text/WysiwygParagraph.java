@@ -34,15 +34,9 @@ public class WysiwygParagraph extends AbstractVisualComponent implements IImageT
 
 	public static final String TYPE = "wysiwyg-paragraph";
 
-	public static final String RAW_STYLE = "raw";
-
-	private static final String[] STYLES = new String[] { "parsed", RAW_STYLE };
-
 	private String title = null;
 
 	private String subtitle = null;
-
-	private int subtitleLevel = 0;
 
 	private String imageDescription;
 
@@ -157,7 +151,6 @@ public class WysiwygParagraph extends AbstractVisualComponent implements IImageT
 			titles = doc.getElementsByTag("h" + i);
 			if (titles.size() > 0) {
 				this.subtitle = titles.get(0).text();
-				this.subtitleLevel = i;
 			}
 		}
 
@@ -285,18 +278,4 @@ public class WysiwygParagraph extends AbstractVisualComponent implements IImageT
 		return false;
 	}
 	
-	@Override
-	public String getStyleLabel(ContentContext ctx) {
-		return "mode";
-	}
-
-	public String[] getStyleList(ContentContext ctx) {
-		return STYLES;
-	}
-	
-	@Override
-	public String[] getStyleLabelList(ContentContext ctx) {
-		return STYLES;
-	}
-
 }
