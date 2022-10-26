@@ -46,9 +46,9 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	public List<String> getFields(ContentContext ctx) throws Exception {
 		return FIELDS;
 	}
-	
+
 	@Override
-	public void prepareView(ContentContext ctx) throws Exception {	
+	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
 		ctx.getRequest().setAttribute("title", getTitle(ctx));
 		ctx.setTitleDepth(getDepth(ctx));
@@ -59,15 +59,17 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-		
+
 		String depthHTML = "<div class=\"form-group\"><label>" + i18nAccess.getText("content.heading.depth", "depth") + "</label><div>";
 		int depth = getDepth(ctx);
 		for (int i = 1; i < 7; i++) {
-			depthHTML = depthHTML+"<label class=\"radio-inline\">";
-			depthHTML = depthHTML+"<input type=\"radio\" value=\"" + i + "\" name=\"" + getInputName(DEPTH) + "\"" + (depth == i ? " checked=\"checked\"" : "") + "/>" + i + "</label>";
+			String id = "depth-" + getId() + '-' + i;
+			depthHTML = depthHTML + "<div class\"btn-check\"><input id=\""+id+"\" type=\"radio\" value=\"" + i + "\" name=\"" + getInputName(DEPTH) + "\"" + (depth == i ? " checked=\"checked\"" : "") + "/>";
+			depthHTML = depthHTML + "<label for=\""+id+"\" class=\"radio-inline\">" + i + "</label></div>";
+
 		}
-		depthHTML = depthHTML+"</select></div></div>";
-		
+		depthHTML = depthHTML + "</select></div></div>";
+
 		if (!ctx.getGlobalContext().isMailingPlatform()) {
 			out.println("<div class=\"row\"><div class=\"col-sm-8\">");
 		} else {
@@ -78,7 +80,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		if (ctx.getGlobalContext().isMailingPlatform()) {
 			out.println("<input class=\"form-control\" type=\"text\" id=\"" + createKeyWithField(TEXT) + "\" name=\"" + createKeyWithField(TEXT) + "\" value=\"" + Encode.forHtmlAttribute(getFieldValue(TEXT)) + "\" >");
 		} else {
-			out.println("<textarea rows=\"1\" class=\"form-control\" id=\"" + createKeyWithField(TEXT) + "\" name=\"" + createKeyWithField(TEXT) + "\">"+Encode.forHtmlContent(getFieldValue(TEXT))+"</textarea>");
+			out.println("<textarea rows=\"1\" class=\"form-control\" id=\"" + createKeyWithField(TEXT) + "\" name=\"" + createKeyWithField(TEXT) + "\">" + Encode.forHtmlContent(getFieldValue(TEXT)) + "</textarea>");
 			out.println("<script type=\"text/javascript\">jQuery(document).ready(loadWysiwyg('#" + createKeyWithField(TEXT) + "','soft',''));</script>");
 		}
 		out.println("</div>");
@@ -90,10 +92,10 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 			out.println("<input class=\"form-control\" type=\"text\" id=\"" + createKeyWithField(SMALL_TEXT) + "\" name=\"" + createKeyWithField(SMALL_TEXT) + "\" value=\"" + getFieldValue(SMALL_TEXT) + "\" >");
 			out.println("</div>");
 		}
-		
+
 		out.println("<div class=\"form-group\">");
 		out.println("<label for=\"" + getInputName(LINK) + "\">" + i18nAccess.getText("content.header.link", "link") + "</label>");
-		out.println("<input class=\"form-control\" type=\"text\" id=\"" + createKeyWithField(LINK) + "\" name=\"" + createKeyWithField(LINK) + "\" value=\"" + getFieldValue(LINK) + "\" >");		
+		out.println("<input class=\"form-control\" type=\"text\" id=\"" + createKeyWithField(LINK) + "\" name=\"" + createKeyWithField(LINK) + "\" value=\"" + getFieldValue(LINK) + "\" >");
 		out.println("</div>");
 		if (!ctx.getGlobalContext().isMailingPlatform()) {
 			out.println("</div></div>");
@@ -150,26 +152,28 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	@Override
 	public String getTextTitle(ContentContext ctx) {
 		try {
-			// return XHTMLHelper.replaceJSTLData(ctx,StringHelper.removeTag(getFieldValue(TEXT))); // warning recursive call of title
+			// return
+			// XHTMLHelper.replaceJSTLData(ctx,StringHelper.removeTag(getFieldValue(TEXT)));
+			// // warning recursive call of title
 			return StringHelper.removeTag(getFieldValue(TEXT));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return StringHelper.removeTag(getFieldValue(TEXT));
 		}
 	}
-	
+
 	@Override
 	public String getTextLabel(ContentContext ctx) {
 		String smText = getFieldValue(SMALL_TEXT);
-		smText = StringEscapeUtils.unescapeHtml4(smText);		
-		if (StringHelper.isEmpty(smText)) {	
+		smText = StringEscapeUtils.unescapeHtml4(smText);
+		if (StringHelper.isEmpty(smText)) {
 			String lgText = getFieldValue(TEXT);
 			lgText = StringEscapeUtils.unescapeHtml4(lgText);
 			return StringHelper.removeTag(lgText);
 		} else {
 			return smText;
 		}
-	}	
+	}
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
@@ -205,9 +209,9 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 			if (style.length() > 0) {
 				style = " style=\"" + style + "\"";
 			}
-			
+
 			link = URLHelper.replacePageReference(ctx, link);
-			
+
 			return "<a" + style + " href=\"" + link + "\"" + target + ">" + getTitle(ctx) + "</a>";
 		} else {
 			if (getBackgroundColor() != null && getBackgroundColor().length() > 2 && ctx.getGlobalContext().isMailing()) {
@@ -218,10 +222,10 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 			}
 			if (getBackgroundColor() != null && getBackgroundColor().length() > 2) {
 				if (ctx.getGlobalContext().isMailing()) {
-					style = " style=\"border: 1px " + getBackgroundColor() + " solid; "+style+"\"";
+					style = " style=\"border: 1px " + getBackgroundColor() + " solid; " + style + "\"";
 				}
 			} else if (style.trim().length() > 0) {
-				style=" style=\""+style+"\"";
+				style = " style=\"" + style + "\"";
 			}
 			String tag = "span";
 			if (ctx.getGlobalContext().isMailingPlatform()) {
@@ -230,10 +234,10 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 			return "<" + tag + " class=\"inside-wrapper\"" + style + ">" + XHTMLHelper.replaceJSTLData(ctx, cleanValue(ctx, getTitle(ctx))) + "</" + tag + ">";
 		}
 	}
-	
+
 	protected String getTitle(ContentContext ctx) throws ServiceException, Exception {
 		String html = getFieldValue(TEXT);
-		if (!isNolink()) {			
+		if (!isNolink()) {
 			html = XHTMLHelper.autoLink(html, ctx.getGlobalContext());
 			html = ReverseLinkService.getInstance(ctx.getGlobalContext()).replaceLink(ctx, this, html);
 		}
@@ -276,19 +280,20 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 			getComponentBean().setLayout(new ComponentLayout(""));
 		}
 	}
-	
+
 	@Override
 	public void init(ComponentBean bean, ContentContext newContext) throws Exception {
 		super.init(bean, newContext);
-//		if ((StringHelper.isEmpty(getFieldValue(TEXT))) && !StringHelper.isEmpty(getFieldValue(SMALL_TEXT))) {			
-//			setFieldValue(TEXT, getFieldValue(SMALL_TEXT));
-//			setFieldValue(SMALL_TEXT, "");			
-//		}
+		// if ((StringHelper.isEmpty(getFieldValue(TEXT))) &&
+		// !StringHelper.isEmpty(getFieldValue(SMALL_TEXT))) {
+		// setFieldValue(TEXT, getFieldValue(SMALL_TEXT));
+		// setFieldValue(SMALL_TEXT, "");
+		// }
 	}
 
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {
-		setFieldValue(TEXT, LoremIpsumGenerator.getParagraph(4, false, true));		
+		setFieldValue(TEXT, LoremIpsumGenerator.getParagraph(4, false, true));
 		setModify();
 		storeProperties();
 		return true;
@@ -358,13 +363,13 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		}
 		return inlineStyle;
 	}
-	
+
 	@Override
 	public String getXHTMLConfig(ContentContext ctx) throws Exception {
 		String xhtml = super.getXHTMLConfig(ctx);
 		return xhtml;
 	}
-	
+
 	public String getSpecialPreviewCssId(ContentContext ctx) {
 		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 			return " id=\"cp_" + getForcedId(ctx) + "\"";
@@ -372,12 +377,12 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 			return " id=\"" + getXHTMLId(ctx) + "\"";
 		}
 	}
-	
+
 	@Override
 	protected boolean isHiddable() {
 		return true;
 	}
-	
+
 	protected String getForcedPrefixViewXHTMLCode(ContentContext ctx) {
 		if (isDisplayHidden() && ctx.isAsViewMode()) {
 			return "";
@@ -385,8 +390,8 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		if (getConfig(ctx).getProperty("prefix", null) != null) {
 			return getConfig(ctx).getProperty("prefix", null);
 		}
-		String style = contructViewStyle(ctx);		
-		return "<" + getTag(ctx) + " " + getPrefixCssClass(ctx, style) + getSpecialPreviewCssId(ctx) + " " + getInlineStyle(ctx) + ">";		
+		String style = contructViewStyle(ctx);
+		return "<" + getTag(ctx) + " " + getPrefixCssClass(ctx, style) + getSpecialPreviewCssId(ctx) + " " + getInlineStyle(ctx) + ">";
 	}
 
 	@Override
@@ -396,7 +401,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 			return "";
 		}
 		if (isWrapped(ctx)) {
-			return "</" + getTag(ctx) + '>'+colSuffix;
+			return "</" + getTag(ctx) + '>' + colSuffix;
 		} else {
 			return colSuffix;
 		}
@@ -406,54 +411,53 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	public boolean isRealContent(ContentContext ctx) {
 		return false;
 	}
-	
+
 	@Override
 	public boolean isNoLinkable() {
 		return true;
-	}	
-	
+	}
+
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
-		return !getValue().contains("${");	
+		return !getValue().contains("${");
 	}
-	
+
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
 		performColumnable(ctx);
 		String outPerform = super.performEdit(ctx);
 		if (!ctx.getGlobalContext().isMailingPlatform()) {
-			setFieldValue(TEXT, XHTMLHelper.removeTag(getFieldValue(TEXT, "" ),"p"));
+			setFieldValue(TEXT, XHTMLHelper.removeTag(getFieldValue(TEXT, ""), "p"));
 		}
 		return outPerform;
-		
+
 	}
-	
+
 	@Override
 	public boolean isDefaultValue(ContentContext ctx) {
-		return getFieldValue(TEXT, "" ).trim().length() == 0;
+		return getFieldValue(TEXT, "").trim().length() == 0;
 	}
-	
+
 	@Override
-	public String getFontAwesome() {	
+	public String getFontAwesome() {
 		return "header";
 	}
-	
+
 	public static void main(String[] args) {
 		Properties p = new Properties();
 		String value = "mes articles d'été";
 		p.setProperty("text", value);
-		System.out.println("value = p.get ? "+value.equals(p.getProperty("text")));
+		System.out.println("value = p.get ? " + value.equals(p.getProperty("text")));
 	}
-	
+
 	@Override
 	protected boolean isValueTranslatable() {
 		return true;
 	}
-	
+
 	@Override
 	protected boolean getColumnableDefaultValue() {
 		return true;
 	}
 
 }
-
