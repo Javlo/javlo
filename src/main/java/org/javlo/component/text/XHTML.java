@@ -88,7 +88,7 @@ public class XHTML extends AbstractVisualComponent {
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		if (!getStyle().equals(RAW_STYLE)) {
+		if (getStyle().equals(RAW_STYLE)) {
 			return getValue();
 		} else {
 			String xhtml = getValue();
