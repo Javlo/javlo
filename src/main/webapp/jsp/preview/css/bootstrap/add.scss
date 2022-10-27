@@ -1,0 +1,73 @@
+#preview_command .add {
+	
+	position: fixed;
+	top: 10vh;
+	bottom: 10vh;
+	right: 0;
+	height: 80vh;
+	
+	display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    .button-group-addon {
+    	width: 42px;
+    	float: left;
+    	margin: -6px 12px -6px -12px;
+    	padding: 8px 12px;
+    	border: 0 none;
+    	border-right: 1px #cccccc solid;
+    	text-align: center;
+    }
+	
+	.action {
+		opacity: 0.6;
+		font-size: 32px;
+		margin-right: 10px;
+		color: #007ce7;
+	}
+	
+	.action:hover {
+		opacity: 1;
+	}
+	
+	.direct-action {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		margin-right: 10px;
+		.action {
+			margin-right: 0; 
+		}
+	}
+	
+	a.action:hover {
+		 opacity: 1;
+	}
+	
+	.bloc-background {
+		border: 1px rgba(0,0,0,0.6) solid;
+		background-color: rgba(0,0,0,0.3);
+		padding: 15px 15px 10px 15px;
+		border-radius: 3px;
+	}
+	
+	.hiddenCollapse.bloc-background {
+		padding: 0;
+		display: none;
+	}
+	
+	.macros {
+		display: flex;
+    	flex-direction: column;
+    	justify-content: center;
+    	margin-right: 15px;
+		.btn {
+			display: block;
+			margin-bottom: 5px;
+			width: 100%;
+		}
+	}
+
+}

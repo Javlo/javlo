@@ -1,0 +1,54 @@
+#preview_command {
+	.btn-mobile[aria-expanded=true] {
+		background-color: #000000;
+		color: #ffffff;
+	}
+	#_mobile_preview {
+		position: fixed;
+		top: 70px;
+		z-index: 99999999;
+		right: 20px;	
+		border: 3px #333333 solid;
+		border-radius: 5px;
+		background-color: #ffffff;
+		max-height: 80vh;
+		box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.2), 0 12px 40px 0 rgba(0, 0, 0, 0.19);
+		._mobile_header {
+			color: #ffffff;
+			background-color: #000000;
+			._mobile_wrapper {
+				padding: 5px;
+			}
+		}	
+		._mobile_action {
+			padding: 5px 0;
+			display: flex;
+			justify-content: space-around;
+			a {
+				display: block;
+				text-decoration: none;
+				font-size: 9px;
+				padding: 3px;
+				background-color: #cccccc;
+				color: #000000;
+				border-radius: 3px;
+			}
+			a:hover {
+				background-color: #dddddd;
+			}
+		}
+		._mobile_footer {
+			background-color: #000000;
+			padding: 12px;
+			._mobile_micro {
+				display: block;
+				border: 1px #999999 solid;
+				background-color: #bbbbbb;
+				border-radius: 50%;
+				width: 20px;
+				height: 20px;
+				margin: 0 auto;
+			}
+		}	
+	}
+}
