@@ -1078,28 +1078,30 @@ public class Template implements Comparable<Template> {
 		config.getTemplateFolder();
 		Collection<File> file = ResourceHelper.getAllFiles(dir, null);
 		for (File cssFile : file) {
-			String ext = StringHelper.neverNull(StringHelper.getFileExtension(cssFile.getName())).toLowerCase();
-			if (ext.equals("css") || ext.equals("less") || ext.equals("scss")) {
-				String cssFileName = cssFile.getAbsolutePath().replace(cssFile.getParentFile().getAbsolutePath(), "");
-				boolean add = true;
-				if (!StringHelper.isEmpty(filter)) {
-					String content = ResourceHelper.loadStringFromFile(cssFile);
-					if (!content.toLowerCase().contains(filter.toLowerCase())) {
-						add = false;
+			if (cssFile.isFile()) {
+				String ext = StringHelper.neverNull(StringHelper.getFileExtension(cssFile.getName())).toLowerCase();
+				if (ext.equals("css") || ext.equals("less") || ext.equals("scss")) {
+					String cssFileName = cssFile.getAbsolutePath().replace(cssFile.getParentFile().getAbsolutePath(), "");
+					boolean add = true;
+					if (!StringHelper.isEmpty(filter)) {
+						String content = ResourceHelper.loadStringFromFile(cssFile);
+						if (!content.toLowerCase().contains(filter.toLowerCase())) {
+							add = false;
+						}
 					}
-				}
-				if (add) {
-					String cssFolder = cssFile.getParentFile().getAbsolutePath().replace(dir.getAbsolutePath(), "");
-					List<String> css = outCSS.get(cssFolder);
-					if (css == null) {
-						css = new LinkedList<String>();
-						outCSS.put(cssFolder, css);
+					if (add) {
+						String cssFolder = cssFile.getParentFile().getAbsolutePath().replace(dir.getAbsolutePath(), "");
+						List<String> css = outCSS.get(cssFolder);
+						if (css == null) {
+							css = new LinkedList<String>();
+							outCSS.put(cssFolder, css);
+						}
+						cssFileName = cssFileName.replace("\\", "/");
+						if (cssFileName.startsWith("/")) {
+							cssFileName = cssFileName.substring(1);
+						}
+						css.add(cssFileName);
 					}
-					cssFileName = cssFileName.replace("\\", "/");
-					if (cssFileName.startsWith("/")) {
-						cssFileName = cssFileName.substring(1);
-					}
-					css.add(cssFileName);
 				}
 			}
 		}
@@ -1186,7 +1188,7 @@ public class Template implements Comparable<Template> {
 		if (configFile.exists()) {
 			return ResourceHelper.loadProperties(configFile);
 		} else {
-			logger.warning("file not found : "+configFile);
+			logger.warning("file not found : " + configFile);
 		}
 		return null;
 	}
@@ -1595,7 +1597,7 @@ public class Template implements Comparable<Template> {
 
 		return deviceRenderer;
 	}
-	
+
 	protected String getRelativeLoginFile(ContentContext ctx) {
 		return properties.getString("login.jsp", getParent().getRelativeLoginFile(ctx));
 	}
@@ -1823,11 +1825,11 @@ public class Template implements Comparable<Template> {
 	public String getImageFiltersRAW() {
 		return properties.getString("images-filter", getParent().getImageFiltersRAW());
 	}
-	
+
 	public String getNoImage() {
-		return properties.getString("no-image.file", getParent().getNoImage()); 
+		return properties.getString("no-image.file", getParent().getNoImage());
 	}
-	
+
 	public String getNoImageUrl(ContentContext ctx, String filter) throws Exception {
 		String noImage = getNoImage();
 		if (noImage == null) {
