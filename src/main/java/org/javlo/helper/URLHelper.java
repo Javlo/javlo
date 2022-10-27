@@ -1627,7 +1627,6 @@ public class URLHelper extends ElementaryURLHelper {
 		String outText = text;
 		while (matcher.find()) {
 			String group = matcher.group();
-			System.out.println(">>>>>>>>> URLHelper.replacePageReference : group = "+group); //TODO: remove debug trace
 			group = group.substring(0, group.length()-1);	
 			String pageName = group.replaceFirst("page:", "");
 			if (ctx != null) { // test
@@ -1700,9 +1699,8 @@ public class URLHelper extends ElementaryURLHelper {
 	
 	public static void main(String[] args) {
 		try {
-			System.out.println(">> "+replacePageReference(null," page:product"));
+			System.out.println(">> "+replacePageReference(null,"page:cookie"));
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
