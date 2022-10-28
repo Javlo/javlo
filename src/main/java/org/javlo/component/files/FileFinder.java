@@ -126,7 +126,6 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 													}
 												}
 											}
-											System.out.println(">>>>>>>>> FileFinder.FileFilter.match : taxonomy.size() = "+taxonomy.size()); //TODO: remove debug trace
 											if (textUndefinedOrMatch && getTaxonomy().size() > 0) {
 												StaticInfoBean staticInfoBean = new StaticInfoBean(ctx, file);
 												TaxonomyService taxonomyService = TaxonomyService.getInstance(ctx);
