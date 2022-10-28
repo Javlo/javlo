@@ -80,16 +80,16 @@ public class InfoBean {
 
 	public static final String REQUEST_KEY = "info";
 
-	//public static final String NEW_SESSION_PARAM = "__new_session";
+	// public static final String NEW_SESSION_PARAM = "__new_session";
 
 	private String fakeCurrentURL = null;
-	
+
 	private ImageBean imageHeader = null;
 
 	private Map<String, Boolean> areas = null;
 
 	private Map<String, String> bgAreas = null;
-	
+
 	private String pageNotFoundMessage = null;
 
 	private static final Map<String, String> staticData = Collections.unmodifiableMap(new HashMap<String, String>() {
@@ -193,7 +193,7 @@ public class InfoBean {
 			return URLHelper.createURL(ctx);
 		}
 	}
-	
+
 	public String getVirtualCurrentURL() throws Exception {
 		if (getFakeCurrentURL() != null) {
 			return getFakeCurrentURL();
@@ -201,7 +201,7 @@ public class InfoBean {
 			return URLHelper.createVirtualURL(ctx);
 		}
 	}
-	
+
 	public String getRealCurrentURL() throws Exception {
 		return URLHelper.createURL(ctx);
 	}
@@ -416,17 +416,17 @@ public class InfoBean {
 	public String getNowSortable() {
 		return StringHelper.renderSortableDate(new Date());
 	}
-	
+
 	public String getNowInputDate() throws ParseException {
 		return StringHelper.renderInputDate(new Date());
 	}
-	
+
 	public String getMajorInputDate() throws ParseException {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.YEAR, -18);
 		return StringHelper.renderInputDate(cal.getTime());
 	}
-	
+
 	public String getMaxAgeInputDate() throws ParseException {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.YEAR, -120);
@@ -486,7 +486,8 @@ public class InfoBean {
 	}
 
 	public String getGlobalTitle() {
-		try {if (getCurrentPage() != null) {
+		try {
+			if (getCurrentPage() != null) {
 				return getCurrentPage().getGlobalTitle(ctx);
 			} else {
 				return null;
@@ -545,7 +546,7 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
+
 	public String getPageDescriptionForAttribute() {
 		HtmlPart desc = getPageDescription();
 		if (desc != null) {
@@ -559,7 +560,7 @@ public class InfoBean {
 	public String getPageID() {
 		return getCurrentPage().getId();
 	}
-	
+
 	public String getPageId() {
 		return getCurrentPage().getId();
 	}
@@ -599,7 +600,7 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
+
 	public String getPageTitleForAttribute() {
 		return Encode.forHtmlAttribute(getPageTitle());
 	}
@@ -617,7 +618,7 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
+
 	public String getTitleForAttribute() {
 		return Encode.forHtmlAttribute(getTitle());
 	}
@@ -643,7 +644,7 @@ public class InfoBean {
 	public String getUserName() {
 		return ctx.getCurrentUserId();
 	}
-	
+
 	public String getAdminUserName() {
 		return ctx.getCurrentAdminUserId();
 	}
@@ -659,7 +660,7 @@ public class InfoBean {
 		}
 		return ctx.getCurrentUserId();
 	}
-	
+
 	public String getUserEmail() {
 		User user = ctx.getCurrentUser();
 		if (user == null) {
@@ -715,11 +716,13 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
+
 	/**
-	 * return the root page with this template, stop to parent page with different template
+	 * return the root page with this template, stop to parent page with different
+	 * template
+	 * 
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public PageBean getTemplateRoot() throws Exception {
 		String template = getCurrentPage().getTemplateIdOnInherited(ctx);
@@ -745,7 +748,7 @@ public class InfoBean {
 		}
 
 		List<PageBean> pagePath = new LinkedList<PageBean>();
-		page=page.getParent();
+		page = page.getParent();
 
 		while (page != null) {
 			try {
@@ -827,11 +830,11 @@ public class InfoBean {
 	public String getResourceRootURL() {
 		return URLHelper.createResourceURL(ctx, "/");
 	}
-	
+
 	public String getFileRootURL() {
 		return URLHelper.createFileURL(ctx, "/");
 	}
-	
+
 	public String getMediaRootURL() {
 		return URLHelper.createMediaURL(ctx, "/");
 	}
@@ -936,7 +939,7 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
+
 	public String getCookiesPolicyUrl() throws Exception {
 		String url = globalContext.getCookiesPolicyUrl();
 		if (StringHelper.isURL(url)) {
@@ -1018,10 +1021,10 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
+
 	public String getQrCodeURL() {
 		try {
-			return URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), "/qrcode/page/"+ctx.getRequestContentLanguage()+"/"+ctx.getPath());
+			return URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), "/qrcode/page/" + ctx.getRequestContentLanguage() + "/" + ctx.getPath());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -1330,7 +1333,7 @@ public class InfoBean {
 					return o1.getName().compareTo(o2.getName());
 				}
 			});
-			
+
 			return templates;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1403,13 +1406,15 @@ public class InfoBean {
 
 	}
 
-//	public boolean isNewSession() {
-//		if (StringHelper.isTrue(ctx.getRequest().getSession().getAttribute(NEW_SESSION_PARAM))) {
-//			return true;
-//		} else {
-//			return ctx.getRequest().getSession().isNew();
-//		}
-//	}
+	// public boolean isNewSession() {
+	// if
+	// (StringHelper.isTrue(ctx.getRequest().getSession().getAttribute(NEW_SESSION_PARAM)))
+	// {
+	// return true;
+	// } else {
+	// return ctx.getRequest().getSession().isNew();
+	// }
+	// }
 
 	/**
 	 * this method return true at the first call for current session and false afer.
@@ -1593,7 +1598,7 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
+
 	public PageBean getPageByName(String name) {
 		try {
 			return getRoot().getPage().searchChildFromName(name).getPageBean(ctx);
@@ -1627,7 +1632,7 @@ public class InfoBean {
 	public int getCurrentMonth() {
 		return Calendar.getInstance().get(Calendar.MONTH);
 	}
-	
+
 	public String getUserLanguage() {
 		if (ctx.isAsEditMode()) {
 			return globalContext.getEditLanguage(ctx.getRequest().getSession());
@@ -1636,7 +1641,7 @@ public class InfoBean {
 		}
 	}
 
-	public String[] getMonths() {		
+	public String[] getMonths() {
 		return DateFormatSymbols.getInstance(new Locale(getUserLanguage())).getMonths();
 	}
 
@@ -1801,7 +1806,7 @@ public class InfoBean {
 		for (String name : macroName) {
 			IMacro macro = factory.getMacro(name);
 			if (macro instanceof IInteractiveMacro && macro.isActive()) {
-				macros.add(new MacroBean(macro.getName(), macro.getInfo(ctx), ((IInteractiveMacro)macro).getModalSize(), macro.getPriority()));
+				macros.add(new MacroBean(macro.getName(), macro.getInfo(ctx), ((IInteractiveMacro) macro).getModalSize(), macro.getPriority()));
 			}
 		}
 		return macros;
@@ -1970,61 +1975,61 @@ public class InfoBean {
 	public void setPageNotFoundMessage(String pageNotFoundMessage) {
 		this.pageNotFoundMessage = pageNotFoundMessage;
 	}
-	
+
 	public String getAjaxLoginUrl() {
 		return URLHelper.createActionURL(ctx, "user.login", ctx.getPath());
 	}
-	
+
 	public String getWebactionUrl() {
 		return URLHelper.createActionURL(ctx, null, null);
-	}	
-	
+	}
+
 	public String[] getShortDays() {
 		String[] days = new String[7];
 		Locale locale = new Locale(getUserLanguage());
 		Calendar cal = Calendar.getInstance(locale);
-		for (int i=0; i<7; i++) {
-			cal.set(Calendar.DAY_OF_WEEK, i+1);
-			days[i]=cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT_FORMAT, locale);
+		for (int i = 0; i < 7; i++) {
+			cal.set(Calendar.DAY_OF_WEEK, i + 1);
+			days[i] = cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT_FORMAT, locale);
 		}
 		return days;
 	}
-	
+
 	public String[] getLongDays() {
 		String[] days = new String[7];
 		Locale locale = ctx.getLocale();
 		Calendar cal = Calendar.getInstance(locale);
-		for (int i=1; i<7; i++) {
-			cal.set(Calendar.DAY_OF_WEEK, i+1);
-			days[i]=cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG_FORMAT, locale);
+		for (int i = 1; i < 7; i++) {
+			cal.set(Calendar.DAY_OF_WEEK, i + 1);
+			days[i] = cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG_FORMAT, locale);
 		}
 		return days;
 	}
-	
+
 	public String getSearchPageUrl() throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement searchPage = content.getNavigation(ctx).searchChildFromName(ctx.getGlobalContext().getSpecialConfig().getSearchPageName());
 		if (searchPage != null) {
-			return URLHelper.createURL(ctx, searchPage) ;
+			return URLHelper.createURL(ctx, searchPage);
 		} else {
 			return null;
 		}
 	}
-	
+
 	public boolean isSearchPage() throws Exception {
 		return ctx.getCurrentPage().getName().equals(ctx.getGlobalContext().getSpecialConfig().getSearchPageName());
 	}
-	
+
 	public String getRegisterPageUrl() throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement page = content.getNavigation(ctx).searchChildFromName(ctx.getGlobalContext().getSpecialConfig().getRegisterPageName());
 		if (page != null) {
-			return URLHelper.createURL(ctx, page) ;
+			return URLHelper.createURL(ctx, page);
 		} else {
 			return null;
 		}
 	}
-	
+
 	public boolean isRegisterPage() throws Exception {
 		return ctx.getCurrentPage().getName().equals(ctx.getGlobalContext().getSpecialConfig().getRegisterPageName());
 	}
@@ -2033,56 +2038,56 @@ public class InfoBean {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement page = content.getNavigation(ctx).searchChildFromName(ctx.getGlobalContext().getSpecialConfig().getLoginPageName());
 		if (page != null) {
-			return URLHelper.createURL(ctx, page) ;
+			return URLHelper.createURL(ctx, page);
 		} else {
 			return null;
 		}
 	}
-	
+
 	public boolean isLoginPage() throws Exception {
 		return ctx.getCurrentPage().getName().equals(ctx.getGlobalContext().getSpecialConfig().getLoginPageName());
 	}
 
-	public String getNewsPageUrl() throws Exception {		
+	public String getNewsPageUrl() throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement page = content.getNavigation(ctx).searchChildFromName(ctx.getGlobalContext().getSpecialConfig().getNewsPageName());
 		if (page != null) {
-			return URLHelper.createURL(ctx, page) ;
+			return URLHelper.createURL(ctx, page);
 		} else {
 			return null;
 		}
 	}
-	
+
 	public boolean isNewsPage() throws Exception {
 		return ctx.getCurrentPage().getName().equals(ctx.getGlobalContext().getSpecialConfig().getNewsPageName());
 	}
-	
+
 	public boolean isHomePage() throws Exception {
 		return ctx.getCurrentPage().isLikeRoot(ctx);
 	}
 
 	public static void main(String[] args) {
 		Locale locale = new Locale("FR", "BE");
-		
+
 		Calendar cal = Calendar.getInstance(locale);
-		for (int i=0; i<7; i++) {
-			cal.set(Calendar.DAY_OF_WEEK, i+1);
+		for (int i = 0; i < 7; i++) {
+			cal.set(Calendar.DAY_OF_WEEK, i + 1);
 			System.out.println(cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT_FORMAT, locale));
 		}
 	}
-	
+
 	public String getForwardUrl() throws Exception {
 		return ctx.getCurrentPage().getForward(ctx);
 	}
-	
+
 	public String getDefaultEmailSender() {
 		return ctx.getGlobalContext().getAdministratorEmail();
 	}
-	
+
 	public String getMarkAllReadNotificationUrl() {
 		return URLHelper.createActionURL(ctx, "data.notificationsAsRead");
 	}
-	
+
 	public String getHello() throws ServiceException, Exception {
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 		LocalTime time = LocalTime.now();
@@ -2094,5 +2099,5 @@ public class InfoBean {
 			return i18nAccess.getViewText("global.hello.morning");
 		}
 	}
-	
+
 }
