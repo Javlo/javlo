@@ -356,7 +356,7 @@ public class TaxonomyService {
 
 	public boolean isAllMatch(ITaxonomyContainer container, ITaxonomyContainer filter) {
 		for (String taxonomy : filter.getTaxonomy()) {
-			if (!isMatch(container, new TaxonomyContainerBean(taxonomy))) {
+			if (!isMatchWidthParent(container, new TaxonomyContainerBean(taxonomy))) {
 				return false;
 			}
 		}
