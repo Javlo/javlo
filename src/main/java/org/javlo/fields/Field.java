@@ -227,6 +227,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 			}
 		}
 
+		@Deprecated
 		public String getURL() {
 			return getUrl();
 		}

@@ -25,15 +25,20 @@ public class FieldExternalLink extends MetaField implements ILink {
 		public ExternalLinkBean(ContentContext ctx) {
 			super(ctx);
 		}
-
+		
 		@Override
-		public String getURL() {
+		public String getUrl() {
 			try {
 				return URLHelper.convertLink(ctx, getCurrentLink());
 			} catch (Exception e) {
 				e.printStackTrace();
 				return "error:"+e.getMessage();				
 			}
+		}
+
+		@Override		
+		public String getURL() {
+			return getUrl();
 		}
 
 		public String getTitle() {

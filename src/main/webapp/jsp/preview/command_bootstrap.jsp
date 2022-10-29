@@ -57,7 +57,7 @@ if (!rightOnPage) {
 request.setAttribute("editUser", ctx.getCurrentEditUser());
 request.setAttribute("editPreview", EditContext.getInstance(globalContext, session).isPreviewEditionMode());
 if (StringHelper.isTrue(request.getParameter("preview-command"), true) && !ctx.isPreviewOnly()) {
-%><c:set var="pdf" value="${info.device.code == 'pdf'}" /><div id="preview_command" lang="${info.editLanguage}" class="edit-${not empty editUser} ${editPreview == 'true'?'edit':'preview'}">
+%><c:set var="pdf" value="${info.device.code == 'pdf'}" /><div id="preview_command" lang="${info.editLanguage}" class="edit-${not empty editUser} ${editPreview == 'true'?'edit':'preview'} mode-${globalContext.editTemplateMode}">
 	<script type="text/javascript">	
 		var i18n_preview_edit = "${i18n.edit['component.preview-edit']}";	
 		var i18n_first_component = "${i18n.edit['component.insert.first']}";
