@@ -337,7 +337,7 @@ public class URLHelper extends ElementaryURLHelper {
 				return url;
 			}
 		}
-		return URLHelper.createStaticURL(ctx,  "/images/avatar.png");
+		return URLHelper.createStaticURL(ctx,  "/images/avatar.svg");
 	}
 
 	public static String createQRCodeLink(ContentContext ctx, IContentVisualComponent comp) {
