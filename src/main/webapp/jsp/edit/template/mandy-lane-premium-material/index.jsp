@@ -237,7 +237,7 @@
 						<img src="${info.currentUserAvatarUrl}" alt="social avatar" lang="en" />
 					</c:if>
 					<c:if test="${empty info.currentUserAvatarUrl}">
-						<img src="${info.editTemplateURL}/images/avatar.png" alt="default avatar" lang="en" />
+						<img src="${info.editTemplateURL}/images/avatar.svg" alt="default avatar" lang="en" />
 					</c:if>
 					<div class="info">
 						<h3>${currentUser.name}</h3>
