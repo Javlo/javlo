@@ -128,11 +128,24 @@ public class TimeMap<K, V> implements Map<K, V> {
 	public V put(K key, V value) {
 		return put(key, value, getDefaultTimeValue());
 	}
+	
+	private V release(Object key) {
+		V value = internalMap.get(key);
+		internalMap.remove(key);
+		internalTimeMap.remove(key);
+		if (value != null && value instanceof AutoCloseable) {
+			try {
+				((AutoCloseable)value).close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return value;
+	}
 
 	public V put(K key, V value, int liveTime) {
 		if (maxSize > 0 && internalTimeMap.size() == maxSize) {
-			internalMap.remove(order.get(0));
-			internalTimeMap.remove(order.get(0));
+			release(order.get(0));
 			order.remove(0);
 		}
 		synchronized (internalMap) {
@@ -155,9 +168,8 @@ public class TimeMap<K, V> implements Map<K, V> {
 	}
 
 	private V internalRemove(Object key) {
-		internalTimeMap.remove(key);
 		order.remove(key);
-		return internalMap.remove(key);
+		return release(key);
 	}
 
 	@Override

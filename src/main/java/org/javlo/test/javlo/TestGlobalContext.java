@@ -13,6 +13,7 @@ public class TestGlobalContext extends GlobalContext {
 	
 	public TestGlobalContext() {
 		super("Test");
+		this.staticConfig = StaticConfig.getInstance((ServletContext)null);
 	}
 
 	@Override
@@ -23,7 +24,6 @@ public class TestGlobalContext extends GlobalContext {
 	public static GlobalContext getInstance(HttpServletRequest request) {
 		GlobalContext outContext = new TestGlobalContext();
 		outContext.setApplication(request.getSession().getServletContext());
-		outContext.staticConfig = StaticConfig.getInstance((ServletContext)null);		
 		return outContext;
 	}	
 	
@@ -34,6 +34,10 @@ public class TestGlobalContext extends GlobalContext {
 		} else {
 			return super.getAttribute(key);
 		}
+	}
+	
+	public void addInConfig(String key, String value) {
+		this.properties.addProperty(key, value);
 	}
 	
 	

@@ -11,6 +11,10 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -64,6 +68,7 @@ import org.javlo.service.CaptchaService;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
+import org.javlo.service.database.DataBaseService;
 import org.javlo.service.document.DataDocument;
 import org.javlo.service.document.DataDocumentService;
 import org.javlo.service.event.Event;
@@ -297,6 +302,12 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		// ""))).withClass("form-group")).withClass("col-sm-10").render());
 		out.println("</div></div>");
 
+		String dbprefix = getInputName("dbprefix");
+		out.println("<div class=\"row\">");
+		out.println("<div class=\"col-sm-2\"><label for=\"" + dbprefix + "\">DB table prefix</label>");
+		out.println("</div><div class=\"form-group col-sm-6\"><input class=\"form-control\" id=\"" + dbprefix + "\" name=\"" + dbprefix + "\" value=\"" + getLocalConfig(false).getProperty("dbprefix", "") + "\" />");
+		out.println("</div></div>");
+
 		String inputName = getInputName("filename");
 		out.println("<div class=\"row\">");
 		out.println("<div class=\"col-sm-2\"><label for=\"" + inputName + "\">filename</label>");
@@ -310,11 +321,11 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		String csvLink = URLHelper.createResourceURL(ctx, URLHelper.mergePath("/", staticConfig.getStaticFolder(), FOLDER, getLocalConfig(false).getProperty("filename", "")));
 		String xlsxLink = FilenameUtils.removeExtension(csvLink) + ".xlsx";
 		out.println("</div><div class=\"col-sm-2\"><a href=\"" + xlsxLink + "\">[XSLX]</a> - <a href=\"" + csvLink + "\">[CSV]</a><label style=\"float: right\">&nbsp;" + XHTMLHelper.getCheckbox(getInputName("store-label"), isStoreLabel()) + " store label</label></div>");
-		out.println("<div class=\"col-sm-2\"><button class=\"btn btn-default btn-xs\" type=\"submit\" name=\"reset-file\" value=\""+ getLocalConfig(false).getProperty("filename", "")+"\">reset</button></div>");
+		out.println("<div class=\"col-sm-2\"><button class=\"btn btn-default btn-xs\" type=\"submit\" name=\"reset-file\" value=\"" + getLocalConfig(false).getProperty("filename", "") + "\">reset</button></div>");
 		// out.println(div(a("[XSLX]").attr("href", xlsxLink),span(" -
 		// "),a("[CSV]").attr("href", csvLink)).withClass("col-sm-2").render());
 		out.println("</div>");
-		
+
 		File file = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getStaticFolder(), GenericForm.DYNAMIC_FORM_RESULT_FOLDER, getLocalConfig(false).getProperty("filename", "")));
 		out.println("<div class=\"backup-file-list\">");
 		for (File f : ResourceHelper.getAllFiles(file.getParentFile(), new FileFilter() {
@@ -323,7 +334,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				return pathname.getName().startsWith(file.getName());
 			}
 		})) {
-			out.print("<span class=\"backup-file\" style=\"font-size: 0.8em; display: inline-block; margin-left: 15px; font-style: italic;\">"+f.getName()+"</span>");
+			out.print("<span class=\"backup-file\" style=\"font-size: 0.8em; display: inline-block; margin-left: 15px; font-style: italic;\">" + f.getName() + "</span>");
 		}
 		out.println("</div>");
 
@@ -855,6 +866,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		performColumnable(ctx);
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		getLocalConfig(false).setProperty("title", rs.getParameter(getInputName("title"), ""));
+		getLocalConfig(false).setProperty("dbprefix", rs.getParameter(getInputName("dbprefix"), ""));
 		getLocalConfig(false).setProperty("filename", rs.getParameter(getInputName("filename"), ""));
 		boolean oldCaptcha = isCaptcha();
 		getLocalConfig(false).setProperty("captcha", rs.getParameter(getInputName("captcha"), ""));
@@ -947,17 +959,17 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				store(field);
 			}
 		}
-		
+
 		String resetFile = rs.getParameter("reset-file");
 		if (!StringHelper.isEmpty(resetFile)) {
 			File file = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getStaticFolder(), GenericForm.DYNAMIC_FORM_RESULT_FOLDER, resetFile));
 			if (file.exists()) {
-				File newFile = new File(file.getAbsoluteFile()+"_"+StringHelper.renderFileTime(new Date()));
+				File newFile = new File(file.getAbsoluteFile() + "_" + StringHelper.renderFileTime(new Date()));
 				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
 				if (file.renameTo(newFile)) {
-					messageRepository.setGlobalMessage(new GenericMessage("file reset, backup file created : "+newFile, GenericMessage.INFO));
+					messageRepository.setGlobalMessage(new GenericMessage("file reset, backup file created : " + newFile, GenericMessage.INFO));
 				} else {
-					messageRepository.setGlobalMessage(new GenericMessage("error on reset, backup file not created : "+newFile, GenericMessage.ERROR));
+					messageRepository.setGlobalMessage(new GenericMessage("error on reset, backup file not created : " + newFile, GenericMessage.ERROR));
 				}
 				ctx.setClosePopup(true);
 			}
@@ -987,6 +999,8 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 		store(ctx);
 
+		createOrUpdateTable(ctx);
+
 		countCache = null;
 
 		return null;
@@ -1006,6 +1020,24 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 	protected boolean isStorage() {
 		return true;
+	}
+
+	public String getTableSqlName() {
+		String dbprefix = getLocalConfig(false).getProperty("dbprefix", null);
+		if (!StringHelper.isEmpty(dbprefix)) {
+			return dbprefix;
+		} else {
+			return null;
+		}
+	}
+
+	public String getTableSqlNameReference() {
+		String dbprefix = getLocalConfig(false).getProperty("dbprefix", null);
+		if (!StringHelper.isEmpty(dbprefix)) {
+			return dbprefix + "_ref";
+		} else {
+			return null;
+		}
 	}
 
 	protected File getFile(ContentContext ctx) throws Exception {
@@ -1128,6 +1160,74 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		return true;
 	}
 
+	private boolean isDb(ContentContext ctx) {
+		String tableName = DataBaseService.getDefaultDbName(ctx);
+		if (tableName == null) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	private boolean createOrUpdateTable(ContentContext ctx) throws Exception {
+		String tableName = DataBaseService.getDefaultDbName(ctx);
+		if (!isDb(ctx)) {
+			return false;
+		}
+		boolean out = false;
+		DataBaseService dbService = DataBaseService.getInstance(ctx.getGlobalContext());
+		Connection conn = dbService.getConnection(tableName);
+		Statement st = conn.createStatement();
+		try {
+			/** main table **/
+			try {
+				String sql = "CREATE TABLE " + getTableSqlName() + " (id SERIAL)";
+				st.executeUpdate(sql);
+				logger.info("SQL : create table : " + getTableSqlName());
+				out = true;
+			} catch (SQLException e) {
+				// e.printStackTrace();
+			}
+			List<Field> fields = getFields(ctx);
+			for (Field field : fields) {
+				try {
+					String sql = "ALTER TABLE " + getTableSqlName() + " ADD " + field.getName() + " " + field.getSqlType();
+					st.executeUpdate(sql);
+					logger.info("SQL : create field : " + field.getName() + " [" + field.getSqlType() + "]");
+					out = true;
+				} catch (SQLException e) {
+					// e.printStackTrace();
+				}
+			}
+			/** ref table **/
+			try {
+				String sql = "CREATE TABLE " + getTableSqlNameReference() + " (id SERIAL, name text, label text, lang text)";
+				st.executeUpdate(sql);
+				logger.info("SQL : create table : " + getTableSqlName());
+				out = true;
+			} catch (SQLException e) {
+				// e.printStackTrace();
+			}
+			st.executeUpdate("DELETE FROM " + getTableSqlNameReference() + " WHERE lang='" + ctx.getRequestContentLanguage() + "'");
+			for (Field field : fields) {
+				try {
+					String sql = "INSERT INTO " + getTableSqlNameReference() + " (name, label, lang) VALUES (?,?,?)";
+					PreparedStatement ps = conn.prepareStatement(sql);
+					ps.setString(1, field.getName());
+					ps.setString(2, field.getLabel());
+					ps.setString(3, ctx.getRequestContentLanguage());
+					ps.execute();
+					ps.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		} finally {
+			dbService.releaseConnection(st, conn);
+		}
+		return out;
+	}
+
 	public static String performSubmit(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		RequestService rs = RequestService.getInstance(request);
@@ -1205,7 +1305,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		result.put("_registrationID", registrationID);
 		result.put("_event-close", "" + comp.isClose(ctx));
 		result.put("_compid", "" + comp.getId());
-		
+
 		result.put(USER_FIELD, StringHelper.neverNull(ctx.getCurrentUserId(), ""));
 		result.put(VALIDED, "false");
 		String fakeField = comp.getLocalConfig(false).getProperty("field.fake", "fake");
@@ -1267,19 +1367,38 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		}
 
 		Map<String, String> dataDoc = new HashMap<>();
-		
-		Map<String,String> dataMap = null;
+
+		Map<String, String> dataMap = null;
 		if (comp.isFilledFromCookies()) {
 			dataMap = new HashMap<>();
 		}
 		
+		String sql=null;
+		PreparedStatement ps = null;
+		Connection conn = null;
+		if (comp.isDb(ctx)) {
+			sql = "INSERT INTO " + comp.getTableSqlName() + "(";
+			String values = "(";
+			String sep="";		
+			for (Field field : comp.getFields(ctx)) {
+				sql += sep+field.getName();
+				values += sep+"?";
+				sep=",";
+			}
+			sql += ") VALUES "+values+")";
+			conn = DataBaseService.getInstance(ctx.getGlobalContext()).getConnection(DataBaseService.getDefaultDbName(ctx));
+			System.out.println(">>>>>>>>> SmartGenericForm.performSubmit : sql = "+sql); //TODO: remove debug trace
+			ps = conn.prepareStatement(sql);
+		}
+
+		int statementIndex = 1;
 		for (Field field : comp.getFields(ctx)) {
-			
+
 			String key = field.getName();
 			Object value = params.get(key);
-			
+
 			if (dataMap != null) {
-				dataMap.put(key, ""+value);
+				dataMap.put(key, "" + value);
 			}
 
 			if (value != null && value.toString().contains("//") && !comp.acceptLinks(ctx)) {
@@ -1308,6 +1427,11 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				dataDoc.put(StringHelper.firstLetterLower(key), field.getLabel());
 			} else {
 				dataDoc.put(StringHelper.firstLetterLower(key), "" + value);
+			}
+			
+			if (ps != null) {
+				ps.setObject(statementIndex, value);
+				statementIndex++;
 			}
 
 			if (!update || !field.getType().equals("file")) {
@@ -1391,7 +1515,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				adminMailData.put(field.getLabel() + " (" + key + ") ", finalValue);
 				userMailData.put(field.getLabel() + MailService.HIDDEN_DIV + key + "</div>", finalValue);
 			}
-			
+
 			if (comp.isStoreLabel()) {
 				result.put(field.getLabel(), finalValue);
 			} else {
@@ -1399,7 +1523,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			}
 
 		}
-		
+
 		if (comp.isFilledFromCookies()) {
 			UserDataService userDataService = UserDataService.getInstance(ctx);
 			userDataService.addUserData(ctx, comp.getDataKey(), StringHelper.mapToString(dataMap));
@@ -1407,6 +1531,11 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 		if (fakeFilled) {
 			logger.warning("spam detected fake field filled : " + comp.getPage().getPath());
+		}
+
+		if (ps != null) {
+			ps.execute();
+			DataBaseService.getInstance(ctx.getGlobalContext()).releaseConnection(conn);
 		}
 
 		if (errorFields.size() == 0) {
@@ -1417,7 +1546,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			}
 			if (comp.isSendEmail() && !fakeFilled) {
 				String emailFrom = comp.getLocalConfig(false).getProperty("mail.from", StaticConfig.getInstance(request.getSession()).getSiteEmail());
-				emailFrom = MailService.getDefaultSenderEmail(ctx, MailService.getDefaultSenderEmail(ctx,  emailFrom));
+				emailFrom = MailService.getDefaultSenderEmail(ctx, MailService.getDefaultSenderEmail(ctx, emailFrom));
 
 				String emailFromField = comp.getLocalConfig(false).getProperty("mail.from.field", null);
 				if (emailFromField != null && rs.getParameter(emailFromField, "") != null) {
@@ -1431,7 +1560,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				}
 				String emailTo = comp.getLocalConfig(false).getProperty("mail.to", null);
 				if (!StringHelper.isMail(emailTo)) {
-					emailTo = MailService.getDefaultReceiverEmail(ctx, MailService.getDefaultSenderEmail(ctx,  emailFrom));
+					emailTo = MailService.getDefaultReceiverEmail(ctx, MailService.getDefaultSenderEmail(ctx, emailFrom));
 				}
 				String emailCC = comp.getLocalConfig(false).getProperty("mail.cc", null);
 				String emailBCC = comp.getLocalConfig(false).getProperty("mail.bcc", null);

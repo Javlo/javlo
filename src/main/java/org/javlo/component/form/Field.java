@@ -116,6 +116,14 @@ public class Field {
 	public String getType() {
 		return type;
 	}
+	
+	public String getSqlType() {
+		if (TYPE_NUMBER.equals(getType())) {
+			return "integer";
+		} else {
+			return "text";
+		}
+	}
 
 	public void setType(String type) {
 		this.type = type;

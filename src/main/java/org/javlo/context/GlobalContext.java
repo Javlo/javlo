@@ -855,7 +855,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return contextFile.exists();
 	}
 
-	private final ConfigurationProperties properties = new ConfigurationProperties();
+	protected final ConfigurationProperties properties = new ConfigurationProperties();
 
 	private String contextKey = null;
 
@@ -1559,11 +1559,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public String getDBLogin() {
-		return properties.getString("db.login", staticConfig.getDBLogin());
+		return getSpecialConfig().get("db.login", properties.getString("db.login", staticConfig.getDBLogin()));
 	}
 
 	public String getDBPassword() {
-		return properties.getString("db.password", staticConfig.getDBPassword());
+		return getSpecialConfig().get("db.password", properties.getString("db.password", staticConfig.getDBPassword()));
 	}
 
 	public String getDBResourceName() {
@@ -1571,7 +1571,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public String getDBURL() {
-		return properties.getString("db.url", staticConfig.getDBURL());
+		return getSpecialConfig().get("db.url", properties.getString("db.url", staticConfig.getDBURL()));
 	}
 
 	public String getDefaultEncoding() {
