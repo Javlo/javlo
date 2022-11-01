@@ -859,7 +859,7 @@ public class InfoBean {
 		if (ctx.getCurrentUser() != null) {
 			return URLHelper.createAvatarUrl(ctx, ctx.getCurrentUser().getUserInfo());
 		} else {
-			return URLHelper.createStaticURL(ctx, "/images/avatar.png");
+			return URLHelper.createStaticURL(ctx, "/images/avatar.svg");
 		}
 	}
 
