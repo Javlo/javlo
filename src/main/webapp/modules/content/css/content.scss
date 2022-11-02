@@ -363,6 +363,11 @@ a.action-button::first-letter,
 	}
 }
 
+label .form-check-input {
+  margin-left: -2rem;
+}
+
+
 // .form-group{
 // 	input[type="radio"]:checked+label{
 // 		border: 1px solid var(--blue-100); /* Rester coché quand le choix est sélectionné - MARCHE PAS*/
