@@ -723,9 +723,12 @@ body.right-admin #page-404 {
 }
 
 
-label .form-check-input {
-  margin-left: -2rem;
+label {
+	input.form-check-input[type], .form-check-input {
+		margin-left: -2rem;
+	}
 }
+
 .screenshot{
 	align-items: end;
 }
