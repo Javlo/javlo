@@ -363,9 +363,6 @@ a.action-button::first-letter,
 	}
 }
 
-label .form-check-input {
-  margin-left: -2rem;
-}
 
 
 // .form-group{
@@ -723,6 +720,11 @@ body.right-admin #page-404 {
 
 #content-edit input[type=submit],#content-edit input[type=button] {
 	width: auto;
+}
+
+
+label .form-check-input {
+  margin-left: -2rem;
 }
 .screenshot{
 	align-items: end;
