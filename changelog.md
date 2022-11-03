@@ -922,3 +922,7 @@ Security in case of vulnerabilities.
   - content edit css
 ### fixed
   - read exif size of picture
+## [2.1.4.1] - 03/11/2022
+### Added
+### Modified
+### fixed
