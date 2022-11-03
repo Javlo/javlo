@@ -915,8 +915,10 @@ Security in case of vulnerabilities.
 ### Added
   - open mailing marcro
   - epub converter + login from template
+  - change log on edit
 ### Modified
   - change ctrl+alt+e by ctrl+alt+j (because 'euro' problem on Belgian Keyboard)
   - replace link with jsoup
+  - content edit css
 ### fixed
   - read exif size of picture

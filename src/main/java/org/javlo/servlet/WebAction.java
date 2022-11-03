@@ -89,7 +89,7 @@ public class WebAction extends HttpServlet {
 				moduleContext.initContext(request, response);
 
 				InfoBean.updateInfoBean(ctx);
-				ServletHelper.execAction(ctx, action);
+				ServletHelper.execAction(ctx, action, false);
 				ServletHelper.prepareModule(ctx);
 			} catch (Throwable t) {
 				t.printStackTrace();

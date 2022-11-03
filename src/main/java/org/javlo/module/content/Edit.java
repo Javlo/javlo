@@ -65,6 +65,7 @@ import org.javlo.module.mailing.MailingModuleContext;
 import org.javlo.module.ticket.Ticket;
 import org.javlo.module.ticket.TicketBean;
 import org.javlo.module.ticket.TicketService;
+import org.javlo.module.user.UserAction;
 import org.javlo.navigation.MenuElement;
 import org.javlo.search.SearchEngineFactory;
 import org.javlo.search.SearchResult;
@@ -2469,7 +2470,7 @@ public class Edit extends AbstractModuleAction {
 		}
 		return null;
 	}
-
+	
 	public static String performClosepopup(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		ctx.setParentURL(rs.getParameter("url", null));
 		ctx.setClosePopup(true);

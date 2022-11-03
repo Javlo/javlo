@@ -303,6 +303,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	}
 
 	public void process(HttpServletRequest request, HttpServletResponse response, boolean post) throws ServletException {
+		
+		
 		request.getSession(); // create session
 
 		COUNT_ACCESS++;
@@ -582,6 +584,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());
 				ctx.setArea(editCtx.getCurrentArea());
 				if (ctx.getCurrentEditUser() == null) {
+					ServletHelper.execAction(ctx, null, true);
 					InfoBean.updateInfoBean(ctx);
 					response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
 					if (ctx.getGlobalContext().getMainContext() == null) {
@@ -675,7 +678,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				ctx.setArea(editCtx.getCurrentArea());
 			}
 
-			String action = ServletHelper.execAction(ctx, null);
+			String action = ServletHelper.execAction(ctx, null, false);
 			if (ctx.isStopRendering()) {
 				return;
 			}

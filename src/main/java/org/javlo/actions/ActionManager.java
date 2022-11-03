@@ -50,6 +50,10 @@ public class ActionManager {
 
 	static final String ACTION_SEPARATOR = ".";
 
+	static IAction[] actionGroup = null;
+	
+	static IAction unsecureActionGroup = null;
+
 	static final String removeGroup(String actionName) {
 		return actionName.substring(actionName.indexOf(".") + 1);
 	}
@@ -118,8 +122,21 @@ public class ActionManager {
 				action = null;
 			}
 		}
+		
+		if (action == null) {
+			if (group.equals(getUnsecureActionGroup().getActionGroupName())) {
+				action = getUnsecureActionGroup();
+			}
+		}
 
 		return action;
+	}
+	
+	public static IAction getUnsecureActionGroup() {
+		if (unsecureActionGroup == null) {
+			unsecureActionGroup = new UnsecureAction();
+		}
+		return unsecureActionGroup;
 	}
 
 	public static IAction getActionMacro(ContentContext ctx, String group) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
@@ -152,19 +169,19 @@ public class ActionManager {
 	 * @return a list of IAction implementation
 	 */
 	private static IAction[] getSpecialActionGroup() {
-		IAction[] outActionGroup = new IAction[5];
-		outActionGroup[0] = new SearchActions();
-		// outActionGroup[1] = new MailingActions();
-		// outActionGroup[2] = new AdminAction();
-		// outActionGroup[3] = new EcomActions();
-		outActionGroup[1] = new ViewActions();
-		outActionGroup[2] = new TimeTravelerActions();
-		outActionGroup[3] = new DataAction();
-		outActionGroup[4] = new MobileAction();
-		return outActionGroup;
+		if (actionGroup == null) {
+			IAction[] outActionGroup = new IAction[5];
+			outActionGroup[0] = new SearchActions();
+			outActionGroup[1] = new ViewActions();
+			outActionGroup[2] = new TimeTravelerActions();
+			outActionGroup[3] = new DataAction();
+			outActionGroup[4] = new MobileAction();
+			actionGroup = outActionGroup;
+		}
+		return actionGroup;
 	}
 
-	static public final String perform(String actionName, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	static public final String perform(String actionName, HttpServletRequest request, HttpServletResponse response, boolean unsecure) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		logger.fine("perform action : " + actionName);
 
@@ -186,6 +203,10 @@ public class ActionManager {
 
 		String group = getActionGroup(actionName);
 		String message = null;
+		
+		if (unsecure && !UnsecureAction.TYPE.equals(group)) {
+			return "security error !";
+		}
 
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 
@@ -203,9 +224,9 @@ public class ActionManager {
 			if (action != null) {
 				/** security **/
 				if (action instanceof IModuleAction) { // if module action
-//					if (currentUser == null) {
-//						ctx.setNeedRefresh(true);
-//					}
+					// if (currentUser == null) {
+					// ctx.setNeedRefresh(true);
+					// }
 					if (!AdminUserSecurity.getInstance().isAdmin(currentUser)) {
 						if (!moduleContext.getCurrentModule().haveRight(request.getSession(), currentUser)) {
 							I18nAccess i18nAccess = I18nAccess.getInstance(request);

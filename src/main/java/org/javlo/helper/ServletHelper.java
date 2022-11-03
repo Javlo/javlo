@@ -37,7 +37,7 @@ public class ServletHelper {
 	 * @return the name of the action.
 	 * @throws Exception
 	 */
-	public static final String execAction(ContentContext ctx, String forceAction) throws Exception {
+	public static final String execAction(ContentContext ctx, String forceAction, boolean unsecure) throws Exception {
 
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 
@@ -78,13 +78,13 @@ public class ServletHelper {
 		if (actions.size() == 0) {
 			return null;
 		}
-
+		
 		for (String action : actions) {
 			EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
-			if ((ctx.getRequest().getServletPath().equals("/edit") || ctx.getRequest().getServletPath().equals("/admin")) && (editCtx.getUserPrincipal() == null && !specialRightON)) {
+			if (!unsecure && (ctx.getRequest().getServletPath().equals("/edit") || ctx.getRequest().getServletPath().equals("/admin")) && (editCtx.getUserPrincipal() == null && !specialRightON)) {
 				logger.warning("block action : '" + action + "' because user is not logged.");
 			} else {
-				String newMessage = ActionManager.perform(action, ctx.getRequest(), ctx.getResponse());
+				String newMessage = ActionManager.perform(action, ctx.getRequest(), ctx.getResponse(), unsecure);
 				if (newMessage != null) {
 					ctx.getRequest().setAttribute("message", new GenericMessage(newMessage, GenericMessage.ERROR));
 				}

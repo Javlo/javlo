@@ -2,21 +2,17 @@
 
 body {
 	overflow: hidden;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .main {
-	position: absolute;
 	width: 400px;
-	height: 300px;
-	top: 50%;
-	left: 50%;
-	margin-left: -200px;
-	margin-top: -150px;
 	border: 1px #cccccc solid;
-	padding: 30px;
+	padding: 2rem;
 	background-color: #ffffff;
-	opacity: 0.85;
-    filter: alpha(opacity=85);
 }
 
 .main h1 {
@@ -43,6 +39,18 @@ body {
 .alert {
   padding: 7px;
   text-align: center;
+}
+
+.login-reset-password {
+	clear: both;
+	display: flex;
+	justify-content: flex-end;
+}
+
+.login-reset-password label {
+	margin-top: 0.5em;
+	font-weight: normal;
+	font-size: 0.9em;
 }
 
 
@@ -123,3 +131,4 @@ body {
     border-color: #ccc;
     box-shadow: 0 0 0 transparent;
 }
+

@@ -494,6 +494,9 @@ public class UserAction extends AbstractModuleAction {
 
 	public static String performAskChangePassword(RequestService rs, ContentContext ctx, EditContext editContext, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String email = rs.getParameter("email", null);
+		
+		System.out.println(">>>>>>>>> UserAction.performAskChangePassword : email = "+email); //TODO: remove debug trace
+		
 		if (email == null && rs.getParameter("j_username", null) != null) {
 			email = rs.getParameter("j_username", null);
 			rs.removeParameter("j_username");
