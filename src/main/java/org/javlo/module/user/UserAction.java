@@ -495,8 +495,6 @@ public class UserAction extends AbstractModuleAction {
 	public static String performAskChangePassword(RequestService rs, ContentContext ctx, EditContext editContext, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String email = rs.getParameter("email", null);
 		
-		System.out.println(">>>>>>>>> UserAction.performAskChangePassword : email = "+email); //TODO: remove debug trace
-		
 		if (email == null && rs.getParameter("j_username", null) != null) {
 			email = rs.getParameter("j_username", null);
 			rs.removeParameter("j_username");
@@ -527,16 +525,21 @@ public class UserAction extends AbstractModuleAction {
 				params.put("pwtoken", globalContext.getChangePasswordToken(user.getLogin()));
 				params.put("hideform", "true");
 				ContentService contentService = ContentService.getInstance(globalContext);
-				MenuElement regPage = contentService.getRegistrationPage(ctx);
-				String link = URLHelper.createURL(ctx.getContextForAbsoluteURL(), regPage, params);
+				String link = null;
+				if (ctx.isAsEditMode()) {
+					link = URLHelper.createURL(ctx.getContextForAbsoluteURL(), ctx.getCurrentPage(), params);
+				} else {
+					MenuElement regPage = contentService.getRegistrationPage(ctx);
+					link = URLHelper.createURL(ctx.getContextForAbsoluteURL(), regPage, params);
+				}
 				// String mailBody = XHTMLHelper.createUserMail(globalContext.getTemplateData(),
 				// body, null, null, link, i18nAccess.getViewText("user.change-password"),
 				// null);
 				
 				if (StringHelper.isEmpty(link)) {
 					String errorId = StringHelper.getDateRandomId();
-					logger.severe("["+errorId+"] link could not be generated. [page:"+regPage+"]");
-					return "technical error (page registration not found) : "+errorId+" [page:"+regPage+"]";
+					logger.severe("["+errorId+"] link could not be generated.");
+					return "technical error (page registration not found) : "+errorId;
 				}
 				
 				String mailBody = XHTMLHelper.createUserMail(ctx, "/images/font/lock.png", body, "", link, i18nAccess.getViewText("user.change-password"), "");
