@@ -357,9 +357,6 @@ a.action-button::first-letter,
 	    cursor: pointer;
 	    border-radius: 4px;
 		margin-right:5px!important;
-		&:before{
-			content: "h";
-		}
 	}
 }
 

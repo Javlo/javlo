@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDataFormatter;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -116,6 +115,43 @@ public class ArrayHelper {
 				}
 			}
 		}
+	}
+	
+	public static List<String> getTitles(org.javlo.utils.Cell[][] cells) {
+		if (cells.length == 0) {
+			return Collections.EMPTY_LIST;
+		} else if (cells[0].length == 0) {
+			return Collections.EMPTY_LIST;
+		} else {
+			ArrayList<String> titles = new ArrayList();
+			int p = 0;
+			int maxRowSpan = 1;
+			for (org.javlo.utils.Cell title : cells[0]) {
+				if (title != null) {
+					if (maxRowSpan < title.getRowSpan()) {
+						maxRowSpan = title.getRowSpan();
+					}
+				}
+			}
+			for (org.javlo.utils.Cell title : cells[maxRowSpan - 1]) {
+				String t = "";
+				if (title != null) {
+					int addCellTitlePos = title.getRowSpan();
+					t = title.getValue();
+					org.javlo.utils.Cell subTitle = title;
+					while (addCellTitlePos < maxRowSpan && subTitle != null) {
+						addCellTitlePos = addCellTitlePos + subTitle.getRowSpan();
+						subTitle = cells[addCellTitlePos][p];
+						t = t + " - " + subTitle;
+					}
+
+				}
+				titles.add(t);
+				p++;
+			}
+			return titles;
+		}
+
 	}
 
 	public static List<String> getTitles(Cell[][] cells) {

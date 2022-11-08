@@ -168,14 +168,16 @@ public class DebugNote extends AbstractPropertiesComponent {
 		out.println("</div>");
 		UserFactory userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
 		out.println("<fieldset><legend>"+i18nAccess.getText("debug.user", "user")+"</legend>");
+		String id = "";
 		for (IUserInfo userInfo : userFactory.getUserInfoList()) {
-			out.println("<label class=\"checkbox-inline\">");
+			id = "user_"+getId()+"_"+StringHelper.createFileName(userInfo.getLogin());
+			out.println("<div class=\"btn-check\">");
 			String checkedString = "";
 			if (getUserList().contains(userInfo.getLogin())) {
 				checkedString = " checked=\"checked\"";
 			}
-			out.println("<input type=\"checkbox\" name=\""+createKeyWithField(USER)+"\" value=\""+userInfo.getLogin()+"\" "+checkedString+" /> "+userInfo.getLogin());
-			out.println("</label>");
+			out.println("<input id=\""+id+"\" type=\"checkbox\" name=\""+createKeyWithField(USER)+"\" value=\""+userInfo.getLogin()+"\" "+checkedString+" /><label for=\""+id+"\" class=\"checkbox-inline\">"+userInfo.getLogin());
+			out.println("</label></div>");
 		}
 		out.println("</fieldset>");		
 		out.println("<fieldset><legend>"+i18nAccess.getText("debug.priority", "priority")+"</legend>");
@@ -183,31 +185,36 @@ public class DebugNote extends AbstractPropertiesComponent {
 		if (getPriority().equals("0")) {
 			checkedString = " checked=\"checked\"";
 		}
-		out.println("<label class=\"radio-inline\"><input type=\"radio\" name=\""+createKeyWithField(PRIORITY)+"\" value=\"0\""+checkedString+" />"+i18nAccess.getText("debug.prority.0", "none")+"</label>");
+		id = "prio_"+getId()+"_1";
+		out.println("<div class=\"btn-check\"><input id=\""+id+"\" type=\"radio\" name=\""+createKeyWithField(PRIORITY)+"\" value=\"0\""+checkedString+" /><label class=\"radio-inline\" for=\""+id+"\">"+i18nAccess.getText("debug.prority.0", "none")+"</label></div>");
 		checkedString = "";
 		if (getPriority().equals("1")) {
 			checkedString = " checked=\"checked\"";
 		}
-		out.println("<label class=\"radio-inline\"><input type=\"radio\" name=\""+createKeyWithField(PRIORITY)+"\" value=\"1\""+checkedString+" />"+i18nAccess.getText("debug.prority.1", "low")+"</label>");
+		id = "prio_"+getId()+"_2";
+		out.println("<div class=\"btn-check\"><input id=\""+id+"\" type=\"radio\" name=\""+createKeyWithField(PRIORITY)+"\" value=\"1\""+checkedString+" /><label for=\""+id+"\" class=\"radio-inline\">"+i18nAccess.getText("debug.prority.1", "low")+"</label></div>");
 		checkedString = "";
 		if (getPriority().equals("2")) {
 			checkedString = " checked=\"checked\"";
 		}
-		out.println("<label class=\"radio-inline\"><input type=\"radio\" name=\""+createKeyWithField(PRIORITY)+"\" value=\"2\""+checkedString+" />"+i18nAccess.getText("debug.prority.2", "middle")+"</label>");
+		id = "prio_"+getId()+"_3";
+		out.println("<div class=\"btn-check\"><input id=\""+id+"\" type=\"radio\" name=\""+createKeyWithField(PRIORITY)+"\" value=\"2\""+checkedString+" /><label for=\""+id+"\" class=\"radio-inline\">"+i18nAccess.getText("debug.prority.2", "middle")+"</label></div>");
 		checkedString = "";
 		if (getPriority().equals("3")) {
 			checkedString = " checked=\"checked\"";
 		}
-		out.println("<label class=\"radio-inline\"><input type=\"radio\" name=\""+createKeyWithField(PRIORITY)+"\" value=\"3\""+checkedString+" />"+i18nAccess.getText("debug.prority.3", "high")+"</label>");		
+		id = "prio_"+getId()+"_4";
+		out.println("<div class=\"btn-check\"><input id=\""+id+"\" type=\"radio\" name=\""+createKeyWithField(PRIORITY)+"\" value=\"3\""+checkedString+" /><label for=\""+id+"\" class=\"radio-inline\">"+i18nAccess.getText("debug.prority.3", "high")+"</label></div>");		
 		out.println("</fieldset>");
 		
 		out.println("<fieldset><legend>"+i18nAccess.getText("debug.status", "status")+"</legend>");		
 		for (String status : Ticket.STATUS) {
+			id = "status_"+getId()+"_"+StringHelper.createFileName(status);
 			checkedString = "";
 			if (getStatus().equals(status)) {
 				checkedString = " checked=\"checked\"";
 			}
-			out.println("<label class=\"radio-inline\"><input type=\"radio\" name=\""+createKeyWithField(STATUS)+"\" value=\""+status+"\""+checkedString+" />"+status+"</label>");			
+			out.println("<div class=\"btn-check\"><input id=\""+id+"\" type=\"radio\" name=\""+createKeyWithField(STATUS)+"\" value=\""+status+"\""+checkedString+" /><label for=\""+id+"\" class=\"radio-inline\">"+status+"</label></div>");
 		}
 		out.println("</fieldset>");
 		
