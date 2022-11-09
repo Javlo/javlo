@@ -171,12 +171,12 @@ public class DebugNote extends AbstractPropertiesComponent {
 		String id = "";
 		for (IUserInfo userInfo : userFactory.getUserInfoList()) {
 			id = "user_"+getId()+"_"+StringHelper.createFileName(userInfo.getLogin());
-			out.println("<div class=\"btn-check\">");
+			out.print("<div class=\"btn-check\">");
 			String checkedString = "";
 			if (getUserList().contains(userInfo.getLogin())) {
 				checkedString = " checked=\"checked\"";
 			}
-			out.println("<input id=\""+id+"\" type=\"checkbox\" name=\""+createKeyWithField(USER)+"\" value=\""+userInfo.getLogin()+"\" "+checkedString+" /><label for=\""+id+"\" class=\"checkbox-inline\">"+userInfo.getLogin());
+			out.print("<input id=\""+id+"\" type=\"checkbox\" name=\""+createKeyWithField(USER)+"\" value=\""+userInfo.getLogin()+"\" "+checkedString+" /><label for=\""+id+"\" class=\"checkbox-inline\">"+userInfo.getLogin());
 			out.println("</label></div>");
 		}
 		out.println("</fieldset>");		
@@ -186,7 +186,7 @@ public class DebugNote extends AbstractPropertiesComponent {
 			checkedString = " checked=\"checked\"";
 		}
 		id = "prio_"+getId()+"_1";
-		out.println("<div class=\"btn-check\"><input id=\""+id+"\" type=\"radio\" name=\""+createKeyWithField(PRIORITY)+"\" value=\"0\""+checkedString+" /><label class=\"radio-inline\" for=\""+id+"\">"+i18nAccess.getText("debug.prority.0", "none")+"</label></div>");
+		out.println("<div class=\"btn-group\"><div class=\"btn-check\"><input id=\""+id+"\" type=\"radio\" name=\""+createKeyWithField(PRIORITY)+"\" value=\"0\""+checkedString+" /><label class=\"radio-inline\" for=\""+id+"\">"+i18nAccess.getText("debug.prority.0", "none")+"</label></div>");
 		checkedString = "";
 		if (getPriority().equals("1")) {
 			checkedString = " checked=\"checked\"";
@@ -205,9 +205,10 @@ public class DebugNote extends AbstractPropertiesComponent {
 		}
 		id = "prio_"+getId()+"_4";
 		out.println("<div class=\"btn-check\"><input id=\""+id+"\" type=\"radio\" name=\""+createKeyWithField(PRIORITY)+"\" value=\"3\""+checkedString+" /><label for=\""+id+"\" class=\"radio-inline\">"+i18nAccess.getText("debug.prority.3", "high")+"</label></div>");		
+		out.println("</div>");
 		out.println("</fieldset>");
 		
-		out.println("<fieldset><legend>"+i18nAccess.getText("debug.status", "status")+"</legend>");		
+		out.println("<fieldset><legend>"+i18nAccess.getText("debug.status", "status")+"</legend><div class=\"btn-group\">");		
 		for (String status : Ticket.STATUS) {
 			id = "status_"+getId()+"_"+StringHelper.createFileName(status);
 			checkedString = "";
@@ -216,7 +217,7 @@ public class DebugNote extends AbstractPropertiesComponent {
 			}
 			out.println("<div class=\"btn-check\"><input id=\""+id+"\" type=\"radio\" name=\""+createKeyWithField(STATUS)+"\" value=\""+status+"\""+checkedString+" /><label for=\""+id+"\" class=\"radio-inline\">"+status+"</label></div>");
 		}
-		out.println("</fieldset>");
+		out.println("</div></fieldset>");
 		
 		out.flush();
 		out.close();

@@ -360,6 +360,33 @@ a.action-button::first-letter,
 	}
 }
 
+.btn-group {
+	display: flex;
+	.btn-check {
+		margin-right: 0;
+		margin-left: -1px;
+		display: block;
+		border-radius: 0;
+		label {
+			margin-right: 0 !important;
+			border-radius: 0;
+		}
+	}
+	.btn-check:first-child {
+		border-radius: 5px 0 0 5px;
+		margin-left: 0;
+		label {
+			border-radius: 5px 0 0 5px;
+		}
+	}
+	.btn-check:last-child {
+		border-radius: 0 5px 5px 0;
+		label {
+			border-radius: 0 5px 5px 0;
+		}
+	}
+}
+
 
 
 // .form-group{

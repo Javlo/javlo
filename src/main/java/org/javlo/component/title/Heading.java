@@ -60,7 +60,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		PrintStream out = new PrintStream(outStream);
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 
-		String depthHTML = "<div class=\"form-group\"><label>" + i18nAccess.getText("content.heading.depth", "depth") + "</label><div>";
+		String depthHTML = "<div class=\"form-group\"><label>" + i18nAccess.getText("content.heading.depth", "depth") + "</label><div><div class=\"btn-group\">";
 		int depth = getDepth(ctx);
 		for (int i = 1; i < 7; i++) {
 			String id = "depth-" + getId() + '-' + i;
@@ -68,7 +68,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 			depthHTML = depthHTML + "<label for=\""+id+"\" class=\"radio-inline\">" + i + "</label></div>";
 
 		}
-		depthHTML = depthHTML + "</select></div></div>";
+		depthHTML = depthHTML + "</div></div></div>";
 
 		if (!ctx.getGlobalContext().isMailingPlatform()) {
 			out.println("<div class=\"row\"><div class=\"col-sm-8\">");
