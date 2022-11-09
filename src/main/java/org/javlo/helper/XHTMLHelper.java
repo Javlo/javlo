@@ -2359,6 +2359,9 @@ public class XHTMLHelper {
 	}
 
 	public static final String stringToAttribute(String str) {
+		if (str == null) { 
+			return null;
+		}
 		return escapeXHTML(str.replace("\"", "&quot;"));
 	}
 

@@ -707,6 +707,18 @@ public class StringHelper {
 			}
 		}
 	}
+	
+	/** replace all space repeatition with one space */
+	public static String trimInternal(String str) {
+		if (str==null) {
+			return null;
+		} else {
+			while (str.contains("  ")) {
+				str = str.replace("  ", " ");
+			}
+			return str.trim();
+		}
+	}
 
 	public static String noRepeatChar(String text, char chr) {
 		StringBuffer outStr = new StringBuffer();
@@ -2076,8 +2088,8 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) throws IOException {
-		System.out.println(extractNumber("23px"));
-		System.out.println(extractNumber("animal"));
+		System.out.println(trimInternal("23  px "));
+		System.out.println(trimInternal("  23 px "));
 	}
 
 	public static LocalTime smartParseTime(String inTime) {

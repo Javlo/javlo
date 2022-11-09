@@ -27,6 +27,7 @@ import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.template.Template;
 import org.javlo.ztatic.StaticInfo;
 import org.owasp.encoder.Encode;
+import org.springframework.beans.factory.BeanIsAbstractException;
 
 /**
  * countain the method with efficient body for URLHelper.
@@ -356,7 +357,9 @@ public abstract class ElementaryURLHelper {
 			url = URLHelper.mergePath("/", pathPrefix, inUrl);
 		}
 		if (newCtx.isAbsoluteURL()) {
-			url = addHost(ctx, url);
+			if (!StringHelper.isURL(url)) {
+				url = addHost(ctx, url);
+			}
 		}
 		url = url.replace('\\', '/');
 		if (!ctx.isInternalURL() && ctx.getGlobalContext().getProxyPathPrefix().length() > 0) {
@@ -428,11 +431,10 @@ public abstract class ElementaryURLHelper {
 		String currentExt = StringHelper.getFileExtension(url);
 		if (!currentExt.equalsIgnoreCase(ext)) {
 			if (url.contains("?")) {
-				url = StringUtils.replaceFirst(url, "?", '.'+ext+'?'); 
+				url = StringUtils.replaceOnce(url, "?", '.'+ext+'?'); 
 			} else  {
 				url = url + '.'+ext;
 			}
-			
 		}
 
 		ContentService.getInstance(ctx.getRequest());

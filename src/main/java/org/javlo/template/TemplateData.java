@@ -201,7 +201,7 @@ public class TemplateData {
 			setDropdownMenu(StringHelper.isTrue(map.get("dropdown")));
 			setLarge(StringHelper.isTrue(map.get("large")));
 			setSmall(StringHelper.isTrue(map.get("small")));
-			setFixSidebar(StringHelper.isTrue(map.get("sideBar")));
+			setFixSidebar(StringHelper.isTrue(map.get("fixSidebar")));
 		}
 	}
 	

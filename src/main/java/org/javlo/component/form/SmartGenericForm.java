@@ -1161,12 +1161,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	}
 
 	private boolean isDb(ContentContext ctx) {
-		String tableName = DataBaseService.getDefaultDbName(ctx);
-		if (tableName == null) {
-			return false;
-		} else {
-			return true;
-		}
+		return !DataBaseService.getInstance(ctx.getGlobalContext()).isInternalDb();
 	}
 
 	private boolean createOrUpdateTable(ContentContext ctx) throws Exception {

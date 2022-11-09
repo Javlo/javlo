@@ -1468,8 +1468,10 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 	@Override
 	public boolean isImageValid(ContentContext ctx) {
 		try {
-			return getFirstResource(ctx) != null;
+			boolean out  = getFirstResource(ctx) != null;
+			return out;			
 		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 	}

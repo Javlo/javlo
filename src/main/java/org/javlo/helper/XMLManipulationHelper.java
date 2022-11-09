@@ -530,12 +530,19 @@ public class XMLManipulationHelper {
 					cssClass = cssClass + ' ' + "${info.preview && !info.page.editable?'not-editable':''}";
 					cssClass = cssClass + ' ' + "${info.admin?'right-admin':''}";
 					cssClass = cssClass + ' ' + "${empty info.userName?'user-not-logged-in':'user-logged-in'}";
+					if (globalContext.getTemplateData().isFixSidebar()) {
+						cssClass = cssClass + ' ' + "fix-sidebar";
+					} else {
+						cssClass = cssClass + ' ' + "fluid-sidebar";
+					}
 					
 					for (String area : template.getAreas()) {
 						cssClass = cssClass+ ' ' + "<%=(currentPage.isEmpty(ctx, \""+area+"\", true)?\"empty-area-"+area+"\":\"not-empty-area-"+area+"\")%>";
 					}
 					
-					tags[i].getAttributes().put("class", cssClass.trim());
+					cssClass = StringHelper.trimInternal(cssClass);
+					
+					tags[i].getAttributes().put("class", cssClass);
 
 					if (template.isPDFRenderer()) {
 						tags[i].getAttributes().put("data-pdfheight", "" + template.getPDFHeigth());

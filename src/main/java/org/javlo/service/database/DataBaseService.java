@@ -41,7 +41,6 @@ public class DataBaseService {
 		if (outService == null) {
 			outService = new DataBaseService();
 			if (globalContext != null) {
-
 				if (StringHelper.isEmpty(globalContext.getDBURL())) {
 					outService.internalDb = true;
 					outService.dbFolder = new File(URLHelper.mergePath(globalContext.getDataBaseFolder().getAbsolutePath(), "h2"));
