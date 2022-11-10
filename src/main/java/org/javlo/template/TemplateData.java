@@ -635,7 +635,7 @@ public class TemplateData {
 	
 	public String getMenuAlign() {
 		if (isMenuRight()) {
-			return "right";
+			return "end";
 		} else if (isMenuCenter()) {
 			return "center";
 		} else if (isMenuAround()) {

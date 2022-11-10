@@ -370,7 +370,6 @@ public class ImageHelper {
 		} else {
 			ImageSize size = null;
 			InputStream in = null;
-
 			try {
 				in = new FileInputStream(file);
 				size = ExifHelper.getExifSize(in);
