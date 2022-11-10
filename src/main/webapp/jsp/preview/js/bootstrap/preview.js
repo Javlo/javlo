@@ -579,6 +579,8 @@ if (!String.prototype.startsWith) {
 				});
 				el.addEventListener('drop', function (event) {
 					
+					console.log(">>>>>>> DROP");
+					
 					dragovercomp = false;
 					
 					if (PREVIEWLOG) {

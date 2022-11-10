@@ -45,6 +45,7 @@ import org.javlo.component.files.VFSFile;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.component.image.Image;
 import org.javlo.component.multimedia.Multimedia;
+import org.javlo.component.multimedia.PDFMultimedia;
 import org.javlo.component.title.Title;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -103,7 +104,7 @@ public class DataAction implements IAction {
 	public String getActionGroupName() {
 		return "data";
 	}
-	
+
 	public static String performNotificationsAsRead(RequestService rs, ContentContext ctx, GlobalContext globalContext, NotificationService notif, User user, HttpSession session) throws ParseException {
 		if (user != null) {
 			notif.markAllAsRead(user.getLogin());
@@ -263,7 +264,7 @@ public class DataAction implements IAction {
 		}
 		return null;
 	}
-	
+
 	public static void updateAreaAjax(ContentContext ctx, String area) throws Exception {
 		if (area == null) {
 			return;
@@ -438,18 +439,31 @@ public class DataAction implements IAction {
 	 */
 	protected static File createOrUpdateGallery(ContentContext ctx, File targetFolder, String importFolder, Collection<FileItem> imageItem, ImportConfigBean config, boolean content, String previousId) throws Exception {
 		boolean galleryFound = false;
-		Template tpl = ctx.getCurrentTemplate();
 		GlobalContext globalContext = ctx.getGlobalContext();
 		ContentService cs = ContentService.getInstance(globalContext);
 		String galleryRelativeFolder = null;
+
+		boolean pdf = false;
+		String fileName = null;
+		if (imageItem.size() > 0 && StringHelper.isPDF(imageItem.iterator().next().getName())) {
+			pdf = true;
+			fileName = StringHelper.createFileName(imageItem.iterator().next().getName());
+		}
 
 		String baseGalleryFolder = ctx.getGlobalContext().getStaticConfig().getImportGalleryFolder();
 		if (!config.isCreateContentOnImportImage() && !content) {
 			baseGalleryFolder = ctx.getGlobalContext().getStaticConfig().getImportImageFolder();
 		}
 
+		System.out.println(">>>>>>>>> DataAction.createOrUpdateGallery : pdf = " + pdf); // TODO: remove debug trace
+
 		Multimedia compGalleryFound = null;
-		Collection<IContentVisualComponent> mediaComps = ctx.getCurrentPage().getContentByType(ctx, Multimedia.TYPE);
+		Collection<IContentVisualComponent> mediaComps;
+		if (pdf) {
+			mediaComps = ctx.getCurrentPage().getContentByType(ctx, PDFMultimedia.TYPE);
+		} else {
+			mediaComps = ctx.getCurrentPage().getContentByType(ctx, Multimedia.TYPE);
+		}
 		if (mediaComps.size() > 0) {
 			for (IContentVisualComponent comp : mediaComps) {
 				Multimedia multimedia = (Multimedia) comp;
@@ -460,15 +474,22 @@ public class DataAction implements IAction {
 					if (content) {
 						if (multimedia.getId().equals(previousId)) {
 							compGalleryFound = multimedia;
+							if (pdf) {
+								((PDFMultimedia) compGalleryFound).setCurrentRootFolder(ctx, URLHelper.createStaticFolderURI(ctx, targetFolder)+"/"+fileName);
+							}
 							break;
 						}
 					} else {
 						compGalleryFound = multimedia;
+						if (pdf) {
+							((PDFMultimedia) compGalleryFound).setCurrentRootFolder(ctx, URLHelper.createStaticFolderURI(ctx, targetFolder)+"/"+fileName);
+						}
 						break;
 					}
 				}
 			}
 		}
+
 		if (galleryRelativeFolder == null) {
 			String galFolder = importFolder;
 			if (galFolder.trim().length() == 0) {
@@ -493,15 +514,17 @@ public class DataAction implements IAction {
 		}
 
 		if (!galleryFound && (config.isCreateContentOnImportImage() || content)) {
-			
+			System.out.println(">>>>>>>>> DataAction.createOrUpdateGallery : CRAETE"); // TODO: remove debug trace
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 			PrintStream out = new PrintStream(outStream);
-			out.println(Multimedia.PAGE_SIZE+"="+128);
-			out.println(Multimedia.MAX_LIST_SIZE+"="+12);
-			out.println(Multimedia.ROOT_FOLDER+"="+galleryRelativeFolder.replaceFirst(globalContext.getStaticConfig().getStaticFolder(), "") );
+			out.println(Multimedia.PAGE_SIZE + "=" + 128);
+			out.println(Multimedia.MAX_LIST_SIZE + "=" + 99);
+			out.println(Multimedia.ROOT_FOLDER + "=" + galleryRelativeFolder.replaceFirst(globalContext.getStaticConfig().getStaticFolder(), ""));
 			out.close();
 			ComponentBean multimedia = new ComponentBean(Multimedia.TYPE, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
-//			ComponentBean multimedia = new ComponentBean(Multimedia.TYPE, "--12,128-" + galleryRelativeFolder.replaceFirst(globalContext.getStaticConfig().getStaticFolder(), "") + "---", ctx.getRequestContentLanguage());
+			// ComponentBean multimedia = new ComponentBean(Multimedia.TYPE, "--12,128-" +
+			// galleryRelativeFolder.replaceFirst(globalContext.getStaticConfig().getStaticFolder(),
+			// "") + "---", ctx.getRequestContentLanguage());
 			multimedia.setStyle(Multimedia.IMAGE);
 
 			Collection<IContentVisualComponent> titles = ctx.getCurrentPage().getContentByType(ctx, Title.TYPE);
@@ -572,12 +595,14 @@ public class DataAction implements IAction {
 			} else {
 				boolean content = StringHelper.isTrue(rs.getParameter("content", null));
 				ctx = ctx.getContextWithArea(rs.getParameter("area", ctx.getArea()));
+				String newCompId = null;
+				File targetFolder = null;
 				for (FileItem item : rs.getAllFileItem()) {
 					logger.info("try to import (" + ctx.getCurrentUserId() + ") : " + item.getName());
 
 					if (item.getName().equals("blob")) {
 						String resourceRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportImageFolder(), importFolder);
-						File targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), resourceRelativeFolder));
+						targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), resourceRelativeFolder));
 						File targetImage = new File(URLHelper.mergePath(targetFolder.getAbsolutePath(), "clipboard.png"));
 						targetFolder.getParentFile().mkdirs();
 						targetImage = ResourceHelper.getFreeFileName(targetImage);
@@ -646,7 +671,7 @@ public class DataAction implements IAction {
 					} else {
 						boolean isArray = StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("xls") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("xlsx") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("ods") || StringHelper.getFileExtension(item.getName()).equalsIgnoreCase("csv");
 						String resourceRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportResourceFolder(), importFolder);
-						File targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), resourceRelativeFolder));
+						targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), resourceRelativeFolder));
 
 						if (!targetFolder.exists()) {
 							targetFolder.mkdirs();
@@ -709,21 +734,19 @@ public class DataAction implements IAction {
 							}
 							if (content) {
 								bean.setArea(ctx.getArea());
-								cs.createContent(ctx, bean, previousId, true);
+								newCompId = cs.createContent(ctx, bean, previousId, true);
 							}
-							staticInfo.setShared(ctx, false); 
-							
+							staticInfo.setShared(ctx, false);
+
 							if (ctx.getCurrentPage().getUserRoles().size() > 0) {
 								staticInfo.addReadRole(ctx, ctx.getCurrentPage().getUserRoles());
 							}
-							
 							ctx.setNeedRefresh(true);
 						} else {
 							return "error upload file : " + item.getName();
 						}
 					}
 				}
-				File targetFolder = null;
 
 				File folderSelection = null;
 
@@ -731,7 +754,7 @@ public class DataAction implements IAction {
 				IContentVisualComponent previousComp = contentService.getComponent(ctx, previousId);
 				if (previousComp != null && previousComp.getType().equals(FileFinder.TYPE)) {
 
-				} else if (previousComp != null && previousComp.getType().equals(Multimedia.TYPE)) {
+				} else if (previousComp != null && (previousComp.getType().equals(Multimedia.TYPE) || previousComp.getType().equals(PDFMultimedia.TYPE))) {
 					countImages = 2;
 				}
 				if (countImages == 1) {
@@ -742,6 +765,9 @@ public class DataAction implements IAction {
 						}
 					} else {
 						folderSelection = createOrUpdateGallery(ctx, targetFolder, importFolder, Arrays.asList(new FileItem[] { imageItem }), config, content, previousId);
+						if (folderSelection != null && newCompId != null) {
+							ctx.getCurrentPage().removeContent(ctx, newCompId);
+						}
 					}
 					ctx.setNeedRefresh(true);
 					SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
@@ -753,6 +779,9 @@ public class DataAction implements IAction {
 				} else if (countImages > 1) { // gallery
 					if (!config.isImagesAsImages() && ctx.getGlobalContext().getComponents().contains(Multimedia.class.getName())) {
 						folderSelection = createOrUpdateGallery(ctx, targetFolder, importFolder, rs.getAllFileItem(), config, content, previousId);
+						if (folderSelection != null && newCompId != null) {
+							ctx.getCurrentPage().removeContent(ctx,newCompId);
+						}
 					} else {
 						for (FileItem file : rs.getAllFileItem()) {
 							folderSelection = createImage(ctx, importFolder, file, config, content, previousId, rename);
@@ -873,7 +902,7 @@ public class DataAction implements IAction {
 				ResourceHelper.closeResource(in);
 			}
 			img = ImageEngine.trim(img, Color.WHITE, 1);
-			ImageHelper.saveImage(img, imageFile);			
+			ImageHelper.saveImage(img, imageFile);
 			StaticInfo staticInfo = StaticInfo.getInstance(ctx, imageFile);
 			staticInfo.setFocusZoneY(ctx, 10);
 			staticInfo.setFocusZoneX(ctx, 499);

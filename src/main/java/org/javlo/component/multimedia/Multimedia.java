@@ -1204,7 +1204,7 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 
 			if (!getDirSelected().equals(importFolder)) {
 				File sourceDir = new File(getFilesDirectory(ctx));
-				if (sourceDir.exists()) {
+				if (sourceDir.exists() && sourceDir.isDirectory()) {
 					try {
 						setCurrentRootFolder(ctx, importFolder);
 						File targetDir = new File(getFilesDirectory(ctx));
@@ -1228,7 +1228,7 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 		if (StringHelper.isEmpty(getValue())) {
 			String importFolder = getImportFolderPath(ctx).replaceFirst("/" + ctx.getGlobalContext().getStaticConfig().getStaticFolder(), "");
 			setCurrentRootFolder(ctx, importFolder);
-			properties.setProperty(PAGE_SIZE, "12");
+			properties.setProperty(PAGE_SIZE, "99");
 			properties.setProperty(MAX_LIST_SIZE, "99");
 		}
 	}

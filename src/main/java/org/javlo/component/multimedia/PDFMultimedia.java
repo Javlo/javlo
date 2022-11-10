@@ -59,6 +59,10 @@ public class PDFMultimedia extends Multimedia {
 		}
 		return currentFolder.getParentFile().getPath();
 	}
+	
+	public void setCurrentRootFolder(ContentContext ctx, String folder) {
+		setFieldValue(ROOT_FOLDER, folder);
+	}
 
 	protected List<String> getSelection(ContentContext ctx) {
 		String baseDir = getBaseStaticDir(ctx);

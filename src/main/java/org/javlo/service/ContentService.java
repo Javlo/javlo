@@ -508,10 +508,14 @@ public class ContentService implements IPrintInfo {
 	}
 
 	public String getAttribute(ContentContext ctx, String key) {
+		Map<String,String> map = getAttributeMap(ctx);
+		if (map==null) {
+			return null;
+		}
 		if (key != null) {
 			key = key.replace("&", "_and_");
 		}
-		return getAttributeMap(ctx).get(key);
+		return map.get(key);
 	}
 
 	public String getAttribute(ContentContext ctx, String key, String defaultValue) {

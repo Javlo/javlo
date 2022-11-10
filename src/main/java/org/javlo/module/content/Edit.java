@@ -798,6 +798,7 @@ public class Edit extends AbstractModuleAction {
 		}
 
 		String newId = null;
+		
 		if (type.equals("clipboard")) {
 			ClipBoard cb = ClipBoard.getInstance(ctx.getRequest());
 			Object copied = cb.getCopied();
@@ -1089,7 +1090,7 @@ public class Edit extends AbstractModuleAction {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
 			return null;
 		}
-
+		
 		org.javlo.helper.LocalLogger.forceStartCount("save");
 
 		String message = null;

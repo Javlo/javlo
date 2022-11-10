@@ -64,8 +64,8 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		int depth = getDepth(ctx);
 		for (int i = 1; i < 7; i++) {
 			String id = "depth-" + getId() + '-' + i;
-			depthHTML = depthHTML + "<div class=\"btn-check\"><input id=\""+id+"\" type=\"radio\" value=\"" + i + "\" name=\"" + getInputName(DEPTH) + "\"" + (depth == i ? " checked=\"checked\"" : "") + "/>";
-			depthHTML = depthHTML + "<label for=\""+id+"\" class=\"radio-inline\">" + i + "</label></div>";
+			depthHTML = depthHTML + "<div class=\"btn-check\"><input id=\"" + id + "\" type=\"radio\" value=\"" + i + "\" name=\"" + getInputName(DEPTH) + "\"" + (depth == i ? " checked=\"checked\"" : "") + "/>";
+			depthHTML = depthHTML + "<label for=\"" + id + "\" class=\"radio-inline\">" + i + "</label></div>";
 
 		}
 		depthHTML = depthHTML + "</div></div></div>";
@@ -112,13 +112,15 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 				try {
 					Collection<IContentVisualComponent> comps = null;
 					if (ctx.getCurrentPage() != null) {
-						comps = ctx.getCurrentPage().getContentByType(ctx, getType());
+						comps = getPage().getContentByType(ctx, getType());
 					}
 					if (comps != null) {
 						for (IContentVisualComponent comp : comps) {
-							if (((Heading) comp).getFieldValue(DEPTH).equals("1")) {
-								setFieldValue(DEPTH, "2");
-								return 2;
+							if (!comp.getId().equals(getId())) {
+								if (((Heading) comp).getFieldValue(DEPTH).equals("1")) {
+									setFieldValue(DEPTH, "2");
+									return 2;
+								}
 							}
 						}
 					}

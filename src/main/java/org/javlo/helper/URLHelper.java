@@ -418,8 +418,14 @@ public class URLHelper extends ElementaryURLHelper {
 
 	public static String createLocalURI(ContentContext ctx, File file) {
 		GlobalContext globalContext = ctx.getGlobalContext();
-		String url = file.getAbsolutePath();
-		return StringUtils.removeStart(url, globalContext.getDataFolder());
+		String url = cleanPath(file.getAbsolutePath(), false);
+		return StringUtils.removeStart(url, cleanPath(globalContext.getDataFolder(), false));
+	}
+	
+	public static String createStaticFolderURI(ContentContext ctx, File file) {
+		GlobalContext globalContext = ctx.getGlobalContext();
+		String url = cleanPath(file.getAbsolutePath(), false);
+		return StringUtils.removeStart(url, cleanPath(globalContext.getStaticFolder(), false));
 	}
 
 	public static String createResourceURL(ContentContext ctx, String url) {
