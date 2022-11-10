@@ -43,6 +43,10 @@ public class TemplateData {
 	private boolean fixSidebar = false;
 	private boolean small;
 	private boolean large;
+	private boolean menuLeft = false;
+	private boolean menuCenter = false;
+	private boolean menuRight = false;
+	private boolean menuAround = false;
 
 	public TemplateData() {
 	};
@@ -238,6 +242,10 @@ public class TemplateData {
 		outData.put("jssearch", ""+isJssearchMenu());
 		outData.put("search", ""+isSearchMenu());
 		outData.put("fixSidebar", ""+isFixSidebar());
+		outData.put("menuLeft", ""+isMenuLeft());
+		outData.put("menuRight", ""+isMenuRight());
+		outData.put("menuCenter", ""+isMenuCenter());
+		outData.put("menuAround", ""+isMenuAround());
 		
 		String colors = "";
 		String sep = "";
@@ -593,4 +601,48 @@ public class TemplateData {
 		this.fixSidebar = fixSidebar;
 	}
 
+	public boolean isMenuLeft() {
+		return menuLeft;
+	}
+
+	public void setMenuLeft(boolean menuLeft) {
+		this.menuLeft = menuLeft;
+	}
+
+	public boolean isMenuCenter() {
+		return menuCenter;
+	}
+
+	public void setMenuCenter(boolean menuCenter) {
+		this.menuCenter = menuCenter;
+	}
+
+	public boolean isMenuRight() {
+		return menuRight;
+	}
+
+	public void setMenuRight(boolean menuRight) {
+		this.menuRight = menuRight;
+	}
+
+	public boolean isMenuAround() {
+		return menuAround;
+	}
+
+	public void setMenuAround(boolean menuBetween) {
+		this.menuAround = menuBetween;
+	}
+	
+	public String getMenuAlign() {
+		if (isMenuRight()) {
+			return "right";
+		} else if (isMenuCenter()) {
+			return "center";
+		} else if (isMenuAround()) {
+			return "around";
+		} else {
+			return "left";
+		}
+	}
+	
 }

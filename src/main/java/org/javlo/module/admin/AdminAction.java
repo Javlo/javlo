@@ -761,6 +761,10 @@ public class AdminAction extends AbstractModuleAction {
 		td.setLarge(StringHelper.isTrue(requestService.getParameter("large", null)));
 		td.setSmall(StringHelper.isTrue(requestService.getParameter("small", null)));
 		td.setFixSidebar(StringHelper.isTrue(requestService.getParameter("fixSidebar", null)));
+		td.setMenuLeft(StringHelper.isTrue(requestService.getParameter("menuLeft", null)));
+		td.setMenuRight(StringHelper.isTrue(requestService.getParameter("menuRight", null)));
+		td.setMenuCenter(StringHelper.isTrue(requestService.getParameter("menuCenter", null)));
+		td.setMenuAround(StringHelper.isTrue(requestService.getParameter("menuAround", null)));
 
 		/** message **/
 		td.setMessagePrimary(StringHelper.parseColor(requestService.getParameter("messagePrimary", "" + td.getMessagePrimary())));
