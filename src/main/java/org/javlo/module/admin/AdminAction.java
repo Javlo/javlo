@@ -1,5 +1,31 @@
 package org.javlo.module.admin;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.mail.MessagingException;
+import javax.mail.Transport;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.fileupload.FileItem;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.core.ComponentFactory;
@@ -11,7 +37,12 @@ import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.GlobalContextFactory;
 import org.javlo.data.InfoBean;
-import org.javlo.helper.*;
+import org.javlo.helper.DebugHelper;
+import org.javlo.helper.LangHelper;
+import org.javlo.helper.PatternHelper;
+import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IMacro;
 import org.javlo.macro.core.MacroFactory;
@@ -23,11 +54,19 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
-import org.javlo.service.*;
+import org.javlo.service.ContentService;
+import org.javlo.service.ListService;
+import org.javlo.service.NotificationService;
+import org.javlo.service.PersistenceService;
+import org.javlo.service.RequestService;
 import org.javlo.service.log.LogService;
 import org.javlo.service.shared.SharedContentService;
 import org.javlo.service.visitors.CookiesService;
-import org.javlo.template.*;
+import org.javlo.template.Template;
+import org.javlo.template.TemplateData;
+import org.javlo.template.TemplateFactory;
+import org.javlo.template.TemplatePlugin;
+import org.javlo.template.TemplatePluginFactory;
 import org.javlo.tracking.Tracker;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
@@ -38,17 +77,7 @@ import org.javlo.utils.StructuredProperties;
 import org.javlo.utils.TimeTracker;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.ResourceFactory;
-
-import javax.mail.MessagingException;
-import javax.mail.Transport;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import org.javlo.ztatic.StaticInfo;
 
 public class AdminAction extends AbstractModuleAction {
 
@@ -913,7 +942,7 @@ public class AdminAction extends AbstractModuleAction {
 		TimeTracker.reset(staticConfig);
 		ResourceHelper.deleteFolder(globalContext.getStaticConfig().getWebTempDir());
 		ListService.getInstance(ctx).clear();
-		MacroFactory.getInstance(ctx).clear(ctx);
+		MacroFactory.getInstance(ctx).clear(ctx);		
 		System.gc();
 		return msg;
 	}
@@ -961,6 +990,12 @@ public class AdminAction extends AbstractModuleAction {
 		if (!AdminUserSecurity.getInstance().isAdmin(user)) {
 			return "security error !";
 		}
+		
+		int cleanAtribute = ContentService.getInstance(globalContext).cleanAttribute(ctx, StaticInfo.IMAGE_SIZE_PREFIX);
+		logger.info("clear attribute in preview end with "+StaticInfo.IMAGE_SIZE_PREFIX+" -> "+cleanAtribute);
+		cleanAtribute = ContentService.getInstance(globalContext).cleanAttribute(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), StaticInfo.IMAGE_SIZE_PREFIX);
+		logger.info("clear attribute in view end with "+StaticInfo.IMAGE_SIZE_PREFIX+" -> "+cleanAtribute);
+		
 		String currentContextKey = request.getParameter("context");
 		if (currentContextKey == null) { // param context is used only for check
 											// the type of call, but you can

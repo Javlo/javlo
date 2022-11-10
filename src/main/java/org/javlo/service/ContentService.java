@@ -458,11 +458,15 @@ public class ContentService implements IPrintInfo {
 			}
 		}
 	}
-
-	public String getAttribute(ContentContext ctx, String key) {
-		if (key != null) {
-			key = key.replace("&", "_and_");
-		}
+	
+	public int cleanAttribute(ContentContext ctx, String keySuffix) {
+		Map<String,String> map = getAttributeMap(ctx);
+		int startSize = map.size();
+		map.entrySet().removeIf(entry -> entry.getKey().endsWith(keySuffix));
+		return startSize-map.size();
+	}
+	
+	private Map<String,String> getAttributeMap(ContentContext ctx) {
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE && ctx.getGlobalContext().isPreviewMode()) {
 			if (viewGlobalMap == null) {
 				try {
@@ -474,7 +478,7 @@ public class ContentService implements IPrintInfo {
 					e.printStackTrace();
 				}
 			}
-			return viewGlobalMap.get(key);
+			return viewGlobalMap;
 		} else if (ctx.getRenderMode() == ContentContext.TIME_MODE) {
 			if (timeTravelerGlobalMap == null) {
 				try {
@@ -487,7 +491,7 @@ public class ContentService implements IPrintInfo {
 				}
 				return null;
 			}
-			return timeTravelerGlobalMap.get(key);
+			return timeTravelerGlobalMap;
 		} else {
 			if (previewGlobalMap == null) {
 				try {
@@ -499,8 +503,15 @@ public class ContentService implements IPrintInfo {
 					e.printStackTrace();
 				}
 			}
-			return previewGlobalMap.get(key);
+			return previewGlobalMap;
 		}
+	}
+
+	public String getAttribute(ContentContext ctx, String key) {
+		if (key != null) {
+			key = key.replace("&", "_and_");
+		}
+		return getAttributeMap(ctx).get(key);
 	}
 
 	public String getAttribute(ContentContext ctx, String key, String defaultValue) {

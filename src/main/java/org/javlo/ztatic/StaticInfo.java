@@ -449,6 +449,8 @@ public class StaticInfo implements IRestItem {
 
 	private static final ImageSize NO_IMAGE_SIZE = new ImageSize(0, 0);
 
+	public static final String IMAGE_SIZE_PREFIX = "imageSize";
+
 	/**
 	 * false if date come from last modified of the file.
 	 */
@@ -1626,7 +1628,7 @@ public class StaticInfo implements IRestItem {
 		} else {
 			try {
 				//String key = getKey(ctx, "imageSize-" + ctx.getRequestContentLanguage());
-				String key = getKey(ctx, "imageSize");
+				String key = getKey(ctx, IMAGE_SIZE_PREFIX);
 				ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 				String imageSizeRAW = content.getAttribute(ctx, key, null);
 				if (imageSizeRAW != null) {
@@ -1636,6 +1638,7 @@ public class StaticInfo implements IRestItem {
 						return imageSize;
 					}
 				}
+				logger.info("load image size for : "+file);
 				imageSize = ImageHelper.getImageSize(file);
 				content.setAttribute(ctx, key, imageSize.storeToString());
 			} catch (Throwable e) {

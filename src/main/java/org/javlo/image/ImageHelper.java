@@ -373,22 +373,12 @@ public class ImageHelper {
 
 			try {
 				in = new FileInputStream(file);
-				// size = getExifSize(in);
 				size = ExifHelper.getExifSize(in);
 			} finally {
 				ResourceHelper.closeResource(in);
 			}
 
-			// if (size == null && StringHelper.isJpeg(file.getName())) {
-			// try {
-			// in = new FileInputStream(file);
-			// size = getJpegSize(in);
-			// } finally {
-			// ResourceHelper.closeResource(in);
-			// }
-			// }
-			if (size == null) {
-				System.out.println(">>>>>>>>> ImageHelper.getImageSize : LOAD IMAGE"); //TODO: remove debug trace
+			if (size == null || size.getHeight() == 0 || size.getWidth() == 0) {
 				BufferedImage image = ImageIO.read(file);
 				size = new ImageSize(image.getWidth(), image.getHeight());
 			}
