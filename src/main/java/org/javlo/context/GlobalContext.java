@@ -1918,6 +1918,14 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getHomePage() {
 		return properties.getString("homepage", "");
 	}
+	
+	public String getHomePageLink(ContentContext ctx) throws Exception {
+		if (!StringHelper.isEmpty(getHomePage())) {
+			return URLHelper.replacePageReference(ctx, getHomePage());
+		} else {
+			return null;
+		}
+	}
 
 	public String getHTMLDefinition(String key, String defaultValue) {
 		String value = (String) properties.getProperty("html." + key);

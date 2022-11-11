@@ -58,6 +58,7 @@ public class CatchAllFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain next) throws IOException, ServletException {
 
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
+		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		ServletContext servletContext = httpRequest.getSession().getServletContext();
 		CountService.getInstance(servletContext).touch();
 
@@ -358,8 +359,13 @@ public class CatchAllFilter implements Filter {
 			}
 			
 			if ((cmsURI.length() == 0 || cmsURI.equals("/")) && globalContext.getHomePage().length()>1) {
-				NetHelper.sendRedirectTemporarily((HttpServletResponse) response, globalContext.getHomePage());
-				return;
+				try {
+					NetHelper.sendRedirectTemporarily((HttpServletResponse) response, globalContext.getHomePageLink(ContentContext.getContentContext(httpRequest, httpResponse)));
+					return;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
 			}
 			
 			Map<String, String> uriAlias = globalContext.getURIAlias();

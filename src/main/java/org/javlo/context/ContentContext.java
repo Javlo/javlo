@@ -1931,7 +1931,12 @@ public class ContentContext {
 	public String getHomePageURL() {
 		GlobalContext globalContext = GlobalContext.getInstance(getRequest());
 		if (globalContext.getHomePage().length() > 0) {
-			return globalContext.getHomePage();
+			try {
+				return globalContext.getHomePageLink(this);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
 		} else {
 			MenuElement rootPage;
 			try {
