@@ -140,16 +140,15 @@ public class CatchAllFilter implements Filter {
 		} else {
 			globalContext.touch();
 		}
-		
+
 		/** globalcontext not null **/
-		
+
 		if (!StringHelper.isEmpty(globalContext.getSecurityCsp())) {
 			/** TODO: NACEUR - set CSP in header */
-			((HttpServletResponse)response).setHeader("content-security-policy",CatchAllFilter.POLICY);
+			((HttpServletResponse) response).setHeader("content-security-policy", CatchAllFilter.POLICY);
 
 		}
-		
-		
+
 		if (globalContext.isForcedHttps()) {
 			((HttpServletResponse) response).setHeader("Strict-Transport-Security", "max-age=3628800");
 		}
@@ -196,7 +195,7 @@ public class CatchAllFilter implements Filter {
 				return;
 			}
 		}
-		
+
 		if (user != null && AdminUserSecurity.getInstance().isViewOnly(user)) {
 			if (editURI.startsWith("/edit")) {
 				httpRequest.getRequestDispatcher(editURI.replaceFirst("/edit", "/view")).forward(request, response);
@@ -301,9 +300,9 @@ public class CatchAllFilter implements Filter {
 			}
 		} else if (shortURI.startsWith("/")) {
 			shortURI = shortURI.substring(1);
-			
+
 		}
-		
+
 		if (shortURI.length() == globalContext.getStaticConfig().getShortURLSize() + 1 && shortURI.startsWith("U")) {
 			ContentContext ctx = null;
 			try {
@@ -320,7 +319,7 @@ public class CatchAllFilter implements Filter {
 						NetHelper.sendRedirectTemporarily((HttpServletResponse) response, newURL);
 						return;
 					} else {
-						logger.warning("bad short url code : "+shortURI);
+						logger.warning("bad short url code : " + shortURI);
 					}
 				}
 			} catch (Exception e1) {
@@ -358,19 +357,17 @@ public class CatchAllFilter implements Filter {
 			if (ContentContext.getPathPrefix(globalContext, (HttpServletRequest) request) != null && ContentContext.getPathPrefix(globalContext, (HttpServletRequest) request).length() > 0) {
 				cmsURI = cmsURI.replaceFirst("/" + ContentContext.getPathPrefix(globalContext, (HttpServletRequest) request), "");
 			}
-			
-			if ((cmsURI.length() == 0 || cmsURI.equals("/")) && globalContext.getHomePage().length()>1) {
-				try {
-					String homeUrl =  globalContext.getHomePageLink(ContentContext.getContentContext(httpRequest, httpResponse));
-					logger.info("forward to home >>> "+homeUrl);
+			try {
+				if ((cmsURI.length() < 5 || cmsURI.equals("/")) && globalContext.getHomePage().length() > 1) {
+					String homeUrl = globalContext.getHomePageLink(ContentContext.getContentContext(httpRequest, httpResponse));
+					logger.info("forward to home >>> " + homeUrl);
 					NetHelper.sendRedirectTemporarily((HttpServletResponse) response, homeUrl);
 					return;
-				} catch (Exception e) {
-					e.printStackTrace();
 				}
-				
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-			
+
 			Map<String, String> uriAlias = globalContext.getURIAlias();
 			Collection<Map.Entry<String, String>> entries = uriAlias.entrySet();
 			if (cmsURI.length() > 1) {
@@ -380,20 +377,20 @@ public class CatchAllFilter implements Filter {
 					if (!pattern1.contains("*")) {
 						if (cmsURI.equals(pattern1)) {
 							if (httpRequest.getQueryString() != null && httpRequest.getQueryString().length() > 0) {
-								
-//								String query = httpRequest.getQueryString();
-//								Map<String,String> params = URLHelper.getParams(query);
-//								String newQuery = "";
-//								String sep = "";
-//								for (Map.Entry<String, String> entryParam : params) {
-//									newQuery += sep+entryParam.getKey()+"="+URLEncoder
-//									sep = "?";
-//								}
-								
+
+								// String query = httpRequest.getQueryString();
+								// Map<String,String> params = URLHelper.getParams(query);
+								// String newQuery = "";
+								// String sep = "";
+								// for (Map.Entry<String, String> entryParam : params) {
+								// newQuery += sep+entryParam.getKey()+"="+URLEncoder
+								// sep = "?";
+								// }
+
 								if (pattern2.contains("?")) {
-									pattern2 += '&'+httpRequest.getQueryString();
+									pattern2 += '&' + httpRequest.getQueryString();
 								} else {
-									pattern2 += '?'+httpRequest.getQueryString();
+									pattern2 += '?' + httpRequest.getQueryString();
 								}
 							}
 							logger.info("manual redirect : " + pattern1 + " --> " + pattern2);
@@ -419,16 +416,16 @@ public class CatchAllFilter implements Filter {
 							}
 							if (httpRequest.getQueryString() != null && httpRequest.getQueryString().length() > 0) {
 								if (newURL.contains("?")) {
-									newURL += '&'+httpRequest.getQueryString();
+									newURL += '&' + httpRequest.getQueryString();
 								} else {
-									newURL += '?'+httpRequest.getQueryString();
+									newURL += '?' + httpRequest.getQueryString();
 								}
 							}
 							NetHelper.sendRedirectPermanently((HttpServletResponse) response, newURL);
 							return;
 						}
 					}
-				}				
+				}
 			}
 			File staticFile = new File(URLHelper.mergePath(globalContext.getDataFolder(), "www", cmsURI));
 			if (StringHelper.isEmpty(cmsURI) || cmsURI.equals("/")) {
@@ -583,7 +580,7 @@ public class CatchAllFilter implements Filter {
 				if (realToken != null) {
 					token = realToken;
 				} else {
-					logger.warning("bad one time token : "+token);
+					logger.warning("bad one time token : " + token);
 				}
 			}
 			if (fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null && adminFact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null) {
@@ -611,18 +608,20 @@ public class CatchAllFilter implements Filter {
 								MessageRepository messageRepository = MessageRepository.getInstance(((HttpServletRequest) request));
 								messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
 							} else {
-								//ContentService.getInstance(globalContext).releaseViewNav(globalContext);
-								//TODO: check why we need to releaseViewNav on login
+								// ContentService.getInstance(globalContext).releaseViewNav(globalContext);
+								// TODO: check why we need to releaseViewNav on login
 							}
 							ModulesContext.getInstance(httpRequest.getSession(), globalContext).loadModule(httpRequest.getSession(), globalContext);
-//							ContentContext ctx = ContentContext.getContentContext(httpRequest, (HttpServletResponse) response);
-//							User loggedUser = fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession());
-//							if (ctx.isAjax() && loggedUser != null) {
-//								ctx.getAjaxData().put("login", login);
-//								ctx.getAjaxData().put("firstname", loggedUser.getUserInfo().getFirstName());
-//								ctx.getAjaxData().put("lastname", loggedUser.getUserInfo().getLastName());
-//								ctx.getAjaxData().put("email", loggedUser.getUserInfo().getEmail());
-//							}
+							// ContentContext ctx = ContentContext.getContentContext(httpRequest,
+							// (HttpServletResponse) response);
+							// User loggedUser = fact.getCurrentUser(globalContext, ((HttpServletRequest)
+							// request).getSession());
+							// if (ctx.isAjax() && loggedUser != null) {
+							// ctx.getAjaxData().put("login", login);
+							// ctx.getAjaxData().put("firstname", loggedUser.getUserInfo().getFirstName());
+							// ctx.getAjaxData().put("lastname", loggedUser.getUserInfo().getLastName());
+							// ctx.getAjaxData().put("email", loggedUser.getUserInfo().getEmail());
+							// }
 						}
 					}
 				}
@@ -634,7 +633,7 @@ public class CatchAllFilter implements Filter {
 			if (fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null && adminFact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null) {
 
 				/* AUTO LOGIN */
-				String autoLoginId = RequestHelper.getCookieValue(httpRequest,  UserAction.JAVLO_LOGIN_ID);
+				String autoLoginId = RequestHelper.getCookieValue(httpRequest, UserAction.JAVLO_LOGIN_ID);
 				String autoLoginUser = null;
 				if (autoLoginId != null) {
 					DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
@@ -677,7 +676,7 @@ public class CatchAllFilter implements Filter {
 					if (request.getParameter("autologin") != null) {
 						DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
 						String codeId = service.setData(editUser.getLogin(), ((long) IUserFactory.AUTO_LOGIN_AGE_SEC) * 1000);
-						RequestHelper.setCookieValue(httpResponse,  UserAction.JAVLO_LOGIN_ID, codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, null);
+						RequestHelper.setCookieValue(httpResponse, UserAction.JAVLO_LOGIN_ID, codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, null);
 					}
 					globalContext.addPrincipal(editUser);
 					globalContext.eventLogin(editUser.getLogin());
