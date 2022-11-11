@@ -280,7 +280,18 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		if (rs.getParameter("max", "").equals("1000")) {
 			maxSize = 1000;
 		}
-		ctx.getRequest().setAttribute("files", getFileList(ctx, filter, maxSize, display));
+		List<FileBean> files = getFileList(ctx, filter, maxSize, display);
+		
+		Set<String> lg = new HashSet<>();
+		for (FileBean file : files) {
+			if (!StringHelper.isEmpty(file.getLanguage())) {
+				if (!lg.contains(file.getLanguage())) {
+					lg.add(file.getLanguage());
+				}
+			}
+		}
+		ctx.getRequest().setAttribute("languages", lg);
+		ctx.getRequest().setAttribute("files", files);
 		if (taxonomyIds.size() > 0) {
 			List<TaxonomyDisplayBean> beans = new LinkedList<>();
 			TaxonomyService ts = TaxonomyService.getInstance(ctx);
