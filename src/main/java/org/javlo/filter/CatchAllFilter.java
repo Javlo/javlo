@@ -1,5 +1,6 @@
 package org.javlo.filter;
 
+import org.apache.logging.log4j.spi.LoggerContextFactory;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.*;
 import org.javlo.helper.*;
@@ -360,7 +361,9 @@ public class CatchAllFilter implements Filter {
 			
 			if ((cmsURI.length() == 0 || cmsURI.equals("/")) && globalContext.getHomePage().length()>1) {
 				try {
-					NetHelper.sendRedirectTemporarily((HttpServletResponse) response, globalContext.getHomePageLink(ContentContext.getContentContext(httpRequest, httpResponse)));
+					String homeUrl =  globalContext.getHomePageLink(ContentContext.getContentContext(httpRequest, httpResponse));
+					logger.info("forward to home >>> "+homeUrl);
+					NetHelper.sendRedirectTemporarily((HttpServletResponse) response, homeUrl);
 					return;
 				} catch (Exception e) {
 					e.printStackTrace();
