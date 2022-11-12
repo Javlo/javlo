@@ -97,6 +97,17 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 									if (tags.size() == 0 || !Collections.disjoint(file.getTags(ctx), tags)) {
 										if (file.getFile().getCanonicalPath().startsWith(getRoot().getCanonicalPath())) {
 											boolean textUndefinedOrMatch = true;
+											
+											if (textUndefinedOrMatch && getTaxonomy().size() > 0) {
+												StaticInfoBean staticInfoBean = new StaticInfoBean(ctx, file);
+												TaxonomyService taxonomyService = TaxonomyService.getInstance(ctx);
+												if (taxonomyService.isAllMatch(staticInfoBean, this, 0)) {
+													matchScore = matchScore + 1;
+												} else {
+													return 0;
+												}
+											}
+											
 											if (!StringHelper.isEmpty(text)) {
 												for (String t : text.split(" ")) {
 													boolean found = false;
@@ -125,17 +136,6 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 														break;
 													}
 												}
-											}
-											if (textUndefinedOrMatch && getTaxonomy().size() > 0) {
-												StaticInfoBean staticInfoBean = new StaticInfoBean(ctx, file);
-												TaxonomyService taxonomyService = TaxonomyService.getInstance(ctx);
-												if (taxonomyService.isAllMatch(staticInfoBean, this)) {
-													matchScore = matchScore + 1;
-												} else {
-													return 0;
-												}
-											} else {
-												return matchScore;
 											}
 										}
 									}
