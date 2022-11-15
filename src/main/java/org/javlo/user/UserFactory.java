@@ -287,7 +287,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	public User getUserByEmail(String email) {
 		List<IUserInfo> users = getUserInfoList();
 		for (IUserInfo user : users) {
-			if (user.getEmail().equals(email)) {
+			if (user.getEmail().equalsIgnoreCase(email)) {
 				return new User(user);
 			}
 		}
