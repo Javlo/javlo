@@ -202,6 +202,10 @@ public class SmartPageBean {
 			return null;
 		}
 	}
+	
+	public String getXhtmlTitle() throws Exception {
+		return page.getXHTMLTitle(ctx);
+	}
 
 	public String getXhtmlDescription() {
 		try {
