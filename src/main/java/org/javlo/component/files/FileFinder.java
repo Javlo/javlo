@@ -112,6 +112,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 												}
 												
 												if (matchScore == 0) {
+													System.out.println(">>>>>>>>> FileFinder.FileFilter.match : file = "+file.getFile().getName()); //TODO: remove debug trace
 													return 0;
 												}
 											}
