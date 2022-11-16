@@ -67,7 +67,6 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 			outFilter.text = ctx.getRequest().getParameter("text");
 			outFilter.root = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getFileFolder()));
 			String[] taxonomy = ctx.getRequest().getParameterValues("taxonomy");
-			
 			if (taxonomy != null && taxonomy.length > 0) {
 				outFilter.taxonomy = new HashSet<String>(Arrays.asList(taxonomy));
 			} else {
@@ -101,18 +100,13 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 												for (String taxo : staticInfoBean.getTaxonomy()) {
 													for (String thisTaxo : this.getTaxonomy()) {
 														if (taxo.equals(thisTaxo)) {
-															System.out.println(">>>>>>>>> FileFinder.FileFilter.match : taxo     = "+taxo); //TODO: remove debug trace
-															System.out.println(">>>>>>>>> FileFinder.FileFilter.match : thisTaxo = "+thisTaxo); //TODO: remove debug trace
 															matchScore = matchScore + 1;
 														}
 													}
 												}
 												if (matchScore == 0) {
-													System.out.println(">>>>>>>>> FileFinder.FileFilter.match : file = "+file.getFile().getName()); //TODO: remove debug trace
 													return 0;
 												}
-											} else {
-												System.out.println(">>>>>>>>> FileFinder.FileFilter.match : NO TAXO"); //TODO: remove debug trace
 											}
 											if (!StringHelper.isEmpty(text)) {
 												for (String t : text.split(" ")) {
@@ -274,7 +268,9 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		filter.setExt(StringHelper.stringToCollection(getFieldValue("ext"), ","));
 		filter.setNoext(StringHelper.stringToCollection(getFieldValue("noext"), ","));
 		filter.setRoot(new File(URLHelper.mergePath(filter.getRoot().getCanonicalPath(), getFieldValue("root"))));
-		filter.setTaxonomy(taxonomyIds);
+		if (!getCurrentRenderer(ctx).contains("interactive")) {
+			filter.setTaxonomy(taxonomyIds);
+		}
 		ctx.getRequest().setAttribute("filter", filter);
 		boolean display = StringHelper.isTrue(getFieldValue("display"));
 		ctx.getRequest().setAttribute("display", display);
