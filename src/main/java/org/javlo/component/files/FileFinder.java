@@ -96,8 +96,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 								if (noext.size() == 0 || !noext.contains(fileExt)) {
 									if (tags.size() == 0 || !Collections.disjoint(file.getTags(ctx), tags)) {
 										if (file.getFile().getCanonicalPath().startsWith(getRoot().getCanonicalPath())) {
-											boolean textUndefinedOrMatch = true;
-											if (textUndefinedOrMatch && getTaxonomy().size() > 0) {
+											if (getTaxonomy().size() > 0) {
 												StaticInfoBean staticInfoBean = new StaticInfoBean(ctx, file);
 												for (String taxo : staticInfoBean.getTaxonomy()) {
 													for (String thisTaxo : this.getTaxonomy()) {
@@ -115,7 +114,6 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 											} else {
 												System.out.println(">>>>>>>>> FileFinder.FileFilter.match : NO TAXO"); //TODO: remove debug trace
 											}
-											
 											if (!StringHelper.isEmpty(text)) {
 												for (String t : text.split(" ")) {
 													boolean found = false;
@@ -135,12 +133,8 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 														matchScore = matchScore + 1;
 														found = true;
 													}
-													if (matchScore == 0) {
-														textUndefinedOrMatch = false;
-													}
 													if (!found) {
 														matchScore = 0;
-														textUndefinedOrMatch = false;
 														break;
 													}
 												}
@@ -197,6 +191,10 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		@Override
 		public Set<String> getTaxonomy() {
 			return taxonomy;
+		}
+		
+		public void setTaxonomy(List<String> inTaxo) {
+			taxonomy = new HashSet(inTaxo);
 		}
 	}
 
@@ -276,6 +274,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		filter.setExt(StringHelper.stringToCollection(getFieldValue("ext"), ","));
 		filter.setNoext(StringHelper.stringToCollection(getFieldValue("noext"), ","));
 		filter.setRoot(new File(URLHelper.mergePath(filter.getRoot().getCanonicalPath(), getFieldValue("root"))));
+		filter.setTaxonomy(taxonomyIds);
 		ctx.getRequest().setAttribute("filter", filter);
 		boolean display = StringHelper.isTrue(getFieldValue("display"));
 		ctx.getRequest().setAttribute("display", display);
