@@ -550,6 +550,16 @@ public class SmartPageBean {
 		}
 	}
 	
+	public String getHtmlTitle() {
+		try {
+			display();
+			return page.getXHTMLTitle(ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	public String getTitleForAttribute() {
 		display();
 		try {

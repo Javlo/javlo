@@ -4007,7 +4007,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 				res = name;
 			}
 		}
-		return StringHelper.removeTag(res);
+		return res;
 	}
 
 	public boolean isBlocked() {
