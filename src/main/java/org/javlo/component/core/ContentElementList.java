@@ -545,7 +545,6 @@ public class ContentElementList implements IContentComponentsList {
 				res = comp.getXHTMLCode(ctx);
 				maxLabelLevel = comp.getLabelLevel(ctx);
 			}
-
 		}
 		return res;
 	}

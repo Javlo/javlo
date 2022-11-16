@@ -34,6 +34,7 @@ import org.javlo.image.ExtendedColor;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.data.PageContentMap;
 import org.javlo.service.event.Event;
+import org.javlo.service.exception.ServiceException;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserFactory;
@@ -790,6 +791,21 @@ public class SmartPageBean {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+		}
+	}
+	
+	public String getRangeOrDate() throws ServiceException, Exception {
+		I18nAccess i18n = I18nAccess.getInstance(ctx);
+		TimeRange tr = page.getTimeRange(ctx);
+		if (tr != null) {
+			return i18n.getViewText("global.from")+' '
+					+StringHelper.renderFullDate(ctx, tr.getStartDate())+' '
+					+i18n.getViewText("global.to")+' '
+					+StringHelper.renderFullDate(ctx, tr.getEndDate());
+		} else if (page.getContentDate(ctx) != null) {
+				return StringHelper.renderFullDate(ctx, page.getContentDate(ctx));
+		} else {
+			return "";
 		}
 	}
 
