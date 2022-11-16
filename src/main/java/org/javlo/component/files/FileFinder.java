@@ -104,6 +104,8 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 												for (String taxo : staticInfoBean.getTaxonomy()) {
 													for (String thisTaxo : this.getTaxonomy()) {
 														if (taxo.equals(thisTaxo)) {
+															System.out.println(">>>>>>>>> FileFinder.FileFilter.match : taxo     = "+taxo); //TODO: remove debug trace
+															System.out.println(">>>>>>>>> FileFinder.FileFilter.match : thisTaxo = "+thisTaxo); //TODO: remove debug trace
 															matchScore = matchScore + 1;
 														}
 													}
