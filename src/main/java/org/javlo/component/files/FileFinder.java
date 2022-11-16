@@ -99,8 +99,6 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 											boolean textUndefinedOrMatch = true;
 											if (textUndefinedOrMatch && getTaxonomy().size() > 0) {
 												StaticInfoBean staticInfoBean = new StaticInfoBean(ctx, file);
-												TaxonomyService taxonomyService = TaxonomyService.getInstance(ctx);
-												
 												for (String taxo : staticInfoBean.getTaxonomy()) {
 													for (String thisTaxo : this.getTaxonomy()) {
 														if (taxo.equals(thisTaxo)) {
@@ -110,11 +108,12 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 														}
 													}
 												}
-												
 												if (matchScore == 0) {
 													System.out.println(">>>>>>>>> FileFinder.FileFilter.match : file = "+file.getFile().getName()); //TODO: remove debug trace
 													return 0;
 												}
+											} else {
+												System.out.println(">>>>>>>>> FileFinder.FileFilter.match : NO TAXO"); //TODO: remove debug trace
 											}
 											
 											if (!StringHelper.isEmpty(text)) {
