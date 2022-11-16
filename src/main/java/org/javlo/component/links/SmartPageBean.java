@@ -800,7 +800,7 @@ public class SmartPageBean {
 		if (tr != null && !tr.getStartDate().equals(tr.getEndDate())) {
 			return i18n.getViewText("global.from-date")+' '
 					+StringHelper.renderShortDate(ctx, tr.getStartDate())+' '
-					+i18n.getViewText("global.to")+' '
+					+i18n.getViewText("global.to-date")+' '
 					+StringHelper.renderShortDate(ctx, tr.getEndDate());
 		} else if (page.getContentDate(ctx) != null) {
 				return StringHelper.renderShortDate(ctx, page.getContentDate(ctx));
