@@ -97,13 +97,19 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 									if (tags.size() == 0 || !Collections.disjoint(file.getTags(ctx), tags)) {
 										if (file.getFile().getCanonicalPath().startsWith(getRoot().getCanonicalPath())) {
 											boolean textUndefinedOrMatch = true;
-											
 											if (textUndefinedOrMatch && getTaxonomy().size() > 0) {
 												StaticInfoBean staticInfoBean = new StaticInfoBean(ctx, file);
 												TaxonomyService taxonomyService = TaxonomyService.getInstance(ctx);
-												if (taxonomyService.isAllMatch(staticInfoBean, this, 0)) {
-													matchScore = matchScore + 1;
-												} else {
+												
+												for (String taxo : staticInfoBean.getTaxonomy()) {
+													for (String thisTaxo : this.getTaxonomy()) {
+														if (taxo.equals(thisTaxo)) {
+															matchScore = matchScore + 1;
+														}
+													}
+												}
+												
+												if (matchScore == 0) {
 													return 0;
 												}
 											}
