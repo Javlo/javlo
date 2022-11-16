@@ -797,13 +797,13 @@ public class SmartPageBean {
 	public String getRangeOrDate() throws ServiceException, Exception {
 		I18nAccess i18n = I18nAccess.getInstance(ctx);
 		TimeRange tr = page.getTimeRange(ctx);
-		if (tr != null) {
-			return i18n.getViewText("global.from")+' '
-					+StringHelper.renderFullDate(ctx, tr.getStartDate())+' '
+		if (tr != null && !tr.getStartDate().equals(tr.getEndDate())) {
+			return i18n.getViewText("global.from-date")+' '
+					+StringHelper.renderShortDate(ctx, tr.getStartDate())+' '
 					+i18n.getViewText("global.to")+' '
-					+StringHelper.renderFullDate(ctx, tr.getEndDate());
+					+StringHelper.renderShortDate(ctx, tr.getEndDate());
 		} else if (page.getContentDate(ctx) != null) {
-				return StringHelper.renderFullDate(ctx, page.getContentDate(ctx));
+				return StringHelper.renderShortDate(ctx, page.getContentDate(ctx));
 		} else {
 			return "";
 		}
