@@ -926,4 +926,5 @@ Security in case of vulnerabilities.
 ### Added
   - upload files from preview
 ### Modified
+  - load cookies.css afther dom loading
 ### fixed

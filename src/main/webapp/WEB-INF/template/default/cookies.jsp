@@ -3,8 +3,6 @@
 	prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%><%@ taglib
 	uri="/WEB-INF/javlo.tld" prefix="jv"%>
 
-<link rel="stylesheet" href="${info.rootTemplateURL}/cookies.css" />
-
 <div id="cookies-message" style="z-index: 100; font-size: 14px;">
 	<div style="position: relative;">
 		<div id="cookies-popup-plus"
@@ -94,6 +92,14 @@
 </div>
 
 <script>
+
+document.addEventListener("DOMContentLoaded", function(event) { 
+	const style = document.createElement('link');
+	style.setAttribute("rel", "stylesheet");
+	style.setAttribute("href", "${info.rootTemplateURL}/cookies.css");
+	document.head.appendChild(style);
+});
+
 
 var _beforeCookieBodyOverflow = document.body.style;
 
