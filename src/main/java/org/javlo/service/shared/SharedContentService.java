@@ -3,12 +3,15 @@ package org.javlo.service.shared;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.module.core.IMainModuleName;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
@@ -168,6 +171,9 @@ public class SharedContentService {
 					}
 				}
 				ctx.getRequest().setAttribute("sharedContentCategories", provider.getCategories(ctx).entrySet());
+				Map<String,String> params = new HashMap<>();
+				params.put("webaction", "shared-content.refreshresult");
+				ctx.getRequest().setAttribute("refreshUrl", URLHelper.createAjaxURL(ctx, params));
 			} else {
 				logger.warning("shared content not found = " + sharedContentContext.getProvider());
 			}

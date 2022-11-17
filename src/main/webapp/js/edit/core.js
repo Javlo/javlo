@@ -325,7 +325,7 @@ jQuery(document).ready(function() {
 							fd.append(fieldName+"_"+i,file);
 						}
 						i++;			
-					});	
+					});
 					jQuery.ajax({
 						url : url,
 						cache : false,

@@ -1005,8 +1005,27 @@ if (!String.prototype.startsWith) {
 					pjq(this).removeClass("drop-selected");
 					return false;
 				});
-				el.addEventListener('drop', function(event) {					
-					var ajaxURL = editPreview.addParam(currentURL,"webaction=data.upload");					
+				el.addEventListener('drop', function(event) {
+					var onDone = jQuery(this).data("done");
+					var oDoneFunction = null;
+					if (onDone != null)  {
+						oDoneFunction = window[onDone];
+					}
+					var ajaxURL  = jQuery(this).data("url");
+					if (ajaxURL == null) {
+						ajaxURL = editPreview.addParam(currentURL,"webaction=data.upload");
+					}	
+					if (ajaxURL.indexOf("/edit-")>=0) {
+						ajaxURL = ajaxURL.replace("/edit-", "/ajax-");
+					} else {
+						ajaxURL = ajaxURL.replace("/edit/", "/ajax/");
+						if (ajaxURL.indexOf("/preview-")>=0) {
+							ajaxURL = ajaxURL.replace("/preview-", "/ajax-");
+						} else {
+							ajaxURL = ajaxURL.replace("/preview/", "/ajax/");
+						}
+					}
+					
 					var fd=new FormData();					
 					var fieldName = pjq(this).data("fieldname");					
 					if (fieldName == null) {
@@ -1027,16 +1046,16 @@ if (!String.prototype.startsWith) {
 					});						
 					if (sameName) {
 						editPreview.openModalQuestion("Upload file", "File already exists !", "overwrite", "rename", function () {
-							ajaxURL = editPreview.addParam(ajaxURL, "rename=false");								
-							editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
+							ajaxURL = editPreview.addParam(ajaxURL, "rename=false");
+							editPreview.ajaxPreviewRequest(ajaxURL, oDoneFunction, fd);
 							pjq("#preview-modal-question").modal("hide");
 						}, function () {
 							ajaxURL = editPreview.addParam(ajaxURL, "rename=true");
-							editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
+							editPreview.ajaxPreviewRequest(ajaxURL, oDoneFunction, fd);
 							pjq("#preview-modal-question").modal("hide");
 						});
 					} else {
-						editPreview.ajaxPreviewRequest(ajaxURL, null, fd);
+						editPreview.ajaxPreviewRequest(ajaxURL, oDoneFunction, fd);
 					}
 					event.preventDefault();
 					return false;
@@ -1164,7 +1183,7 @@ if (!String.prototype.startsWith) {
 			window.location.href = currentURL;
 		}
 
-		editPreview.ajaxPreviewRequest = function(url, doneFunction, data, async) {
+		editPreview.ajaxPreviewRequest = function(url, doneFunction, data, async, type) {
 			if (async==null) {
 				async=false;
 			}
@@ -1179,6 +1198,7 @@ if (!String.prototype.startsWith) {
 					url = url.replace("/preview/", "/ajax/");
 				}
 			}
+			
 			pjq.ajax({
 				url : url,
 				cache : false,
@@ -1193,7 +1213,7 @@ if (!String.prototype.startsWith) {
 					if (jsonObj.data["need-refresh"]) {
 						editPreview.reloadPreviewPage();
 					}
-				}				
+				}
 				editPreview.stopAjax();
 				if (jsonObj.messageText != null) {
 					editPreview.addAlert(jsonObj.messageText, jsonObj.messageType);
@@ -1237,7 +1257,6 @@ if (!String.prototype.startsWith) {
 						console.log("Exception when calling initPreview()", ex);
 					}
 				}
-				editPreview.stopAjax();
 				if (doneFunction != null) {
 					doneFunction();
 				}
@@ -1250,7 +1269,11 @@ if (!String.prototype.startsWith) {
 						pjq(this).removeClass("_not_empty_area");
 					}
 				});
-			});			
+			}).fail(function(e) {
+				alert( "ajax error : ",e);
+			}).always(function() {
+				editPreview.stopAjax();
+			});
 			setInterval(function(){editPreview.updateImg()},300);
 		}
 		function scrollToMe() {

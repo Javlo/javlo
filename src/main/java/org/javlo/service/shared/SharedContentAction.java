@@ -3,10 +3,12 @@ package org.javlo.service.shared;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
 
@@ -21,13 +23,15 @@ import org.javlo.service.RequestService;
 
 public class SharedContentAction extends AbstractModuleAction {
 	
+	private static Logger logger = Logger.getLogger(SharedContentAction.class.getName());
+
 	public static class SharedContentBean {
-		
+
 		private ISharedContentProvider contentProvider;
 		private boolean active = false;
 		private ContentContext ctx;
-		
-		public SharedContentBean (ContentContext ctx, ISharedContentProvider inContentProvider) {
+
+		public SharedContentBean(ContentContext ctx, ISharedContentProvider inContentProvider) {
 			contentProvider = inContentProvider;
 			this.ctx = ctx;
 		}
@@ -67,15 +71,15 @@ public class SharedContentAction extends AbstractModuleAction {
 		public void setActive(boolean active) {
 			this.active = active;
 		}
-		
+
 		public int getContentSize() {
 			return contentProvider.getContentSize(ctx);
 		}
-		
+
 		public int getCategoriesSize() {
 			return contentProvider.getCategoriesSize(ctx);
 		}
-		
+
 	}
 
 	@Override
@@ -92,7 +96,7 @@ public class SharedContentAction extends AbstractModuleAction {
 		List<SharedContentBean> beans = new LinkedList<SharedContentAction.SharedContentBean>();
 		for (ISharedContentProvider iSharedContentProvider : contentProviders) {
 			ctx.setContentContextIfNeeded(iSharedContentProvider);
-			SharedContentBean bean = new SharedContentBean(ctx,iSharedContentProvider);
+			SharedContentBean bean = new SharedContentBean(ctx, iSharedContentProvider);
 			if (activeProvider.contains(bean.getName())) {
 				bean.setActive(true);
 			}
@@ -115,7 +119,7 @@ public class SharedContentAction extends AbstractModuleAction {
 			sharedContentContext.setProvider(rs.getParameter("provider", ""));
 		}
 		if (rs.getParameter("category", null) != null) {
-			sharedContentContext.getCategories().clear();			
+			sharedContentContext.getCategories().clear();
 			sharedContentContext.getCategories().add(rs.getParameter("category", ""));
 		}
 		return null;
@@ -139,22 +143,22 @@ public class SharedContentAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performSearch(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {		
-		String providerName = rs.getParameter("provider", "");		
+	public static String performSearch(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
+		String providerName = rs.getParameter("provider", "");
 		ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, providerName);
 		if (provider == null) {
 			return "provider not found : " + providerName;
 		} else {
 			String query = rs.getParameter("query", "").trim();
-			if(rs.getParameter("reset", null) != null) {
+			if (rs.getParameter("reset", null) != null) {
 				query = "";
 			}
-			Collection<SharedContent> sharedContent = SharedContentService.getInstance(ctx).searchContent(ctx, provider, query);		
+			Collection<SharedContent> sharedContent = SharedContentService.getInstance(ctx).searchContent(ctx, provider, query);
 			ctx.getRequest().setAttribute("sharedContent", sharedContent);
 			if (ctx.isAjax()) {
 				String result;
 				try {
-					result = ServletHelper.executeJSP(ctx, "/jsp/preview/shared_content_result.jsp");					
+					result = ServletHelper.executeJSP(ctx, "/jsp/preview/shared_content_result.jsp");
 				} catch (Exception e) {
 					result = e.getMessage();
 					e.printStackTrace();
@@ -164,14 +168,35 @@ public class SharedContentAction extends AbstractModuleAction {
 		}
 		return null;
 	}
-	
+
+	public static String performRefreshresult(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
+		SharedContentService sharedContentService = SharedContentService.getInstance(ctx);
+		SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
+		ISharedContentProvider provider = sharedContentService.getProvider(ctx, sharedContentContext.getProvider());
+		
+		if (provider == null) { 
+			logger.severe("provider not found.");
+			return "provider not found";
+		}
+		ctx.getRequest().setAttribute("sharedContent", provider.getContent(ctx, Arrays.asList(new String[] {sharedContentContext.getCategory()})));
+		String result;
+		try {
+			result = ServletHelper.executeJSP(ctx, "/jsp/preview/bootstrap/shared_content_result.jsp");
+		} catch (Exception e) {
+			result = e.getMessage();
+			e.printStackTrace();
+		}
+		ctx.getAjaxInsideZone().put("shared-content-result", result);
+		return null;
+	}
+
 	public static String performUpdateActive(RequestService rs, ContentContext ctx, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) {
-		Collection<ISharedContentProvider> contentProviders = SharedContentService.getInstance(ctx).getAllProvider(ctx);		
+		Collection<ISharedContentProvider> contentProviders = SharedContentService.getInstance(ctx).getAllProvider(ctx);
 		List<String> activeProvider = new LinkedList<String>();
-		for (ISharedContentProvider contentProvider : contentProviders) {			
-			if (rs.getParameter("active-"+contentProvider.getName(), null) != null) {				
+		for (ISharedContentProvider contentProvider : contentProviders) {
+			if (rs.getParameter("active-" + contentProvider.getName(), null) != null) {
 				activeProvider.add(contentProvider.getName());
-			}			
+			}
 		}
 		SharedContentService service = SharedContentService.getInstance(ctx);
 		service.setActiveProviderNames(ctx, activeProvider);

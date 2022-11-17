@@ -1,5 +1,6 @@
 package org.javlo.service.shared;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -42,7 +43,12 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 	public void setURL(URL url) {
 		this.url = url;
 	}
-
+	
+	@Override
+	public File getFolder(ContentContext ctx, String category) {
+		return null;
+	}
+	
 	@Override
 	public abstract Collection<SharedContent> getContent(ContentContext ctx);
 
@@ -103,8 +109,8 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 		if (getCategories(ctx).size() <= 0 || categories == null || categories.size() == 0) {
 			return getContent(ctx);
 		}
-		List<SharedContent> outList = new LinkedList<SharedContent>();		
-		Collection<SharedContent> contents = getContent(ctx);		
+		List<SharedContent> outList = new LinkedList<SharedContent>();
+		Collection<SharedContent> contents = getContent(ctx);
 		if (contents != null) {
 			for (SharedContent content : contents) {
 				if (!Collections.disjoint(content.getCategories(), categories)) {

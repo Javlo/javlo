@@ -375,7 +375,7 @@ public class DataAction implements IAction {
 	 * @param importFolder
 	 * @param imageItem
 	 * @param config
-	 * @return
+	 * @return the local file
 	 * @throws Exception
 	 */
 	protected static File createImage(ContentContext ctx, String importFolder, FileItem imageItem, ImportConfigBean config, boolean content, String previousId, boolean rename) throws Exception {
@@ -475,14 +475,14 @@ public class DataAction implements IAction {
 						if (multimedia.getId().equals(previousId)) {
 							compGalleryFound = multimedia;
 							if (pdf) {
-								((PDFMultimedia) compGalleryFound).setCurrentRootFolder(ctx, URLHelper.createStaticFolderURI(ctx, targetFolder)+"/"+fileName);
+								((PDFMultimedia) compGalleryFound).setCurrentRootFolder(ctx, URLHelper.createStaticFolderURI(ctx, targetFolder) + "/" + fileName);
 							}
 							break;
 						}
 					} else {
 						compGalleryFound = multimedia;
 						if (pdf) {
-							((PDFMultimedia) compGalleryFound).setCurrentRootFolder(ctx, URLHelper.createStaticFolderURI(ctx, targetFolder)+"/"+fileName);
+							((PDFMultimedia) compGalleryFound).setCurrentRootFolder(ctx, URLHelper.createStaticFolderURI(ctx, targetFolder) + "/" + fileName);
 						}
 						break;
 					}
@@ -597,12 +597,23 @@ public class DataAction implements IAction {
 				ctx = ctx.getContextWithArea(rs.getParameter("area", ctx.getArea()));
 				String newCompId = null;
 				File targetFolder = null;
+
+				ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, rs.getParameter("provider"));
+				if (provider != null && provider.isUploadable(ctx)) {
+					SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
+					targetFolder = provider.getFolder(ctx, sharedContentContext.getCategory());
+				} 
+
+				if (targetFolder == null) {
+					String resourceRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportImageFolder(), importFolder);
+					targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), resourceRelativeFolder));
+					provider = null;
+				}
+
 				for (FileItem item : rs.getAllFileItem()) {
 					logger.info("try to import (" + ctx.getCurrentUserId() + ") : " + item.getName());
 
 					if (item.getName().equals("blob")) {
-						String resourceRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportImageFolder(), importFolder);
-						targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), resourceRelativeFolder));
 						File targetImage = new File(URLHelper.mergePath(targetFolder.getAbsolutePath(), "clipboard.png"));
 						targetFolder.getParentFile().mkdirs();
 						targetImage = ResourceHelper.getFreeFileName(targetImage);
@@ -678,68 +689,77 @@ public class DataAction implements IAction {
 						}
 						File newFile = ResourceHelper.writeFileItemToFolder(item, targetFolder, true, rename);
 						if (newFile != null && newFile.exists()) {
-							boolean isStaticHTML = false;
-							String dir = resourceRelativeFolder.replaceFirst(gc.getStaticConfig().getFileFolder(), "");
-							if (StringHelper.getFileExtension(newFile.getName()).equalsIgnoreCase("zip") || StringHelper.isHTML(newFile.getName())) {
-								isStaticHTML = StringHelper.isHTML(newFile.getName());
-								if (!isStaticHTML) {
-									ZipFile zip = null;
-									try {
-										zip = new ZipFile(newFile);
-										Enumeration<? extends ZipEntry> entries = zip.entries();
-										while (entries.hasMoreElements()) {
-											if (entries.nextElement().getName().equals("index.html")) {
-												isStaticHTML = true;
-											}
-										}
-									} finally {
-										ResourceHelper.closeResource(zip);
-									}
-								}
-								if (isStaticHTML) {
-									resourceRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportVFSFolder(), importFolder);
-									targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), resourceRelativeFolder));
-									File vfsFile = new File(URLHelper.mergePath(targetFolder.getAbsolutePath(), newFile.getName()));
-									if (vfsFile.exists()) {
-										vfsFile.delete();
-									}
-									FileUtils.moveFile(newFile, vfsFile);
-								}
-							}
 
-							ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-							PrintStream out = new PrintStream(outStream);
-							out.println("dir=" + dir);
-							out.println("file-name=" + StringHelper.getFileNameFromPath(newFile.getName()));
-							out.close();
-							String beanType = GenericFile.TYPE;
-							if (isArray && ctx.getGlobalContext().hasComponent(ArrayFileComponent.class.getCanonicalName())) {
-								beanType = ArrayFileComponent.TYPE;
-							}
-							if (ResourceHelper.isSound(ctx, newFile.getName()) && ctx.getGlobalContext().hasComponent(Sound.class.getCanonicalName())) {
-								beanType = Sound.TYPE;
-							}
-							if (isStaticHTML) {
-								beanType = VFSFile.TYPE;
-							}
-							StaticInfo staticInfo = StaticInfo.getInstance(ctx, newFile);
 							SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
 							SharedContentService sharedContentService = SharedContentService.getInstance(ctx);
-							ComponentBean bean = new ComponentBean(beanType, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
-							if (sharedContentService.getActiveProviderNames(ctx).contains(ImportedFileSharedContentProvider.NAME)) {
-								sharedContentContext.setProvider(ImportedFileSharedContentProvider.NAME);
-								sharedContentService.clearCache(ctx);
-							} else if (!content) {
-								cs.createContentAtEnd(ctx, bean, true);
-							}
-							if (content) {
-								bean.setArea(ctx.getArea());
-								newCompId = cs.createContent(ctx, bean, previousId, true);
-							}
-							staticInfo.setShared(ctx, false);
 
-							if (ctx.getCurrentPage().getUserRoles().size() > 0) {
-								staticInfo.addReadRole(ctx, ctx.getCurrentPage().getUserRoles());
+							if (provider != null && provider.getFolder(ctx, sharedContentContext.getCategory()) != null) {
+								File targetFile = new File(URLHelper.mergePath(provider.getFolder(ctx, sharedContentContext.getCategory()).getAbsolutePath(), newFile.getName()));
+								if (targetFile.exists()) {
+									targetFile.delete();
+								}
+								FileUtils.moveFile(newFile, targetFile);
+							} else {
+								boolean isStaticHTML = false;
+								String dir = resourceRelativeFolder.replaceFirst(gc.getStaticConfig().getFileFolder(), "");
+								if (StringHelper.getFileExtension(newFile.getName()).equalsIgnoreCase("zip") || StringHelper.isHTML(newFile.getName())) {
+									isStaticHTML = StringHelper.isHTML(newFile.getName());
+									if (!isStaticHTML) {
+										ZipFile zip = null;
+										try {
+											zip = new ZipFile(newFile);
+											Enumeration<? extends ZipEntry> entries = zip.entries();
+											while (entries.hasMoreElements()) {
+												if (entries.nextElement().getName().equals("index.html")) {
+													isStaticHTML = true;
+												}
+											}
+										} finally {
+											ResourceHelper.closeResource(zip);
+										}
+									}
+									if (isStaticHTML) {
+										resourceRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportVFSFolder(), importFolder);
+										targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), resourceRelativeFolder));
+										File vfsFile = new File(URLHelper.mergePath(targetFolder.getAbsolutePath(), newFile.getName()));
+										if (vfsFile.exists()) {
+											vfsFile.delete();
+										}
+										FileUtils.moveFile(newFile, vfsFile);
+									}
+								}
+								ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+								PrintStream out = new PrintStream(outStream);
+								out.println("dir=" + dir);
+								out.println("file-name=" + StringHelper.getFileNameFromPath(newFile.getName()));
+								out.close();
+								String beanType = GenericFile.TYPE;
+								if (isArray && ctx.getGlobalContext().hasComponent(ArrayFileComponent.class.getCanonicalName())) {
+									beanType = ArrayFileComponent.TYPE;
+								}
+								if (ResourceHelper.isSound(ctx, newFile.getName()) && ctx.getGlobalContext().hasComponent(Sound.class.getCanonicalName())) {
+									beanType = Sound.TYPE;
+								}
+								if (isStaticHTML) {
+									beanType = VFSFile.TYPE;
+								}
+								StaticInfo staticInfo = StaticInfo.getInstance(ctx, newFile);
+								ComponentBean bean = new ComponentBean(beanType, new String(outStream.toByteArray()), ctx.getRequestContentLanguage());
+								if (sharedContentService.getActiveProviderNames(ctx).contains(ImportedFileSharedContentProvider.NAME)) {
+									sharedContentContext.setProvider(ImportedFileSharedContentProvider.NAME);
+									sharedContentService.clearCache(ctx);
+								} else if (!content) {
+									cs.createContentAtEnd(ctx, bean, true);
+								}
+								if (content) {
+									bean.setArea(ctx.getArea());
+									newCompId = cs.createContent(ctx, bean, previousId, true);
+								}
+								staticInfo.setShared(ctx, false);
+
+								if (ctx.getCurrentPage().getUserRoles().size() > 0) {
+									staticInfo.addReadRole(ctx, ctx.getCurrentPage().getUserRoles());
+								}
 							}
 							ctx.setNeedRefresh(true);
 						} else {
@@ -757,51 +777,96 @@ public class DataAction implements IAction {
 				} else if (previousComp != null && (previousComp.getType().equals(Multimedia.TYPE) || previousComp.getType().equals(PDFMultimedia.TYPE))) {
 					countImages = 2;
 				}
+				
+				SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());				
+				if (provider != null) {
+					targetFolder = provider.getFolder(ctx, sharedContentContext.getCategory());
+					importFolder = "";
+				}
+				
 				if (countImages == 1) {
-					if (!config.isImagesAsGallery()) {
+					if (provider != null) {
+						targetFolder = provider.getFolder(ctx, sharedContentContext.getCategory());
+						importFolder = "";
+					} else {
+						sharedContentContext.setProvider(ImportedImageSharedContentProvider.NAME);
+					}
+					
+					if (!config.isImagesAsGallery() || provider != null) {
 						folderSelection = createImage(ctx, importFolder, imageItem, config, content, previousId, rename);
 						if (folderSelection != null) {
+							if (provider != null) {
+								File targetFile = new File(URLHelper.mergePath(targetFolder.getAbsolutePath(), folderSelection.getName()));
+								targetFile = ResourceHelper.getFreeFileName(targetFile);
+								FileUtils.moveFile(folderSelection, targetFile);
+							}
 							folderSelection = folderSelection.getParentFile();
 						}
+						
 					} else {
 						folderSelection = createOrUpdateGallery(ctx, targetFolder, importFolder, Arrays.asList(new FileItem[] { imageItem }), config, content, previousId);
 						if (folderSelection != null && newCompId != null) {
 							ctx.getCurrentPage().removeContent(ctx, newCompId);
 						}
 					}
+					
+					if (provider == null) {
+						sharedContentContext.setProvider(ImportedImageSharedContentProvider.NAME);
+						provider = SharedContentService.getInstance(ctx).getProvider(ctx, sharedContentContext.getProvider());
+					}
+					
 					ctx.setNeedRefresh(true);
-					SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
-					sharedContentContext.setProvider(ImportedImageSharedContentProvider.NAME);
+					
 					SharedContentService.getInstance(ctx).clearCache(ctx);
-					ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, sharedContentContext.getProvider());
+					
 					provider.refresh(ctx);
 					provider.getContent(ctx); // refresh categories list
 				} else if (countImages > 1) { // gallery
-					if (!config.isImagesAsImages() && ctx.getGlobalContext().getComponents().contains(Multimedia.class.getName())) {
+					
+					System.out.println(">>>>>>>>> DataAction.uploadContent : gallery"); //TODO: remove debug trace
+					
+					if (provider != null) {
+						targetFolder = provider.getFolder(ctx, sharedContentContext.getCategory());
+						importFolder = "";
+					}
+					
+					if (provider == null && !config.isImagesAsImages() && ctx.getGlobalContext().getComponents().contains(Multimedia.class.getName())) {
 						folderSelection = createOrUpdateGallery(ctx, targetFolder, importFolder, rs.getAllFileItem(), config, content, previousId);
 						if (folderSelection != null && newCompId != null) {
-							ctx.getCurrentPage().removeContent(ctx,newCompId);
+							ctx.getCurrentPage().removeContent(ctx, newCompId);
 						}
 					} else {
 						for (FileItem file : rs.getAllFileItem()) {
 							folderSelection = createImage(ctx, importFolder, file, config, content, previousId, rename);
+							if (provider != null) {
+								File targetFile = new File(URLHelper.mergePath(targetFolder.getAbsolutePath(), folderSelection.getName()));
+								targetFile = ResourceHelper.getFreeFileName(targetFile);
+								System.out.println(">>>>>>>>> DataAction.uploadContent : targetFile = "+targetFile); //TODO: remove debug trace
+								FileUtils.moveFile(folderSelection, targetFile);
+							}
 							if (folderSelection != null) {
 								folderSelection = folderSelection.getParentFile();
 							}
 						}
 					}
-					SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
-					sharedContentContext.setProvider(ImportedImageSharedContentProvider.NAME);
+					
+					if (provider == null) {
+						sharedContentContext.setProvider(ImportedImageSharedContentProvider.NAME);
+						provider = SharedContentService.getInstance(ctx).getProvider(ctx, sharedContentContext.getProvider());
+					}
+					
 					SharedContentService.getInstance(ctx).clearCache(ctx);
-					ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, sharedContentContext.getProvider());
 					provider.refresh(ctx);
 					provider.getContent(ctx); // refresh categories list
 				}
 				if (!config.isCreateContentOnImportImage() && !content && countImages > 0) {
-					SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
-					sharedContentContext.setProvider(ImportedImageSharedContentProvider.NAME);
+					if (provider == null) {
+						sharedContentContext.setProvider(ImportedImageSharedContentProvider.NAME);
+					}
 					SharedContentService.getInstance(ctx).clearCache(ctx);
-					ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, sharedContentContext.getProvider());
+					if (provider == null) {
+						provider = SharedContentService.getInstance(ctx).getProvider(ctx, sharedContentContext.getProvider());
+					}
 					provider.refresh(ctx);
 					provider.getContent(ctx); // refresh categories list
 					String prefix = URLHelper.mergePath(gc.getDataFolder(), gc.getStaticConfig().getImageFolder()).replace('\\', '/');
@@ -811,7 +876,9 @@ public class DataAction implements IAction {
 						if (cat.length() > 1) { // remove '/'
 							cat = cat.substring(1);
 						}
-						sharedContentContext.setCategories(new LinkedList<String>(Arrays.asList(new String[] { cat })));
+						if (provider.getName().equals(ImportedImageSharedContentProvider.NAME)) {
+							sharedContentContext.setCategories(new LinkedList<String>(Arrays.asList(new String[] { cat })));
+						}
 					}
 					ctx.setNeedRefresh(true);
 				}

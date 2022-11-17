@@ -10,6 +10,7 @@ import org.javlo.component.files.GenericFile;
 import org.javlo.context.ContentContext;
 import org.javlo.filter.NotDirectoryFilter;
 import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 
 public class LocalFileSharedContentProvider extends LocalImageSharedContentProvider {
@@ -45,11 +46,20 @@ public class LocalFileSharedContentProvider extends LocalImageSharedContentProvi
 	protected String getPreviewURL(ContentContext ctx, ComponentBean compBean) throws Exception {
 		GenericFile file = new GenericFile();
 		file.init(compBean, ctx);
-		return URLHelper.getFileTypeURL(ctx, file.getFile(ctx));
+		if (StringHelper.isImage(file.getFile(ctx).getName()) || StringHelper.isPDF(file.getFile(ctx).getName())) {
+			return URLHelper.createTransformURL(ctx, file.getFile(ctx), IMAGE_FILTER);
+		} else {
+			return URLHelper.getFileTypeURL(ctx, file.getFile(ctx));
+		}
 	}
 	
 	protected boolean acceptedDocument(ContentContext ctx, String fileName) {
 		return ResourceHelper.isAcceptedDocument(ctx, fileName);
+	}
+	
+	@Override
+	public File getFolder(ContentContext ctx, String category) {
+		return new File(URLHelper.mergePath(getRootFolder(ctx).getAbsolutePath(), category));
 	}
 
 }

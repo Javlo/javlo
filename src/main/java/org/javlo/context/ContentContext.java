@@ -662,6 +662,12 @@ public class ContentContext {
 		outContext.setRenderMode(mode);
 		return outContext;
 	}
+	
+	public ContentContext getContextForAjax() {
+		ContentContext outContext = new ContentContext(this);
+		outContext.setAjax(true);
+		return outContext;
+	}
 
 	public ContentContext getContextWidthOtherRequestLanguage(String lang) {
 		ContentContext outContext = new ContentContext(this);

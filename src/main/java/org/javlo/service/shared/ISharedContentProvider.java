@@ -1,5 +1,6 @@
 package org.javlo.service.shared;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -67,5 +68,7 @@ public interface ISharedContentProvider {
 	public boolean isLarge();
 	
 	public void upload(ContentContext ctx, String fileName, InputStream in, String category, boolean rename) throws IOException;
+	
+	public File getFolder(ContentContext ctx, String category);
 
 }

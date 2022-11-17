@@ -1,12 +1,21 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
 %><h2><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>Resources</h2>
-<div class="well drop-files">		
-	<div class="upload-zone" data-url="${info.uploadURL}">
+<div class="well drop-files">
+	<c:url var="uploadUrl" value="${info.uploadURL}" context="/">
+		<c:param name="provider" value="${provider.name}" />
+	</c:url>
+	<div class="upload-zone" data-url="${uploadUrl}" data-done="onDoneUpload">
 	<h3>${i18n.edit['preview.upload-here']}</h3>
 	<div class="picto"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></div>	
 	</div>	
 </div>
+
+<script>
+	function onDoneUpload() {
+		editPreview.ajaxPreviewRequest('${refreshUrl}', null, null, null);
+	}
+</script>
 
 <!-- <div id="paste" class="well"> -->
 <%-- <h3>${i18n.edit['preview.paste-here']}</h3> --%>
@@ -29,7 +38,7 @@
 	<input type="hidden" name="webaction" value="shared-content.search" />
 	<input type="hidden" name="provider" value="${provider.name}" />
 	<div class="form-inline form-group">
-		<input type="text" name="query" placeholder="${i18n.edit['content.search']}" class="form-control query" value="${sharedContentContext.searchQuery}"/>		
+		<input type="text" id="shared-content-search-form-query" name="query" placeholder="${i18n.edit['content.search']}" class="form-control query" value="${sharedContentContext.searchQuery}"/>
 		<input type="submit" class="btn btn-default" value="${i18n.edit['global.ok']}" />
 		<input type="submit" name="reset" class="btn btn-default pull-right" value="${i18n.edit['global.reset']}" />
 	</div>

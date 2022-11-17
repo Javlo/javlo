@@ -29,6 +29,8 @@ import org.javlo.ztatic.StaticInfo;
 
 public class LocalImageSharedContentProvider extends AbstractSharedContentProvider {
 
+	protected static final String IMAGE_FILTER = "shared-preview";
+
 	private static Logger logger = Logger.getLogger(LocalImageSharedContentProvider.class.getName());
 
 	public static final String NAME = "local-image";
@@ -56,7 +58,7 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 	protected String getPreviewURL(ContentContext ctx, ComponentBean compBean) throws Exception {
 		GlobalImage image = new GlobalImage();
 		image.init(compBean, ctx);
-		return image.getPreviewURL(ctx.getContextWithArea(ComponentBean.DEFAULT_AREA), "shared-preview");
+		return image.getPreviewURL(ctx.getContextWithArea(ComponentBean.DEFAULT_AREA), IMAGE_FILTER);
 	}
 
 	protected FileFilter getFilter() {
