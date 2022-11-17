@@ -924,5 +924,6 @@ Security in case of vulnerabilities.
   - read exif size of picture
 ## [2.1.4.1] - 03/11/2022
 ### Added
+  - upload files from preview
 ### Modified
 ### fixed
