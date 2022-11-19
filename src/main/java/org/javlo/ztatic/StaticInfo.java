@@ -100,7 +100,6 @@ public class StaticInfo implements IRestItem {
 			} else {
 				ReferenceBean refObj = (ReferenceBean) obj;
 				return StringHelper.compare(reference, refObj.reference) && StringHelper.compare(language, refObj.language);
-
 			}
 		}
 
@@ -689,25 +688,25 @@ public class StaticInfo implements IRestItem {
 
 	public String getReference(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-		return content.getAttribute(ctx, getKey(ctx, "ref-" + ctx.getRequestContentLanguage()), "");
+		return content.getAttribute(ctx, getKey(ctx, "ref"), "");
 	}
 
 	public void setReference(ContentContext ctx, String ref) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		if (!StringHelper.isEmpty(ref)) {
 			if (!getReference(ctx).equals(ref)) {
-				content.setAttribute(ctx, getKey(ctx, "ref-" + ctx.getRequestContentLanguage()), ref);
+				content.setAttribute(ctx, getKey(ctx, "ref"), ref);
 				refBean = null;
 			}
 		} else {
-			content.removeAttribute(ctx, getKey(ctx, "ref-" + ctx.getRequestContentLanguage()));
+			content.removeAttribute(ctx, getKey(ctx, "ref"));
 			refBean = null;
 		}
 	}
 
 	public String getLanguage(ContentContext ctx) {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
-		return content.getAttribute(ctx, getKey(ctx, "lg-" + ctx.getRequestContentLanguage()), "");
+		return content.getAttribute(ctx, getKey(ctx, "lg"), "");
 	}
 
 	public ReferenceBean getReferenceBean(ContentContext ctx) {
@@ -725,11 +724,11 @@ public class StaticInfo implements IRestItem {
 		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		if (!StringHelper.isEmpty(lg)) {
 			if (!lg.equals(getLanguage(ctx))) {
-				content.setAttribute(ctx, getKey(ctx, "lg-" + ctx.getRequestContentLanguage()), lg);
+				content.setAttribute(ctx, getKey(ctx, "lg"), lg);
 				refBean = null;
 			}
 		} else {
-			content.removeAttribute(ctx, getKey(ctx, "lg-" + ctx.getRequestContentLanguage()));
+			content.removeAttribute(ctx, getKey(ctx, "lg"));
 			refBean = null;
 		}
 	}
