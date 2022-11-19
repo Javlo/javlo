@@ -204,7 +204,7 @@ public class URLHelper extends ElementaryURLHelper {
 		GlobalContext globalContext = ctx.getGlobalContext();
 		String fullFileName = URLHelper.mergePath(globalContext.getDataFolder(), url);
 
-		if (StringHelper.isURLFile(url)) {						
+		if (StringHelper.isURLFile(url)) {
 			try {
 				return FileUtils.readFileToString(new File(fullFileName));
 			} catch (IOException e) {
@@ -245,6 +245,8 @@ public class URLHelper extends ElementaryURLHelper {
 				url = createStaticURL(ctx, currentPage, MEDIA + '/' + url);
 			}
 		}
+		
+		url = addCdn(ctx, url);
 		
 		return url;
 	}
@@ -572,9 +574,9 @@ public class URLHelper extends ElementaryURLHelper {
 		if (templateVersion != null) {
 			url = URLHelper.addParam(url, "template-id", templateVersion);
 		}
-		return createStaticURL(ctx, null, URLHelper.mergePath(templateFullPath, url), widthPath);
-		// return createStaticURL(ctx, URLHelper.mergePath(templateFullPath,
-		// url));
+		url = createStaticURL(ctx, null, URLHelper.mergePath(templateFullPath, url), widthPath);
+		url = addCdn(ctx, url);
+		return url;
 	}
 
 	public static String createStaticTemplatePluginURL(ContentContext ctx, String url, String pluginFolder) throws Exception {

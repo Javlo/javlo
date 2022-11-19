@@ -831,6 +831,12 @@ public class XMLManipulationHelper {
 					remplacement.addReplacement(tagHead.getCloseStart(), tagHead.getCloseStart(), "<title><%=currentTitle%> | ${info.globalTitle}</title>");
 				}
 			}
+			
+			// CDN
+			if (globalContext.getSpecialConfig().getMainCdn() != null) {
+				String preconnectCdn = "<link rel=\"preconnect\" href=\""+StringHelper.extractHostAndProtocol(globalContext.getSpecialConfig().getMainCdn())+"\">";
+				remplacement.addReplacement(tagHead.getOpenEnd()+1, tagHead.getOpenEnd()+1, preconnectCdn);
+			}
 
 			// src url
 			int urlIndex = content.indexOf("url(");

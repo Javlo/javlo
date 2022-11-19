@@ -4670,6 +4670,25 @@ public class StringHelper {
 		}
 		return host;
 	}
+	
+	public static String extractHostAndProtocol(String inUrl) {
+		if (!StringHelper.isURL(inUrl)) {
+			return "";
+		}
+		URL url;
+		try {
+			url = new URL(inUrl);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			return "";
+		}
+		String host = url.getHost();
+		while (StringUtils.countMatches(host, ".") > 1) {
+			host = host.substring(host.indexOf('.') + 1);
+		}
+		
+		return url.getProtocol()+"://"+host;
+	}
 
 	public static String quote(String string) {
 		if (string == null || string.length() == 0) {

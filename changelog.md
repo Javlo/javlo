@@ -925,6 +925,7 @@ Security in case of vulnerabilities.
 ## [2.1.4.1] - 03/11/2022
 ### Added
   - upload files from preview
+  - CDN
 ### Modified
-  - load cookies.css afther dom loading
+  - load cookies.css after dom loading
 ### fixed

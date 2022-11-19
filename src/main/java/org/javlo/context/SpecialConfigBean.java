@@ -76,6 +76,10 @@ public class SpecialConfigBean {
 		return pwd;
 	}
 	
+	public String getMainCdn() {
+		return (String)config.get("cdn.1");
+	}
+	
 	public String getSearchPageName() {
 			return StringHelper.neverEmpty((String)config.get("page.search"), staticConfig.getSearchPageName());
 	}

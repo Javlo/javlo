@@ -365,6 +365,7 @@ public abstract class ElementaryURLHelper {
 		if (!ctx.isInternalURL() && ctx.getGlobalContext().getProxyPathPrefix().length() > 0) {
 			url = URLHelper.mergePath(ctx.getGlobalContext().getProxyPathPrefix(), url);
 		}
+		
 		return Encode.forUri(url);
 	}
 
@@ -511,6 +512,19 @@ public abstract class ElementaryURLHelper {
 		url = createStaticURL(ctx, referencePage, url, true);
 		if (ctx.getRequest().getParameter("lowdef") != null) {
 			url = URLHelper.addParam(url, "lowdef", ctx.getRequest().getParameter("lowdef"));
+		}
+		
+		// cdn
+		url = addCdn(ctx, url);
+		
+		return url;
+	}
+	
+	public static String addCdn(ContentContext ctx, String url) {
+		if (ctx.getGlobalContext().getSpecialConfig().getMainCdn() != null) {
+			if (!StringHelper.isURL(url)) {
+				url = mergePath(ctx.getGlobalContext().getSpecialConfig().getMainCdn(), url);
+			}
 		}
 		return url;
 	}
