@@ -2088,8 +2088,7 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) throws IOException {
-		System.out.println(trimInternal("23  px "));
-		System.out.println(trimInternal("  23 px "));
+		System.out.println(extractHostAndProtocol("https://cdn.javlo.org/test.html"));
 	}
 
 	public static LocalTime smartParseTime(String inTime) {
@@ -4682,12 +4681,7 @@ public class StringHelper {
 			e.printStackTrace();
 			return "";
 		}
-		String host = url.getHost();
-		while (StringUtils.countMatches(host, ".") > 1) {
-			host = host.substring(host.indexOf('.') + 1);
-		}
-		
-		return url.getProtocol()+"://"+host;
+		return url.getProtocol()+"://"+url.getHost();
 	}
 
 	public static String quote(String string) {

@@ -872,7 +872,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				response.addHeader("link", "<" + URLHelper.createURL(robotCtx) + ">; rel=\"canonical\"");
 				
 				// cdn
-				System.out.println(">>>>>>>>> AccessServlet.process : ctx.getGlobalContext().getSpecialConfig().getMainCdn() = "+ctx.getGlobalContext().getSpecialConfig().getMainCdn()); //TODO: remove debug trace
 				if (ctx.getGlobalContext().getSpecialConfig().getMainCdn() != null) {
 					response.addHeader("link", "<link href='"+StringHelper.extractHostAndProtocol(ctx.getGlobalContext().getSpecialConfig().getMainCdn())+"' rel='preconnect' crossorigin>");
 				};
