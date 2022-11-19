@@ -676,6 +676,13 @@ public class XMLManipulationHelper {
 				/* head - StyleSheet */
 				if (tags[i].getName().equalsIgnoreCase("head")) {
 					tagHead = tags[i];
+					
+					// CDN
+					if (tagHead != null && globalContext.getSpecialConfig().getMainCdn() != null) {
+						String preconnectCdn = "<link rel=\"preconnect\" href=\""+StringHelper.extractHostAndProtocol(globalContext.getSpecialConfig().getMainCdn())+"\">";
+						remplacement.addReplacement(tagHead.getOpenEnd()+1, tagHead.getOpenEnd()+2, preconnectCdn);
+					}
+
 
 					String staticHeader = StringHelper.neverEmpty(globalContext.getStaticConfig().getHtmlHead(), "");
 
@@ -832,12 +839,6 @@ public class XMLManipulationHelper {
 				}
 			}
 			
-			// CDN
-			if (globalContext.getSpecialConfig().getMainCdn() != null) {
-				String preconnectCdn = "<link rel=\"preconnect\" href=\""+StringHelper.extractHostAndProtocol(globalContext.getSpecialConfig().getMainCdn())+"\">";
-				remplacement.addReplacement(tagHead.getOpenEnd()+1, tagHead.getOpenEnd()+1, preconnectCdn);
-			}
-
 			// src url
 			int urlIndex = content.indexOf("url(");
 			while (urlIndex >= 0 && !content.contains("url(#")) {
