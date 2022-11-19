@@ -6,9 +6,13 @@ import org.javlo.config.StaticConfig;
 import org.javlo.helper.StringHelper;
 
 public class SpecialConfigBean {
+	
+	private String mainCdn = null;
 
 	private Map config;
 	private StaticConfig staticConfig = null;
+
+	private Boolean trackingAccess = null;
 
 	public SpecialConfigBean(Map config, StaticConfig staticConfig) {
 		this.config = config;
@@ -30,7 +34,10 @@ public class SpecialConfigBean {
 	 * @return
 	 */
 	public boolean isTrackingAccess() {
-		return StringHelper.isTrue(config.get("tracking.access"));
+		if (trackingAccess  == null) {
+			trackingAccess = StringHelper.isTrue(config.get("tracking.access"));
+		}
+		return trackingAccess;
 	}
 
 	public boolean isNeedLogForPreview() {
@@ -77,7 +84,17 @@ public class SpecialConfigBean {
 	}
 	
 	public String getMainCdn() {
-		return (String)config.get("cdn.1");
+		if (mainCdn == null) {
+			mainCdn = (String)config.get("cdn.1");
+			if (mainCdn==null) {
+				mainCdn = "0";
+			}
+		}
+		if (mainCdn.length()==1) {
+			return null;
+		} else {
+			return mainCdn;
+		}
 	}
 	
 	public String getSearchPageName() {

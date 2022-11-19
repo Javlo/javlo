@@ -304,7 +304,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 	public void process(HttpServletRequest request, HttpServletResponse response, boolean post) throws ServletException {
 		
-		
 		request.getSession(); // create session
 
 		COUNT_ACCESS++;
@@ -342,6 +341,11 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		ContentContext ctx = null;
 		try {
 			ctx = ContentContext.getContentContext(request, response);
+			
+			// cdn
+			if (ctx.getGlobalContext().getSpecialConfig().getMainCdn() != null) {
+				response.addHeader("link", "<link href='"+StringHelper.extractHostAndProtocol(ctx.getGlobalContext().getSpecialConfig().getMainCdn())+"' rel='preconnect' crossorigin>");
+			};
 
 			if (!FIRST_REQUEST_SET.contains(globalContext.getContextKey())) {
 				synchronized (FIRST_REQUEST_SET) {

@@ -678,10 +678,10 @@ public class XMLManipulationHelper {
 					tagHead = tags[i];
 					
 					// CDN
-					if (tagHead != null && globalContext.getSpecialConfig().getMainCdn() != null) {
-						String preconnectCdn = "<link rel=\"preconnect\" href=\""+StringHelper.extractHostAndProtocol(globalContext.getSpecialConfig().getMainCdn())+"\">";
-						remplacement.addReplacement(tagHead.getOpenEnd()+1, tagHead.getOpenEnd()+2, preconnectCdn);
-					}
+//					if (tagHead != null && globalContext.getSpecialConfig().getMainCdn() != null) {
+//						String preconnectCdn = "<link rel=\"preconnect\" href=\""+StringHelper.extractHostAndProtocol(globalContext.getSpecialConfig().getMainCdn())+"\">";
+//						remplacement.addReplacement(tagHead.getOpenEnd()+1, tagHead.getOpenEnd()+2, preconnectCdn);
+//					}
 
 
 					String staticHeader = StringHelper.neverEmpty(globalContext.getStaticConfig().getHtmlHead(), "");
