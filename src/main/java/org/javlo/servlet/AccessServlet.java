@@ -342,11 +342,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		try {
 			ctx = ContentContext.getContentContext(request, response);
 			
-			// cdn
-			if (ctx.getGlobalContext().getSpecialConfig().getMainCdn() != null) {
-				response.addHeader("link", "<link href='"+StringHelper.extractHostAndProtocol(ctx.getGlobalContext().getSpecialConfig().getMainCdn())+"' rel='preconnect' crossorigin>");
-			};
-
 			if (!FIRST_REQUEST_SET.contains(globalContext.getContextKey())) {
 				synchronized (FIRST_REQUEST_SET) {
 					if (!FIRST_REQUEST_SET.contains(globalContext.getContextKey())) {
@@ -874,7 +869,12 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				ContentContext robotCtx = new ContentContext(ctx);
 				robotCtx.setDevice(Device.getFakeDevice("robot"));
 				robotCtx.setAbsoluteURL(true);
-				response.setHeader("link", "<" + URLHelper.createURL(robotCtx) + ">; rel=\"canonical\"");
+				response.addHeader("link", "<" + URLHelper.createURL(robotCtx) + ">; rel=\"canonical\"");
+				
+				// cdn
+				if (ctx.getGlobalContext().getSpecialConfig().getMainCdn() != null) {
+					response.addHeader("link", "<link href='"+StringHelper.extractHostAndProtocol(ctx.getGlobalContext().getSpecialConfig().getMainCdn())+"' rel='preconnect' crossorigin>");
+				};
 
 				request.setAttribute("social", SocialService.getInstance(ctx));
 
