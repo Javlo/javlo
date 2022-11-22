@@ -25,7 +25,11 @@ public class Cell {
 
 	public void setValue(String value) {
 		if (value != null) {
-			setControledWidth(value.length());
+			if (value.equals("null")) {
+				value = null;
+			} else {
+				setControledWidth(value.length());
+			}
 		}
 		this.value = value;
 	}
