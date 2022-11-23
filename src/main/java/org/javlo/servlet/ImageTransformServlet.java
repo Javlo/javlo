@@ -565,9 +565,7 @@ public class ImageTransformServlet extends FileServlet {
 		boolean mobileImage = false;
 		if (filter.endsWith(MOBILE_IMAGE_SUFFIX)) {
 			if (!config.isFilter(filter)) {
-				
 				System.out.println(">>>>>>>>> ImageTransformServlet.imageTransformForThread : filter not found : "+filter); //TODO: remove debug trace
-				
 				mobileImage = true;
 				filter = filter.substring(0, filter.lastIndexOf(MOBILE_IMAGE_SUFFIX));
 			}

@@ -236,7 +236,7 @@ public class ImageConfig {
 	public boolean isFilter(String filter) {
 		Iterator<String> keys = properties.getKeys();
 		while (keys.hasNext()) {
-			if (keys.next().contains('.'+filter+'.')) {
+			if (keys.next().startsWith(filter+'.')) {
 				return true;
 			}
 		}
