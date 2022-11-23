@@ -1221,7 +1221,6 @@ public class ImageTransformServlet extends FileServlet {
 				}
 
 				if (!imageFile.exists() || imageFile.isDirectory()) {
-					 
 					File dirFile = new File(StringHelper.getFileNameWithoutExtension(imageFile.getAbsolutePath()));
 					if (!dirFile.exists()) {
 						logger.warning("file not found : " + imageFile);
