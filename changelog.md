@@ -928,4 +928,5 @@ Security in case of vulnerabilities.
   - CDN
 ### Modified
   - load cookies.css after dom loading
+  - image : use -mob filter if defined
 ### fixed

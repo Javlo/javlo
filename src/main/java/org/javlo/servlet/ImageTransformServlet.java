@@ -562,10 +562,12 @@ public class ImageTransformServlet extends FileServlet {
 			filter = filter.substring(0, filter.lastIndexOf(SMALL_IMAGE_SUFFIX));
 		}
 		
-		boolean mobileImage = false;		
+		boolean mobileImage = false;
 		if (filter.endsWith(MOBILE_IMAGE_SUFFIX)) {
-			mobileImage = true;
-			filter = filter.substring(0, filter.lastIndexOf(MOBILE_IMAGE_SUFFIX));
+			if (!config.isFilter(filter)) {
+				mobileImage = true;
+				filter = filter.substring(0, filter.lastIndexOf(MOBILE_IMAGE_SUFFIX));
+			}
 		}
 		
 		int width = config.getWidth(device, filter, area);

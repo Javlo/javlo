@@ -232,6 +232,16 @@ public class ImageConfig {
 		}
 		return properties.getInt(filter + ".grid-height", -1);
 	}
+	
+	public boolean isFilter(String filter) {
+		Iterator<String> keys = properties.getKeys();
+		while (keys.hasNext()) {
+			if (keys.next().contains('.'+filter+'.')) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public int getWidth(Device device, String filter, String area) {
 		if (device != null) {
