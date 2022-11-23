@@ -565,10 +565,16 @@ public class ImageTransformServlet extends FileServlet {
 		boolean mobileImage = false;
 		if (filter.endsWith(MOBILE_IMAGE_SUFFIX)) {
 			if (!config.isFilter(filter)) {
+				
+				System.out.println(">>>>>>>>> ImageTransformServlet.imageTransformForThread : filter not found : "+filter); //TODO: remove debug trace
+				
 				mobileImage = true;
 				filter = filter.substring(0, filter.lastIndexOf(MOBILE_IMAGE_SUFFIX));
 			}
 		}
+		
+		System.out.println(">>>>>>>>> ImageTransformServlet.imageTransformForThread : mobileImage = "+mobileImage); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> ImageTransformServlet.imageTransformForThread : filter = "+filter); //TODO: remove debug trace
 		
 		int width = config.getWidth(device, filter, area);
 		int height = config.getHeight(device, filter, area);
