@@ -19,6 +19,7 @@ import java.awt.image.IndexColorModel;
 import java.awt.image.Kernel;
 import java.awt.image.WritableRaster;
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,9 +47,11 @@ import org.apache.batik.transcoder.TranscodingHints;
 import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.batik.util.SVGConstants;
 import org.apache.commons.io.FileUtils;
+import org.javlo.context.GlobalContext;
 import org.javlo.helper.MathHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.service.remote.RemoveBgService;
 import org.jcodec.codecs.vpx.VP8Decoder;
 import org.jcodec.common.model.Picture;
 import org.jcodec.scale.AWTUtil;
@@ -2154,6 +2157,21 @@ public class ImageEngine {
 		outImage = makeTransparent(outImage, 0, 0);
 		outImage.createGraphics().drawImage(src, 0, 0, null);
 		return outImage;
+	}
+	
+	public static BufferedImage removeBg(GlobalContext globalContext, BufferedImage image) throws IOException {
+		final String KEY = "removebg.key";
+		String apiKey = globalContext.getSpecialConfig().get(KEY, null);
+		if (apiKey == null) {
+			logger.warning("no API key found for removebg : "+KEY);
+			return image;
+		} else {
+			ByteArrayOutputStream arrayOut = new ByteArrayOutputStream();
+			ImageIO.write(image, "png", arrayOut);
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			RemoveBgService.removeBg(apiKey, new ByteArrayInputStream(arrayOut.toByteArray()), out);
+			return ImageIO.read(new ByteArrayInputStream(out.toByteArray()));
+		}
 	}
 
 	private static BufferedImage makeTransparent(BufferedImage image, int x, int y) {

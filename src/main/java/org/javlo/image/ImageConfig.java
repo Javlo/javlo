@@ -599,6 +599,11 @@ public class ImageConfig {
 		String key = getKey(device, filter, area, "crop-resize");
 		return properties.getBoolean(key, device != null ? isCropResize(null, ALL, null) : false);
 	}
+	
+	public boolean isRemoveBg(Device device, String filter, String area) {
+		String key = getKey(device, filter, area, "removebg");
+		return properties.getBoolean(key, device != null ? isCropResize(null, ALL, null) : false);
+	}
 
 	public boolean isAddBorder(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "add-border");
@@ -755,5 +760,4 @@ public class ImageConfig {
 		
 		System.out.println("*** done ***");
 	}
-
 }

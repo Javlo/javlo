@@ -412,6 +412,10 @@ public class ImageTransformServlet extends FileServlet {
 		if (config.isGrayscaleLuminosity(ctx.getDevice(), filter, area)) {
 			img = ImageEngine.luminosity(img);
 		}
+		if (config.isRemoveBg(ctx.getDevice(), filter, area)) {
+			img = ImageEngine.removeBg(ctx.getGlobalContext(), img);
+		}
+		
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 2.2");
 		if (config.isCrystallize(ctx.getDevice(), filter, area)) {
@@ -697,6 +701,10 @@ public class ImageTransformServlet extends FileServlet {
 		}
 		if (config.isGlow(device, filter, area)) {
 			img = (new GlowFilter()).filter(img, null);
+		}
+		
+		if (config.isRemoveBg(device, filter, area)) {
+			img = ImageEngine.removeBg(globalContext, img);
 		}
 		float contrast = config.getConstrast(device, filter, area);
 		float brightness = config.getBrightness(device, filter, area);

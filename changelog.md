@@ -926,6 +926,7 @@ Security in case of vulnerabilities.
 ### Added
   - upload files from preview
   - CDN
+  - remove.bg service integration
 ### Modified
   - load cookies.css after dom loading
   - image : use -mob filter if defined
