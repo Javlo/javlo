@@ -98,6 +98,12 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 	public void setDate(String date) {
 		properties.setProperty("date", date);
 	}
+	
+	
+	@Override
+	protected boolean getColumnableDefaultValue() {
+		return true;
+	}
 
 	public File getFile(ContentContext ctx) throws Exception {
 		String fileName = getFileName();
@@ -362,6 +368,7 @@ public class SmartLink extends ComplexPropertiesLink implements ILink, IAction {
 
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
+		performColumnable(ctx);
 		File file = getFile(ctx);
 		String oldValue = getValue();
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
