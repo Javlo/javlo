@@ -521,8 +521,9 @@ public abstract class ElementaryURLHelper {
 	}
 	
 	public static String addCdn(ContentContext ctx, String url) {
+		
 		if (ctx.getGlobalContext().getSpecialConfig().getMainCdn() != null) {
-			if (!StringHelper.isURL(url)) {
+			if (!StringHelper.isURL(url) && !StringHelper.isVideo(url)) {
 				url = mergePath(ctx.getGlobalContext().getSpecialConfig().getMainCdn(), url);
 			}
 		}

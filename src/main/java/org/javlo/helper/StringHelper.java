@@ -1824,15 +1824,15 @@ public class StringHelper {
 	 * @return true if file name is a video
 	 */
 	public static final boolean isVideo(String fileName) {
-		String ext = getFileExtension(fileName);
-		boolean res = ext.equalsIgnoreCase("wmv");
-		res = res || ext.equalsIgnoreCase("avi");
-		res = res || ext.equalsIgnoreCase("mov");
-		res = res || ext.equalsIgnoreCase("mpg");
-		res = res || ext.equalsIgnoreCase("mpeg");
-		res = res || ext.equalsIgnoreCase("ru");
-		res = res || ext.equalsIgnoreCase("mp4");
-		res = res || ext.equalsIgnoreCase("flv");
+		String ext = getFileExtension(fileName).toLowerCase();
+		boolean res = ext.equals("wmv");
+		res = res || ext.equals("avi");
+		res = res || ext.equals("mov");
+		res = res || ext.equals("mpg");
+		res = res || ext.equals("mpeg");
+		res = res || ext.equals("ru");
+		res = res || ext.equals("mp4");
+		res = res || ext.equals("flv");
 		return res;
 	}
 
