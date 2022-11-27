@@ -75,7 +75,7 @@ input,select,textarea,button {
 a {
 	text-decoration: none;
 	outline: none;
-	color: #069;
+	color: var(--action-color);
 }
 
 a:hover {
@@ -968,13 +968,13 @@ h2.prize {
 .breadcrumbs {
 	a {
 		display: inline-block;
-		color: #069;
+		color: var(--action-color);
 		padding: 5px 20px 5px 0;
 		background: url(../images/separator2.png) no-repeat right center;
 		margin-right: 10px;
 		.link {
 			padding: 0;
-			color: #069;
+			color: var(--action-color);
 		}
 		
 	}
@@ -1082,7 +1082,7 @@ h2.prize {
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
 	-moz-box-shadow: 1px 1px 0 #fff;
-	color: #069;
+	color: var(--action-color);
 }
 
 .widgetlist li a span {
@@ -1393,7 +1393,7 @@ button.button:hover,.button:active {
 }
 
 .progress .bluebar {
-	background-color: #069;
+	background-color: var(--action-color);
 }
 
 .progress .orangebar {
@@ -1454,7 +1454,7 @@ button.button:hover,.button:active {
 
 .submenu li.current a {
 	background: #f7f7f7;
-	color: #069;
+	color: var(--action-color);
 	text-shadow: none;
 }
 
@@ -2780,7 +2780,7 @@ table.dataTable td {
 }
 
 .color069 {
-	color: #069;
+	color: var(--action-color);
 }
 
 .tooltipflot {

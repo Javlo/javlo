@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -986,6 +987,17 @@ public class AdminAction extends AbstractModuleAction {
 		return null;
 	}
 
+	/**
+	 * @param request
+	 * @param globalContext
+	 * @param session
+	 * @param user
+	 * @param ctx
+	 * @param messageRepository
+	 * @param i18nAccess
+	 * @param fileCache
+	 * @return
+	 */
 	public static String performClearimagecache(HttpServletRequest request, GlobalContext globalContext, HttpSession session, User user, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, FileCache fileCache) {
 		if (!AdminUserSecurity.getInstance().isAdmin(user)) {
 			return "security error !";
@@ -1007,6 +1019,17 @@ public class AdminAction extends AbstractModuleAction {
 			}
 			fileCache.clear(globalContext.getContextKey());
 		}
+		
+		/** clear CDN **/
+		for (String cdnUrlStr : ctx.getGlobalContext().getSpecialConfig().getCdnRefreshUrl()) {
+			try {
+				URL cdnUrl = new URL(cdnUrlStr);
+				cdnUrl.openConnection();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
 		return null;
 	}
 

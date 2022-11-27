@@ -1,5 +1,7 @@
 package org.javlo.context;
 
+import java.net.URL;
+import java.util.List;
 import java.util.Map;
 
 import org.javlo.config.StaticConfig;
@@ -95,6 +97,11 @@ public class SpecialConfigBean {
 		} else {
 			return mainCdn;
 		}
+	}
+	
+	public List<String> getCdnRefreshUrl() {
+		String refreshCdh = (String)config.get("cdn.refresh");
+		return StringHelper.stringToCollection(refreshCdh, ",", true);
 	}
 	
 	public String getSearchPageName() {

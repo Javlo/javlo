@@ -1165,15 +1165,18 @@ public class XMLManipulationHelper {
 
 		StringWriter outString = new StringWriter();
 		BufferedWriter out = new BufferedWriter(outString);
+		
+		out.append("<%=(ctx.isInteractiveMode() ? \"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\"+URLHelper.createStaticURL(ctx,\"css/main_edit_and_preview.scss\")+\"?ts=\"+infoBean.getTs()+\"\\\" />\" : \"\")  %>");
 
 		if (template.isEditable()) {
-			out.append("<%if (StringHelper.isTrue(request.getParameter(\"_display-zone\"))) {%><link rel=\"stylesheet\" type=\"text/css\" href=\"<%=URLHelper.createStaticURL(ctx,\"/css/editable/edit_editable.css\")+\"?ts=\"+infoBean.getTs()%>\" /><%}%>");
-			out.newLine();
+/*			out.append("<%if (StringHelper.isTrue(request.getParameter(\"_display-zone\"))) {%><link rel=\"stylesheet\" type=\"text/css\" href=\"<%=URLHelper.createStaticURL(ctx,\"/css/editable/edit_editable.css\")+\"?ts=\"+infoBean.getTs()%>\" /><%}%>");
+			out.newLine(); */
 			out.append("<%if (StringHelper.isTrue(request.getParameter(\"_display-zone\"))) {%><script src=\"<%=URLHelper.createStaticURL(ctx,\"/js/editable/edit_editable.js\")%>\"></script><%}%>");
 			out.newLine();
 		}
 
 		out.append("<%if (StringHelper.isTrue(request.getParameter(\"_display-zone\"))) {%><link rel=\"stylesheet\" type=\"text/css\" href=\"<%=URLHelper.createStaticURL(ctx,\"/css/preview/edit_preview.css\")+\"?ts=\"+infoBean.getTs()%>\" /><%}%>");
+		
 		out.newLine();
 		out.append("<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE || ctx.getRenderMode() == ContentContext.TIME_MODE && !ctx.isPreviewOnly()) {");
 		out.newLine();
@@ -1181,6 +1184,9 @@ public class XMLManipulationHelper {
 		out.newLine();
 		String previewCSS = staticConfig.getCssPreview();
 		out.append("<%=(ctx.isInteractiveMode() ? \"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\"+URLHelper.createStaticURL(ctx,\"" + previewCSS + "\")+\"?ts=\"+infoBean.getTs()+\"\\\" />\" : \"\")  %>");
+		
+		
+		
 		out.newLine();
 		// out.append("<%String cssPreviewURL =
 		// URLHelper.mergePath(URLHelper.createStaticURL(ctx,\"/\"),

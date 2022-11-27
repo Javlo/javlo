@@ -70,10 +70,10 @@
 	}
 	.image:hover {
 		text-decoration: none;
-		border-color: #337ab7; 
+		border-color: var(--action-color); 
 	}
 	.image.select {
-		border-color: #337ab7;
+		border-color: var(--action-color);
 		box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
 	}
 }

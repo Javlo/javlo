@@ -103,7 +103,7 @@ mark,
   color: @text-muted;
 }
 .text-primary {
-  .text-emphasis-variant(@brand-primary);
+  color: var(--action-text);
 }
 .text-success {
   .text-emphasis-variant(@state-success-text);
@@ -124,8 +124,8 @@ mark,
 .bg-primary {
   // Given the contrast here, this is the only class to have its color inverted
   // automatically.
-  color: #fff;
-  .bg-variant(@brand-primary);
+  color: var(--action-text);
+  background-color: var(--action-color);
 }
 .bg-success {
   .bg-variant(@state-success-bg);

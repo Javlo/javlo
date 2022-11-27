@@ -1,0 +1,17 @@
+JAVLO2 : file structure
+=======================
+
+
+- main > webapps
+	main_edit_and_preview.scss > global css, for variable or css between edit and preview mode
+	css > bootstrap 3.3.2 : bootstrap framework for preview mode
+		include from bootstreap_preview.less (all bootstrap class wrapper by #edit_preview id)
+	edit > global.scss
+		specific css for edit mode
+	preview > edit_preview.css
+		preview edit css
+	jsp > preview > css > bootstrap
+		preview css, modification of bootstreap FW
+		main.css > include BS + include main_sass.scss class
+	
+	
