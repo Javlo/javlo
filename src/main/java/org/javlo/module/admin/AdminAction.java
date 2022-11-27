@@ -1024,6 +1024,7 @@ public class AdminAction extends AbstractModuleAction {
 		for (String cdnUrlStr : ctx.getGlobalContext().getSpecialConfig().getCdnRefreshUrl()) {
 			try {
 				URL cdnUrl = new URL(cdnUrlStr);
+				logger.info("call refresh cdn : "+cdnUrl);
 				cdnUrl.openConnection();
 			} catch (Exception e) {
 				e.printStackTrace();
