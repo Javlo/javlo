@@ -150,36 +150,36 @@ if (!rightOnPage) {
 							<c:if test="${not empty param.button_publish and empty param.previewEdit and info.page.flowIndex>2}">
 								<a class="action-button publish ajax" href="${info.currentURL}?webaction=publish&render-mode=1"><span>${i18n.edit['command.publish']}</span></a>
 							</c:if>
-							
+
 							<%
 							if (rightOnPage) {
 							%>
 
 							<li class="btn-group"><form id="add_copy_page" action="${info.currentURL}" method="post">
-								<div class="pc_line">
-									<input type="hidden" name="webaction" value="edit.copypage" />
-									<button class="btn btn-default btn-sm btn-paste" type="submit" title="${i18n.edit['preview.label.copy-page']}">
-										<i class="bi bi-files"></i>
-									</button>
-								</div>
-							</form>
+									<div class="pc_line">
+										<input type="hidden" name="webaction" value="edit.copypage" />
+										<button class="btn btn-default btn-sm btn-paste" type="submit" title="${i18n.edit['preview.label.copy-page']}">
+											<i class="bi bi-files"></i>
+										</button>
+									</div>
+								</form>
 
-							<form id="add_paste_page" action="${info.currentURL}" method="post" class="${empty info.contextForCopy || !info.page.pageLocalEmpty || info.page.childrenAssociation?'disabled':''}">
-								<div class="pc_line">
-									<c:if test="${!(empty info.contextForCopy || !info.page.pageLocalEmpty || info.page.childrenAssociation)}">
-										<input type="hidden" name="webaction" value="edit.pastepage" />
-										<button class="action btn-wait-loading" type="submit" title="${i18n.edit['preview.label.paste-page']}">
-											<i class="bi bi-box-arrow-in-down"></i>
-										</button>
-									</c:if>
-									<c:if test="${empty info.contextForCopy || !info.page.pageLocalEmpty || info.page.childrenAssociation}">
-										<button class="btn btn-default btn-sm btn-copy" id="pc_paste_page" type="submit">
-											<i class="bi bi-box-arrow-in-down"></i>
-										</button>
-									</c:if>
-								</div>
-							</form></li>
-							
+								<form id="add_paste_page" action="${info.currentURL}" method="post" class="${empty info.contextForCopy || !info.page.pageLocalEmpty || info.page.childrenAssociation?'disabled':''}">
+									<div class="pc_line">
+										<c:if test="${!(empty info.contextForCopy || !info.page.pageLocalEmpty || info.page.childrenAssociation)}">
+											<input type="hidden" name="webaction" value="edit.pastepage" />
+											<button class="action btn-wait-loading" type="submit" title="${i18n.edit['preview.label.paste-page']}">
+												<i class="bi bi-box-arrow-in-down"></i>
+											</button>
+										</c:if>
+										<c:if test="${empty info.contextForCopy || !info.page.pageLocalEmpty || info.page.childrenAssociation}">
+											<button class="btn btn-default btn-sm btn-copy" id="pc_paste_page" type="submit">
+												<i class="bi bi-box-arrow-in-down"></i>
+											</button>
+										</c:if>
+									</div>
+								</form></li>
+
 							<c:if test="${!userInterface.minimalInterface && !contentContext.asTimeMode}">
 								<li class="undo${contentContext.canUndo?'':' no-access'}"><form class="${!info.page.pageLocalEmpty?'no-access':''}" action="${info.currentURL}" method="get">
 										<c:if test="${not empty param['force-device-code']}">
@@ -200,56 +200,67 @@ if (!rightOnPage) {
 							</c:if>
 
 							<li><form id="pc_del_page_form" class="<%=readOnlyClass%>" action="${info.currentURL}" method="post">
-								<div>
-									<c:if test="${not empty param['force-device-code']}">
-										<input type="hidden" name="force-device-code" value="${param['force-device-code']}" />
-									</c:if>
-									<input type="hidden" value="${info.pageID}" name="page" />
-									<input type="hidden" value="${globalContext.pageTrash?'edit.DeletePage':'edit.movePageToTrash'}" name="webaction" />
-									<c:if test="${not empty param['force-device-code']}">
-										<input type="hidden" name="force-device-code" value="${param['force-device-code']}" />
-									</c:if>
-									<c:if test="${!info.page.root}">
-										<button class="btn btn-default btn-sm btn-delete" type="submit" onclick="if (!confirm('${i18n.edit['menu.confirm-page']}')) return false;" title="${i18n.edit['menu.delete']}">
-											<i class="bi bi-trash"></i>
-										</button>
-									</c:if>
-									<c:if test="${info.page.root}">
-										<button class="btn btn-default btn-sm btn-delete" type="button" onclick="if (!confirm('${i18n.edit['menu.confirm-page']}')) return false;" disabled="disabled">
-											<i class="bi bi-trash"></i>
-										</button>
-									</c:if>
-								</div>
-							</form></li>
+									<div>
+										<c:if test="${not empty param['force-device-code']}">
+											<input type="hidden" name="force-device-code" value="${param['force-device-code']}" />
+										</c:if>
+										<input type="hidden" value="${info.pageID}" name="page" />
+										<input type="hidden" value="${globalContext.pageTrash?'edit.DeletePage':'edit.movePageToTrash'}" name="webaction" />
+										<c:if test="${not empty param['force-device-code']}">
+											<input type="hidden" name="force-device-code" value="${param['force-device-code']}" />
+										</c:if>
+										<c:if test="${!info.page.root}">
+											<button class="btn btn-default btn-sm btn-delete" type="submit" onclick="if (!confirm('${i18n.edit['menu.confirm-page']}')) return false;" title="${i18n.edit['menu.delete']}">
+												<i class="bi bi-trash"></i>
+											</button>
+										</c:if>
+										<c:if test="${info.page.root}">
+											<button class="btn btn-default btn-sm btn-delete" type="button" onclick="if (!confirm('${i18n.edit['menu.confirm-page']}')) return false;" disabled="disabled">
+												<i class="bi bi-trash"></i>
+											</button>
+										</c:if>
+									</div>
+								</form></li>
 							<%
 							}
 							%>
-							
-							<c:if test="${fn:length(integrities.checker)>0}">
-							<li><a class="btn btn-default btn-sm btn-integrity btn-color alert-${integrities.levelLabel} btn-notext badged" data-toggle="_eprv_collapse" data-target="#integrity-list" href="#integrity-list" aria-expanded="false" aria-controls="integrity-list"> <i class="bi bi-exclamation-triangle"></i> <c:if test="${fn:length(integrities.checker)>0}">
-										<div class="badge unread-count">${fn:length(integrities.checker)}</div>
-									</c:if>
-							</a>
-								<div class="integrity-message collapse${integrities.error && contentContext.previewEdit?' in':''}" id="integrity-list">
-									<ul class="list-group">
-										<c:forEach var="checker" items="${integrities.checker}">
-											<c:if test="${checker.errorCount>0}">
-												<li class="list-group-item list-group-item-${checker.levelLabel}"><span class="badge">${checker.errorCount}</span>${checker.errorMessage}</li>
-											</c:if>
-										</c:forEach>
-									</ul>
-								</div></li>
-							<c:if test="${userInterface.IM}">
-								<li><a class="btn btn-default btn-sm btn-discution btn-color btn-notext badged" data-toggle="_eprv_collapse" data-target="#discution" href="#discution" aria-expanded="false" aria-controls="discution"> <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> <c:if test="${im.messagesSize>0}">
-											<div class="badge unread-count">${im.messagesSize}</div>
-										</c:if>
-								</a>
-									<div class="discution collapse" id="discution">
-										<jsp:include page="${info.editTemplateFolder}/im.jsp" />
-									</div></li>
-							</c:if>
-						</c:if>
 
+							<c:if test="${not empty integrities && !globalContext.collaborativeMode && !globalContext.mailingPlatform && logged}">
+								<c:if test="${fn:length(integrities.checker)==0}">
+									<li><a class="btn btn-default btn-sm btn-integrity btn-color alert-success btn-notext" data-toggle="collapse" data-target="#integrity-list" href="#integrity-list" aria-expanded="false" aria-controls="integrity-list"> <i class="bi bi-check2-square"></i>
+									</a>
+										<div class="integrity-message collapse${integrities.error && contentContext.previewEdit?' in':''}" id="integrity-list">
+											<ul class="list-group">
+												<li class="list-group-item list-group-item-success">${i18n.edit['integrity.no_error']}</li>
+											</ul>
+										</div></li>
+								</c:if>
+
+								<c:if test="${fn:length(integrities.checker)>0}">
+									<li><a class="btn btn-default btn-sm btn-integrity btn-color alert-${integrities.levelLabel} btn-notext badged" data-toggle="_eprv_collapse" data-target="#integrity-list" href="#integrity-list" aria-expanded="false" aria-controls="integrity-list"> <i class="bi bi-exclamation-triangle"></i> <c:if test="${fn:length(integrities.checker)>0}">
+												<div class="badge unread-count">${fn:length(integrities.checker)}</div>
+											</c:if>
+									</a>
+										<div class="integrity-message collapse${integrities.error && contentContext.previewEdit?' in':''}" id="integrity-list">
+											<ul class="list-group">
+												<c:forEach var="checker" items="${integrities.checker}">
+													<c:if test="${checker.errorCount>0}">
+														<li class="list-group-item list-group-item-${checker.levelLabel}"><span class="badge">${checker.errorCount}</span>${checker.errorMessage}</li>
+													</c:if>
+												</c:forEach>
+											</ul>
+										</div></li>
+									<c:if test="${userInterface.IM}">
+										<li><a class="btn btn-default btn-sm btn-discution btn-color btn-notext badged" data-toggle="_eprv_collapse" data-target="#discution" href="#discution" aria-expanded="false" aria-controls="discution"> <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> <c:if test="${im.messagesSize>0}">
+													<div class="badge unread-count">${im.messagesSize}</div>
+												</c:if>
+										</a>
+											<div class="discution collapse" id="discution">
+												<jsp:include page="${info.editTemplateFolder}/im.jsp" />
+											</div></li>
+									</c:if>
+								</c:if>
+							</c:if>
 						</c:if>
 					</c:if>
 

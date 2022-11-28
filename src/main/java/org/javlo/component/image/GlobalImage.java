@@ -1199,6 +1199,9 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 
 	private String getWidthKey(ContentContextBean ctx) {
+		if (ctx == null) {
+			return null;
+		}
 		Device device = ctx.getDevice();
 		try {
 			String pageId = "noid";
@@ -1235,6 +1238,9 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 
 	public int getWidth(ContentContextBean ctx) {
+		if (ctx == null) {
+			return -1;
+		}
 		String width = properties.getProperty(getWidthKey(ctx));
 		if (width == null) {
 			return -1;
