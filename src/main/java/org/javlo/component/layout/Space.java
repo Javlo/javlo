@@ -22,7 +22,7 @@ public class Space extends AbstractVisualComponent {
 		if (ctx.getCurrentTemplate().isMailing()) {
 			finalCode.append("<table class=\"" + getType() + "\"><tr><td height=\""+getStyle()+"\"  style=\"font-size: 0px; height: " + getStyle() + "px;\">&nbsp;.</td></tr></table>");
 		} else {
-			finalCode.append("<div class=\"" + getType() + "\" style=\"font-size: 0px; height: " + getStyle() + "px;\">&nbsp;.</div>");
+			finalCode.append("<div class=\"" + getType() + "\" style=\"font-size: 0px; height: " + getStyle() + ";\">&nbsp;.</div>");
 		}
 		return finalCode.toString();
 	}
@@ -42,7 +42,7 @@ public class Space extends AbstractVisualComponent {
 
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
-		return new String[] { "1", "3", "5", "9", "20", "height-1line", "height-2lines" };
+		return new String[] { "1px", "3px", "5px", "9px", "20px", "1em", "2em" };
 	}
 
 	@Override
