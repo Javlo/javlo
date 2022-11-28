@@ -86,6 +86,10 @@ public class ContentContext {
 
 	public static final int MODULE_MODE = 8; // view module outside cms context.
 	
+	public static final int POST_MODE = 9;
+	
+	public static final int GET_MODE = 10;
+	
 	public static final int MODULE_DESKTOP_SPECIAL_MODE = 1000;
 	
 	public static final int MODULE_MOBILE_SPECIAL_MODE = 1001;
@@ -304,6 +308,10 @@ public class ContentContext {
 			return "desktop";
 		case MODULE_MOBILE_SPECIAL_MODE:
 			return "mobile";
+		case GET_MODE:
+			return "get";
+		case POST_MODE:
+			return "post";
 		default:
 			return "unknown";
 		}

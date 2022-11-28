@@ -153,7 +153,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	public static final String FORCE_COMPONENT_ID = "___FORCE_COMPONENT_ID";
 
-	private static final Integer[] ALL_MODES = new Integer[] { ContentContext.MODULE_DESKTOP_SPECIAL_MODE, ContentContext.MODULE_MOBILE_SPECIAL_MODE, ContentContext.VIEW_MODE, ContentContext.PREVIEW_MODE, ContentContext.PAGE_MODE, ContentContext.TIME_MODE };
+	private static final Integer[] ALL_MODES = new Integer[] { 
+			ContentContext.MODULE_DESKTOP_SPECIAL_MODE, 
+			ContentContext.MODULE_MOBILE_SPECIAL_MODE, 
+			ContentContext.VIEW_MODE, 
+			ContentContext.PREVIEW_MODE, 
+			ContentContext.PAGE_MODE, 
+			ContentContext.TIME_MODE,
+			ContentContext.GET_MODE,
+			ContentContext.POST_MODE
+	};
 
 	private Map<String, Properties> i18nView = Collections.EMPTY_MAP;
 
@@ -3378,6 +3387,15 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return false;
 		} else {
 			if (!ctx.isPreviewEditionMode()) {
+				if (ctx.isPostRequest()) {
+					if (!componentBean.getHiddenModes().contains(ContentContext.POST_MODE)) {
+						return false;
+					}
+				} else {
+					if (!componentBean.getHiddenModes().contains(ContentContext.GET_MODE)) {
+						return false;
+					}
+				}
 				if (mobile != null) {
 					if (mobile) {
 						if (componentBean.getHiddenModes().contains(ContentContext.MODULE_MOBILE_SPECIAL_MODE)) {
