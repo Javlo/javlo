@@ -930,4 +930,6 @@ Security in case of vulnerabilities.
 ### Modified
   - load cookies.css after dom loading
   - image : use -mob filter if defined
+  - new preview interface
 ### fixed
+## [2.1.5.0] - 28/11/2022
