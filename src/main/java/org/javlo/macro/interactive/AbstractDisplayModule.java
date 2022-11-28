@@ -104,7 +104,7 @@ public abstract class AbstractDisplayModule implements IInteractiveMacro, IActio
 
 	@Override
 	public String getIcon() {
-		return "fa fa-signal";
+		return "bi bi-boxes";
 	}
 	
 	@Override

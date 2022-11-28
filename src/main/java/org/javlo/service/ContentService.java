@@ -877,8 +877,12 @@ public class ContentService implements IPrintInfo {
 				subContext.releaseAllCache();
 			}
 			clearComponentCache();
-			shortURLMap = null;
+			releaseShortUrlMap(globalContext);
 		}
+	}
+	
+	public void releaseShortUrlMap(GlobalContext globalContext) throws Exception {
+		shortURLMap = null;
 	}
 
 	public void removeAttributeRAWKey(ContentContext ctx, String key) {

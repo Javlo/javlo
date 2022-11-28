@@ -24,7 +24,7 @@ public class MailingMacroModule extends AbstractDisplayModule {
 	
 	@Override
 	public String getIcon() {
-		return "<i class=\"fa fa-envelope-o\" aria-hidden=\"true\"></i>";
+		return "fa fa-envelope-o";
 	}
 
 }

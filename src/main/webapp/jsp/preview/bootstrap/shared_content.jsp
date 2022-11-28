@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
-%><h2><span class="glyphicon glyphicon-folder-open" aria-hidden="true"></span>Resources</h2>
+%><h2><i class="bi bi-file-earmark"></i> Resources</h2>
 <div class="well drop-files">
 	<c:url var="uploadUrl" value="${info.uploadURL}" context="/">
 		<c:param name="provider" value="${provider.name}" />
@@ -67,7 +67,7 @@
 		<a class="btn btn-default" title="link" lang="en" href="${provider.URL}" target="_blank"><span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true"></span></a>
 		</c:if>
 		<c:if test="${info.admin}">
-		<button class="btn btn-default pull-right" title="add" lang="en" onclick="editPreview.openModal('${i18n.edit['global.shared-config']}', '${url}'); return false;"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button>
+		<button class="btn btn-default pull-right" title="add" lang="en" onclick="editPreview.openModal('${i18n.edit['global.shared-config']}', '${url}'); return false;"><i class="bi bi-plus-lg"></i></button>
 		</c:if>
 		</div>		
 		<c:if test="${fn:length(sharedContentCategories)>1}">

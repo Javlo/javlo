@@ -7,7 +7,7 @@ ContentContext ctx = ContentContext.getContentContext(request, response);
 ContentContext editCtx = new ContentContext(ctx);
 editCtx.setRenderMode(ContentContext.EDIT_MODE);
 %><div class="settings">
-<h2><span class="glyphicon glyphicon-cog" aria-hidden="true"></span>Settings</h2>
+<h2><i class="bi bi-gear"></i> Settings</h2>
 <div class="height-to-bottom">
 <c:if test="${not empty editUser && !globalContext.mailingPlatform}">
 	<c:url var="url" value="<%=URLHelper.createURL(editCtx)%>" context="/">
@@ -44,7 +44,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 </c:if>
 
 <c:if test="${fn:length(info.interactiveMacro)>0 || fn:length(info.macro)>0}">
-<h2><span class="glyphicon glyphicon-wrench" aria-hidden="true"></span>${i18n.edit['command.macro']}</h2>
+<h2><i class="bi bi-wrench-adjustable-circle"></i> ${i18n.edit['command.macro']}</h2>
 <c:forEach var="macro" items="${info.interactiveMacro}">
 	<c:url var="url" value="<%=URLHelper.createURL(editCtx)%>" context="/">
 		<c:param name="module" value="macro" />

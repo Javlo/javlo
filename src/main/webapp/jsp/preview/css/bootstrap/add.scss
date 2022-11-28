@@ -1,11 +1,9 @@
 #preview_command .add {
 	
 	position: fixed;
-	top: 10vh;
-	bottom: 10vh;
+	right: 30px;
+	bottom: 30px;
 	right: 0;
-	height: 80vh;
-	
 	display: flex;
     justify-content: center;
     align-items: center;
@@ -59,6 +57,9 @@
 	}
 	
 	.macros {
+		position: fixed;
+		bottom: 30px;
+		right: 60px;
 		display: flex;
     	flex-direction: column;
     	justify-content: center;

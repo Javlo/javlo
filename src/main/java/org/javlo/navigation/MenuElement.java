@@ -5050,6 +5050,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			}
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			this.shortURL = 'U' + StringHelper.createKey(globalContext.getStaticConfig().getShortURLSize(), shortURLs);
+			ContentService.getInstance(ctx.getGlobalContext()).releaseShortUrlMap(globalContext);
 			PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 		}
 		return shortURL;

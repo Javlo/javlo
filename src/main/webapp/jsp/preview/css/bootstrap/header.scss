@@ -27,6 +27,7 @@
 
 #preview_command .page-actions {
 	margin: 0 auto;
+	position: relative;
 }
 
 
@@ -50,8 +51,14 @@
  }
 
  #preview_command .header .menu {
- 	float: left;
 	height: $header-height;
+	display: flex;
+	form {
+		margin-right: 5px;
+		.pc_line, ._language {
+			margin-top: 12px;
+		}
+	}
  }
 
 #preview_command .header .select {
@@ -84,10 +91,9 @@
 
 #preview_command .integrity-message {
 	position: absolute;
-	margin-top: -30px;
+	margin-top: 10px;
 	width: 380px;
-	left: -385px;
-	opacity: 0.9;
+	right: -60px;
 }
 
 #preview_command #_language-list {
@@ -133,6 +139,23 @@
 	display: none;
 }
 
-#preview_command ._language {
-	margin-top: 12px;
+#preview_command li.btn-group {
+	display: flex;
+	.btn {
+		border-radius: 0;
+		margin-left: -1px;
+	}
+	form:first-child {
+		.btn {
+			border-bottom-left-radius: 3px;
+			border-top-left-radius: 3px;
+			margin-left: 0;
+		}
+	}
+	form:last-child {
+		.btn {
+			border-bottom-right-radius: 3px;
+			border-top-right-radius: 3px;
+		}
+	}
 }

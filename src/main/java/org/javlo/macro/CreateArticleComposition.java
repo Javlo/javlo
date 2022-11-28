@@ -347,7 +347,7 @@ public class CreateArticleComposition extends AbstractInteractiveMacro implement
 	
 	@Override
 	public String getIcon() {
-		return "fa fa-cogs";
+		return "bi bi-file-earmark-richtext";
 	}
 	
 	@Override

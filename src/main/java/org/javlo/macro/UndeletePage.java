@@ -184,7 +184,7 @@ public class UndeletePage extends AbstractInteractiveMacro implements IAction {
 
 	@Override
 	public String getIcon() {
-		return "fa fa-cogs";
+		return "bi bi-life-preserver";
 	}
 	
 	@Override

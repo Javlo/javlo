@@ -300,7 +300,6 @@ public class CatchAllFilter implements Filter {
 			}
 		} else if (shortURI.startsWith("/")) {
 			shortURI = shortURI.substring(1);
-
 		}
 
 		if (shortURI.length() == globalContext.getStaticConfig().getShortURLSize() + 1 && shortURI.startsWith("U")) {

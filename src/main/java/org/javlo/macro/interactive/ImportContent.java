@@ -207,7 +207,7 @@ public class ImportContent implements IInteractiveMacro, IAction {
 
 	@Override
 	public String getIcon() {
-		return "fa fa-cogs";
+		return "bi bi-nut";
 	}
 
 	@Override

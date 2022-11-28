@@ -24,7 +24,7 @@ public class TaxonomyMacroModule extends AbstractDisplayModule {
 	
 	@Override
 	public String getIcon() {	
-		return "<i class=\"fa fa-sitemap\" aria-hidden=\"true\"></i>";
+		return "bi bi-diagram-3";
 	}
 
 }

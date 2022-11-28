@@ -1551,7 +1551,7 @@ public class InfoBean {
 	public String getRootURL() {
 		return URLHelper.createURL(ctx, "/");
 	}
-
+	
 	public String getRootURLPageMode() {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE), "/");
 	}
@@ -1818,7 +1818,7 @@ public class InfoBean {
 		MacroFactory factory = MacroFactory.getInstance(ctx);
 		for (String name : macroName) {
 			IMacro macro = factory.getMacro(name);
-			if (macro != null && macro.isAdd() && macro.isActive()) {
+			if (macro != null && macro.isActive()) {
 				macros.add(macro);
 			}
 		}

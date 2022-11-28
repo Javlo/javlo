@@ -81,7 +81,7 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 
 	@Override
 	public String getIcon() {
-		return "fa fa-file-text-o";
+		return "bi bi-file-earmark-richtext";
 	}
 	
 	protected static boolean isEditPopup() {

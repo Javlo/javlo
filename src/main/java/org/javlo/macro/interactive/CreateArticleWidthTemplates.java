@@ -299,7 +299,6 @@ public class CreateArticleWidthTemplates implements IInteractiveMacro, IAction {
 			e.printStackTrace();
 			return e.getMessage();
 		}
-		System.out.println(">>>>>>>>> CreateArticleWidthTemplates.performCreate : message = "+message); //TODO: remove debug trace
 		return message;
 	}
 
@@ -339,7 +338,7 @@ public class CreateArticleWidthTemplates implements IInteractiveMacro, IAction {
 
 	@Override
 	public String getIcon() {
-		return "fa fa-file-text-o";
+		return "bi bi-file-earmark-richtext";
 	}
 	
 	@Override
