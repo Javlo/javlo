@@ -39,7 +39,9 @@ if (!rightOnPage) {
 						<c:param name="module" value="admin"></c:param>
 						<c:param name="previewEdit" value="true"></c:param>
 					</c:url>
-					<a href="#" style="float: right;" onclick="editPreview.openModal('${i18n.edit['preview.label.properties']}','${url}'); return false;"> <i class="bi bi-gear"></i>
+					<c:if test="${!userInterface.light}">
+						<a href="#" style="float: right;" onclick="editPreview.openModal('${i18n.edit['preview.label.properties']}','${url}'); return false;"> <i class="bi bi-gear"></i>
+					</c:if>
 					</a>
 				</c:if>
 				<a target="_blank" href="<%=URLHelper.createViewURL(ctx.getPath(), ctx)%>">Javlo</a>
