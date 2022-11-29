@@ -53,9 +53,11 @@ public class CssCompilationFilter implements Filter {
 			if (!StaticConfig.getInstance(((HttpServletRequest) request).getSession().getServletContext()).isProd()) {
 				if (lessFile.lastModified() > cssFile.lastModified()) {
 					compileFile = true;
+					cssFile.delete();
 				}
 				if (sassFile.lastModified() > cssFile.lastModified()) {
 					compileFile = true;
+					cssFile.delete();
 				}
 			}
 		}
