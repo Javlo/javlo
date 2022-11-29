@@ -59,38 +59,39 @@ if (!rightOnPage) {
 							</c:forEach>
 						</div>
 					</div>
-					<!-- 		<li class="_language"> -->
-					<%-- 			<a class="btn btn-default btn-sm btn-languiages btn-notext ${noemptypage?'':'btn-color alert-warning'}" data-toggle="collapse" data-target="#_language-list" href="#_language-list" aria-expanded="true" aria-controls="_language-list"> --%>
-					<%-- 			<i class="fa fa-language"></i><span class="text"> ${info.requestContentLanguageName}</span> --%>
-					<!-- 			</a> -->
-					<!-- 		</li> -->
-					<form action="${info.currentURL}" method="post">
-						<input type="hidden" name="webaction" value="edit.changeLanguage" />
-						<select class="btn btn-default btn-sm btn-languiages btn-notext _language" name="language" onchange="this.form.submit();">
-							<c:forEach var="page" items="${info.pagesForAnyLanguages}">
-								<c:set var="noemptypage" value="${noemptypage && page.realContent}" />
-								<option title="${page.contentLanguageName}" value="${page.contentLanguage}" class="list-group-item ${page.realContent?'list-group-item-success':'list-group-item-danger'}" ${info.requestContentLanguage==page.contentLanguage?'selected="selected"':''}>${page.contentLanguage}</option>
-							</c:forEach>
-						</select>
-					</form>
-
-					<c:if test="${globalContext.previewMode && !contentContext.asTimeMode}">
-						<form id="pc_form" action="${info.currentURL}" method="post">
-							<div class="pc_line">
-								<input type="hidden" name="webaction" value="edit.previewedit" />
-								<div class="btn-group" role="group" aria-label="...">
-									<button class="btn btn-default btn-sm btn-mode btn-wait-loading ${editPreview?'active':''}" type="submit">
-										<i class="bi bi-pencil-square"></i> <span class="text hidden">${i18n.edit['preview.label.edit-page']}</span>
-									</button>
-									<button class="btn btn-default btn-sm btn-mode btn-wait-loading ${!editPreview?'active':''}" type="submit">
-										<i class="bi bi-eye-fill"></i> <span class="text hidden">${i18n.edit['preview.label.not-edit-page']}</span>
-									</button>
-								</div>
-							</div>
-						</form>
-					</c:if>
-
 				</c:if>
+				<!-- 		<li class="_language"> -->
+				<%-- 			<a class="btn btn-default btn-sm btn-languiages btn-notext ${noemptypage?'':'btn-color alert-warning'}" data-toggle="collapse" data-target="#_language-list" href="#_language-list" aria-expanded="true" aria-controls="_language-list"> --%>
+				<%-- 			<i class="fa fa-language"></i><span class="text"> ${info.requestContentLanguageName}</span> --%>
+				<!-- 			</a> -->
+				<!-- 		</li> -->
+				<form action="${info.currentURL}" method="post">
+					<input type="hidden" name="webaction" value="edit.changeLanguage" />
+					<select class="btn btn-default btn-sm btn-languiages btn-notext _language" name="language" onchange="this.form.submit();">
+						<c:forEach var="page" items="${info.pagesForAnyLanguages}">
+							<c:set var="noemptypage" value="${noemptypage && page.realContent}" />
+							<option title="${page.contentLanguageName}" value="${page.contentLanguage}" class="list-group-item ${page.realContent?'list-group-item-success':'list-group-item-danger'}" ${info.requestContentLanguage==page.contentLanguage?'selected="selected"':''}>${page.contentLanguage}</option>
+						</c:forEach>
+					</select>
+				</form>
+
+				<c:if test="${globalContext.previewMode && !contentContext.asTimeMode}">
+					<form id="pc_form" action="${info.currentURL}" method="post">
+						<div class="pc_line">
+							<input type="hidden" name="webaction" value="edit.previewedit" />
+							<div class="btn-group" role="group" aria-label="...">
+								<button class="btn btn-default btn-sm btn-mode btn-wait-loading ${editPreview?'active':''}" type="submit">
+									<i class="bi bi-pencil-square"></i> <span class="text hidden">${i18n.edit['preview.label.edit-page']}</span>
+								</button>
+								<button class="btn btn-default btn-sm btn-mode btn-wait-loading ${!editPreview?'active':''}" type="submit">
+									<i class="bi bi-eye-fill"></i> <span class="text hidden">${i18n.edit['preview.label.not-edit-page']}</span>
+								</button>
+							</div>
+						</div>
+					</form>
+				</c:if>
+
+
 
 			</div>
 

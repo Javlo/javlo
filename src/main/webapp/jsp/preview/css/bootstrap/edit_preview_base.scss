@@ -52,7 +52,7 @@
 	#preview-layer img, #preview-layer div, #preview-layer a,
 	#preview-layer span, #preview-layer input, #preview-layer fieldset,
 	#preview-layer legend, #preview-layer form, #preview-layer select, #preview-layer .badge, #preview-layer .badge:before, #preview-layer .badge:after,
-	#preview-layer option, #preview-layer .navigation, #preview-layer .commands, #preview-layer button, #preview-layer .btn, .btn i, #preview-layer .btn:after, #preview-layer .btn, #preview-layer .btn:after {
+	#preview-layer option, #preview-layer .navigation, #preview-layer .commands, #preview-layer button, #preview-layer .btn, #preview-layer .btn:after, #preview-layer .btn, #preview-layer .btn:after {
 	margin: 0;
 	border: 0 none;
 	padding: 0;
@@ -83,6 +83,11 @@
 	bottom: auto;
 	left: auto;
 	right: auto;
+}
+
+#preview-layer .btn i {
+	margin: 0;
+	display: inline-block;
 }
 
 ._component_title {
