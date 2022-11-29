@@ -59,7 +59,7 @@ if (!rightOnPage) {
 							</c:forEach>
 						</div>
 					</div>
-				</c:if>
+				
 				<!-- 		<li class="_language"> -->
 				<%-- 			<a class="btn btn-default btn-sm btn-languiages btn-notext ${noemptypage?'':'btn-color alert-warning'}" data-toggle="collapse" data-target="#_language-list" href="#_language-list" aria-expanded="true" aria-controls="_language-list"> --%>
 				<%-- 			<i class="fa fa-language"></i><span class="text"> ${info.requestContentLanguageName}</span> --%>
@@ -74,6 +74,8 @@ if (!rightOnPage) {
 						</c:forEach>
 					</select>
 				</form>
+				
+				</c:if>
 
 				<c:if test="${globalContext.previewMode && !contentContext.asTimeMode}">
 					<form id="pc_form" action="${info.currentURL}" method="post">
