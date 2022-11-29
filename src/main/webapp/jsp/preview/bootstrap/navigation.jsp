@@ -1,7 +1,6 @@
 <%@page import="org.javlo.context.ContentContext"
 %><%@page import="org.javlo.helper.URLHelper"
-%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+%><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
 %><%
 ContentContext ctx = ContentContext.getContentContext(request, response);
@@ -41,14 +40,16 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 			</li>
 		</c:if>
 		<c:if test="${!(page.url eq info.currentURL) && not empty info.parent.parent}"><c:set var="asTitle" value="true" />
-			<li class="parent ${!info.parent.parent.trash?'title':'trash'}">				
+			<li class="parent ${!info.parent.parent.trash?'title':'trash'}">
 				<span><a class="draggable flow-${info.parent.parent.flowIndex}" id="page-${info.parent.parent.name}" href="${info.parent.parent.url}" title="${info.parent.parent.path}">${info.parent.parent.info.label}${info.parent.parent.haveChildren?'...':''}</a></span>			
 			</li>
 		</c:if>		
 	</c:if>
 	
 	<c:forEach var="brother" items="${page.info.previousBrothers}"><li ${brother.trash?'class="trash"':''}>
-		<span><a id="page-${brother.name}" class="draggable ${!brother.trash?'editor':'trash'} ${brother.active?'active':'unactive'} flow-${brother.flowIndex}" title="${brother.path}" href="${brother.url}">${brother.info.label}${info.parent.parent.haveChildren?'...':''}</a></span>
+		<span><a id="page-${brother.name}" class="draggable ${!brother.trash?'editor':'trash'} ${brother.active?'active':'unactive'} flow-${brother.flowIndex}" title="${brother.path}" href="${brother.url}">
+			${brother.info.label}${info.parent.parent.haveChildren?'...':''}
+		</a></span>
 		</li>
 	</c:forEach>
 	
@@ -86,7 +87,21 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 			<c:if test="${child.url eq info.currentURL}"><span><i class="bi bi-gear" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;"></i></span></c:if>
 		</a>
 	</span>
-	</li></c:forEach>	
+	</li>
+	
+	<c:if test="${child.url eq info.currentURL}">
+		<c:if test="${userInterface.navigation}">
+		<li class="add-page page-depth-${child.depth}"><form id="form-add-page" action="${info.currentURL}" method="post">
+			<input type="hidden" name="webaction" value="edit.addPage" />
+			<button class="flex-line btn-full" name="auto-name" type="submit">
+				<span>${i18n.edit['navigation.add-page']}...</span>
+				<i class="fa fa-plus-circle"></i>
+			</button>
+		</form></li>
+		</c:if>
+		</c:if>
+	
+	</c:forEach>	
 	<c:if test="${asTitle}">
 	</ul></li>
 	</c:if> 

@@ -1741,17 +1741,13 @@ public class Edit extends AbstractModuleAction {
 		}
 
 		String message = null;
-
 		String id = ctx.getRequest().getParameter("page");
-
 		MenuElement menuElement;
-
 		menuElement = content.getNavigation(ctx).searchChildFromId(id);
 		String path = menuElement.getPath();
 		if (menuElement.getParent() == null) {
 			return i18nAccess.getText("action.remove.can-not-delete");
 		}
-
 		String newPath = menuElement.getParent().getPath();
 		if (menuElement.isChildrenOfAssociation()) {
 			if (menuElement.getRootOfChildrenAssociation() != null && menuElement.getRootOfChildrenAssociation().getFirstChild() != null) {
@@ -1762,7 +1758,6 @@ public class Edit extends AbstractModuleAction {
 			newPath = "/";
 			menuElement = menuElement.getParent();
 		}
-
 		if (menuElement == null) {
 			message = i18nAccess.getText("action.remove.can-not-delete");
 		} else {
@@ -1775,15 +1770,19 @@ public class Edit extends AbstractModuleAction {
 			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
 			autoPublish(ctx.getRequest(), ctx.getResponse());
 		}
-
 		NavigationService navigationService = NavigationService.getInstance(globalContext);
 		navigationService.clearPage(ctx);
 		ReverseLinkService.getInstance(globalContext).clearCache();
-
+		
+		if (ctx.isEditPreview()) {
+			ctx.setRenderMode(ContentContext.PREVIEW_MODE);
+		}
+		
 		ctx.setPath(newPath);
 		String forwardURL = ctx.getResponse().encodeRedirectURL(URLHelper.createURL(ctx));
-		ctx.getResponse().sendRedirect(forwardURL);
-
+		ctx.setClosePopup(true);
+		ctx.setParentURL(forwardURL);
+		//ctx.getResponse().sendRedirect(forwardURL);
 		return message;
 	}
 

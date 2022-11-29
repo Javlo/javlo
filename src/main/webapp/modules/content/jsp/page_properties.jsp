@@ -25,8 +25,8 @@
 			</c:if>
 
 			<div>
-				<input type="hidden" name="webaction" value="pageProperties" />
 				<input type="hidden" name="name" value="${page.name}" />
+				<input type="hidden" name="page" value="${page.id}" />
 			</div>
 
 			<c:if test="${!userInterface.light}">
@@ -367,8 +367,9 @@
 				</div>
 			</div>
 
-			<div class="action">
-				<input type="submit" class="btn btn-primary btn-color" value="${i18n.edit['global.ok']}" />
+			<div class="action flex-line">
+				<button type="submit" ${page.parent==null?'disabled="disabled"':''}class="btn btn-warning" name="webaction" value="edit.DeletePage"><i class="bi bi-trash"></i> ${i18n.edit['global.delete']}</button>
+				<button type="submit" class="btn btn-primary btn-color"  name="webaction" value="pageProperties">${i18n.edit['global.ok']}</button>
 			</div>
 
 		</form>
