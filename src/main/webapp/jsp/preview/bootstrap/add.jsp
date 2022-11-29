@@ -47,7 +47,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 			</c:forEach>
 		</div>
 
-		<a role="button" class="action prvCollapse" href="#addMacros" aria-expanded="false" aria-controls="addMacros"><i class="bi bi-wrench-adjustable-circle"></i></a>
+		<a role="button" class="action prvCollapse" href="#addMacros" aria-expanded="false" aria-controls="addMacros"><i class="bi bi-plus-circle"></i></a>
 
 <div class="direct-action">
 	<%-- 	<form id="pc_form" action="${info.currentURL}" method="post"> --%>
