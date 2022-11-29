@@ -112,7 +112,7 @@
   }
 
   ul.navigation li {
-    a, h4 {
+    a, h4, .btn-full {
       display: block;
       margin: 0;
       padding: 0 10px;
@@ -125,6 +125,26 @@
       font-size: 1em;
     }
   }
+  
+  .btn-full {
+	width: 100%;
+  }
+}
+
+ul.navigation li.add-page {
+	margin-left: 60px !important;
+	font-style: italic;
+	.btn-full {
+		border: 1px solid var(--javlo-ui-accent-color-1);
+		border-radius: 3px;;
+		i {
+			color: var(--javlo-ui-accent-color-1);
+		}
+	}
+}
+
+ul.navigation li.add-page.page-depth-0 {
+	margin-left: 30px !important;
 }
 	
 	.pages ul.navigation li a {

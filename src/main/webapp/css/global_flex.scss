@@ -1,7 +1,7 @@
 .flex-line {
-	display : flex;
+	display : flex !important;
 	justify-content: space-between;
-	
+	align-items: center;
 	.btn, .form-control {
 		padding-top: 3px;
 		padding-bottom: 3px;
@@ -9,4 +9,8 @@
 		font-size: 1em;
 		margin-bottom: 0.5em;
 	}
+}
+
+.btn-no {
+	border: 0 none;
 }

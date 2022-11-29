@@ -60,6 +60,19 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 				<c:if test="${page.url eq info.currentURL}"><span><i class="bi bi-gear" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;"></i></span></c:if>
 			</a>
 		</span>
+		
+		<c:if test="${page.url eq info.currentURL}">
+		<c:if test="${userInterface.navigation}">
+		<li class="add-page page-depth-${page.depth}"><form id="form-add-page" action="${info.currentURL}" method="post">
+			<input type="hidden" name="webaction" value="edit.addPage" />
+			<button class="flex-line btn-full" name="auto-name" type="submit">
+				<span>${i18n.edit['navigation.add-page']}...</span>
+				<i class="fa fa-plus-circle"></i>
+			</button>
+		</form></li>
+		</c:if>
+		</c:if>
+		
 	</li>
 	<c:if test="${asTitle}">
 	<li><ul class="children sortable">
@@ -84,20 +97,5 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 		
 	</c:forEach>
 	</ul>
-	<c:if test="${userInterface.navigation}">		
-		<form class="preview-form" id="_pe_form-add-page" action="${info.currentURL}" method="post">
-			<div class="row"><div class="col-xs-7">
-			<div class="form-group">
-			<input type="hidden" name="webaction" value="edit.addPage" />
-			<input type="text" class="form-control input-sm" name="name" placeholder="${i18n.edit['navigation.add-page']}..." 
-				onkeyup="if (pjq(this).val().length == 0) {$('#plus-btn').prop('disabled', false); $('#ok-btn').prop('disabled', true);} else {pjq('#plus-btn').prop('disabled', true); pjq('#ok-btn').prop('disabled', false);}" />
-			</div>
-			</div><div class="col-xs-5">
-			<input id="ok-btn" class="btn btn-default btn-sm" type="submit" value="${i18n.edit['global.ok']}" disabled="disabled" />
-			<button id="plus-btn" class="btn btn-default btn-sm pull-right" name="auto-name" type="submit"><i class="fa fa-plus-circle"></i></button>
-			</div></div>
-		</form>
-		
-	</c:if>	
 </div>	
 </div>
