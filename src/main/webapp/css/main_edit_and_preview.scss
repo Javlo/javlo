@@ -6,6 +6,43 @@
 	--action-color-lighten: #17A;
 	--action-text: #fff;
 	
+	/* GRIS --javlo-ui-color : #333333 = hsl(0, 0%, 20%); Du plus clair au plus foncé */
+	--javlo-ui-color: 0, 0%;
+	--javlo-ui-color-1: hsl(var(--javlo-ui-color), 97%);
+	--javlo-ui-color-2: hsl(var(--javlo-ui-color), 90%);
+	--javlo-ui-color-3: hsl(var(--javlo-ui-color), 80%);
+	--javlo-ui-color-4: hsl(var(--javlo-ui-color), 70%);
+	--javlo-ui-color-5: hsl(var(--javlo-ui-color), 60%);
+	--javlo-ui-color-6: hsl(var(--javlo-ui-color), 50%);
+	--javlo-ui-color-7: hsl(var(--javlo-ui-color), 40%);
+	--javlo-ui-color-8: hsl(var(--javlo-ui-color), 30%);
+	--javlo-ui-color-9: hsl(var(--javlo-ui-color), 20%);
+
+	/* BLEU --javlo-ui-accent-color : #006699 = hsl(200, 100%, 30%); Du plus clair au plus foncé */
+	--javlo-ui-accent-color: 200, 100%;
+	--javlo-ui-accent-color-1: hsl(var(--javlo-ui-accent-color), 70%);
+	--javlo-ui-accent-color-2: hsl(var(--javlo-ui-accent-color), 65%);
+	--javlo-ui-accent-color-3: hsl(var(--javlo-ui-accent-color), 60%);
+	--javlo-ui-accent-color-4: hsl(var(--javlo-ui-accent-color), 55%);
+	--javlo-ui-accent-color-5: hsl(var(--javlo-ui-accent-color), 50%);
+	--javlo-ui-accent-color-6: hsl(var(--javlo-ui-accent-color), 45%);
+	--javlo-ui-accent-color-7: hsl(var(--javlo-ui-accent-color), 40%);
+	--javlo-ui-accent-color-8: hsl(var(--javlo-ui-accent-color), 35%);
+	--javlo-ui-accent-color-9: hsl(var(--javlo-ui-accent-color), 30%);
+
+	--blue-100: hsl(200, 100%, 30%);
+	--light-black: hsl(0, 0%, 9%);
+	--grey-1: #656565;
+	--grey-2: #888;
+	--grey-3: #ccc;
+	--grey-4: #ddd;
+	--grey-5: #eee;
+	--red: #dc3545;
+
+	/* Fonts */
+	--bsicons: "bootstrap-icons";
+	--systemfonts: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Oxygen, Cantarell, sans-serif;
+	
 	@import 'global_flex.scss';
 }
 
