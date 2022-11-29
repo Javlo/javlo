@@ -1,13 +1,14 @@
-/** version 2.1 **/;
+/** version 2.0 **/
 
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css");
 
-#preview_command, body#main-body  {
+#preview_command,
+body#main-body {
 	--action-color: #069;
 	--action-color-darken: #058;
 	--action-color-lighten: #17A;
 	--action-text: #fff;
-	
+
 	/* GRIS --javlo-ui-color : #333333 = hsl(0, 0%, 20%); Du plus clair au plus foncé */
 	--javlo-ui-color: 0, 0%;
 	--javlo-ui-color-1: hsl(var(--javlo-ui-color), 97%);
@@ -44,7 +45,6 @@
 	/* Fonts */
 	--bsicons: "bootstrap-icons";
 	--systemfonts: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Oxygen, Cantarell, sans-serif;
-	
+
 	@import 'global_flex.scss';
 }
-
