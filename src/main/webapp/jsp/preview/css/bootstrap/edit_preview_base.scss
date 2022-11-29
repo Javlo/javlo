@@ -45,6 +45,11 @@
 	overflow: visible;
 }
 
+#preview_command .btn i {
+	margin: 0;
+	display: inline-block;
+}
+
 #preview-layer figure, #preview-layer .version, #preview-layer .content,
 	#preview-layer .description, #preview-layer, #preview-layer h1,
 	#preview-layer h2, #preview-layer h3, #preview-layer h4,
@@ -83,11 +88,6 @@
 	bottom: auto;
 	left: auto;
 	right: auto;
-}
-
-#preview-layer .btn i {
-	margin: 0;
-	display: inline-block;
 }
 
 ._component_title {
