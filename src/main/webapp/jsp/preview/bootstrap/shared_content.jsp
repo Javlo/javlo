@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
-%><h2><i class="bi bi-file-earmark"></i> Resources</h2>
+%>
 <div class="well drop-files">
 	<c:url var="uploadUrl" value="${info.uploadURL}" context="/">
 		<c:param name="provider" value="${provider.name}" />
@@ -37,7 +37,7 @@
 <div>
 	<input type="hidden" name="webaction" value="shared-content.search" />
 	<input type="hidden" name="provider" value="${provider.name}" />
-	<div class="form-inline form-group">
+	<div class="flex-line">
 		<input type="text" id="shared-content-search-form-query" name="query" placeholder="${i18n.edit['content.search']}" class="form-control query" value="${sharedContentContext.searchQuery}"/>
 		<input type="submit" class="btn btn-default" value="${i18n.edit['global.ok']}" />
 		<input type="submit" name="reset" class="btn btn-default pull-right" value="${i18n.edit['global.reset']}" />
@@ -49,7 +49,7 @@
 <form id="shared-content-form" class="js-submit" action="${info.currentURL}" method="post">
 	<div>
 		<input type="hidden" name="webaction" value="shared-content.choose" />
-		<div class="form-group form-inline">		
+		<div class="form-group form-inline">
 		<select name="provider" class="form-control ${!info.admin && empty provider.URL?'max-width':''}  ${empty provider.URL?'':'min-width'}">
 			<option class="placeholder" value="">${i18n.edit["preview.choose-provider"]}</option>
 			<c:forEach var="provider" items="${sharedContentProviders}">

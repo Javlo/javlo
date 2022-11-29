@@ -7,7 +7,7 @@
 ContentContext ctx = ContentContext.getContentContext(request, response);
 ContentContext editCtx = new ContentContext(ctx);
 editCtx.setRenderMode(ContentContext.EDIT_MODE);
- %><h2><i class="bi bi-list"></i> Navigation</h2><c:set var="page" value="${info.page}" />
+ %><c:set var="page" value="${info.page}" />
 <c:if test="${fn:length(page.children) == 0 and not empty info.parent}">
 	<c:set var="page" value="${info.parent}" />
 </c:if>

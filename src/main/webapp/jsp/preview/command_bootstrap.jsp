@@ -94,11 +94,10 @@ if (StringHelper.isTrue(request.getParameter("preview-command"), true) && !ctx.i
 					<c:if test="${not empty editUser}">
 						<div role="tabpanel">
 							<ul class="nav nav-tabs" role="tablist">
-								<li role="presentation" class="active"><a href="#_ep_navigation" aria-controls="_ep_navigation" role="tab" data-toggle="tab">Navigation</a></li>
-								<!-- <li role="presentation"><a href="#_ep_commands" aria-controls="_ep_commands" role="tab" data-toggle="tab">Commands</a></li>  -->
-								<li role="presentation" ${!info.pageEditable?'class="disabled"':''}><a href="#_ep_content" aria-controls="_ep_content" role="tab" ${info.pageEditable?'data-toggle="tab"':''}>Content</a></li>
+								<li role="presentation" class="active"><a href="#_ep_navigation" aria-controls="_ep_navigation" role="tab" data-toggle="tab"><i class="bi bi-diagram-3"></i> Navigation</a></li>
+								<li role="presentation" ${!info.pageEditable?'class="disabled"':''}><a href="#_ep_content" aria-controls="_ep_content" role="tab" ${info.pageEditable?'data-toggle="tab"':''}><i class="bi bi-boxes"></i> Content</a></li>
 								<c:if test="${userInterface.previewResourcesTab}">
-									<li role="presentation" ${!info.pageEditable?'class="disabled"':''}><a href="#_ep_files" aria-controls="_ep_files" role="tab" ${info.pageEditable?'data-toggle="tab"':''}>Resources</a></li>
+									<li role="presentation" ${!info.pageEditable?'class="disabled"':''}><a href="#_ep_files" aria-controls="_ep_files" role="tab" ${info.pageEditable?'data-toggle="tab"':''}><i class="bi bi-file-earmark"></i> Files</a></li>
 								</c:if>
 							</ul>
 							<div class="tab-content">
@@ -110,7 +109,6 @@ if (StringHelper.isTrue(request.getParameter("preview-command"), true) && !ctx.i
 										<jsp:include page="bootstrap/navigation.jsp"></jsp:include>
 									</c:if>
 								</div>
-								<!-- <div role="tabpanel" class="tab-pane fade" id="_ep_commands"><jsp:include page="bootstrap/commands.jsp" /></div>  -->
 								<div role="tabpanel" class="tab-pane fade" id="_ep_content"><jsp:include page="bootstrap/component.jsp" /></div>
 								<c:if test="${userInterface.previewResourcesTab}">
 									<div role="tabpanel" class="tab-pane fade" id="_ep_files"><jsp:include page="bootstrap/shared_content.jsp" /></div>

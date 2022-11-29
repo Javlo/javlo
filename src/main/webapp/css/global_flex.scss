@@ -1,0 +1,12 @@
+.flex-line {
+	display : flex;
+	justify-content: space-between;
+	
+	.btn, .form-control {
+		padding-top: 3px;
+		padding-bottom: 3px;
+		line-height: 1.5em;
+		font-size: 1em;
+		margin-bottom: 0.5em;
+	}
+}

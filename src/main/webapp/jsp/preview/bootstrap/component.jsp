@@ -48,9 +48,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 });
 </script>
 </c:if>
-<c:if test="${info.admin}"><button onclick="editPreview.openModal('Components', '${info.currentEditURL}?module=admin&context=${info.contextKey}&webaction=admin.previewEditComponent&previewEdit=true'); return false;" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button></c:if>
- <h2><i class="bi bi-boxes"></i> Content</h2>
-<c:if test="${globalContext.componentsFiltered}">
+ <c:if test="${globalContext.componentsFiltered}">
 <div class="btn-group btn-group-justified components-group" role="group">
   <div class="btn-group" role="group"> 	
   <button type="button" class="btn btn-default btn-xs active btn-1" role="group" onclick="displayComplexity(1);">${i18n.edit['preview.component-group.basic']}</button>
@@ -62,10 +60,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
   <button type="button" class="btn btn-default btn-xs btn-3" role="group" onclick="displayComplexity(3);">${i18n.edit['preview.component-group.admin']}</button>
   </div></c:if>
 </div>
-
+<div class="flex-line">
 <div class="filter-wrapper">
 <input id="filter-components" type="text" class="form-control filter" placeholder="filter..." onkeyup="filter(this.value);"/>
 <button type="button" class="reset-filter"><i class="fa fa-times-circle" aria-hidden="true" onclick="document.getElementById('filter-components').value = ''; filter('');"></i></button>
+</div>
+<c:if test="${info.admin}"><button onclick="editPreview.openModal('Components', '${info.currentEditURL}?module=admin&context=${info.contextKey}&webaction=admin.previewEditComponent&previewEdit=true'); return false;" class="btn btn-default"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button></c:if>
 </div>
 
 <script>
