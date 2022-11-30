@@ -1,4 +1,8 @@
 #preview_command {
+	ul {
+		margin: 0 !important;
+	}
+
 	.modal-dialog {
 		left: 50%;
 		top: 50%;
@@ -40,12 +44,12 @@
 		display: flex;
 		justify-content: space-between;
 		border-bottom: 1px solid var(--javlo-ui-color-3);
-		padding: 10px;
+		padding: 0;
 	}
 }
 
 #preview_command .logo a {
-	font-size: 24px;
+	font-size: 28px;
 	font-family: javloFont, sans-serif;
 	color: var(--javlo-ui-accent-color-9);
 
@@ -61,6 +65,15 @@
 #preview_command .users {
 	height: $header-height;
 	// padding: 10px 20px;
+	// margin: 0 auto;
+	position: relative;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+#preview_command .logo {
+	flex-direction: row-reverse;
 }
 
 #preview_command .page-actions {
@@ -113,15 +126,39 @@
 	float: left;
 }
 
+#preview_command .header .btn {
+	height: $header-height !important;
+}
+
+#preview_command .btn {
+	display: flex !important;
+	align-items: center;
+	justify-content: center;
+}
+
+#preview_command .btn-sm {
+	font-size: 16px !important;
+	line-height: 1 !important;
+	padding: 10px !important;
+
+	span {
+		font-size: 12px;
+		line-height: 2;
+	}
+}
+
 #preview_command .header .logo {
 
 	width: 330px;
-	height: 50px;
+	height: $header-height !important;
 }
 
 #preview_command .header li {
+	// margin-right: 3px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	float: left;
-	margin-right: 3px;
 }
 
 #preview_command .header .list-group li {
@@ -130,7 +167,10 @@
 }
 
 #preview_command .header .users {
-	float: right;
+	// float: right;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 #preview_command .integrity-message {
@@ -160,7 +200,7 @@
 }
 
 #preview_command .badged {
-	margin-right: 3px;
+	// margin-right: 3px;
 	position: relative;
 }
 
