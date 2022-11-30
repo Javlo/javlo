@@ -83,7 +83,7 @@ if (!rightOnPage) {
 							<input type="hidden" name="webaction" value="edit.previewedit" />
 							<div class="btn-group" role="group" aria-label="...">
 								<button class="btn btn-default btn-sm btn-mode btn-wait-loading ${editPreview?'active':''}" type="submit">
-									<i class="bi bi-pencil-square"></i> <span class="text hidden">${i18n.edit['preview.label.edit-page']}</span>
+									<i class="bi bi-pencil-fill"></i> <span class="text hidden">${i18n.edit['preview.label.edit-page']}</span>
 								</button>
 								<button class="btn btn-default btn-sm btn-mode btn-wait-loading ${!editPreview?'active':''}" type="submit">
 									<i class="bi bi-eye-fill"></i> <span class="text hidden">${i18n.edit['preview.label.not-edit-page']}</span>
@@ -275,7 +275,7 @@ if (!rightOnPage) {
 							<c:set var="tooltip" value='data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'command.publish.tooltip\']}"' />
 						</c:if>
 						<button type="submit" class="btn btn-default btn-sm" ${tooltip} ${empty webaction?'disabled="disabled"':''}>
-							<i class="bi bi-box-arrow-up"></i>
+							<i class="bi bi-file-earmark-arrow-up"></i>
 							<c:if test="${globalContext.portail}">
 								<span class="flow-status">${info.page.flowIndex}</span>
 							</c:if>
@@ -305,7 +305,7 @@ if (!rightOnPage) {
 								<c:set var="tooltip" value=' data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'preview.label.ticket.tooltip\']}"' />
 							</c:if>
 							<button ${tooltip} class="btn btn-default btn-sm btn-tickets btn-color btn-notext badged" type="<%=accessType%>" value="${i18n.edit['preview.label.ticket']}" onclick="html2canvas(document.querySelector('body')).then(canvas => {editPreview.openModal('${i18n.edit['preview.label.ticket']}','${url}'); editPreview.uploadScreenshot(canvas); });return false;" ${tooltip}>
-								<i class="bi bi-question-lg"></i> <span class="text">${i18n.edit['preview.label.ticket']}</span>
+								<i class="bi bi-question-circle"></i> <span class="text">${i18n.edit['preview.label.ticket']}</span>
 								<c:set var="unreadTicketsize" value="${fn:length(info.unreadTickets)}" />
 								<c:if test="${unreadTicketsize>0}">
 									<div class="badge unread-count">${unreadTicketsize}</div>
