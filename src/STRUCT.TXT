@@ -13,5 +13,5 @@ JAVLO2 : file structure
 	jsp > preview > css > bootstrap
 		preview css, modification of bootstreap FW
 		main.css > include BS + include main_sass.scss class
-	
-	
+	module > #NAME# > css
+		contains all stylesheets specific for the module #NAME#

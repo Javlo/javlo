@@ -19,6 +19,8 @@ import org.javlo.bean.DateBean;
 import org.javlo.bean.Link;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.core.ISubTitle;
+import org.javlo.component.core.SubTitleBean;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.component.links.PageReferenceComponent.PageEvent;
 import org.javlo.component.meta.Tags;
@@ -481,6 +483,23 @@ public class SmartPageBean {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	public Collection<SubTitleBean> getSubTitlesBean() throws Exception {
+		ContentContext noAreaContext = ctx.getContextWithArea(null);
+		ContentElementList content = page.getContent(noAreaContext);
+		Collection<SubTitleBean> links = new LinkedList<SubTitleBean>();
+		while (content.hasNext(noAreaContext)) {
+			IContentVisualComponent comp = content.next(noAreaContext);
+			if (comp instanceof ISubTitle) {
+				ISubTitle subTitle = (ISubTitle) comp;
+				if (subTitle.getSubTitleLevel(noAreaContext) > 1) {
+					SubTitleBean st = new SubTitleBean(noAreaContext, subTitle);
+					links.add(st);
+				}
+			}
+		}
+		return links;
 	}
 
 	public Collection<String> getTags() {
