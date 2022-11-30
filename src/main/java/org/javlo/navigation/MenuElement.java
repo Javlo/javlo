@@ -47,7 +47,6 @@ import org.javlo.component.core.ILink;
 import org.javlo.component.core.IPageRank;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.ecom.IProductContainer;
-import org.javlo.component.image.GlobalImage;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.component.image.ImageBackground;
 import org.javlo.component.image.ImageBean;
