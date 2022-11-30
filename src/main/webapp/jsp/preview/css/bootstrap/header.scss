@@ -1,12 +1,21 @@
 #preview_command {
-	.btn-default.active {
-		background-color: var(--javlo-ui-color-2) !important;
-		color: var(--javlo-ui-color-9) !important;
+	.btn-default {
+		background-color: var(--javlo-ui-color-1) !important;
+		color: var(--javlo-ui-color-8) !important;
 		border-color: var(--javlo-ui-color-5) !important;
+	}
+}
+
+#preview_command {
+	.btn-default.active {
+		background-color: var(--javlo-ui-color-8) !important;
+		color: white !important;
+		border-color: var(--javlo-ui-color-8) !important;
 		box-shadow: none !important;
 		-webkit-box-shadow: none !important;
 	}
 }
+
 
 
 #preview_command {
@@ -25,12 +34,6 @@
 		border-bottom: 1px solid var(--javlo-ui-color-3);
 	}
 }
-
-// #preview_command {
-// 	.btn-default {
-// 		background-color: var(--javlo-ui-color-1) !important;
-// 	}
-// }
 
 #preview_command .logo a {
 	font-size: 24px;
