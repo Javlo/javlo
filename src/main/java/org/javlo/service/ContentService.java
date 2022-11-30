@@ -1054,11 +1054,11 @@ public class ContentService implements IPrintInfo {
 				shortURLMap = new HashMap<String, MenuElement>();
 				MenuElement root = getNavigation(ctx);
 				if (root.isShortURL()) {
-					shortURLMap.put(root.getShortURL(ctx), root);
+					shortURLMap.put(root.getShortURL(ctx, false), root);
 				}
 				for (MenuElement child : root.getAllChildrenList()) {
 					//if (child.isShortURL()) {
-						shortURLMap.put(child.getShortURL(ctx), child);
+						shortURLMap.put(child.getShortURL(ctx, false), child);
 					//}
 				}
 			}

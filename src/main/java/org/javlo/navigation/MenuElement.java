@@ -5035,8 +5035,12 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	public String getShortURL() {
 		return shortURL;
 	}
-
+	
 	public String getShortURL(ContentContext ctx) throws Exception {
+		return getShortURL(ctx, true);
+	}
+
+	public String getShortURL(ContentContext ctx, boolean releaseCache) throws Exception {
 		if (shortURL == null) {
 			HashSet<String> shortURLs = new HashSet<String>();
 			MenuElement root = getRoot();
@@ -5050,7 +5054,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			}
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			this.shortURL = 'U' + StringHelper.createKey(globalContext.getStaticConfig().getShortURLSize(), shortURLs);
-			ContentService.getInstance(ctx.getGlobalContext()).releaseShortUrlMap(globalContext);
+			if (releaseCache) {
+				ContentService.getInstance(ctx.getGlobalContext()).releaseShortUrlMap(globalContext);
+			}
 			PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 		}
 		return shortURL;
