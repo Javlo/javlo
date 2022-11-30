@@ -178,6 +178,7 @@
 #preview_command .header .list-group li {
 	float: none;
 	margin-right: 0;
+	display: block;
 }
 
 #preview_command .header .users {
@@ -189,9 +190,10 @@
 
 #preview_command .integrity-message {
 	position: absolute;
-	margin-top: 10px;
+	top: 45px;
 	width: 380px;
-	right: -60px;
+	right: 0;
+	
 }
 
 #preview_command #_language-list {

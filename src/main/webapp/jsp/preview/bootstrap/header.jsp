@@ -205,23 +205,7 @@ if (!rightOnPage) {
 									</form></li>
 							</c:if>
 
-							<li><form id="pc_del_page_form" class="<%=readOnlyClass%>" action="${info.currentURL}" method="post">
-									<div>
-										<c:if test="${not empty param['force-device-code']}">
-											<input type="hidden" name="force-device-code" value="${param['force-device-code']}" />
-										</c:if>
-										<input type="hidden" value="${info.pageID}" name="page" />
-										<input type="hidden" value="${globalContext.pageTrash?'edit.DeletePage':'edit.movePageToTrash'}" name="webaction" />
-										<c:if test="${not empty param['force-device-code']}">
-											<input type="hidden" name="force-device-code" value="${param['force-device-code']}" />
-										</c:if>
-										<c:if test="${info.page.root}">
-											<button class="btn btn-default btn-sm btn-delete" type="button" onclick="if (!confirm('${i18n.edit['menu.confirm-page']}')) return false;" disabled="disabled">
-												<i class="bi bi-trash"></i>
-											</button>
-										</c:if>
-									</div>
-								</form></li>
+							
 							<%
 							}
 							%>
