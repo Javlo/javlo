@@ -39,13 +39,14 @@ if (!rightOnPage) {
 						<c:param name="module" value="admin"></c:param>
 						<c:param name="previewEdit" value="true"></c:param>
 					</c:url>
-					<c:if test="${!userInterface.light}">
-						<a href="#" style="float: right;" onclick="editPreview.openModal('${i18n.edit['preview.label.properties']}','${url}'); return false;"> <i class="bi bi-gear"></i>
-					</c:if>
 					</a>
 				</c:if>
-				<a target="_blank" href="<%=URLHelper.createViewURL(ctx.getPath(), ctx)%>">Javlo</a>
+				<a class="name" target="_blank" href="<%=URLHelper.createViewURL(ctx.getPath(), ctx)%>">Javlo</a>
 				<img class="ajax-loading" src="${info.ajaxLoaderURL}" alt="loading..." lang="en" />
+									<c:if test="${!userInterface.light}">
+						<a class="settings" href="#" onclick="editPreview.openModal('${i18n.edit['preview.label.properties']}','${url}'); return false;"> <i class="bi bi-gear"></i>
+					</c:if>
+				
 			</div>
 			<div class="menu">
 				<c:if test="${fn:length(info.contentLanguages)>1}">
@@ -82,10 +83,10 @@ if (!rightOnPage) {
 						<div class="pc_line">
 							<input type="hidden" name="webaction" value="edit.previewedit" />
 							<div class="btn-group" role="group" aria-label="...">
-								<button class="btn btn-default btn-sm btn-mode btn-wait-loading ${editPreview?'active':''}" type="submit">
+								<button class="btn btn-default btn-mode btn-wait-loading ${editPreview?'active':''}" type="submit">
 									<i class="bi bi-pencil-fill"></i> <span class="text hidden">${i18n.edit['preview.label.edit-page']}</span>
 								</button>
-								<button class="btn btn-default btn-sm btn-mode btn-wait-loading ${!editPreview?'active':''}" type="submit">
+								<button class="btn btn-default btn-mode btn-wait-loading ${!editPreview?'active':''}" type="submit">
 									<i class="bi bi-eye-fill"></i> <span class="text hidden">${i18n.edit['preview.label.not-edit-page']}</span>
 								</button>
 							</div>

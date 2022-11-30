@@ -48,14 +48,27 @@
 	}
 }
 
-#preview_command .logo a {
-	font-size: 28px;
-	font-family: javloFont, sans-serif;
-	color: var(--javlo-ui-accent-color-9);
+#preview_command .logo {
+	
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	
+	padding: 0 var(--main-sep);
 
-	&:hover {
-		text-decoration: none;
-		color: var(--javlo-ui-accent-color-7);
+	.name {
+		font-size: 28px;
+		font-family: javloFont, sans-serif;
+		color: var(--javlo-ui-accent-color-9);
+	
+		&:hover {
+			text-decoration: none;
+			color: var(--javlo-ui-accent-color-7);
+		}
+	}
+	
+	.settings {
+		color: var(--javlo-ui-color-8) !important;
 	}
 }
 
@@ -70,10 +83,6 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-}
-
-#preview_command .logo {
-	flex-direction: row-reverse;
 }
 
 #preview_command .page-actions {
@@ -127,10 +136,15 @@
 }
 
 #preview_command .header .btn {
-	height: $header-height !important;
+	height: $header-height - 1 !important;
+	border-radius: 0;
+	margin-right: -1px;
+	border-bottom: 0 none;
+	border-top: 0 none;
+	margin-bottom: 2px;
 }
 
-#preview_command .btn {
+#preview_command .header .btn {
 	display: flex !important;
 	align-items: center;
 	justify-content: center;
@@ -214,9 +228,11 @@
 	padding: 1px 5px 1px 5px;
 	display: block;
 	position: absolute;
-	top: -4px;
-	right: -4px;
-	font-size: 9px;
+	bottom: 1px;
+	width: 50%;
+	margin-left: -25%;
+	left: 50%;
+	font-size: 8px;
 }
 
 #preview_command .publish .flow-status {
@@ -225,17 +241,19 @@
 
 #preview_command li.btn-group {
 	display: flex;
+	margin-right: -1px;
 
 	.btn {
 		border-radius: 0;
 		margin-left: -1px;
+		border-right-style: dashed;
+		border-left: 0 none;
 	}
 
 	form:first-child {
 		.btn {
-			border-bottom-left-radius: 3px;
-			border-top-left-radius: 3px;
 			margin-left: 0;
+			border-left: 1px var(--javlo-ui-color-5) solid;
 		}
 	}
 
@@ -243,6 +261,12 @@
 		.btn {
 			border-bottom-right-radius: 3px;
 			border-top-right-radius: 3px;
+			margin-right: 0;
+			border-right-style: solid
 		}
 	}
+}
+
+.btn-mode {
+	margin-right: 0 !important;
 }
