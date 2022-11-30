@@ -84,6 +84,7 @@
 
 #preview_command .btn i {
 	display: inline-block;
+	margin-right: 0;
 }
 
 #preview-layer figure,
@@ -148,10 +149,6 @@
 	bottom: auto;
 	left: auto;
 	right: auto;
-}
-
-#preview-layer .btn i {
-	margin-right: 0;
 }
 
 ._component_title {
