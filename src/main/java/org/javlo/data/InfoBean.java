@@ -2099,5 +2099,9 @@ public class InfoBean {
 			return i18nAccess.getViewText("global.hello.morning");
 		}
 	}
+	
+	public String getJsonSiteMapUrl() {
+		return URLHelper.createStaticURL(ctx, "/sitemap.json");
+	}
 
 }
