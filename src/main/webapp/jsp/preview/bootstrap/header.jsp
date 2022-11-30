@@ -39,12 +39,11 @@ if (!rightOnPage) {
 						<c:param name="module" value="admin"></c:param>
 						<c:param name="previewEdit" value="true"></c:param>
 					</c:url>
-					</a>
 				</c:if>
 				<a class="name" target="_blank" href="<%=URLHelper.createViewURL(ctx.getPath(), ctx)%>">Javlo</a>
 				<img class="ajax-loading" src="${info.ajaxLoaderURL}" alt="loading..." lang="en" />
 									<c:if test="${!userInterface.light}">
-						<a class="settings" href="#" onclick="editPreview.openModal('${i18n.edit['preview.label.properties']}','${url}'); return false;"> <i class="bi bi-gear"></i>
+						<a class="settings" href="#" onclick="editPreview.openModal('${i18n.edit['preview.label.properties']}','${url}'); return false;"> <i class="bi bi-gear"></i></a>
 					</c:if>
 				
 			</div>
