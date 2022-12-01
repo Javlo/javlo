@@ -7,8 +7,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 //if (ctx.getGlobalContext().getStaticConfig().isAddButton()) {
 %><c:set var="logged" value="${not empty info.editUser}" />
 <c:if test="${not empty info.editUser}">
-	<div class="add">
-		
+	<div class="add">		
 		<div class="macros hiddenCollapse bloc-background" id="addMacros">
 			<div class="_jv_header_sm">
 				<span>action</span>
@@ -55,42 +54,22 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 		</div>
 
 		<a role="button" class="action prvCollapse" href="#addMacros" aria-expanded="false" aria-controls="addMacros"><i class="bi bi-plus-circle"></i></a>
-
-<div class="direct-action">
-	<%-- 	<form id="pc_form" action="${info.currentURL}" method="post"> --%>
-	<!-- 		<div class="pc_line"> -->
-	<!-- 			<input type="hidden" name="webaction" value="edit.previewedit" /> -->
-	<%-- 			<c:if test='${!editPreview}'> --%>
-	<%-- 				<button class="action btn-wait-loading" type="submit" title="${i18n.edit['preview.label.edit-page']}"> --%>
-	<!-- 					<i class="bi bi-lock"></i></button> -->
-	<%-- 			</c:if> --%>
-	<%-- 			<c:if test='${editPreview}'> --%>
-	<%-- 				<button class="action btn-wait-loading" type="submit" title="${i18n.edit['preview.label.not-edit-page']}"> --%>
-	<!-- 					<i class="bi bi-unlock"></i></button> -->
-	<%-- 			</c:if> --%>
-	<!-- 		</div> -->
-	<!-- 	</form> -->
-
-
-	<c:url var="logoutURL" value="<%=URLHelper.createURL(ctx)%>" context="/">
-		<c:param name="edit-logout" value="true" />
-	</c:url>
-	<c:if test="${userInterface.minimalInterface}">
-		<a class="action btn-logout" title="${i18n.edit['global.logout']}" href="${logoutURL}"><i class="fa fa-sign-out" aria-hidden="true"></i></a>
-	</c:if>
-</div>
 </div>
 </c:if>
 <c:if test="${empty info.editUser}">
-	<div class="add">
-		<form id="pc_form" method="post" action="<%=URLHelper.createURL(editCtx)%>">
-			<c:if test='${!editPreview}'>
-				<button class="action btn-login" type="submit" title="${i18n.edit['global.login']}">
-					<i class="bi bi-pencil-square"></i>
-				</button>
-			</c:if>
-			<input type="hidden" name="backPreview" value="true" />
-		</form>
+	<div id="preview-login-banner">
+		<div class="preview-login-banner-wrapped">
+			<span>Javlo</span>
+			<form id="pc_form" method="post" action="<%=URLHelper.createURL(editCtx)%>">
+				<c:if test='${!editPreview}'>
+					<button class="action btn-login" type="submit" title="${i18n.edit['global.login']}">
+						<i class="bi bi-pencil-square"></i>
+					</button>
+				</c:if>
+				<input type="hidden" name="backPreview" value="true" />
+			</form>
+			<a class="close-preview-banner" href='#' onclick="document.getElementById('preview-login-banner').remove();"><i class="bi bi-x"></i></a>
+		</div>
 	</div>
 </c:if>
 <%
