@@ -92,9 +92,6 @@ if (!rightOnPage) {
 						</div>
 					</form>
 				</c:if>
-
-
-
 			</div>
 
 			<div class="page-actions">
@@ -247,7 +244,6 @@ if (!rightOnPage) {
 							</c:if>
 						</c:if>
 					</c:if>
-
 				</ul>
 			</div>
 			<div class="users">

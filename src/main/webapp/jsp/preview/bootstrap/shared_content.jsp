@@ -7,7 +7,7 @@
 	</c:url>
 	<div class="upload-zone" data-url="${uploadUrl}" data-done="onDoneUpload">
 	<h3>${i18n.edit['preview.upload-here']}</h3>
-	<div class="picto"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></div>	
+	<div class="picto"><i class="bi bi-box-arrow-in-down"></i></div>	
 	</div>	
 </div>
 

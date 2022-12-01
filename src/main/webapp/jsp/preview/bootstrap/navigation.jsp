@@ -13,7 +13,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 <c:url var="pasteURL" value="${info.currentURL}" context="/">
 	<c:param name="webaction" value="edit.insertPage" />
 </c:url>
-<div class="height-to-bottom minus-50">
+<div class="height-to-bottom">
 <div class="pages web">
 
 <c:url var="urlPageProperties" value="<%=URLHelper.createURL(editCtx)%>" context="/">

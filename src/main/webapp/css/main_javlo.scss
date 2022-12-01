@@ -1,0 +1,19 @@
+._jv_main-box, #preview_command ._jv_main-box  {
+	margin: var(--main-sep);
+}
+
+._jv_header_sm, #preview_command ._jv_header_sm {
+	display: flex;
+	justify-content: space-between;
+	padding: 1px 1px 1px calc( var(--main-sep) / 2) !important;
+	border: 0px !important;
+	background-color: var(--light-black) !important;
+	font-size: 1rem !important;
+	text-transform: uppercase;
+	color: white !important;
+	a {
+		color: white !important;
+	}
+	box-shadow: none !important;
+	width: 100%;
+}

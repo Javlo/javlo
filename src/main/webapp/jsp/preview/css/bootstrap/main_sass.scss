@@ -199,16 +199,15 @@ html.preview-only.preview-standard.preview-command-visible {
 		background-color: #ffffff;
 		z-index: 11000;
 		border-top: none;
+		
+		.tab-pane {
+			padding: calc(var(--main-sep) / 2);
+		}
 	}
 
 	.height-to-bottom {
 		overflow-x: hidden;
 		overflow-y: auto;
-	}
-
-	.height-to-bottom.has-scrollbar {
-		// padding-right: 3px;
-		padding: 10px;
 	}
 
 	.sidebar ul {
@@ -445,10 +444,8 @@ div#preview_command {
 	min-width: 200px;
 }
 
-#preview-layer.repeated {
-	.repeat-icon {
-		display: inline-block !important;
-	}
+#preview-layer.repeated	.repeat-icon {
+	display: inline-block !important;
 }
 
 #preview-layer.small .text {
@@ -586,8 +583,14 @@ body #preview-layer .commands {
 	position: relative;
 }
 
-#preview_command .drop-files .upload-zone {
-	text-align: center;
+#preview_command #_ep_files {
+
+	width: 100%;
+	
+	.upload-zone {
+		text-align: center;
+	}
+
 }
 
 #preview_command .drop-files .upload-zone.drop-selected .glyphicon {
