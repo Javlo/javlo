@@ -55,7 +55,6 @@
 				float: none;
 				width: 33.3%;
 				background-color: var(--javlo-ui-color-2);
-
 				a {
 					display: block;
 					text-align: center;
@@ -67,9 +66,21 @@
 	.integrity-message {
 		position: absolute;
 		top: 20px;
-		left: 10px;
+		left: -30px;
 		width: 312px;
 		z-index: 10;
+		.list-group {
+			background-color: var(--javlo-ui-color-1);
+			border: 1px var(--javlo-ui-color-3) solid;
+			margin: calc(var(--main-sep) / 2) !important;
+			padding: calc(var(--main-sep) / 2) calc(var(--main-sep) / 2) 0 calc(var(--main-sep) / 2);
+			li {
+				margin: 0 0 calc(var(--main-sep) / 2) 0  !important;
+			}
+		}
+		.badge {
+			line-height: normal !important;
+		}
 	}
 
 	
