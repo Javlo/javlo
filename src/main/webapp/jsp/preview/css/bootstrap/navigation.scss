@@ -63,10 +63,15 @@
 		}
 	}
 	
+	.btn-integrity:hover #integrity-list {
+		display: block;
+		visibility: visible;
+	}
+	
 	.integrity-message {
 		position: absolute;
-		top: 20px;
-		left: -30px;
+		top: 10px;
+		left: -286px;
 		width: 312px;
 		z-index: 10;
 		.list-group {
@@ -95,7 +100,7 @@
 			padding: 1px 5px 1px 5px;
 			display: block;
 			position: absolute;
-			top: 2px;
+			top: -6px;
 			right: -8px;
 			width: auto;
 			font-size: 8px;

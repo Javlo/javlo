@@ -30,21 +30,22 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 					</a>
 					<c:if test="${info.page.root}">
 						<div class="page-shortcut">
-							<span><i class="bi bi-gear" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;"></i></span> <span class="btn-integrity alert-${integrities.levelLabel} btn-notext badged" data-toggle="_eprv_collapse" data-target="#integrity-list" href="#integrity-list" aria-expanded="false" aria-controls="integrity-list"> <c:if test="${integrities.levelLabel != 'success'}">
-									<i class="bi bi-exclamation-triangle-fill"></i>
-								</c:if> <c:if test="${integrities.levelLabel == 'success'}">
-									<i class="bi bi-check-circle-fill"></i>
-								</c:if>
-								<div class="badge-integrity">${fn:length(integrities.checker)}</div>
-							</span>
-							<div class="integrity-message collapse${integrities.error && contentContext.previewEdit?' in':''}" id="integrity-list">
-								<ul class="list-group">
-									<c:forEach var="checker" items="${integrities.checker}">
-										<c:if test="${checker.errorCount>0}">
-											<li class="list-group-item list-group-item-${checker.levelLabel}"><span class="badge">${checker.errorCount}</span>${checker.errorMessage}</li>
-										</c:if>
-									</c:forEach>
-								</ul>
+							<span><i class="bi bi-gear" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;"></i></span>
+							<div class="btn-integrity alert-${integrities.levelLabel} btn-notext badged" data-toggle="_eprv_collapse" data-target="#integrity-list" href="#integrity-list" aria-expanded="false" aria-controls="integrity-list"> <c:if test="${integrities.levelLabel != 'success'}">
+								<i class="bi bi-exclamation-triangle-fill"></i>
+									</c:if> <c:if test="${integrities.levelLabel == 'success'}">
+										<i class="bi bi-check-circle-fill"></i>
+									</c:if>
+									<div class="badge-integrity">${fn:length(integrities.checker)}</div>
+								<div class="integrity-message collapse${integrities.error && contentContext.previewEdit?' in':''}" id="integrity-list">
+									<ul class="list-group">
+										<c:forEach var="checker" items="${integrities.checker}">
+											<c:if test="${checker.errorCount>0}">
+												<li class="list-group-item list-group-item-${checker.levelLabel}"><span class="badge">${checker.errorCount}</span>${checker.errorMessage}</li>
+											</c:if>
+										</c:forEach>
+									</ul>
+								</div>
 							</div>
 						</div>
 					</c:if>
@@ -95,13 +96,13 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 							<a href="${page.url}">${page.info.label}${page.haveChildren?'...':''}</a>
 							<c:if test="${page.url eq info.currentURL}">
 								<div class="page-shortcut">
-									<span><i class="bi bi-gear" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;"></i></span> <span class="btn-integrity alert-${integrities.levelLabel} btn-notext badged" data-toggle="_eprv_collapse" data-target="#integrity-list" href="#integrity-list" aria-expanded="false" aria-controls="integrity-list"> <c:if test="${integrities.levelLabel != 'success'}">
+									<span><i class="bi bi-gear" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;"></i></span>
+									<div class="btn-integrity alert-${integrities.levelLabel} btn-notext badged" data-toggle="_eprv_collapse" data-target="#integrity-list" href="#integrity-list" aria-expanded="false" aria-controls="integrity-list"> <c:if test="${integrities.levelLabel != 'success'}">
 											<i class="bi bi-exclamation-triangle-fill"></i>
 										</c:if> <c:if test="${integrities.levelLabel == 'success'}">
 											<i class="bi bi-check-circle-fill"></i>
 										</c:if>
 										<div class="badge-integrity">${fn:length(integrities.checker)}</div>
-									</span>
 									<div class="integrity-message collapse${integrities.error && contentContext.previewEdit?' in':''}" id="integrity-list">
 										<ul class="list-group">
 											<c:forEach var="checker" items="${integrities.checker}">
@@ -110,6 +111,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 												</c:if>
 											</c:forEach>
 										</ul>
+									</div>
 									</div>
 								</div>
 							</c:if>
