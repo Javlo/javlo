@@ -417,7 +417,6 @@ div#preview_command {
 		font-size: 16px;
 	}
 
-	h3,
 	h3 .glyphicon {
 		font-size: 14px;
 	}
@@ -583,13 +582,10 @@ body #preview-layer .commands {
 }
 
 #preview_command #_ep_files {
-
 	width: 100%;
-	
 	.upload-zone {
 		text-align: center;
 	}
-
 }
 
 #preview_command .drop-files .upload-zone.drop-selected .glyphicon {
