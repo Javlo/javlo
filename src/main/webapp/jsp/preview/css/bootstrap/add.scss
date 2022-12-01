@@ -1,111 +1,129 @@
 #preview_command {
-	
-.add {
-	position: fixed;
-	right: 1.5rem;
-	bottom: 1.5rem;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	z-index: 10000;
 
-	.button-group-addon {
-		width: 42px;
-		float: left;
-		margin: -6px 12px -6px -12px;
-		padding: 8px 12px;
-		border: 0 none;
-		border-right: 1px #cccccc solid;
-		text-align: center;
-	}
-
-	.action {
-		font-size: 30px;
-		line-height: 30px;
-		color: white;
-		background-color: var(--javlo-ui-accent-color-8);
-		border-radius: 50%;
-		width: 50px;
-		height: 50px;
+	.add {
+		position: fixed;
+		right: 1.5rem;
+		bottom: 1.5rem;
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		z-index: 10000;
 
-		&:hover {
-			background-color: var(--javlo-ui-accent-color-9);
+		.button-group-addon {
+			width: 42px;
+			float: left;
+			margin: -6px 12px -6px -12px;
+			padding: 8px 12px;
+			border: 0 none;
+			border-right: 1px #cccccc solid;
+			text-align: center;
 		}
-	}
-
-	.direct-action {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		margin-right: 10px;
 
 		.action {
-			margin-right: 0;
+			font-size: 30px;
+			line-height: 30px;
+			color: white;
+			background-color: var(--javlo-ui-accent-color-8);
+			border-radius: 50%;
+			width: 50px;
+			height: 50px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+
+			&:hover {
+				background-color: var(--javlo-ui-accent-color-9);
+			}
 		}
-	}
 
-	a.action:hover {
-		opacity: 1;
-	}
+		.direct-action {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			margin-right: 10px;
 
-	.body {
-		padding: calc(var(--main-sep) / 2) var(--main-sep);
-	}
-
-	.hiddenCollapse.bloc-background {
-		padding: 0;
-		display: none;
-	}
-
-	.macros {
-		position: fixed;
-		bottom: 90px;
-		right: 1.5rem;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		background-color: var(--javlo-ui-color-1);
-		border: 1px solid var(--javlo-ui-color-3);
-
-		.btn {
-			display: block;
-			margin-bottom: 5px;
-			width: 100%;
+			.action {
+				margin-right: 0;
+			}
 		}
-	}
+
+		a.action:hover {
+			opacity: 1;
+		}
+
+		.body {
+			padding: calc(var(--main-sep) / 2) var(--main-sep);
+		}
+
+		.hiddenCollapse.bloc-background {
+			padding: 0;
+			display: none;
+		}
+
+		.macros {
+			position: fixed;
+			bottom: 90px;
+			right: 1.5rem;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			background-color: var(--javlo-ui-color-1);
+			border: 1px solid var(--javlo-ui-color-3);
+
+			.btn {
+				display: block;
+				margin-bottom: 5px;
+				width: 100%;
+			}
+		}
 
 	}
 
 	#preview-login-banner {
-		position:fixed;
+		position: fixed;
 		bottom: 0;
-		background-color: var(--action-color-darken);
-		padding: calc(var(--main-sep) / 2);
+		background-color: var(--javlo-ui-accent-color-9);
+		padding: calc(var(--main-sep) / 2) var(--main-sep);
 		width: 100%;
-		font-size: 12px;
+		font-size: 14px;
 		color: #fff;
 		z-index: 999999;
+
 		.preview-login-banner-wrapped {
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-			position : relative;
+			position: relative;
+
+			span {
+				flex-grow: 1;
+			}
 		}
+
 		button {
 			font-size: 24px;
 			background-color: transparent;
 			border: 0 none;
+
+			span {
+				font-size: 14px;
+			}
+
+			&:hover {
+				opacity: .7;
+			}
 		}
+
 		.close-preview-banner {
-			position: absolute;;
-			top: -6px;
-			right: -6px;
-			font-size: 8px;
+			font-size: 14px;
 			color: #fff;
+			margin-left: var(--main-sep);
+			transition: opacity .3;
+
+			&:hover {
+				opacity: .7;
+			}
 		}
 	}
 }

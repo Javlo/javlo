@@ -59,11 +59,11 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 <c:if test="${empty info.editUser}">
 	<div id="preview-login-banner">
 		<div class="preview-login-banner-wrapped">
-			<span>Javlo</span>
+			<span><strong>Javlo</strong> Preview Mode</span>
 			<form id="pc_form" method="post" action="<%=URLHelper.createURL(editCtx)%>">
 				<c:if test='${!editPreview}'>
-					<button class="action btn-login" type="submit" title="${i18n.edit['global.login']}">
-						<i class="bi bi-pencil-square"></i>
+					<button class="action btn-login" type="submit" title="${i18n.edit['global.login']}"><span>Login</span>
+						<i class="bi bi-person-down"></i>
 					</button>
 				</c:if>
 				<input type="hidden" name="backPreview" value="true" />
