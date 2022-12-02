@@ -25,31 +25,18 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 
 			<li class="nav-root parent title page-root page-item ${info.page.root?'selected':''}">
 				<div class="nav-item">
-					<a href="${info.rootURL}">${info.globalTitle} <i class="bi bi-arrow-90deg-up"></i>
+					<a href="${info.rootURL}">${info.globalTitle} <i class="bi bi-arrow-90deg-up"></i></a>
 					<c:if test="${fn:length(info.contentLanguages)>1}">
-					<div class="language-list collapse" id="_language-list" aria-expanded="true" style="">
-							<c:set var="noemptypage" value="true" />
-							<div class="list-group">
-								<c:forEach var="page" items="${info.pagesForAnyLanguages}">
-									<c:set var="noemptypage" value="${noemptypage && page.realContent}" />
-									<a href="${page.url}" class="list-group-item ${page.realContent?'list-group-item-success':'list-group-item-danger'}">
-										<span class="badge">${page.contentLanguage}</span>${page.contentLanguageName}
-									</a>
-								</c:forEach>
-							</div>
-						</div>
-
-						<form action="${info.currentURL}" method="post">
+						<form class="language-list" action="${info.currentURL}" method="post">
 							<input type="hidden" name="webaction" value="edit.changeLanguage" />
 							<select class="btn btn-default btn-sm btn-languages btn-notext _language" name="language" onchange="this.form.submit();">
-								<c:forEach var="page" items="${info.pagesForAnyLanguages}">
-									<c:set var="noemptypage" value="${noemptypage && page.realContent}" />
-									<option title="${page.contentLanguageName}" value="${page.contentLanguage}" class="list-group-item ${page.realContent?'list-group-item-success':'list-group-item-danger'}" ${info.requestContentLanguage==page.contentLanguage?'selected="selected"':''}>${page.contentLanguage}</option>
+								<c:forEach var="pageLg" items="${info.pagesForAnyLanguages}">
+									<c:set var="noemptypage" value="${noemptypage && pageLg.realContent}" />
+									<option title="${pageLg.contentLanguageName}" value="${pageLg.contentLanguage}" class="list-group-item ${pageLg.realContent?'list-group-item-success':'list-group-item-danger'}" ${info.requestContentLanguage==pageLg.contentLanguage?'selected="selected"':''}>${pageLg.contentLanguage}</option>
 								</c:forEach>
 							</select>
 						</form>
 					</c:if>
-					</a>
 					<c:if test="${info.page.root}">
 						<div class="page-shortcut">
 							<span><i class="bi bi-gear" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;"></i></span>
@@ -87,10 +74,15 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 					<c:set var="asTitle" value="true" />
 					<li class="page-item parent ${!page.trash?'title':'trash'}"><c:if test="${not empty info.contextForCopy && (child.url eq info.currentURL)}">
 							<div class="nav-item">
-								<a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}"> <span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span>
+								<a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}">
+									<span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span>
 								</a>
 							</div>
-						</c:if> <a class="draggable flow-${info.parent.flowIndex}" id="page-${info.parent.name}" data-pageid="${info.parent.id}" href="${info.parent.url}" title="${info.parent.path}">${info.parent.info.label}${info.parent.haveChildren?'...':''}</a></li>
+						</c:if>
+						<a class="draggable flow-${info.parent.flowIndex}" id="page-${info.parent.name}" data-pageid="${info.parent.id}" href="${info.parent.url}" title="${info.parent.path}">
+							${info.parent.info.label}${info.parent.haveChildren?'...':''}
+						</a>
+					</li>
 				</c:if>
 				<c:if test="${!(page.url eq info.currentURL) && not empty info.parent.parent}">
 					<c:set var="asTitle" value="true" />

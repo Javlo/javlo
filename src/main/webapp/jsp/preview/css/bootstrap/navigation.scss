@@ -120,6 +120,7 @@ body #preview_command .component-list .complexity-2 .wrapper-in {
 			right: -8px;
 			width: auto;
 			font-size: 8px;
+			display: none;
 		}
 		
 	}
@@ -191,22 +192,31 @@ body #preview_command .component-list .complexity-2 .wrapper-in {
 		.nav-root {
 			
 			.nav-item {
+				display: flex;
+				justify-content: space-between;
 				a {
 					flex-basis: 60% !important;
 				}
 			}
 			
-			.btn-languages {
-			  height: 30px !important;
-			  border-radius: 0;
-			  margin-right: -1px;
-			  border-bottom: 0 none;
-			  border-top: 0 none;
-			  padding-top: 0 !important;
-			  padding-bottom: 0 !important;
-			  .list-group-item {
-				padding: 1px;
-			}
+			.language-list {
+				background-color: transparent;
+				.btn-languages {
+					height: 30px !important;
+					border-radius: 0;
+					margin-right: -1px;
+					border-bottom: 0 none;
+					border-top: 0 none;
+					padding-top: 0 !important;
+					padding-bottom: 0 !important;
+					border: 0 none;
+					background-color: transparent !important;
+					font-size: 12px !important;
+					.list-group-item {
+						padding: 1px;
+						background-color: transparent;
+					}
+				}
 			}
 		}
 		
