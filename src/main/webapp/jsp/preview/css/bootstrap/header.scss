@@ -28,8 +28,6 @@
 	}
 }
 
-
-
 #preview_command {
 	.header {
 		min-width: 980px;
@@ -186,14 +184,6 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-}
-
-#preview_command .integrity-message {
-	position: absolute;
-	top: 45px;
-	width: 380px;
-	right: 0;
-	
 }
 
 #preview_command #_language-list {

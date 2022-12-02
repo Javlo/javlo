@@ -48,35 +48,6 @@ if (!rightOnPage) {
 				
 			</div>
 			<div class="menu">
-				<c:if test="${fn:length(info.contentLanguages)>1}">
-					<div class="language-list collapse" id="_language-list" aria-expanded="true" style="">
-						<c:set var="noemptypage" value="true" />
-						<div class="list-group">
-							<c:forEach var="page" items="${info.pagesForAnyLanguages}">
-								<c:set var="noemptypage" value="${noemptypage && page.realContent}" />
-								<a href="${page.url}" class="list-group-item ${page.realContent?'list-group-item-success':'list-group-item-danger'}"> <span class="badge">${page.contentLanguage}</span>${page.contentLanguageName}
-								</a>
-							</c:forEach>
-						</div>
-					</div>
-				
-				<!-- 		<li class="_language"> -->
-				<%-- 			<a class="btn btn-default btn-sm btn-languiages btn-notext ${noemptypage?'':'btn-color alert-warning'}" data-toggle="collapse" data-target="#_language-list" href="#_language-list" aria-expanded="true" aria-controls="_language-list"> --%>
-				<%-- 			<i class="fa fa-language"></i><span class="text"> ${info.requestContentLanguageName}</span> --%>
-				<!-- 			</a> -->
-				<!-- 		</li> -->
-				<form action="${info.currentURL}" method="post">
-					<input type="hidden" name="webaction" value="edit.changeLanguage" />
-					<select class="btn btn-default btn-sm btn-languiages btn-notext _language" name="language" onchange="this.form.submit();">
-						<c:forEach var="page" items="${info.pagesForAnyLanguages}">
-							<c:set var="noemptypage" value="${noemptypage && page.realContent}" />
-							<option title="${page.contentLanguageName}" value="${page.contentLanguage}" class="list-group-item ${page.realContent?'list-group-item-success':'list-group-item-danger'}" ${info.requestContentLanguage==page.contentLanguage?'selected="selected"':''}>${page.contentLanguage}</option>
-						</c:forEach>
-					</select>
-				</form>
-				
-				</c:if>
-
 				<c:if test="${globalContext.previewMode && !contentContext.asTimeMode}">
 					<form id="pc_form" action="${info.currentURL}" method="post">
 						<div class="pc_line">
@@ -206,42 +177,6 @@ if (!rightOnPage) {
 							}
 							%>
 
-							<c:if test="${not empty integrities && !globalContext.collaborativeMode && !globalContext.mailingPlatform && logged}">
-								<c:if test="${fn:length(integrities.checker)==0}">
-									<li><a class="btn btn-default btn-sm btn-integrity btn-color alert-success btn-notext" data-toggle="collapse" data-target="#integrity-list" href="#integrity-list" aria-expanded="false" aria-controls="integrity-list"> <i class="bi bi-check2-square"></i>
-									</a>
-										<div class="integrity-message collapse${integrities.error && contentContext.previewEdit?' in':''}" id="integrity-list">
-											<ul class="list-group">
-												<li class="list-group-item list-group-item-success">${i18n.edit['integrity.no_error']}</li>
-											</ul>
-										</div></li>
-								</c:if>
-
-								<c:if test="${fn:length(integrities.checker)>0}">
-									<li><a class="btn btn-default btn-sm btn-integrity btn-color alert-${integrities.levelLabel} btn-notext badged" data-toggle="_eprv_collapse" data-target="#integrity-list" href="#integrity-list" aria-expanded="false" aria-controls="integrity-list"> <i class="bi bi-exclamation-triangle"></i> <c:if test="${fn:length(integrities.checker)>0}">
-												<div class="badge unread-count">${fn:length(integrities.checker)}</div>
-											</c:if>
-									</a>
-										<div class="integrity-message collapse${integrities.error && contentContext.previewEdit?' in':''}" id="integrity-list">
-											<ul class="list-group">
-												<c:forEach var="checker" items="${integrities.checker}">
-													<c:if test="${checker.errorCount>0}">
-														<li class="list-group-item list-group-item-${checker.levelLabel}"><span class="badge">${checker.errorCount}</span>${checker.errorMessage}</li>
-													</c:if>
-												</c:forEach>
-											</ul>
-										</div></li>
-									<c:if test="${userInterface.IM}">
-										<li><a class="btn btn-default btn-sm btn-discution btn-color btn-notext badged" data-toggle="_eprv_collapse" data-target="#discution" href="#discution" aria-expanded="false" aria-controls="discution"> <span class="glyphicon glyphicon-comment" aria-hidden="true"></span> <c:if test="${im.messagesSize>0}">
-													<div class="badge unread-count">${im.messagesSize}</div>
-												</c:if>
-										</a>
-											<div class="discution collapse" id="discution">
-												<jsp:include page="${info.editTemplateFolder}/im.jsp" />
-											</div></li>
-									</c:if>
-								</c:if>
-							</c:if>
 						</c:if>
 					</c:if>
 				</ul>

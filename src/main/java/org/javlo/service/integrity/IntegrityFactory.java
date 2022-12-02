@@ -69,6 +69,19 @@ public class IntegrityFactory {
 		checkers.add(new CheckResource());
 		return checkers;
 	}
+	
+	public boolean isClean() {
+		if (!displayIntegrity) {
+			return true;
+		} else {
+			for (IntegrityBean bean : beans) {
+				if (bean.getErrorCount() > 0) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 
 	public boolean isError() {
 		if (!displayIntegrity) {

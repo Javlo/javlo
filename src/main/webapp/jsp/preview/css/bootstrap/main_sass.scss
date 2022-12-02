@@ -71,7 +71,7 @@ html.preview-only.preview-standard.preview-command-visible {
 	}
 
 	.modal-full {
-		max-width: clamp(800px, 85vw, 1440px) !important;
+		max-width: clamp(800px, 85vw, 1710px) !important;
 	}
 
 
@@ -198,7 +198,7 @@ html.preview-only.preview-standard.preview-command-visible {
 		background-color: #ffffff;
 		z-index: 11000;
 		border-top: none;
-		
+
 		.tab-pane {
 			padding: calc(var(--main-sep) / 2);
 		}
@@ -411,13 +411,11 @@ body #preview_command .btn[disabled] {
 }
 
 div#preview_command {
-
 	h2,
 	h2 .glyphicon {
 		font-size: 16px;
 	}
 
-	h3,
 	h3 .glyphicon {
 		font-size: 14px;
 	}
@@ -583,13 +581,10 @@ body #preview-layer .commands {
 }
 
 #preview_command #_ep_files {
-
 	width: 100%;
-	
 	.upload-zone {
 		text-align: center;
 	}
-
 }
 
 #preview_command .drop-files .upload-zone.drop-selected .glyphicon {
