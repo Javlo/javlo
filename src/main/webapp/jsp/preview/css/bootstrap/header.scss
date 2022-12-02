@@ -47,24 +47,24 @@
 }
 
 #preview_command .logo {
-	
+
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	
+
 	padding: 0 var(--main-sep);
 
 	.name {
 		font-size: 28px;
 		font-family: javloFont, sans-serif;
 		color: var(--javlo-ui-accent-color-9);
-	
+
 		&:hover {
 			text-decoration: none;
 			color: var(--javlo-ui-accent-color-7);
 		}
 	}
-	
+
 	.settings {
 		color: var(--javlo-ui-color-8) !important;
 	}
@@ -156,6 +156,7 @@
 	span {
 		font-size: 12px;
 		line-height: 2;
+		margin-left: 10px;
 	}
 }
 

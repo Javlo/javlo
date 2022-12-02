@@ -1,4 +1,32 @@
+#preview_command .component .figure {
+	background-color: transparent !important;
+}
+
+body #preview_command .component-list .component .wrapper-in {
+	height: 100px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#preview_command .tab-content>.active {
+	width: 100%;
+}
+
+#preview_command .flex-line .btn {
+	height: 34px;
+}
+
+#preview_command .filter-wrapper .reset-filter {
+	right: 8px;
+	top: 8px;
+	font-size: 14px;
+}
+
 #preview_command {
+	.filter-wrapper {
+		width: 85%;
+	}
 
 	.component-list {
 		margin-left: -5px;
@@ -13,7 +41,8 @@
 	}
 
 	.component-list .component:hover .wrapper-in {
-		background-color: #e2e2e2;
+		background-color: var(--javlo-ui-color-2);
+		border: 1px solid var(--javlo-ui-color-5);
 	}
 
 	.components-group {
@@ -25,7 +54,7 @@
 		display: block;
 		margin: 5px;
 		background-color: white;
-		border: 1px solid var(--javlo-ui-color-1);
+		border: 1px solid var(--javlo-ui-color-2);
 		padding: 5px;
 		color: #aaaaaa;
 		text-align: center;
