@@ -6,6 +6,7 @@ body #preview_command .component-list .component .wrapper-in .text {
 	display: grid !important;
 	grid-template-columns: repeat(2, 1fr) !important;
 	grid-gap: 10px;
+	margin-top: 10px !important;
 }
 
 body #preview_command .component-list .component {

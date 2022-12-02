@@ -60,16 +60,17 @@ document.addEventListener("DOMContentLoaded", function(event) {
   <button type="button" class="btn btn-default btn-xs btn-3" role="group" onclick="displayComplexity(3);">${i18n.edit['preview.component-group.admin']}</button>
   </div></c:if>
 </div>
-<div class="flex-line">
+<div class="flex-line" style="margin-top: 10px;">
 <div class="filter-wrapper">
-<input id="filter-components" type="text" class="form-control filter" placeholder="filter..." onkeyup="filter(this.value);"/>
-<button type="button" class="reset-filter"><i class="bi bi-x-circle-fill" aria-hidden="true" onclick="document.getElementById('filter-components').value = ''; filter('');"></i></button>
+<input id="filter-components" type="text" class="form-control filter" placeholder="Filter..." onkeyup="filter(this.value);"/>
+<button type="button" class="reset-filter"><i id="close" class="bi bi-x-circle-fill" aria-hidden="true" style="visibility: hidden; transition: visibility 300ms linear 0ms" onclick="document.getElementById('filter-components').value = ''; filter('');"></i></button>
 </div>
 <c:if test="${info.admin}"><button onclick="editPreview.openModal('Components', '${info.currentEditURL}?module=admin&context=${info.contextKey}&webaction=admin.previewEditComponent&previewEdit=true'); return false;" class="btn btn-default"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button></c:if>
 </div>
 
 <script>
-	function filter(text) {
+function filter(text) {
+		
 		if (text === null || text.length == 0) {
 			document.querySelectorAll('#preview_command .component-list .component').forEach(item => {
 				item.classList.remove('hidden');
@@ -84,11 +85,15 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				item.classList.remove('hidden');
 			}	
 		});
+		const filterComponents = document.getElementById('filter-components');
+		const close = document.getElementById('close');
+		filterComponents.length !== 0 ? close.style.visibility = "visible" : close.style.visibility = "hidden";
+
 	}
 </script>
 
 </c:if>
-<div class="component-list height-to-bottom ${globalContext.componentsFiltered?'display-1':''}">
+<div class="component-list  ${globalContext.componentsFiltered?'display-1':''}">
 <c:set var="cat" value="" />
 <c:forEach var="comp" items="${components}">
 <c:if test="${comp.metaTitle}">
