@@ -7,7 +7,7 @@ body #preview_command .component-list .complexity-2 .wrapper-in i {
 
 body #preview_command .component-list .complexity-1 .wrapper-in,
 body #preview_command .component-list .complexity-2 .wrapper-in {
-	border-bottom-color: transparent !important;
+	border-bottom-color: var(--javlo-ui-color-2) !important;
 }
 
 #preview_command {
@@ -51,7 +51,7 @@ body #preview_command .component-list .component .wrapper-in {
 }
 
 #preview_command {
-	
+
 	#page-root {
 		display: none;
 	}
@@ -75,6 +75,7 @@ body #preview_command .component-list .component .wrapper-in {
 				float: none;
 				width: 33.3%;
 				background-color: var(--javlo-ui-color-2);
+
 				a {
 					display: block;
 					text-align: center;
@@ -82,45 +83,48 @@ body #preview_command .component-list .component .wrapper-in {
 			}
 		}
 	}
-	
+
 	.btn-integrity:hover #integrity-list {
 		display: block;
 		visibility: visible;
 	}
-	
+
 	.page-shortcut {
 		color: var(--javlo-ui-color-8);
 	}
-	
+
 	.integrity-message {
 		position: absolute;
 		top: 10px;
 		left: -286px;
 		width: 312px;
 		z-index: 10;
+
 		.list-group {
 			background-color: var(--javlo-ui-color-1);
 			border: 1px var(--javlo-ui-color-3) solid;
 			margin: calc(var(--main-sep) / 2) !important;
 			padding: calc(var(--main-sep) / 2) calc(var(--main-sep) / 2) 0 calc(var(--main-sep) / 2);
+
 			li {
-				margin: 0 0 calc(var(--main-sep) / 2) 0  !important;
+				margin: 0 0 calc(var(--main-sep) / 2) 0 !important;
 			}
 		}
+
 		.badge {
 			line-height: normal !important;
 		}
 	}
 
-	
+
 	.pages ul li.page-item.selected .btn-integrity {
 		display: inline-block;
 		padding: 0;
 		background-color: transparent;
 		border: 0 none;
 		margin-right: 5px;
-		
-		.badge-integrity {			
+
+		.badge-integrity {
 			padding: 1px 5px 1px 5px;
 			display: block;
 			position: absolute;
@@ -130,7 +134,7 @@ body #preview_command .component-list .component .wrapper-in {
 			font-size: 8px;
 			display: none;
 		}
-		
+
 	}
 
 	.navigation_panel {
@@ -179,10 +183,11 @@ body #preview_command .component-list .component .wrapper-in {
 		ul.empty {
 			padding-bottom: 1px;
 		}
-		
+
 		.nav-item {
 			background: var(--javlo-ui-color-1);
 			border: 1px var(--javlo-ui-color-2) solid;
+
 			a {
 				max-width: 90%;
 				overflow: hidden;
@@ -190,25 +195,29 @@ body #preview_command .component-list .component .wrapper-in {
 			}
 		}
 
-		.selected .nav-item, .nav-item:hover {
+		.selected .nav-item,
+		.nav-item:hover {
 			background: var(--javlo-ui-color-2);
+
 			a {
 				background: var(--javlo-ui-color-2);
 			}
 		}
-		
+
 		.nav-root {
-			
+
 			.nav-item {
 				display: flex;
 				justify-content: space-between;
+
 				a {
 					flex-basis: 60% !important;
 				}
 			}
-			
+
 			.language-list {
 				background-color: transparent;
+
 				.btn-languages {
 					height: 30px !important;
 					border-radius: 0;
@@ -220,6 +229,7 @@ body #preview_command .component-list .component .wrapper-in {
 					border: 0 none;
 					background-color: transparent !important;
 					font-size: 12px !important;
+
 					.list-group-item {
 						padding: 1px;
 						background-color: transparent;
@@ -227,11 +237,11 @@ body #preview_command .component-list .component .wrapper-in {
 				}
 			}
 		}
-		
-		
+
+
 
 		ul {
-/*			&:after {
+			/*			&:after {
 				position: absolute;
 				left: 54px;
 				top: 0;
@@ -264,7 +274,7 @@ body #preview_command .component-list .component .wrapper-in {
 		}
 
 		ul.navigation li.page-item {
-			
+
 			a {
 				flex-basis: 85%;
 			}
@@ -336,7 +346,7 @@ body #preview_command .component-list .component .wrapper-in {
 
 	.pages ul li.page-item a span.move {
 		display: inline-block;
-		float: right;
+		// float: right;
 		width: 22px;
 		height: 22px;
 		border-radius: 2px;

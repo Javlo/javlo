@@ -1,9 +1,24 @@
+body #preview_command .component-list .component .wrapper-in .text {
+	height: fit-content !important;
+}
+
+.component-list.display-1 {
+	display: grid !important;
+	grid-template-columns: repeat(2, 1fr) !important;
+	grid-gap: 10px;
+}
+
+body #preview_command .component-list .component {
+	width: 100% !important;
+}
+
+
 #preview_command .component .figure {
 	background-color: transparent !important;
 }
 
 body #preview_command .component-list .component .wrapper-in {
-	height: 100px;
+	height: 80px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -28,21 +43,17 @@ body #preview_command .component-list .component .wrapper-in {
 		width: 85%;
 	}
 
-	.component-list {
-		// margin-left: -5px;
-	}
 
 	.component-list .component {
 		margin: 0;
 		padding: 0;
-		width: 33%;
-		float: left;
-		color: #3b3b3b;
+		color: var(--javlo-ui-color-8);
 	}
 
 	.component-list .component:hover .wrapper-in {
 		background-color: var(--javlo-ui-color-2);
 		border: 1px solid var(--javlo-ui-color-5);
+		border-bottom-color: var(--javlo-ui-color-5) !important;
 	}
 
 	.components-group {
@@ -52,14 +63,19 @@ body #preview_command .component-list .component .wrapper-in {
 	.component-list .component .wrapper-in {
 		position: relative;
 		display: block;
-		margin: 5px;
+		margin: 0 !important;
+		padding: 0 !important;
 		background-color: white;
 		border: 1px solid var(--javlo-ui-color-2);
-		padding: 5px;
 		color: #aaaaaa;
 		text-align: center;
 		font-weight: bold;
+
+		.text span {
+			line-height: 1.2 !important;
+		}
 	}
+
 
 	.component-list .component .wrapper-in .category {
 		text-align: center;
@@ -83,7 +99,7 @@ body #preview_command .component-list .component .wrapper-in {
 		vertical-align: middle;
 		height: 36px;
 		overflow: hidden;
-		font-size: 0.86em;
+		font-size: 1em;
 
 		span {
 			line-height: 12px;
@@ -93,8 +109,8 @@ body #preview_command .component-list .component .wrapper-in {
 
 	.component span {
 		display: block;
-		max-height: 36px;
-		overflow: hidden;
+		// max-height: 36px;
+		// overflow: hidden;
 		text-align: center;
 	}
 
@@ -104,7 +120,7 @@ body #preview_command .component-list .component .wrapper-in {
 		height: 49px;
 		background-color: #ffffff;
 		font-size: 30px;
-		color: var(--javlo-ui-accent-color-8);
+		color: var(--javlo-ui-color-8);
 		padding: 5px;
 		border-radius: 3px;
 		text-align: center;
@@ -180,7 +196,7 @@ body #preview_command .component-list .component .wrapper-in {
 .multimedia .empty,
 .pdf-mutlimedia .empty {
 	padding: 5px;
-	vertical-align: middle;
+	// vertical-align: middle;
 	text-align: center;
 	font-family: sans-serif;
 	font-size: 16px;

@@ -411,6 +411,7 @@ body #preview_command .btn[disabled] {
 }
 
 div#preview_command {
+
 	h2,
 	h2 .glyphicon {
 		font-size: 16px;
@@ -441,7 +442,7 @@ div#preview_command {
 	min-width: 200px;
 }
 
-#preview-layer.repeated	.repeat-icon {
+#preview-layer.repeated .repeat-icon {
 	display: inline-block !important;
 }
 
@@ -582,6 +583,7 @@ body #preview-layer .commands {
 
 #preview_command #_ep_files {
 	width: 100%;
+
 	.upload-zone {
 		text-align: center;
 	}
