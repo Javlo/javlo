@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 <div class="flex-line">
 <div class="filter-wrapper">
 <input id="filter-components" type="text" class="form-control filter" placeholder="filter..." onkeyup="filter(this.value);"/>
-<button type="button" class="reset-filter"><i class="fa fa-times-circle" aria-hidden="true" onclick="document.getElementById('filter-components').value = ''; filter('');"></i></button>
+<button type="button" class="reset-filter"><i class="bi bi-x-circle-fill" aria-hidden="true" onclick="document.getElementById('filter-components').value = ''; filter('');"></i></button>
 </div>
 <c:if test="${info.admin}"><button onclick="editPreview.openModal('Components', '${info.currentEditURL}?module=admin&context=${info.contextKey}&webaction=admin.previewEditComponent&previewEdit=true'); return false;" class="btn btn-default"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button></c:if>
 </div>
