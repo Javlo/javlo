@@ -23,20 +23,44 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 		<ul class="navigation">
 			<c:set var="asTitle" value="false" />
 
-			<li class="parent title page-root page-item ${info.page.root?'selected':''}">
+			<li class="nav-root parent title page-root page-item ${info.page.root?'selected':''}">
 				<div class="nav-item">
-					<a href="${info.rootURL}">${info.globalTitle}
-						<i class="bi bi-arrow-90deg-up"></i>
+					<a href="${info.rootURL}">${info.globalTitle} <i class="bi bi-arrow-90deg-up"></i>
+					<c:if test="${fn:length(info.contentLanguages)>1}">
+					<div class="language-list collapse" id="_language-list" aria-expanded="true" style="">
+							<c:set var="noemptypage" value="true" />
+							<div class="list-group">
+								<c:forEach var="page" items="${info.pagesForAnyLanguages}">
+									<c:set var="noemptypage" value="${noemptypage && page.realContent}" />
+									<a href="${page.url}" class="list-group-item ${page.realContent?'list-group-item-success':'list-group-item-danger'}">
+										<span class="badge">${page.contentLanguage}</span>${page.contentLanguageName}
+									</a>
+								</c:forEach>
+							</div>
+						</div>
+
+						<form action="${info.currentURL}" method="post">
+							<input type="hidden" name="webaction" value="edit.changeLanguage" />
+							<select class="btn btn-default btn-sm btn-languages btn-notext _language" name="language" onchange="this.form.submit();">
+								<c:forEach var="page" items="${info.pagesForAnyLanguages}">
+									<c:set var="noemptypage" value="${noemptypage && page.realContent}" />
+									<option title="${page.contentLanguageName}" value="${page.contentLanguage}" class="list-group-item ${page.realContent?'list-group-item-success':'list-group-item-danger'}" ${info.requestContentLanguage==page.contentLanguage?'selected="selected"':''}>${page.contentLanguage}</option>
+								</c:forEach>
+							</select>
+						</form>
+					</c:if>
 					</a>
 					<c:if test="${info.page.root}">
 						<div class="page-shortcut">
 							<span><i class="bi bi-gear" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;"></i></span>
-							<div class="btn-integrity alert-${integrities.levelLabel} btn-notext badged" data-toggle="_eprv_collapse" data-target="#integrity-list" href="#integrity-list" aria-expanded="false" aria-controls="integrity-list"> <c:if test="${integrities.levelLabel != 'success'}">
-								<i class="bi bi-exclamation-triangle-fill"></i>
-									</c:if> <c:if test="${integrities.levelLabel == 'success'}">
-										<i class="bi bi-check-circle-fill"></i>
-									</c:if>
-									<div class="badge-integrity">${fn:length(integrities.checker)}</div>
+							<div class="btn-integrity alert-${integrities.levelLabel} btn-notext badged" data-toggle="_eprv_collapse" data-target="#integrity-list" href="#integrity-list" aria-expanded="false" aria-controls="integrity-list">
+								<c:if test="${integrities.levelLabel != 'success'}">
+									<i class="bi bi-exclamation-triangle-fill"></i>
+								</c:if>
+								<c:if test="${integrities.levelLabel == 'success'}">
+									<i class="bi bi-check-circle-fill"></i>
+								</c:if>
+								<div class="badge-integrity">${fn:length(integrities.checker)}</div>
 								<div class="integrity-message collapse${integrities.error && contentContext.previewEdit?' in':''}" id="integrity-list">
 									<ul class="list-group">
 										<c:forEach var="checker" items="${integrities.checker}">
@@ -49,6 +73,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 							</div>
 						</div>
 					</c:if>
+
 				</div>
 			</li>
 			<c:if test="${!page.root && page.parent != null && !page.parent.root}">
@@ -61,18 +86,17 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 				<c:if test="${page.url eq info.currentURL}">
 					<c:set var="asTitle" value="true" />
 					<li class="page-item parent ${!page.trash?'title':'trash'}"><c:if test="${not empty info.contextForCopy && (child.url eq info.currentURL)}">
-						<div class="nav-item">
-							<a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}">
-								<span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span>
-							</a>
-						</div>
+							<div class="nav-item">
+								<a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}"> <span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span>
+								</a>
+							</div>
 						</c:if> <a class="draggable flow-${info.parent.flowIndex}" id="page-${info.parent.name}" data-pageid="${info.parent.id}" href="${info.parent.url}" title="${info.parent.path}">${info.parent.info.label}${info.parent.haveChildren?'...':''}</a></li>
 				</c:if>
 				<c:if test="${!(page.url eq info.currentURL) && not empty info.parent.parent}">
 					<c:set var="asTitle" value="true" />
 					<li class="page-item parent ${!info.parent.parent.trash?'title':'trash'}">
 						<div class="nav-item">
-						<a class="draggable flow-${info.parent.parent.flowIndex}" id="page-${info.parent.parent.name}" href="${info.parent.parent.url}" title="${info.parent.parent.path}">${info.parent.parent.info.label}${info.parent.parent.haveChildren?'...':''}</a>
+							<a class="draggable flow-${info.parent.parent.flowIndex}" id="page-${info.parent.parent.name}" href="${info.parent.parent.url}" title="${info.parent.parent.path}">${info.parent.parent.info.label}${info.parent.parent.haveChildren?'...':''}</a>
 						</div>
 					</li>
 				</c:if>
@@ -80,15 +104,14 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 
 			<c:forEach var="brother" items="${page.info.previousBrothers}">
 				<li class="page-item" ${brother.trash?'class="trash"':''}>
-				<div class="nav-item ">
-				<a id="page-${brother.name}" class="draggable ${!brother.trash?'editor':'trash'} ${brother.active?'active':'unactive'} flow-${brother.flowIndex}" title="${brother.path}" href="${brother.url}"> ${brother.info.label}${info.parent.parent.haveChildren?'...':''} </a>
-				</div>	
+					<div class="nav-item ">
+						<a id="page-${brother.name}" class="draggable ${!brother.trash?'editor':'trash'} ${brother.active?'active':'unactive'} flow-${brother.flowIndex}" title="${brother.path}" href="${brother.url}"> ${brother.info.label}${info.parent.parent.haveChildren?'...':''} </a>
+					</div>
 				</li>
 			</c:forEach>
 
 			<li class="page-item ${page.trash?'trash ':''}${page.url eq info.currentURL?'selected ':''}${!asTitle?' title':''}${page.selected?' selected':''}" id="page-${page.name}"><c:if test="${not empty info.contextForCopy && (page.url eq info.currentURL)}">
-					<a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}">
-						<span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span>
+					<a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}"> <span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span>
 					</a>
 				</c:if> <c:if test="${!page.root}">
 					<span>
@@ -97,21 +120,23 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 							<c:if test="${page.url eq info.currentURL}">
 								<div class="page-shortcut">
 									<span><i class="bi bi-gear" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;"></i></span>
-									<div class="btn-integrity alert-${integrities.levelLabel} btn-notext badged" data-toggle="_eprv_collapse" data-target="#integrity-list" href="#integrity-list" aria-expanded="false" aria-controls="integrity-list"> <c:if test="${integrities.levelLabel != 'success'}">
+									<div class="btn-integrity alert-${integrities.levelLabel} btn-notext badged" data-toggle="_eprv_collapse" data-target="#integrity-list" href="#integrity-list" aria-expanded="false" aria-controls="integrity-list">
+										<c:if test="${integrities.levelLabel != 'success'}">
 											<i class="bi bi-exclamation-triangle-fill"></i>
-										</c:if> <c:if test="${integrities.levelLabel == 'success'}">
+										</c:if>
+										<c:if test="${integrities.levelLabel == 'success'}">
 											<i class="bi bi-check-circle-fill"></i>
 										</c:if>
 										<div class="badge-integrity">${fn:length(integrities.checker)}</div>
-									<div class="integrity-message collapse${integrities.error && contentContext.previewEdit?' in':''}" id="integrity-list">
-										<ul class="list-group">
-											<c:forEach var="checker" items="${integrities.checker}">
-												<c:if test="${checker.errorCount>0}">
-													<li class="list-group-item list-group-item-${checker.levelLabel}"><span class="badge">${checker.errorCount}</span>${checker.errorMessage}</li>
-												</c:if>
-											</c:forEach>
-										</ul>
-									</div>
+										<div class="integrity-message collapse${integrities.error && contentContext.previewEdit?' in':''}" id="integrity-list">
+											<ul class="list-group">
+												<c:forEach var="checker" items="${integrities.checker}">
+													<c:if test="${checker.errorCount>0}">
+														<li class="list-group-item list-group-item-${checker.levelLabel}"><span class="badge">${checker.errorCount}</span>${checker.errorMessage}</li>
+													</c:if>
+												</c:forEach>
+											</ul>
+										</div>
 									</div>
 								</div>
 							</c:if>
@@ -132,32 +157,33 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 			</c:if>
 			<c:forEach var="child" items="${page.children}">
 				<li id="page-${child.name}" class="page-item ${child.trash?'trash ':''}${child.url eq info.currentURL?'selected ':''}${child.info.realContent?'real-content':''} ${fn:length(child.children) > 0?'have-children ':''}"><c:if test="${not empty info.contextForCopy && (child.url eq info.currentURL)}">
-						<a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}">
-							<span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span>
+						<a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}"> <span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span>
 						</a>
 					</c:if> <span>
 						<div id="page-${child.name}" data-pageid="${child.id}" class="nav-item draggable ${child.active?'active':'unactive'} flow-${child.flowIndex}" title="${child.path}">
-							<a href="${child.url}" data-pageid="${child.id}" title="${child.path}">
-								<span>${child.info.label}${child.haveChildren?'...':''}</span>
+							<a href="${child.url}" data-pageid="${child.id}" title="${child.path}"> <span>${child.info.label}${child.haveChildren?'...':''}</span>
 							</a>
 
 							<c:if test="${child.url eq info.currentURL}">
 								<div class="page-shortcut">
-									<span><i class="bi bi-gear" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;"></i></span> <span class="btn-integrity alert-${integrities.levelLabel} btn-notext badged" data-toggle="_eprv_collapse" data-target="#integrity-list" href="#integrity-list" aria-expanded="false" aria-controls="integrity-list"> <c:if test="${integrities.levelLabel != 'success'}">
+									<span><i class="bi bi-gear" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;"></i></span>
+									<div class="btn-integrity alert-${integrities.levelLabel} btn-notext badged" data-toggle="_eprv_collapse" data-target="#integrity-list" href="#integrity-list" aria-expanded="false" aria-controls="integrity-list">
+										<c:if test="${integrities.levelLabel != 'success'}">
 											<i class="bi bi-exclamation-triangle-fill"></i>
-										</c:if> <c:if test="${integrities.levelLabel == 'success'}">
+										</c:if>
+										<c:if test="${integrities.levelLabel == 'success'}">
 											<i class="bi bi-check-circle-fill"></i>
 										</c:if>
 										<div class="badge-integrity">${fn:length(integrities.checker)}</div>
-									</span>
-									<div class="integrity-message collapse${integrities.error && contentContext.previewEdit?' in':''}" id="integrity-list">
-										<ul class="list-group">
-											<c:forEach var="checker" items="${integrities.checker}">
-												<c:if test="${checker.errorCount>0}">
-													<li class="list-group-item list-group-item-${checker.levelLabel}"><span class="badge">${checker.errorCount}</span>${checker.errorMessage}</li>
-												</c:if>
-											</c:forEach>
-										</ul>
+										<div class="integrity-message collapse${integrities.error && contentContext.previewEdit?' in':''}" id="integrity-list">
+											<ul class="list-group">
+												<c:forEach var="checker" items="${integrities.checker}">
+													<c:if test="${checker.errorCount>0}">
+														<li class="list-group-item list-group-item-${checker.levelLabel}"><span class="badge">${checker.errorCount}</span>${checker.errorMessage}</li>
+													</c:if>
+												</c:forEach>
+											</ul>
+										</div>
 									</div>
 								</div>
 							</c:if>

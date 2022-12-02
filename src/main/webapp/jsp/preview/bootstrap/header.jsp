@@ -48,35 +48,6 @@ if (!rightOnPage) {
 				
 			</div>
 			<div class="menu">
-				<c:if test="${fn:length(info.contentLanguages)>1}">
-					<div class="language-list collapse" id="_language-list" aria-expanded="true" style="">
-						<c:set var="noemptypage" value="true" />
-						<div class="list-group">
-							<c:forEach var="page" items="${info.pagesForAnyLanguages}">
-								<c:set var="noemptypage" value="${noemptypage && page.realContent}" />
-								<a href="${page.url}" class="list-group-item ${page.realContent?'list-group-item-success':'list-group-item-danger'}"> <span class="badge">${page.contentLanguage}</span>${page.contentLanguageName}
-								</a>
-							</c:forEach>
-						</div>
-					</div>
-				
-				<!-- 		<li class="_language"> -->
-				<%-- 			<a class="btn btn-default btn-sm btn-languiages btn-notext ${noemptypage?'':'btn-color alert-warning'}" data-toggle="collapse" data-target="#_language-list" href="#_language-list" aria-expanded="true" aria-controls="_language-list"> --%>
-				<%-- 			<i class="fa fa-language"></i><span class="text"> ${info.requestContentLanguageName}</span> --%>
-				<!-- 			</a> -->
-				<!-- 		</li> -->
-				<form action="${info.currentURL}" method="post">
-					<input type="hidden" name="webaction" value="edit.changeLanguage" />
-					<select class="btn btn-default btn-sm btn-languiages btn-notext _language" name="language" onchange="this.form.submit();">
-						<c:forEach var="page" items="${info.pagesForAnyLanguages}">
-							<c:set var="noemptypage" value="${noemptypage && page.realContent}" />
-							<option title="${page.contentLanguageName}" value="${page.contentLanguage}" class="list-group-item ${page.realContent?'list-group-item-success':'list-group-item-danger'}" ${info.requestContentLanguage==page.contentLanguage?'selected="selected"':''}>${page.contentLanguage}</option>
-						</c:forEach>
-					</select>
-				</form>
-				
-				</c:if>
-
 				<c:if test="${globalContext.previewMode && !contentContext.asTimeMode}">
 					<form id="pc_form" action="${info.currentURL}" method="post">
 						<div class="pc_line">

@@ -1,3 +1,15 @@
+body #preview_command .component-list .complexity-1 .wrapper-in,
+body #preview_command .component-list .complexity-1 .wrapper-in i,
+body #preview_command .component-list .complexity-2 .wrapper-in,
+body #preview_command .component-list .complexity-2 .wrapper-in i {
+	color: inherit var(--javlo-ui-color-8) !important;
+}
+
+body #preview_command .component-list .complexity-1 .wrapper-in,
+body #preview_command .component-list .complexity-2 .wrapper-in {
+	border-bottom-color: transparent !important;
+}
+
 #preview_command {
 	.panel {
 		background-color: var(--javlo-ui-color-1) !important;
@@ -68,6 +80,10 @@
 		visibility: visible;
 	}
 	
+	.page-shortcut {
+		color: var(--javlo-ui-color-8);
+	}
+	
 	.integrity-message {
 		position: absolute;
 		top: 10px;
@@ -100,7 +116,7 @@
 			padding: 1px 5px 1px 5px;
 			display: block;
 			position: absolute;
-			top: -6px;
+			top: -7px;
 			right: -8px;
 			width: auto;
 			font-size: 8px;
@@ -171,6 +187,30 @@
 				background: var(--javlo-ui-color-2);
 			}
 		}
+		
+		.nav-root {
+			
+			.nav-item {
+				a {
+					flex-basis: 60% !important;
+				}
+			}
+			
+			.btn-languages {
+			  height: 30px !important;
+			  border-radius: 0;
+			  margin-right: -1px;
+			  border-bottom: 0 none;
+			  border-top: 0 none;
+			  padding-top: 0 !important;
+			  padding-bottom: 0 !important;
+			  .list-group-item {
+				padding: 1px;
+			}
+			}
+		}
+		
+		
 
 		ul {
 /*			&:after {
