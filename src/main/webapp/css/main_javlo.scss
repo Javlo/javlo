@@ -17,3 +17,19 @@
 	box-shadow: none !important;
 	width: 100%;
 }
+
+._jv_hidden {
+	display: none !important;
+}
+
+._jv_show {
+	display: block !important;
+}
+._jv_collapse-container {
+	position: relative;
+}
+
+._jv_collapse-target {
+	position: absolute;
+	top: 40px;
+}

@@ -189,6 +189,14 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	
+	li.user {
+		._jv_collapse-target {
+			left: auto;
+			right: 0;
+		}
+		
+	}
 }
 
 #preview_command .integrity-message {
@@ -269,6 +277,38 @@
 			margin-right: 0;
 			border-right-style: solid
 		}
+	}
+}
+
+#preview_command ._jv_menu {
+	border-right: 1px solid var(--javlo-ui-color-3);
+	border-bottom: 1px solid var(--javlo-ui-color-3);
+	border-left: 1px solid var(--javlo-ui-color-3);
+	.btn {
+		width: 100%;
+		display: flex;
+		justify-content: flex-start;
+		margin: 0;
+		border: 0 none;
+		padding-left: 0 !important;
+		.label {
+			margin: 0;
+			margin-left: 1em;
+		}
+	}
+	.btn:hover {
+		background-color: var(--javlo-ui-color-8) !important;
+		color: white !important;
+		.label {
+			color: white !important;
+		}
+	}
+	.button-group-addon {
+		width: 42px;
+		padding: 8px 12px;
+		border: 0 none;
+		border-right: 1px #cccccc solid;
+		text-align: center;
 	}
 }
 

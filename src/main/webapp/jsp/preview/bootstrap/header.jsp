@@ -42,10 +42,10 @@ if (!rightOnPage) {
 				</c:if>
 				<a class="name" target="_blank" href="<%=URLHelper.createViewURL(ctx.getPath(), ctx)%>">Javlo</a>
 				<img class="ajax-loading" src="${info.ajaxLoaderURL}" alt="loading..." lang="en" />
-									<c:if test="${!userInterface.light}">
-						<a class="settings" href="#" onclick="editPreview.openModal('${i18n.edit['preview.label.properties']}','${url}'); return false;"> <i class="bi bi-gear"></i></a>
-					</c:if>
-				
+				<c:if test="${!userInterface.light}">
+					<a class="settings" href="#" onclick="editPreview.openModal('${i18n.edit['preview.label.properties']}','${url}'); return false;"> <i class="bi bi-gear"></i></a>
+				</c:if>
+
 			</div>
 			<div class="menu">
 				<c:if test="${globalContext.previewMode && !contentContext.asTimeMode}">
@@ -172,7 +172,7 @@ if (!rightOnPage) {
 									</form></li>
 							</c:if>
 
-							
+
 							<%
 							}
 							%>
@@ -197,6 +197,13 @@ if (!rightOnPage) {
 							<span class="text">${label}</span>
 						</button>
 					</form></li>
+
+				<li class="macro">
+					<button class="btn btn-default btn-toggle _jv_collapse-container" data-jv-toggle="collapse" data-jv-target="#macro-list"><i class="bi bi-tools"></i></button>
+					<div id="macro-list" class="_jv_collapse-target">
+						<jsp:include page="macro.jsp" />
+					</div>
+				</li>
 
 				<c:if test="${userInterface.search && !userInterface.minimalInterface && !contentContext.asTimeMode}">
 					<li><c:url var="url" value="<%=URLHelper.createURL(editCtx)%>" context="/">
@@ -236,16 +243,22 @@ if (!rightOnPage) {
 					<c:if test="${i18n.edit['preview.label.edit.tooltip'] != 'preview.label.edit.tooltip'}">
 						<c:set var="tooltip" value=' data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'preview.label.edit.tooltip\']}"' />
 					</c:if>
-					<li class="user"><c:if test="${!userInterface.contributor}">
+					<a id="pc_edit_mode_button" class="btn btn-default btn-sm" title="${i18n.edit['global.exit']}" href="${editURL}" title="edit mode"> <i class="bi bi-x-lg"></i></a>
+					<li class="user _jv_collapse-container"><button class=" btn btn-user btn-toggle" data-jv-target="#_jv_user-collapse" data-jv-toggle="collapse"><i class="bi bi-person-circle"></i></button>
+					<div id="_jv_user-collapse" class="user-collapse _jv_collapse-target _jv_menu">
+						<a href="${info.currentEditURL}?module=users&webaction=user.changeMode&mode=myself&previewEdit=true" class="as-modal btn btn-default btn-sm btn-user">
+						<div class="button-group-addon"><i class="bi bi-person"></i></div><span class="label">${info.adminUserName}</span>
+						</a> <c:if test="${!userInterface.contributor}">
 							<c:url var="editURL" value="<%=URLHelper.createURL(returnEditCtx)%>" context="/">
 								<c:param name="module" value="content" />
 								<c:param name="webaction" value="previewEdit" />
 								<c:param name="preview" value="false" />
 							</c:url>
-							<a ${tooltip} id="pc_edit_mode_button" class="btn btn-default btn-sm" title="${i18n.edit['global.exit']}" href="${editURL}" title="edit mode"><i class="bi bi-tools"></i> <span class="text hidden">admin</span></a>
-						</c:if> <c:set var="tooltip" value="" /> <c:if test="${i18n.edit['preview.label.user.tooltip'] != 'preview.label.user.tooltip'}">
-							<c:set var="tooltip" value=' data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'preview.label.user.tooltip\']}"' />
-						</c:if> <a ${tooltip} href="${info.currentEditURL}?module=users&webaction=user.changeMode&mode=myself&previewEdit=true" class="as-modal btn btn-default btn-sm btn-user"><i class="bi bi-person-circle"></i> <span class="text">${info.adminUserName}</span></a> <a class="btn btn-default btn-sm" title="${i18n.edit['global.logout']}" href="${logoutURL}"><i class="bi bi-box-arrow-right"></i><span class="text hidden">${i18n.edit["global.logout"]}</span></a></li>
+						</c:if> <a class="btn btn-default btn-sm" title="${i18n.edit['global.logout']}" href="${logoutURL}">
+							<div class="button-group-addon"><i class="bi bi-box-arrow-right"></i></div>
+							<span class="text label">${i18n.edit["global.logout"]}</span></a>
+						</div>
+						</li>
 				</c:if>
 			</div>
 		</div>

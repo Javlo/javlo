@@ -1,0 +1,30 @@
+JAVLO 2 : HTML/CSS Framework
+============================
+
+Collapse
+--------
+
+	minimal html : 
+
+	<div class="_jv_collapse-container">
+		<button class="btn-toggle" data-jv-target="#container" data-jv-toggle="collapse">open</button>
+		<div id="container" class="_jv_collapse-target">LoremIpsun</div>
+	</div>
+
+Menu
+----
+
+	class '_jv_menu' wrap list of items
+	
+	item html : 
+	
+	<div class="_jv_menu">
+		<button type="button" class="btn btn-default">
+			<span class="button-group-addon">[icon]</span> 
+			<span class="label">[label]</span>
+		</button>
+		<button type="button" class="btn btn-default">
+			<span class="button-group-addon">[icon]</span> 
+			<span class="label">[label]</span>
+		</button>
+	</div>

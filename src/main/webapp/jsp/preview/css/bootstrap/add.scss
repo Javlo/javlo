@@ -9,33 +9,6 @@
 		align-items: center;
 		z-index: 10000;
 
-		.button-group-addon {
-			width: 42px;
-			float: left;
-			margin: -6px 12px -6px -12px;
-			padding: 8px 12px;
-			border: 0 none;
-			border-right: 1px #cccccc solid;
-			text-align: center;
-		}
-
-		.action {
-			font-size: 30px;
-			line-height: 30px;
-			color: white;
-			background-color: var(--javlo-ui-accent-color-8);
-			border-radius: 50%;
-			width: 50px;
-			height: 50px;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-
-			&:hover {
-				background-color: var(--javlo-ui-accent-color-9);
-			}
-		}
-
 		.direct-action {
 			display: flex;
 			flex-direction: column;
@@ -60,24 +33,6 @@
 			padding: 0;
 			display: none;
 		}
-
-		.macros {
-			position: fixed;
-			bottom: 90px;
-			right: 1.5rem;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			background-color: var(--javlo-ui-color-1);
-			border: 1px solid var(--javlo-ui-color-3);
-
-			.btn {
-				display: block;
-				margin-bottom: 5px;
-				width: 100%;
-			}
-		}
-
 	}
 
 	#preview-login-banner {

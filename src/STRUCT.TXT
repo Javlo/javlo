@@ -1,7 +1,6 @@
 JAVLO2 : file structure
 =======================
 
-
 - main > webapps
 	main_edit_and_preview.scss > global css, for variable or css between edit and preview mode
 	css > bootstrap 3.3.2 : bootstrap framework for preview mode

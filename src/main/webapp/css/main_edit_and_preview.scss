@@ -51,10 +51,9 @@ body#main-body {
 	--systemfonts: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Oxygen, Cantarell, sans-serif;
 
 	@import 'global_flex.scss';
+	@import 'main_javlo.scss';
 
 	.main-box {
 		margin: var(--main-sep);
 	}
 }
-
-@import 'main_javlo.scss';
