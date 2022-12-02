@@ -451,16 +451,25 @@ _component-title {
 
 #preview_command .filter-wrapper {
 	position: relative;
+	width: 85%;
 }
 
 #preview_command .filter-wrapper .reset-filter {
 	position: absolute;
-	right: 6px;
-	top: 4px;
-	font-size: 20px;
+	right: 9px;
+	top: 9px;
+	font-size: 12px;
 	opacity: 0.6;
 }
 
 #preview_command .filter-wrapper .reset-filter:hover {
 	opacity: 0.9;
+}
+
+#preview_command .flex-line .btn {
+	height: 34px !important;
+}
+
+div#_ep_content {
+	width: 100%;
 }

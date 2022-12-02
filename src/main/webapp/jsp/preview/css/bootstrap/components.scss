@@ -29,7 +29,7 @@ body #preview_command .component-list .component .wrapper-in {
 	}
 
 	.component-list {
-		margin-left: -5px;
+		// margin-left: -5px;
 	}
 
 	.component-list .component {
@@ -104,7 +104,7 @@ body #preview_command .component-list .component .wrapper-in {
 		height: 49px;
 		background-color: #ffffff;
 		font-size: 30px;
-		color: #D9D9DA;
+		color: var(--javlo-ui-accent-color-8);
 		padding: 5px;
 		border-radius: 3px;
 		text-align: center;

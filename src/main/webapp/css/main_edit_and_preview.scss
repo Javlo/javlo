@@ -4,8 +4,10 @@
 
 #preview_command,
 body#main-body {
+	/* Spacings */
 	--main-sep: 16px;
-	
+
+	/*OLD*/
 	--action-color: #069;
 	--action-color-darken: #058;
 	--action-color-lighten: #17A;
@@ -49,7 +51,7 @@ body#main-body {
 	--systemfonts: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Oxygen, Cantarell, sans-serif;
 
 	@import 'global_flex.scss';
-	
+
 	.main-box {
 		margin: var(--main-sep);
 	}

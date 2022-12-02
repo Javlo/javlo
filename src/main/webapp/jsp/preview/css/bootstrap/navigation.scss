@@ -21,6 +21,14 @@ body #preview_command .component-list .complexity-2 .wrapper-in {
 	}
 }
 
+body #preview_command .component-list .component .wrapper-in {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100px;
+}
+
+
 // #preview_command .nav-tabs>li.active>a,
 // #preview_command .nav-tabs>li.active>a:hover {
 // 	border: 1px solid var(--javlo-ui-color-3);
@@ -420,8 +428,4 @@ body #preview_command .component-list .complexity-2 .wrapper-in {
 		}
 	}
 
-}
-
-body #preview_command .component-list .complexity-1 .wrapper-in {
-	border-bottom-color: hsla(0, 0%, 0%, 0.1)
 }
