@@ -84,7 +84,7 @@
 		position: fixed;
 		bottom: 0;
 		// background-color: var(--javlo-ui-accent-color-9);
-		padding: calc(var(--main-sep) / 2);
+		padding: calc(var(--main-sep) / 4) calc(var(--main-sep) / 2);
 		width: 100%;
 		font-size: 12px;
 		color: #fff;
@@ -132,4 +132,8 @@
 			}
 		}
 	}
+}
+
+#preview_command #preview-login-banner {
+	background: repeating-linear-gradient(-45deg, var(--javlo-ui-color-9), var(--javlo-ui-color-9) 10px, var(--javlo-ui-color-8) 10px, var(--javlo-ui-color-8) 20px);
 }
