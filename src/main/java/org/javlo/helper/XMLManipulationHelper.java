@@ -527,6 +527,7 @@ public class XMLManipulationHelper {
 					cssClass = cssClass + ' ' + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly()) { if(ctx.getGlobalContext().getStaticConfig().isFixPreview() ) {%>fix-preview<%} else {%>floating-preview<%} }%>";
 					cssClass = cssClass + ' ' + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly()) { if(EditContext.getInstance(globalContext, request.getSession()).isPreviewEditionMode() ) {%>edit-preview<%} else {%>preview-only<%} }%>";
 					cssClass = cssClass + ' ' + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly()) { if(ctx.getCurrentEditUser() == null) {%>preview-notlogged<%} else {%>preview-logged<%} }%>";
+					cssClass = cssClass + ' ' + "<%if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {%> edition-mode-<%=ctx.getGlobalContext().getEditTemplateMode()%> <%}%>";
 					cssClass = cssClass + ' ' + "${info.preview && !info.page.editable?'not-editable':''}";
 					cssClass = cssClass + ' ' + "${info.admin?'right-admin':''}";
 					cssClass = cssClass + ' ' + "${empty info.userName?'user-not-logged-in':'user-logged-in'}";
@@ -1187,12 +1188,8 @@ public class XMLManipulationHelper {
 		
 		
 		
-		out.newLine();
-		// out.append("<%String cssPreviewURL =
-		// URLHelper.mergePath(URLHelper.createStaticURL(ctx,\"/\"),
-		// globalContext.getStaticConfig().getEditTemplateFolder(),
-		// \"/preview/\"+globalContext.getEditTemplateMode()+\"/css/edit_preview.css\");%>");
-		out.append("<%=(ctx.isInteractiveMode() && !StringHelper.isEmpty(infoBean.getPreviewTemplateModeURL()) ? \"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\"+infoBean.getPreviewTemplateModeURL()+\"?ts=\"+infoBean.getTs()+\"\\\" />\" : \"\")  %>");
+		/*out.newLine();
+		out.append("<%=(ctx.isInteractiveMode() && !StringHelper.isEmpty(infoBean.getPreviewTemplateModeURL()) ? \"<link rel=\\\"stylesheet\\\" type=\\\"text/css\\\" href=\\\"\"+infoBean.getPreviewTemplateModeURL()+\"?ts=\"+infoBean.getTs()+\"\\\" />\" : \"\")  %>");*/
 		out.newLine();
 		out.append("<%=(ctx.isInteractiveMode() ? \"<script src=\\\"\"+URLHelper.createStaticURL(ctx,\"" + staticConfig.getJSPreview() + "\")+\"\\\"></script>\" : \"\")  %>");
 		if (!StringHelper.isEmpty(staticConfig.getHTML2Canvas())) {

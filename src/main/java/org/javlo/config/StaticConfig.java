@@ -163,6 +163,8 @@ public class StaticConfig extends Observable {
 	private String sourceRevision;
 
 	private String buildTime;
+	
+	private Boolean prod = null;
 
 	private Class<IUserFactory> adminUserFactoryClass = null;
 
@@ -685,7 +687,10 @@ public class StaticConfig extends Observable {
 	}
 
 	public boolean isProd() {
-		return getEnv().equalsIgnoreCase("prod");
+		if (prod == null) {
+			prod = getEnv().equalsIgnoreCase("prod");
+		}
+		return prod;
 	}
 
 	public boolean isImageShortURL() {
@@ -1532,6 +1537,7 @@ public class StaticConfig extends Observable {
 		contentExtension = null;
 		ipMaskList = null;
 		internetAccess = null;
+		prod = null;
 	}
 
 	public static String replaceFolderVariable(String folder) {

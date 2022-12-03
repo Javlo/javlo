@@ -47,10 +47,10 @@ public class CssCompilationFilter implements Filter {
 		// File(httpRequest.getSession().getServletContext().getRealPath(path));
 		File cssFile = new File(ResourceHelper.getRealPath(httpRequest.getSession().getServletContext(), path));
 		boolean compileFile = !cssFile.exists();
-		File lessFile = new File(cssFile.getAbsolutePath().substring(0, cssFile.getAbsolutePath().length() - 4) + ".less");
-		File sassFile = new File(cssFile.getAbsolutePath().substring(0, cssFile.getAbsolutePath().length() - 4) + ".scss");
 		if (!compileFile) {
 			if (!StaticConfig.getInstance(((HttpServletRequest) request).getSession().getServletContext()).isProd()) {
+				File lessFile = new File(cssFile.getAbsolutePath().substring(0, cssFile.getAbsolutePath().length() - 4) + ".less");
+				File sassFile = new File(cssFile.getAbsolutePath().substring(0, cssFile.getAbsolutePath().length() - 4) + ".scss");
 				if (lessFile.lastModified() > cssFile.lastModified()) {
 					compileFile = true;
 					cssFile.delete();
@@ -64,6 +64,8 @@ public class CssCompilationFilter implements Filter {
 		if (compileFile) {
 			synchronized (globalContext) {
 				if (!cssFile.exists()) {
+					File lessFile = new File(cssFile.getAbsolutePath().substring(0, cssFile.getAbsolutePath().length() - 4) + ".less");
+					File sassFile = new File(cssFile.getAbsolutePath().substring(0, cssFile.getAbsolutePath().length() - 4) + ".scss");
 					long startTime = System.currentTimeMillis();
 					if (!globalContext.getContextKey().equals(globalContext.getSourceContextKey())) {
 						lessFile = new File(StringUtils.replaceOnce(lessFile.getAbsolutePath(), File.separator + globalContext.getSourceContextKey() + File.separator, File.separator + globalContext.getContextKey() + File.separator));
@@ -75,21 +77,9 @@ public class CssCompilationFilter implements Filter {
 						sass = true;
 						StaticConfig staticConfig = StaticConfig.getInstance(httpRequest.getSession().getServletContext());
 						if (compileSass(staticConfig.isProd(), sassFile, tempCssFile)) {
-							// try {
-							// Thread.sleep(5 * 1000); // check why on linux we need
-							// // the sleep.
-							// } catch (InterruptedException e) {
-							// e.printStackTrace();
-							// }
 						}
 					} else if (lessFile.exists()) {
 						if (compile(lessFile, tempCssFile, globalContext.getStaticConfig().isProd())) {
-							// try {
-							// Thread.sleep(5 * 1000); // check why on linux we need
-							// // the sleep.
-							// } catch (InterruptedException e) {
-							// e.printStackTrace();
-							// }
 						}
 					}
 					if (!tempCssFile.renameTo(cssFile)) {

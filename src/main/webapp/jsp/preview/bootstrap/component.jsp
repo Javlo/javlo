@@ -110,5 +110,4 @@ function filter(text) {
 </div>
 </div>
 </c:if></c:forEach>
-<div style="clear: both;"><span></span></div>
 </div>

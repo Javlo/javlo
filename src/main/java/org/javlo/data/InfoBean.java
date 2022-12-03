@@ -791,24 +791,24 @@ public class InfoBean {
 		return ctx.getGlobalContext().getStaticConfig().getEditTemplateFolder();
 	}
 
-	public String getEditTemplateModeURL() {
-		if (globalContext.getEditTemplateMode() != null && globalContext.getEditTemplateMode().trim().length() > 0) {
-			String cssLink = URLHelper.mergePath(globalContext.getStaticConfig().getEditTemplateFolder(), "css", "edit_" + globalContext.getEditTemplateMode() + ".css");
-			return URLHelper.createStaticURL(ctx, cssLink);
-		} else {
-			try {
-				if (ctx.getCurrentTemplate() != null && !StringHelper.isEmpty(ctx.getCurrentTemplate().getEditTemplateMode())) {
-					String cssLink = URLHelper.mergePath(globalContext.getStaticConfig().getEditTemplateFolder(), "css", "edit_" + ctx.getCurrentTemplate().getEditTemplateMode() + ".css");
-					return URLHelper.createStaticURL(ctx, cssLink);
-				} else {
-					return null;
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
-			}
-		}
-	}
+//	public String getEditTemplateModeURL() {
+//		if (globalContext.getEditTemplateMode() != null && globalContext.getEditTemplateMode().trim().length() > 0) {
+//			String cssLink = URLHelper.mergePath(globalContext.getStaticConfig().getEditTemplateFolder(), "css", "edit_" + globalContext.getEditTemplateMode() + ".css");
+//			return URLHelper.createStaticURL(ctx, cssLink);
+//		} else {
+//			try {
+//				if (ctx.getCurrentTemplate() != null && !StringHelper.isEmpty(ctx.getCurrentTemplate().getEditTemplateMode())) {
+//					String cssLink = URLHelper.mergePath(globalContext.getStaticConfig().getEditTemplateFolder(), "css", "edit_" + ctx.getCurrentTemplate().getEditTemplateMode() + ".css");
+//					return URLHelper.createStaticURL(ctx, cssLink);
+//				} else {
+//					return null;
+//				}
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				return null;
+//			}
+//		}
+//	}
 
 	public String getPreviewTemplateModeURL() {
 		if (globalContext.getEditTemplateMode() != null && globalContext.getEditTemplateMode().trim().length() > 0) {
