@@ -243,7 +243,7 @@ if (!rightOnPage) {
 					<c:if test="${i18n.edit['preview.label.edit.tooltip'] != 'preview.label.edit.tooltip'}">
 						<c:set var="tooltip" value=' data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'preview.label.edit.tooltip\']}"' />
 					</c:if>
-					<a id="pc_edit_mode_button" class="btn btn-default btn-sm" title="${i18n.edit['global.exit']}" href="${editURL}" title="edit mode"> <i class="bi bi-x-lg"></i></a>
+					<a id="pc_edit_mode_button" class="btn btn-default btn-sm" title="${i18n.edit['global.exit']}" href="${info.currentEditURL}" title="edit mode"> <i class="bi bi-x-lg"></i></a>
 					<li class="user _jv_collapse-container"><button class=" btn btn-user btn-toggle" data-jv-target="#_jv_user-collapse" data-jv-toggle="collapse"><i class="bi bi-person-circle"></i></button>
 					<div id="_jv_user-collapse" class="user-collapse _jv_collapse-target _jv_menu">
 						<a href="${info.currentEditURL}?module=users&webaction=user.changeMode&mode=myself&previewEdit=true" class="as-modal btn btn-default btn-sm btn-user">
