@@ -35,4 +35,4 @@ Menu
 Layout
 ------
 
-	._jv_full_height_bottom : full height from to of item to bottom.
+	._jv_full_height_bottom : full height from top of item to bottom.
