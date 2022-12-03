@@ -302,6 +302,10 @@ public class Edit extends AbstractModuleAction {
 		public String getFontAwesome() {
 			return comp.getFontAwesome();
 		}
+		
+		public String getIcon() {
+			return comp.getIcon();
+		}
 
 		public String getGroup() {
 			return comp.getGroup();
@@ -2086,7 +2090,7 @@ public class Edit extends AbstractModuleAction {
 		if (comp == null) {
 			return "component not found : " + compId;
 		} else {
-			clipBoard.copy(ctx, new ComponentBean(comp.getComponentBean()));
+			clipBoard.copy(ctx, new ComponentBean(comp.getComponentBean()), comp.getIcon());
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.copy", new String[][] { { "type", "" + comp.getType() } }), GenericMessage.INFO), false);
 			prepareUpdateInsertLine(ctx);
 		}

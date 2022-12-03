@@ -892,7 +892,14 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	
 	public boolean isRestMatch(ContentContext ctx, Map<String,String> params);
 	
+	@Deprecated
+	/**
+	 * user getIcon
+	 * @return
+	 */
 	public String getFontAwesome();
+	
+	public String getIcon();
 	
 	/**
 	 * translate the content of the component to the current language

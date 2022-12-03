@@ -2,15 +2,24 @@ body #preview_command .component-list .component .wrapper-in .text {
 	height: fit-content !important;
 }
 
-.component-list.display-1 {
-	display: grid !important;
+#preview_command .component-list.display-1 {
+	/*display: grid !important;
 	grid-template-columns: repeat(2, 1fr) !important;
 	grid-gap: 10px;
-	margin-top: 10px !important;
+	margin-top: 10px !important;*/
+	
+	display: flex;
+	flex-wrap: wrap;
+	
+	.component {
+		width: 50%;
+		margin-right: -1px;
+		margin-bottom: -1px;
+	}
 }
 
 body #preview_command .component-list .component {
-	width: 100% !important;
+	//width: 100% !important;
 }
 
 
@@ -43,18 +52,24 @@ body #preview_command .component-list .component .wrapper-in {
 	.filter-wrapper {
 		width: 85%;
 	}
+	
+	.clipboard {
+		padding-bottom: calc(var(--javlo-main-sep) / 2);
+	}
 
-
-	.component-list .component {
-		margin: 0;
-		padding: 0;
-		color: var(--javlo-ui-color-8);
+	.component-list {
+		margin-top: calc(var(--javlo-main-sep) / 2);
+		.component {
+			margin: 0;
+			padding: 0;
+			color: var(--javlo-ui-color-8);
+		}
 	}
 
 	.component-list .component:hover .wrapper-in {
 		background-color: var(--javlo-ui-color-2);
-		border: 1px solid var(--javlo-ui-color-5);
-		border-bottom-color: var(--javlo-ui-color-5) !important;
+		//border: 1px solid var(--javlo-ui-color-5);
+		//border-bottom-color: var(--javlo-ui-color-5) !important;
 	}
 
 	.components-group {

@@ -8,9 +8,7 @@ $active-color: $link-color;
 $link-hover-color: darken($link-color, 15%);
 
 /* size */
-
 $header-height: 40px;
-$sidebar-width: 330px;
 
 @import "edit_preview_base";
 @import "header";
@@ -35,7 +33,7 @@ html.preview-command-visible.preview-standard {
 }
 
 html.preview-command-visible.preview-standard.preview-command-visible {
-	margin-left: $sidebar-width !important;
+	margin-left: var(--javlo-sidebar-width) !important;
 }
 
 html.preview-only.preview-standard.preview-command-visible {
@@ -51,6 +49,12 @@ html.preview-only.preview-standard.preview-command-visible {
 
 	#preview-modal-frame {
 		width: 100%;
+	}
+	
+	.sidebar {
+		._jv_full_height_bottom {
+			width: calc(var(--javlo-sidebar-width) - var(--javlo-main-sep) / 2 - 2px);
+		}
 	}
 }
 
@@ -189,7 +193,7 @@ html.preview-only.preview-standard.preview-command-visible {
 	}
 
 	.sidebar {
-		width: $sidebar-width;
+		width: var(--javlo-sidebar-width);
 		height: 100%;
 		position: fixed;
 		top: $header-height;
@@ -200,7 +204,7 @@ html.preview-only.preview-standard.preview-command-visible {
 		border-top: none;
 
 		.tab-pane {
-			padding: calc(var(--main-sep) / 2);
+			padding: calc(var(--javlo-main-sep) / 2);
 		}
 	}
 
@@ -247,7 +251,7 @@ html.preview-only.preview-standard.preview-command-visible {
 	}
 
 	.navbar-brand {
-		width: 330px;
+		width: var(--javlo-sidebar-width);
 	}
 
 	.header .navbar-nav li input[disabled] {

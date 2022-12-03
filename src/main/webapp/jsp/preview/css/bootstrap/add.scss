@@ -26,7 +26,7 @@
 		}
 
 		.body {
-			padding: calc(var(--main-sep) / 2) var(--main-sep);
+			padding: calc(var(--javo-main-sep) / 2) var(--javlo-main-sep);
 		}
 
 		.hiddenCollapse.bloc-background {
@@ -39,7 +39,7 @@
 		position: fixed;
 		bottom: 0;
 		// background-color: var(--javlo-ui-accent-color-9);
-		padding: calc(var(--main-sep) / 4) calc(var(--main-sep) / 2);
+		padding: calc(var(--javlo-main-sep) / 4) calc(var(--javlo-main-sep) / 2);
 		width: 100%;
 		font-size: 12px;
 		color: #fff;
@@ -79,7 +79,7 @@
 		.close-preview-banner {
 			font-size: 14px;
 			color: #fff;
-			margin-left: var(--main-sep);
+			margin-left: var(--javlo-main-sep);
 			transition: opacity .3;
 
 			&:hover {

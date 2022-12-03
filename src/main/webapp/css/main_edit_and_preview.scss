@@ -3,15 +3,19 @@
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css");
 
 #preview_command,
-body#main-body {
-	/* Spacings */
-	--main-sep: 16px;
+body#main-body, :root {
 
 	/*OLD*/
 	--action-color: #069;
 	--action-color-darken: #058;
 	--action-color-lighten: #17A;
 	--action-text: #fff;
+
+	/* Spacings and size */
+	--javlo-main-sep: 16px;
+	--javlo-menu-height: 40px;
+	--javlo-sidebar-width: 330px;
+
 
 	/* GRIS --javlo-ui-color : #333333 = hsl(0, 0%, 20%); Du plus clair au plus foncé */
 	--javlo-ui-color: 0, 0%;
@@ -54,6 +58,6 @@ body#main-body {
 	@import 'main_javlo.scss';
 
 	.main-box {
-		margin: var(--main-sep);
+		margin: var(--javlo-main-sep);
 	}
 }

@@ -103,11 +103,11 @@ body #preview_command .component-list .component .wrapper-in {
 		.list-group {
 			background-color: var(--javlo-ui-color-1);
 			border: 1px var(--javlo-ui-color-3) solid;
-			margin: calc(var(--main-sep) / 2) !important;
-			padding: calc(var(--main-sep) / 2) calc(var(--main-sep) / 2) 0 calc(var(--main-sep) / 2);
+			margin: calc(var(--javlo-main-sep) / 2) !important;
+			padding: calc(var(--javlo-main-sep) / 2) calc(var(--javlo-main-sep) / 2) 0 calc(var(--javlo-main-sep) / 2);
 
 			li {
-				margin: 0 0 calc(var(--main-sep) / 2) 0 !important;
+				margin: 0 0 calc(var(--javlo-main-sep) / 2) 0 !important;
 			}
 		}
 
@@ -284,7 +284,7 @@ body #preview_command .component-list .component .wrapper-in {
 			.btn-full {
 				display: block;
 				margin: 0;
-				padding: 0 calc(var(--main-sep) / 2);
+				padding: 0 calc(var(--javlo-main-sep) / 2);
 				height: 30px;
 				line-height: 30px;
 				border-radius: 2px;

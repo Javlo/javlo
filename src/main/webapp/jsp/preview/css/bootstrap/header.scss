@@ -37,7 +37,7 @@
 		min-width: 980px;
 		position: fixed;
 		width: 100%;
-		height: $header-height;
+		height: var(--javlo-menu-height);
 		top: 0;
 		left: 0;
 		// box-shadow: 0 0 6px #333333;
@@ -56,7 +56,7 @@
 	justify-content: space-between;
 	align-items: center;
 
-	padding: 0 var(--main-sep);
+	padding: 0 var(--javlo-main-sep);
 
 	.name {
 		font-size: 28px;
@@ -78,7 +78,7 @@
 #preview_command .actions-wrapper,
 #preview_command .page-actions,
 #preview_command .users {
-	height: $header-height;
+	height: var(--javlo-menu-height);
 	// padding: 10px 20px;
 	// margin: 0 auto;
 	position: relative;
@@ -100,8 +100,8 @@
 #preview_command .header h1 {
 	margin: 0 15px;
 	padding: 0;
-	line-height: $header-height/2;
-	height: $header-height/2;
+	line-height: cacl(var(--javlo-menu-height) / 2);
+	height: cacl(var(--javlo-menu-height) / 2);
 	vertical-align: middle;
 	max-width: 160px;
 	overflow: hidden;
@@ -113,7 +113,7 @@
 }
 
 #preview_command .header .menu {
-	height: $header-height;
+	height: var(--javlo-menu-height);
 	display: flex;
 
 	form {
@@ -138,7 +138,7 @@
 }
 
 #preview_command .header .btn {
-	height: $header-height - 1 !important;
+	height: calc(var(--javlo-menu-height) - 1px) !important;
 	border-radius: 0;
 	margin-right: -1px;
 	border-bottom: 0 none;
@@ -165,9 +165,8 @@
 }
 
 #preview_command .header .logo {
-
-	width: 330px;
-	height: $header-height !important;
+	width: var(--javlo-sidebar-width);
+	height: var(--javlo-menu-height);
 }
 
 #preview_command .header li {

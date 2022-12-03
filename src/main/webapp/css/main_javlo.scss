@@ -1,11 +1,11 @@
 ._jv_main-box, #preview_command ._jv_main-box  {
-	margin: var(--main-sep);
+	margin: var(--javlo-main-sep);
 }
 
 ._jv_header_sm, #preview_command ._jv_header_sm {
 	display: flex;
 	justify-content: space-between;
-	padding: 1px 1px 1px calc( var(--main-sep) / 2) !important;
+	padding: 1px 1px 1px calc( var(--javlo-main-sep) / 2) !important;
 	border: 0px !important;
 	background-color: var(--light-black) !important;
 	font-size: 1rem !important;

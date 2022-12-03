@@ -1,6 +1,7 @@
 JAVLO 2 : HTML/CSS Framework
 ============================
 
+
 Collapse
 --------
 
@@ -10,6 +11,7 @@ Collapse
 		<button class="btn-toggle" data-jv-target="#container" data-jv-toggle="collapse">open</button>
 		<div id="container" class="_jv_collapse-target">LoremIpsun</div>
 	</div>
+
 
 Menu
 ----
@@ -28,3 +30,9 @@ Menu
 			<span class="label">[label]</span>
 		</button>
 	</div>
+
+
+Layout
+------
+
+	._jv_full_height_bottom : full height from to of item to bottom.

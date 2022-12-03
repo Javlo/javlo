@@ -392,6 +392,8 @@ if (!String.prototype.startsWith) {
 	}
 
 	editPreview.initPreview = function() {
+		
+		jvInit();
 
 		var cols = document.querySelectorAll('body');
 		[].forEach.call(cols, function(col) {
@@ -2561,8 +2563,22 @@ if (!String.prototype.startsWith) {
 /* 2022 - no JQ code */
 
 document.addEventListener("DOMContentLoaded", function(event) {
-	initJvCollapse();
+	jvInit();
 });
+
+function jvInit() {
+	initJvCollapse();
+	jvFullHeightItem();	
+}
+
+function jvFullHeightItem() {
+	document.querySelectorAll('._jv_full_height_bottom').forEach(i => {
+		let top = i.offsetTop;
+		i.style.height = "calc(100vh - "+top+"px)";
+		i.style.position = "fixed";
+		i.style.overflowY = "auto";
+	});
+}
 
 function initJvCollapse() {
 	document.querySelectorAll('[data-jv-toggle="collapse"]').forEach(i => {

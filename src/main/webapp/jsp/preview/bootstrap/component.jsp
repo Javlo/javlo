@@ -6,12 +6,12 @@
 	<c:url var="url" value="${info.currentURL}" context="/">
 		<c:param name="webaction" value="edit.clearClipboard" />
 	</c:url>
-	<h2><span class="glyphicon glyphicon glyphicon-duplicate" aria-hidden="true"></span>${i18n.edit['global.clipboard']}<a href="${url}" class="ajax close">X</a></h2>
+	<h2><i class="bi bi-clipboard"></i> ${i18n.edit['global.clipboard']}<a href="${url}" class="ajax close"><i class="bi bi-x"></i></a></h2>
 	<div class="body component-list">
 		<c:if test="${not empty clipboard.copied}">
 		<div class="component" data-type="clipboard" data-deletable="true">
 			<div class="wrapper-in">
-				<div class="figure"><i class="fa fa-clipboard" aria-hidden="true"></i></div>				
+				<div class="figure"><i class="${clipboard.icon}"></i></div>
 				<span>${clipboard.label}</span>
 				<div class="category">(${i18n.edit['global.clipboard']})</div>
 			</div>
@@ -19,7 +19,7 @@
 		</c:if><c:if test="${not empty editInfo.copiedPage}">
 		<div class="component page" data-type="clipboard-page" data-deletable="true">
 			<div class="wrapper-in" title="${editInfo.copiedPage}">
-				<div class="figure"><i class="fa fa-clone" aria-hidden="true"></i></div>				
+				<div class="figure"><i class="bi bi-file-richtext"></i></div>
 				<span>${editInfo.copiedPage}</span>
 				<div class="category">(page)</div>
 			</div>
@@ -60,25 +60,25 @@ document.addEventListener("DOMContentLoaded", function(event) {
   <button type="button" class="btn btn-default btn-xs btn-3" role="group" onclick="displayComplexity(3);">${i18n.edit['preview.component-group.admin']}</button>
   </div></c:if>
 </div>
-<div class="flex-line" style="margin-top: 10px;">
+<div class="flex-line">
 <div class="filter-wrapper">
 <input id="filter-components" type="text" class="form-control filter" placeholder="Filter..." onkeyup="filter(this.value);"/>
 <button type="button" class="reset-filter"><i id="close" class="bi bi-x-circle-fill" aria-hidden="true" style="visibility: hidden; transition: visibility 300ms linear 0ms" onclick="document.getElementById('filter-components').value = ''; filter('');"></i></button>
 </div>
-<c:if test="${info.admin}"><button onclick="editPreview.openModal('Components', '${info.currentEditURL}?module=admin&context=${info.contextKey}&webaction=admin.previewEditComponent&previewEdit=true'); return false;" class="btn btn-default"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></button></c:if>
+<c:if test="${info.admin}"><button onclick="editPreview.openModal('Components', '${info.currentEditURL}?module=admin&context=${info.contextKey}&webaction=admin.previewEditComponent&previewEdit=true'); return false;" class="btn btn-default"><i class="bi bi-plus-circle"></i></button></c:if>
 </div>
 
 <script>
 function filter(text) {
 		
 		if (text === null || text.length == 0) {
-			document.querySelectorAll('#preview_command .component-list .component').forEach(item => {
+			document.querySelectorAll('#preview_command .component-list-filtered .component').forEach(item => {
 				item.classList.remove('hidden');
 			});
 			return;
 		}
 		text = text.toLowerCase();
-		document.querySelectorAll('#preview_command .component-list .component').forEach(item => {
+		document.querySelectorAll('#preview_command .component-list-filtered .component').forEach(item => {
 			if (item.querySelectorAll('.text')[0].innerHTML.toLowerCase().indexOf(text) < 0) {
 				item.classList.add('hidden');
 			} else {
@@ -93,7 +93,7 @@ function filter(text) {
 </script>
 
 </c:if>
-<div class="component-list  ${globalContext.componentsFiltered?'display-1':''}">
+<div class="component-list _jv_full_height_bottom component-list-filtered ${globalContext.componentsFiltered?'display-1':''}">
 <c:set var="cat" value="" />
 <c:forEach var="comp" items="${components}">
 <c:if test="${comp.metaTitle}">
@@ -102,7 +102,7 @@ function filter(text) {
 ><c:set var="toolTipKey" value="content.${comp.type}.description" /><c:set var="toolTip" value="data-toggle=\"tooltip\" data-placement=\"right\" title=\"${i18n.edit[toolTipKey]}\"" />
 <div ${i18n.edit[toolTipKey] != toolTipKey?toolTip:''} class="component${comp.selected?' selected':''} component-${comp.type} complexity-${comp.complexityLevel} business-${comp.dynamicComponent}" data-type="${comp.type}" title="${i18n.edit[cat]} : ${comp.label}">
 <div class="wrapper-in">
-<div class="figure"><i class="fa fa-${comp.fontAwesome}" aria-hidden="true"></i></div>
+<div class="figure"><i class="${comp.icon}" aria-hidden="true"></i></div>
 <div class="text">
 <span>${comp.label}</span>
 <div class="category">(${i18n.edit[cat]})</div>

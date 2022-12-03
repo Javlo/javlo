@@ -6,6 +6,7 @@ package org.javlo.service;
 import javax.servlet.http.HttpServletRequest;
 
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.i18n.I18nAccess;
 
@@ -20,6 +21,7 @@ public class ClipBoard {
 	
 	private Object copied = null;
 	private String label = null;
+	private String icon;
 	
 	private ClipBoard(){};
 	
@@ -32,8 +34,9 @@ public class ClipBoard {
 		return res;
 	}
 	
-	public void copy ( ContentContext ctx, Object inCopied ) {		
+	public void copy ( ContentContext ctx, Object inCopied, String icon) {		
 		copied=inCopied;
+		this.icon=icon;
 		if (copied instanceof ComponentBean) {
 			ComponentBean comp = (ComponentBean)copied;
 			I18nAccess i18nAccess;
@@ -49,6 +52,17 @@ public class ClipBoard {
 	
 	public Object getCopied() {
 		return copied;
+	}
+	
+	public String getIcon() {
+		if (icon != null) {
+			return icon;
+		}
+		if (copied instanceof IContentVisualComponent) {
+			return ((IContentVisualComponent)copied).getIcon();
+		} else {
+			return null;
+		}
 	}
 	
 	public String getLabel() {
@@ -79,6 +93,10 @@ public class ClipBoard {
 		} else {
 			return null;
 		}
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
 	}
 
 }
