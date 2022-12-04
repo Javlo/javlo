@@ -312,10 +312,10 @@
 								</div>
 							</c:if>
 							<c:if test="${!userInterface.light}">
-								<div class="_jv_btn-check">
-									<input type="hidden" name="special_input" value="true" />
-									<label class="suffix"> <input type="checkbox" id="break_repeat" name="break_repeat" ${page.info.breakRepeat?'checked="checked"':''} value="true" /> ${i18n.edit['item.break-repeat']}
-									</label>
+								<input type="hidden" name="special_input" value="true" />
+								<div class="_jv_btn-check  ${page.root?'disabled':''}">
+									<input type="checkbox" id="break_repeat" name="break_repeat" ${page.info.breakRepeat?'checked="checked"':''} value="true" ${page.root?'disabled="disabled"':''} />
+									<label class="suffix" for="break_repeat">${i18n.edit['item.break-repeat']}</label>
 								</div>
 							</c:if>
 							<c:if test="${userInterface.admin}">
