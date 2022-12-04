@@ -36,12 +36,6 @@ body {
 	box-shadow: none;
 }
 
-.form-group {
-	label {
-		min-width: 120px;
-	}
-}
-
 #form-page-properties {
 	label {
 		min-width: 120px;
@@ -58,6 +52,11 @@ body {
 	.form-group {
 		label {
 			display: block;
+		}
+	}
+	.form-group {
+		label {
+			min-width: 120px;
 		}
 	}
 }
