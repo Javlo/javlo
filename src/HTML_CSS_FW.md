@@ -1,23 +1,15 @@
 # JAVLO 2 : HTML/CSS Framework
-
 ## Collapse
-
-	minimal html : 
-
+	minimal html 
 	```
 	<div class="_jv_collapse-container">
 		<button class="btn-toggle" data-jv-target="#container" data-jv-toggle="collapse">open</button>
 		<div id="container" class="_jv_collapse-target">LoremIpsun</div>
 	</div>
 	```
-
-
 ## Menu
-
 	class '_jv_menu' wrap list of items
-	
-	item html : 
-	
+	item html
 	```
 	<div class="_jv_menu">
 		<button type="button" class="btn btn-default">
@@ -30,26 +22,19 @@
 		</button>
 	</div>
 	```
-
-
 ## Layout
-
 	### ._jv_full_height_bottom
-	
 	full height from top of item to bottom.
-	
 	### _jv_btn-check
-	
-	
+	Exemple code for check box button
 	```
 	<div class="_jv_btn-check">
 		<input type="checkbox" name="user" value="me">
 		<label for="user">pvandermaesen</label>
 	</div>
 	```
-	
 	#### checkbox
-	
+	Exemple code for radio group button
 	```
 	<div class="btn-group">
 		<div class="_jv_btn-check">
@@ -60,6 +45,5 @@
 			<input id="i2" type="radio" name="i2" value="2">
 			<label or="i2">none</label>
 		</div>
-	</div>
-	```
+	</div>``
 	
