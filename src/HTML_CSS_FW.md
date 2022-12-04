@@ -46,7 +46,8 @@ Exemple code for radio group button
 		<input id="i2" type="radio" name="i2" value="2">
 		<label or="i2">none</label>
 	</div>
-</div>``
+</div>
+```
 ## Edit
 ### Layout
 #### _jv_collapsable fieldset
