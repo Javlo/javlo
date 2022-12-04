@@ -33,3 +33,68 @@
 	position: absolute;
 	top: 40px;
 }
+
+._jv_check_line {
+	display: flex;
+	align-items: center;
+	label {
+		min-width: 0;
+	}
+	justify-content: space-between; 
+}
+
+._jv_btn-check {
+	display: inline-block;
+	margin-right: 0.5em;
+	margin-bottom: 0.5em;
+	input {
+		position: absolute;
+		left: -9999px;
+	}
+	input:checked + label {
+		background-color: var(--blue-100);
+		color: #fff;
+	}
+	input:checked + label, label:hover {
+		border: 1px solid var(--blue-100);
+	}
+	label {
+	    display: inline-block;
+	    position: relative;
+	    max-width: 100%;
+	    width: fit-content;
+	    border: 1px solid var(--grey-3);
+	    padding: 5px 10px;
+	    color: black;
+	    cursor: pointer;
+	    border-radius: 4px;
+		margin-right:5px!important;
+	}
+}
+
+.btn-group {
+	display: flex;
+	._jv_btn-check {
+		margin-right: 0;
+		margin-left: -1px;
+		display: block;
+		border-radius: 0;
+		label {
+			margin-right: 0 !important;
+			border-radius: 0;
+		}
+	}
+	._jv_btn-check:first-child {
+		border-radius: 5px 0 0 5px;
+		margin-left: 0;
+		label {
+			border-radius: 5px 0 0 5px;
+		}
+	}
+	._jv_btn-check:last-child {
+		border-radius: 0 5px 5px 0;
+		label {
+			border-radius: 0 5px 5px 0;
+		}
+	}
+}

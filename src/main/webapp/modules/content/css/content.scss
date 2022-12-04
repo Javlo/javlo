@@ -1,51 +1,17 @@
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css");
 
 html {
-	font-size: 62.5%;
-	--blue-100: #069;
 	--light-black: #333;
 	--grey-1: #656565;
 	--grey-2: #888;
 	--grey-3: #ccc;
 	--grey-4: #ddd;
 	--red: #dc3545;
-	--bsicons: "bootstrap-icons";  
-	--systemfonts: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Oxygen, Cantarell, sans-serif;
-}
-body {
-	font-family: var(--systemfonts);
-	font-size: 1.6rem;
+	--bsicons: "bootstrap-icons";
 }
 .maincontent{
 	overflow: inherit;
 }
-.header{
-	border-bottom: 3px solid var(--blue-100);
-	.logo{
-		color: var(--blue-100);
-	}
-}
-.topheader{
-	ul{
-		li{
-			a{
-				cursor: pointer;
-					&:hover{
-						opacity:.7;
-					}
-				.wrap{
-					i{
-						color: var(--grey-2);
-					}
-					span.count{
-						background: var(--red);
-					}
-				}
-				}
-		}
-	}
-}
-
 .ui-tabs-nav{
 	font-size: 1.3rem;
 	li{
@@ -333,62 +299,6 @@ a.action-button::first-letter,
     left: -9999px;
 }
 
-.btn-check {
-	display: inline-block;
-	margin-right: 0.5em;
-	margin-bottom: 0.5em;
-	input {
-		position: absolute;
-		left: -9999px;
-	}
-	input:checked + label, label:hover {
-		border: 1px solid var(--blue-100);  /* Rester coché quand le choix est sélectionné - MARCHE PAS*/
-		background-color: var(--blue-100);
-		color: #fff;
-	}
-	label {
-	    display: inline-block;
-	    position: relative;
-	    max-width: 100%;
-	    width: fit-content;
-	    border: 1px solid var(--grey-3);
-	    padding: 5px 10px;
-	    color: black;
-	    cursor: pointer;
-	    border-radius: 4px;
-		margin-right:5px!important;
-	}
-}
-
-.btn-group {
-	display: flex;
-	.btn-check {
-		margin-right: 0;
-		margin-left: -1px;
-		display: block;
-		border-radius: 0;
-		label {
-			margin-right: 0 !important;
-			border-radius: 0;
-		}
-	}
-	.btn-check:first-child {
-		border-radius: 5px 0 0 5px;
-		margin-left: 0;
-		label {
-			border-radius: 5px 0 0 5px;
-		}
-	}
-	.btn-check:last-child {
-		border-radius: 0 5px 5px 0;
-		label {
-			border-radius: 0 5px 5px 0;
-		}
-	}
-}
-
-
-
 // .form-group{
 // 	input[type="radio"]:checked+label{
 // 		border: 1px solid var(--blue-100); /* Rester coché quand le choix est sélectionné - MARCHE PAS*/
@@ -396,7 +306,6 @@ a.action-button::first-letter,
 // }
 
 label:not(.radio-inline){
-	font-weight: 700;
     text-transform: uppercase;
     font-size: 1rem;
 	color: var(--grey-2);
@@ -753,9 +662,6 @@ label {
 	}
 }
 
-.screenshot{
-	align-items: end;
-}
 .btn .loader {
 	display: none;
 }

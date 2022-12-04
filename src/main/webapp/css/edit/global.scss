@@ -1,3 +1,11 @@
+/** ANDRO **/
+@import 'andro_grey';
+/** /ANDRO **/
+
+html {
+	font-size: 62.5%;
+}
+
 .bloc-info {
 	padding: 15px;
 	background-color: #eeeeee;
@@ -16,14 +24,11 @@
 }
 
 .screenshot {
-	display: flex; 
-	flex-direction: column;
+	display: flex;
 	align-items: center;
-	height: 150px;
+	justify-content: flex-end;
 	img {
-		max-height: 130px;
-		max-width: 80%;
-		margin-bottom: 15px;
+		max-height: 90px;
 	}
 }
 

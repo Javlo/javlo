@@ -2,6 +2,7 @@
 	<h3>
 		<span>${i18n.edit['item.title']}</span>
 	</h3>
+
 	<div class="content">
 
 		<form id="form-page-properties" class="standard-form" action="${info.currentURL}" method="post">
@@ -29,48 +30,60 @@
 				<input type="hidden" name="page" value="${page.id}" />
 			</div>
 
-			<c:if test="${!userInterface.light}">
-				<div class="form-group template">
-					<label for="template">${i18n.edit['item.template']}</label>
-					<select id="template" name="template" class="form-control">
-						<c:if test="${not empty inheritedTemplate}">
-							<option value="">${i18n.edit['global.inherited']}(${inheritedTemplate.name})</option>
-						</c:if>
-						<c:set var="templateFound" value="${empty page.templateId}" />
-						<c:forEach var="template" items="${templates}">
-							<option value="${template.name}" ${template.name eq page.templateId?'selected="selected"':''}>${template.name}</option>
-							<c:if test="${template.name eq page.templateId}">
-								<c:set var="templateFound" value="${true}" />
-							</c:if>
-						</c:forEach>
-						<c:if test="${not templateFound}">
-							<option value="${page.templateId}" selected="selected">*${page.templateId}</option>
-						</c:if>
-					</select>
-				</div>
-			</c:if>
-			<div class="row taxo-row">
+			<div class="row">
 				<div class="col-md-6">
-					<c:if test="${userInterface.light}">
-						<c:set var="found" value="false" />
-						<c:forEach var="template" items="${templates}">
-							<c:if test="${template.name eq page.templateId}">
-								<div class="line">
-									<label>${i18n.edit['item.template']} : </label>${template.name}</div>
-								<c:set var="found" value="true" />
-							</c:if>
-						</c:forEach>
-						<c:if test="${not found}">
-							<div class="line">
-								<label>${i18n.edit['item.template']} : </label>${i18n.edit['global.inherited']} (${inheritedTemplate.name})
-							</div>
-						</c:if>
-					</c:if>
 
-					<div class="form-group">
-						<label for="new_name">${i18n.edit['item.name']}</label>
-						<input type="text" class="form-control" id="new_name" name="new_name" value="${page.humanName}" />
-					</div>
+					<c:if test="${!userInterface.light}">
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group template">
+									<label for="template">${i18n.edit['item.template']}</label>
+									<select id="template" name="template" class="form-control">
+										<c:if test="${not empty inheritedTemplate}">
+											<option value="">${i18n.edit['global.inherited']}(${inheritedTemplate.name})</option>
+										</c:if>
+										<c:set var="templateFound" value="${empty page.templateId}" />
+										<c:forEach var="template" items="${templates}">
+											<option value="${template.name}" ${template.name eq page.templateId?'selected="selected"':''}>${template.name}</option>
+											<c:if test="${template.name eq page.templateId}">
+												<c:set var="templateFound" value="${true}" />
+											</c:if>
+										</c:forEach>
+										<c:if test="${not templateFound}">
+											<option value="${page.templateId}" selected="selected">*${page.templateId}</option>
+										</c:if>
+									</select>
+								</div>
+								<c:if test="${userInterface.light}">
+									<c:set var="found" value="false" />
+									<c:forEach var="template" items="${templates}">
+										<c:if test="${template.name eq page.templateId}">
+											<div class="line">
+												<label>${i18n.edit['item.template']} : </label>${template.name}</div>
+											<c:set var="found" value="true" />
+										</c:if>
+									</c:forEach>
+									<c:if test="${not found}">
+										<div class="line">
+											<label>${i18n.edit['item.template']} : </label>${i18n.edit['global.inherited']} (${inheritedTemplate.name})
+										</div>
+									</c:if>
+								</c:if>
+								<div class="form-group">
+									<label for="new_name">${i18n.edit['item.name']}</label>
+									<input type="text" class="form-control" id="new_name" name="new_name" value="${page.humanName}" />
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="screenshot">
+									<button class="btn btn-primary btn-sm" onclick="closePopup(); window.open('${takeSreenshotUrl}'); return false;">take screenshot</button>
+									<c:if test="${not empty page.screenshotUrl}">
+										<a href="${page.screenshotUrl}" target="_blank"> <img id="screenshot-img" src="${page.screenshotUrl}" alt="screenshot" /></a>
+									</c:if>
+								</div>
+							</div>
+						</div>
+					</c:if>
 					<c:if test="${taxonomy.active}">
 						<div class="taxonomy">
 							<label for="taxonomy">${i18n.edit ['taxonomy']}</label> ${taxonomySelect}
@@ -93,20 +106,7 @@
 							</div>
 						</fieldset>
 					</c:if>
-				</div>
-				<div class="col-md-6">
-					<div class="screenshot">
-						<c:if test="${not empty page.screenshotUrl}">
-							<a href="${page.screenshotUrl}" target="_blank"> <img id="screenshot-img" src="${page.screenshotUrl}" alt="screenshot" /><br />
-							</a>
-						</c:if>
-						<button class="btn btn-primary btn-sm" onclick="closePopup(); window.open('${takeSreenshotUrl}'); return false;">take screenshot</button>
-					</div>
-				</div>
-			</div>
 
-			<div class="row">
-				<div class="col-md-6">
 					<div class="bloc-info">
 						<div class="row">
 							<div class="col-sm-8">
@@ -166,16 +166,14 @@
 								</div>
 							</div>
 							<div class="col-sm-4">
-								<c:if test="${not globalContext.mailingPlatform}">
-									<div class="line">
-										<label>${i18n.edit['item.last-access']}</label> <span>${page.lastAccess}</span>
-									</div>
+								<div class="line">
+									<label>${i18n.edit['item.last-access']}</label> <span>${page.lastAccess}</span>
+								</div>
 							</div>
 							<div class="col-sm-4">
 								<div class="line">
 									<label>${i18n.edit['item.page-rank']}</label> <span>${page.pageRank}</span>
 								</div>
-								</c:if>
 							</div>
 						</div>
 						<div class="row">
@@ -223,6 +221,7 @@
 					</fieldset>
 
 				</div>
+
 				<div class="col-md-6">
 					<div class="row">
 						<div class="col-md-6">
@@ -294,44 +293,34 @@
 					</div>
 
 					<div class="bloc-default">
-						<div class="row">
-							<div class="col-md-2">
-								<div class="form-group">
-									<input type="checkbox" id="page_visible" name="view" ${page.info.visible?'checked="checked"':''} value="true" />
-									<label class="suffix" for="page_visible">${i18n.edit['item.visible']}</label>
+						<div class="_jv_check_line">
+							<div class="_jv_btn-check">
+								<input type="checkbox" id="page_visible" name="view" ${page.info.visible?'checked="checked"':''} value="true" />
+								<label class="suffix" for="page_visible">${i18n.edit['item.visible']}</label>
+							</div>
+							<c:if test="${!userInterface.light}">
+								<div class="_jv_btn-check">
+									<input type="checkbox" id="page_active" name="active" ${page.info.pageActive?'checked="checked"':''} value="true" />
+									<label class="suffix" for="page_active">${i18n.edit['item.active']}</label>
 								</div>
-							</div>
-							<div class="col-md-2">
-								<c:if test="${!userInterface.light}">
-									<div class="form-group">
-										<input type="checkbox" id="page_active" name="active" ${page.info.pageActive?'checked="checked"':''} value="true" />
-										<label class="suffix" for="page_active">${i18n.edit['item.active']}</label>
-									</div>
-								</c:if>
-							</div>
-							<div class="col-md-2">
-								<c:if test="${userInterface.model && !info.page.root && !page.childrenOfAssociation}">
-									<div class="form-group">
-										<input type="checkbox" id="page_model" name="model" ${page.model?'checked="checked"':''} value="true" />
-										<label class="suffix" for="page_model">Model</label>
-									</div>
-								</c:if>
-							</div>
-							<div class="col-md-2">
-								<c:if test="${!userInterface.light}">
-									<div class="form-group">
-										<input type="hidden" name="special_input" value="true" />
-										<label class="suffix"> <input type="checkbox" id="break_repeat" name="break_repeat" ${page.info.breakRepeat?'checked="checked"':''} value="true" /> ${i18n.edit['item.break-repeat']}
-										</label>
-									</div>
-								</c:if>
-							</div>
+							</c:if>
+							<c:if test="${userInterface.model && !info.page.root && !page.childrenOfAssociation}">
+								<div class="_jv_btn-check">
+									<input type="checkbox" id="page_model" name="model" ${page.model?'checked="checked"':''} value="true" />
+									<label class="suffix" for="page_model">Model</label>
+								</div>
+							</c:if>
+							<c:if test="${!userInterface.light}">
+								<div class="_jv_btn-check">
+									<input type="hidden" name="special_input" value="true" />
+									<label class="suffix"> <input type="checkbox" id="break_repeat" name="break_repeat" ${page.info.breakRepeat?'checked="checked"':''} value="true" /> ${i18n.edit['item.break-repeat']}
+									</label>
+								</div>
+							</c:if>
 							<c:if test="${userInterface.admin}">
-								<div class="col-md-2">
-									<div class="form-group">
-										<input type="checkbox" id="page_admin" name="admin" ${page.admin?'checked="checked"':''} value="true" />
-										<label class="suffix" for="page_admin">Admin</label>
-									</div>
+								<div class="_jv_btn-check">
+									<input type="checkbox" id="page_admin" name="admin" ${page.admin?'checked="checked"':''} value="true" />
+									<label class="suffix" for="page_admin">Admin</label>
 								</div>
 							</c:if>
 						</div>
@@ -363,16 +352,18 @@
 						</fieldset>
 
 					</c:if>
-
 				</div>
+
 			</div>
 
 			<div class="action flex-line">
-				<button type="submit" ${page.parent==null?'disabled="disabled"':''}class="btn btn-warning" name="webaction" value="edit.DeletePage"><i class="bi bi-trash"></i> ${i18n.edit['global.delete']}</button>
-				<button type="submit" class="btn btn-primary btn-color"  name="webaction" value="pageProperties">${i18n.edit['global.ok']}</button>
+				<button type="submit" ${page.parent==null?'disabled="disabled"':''} class="btn btn-warning" name="webaction" value="edit.DeletePage">
+					<i class="bi bi-trash"></i> ${i18n.edit['global.delete']}
+				</button>
+				<button type="submit" class="btn btn-primary btn-color" name="webaction" value="pageProperties">${i18n.edit['global.ok']}</button>
 			</div>
-
 		</form>
 
 	</div>
+
 </div>
