@@ -52,4 +52,4 @@ Exemple code for radio group button
 ### Layout
 #### _jv_collapsable fieldset
 
-	add class collapsable on a `<fieldset>`, I will web collapsable with click on legend.
+	add class collapsable on a `<fieldset>`, It will be collapsable with a click on legend.
