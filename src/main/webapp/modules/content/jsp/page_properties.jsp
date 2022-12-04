@@ -76,10 +76,10 @@
 							</div>
 							<div class="col-md-6">
 								<div class="screenshot">
-									<button class="btn btn-primary btn-sm" onclick="closePopup(); window.open('${takeSreenshotUrl}'); return false;">take screenshot</button>
 									<c:if test="${not empty page.screenshotUrl}">
 										<a href="${page.screenshotUrl}" target="_blank"> <img id="screenshot-img" src="${page.screenshotUrl}" alt="screenshot" /></a>
 									</c:if>
+									<button class="btn btn-primary btn-sm" onclick="closePopup(); window.open('${takeSreenshotUrl}'); return false;">update screenshot</button>
 								</div>
 							</div>
 						</div>

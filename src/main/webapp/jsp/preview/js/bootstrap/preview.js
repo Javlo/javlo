@@ -208,9 +208,9 @@ if (!String.prototype.startsWith) {
 			pjq('#preview-modal-frame').attr("src", pjq('#preview-modal-frame').data("wait"));
 		});
 		var modalMargin = parseInt(pjq('#preview-modal .modal-dialog').css("margin-top").replace("px", "")) * 2;
-		var bodyPadding = parseInt(pjq('#preview-modal .modal-body').css("padding-top").replace("px", "")) + parseInt(pjq('#preview-modal .modal-body').css("padding-bottom").replace("px", ""));
+		var bodyPadding = parseInt(pjq('#preview-modal .modal-preview-body').css("padding-top").replace("px", "")) + parseInt(pjq('#preview-modal .modal-preview-body').css("padding-bottom").replace("px", ""));
 		var viewportHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-		pjq('#preview-modal .modal-body iframe').height(viewportHeight - (pjq('#preview-modal .modal-header').outerHeight(true) + modalMargin + bodyPadding));
+		pjq('#preview-modal .modal-preview-body iframe').height(viewportHeight - (pjq('#preview-modal .modal-header').outerHeight(true) + modalMargin + bodyPadding));
 	}
 
 	editPreview.openModalQuestion = function(title, question, secondaryActionLabel, primaryActionLabel, secondaryActionFunction, primaryActionFunction) {

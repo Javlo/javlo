@@ -718,3 +718,10 @@ body #preview-layer .commands {
   border-bottom: 0;
   border-left: .3em solid transparent;
 }
+
+/** modal **/
+#preview_command {
+	.modal-preview-body {
+		background-color: var(--javlo-ui-color-1) !important;
+	}
+}

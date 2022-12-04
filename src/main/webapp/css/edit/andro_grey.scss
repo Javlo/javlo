@@ -1,0 +1,76 @@
+body {
+	font-family: var(--systemfonts);
+	font-size: 1.6rem;
+}
+
+.header{
+	border-bottom: 3px solid var(--blue-100);
+	.logo{
+		color: var(--blue-100);
+	}
+}
+
+.topheader{
+	ul{
+		li{
+			a{
+				cursor: pointer;
+					&:hover{
+						opacity:.7;
+					}
+				.wrap{
+					i{
+						color: var(--grey-2);
+					}
+					span.count{
+						background: var(--red);
+					}
+				}
+				}
+		}
+	}
+}
+
+.form-control {
+	border-radius: 0;
+	box-shadow: none;
+}
+
+.form-group {
+	label {
+		min-width: 120px;
+	}
+}
+
+#form-page-properties {
+	label {
+		min-width: 120px;
+	}
+}
+
+.page-properties {
+	.form-control {
+		min-width: 220px;
+	}
+	.checkbox-inline {
+		margin-right: 5px;
+	}
+	.form-group {
+		label {
+			display: block;
+		}
+	}
+}
+
+body fieldset {
+	border-radius: 0;
+	background-color: var(--javlo-ui-color-1);
+	border: 1px var(--javlo-ui-color-4) solid; 
+	legend {
+		border-radius: 0;
+		border: 1px var(--javlo-ui-color-4) solid;
+		padding: 2px 5px;
+		background-color: var(--javlo-ui-color-4);
+		color: #fff;
+	}
+}

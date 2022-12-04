@@ -25,10 +25,19 @@ html {
 
 .screenshot {
 	display: flex;
-	align-items: center;
 	justify-content: flex-end;
+	align-items: flex-end;
+	flex-direction: column;
 	img {
-		max-height: 90px;
+		max-height: 100px;
+		max-width: 140px;
+		display: block;
+	}
+	.btn {
+		padding: 0;
+		margin: 0;
+		width: 140px;
+		height: 30px;
 	}
 }
 

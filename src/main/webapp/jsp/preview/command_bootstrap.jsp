@@ -140,7 +140,7 @@ if (StringHelper.isTrue(request.getParameter("preview-command"), true) && !ctx.i
 							<h4 class="modal-title" id="previewModalTitle">[title]</h4>
 						</div>
 						<div class="box">
-							<div class="modal-body tabs-edit-fancy">
+							<div class="modal-preview-body tabs-edit-fancy">
 								<iframe id="preview-modal-frame" data-wait="${info.waitURL}" src="${info.waitURL}"></iframe>
 							</div>
 						</div>

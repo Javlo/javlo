@@ -24,7 +24,7 @@ item html
 ```
 ## Layout
 ### ._jv_full_height_bottom
-full height from top of item to bottom.
+full height from top of item to bottom of page.
 ### _jv_btn-check
 Exemple code for check box button
 ```
