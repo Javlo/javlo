@@ -2,10 +2,6 @@
 	margin: var(--javlo-main-sep);
 }
 
-.btn-block {
-	display: block;
-}
-
 ._jv_header_sm, #preview_command ._jv_header_sm {
 	display: flex;
 	justify-content: space-between;
@@ -106,4 +102,39 @@
 			border-radius: 0 5px 5px 0;
 		}
 	}
+}
+
+fieldset.collapsable {
+	legend {
+		cursor: pointer;
+	}
+	legend:before {
+		display: inline-block;
+		margin-right: .255em;
+		vertical-align: .255em;
+		content: "";
+		border-top: .4em solid;
+		border-left: .4em solid transparent;
+		border-bottom: 0;
+		border-right: .4em solid transparent;
+		margin-bottom: -2px;
+	}
+}
+
+fieldset.collapsable.collapsed {	
+	legend:before {
+		border-left: .4em solid;
+		border-bottom: .4em solid transparent;
+		border-right: 0;
+		border-top: .4em solid transparent;
+		margin-bottom: -4px;
+		margin-left: 0;
+		margin-left: 5px;
+	}
+}
+
+fieldset.collapsable.collapsed {
+	height: 1em;
+	padding-bottom: 0;
+	overflow: hidden;
 }

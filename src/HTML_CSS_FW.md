@@ -1,5 +1,6 @@
 # JAVLO 2 : HTML/CSS Framework
-## Collapse
+## Preview
+### Collapse
 minimal html 
 ```
 <div class="_jv_collapse-container">
@@ -7,7 +8,7 @@ minimal html
 	<div id="container" class="_jv_collapse-target">LoremIpsun</div>
 </div>
 ```
-## Menu
+### Menu
 class '_jv_menu' wrap list of items
 item html
 ```
@@ -22,10 +23,10 @@ item html
 	</button>
 </div>
 ```
-## Layout
-### ._jv_full_height_bottom
+### Layout
+#### ._jv_full_height_bottom
 full height from top of item to bottom of page.
-### _jv_btn-check
+#### _jv_btn-check
 Exemple code for check box button
 ```
 <div class="_jv_btn-check">
@@ -33,7 +34,7 @@ Exemple code for check box button
 	<label for="user">pvandermaesen</label>
 </div>
 ```
-#### checkbox
+##### checkbox
 Exemple code for radio group button
 ```
 <div class="btn-group">
@@ -46,3 +47,8 @@ Exemple code for radio group button
 		<label or="i2">none</label>
 	</div>
 </div>``
+## Edit
+### Layout
+#### _jv_collapsable fieldset
+
+	add class collapsable on a `<fieldset>`, I will web collapsable with click on legend.

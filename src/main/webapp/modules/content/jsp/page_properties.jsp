@@ -90,7 +90,7 @@
 						</div>
 					</c:if>
 					<c:if test="${not globalContext.mailingPlatform}">
-						<fieldset>
+						<fieldset class="collapsable time-range-fieldset">
 							<legend>${i18n.edit['item.time-range']} (${i18n.edit['item.time-published']}:${page.insideTimeRange})</legend>
 							<div class="row">
 								<div class="col-sm-6">
@@ -107,7 +107,8 @@
 						</fieldset>
 					</c:if>
 
-					<div class="bloc-info">
+					<fieldset class="bloc-info collapsable">
+						<legend>information</legend>
 						<div class="row">
 							<div class="col-sm-8">
 								<div class="line">
@@ -196,7 +197,7 @@
 							</div>
 						</div>
 
-					</div>
+					</fieldset>
 
 					<fieldset>
 						<legend>stat</legend>

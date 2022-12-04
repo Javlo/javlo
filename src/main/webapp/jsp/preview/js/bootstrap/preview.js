@@ -2568,7 +2568,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 function jvInit() {
 	initJvCollapse();
-	jvFullHeightItem();	
+	jvFullHeightItem();
 }
 
 function jvFullHeightItem() {

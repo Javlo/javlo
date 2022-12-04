@@ -689,3 +689,25 @@ function addToolTips(selector, text, position) {
 	}
 }
 
+/* 2022 - no JQ code */
+
+document.addEventListener("DOMContentLoaded", function(event) {
+	jvInit();
+});
+
+function jvInit() {
+	initJvCollapsedFieldset();
+}
+
+function initJvCollapsedFieldset() {
+	document.querySelectorAll('fieldset.collapsable').forEach(i => {
+		i.classList.add("collapsed");
+		i.querySelector("legend").onclick = function(e) {
+			if (this.parentElement.classList.contains('collapsed')) {
+				this.parentElement.classList.remove('collapsed');
+			} else {
+				this.parentElement.classList.add('collapsed');
+			}
+		}
+	});
+}
