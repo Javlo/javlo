@@ -50,12 +50,20 @@ html.preview-only.preview-standard.preview-command-visible {
 	#preview-modal-frame {
 		width: 100%;
 	}
-	
+
 	.sidebar {
 		._jv_full_height_bottom {
-			width: calc(var(--javlo-sidebar-width) - var(--javlo-main-sep) / 2 - 2px);
+			width: calc(var(--javlo-sidebar-width) - var(--javlo-main-sep));
 		}
 	}
+}
+
+#preview_command .sidebar ._jv_full_height_bottom::-webkit-scrollbar {
+	display: none;
+	-ms-overflow-style: none;
+	/* IE and Edge */
+	scrollbar-width: none;
+	/* Firefox */
 }
 
 #preview_command {
@@ -709,14 +717,14 @@ body #preview-layer .commands {
 }
 
 #preview_command .btn-toggle::after {
-  display: inline-block;
-  margin-left: .255em;
-  vertical-align: .255em;
-  content: "";
-  border-top: .3em solid;
-  border-right: .3em solid transparent;
-  border-bottom: 0;
-  border-left: .3em solid transparent;
+	display: inline-block;
+	margin-left: .255em;
+	vertical-align: .255em;
+	content: "";
+	border-top: .3em solid;
+	border-right: .3em solid transparent;
+	border-bottom: 0;
+	border-left: .3em solid transparent;
 }
 
 /** modal **/

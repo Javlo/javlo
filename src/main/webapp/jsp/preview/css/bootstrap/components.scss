@@ -7,21 +7,17 @@ body #preview_command .component-list .component .wrapper-in .text {
 	grid-template-columns: repeat(2, 1fr) !important;
 	grid-gap: 10px;
 	margin-top: 10px !important;*/
-	
+
 	display: flex;
 	flex-wrap: wrap;
 	align-content: flex-start;
-	
-	.component {
-		width: 50%;
-		margin-right: -1px;
-		margin-bottom: -1px;
-	}
+	gap: 10px;
+
 }
 
-body #preview_command .component-list .component {
-	//width: 100% !important;
-}
+// body #preview_command .component-list .component {
+// 	width: 100% !important;
+// }
 
 
 #preview_command .component .figure {
@@ -53,13 +49,14 @@ body #preview_command .component-list .component .wrapper-in {
 	.filter-wrapper {
 		width: 85%;
 	}
-	
+
 	.clipboard {
 		padding-bottom: calc(var(--javlo-main-sep) / 2);
 	}
 
 	.component-list {
 		margin-top: calc(var(--javlo-main-sep) / 2);
+
 		.component {
 			margin: 0;
 			padding: 0;
@@ -266,7 +263,8 @@ body.edit-preview .editable-component {
 	font-size: 11px;
 }
 
-body.edition-mode-light, body.edition-mode-dark {
+body.edition-mode-light,
+body.edition-mode-dark {
 	#preview_command {
 		.components-group {
 			display: table;
@@ -276,39 +274,45 @@ body.edition-mode-light, body.edition-mode-dark {
 
 body #preview_command {
 	.component-list .component {
-		width: 50%;
+		flex-grow: 1;
+
 		.wrapper-in {
 			margin: 3px;
 			padding: 3px;
 			text-align: left;
-			.figure, .text {
+
+			.figure,
+			.text {
 				display: inline-block;
 				margin: 0;
 				width: 30px;
 				height: 30px;
 			}
+
 			.text {
 				padding-left: 3px;
 				height: auto;
 				width: 88px;
 				height: 18px;
 				overflow: hidden;
+
 				span {
 					line-height: 9px;
 				}
 			}
+
 			.figure {
 				font-size: 18px;
 				padding: 2px 5px
 			}
-		}	
+		}
 	}
+
 	.component span {
 		display: inline-block;
 	}
-	.display-1 .component {
-		display: block;
-	}
+
+
 	.components-group {
 		display: none;
 	}
@@ -316,6 +320,7 @@ body #preview_command {
 	.component-list .complexity-1 .wrapper-in {
 		border-bottom-color: #00A0B0;
 		color: #00A0B0;
+
 		i {
 			color: #00A0B0;
 		}
@@ -324,6 +329,7 @@ body #preview_command {
 	.component-list .complexity-2 .wrapper-in {
 		border-bottom-color: #EB6841;
 		color: #EB6841;
+
 		i {
 			color: #EB6841;
 		}
@@ -332,6 +338,7 @@ body #preview_command {
 	.component-list .complexity-3 .wrapper-in {
 		border-bottom-color: #CC333F;
 		color: #CC333F;
+
 		i {
 			color: #CC333F;
 		}
@@ -340,6 +347,7 @@ body #preview_command {
 	.component-list .complexity-3 .wrapper-in {
 		border-bottom-color: #EDC951;
 		color: #EDC951;
+
 		i {
 			color: #EDC951;
 		}
