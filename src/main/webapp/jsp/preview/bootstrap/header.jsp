@@ -125,7 +125,8 @@ if (!rightOnPage) {
 							</c:if>
 							
 							<li class="page-title">
-								<span>${info.page.pageTitle}</span>
+								<span class="page">${info.page.pageTitle}</span>
+								<span class="template">${info.page.template}</span>
 							</li>
 
 							<%
@@ -171,7 +172,7 @@ if (!rightOnPage) {
 														<i class="${clipboard.icon}"></i>
 													</div>
 													<span>${clipboard.label}</span>
-													<div class="category">(${i18n.edit['global.clipboard']})</div>
+													<div class="category"> (${i18n.edit['global.clipboard']})</div>
 													<a href="${url}" class="ajax close"><i class="bi bi-x"></i></a>
 												</div>
 											</div>
@@ -183,7 +184,7 @@ if (!rightOnPage) {
 														<i class="bi bi-file-richtext"></i>
 													</div>
 													<span>${editInfo.copiedPage}</span>
-													<div class="category">(page)</div>
+													<div class="category"> (page)</div>
 													<a href="${url}" class="ajax close"><i class="bi bi-x"></i></a>
 												</div>
 											</div>
