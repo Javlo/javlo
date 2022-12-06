@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.context.EditContext;
+import org.javlo.data.EditInfoBean;
 import org.javlo.i18n.I18nAccess;
 
 
@@ -34,7 +36,12 @@ public class ClipBoard {
 		return res;
 	}
 	
-	public void copy ( ContentContext ctx, Object inCopied, String icon) {		
+	public void copy ( ContentContext ctx, Object inCopied, String icon) {
+		try {
+			EditContext.getInstance(ctx.getGlobalContext(), ctx.getSession()).setPathForCopy(null);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
 		copied=inCopied;
 		this.icon=icon;
 		if (copied instanceof ComponentBean) {

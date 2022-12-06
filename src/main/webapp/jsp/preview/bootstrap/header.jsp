@@ -81,14 +81,15 @@ if (!rightOnPage) {
 						</li>
 					</c:if>
 					<c:if test="${logged}">
-						<li><c:if test="${!globalContext.previewMode && !contentContext.asTimeMode}">
+						<c:if test="${!globalContext.previewMode && !contentContext.asTimeMode}">
+							<li>
 								<div class="link-wrapper">
 									<a class="btn btn-default btn-sm btn-mode btn-wait-loading" href="${info.currentViewURLWidthDevice}" target="_blank"><i class="bi bi-eye-fill"></i> ${i18n.edit['preview.label.not-edit-page']}</a>
 								</div>
-							</c:if></li>
+							</li>
+						</c:if>
 
 						<c:if test="${pdf}">
-							<li>
 							<li><c:url var="lowPDFURL" value="${info.currentPDFURL}" context="/">
 									<c:param name="lowdef" value="true" />
 								</c:url>
@@ -103,7 +104,6 @@ if (!rightOnPage) {
 						</c:if>
 
 						<c:if test="${globalContext.previewMode}">
-
 							<c:set var="webaction" value="edit.publish" />
 							<c:set var="label" value="${i18n.edit['command.publish']}" />
 							<c:if test="${info.page.flowIndex==1}">
@@ -123,12 +123,17 @@ if (!rightOnPage) {
 							<c:if test="${not empty param.button_publish and empty param.previewEdit and info.page.flowIndex>2}">
 								<a class="action-button publish ajax" href="${info.currentURL}?webaction=publish&render-mode=1"><span>${i18n.edit['command.publish']}</span></a>
 							</c:if>
+							
+							<li class="page-title">
+								<span>${info.page.pageTitle}</span>
+							</li>
 
 							<%
 							if (rightOnPage) {
 							%>
 
-							<li class="btn-group"><form id="add_copy_page" action="${info.currentURL}" method="post">
+							<li class="btn-group">
+								<form id="add_copy_page" action="${info.currentURL}" method="post">
 									<div class="pc_line">
 										<input type="hidden" name="webaction" value="edit.copypage" />
 										<button class="btn btn-default btn-sm btn-paste" type="submit" title="${i18n.edit['preview.label.copy-page']}">
@@ -151,27 +156,41 @@ if (!rightOnPage) {
 											</button>
 										</c:if>
 									</div>
-								</form></li>
+								</form>
+							</li>
 
-							<c:if test="${!userInterface.minimalInterface && !contentContext.asTimeMode}">
-								<li class="undo${contentContext.canUndo?'':' no-access'}"><form class="${!info.page.pageLocalEmpty?'no-access':''}" action="${info.currentURL}" method="get">
-										<c:if test="${not empty param['force-device-code']}">
-											<input type="hidden" name="force-device-code" value="${param['force-device-code']}" />
+							<li id="_jv_clipboard" class="clipboard ${not empty clipboard.copied || not empty editInfo.copiedPage?'':'disabled'}" title="${i18n.edit['global.clipboard']}"><c:url var="url" value="${info.currentURL}" context="/">
+									<c:param name="webaction" value="edit.clearClipboard" />
+								</c:url> <span class="title btn"> <i class="bi bi-clipboard"></i>
+							</span> <c:if test="${not empty clipboard.copied || not empty editInfo.copiedPage}">
+									<div class="cb-component-list">
+										<c:if test="${not empty clipboard.copied}">
+											<div class="cb-component" data-type="clipboard" data-deletable="true">
+												<div class="wrapper-in">
+													<div class="figure">
+														<i class="${clipboard.icon}"></i>
+													</div>
+													<span>${clipboard.label}</span>
+													<div class="category">(${i18n.edit['global.clipboard']})</div>
+													<a href="${url}" class="ajax close"><i class="bi bi-x"></i></a>
+												</div>
+											</div>
 										</c:if>
-										<div class="hidden">
-											<input type="hidden" name="webaction" value="time.undoRedo" />
-											<input type="hidden" name="previous" value="true" />
-										</div>
-										<c:set var="tooltip" value="" />
-										<c:if test="${i18n.edit['command.undo.tooltip'] != 'command.undo.tooltip'}">
-											<c:set var="tooltip" value='data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'command.undo.tooltip\']}"' />
+										<c:if test="${not empty editInfo.copiedPage}">
+											<div class="cb-component page" data-type="clipboard-page" data-deletable="true">
+												<div class="wrapper-in" title="${editInfo.copiedPage}">
+													<div class="figure">
+														<i class="bi bi-file-richtext"></i>
+													</div>
+													<span>${editInfo.copiedPage}</span>
+													<div class="category">(page)</div>
+													<a href="${url}" class="ajax close"><i class="bi bi-x"></i></a>
+												</div>
+											</div>
 										</c:if>
-										<button class="btn btn-default btn-sm btn-refresh" id="pc_paste_page" type="submit" ${contentContext.canUndo?'':' disabled="disabled"'} ${tooltip}>
-											<i class="bi bi-arrow-counterclockwise"></i> <span class="text">${i18n.edit['global.undo']}</span>
-										</button>
-									</form></li>
-							</c:if>
-
+									</div>
+								</c:if>
+							</li>
 
 							<%
 							}
@@ -198,8 +217,29 @@ if (!rightOnPage) {
 						</button>
 					</form></li>
 
+				<c:if test="${!userInterface.minimalInterface && !contentContext.asTimeMode}">
+					<li class="undo${contentContext.canUndo?'':' no-access'}"><form class="${!info.page.pageLocalEmpty?'no-access':''}" action="${info.currentURL}" method="get">
+							<c:if test="${not empty param['force-device-code']}">
+								<input type="hidden" name="force-device-code" value="${param['force-device-code']}" />
+							</c:if>
+							<div class="hidden">
+								<input type="hidden" name="webaction" value="time.undoRedo" />
+								<input type="hidden" name="previous" value="true" />
+							</div>
+							<c:set var="tooltip" value="" />
+							<c:if test="${i18n.edit['command.undo.tooltip'] != 'command.undo.tooltip'}">
+								<c:set var="tooltip" value='data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'command.undo.tooltip\']}"' />
+							</c:if>
+							<button class="btn btn-default btn-sm btn-refresh" id="pc_paste_page" type="submit" ${contentContext.canUndo?'':' disabled="disabled"'} ${tooltip}>
+								<i class="bi bi-arrow-counterclockwise"></i> <span class="text">${i18n.edit['global.undo']}</span>
+							</button>
+						</form></li>
+				</c:if>
+
 				<li class="macro">
-					<button class="btn btn-default btn-toggle _jv_collapse-container" data-jv-toggle="collapse" data-jv-target="#macro-list"><i class="bi bi-tools"></i></button>
+					<button class="btn btn-default btn-toggle _jv_collapse-container" data-jv-toggle="collapse" data-jv-target="#macro-list">
+						<i class="bi bi-tools"></i>
+					</button>
 					<div id="macro-list" class="_jv_collapse-target">
 						<jsp:include page="macro.jsp" />
 					</div>
@@ -244,21 +284,28 @@ if (!rightOnPage) {
 						<c:set var="tooltip" value=' data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'preview.label.edit.tooltip\']}"' />
 					</c:if>
 					<a id="pc_edit_mode_button" class="btn btn-default btn-sm" title="${i18n.edit['global.exit']}" href="${info.currentEditURL}" title="edit mode"> <i class="bi bi-x-lg"></i></a>
-					<li class="user _jv_collapse-container"><button class=" btn btn-user btn-toggle" data-jv-target="#_jv_user-collapse" data-jv-toggle="collapse"><i class="bi bi-person-circle"></i></button>
-					<div id="_jv_user-collapse" class="user-collapse _jv_collapse-target _jv_menu">
-						<a href="${info.currentEditURL}?module=users&webaction=user.changeMode&mode=myself&previewEdit=true" class="as-modal btn btn-default btn-sm btn-user">
-						<div class="button-group-addon"><i class="bi bi-person"></i></div><span class="label">${info.adminUserName}</span>
-						</a> <c:if test="${!userInterface.contributor}">
-							<c:url var="editURL" value="<%=URLHelper.createURL(returnEditCtx)%>" context="/">
-								<c:param name="module" value="content" />
-								<c:param name="webaction" value="previewEdit" />
-								<c:param name="preview" value="false" />
-							</c:url>
-						</c:if> <a class="btn btn-default btn-sm" title="${i18n.edit['global.logout']}" href="${logoutURL}">
-							<div class="button-group-addon"><i class="bi bi-box-arrow-right"></i></div>
-							<span class="text label">${i18n.edit["global.logout"]}</span></a>
-						</div>
-						</li>
+					<li class="user _jv_collapse-container"><button class=" btn btn-user btn-toggle" data-jv-target="#_jv_user-collapse" data-jv-toggle="collapse">
+							<i class="bi bi-person-circle"></i>
+						</button>
+						<div id="_jv_user-collapse" class="user-collapse _jv_collapse-target _jv_menu">
+							<a href="${info.currentEditURL}?module=users&webaction=user.changeMode&mode=myself&previewEdit=true" class="as-modal btn btn-default btn-sm btn-user">
+								<div class="button-group-addon">
+									<i class="bi bi-person"></i>
+								</div> <span class="label">${info.adminUserName}</span>
+							</a>
+							<c:if test="${!userInterface.contributor}">
+								<c:url var="editURL" value="<%=URLHelper.createURL(returnEditCtx)%>" context="/">
+									<c:param name="module" value="content" />
+									<c:param name="webaction" value="previewEdit" />
+									<c:param name="preview" value="false" />
+								</c:url>
+							</c:if>
+							<a class="btn btn-default btn-sm" title="${i18n.edit['global.logout']}" href="${logoutURL}">
+								<div class="button-group-addon">
+									<i class="bi bi-box-arrow-right"></i>
+								</div> <span class="text label">${i18n.edit["global.logout"]}</span>
+							</a>
+						</div></li>
 				</c:if>
 			</div>
 		</div>

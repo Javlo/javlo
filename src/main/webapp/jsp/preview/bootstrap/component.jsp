@@ -2,33 +2,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
  %><c:set var="titleCount" value="0" />
 <div id="component-wrapper" class="filter-empty">
-<c:if test="${not empty clipboard.copied || not empty editInfo.copiedPage}">
-<div id="_ep_clipboard" class="clipboard">
-	<c:url var="url" value="${info.currentURL}" context="/">
-		<c:param name="webaction" value="edit.clearClipboard" />
-	</c:url>
-	<h2><i class="bi bi-clipboard"></i> ${i18n.edit['global.clipboard']}<a href="${url}" class="ajax close"><i class="bi bi-x"></i></a></h2>
-	<div class="body component-list">
-		<c:if test="${not empty clipboard.copied}">
-		<div class="component" data-type="clipboard" data-deletable="true">
-			<div class="wrapper-in">
-				<div class="figure"><i class="${clipboard.icon}"></i></div>
-				<span>${clipboard.label}</span>
-				<div class="category">(${i18n.edit['global.clipboard']})</div>
-			</div>
-		</div>
-		</c:if><c:if test="${not empty editInfo.copiedPage}">
-		<div class="component page" data-type="clipboard-page" data-deletable="true">
-			<div class="wrapper-in" title="${editInfo.copiedPage}">
-				<div class="figure"><i class="bi bi-file-richtext"></i></div>
-				<span>${editInfo.copiedPage}</span>
-				<div class="category">(page)</div>
-			</div>
-		</div>
-		</c:if>
-	</div>
-</div>
-</c:if>
 <c:if test="${globalContext.componentsFiltered}">
 <script type="text/javascript">
 function displayComplexity(l) {

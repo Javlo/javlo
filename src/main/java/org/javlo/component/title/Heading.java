@@ -432,7 +432,6 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 			setFieldValue(TEXT, XHTMLHelper.removeTag(getFieldValue(TEXT, ""), "p"));
 		}
 		return outPerform;
-
 	}
 
 	@Override

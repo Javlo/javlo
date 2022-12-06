@@ -22,6 +22,7 @@ import org.javlo.component.title.Heading;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.service.ClipBoard;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.User;
@@ -292,13 +293,8 @@ public class EditContext implements Serializable {
 		if (ctx == null) {
 			contextForCopy = null;
 		} else {
+			ClipBoard.getInstance(ctx.getRequest()).clear();
 			contextForCopy = new ContentContextBean(ctx);
-			// try {
-			// contextForCopy.getCurrentPage(); // put page in cache
-			// } catch (Exception e) {
-			// contextForCopy = null;
-			// e.printStackTrace();
-			// }
 		}
 	}
 

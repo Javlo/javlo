@@ -513,7 +513,7 @@ if (!String.prototype.startsWith) {
 		/** *************************** */
 		/** drag and drop component * */
 		/** *************************** */
-		var drag = document.querySelectorAll('#preview_command .component'), el = null;
+		var drag = document.querySelectorAll('#preview_command .component, #preview_command .cb-component'), el = null;
 		for (var i = 0; i < drag.length; i++) {
 			el = drag[i];
 			el.setAttribute('draggable', 'true');

@@ -283,13 +283,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	public String getFileDirectory(ContentContext ctx) {
-		throw null;
+		return null;
 	}
 
 	@Override
 	public boolean cleanResources(ContentContext ctx) {
 		if (ctx.getGlobalContext().getStaticConfig().isRemoveImportOnDeletePage()) {
-			System.out.println(">>>>>>>>> AbstractVisualComponent.cleanResources : CLEAN"); //TODO: remove debug trace
 			String filesDir = getFileDirectory(ctx);
 			if (StringHelper.isEmpty(filesDir)) {
 				return false;
@@ -304,7 +303,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				e.printStackTrace();
 			}
 		} else {
-			System.out.println(">>>>>>>>> AbstractVisualComponent.cleanResources : NOT CLEAN"); //TODO: remove debug trace
 		}
 		return false;
 	}
