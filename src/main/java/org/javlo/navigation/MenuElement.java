@@ -5636,12 +5636,13 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	}
 
 	public boolean isLayout() {
-		MenuElement parent = getParent();
+		/*MenuElement parent = getParent();
 		if (parent != null && getName().equals(LAYOUTS_PREFIX + parent.getName())) {
 			return true;
 		} else {
 			return false;
-		}
+		}*/
+		return isModel();
 	}
 
 	public int getFinalSeoWeight() {

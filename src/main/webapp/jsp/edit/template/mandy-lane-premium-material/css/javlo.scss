@@ -451,10 +451,6 @@ ul,li {
 	list-style: none;
 }
 
-.widgetbox h4,.widgetbox2 h4 {
-	font-size: 11px;
-}
-
 .widgetbox h4 a,.widgetbox2 h4 a,.widgetbox h4 span,.widgetbox2 h4 span
 	{
 	padding: 10px 15px;
@@ -602,16 +598,6 @@ ul,li {
 	height: 50px;
 }
 
-#tools {
-	box-shadow: 1px 1px 0 #F3F3F3;
-	background: url("../images/icons/tools.png") no-repeat scroll 10px 9px
-		#F7F7F7;
-	border-radius: 2px 2px 2px 2px;
-	border: 1px solid #DDDDDD;
-	padding: 0 0 0 30px;
-	overflow: hidden;
-}
-
 #subtools {
 	clear: both;
 	font-size: 11px;
@@ -660,23 +646,6 @@ ul,li {
 	display: inline-block;
 }
 
-#tools .action-button, #tools .action-field {
-	float: right;
-}
-
-#tools .action-button.more {
-	float: left;
-}
-
-#tools .special {
-	margin: -1px -1px -1px 3px;
-	border-top: 1px #DDDDDD solid;		
-	border-bottom: 1px #DDDDDD solid;
-	border-left: 1px #DDDDDD solid;
-	padding: 0 3px 2px 5px;
-	float: right;
-}
-
 #tools .special form {
 	display: inline-block;
 }
@@ -707,7 +676,7 @@ ul,li {
 		margin-right: 2px;
 		margin-bottom: 12px;
 		h3 {
-			padding: 0 16px;
+			padding: 0 var(--main-sep);
 		}
 		h3, .ui-tabs-nav {			
 			border-bottom: 1px solid rgba(0,0,0,.12);

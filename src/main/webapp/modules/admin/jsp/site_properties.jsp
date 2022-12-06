@@ -1,4 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><div class="widgetbox site-properties">
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+%><div class="widgetbox site-properties">
 	<h3>
 		<span>${i18n.edit['admin.site-properties']}</span>
 	</h3>
@@ -14,7 +15,7 @@
 				<fieldset>
 					<legend>${i18n.edit['admin.form.info']}</legend>
 					<div class="row">
-						<div class="col-sm-6">
+						<div class="col-sm-10">
 							<div class="form-group">
 								<label>${i18n.edit['global.name']}</label> <span>${currentContext.key}</span>
 							</div>
@@ -43,7 +44,7 @@
 								</div>
 							</c:if>
 						</div>
-						<div class="col-sm-6">
+						<div class="col-sm-2">
 							<div class="screenshot">
 								<c:if test="${currentContext.screenshot}">
 									<a href="${currentContext.screenshotUrl}" target="_blank"> <img id="screenshot-img" src="${currentContext.screenshotUrl}" alt="screenshot" /><br />
@@ -152,7 +153,7 @@
 				<fieldset class="collapsable">
 					<legend>${i18n.edit['admin.form.info']}</legend>
 					<div class="row">
-						<div class="col-sm-6">
+						<div class="col-sm-10">
 							<div class="form-group">
 								<label>${i18n.edit['global.name']}</label> <span>${currentContext.key}</span>
 							</div>
@@ -178,7 +179,7 @@
 								</div>
 							</c:if>
 						</div>
-						<div class="col-sm-6">
+						<div class="col-sm-2">
 							<div class="screenshot">
 								<c:if test="${currentContext.screenshot}">
 									<img id="screenshot-img" src="${currentContext.screenshotUrl}" alt="screenshot" />

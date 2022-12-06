@@ -838,11 +838,9 @@ public class MacroHelper {
 		MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);
 		for (MenuElement page : root.getAllChildrenList()) {
 			if (page.isActive() && !page.isTrash() && !page.isInTrash()) {
-				for (MenuElement child : page.getChildMenuElements()) {
-					if (child.isLayout()) {
+					if (page.isLayout()) {
 						outPages.add(page);
 					}
-				}
 			}
 		}
 		return outPages;

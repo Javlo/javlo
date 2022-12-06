@@ -2,18 +2,46 @@
 @import 'andro_grey';
 /** /ANDRO **/
 
-html {
-	font-size: 62.5%;
+.bloc-info {
+	padding: var(--main-sep);
+	background-color: #eeeeee;
 }
 
-.bloc-info {
-	padding: 15px;
-	background-color: #eeeeee;
-	font-size: 0.9em;
+#tools {
+	box-shadow: 1px 1px 0 #F3F3F3;
+	border-radius: 2px 2px 2px 2px;
+	border: 1px solid #DDDDDD;
+	overflow: hidden;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 4px 4px 4px 8px;
+	.picto {
+		margin: 0 var(--main-sep);
+	}
+	.action-button, .action-field, .content {
+		margin-top: 0;
+		margin-bottom: 0;
+		font-size: .894rem;
+	}
+	.content {
+		flex-grow: 2;
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+	}
+	.action-button {
+		font-size: .894rem;
+		line-height: 1.54;
+		background-color: #fff;
+		background-clip: padding-box;
+		border: 1px solid rgba(24, 28, 33, 0.1);
+		border-radius: .25rem;
+	}
 }
 
 .bloc-info, .bloc-default {
-	margin: 15px 0;
+	margin: var(--main-sep) 0;
 	.row {
 		margin-bottom: 5px;
 	}
@@ -40,55 +68,66 @@ html {
 		height: 30px;
 	}
 }
-
-.select-image {
-	display: flex;
-	justify-content: space-between;
-	flex-wrap: wrap;
-	padding: 15px 15px 0 15px;
-	background-color: #eeeeee;
-	font-size: 0.9em;
-	.image {
+.create-article-macro {
+	--image-width: 180px;
+	.params {
 		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		width: 180px;
-		height: 180px;
-		padding: 8px;
-		border: 1px #dddddd solid;
-		border-radius: 3px;
-		margin-bottom: 15px;
-		background-color: #ffffff;
-		align-items: center;
-		img, .no-image {
-			max-height: 180px;
-			max-width: 180px;
+		.form-group {
+			input, select {
+				width: calc(var(--image-width) + var(--main-sep) + 2px);
+			}
+			margin-right: var(--main-sep);
 		}
-		.no-image, .no-image:hover {
-			width: 180px;
-			height: 180px;
-			border-radius: 3px;
-			border: 1px #ddddd solid;
-			background-color: #eeeeee;
+	}
+	.select-image {
+		display: flex;
+		justify-content: flex-start;
+		flex-wrap: wrap;
+		padding: var(--main-sep) 0;
+		font-size: 0.9em;
+		.image {
 			display: flex;
 			flex-direction: column;
-			justify-content: center;
-			text-align: center;			
-			color: #ffffff;
-			font-size: 20px;
+			justify-content: space-between;
+			width: var(--image-width);
+			height: var(--image-width);
+			padding: calc( var(--main-sep) / 2);
+			border: 1px #dddddd solid;
+			border-radius: 3px;
+			margin-bottom: var(--main-sep);
+			margin-right: var(--main-sep);
+			background-color: #ffffff;
+			align-items: center;
+			img, .no-image {
+				max-height: var(--image-width);
+				max-width: var(--image-width);
+			}
+			.no-image, .no-image:hover {
+				width: var(--image-width);
+				height: var(--image-width);
+				border-radius: 3px;
+				border: 1px #ddddd solid;
+				background-color: #eeeeee;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				text-align: center;			
+				color: #ffffff;
+				font-size: 20px;
+			}
+			.name {
+				text-align: center;
+				padding: 5px;
+			}
 		}
-		.name {
-			text-align: center;
-			padding: 5px;
+		.image:hover {
+			text-decoration: none;
+			border-color: var(--action-color); 
 		}
-	}
-	.image:hover {
-		text-decoration: none;
-		border-color: var(--action-color); 
-	}
-	.image.select {
-		border-color: var(--action-color);
-		box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
+		.image.select {
+			border-color: var(--action-color);
+			box-shadow: 0 0.5rem var(--main-sep) rgba(0, 0, 0, 0.175);
+		}
 	}
 }
 

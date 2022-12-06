@@ -307,7 +307,7 @@
 
 				<c:if test="${currentModule.toolsRenderer != null && info.tools}">
 					<div id="tools">
-						<h3>${currentModule.toolsTitle}</h3>
+						<h3><span class="picto"><i class="bi bi-gear"></i></span>${currentModule.toolsTitle}</h3>
 						<div class="content"><jsp:include page="${currentModule.toolsRenderer}" /></div>
 					</div>
 				</c:if>

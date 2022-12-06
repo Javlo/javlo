@@ -1,0 +1,11 @@
+#preview-modal {
+	.modal-dialog {
+		.modal-header {
+			padding: var(--javlo-main-sep);
+			h4, .close {
+				color: #333333;
+				opacity: 1;
+			}
+		}
+	}
+}

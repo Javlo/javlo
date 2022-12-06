@@ -38,6 +38,7 @@ import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserInfo;
+import org.owasp.encoder.Encode;
 
 public class CreateArticleWidthTemplates implements IInteractiveMacro, IAction {
 
@@ -75,39 +76,43 @@ public class CreateArticleWidthTemplates implements IInteractiveMacro, IAction {
 
 	@Override
 	public String prepare(ContentContext ctx) {
+		
 		Map<String, String> rootPages = new HashMap<String, String>();
-		StringBuffer js = new StringBuffer();
-		js.append("<script>var layouts = [");
 		try {
-			String sep = "";
-			for (MenuElement page : MacroHelper.searchPageWidthLayout(ctx)) {
+			for (MenuElement page : MacroHelper.searchArticleRoot(ctx)) {
 				rootPages.put(page.getName(), page.getTitle(ctx));
-				for (MenuElement layout : page.getChildMenuElements()) {
-					if (layout.isLayout()) {
-						js.append(sep + "[");
-						String subSep = "";
-						for (MenuElement child : layout.getChildMenuElements()) {
-							String screenshotUrl = "";
-							File scFile = ctx.getGlobalContext().getPageScreenshotFile(child.getName());
-							if (scFile.exists()) {
-								screenshotUrl = URLHelper.createFileURL(ctx, scFile);
-							}
-							js.append(subSep + "['" + child.getName() + "','" + child.getTitle(ctx) + "', '"+screenshotUrl+"']");
-							subSep = ",";
-						}
-						js.append("]");
-						sep = ",";
-					}
-				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
 		}
-		js.append("];</script>");
 		rootPages = MapHelper.sortByValue(rootPages);
 		ctx.getRequest().setAttribute("pages", rootPages);
+		
+		StringBuffer js = new StringBuffer();
+		js.append("<script>var layouts = [");
+		boolean found = true;
+		try {
+
+			String subSep = "";
+			for (MenuElement page : MacroHelper.searchPageWidthLayout(ctx)) {
+				String screenshotUrl = "";
+				File scFile = ctx.getGlobalContext().getPageScreenshotFile(page.getName());
+				if (scFile.exists()) {
+					screenshotUrl = URLHelper.createFileURL(ctx, scFile);
+				}
+				js.append(subSep + "['" + page.getName() + "','" + Encode.forJavaScriptAttribute(page.getTitle(ctx)) + "', '" + screenshotUrl + "']");
+				subSep = ",";
+				found = true;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		js.append("];</script>");
 		ctx.getRequest().setAttribute("js", js);
+		ctx.getRequest().setAttribute("foundModel", found);
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (globalContext.getTags().size() > 0) {
@@ -133,11 +138,9 @@ public class CreateArticleWidthTemplates implements IInteractiveMacro, IAction {
 		String pageName = rs.getParameter("root", null);
 		String date = rs.getParameter("date", null);
 
-		boolean create = rs.getParameter("create", null) != null;
 		boolean duplicate = rs.getParameter("duplicate", null) != null;
 		String message = null;
 		String newURL = null;
-		String newEditURL = null;
 
 		String lang = rs.getParameter("lang", null);
 		ContentContext ctxLg = ctx;
@@ -149,7 +152,7 @@ public class CreateArticleWidthTemplates implements IInteractiveMacro, IAction {
 		if (pageName == null) {
 			return "page or date not found.";
 		}
-		
+
 		try {
 			Date articleDate;
 			if (date != null && date.trim().length() > 0) {
@@ -185,7 +188,7 @@ public class CreateArticleWidthTemplates implements IInteractiveMacro, IAction {
 				if (mountPage != null) {
 					newPage = MacroHelper.createArticlePageName(ctx, mountPage);
 					if (newPage != null) {
-						MenuElement page;						
+						MenuElement page;
 						ContentService content = ContentService.getInstance(ctx.getRequest());
 						if (duplicate) {
 							page = content.getNavigation(ctx).searchChildFromName(ctx.getRequest().getParameter("page"));
@@ -211,7 +214,6 @@ public class CreateArticleWidthTemplates implements IInteractiveMacro, IAction {
 						}
 						ctx.getCurrentPage().releaseCache();
 						newURL = URLHelper.createURL(ctxLg.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), newPage);
-						newEditURL = URLHelper.createURL(ctxLg.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), newPage);
 
 						List<String> selectedRole = new LinkedList<String>();
 						for (String role : roles) {
@@ -273,20 +275,20 @@ public class CreateArticleWidthTemplates implements IInteractiveMacro, IAction {
 			}
 			MacroModuleContext.getInstance(ctx.getRequest()).setActiveMacro(null);
 			if (ctx.isEditPreview()) {
-				if (newURL != null && create) {
-					newEditURL = URLHelper.addParam(newEditURL, "module", "content");
-					newEditURL = URLHelper.addParam(newEditURL, "webaction", "editPreview");
-					newEditURL = URLHelper.addParam(newEditURL, "webaction", "edit.changeArea");
-					newEditURL = URLHelper.addParam(newEditURL, ContentContext.PREVIEW_EDIT_PARAM, "true");
-					newEditURL = URLHelper.addParam(newEditURL, "lightEdit", "true");
-					newEditURL = URLHelper.addParam(newEditURL, "area", ComponentBean.DEFAULT_AREA);
-				}
-				if (create) {
-					NetHelper.sendRedirectTemporarily(ctx.getResponse(), newEditURL);
-				} else {
+//				if (newURL != null && create) {
+//					newEditURL = URLHelper.addParam(newEditURL, "module", "content");
+//					newEditURL = URLHelper.addParam(newEditURL, "webaction", "editPreview");
+//					newEditURL = URLHelper.addParam(newEditURL, "webaction", "edit.changeArea");
+//					newEditURL = URLHelper.addParam(newEditURL, ContentContext.PREVIEW_EDIT_PARAM, "true");
+//					newEditURL = URLHelper.addParam(newEditURL, "lightEdit", "true");
+//					newEditURL = URLHelper.addParam(newEditURL, "area", ComponentBean.DEFAULT_AREA);
+//				}
+//				if (create) {
+//					NetHelper.sendRedirectTemporarily(ctx.getResponse(), newEditURL);
+//				} else {
 					ctx.setParentURL(newURL);
 					ctx.setClosePopup(true);
-				}
+//				}
 
 				// ctx.getRequest().getRequestDispatcher(editPressrealseURL).forward(ctx.getRequest(),
 				// ctx.getResponse());
@@ -340,12 +342,12 @@ public class CreateArticleWidthTemplates implements IInteractiveMacro, IAction {
 	public String getIcon() {
 		return "bi bi-file-earmark-richtext";
 	}
-	
+
 	@Override
 	public String getUrl() {
 		return null;
 	}
-	
+
 	@Override
 	public int getPriority() {
 		return DEFAULT_PRIORITY;
