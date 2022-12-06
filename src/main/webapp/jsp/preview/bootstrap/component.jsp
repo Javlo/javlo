@@ -1,6 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
  %><c:set var="titleCount" value="0" />
+<div id="component-wrapper" class="filter-empty">
 <c:if test="${not empty clipboard.copied || not empty editInfo.copiedPage}">
 <div id="_ep_clipboard" class="clipboard">
 	<c:url var="url" value="${info.currentURL}" context="/">
@@ -63,7 +64,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 <div class="flex-line">
 <div class="filter-wrapper">
 <input id="filter-components" type="text" class="form-control filter" placeholder="Filter..." onkeyup="filter(this.value);"/>
-<button type="button" class="reset-filter"><i id="close" class="bi bi-x-circle-fill" aria-hidden="true" style="visibility: hidden; transition: visibility 300ms linear 0ms" onclick="document.getElementById('filter-components').value = ''; filter('');"></i></button>
+<button type="button" class="reset-filter"><i class="bi bi-x-circle-fill" aria-hidden="true" onclick="document.getElementById('filter-components').value = ''; filter('');"></i></button>
 </div>
 <c:if test="${info.admin}"><button onclick="editPreview.openModal('Components', '${info.currentEditURL}?module=admin&context=${info.contextKey}&webaction=admin.previewEditComponent&previewEdit=true'); return false;" class="btn btn-default"><i class="bi bi-plus-circle"></i></button></c:if>
 </div>
@@ -74,8 +75,11 @@ function filter(text) {
 		if (text === null || text.length == 0) {
 			document.querySelectorAll('#preview_command .component-list-filtered .component').forEach(item => {
 				item.classList.remove('hidden');
+				document.getElementById('component-wrapper').classList.add('filter-empty');
 			});
 			return;
+		} else {
+			document.getElementById('component-wrapper').classList.remove('filter-empty');
 		}
 		text = text.toLowerCase();
 		document.querySelectorAll('#preview_command .component-list-filtered .component').forEach(item => {
@@ -86,9 +90,6 @@ function filter(text) {
 			}	
 		});
 		const filterComponents = document.getElementById('filter-components');
-		const close = document.getElementById('close');
-		filterComponents.length !== 0 ? close.style.visibility = "visible" : close.style.visibility = "hidden";
-
 	}
 </script>
 
@@ -110,4 +111,5 @@ function filter(text) {
 </div>
 </div>
 </c:if></c:forEach>
+</div>
 </div>

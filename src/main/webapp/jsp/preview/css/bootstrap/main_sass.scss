@@ -29,6 +29,11 @@ $header-height: 40px;
 	color: var(--javlo-ui-color-6) !important;
 }
 
+#preview_command #shared-content-search-form {
+	margin-bottom: var(--javlo-main-sep);
+}
+
+
 html.preview-command-visible.preview-standard {
 	margin-top: $header-height !important;
 }
