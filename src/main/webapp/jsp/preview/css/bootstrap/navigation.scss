@@ -34,6 +34,9 @@ body #preview_command .component-list .component .wrapper-in {
 // 	border: 1px solid var(--javlo-ui-color-3);
 // 	border-top: 0 !important;
 // }
+#preview_command .nav-tabs>li.active>a {
+	border: 1px solid transparent !important;
+}
 
 #preview_command .nav-tabs>li.page-item.active>a,
 #preview_command .nav-tabs>li.page-item.active>a:hover {

@@ -10,3 +10,4 @@
 *.bat
 /snapshot/
 /dump/
+src/main/webapp/.vscode/sftp.json

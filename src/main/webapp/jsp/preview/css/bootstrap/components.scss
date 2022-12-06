@@ -43,6 +43,7 @@ body #preview_command .component-list .component .wrapper-in {
 	right: 8px;
 	top: 8px;
 	font-size: 14px;
+	margin-bottom: 0.5em !important;
 }
 
 #preview_command {
@@ -292,6 +293,7 @@ body.edition-mode-dark {
 body #preview_command {
 	.component-list .component {
 		flex-grow: 1;
+		max-width: 50%;
 
 		.wrapper-in {
 			margin: 3px;
