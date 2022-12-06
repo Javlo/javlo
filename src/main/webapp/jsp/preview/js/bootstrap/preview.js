@@ -192,6 +192,8 @@ if (!String.prototype.startsWith) {
 		pjq('#previewModalTitle').html(title);
 
 		var modal = pjq('#preview-modal');
+		
+		document.body.classList.add("_jv_modal-open");
 
 		// type
 		modal.removeClass("jv-modal-xs");
@@ -204,6 +206,8 @@ if (!String.prototype.startsWith) {
 
 		modal.modal('show');
 		modal.on('hidden.bs.modal', function(e) {
+			document.body.classList.remove("_jv_modal-open");
+			document.getElementById('preview-modal-dialog').classList.remove('maximized');
 			pjq('#previewModalTitle').html('');
 			pjq('#preview-modal-frame').attr("src", pjq('#preview-modal-frame').data("wait"));
 		});

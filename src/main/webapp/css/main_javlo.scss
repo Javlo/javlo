@@ -2,6 +2,10 @@
 	margin: var(--javlo-main-sep);
 }
 
+body._jv_modal-open {
+	overflow: hidden; // remove scrollbar
+}
+
 ._jv_header_sm, #preview_command ._jv_header_sm {
 	display: flex;
 	justify-content: space-between;
