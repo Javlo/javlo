@@ -129,15 +129,23 @@ if (StringHelper.isTrue(request.getParameter("preview-command"), true) && !ctx.i
 	</c:if>
 	<jsp:include page="bootstrap/add.jsp"></jsp:include>
 	<div class="modal fade fancybox-wrapper" id="preview-modal" tabindex="-1" role="dialog" aria-labelledby="previewModalTitle" aria-hidden="true">
-		<div class="modal-dialog modal-full fancybox-skin">
+		<div id="preview-modal-dialog" class="modal-dialog modal-full fancybox-skin">
 			<div class="fancybox-outer">
 				<div class="modal-content fancybox-inner">
 					<div class="for-fancy">
 						<div class="modal-header page-title">
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
 							<h4 class="modal-title" id="previewModalTitle">[title]</h4>
+							<div class="modal-btn">
+								<button type="button" class="maximise-modal" data-modal="modal" aria-label="Close" onclick="document.getElementById('preview-modal-dialog').classList.add('maximized')">
+									<span aria-hidden="true"><i class="bi bi-box-arrow-in-up-right"></i></span>
+								</button>
+								<button type="button" class="minimise-modal" data-modal="modal" aria-label="Close" onclick="document.getElementById('preview-modal-dialog').classList.remove('maximized')">
+									<span aria-hidden="true"><i class="bi bi-box-arrow-in-down-left"></i></span>
+								</button>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true"><i class="bi bi-x-lg"></i></span>
+								</button>
+							</div>
 						</div>
 						<div class="box">
 							<div class="modal-preview-body tabs-edit-fancy">
@@ -156,7 +164,7 @@ if (StringHelper.isTrue(request.getParameter("preview-command"), true) && !ctx.i
 					<div class="for-fancy">
 						<div class="modal-header page-title">
 							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
+								<span aria-hidden="true"><i class="bi bi-x-lg"></i></span>
 							</button>
 							<h4 class="modal-title">[title]</h4>
 						</div>
