@@ -126,7 +126,7 @@ if (!rightOnPage) {
 							
 							<li class="page-title">
 								<span class="page">${info.page.pageTitle}</span>
-								<span class="template">${info.page.template}</span>
+								<a href="#" class="template" onclick="editPreview.openModal('Template', '${info.currentEditURL}?module=template&webaction=template.changeFromPreview&previewEdit=true');">${info.page.template}</a>
 							</li>
 
 							<%
