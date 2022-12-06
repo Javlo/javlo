@@ -279,6 +279,12 @@
 	}
 }
 
+#preview_command {
+	#macro-list {
+		left: -64px;
+	}
+}
+
 #preview_command ._jv_menu {
 	border-right: 1px solid var(--javlo-ui-color-3);
 	border-bottom: 1px solid var(--javlo-ui-color-3);
@@ -335,7 +341,7 @@
 		a.template {
 			font-size: .8em;
 			opacity: 0.4;
-			font-style: italic;
+			color: #333333;
 		}
 	}
 }

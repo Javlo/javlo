@@ -125,8 +125,10 @@ if (!rightOnPage) {
 							</c:if>
 							
 							<li class="page-title">
-								<span class="page">${info.page.pageTitle}</span>
-								<a href="#" class="template" onclick="editPreview.openModal('Template', '${info.currentEditURL}?module=template&webaction=template.changeFromPreview&previewEdit=true');">${info.page.template}</a>
+								<span class="page">${not empty info.page.pageTitle?info.page.pageTitle:info.page.name}</span>
+								<a href="#" class="template" onclick="editPreview.openModal('Template', '${info.currentEditURL}?module=template&webaction=template.changeFromPreview&previewEdit=true');">
+									${info.currentPage.templateId == null?'<i class="bi bi-arrow-return-right"></i>':''} ${info.page.template}
+								</a>
 							</li>
 
 							<%
@@ -147,7 +149,7 @@ if (!rightOnPage) {
 									<div class="pc_line">
 										<c:if test="${!(empty info.contextForCopy || !info.page.pageLocalEmpty || info.page.childrenAssociation)}">
 											<input type="hidden" name="webaction" value="edit.pastepage" />
-											<button class="action btn-wait-loading" type="submit" title="${i18n.edit['preview.label.paste-page']}">
+											<button class="action btn btn-wait-loading" type="submit" title="${i18n.edit['preview.label.paste-page']}">
 												<i class="bi bi-box-arrow-in-down"></i>
 											</button>
 										</c:if>
