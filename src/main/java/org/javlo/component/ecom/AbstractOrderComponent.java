@@ -107,7 +107,7 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 		
 		boolean tva = false;
 		for (Product product : basket.getProducts()) {
-			if (product.getVAT()>0) {
+			if (product.getVAT()>0.01) {
 				tva = true;
 			}
 		}
