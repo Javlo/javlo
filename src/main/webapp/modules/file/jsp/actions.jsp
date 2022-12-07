@@ -1,10 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
 %><c:if test="${fn:length(info.contentLanguages) > 1 and empty param.previewEdit && empty param.templateid}">
-<div class="special${empty componentsList?' last':''}">
-
 <form id="form-languages" action="${info.currentURL}" method="get" class="js-submit">
-
 <div class="select-languages form_default">
 	<input type="hidden" name="webaction" value="file.changeLanguage" />
 	<c:if test="${info.admin && globalContext.master}">
@@ -12,8 +9,7 @@
 		<c:param name="webaction" value="createfilestructure" />
 	</c:url>
 	<a class="action-button" title="create file structure" href="${createStructureFile}">file struc.</a>
-	</c:if>	
-	<a class="action-button notuse" href="${info.currentURL}?use=true" onclick=""><span>${i18n.edit['action.notuse']}</span></a>
+	</c:if>
 	<c:if test="${not empty param[BACK_PARAM_NAME]}"><input type="hidden" name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" /></c:if>
 	<c:if test="${not empty param['select']}"><input type="hidden" name="select" value="true" /></c:if>
 	<select name="language">
@@ -21,10 +17,10 @@
 		<option value="${lang}"${lang eq info.contentLanguage?' selected="selected"':''}>${lang}</option>
 	</c:forEach>
 	</select>
-	<input class="action-button" type="submit" name="ok" value="${i18n.edit['global.ok']}" />
+<%-- 	<input class="action-button" type="submit" name="ok" value="${i18n.edit['global.ok']}" /> --%>
 </div>
 </form>
-</div>
+<a class="action-button notuse" href="${info.currentURL}?use=true" onclick=""><span>${i18n.edit['action.notuse']}</span></a>
 </c:if>
 <c:if test="${not empty param[BACK_PARAM_NAME]}"><a class="action-button back" href="${param[BACK_PARAM_NAME]}&path=${param.path}&backreturn=true"><span>${i18n.edit['action.back']}</span></a></c:if>
 <c:if test="${empty param.templateid && empty param.select}"><a class="action-button save" href="#save" onclick="jQuery('#form-meta').submit(); return false;"><span>${i18n.edit['action.update']}</span></a></c:if>
@@ -64,12 +60,13 @@
 <input class="action-field filter-field" type="text" name="filter" placeholder="${i18n.edit['global.filter']}" onkeyup="filter(this.value, '#form-meta li');"/>
 <c:if test="${empty param.select}">
 <form id="fill-all-form">
-<a title="lock all" href="#" onclick="jQuery('li.item').addClass('lock');jQuery('li.item').removeClass('unlock');"><span class="glyphicon glyphicon-lock lock"></span></a>
-<a title="unlock all" href="#" onclick="jQuery('li.item').addClass('unlock');jQuery('li.item').removeClass('lock');"><span class="glyphicon glyphicon-link lock"></span></a>
+<a title="lock all" href="#" onclick="jQuery('li.item').addClass('lock');jQuery('li.item').removeClass('unlock');"><i class="bi bi-lock"></i></span></a>
+<a title="unlock all" href="#" onclick="jQuery('li.item').addClass('unlock');jQuery('li.item').removeClass('lock');"><i class="bi bi-link-45deg"></i></a>
 <input type="text" id="allTitle" name="all-title" placeholder="${i18n.edit['action.change-all-title']}" onkeyup="jQuery('.unlock .file-title').each(function(){var t = jQuery(this);if (t.val().length == 0 || t.data('empty') == true) {t.data('empty',true);t.val(jQuery('#allTitle').val())}});"/>
 <input type="text" id="allDescription" name="all-descritpion" placeholder="${i18n.edit['action.change-all-description']}" onkeyup="jQuery('.unlock .file-description').each(function(){var t = jQuery(this);if (t.val().length == 0 || t.data('empty') == true) {t.data('empty',true);t.val(jQuery('#allDescription').val())}});"/>
+<input type="text" name="test" placeholder="TEST" />
 <a title="set all location" href="#" onclick="jQuery('.set-location').click();">
-	<span class="glyphicon glyphicon-map-marker"></span>
+	<i class="bi bi-geo-alt"></i>
 </a>
 <input type="text" id="allLocation" name="all-location" placeholder="${i18n.edit['action.change-all-location']}" onkeyup="jQuery('.unlock .file-location').each(function(){var t = jQuery(this);if (t.val().length == 0 || t.data('empty') == true) {t.data('empty',true);t.val(jQuery('#allLocation').val())}});"/>
 <input type="text" id="allCopyright" name="all-copyright" placeholder="${i18n.edit['action.change-all-copyright']}" onkeyup="jQuery('.unlock .file-copyright').each(function(){var t = jQuery(this);if (t.val().length == 0 || t.data('empty') == true) {t.data('empty',true);t.val(jQuery('#allCopyright').val())}});"/>

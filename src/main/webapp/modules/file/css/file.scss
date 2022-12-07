@@ -1,0 +1,265 @@
+@import "elfinder/smoothness/jquery-ui-1.8.19.custom.css";
+@import "elfinder/elfinder.min.css";
+@import "elfinder/theme.css";
+
+#tools {
+	margin-bottom: 10px;
+}
+.elfinder-cwd-view-icons {
+	.elfinder-cwd-file-wrapper {
+		width: 118px;
+		height: 118px;
+	}
+	.elfinder-cwd-icon {
+		margin: 34px 0 0 34px;
+		background-size: 100% auto !important;
+	}
+	.elfinder-cwd-icon-image {
+		margin: 0;
+		width: 118px;
+		height: 118px;
+		background-color: #f7f7f7 !important;
+		background-image: none;
+		background-position: 0 0;
+	}
+	.elfinder-cwd-file {
+		border: 1px #ffffff solid;
+		height: 140px;
+		width: 160px;
+		border: 1px #efefef solid;
+	}
+	.elfinder-cwd-filename {
+		max-height: 4em;
+		line-height: 1em;
+	}
+}
+.elfinder {
+	.ui-dialog.ui-widget.ui-widget-content {
+		position: absolute;
+	}
+}
+.elfinder-cwd-icon {
+	&::before {
+		left: auto !important;
+		right: -5px !important;
+		opacity: 0.7 !important;
+	}
+}
+.elfinder-touch {
+	.elfinder-toolbar-button-separator {
+		height: 28px;
+	}
+	.elfinder-button {
+		width: 20px;
+	}
+	.elfinder-button.elfinder-button-search {
+		width: auto;
+	}
+}
+body {
+	.elfinder-cwd-file {
+		.elfinder-cwd-select {
+			width: auto;
+			height: auto;
+			top: 5px;
+			left: 5px;
+		}
+	}
+	.el-finder {
+		width: 100%;
+		min-width: 400px;
+		background-color: #eee;
+		font-size: 10px;
+		font-family: inherit;
+	}
+}
+.maincontent.file {
+	.left {
+		padding: 20px 15px 20px 15px;
+	}
+}
+.elfinder-cwd-icon-jsp {
+	background-position: 0 -550px;
+}
+#fileManager {
+	.elfinder-dialog-edit {
+		.ui-dialog-content {
+			height: 60vh !important;
+			font-size: 0.9em;
+		}
+	}
+}
+.elfinder-dialog-confirm {
+	.ui-dialog-content {
+		min-height: 15px;
+	}
+}
+.elfinder-dialog-error {
+	.ui-dialog-content {
+		min-height: 15px;
+	}
+}
+.form-list {
+	.title {
+		span.delete {
+			float: right;
+			color: #333333;
+			background-image: none;
+			padding: 6px;
+		}
+		span.size {
+			padding: 6px 0 6px 6px;
+		}
+	}
+	.taxonomy {
+		li {
+			border-radius: 0px;
+			border: 0 none;
+			box-shadow: none;
+			width: auto;
+			background-color: transparent;
+		}
+	}
+}
+.widgetbox2 {
+	.content {
+		#form-meta {
+			label {
+				float: none;
+				margin-right: 0;
+			}
+		}
+	}
+}
+#fill-all-form {
+	input {
+		width: 80px;
+		-webkit-transition: width 200ms ease-in-out;
+		-moz-transition: width 200ms ease-in-out;
+		-o-transition: width 200ms ease-in-out;
+		transition: width 200ms ease-in-out;
+		&:FOCUS {
+			width: 160px;
+		}
+	}
+}
+.filter-field {
+	width: 80px;
+	-webkit-transition: width 200ms ease-in-out;
+	-moz-transition: width 200ms ease-in-out;
+	-o-transition: width 200ms ease-in-out;
+	transition: width 200ms ease-in-out;
+	&:FOCUS {
+		width: 160px;
+	}
+}
+.unlock {
+	.lock {
+		display: hidden;
+		display: none;
+	}
+}
+.lock {
+	.unlock {
+		display: none;
+	}
+}
+.item.one {
+	margin: 0 auto;
+	display: block;
+	float: none;
+}
+.item {
+	.alert {
+		margin: 5px;
+		padding: 5px;
+	}
+	.link-list {
+		margin: 0;
+		padding: 0;
+		li {
+			margin: 0 0 0 15px;
+			border: 0 none;
+			background: none;
+			border-radius: 0;
+			box-shadow: none;
+		}
+	}
+}
+#main-renderer {
+	.btn-edit {
+		display: inline-block;
+		width: auto;
+		margin: 10px 0;
+		line-height: normal;
+		vertical-align: center;
+	}
+	.btn-jpg {
+		display: inline-block;
+		width: auto;
+		margin: 10px 0;
+		line-height: normal;
+		vertical-align: center;
+		font-size: 0.9em;
+	}
+}
+.ui-state-hover {
+	background-image: none;
+}
+.ui-widget-content {
+	.ui-state-hover {
+		background-image: none;
+		background-color: #eeeeee;
+	}
+	.ui-state-focus {
+		background-image: none;
+	}
+}
+.ui-widget-header {
+	.ui-state-hover {
+		background-image: none;
+	}
+	.ui-state-focus {
+		background-image: none;
+	}
+}
+.ui-state-focus {
+	background-image: none;
+}
+.download {
+	.label {
+		height: 42px;
+		vertical-align: middle;
+	}
+}
+.maincontent {
+	.left {
+		overflow: visible;
+	}
+}
+.row.stat {
+	.line {
+		margin: 0;
+		label {
+			width: auto !important;
+		}
+	}
+}
+
+#form-meta {
+	.line {
+		display: flex;
+		align-items: center;
+		label, .label {
+			width: 35%;			
+		}
+		input, select, textarea, .value {
+			width: 65%;
+		}
+		input[type="checkbox"] {
+			height: 1rem;
+			width: 1rem;
+			text-align: left;
+		}
+	}
+}

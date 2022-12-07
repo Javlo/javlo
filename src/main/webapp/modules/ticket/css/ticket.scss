@@ -20,6 +20,14 @@ a.unread {
     display: block;
 }
 
+#filter_status {
+	padding: 3px;
+	font-weight: normal;
+	font-size: .9rem;
+	border: 0 none;
+	background-color: transparent;
+}
+
 #main-renderer .deleted td {
 	font-style: italic;
 	background-color: #FFA8A8;
@@ -130,5 +138,14 @@ h2 {
 .business-ticket {
 	.alert {
 		margin-bottom: 10px;
+	}
+}
+
+._jv_flex-line-start {
+	.main-label{
+		width: 60px !important;
+	}
+	.btn-group {
+		flex-grow: 2;
 	}
 }

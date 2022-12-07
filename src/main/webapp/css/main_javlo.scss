@@ -61,11 +61,11 @@ body._jv_modal-open {
 		left: -9999px;
 	}
 	input:checked + label {
-		background-color: var(--blue-100);
+		background-color: var(--javlo-primary-bg);
 		color: #fff;
 	}
 	input:checked + label, label:hover {
-		border: 1px solid var(--blue-100);
+		color: (--javlo-primary-bg);
 	}
 	label {
 	    display: inline-block;
@@ -73,8 +73,8 @@ body._jv_modal-open {
 	    max-width: 100%;
 	    width: fit-content;
 	    border: 1px solid var(--grey-3);
-	    padding: 1px 10px 0 10px;
-	    line-height: 3em;
+	    padding: 0 10px 1px 10px;
+	    line-height: 1.6rem;
 	    color: black;
 	    cursor: pointer;
 	    border-radius: 4px;
@@ -107,6 +107,19 @@ body._jv_modal-open {
 			border-radius: 0 5px 5px 0;
 		}
 	}
+}
+
+._jv_spinner {
+	display: inline-block;
+	width: 2rem;
+	height: 2rem;
+	vertical-align: text-bottom;
+	border: .15em solid currentColor;
+	border-right-color: currentcolor;
+	border-right-color: transparent;
+	border-radius: 50%;
+	-webkit-animation: spinner-border .75s linear infinite;
+	animation: spinner-border .75s linear infinite;
 }
 
 fieldset.collapsable {
@@ -142,4 +155,30 @@ fieldset.collapsable.collapsed {
 	height: 1em;
 	padding-bottom: 0;
 	overflow: hidden;
+}
+
+/** flex **/
+
+.flex-line, ._jv_flex-line {
+	display : flex !important;
+	justify-content: space-between;
+	align-items: center;
+	.btn, .form-control {
+		padding-top: 3px;
+		padding-bottom: 3px;
+		line-height: 1.5em;
+		font-size: 1em;
+	}
+	.btn {
+		margin: 0;
+	}
+}
+
+._jv_flex-line-start {
+	@extend ._jv_flex-line;
+	align-items: flex-start;
+}
+
+.btn-no {
+	border: 0 none;
 }

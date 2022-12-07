@@ -20,6 +20,12 @@
 		color: var(--javlo-ui-color-8) !important;
 		border-color: var(--javlo-ui-color-5) !important;
 	}
+	
+	._jv_spinner {
+		width: 16px;
+		height: 16px;
+		opacity: .8;
+	}
 }
 
 #preview_command {
@@ -217,8 +223,21 @@
 	margin-left: 6px;
 }
 
-#preview_command .btn-tickets {
-	position: relative;
+#preview_command {
+	.btn-tickets {
+		position: relative;
+	}
+	.loader {
+		display: none;
+	}
+	#btn-ticket.loading {
+		.loader {
+			display: block;
+		}
+		i {
+			display: none;
+		}
+	}
 }
 
 #preview_command .page-actions form {

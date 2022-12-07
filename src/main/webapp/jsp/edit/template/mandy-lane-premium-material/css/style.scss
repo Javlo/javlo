@@ -29,16 +29,6 @@ html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abb
 	}
 }
 
-input, select, textarea {
-	padding: .438rem .875rem;
-	font-size: .894rem;
-	line-height: 1.54;
-	background-color: #fff;
-	background-clip: padding-box;
-	border: 1px solid $border-dark;
-	border-radius: .25rem;
-}
-
 input:focus, select:focus {
 	border-color: $border-active;
 }
@@ -60,15 +50,6 @@ h1,h2,h3,h4,h5,h6 {
 
 .label {
 	font-family: 'Roboto Condensed', sans-serif;
-}
-
-input,select,textarea,button {
-	outline: none;
-}
-
-input,select,textarea,button {
-	border: 1px solid #ccc;
-	padding: 5px;
 }
 
 a {
@@ -1536,60 +1517,6 @@ input[type=radio],input[type=checkbox] {
 	margin-right: 10px;
 }
 
-.form_default input[type=text]:focus,.form_default textarea:focus {
-	background: #fff;
-}
-
-.form_default button {
-	background: $main-bg url(../images/buttonbg3.png) repeat-x top left;
-	color: #fff;
-	padding: 7px 20px;
-	cursor: pointer;
-}
-
-.form_default button {
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
-	border-radius: 3px;
-	border: 1px solid #395380;
-	font-size: 12px;
-}
-
-.form_default button {
-	text-transform: uppercase;
-	text-shadow: 1px 1px #395380;
-	margin-left: 170px;
-}
-
-.form_default button {
-	-moz-box-shadow: 1px 1px 2px #999;
-	-webkit-box-shadow: 1px 1px 2px #999;
-	box-shadow: 1px 1px 2px #999;
-}
-
-.form_default button:hover {
-	background: #005681 url(../images/buttonbg3.png) repeat-x 0 -36px;
-}
-
-.form_default button:active {
-	-moz-box-shadow: inset 2px 2px 2px #12274c;
-	-webkit-box-shadow: inset 2px 2px 2px #12274c;
-	box-shadow: inset 2px 2px 2px #12274c;
-}
-
-.form_default input.error,.form_default textarea.error,.form_default select.error
-	{
-	border: 1px solid #ff0000;
-}
-
-.form_default label.error {
-	float: none;
-	width: auto;
-	color: #ff0000;
-	font-size: 11px;
-	display: inline-block;
-}
-
 /***MAIN CONTENT: STANDARD TABLE (users.html)***/
 .addNewButton {
 	float: right;
@@ -2067,7 +1994,7 @@ table.dataTable.nowrap th, table.dataTable.nowrap td {
 }
 table.dataTable.compact thead th,
 table.dataTable.compact thead td {
-  padding: 4px 17px 4px 4px;
+  padding: 4px;
 }
 table.dataTable.compact tfoot th,
 table.dataTable.compact tfoot td {
@@ -2829,23 +2756,4 @@ table.dataTable td {
 
 .bordertop {
 	border-top: 1px solid #ccc;
-}
-
-.action-button {
-	border: 1px #cccccc solid;;
-	display: inline-block;
-	color: #4E5155;
-	margin: 4px 2px;
-	padding: 2px 4px;
-	background-color: $bg-lightest;
-}
-
-#tools .action-button.link {
-	padding: 6px 7px 8px 7px;
-	float: none; 
-}
-
-.action-button:hover {
-	border-color: #2090f0;
-	text-decoration: none;
 }

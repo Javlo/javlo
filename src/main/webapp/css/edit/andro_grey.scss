@@ -7,6 +7,11 @@ body {
 	font-size: 12px;
 }
 
+body #tools .btn-primary, .btn-primary  {
+	background-color: var(--javlo-primary-bg);
+	color: var(--javlo-primary-bg-text);
+}
+
 .header{
 	border-bottom: 3px solid var(--blue-100);
 	.logo{

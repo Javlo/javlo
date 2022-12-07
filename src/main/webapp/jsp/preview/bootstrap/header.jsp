@@ -269,8 +269,24 @@ if (!rightOnPage) {
 							<c:if test="${i18n.edit['preview.label.ticket.tooltip'] != 'preview.label.ticket.tooltip'}">
 								<c:set var="tooltip" value=' data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'preview.label.ticket.tooltip\']}"' />
 							</c:if>
-							<button ${tooltip} class="btn btn-default btn-sm btn-tickets btn-color btn-notext badged" type="<%=accessType%>" value="${i18n.edit['preview.label.ticket']}" onclick="html2canvas(document.querySelector('body')).then(canvas => {editPreview.openModal('${i18n.edit['preview.label.ticket']}','${url}'); editPreview.uploadScreenshot(canvas); });return false;" ${tooltip}>
-								<i class="bi bi-question-circle"></i> <span class="text">${i18n.edit['preview.label.ticket']}</span>
+							<script>
+								function openTicket() {
+									document.getElementById('btn-ticket').classList.add('loading');
+									setTimeout(() => {
+										html2canvas(document.querySelector('body')).then(canvas => {
+											editPreview.openModal('${i18n.edit['preview.label.ticket']}','${url}');
+											editPreview.uploadScreenshot(canvas);
+											document.getElementById('btn-ticket').classList.remove('loading');
+										});
+									}, 50); // if no timeout delay before display spinner, I don't no why :-)
+									return false;
+								}
+							</script>
+							<button id="btn-ticket" ${tooltip} class="btn btn-default btn-sm btn-tickets btn-color btn-notext badged"
+							type="<%=accessType%>" value="${i18n.edit['preview.label.ticket']}" onclick="return openTicket()" ${tooltip}>
+								<i class="bi bi-question-circle"></i>
+								<div class="loader _jv_spinner" role="status"><span class="sr-only" lang="en">Loading...</span></div>
+								<span class="text">${i18n.edit['preview.label.ticket']}</span>
 								<c:set var="unreadTicketsize" value="${fn:length(info.unreadTickets)}" />
 								<c:if test="${unreadTicketsize>0}">
 									<div class="badge unread-count">${unreadTicketsize}</div>

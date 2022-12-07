@@ -13,10 +13,9 @@
 </c:url>
 <div class="link"><a class="popup" href="${uploadURL}" title="${i18n.edit['edit.action.upload']}"><span>${i18n.edit['edit.action.upload']}</span></a></div>
 
-<div class="special">
 <c:if test="${fn:length(roles)>0}">
 <form class="form_default js-change-submit" id="form-select-role" action="${info.currentURL}" method="post">
-<div>
+
 <input type="hidden" name="webaction" value="selectRole" />
 <input type="hidden" name="admin" value="${admin}" />
 <label for="select-roles">${i18n.edit['user.select-role']}</label>
@@ -26,19 +25,14 @@
 <option${userContext.currentRole == role?' selected="selected"':''}>${role}</option>
 </c:forEach>
 </select>
-<input type="submit" class="action-button add-user" value="${i18n.edit['global.ok']}" />
-<input type="submit" style="display: inline;" class="action-button needconfirm" name="add" title="${i18n.edit['user.add-role']}" value="+" />
-<input type="submit" style="display: inline;" class="action-button needconfirm" name="remove" title="${i18n.edit['user.remove-role']}" value="-" />
-</div>
+<button type="submit" class="action-button add-user"><span>${i18n.edit['global.ok']}</span></button>
+<button type="submit" style="display: inline;" class="action-button needconfirm" name="add" title="${i18n.edit['user.add-role']}"><span><i class="bi bi-plus"></i></span></button>
+<button type="submit" style="display: inline;" class="action-button needconfirm" name="remove" title="${i18n.edit['user.remove-role']}"><span><i class="bi bi-dash"></i></span></button>
+
 </form>
 </c:if>
 <form class="form_default" id="form-add-user" action="${info.currentURL}" method="post">
-<div>
 <input type="hidden" name="webaction" value="createUser" />
 <input class="label-inside label" type="text" name="user" value="${i18n.edit['user.create-new-user']}..." />
-<input type="submit" class="action-button add-user" value="${i18n.edit['global.ok']}" />
-</div>
+<button type="submit" class="action-button add-user">${i18n.edit['global.ok']}</button>
 </form>
-</div>
-<div class="clear">&nbsp;</div>
-

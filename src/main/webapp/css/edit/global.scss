@@ -7,6 +7,24 @@
 	background-color: #eeeeee;
 }
 
+label, legend, .label, h1, h2, h3 {
+	&:first-letter {
+    	text-transform: uppercase;
+    }
+}
+
+.btn, .btn-group, ._jv_btn-check {
+	.label, label {
+		&::first-letter {
+			text-transform: none;
+		}
+	}
+}
+
+.placeholder {
+	opacity: .4;
+}
+
 #tools {
 	box-shadow: 1px 1px 0 #F3F3F3;
 	border-radius: 2px 2px 2px 2px;
@@ -16,13 +34,38 @@
 	justify-content: space-between;
 	align-items: center;
 	padding: 4px 4px 4px 8px;
+	font-size: .8rem;
+	form {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+	input, select, button, a.btn, form, .action-button {
+		height: 30px;
+		line-height: 30px;
+		box-sizing: border-box;
+	}
+	input, select, button, a.btn, .action-button {
+		font-size: 12px;
+		padding: 4px;
+		background-color: #fff;
+		color: #000;
+		border: 1px solid rgba(24, 28, 33, 0.1);
+		border-radius: .25rem;
+	}
+	input, select, button, a.btn, a {
+		margin-left: calc(var(--javlo-main-sep) / 2);
+		&:hover {
+			border-color: var(--javlo-primary-color);
+		}
+	}
 	.picto {
 		margin: 0 var(--main-sep);
 	}
 	.action-button, .action-field, .content {
 		margin-top: 0;
 		margin-bottom: 0;
-		font-size: .894rem;
+		font-size: inherit;
 	}
 	.content {
 		flex-grow: 2;
@@ -31,12 +74,17 @@
 		align-items: center;
 	}
 	.action-button {
-		font-size: .894rem;
-		line-height: 1.54;
-		background-color: #fff;
-		background-clip: padding-box;
 		border: 1px solid rgba(24, 28, 33, 0.1);
 		border-radius: .25rem;
+		display : flex !important;
+		justify-content: space-between;
+		align-items: center;
+		i {
+			margin-right: .25em
+		}
+		span {
+			line-height: normal;
+		}
 	}
 }
 

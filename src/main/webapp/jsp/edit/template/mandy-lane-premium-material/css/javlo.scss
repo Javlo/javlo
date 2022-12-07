@@ -466,26 +466,6 @@ ul,li {
 	margin-left: 0;
 }
 
-#tools .link {
-	display: inline-block;
-	margin: 2px 2px;
-	padding: 2px 5px;	
-}
-
-#tools label {
-	width: auto;
-}
-
-@media (max-width: 640px) {
-	body #tools {
-		padding: 0;
-		background-image: none;
-	}
-	body #tools h3 {
-		display: none;
-	}		
-}
-
 .action-button span {
 	text-transform: lowercase;
 }
@@ -617,52 +597,6 @@ ul,li {
 	padding-left: 30px;
 }
 
-#tools h3 {
-	font-size: 1em;
-	font-weight: normal;
-	color: #656565;
-	display: block;
-	float: left;
-	padding: 5px 20px 5px 0;
-	background: url("../images/separator2.png") no-repeat scroll right
-		center transparent;
-	margin-right: 10px;
-	padding: 5px 20px 5px 0;
-}
-
-#tools .clear {
-	height: 0;
-	font-size: 0; 
-}
-
-
-/*#tools input {
-	display: block;
-	float: right;
-}*/
-
-#tools .special input {
-	float: none;
-	display: inline-block;
-}
-
-#tools .special form {
-	display: inline-block;
-}
-
-#tools .special .close {
-	display: inline-block;
-	font-size: 0;
-    background: url("../images/icons/popup.png") no-repeat scroll 0 0 transparent;
-    right: 5px;
-    cursor: pointer;
-    display: block;
-    float: right;
-    height: 8px;
-    margin: 11px 0 0 4px;
-    width: 8px;
-}
-
 .sidebox, .mainBox, .full-height, #main-renderer {
 	.widgetbox {
 		margin-top: 3px;
@@ -711,15 +645,6 @@ ul,li {
     background: url("../images/icons/small/black/close.png") no-repeat scroll center center transparent;     
     cursor: pointer;
     display: block;    
-}
-
-#tools input,#tools select {
-	margin: 2px 3px 0 0;
-	padding: 4px 4px 3px 4px;
-}
-
-#tools input[type=text] {
-	padding: 4px 4px 3px 4px;
 }
 
 /*** component list ***/
