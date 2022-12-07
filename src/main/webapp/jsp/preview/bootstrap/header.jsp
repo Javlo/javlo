@@ -123,13 +123,8 @@ if (!rightOnPage) {
 							<c:if test="${not empty param.button_publish and empty param.previewEdit and info.page.flowIndex>2}">
 								<a class="action-button publish ajax" href="${info.currentURL}?webaction=publish&render-mode=1"><span>${i18n.edit['command.publish']}</span></a>
 							</c:if>
-							
-							<li class="page-title">
-								<span class="page">${not empty info.page.pageTitle?info.page.pageTitle:info.page.name}</span>
-								<a href="#" class="template" onclick="editPreview.openModal('Template', '${info.currentEditURL}?module=template&webaction=template.changeFromPreview&previewEdit=true');">
-									${info.currentPage.templateId == null?'<i class="bi bi-arrow-return-right"></i>':''} ${info.page.template}
-								</a>
-							</li>
+
+							<li class="page-title"><span class="page">${not empty info.page.pageTitle?info.page.pageTitle:info.page.name}</span> <a href="#" class="template" onclick="editPreview.openModal('Template', '${info.currentEditURL}?module=template&webaction=template.changeFromPreview&previewEdit=true');"> ${info.currentPage.templateId == null?'<i class="bi bi-arrow-return-right"></i>':''} ${info.page.template} </a></li>
 
 							<%
 							if (rightOnPage) {
@@ -174,7 +169,7 @@ if (!rightOnPage) {
 														<i class="${clipboard.icon}"></i>
 													</div>
 													<span>${clipboard.label}</span>
-													<div class="category"> (${i18n.edit['global.clipboard']})</div>
+													<div class="category">(${i18n.edit['global.clipboard']})</div>
 													<a href="${url}" class="ajax close"><i class="bi bi-x"></i></a>
 												</div>
 											</div>
@@ -186,14 +181,13 @@ if (!rightOnPage) {
 														<i class="bi bi-file-richtext"></i>
 													</div>
 													<span>${editInfo.copiedPage}</span>
-													<div class="category"> (page)</div>
+													<div class="category">(page)</div>
 													<a href="${url}" class="ajax close"><i class="bi bi-x"></i></a>
 												</div>
 											</div>
 										</c:if>
 									</div>
-								</c:if>
-							</li>
+								</c:if></li>
 
 							<%
 							}
@@ -239,15 +233,6 @@ if (!rightOnPage) {
 						</form></li>
 				</c:if>
 
-				<li class="macro">
-					<button class="btn btn-default btn-toggle _jv_collapse-container" data-jv-toggle="collapse" data-jv-target="#macro-list">
-						<i class="bi bi-tools"></i>
-					</button>
-					<div id="macro-list" class="_jv_collapse-target">
-						<jsp:include page="macro.jsp" />
-					</div>
-				</li>
-
 				<c:if test="${userInterface.search && !userInterface.minimalInterface && !contentContext.asTimeMode}">
 					<li><c:url var="url" value="<%=URLHelper.createURL(editCtx)%>" context="/">
 							<c:param name="module" value="search"></c:param>
@@ -282,10 +267,11 @@ if (!rightOnPage) {
 									return false;
 								}
 							</script>
-							<button id="btn-ticket" ${tooltip} class="btn btn-default btn-sm btn-tickets btn-color btn-notext badged"
-							type="<%=accessType%>" value="${i18n.edit['preview.label.ticket']}" onclick="return openTicket()" ${tooltip}>
+							<button id="btn-ticket" ${tooltip} class="btn btn-default btn-sm btn-tickets btn-color btn-notext badged" type="<%=accessType%>" value="${i18n.edit['preview.label.ticket']}" onclick="return openTicket()" ${tooltip}>
 								<i class="bi bi-question-circle"></i>
-								<div class="loader _jv_spinner" role="status"><span class="sr-only" lang="en">Loading...</span></div>
+								<div class="loader _jv_spinner" role="status">
+									<span class="sr-only" lang="en">Loading...</span>
+								</div>
 								<span class="text">${i18n.edit['preview.label.ticket']}</span>
 								<c:set var="unreadTicketsize" value="${fn:length(info.unreadTickets)}" />
 								<c:if test="${unreadTicketsize>0}">
@@ -302,7 +288,14 @@ if (!rightOnPage) {
 					<c:if test="${i18n.edit['preview.label.edit.tooltip'] != 'preview.label.edit.tooltip'}">
 						<c:set var="tooltip" value=' data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'preview.label.edit.tooltip\']}"' />
 					</c:if>
-					<a id="pc_edit_mode_button" class="btn btn-default btn-sm" title="${i18n.edit['global.exit']}" href="${info.currentEditURL}" title="edit mode"> <i class="bi bi-x-lg"></i></a>
+					<li class="macro">
+						<button class="btn btn-default btn-toggle _jv_collapse-container" data-jv-toggle="collapse" data-jv-target="#macro-list">
+							<i class="bi bi-tools"></i>
+						</button>
+						<div id="macro-list" class="_jv_collapse-target">
+							<jsp:include page="macro.jsp" />
+						</div>
+					</li>
 					<li class="user _jv_collapse-container"><button class=" btn btn-user btn-toggle" data-jv-target="#_jv_user-collapse" data-jv-toggle="collapse">
 							<i class="bi bi-person-circle"></i>
 						</button>

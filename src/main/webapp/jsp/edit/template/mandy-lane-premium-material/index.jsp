@@ -185,22 +185,28 @@
 							</a>
 							</li>
 						</c:if>
-						<li class="note"><a href="${info.editTemplateURL}/notifications.jsp" class="alertnotify"> <span class="wrap"> <i class="fa fa-comment" aria-hidden="true"></i> <c:if test="${not empty notificationSize}">
+						<li class="note"><a href="${info.editTemplateURL}/notifications.jsp" class="alertnotify"> <span class="wrap"> <i class="bi bi-chat"></i> <c:if test="${not empty notificationSize}">
 										<span id="notification-count" class="count">${notificationSize}</span>
 									</c:if>
 							</span>
 						</a></li>
 						<c:if test="${not empty info.privateHelpURL}">
-							<li class="note"><a href="${info.privateHelpURL}" target="_blanck"> <span class="wrap"> <i class="fa fa-life-ring" aria-hidden="true"></i> <span class="count" style="display: none;">0</span>
+							<li class="note"><a href="${info.privateHelpURL}" target="_blanck"> <span class="wrap"> <i class="bi bi-chat"></i> <span class="count" style="display: none;">0</span>
 								</span>
 							</a></li>
 						</c:if>
 						<c:if test="${not empty integrities}">
-							<li class="note"><a href="${info.editTemplateURL}/integrity.jsp?path=${info.path}" class="alertintegrity"> <span class="wrap"> <i class="fa fa-info-circle" aria-hidden="true"></i> <span id="integrity-count"
-										class="count ${integrities.errorCount == 0?'clear':'not-clear'}">${fn:length(integrities.checker)}</span>
+							<li class="note"><a title="preview mode" href="${info.editTemplateURL}/integrity.jsp?path=${info.path}" class="alertintegrity"> <span class="wrap"> 
+									<i class="bi bi-info-circle"></i> <span id="integrity-count"
+									class="count ${integrities.errorCount == 0?'clear':'not-clear'}">${fn:length(integrities.checker)}</span>
 								</span>
 							</a></li>
 						</c:if>
+						
+						<li class="note"><a href="${info.currentPreviewURL}" class="back-preview">
+							<span class="wrap"> <i class="bi bi-arrow-repeat"></i></span>
+							</a></li>
+						
 					</ul>
 					<h1><a href="${info.currentViewURL}">${info.globalTitle}</a></h1>
 				</div>

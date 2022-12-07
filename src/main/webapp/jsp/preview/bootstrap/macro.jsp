@@ -6,6 +6,10 @@ ContentContext editCtx = new ContentContext(ctx);
 editCtx.setRenderMode(ContentContext.EDIT_MODE);
 %>
 <div class="macro-btn-list _jv_menu">
+<a id="pc_edit_mode_button" class="btn btn-default" title="${i18n.edit['global.exit']}" href="${info.currentEditURL}">
+	<span class="button-group-addon"><i class="bi bi-arrow-repeat"></i></span>
+	<span class="label">edit mode</span>
+</a>
 <c:forEach var="macro" items="${info.addMacro}">
 	<c:set var="key" value="macro.${macro.name}" />
 	<c:if test="${!macro.interative}">
