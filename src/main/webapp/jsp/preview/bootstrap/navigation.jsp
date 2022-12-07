@@ -39,7 +39,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 					</c:if>
 					<c:if test="${info.page.root}">
 						<div class="page-shortcut">
-							<span><i class="bi bi-gear" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;"></i></span>
+<%-- 							<span><i class="bi bi-gear" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;"></i></span> --%>
 							<div class="btn-integrity alert-${integrities.levelLabel} btn-notext badged" data-toggle="_eprv_collapse" data-target="#integrity-list" href="#integrity-list" aria-expanded="false" aria-controls="integrity-list">
 								<c:if test="${integrities.levelLabel != 'success'}">
 									<i class="bi bi-exclamation-triangle-fill"></i>
@@ -111,7 +111,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 							<a href="${page.url}">${page.info.label}${page.haveChildren?'...':''}</a>
 							<c:if test="${page.url eq info.currentURL}">
 								<div class="page-shortcut">
-									<span><i class="bi bi-gear" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;"></i></span>
+<%-- 									<span><i class="bi bi-gear" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;"></i></span> --%>
 									<div class="btn-integrity alert-${integrities.levelLabel} btn-notext badged" data-toggle="_eprv_collapse" data-target="#integrity-list" href="#integrity-list" aria-expanded="false" aria-controls="integrity-list">
 										<c:if test="${integrities.levelLabel != 'success'}">
 											<i class="bi bi-exclamation-triangle-fill"></i>
@@ -158,7 +158,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 
 							<c:if test="${child.url eq info.currentURL}">
 								<div class="page-shortcut">
-									<span><i class="bi bi-gear" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;"></i></span>
+<%-- 									<span><i class="bi bi-gear" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;"></i></span> --%>
 									<div class="btn-integrity alert-${integrities.levelLabel} btn-notext badged" data-toggle="_eprv_collapse" data-target="#integrity-list" href="#integrity-list" aria-expanded="false" aria-controls="integrity-list">
 										<c:if test="${integrities.levelLabel != 'success'}">
 											<i class="bi bi-exclamation-triangle-fill"></i>

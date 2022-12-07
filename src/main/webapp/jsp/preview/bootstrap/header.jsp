@@ -124,7 +124,16 @@ if (!rightOnPage) {
 								<a class="action-button publish ajax" href="${info.currentURL}?webaction=publish&render-mode=1"><span>${i18n.edit['command.publish']}</span></a>
 							</c:if>
 
-							<li class="page-title"><span class="page">${not empty info.page.pageTitle?info.page.pageTitle:info.page.name}</span> <a href="#" class="template" onclick="editPreview.openModal('Template', '${info.currentEditURL}?module=template&webaction=template.changeFromPreview&previewEdit=true');"> ${info.currentPage.templateId == null?'<i class="bi bi-arrow-return-right"></i>':''} ${info.page.template} </a></li>
+							<c:url var="urlPageProperties" value="<%=URLHelper.createURL(editCtx)%>" context="/">
+								<c:param name="module" value="content" />
+								<c:param name="webaction" value="changeMode" />
+								<c:param name="mode" value="3" />
+								<c:param name="previewEdit" value="true" />
+							</c:url>
+							<li class="page-title">
+							<a href="#" class="page" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;">${not empty info.page.pageTitle?info.page.pageTitle:info.page.name}</a>
+							<a href="#" class="template" onclick="editPreview.openModal('Template', '${info.currentEditURL}?module=template&webaction=template.changeFromPreview&previewEdit=true');"> ${info.currentPage.templateId == null?'<i class="bi bi-arrow-return-right"></i>':''} ${info.page.template} </a>
+							</li>
 
 							<%
 							if (rightOnPage) {

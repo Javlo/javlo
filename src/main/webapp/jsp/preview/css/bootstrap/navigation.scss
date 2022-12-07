@@ -98,24 +98,25 @@ body #preview_command .component-list .component .wrapper-in {
 
 	.integrity-message {
 		position: absolute;
-		top: 10px;
-		left: -286px;
-		width: 312px;
+		top: 30px;
+		left: -270px;
+		width: 280px;
 		z-index: 10;
 
 		.list-group {
 			background-color: var(--javlo-ui-color-1);
-			border: 1px var(--javlo-ui-color-3) solid;
-			margin: calc(var(--javlo-main-sep) / 2) !important;
-			padding: calc(var(--javlo-main-sep) / 2) calc(var(--javlo-main-sep) / 2) 0 calc(var(--javlo-main-sep) / 2);
+			border-radius: 0;
+			margin: 0 ;
+			padding:0;
 
 			li {
-				margin: 0 0 calc(var(--javlo-main-sep) / 2) 0 !important;
+				margin: 0 0 -1px 0 !important;
 			}
 		}
 
 		.badge {
 			line-height: normal !important;
+			font-size: .8rem;
 		}
 	}
 
@@ -126,6 +127,7 @@ body #preview_command .component-list .component .wrapper-in {
 		background-color: transparent;
 		border: 0 none;
 		margin-right: 5px;
+		line-height: 30px;
 
 		.badge-integrity {
 			padding: 1px 5px 1px 5px;

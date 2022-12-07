@@ -367,11 +367,14 @@
 			text-overflow: ellipsis;
 			overflow: hidden;
 		}
+		
+		a {
+			color: #333333;
+		}
 
 		a.template {
 			font-size: .8em;
 			opacity: 0.4;
-			color: #333333;
 		}
 	}
 }
