@@ -57,6 +57,7 @@ label, legend, .label, h1, h2, h3 {
 		margin-left: calc(var(--javlo-main-sep) / 2);
 		&:hover {
 			border-color: var(--javlo-primary-color);
+			text-decoration: none;
 		}
 	}
 	.picto {
