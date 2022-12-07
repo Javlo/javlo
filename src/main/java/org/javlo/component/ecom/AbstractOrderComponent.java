@@ -96,7 +96,7 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 		PrintStream out = new PrintStream(outStream);
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 
-		String cellStyle = "text-align: left;";
+		String cellStyle = "text-align: left; font-size: 1rem;";
 
 		out.println("<table class=\"table\" id=\"basket-details\" style=\"width: 100%\">");
 		out.println("<thead>");
@@ -104,7 +104,18 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 		out.println("<th style=\"" + cellStyle + "\">" + i18nAccess.getViewText("ecom.product") + "</th>");
 		out.println("<th style=\"" + cellStyle + "\">" + i18nAccess.getViewText("ecom.quantity") + "</th>");
 		out.println("<th style=\"" + cellStyle + "\">" + i18nAccess.getViewText("ecom.total_evat") + "</th>");
-		out.println("<th style=\"" + cellStyle + "\">" + i18nAccess.getViewText("ecom.total_vat") + "</th>");
+		
+		boolean tva = false;
+		for (Product product : basket.getProducts()) {
+			if (product.getVAT()>0) {
+				tva = true;
+			}
+		}
+		
+		
+		if (tva) {
+			out.println("<th style=\"" + cellStyle + "\">" + i18nAccess.getViewText("ecom.total_vat") + "</th>");
+		}
 		out.println("</tr>");
 		out.println("</thead>");
 		for (Product product : basket.getProducts()) {
@@ -114,23 +125,25 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 			out.println("<td style=\"" + cellStyle + "\">" + product.getQuantity() + "</td>");
 			double total = product.getPrice() * product.getQuantity();
 			out.println("<td style=\"" + cellStyle + "\">" + Basket.renderPrice(ctx, total / (1 + product.getVAT()), product.getCurrencyCode()) + "</td>");
-			out.println("<td style=\"" + cellStyle + "\">" + Basket.renderPrice(ctx, total, product.getCurrencyCode()) + "</td>");
+			if (tva) {
+				out.println("<td style=\"" + cellStyle + "\">" + Basket.renderPrice(ctx, total, product.getCurrencyCode()) + "</td>");
+			}
 			out.println("</tr>");
 		}
-		out.println("<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>");
+		out.println("<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>"+(tva?"<td>&nbsp;</td>":"")+"</tr>");
 		if (basket.getUserReduction() > 0.01) {
-			out.println("<tr><td>&nbsp;</td><td>&nbsp;</td>");
+			out.println("<tr><td>&nbsp;</td>"+(tva?"<td>&nbsp;</td>":""));
 			out.println("<th style=\"" + cellStyle + "\">" + i18nAccess.getViewText("ecom.promo") + "</th>");
 			out.println("<td style=\"" + cellStyle + "\">" + StringHelper.renderDoubleAsPercentage(basket.getUserReduction()) + "</td>");
 			out.println("</tr>");
 		}
 		if (basket.getDelivery(ctx, true) > 0.01) {
-			out.println("<tr><td>&nbsp;</td><td>&nbsp;</td>");
+			out.println("<tr><td>&nbsp;</td>"+(tva?"<td>&nbsp;</td>":""));
 			out.println("<th style=\"" + cellStyle + "\">" + i18nAccess.getViewText("ecom.shipping") + "</th>");
 			out.println("<td style=\"" + cellStyle + "\">" + Basket.renderPrice(ctx, basket.getDelivery(ctx, true), basket.getCurrencyCode()) + "</td>");
 			out.println("</tr>");
 		}
-		out.println("<tr><td>&nbsp;</td><td>&nbsp;</td>");
+		out.println("<tr><td>&nbsp;</td>"+(tva?"<td>&nbsp;</td>":""));
 		out.println("<th style=\"" + cellStyle + "\">" + i18nAccess.getViewText("ecom.total") + "</th>");
 		out.println("<td style=\"" + cellStyle + "\">" + Basket.renderPrice(ctx, basket.getTotal(ctx, true), basket.getCurrencyCode()) + "</td>");
 		out.println("</tr>");
