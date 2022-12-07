@@ -8,7 +8,7 @@ minimal html
 	<div id="container" class="_jv_collapse-target">LoremIpsun</div>
 </div>
 ```
-### Menu
+### Component
 class '_jv_menu' wrap list of items
 item html
 ```
@@ -23,7 +23,15 @@ item html
 	</button>
 </div>
 ```
+#### Spinner
+```
+<div class="_jv_spinner" role="status"><span class="sr-only" lang="en">Loading...</span></div>
+```
 ### Layout
+#### ._jv_flex-line
+standard flex line, space-between and center
+#### ._jv_flex-line-start
+same with align on flex-start
 #### ._jv_full_height_bottom
 full height from top of item to bottom of page.
 #### _jv_btn-check
@@ -40,16 +48,15 @@ Exemple code for radio group button
 <div class="btn-group">
 	<div class="_jv_btn-check">
 		<input id="i1" type="radio" name="i1" value="1">
-		<label or="i1">none</label>
+		<label for="i1">none</label>
 	</div>
 	<div class="_jv_btn-check">
 		<input id="i2" type="radio" name="i2" value="2">
-		<label or="i2">none</label>
+		<label for="i2">none</label>
 	</div>
 </div>
 ```
 ## Edit
 ### Layout
 #### _jv_collapsable fieldset
-
 	add class collapsable on a `<fieldset>`, It will be collapsable with a click on legend.
