@@ -211,6 +211,7 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 				try {
 					params.putAll(new ReadOnlyPropertiesMap(getData()));
 					pageURL = URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.PAGE_MODE), page.getPath(), params);
+					logger.info(("read page for mail : "+pageURL);
 					email = NetHelper.readPageForMailing(new URL(pageURL));
 				} catch (Exception e) {
 					e.printStackTrace();
