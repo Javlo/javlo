@@ -137,10 +137,10 @@ if (StringHelper.isTrue(request.getParameter("preview-command"), true) && !ctx.i
 							<h4 class="modal-title" id="previewModalTitle">[title]</h4>
 							<div class="modal-btn">
 								<button type="button" class="maximise-modal" data-modal="modal" aria-label="Close" onclick="document.getElementById('preview-modal-dialog').classList.add('maximized')">
-									<span aria-hidden="true"><i class="bi bi-box-arrow-in-up-right"></i></span>
+									<span aria-hidden="true"><i class="bi bi-arrows-angle-expand"></i></span>
 								</button>
 								<button type="button" class="minimise-modal" data-modal="modal" aria-label="Close" onclick="document.getElementById('preview-modal-dialog').classList.remove('maximized')">
-									<span aria-hidden="true"><i class="bi bi-box-arrow-in-down-left"></i></span>
+									<span aria-hidden="true"><i class="bi bi-arrows-angle-contract"></i></span>
 								</button>
 								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 									<span aria-hidden="true"><i class="bi bi-x-lg"></i></span>
