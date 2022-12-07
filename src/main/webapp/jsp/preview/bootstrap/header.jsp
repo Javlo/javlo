@@ -135,7 +135,7 @@ if (!rightOnPage) {
 									<div class="pc_line">
 										<input type="hidden" name="webaction" value="edit.copypage" />
 										<button class="btn btn-default btn-sm btn-paste" type="submit" title="${i18n.edit['preview.label.copy-page']}">
-											<i class="bi bi-files"></i>
+											<i class="bi bi-clipboard-plus"></i>
 										</button>
 									</div>
 								</form>

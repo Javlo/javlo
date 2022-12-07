@@ -425,11 +425,11 @@ if (!String.prototype.startsWith) {
 		/** ******************* */
 
 		if (pjq("#preview-layer").length == 0) {
-			pjq("body").append('<div id="preview-layer"><div class="commands btn-group btn-group-sm area-actions" role="group"><span class=\"btn area-name\"><span class="mirror glyphicon glyphicon-paste" aria-hidden="true"></span><span class="not-mirror glyphicon glyphicon-th-large" aria-hidden="true"></span><span id=\"area-name\"></span></span>' +
-				'<button class="btn-edit btn btn-primary"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span><span class="text">edit</span></button>' +
-				'<button class="btn-copy btn btn-primary"><span class="glyphicon glyphicon-copy" aria-hidden="true"></span><span class="text">copy</span></button>' +
-				'<button class="btn-duplicate btn btn-primary"><span class="glyphicon glyphicon-duplicate" aria-hidden="true"></span><span class="text">duplicate</span></button>' +
-				'<button class="btn-delete btn btn-primary"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span><span class="text">delete</span></button>' +
+			pjq("body").append('<div id="preview-layer"><div class="commands btn-group btn-group-sm area-actions" role="group"><span class=\"btn area-name\"><span class="mirror glyphicon glyphicon-paste" aria-hidden="true"></span><i class="bi bi-layout-sidebar"></i><span id=\"area-name\"></span></span>' +
+				//'<button class="btn-edit btn btn-primary"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span><span class="text">edit</span></button>' +
+				'<button class="btn-copy btn btn-primary"><i class="bi bi-clipboard-plus"></i><span class="text">copy</span></button>' +
+				'<button class="btn-duplicate btn btn-primary"><i class="bi bi-files"></i><span class="text">duplicate</span></button>' +
+				'<button class="btn-delete btn btn-primary"><i class="bi bi-trash"></i><span class="text">delete</span></button>' +
 				'<div class="btn-off btn repeat-icon"><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span></div>' +
 				'</div><h4></h4><div class="main">&nbsp;</span></div>');
 			pjq("#preview-layer").css("position", "absolute");

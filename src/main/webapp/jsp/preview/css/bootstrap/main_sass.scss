@@ -410,9 +410,22 @@ div#preview_command {
 }
 
 #preview-layer {
-	border: 1px $layer-color solid;
+	border: 4px var(--javlo-layer-color) dotted;
 	cursor: pointer;
 	position: relative;
+	
+	/** DEBUG **/
+	/*display: block !important;
+	z-index: 100000000 !important;
+	position: absolute !important;
+	top: 100px !important;
+	left: 400px !important;
+	width: 600px !important;
+	height: 400px !important;*/
+	
+	.btn, .btn-group {
+		border-radius: 0 !important;
+	}
 
 	.hidden {
 		display: none !important;
@@ -442,25 +455,31 @@ div#preview_command {
 }
 
 #preview-layer h4 {
-	text-align: center;
+	text-align: left;
 	padding: 3px;
 	font-size: 11px;
 	color: #ffffff;
-	background-color: $layer-color;
-	margin: -18px -1px 0 -1px;
+	background-color: var(--javlo-layer-color);
+	margin: -18px -4px 0 -4px;
 }
 
 body #preview-layer .commands {
-	background-color: $layer-color;
+	background-color: var(--javlo-layer-color) ;
 	position: absolute;
-	top: -47px;
-	right: -1px;
+	top: 0;
+	right: -4px;
 	overflow: hidden;
 	text-align: right;
 
 	.btn {
 		padding: 5px 8px;
 		text-align: center;
+		border: 0 none;
+		border-left: 1px rgba(255, 255, 255, 0.1) solid;
+	}
+	
+	.btn.area-name {
+		border: 0 none;
 	}
 }
 
@@ -482,19 +501,24 @@ body #preview-layer .commands {
 	bottom: -18px;
 }
 
-#preview-layer .commands .area-name span {
-	color: #dddddd;
+#preview-layer .commands .area-name {
+	span, i {
+		filter: opacity(50%);
+	}
 }
 
 #preview-layer .commands .btn,
 #preview-layer .commands .btn-off {
-	background-color: $layer-color;
-	border-color: $layer-color;
+	background-color: var(--javlo-layer-color);
+	border-color: var(--javlo-layer-color);
 	color: #ffffff !important;
 	z-index: 1;
 	display: inline-block;
 	float: none;
 	font-size: 12px;
+	i {
+		font-size: 14px;
+	}
 }
 
 #preview-layer.nocommand .commands {
@@ -502,8 +526,7 @@ body #preview-layer .commands {
 }
 
 #preview-layer .commands button:hover {
-	background-color: lighten($layer-color, 20%);
-	border-color: lighten($layer-color, 10%);
+	filter: brightness(85%);
 	color: #ffffff;
 }
 
@@ -522,7 +545,7 @@ body #preview-layer .commands {
 ._dragover .free-edit-zone {
 	display: block;
 	border: 1px var(--action-color) solid;
-	background-color: $layer-color;
+	background-color: var(--javlo-layer-color);
 	color: #ffffff;
 	text-align: center;
 	padding: 5px 0;

@@ -235,14 +235,30 @@ body #preview_command .component-list .component .wrapper-in {
 	background-color: #eeeeee;
 }
 
+
 ._edit_empty_component {
 	font-size: 12px;
 	display: inline-block;
-	background-color: #D31996;
+	background-color: var(--javlo-unvisible-component-color);
 	color: #ffffff;
 	padding: 2px 6px;
 	border-radius: 3px;
 	margin: 1px;
+}
+
+._edit_empty_component::before, ._preview-hidden::before {
+	content: "\f340";
+	display: inline-block;
+	font-family: bootstrap-icons !important;
+	font-style: normal;
+	font-weight: normal !important;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+	vertical-align: -.125em;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	margin-right: 3px;
 }
 
 body.edit-preview .editable-component {
@@ -273,8 +289,8 @@ body.edit-preview .editable-component {
 ._preview-hidden {
 	opacity: 0.8;
 	padding-left: 15px;
-	border-left: 15px #D31996 solid;
-	font-size: 11px;
+	border-left: 15px var(--javlo-unvisible-component-color) solid;
+	font-size: 12px;
 }
 
 body.edition-mode-light,
