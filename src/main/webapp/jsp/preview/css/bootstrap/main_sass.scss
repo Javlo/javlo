@@ -413,7 +413,7 @@ div#preview_command {
 	border: 4px var(--javlo-layer-color) dotted;
 	cursor: pointer;
 	position: relative;
-	
+
 	/** DEBUG **/
 	/*display: block !important;
 	z-index: 100000000 !important;
@@ -422,8 +422,9 @@ div#preview_command {
 	left: 400px !important;
 	width: 600px !important;
 	height: 400px !important;*/
-	
-	.btn, .btn-group {
+
+	.btn,
+	.btn-group {
 		border-radius: 0 !important;
 	}
 
@@ -464,7 +465,7 @@ div#preview_command {
 }
 
 body #preview-layer .commands {
-	background-color: var(--javlo-layer-color) ;
+	background-color: var(--javlo-layer-color);
 	position: absolute;
 	top: 0;
 	right: -4px;
@@ -477,7 +478,7 @@ body #preview-layer .commands {
 		border: 0 none;
 		border-left: 1px rgba(255, 255, 255, 0.1) solid;
 	}
-	
+
 	.btn.area-name {
 		border: 0 none;
 	}
@@ -502,7 +503,9 @@ body #preview-layer .commands {
 }
 
 #preview-layer .commands .area-name {
-	span, i {
+
+	span,
+	i {
 		filter: opacity(50%);
 	}
 }
@@ -516,6 +519,7 @@ body #preview-layer .commands {
 	display: inline-block;
 	float: none;
 	font-size: 12px;
+
 	i {
 		font-size: 14px;
 	}

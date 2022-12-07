@@ -20,7 +20,7 @@
 		color: var(--javlo-ui-color-8) !important;
 		border-color: var(--javlo-ui-color-5) !important;
 	}
-	
+
 	._jv_spinner {
 		width: 16px;
 		height: 16px;
@@ -194,13 +194,13 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	
+
 	li.user {
 		._jv_collapse-target {
 			left: auto;
 			right: 0;
 		}
-		
+
 	}
 }
 
@@ -227,13 +227,16 @@
 	.btn-tickets {
 		position: relative;
 	}
+
 	.loader {
 		display: none;
 	}
+
 	#btn-ticket.loading {
 		.loader {
 			display: block;
 		}
+
 		i {
 			display: none;
 		}
@@ -309,6 +312,7 @@
 	border-right: 1px solid var(--javlo-ui-color-3);
 	border-bottom: 1px solid var(--javlo-ui-color-3);
 	border-left: 1px solid var(--javlo-ui-color-3);
+
 	.btn {
 		width: 100%;
 		display: flex;
@@ -316,18 +320,22 @@
 		margin: 0;
 		border: 0 none;
 		padding-left: 0 !important;
+
 		.label {
 			margin: 0;
 			margin-left: 1em;
 		}
 	}
+
 	.btn:hover {
 		background-color: var(--javlo-ui-color-8) !important;
 		color: white !important;
+
 		.label {
 			color: white !important;
 		}
 	}
+
 	.button-group-addon {
 		width: 42px;
 		padding: 8px 12px;
@@ -345,19 +353,21 @@
 		display: flex;
 		flex-direction: column;
 		align-items: flex-end;
+
 		span {
 			padding-top: 2px;
 			color: #333333;
 			opacity: 0.8;
-			
+
 			max-width: 220px;
 			display: inline;
 			vertical-align: middle;
-			
+
 			white-space: nowrap;
 			text-overflow: ellipsis;
 			overflow: hidden;
 		}
+
 		a.template {
 			font-size: .8em;
 			opacity: 0.4;
@@ -370,15 +380,18 @@
 	.clipboard {
 		border-right: 1px var(--javlo-ui-color-5) solid;
 		color: #333333;
+
 		.cb-component-list .wrapper-in {
 			.figure {
 				margin-left: calc(var(--javlo-main-sep) / 2);
 				margin-right: calc(var(--javlo-main-sep) / 2);
 				text-shadow: none;
 			}
+
 			.close {
 				text-shadow: none;
 			}
+
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
@@ -388,13 +401,16 @@
 			padding: 3px;
 			border-radius: 5px;
 			cursor: grab;
+
 			.category {
 				display: none;
 			}
 		}
+
 		.cb-component-list .wrapper-in:hover {
 			background-color: var(--javlo-ui-color-8) !important;
 			color: white !important;
+
 			.close {
 				color: white !important;
 			}
