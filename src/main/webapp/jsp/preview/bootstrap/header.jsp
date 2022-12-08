@@ -143,7 +143,7 @@ if (!rightOnPage) {
 								<form id="add_copy_page" action="${info.currentURL}" method="post">
 									<div class="pc_line">
 										<input type="hidden" name="webaction" value="edit.copypage" />
-										<button class="btn btn-default btn-sm btn-paste" type="submit" title="${i18n.edit['preview.label.copy-page']}">
+										<button class="btn btn-default btn-sm btn-copy" type="submit" title="${i18n.edit['preview.label.copy-page']}">
 											<i class="bi bi-clipboard-plus"></i>
 										</button>
 									</div>
@@ -153,12 +153,12 @@ if (!rightOnPage) {
 									<div class="pc_line">
 										<c:if test="${!(empty info.contextForCopy || !info.page.pageLocalEmpty || info.page.childrenAssociation)}">
 											<input type="hidden" name="webaction" value="edit.pastepage" />
-											<button class="action btn" type="submit" title="${i18n.edit['preview.label.paste-page']}">
+											<button class="action btn btn-paste" type="submit" title="${i18n.edit['preview.label.paste-page']}">
 												<i class="bi bi-box-arrow-in-down"></i>
 											</button>
 										</c:if>
 										<c:if test="${empty info.contextForCopy || !info.page.pageLocalEmpty || info.page.childrenAssociation}">
-											<button class="btn btn-default btn-copy" id="pc_paste_page" type="submit">
+											<button class="btn btn-default btn-paste" id="pc_paste_page" type="submit">
 												<i class="bi bi-box-arrow-in-down"></i>
 											</button>
 										</c:if>

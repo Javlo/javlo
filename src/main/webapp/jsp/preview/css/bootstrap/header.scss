@@ -153,6 +153,10 @@
 	margin-bottom: 2px;
 }
 
+#preview_command .header .btn-paste {
+	border-right: 1px var(--javlo-ui-color-5) dashed !important;
+}
+
 #preview_command .header .btn {
 	display: flex !important;
 	align-items: center;
@@ -294,8 +298,6 @@
 
 	form:last-child {
 		.btn {
-			border-bottom-right-radius: 3px;
-			border-top-right-radius: 3px;
 			margin-right: 0;
 			border-right-style: solid
 		}
@@ -417,6 +419,7 @@
 
 			.close {
 				color: white !important;
+				opacity: 1;
 			}
 		}
 	}
