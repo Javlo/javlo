@@ -42,12 +42,12 @@ public class Space extends AbstractVisualComponent {
 
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
-		return new String[] { "1px", "3px", "5px", "9px", "20px", "1em", "2em" };
+		return new String[] { "1px", "3px", "5px", "9px", "20px", "1rem", "2rem", "4rem" };
 	}
 
 	@Override
 	public String[] getStyleLabelList(ContentContext ctx) {
-		String[] outSize = new String[7];
+		String[] outSize = new String[8];
 		try {
 			I18nAccess i18n = I18nAccess.getInstance(ctx);
 			outSize[0] = i18n.getText("size.tiny");
@@ -57,6 +57,7 @@ public class Space extends AbstractVisualComponent {
 			outSize[4] = i18n.getText("size.enormous");
 			outSize[5] = i18n.getText("size.1line");
 			outSize[6] = i18n.getText("size.2lines");
+			outSize[7] = i18n.getText("size.4lines");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
