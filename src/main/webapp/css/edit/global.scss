@@ -50,7 +50,7 @@ label, legend, .label, h1, h2, h3 {
 		padding: 4px;
 		background-color: #fff;
 		color: #000;
-		border: 1px solid rgba(24, 28, 33, 0.1);
+		border: 1px solid rgba(24, 28, 33, 0.3);
 		border-radius: .25rem;
 	}
 	input, select, button, a.btn, a {
@@ -75,11 +75,45 @@ label, legend, .label, h1, h2, h3 {
 		align-items: center;
 	}
 	.action-button {
-		border: 1px solid rgba(24, 28, 33, 0.1);
+		border: 1px solid rgba(24, 28, 33, 0.3);
 		border-radius: .25rem;
 		display : flex !important;
 		justify-content: space-between;
 		align-items: center;
+		i {
+			margin-right: .25em
+		}
+		span {
+			line-height: normal;
+		}
+	}
+}
+
+input {
+	border-radius: 3px;
+	padding: 4px;
+	border: 1px solid rgba(24, 28, 33, 0.3);
+	box-shadow: none;
+	&:focus, &:focus-visible {
+		border: 1px solid rgba(24, 28, 33, 0.8);
+	}
+}
+
+.action {
+	display: flex;
+	justify-content: flex-end;
+	button, input {
+		border: 1px solid rgba(24, 28, 33, 0.3);
+		border-radius: .25rem;
+		display : flex !important;
+		justify-content: space-between;
+		align-items: center;
+		background-color: #fff;
+		padding: 6px;
+		margin-left: .5rem;
+		&:hover {
+			border: 1px solid rgba(24, 28, 33, 0.8);
+		}
 		i {
 			margin-right: .25em
 		}
