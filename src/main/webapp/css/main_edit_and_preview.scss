@@ -55,6 +55,8 @@ body#main-body,
 	
 	--javlo-layer-color: #17A;	
 	--javlo-flash-color: #E70A5A;
+	
+	--javlo-modal-maximize-border-multi: 6;
 
 	/* Fonts */
 	--bsicons: "bootstrap-icons";
@@ -64,5 +66,21 @@ body#main-body,
 
 	.main-box {
 		margin: var(--javlo-main-separator);
+	}
+}
+
+@media (max-width: 1440px) {
+	#preview_command,
+	body#main-body,
+	:root {
+		--javlo-modal-maximize-border-multi: 3;
+	}
+}
+
+@media (max-width: 1000px) {
+	#preview_command,
+	body#main-body,
+	:root {
+		--javlo-modal-maximize-border-multi: 0;
 	}
 }
