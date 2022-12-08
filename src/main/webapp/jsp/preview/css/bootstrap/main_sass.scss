@@ -410,7 +410,9 @@ div#preview_command {
 }
 
 #preview-layer {
-	border: 4px var(--javlo-layer-color) dotted;
+	--layer-border-size: 1px;
+	border: var(--layer-border-size) var(--javlo-layer-color) solid;
+	background-color: var(--javlo-layer-color-bg);
 	cursor: pointer;
 	position: relative;
 
@@ -461,14 +463,14 @@ div#preview_command {
 	font-size: 11px;
 	color: #ffffff;
 	background-color: var(--javlo-layer-color);
-	margin: -18px -4px 0 -4px;
+	margin: -18px -var(--layer-border-size) 0 -var(--layer-border-size);
 }
 
 body #preview-layer .commands {
 	background-color: var(--javlo-layer-color);
 	position: absolute;
 	top: 24px;
-	right: -4px;
+	right: calc(var(--layer-border-size) * -1);
 	overflow: hidden;
 	text-align: right;
 
@@ -490,19 +492,6 @@ body #preview-layer .commands {
 #preview-layer .commands span {
 	color: #ffffff;
 	font-size: 11px;
-}
-
-#preview-layer.bottom .commands {
-	top: auto;
-	bottom: 24px;
-	right: -5px;
-}
-
-#preview-layer.bottom h4 {
-	position: absolute;
-	top: auto;
-	width: calc(100% + 9px);
-	bottom: -18px;
 }
 
 #preview-layer .commands .area-name {
