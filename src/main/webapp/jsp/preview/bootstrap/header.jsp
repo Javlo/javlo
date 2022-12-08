@@ -132,7 +132,7 @@ if (!rightOnPage) {
 							</c:url>
 							<li class="page-title">
 							<a href="#" class="page" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;">${not empty info.page.pageTitle?info.page.pageTitle:info.page.name}</a>
-							<a href="#" class="template" onclick="editPreview.openModal('Template', '${info.currentEditURL}?module=template&webaction=template.changeFromPreview&previewEdit=true');"> ${info.currentPage.templateId == null?'<i class="bi bi-file-earmark-code"></i>':''} ${info.page.template} </a>
+							<a href="#" class="template" onclick="editPreview.openModal('Template', '${info.currentEditURL}?module=template&webaction=template.changeFromPreview&previewEdit=true');"> ${info.currentPage.templateId == null?'<i class="bi bi-file-earmark-arrow-down"></i>':'<i class="bi bi-file-earmark-code"></i>'} ${info.page.template} </a>
 							</li>
 
 							<%
