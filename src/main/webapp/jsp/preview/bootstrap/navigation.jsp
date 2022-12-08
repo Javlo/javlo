@@ -75,7 +75,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 					<li class="page-item parent ${!page.trash?'title':'trash'}"><c:if test="${not empty info.contextForCopy && (child.url eq info.currentURL)}">
 							<div class="nav-item">
 								<a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}">
-									<span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span>
+									<i class="bi bi-arrow-down-square"></i>
 								</a>
 							</div>
 						</c:if>
@@ -103,7 +103,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 			</c:forEach>
 
 			<li class="page-item ${page.trash?'trash ':''}${page.url eq info.currentURL?'selected ':''}${!asTitle?' title':''}${page.selected?' selected':''}" id="page-${page.name}"><c:if test="${not empty info.contextForCopy && (page.url eq info.currentURL)}">
-					<a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}"> <span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span>
+					<a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}"> <i class="bi bi-arrow-down-square"></i>
 					</a>
 				</c:if> <c:if test="${!page.root}">
 					<span>
@@ -149,7 +149,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 			</c:if>
 			<c:forEach var="child" items="${page.children}">
 				<li id="page-${child.name}" class="page-item ${child.trash?'trash ':''}${child.url eq info.currentURL?'selected ':''}${child.info.realContent?'real-content':''} ${fn:length(child.children) > 0?'have-children ':''}"><c:if test="${not empty info.contextForCopy && (child.url eq info.currentURL)}">
-						<a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}"> <span class="glyphicon glyphicon-collapse-down" aria-hidden="true"></span>
+						<a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}"> <i class="bi bi-arrow-down-square"></i>
 						</a>
 					</c:if> <span>
 						<div id="page-${child.name}" data-pageid="${child.id}" class="nav-item draggable ${child.active?'active':'unactive'} flow-${child.flowIndex}" title="${child.path}">
