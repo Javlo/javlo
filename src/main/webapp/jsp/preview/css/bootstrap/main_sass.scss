@@ -494,14 +494,14 @@ body #preview-layer .commands {
 
 #preview-layer.bottom .commands {
 	top: auto;
-	bottom: -45px;
+	bottom: 24px;
 	right: -5px;
 }
 
 #preview-layer.bottom h4 {
 	position: absolute;
 	top: auto;
-	width: 100%;
+	width: calc(100% + 9px);
 	bottom: -18px;
 }
 
