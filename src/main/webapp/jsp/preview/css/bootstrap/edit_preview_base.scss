@@ -15,12 +15,16 @@
 
 /*** RESETER ***/
 
-#preview_command i.bi {
-	color: inherit;
+#preview_command, #preview-layer {
+	 i.bi {
+		color: inherit;
+	}
 }
 
-#preview_command .btn i {
-	margin: 0;
+#preview_command, #preview-layer {
+	 .btn i {
+		margin: 0;
+	}
 }
 
 #preview_command figure,
