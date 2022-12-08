@@ -153,12 +153,12 @@ if (!rightOnPage) {
 									<div class="pc_line">
 										<c:if test="${!(empty info.contextForCopy || !info.page.pageLocalEmpty || info.page.childrenAssociation)}">
 											<input type="hidden" name="webaction" value="edit.pastepage" />
-											<button class="action btn btn-wait-loading" type="submit" title="${i18n.edit['preview.label.paste-page']}">
+											<button class="action btn" type="submit" title="${i18n.edit['preview.label.paste-page']}">
 												<i class="bi bi-box-arrow-in-down"></i>
 											</button>
 										</c:if>
 										<c:if test="${empty info.contextForCopy || !info.page.pageLocalEmpty || info.page.childrenAssociation}">
-											<button class="btn btn-default btn-sm btn-copy" id="pc_paste_page" type="submit">
+											<button class="btn btn-default btn-copy" id="pc_paste_page" type="submit">
 												<i class="bi bi-box-arrow-in-down"></i>
 											</button>
 										</c:if>
