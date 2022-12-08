@@ -40,10 +40,12 @@
 		<th colspan="${colspan}">${i18n.view['ecom.total_evat']}</th>
 		<td>${totalNoVAT}</td>
 	</tr>
+    <c:if test="${total != totalNoVAT}">
 	<tr>
 		<th colspan="${colspan}">${i18n.view['ecom.total_vat']}</th>
 		<td>${total}</td>
 	</tr>
+    </c:if>
 </tfoot>
 
 </table>

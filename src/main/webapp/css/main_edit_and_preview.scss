@@ -12,7 +12,7 @@ body#main-body,
 	--action-text: #fff;
 
 	/* Spacings and size */
-	--javlo-main-sep: 16px;
+	--javlo-main-separator: 16px;
 	--javlo-menu-height: 40px;
 	--javlo-sidebar-width: 330px;
 
@@ -27,6 +27,7 @@ body#main-body,
 	--javlo-ui-color-6: hsl(var(--javlo-ui-color), 45%);
 	--javlo-ui-color-7: hsl(var(--javlo-ui-color), 35%);
 	--javlo-ui-color-8: hsl(var(--javlo-ui-color), 25%);
+	--javlo-ui-color-9: hsl(var(--javlo-ui-color), 15%);
 
 	/* BLEU --javlo-ui-accent-color : #006699 = hsl(200, 100%, 30%); Du plus clair au plus foncé */
 	--javlo-ui-accent-color: 200, 100%;
@@ -53,7 +54,7 @@ body#main-body,
 	--red: #dc3545;
 	
 	--javlo-layer-color: #17A;	
-	--javlo-unvisible-component-color: #E70A5A;
+	--javlo-flash-color: #E70A5A;
 
 	/* Fonts */
 	--bsicons: "bootstrap-icons";
@@ -62,6 +63,6 @@ body#main-body,
 	@import 'main_javlo.scss';
 
 	.main-box {
-		margin: var(--javlo-main-sep);
+		margin: var(--javlo-main-separator);
 	}
 }

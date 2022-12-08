@@ -54,7 +54,7 @@ label, legend, .label, h1, h2, h3 {
 		border-radius: .25rem;
 	}
 	input, select, button, a.btn, a {
-		margin-left: calc(var(--javlo-main-sep) / 2);
+		margin-left: calc(var(--javlo-main-separator) / 2);
 		&:hover {
 			border-color: var(--javlo-primary-color);
 			text-decoration: none;

@@ -3,7 +3,7 @@
 		transition: none !important;
 
 		.modal-header {
-			padding: var(--javlo-main-sep);
+			padding: var(--javlo-main-separator);
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
@@ -17,7 +17,7 @@
 				align-items: center;
 
 				button {
-					margin: 0 0 0 calc(var(--javlo-main-sep));
+					margin: 0 0 0 calc(var(--javlo-main-separator));
 					float: none;
 					text-shadow: none;
 					font-weight: normal;
@@ -57,7 +57,7 @@
 		width: 100vw !important;
 		max-width: 100vw !important;
 		transform: none !important;
-		padding: calc(var(--javlo-main-sep) * 6);
+		padding: calc(var(--javlo-main-separator) * 6);
 
 		.modal-content {
 			border-radius: 0;
@@ -72,8 +72,8 @@
 		}
 
 		iframe {
-			max-height: calc(100vh - 63px - 1px - var(--javlo-main-sep) * 2) !important;
-			height: calc(100vh - 63px - 1px - var(--javlo-main-sep) * 2) !important;
+			max-height: calc(100vh - 63px - 1px - var(--javlo-main-separator) * 2) !important;
+			height: calc(100vh - 63px - 1px - var(--javlo-main-separator) * 2) !important;
 		}
 	}
 

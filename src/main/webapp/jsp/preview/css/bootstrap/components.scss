@@ -66,7 +66,7 @@ body #preview_command .component-list .component .wrapper-in {
 	}
 
 	.component-list {
-		margin-top: calc(var(--javlo-main-sep) / 2);
+		margin-top: calc(var(--javlo-main-separator) / 2);
 
 		.component {
 			margin: 0;
@@ -82,7 +82,7 @@ body #preview_command .component-list .component .wrapper-in {
 	}
 
 	.components-group {
-		margin-bottom: calc(var(--javlo-main-sep) / 2);
+		margin-bottom: calc(var(--javlo-main-separator) / 2);
 	}
 
 	.component-list .component .wrapper-in {
@@ -240,7 +240,7 @@ body #preview_command .component-list .component .wrapper-in {
 ._edit_empty_component {
 	font-size: 13px;
 	display: inline-block;
-	background-color: var(--javlo-unvisible-component-color);
+	background-color: var(--javlo-flash-color);
 	color: #ffffff;
 	padding: 2px 6px;
 	margin: 1px;
@@ -290,7 +290,7 @@ body.edit-preview .editable-component {
 ._preview-hidden {
 	opacity: 0.8;
 	padding-left: 15px;
-	border-left: 15px var(--javlo-unvisible-component-color) solid;
+	border-left: 15px var(--javlo-flash-color) solid;
 	font-size: 13px;
 }
 

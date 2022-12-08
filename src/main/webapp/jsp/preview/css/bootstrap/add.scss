@@ -26,7 +26,7 @@
 		}
 
 		.body {
-			padding: calc(var(--javo-main-sep) / 2) var(--javlo-main-sep);
+			padding: calc(var(--javo-main-sep) / 2) var(--javlo-main-separator);
 		}
 
 		.hiddenCollapse.bloc-background {
@@ -35,60 +35,4 @@
 		}
 	}
 
-	#preview-login-banner {
-		position: fixed;
-		bottom: 0;
-		// background-color: var(--javlo-ui-accent-color-9);
-		padding: calc(var(--javlo-main-sep) / 4) calc(var(--javlo-main-sep) / 2);
-		width: 100%;
-		font-size: 12px;
-		color: #fff;
-		z-index: 999999;
-		color: white;
-		background: repeating-linear-gradient(-45deg,
-				var(--javlo-ui-color-9),
-				var(--javlo-ui-color-9) 10px,
-				var(--javlo-ui-color-7) 10px,
-				var(--javlo-ui-color-7) 20px);
-
-		.preview-login-banner-wrapped {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			position: relative;
-
-			span {
-				flex-grow: 1;
-			}
-		}
-
-		button {
-			font-size: 20px;
-			background-color: transparent;
-			border: 0 none;
-
-			span {
-				font-size: 12px;
-			}
-
-			&:hover {
-				opacity: .7;
-			}
-		}
-
-		.close-preview-banner {
-			font-size: 14px;
-			color: #fff;
-			margin-left: var(--javlo-main-sep);
-			transition: opacity .3;
-
-			&:hover {
-				opacity: .7;
-			}
-		}
-	}
-}
-
-#preview_command #preview-login-banner {
-	background: repeating-linear-gradient(-45deg, var(--javlo-ui-color-9), var(--javlo-ui-color-9) 10px, var(--javlo-ui-color-8) 10px, var(--javlo-ui-color-8) 20px);
 }

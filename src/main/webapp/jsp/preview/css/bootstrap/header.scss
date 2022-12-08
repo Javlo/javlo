@@ -62,7 +62,7 @@
 	justify-content: space-between;
 	align-items: center;
 
-	padding: 0 var(--javlo-main-sep);
+	padding: 0 var(--javlo-main-separator);
 
 	.name {
 		font-size: 28px;
@@ -347,8 +347,8 @@
 
 #preview_command {
 	ul li.page-title {
-		padding-left: calc(var(--javlo-main-sep) / 2);
-		padding-right: calc(var(--javlo-main-sep) / 2);
+		padding-left: calc(var(--javlo-main-separator) / 2);
+		padding-right: calc(var(--javlo-main-separator) / 2);
 		height: calc(var(--javlo-menu-height) - 5px) !important;
 		display: flex;
 		flex-direction: column;
@@ -386,8 +386,8 @@
 
 		.cb-component-list .wrapper-in {
 			.figure {
-				margin-left: calc(var(--javlo-main-sep) / 2);
-				margin-right: calc(var(--javlo-main-sep) / 2);
+				margin-left: calc(var(--javlo-main-separator) / 2);
+				margin-right: calc(var(--javlo-main-separator) / 2);
 				text-shadow: none;
 			}
 
@@ -399,7 +399,7 @@
 			justify-content: space-between;
 			align-items: center;
 			height: calc(var(--javlo-menu-height) - 5px) !important;
-			margin: 2px calc(var(--javlo-main-sep) / 2) 3px 0;
+			margin: 2px calc(var(--javlo-main-separator) / 2) 3px 0;
 			border: 1px dotted var(--javlo-ui-color-5);
 			padding: 3px;
 			border-radius: 5px;
