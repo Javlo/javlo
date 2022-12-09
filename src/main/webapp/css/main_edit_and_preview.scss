@@ -40,22 +40,22 @@ body#main-body,
 	--javlo-ui-bg-secondary: var(--javlo-ui-color-9);
 	--javlo-ui-border: var(--javlo-ui-color-10);
 
-	--javlo-ui-btn-bg: transparent;
+	/*BTNS*/
+	--javlo-ui-btn-bg-active: transparent;
+	--javlo-ui-btn-toggle-bg-active: var(--javlo-ui-primary-accent-color-3);
+	--javlo-ui-btn-toggle-bg-inactive: var(--javlo-ui-bg-secondary);
+
+	--javlo-ui-btn-border: var(--javlo-ui-border);
+
 	--javlo-ui-btn-text-active: white;
 	--javlo-ui-btn-text-inactive: var(--javlo-ui-color-6);
 
 	--javlo-ui-btn-separator: var(--javlo-ui-color-9);
 
-	--javlo-ui-btn-toggle-border: var(--javlo-ui-color-10);
-	--javlo-ui-btn-toggle-active-bg: var(--javlo-ui-primary-accent-color-3);
-	--javlo-ui-btn-toggle-active-text: white;
-
-	--javlo-ui-btn-toggle-inactive-bg: var(--javlo-ui-accent-color-3);
-	--javlo-ui-btn-toggle-inactive-text: var(--javlo-ui-color-6);
-
 	--javlo-ui-clipboard-bg: hsla(var(--javlo-ui-accent-color-3), 0.1);
 	--javlo-ui-clipboard-border: var(--javlo-ui-primary-accent-color-1);
 	--javlo-ui-clipboard-text: var(--javlo-ui-accent-color-1);
+
 
 	/*Sidebar*/
 

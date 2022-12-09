@@ -1,3 +1,10 @@
+#preview_command {
+	span.label:first-letter {
+		text-transform: uppercase;
+	}
+}
+
+
 #preview_command .user .text {
 	max-width: fit-content !important;
 }
@@ -16,9 +23,9 @@
 	}
 
 	.btn-default {
-		background-color: var(--javlo-ui-btn-bg) !important;
-		color: var(--javlo-ui-btn-toggle-inactive-text) !important;
-		border-color: var(--javlo-ui-btn-toggle-border) !important;
+		background-color: var(--javlo-ui-btn-bg-active) !important;
+		color: var(--javlo-ui-btn-text-active) !important;
+		border-color: var(--javlo-ui-btn-border) !important;
 	}
 
 	._jv_spinner {
@@ -28,15 +35,7 @@
 	}
 }
 
-#preview_command {
-	.btn-default.active {
-		background-color: var(--javlo-ui-btn-toggle-active-bg) !important;
-		color: white !important;
-		border-color: var(--javlo-ui-btn-toggle-border) !important;
-		box-shadow: none !important;
-		-webkit-box-shadow: none !important;
-	}
-}
+
 
 #preview_command {
 	.header {
@@ -46,14 +45,46 @@
 		height: var(--javlo-menu-height);
 		top: 0;
 		left: 0;
-		// box-shadow: 0 0 6px #333333;
 		background-color: var(--javlo-ui-bg-primary) !important;
 		z-index: 11000;
 		display: flex;
 		justify-content: space-between;
 		border-bottom: 1px solid var(--javlo-ui-border);
 		padding: 0;
-		color: #333333;
+
+		.btn {
+			padding: 10px !important;
+			font-size: 20px !important;
+			border: 0px !important;
+			height: calc(var(--javlo-menu-height)/2) !important;
+			color: var(--javlo-ui-btn-text-active);
+
+		}
+	}
+}
+
+
+
+#preview_command .header .users li:not(:last-child) {
+	border-right: 1px solid var(--javlo-ui-btn-separator) !important;
+}
+
+#preview_command {
+	.toggle-preview-edit {
+		.btn-default {
+			background-color: var(--javlo-ui-btn-toggle-bg-inactive) !important;
+			color: var(--javlo-ui-btn-text-inactive) !important;
+			border-color: var(--javlo-ui-btn-border) !important;
+			box-shadow: none !important;
+			-webkit-box-shadow: none !important;
+			margin: 0 !important;
+			height: var(--javlo-menu-height) !important;
+		}
+
+		.btn-default.active {
+			background-color: var(--javlo-ui-btn-toggle-bg-active) !important;
+			color: white !important;
+		}
 	}
 }
 
@@ -72,7 +103,7 @@
 
 		li {
 			margin: 0 0 -1px 0 !important;
-			overflow:hidden;
+			overflow: hidden;
 			word-wrap: normal;
 		}
 	}
@@ -88,6 +119,7 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+
 	.name {
 		padding-left: var(--javlo-main-separator);
 	}
@@ -95,7 +127,7 @@
 	.name {
 		font-size: 28px;
 		font-family: javloFont, sans-serif;
-		color: var(--javlo-ui-accent-color-9);
+		color: white;
 
 		&:hover {
 			text-decoration: none;
@@ -170,14 +202,6 @@
 	float: left;
 }
 
-#preview_command .header .btn {
-	height: calc(var(--javlo-menu-height) - 1px) !important;
-	border-radius: 0;
-	margin-right: -1px;
-	border-bottom: 0 none;
-	border-top: 0 none;
-	margin-bottom: 2px;
-}
 
 #preview_command .header .btn-paste {
 	border-right: 1px var(--javlo-ui-color-5) dashed !important;
@@ -198,6 +222,14 @@
 		font-size: 12px;
 		line-height: 2;
 		margin-left: 10px;
+	}
+}
+
+#preview_command .btn {
+	span {
+		font-size: 12px;
+		line-height: 2;
+		margin-left: 5px;
 	}
 }
 
@@ -332,9 +364,10 @@
 }
 
 #preview_command ._jv_menu {
-	border-right: 1px solid var(--javlo-ui-color-3);
-	border-bottom: 1px solid var(--javlo-ui-color-3);
-	border-left: 1px solid var(--javlo-ui-color-3);
+	border-right: 1px solid var(--javlo-ui-border);
+	border-bottom: 1px solid var(--javlo-ui-border);
+	border-left: 1px solid var(--javlo-ui-border);
+	background-color: var(--javlo-ui-bg-primary);
 
 	.btn {
 		width: 100%;

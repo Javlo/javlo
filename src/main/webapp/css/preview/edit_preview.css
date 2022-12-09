@@ -359,6 +359,7 @@ body.edit-preview ._empty_area span {
 #one-component-edit textarea {
 	width: 100%;
 	-moz-box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 #one-component-edit input {

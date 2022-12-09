@@ -374,9 +374,7 @@ html.preview-only.preview-standard.preview-command-visible {
 }
 
 body #preview_command .btn[disabled] {
-	color: #e0e0e0;
-	background-color: #c4c4c6;
-
+	color: var(--javlo-ui-btn-toggle-inactive-text) !important;
 }
 
 ._preview_ajax-loading #preview_command .logo a {
@@ -716,10 +714,10 @@ body #preview-layer .commands {
 	margin-left: .255em;
 	vertical-align: .255em;
 	content: "";
-	border-top: .3em solid;
-	border-right: .3em solid transparent;
+	border-top: .15em solid;
+	border-right: .15em solid transparent;
 	border-bottom: 0;
-	border-left: .3em solid transparent;
+	border-left: .15em solid transparent;
 }
 
 #preview_command #preview-login-banner {
@@ -735,8 +733,8 @@ body #preview-layer .commands {
 	background: repeating-linear-gradient(-45deg,
 			var(--javlo-ui-color-9),
 			var(--javlo-ui-color-9) 10px,
-			var(--javlo-ui-color-7) 10px,
-			var(--javlo-ui-color-7) 20px);
+			var(--javlo-ui-color-8) 10px,
+			var(--javlo-ui-color-8) 20px);
 
 	.preview-login-banner-wrapped {
 		display: flex;

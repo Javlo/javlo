@@ -79,7 +79,7 @@ if (!rightOnPage) {
 								<form id="pc_form" method="post" action="<%=URLHelper.createURL(editCtx)%>">
 									<div class="pc_line">
 										<c:if test='${!editPreview}'>
-											<button class="btn btn-default btn-sm btn-login" type="submit">
+											<button class="btn btn-default btn-login" type="submit">
 												<span class="glyphicon glyphicon-user" aria-hidden="true"></span>${i18n.edit['global.login']}</button>
 										</c:if>
 										<input type="hidden" name="backPreview" value="true" />
@@ -91,7 +91,7 @@ if (!rightOnPage) {
 							<c:if test="${!globalContext.previewMode && !contentContext.asTimeMode}">
 								<li>
 									<div class="link-wrapper">
-										<a class="btn btn-default btn-sm btn-mode btn-wait-loading" href="${info.currentViewURLWidthDevice}" target="_blank"><i class="bi bi-eye-fill"></i> ${i18n.edit['preview.label.not-edit-page']}</a>
+										<a class="btn btn-default btn-mode btn-wait-loading" href="${info.currentViewURLWidthDevice}" target="_blank"><i class="bi bi-eye-fill"></i> ${i18n.edit['preview.label.not-edit-page']}</a>
 									</div>
 								</li>
 							</c:if>
@@ -102,10 +102,10 @@ if (!rightOnPage) {
 									</c:url>
 									<form id="export_pdf_page_form" action="${info.currentPDFURL}" method="post" target="_blanck">
 										<div class="btn-group" role="group">
-											<button class="btn btn-default btn-sm btn-pdf btn-color btn-wait-loading" id="export_pdf_button" type="submit" value="${i18n.edit['preview.label.pdf']}">
+											<button class="btn btn-default btn-pdf btn-color btn-wait-loading" id="export_pdf_button" type="submit" value="${i18n.edit['preview.label.pdf']}">
 												<span class="glyphicon glyphicon-open-file" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.pdf']}</span>
 											</button>
-											<a href="${lowPDFURL}" class="btn btn-default btn-sm btn-pdf btn-color btn-wait-loading" id="export_pdf_button" type="submit" target="_blank"><span class="glyphicon glyphicon-leaf" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.pdf.low']}</span></a>
+											<a href="${lowPDFURL}" class="btn btn-default btn-pdf btn-color btn-wait-loading" id="export_pdf_button" type="submit" target="_blank"><span class="glyphicon glyphicon-leaf" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.pdf.low']}</span></a>
 										</div>
 									</form></li>
 							</c:if>
@@ -146,7 +146,7 @@ if (!rightOnPage) {
 									<form id="add_copy_page" action="${info.currentURL}" method="post">
 										<div class="pc_line">
 											<input type="hidden" name="webaction" value="edit.copypage" />
-											<button class="btn btn-default btn-sm btn-copy" type="submit" title="${i18n.edit['preview.label.copy-page']}">
+											<button class="btn btn-default btn-copy" type="submit" title="${i18n.edit['preview.label.copy-page']}">
 												<i class="bi bi-clipboard-plus"></i>
 											</button>
 										</div>
@@ -157,12 +157,12 @@ if (!rightOnPage) {
 											<c:if test="${!(empty info.contextForCopy || !info.page.pageLocalEmpty || info.page.childrenAssociation)}">
 												<input type="hidden" name="webaction" value="edit.pastepage" />
 												<button class="action btn btn-paste" type="submit" title="${i18n.edit['preview.label.paste-page']}">
-													<i class="bi bi-box-arrow-in-down"></i>
+													<i class="bi bi-clipboard-check"></i>
 												</button>
 											</c:if>
 											<c:if test="${empty info.contextForCopy || !info.page.pageLocalEmpty || info.page.childrenAssociation}">
 												<button class="btn btn-default btn-paste" id="pc_paste_page" type="submit">
-													<i class="bi bi-box-arrow-in-down"></i>
+													<i class="bi bi-clipboard-check"></i>
 												</button>
 											</c:if>
 										</div>
@@ -217,7 +217,7 @@ if (!rightOnPage) {
 					<form id="pc_form" action="${info.currentURL}" method="post">
 						<div class="pc_line">
 							<input type="hidden" name="webaction" value="edit.previewedit" />
-							<div class="btn-group" role="group" aria-label="...">
+							<div class="btn-group toggle-preview-edit" role="group" aria-label="...">
 								<button class="btn btn-default btn-mode btn-wait-loading ${editPreview?'active':''}" type="submit">
 									<i class="bi bi-pencil-fill"></i> <span class="text hidden">${i18n.edit['preview.label.edit-page']}</span>
 								</button>
@@ -240,8 +240,8 @@ if (!rightOnPage) {
 						<c:if test="${i18n.edit['command.publish.tooltip'] != 'command.publish.tooltip'}">
 							<c:set var="tooltip" value='data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'command.publish.tooltip\']}"' />
 						</c:if>
-						<button type="submit" class="btn btn-default btn-sm" ${tooltip} ${empty webaction?'disabled="disabled"':''}>
-							<i class="bi bi-file-earmark-arrow-up"></i>
+						<button type="submit" class="btn btn-default" ${tooltip} ${empty webaction?'disabled="disabled"':''}>
+							<i class="bi bi-cloud-upload"></i>
 							<c:if test="${globalContext.portail}">
 								<span class="flow-status">${info.page.flowIndex}</span>
 							</c:if>
@@ -262,7 +262,7 @@ if (!rightOnPage) {
 							<c:if test="${i18n.edit['command.undo.tooltip'] != 'command.undo.tooltip'}">
 								<c:set var="tooltip" value='data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'command.undo.tooltip\']}"' />
 							</c:if>
-							<button class="btn btn-default btn-sm btn-refresh" id="pc_paste_page" type="submit" ${contentContext.canUndo?'':' disabled="disabled"'} ${tooltip}>
+							<button class="btn btn-default btn-refresh" id="pc_paste_page" type="submit" ${contentContext.canUndo?'':' disabled="disabled"'} ${tooltip}>
 								<i class="bi bi-arrow-counterclockwise"></i> <span class="text">${i18n.edit['global.undo']}</span>
 							</button>
 						</form></li>
@@ -275,7 +275,7 @@ if (!rightOnPage) {
 						</c:url> <c:set var="tooltip" value="" /> <c:if test="${i18n.edit['preview.label.search.tooltip'] != 'preview.label.search.tooltip'}">
 							<c:set var="tooltip" value=' data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'preview.label.search.tooltip\']}"' />
 						</c:if>
-						<button ${tooltip} class="btn btn-default btn-sm btn-search btn-color btn-notext badged" type="<%=accessType%>" value="${i18n.edit['preview.label.search']}" onclick="editPreview.openModal('${i18n.edit['preview.label.search']}','${url}'); return false;" ${tooltip}>
+						<button ${tooltip} class="btn btn-default btn-search btn-color btn-notext badged" type="<%=accessType%>" value="${i18n.edit['preview.label.search']}" onclick="editPreview.openModal('${i18n.edit['preview.label.search']}','${url}'); return false;" ${tooltip}>
 							<i class="bi bi-search"></i> <span class="text">${i18n.edit['preview.label.search']}</span>
 						</button></li>
 				</c:if>
@@ -302,7 +302,7 @@ if (!rightOnPage) {
 									return false;
 								}
 							</script>
-							<button id="btn-ticket" ${tooltip} class="btn btn-default btn-sm btn-tickets btn-color btn-notext badged" type="<%=accessType%>" value="${i18n.edit['preview.label.ticket']}" onclick="return openTicket()" ${tooltip}>
+							<button id="btn-ticket" ${tooltip} class="btn btn-default btn-tickets btn-color btn-notext badged" type="<%=accessType%>" value="${i18n.edit['preview.label.ticket']}" onclick="return openTicket()" ${tooltip}>
 								<i class="bi bi-question-circle"></i>
 								<div class="loader _jv_spinner" role="status">
 									<span class="sr-only" lang="en">Loading...</span>
@@ -335,7 +335,7 @@ if (!rightOnPage) {
 							<i class="bi bi-person-circle"></i>
 						</button>
 						<div id="_jv_user-collapse" class="user-collapse _jv_collapse-target _jv_menu">
-							<a href="${info.currentEditURL}?module=users&webaction=user.changeMode&mode=myself&previewEdit=true" class="as-modal btn btn-default btn-sm btn-user">
+							<a href="${info.currentEditURL}?module=users&webaction=user.changeMode&mode=myself&previewEdit=true" class="as-modal btn btn-default btn-user">
 								<div class="button-group-addon">
 									<i class="bi bi-person"></i>
 								</div> <span class="label">${info.adminUserName}</span>
@@ -347,7 +347,7 @@ if (!rightOnPage) {
 									<c:param name="preview" value="false" />
 								</c:url>
 							</c:if>
-							<a class="btn btn-default btn-sm" title="${i18n.edit['global.logout']}" href="${logoutURL}">
+							<a class="btn btn-default" title="${i18n.edit['global.logout']}" href="${logoutURL}">
 								<div class="button-group-addon">
 									<i class="bi bi-box-arrow-right"></i>
 								</div> <span class="text label">${i18n.edit["global.logout"]}</span>
