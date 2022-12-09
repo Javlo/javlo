@@ -170,7 +170,7 @@ e
 			if (count == null) {
 				count = 0;
 			}
-			request.getSession().setAttribute(COUNT_REQUEST_BY_SESSION_KEY, count);
+			request.getSession().setAttribute(COUNT_REQUEST_BY_SESSION_KEY, count+1);
 		}
 		return ctx;
 	}
