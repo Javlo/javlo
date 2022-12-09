@@ -22,6 +22,8 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -73,6 +75,7 @@ import org.javlo.utils.SuffixPrefix;
 import org.javlo.ztatic.StaticInfo;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Entities.EscapeMode;
 import org.jsoup.parser.Parser;
 import org.jsoup.safety.Safelist;
@@ -2373,13 +2376,14 @@ public class XHTMLHelper {
 		return textToXHTML(text, false, false, null, (GlobalContext) null, true);
 	}
 
-	public static void main(String[] args) {
-		String html = "<h2><p>&nbsp;\r\n" + "<div id=\"ConnectiveDocSignExtentionInstalled\" data-extension-version=\"1.0.4\"></div></h2>";
-		System.out.println(cleanHTML(html));
-		System.out.println("");
-		html = "Patrick";
-		System.out.println(cleanHTML(html));
-		System.out.println("");
+	public static void main(String[] args) throws MalformedURLException, Exception {
+		String html = NetHelper.readPage(new URL("https://penthouse.com/"));
+		
+		Collection<String> links = extractLinks(html, true);
+		for (String link : links) {
+			System.out.println("link = "+URLHelper.extractHost(link));
+		}
+		
 	}
 
 	public static String textToXHTMLNewWin(String text) {
@@ -2541,6 +2545,35 @@ public class XHTMLHelper {
 			}
 		}
 		return content;
+
+	}
+	
+	public static List<String> extractLinks (String html, boolean absolute) {
+		
+		List<String> outLinks = new LinkedList<>();
+		
+		Document doc = Jsoup.parse(html, "UTF-8");
+
+		Elements hrefs = doc.select("[href]");
+		Elements srcs = doc.select("[src]");
+		
+		for (int i = 0; i < hrefs.size(); i++) {
+			Element href = hrefs.get(i);
+			String lnk = href.attr("href");
+			if (!absolute || StringHelper.isURL(lnk)) {
+				outLinks.add(lnk);
+			}
+		}
+		
+		for (int i = 0; i < srcs.size(); i++) {
+			Element href = hrefs.get(i);
+			String lnk = href.attr("src");
+			if (!absolute || StringHelper.isURL(lnk)) {
+				outLinks.add(lnk);
+			}
+		}
+		
+		return outLinks;
 
 	}
 

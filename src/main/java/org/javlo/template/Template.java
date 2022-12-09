@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -542,6 +543,8 @@ public class Template implements Comparable<Template> {
 	private String fakeName = null;
 
 	private List<Integer> sizes = null;
+
+	private List<String> hosts = null;
 
 	public static Template getApplicationInstance(ServletContext application, ContentContext ctx, String templateDir) throws Exception {
 
@@ -1579,6 +1582,32 @@ public class Template implements Comparable<Template> {
 			return null;
 		}
 		return URLHelper.mergePath(getLocalTemplateTargetFolder(globalContext), getHomeRenderer(globalContext));
+	}
+
+	/**
+	 * detect host used in links (index.html)
+	 * 
+	 * @return a list of host
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 */
+	public List<String> getHostDetected(ContentContext ctx) throws FileNotFoundException, IOException {
+		if (this.hosts == null) {
+			File HTMLFile = new File(URLHelper.mergePath(getTemplateTargetFolder(ctx.getGlobalContext()), getHTMLFile(ctx.getDevice())));
+			
+			String html = ResourceHelper.getFileContent(HTMLFile);
+			Collection<String> links = XHTMLHelper.extractLinks(html, true);
+			List<String> outHosts = new LinkedList<>();
+			for (String link : links) {
+				String host = StringHelper.extractHostAndProtocol(link);
+				if (!outHosts.contains(host)) {
+					outHosts.add(host);
+				}
+			}
+			this.hosts = outHosts;
+			logger.info("found "+outHosts.size()+" host(s) in : "+HTMLFile);
+		}
+		return this.hosts;
 	}
 
 	protected String getHTMLFile(Device device) {

@@ -875,6 +875,10 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				if (ctx.getGlobalContext().getSpecialConfig().getMainCdn() != null) {
 					response.addHeader("link", "<link href='"+StringHelper.extractHostAndProtocol(ctx.getGlobalContext().getSpecialConfig().getMainCdn())+"' rel='preconnect' crossorigin>");
 				};
+				
+				for (String host : ctx.getCurrentTemplate().getHostDetected(ctx)) {
+					response.addHeader("link", "<link href='"+host+"' rel='preconnect' crossorigin>");
+				}
 
 				request.setAttribute("social", SocialService.getInstance(ctx));
 
