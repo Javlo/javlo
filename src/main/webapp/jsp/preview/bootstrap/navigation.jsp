@@ -13,13 +13,6 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 <div class="height-to-bottom">
 	<div class="pages web">
 
-		<c:url var="urlPageProperties" value="<%=URLHelper.createURL(editCtx)%>" context="/">
-			<c:param name="module" value="content" />
-			<c:param name="webaction" value="changeMode" />
-			<c:param name="mode" value="3" />
-			<c:param name="previewEdit" value="true" />
-		</c:url>
-
 		<ul class="navigation">
 			<c:set var="asTitle" value="false" />
 
@@ -78,15 +71,14 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 				</li>
 			</c:forEach>
 
-			<li class="page-item ${page.trash?'trash ':''}${page.url eq info.currentURL?'selected ':''}${!asTitle?' title':''}${page.selected?' selected':''}" id="page-${page.name}"><c:if test="${not empty info.contextForCopy && (page.url eq info.currentURL)}">
-					<a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}"> <i class="bi bi-arrow-down-square"></i>
-					</a>
-				</c:if> <c:if test="${!page.root}">
-					<span>
-						<div class="nav-item editor draggable ${page.active?'active':'unactive'} flow-${page.flowIndex}" data-pageid="${child.id}" title="${page.path}">
-							<a href="${page.url}">${page.info.label}${page.haveChildren?'...':''}</a>
-						</div>
-					</span>
+			<li class="page-item ${page.trash?'trash ':''}${page.url eq info.currentURL?'selected ':''}${!asTitle?' title':''}${page.selected?' selected':''}" id="page-${page.name}">
+				<c:if test="${!page.root}">
+					<div class="nav-item editor draggable ${page.active?'active':'unactive'} flow-${page.flowIndex}" data-pageid="${child.id}" title="${page.path}">
+						<a href="${page.url}">${page.info.label}${page.haveChildren?'...':''}</a>
+						<c:if test="${not empty info.contextForCopy && (page.url eq info.currentURL)}">
+							<a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}"> <i class="bi bi-arrow-down-square"></i></a>
+						</c:if> 
+					</div>
 				</c:if> <c:if test="${page.url eq info.currentURL}">
 					<c:if test="${userInterface.navigation}">
 						<li class="page-item add-page page-depth-${page.depth}"><form id="form-add-page" action="${info.currentURL}" method="post">
@@ -101,12 +93,13 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 				<li class="page-item"><ul class="children sortable">
 			</c:if>
 			<c:forEach var="child" items="${page.children}">
-				<li id="page-${child.name}" class="page-item ${child.trash?'trash ':''}${child.url eq info.currentURL?'selected ':''}${child.info.realContent?'real-content':''} ${fn:length(child.children) > 0?'have-children ':''}"><c:if test="${not empty info.contextForCopy && (child.url eq info.currentURL)}">
-						<a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}"> <i class="bi bi-arrow-down-square"></i>
-						</a>
-					</c:if> <span>
+				<li id="page-${child.name}" class="page-item ${child.trash?'trash ':''}${child.url eq info.currentURL?'selected ':''}${child.info.realContent?'real-content':''} ${fn:length(child.children) > 0?'have-children ':''}">
+					 <span>
 						<div id="page-${child.name}" data-pageid="${child.id}" class="nav-item draggable ${child.active?'active':'unactive'} flow-${child.flowIndex}" title="${child.path}">
 							<a href="${child.url}" data-pageid="${child.id}" title="${child.path}"> <span>${child.info.label}${child.haveChildren?'...':''}</span>
+							<c:if test="${not empty info.contextForCopy && (child.url eq info.currentURL)}">
+								<a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}"> <i class="bi bi-arrow-down-square"></i></a>
+							</c:if>
 							</a>
 						</div>
 				</span></li>

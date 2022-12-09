@@ -390,7 +390,7 @@ h2.prize {
 		display: inline-block;
 		margin-left: -20px;
 		font-size: 1.5em;
-		color: $bg-darker;
+		color: var(--javlo-ui-btn-text-active);
 	}
 }
 
@@ -483,8 +483,9 @@ h2.prize {
 	position: absolute;
 	top: 10px;
 	left: 219px;
-	background-color: $bg-darker;
+	background-color: var(--javlo-ui-bg-secondary);
 	border-radius: 0.25rem;
+	color: #fff;
 	.label {
 		padding: 6px 12px 0 12px;
 		font-size: 0.9em;
@@ -496,6 +497,9 @@ h2.prize {
 	}
 	.searchbutton {
 		border-radius: 0 0.25rem 0.25rem 0;
+	}
+	button {
+		color: #000;
 	}
 }
 
@@ -519,11 +523,6 @@ h2.prize {
 	width: 27px;
 	height: 30px;
 	cursor: pointer;
-}
-
-#search button:hover {
-	background-color: #bg-darker;
-	color: $important;
 }
 
 /***HEADER (all page)***/
@@ -578,9 +577,8 @@ h2.prize {
 
 .accountinfo p a {
 	font-size: 11px;
-	color: #ccc;
 	display: inline-block;
-	color: $important;
+	color: inherit;
 }
 
 .accountinfo p a:hover {
@@ -645,12 +643,8 @@ h2.prize {
 }
 
 .tabmenu ul li.current a {
-	color: #333;
+	color: #fff;
 	background: none;
-}
-
-.tabmenu ul li.current a span {
-	text-shadow: 1px 1px #fcfcfc;
 }
 
 .tabmenu ul li a.dashboard span {
@@ -709,7 +703,7 @@ h2.prize {
 }
 
 .tabmenu ul li .subnav li a:hover {
-	background: $bg-darker;
+	background: var(--javlo-ui-bg-secondary);
 	color: #fff;
 }
 
@@ -996,7 +990,7 @@ h2.prize {
 }
 
 .breadcrumbs .children .container a:hover {
-	background-color: $bg-dark;
+	background-color: var(--javlo-ui-bg-secondary);
 }
 
 .breadcrumbs .children li {
@@ -1014,7 +1008,7 @@ h2.prize {
 	z-index: 5;
 	
 	/*min-height: 100px;*/
-	background: #fcfcfc;
+	background-color: var(--javlo-ui-bg-secondary);
 	position: absolute;
 	
 	top: 29px;
@@ -1278,15 +1272,17 @@ button.button:hover,.button:active {
 .widgetbox2 h3 {
 	color: #333;
 	border-radius: .25rem;
+	background: var(--javlo-ui-bg-secondary);
 }
 
 .widgetbox2 h3 span {
 	padding: 10px 15px;
 	display: block;
+	color: var(--javlo-ui-text);
 }
 
 .widgetbox2 .content {
-	background: #fcfcfc;
+	background: var(--javlo-ui-bg-secondary);
 	padding: 20px 15px;
 	color: #666;
 	overflow: hidden;
@@ -2288,7 +2284,7 @@ table.dataTable td {
 }
 
 .paging_full_numbers .paginate_button:hover {
-	background-color: $bg-dark;
+	background-color: var(--javlo-ui-bg-secondary);
 }
 
 .paging_full_numbers .paginate_active,.paging_full_numbers .paginate_button:active
@@ -2297,7 +2293,7 @@ table.dataTable td {
 	padding: 2px 8px;
 	border: 1px solid $border;
 	margin-left: 5px;
-	background-color: $bg-darker;
+	background-color: var(--javlo-ui-bg-secondary);
 	color: #fff;
 	border-radius: 0.25rem;
 	text-transform: lowercase;
@@ -2447,23 +2443,23 @@ table.dataTable td {
 }
 
 .gallery .thumbview .info .menu a.view {
-	background: $bg-dark url("../images/icons/small/white/search.png") no-repeat 4px 4px;
+	background: var(--javlo-ui-bg-secondary) url("../images/icons/small/white/search.png") no-repeat 4px 4px;
 }
 
 .gallery .thumbview .info .menu a.delete {
-	background: $bg-dark url("../images/icons/small/white/close.png") no-repeat 4px 4px;
+	background: var(--javlo-ui-bg-secondary) url("../images/icons/small/white/close.png") no-repeat 4px 4px;
 }
 
 .gallery .thumbview .info .menu a.edit {
-    background: $bg-dark url("../images/icons/small/white/edit.png") no-repeat 4px 4px;
+    background: var(--javlo-ui-bg-secondary) url("../images/icons/small/white/edit.png") no-repeat 4px 4px;
 }
 
 .gallery .thumbview .info .menu a.select {
-    background: $bg-dark url("../images/icons/small/white/check.png") no-repeat 4px 4px;
+    background: var(--javlo-ui-bg-secondary) url("../images/icons/small/white/check.png") no-repeat 4px 4px;
 }
 
 .gallery .thumbview .info .menu a.push {
-    background: url("../images/icons/small/white/push.png") no-repeat scroll 4px 3px $bg-dark;
+    background: url("../images/icons/small/white/push.png") no-repeat scroll 4px 3px var(--javlo-ui-bg-secondary);
 }
 
 

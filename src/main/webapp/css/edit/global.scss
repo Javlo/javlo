@@ -26,15 +26,15 @@ label, legend, .label, h1, h2, h3 {
 }
 
 #tools {
-	box-shadow: 1px 1px 0 #F3F3F3;
-	border-radius: 2px 2px 2px 2px;
-	border: 1px solid #DDDDDD;
+	border-radius: 3px;
 	overflow: hidden;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	padding: 4px 4px 4px 8px;
 	font-size: .8rem;
+	background: var(--javlo-ui-bg-secondary);
+	color: #fff;
 	form {
 		display: flex;
 		justify-content: space-between;

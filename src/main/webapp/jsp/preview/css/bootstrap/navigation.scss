@@ -144,6 +144,11 @@ body #preview_command .component-list .component .wrapper-in {
 
 		.page-root {
 			margin-bottom: 15px !important;
+			background-color: var(--javlo-ui-bg-secondary);
+			border-radius: 3px;
+			.nav-item {
+				border-color: var(--javlo-ui-bg-secondary);
+			}
 		}
 
 		ul {
@@ -165,6 +170,7 @@ body #preview_command .component-list .component .wrapper-in {
 		}
 
 		.nav-item {
+			border-radius: 3px;
 			background: var(--javlo-ui-nav-btn-bg);
 			border: 1px var(--javlo-ui-nav-btn-border) solid;
 
@@ -177,13 +183,19 @@ body #preview_command .component-list .component .wrapper-in {
 
 		.selected .nav-item,
 		.nav-item:hover {
-			background: var(--javlo-ui-color-2);
-
-			a {
-				background: var(--javlo-ui-color-2);
+			background: var(--javlo-ui-nav-btn-bg-selected);
+			a, .paste-page {
+				background-color: var(--javlo-ui-nav-btn-bg-selected);
+				color: #fff !important;
+				text-decoration: none;
 			}
 		}
-
+		
+		.paste-page {
+			width: 30px;
+			text-align: right;
+		}
+		
 		.nav-root {
 
 			.nav-item {
@@ -218,8 +230,6 @@ body #preview_command .component-list .component .wrapper-in {
 			}
 		}
 
-
-
 		ul {
 			/*			&:after {
 				position: absolute;
@@ -240,6 +250,7 @@ body #preview_command .component-list .component .wrapper-in {
 				ul li {
 					position: relative;
 					margin: 5px 0 5px 30px;
+					//background: var(--javlo-ui-btn-text-inactive);
 				}
 			}
 		}
@@ -268,7 +279,6 @@ body #preview_command .component-list .component .wrapper-in {
 				height: 30px;
 				line-height: 30px;
 				border-radius: 2px;
-				border-left: 2px solid rgba(0, 0, 0, 0.1);
 				color: var(--javlo-ui-color-5);
 				font-size: 1em;
 			}
@@ -285,15 +295,23 @@ body #preview_command .component-list .component .wrapper-in {
 		font-style: italic;
 
 		.btn-full {
-			border: 1px dashed var(--javlo-ui-add-nav-btn-border);
+			border: 1px dashed var(--javlo-ui-special-action-color);
 			border-radius: 3px;
+			
+			&:hover {
+				border: 1px solid var(--javlo-ui-special-action-color);
+				background-color: var(--javlo-ui-special-action-color);
+				span, i {
+					color: #fff;
+				}
+			}
 
 			span {
-				color: var(--javlo-ui-add-nav-btn-border);
+				color: var(--javlo-ui-special-action-color);
 			}
 
 			i {
-				color: var(--javlo-ui-add-nav-btn-border);
+				color: var(--javlo-ui-special-action-color);
 			}
 		}
 	}
@@ -410,10 +428,6 @@ body #preview_command .component-list .component .wrapper-in {
 	.pages ul.navigation li a.flow-3 {
 		color: #ffffff !important;
 		background-color: #5cb85c;
-	}
-
-	.paste-page {
-		float: right;
 	}
 
 	#_pe_form-add-page {

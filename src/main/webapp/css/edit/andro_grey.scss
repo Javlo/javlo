@@ -8,14 +8,14 @@ body {
 }
 
 body #tools .btn-primary, .btn-primary  {
-	background-color: var(--javlo-primary-bg);
-	color: var(--javlo-primary-bg-text);
+	background-color: var(--javlo-ui-btn-toggle-bg-active);
+	color: #fff;
 }
 
 .header{
-	border-bottom: 3px solid var(--blue-100);
+	border-bottom: 3px solid var(--javlo-ui-text);
 	.logo{
-		color: var(--blue-100);
+		color: var(--javlo-ui-text);
 	}
 }
 
@@ -29,7 +29,7 @@ body #tools .btn-primary, .btn-primary  {
 					}
 				.wrap{
 					i{
-						color: var(--grey-2);
+						color: var(--javlo-ui-text);
 					}
 					span.count{
 						background: var(--red);

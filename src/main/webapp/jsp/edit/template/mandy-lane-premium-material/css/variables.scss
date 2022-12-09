@@ -1,12 +1,6 @@
 /* colors */
-$main-bg:       #f6f6f6;
-$content-bg:	darken($main-bg, 3%);
-$bg-dark:       darken($main-bg, 6%);
-$bg-darker:    darken($main-bg, 10%);
-$bg-darkest:    darken($main-bg, 30%);
-$bg-light:      lighten($main-bg, 10%);
-$bg-lighter:   lighten($main-bg, 20%);
-$bg-lightest:   lighten($main-bg, 40%);
+$main-bg:       var(--javlo-ui-bg-primary);
+$content-bg:	var(--javlo-ui-bg-secondary);
 
 $border: rgba(24,28,33,0.06);
 $border-dark: rgba(24,28,33,0.1);
@@ -18,4 +12,4 @@ $important: $javlo;
 $link: #333333;
 $text: #404040;
 
-$shadow: 3px 3px 16px #ccc;
+$shadow: 1px 1px 16px #ccc;

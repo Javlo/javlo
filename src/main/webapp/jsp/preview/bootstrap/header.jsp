@@ -41,7 +41,8 @@ if (!rightOnPage) {
 							<c:param name="previewEdit" value="true"></c:param>
 						</c:url>
 					</c:if>
-					<a class="name" target="_blank" href="<%=URLHelper.createViewURL(ctx.getPath(), ctx)%>">Javlo</a>
+					<a class="name btn-toggle _jv_collapse-container" href="#" data-jv-toggle="collapse" data-jv-target="#admin-list">Javlo</a>
+					<div id="admin-list" class="_jv_collapse-target"><jsp:include page="admin_menu.jsp" /></div>
 					<img class="ajax-loading" src="${info.ajaxLoaderURL}" alt="loading..." lang="en" />
 					<c:if test="${!userInterface.light}">
 						<a class="settings" href="#" onclick="editPreview.openModal('${i18n.edit['preview.label.properties']}','${url}'); return false;"> <i class="bi bi-gear"></i></a>
@@ -51,12 +52,12 @@ if (!rightOnPage) {
 						<li class="page-title"><a href="#" class="page" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;">${not empty info.page.pageTitle?info.page.pageTitle:info.page.name}</a> <a href="#" class="template" onclick="editPreview.openModal('Template', '${info.currentEditURL}?module=template&webaction=template.changeFromPreview&previewEdit=true');"> ${info.currentPage.templateId == null?'<i class="bi bi-file-earmark-arrow-down"></i>':'<i class="bi bi-file-earmark-code"></i>'} ${info.page.template} </a></li>
 						<li class="page-shortcut">
 							<%-- 									<span><i class="bi bi-gear" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;"></i></span> --%>
-							<div class="btn btn-integrity alert-${integrities.levelLabel} btn-notext" data-toggle="_eprv_collapse" data-target="#integrity-list" href="#integrity-list" aria-expanded="false" aria-controls="integrity-list">
+							<div class="btn btn-integrity btn-notext" data-toggle="_eprv_collapse" data-target="#integrity-list" href="#integrity-list" aria-expanded="false" aria-controls="integrity-list">
 								<c:if test="${integrities.levelLabel != 'success'}">
-									<i class="bi bi-exclamation-triangle-fill"></i>
+									<i class="bi bi-exclamation-triangle"></i>
 								</c:if>
 								<c:if test="${integrities.levelLabel == 'success'}">
-									<i class="bi bi-check-circle-fill"></i>
+									<i class="bi bi-check-circle"></i>
 								</c:if>
 								<div class="integrity-message collapse${integrities.error && contentContext.previewEdit?' in':''}" id="integrity-list">
 									<ul class="list-group">

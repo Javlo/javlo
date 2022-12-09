@@ -54,9 +54,9 @@
 
 		.btn {
 			padding: 10px !important;
-			font-size: 20px !important;
+			font-size: 19px !important;
 			border: 0px !important;
-			height: calc(var(--javlo-menu-height)/2) !important;
+			height: var(--javlo-menu-height) !important;
 			color: var(--javlo-ui-btn-text-active);
 
 		}
@@ -194,14 +194,6 @@
 #preview_command .header .select {
 	margin: 0 5px;
 }
-
-#preview_command .select,
-#preview_command .header .btn-group,
-#preview_command .header .page-title,
-#preview_command .header .actions {
-	float: left;
-}
-
 
 #preview_command .header .btn-paste {
 	border-right: 1px var(--javlo-ui-color-5) dashed !important;
@@ -412,7 +404,7 @@
 
 		span {
 			padding-top: 2px;
-			color: #333333;
+			color: var(--javlo-ui-text);
 			opacity: 0.8;
 
 			max-width: 220px;
@@ -425,7 +417,7 @@
 		}
 
 		a {
-			color: #333333;
+			color: var(--javlo-ui-text);
 		}
 
 		a.template {
@@ -449,14 +441,18 @@
 
 			.close {
 				text-shadow: none;
+				color: var(--javlo-ui-special-action-color);
+				opacity: 1;
 			}
 
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-			height: calc(var(--javlo-menu-height) - 5px) !important;
-			margin: 2px calc(var(--javlo-main-separator) / 2) 3px 0;
-			border: 1px dotted var(--javlo-ui-color-5);
+			height: calc(var(--javlo-menu-height) - 7px) !important;
+			margin: 4px calc(var(--javlo-main-separator) / 2)5px 0;
+			border: 1px solid var(--javlo-ui-special-action-color);
+			color: var(--javlo-ui-special-action-color);
+			background-color: var(--javlo-ui-special-action-color-bg);
 			padding: 3px;
 			border-radius: 5px;
 			cursor: grab;
@@ -466,15 +462,6 @@
 			}
 		}
 
-		.cb-component-list .wrapper-in:hover {
-			background-color: var(--javlo-ui-color-8) !important;
-			color: white !important;
-
-			.close {
-				color: white !important;
-				opacity: 1;
-			}
-		}
 	}
 }
 

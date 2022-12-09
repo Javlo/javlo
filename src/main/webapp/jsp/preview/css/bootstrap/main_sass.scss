@@ -282,7 +282,7 @@ html.preview-only.preview-standard.preview-command-visible {
 		top: 50%;
 		height: 12px;
 		margin-top: -6px;
-		color: #aaaaaa;
+		color: var(--javlo-ui-text);
 	}
 
 	.settings .btn .glyphicon.normal {
@@ -314,7 +314,7 @@ html.preview-only.preview-standard.preview-command-visible {
 		height: auto;
 		width: 100%;
 		background-color: #F9F9F9;
-		color: #aaaaaa;
+		color: var(--javlo-ui-text);
 		position: relative;
 		margin-bottom: 6px;
 	}
@@ -329,7 +329,7 @@ html.preview-only.preview-standard.preview-command-visible {
 		font-size: 11px;
 		margin: 10px 0 0 10px;
 		padding: 0;
-		color: #aaaaaa;
+		color: var(--javlo-ui-text);
 		text-align: left;
 		max-width: 240px;
 		line-height: normal;
@@ -689,8 +689,8 @@ body #preview-layer .commands {
 	cursor: Not-Allowed;
 }
 
-#preview_command .disabled {
-	opacity: 0.4;
+#preview_command .disabled .btn {
+	color: var(--javlo-ui-btn-toggle-inactive-text) !important;
 }
 
 #preview_command .settings .label {
@@ -714,10 +714,10 @@ body #preview-layer .commands {
 	margin-left: .255em;
 	vertical-align: .255em;
 	content: "";
-	border-top: .15em solid;
-	border-right: .15em solid transparent;
+	border-top: .25rem solid;
+	border-right: .25rem solid transparent;
 	border-bottom: 0;
-	border-left: .15em solid transparent;
+	border-left: .25rem solid transparent;
 }
 
 #preview_command #preview-login-banner {

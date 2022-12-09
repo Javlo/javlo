@@ -6,7 +6,7 @@
 body#main-body,
 :root {
 	/*OLD*/
-	--action-color: #069;
+	--action-color: #fff;
 	--action-color-darken: #058;
 	--action-color-lighten: #17A;
 	--action-text: #fff;
@@ -39,6 +39,9 @@ body#main-body,
 	--javlo-ui-bg-primary: var(--javlo-ui-color-8);
 	--javlo-ui-bg-secondary: var(--javlo-ui-color-9);
 	--javlo-ui-border: var(--javlo-ui-color-10);
+	--javlo-ui-text: #ccc;
+	
+	--javlo-ui-btn-toggle-inactive-text: #333;
 
 	/*BTNS*/
 	--javlo-ui-btn-bg-active: transparent;
@@ -55,7 +58,11 @@ body#main-body,
 	--javlo-ui-clipboard-bg: hsla(var(--javlo-ui-accent-color-3), 0.1);
 	--javlo-ui-clipboard-border: var(--javlo-ui-primary-accent-color-1);
 	--javlo-ui-clipboard-text: var(--javlo-ui-accent-color-1);
-
+	
+	--javlo-ui-special-action-color: var(--javlo-ui-primary-accent-color-2);
+	--javlo-ui-special-action-color-bg: hsl(209, 83%, 51%, .1);
+	
+	--javlo-primary-bg-text: 
 
 	/*Sidebar*/
 
@@ -64,8 +71,8 @@ body#main-body,
 	--javlo-ui-nav-root-btn-text: white;
 
 	--javlo-ui-nav-btn-bg: transparent;
-	--javlo-ui-nav-btn-bg-selected: var(--javlo-ui-accent-color-7);
-	--javlo-ui-nav-btn-border: var(--javlo-ui-primary-accent-color-7);
+	--javlo-ui-nav-btn-bg-selected: var(--javlo-ui-color-7);
+	--javlo-ui-nav-btn-border: var(--javlo-ui-color-7);
 
 	--javlo-ui-add-nav-btn-bg: transparent;
 	--javlo-ui-add-nav-btn-border: var(--javlo-ui-accent-color-1);
