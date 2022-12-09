@@ -71,7 +71,7 @@ public class ContentContext {
 	public static final String TAKE_SCREENSHOT = "____screenshot";
 	
 	public static final String TAKE_SCREENSHOT_PAGE_NAME = "____screenshot_page";
-e
+
 	private static final String FORCE_SPECIAL_RENDERER = "forced-renderer";
 
 	public static final int EDIT_MODE = 1;
