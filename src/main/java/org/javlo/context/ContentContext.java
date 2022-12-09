@@ -55,6 +55,8 @@ import org.javlo.utils.downloader.Html2Directory;
  * @author pvanderm
  */
 public class ContentContext {
+	
+	public static final String COUNT_REQUEST_BY_SESSION_KEY = "__session_request";
 
 	public static final String PREVIEW_ONLY_MODE = "__preview_only_mode";
 
@@ -63,13 +65,13 @@ public class ContentContext {
 	private static final String INPUT_TRACKING_KEY = "_jikey";
 
 	private static final String HOST_DEFINED_SITE = "____host-defined-site";
-
+	
 	private static final String FORCE_PATH_PREFIX = "____force-path-prefix";
 
 	public static final String TAKE_SCREENSHOT = "____screenshot";
 	
 	public static final String TAKE_SCREENSHOT_PAGE_NAME = "____screenshot_page";
-
+e
 	private static final String FORCE_SPECIAL_RENDERER = "forced-renderer";
 
 	public static final int EDIT_MODE = 1;
@@ -153,6 +155,7 @@ public class ContentContext {
 	private Set<String> mirrorId = new HashSet<>();
 	
 	private Locale locale = null;
+	
 
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free, boolean pageManagement) {
 		ContentContext ctx = new ContentContext();
@@ -160,7 +163,20 @@ public class ContentContext {
 		ctx.setFree(free);
 		init(ctx, request, response);
 		ctx.storeInRequest(request);
+		// count request by session
+		if (request.getAttribute(COUNT_REQUEST_BY_SESSION_KEY) == null) {
+			request.setAttribute(COUNT_REQUEST_BY_SESSION_KEY, true);
+			Integer count = (Integer)request.getSession().getAttribute(COUNT_REQUEST_BY_SESSION_KEY);
+			if (count == null) {
+				count = 0;
+			}
+			request.getSession().setAttribute(COUNT_REQUEST_BY_SESSION_KEY, count);
+		}
 		return ctx;
+	}
+	
+	public int getRequestCountOnSession() {
+		return (int)request.getSession().getAttribute(COUNT_REQUEST_BY_SESSION_KEY);
 	}
 
 	/**
