@@ -45,6 +45,14 @@ public class FieldExternalLink extends MetaField implements ILink {
 		public String getTitle() {
 			return getCurrentLabel();
 		}
+		
+		public String linkAttribute() {
+			if (URLHelper.isAbsoluteURL(getUrl()) && ctx.getGlobalContext().isOpenExternalLinkAsPopup()) {
+				return "target=\"_blank\"";
+			} else {
+				return "";
+			}
+		}
 
 	}
 
