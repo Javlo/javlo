@@ -2566,8 +2566,8 @@ public class XHTMLHelper {
 		}
 		
 		for (int i = 0; i < srcs.size(); i++) {
-			Element href = hrefs.get(i);
-			String lnk = href.attr("src");
+			Element src = srcs.get(i);
+			String lnk = src.attr("src");
 			if (!absolute || StringHelper.isURL(lnk)) {
 				outLinks.add(lnk);
 			}
