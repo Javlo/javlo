@@ -937,3 +937,4 @@ Security in case of vulnerabilities.
   - detect host in html (template) for set preconnect in http head
 ### Modified
 ### fixed
+  - link without scheme usable in field external link
