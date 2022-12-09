@@ -12,7 +12,7 @@ body #preview_command .component-list .complexity-2 .wrapper-in {
 
 #preview_command {
 	.panel {
-		background-color: var(--javlo-ui-color-1) !important;
+		background-color: var(--javlo-ui-bg-primary) !important;
 		border-top: 0 !important;
 
 		.panel-body {
@@ -41,7 +41,7 @@ body #preview_command .component-list .component .wrapper-in {
 #preview_command .nav-tabs>li.page-item.active>a,
 #preview_command .nav-tabs>li.page-item.active>a:hover {
 	border: 0 !important;
-	background-color: var(--javlo-ui-color-1) !important;
+	background-color: var(--javlo-ui-bg-primary) !important;
 	color: var(--javlo-ui-color-9) !important;
 }
 
@@ -50,7 +50,7 @@ body #preview_command .component-list .component .wrapper-in {
 }
 
 #preview_command .tab-content>.active {
-	background-color: var(--javlo-ui-color-1) !important;
+	background-color: var(--javlo-ui-bg-primary) !important;
 }
 
 #preview_command {
@@ -77,7 +77,7 @@ body #preview_command .component-list .component .wrapper-in {
 			li {
 				float: none;
 				width: 33.3%;
-				background-color: var(--javlo-ui-color-2);
+				background-color: var(--javlo-ui-bg-secondary);
 
 				a {
 					display: block;
@@ -104,10 +104,10 @@ body #preview_command .component-list .component .wrapper-in {
 		z-index: 10;
 
 		.list-group {
-			background-color: var(--javlo-ui-color-1);
+			background-color: var(--javlo-ui-bg-primary);
 			border-radius: 0;
-			margin: 0 ;
-			padding:0;
+			margin: 0;
+			padding: 0;
 
 			li {
 				margin: 0 0 -1px 0 !important;
@@ -190,8 +190,8 @@ body #preview_command .component-list .component .wrapper-in {
 		}
 
 		.nav-item {
-			background: var(--javlo-ui-color-1);
-			border: 1px var(--javlo-ui-color-2) solid;
+			background: var(--javlo-ui-nav-btn-bg);
+			border: 1px var(--javlo-ui-nav-btn-border) solid;
 
 			a {
 				max-width: 90%;
@@ -310,15 +310,15 @@ body #preview_command .component-list .component .wrapper-in {
 		font-style: italic;
 
 		.btn-full {
-			border: 1px dashed var(--javlo-ui-accent-color-6);
+			border: 1px dashed var(--javlo-ui-add-nav-btn-border);
 			border-radius: 3px;
 
 			span {
-				color: var(--javlo-ui-accent-color-6);
+				color: var(--javlo-ui-add-nav-btn-border);
 			}
 
 			i {
-				color: var(--javlo-ui-accent-color-6);
+				color: var(--javlo-ui-add-nav-btn-border);
 			}
 		}
 	}

@@ -483,7 +483,8 @@ body #preview-layer .commands {
 		border-bottom: 1px rgba(255, 255, 255, 0.1) solid;
 	}
 
-	.btn.area-name, .btn.area-name:hover {
+	.btn.area-name,
+	.btn.area-name:hover {
 		border: 0 none;
 		z-index: 0 !important; // no effect on over
 	}
@@ -730,7 +731,7 @@ body #preview-layer .commands {
 	color: #fff;
 	z-index: 999999;
 	color: white;
-	
+
 	background: repeating-linear-gradient(-45deg,
 			var(--javlo-ui-color-9),
 			var(--javlo-ui-color-9) 10px,
@@ -777,6 +778,6 @@ body #preview-layer .commands {
 /** modal **/
 #preview_command {
 	.modal-preview-body {
-		background-color: var(--javlo-ui-color-1) !important;
+		background-color: var(--javlo-ui-bg-primary) !important;
 	}
 }

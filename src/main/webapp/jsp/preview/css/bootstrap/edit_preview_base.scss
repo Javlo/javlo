@@ -8,21 +8,23 @@
 
 #preview_command {
 	.panel-default {
-		background-color: var(--javlo-ui-color-1) !important;
+		background-color: var(--javlo-ui-bg-primary) !important;
 		border-color: var(--javlo-ui-color-3) !important;
 	}
 }
 
 /*** RESETER ***/
 
-#preview_command, #preview-layer {
-	 i.bi {
+#preview_command,
+#preview-layer {
+	i.bi {
 		color: inherit;
 	}
 }
 
-#preview_command, #preview-layer {
-	 .btn i {
+#preview_command,
+#preview-layer {
+	.btn i {
 		margin: 0;
 	}
 }

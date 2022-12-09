@@ -21,7 +21,7 @@ body.edit-preview ._empty_area span {
 	border-radius: 3px 3px 3px 3px;
 	padding: 6px;
 	background-color: #cccccc;
-	vertical-align: middle;
+	/* vertical-align: middle; */
 	text-align: center;
 	font-family: sans-serif;
 	font-size: 24px;
@@ -599,7 +599,7 @@ body.edit-preview ._empty_area span {
 	-moz-box-shadow: 0px 0px 7px #999;
 	-webkit-box-shadow: 0px 0px 7px #999;
 	z-index: 100000;
-	vertical-align: middle;
+	/* vertical-align: middle; */
 	opacity: .95;
 }
 
@@ -1114,7 +1114,7 @@ body.edit-preview ._empty_area span {
 	border-top: 2px #ffffff dashed;
 }
 
-.free-edit-zone.droppable span {}
+/* .free-edit-zone.droppable span {} */
 
 .drop-zone {
 	margin-bottom: 0;
@@ -1353,7 +1353,7 @@ body.edit-preview ._empty_area span {
 	-moz-transform: rotate(45deg);
 	-ms-transform: rotate(45deg);
 	-o-transform: rotate(45deg);
-	tranform: rotate(45deg);
+	transform: rotate(45deg);
 }
 
 .arrow.top:after {

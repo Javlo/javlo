@@ -11,77 +11,91 @@ body#main-body,
 	--action-color-lighten: #17A;
 	--action-text: #fff;
 
+	/// Colors
+	/* Gris - Du plus clair au plus foncé */
+	--javlo-ui-color-1: hsl(210, 12%, 97%);
+	--javlo-ui-color-2: hsl(210, 13%, 91%);
+	--javlo-ui-color-3: hsl(210, 13%, 82%);
+	--javlo-ui-color-4: hsl(208, 14%, 76%);
+	--javlo-ui-color-5: hsl(211, 14%, 68%);
+	--javlo-ui-color-6: hsl(211, 11%, 59%);
+	--javlo-ui-color-7: hsl(209, 9%, 50%);
+	--javlo-ui-color-8: hsl(209, 11%, 41%);
+	--javlo-ui-color-9: hsl(209, 14%, 30%);
+	--javlo-ui-color-10: hsl(210, 22%, 20%);
+
+	/* Couleurs d'accentuation -  Du plus clair au plus foncé */
+	--javlo-ui-primary-accent-color-1: hsl(209, 84%, 81%);
+	--javlo-ui-primary-accent-color-2: hsl(209, 82%, 71%);
+	--javlo-ui-primary-accent-color-3: hsl(209, 83%, 51%);
+	--javlo-ui-secondary-accent-color-1: hsl(324, 100%, 91%);
+	--javlo-ui-secondary-accent-color-2: hsl(324, 100%, 71%);
+	--javlo-ui-secondary-accent-color-3: hsl(324, 100%, 51%);
+
+
+	/// colors schema
+
+	/*Header*/
+	--javlo-ui-bg-primary: var(--javlo-ui-color-8);
+	--javlo-ui-bg-secondary: var(--javlo-ui-color-9);
+	--javlo-ui-border: var(--javlo-ui-color-10);
+
+	--javlo-ui-btn-bg: transparent;
+	--javlo-ui-btn-text-active: white;
+	--javlo-ui-btn-text-inactive: var(--javlo-ui-color-6);
+
+	--javlo-ui-btn-separator: var(--javlo-ui-color-9);
+
+	--javlo-ui-btn-toggle-border: var(--javlo-ui-color-10);
+	--javlo-ui-btn-toggle-active-bg: var(--javlo-ui-primary-accent-color-3);
+	--javlo-ui-btn-toggle-active-text: white;
+
+	--javlo-ui-btn-toggle-inactive-bg: var(--javlo-ui-accent-color-3);
+	--javlo-ui-btn-toggle-inactive-text: var(--javlo-ui-color-6);
+
+	--javlo-ui-clipboard-bg: hsla(var(--javlo-ui-accent-color-3), 0.1);
+	--javlo-ui-clipboard-border: var(--javlo-ui-primary-accent-color-1);
+	--javlo-ui-clipboard-text: var(--javlo-ui-accent-color-1);
+
+	/*Sidebar*/
+
+	--javlo-ui-nav-root-btn-bg: var(--javlo-ui-color-9);
+	--javlo-ui-nav-root-btn-border: var(--javlo-ui-color-9);
+	--javlo-ui-nav-root-btn-text: white;
+
+	--javlo-ui-nav-btn-bg: transparent;
+	--javlo-ui-nav-btn-bg-selected: var(--javlo-ui-accent-color-7);
+	--javlo-ui-nav-btn-border: var(--javlo-ui-primary-accent-color-7);
+
+	--javlo-ui-add-nav-btn-bg: transparent;
+	--javlo-ui-add-nav-btn-border: var(--javlo-ui-accent-color-1);
+	--javlo-ui-add-nav-btn-text: var(--javlo-ui-primary-accent-color-1);
+
+	/*Edit Overlays*/
+
+	--javlo-ui-edit-bg: hsla(var(--javlo-ui-primary-accent-color-1), 0.2);
+	--javlo-ui-edit-border: var(--javlo-ui-primary-accent-color-3);
+	--javlo-ui-edit-btn: white;
+	--javlo-ui-edit-text: var(--javlo-ui-primaryaccent-color-1);
+
+	--javlo-ui-hidden-edit-bg: hsla(var(--javlo-ui-secondary-accent-color-1), 0.2);
+	--javlo-ui-hidden-edit-border: var(--javlo-ui-secondary-accent-color-3);
+	--javlo-ui-hidden-edit-btn: white;
+	--javlo-ui-hidden-edit-text: var(--javlo-ui-secondary-accent-color-1);
+
+	/*General*/
+	--javlo-ui-color-text-primary: white;
+	--javlo-ui-color-danger: hsl(343, 58%, 53%);
+	--javlo-ui-color-success: hsl(134, 67%, 41%);
+
 	/* Spacings and size */
 	--javlo-main-separator: 16px;
 	--javlo-menu-height: 40px;
 	--javlo-sidebar-width: 330px;
-	
-	/// colors schema
-	
-	--javlo-ui-color-bg-primary: #ccc;
-	--javlo-ui-color-bg-secondary: #ddd;
-	--javlo-ui-color-bg-active: #ddd;
-	--javlo-ui-color-bg-unactive: #767676;
-	
-	--javlo-ui-color-text-primary: #fff;
-	--javlo-ui-color-text-link: #ddd;
-	--javlo-ui-color-text-disabled: rgba(0,0,0,.2);
-	
-	--javlo-ui-color-focus: red;
-	--javlo-ui-color-border: #999;
-	
-	--javlo-ui-color-btn-border: #555;
-	--javlo-ui-color-btn-text: #555;
-	--javlo-ui-color-btn-border-active: #000;
-	--javlo-ui-color-btn-bg: #555;
-	--javlo-ui-color-btn-bg-active: #555;
-	--javlo-ui-color-btn-text-active: #555;
-	
-	/// END colors schema
 
-	/* GRIS Du plus clair au plus foncé */
-	--javlo-ui-color: 0, 0%;
-	--javlo-ui-color-1: hsl(var(--javlo-ui-color), 95%);
-	--javlo-ui-color-2: hsl(var(--javlo-ui-color), 85%);
-	--javlo-ui-color-3: hsl(var(--javlo-ui-color), 75%);
-	--javlo-ui-color-4: hsl(var(--javlo-ui-color), 65%);
-	--javlo-ui-color-5: hsl(var(--javlo-ui-color), 55%);
-	--javlo-ui-color-6: hsl(var(--javlo-ui-color), 45%);
-	--javlo-ui-color-7: hsl(var(--javlo-ui-color), 35%);
-	--javlo-ui-color-8: hsl(var(--javlo-ui-color), 25%);
-	--javlo-ui-color-9: hsl(var(--javlo-ui-color), 15%);
-
-	/* BLEU --javlo-ui-accent-color : #006699 = hsl(200, 100%, 30%); Du plus clair au plus foncé */
-	--javlo-ui-accent-color: 200, 100%;
-	--javlo-ui-accent-color-1: hsl(var(--javlo-ui-accent-color), 70%);
-	--javlo-ui-accent-color-2: hsl(var(--javlo-ui-accent-color), 65%);
-	--javlo-ui-accent-color-3: hsl(var(--javlo-ui-accent-color), 60%);
-	--javlo-ui-accent-color-4: hsl(var(--javlo-ui-accent-color), 55%);
-	--javlo-ui-accent-color-5: hsl(var(--javlo-ui-accent-color), 50%);
-	--javlo-ui-accent-color-6: hsl(var(--javlo-ui-accent-color), 45%);
-	--javlo-ui-accent-color-7: hsl(var(--javlo-ui-accent-color), 40%);
-	--javlo-ui-accent-color-8: hsl(var(--javlo-ui-accent-color), 35%);
-	--javlo-ui-accent-color-9: hsl(var(--javlo-ui-accent-color), 30%);
-
-	--javlo-primary-bg: #058;
-	--javlo-primary-bg-text: #fff;
-
-	--blue-100: hsl(200, 100%, 30%);
-	--light-black: hsl(0, 0%, 9%);
-	--grey-1: #656565;
-	--grey-2: #888;
-	--grey-3: #ccc;
-	--grey-4: #ddd;
-	--grey-5: #eee;
-	--red: #dc3545;
-	
-	--javlo-layer-color: rgb(17, 119, 170);	
-	--javlo-layer-color-bg: rgb(17, 119, 170, 0.2);
-	--javlo-flash-color: #E70A5A;
-	
 	--javlo-modal-maximize-border-multi: 6;
 
-	/* Fonts */
+	// Fonts
 	--bsicons: "bootstrap-icons";
 	--systemfonts: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Oxygen, Cantarell, sans-serif;
 
@@ -93,6 +107,7 @@ body#main-body,
 }
 
 @media (max-width: 1440px) {
+
 	#preview_command,
 	body#main-body,
 	:root {
@@ -101,6 +116,7 @@ body#main-body,
 }
 
 @media (max-width: 1000px) {
+
 	#preview_command,
 	body#main-body,
 	:root {
