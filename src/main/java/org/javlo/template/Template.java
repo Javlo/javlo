@@ -1596,7 +1596,7 @@ public class Template implements Comparable<Template> {
 			File HTMLFile = new File(URLHelper.mergePath(getTemplateTargetFolder(ctx.getGlobalContext()), getHTMLFile(ctx.getDevice())));
 			
 			String html = ResourceHelper.getFileContent(HTMLFile);
-			Collection<String> links = XHTMLHelper.extractLinks(html, true);
+			Collection<String> links = XHTMLHelper.extractUnsedLinks(html, true);
 			List<String> outHosts = new LinkedList<>();
 			for (String link : links) {
 				String host = StringHelper.extractHostAndProtocol(link);

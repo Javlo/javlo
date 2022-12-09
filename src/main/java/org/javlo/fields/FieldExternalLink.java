@@ -3,7 +3,6 @@ package org.javlo.fields;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Date;
-import java.util.Locale;
 import java.util.logging.Logger;
 
 import org.javlo.component.core.ILink;
@@ -29,10 +28,14 @@ public class FieldExternalLink extends MetaField implements ILink {
 		@Override
 		public String getUrl() {
 			try {
-				return URLHelper.convertLink(ctx, getCurrentLink());
+				String url = getCurrentLink();
+				System.out.println(">>>>>>>>> FieldExternalLink.ExternalLinkBean.getUrl : 1 = "+url); //TODO: remove debug trace
+				url = URLHelper.convertLink(ctx, url);
+				System.out.println(">>>>>>>>> FieldExternalLink.ExternalLinkBean.getUrl : 2 = "+url); //TODO: remove debug trace
+				return url;
 			} catch (Exception e) {
 				e.printStackTrace();
-				return "error:"+e.getMessage();				
+				return "error:"+e.getMessage();
 			}
 		}
 
@@ -211,7 +214,7 @@ public class FieldExternalLink extends MetaField implements ILink {
 	@Override
 	public boolean isPublished(ContentContext ctx) {
 		String link = getCurrentLink().trim();
-		if (link.startsWith("/")) { // relative link
+		if (link.startsWith("/") && !link.startsWith("//")) { // relative link
 			try {
 				link = XHTMLHelper.replaceJSTLData(ctx, link);
 				MenuElement page = ContentService.getInstance(GlobalContext.getInstance(ctx.getRequest())).getNavigation(ctx).searchRealChild(ctx, link);

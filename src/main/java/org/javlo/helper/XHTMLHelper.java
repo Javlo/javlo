@@ -2379,7 +2379,7 @@ public class XHTMLHelper {
 	public static void main(String[] args) throws MalformedURLException, Exception {
 		String html = NetHelper.readPage(new URL("https://penthouse.com/"));
 		
-		Collection<String> links = extractLinks(html, true);
+		Collection<String> links = extractUnsedLinks(html, true);
 		for (String link : links) {
 			System.out.println("link = "+URLHelper.extractHost(link));
 		}
@@ -2548,13 +2548,13 @@ public class XHTMLHelper {
 
 	}
 	
-	public static List<String> extractLinks (String html, boolean absolute) {
+	public static List<String> extractUnsedLinks (String html, boolean absolute) {
 		
 		List<String> outLinks = new LinkedList<>();
 		
 		Document doc = Jsoup.parse(html, "UTF-8");
 
-		Elements hrefs = doc.select("[href]");
+		Elements hrefs = doc.select("link[href]");
 		Elements srcs = doc.select("[src]");
 		
 		for (int i = 0; i < hrefs.size(); i++) {
