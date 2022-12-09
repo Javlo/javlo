@@ -933,3 +933,7 @@ Security in case of vulnerabilities.
   - new preview interface
 ### fixed
 ## [2.1.5.0] - 28/11/2022
+### Added
+  - detect host in html (template) for set preconnect in http head
+### Modified
+### fixed
