@@ -15,7 +15,29 @@ body#main-body,
 	--javlo-main-separator: 16px;
 	--javlo-menu-height: 40px;
 	--javlo-sidebar-width: 330px;
-
+	
+	/// colors schema
+	
+	--javlo-ui-color-bg-primary: #ccc;
+	--javlo-ui-color-bg-secondary: #ddd;
+	--javlo-ui-color-bg-active: #ddd;
+	--javlo-ui-color-bg-unactive: #767676;
+	
+	--javlo-ui-color-text-primary: #fff;
+	--javlo-ui-color-text-link: #ddd;
+	--javlo-ui-color-text-disabled: rgba(0,0,0,.2);
+	
+	--javlo-ui-color-focus: red;
+	--javlo-ui-color-border: #999;
+	
+	--javlo-ui-color-btn-border: #555;
+	--javlo-ui-color-btn-text: #555;
+	--javlo-ui-color-btn-border-active: #000;
+	--javlo-ui-color-btn-bg: #555;
+	--javlo-ui-color-btn-bg-active: #555;
+	--javlo-ui-color-btn-text-active: #555;
+	
+	/// END colors schema
 
 	/* GRIS Du plus clair au plus foncé */
 	--javlo-ui-color: 0, 0%;
