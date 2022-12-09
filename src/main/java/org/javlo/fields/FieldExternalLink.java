@@ -29,9 +29,7 @@ public class FieldExternalLink extends MetaField implements ILink {
 		public String getUrl() {
 			try {
 				String url = getCurrentLink();
-				System.out.println(">>>>>>>>> FieldExternalLink.ExternalLinkBean.getUrl : 1 = "+url); //TODO: remove debug trace
 				url = URLHelper.convertLink(ctx, url);
-				System.out.println(">>>>>>>>> FieldExternalLink.ExternalLinkBean.getUrl : 2 = "+url); //TODO: remove debug trace
 				return url;
 			} catch (Exception e) {
 				e.printStackTrace();
