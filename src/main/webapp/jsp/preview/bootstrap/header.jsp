@@ -33,20 +33,185 @@ if (!rightOnPage) {
 <c:if test="${logged || !globalContext.staticConfig.addButton}">
 	<c:if test="${!userInterface.minimalInterface}">
 		<div class="header">
-			<div class="logo">
-				<c:if test="${not empty editUser && !globalContext.mailingPlatform && !userInterface.minimalInterface}">
-					<c:url var="url" value="<%=URLHelper.createURL(editCtx)%>" context="/">
-						<c:param name="module" value="admin"></c:param>
-						<c:param name="previewEdit" value="true"></c:param>
-					</c:url>
-				</c:if>
-				<a class="name" target="_blank" href="<%=URLHelper.createViewURL(ctx.getPath(), ctx)%>">Javlo</a>
-				<img class="ajax-loading" src="${info.ajaxLoaderURL}" alt="loading..." lang="en" />
-				<c:if test="${!userInterface.light}">
-					<a class="settings" href="#" onclick="editPreview.openModal('${i18n.edit['preview.label.properties']}','${url}'); return false;"> <i class="bi bi-gear"></i></a>
-				</c:if>
+			<div class="bloc-start">
+				<div class="top-sidebar">
+					<c:if test="${not empty editUser && !globalContext.mailingPlatform && !userInterface.minimalInterface}">
+						<c:url var="url" value="<%=URLHelper.createURL(editCtx)%>" context="/">
+							<c:param name="module" value="admin"></c:param>
+							<c:param name="previewEdit" value="true"></c:param>
+						</c:url>
+					</c:if>
+					<a class="name" target="_blank" href="<%=URLHelper.createViewURL(ctx.getPath(), ctx)%>">Javlo</a>
+					<img class="ajax-loading" src="${info.ajaxLoaderURL}" alt="loading..." lang="en" />
+					<c:if test="${!userInterface.light}">
+						<a class="settings" href="#" onclick="editPreview.openModal('${i18n.edit['preview.label.properties']}','${url}'); return false;"> <i class="bi bi-gear"></i></a>
+					</c:if>
+
+					<ul>
+						<li class="page-title"><a href="#" class="page" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;">${not empty info.page.pageTitle?info.page.pageTitle:info.page.name}</a> <a href="#" class="template" onclick="editPreview.openModal('Template', '${info.currentEditURL}?module=template&webaction=template.changeFromPreview&previewEdit=true');"> ${info.currentPage.templateId == null?'<i class="bi bi-file-earmark-arrow-down"></i>':'<i class="bi bi-file-earmark-code"></i>'} ${info.page.template} </a></li>
+						<li class="page-shortcut">
+							<%-- 									<span><i class="bi bi-gear" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;"></i></span> --%>
+							<div class="btn btn-integrity alert-${integrities.levelLabel} btn-notext" data-toggle="_eprv_collapse" data-target="#integrity-list" href="#integrity-list" aria-expanded="false" aria-controls="integrity-list">
+								<c:if test="${integrities.levelLabel != 'success'}">
+									<i class="bi bi-exclamation-triangle-fill"></i>
+								</c:if>
+								<c:if test="${integrities.levelLabel == 'success'}">
+									<i class="bi bi-check-circle-fill"></i>
+								</c:if>
+								<div class="integrity-message collapse${integrities.error && contentContext.previewEdit?' in':''}" id="integrity-list">
+									<ul class="list-group">
+										<c:forEach var="checker" items="${integrities.checker}">
+											<c:if test="${checker.errorCount>0}">
+												<li class="list-group-item list-group-item-${checker.levelLabel}"><span class="badge">${checker.errorCount}</span>${checker.errorMessage}</li>
+											</c:if>
+										</c:forEach>
+									</ul>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+
+				<div class="page-actions">
+					<ul>
+						<c:if test="${!logged}">
+							<li>
+								<form id="pc_form" method="post" action="<%=URLHelper.createURL(editCtx)%>">
+									<div class="pc_line">
+										<c:if test='${!editPreview}'>
+											<button class="btn btn-default btn-sm btn-login" type="submit">
+												<span class="glyphicon glyphicon-user" aria-hidden="true"></span>${i18n.edit['global.login']}</button>
+										</c:if>
+										<input type="hidden" name="backPreview" value="true" />
+									</div>
+								</form>
+							</li>
+						</c:if>
+						<c:if test="${logged}">
+							<c:if test="${!globalContext.previewMode && !contentContext.asTimeMode}">
+								<li>
+									<div class="link-wrapper">
+										<a class="btn btn-default btn-sm btn-mode btn-wait-loading" href="${info.currentViewURLWidthDevice}" target="_blank"><i class="bi bi-eye-fill"></i> ${i18n.edit['preview.label.not-edit-page']}</a>
+									</div>
+								</li>
+							</c:if>
+
+							<c:if test="${pdf}">
+								<li><c:url var="lowPDFURL" value="${info.currentPDFURL}" context="/">
+										<c:param name="lowdef" value="true" />
+									</c:url>
+									<form id="export_pdf_page_form" action="${info.currentPDFURL}" method="post" target="_blanck">
+										<div class="btn-group" role="group">
+											<button class="btn btn-default btn-sm btn-pdf btn-color btn-wait-loading" id="export_pdf_button" type="submit" value="${i18n.edit['preview.label.pdf']}">
+												<span class="glyphicon glyphicon-open-file" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.pdf']}</span>
+											</button>
+											<a href="${lowPDFURL}" class="btn btn-default btn-sm btn-pdf btn-color btn-wait-loading" id="export_pdf_button" type="submit" target="_blank"><span class="glyphicon glyphicon-leaf" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.pdf.low']}</span></a>
+										</div>
+									</form></li>
+							</c:if>
+
+							<c:if test="${globalContext.previewMode}">
+								<c:set var="webaction" value="edit.publish" />
+								<c:set var="label" value="${i18n.edit['command.publish']}" />
+								<c:if test="${info.page.flowIndex==1}">
+									<c:set var="webaction" value="edit.needValidation" />
+									<c:set var="label" value="${i18n.edit['command.need-validation']}" />
+								</c:if>
+								<c:if test="${info.page.flowIndex==2}">
+									<c:if test="${info.page.validable}">
+										<c:set var="webaction" value="edit.validate" />
+										<c:set var="label" value="${i18n.edit['flow.validate']}" />
+									</c:if>
+									<c:if test="${!info.page.validable}">
+										<c:set var="webaction" value="" />
+										<c:set var="label" value="${i18n.edit['flow.wait-validation']}" />
+									</c:if>
+								</c:if>
+								<c:if test="${not empty param.button_publish and empty param.previewEdit and info.page.flowIndex>2}">
+									<a class="action-button publish ajax" href="${info.currentURL}?webaction=publish&render-mode=1"><span>${i18n.edit['command.publish']}</span></a>
+								</c:if>
+
+								<c:url var="urlPageProperties" value="<%=URLHelper.createURL(editCtx)%>" context="/">
+									<c:param name="module" value="content" />
+									<c:param name="webaction" value="changeMode" />
+									<c:param name="mode" value="3" />
+									<c:param name="previewEdit" value="true" />
+								</c:url>
+
+								<%
+								if (rightOnPage) {
+								%>
+
+								<li class="btn-group">
+									<form id="add_copy_page" action="${info.currentURL}" method="post">
+										<div class="pc_line">
+											<input type="hidden" name="webaction" value="edit.copypage" />
+											<button class="btn btn-default btn-sm btn-copy" type="submit" title="${i18n.edit['preview.label.copy-page']}">
+												<i class="bi bi-clipboard-plus"></i>
+											</button>
+										</div>
+									</form>
+
+									<form id="add_paste_page" action="${info.currentURL}" method="post" class="${empty info.contextForCopy || !info.page.pageLocalEmpty || info.page.childrenAssociation?'disabled':''}">
+										<div class="pc_line">
+											<c:if test="${!(empty info.contextForCopy || !info.page.pageLocalEmpty || info.page.childrenAssociation)}">
+												<input type="hidden" name="webaction" value="edit.pastepage" />
+												<button class="action btn btn-paste" type="submit" title="${i18n.edit['preview.label.paste-page']}">
+													<i class="bi bi-box-arrow-in-down"></i>
+												</button>
+											</c:if>
+											<c:if test="${empty info.contextForCopy || !info.page.pageLocalEmpty || info.page.childrenAssociation}">
+												<button class="btn btn-default btn-paste" id="pc_paste_page" type="submit">
+													<i class="bi bi-box-arrow-in-down"></i>
+												</button>
+											</c:if>
+										</div>
+									</form>
+								</li>
+
+								<li id="_jv_clipboard" class="clipboard ${not empty clipboard.copied || not empty editInfo.copiedPage?'':'disabled'}" title="${i18n.edit['global.clipboard']}"><c:url var="url" value="${info.currentURL}" context="/">
+										<c:param name="webaction" value="edit.clearClipboard" />
+									</c:url> <span class="title btn"> <i class="bi bi-clipboard"></i>
+								</span> <c:if test="${not empty clipboard.copied || not empty editInfo.copiedPage}">
+										<div class="cb-component-list">
+											<c:if test="${not empty clipboard.copied}">
+												<div class="cb-component" data-type="clipboard" data-deletable="true">
+													<div class="wrapper-in">
+														<div class="figure">
+															<i class="${clipboard.icon}"></i>
+														</div>
+														<span>${clipboard.label}</span>
+														<div class="category">(${i18n.edit['global.clipboard']})</div>
+														<a href="${url}" class="ajax close"><i class="bi bi-x"></i></a>
+													</div>
+												</div>
+											</c:if>
+											<c:if test="${not empty editInfo.copiedPage}">
+												<div class="cb-component page" data-type="clipboard-page" data-deletable="true">
+													<div class="wrapper-in" title="${editInfo.copiedPage}">
+														<div class="figure">
+															<i class="bi bi-file-richtext"></i>
+														</div>
+														<span>${editInfo.copiedPage}</span>
+														<div class="category">(page)</div>
+														<a href="${url}" class="ajax close"><i class="bi bi-x"></i></a>
+													</div>
+												</div>
+											</c:if>
+										</div>
+									</c:if></li>
+
+								<%
+								}
+								%>
+
+							</c:if>
+						</c:if>
+					</ul>
+				</div>
 
 			</div>
+
 			<div class="menu">
 				<c:if test="${globalContext.previewMode && !contentContext.asTimeMode}">
 					<form id="pc_form" action="${info.currentURL}" method="post">
@@ -65,147 +230,8 @@ if (!rightOnPage) {
 				</c:if>
 			</div>
 
-			<div class="page-actions">
-				<ul>
-					<c:if test="${!logged}">
-						<li>
-							<form id="pc_form" method="post" action="<%=URLHelper.createURL(editCtx)%>">
-								<div class="pc_line">
-									<c:if test='${!editPreview}'>
-										<button class="btn btn-default btn-sm btn-login" type="submit">
-											<span class="glyphicon glyphicon-user" aria-hidden="true"></span>${i18n.edit['global.login']}</button>
-									</c:if>
-									<input type="hidden" name="backPreview" value="true" />
-								</div>
-							</form>
-						</li>
-					</c:if>
-					<c:if test="${logged}">
-						<c:if test="${!globalContext.previewMode && !contentContext.asTimeMode}">
-							<li>
-								<div class="link-wrapper">
-									<a class="btn btn-default btn-sm btn-mode btn-wait-loading" href="${info.currentViewURLWidthDevice}" target="_blank"><i class="bi bi-eye-fill"></i> ${i18n.edit['preview.label.not-edit-page']}</a>
-								</div>
-							</li>
-						</c:if>
 
-						<c:if test="${pdf}">
-							<li><c:url var="lowPDFURL" value="${info.currentPDFURL}" context="/">
-									<c:param name="lowdef" value="true" />
-								</c:url>
-								<form id="export_pdf_page_form" action="${info.currentPDFURL}" method="post" target="_blanck">
-									<div class="btn-group" role="group">
-										<button class="btn btn-default btn-sm btn-pdf btn-color btn-wait-loading" id="export_pdf_button" type="submit" value="${i18n.edit['preview.label.pdf']}">
-											<span class="glyphicon glyphicon-open-file" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.pdf']}</span>
-										</button>
-										<a href="${lowPDFURL}" class="btn btn-default btn-sm btn-pdf btn-color btn-wait-loading" id="export_pdf_button" type="submit" target="_blank"><span class="glyphicon glyphicon-leaf" aria-hidden="true"></span><span class="text">${i18n.edit['preview.label.pdf.low']}</span></a>
-									</div>
-								</form></li>
-						</c:if>
 
-						<c:if test="${globalContext.previewMode}">
-							<c:set var="webaction" value="edit.publish" />
-							<c:set var="label" value="${i18n.edit['command.publish']}" />
-							<c:if test="${info.page.flowIndex==1}">
-								<c:set var="webaction" value="edit.needValidation" />
-								<c:set var="label" value="${i18n.edit['command.need-validation']}" />
-							</c:if>
-							<c:if test="${info.page.flowIndex==2}">
-								<c:if test="${info.page.validable}">
-									<c:set var="webaction" value="edit.validate" />
-									<c:set var="label" value="${i18n.edit['flow.validate']}" />
-								</c:if>
-								<c:if test="${!info.page.validable}">
-									<c:set var="webaction" value="" />
-									<c:set var="label" value="${i18n.edit['flow.wait-validation']}" />
-								</c:if>
-							</c:if>
-							<c:if test="${not empty param.button_publish and empty param.previewEdit and info.page.flowIndex>2}">
-								<a class="action-button publish ajax" href="${info.currentURL}?webaction=publish&render-mode=1"><span>${i18n.edit['command.publish']}</span></a>
-							</c:if>
-
-							<c:url var="urlPageProperties" value="<%=URLHelper.createURL(editCtx)%>" context="/">
-								<c:param name="module" value="content" />
-								<c:param name="webaction" value="changeMode" />
-								<c:param name="mode" value="3" />
-								<c:param name="previewEdit" value="true" />
-							</c:url>
-							<li class="page-title">
-							<a href="#" class="page" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;">${not empty info.page.pageTitle?info.page.pageTitle:info.page.name}</a>
-							<a href="#" class="template" onclick="editPreview.openModal('Template', '${info.currentEditURL}?module=template&webaction=template.changeFromPreview&previewEdit=true');"> ${info.currentPage.templateId == null?'<i class="bi bi-file-earmark-arrow-down"></i>':'<i class="bi bi-file-earmark-code"></i>'} ${info.page.template} </a>
-							</li>
-
-							<%
-							if (rightOnPage) {
-							%>
-
-							<li class="btn-group">
-								<form id="add_copy_page" action="${info.currentURL}" method="post">
-									<div class="pc_line">
-										<input type="hidden" name="webaction" value="edit.copypage" />
-										<button class="btn btn-default btn-sm btn-copy" type="submit" title="${i18n.edit['preview.label.copy-page']}">
-											<i class="bi bi-clipboard-plus"></i>
-										</button>
-									</div>
-								</form>
-
-								<form id="add_paste_page" action="${info.currentURL}" method="post" class="${empty info.contextForCopy || !info.page.pageLocalEmpty || info.page.childrenAssociation?'disabled':''}">
-									<div class="pc_line">
-										<c:if test="${!(empty info.contextForCopy || !info.page.pageLocalEmpty || info.page.childrenAssociation)}">
-											<input type="hidden" name="webaction" value="edit.pastepage" />
-											<button class="action btn btn-paste" type="submit" title="${i18n.edit['preview.label.paste-page']}">
-												<i class="bi bi-box-arrow-in-down"></i>
-											</button>
-										</c:if>
-										<c:if test="${empty info.contextForCopy || !info.page.pageLocalEmpty || info.page.childrenAssociation}">
-											<button class="btn btn-default btn-paste" id="pc_paste_page" type="submit">
-												<i class="bi bi-box-arrow-in-down"></i>
-											</button>
-										</c:if>
-									</div>
-								</form>
-							</li>
-
-							<li id="_jv_clipboard" class="clipboard ${not empty clipboard.copied || not empty editInfo.copiedPage?'':'disabled'}" title="${i18n.edit['global.clipboard']}"><c:url var="url" value="${info.currentURL}" context="/">
-									<c:param name="webaction" value="edit.clearClipboard" />
-								</c:url> <span class="title btn"> <i class="bi bi-clipboard"></i>
-							</span> <c:if test="${not empty clipboard.copied || not empty editInfo.copiedPage}">
-									<div class="cb-component-list">
-										<c:if test="${not empty clipboard.copied}">
-											<div class="cb-component" data-type="clipboard" data-deletable="true">
-												<div class="wrapper-in">
-													<div class="figure">
-														<i class="${clipboard.icon}"></i>
-													</div>
-													<span>${clipboard.label}</span>
-													<div class="category">(${i18n.edit['global.clipboard']})</div>
-													<a href="${url}" class="ajax close"><i class="bi bi-x"></i></a>
-												</div>
-											</div>
-										</c:if>
-										<c:if test="${not empty editInfo.copiedPage}">
-											<div class="cb-component page" data-type="clipboard-page" data-deletable="true">
-												<div class="wrapper-in" title="${editInfo.copiedPage}">
-													<div class="figure">
-														<i class="bi bi-file-richtext"></i>
-													</div>
-													<span>${editInfo.copiedPage}</span>
-													<div class="category">(page)</div>
-													<a href="${url}" class="ajax close"><i class="bi bi-x"></i></a>
-												</div>
-											</div>
-										</c:if>
-									</div>
-								</c:if></li>
-
-							<%
-							}
-							%>
-
-						</c:if>
-					</c:if>
-				</ul>
-			</div>
 			<div class="users">
 
 				<li class="publish"><form id="pc_publish_form" action="${info.currentURL}" method="post">

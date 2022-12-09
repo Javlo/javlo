@@ -96,31 +96,6 @@ body #preview_command .component-list .component .wrapper-in {
 		color: var(--javlo-ui-color-8);
 	}
 
-	.integrity-message {
-		position: absolute;
-		top: 30px;
-		left: -270px;
-		width: 280px;
-		z-index: 10;
-
-		.list-group {
-			background-color: var(--javlo-ui-bg-primary);
-			border-radius: 0;
-			margin: 0;
-			padding: 0;
-
-			li {
-				margin: 0 0 -1px 0 !important;
-			}
-		}
-
-		.badge {
-			line-height: normal !important;
-			font-size: .8rem;
-		}
-	}
-
-
 	.pages ul li.page-item.selected .btn-integrity {
 		display: inline-block;
 		padding: 0;
