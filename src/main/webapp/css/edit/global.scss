@@ -29,9 +29,15 @@ label, legend, .label, h1, h2, h3 {
 	background: var(--javlo-ui-bg-secondary);
 	border: 1px var(--javlo-ui-nav-btn-border) solid;
 	color: var(--javlo-ui-color-5);
+	padding: 4px;
+	font-size: 12px;
 	&:hover{
 		color: #fff;
 		background: var(--javlo-ui-nav-btn-bg-selected);		
+	}
+	&.active {
+		background-color: var(--javlo-ui-btn-toggle-bg-active) !important;
+		color: white !important;
 	}
 }
 
@@ -122,23 +128,6 @@ input {
 	display: flex;
 	justify-content: flex-end;
 	padding: 0;
-	button, input {
-		border: 1px solid rgba(24, 28, 33, 0.3);
-		border-radius: .25rem;
-		align-items: center;
-		background-color: #fff;
-		padding: 6px;
-		margin: 0 0 0 .5rem;
-		&:hover {
-			border: 1px solid rgba(24, 28, 33, 0.8);
-		}
-		i {
-			margin-right: .25em
-		}
-		span {
-			line-height: normal;
-		}
-	}
 }
 
 .bloc-info, .bloc-default {
@@ -227,7 +216,7 @@ input {
 		}
 		.image.select {
 			border-color: var(--action-color);
-			box-shadow: 0 0.5rem var(--main-sep) rgba(0, 0, 0, 0.175);
+			box-shadow: 0 0 0px 3px var(--javlo-ui-btn-toggle-bg-active);
 		}
 	}
 }

@@ -62,6 +62,13 @@ html.preview-only.preview-standard.preview-command-visible {
 			width: calc(var(--javlo-sidebar-width) - var(--javlo-main-separator));
 		}
 	}
+	
+	.btn {
+		&.active {
+			background-color: var(--javlo-ui-btn-toggle-bg-active) !important;
+			color: white !important;
+		}
+	}
 }
 
 #preview_command .sidebar ._jv_full_height_bottom::-webkit-scrollbar {
