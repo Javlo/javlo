@@ -444,9 +444,11 @@ div#preview_command {
 		opacity: .9;
 		
 		h4 {
+			padding: 6px 0;
 			display: flex;
 			margin-left: 1rem;
 			font-size: 11px;
+			flex-grow: 2;
 			.layer-cols {
 				margin-left: .5rem;
 			}

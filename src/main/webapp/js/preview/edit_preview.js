@@ -161,7 +161,7 @@ function onreadyPreview() {
 		}
 		return true;
 	});
-	jQuery("#preview-layer .main").click(
+	jQuery("#preview-layer").click(
 			function() {						
 				layerOver(null);
 				jQuery(this).data("subItem").trigger("click",

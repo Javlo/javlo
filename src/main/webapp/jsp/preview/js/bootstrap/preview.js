@@ -437,8 +437,14 @@ if (!String.prototype.startsWith) {
 				editPreview.layerOver(null);
 			});
 			pjq("#preview-layer").hide();
-			pjq("#preview-layer .main").on('click', function(event) {
-				var compId = pjq(this.parentElement).data("comp").attr("id").substring(3);
+			let editLayerAction = function(event) {
+				
+				let layer = this.parentElement;
+				while (layer.id != 'preview-layer') {
+					layer = layer.parentElement;
+				}
+				console.log(layer);
+				var compId = pjq(layer).data("comp").attr("id").substring(3);
 				var editURL = editPreviewURL + "&comp_id=" + compId;
 				var url = location.href, idx = url.indexOf("#")
 				var hash = idx != -1 ? url.substring(idx + 1) : "";
@@ -446,7 +452,10 @@ if (!String.prototype.startsWith) {
 					editURL = editURL + "&forward_anchor=" + hash;
 				}
 				editPreview.openModal(i18n_preview_edit, editURL);
-			});
+			};
+			pjq("#preview-layer .main").on('click', editLayerAction);
+			pjq("#preview-layer h4").on('click', editLayerAction);
+			pjq("#preview-layer .area-name").on('click', editLayerAction);
 			pjq('#preview-layer .btn-delete').on('click', function(e) {
 				editPreview.layerOver(null);
 				var subComp = pjq(this).parent().parent().parent().data("comp");
