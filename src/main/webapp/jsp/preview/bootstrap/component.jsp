@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 </script>
 </c:if>
  <c:if test="${globalContext.componentsFiltered}">
-<div class="btn-group btn-group-justified components-group" role="group">
+<div class="btn-group components-group" role="group">
   <div class="btn-group" role="group"> 	
   <button type="button" class="btn btn-default btn-xs active btn-1" role="group" onclick="displayComplexity(1);">${i18n.edit['preview.component-group.basic']}</button>
   </div><div class="btn-group btn-group-sm" role="group">

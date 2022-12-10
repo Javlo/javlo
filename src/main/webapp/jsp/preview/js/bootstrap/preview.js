@@ -479,7 +479,10 @@ if (!String.prototype.startsWith) {
 				if (editPreview.searchPageId(subComp) != null) {
 					ajaxURL = ajaxURL + '&pageCompID=' + editPreview.searchPageId(subComp);
 				}
-				editPreview.ajaxPreviewRequest(ajaxURL, function() { editPreview.layerOver(null); editPreview.heightToBottom(pjq(".height-to-bottom")); }, null);
+				editPreview.ajaxPreviewRequest(ajaxURL, function() {
+					editPreview.layerOver(null);
+					editPreview.heightToBottom(pjq(".height-to-bottom"));
+				}, null);
 				return false;
 			});
 

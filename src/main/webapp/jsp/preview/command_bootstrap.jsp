@@ -117,10 +117,21 @@ if (StringHelper.isTrue(request.getParameter("preview-command"), true) && !ctx.i
 							<c:set var="tabActive" value="${param._preview_tab}" />
 							<c:if test="${not empty tabActive}">
 								<script type="text/javascript">
-									pjq(".nav-tabs a[href='#${tabActive}']")
-											.tab("show");
+									pjq(".nav-tabs a[href='#${tabActive}']").tab("show");
 								</script>
 							</c:if>
+							<c:if test="${empty tabActive}">
+								<script type="text/javascript">
+									var activeTab = editPreview.readCookie("preview_tab");
+									if (activeTab != null) {
+										var tab = pjq(".nav-tabs a[href='" + activeTab + "']");
+										if (!tab.parent().hasClass("disabled")) {
+											tab.tab("show");
+										}
+								}
+								</script>
+							</c:if>
+							
 						</div>
 					</c:if>
 				</div>

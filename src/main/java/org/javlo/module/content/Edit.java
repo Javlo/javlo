@@ -2096,7 +2096,7 @@ public class Edit extends AbstractModuleAction {
 		}
 
 		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
-			updatePreviewCommands(ctx, "_ep_content");
+			updatePreviewCommands(ctx, null);
 		}
 
 		return null;

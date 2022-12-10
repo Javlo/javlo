@@ -19,6 +19,24 @@ body #preview_command .component-list .component .wrapper-in .text {
 // 	width: 100% !important;
 // }
 
+#preview_command .components-group {
+	width: 100%;
+	display: flex !important;
+	align-content: stretch;
+	align-items: stretch;
+	flex-wrap: wrap;
+	.btn-group {
+		width: auto;
+		flex-grow: 1;
+		max-width: 100%;
+		.btn {
+			display: block;
+			float: none;
+			width: 100%;
+		}
+	}
+}
+
 
 #preview_command .component .figure {
 	background-color: transparent !important;
@@ -292,15 +310,6 @@ body.edit-preview .editable-component {
 	padding-left: 15px;
 	border-left: 15px var(--javlo-flash-color) solid;
 	font-size: 13px;
-}
-
-body.edition-mode-light,
-body.edition-mode-dark {
-	#preview_command {
-		.components-group {
-			display: table;
-		}
-	}
 }
 
 body #preview_command {
