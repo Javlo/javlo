@@ -35,8 +35,6 @@
 	}
 }
 
-
-
 #preview_command {
 	.header {
 		min-width: 980px;
@@ -62,8 +60,6 @@
 		}
 	}
 }
-
-
 
 #preview_command .header .users li:not(:last-child) {
 	border-right: 1px solid var(--javlo-ui-btn-separator) !important;
@@ -377,11 +373,13 @@
 	}
 
 	.btn:hover {
-		background-color: var(--javlo-ui-color-8) !important;
+		background-color: #ffffff !important;
 		color: white !important;
+		border-color: var(--javlo-ui-color-6) !important;
+		color: var(--javlo-ui-color-6) !important;
 
 		.label {
-			color: white !important;
+			color: var(--javlo-ui-color-6) !important;
 		}
 	}
 
