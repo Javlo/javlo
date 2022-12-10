@@ -61,11 +61,11 @@ body._jv_modal-open {
 		left: -9999px;
 	}
 	input:checked + label {
-		background-color: var(--javlo-primary-bg);
+		background-color: var(--javlo-ui-btn-toggle-bg-active);
 		color: #fff;
 	}
 	input:checked + label, label:hover {
-		color: (--javlo-primary-bg);
+		color: (--javlo-ui-btn-toggle-bg-active);
 	}
 	label {
 	    display: inline-block;
