@@ -936,5 +936,6 @@ Security in case of vulnerabilities.
 ### Added
   - detect host in html (template) for set preconnect in http head
 ### Modified
+  - detect less and scss modification on all files
 ### fixed
   - link without scheme usable in field external link
