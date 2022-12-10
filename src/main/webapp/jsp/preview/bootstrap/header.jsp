@@ -42,7 +42,7 @@ if (!rightOnPage) {
 						</c:url>
 					</c:if>
 					<a class="name btn-toggle _jv_collapse-container" href="#" data-jv-toggle="collapse" data-jv-target="#admin-list">Javlo</a>
-					<div id="admin-list" class="_jv_collapse-target"><jsp:include page="admin_menu.jsp" /></div>
+					<div id="admin-list" class="_jv_collapse-target _jv_hidden"><jsp:include page="admin_menu.jsp" /></div>
 					<img class="ajax-loading" src="${info.ajaxLoaderURL}" alt="loading..." lang="en" />
 					<c:if test="${!userInterface.light}">
 						<a class="settings" href="#" onclick="editPreview.openModal('${i18n.edit['preview.label.properties']}','${url}'); return false;"> <i class="bi bi-gear"></i></a>
@@ -328,14 +328,14 @@ if (!rightOnPage) {
 						<button class="btn btn-default btn-toggle _jv_collapse-container" data-jv-toggle="collapse" data-jv-target="#macro-list">
 							<i class="bi bi-tools"></i>
 						</button>
-						<div id="macro-list" class="_jv_collapse-target">
+						<div id="macro-list" class="_jv_collapse-target _jv_hidden">
 							<jsp:include page="macro.jsp" />
 						</div>
 					</li>
 					<li class="user _jv_collapse-container"><button class=" btn btn-user btn-toggle" data-jv-target="#_jv_user-collapse" data-jv-toggle="collapse">
 							<i class="bi bi-person-circle"></i>
 						</button>
-						<div id="_jv_user-collapse" class="user-collapse _jv_collapse-target _jv_menu">
+						<div id="_jv_user-collapse" class="user-collapse _jv_collapse-target _jv_menu _jv_hidden">
 							<a href="${info.currentEditURL}?module=users&webaction=user.changeMode&mode=myself&previewEdit=true" class="as-modal btn btn-default btn-user">
 								<div class="button-group-addon">
 									<i class="bi bi-person"></i>

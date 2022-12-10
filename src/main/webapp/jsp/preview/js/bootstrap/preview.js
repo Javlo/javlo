@@ -425,20 +425,20 @@ if (!String.prototype.startsWith) {
 		/** ******************* */
 
 		if (pjq("#preview-layer").length == 0) {
-			pjq("body").append('<div id="preview-layer"><div class="commands btn-group btn-group-sm area-actions" role="group"><span class=\"btn area-name\"><span class="mirror glyphicon glyphicon-paste" aria-hidden="true"></span><i class="bi bi-layout-sidebar"></i><span id=\"area-name\"></span></span>' +
+			pjq("body").append('<div id="preview-layer"><div class="layer-header"><h4></h4><div class="repeat-icon"><i class="bi bi-repeat"></i></div><div class="commands btn-group btn-group-sm area-actions" role="group">'+
+				'<span class=\"area-name\"><span class="mirror glyphicon glyphicon-paste" aria-hidden="true"></span><i class="bi bi-layout-sidebar"></i><span id=\"area-name\"></span></span>' +
 				//'<button class="btn-edit btn btn-primary"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span><span class="text">edit</span></button>' +
 				'<button class="btn-copy btn btn-primary"><i class="bi bi-clipboard-plus"></i><span class="text">copy</span></button>' +
 				'<button class="btn-duplicate btn btn-primary"><i class="bi bi-files"></i><span class="text">duplicate</span></button>' +
 				'<button class="btn-delete btn btn-primary"><i class="bi bi-trash"></i><span class="text">delete</span></button>' +
-				'<div class="btn-off btn repeat-icon"><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span></div>' +
-				'</div><h4></h4><div class="main">&nbsp;</span></div>');
+				'</div></div><div class="main"><i class="bi bi-pencil-square"></i></span></div>');
 			pjq("#preview-layer").css("position", "absolute");
 			pjq("#preview-layer").on('mouseleave', function(event) {
 				editPreview.layerOver(null);
 			});
 			pjq("#preview-layer").hide();
-			pjq("#preview-layer").on('click', function(event) {
-				var compId = pjq(this).data("comp").attr("id").substring(3);
+			pjq("#preview-layer .main").on('click', function(event) {
+				var compId = pjq(this.parentElement).data("comp").attr("id").substring(3);
 				var editURL = editPreviewURL + "&comp_id=" + compId;
 				var url = location.href, idx = url.indexOf("#")
 				var hash = idx != -1 ? url.substring(idx + 1) : "";
@@ -449,7 +449,7 @@ if (!String.prototype.startsWith) {
 			});
 			pjq('#preview-layer .btn-delete').on('click', function(e) {
 				editPreview.layerOver(null);
-				var subComp = pjq(this).parent().parent().data("comp");
+				var subComp = pjq(this).parent().parent().parent().data("comp");
 				var area = editPreview.searchArea(subComp);
 				var compId = subComp.attr("id").substring(3);
 				var ajaxURL = editPreview.addParam(currentURL, "webaction=edit.delete&previewEdit=true&id=" + compId);
@@ -461,7 +461,7 @@ if (!String.prototype.startsWith) {
 			});
 			pjq('#preview-layer .btn-duplicate').on('click', function(e) {
 				editPreview.layerOver(null);
-				var subComp = pjq(this).parent().parent().data("comp");
+				var subComp = pjq(this).parent().parent().parent().data("comp");
 				var area = editPreview.searchArea(subComp);
 				var compId = subComp.attr("id").substring(3);
 				var ajaxURL = editPreview.addParam(currentURL, "webaction=edit.duplicate&previewEdit=true&id=" + compId);
@@ -473,7 +473,7 @@ if (!String.prototype.startsWith) {
 			});
 			pjq('#preview-layer .btn-copy').on('click', function(e) {
 				editPreview.layerOver(null);
-				var subComp = pjq(this).parent().parent().data("comp");
+				var subComp = pjq(this).parent().parent().parent().data("comp");
 				var compId = subComp.attr("id").substring(3);
 				var ajaxURL = editPreview.addParam(currentURL, "webaction=edit.copy&id=" + compId);
 				if (editPreview.searchPageId(subComp) != null) {
@@ -2584,7 +2584,20 @@ function jvFullHeightItem() {
 	});
 }
 
+var _jvOpenMenu = false;
+
 function initJvCollapse() {
+	
+	document.body.onclick = function() {
+		if (!_jvOpenMenu) {
+			document.querySelectorAll('._jv_collapse-target').forEach(menu => {
+				menu.classList.remove('_jv_show');
+				menu.classList.add('_jv_hidden');
+			});
+		}
+		_jvOpenMenu = false;
+	}
+	
 	document.querySelectorAll('[data-jv-toggle="collapse"]').forEach(i => {
 		let targetItem = document.querySelector(i.getAttribute("data-jv-target"));
 		if (targetItem == null) {
@@ -2592,6 +2605,7 @@ function initJvCollapse() {
 		}
 		targetItem.classList.add("_jv_hidden");
 		i.onclick = function(e) {
+			_jvOpenMenu = true;
 			document.querySelectorAll('[data-jv-toggle="collapse"]').forEach(i2 => {
 				let targetItem = document.querySelector(i2.getAttribute("data-jv-target"));
 				if (i2 !== i) {

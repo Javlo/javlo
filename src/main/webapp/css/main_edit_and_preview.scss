@@ -32,8 +32,9 @@ body#main-body,
 	--javlo-ui-secondary-accent-color-2: hsl(324, 100%, 71%);
 	--javlo-ui-secondary-accent-color-3: hsl(324, 100%, 51%); 
 	
-	--javlo-layer-color: var(--javlo-ui-secondary-accent-color-3);
-	--javlo-layer-color-bg: hsl(324, 100%, 51%, .2); 
+	--javlo-layer-color: hsl(209, 83%, 51%);;
+	--javlo-layer-color-bg:  hsl(209, 83%, 51%, .2);
+	--javlo-flash-color: hsl(324, 100%, 51%, 1);
 
 
 	/// colors schema

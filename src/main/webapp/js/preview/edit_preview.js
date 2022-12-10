@@ -161,7 +161,7 @@ function onreadyPreview() {
 		}
 		return true;
 	});
-	jQuery("#preview-layer").click(
+	jQuery("#preview-layer .main").click(
 			function() {						
 				layerOver(null);
 				jQuery(this).data("subItem").trigger("click",
@@ -520,7 +520,6 @@ initPreview = function() {
 						over : function(event, ui) {	
 							dragging = true;
 							var dropLayer = jQuery("#droppable-layer");
-							var layer = jQuery("#preview-layer");
 							var target = jQuery(this);
 							
 							if (!target.hasClass("free-edit-zone") && !target.hasClass("_empty_area")) {
@@ -559,7 +558,6 @@ initPreview = function() {
 		tolerance: "pointer",
 		start : function(event, ui) {
 			dragging = true;
-			var layer = jQuery("#preview-layer");
 			
 			/* stable scroll */
 			var height = jQuery("body").height();

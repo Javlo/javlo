@@ -2134,7 +2134,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 						// String debug = ""+getNextComponent().getColumnSize()+" <>
 						// "+getNextComponent().isColumnable(ctx)+" <> "+ctx.getColumnableSize();
 						if (isColumnable(ctx) && getColumnSize(ctx) >= 0) {
-							name = name + " <br /> <span class='glyphicon glyphicon-arrow-left'></span> " + (getColumnSize(ctx) == 0 ? "a" : getColumnSize(ctx)) + " <span class='glyphicon glyphicon-arrow-right'></span>";
+							name = name + " <div class='layer-cols'><i class='bi bi-arrow-left-short'></i></span> " + (getColumnSize(ctx) == 0 ? "a" : getColumnSize(ctx)) + " <i class='bi bi-arrow-right-short'></i></div>";
 							// if (debug != null) {
 							// name = name +" <br /> "+debug;
 							// }
