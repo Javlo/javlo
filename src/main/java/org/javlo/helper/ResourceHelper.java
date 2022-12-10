@@ -38,6 +38,7 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -513,6 +514,23 @@ public class ResourceHelper {
 			}
 		}
 		return res;
+	}
+	
+	public static long getLatestModificationFileOnFolder(File folder, String... exts) {
+		if (folder.isFile()) {
+			return folder.lastModified();
+		}
+		List<String> extsList = Arrays.asList(exts);
+		long latest = Long.MIN_VALUE;
+		for(File file : getAllFilesList(folder)) {
+			String ext = StringHelper.getFileExtension(file.getName()).toLowerCase();
+			if (extsList.size()==0 || extsList.contains(ext)) {
+				if (file.lastModified() > latest) {
+					latest = file.lastModified();
+				}
+			}
+		}
+		return latest;
 	}
 
 	private static void getAllResource(Collection<File> files, File currentDir) {

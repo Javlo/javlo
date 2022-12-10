@@ -209,13 +209,12 @@ a.action-button::first-letter,
 }
 #button-content-submit {
     min-width: 140px;
-	background-color: var(--blue-100);
-	border: 1px solid var(--blue-100);
-	color: white;
+	background: var(--javlo-ui-bg-secondary);
+	border: 1px var(--javlo-ui-nav-btn-border) solid;
+	color: var(--javlo-ui-color-5);
 	&:hover{
-		color: var(--blue-100);
-		border: 1px solid var(--blue-100);
-		background-color: white;
+		color: #fff;
+		background: var(--javlo-ui-nav-btn-bg-selected);		
 	}
 }
 .component{

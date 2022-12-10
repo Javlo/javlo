@@ -25,6 +25,25 @@ label, legend, .label, h1, h2, h3 {
 	opacity: .4;
 }
 
+.action-button, .btn, .action input[type="submit"] {
+	background: var(--javlo-ui-bg-secondary);
+	border: 1px var(--javlo-ui-nav-btn-border) solid;
+	color: var(--javlo-ui-color-5);
+	&:hover{
+		color: #fff;
+		background: var(--javlo-ui-nav-btn-bg-selected);		
+	}
+}
+
+.panel-heading {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	.btn {
+		margin: 0;
+	}
+}
+
 #tools {
 	border-radius: 3px;
 	overflow: hidden;

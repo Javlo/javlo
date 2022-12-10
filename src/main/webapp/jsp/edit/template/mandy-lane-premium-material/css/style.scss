@@ -902,7 +902,7 @@ h2.prize {
 	margin-left: 220px;
 	min-width: 1040px;
 	position: relative;
-	color: #333;
+	color: var(--javlo-ui-text);
 	background-color: $content-bg;
 	overflow: hidden;
 }
@@ -1026,7 +1026,7 @@ h2.prize {
 }
 
 .breadcrumbs span {
-	color: #666;
+	color: var(--javlo-ui-text);
 }
 
 .widgetlist {
@@ -1874,6 +1874,7 @@ table.dataTable thead .sorting_desc_disabled {
 }
 table.dataTable tbody tr {
   background-color: #ffffff;
+  color: #333;
 }
 table.dataTable tbody tr.selected {
   background-color: #B0BED9;
@@ -2084,8 +2085,9 @@ table.dataTable td {
 .dataTables_wrapper {
   position: relative;
   clear: both;
-  *zoom: 1;
-  zoom: 1;
+  label {
+  	color: var(--javlo-ui-text);
+  }
 }
 .dataTables_wrapper .dataTables_length {
   float: left;
@@ -2209,7 +2211,7 @@ table.dataTable td {
 .dataTables_wrapper .dataTables_info,
 .dataTables_wrapper .dataTables_processing,
 .dataTables_wrapper .dataTables_paginate {
-  color: #333;
+  color: var(--javlo-ui-text);
 }
 .dataTables_wrapper .dataTables_scroll {
   clear: both;

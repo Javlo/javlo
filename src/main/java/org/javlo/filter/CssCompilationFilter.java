@@ -50,15 +50,22 @@ public class CssCompilationFilter implements Filter {
 		if (!compileFile) {
 			if (!StaticConfig.getInstance(((HttpServletRequest) request).getSession().getServletContext()).isProd()) {
 				File lessFile = new File(cssFile.getAbsolutePath().substring(0, cssFile.getAbsolutePath().length() - 4) + ".less");
-				File sassFile = new File(cssFile.getAbsolutePath().substring(0, cssFile.getAbsolutePath().length() - 4) + ".scss");
-				if (lessFile.lastModified() > cssFile.lastModified()) {
-					compileFile = true;
-					cssFile.delete();
+				File sassFile = new File(cssFile.getAbsolutePath().substring(0, cssFile.getAbsolutePath().length() - 4) + ".scss"); 
+				
+				if (lessFile.exists() || sassFile.exists()) {
+				
+					long latest = ResourceHelper.getLatestModificationFileOnFolder(cssFile.getParentFile(), "scss", "less");
+					
+					if (latest > cssFile.lastModified()) {
+						compileFile = true;
+						cssFile.delete();
+					}
+				
 				}
-				if (sassFile.lastModified() > cssFile.lastModified()) {
-					compileFile = true;
-					cssFile.delete();
-				}
+//				if (latest > cssFile.lastModified()) {
+//					compileFile = true;
+//					cssFile.delete();
+//				}
 			}
 		}
 		if (compileFile) {

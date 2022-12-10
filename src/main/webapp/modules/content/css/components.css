@@ -177,6 +177,10 @@ body .component-wrapper {
 	height: 516px;	
 }
 
+.preview-image-wrapper .action {
+	justify-content: center;
+}
+
 .image label {	
 	float: left;
 	width: 160px;
