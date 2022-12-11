@@ -400,6 +400,8 @@
 		display: flex;
 		flex-direction: column;
 		align-items: flex-end;
+		
+		overflow: hidden;
 
 		span {
 			padding-top: 2px;
@@ -417,6 +419,11 @@
 
 		a {
 			color: var(--javlo-ui-text);
+			max-height: 1.2em;
+			max-width: 170px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
 		}
 
 		a.template {
