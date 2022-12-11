@@ -70,6 +70,15 @@ body #tools .btn-primary, .btn-primary  {
 	}
 }
 
+a {
+	color: #00B4CC;
+}
+
+h1 a {
+	color: var(--javlo-ui-text);
+}
+
+
 body fieldset {
 	border-radius: 0;
 	background-color: var(--javlo-ui-color-1);
