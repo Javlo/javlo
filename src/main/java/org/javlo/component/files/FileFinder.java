@@ -98,8 +98,8 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 										if (file.getFile().getCanonicalPath().startsWith(getRoot().getCanonicalPath())) {
 											if (getTaxonomy().size() > 0) {
 												StaticInfoBean staticInfoBean = new StaticInfoBean(ctx, file);
-												for (String taxo : staticInfoBean.getTaxonomy()) {
-													for (String thisTaxo : this.getTaxonomy()) {
+												for (String taxo : this.getTaxonomy()) {
+													for (String thisTaxo : staticInfoBean.getTaxonomy()) {
 														TaxonomyBean bean = taxonomyService.getTaxonomyBean(thisTaxo, true);
 														if (bean == null) {
 															logger.severe("bean not found : "+thisTaxo);
