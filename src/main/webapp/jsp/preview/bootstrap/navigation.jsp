@@ -13,9 +13,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 <div class="height-to-bottom">
 	<div class="pages web">
 
-		<ul class="navigation">
-			<c:set var="asTitle" value="false" />
-
+		<ul class="navigation"><c:set var="asTitle" value="false" />
 			<li class="nav-root parent title page-root page-item ${info.page.root?'selected':''}">
 				<div class="nav-item">
 					<a href="${info.rootURL}">${info.globalTitle} <i class="bi bi-arrow-90deg-up"></i></a>
@@ -57,7 +55,9 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 					<c:set var="asTitle" value="true" />
 					<li class="page-item parent ${!info.parent.parent.trash?'title':'trash'}">
 						<div class="nav-item">
-							<a class="draggable flow-${info.parent.parent.flowIndex}" id="page-${info.parent.parent.name}" href="${info.parent.parent.url}" title="${info.parent.parent.path}">${info.parent.parent.info.label}${info.parent.parent.haveChildren?'...':''}</a>
+							<a class="draggable flow-${info.parent.parent.flowIndex} ${!brother.trash?'editor':'trash'}" data-pageid="${info.parent.id}" id="page-${info.parent.parent.name}" href="${info.parent.parent.url}" title="${info.parent.parent.path}">
+							${info.parent.parent.info.label}${info.parent.parent.haveChildren?'...':''}
+							</a>
 						</div>
 					</li>
 				</c:if>
@@ -66,7 +66,9 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 			<c:forEach var="brother" items="${page.info.previousBrothers}">
 				<li class="page-item" ${brother.trash?'class="trash"':''}>
 					<div class="nav-item ">
-						<a id="page-${brother.name}" class="draggable ${!brother.trash?'editor':'trash'} ${brother.active?'active':'unactive'} flow-${brother.flowIndex}" title="${brother.path}" href="${brother.url}"> ${brother.info.label}${info.parent.parent.haveChildren?'...':''} </a>
+						<a id="page-${brother.name}" class="draggable ${!brother.trash?'editor':'trash'} ${brother.active?'active':'unactive'} flow-${brother.flowIndex}" data-pageid="${info.parent.id}" title="${brother.path}" href="${brother.url}">
+						${brother.info.label}${info.parent.parent.haveChildren?'...':''}
+						</a>
 					</div>
 				</li>
 			</c:forEach>
@@ -93,16 +95,18 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 				<li class="page-item"><ul class="children sortable">
 			</c:if>
 			<c:forEach var="child" items="${page.children}">
-				<li id="page-${child.name}" class="page-item ${child.trash?'trash ':''}${child.url eq info.currentURL?'selected ':''}${child.info.realContent?'real-content':''} ${fn:length(child.children) > 0?'have-children ':''}">
-					 <span>
-						<div id="page-${child.name}" data-pageid="${child.id}" class="nav-item draggable ${child.active?'active':'unactive'} flow-${child.flowIndex}" title="${child.path}">
-							<a href="${child.url}" data-pageid="${child.id}" title="${child.path}"> <span>${child.info.label}${child.haveChildren?'...':''}</span>
-							<c:if test="${not empty info.contextForCopy && (child.url eq info.currentURL)}">
-								<a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}"> <i class="bi bi-arrow-down-square"></i></a>
-							</c:if>
-							</a>
-						</div>
-				</span></li>
+				
+				
+				<li class="page-item ${child.trash?'trash ':''}${child.url eq info.currentURL?'selected ':''}${child.info.realContent?'real-content':''} ${fn:length(child.children) > 0?'have-children ':''}">
+					<div class="nav-item editor draggable">
+						<a id="page-${child.name}" class="draggable ${!child.trash?'editor':'trash'} ${child.active?'active':'unactive'} flow-${child.flowIndex}" data-pageid="${info.parent.id}" title="${child.path}" href="${child.url}">
+						<span>${child.info.label}${child.haveChildren?'...':''}</span>
+						<c:if test="${not empty info.contextForCopy && (child.url eq info.currentURL)}"> 
+							<a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}"> <i class="bi bi-arrow-down-square"></i></a>
+						</c:if>
+						</a>
+					</div>
+				</li>
 
 				<c:if test="${child.url eq info.currentURL}">
 					<c:if test="${userInterface.navigation}">

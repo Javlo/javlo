@@ -931,6 +931,9 @@ if (!String.prototype.startsWith) {
 					pjq("._ep_new-component-zone").remove();
 				});
 				el.addEventListener('dragstart', function(event) {
+					
+					document.body.classlist.add("_jv_dragnav");
+					
 					var targetPageName = pjq(this).attr("id");
 					event.dataTransfer.setData('text', "page:" + targetPageName);
 					var dragParent = pjq(this).parent();
@@ -968,6 +971,7 @@ if (!String.prototype.startsWith) {
 					}, 50);
 				});
 				el.addEventListener('dragend', function(event) {
+					document.body.classlist.remove("_jv_dragnav");
 					pjq("#_ep_new-component-fakefirst").parent().remove();
 				});
 				el.addEventListener('drop', function(event) {
