@@ -100,7 +100,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 												StaticInfoBean staticInfoBean = new StaticInfoBean(ctx, file);
 												for (String taxo : staticInfoBean.getTaxonomy()) {
 													for (String thisTaxo : this.getTaxonomy()) {
-														TaxonomyBean bean = taxonomyService.getTaxonomyBean(thisTaxo, true);
+														TaxonomyBean bean = taxonomyService.getRoot().searchChildByName(thisTaxo);
 														while (bean != null) {
 															if (taxo.equals(bean.getName())) {
 																matchScore = matchScore + 1;
