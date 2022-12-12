@@ -30,6 +30,12 @@ if (!rightOnPage) {
 }
 %><c:set var="logged" value="${not empty info.editUser}" />
 <c:set var="pdf" value="${info.device.code == 'pdf'}" />
+<c:url var="urlPageProperties" value="<%=URLHelper.createURL(editCtx)%>" context="/">
+	<c:param name="module" value="content" />
+	<c:param name="webaction" value="changeMode" />
+	<c:param name="mode" value="3" />
+	<c:param name="previewEdit" value="true" />
+</c:url>
 <c:if test="${logged || !globalContext.staticConfig.addButton}">
 	<c:if test="${!userInterface.minimalInterface}">
 		<div class="header">
@@ -131,13 +137,6 @@ if (!rightOnPage) {
 								<c:if test="${not empty param.button_publish and empty param.previewEdit and info.page.flowIndex>2}">
 									<a class="action-button publish ajax" href="${info.currentURL}?webaction=publish&render-mode=1"><span>${i18n.edit['command.publish']}</span></a>
 								</c:if>
-
-								<c:url var="urlPageProperties" value="<%=URLHelper.createURL(editCtx)%>" context="/">
-									<c:param name="module" value="content" />
-									<c:param name="webaction" value="changeMode" />
-									<c:param name="mode" value="3" />
-									<c:param name="previewEdit" value="true" />
-								</c:url>
 
 								<%
 								if (rightOnPage) {
