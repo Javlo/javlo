@@ -87,6 +87,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 			if (file == null || file.getFile() == null) {
 				return 0;
 			} else {
+				TaxonomyService taxonomyService = TaxonomyService.getInstance(ctx);
 				if (acceptDirectory || !file.getFile().isDirectory()) {
 					if (UserSecurity.isCurrentUserCanRead(ctx, file) && file.isShared(ctx)) {
 						try {
@@ -99,8 +100,12 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 												StaticInfoBean staticInfoBean = new StaticInfoBean(ctx, file);
 												for (String taxo : staticInfoBean.getTaxonomy()) {
 													for (String thisTaxo : this.getTaxonomy()) {
-														if (taxo.equals(thisTaxo)) {
-															matchScore = matchScore + 1;
+														TaxonomyBean bean = taxonomyService.getTaxonomyBean(thisTaxo, true);
+														while (bean != null) {
+															if (taxo.equals(bean.getName())) {
+																matchScore = matchScore + 1;
+															}
+															bean = bean.getParent();
 														}
 													}
 												}

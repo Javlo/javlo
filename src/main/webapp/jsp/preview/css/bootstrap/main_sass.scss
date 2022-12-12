@@ -26,7 +26,7 @@ $header-height: 40px;
 #preview_command .nav-tabs>li>a {
 	border-radius: 0 !important;
 	margin-right: 0 !important;
-	color: var(--javlo-ui-btn-text-inactive);
+	color: var(--javlo-ui-btn-text-active);
 }
 
 #preview_command .nav-tabs>li.active>a {
@@ -56,6 +56,10 @@ html.preview-command-visible.preview-standard.preview-command-visible {
 
 html.preview-only.preview-standard.preview-command-visible {
 	margin-left: 0 !important;
+}
+
+#preview_command .btn:hover {
+	color: var(--javlo-ui-btn-text-hover) !important;
 }
 
 #preview_command {
@@ -143,21 +147,7 @@ html.preview-only.preview-standard.preview-command-visible {
 		color: $link-hover-color;
 	}
 
-	@media (max-width: 1910px) {
-
-		#pc_copy_page .text,
-		#pc_paste_page .text {
-			display: none;
-		}
-	}
-
-	@media (max-width: 1780px) {
-		.users .text {
-			display: none;
-		}
-	}
-
-	@media (max-width: 1690px) {
+	@media (max-width: 1100px) {
 
 		h1,
 		.menu .action-title {
@@ -173,12 +163,6 @@ html.preview-only.preview-standard.preview-command-visible {
 		}
 
 		.users .text {
-			display: none;
-		}
-	}
-
-	@media (max-width: 1430px) {
-		.header .text {
 			display: none;
 		}
 	}
@@ -394,6 +378,7 @@ html.preview-only.preview-standard.preview-command-visible {
 
 body #preview_command .btn[disabled] {
 	color: var(--javlo-ui-btn-toggle-inactive-text) !important;
+	cursor: default;
 }
 
 ._preview_ajax-loading #preview_command .logo a {
@@ -704,6 +689,7 @@ div#preview_command {
 
 #preview_command .disabled .btn {
 	color: var(--javlo-ui-btn-text-inactive) !important;
+	cursor: default;
 }
 
 #preview_command .settings .label {

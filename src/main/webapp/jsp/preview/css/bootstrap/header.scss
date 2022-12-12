@@ -69,7 +69,7 @@
 	.toggle-preview-edit {
 		.btn-default {
 			background-color: var(--javlo-ui-btn-toggle-bg-inactive) !important;
-			color: var(--javlo-ui-btn-text-inactive) !important;
+			//color: var(--javlo-ui-btn-text-inactive) !important;
 			border-color: var(--javlo-ui-btn-border) !important;
 			box-shadow: none !important;
 			-webkit-box-shadow: none !important;
@@ -353,7 +353,11 @@
 	}
 }
 
-#preview_command ._jv_menu {
+body #preview_command a:focus {
+  outline: none;
+}
+
+body #preview_command ._jv_menu {
 	border-right: 1px solid var(--javlo-ui-border);
 	border-bottom: 1px solid var(--javlo-ui-border);
 	border-left: 1px solid var(--javlo-ui-border);
@@ -366,6 +370,7 @@
 		margin: 0;
 		border: 0 none;
 		padding-left: 0 !important;
+		height: var(--javlo-menu-height);
 
 		.label {
 			margin: 0;
@@ -442,7 +447,6 @@
 
 #preview_command {
 	.clipboard {
-		border-right: 1px var(--javlo-ui-color-5) solid;
 		color: #333333;
 
 		.cb-component-list .wrapper-in {
