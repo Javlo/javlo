@@ -97,7 +97,7 @@ if (StringHelper.isTrue(request.getParameter("preview-command"), true) && !ctx.i
 								<li role="presentation" class="active"><a href="#_ep_navigation" aria-controls="_ep_navigation" role="tab" data-toggle="tab"><i class="bi bi-diagram-3"></i> Navigator</a></li>
 								<li role="presentation" ${!info.pageEditable?'class="disabled"':''}><a href="#_ep_content" aria-controls="_ep_content" role="tab" ${info.pageEditable?'data-toggle="tab"':''}><i class="bi bi-boxes"></i> Elements</a></li>
 								<c:if test="${userInterface.previewResourcesTab}">
-									<li role="presentation" ${!info.pageEditable?'class="disabled"':''}><a href="#_ep_files" aria-controls="_ep_files" role="tab" ${info.pageEditable?'data-toggle="tab"':''}><i class="bi bi-file-earmark"></i> Files</a></li>
+									<li role="presentation" ${!info.pageEditable?'class="disabled"':''}><a href="#_ep_files" aria-controls="_ep_files" role="tab" ${info.pageEditable?'data-toggle="tab"':''}><i class="bi bi-file-earmark-image"></i> Assets</a></li>
 								</c:if>
 							</ul>
 							<div class="tab-content">

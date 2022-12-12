@@ -25,10 +25,12 @@ body #preview_command .component-list .component .wrapper-in .text {
 	align-content: stretch;
 	align-items: stretch;
 	flex-wrap: wrap;
+
 	.btn-group {
 		width: auto;
 		flex-grow: 1;
 		max-width: 100%;
+
 		.btn {
 			display: block;
 			float: none;
@@ -94,7 +96,7 @@ body #preview_command .component-list .component .wrapper-in {
 	}
 
 	.component-list .component:hover .wrapper-in {
-		background-color: var(--javlo-ui-color-2);
+		background-color: var(--javlo-ui-color-9);
 		//border: 1px solid var(--javlo-ui-color-5);
 		//border-bottom-color: var(--javlo-ui-color-5) !important;
 	}
@@ -108,9 +110,8 @@ body #preview_command .component-list .component .wrapper-in {
 		display: block;
 		margin: 0 !important;
 		padding: 0 !important;
-		background-color: white;
-		border: 1px solid var(--javlo-ui-color-2);
-		color: #aaaaaa;
+		background-color: var(--javlo-ui-nav-btn-bg-selected);
+		border: 1px solid var(--javlo-ui-btn-border);
 		text-align: center;
 		font-weight: bold;
 
@@ -127,9 +128,6 @@ body #preview_command .component-list .component .wrapper-in {
 		display: none;
 	}
 
-	.component-list .component span:hover {
-		background-color: #e2e2e2;
-	}
 
 	.component-list .label {
 		display: block;
@@ -358,39 +356,4 @@ body #preview_command {
 		display: none;
 	}
 
-	.component-list .complexity-1 .wrapper-in {
-		border-bottom-color: #00A0B0;
-		color: #00A0B0;
-
-		i {
-			color: #00A0B0;
-		}
-	}
-
-	.component-list .complexity-2 .wrapper-in {
-		border-bottom-color: #EB6841;
-		color: #EB6841;
-
-		i {
-			color: #EB6841;
-		}
-	}
-
-	.component-list .complexity-3 .wrapper-in {
-		border-bottom-color: #CC333F;
-		color: #CC333F;
-
-		i {
-			color: #CC333F;
-		}
-	}
-
-	.component-list .complexity-3 .wrapper-in {
-		border-bottom-color: #EDC951;
-		color: #EDC951;
-
-		i {
-			color: #EDC951;
-		}
-	}
 }

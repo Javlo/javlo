@@ -131,8 +131,8 @@
 		border-right: 1px solid var(--javlo-ui-btn-separator) !important;
 
 		&:hover {
-			text-decoration: none;
-			color: var(--javlo-ui-accent-color-7);
+			text-decoration: none !important;
+			color: var(--javlo-ui-color-3);
 		}
 	}
 
@@ -269,7 +269,6 @@
 
 #preview_command .list-group-item>.badge {
 	float: right;
-	margin-left: 6px;
 }
 
 #preview_command {
@@ -423,16 +422,20 @@
 
 		a {
 			color: white;
-			max-width: 140px;
+			max-width: 105px;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
-			margin-right: 5px;
+
+			&:first-of-type {
+				margin-right: 5px;
+			}
 		}
 
 		a.template {
-			font-size: .9em;
+			font-size: .8em;
 			color: var(--javlo-ui-color-3);
+			max-width: 85px;
 		}
 	}
 }
@@ -476,4 +479,16 @@
 
 .btn-mode {
 	margin-right: 0 !important;
+}
+
+#preview_command {
+	.list-group-item-danger {
+		color: var(--javlo-flash-color) !important;
+		background-color: var(--javlo-flash-color-bg) !important;
+		border: 1px solid var(--javlo-flash-color) !important;
+
+		&:first-letter {
+			text-transform: capitalize;
+		}
+	}
 }

@@ -1,6 +1,7 @@
 #preview_command {
 	.panel {
-		border-right: 1px solid var(--javlo-ui-color-3) !important;
+		border-right: 1px solid var(--javlo-ui-border) !important;
+		border-left: 0 !important;
 		border-top: 0 !important;
 		border-bottom: 0 !important;
 	}
@@ -9,7 +10,6 @@
 #preview_command {
 	.panel-default {
 		background-color: var(--javlo-ui-bg-primary) !important;
-		border-color: var(--javlo-ui-color-3) !important;
 	}
 }
 
