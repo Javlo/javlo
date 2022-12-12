@@ -146,6 +146,7 @@ body #preview_command .component-list .component .wrapper-in {
 			margin-bottom: 15px !important;
 			background-color: var(--javlo-ui-bg-secondary);
 			border-radius: 3px;
+
 			.nav-item {
 				border-color: var(--javlo-ui-bg-secondary);
 			}
@@ -184,18 +185,20 @@ body #preview_command .component-list .component .wrapper-in {
 		.selected .nav-item,
 		.nav-item:hover {
 			background: var(--javlo-ui-nav-btn-bg-selected);
-			a, .paste-page {
+
+			a,
+			.paste-page {
 				background-color: var(--javlo-ui-nav-btn-bg-selected);
 				color: #fff !important;
 				text-decoration: none;
 			}
 		}
-		
+
 		.paste-page {
 			width: 30px;
 			text-align: right;
 		}
-		
+
 		.nav-root {
 
 			.nav-item {
@@ -279,7 +282,7 @@ body #preview_command .component-list .component .wrapper-in {
 				height: 30px;
 				line-height: 30px;
 				border-radius: 2px;
-				color: var(--javlo-ui-color-5);
+				color: var(--javlo-ui-color-3);
 				font-size: 1em;
 			}
 		}
@@ -297,11 +300,13 @@ body #preview_command .component-list .component .wrapper-in {
 		.btn-full {
 			border: 1px dashed var(--javlo-ui-special-action-color);
 			border-radius: 3px;
-			
+
 			&:hover {
 				border: 1px solid var(--javlo-ui-special-action-color);
 				background-color: var(--javlo-ui-special-action-color);
-				span, i {
+
+				span,
+				i {
 					color: #fff;
 				}
 			}

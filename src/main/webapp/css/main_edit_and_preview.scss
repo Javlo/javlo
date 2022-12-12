@@ -30,11 +30,12 @@ body#main-body,
 	--javlo-ui-primary-accent-color-3: hsl(209, 83%, 51%);
 	--javlo-ui-secondary-accent-color-1: hsl(324, 100%, 91%);
 	--javlo-ui-secondary-accent-color-2: hsl(324, 100%, 71%);
-	--javlo-ui-secondary-accent-color-3: hsl(324, 100%, 51%); 
-	
-	--javlo-layer-color: hsl(209, 83%, 51%);;
-	--javlo-layer-color-bg:  hsl(209, 83%, 51%, .2);
-	--javlo-flash-color: hsl(324, 100%, 51%, 1);
+	--javlo-ui-secondary-accent-color-3: hsl(324, 100%, 51%);
+
+	--javlo-layer-color: hsl(209, 83%, 51%);
+
+	--javlo-layer-color-bg: hsl(209, 83%, 51%, .2);
+	--javlo-flash-color: hsl(343, 58%, 53%);
 
 
 	/// colors schema
@@ -44,7 +45,7 @@ body#main-body,
 	--javlo-ui-bg-secondary: var(--javlo-ui-color-9);
 	--javlo-ui-border: var(--javlo-ui-color-10);
 	--javlo-ui-text: #ccc;
-	
+
 	--javlo-ui-btn-toggle-inactive-text: #333;
 
 	/*BTNS*/
@@ -59,14 +60,12 @@ body#main-body,
 
 	--javlo-ui-btn-separator: var(--javlo-ui-color-9);
 
-	--javlo-ui-clipboard-bg: hsla(var(--javlo-ui-accent-color-3), 0.1);
+	--javlo-ui-clipboard-bg: hsla(var(--javlo-ui-primary-accent-color-3), 0.1);
 	--javlo-ui-clipboard-border: var(--javlo-ui-primary-accent-color-1);
-	--javlo-ui-clipboard-text: var(--javlo-ui-accent-color-1);
-	
+	--javlo-ui-clipboard-text: var(--javlo-ui-primary-accent-color-1);
+
 	--javlo-ui-special-action-color: var(--javlo-ui-primary-accent-color-2);
 	--javlo-ui-special-action-color-bg: hsl(209, 83%, 51%, .1);
-	
-	--javlo-primary-bg-text: 
 
 	/*Sidebar*/
 

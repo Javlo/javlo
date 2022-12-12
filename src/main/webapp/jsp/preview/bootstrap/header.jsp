@@ -56,27 +56,28 @@ if (!rightOnPage) {
 
 					<ul>
 						<li class="page-title"><a href="#" class="page" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;">${not empty info.page.pageTitle?info.page.pageTitle:info.page.name}</a> <a href="#" class="template" onclick="editPreview.openModal('Template', '${info.currentEditURL}?module=template&webaction=template.changeFromPreview&previewEdit=true');"> ${info.currentPage.templateId == null?'<i class="bi bi-file-earmark-arrow-down"></i>':'<i class="bi bi-file-earmark-code"></i>'} ${info.page.template} </a></li>
-						<li class="page-shortcut">
-							<%-- 									<span><i class="bi bi-gear" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;"></i></span> --%>
-							<div class="btn btn-integrity btn-notext" data-toggle="_eprv_collapse" data-target="#integrity-list" href="#integrity-list" aria-expanded="false" aria-controls="integrity-list">
-								<c:if test="${integrities.levelLabel != 'success'}">
-									<i class="bi bi-exclamation-triangle"></i>
-								</c:if>
-								<c:if test="${integrities.levelLabel == 'success'}">
-									<i class="bi bi-check-circle"></i>
-								</c:if>
-								<div class="integrity-message collapse${integrities.error && contentContext.previewEdit?' in':''}" id="integrity-list">
-									<ul class="list-group">
-										<c:forEach var="checker" items="${integrities.checker}">
-											<c:if test="${checker.errorCount>0}">
-												<li class="list-group-item list-group-item-${checker.levelLabel}"><span class="badge">${checker.errorCount}</span>${checker.errorMessage}</li>
-											</c:if>
-										</c:forEach>
-									</ul>
-								</div>
-							</div>
-						</li>
+						
 					</ul>
+					<div class="page-shortcut">
+						<%-- 									<span><i class="bi bi-gear" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;"></i></span> --%>
+						<div class="btn btn-integrity btn-notext" data-toggle="_eprv_collapse" data-target="#integrity-list" href="#integrity-list" aria-expanded="false" aria-controls="integrity-list">
+							<c:if test="${integrities.levelLabel != 'success'}">
+								<i class="bi bi-exclamation-triangle"></i>
+							</c:if>
+							<c:if test="${integrities.levelLabel == 'success'}">
+								<i class="bi bi-check-circle"></i>
+							</c:if>
+							<div class="integrity-message collapse${integrities.error && contentContext.previewEdit?' in':''}" id="integrity-list">
+								<ul class="list-group">
+									<c:forEach var="checker" items="${integrities.checker}">
+										<c:if test="${checker.errorCount>0}">
+											<li class="list-group-item list-group-item-${checker.levelLabel}"><span class="badge">${checker.errorCount}</span>${checker.errorMessage}</li>
+										</c:if>
+									</c:forEach>
+								</ul>
+							</div>
+						</div>
+					</div>
 				</div>
 
 				<div class="page-actions">
@@ -171,8 +172,9 @@ if (!rightOnPage) {
 
 								<li id="_jv_clipboard" class="clipboard ${not empty clipboard.copied || not empty editInfo.copiedPage?'':'disabled'}" title="${i18n.edit['global.clipboard']}"><c:url var="url" value="${info.currentURL}" context="/">
 										<c:param name="webaction" value="edit.clearClipboard" />
-									</c:url> <span class="title btn"> <i class="bi bi-clipboard"></i>
-								</span> <c:if test="${not empty clipboard.copied || not empty editInfo.copiedPage}">
+									</c:url> 
+									<!-- <span class="title btn"> <i class="bi bi-clipboard"></i></span> -->
+									<c:if test="${not empty clipboard.copied || not empty editInfo.copiedPage}">
 										<div class="cb-component-list">
 											<c:if test="${not empty clipboard.copied}">
 												<div class="cb-component" data-type="clipboard" data-deletable="true">
