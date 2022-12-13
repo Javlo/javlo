@@ -37,7 +37,9 @@ public class TaxonomyService {
 
 	public static final String SESSION_KEY = "session-" + TaxonomyService.class.getName();
 
-	private TaxonomyBean root = new TaxonomyBean("0", "root");
+	public static final String ROOT_ID = "0";
+
+	private TaxonomyBean root = new TaxonomyBean(ROOT_ID, "root");
 
 	private String context;
 

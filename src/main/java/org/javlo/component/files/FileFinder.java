@@ -8,6 +8,7 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -66,15 +67,15 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 			FileFilter outFilter = new FileFilter();
 			outFilter.text = ctx.getRequest().getParameter("text");
 			outFilter.root = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getFileFolder()));
-			String[] taxonomy = ctx.getRequest().getParameterValues("taxonomy");
-			if (taxonomy != null && taxonomy.length > 0) {
-				outFilter.taxonomy = new HashSet<String>(Arrays.asList(taxonomy));
+			Collection<String> taxonomy = getSelectedTaxonomy(ctx);
+			if (taxonomy != null && taxonomy.size() > 0) {
+				outFilter.taxonomy = new HashSet<String>(taxonomy);
 			} else {
 				outFilter.taxonomy = new HashSet<String>();
 			}
-//			if (outFilter.taxonomy.size() == 0) {
-//				outFilter.taxonomy.addAll(rootTaxonomy);
-//			}
+			// if (outFilter.taxonomy.size() == 0) {
+			// outFilter.taxonomy.addAll(rootTaxonomy);
+			// }
 			return outFilter;
 		}
 
@@ -98,22 +99,29 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 										if (file.getFile().getCanonicalPath().startsWith(getRoot().getCanonicalPath())) {
 											if (getTaxonomy().size() > 0) {
 												StaticInfoBean staticInfoBean = new StaticInfoBean(ctx, file);
+												boolean allMatch = true;
 												for (String taxo : this.getTaxonomy()) {
+													boolean match = false;
 													for (String thisTaxo : staticInfoBean.getTaxonomy()) {
 														TaxonomyBean bean = taxonomyService.getTaxonomyBean(thisTaxo, true);
 														if (bean == null) {
-															logger.severe("bean not found : "+thisTaxo);
+															logger.severe("bean not found : " + thisTaxo);
 														}
 														while (bean != null) {
 															if (taxo.equals(bean.getId())) {
-																matchScore = matchScore + 1;
+																match = true;
 															}
 															bean = bean.getParent();
-														} 
+														}
+													}
+													if (!match) {
+														allMatch = false;
 													}
 												}
-												if (matchScore == 0) {
+												if (!allMatch) {
 													return 0;
+												} else {
+													matchScore++;
 												}
 											}
 											if (!StringHelper.isEmpty(text)) {
@@ -194,7 +202,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		public Set<String> getTaxonomy() {
 			return taxonomy;
 		}
-		
+
 		public void setTaxonomy(List<String> inTaxo) {
 			taxonomy = new HashSet(inTaxo);
 		}
@@ -231,7 +239,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 							fileWithRef.put(refBean.getReference(), fileBean);
 							fileBean.addTranslation(new FileBean(ctx, file, refBean.getLanguage()));
 						}
-						
+
 						outFileList.add(fileBean);
 						fileBean.setWeight(matchScore);
 						if (outFileList.size() >= max) {
@@ -266,6 +274,16 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 
 	private List<String> FIELDS = Arrays.asList(new String[] { "root", "tags", "ext", "noext", "taxonomy", "display" });
 
+	public static List<String> getSelectedTaxonomy(ContentContext ctx) {
+		List<String> out = new LinkedList<>();
+		RequestService rs = RequestService.getInstance(ctx.getRequest());
+		out.addAll(rs.getParameterListValues("taxonomy"));
+		for (int i = 0; i < 10; i++) {
+			out.addAll(rs.getParameterListValues("taxonomy-"+i));
+		}
+		return out;
+	}
+
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
@@ -292,7 +310,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 			maxSize = 1000;
 		}
 		List<FileBean> files = getFileList(ctx, filter, maxSize, display);
-		
+
 		Set<String> lg = new HashSet<>();
 		for (FileBean file : files) {
 			if (!StringHelper.isEmpty(file.getLanguage())) {
@@ -301,6 +319,35 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 				}
 			}
 		}
+		
+		ctx.getRequest().setAttribute("taxonomySelectedIdString", StringHelper.collectionToString(getSelectedTaxonomy(ctx), ","));
+
+		List<String> taxonomySelected = getSelectedTaxonomy(ctx);
+		if (taxonomySelected != null && taxonomySelected.size() > 0) {
+			List<TaxonomyDisplayBean> children = new LinkedList<>();
+			TaxonomyService ts = TaxonomyService.getInstance(ctx);
+			for (String taxoId : taxonomySelected) {
+				TaxonomyBean b = ts.getTaxonomyBean(taxoId, true);
+				if (b != null) {
+					List<TaxonomyDisplayBean> beans = new LinkedList<>();
+					for (TaxonomyBean bean : b.getChildren()) {
+						beans.add(new TaxonomyDisplayBean(ctx, bean));
+					}
+					children.add(new TaxonomyDisplayBean(ctx, b));
+				}
+			}
+
+			Collections.sort(children, new Comparator<TaxonomyDisplayBean>() {
+				@Override
+				public int compare(TaxonomyDisplayBean o1, TaxonomyDisplayBean o2) {
+					return o1.getDepth() - o2.getDepth();
+				}
+
+			});
+
+			ctx.getRequest().setAttribute("taxonomySelected", children);
+		}
+
 		ctx.getRequest().setAttribute("languages", lg);
 		ctx.getRequest().setAttribute("files", files);
 		if (taxonomyIds.size() > 0) {
@@ -382,7 +429,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		out.println("<input type=\"text\" name=\"" + createKeyWithField("ext") + "\" value=\"" + getFieldValue("ext") + "\" />");
 		out.println("</div>");
 
-		out.println("<div class=\"line\">");	
+		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + createKeyWithField("noext") + "\">refused files</label>");
 		out.println("<input type=\"text\" name=\"" + createKeyWithField("noext") + "\" value=\"" + getFieldValue("noext") + "\" />");
 		out.println("</div>");

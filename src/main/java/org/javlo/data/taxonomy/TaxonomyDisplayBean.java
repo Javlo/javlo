@@ -124,4 +124,8 @@ public class TaxonomyDisplayBean {
 	public void setDisplayParentLabel(boolean displayParentLabel) {
 		this.displayParentLabel = displayParentLabel;
 	}
+	
+	public int getDepth() {
+		return this.bean.getDepth();
+	}
 }

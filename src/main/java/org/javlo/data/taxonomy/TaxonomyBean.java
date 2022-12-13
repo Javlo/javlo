@@ -51,7 +51,7 @@ public class TaxonomyBean {
 		super();
 		this.id = id;
 		this.name = name;
-		this.parent = parent;
+		setParent(parent);
 	}
 
 	public TaxonomyBean(String id, String name) {
@@ -239,7 +239,10 @@ public class TaxonomyBean {
 		return parent;
 	}
 
-	public void setParent(TaxonomyBean parent) {
+	public void setParent(TaxonomyBean parent) {		
+		if (parent != null && parent.getId().equals(this.getId())) {
+			throw new RuntimeException("parent could not be the same node.");
+		}
 		this.parent = parent;
 	}
 
@@ -293,6 +296,16 @@ public class TaxonomyBean {
 			}
 		}
 		return false;
+	}
+
+	public int getDepth() {
+		int out = 0;
+		TaxonomyBean node = this;
+		while (node.getParent() != null && !node.getId().equals(TaxonomyService.ROOT_ID)) {
+			out++;
+			node = node.getParent();
+		}
+		return out;
 	}
 
 }
