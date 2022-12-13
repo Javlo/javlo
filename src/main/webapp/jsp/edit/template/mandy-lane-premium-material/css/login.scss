@@ -1,11 +1,11 @@
-$color_1: #D31996;
+$color_1: #fff;
 $color_2: #708D91;
 $color_3: #333;
 $color_4: var(--javlo-ui-color-5);
 $color_5: #555;
 $font_family_1: javloFont, Verdana;
 $background_color_1: var(--javlo-ui-bg-primary);
-$background_color_2: #ffffff;
+$background_color_2: var(--javlo-ui-bg-primary);
 $background_color_3: #fff;
 $border_color_1: #ccc;
 
@@ -17,16 +17,24 @@ body {
 	justify-content: center;
 	align-items: center;
 	background-color: $background_color_1;
+	color: $color_4;
+	font-size: 14px;
+	a, a:focus, a:hover {
+		color: var(--javlo-ui-special-action-color);
+	}
 }
 .main {
+	--login-padding: 4rem;
 	width: 400px;
-	border: 1px #cccccc solid;
-	padding: 2rem;
+	padding: var(--login-padding);
 	background-color: $background_color_2;
+	position: relative;
+	z-index: 2;
+	border: 1px solid var(--javlo-ui-btn-separator) !important;
 	h1 {
 		text-align: center;
 		color: $color_1;
-		font-size: 80px;
+		font-size: 40px;
 		margin-top: 0;
 		font-family: $font_family_1;
 		.version {
@@ -34,11 +42,11 @@ body {
 			font-size: 0.4em;
 			display: block;
 			margin: 3px 0;
-			vertical-align: bottom;
 			font-size: 12px;
 		}
 	}
 }
+
 .wmsg {
 	h1 {
 		font-size: 32px;
@@ -105,4 +113,6 @@ body {
 	border: 1px solid #ccc;
 	border-radius: 0;
 	box-shadow: none;
+	font-size: 1.1rem;
 }
+
