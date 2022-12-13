@@ -120,14 +120,21 @@
 	justify-content: space-between;
 	align-items: center;
 
-	.name {
+	.spinner_container, .name {
+		width: 80px;
+		color: white;
 		padding: 0 10px;
+	}
+	
+	.spinner_container {
+		display: flex;
+		justify-content: center;
 	}
 
 	.name {
+		padding: 0 10px;
 		font-size: 20px;
 		font-family: javloFont, sans-serif;
-		color: white;
 		border-right: 1px solid var(--javlo-ui-btn-separator) !important;
 
 		&:hover {

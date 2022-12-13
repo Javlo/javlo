@@ -2579,8 +2579,9 @@ if (!String.prototype.startsWith) {
 
 }(pjq, pjq, pjq);
 
-
+/**********************/
 /* 2022 - no JQ code */
+/**********************/
 
 document.addEventListener("DOMContentLoaded", function(event) {
 	jvInit();
@@ -2637,6 +2638,7 @@ function initJvCollapse() {
 				targetItem.classList.add("_jv_hidden");
 				targetItem.classList.remove("_jv_show");
 			}
+			return false;
 		}
 	});
 }

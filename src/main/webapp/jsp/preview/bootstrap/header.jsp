@@ -47,9 +47,13 @@ if (!rightOnPage) {
 							<c:param name="previewEdit" value="true"></c:param>
 						</c:url>
 					</c:if>
-					<a class="name btn-toggle _jv_collapse-container" href="#" data-jv-toggle="collapse" data-jv-target="#admin-list">Javlo</a>
+					<div class="_jv_ajax-loading">
+						<div class="spinner_container">
+							<div class="_jv_spinner" role="status"><span class="sr-only">Loading...</span></div>
+						</div>
+					</div>
+					<a class="name btn-toggle _jv_collapse-container _jv_ajax-hide-on-loading" href="#" data-jv-toggle="collapse" data-jv-target="#admin-list">Javlo</a>
 					<div id="admin-list" class="_jv_collapse-target _jv_hidden"><jsp:include page="admin_menu.jsp" /></div>
-					<img class="ajax-loading" src="${info.ajaxLoaderURL}" alt="loading..." lang="en" />
 					<c:if test="${!userInterface.light}">
 						<a class="settings" href="#" onclick="editPreview.openModal('${i18n.edit['preview.label.properties']}','${url}'); return false;"> <i class="bi bi-gear"></i></a>
 					</c:if>

@@ -27,6 +27,9 @@ item html
 ```
 <div class="_jv_spinner" role="status"><span class="sr-only" lang="en">Loading...</span></div>
 ```
+._jv_ajax-loading : visible only when ajax request in running.
+._jv_ajax-hide-on-loading : hiden only when ajax request in running.
+
 ### Layout
 #### ._jv_flex-line
 standard flex line, space-between and center

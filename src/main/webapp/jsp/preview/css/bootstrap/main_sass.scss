@@ -174,7 +174,7 @@ html.preview-only.preview-standard.preview-command-visible {
 		z-index: 11020;
 	}
 
-	.ajax-loading {
+	._jv_ajax-loading {
 		display: none;
 	}
 
@@ -385,10 +385,12 @@ body #preview_command .btn[disabled] {
 	display: none;
 }
 
-._preview_ajax-loading #preview_command .ajax-loading {
+._preview_ajax-loading #preview_command ._jv_ajax-loading {
 	display: block;
-	height: 30px;
-	margin: 0 0 0 20px;
+}
+
+._preview_ajax-loading #preview_command ._jv_ajax-hide-on-loading {
+	display: none;
 }
 
 ._preview_ajax-loading #preview_command .header .navbar-brand {
