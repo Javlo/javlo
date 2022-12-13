@@ -25,28 +25,25 @@ label, legend, .label, h1, h2, h3 {
 	opacity: .4;
 }
 
-.action-button, .btn, .action input[type="submit"] {
-	background: var(--javlo-ui-bg-secondary);
-	border: 1px var(--javlo-ui-nav-btn-border) solid;
-	color: var(--javlo-ui-color-5);
-	padding: 4px;
-	font-size: 12px;
-	&:hover{
-		color: #fff;
-		background: var(--javlo-ui-nav-btn-bg-selected);		
-	}
-	&.active {
-		background-color: var(--javlo-ui-btn-toggle-bg-active) !important;
-		color: white !important;
-	}
-}
-
 .panel-heading {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	.btn {
 		margin: 0;
+	}
+}
+
+.ajax-loader {
+	display: none !important;
+}
+
+.active {
+	.noajax-text {
+		display: none !important;
+	}
+	.ajax-loader {
+		display: inline-block !important;
 	}
 }
 
@@ -65,52 +62,17 @@ label, legend, .label, h1, h2, h3 {
 		justify-content: space-between;
 		align-items: center;
 	}
-	input, select, button, a.btn, form, .action-button {
-		height: 30px;
-		line-height: 30px;
-		box-sizing: border-box;
-	}
-	input, select, button, a.btn, .action-button {
-		font-size: 12px;
-		padding: 4px;
-		background-color: #fff;
-		color: #000;
-		border: 1px solid rgba(24, 28, 33, 0.3);
-		border-radius: .25rem;
-	}
 	input, select, button, a.btn, a {
 		margin-left: calc(var(--javlo-main-separator) / 2);
-		&:hover {
-			border-color: var(--javlo-primary-color);
-			text-decoration: none;
-		}
 	}
 	.picto {
 		margin: 0 var(--main-sep);
-	}
-	.action-button, .action-field, .content {
-		margin-top: 0;
-		margin-bottom: 0;
-		font-size: inherit;
 	}
 	.content {
 		flex-grow: 2;
 		display: flex;
 		justify-content: flex-end;
 		align-items: center;
-	}
-	.action-button {
-		border: 1px solid rgba(24, 28, 33, 0.3);
-		border-radius: .25rem;
-		display : flex !important;
-		justify-content: space-between;
-		align-items: center;
-		i {
-			margin-right: .25em
-		}
-		span {
-			line-height: normal;
-		}
 	}
 }
 

@@ -508,7 +508,7 @@ public class GlobalImage extends Image implements IImageFilter {
 				filtersArray[i][1] = i18nAccess.getText("template.image.type." + filter, filter);
 				i++;
 			}
-			finalCode.append(XHTMLHelper.getInputOneSelectWithClass(getImageFilterInputName(), filtersArray, getFilter(ctx), "no-submit"));
+			finalCode.append(XHTMLHelper.getInputOneSelectWithClass(getImageFilterInputName(), filtersArray, getFilter(ctx), "no-submit form-control"));
 			finalCode.append("</div></div>");
 
 		} else {
@@ -540,8 +540,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		if (canUpload(ctx)) {
 			finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\"><label for=\"" + getFileXHTMLInputName() + "\">" + getImageUploadTitle(ctx) + " : </label></div>");
 			finalCode.append("<div class=\"col-sm-7\"><input name=\"" + getFileXHTMLInputName() + "\" type=\"file\"/></div>");
-			finalCode.append("<div class=\"col-sm-2\"><button name=\"upload\" type=\"submit\" class=\"btn btn-default btn-xs\" onclick=\"jQuery(this).parent().find('.ajax-loader').addClass('active');\">" + getFileUploadActionTitle(ctx) + "</button>");
-			finalCode.append("<span class=\"ajax-loader\"></span></div>");
+			finalCode.append("<div class=\"col-sm-2\"><button name=\"upload\" type=\"submit\" class=\"btn btn-default btn-xs\" onclick=\"jQuery(this).parent().addClass('active');\"><span class=\"noajax-text\">" + getFileUploadActionTitle(ctx) + "</span><span class=\"ajax-loader\"></span></div></button>");
 			finalCode.append("</div>");
 		}
 

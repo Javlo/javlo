@@ -24,18 +24,11 @@ html {
 .area-label{
 	display:none!important;
 }
-.action-button,
-.btn-default{
-	&:hover{
-		border-color: var(--blue-100);
-	}
-}
-a.action-button,
-.btn{
+
+a.action-button {
 	margin: 5px;
 }
-a.action-button,
-.btn-xs{
+a.action-button {
 	padding: 3px 8px;
 }
 a.action-button::first-letter,
@@ -205,16 +198,7 @@ a.action-button::first-letter,
 				vertical-align: bottom;
 	}
 }
-#button-content-submit {
-    min-width: 140px;
-	background: var(--javlo-ui-bg-secondary);
-	border: 1px var(--javlo-ui-nav-btn-border) solid;
-	color: var(--javlo-ui-color-5);
-	&:hover{
-		color: #fff;
-		background: var(--javlo-ui-nav-btn-bg-selected);		
-	}
-}
+
 .component{
 	.header-action{
 		a.delete{
@@ -657,10 +641,6 @@ body.ajax-loading {
 #content-edit {
 	padding-right: 2px;
 	min-height: 600px;
-}
-
-#content-edit select {
-	padding: 0;
 }
 
 .navigation .parent a {

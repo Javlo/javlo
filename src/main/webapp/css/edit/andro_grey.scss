@@ -40,6 +40,58 @@ body #tools .btn-primary, .btn-primary  {
 	}
 }
 
+select {
+	border-radius: 0;
+	padding: 4px;
+	background-color: transparent;
+	border: 1px rgba(0,0,0,.2) solid;
+	color: #333;
+}
+
+.btn, .action-button, #tools select, #tools input {
+	--btn-height: 28px;
+	--btn-vertical-padding: 3px;
+	padding: var(--btn-vertical-padding) 1em;
+	line-height: calc(var(--btn-height) - var(--btn-vertical-padding) * 2);
+	//background-color: var(--javlo-ui-bg-primary);
+	background-color: #ddd;
+	border: 1px #ddd solid;
+	color: #333;
+	border-radius: 0;
+	&:hover {
+		background-color: var(--javlo-ui-bg-secondary) !important;
+		color: white !important;;
+		border-color: #fff !important;;
+		text-decoration: none !important;
+	}
+	span {
+		display: inline-block;
+		line-height: calc(var(--btn-height) - var(--btn-vertical-padding) * 2);
+	} 
+}
+
+#tools {
+	select {
+		height: var(--btn-height);
+	}	
+} 
+
+
+.component-wrapper {
+	color: #333;
+}
+
+#button-content-submit {
+	min-width: 140px;
+}
+
+.col-sm-1, .col-sm-2, .col-sm-3 {
+	.btn {
+		display: block;
+		width: 100%;
+	}
+}
+
 .form-control {
 	border-radius: 0;
 	box-shadow: none;

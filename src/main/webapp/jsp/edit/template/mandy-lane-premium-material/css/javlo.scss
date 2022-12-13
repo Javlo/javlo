@@ -886,12 +886,9 @@ ul,li {
 	background-image: url("../images/loaders/loader3.gif");
 	width: 16px;
 	height: 16px;
-	visibility: hidden;
+	display: none;
 }
 .ajax-loader.active {
-	visibility: visible;
-}
-span.ajax-loader {
 	display: inline-block;
 }
 
