@@ -1,6 +1,8 @@
 package org.javlo.helper;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.logging.Logger;
 
@@ -12,6 +14,7 @@ import org.javlo.service.visitors.UserDataService;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
+import org.javlo.utils.JSONMap;
 
 public class SecurityHelper {
 	
@@ -28,6 +31,22 @@ public class SecurityHelper {
 			return true;
 		} else {
 			return false;
+		}
+	}
+	
+	public static Boolean checkGoogleRecaptcha(ContentContext ctx, String response) throws MalformedURLException, Exception {
+		String recaptachaKey = ctx.getGlobalContext().getSpecialConfig().get("google-recaptcha.private-key", null);
+		if (recaptachaKey == null) {
+			return null;
+		}
+		String userIP = ctx.getRequest().getHeader("x-real-ip");
+		String url = URLHelper.addAllParams("https://www.google.com/recaptcha/api/siteverify", "secret=" + recaptachaKey, "response=" + response, "remoteip=" + userIP);
+		String captchaResponse = NetHelper.readPage(new URL(url));
+		JSONMap map = JSONMap.parseMap(captchaResponse);
+		if (map == null) {
+			return false;
+		} else {
+			return StringHelper.isTrue(map.get("success"));
 		}
 	}
 

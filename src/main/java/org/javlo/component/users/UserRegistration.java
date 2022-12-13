@@ -26,6 +26,7 @@ import org.javlo.component.core.MapComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.context.SpecialConfigBean;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.LangHelper;
@@ -260,6 +261,13 @@ public class UserRegistration extends MapComponent implements IAction {
 	}
 
 	public static String performRegister(RequestService rs, GlobalContext globalContext, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		
+		if (ctx.getGlobalContext().getSpecialConfig().isGoogleRecaptcha()) {
+			String clientCode = rs.getParameter(SpecialConfigBean.GOOGLE_RECAPTHCA_PARAM_NAME);
+			if (!SecurityHelper.checkGoogleRecaptcha(ctx, clientCode)) {
+				return i18nAccess.getViewText("global.error.captcha");
+			}
+		}
 
 		UserRegistration comp = (UserRegistration) ComponentHelper.getComponentFromRequest(ctx);
 

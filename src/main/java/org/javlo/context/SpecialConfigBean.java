@@ -9,6 +9,8 @@ import org.javlo.helper.StringHelper;
 
 public class SpecialConfigBean {
 	
+	public static final String GOOGLE_RECAPTHCA_PARAM_NAME = "g-recaptcha-response"; 
+	
 	private String mainCdn = null;
 
 	private Map config;
@@ -134,6 +136,18 @@ public class SpecialConfigBean {
 	
 	public String getMailFrom() {
 		return StringHelper.neverNull(config.get("mail.from"));
+	}
+	
+	public boolean isGoogleRecaptcha() {
+		return StringHelper.isEmpty(getGoogleRecaptchaPrivateKey()) || StringHelper.isEmpty(getGoogleRecaptchaPublicKey());
+	}
+	
+	public String getGoogleRecaptchaPrivateKey() {
+		return (String)config.get("google-recaptcha.private-key");
+	}
+	
+	public String getGoogleRecaptchaPublicKey() {
+		return (String)config.get("google-recaptcha.public-key");
 	}
 	
 	public String get(String key, String defaultValue) {
