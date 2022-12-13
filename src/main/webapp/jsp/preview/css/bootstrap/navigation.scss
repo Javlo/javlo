@@ -1,9 +1,17 @@
-body #preview_command .component-list .complexity-1 .wrapper-in,
-body #preview_command .component-list .complexity-1 .wrapper-in i,
-body #preview_command .component-list .complexity-2 .wrapper-in,
-body #preview_command .component-list .complexity-2 .wrapper-in i {
-	color: var(--javlo-ui-color-1) !important;
+body #preview_command .component-list {	
+	.wrapper-in, i {
+		color: var(--javlo-ui-btn-text-active) !important;
+	}
 }
+
+body #preview_command .component-list {	
+	.wrapper-in, i {
+		&:hover {
+			color: var(--javlo-ui-color-1) !important;
+		}
+	}
+}
+
 
 // body #preview_command .component-list .complexity-1 .wrapper-in,
 // body #preview_command .component-list .complexity-2 .wrapper-in {
