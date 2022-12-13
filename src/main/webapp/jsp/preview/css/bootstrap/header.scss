@@ -445,13 +445,19 @@ body #preview_command ._jv_menu {
 	}
 }
 
+form#add_copy_page {
+	border-right: 1px solid var(--javlo-ui-btn-separator) !important;
+}
+
 #preview_command {
 	.clipboard {
+<<<<<<< Updated upstream
 		color: #333333;
 
+=======
+>>>>>>> Stashed changes
 		.cb-component-list .wrapper-in {
 			.figure {
-				margin-left: calc(var(--javlo-main-separator) / 2);
 				margin-right: calc(var(--javlo-main-separator) / 2);
 				text-shadow: none;
 			}
