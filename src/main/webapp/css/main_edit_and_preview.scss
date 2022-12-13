@@ -39,6 +39,8 @@ body#main-body,
 	--javlo-flash-color: hsl(343, 58%, 53%);
 	--javlo-flash-color-bg: hsl(343deg 58% 97%);
 
+
+
 	/// colors schema
 
 	/*Header*/
@@ -56,9 +58,8 @@ body#main-body,
 
 	--javlo-ui-btn-border: var(--javlo-ui-border);
 
-	--javlo-ui-btn-text-active: var(--javlo-ui-color-3);
-	--javlo-ui-btn-text-hover: white;
-	--javlo-ui-btn-text-inactive: #333;
+	--javlo-ui-btn-text-active: white;
+	--javlo-ui-btn-text-inactive: var(--javlo-ui-color-6);
 
 	--javlo-ui-btn-separator: var(--javlo-ui-color-9);
 
@@ -70,6 +71,7 @@ body#main-body,
 	--javlo-ui-special-action-color-bg: hsl(209, 83%, 51%, .1);
 
 	/*Sidebar*/
+
 	--javlo-ui-nav-root-btn-bg: var(--javlo-ui-color-9);
 	--javlo-ui-nav-root-btn-border: var(--javlo-ui-color-9);
 	--javlo-ui-nav-root-btn-text: white;
@@ -87,6 +89,7 @@ body#main-body,
 	--javlo-ui-add-nav-btn-text: var(--javlo-ui-primary-accent-color-1);
 
 	/*Edit Overlays*/
+
 	--javlo-ui-edit-bg: hsla(var(--javlo-ui-primary-accent-color-1), 0.2);
 	--javlo-ui-edit-border: var(--javlo-ui-primary-accent-color-3);
 	--javlo-ui-edit-btn: white;
