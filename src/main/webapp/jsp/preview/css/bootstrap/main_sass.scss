@@ -462,6 +462,7 @@ div#preview_command {
 		.commands {
 			display: flex;
 			border-radius: 0;
+			background-color: var(--javlo-layer-color);
 
 			.area-name {
 				background-color: var(--javlo-layer-color);

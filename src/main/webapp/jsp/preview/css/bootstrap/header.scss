@@ -197,7 +197,6 @@
 	align-items: center;
 	justify-content: center;
 	// height: 30px !important;
-	margin: 0 6px;
 }
 
 #preview_command .header .menu {
@@ -244,16 +243,6 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-}
-
-#preview_command .header li:not(:last-child) {
-	&:after {
-		content: "";
-		background-color: var(--javlo-ui-btn-separator);
-		width: 1px;
-		height: 20px;
-	}
-
 }
 
 
@@ -425,13 +414,6 @@ body #preview_command ._jv_menu {
 		align-items: center;
 		height: 28px;
 		overflow: hidden;
-
-		&:before {
-			content: "";
-			background-color: var(--javlo-ui-btn-separator);
-			width: 1px;
-			height: 20px;
-		}
 
 		span {
 			padding-top: 2px;
