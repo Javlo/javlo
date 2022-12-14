@@ -425,13 +425,14 @@ if (!String.prototype.startsWith) {
 		/** ******************* */
 
 		if (pjq("#preview-layer").length == 0) {
-			pjq("body").append('<div id="preview-layer"><div class="layer-header">'+
-				'<span class=\"area-name\"><div class="commands btn-group btn-group-sm area-actions" role="group"><h4></h4><div class="repeat-icon"><i class="bi bi-repeat"></i></div><span class="mirror glyphicon glyphicon-paste" aria-hidden="true"></span><i class="bi bi-layout-sidebar"></i><span id=\"area-name\"></span></span>' +
+			pjq("body").append('<div id="preview-layer"><div class="preview-layer-wrapper"><div class="layer-header">'+
+				'<div class="layer-info"><div class="repeat-icon"><i class="bi bi-repeat"></i></div>'+
+				'<h4></h4><span class="mirror glyphicon glyphicon-paste" aria-hidden="true"></span><i class="bi bi-layout-sidebar"></i><span id=\"area-name\"></span>' +
 				//'<button class="btn-edit btn btn-primary"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span><span class="text">edit</span></button>' +
-				'<button class="btn-copy btn btn-primary"><i class="bi bi-clipboard-plus"></i><span class="text">copy</span></button>' +
+				'</div><div class="commands"><button class="btn-copy btn btn-primary"><i class="bi bi-clipboard-plus"></i><span class="text">copy</span></button>' +
 				'<button class="btn-duplicate btn btn-primary"><i class="bi bi-files"></i><span class="text">duplicate</span></button>' +
-				'<button class="btn-delete btn btn-primary"><i class="bi bi-trash"></i><span class="text">delete</span></button>' +
-				'</div></div><div class="main"></span></div>');
+				'<button class="btn-delete btn btn-primary"><i class="bi bi-trash"></i><span class="text">delete</span></button></div>' +
+				'</div><div class="main"></span></div></div>');
 			pjq("#preview-layer").css("position", "absolute");
 			pjq("#preview-layer").on('mouseleave', function(event) {
 				editPreview.layerOver(null);
@@ -458,7 +459,13 @@ if (!String.prototype.startsWith) {
 			pjq("#preview-layer .area-name").on('click', editLayerAction);
 			pjq('#preview-layer .btn-delete').on('click', function(e) {
 				editPreview.layerOver(null);
-				var subComp = pjq(this).parent().parent().parent().data("comp");
+				
+				let layer = this.parentElement;
+				while (layer.id != 'preview-layer') {
+					layer = layer.parentElement;
+				}
+				var subComp = pjq(layer).data("comp");
+				
 				var area = editPreview.searchArea(subComp);
 				var compId = subComp.attr("id").substring(3);
 				var ajaxURL = editPreview.addParam(currentURL, "webaction=edit.delete&previewEdit=true&id=" + compId);
@@ -470,7 +477,13 @@ if (!String.prototype.startsWith) {
 			});
 			pjq('#preview-layer .btn-duplicate').on('click', function(e) {
 				editPreview.layerOver(null);
-				var subComp = pjq(this).parent().parent().parent().data("comp");
+				
+				let layer = this.parentElement;
+				while (layer.id != 'preview-layer') {
+					layer = layer.parentElement;
+				}
+				var subComp = pjq(layer).data("comp");
+
 				var area = editPreview.searchArea(subComp);
 				var compId = subComp.attr("id").substring(3);
 				var ajaxURL = editPreview.addParam(currentURL, "webaction=edit.duplicate&previewEdit=true&id=" + compId);
@@ -482,7 +495,11 @@ if (!String.prototype.startsWith) {
 			});
 			pjq('#preview-layer .btn-copy').on('click', function(e) {
 				editPreview.layerOver(null);
-				var subComp = pjq(this).parent().parent().parent().data("comp");
+				let layer = this.parentElement;
+				while (layer.id != 'preview-layer') {
+					layer = layer.parentElement;
+				}
+				var subComp = pjq(layer).data("comp");
 				var compId = subComp.attr("id").substring(3);
 				var ajaxURL = editPreview.addParam(currentURL, "webaction=edit.copy&id=" + compId);
 				if (editPreview.searchPageId(subComp) != null) {

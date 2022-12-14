@@ -432,11 +432,18 @@ div#preview_command {
 	/*display: block !important;
 	z-index: 100000000 !important;
 	position: absolute !important;
-	top: 100px !important;
-	left: 400px !important;
-	width: 600px !important;
+	top: 200px !important;
+	left: 500px !important;
+	width: 150px !important;
 	height: 400px !important;*/
-
+	
+	.preview-layer-wrapper {
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+	}
+	
 	.repeat-icon {
 		display: none !important;
 	}
@@ -448,7 +455,7 @@ div#preview_command {
 		color: var(--javlo-ui-text);
 
 		h4 {
-			padding: 6px 0;
+			padding: 0;
 			display: flex;
 			margin-left: 1rem;
 			font-size: 11px;
@@ -456,10 +463,31 @@ div#preview_command {
 
 			.layer-cols {
 				margin-left: .5rem;
+				margin-right: .5rem;
+			}
+		}
+		
+		.layer-info {
+			position: absolute;
+			top: 0;
+			left: auto;
+			right: auto;
+			background-color: var(--javlo-layer-color);
+			font-size: 11px;
+			padding: 6px 12px;
+			display: flex;
+			i {
+				margin-right: .5rem;
 			}
 		}
 
 		.commands {
+			
+			position: absolute;
+			bottom: 0;
+			left: auto;
+			right: auto;
+			
 			display: flex;
 			border-radius: 0;
 			background-color: var(--javlo-layer-color);
@@ -477,12 +505,12 @@ div#preview_command {
 			}
 
 			.btn {
+				border: 0 none;
+				border-right: 1px #fff solid;
+				
 				background-color: var(--javlo-layer-color);
 				display: flex;
 				align-items: center;
-				border-top: none;
-				border-bottom: none;
-				border-right: none;
 				border-radius: 0;
 				display: flex;
 				justify-content: center;
@@ -490,6 +518,10 @@ div#preview_command {
 				i {
 					margin-right: .25rem;
 				}
+			}
+			
+			.btn-delete {
+				border-right: 0 none;
 			}
 
 			.btn:hover {
@@ -519,6 +551,19 @@ div#preview_command {
 	}
 
 	&.small {
+		
+		.layer-info {
+			display: block;
+			text-align: center;
+			#area-name {
+				display: inline;
+			}
+		}
+		
+		h4 {
+			width: 100%;
+			margin-bottom: 3px;
+		}
 		.main {
 			i {
 				margin-top: -70px;
@@ -528,18 +573,9 @@ div#preview_command {
 		.layer-header {
 			padding-top: 3px;
 			flex-direction: column;
-
 			.commands {
-				flex-wrap: wrap;
-
-				.btn {
-					border-top: 1px #2e6da4 solid;
-				}
-
-				.area-name {
-					display: flex;
-					justify-content: center;
-					width: 100%;
+				.text {
+					display: none;
 				}
 			}
 		}
