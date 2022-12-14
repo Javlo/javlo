@@ -1,11 +1,15 @@
-body #preview_command .component-list {	
-	.wrapper-in, i {
+body #preview_command .component-list {
+
+	.wrapper-in,
+	i {
 		color: var(--javlo-ui-btn-text-active) !important;
 	}
 }
 
-body #preview_command .component-list {	
-	.wrapper-in, i {
+body #preview_command .component-list {
+
+	.wrapper-in,
+	i {
 		&:hover {
 			color: var(--javlo-ui-color-1) !important;
 		}
@@ -471,4 +475,20 @@ body._jv_dragnav>#preview_command {
 
 #preview_command .nav-tabs>li.active>a {
 	background-color: var(--javlo-ui-bg-primary) !important;
+}
+
+#preview_command .well {
+	background-color: var(--javlo-ui-color-9) !important;
+	border: 1px solid var(--javlo-ui-border) !important;
+	-webkit-box-shadow: none !important;
+	box-shadow: none !important;
+
+	.picto {
+		color: var(--javlo-ui-btn-text-inactive) !important;
+	}
+
+	&:hover {
+		border: 1px solid var(--javlo-ui-primary-accent-color-3) !important;
+		cursor: s-resize;
+	}
 }

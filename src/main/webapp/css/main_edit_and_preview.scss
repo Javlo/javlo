@@ -56,7 +56,9 @@ body#main-body,
 	--javlo-ui-btn-border: var(--javlo-ui-border);
 
 	--javlo-ui-btn-text-active: white;
-	--javlo-ui-btn-text-inactive: var(--javlo-ui-color-6);
+	--javlo-ui-btn-text-hover: var(--javlo-ui-color-3);
+	--javlo-ui-btn-text-inactive: var(--javlo-ui-color-5);
+	--javlo-ui-btn-text-disabled: var(--javlo-ui-color-9);
 
 	--javlo-ui-btn-separator: var(--javlo-ui-color-9);
 

@@ -26,7 +26,7 @@ $header-height: 40px;
 #preview_command .nav-tabs>li>a {
 	border-radius: 0 !important;
 	margin-right: 0 !important;
-	color: var(--javlo-ui-btn-text-active);
+	color: var(--javlo-ui-btn-text-inactive);
 }
 
 #preview_command .nav-tabs>li.active>a {
@@ -384,8 +384,8 @@ html.preview-only.preview-standard.preview-command-visible {
 }
 
 body #preview_command .btn[disabled] {
-	color: var(--javlo-ui-btn-toggle-inactive-text) !important;
-	cursor: default;
+	color: var(--javlo-ui-btn-text-disabled) !important;
+	cursor: none;
 }
 
 ._preview_ajax-loading #preview_command .logo a {
@@ -582,7 +582,7 @@ div#preview_command {
 #preview_command #paste h3 {
 	font-size: 14px;
 	margin: 0 0 2px 0;
-	color: #3b3b3b;
+	color: var(--javlo-ui-btn-text-inactive);
 	text-align: center;
 }
 

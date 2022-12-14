@@ -52,9 +52,14 @@
 		padding: 0;
 
 		.btn {
+<<<<<<< Updated upstream
 			padding: 0 6px 2px 6px !important;
 			margin: 0 4px -2px 4px !important;
 			font-size: 20px !important;
+=======
+			padding: 0 10px !important;
+			font-size: 16px !important;
+>>>>>>> Stashed changes
 			border: 0px !important;
 			color: var(--javlo-ui-btn-text-active);
 
@@ -121,12 +126,13 @@
 	justify-content: space-between;
 	align-items: center;
 
-	.spinner_container, .name {
+	.spinner_container,
+	.name {
 		width: 80px;
 		color: white;
 		padding: 0 10px;
 	}
-	
+
 	.spinner_container {
 		display: flex;
 		justify-content: center;
@@ -362,7 +368,7 @@
 }
 
 body #preview_command a:focus {
-  outline: none;
+	outline: none;
 }
 
 body #preview_command ._jv_menu {
@@ -462,6 +468,7 @@ form#add_copy_page {
 	.clipboard {
 
 		color: #333333;
+
 		.cb-component-list .wrapper-in {
 			.figure {
 				margin-right: calc(var(--javlo-main-separator) / 2);
