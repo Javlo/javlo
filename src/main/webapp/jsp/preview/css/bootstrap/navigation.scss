@@ -210,11 +210,14 @@ body._jv_dragnav>#preview_command {
 		.nav-item:hover {
 			background: var(--javlo-ui-nav-btn-bg-active);
 
-			a,
-			.paste-page {
+			a {
 				background-color: var(--javlo-ui-nav-btn-bg-active);
 				color: var(--javlo-ui-nav-btn-text-active) !important;
 				text-decoration: none;
+			}
+
+			a.paste-page {
+				background-color: var(--javlo-ui-primary-accent-color-3) !important;
 			}
 		}
 
@@ -293,9 +296,9 @@ body._jv_dragnav>#preview_command {
 
 		ul.navigation li.page-item {
 
-			a {
-				flex-basis: 75%;
-			}
+			// a {
+			// 	flex-basis: 75%;
+			// }
 
 			a,
 			h4,
@@ -383,7 +386,6 @@ body._jv_dragnav>#preview_command {
 
 	.pages ul li.page-item.selected a {
 		border-left: 2px solid var(--javlo-ui-accent-color-9);
-		color: var(--javlo-ui-accent-color-9);
 		font-weight: 700;
 	}
 

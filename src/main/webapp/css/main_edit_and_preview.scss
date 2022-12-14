@@ -38,11 +38,17 @@ body#main-body,
 	--javlo-flash-color: hsl(343, 58%, 53%);
 	--javlo-flash-color-bg: hsl(343deg 58% 97%);
 
+	/*General*/
+	--javlo-ui-color-text-primary: white;
+	--javlo-ui-color-danger: hsl(343, 58%, 53%);
+	--javlo-ui-color-success: hsl(134, 67%, 41%);
+
 	/// colors schema
 
 	/*Header*/
 	--javlo-ui-bg-primary: var(--javlo-ui-color-8);
 	--javlo-ui-bg-secondary: var(--javlo-ui-color-9);
+	--javlo-ui-bg-tertiary: var(--javlo-ui-color-10);
 	--javlo-ui-border: var(--javlo-ui-color-10);
 	--javlo-ui-text: #ccc;
 
@@ -50,6 +56,7 @@ body#main-body,
 
 	/*BTN*/
 	--javlo-ui-btn-bg-active: transparent;
+	--javlo-ui-btn-bg-hover: hsl(209, 14%, 30%, .2);
 	--javlo-ui-btn-toggle-bg-active: var(--javlo-ui-primary-accent-color-3);
 	--javlo-ui-btn-toggle-bg-inactive: var(--javlo-ui-bg-secondary);
 
@@ -89,26 +96,16 @@ body#main-body,
 
 	/*Edit Overlays*/
 
-	--javlo-ui-edit-bg: hsla(var(--javlo-ui-primary-accent-color-1), 0.2);
+	--javlo-ui-edit-bg: hsla(209, 84%, 81%, 0.2);
 	--javlo-ui-edit-border: var(--javlo-ui-primary-accent-color-3);
 	--javlo-ui-edit-btn: white;
 	--javlo-ui-edit-text: var(--javlo-ui-primary-accent-color-1);
 
-	--javlo-ui-hidden-edit-bg: hsla(var(--javlo-ui-secondary-accent-color-1), 0.2);
-	--javlo-ui-hidden-edit-border: var(--javlo-ui-secondary-accent-color-3);
-	--javlo-ui-hidden-edit-btn: white;
-	--javlo-ui-hidden-edit-text: var(--javlo-ui-secondary-accent-color-1);
-
-	/*General*/
-	--javlo-ui-color-text-primary: white;
-	--javlo-ui-color-danger: hsl(343, 58%, 53%);
-	--javlo-ui-color-success: hsl(134, 67%, 41%);
 
 	/* Spacings and size */
 	--javlo-main-separator: 16px;
 	--javlo-menu-height: 40px;
 	--javlo-sidebar-width: 330px;
-
 	--javlo-modal-maximize-border-multi: 6;
 
 	// Fonts

@@ -60,8 +60,8 @@ html.preview-only.preview-standard.preview-command-visible {
 
 #preview_command .btn:hover {
 	//color: var(--javlo-ui-btn-text-hover) !important;
-	border-radius: 3px !important;
-	background-color: rgba(0,0,0,.2) !important;
+	border-radius: 5px !important;
+	background-color: rgba(0, 0, 0, .2) !important;
 	color: var(--javlo-ui-btn-text-active) !important;
 }
 
@@ -422,8 +422,8 @@ div#preview_command {
 
 #preview-layer {
 	--layer-border-size: 1px;
-	border: var(--layer-border-size) var(--javlo-layer-color) solid;
-	background-color: var(--javlo-layer-color-bg);
+	border: var(--layer-border-size) var(--javlo-ui-edit-border) solid;
+	background-color: var(--javlo-ui-edit-bg);
 	cursor: pointer;
 	position: relative;
 	min-width: 200px;
@@ -442,12 +442,10 @@ div#preview_command {
 	}
 
 	.layer-header {
-		background-color: var(--javlo-layer-color);
 		display: flex;
-		justify-content: space-between;
+		justify-content: center;
 		align-items: center;
 		color: var(--javlo-ui-text);
-		opacity: .9;
 
 		h4 {
 			padding: 6px 0;
@@ -466,9 +464,11 @@ div#preview_command {
 			border-radius: 0;
 
 			.area-name {
+				background-color: var(--javlo-layer-color);
 				display: flex;
 				font-size: 11px;
 				padding: 6px 12px;
+				color: var(--javlo-ui-edit-text);
 
 				i {
 					margin-right: .25rem;
@@ -492,8 +492,12 @@ div#preview_command {
 			}
 
 			.btn:hover {
-				background-color: #eeeeee;
-				color: var(--javlo-ui-color-6) !important;
+				background-color: white;
+				color: var(--javlo-ui-primary-accent-color-3);
+			}
+
+			.btn-primary {
+				border-color: white !important;
 			}
 		}
 	}

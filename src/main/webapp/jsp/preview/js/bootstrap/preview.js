@@ -425,13 +425,13 @@ if (!String.prototype.startsWith) {
 		/** ******************* */
 
 		if (pjq("#preview-layer").length == 0) {
-			pjq("body").append('<div id="preview-layer"><div class="layer-header"><h4></h4><div class="repeat-icon"><i class="bi bi-repeat"></i></div><div class="commands btn-group btn-group-sm area-actions" role="group">'+
+			pjq("body").append('<div id="preview-layer"><div class="layer-header"><div class="repeat-icon"><i class="bi bi-repeat"></i></div><div class="commands btn-group btn-group-sm area-actions" role="group">'+
 				'<span class=\"area-name\"><span class="mirror glyphicon glyphicon-paste" aria-hidden="true"></span><i class="bi bi-layout-sidebar"></i><span id=\"area-name\"></span></span>' +
 				//'<button class="btn-edit btn btn-primary"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span><span class="text">edit</span></button>' +
 				'<button class="btn-copy btn btn-primary"><i class="bi bi-clipboard-plus"></i><span class="text">copy</span></button>' +
 				'<button class="btn-duplicate btn btn-primary"><i class="bi bi-files"></i><span class="text">duplicate</span></button>' +
 				'<button class="btn-delete btn btn-primary"><i class="bi bi-trash"></i><span class="text">delete</span></button>' +
-				'</div></div><div class="main"><i class="bi bi-pencil-square"></i></span></div>');
+				'</div></div><div class="main"></span></div>');
 			pjq("#preview-layer").css("position", "absolute");
 			pjq("#preview-layer").on('mouseleave', function(event) {
 				editPreview.layerOver(null);

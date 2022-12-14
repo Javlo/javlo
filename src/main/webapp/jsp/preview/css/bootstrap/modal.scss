@@ -1,12 +1,18 @@
 #preview-modal {
+	.modal-content {
+		background-color: transparent !important;
+	}
+
 	.modal-dialog {
 		transition: none !important;
 
 		.modal-header {
-			padding: var(--javlo-main-separator);
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
+			padding: calc(var(--javlo-menu-height)/4) !important;
+			background-color: var(--javlo-ui-bg-tertiary);
+			border-bottom: 0 !important;
 
 			h4 {
 				flex-grow: 2;
@@ -22,10 +28,11 @@
 					text-shadow: none;
 					font-weight: normal;
 					opacity: 1;
-					font-size: 1.8rem;
+					font-size: 16px;
 
 					i {
-						color: #333333;
+						color: white;
+						font-size: 16px;
 					}
 				}
 
@@ -40,8 +47,9 @@
 			}
 
 			h4 {
-				color: #333333;
-				opacity: 1;
+				color: white;
+				font-size: 16px !important;
+				font-weight: 600;
 			}
 		}
 	}
