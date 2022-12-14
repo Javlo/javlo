@@ -188,6 +188,9 @@ public class UserRegistration extends MapComponent implements IAction {
 	}
 
 	public static void uploadFile(ContentContext ctx) throws IOException {
+		if (ctx.getCurrentUser() == null) {
+			return;
+		}
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		FileItem userFile = rs.getFileItem("userFile");
 		if (userFile != null && userFile.getSize() > 0) {
