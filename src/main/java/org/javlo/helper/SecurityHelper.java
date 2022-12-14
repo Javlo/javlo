@@ -34,10 +34,13 @@ public class SecurityHelper {
 		}
 	}
 	
-	public static Boolean checkGoogleRecaptcha(ContentContext ctx, String response) throws MalformedURLException, Exception {
+	public static boolean checkGoogleRecaptcha(ContentContext ctx, String response) throws MalformedURLException, Exception {
+		if (response == null) {
+			return false;
+		}
 		String recaptachaKey = ctx.getGlobalContext().getSpecialConfig().get("google-recaptcha.private-key", null);
 		if (recaptachaKey == null) {
-			return null;
+			return false;
 		}
 		String userIP = ctx.getRequest().getHeader("x-real-ip");
 		String url = URLHelper.addAllParams("https://www.google.com/recaptcha/api/siteverify", "secret=" + recaptachaKey, "response=" + response, "remoteip=" + userIP);

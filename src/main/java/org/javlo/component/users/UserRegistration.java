@@ -101,9 +101,7 @@ public class UserRegistration extends MapComponent implements IAction {
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-
 		SocialService.getInstance(ctx).prepare(ctx);
-
 		DeliveryPrice deliveryPrice = DeliveryPrice.getInstance(ctx);
 		if (deliveryPrice != null) {
 			ListService.getInstance(ctx).addList("countries", deliveryPrice.getZone());
@@ -267,9 +265,13 @@ public class UserRegistration extends MapComponent implements IAction {
 		
 		if (ctx.getGlobalContext().getSpecialConfig().isGoogleRecaptcha()) {
 			String clientCode = rs.getParameter(SpecialConfigBean.GOOGLE_RECAPTHCA_PARAM_NAME);
+			System.out.println(">>>>>>>>> UserRegistration.performRegister : clientCode = "+clientCode); //TODO: remove debug trace
 			if (!SecurityHelper.checkGoogleRecaptcha(ctx, clientCode)) {
+				logger.warning("error captcha : IP : "+ctx.getRequest().getHeader("x-real-ip"));
 				return i18nAccess.getViewText("global.error.captcha");
 			}
+		} else {
+			System.out.println(">>>>>>>>> UserRegistration.performRegister : no recaptcha"); //TODO: remove debug trace
 		}
 
 		UserRegistration comp = (UserRegistration) ComponentHelper.getComponentFromRequest(ctx);
