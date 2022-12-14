@@ -434,7 +434,7 @@ body #preview_command ._jv_menu {
 
 		a {
 			color: white;
-			max-width: 105px;
+			max-width: 125px;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
@@ -447,13 +447,14 @@ body #preview_command ._jv_menu {
 		a.template {
 			font-size: .8em;
 			color: var(--javlo-ui-color-3);
-			max-width: 85px;
+			max-width: 95px;
 		}
 	}
 }
 
 form#add_copy_page {
 	border-right: 1px solid var(--javlo-ui-btn-separator) !important;
+	border-left: 1px solid var(--javlo-ui-btn-separator) !important;
 }
 
 #preview_command {

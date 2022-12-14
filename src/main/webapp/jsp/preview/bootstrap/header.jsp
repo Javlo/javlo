@@ -62,7 +62,10 @@ if (!rightOnPage) {
 						<li class="page-title"><a href="#" class="page" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;">${not empty info.page.pageTitle?info.page.pageTitle:info.page.name}</a> <a href="#" class="template" onclick="editPreview.openModal('Template', '${info.currentEditURL}?module=template&webaction=template.changeFromPreview&previewEdit=true');"> ${info.currentPage.templateId == null?'<i class="bi bi-file-earmark-arrow-down"></i>':'<i class="bi bi-file-earmark-code"></i>'} ${info.page.template} </a></li>
 						
 					</ul>
-					<div class="page-shortcut">
+					
+				</div>
+				
+				<div class="page-shortcut">
 						<%-- 									<span><i class="bi bi-gear" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;"></i></span> --%>
 						<div class="btn btn-integrity btn-notext" data-toggle="_eprv_collapse" data-target="#integrity-list" href="#integrity-list" aria-expanded="false" aria-controls="integrity-list">
 							<c:if test="${integrities.levelLabel != 'success'}">
@@ -82,7 +85,6 @@ if (!rightOnPage) {
 							</div>
 						</div>
 					</div>
-				</div>
 
 				<div class="page-actions">
 					<ul>
