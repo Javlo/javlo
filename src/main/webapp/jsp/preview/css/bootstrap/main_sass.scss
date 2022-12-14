@@ -59,7 +59,14 @@ html.preview-only.preview-standard.preview-command-visible {
 }
 
 #preview_command .btn:hover {
-	color: var(--javlo-ui-btn-text-hover) !important;
+	//color: var(--javlo-ui-btn-text-hover) !important;
+	border-radius: 3px !important;
+	background-color: rgba(0,0,0,.2) !important;
+	color: var(--javlo-ui-btn-text-active) !important;
+}
+
+#preview_command .disabled .btn:hover {
+	background-color: transparent;
 }
 
 #preview_command {
