@@ -139,7 +139,7 @@ public class SpecialConfigBean {
 	}
 	
 	public boolean isGoogleRecaptcha() {
-		return StringHelper.isEmpty(getGoogleRecaptchaPrivateKey()) || StringHelper.isEmpty(getGoogleRecaptchaPublicKey());
+		return !StringHelper.isEmpty(getGoogleRecaptchaPrivateKey()) && !StringHelper.isEmpty(getGoogleRecaptchaPublicKey());
 	}
 	
 	public String getGoogleRecaptchaPrivateKey() {
