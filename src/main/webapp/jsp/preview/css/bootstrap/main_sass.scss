@@ -463,7 +463,6 @@ div#preview_command {
 
 			.layer-cols {
 				margin-left: .5rem;
-				margin-right: .5rem;
 			}
 		}
 		
@@ -477,6 +476,7 @@ div#preview_command {
 			padding: 6px 12px;
 			display: flex;
 			i {
+				margin-left: .5rem;
 				margin-right: .5rem;
 			}
 		}
