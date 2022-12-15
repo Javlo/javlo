@@ -458,19 +458,15 @@ div#preview_command {
 		justify-content: center;
 		align-items: center;
 		color: var(--javlo-ui-text);
-
 		h4 {
 			padding: 0;
 			display: flex;
-			margin-left: 1rem;
 			font-size: 11px;
 			flex-grow: 2;
-
 			.layer-cols {
 				margin-left: .5rem;
 			}
 		}
-		
 		.layer-info {
 			position: absolute;
 			top: 0;
@@ -485,18 +481,14 @@ div#preview_command {
 				margin-right: .5rem;
 			}
 		}
-
 		.commands {
-			
 			position: absolute;
 			bottom: 0;
 			left: auto;
 			right: auto;
-			
 			display: flex;
 			border-radius: 0;
 			background-color: var(--javlo-layer-color);
-
 			.area-name {
 				background-color: var(--javlo-layer-color);
 				display: flex;
@@ -508,7 +500,6 @@ div#preview_command {
 					margin-right: .25rem;
 				}
 			}
-
 			.btn {
 				border: 0 none;
 				border-right: 1px #fff solid;
@@ -524,16 +515,13 @@ div#preview_command {
 					margin-right: .25rem;
 				}
 			}
-			
 			.btn-delete {
 				border-right: 0 none;
 			}
-
 			.btn:hover {
 				background-color: white;
 				color: var(--javlo-ui-primary-accent-color-3);
 			}
-
 			.btn-primary {
 				border-color: white !important;
 			}
@@ -556,7 +544,7 @@ div#preview_command {
 	
 	&.small-height {
 		.layer-info {
-			top: -23px;
+			top: -25px;
 		} 
 		.commands {
 			bottom: -28px;
