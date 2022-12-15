@@ -1,3 +1,36 @@
+<style>
+@-webkit-keyframes _jv_spinner-border {
+  to {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes _jv_spinner-border {
+  to {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+._jv_spinner {
+	--_jv_spinner-color: #fff;
+	display: inline-block;
+	width: 2rem;
+	height: 2rem;
+	vertical-align: text-bottom;
+	border: .15em solid var(--_jv_spinner-color);
+	border-right-color: var(--_jv_spinner-color);
+	border-right-color: transparent;
+	border-radius: 50%;
+	-webkit-animation: _jv_spinner-border .75s linear infinite;
+	animation: _jv_spinner-border .75s linear infinite;
+}
+.sr-only {
+	display: none;
+}
+</style>
+
+
 <div style="margin: 20px auto; text-align: center;">
-	<img src="images/ajax_loader.gif" alt="loading..." lang="en" />
+	<div class="_jv_spinner" role="status"><span class="sr-only" lang="en">Loading...</span></div>
 </div>

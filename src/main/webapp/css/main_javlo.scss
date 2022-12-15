@@ -111,6 +111,19 @@ body._jv_modal-open {
 	}
 }
 
+@-webkit-keyframes _jv_spinner-border {
+  to {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes _jv_spinner-border {
+  to {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
 ._jv_spinner {
 	display: inline-block;
 	width: 2rem;
@@ -120,8 +133,8 @@ body._jv_modal-open {
 	border-right-color: currentcolor;
 	border-right-color: transparent;
 	border-radius: 50%;
-	-webkit-animation: spinner-border .75s linear infinite;
-	animation: spinner-border .75s linear infinite;
+	-webkit-animation: _jv_spinner-border .75s linear infinite;
+	animation: _jv_spinner-border .75s linear infinite;
 }
 
 fieldset.collapsable {
