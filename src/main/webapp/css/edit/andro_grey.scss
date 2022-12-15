@@ -48,7 +48,7 @@ select {
 	color: #333;
 }
 
-.btn, .action-button, #tools select, #tools input {
+.btn, .action-button, #tools select, #tools input, .action input[type="submit"] {
 	--btn-height: 28px;
 	--btn-vertical-padding: 3px;
 	padding: var(--btn-vertical-padding) 1em;
@@ -68,6 +68,10 @@ select {
 		display: inline-block;
 		line-height: calc(var(--btn-height) - var(--btn-vertical-padding) * 2);
 	} 
+}
+
+.action input[type="submit"] {
+	margin-left: .5rem;
 }
 
 #tools {
