@@ -427,7 +427,7 @@ div#preview_command {
 	cursor: pointer;
 	position: relative;
 	min-width: 200px;
-	min-height: 80px;
+	min-height: 15px;
 
 	/** DEBUG **/
 	/*display: block !important;
@@ -436,7 +436,7 @@ div#preview_command {
 	top: 200px !important;
 	left: 500px !important;
 	width: 150px !important;
-	height: 400px !important;*/
+	height: 5px !important;*/
 	
 	.preview-layer-wrapper {
 		height: 100%;
@@ -546,12 +546,20 @@ div#preview_command {
 		justify-content: center;
 		align-items: center;
 		height: 100%;
-		min-height: 2.1rem;
 
 		i {
 			margin-top: -28px;
 			opacity: .5;
 			color: #fff;
+		}
+	}
+	
+	&.small-height {
+		.layer-info {
+			top: -24px;
+		} 
+		.commands {
+			bottom: -28px;
 		}
 	}
 

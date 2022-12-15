@@ -181,7 +181,13 @@ if (!String.prototype.startsWith) {
 				} else {
 					layer.removeClass("small");
 				}
-				layer.css("height", comp.outerHeight(false));
+				var height = comp.outerHeight(false);
+				layer.css("height", height);
+				if (height < 80) {
+					layer.addClass("small-height");
+				} else {
+					layer.removeClass("small-height");
+				}
 				layer.data("comp", comp);
 			}
 		}
