@@ -162,6 +162,9 @@
 
 #preview_command .page-actions {
 	position: relative;
+	ul {
+		display: flex;
+	}
 }
 
 
