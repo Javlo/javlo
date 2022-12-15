@@ -58,7 +58,7 @@ html.preview-only.preview-standard.preview-command-visible {
 	margin-left: 0 !important;
 }
 
-#preview_command .btn:hover {
+#preview_command .btn:hover, #preview_command .btn:focus {
 	//color: var(--javlo-ui-btn-text-hover) !important;
 	border-radius: 5px !important;
 	background-color: rgba(0, 0, 0, .2) !important;
@@ -66,7 +66,7 @@ html.preview-only.preview-standard.preview-command-visible {
 }
 
 #preview_command .disabled .btn:hover {
-	background-color: transparent;
+	background-color: transparent !important;
 }
 
 #preview_command {
@@ -427,6 +427,7 @@ div#preview_command {
 	cursor: pointer;
 	position: relative;
 	min-width: 200px;
+	min-height: 80px;
 
 	/** DEBUG **/
 	/*display: block !important;
@@ -445,6 +446,10 @@ div#preview_command {
 	}
 	
 	.repeat-icon {
+		display: none !important;
+	}
+	
+	&.repeated .repeat-icon {
 		display: none !important;
 	}
 

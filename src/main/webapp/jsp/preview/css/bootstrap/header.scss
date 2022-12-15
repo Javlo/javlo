@@ -385,14 +385,9 @@ body #preview_command ._jv_menu {
 	}
 
 	.btn:hover {
-		background-color: #ffffff !important;
-		color: white !important;
-		border-color: var(--javlo-ui-color-6) !important;
-		color: var(--javlo-ui-color-6) !important;
-
-		.label {
-			color: var(--javlo-ui-color-6) !important;
-		}
+		background-color: var(--javlo-ui-color-9) !important;
+		border-radius: 0 !important;
+		border-color: var(--javlo-ui-color-9) !important;
 	}
 
 	.button-group-addon {
@@ -401,6 +396,7 @@ body #preview_command ._jv_menu {
 		border: 0 none;
 		border-right: 1px #cccccc solid;
 		text-align: center;
+		height: 100%;
 	}
 }
 
@@ -433,7 +429,7 @@ body #preview_command ._jv_menu {
 
 		a {
 			color: white;
-			max-width: 125px;
+			max-width: 135px;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
@@ -446,7 +442,8 @@ body #preview_command ._jv_menu {
 		a.template {
 			font-size: .8em;
 			color: var(--javlo-ui-color-3);
-			max-width: 95px;
+			max-width: 105px;
+			margin-right: .5rem;
 		}
 	}
 }
@@ -486,6 +483,10 @@ body #preview_command ._jv_menu {
 
 			.category {
 				display: none;
+			}
+			
+			&:hover {
+				background-color: var(--javlo-ui-clipboard-bg-hover) !important;
 			}
 		}
 

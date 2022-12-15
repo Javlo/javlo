@@ -1,4 +1,3 @@
-
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib uri="/WEB-INF/javlo.tld" prefix="jv"%><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><%@page contentType="text/html" import="
     	    org.javlo.helper.XHTMLHelper,
     	    org.javlo.helper.URLHelper,
@@ -52,11 +51,8 @@ if (!rightOnPage) {
 							<div class="_jv_spinner" role="status"><span class="sr-only">Loading...</span></div>
 						</div>
 					</div>
-					<a class="name btn-toggle _jv_collapse-container _jv_ajax-hide-on-loading" href="#" data-jv-toggle="collapse" data-jv-target="#admin-list">Javlo</a>
+					<a class="name btn-toggle _jv_collapse-container _jv_ajax-hide-on-loading" href="${info.currentViewURL}" data-jv-toggle="collapse" data-jv-target="#admin-list">Javlo</a>
 					<div id="admin-list" class="_jv_collapse-target _jv_hidden"><jsp:include page="admin_menu.jsp" /></div>
-					<c:if test="${!userInterface.light}">
-						<a class="settings" href="#" onclick="editPreview.openModal('${i18n.edit['preview.label.properties']}','${url}'); return false;"> <i class="bi bi-gear"></i></a>
-					</c:if>
 
 					<ul>
 						<li class="page-title"><a href="#" class="page" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;">${not empty info.page.pageTitle?info.page.pageTitle:info.page.name}</a> <a href="#" class="template" onclick="editPreview.openModal('Template', '${info.currentEditURL}?module=template&webaction=template.changeFromPreview&previewEdit=true');"> ${info.currentPage.templateId == null?'<i class="bi bi-file-earmark-arrow-down"></i>':'<i class="bi bi-file-earmark-code"></i>'} ${info.page.template} </a></li>

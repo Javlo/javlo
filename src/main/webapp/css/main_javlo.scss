@@ -29,10 +29,6 @@ body._jv_modal-open {
 ._jv_show {
 	display: block !important;
 }
-._jv_collapse-container {
-	position: relative;
-}
-
 ._jv_collapse-target {
 	position: absolute;
 	top: 40px;
@@ -60,9 +56,9 @@ body._jv_modal-open {
 		position: absolute;
 		left: -9999px;
 	}
-	input:checked + label {
-		background-color: var(--javlo-ui-btn-toggle-bg-active);
-		color: #fff;
+	input:checked + label, &:hover input:checked + label {
+		background-color: var(--javlo-ui-btn-toggle-bg-active) !important;
+		color: #fff !important;
 	}
 	input:checked + label, label:hover {
 		color: (--javlo-ui-btn-toggle-bg-active);
@@ -77,8 +73,14 @@ body._jv_modal-open {
 	    line-height: 1.6rem;
 	    color: black;
 	    cursor: pointer;
-	    border-radius: 4px;
 		margin-right:5px;
+		background-color: #ddd;
+	}
+	&:hover {
+		label {
+			background-color: var(--javlo-ui-bg-secondary) !important;
+			color: #fff;
+		}
 	}
 }
 

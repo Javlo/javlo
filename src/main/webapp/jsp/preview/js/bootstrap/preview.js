@@ -130,6 +130,7 @@ if (!String.prototype.startsWith) {
 			var comp = pjq(item);
 			if (comp.hasClass("repeated")) {
 				layer.addClass("repeated");
+				console.log("repeated");
 				layer.find(".btn-delete").addClass("hidden");
 			}
 			if (comp.hasClass("mirror-wrapped")) {
