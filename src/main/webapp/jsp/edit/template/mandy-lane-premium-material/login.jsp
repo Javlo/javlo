@@ -37,7 +37,7 @@ ISocialNetwork googleOauth = socialService.getGoogle();
 
 <title>Javlo (Login)</title>
 <link rel="shortcut icon" href="img/assets/favicon.ico" />
-<link href="${info.staticRootURL}/css/main_edit_and_preview.css" rel="stylesheet" type="text/css" />
+<link href="${info.staticRootURL}css/main_edit_and_preview.css" rel="stylesheet" type="text/css" />
 <link href="${info.editTemplateURL}/css/login.css" rel="stylesheet" type="text/css" />
 <style type="text/css">
 @font-face {
