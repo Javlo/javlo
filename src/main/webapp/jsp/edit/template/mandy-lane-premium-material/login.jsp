@@ -84,7 +84,7 @@ ISocialNetwork googleOauth = socialService.getGoogle();
 				<div class="form-group">
 					<input id="j_password" class="form-control" type="password" name="j_password" placeholder="Password" />
 				</div>
-				<div class="checkbox pull-left">
+				<div class="checkbox pull-left check-remember">
 					<label> <input type="checkbox" id="autologin" name="autologin" /> Remember.
 					</label>
 				</div>

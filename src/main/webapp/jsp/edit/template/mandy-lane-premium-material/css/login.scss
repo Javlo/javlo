@@ -115,3 +115,14 @@ body {
 	font-size: 1.1rem;
 }
 
+.check-remember label {
+	font-size: 12px;
+	display: flex;
+	align-items: center;;
+	input {
+		border: 0 none;
+		height: 12px;
+		margin: 0;
+	}
+}
+
