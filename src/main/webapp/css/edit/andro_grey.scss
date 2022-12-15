@@ -70,6 +70,13 @@ select {
 	} 
 }
 
+.insert-line {
+	margin-bottom: 15px;
+	.btn {
+		--btn-height: 18px;
+	}
+}
+
 .action input[type="submit"] {
 	margin-left: .5rem;
 }
