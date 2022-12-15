@@ -232,11 +232,25 @@
 	justify-content: space-between;
 	align-items: center;
 
-	&:after {
+}
+
+#preview_command .page-shortcut {
+	position: relative;
+	&:before {
 		content: "";
 		background-color: var(--javlo-ui-btn-separator);
 		width: 1px;
 		height: 20px;
+		display: block;
+		position: absolute;
+		top: 4px;
+		left: -1px;
+	}
+}
+
+#preview_command .page-shortcut:hover {
+	&:before {
+		background-color: transparent;
 	}
 }
 
