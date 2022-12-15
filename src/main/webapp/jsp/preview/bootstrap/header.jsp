@@ -101,7 +101,7 @@ if (!rightOnPage) {
 							<c:if test="${!globalContext.previewMode && !contentContext.asTimeMode}">
 								<li>
 									<div class="link-wrapper">
-										<a class="btn btn-default btn-mode btn-wait-loading" href="${info.currentViewURLWidthDevice}" target="_blank"><i class="bi bi-eye-fill"></i> ${i18n.edit['preview.label.not-edit-page']}</a>
+										<a class="btn btn-default btn-mode" href="${info.currentViewURLWidthDevice}" target="_blank"><i class="bi bi-eye-fill"></i> ${i18n.edit['preview.label.not-edit-page']}</a>
 									</div>
 								</li>
 							</c:if>
@@ -222,10 +222,10 @@ if (!rightOnPage) {
 						<div class="pc_line">
 							<input type="hidden" name="webaction" value="edit.previewedit" />
 							<div class="btn-group toggle-preview-edit" role="group" aria-label="...">
-								<button class="btn btn-default btn-mode btn-wait-loading ${editPreview?'active':''}" type="submit">
+								<button class="btn btn-default btn-mode ${editPreview?'active':''}" type="submit">
 									<i class="bi bi-pencil-fill"></i> <span class="text hidden">${i18n.edit['preview.label.edit-page']}</span>
 								</button>
-								<button class="btn btn-default btn-mode btn-wait-loading ${!editPreview?'active':''}" type="submit">
+								<button class="btn btn-default btn-mode ${!editPreview?'active':''}" type="submit">
 									<i class="bi bi-eye-fill"></i> <span class="text hidden">${i18n.edit['preview.label.not-edit-page']}</span>
 								</button>
 							</div>

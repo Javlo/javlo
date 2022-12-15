@@ -152,7 +152,7 @@ public class PDFMultimedia extends Multimedia {
 				ContentContext forcePreviewCtx = ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE); // force no short url
 				forcePreviewCtx.setAbsoluteURL(false);
 				String previewURL = URLHelper.createTransformURL(forcePreviewCtx, getPage(), URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), folder), "pdf-preview");
-				String fullURL = URLHelper.createTransformURL(forcePreviewCtx, getPage(), URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), folder), "full");
+				String fullURL = URLHelper.createTransformURL(forcePreviewCtx, getPage(), URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), folder), "pdf-full");
 				previewURL = URLHelper.addParam(previewURL, "page", "" + p);
 				resource.setPreviewURL(previewURL);
 				fullURL = URLHelper.addParam(fullURL, "page", "" + p);
