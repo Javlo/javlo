@@ -275,7 +275,7 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 				title = " title=\"" + StringHelper.toXMLAttribute(title) + "\"";
 			}
 
-			res.append("<a " + getPrefixCssClass(ctx, "") + getSpecialPreviewCssId(ctx) + " href=\" ");
+			res.append("<a " + getPrefixCssClass(ctx, "") + getSpecialPreviewCssId(ctx) + getDataAttributes(ctx) + " href=\" ");
 			if (ctx.getRenderMode() != ContentContext.PAGE_MODE) {
 				res.append(StringHelper.toXMLAttribute(url));
 			} else {

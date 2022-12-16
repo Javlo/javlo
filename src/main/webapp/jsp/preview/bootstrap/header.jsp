@@ -220,12 +220,11 @@ if (!rightOnPage) {
 				<c:if test="${globalContext.previewMode && !contentContext.asTimeMode}">
 					<form id="pc_form" action="${info.currentURL}" method="post">
 						<div class="pc_line">
-							<input type="hidden" name="webaction" value="edit.previewedit" />
 							<div class="btn-group toggle-preview-edit" role="group" aria-label="...">
-								<button class="btn btn-default btn-mode ${editPreview?'active':''}" type="submit">
+								<button class="btn btn-default btn-mode ${editPreview?'active':''}" type="submit" ${!editPreview?'name="webaction" value="edit.previewedit"':''}>
 									<i class="bi bi-pencil-fill"></i> <span class="text hidden">${i18n.edit['preview.label.edit-page']}</span>
 								</button>
-								<button class="btn btn-default btn-mode ${!editPreview?'active':''}" type="submit">
+								<button class="btn btn-default btn-mode ${!editPreview?'active':''}" type="submit" ${editPreview?'name="webaction" value="edit.previewedit"':''}>
 									<i class="bi bi-eye-fill"></i> <span class="text hidden">${i18n.edit['preview.label.not-edit-page']}</span>
 								</button>
 							</div>
@@ -234,10 +233,7 @@ if (!rightOnPage) {
 				</c:if>
 			</div>
 
-
-
 			<div class="users">
-
 				<li class="publish"><form id="pc_publish_form" action="${info.currentURL}" method="post">
 						<input type="hidden" name="webaction" value="${webaction}" />
 						<c:set var="tooltip" value="" />
