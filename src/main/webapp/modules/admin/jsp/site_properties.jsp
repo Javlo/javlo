@@ -281,7 +281,7 @@
 					</c:if>
 			
 					<div class="form-group">
-						<label for="administrator">*** ${i18n.edit['admin.adminitrator']}</label>
+						<label for="administrator">${i18n.edit['admin.adminitrator']}</label>
 						<input class="form-control" type="text" id="administrator" name="administrator" value="${currentContext.administrator}" />
 					</div>
 			
