@@ -38,6 +38,13 @@ body#main-body,
 	--javlo-flash-color: hsl(343, 58%, 53%);
 	--javlo-flash-color-bg: hsl(343deg 58% 97%);
 
+	--javlo-shadow-color: 209deg 18% 16%;
+	--javlo-shadow-elevation-medium:
+		0.3px 0.5px 0.7px hsl(var(--javlo-shadow-color) / 0.36),
+		0.8px 1.6px 2px -0.8px hsl(var(--javlo-shadow-color) / 0.36),
+		2.1px 4.1px 5.2px -1.7px hsl(var(--javlo-shadow-color) / 0.36),
+		5px 10px 12.6px -2.5px hsl(var(--javlo-shadow-color) / 0.36);
+
 	/*General*/
 	--javlo-ui-color-text-primary: white;
 	--javlo-ui-color-danger: hsl(343, 58%, 53%);

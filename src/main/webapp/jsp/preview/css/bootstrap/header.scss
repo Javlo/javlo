@@ -162,6 +162,7 @@
 
 #preview_command .page-actions {
 	position: relative;
+
 	ul {
 		display: flex;
 	}
@@ -236,6 +237,7 @@
 
 #preview_command .page-shortcut {
 	position: relative;
+
 	&:before {
 		content: "";
 		background-color: var(--javlo-ui-btn-separator);
@@ -248,11 +250,6 @@
 	}
 }
 
-#preview_command .page-shortcut:hover {
-	&:before {
-		background-color: transparent;
-	}
-}
 
 #preview_command .header li {
 	// margin-right: 3px;
@@ -369,7 +366,7 @@
 #preview_command {
 	#macro-list {
 		left: auto;
-		right: 50px;
+		right: 60px;
 	}
 }
 
@@ -498,7 +495,7 @@ body #preview_command ._jv_menu {
 			.category {
 				display: none;
 			}
-			
+
 			&:hover {
 				background-color: var(--javlo-ui-clipboard-bg-hover) !important;
 			}

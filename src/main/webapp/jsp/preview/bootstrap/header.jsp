@@ -242,7 +242,7 @@ if (!rightOnPage) {
 						<input type="hidden" name="webaction" value="${webaction}" />
 						<c:set var="tooltip" value="" />
 						<c:if test="${i18n.edit['command.publish.tooltip'] != 'command.publish.tooltip'}">
-							<c:set var="tooltip" value='data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'command.publish.tooltip\']}"' />
+							<c:set var="tooltip" value='data-toggle="tooltip" data-placement="bottom" title="${i18n.edit[\'command.publish.tooltip\']}"' />
 						</c:if>
 						<button type="submit" class="btn btn-default" ${tooltip} ${empty webaction?'disabled="disabled"':''}>
 							<i class="bi bi-cloud-upload"></i>
@@ -264,7 +264,7 @@ if (!rightOnPage) {
 							</div>
 							<c:set var="tooltip" value="" />
 							<c:if test="${i18n.edit['command.undo.tooltip'] != 'command.undo.tooltip'}">
-								<c:set var="tooltip" value='data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'command.undo.tooltip\']}"' />
+								<c:set var="tooltip" value='data-toggle="tooltip" data-placement="bottom" title="${i18n.edit[\'command.undo.tooltip\']}"' />
 							</c:if>
 							<button class="btn btn-default btn-refresh" id="pc_paste_page" type="submit" ${contentContext.canUndo?'':' disabled="disabled"'} ${tooltip}>
 								<i class="bi bi-arrow-counterclockwise"></i> <span class="text">${i18n.edit['global.undo']}</span>
@@ -277,7 +277,7 @@ if (!rightOnPage) {
 							<c:param name="module" value="search"></c:param>
 							<c:param name="previewEdit" value="true"></c:param>
 						</c:url> <c:set var="tooltip" value="" /> <c:if test="${i18n.edit['preview.label.search.tooltip'] != 'preview.label.search.tooltip'}">
-							<c:set var="tooltip" value=' data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'preview.label.search.tooltip\']}"' />
+							<c:set var="tooltip" value=' data-toggle="tooltip" data-placement="bottom" title="${i18n.edit[\'preview.label.search.tooltip\']}"' />
 						</c:if>
 						<button ${tooltip} class="btn btn-default btn-search btn-color btn-notext badged" type="<%=accessType%>" value="${i18n.edit['preview.label.search']}" onclick="editPreview.openModal('${i18n.edit['preview.label.search']}','${url}'); return false;" ${tooltip}>
 							<i class="bi bi-search"></i> <span class="text">${i18n.edit['preview.label.search']}</span>
@@ -291,7 +291,7 @@ if (!rightOnPage) {
 						<form class="tooltip-form">
 							<c:set var="tooltip" value="" />
 							<c:if test="${i18n.edit['preview.label.ticket.tooltip'] != 'preview.label.ticket.tooltip'}">
-								<c:set var="tooltip" value=' data-toggle="tooltip" data-placement="left" title="${i18n.edit[\'preview.label.ticket.tooltip\']}"' />
+								<c:set var="tooltip" value=' data-toggle="tooltip" data-placement="bottom" title="${i18n.edit[\'preview.label.ticket.tooltip\']}"' />
 							</c:if>
 							<script>
 								function openTicket() {

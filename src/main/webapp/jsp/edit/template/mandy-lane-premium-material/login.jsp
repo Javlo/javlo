@@ -79,13 +79,15 @@ ISocialNetwork googleOauth = socialService.getGoogle();
 					<input type="hidden" value="editPreview" name="true" />
 				</c:if>
 				<div class="form-group">
-					<input id="j_username" class="form-control" type="text" name="j_username" placeholder="User name" />
+					<i class="bi bi-person-fill"></i>
+					<input id="j_username" class="form-control" type="text" name="j_username" placeholder="Username or Email" />
 				</div>
 				<div class="form-group">
+					<i class="bi bi-lock-fill"></i>
 					<input id="j_password" class="form-control" type="password" name="j_password" placeholder="Password" />
 				</div>
 				<div class="checkbox pull-left check-remember">
-					<label> <input type="checkbox" id="autologin" name="autologin" /> Remember.
+					<label> <input type="checkbox" id="autologin" name="autologin" />Remember me
 					</label>
 				</div>
 				<button class="btn btn-default pull-right">Login</button>
@@ -108,6 +110,7 @@ ISocialNetwork googleOauth = socialService.getGoogle();
 				<form id="fresetpwd" action="${info.currentEditURL}" method="post" role="form">
 					<input type="hidden" name="webaction" value="unsecure.askChangePassword" />
 					<div class="form-group">
+						<i class="bi bi-person-fill"></i>
 						<input type="email" id="resetpwd-input" class="form-control mb-3" name="email" placeholder="${i18n.edit['global.email']}" />
 					</div>
 					<button type="submit" class="btn-reset btn btn-default pull-right">${i18n.edit['global.reset']}</button>

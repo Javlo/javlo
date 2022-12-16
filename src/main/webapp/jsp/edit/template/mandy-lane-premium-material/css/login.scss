@@ -10,33 +10,69 @@ $background_color_3: #fff;
 $border_color_1: #ccc;
 
 @import "bootstrap/bootstrap.min.css";
+
 body {
 	overflow: hidden;
 	height: 100vh;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	background-color: $background_color_1;
+	background-color: $background_color_1 !important;
 	color: $color_4;
 	font-size: 14px;
-	a, a:focus, a:hover {
+
+	a,
+	a:focus,
+	a:hover {
 		color: var(--javlo-ui-special-action-color);
 	}
 }
+
 .main {
 	--login-padding: 4rem;
 	width: 400px;
 	padding: var(--login-padding);
-	background-color: $background_color_2;
+	background-color: $background_color_2 !important;
 	position: relative;
 	z-index: 2;
-	border: 1px solid var(--javlo-ui-btn-separator) !important;
+	// border: 1px solid var(--javlo-ui-border) !important;
+	box-shadow: var(--javlo-shadow-elevation-medium);
+	border-radius: 10px;
+
+	.form-group {
+		display: flex;
+		align-items: center;
+
+		.form-control {
+			color: white !important;
+			border: 0 !important;
+			border-radius: 0;
+			box-shadow: none;
+			font-size: 1.1rem;
+			padding: 6px 12px 6px 22px;
+			background-color: var(--javlo-ui-color-6) !important;
+
+			&::placeholder {
+				color: var(--javlo-ui-color-3) !important;
+			}
+
+		}
+
+
+		i {
+			position: absolute;
+			margin-left: 5px;
+			color: white;
+		}
+	}
+
 	h1 {
 		text-align: center;
 		color: $color_1;
 		font-size: 40px;
 		margin-top: 0;
 		font-family: $font_family_1;
+
 		.version {
 			font-size: 0.4em;
 			display: block;
@@ -51,28 +87,34 @@ body {
 		font-size: 32px;
 	}
 }
+
 .alert {
 	padding: 7px;
 	text-align: center;
 }
+
 .login-reset-password {
 	clear: both;
 	display: flex;
 	justify-content: flex-end;
+
 	label {
 		margin-top: 0.5em;
 		font-weight: normal;
 		font-size: 0.9em;
 	}
 }
+
 .btn-google {
 	margin-right: 5px;
 	padding-top: 8px;
 	padding-bottom: 4px;
 }
+
 .g-signin2 {
 	float: right;
 	margin-right: 5px;
+
 	.abcRioButton {
 		height: 35px !important;
 		display: inline-block;
@@ -100,29 +142,37 @@ body {
 		box-shadow: 0 0 0 transparent;
 	}
 }
-.btn {
+
+.btn,
+.btn-default {
 	min-width: 140px;
-	background: var(--javlo-ui-bg-secondary);
-	border: 1px var(--javlo-ui-nav-btn-border) solid;
-	color: $color_4;
+	border: 1px solid var(--javlo-ui-primary-accent-color-3) !important;
+	background: var(--javlo-ui-primary-accent-color-3) !important;
+	color: white;
 	border-radius: 0;
+
+	&:first-letter {
+		text-transform: uppercase;
+	}
+
+	&:hover {
+		background: var(--javlo-ui-color-9) !important;
+		border: 1px var(--javlo-ui-color-9) solid !important;
+		color: white !important;
+	}
 }
-.form-control {
-	color: $color_5;
-	border: 1px solid #ccc;
-	border-radius: 0;
-	box-shadow: none;
-	font-size: 1.1rem;
-}
+
+
 
 .check-remember label {
 	font-size: 12px;
 	display: flex;
-	align-items: center;;
+	align-items: center;
+	;
+
 	input {
 		border: 0 none;
 		height: 12px;
 		margin: 0;
 	}
 }
-
