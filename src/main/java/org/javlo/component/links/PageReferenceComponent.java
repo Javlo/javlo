@@ -1212,9 +1212,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
-		if (isForceCachable()) {
-			return true;
-		}
+//		if (isForceCachable()) {
+//			return true;
+//		}
 		if (isSessionTaxonomy(ctx)) {
 			return false;
 		}

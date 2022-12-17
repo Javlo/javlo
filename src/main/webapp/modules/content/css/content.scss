@@ -18,8 +18,12 @@ html {
 	}
 }
 
+body .full-height .component .ui-tabs-nav {
+	background-color: #ddd;
+}
+
 .ui-tabs-nav .ui-state-active{
-	font-weight: 600;
+	background-color: #fff;
 }
 .area-label{
 	display:none!important;
@@ -477,7 +481,6 @@ body.right-admin #page-404 {
 .component-title {
 	overflow: hidden;
 	width:100%!important;
-	margin-top:-6px!important;
 	a {
 		display: block;
 		float: left;
@@ -597,6 +600,22 @@ body.right-admin #page-404 {
 .component input[type="radio"],.component input[type="checkbox"] {
 	width: auto;
 }
+.component {
+	.other-config  {
+		padding-top: 23px;
+	}
+	._jv_btn-check {
+		label {
+			width: auto;
+		}
+	}
+	._jv_flex-line-start {
+		justify-content: flex-start;
+	}
+	.style-selection {
+		margin-top: .5rem;
+	}
+}
 
 #content-edit input[type=submit],#content-edit input[type=button] {
 	width: auto;
@@ -611,6 +630,10 @@ label {
 
 .btn .loader {
 	display: none;
+	._jv_spinner {
+		width: 1rem;
+		height: 1rem;
+	}
 }
 
 .standard-form input[type=submit]{
@@ -1015,15 +1038,36 @@ li.line {
 	margin-bottom: 15px;
 	
 	.column-align {
-		margin-right: .5rem;
+		border: 1px solid var(--grey-3);
+		background-color: #ddd;
+		padding-top: 3px;
+		margin-right: .2%;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		._jv_btn-check {
+		._jv_btn-check {			
 			label {
+				border-radius: 0 !important;
 				font-size: 15px;
 				padding: 1px 4px;
+				border: 0 none;
+				background-color: transparent;
+			}
+		}
+		.align-label {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-content: center;
+			text-align: center;
+			i {
+				font-size: 17px;
+				margin-bottom: 3px;
+				color: #000;
+			}
+			select {
+				border: 0 none;
 			}
 		}
 	}
@@ -1032,20 +1076,7 @@ li.line {
 		text-align: center;
 	}
 	
-	.align-label {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-content: center;
-		text-align: center;
-		i {
-			font-size: 18px;
-			margin-bottom: 3px;
-		}
-		select {
-			border: 0 none;
-		}
-	}
+	
 	
 	._jv_btn-check {
 		margin: 0 .2% !important;

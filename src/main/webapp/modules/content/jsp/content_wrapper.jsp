@@ -15,7 +15,9 @@
 		<c:if test="${not empty param.previewEdit}">
 			<c:set var="saveItem" value="${i18n.edit['preview.save']}" />
 		</c:if>
-		<button id="button-content-submit" type="submit" class="btn btn-default btn-xs" name="save" ><span class="text">${saveItem}</span><span class="loader"><img src="${info.ajaxLoaderURL}" /></span></button>
+		<button id="button-content-submit" type="submit" class="btn btn-default btn-xs" name="save" ><span class="text">${saveItem}</span>
+		<span class="loader"><div class="_jv_spinner" role="status"><span class="sr-only" lang="en">Loading...</span></div></span>
+		</button>
 	</div>
 </form>
 <c:if test="${not empty cleanClipBoard && not info.editPreview}">

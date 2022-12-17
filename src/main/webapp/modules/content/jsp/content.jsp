@@ -152,7 +152,7 @@ for (IContentVisualComponent comp : components) {
      <%
  String errorMessage = comp.getErrorMessage(ctx);
  if (!StringHelper.isEmpty(errorMessage)) {%>
- <div class="component-error-message"><span class="body"><span class="glyphicon glyphicon-alert"></span> <%=errorMessage%></div>
+ <div class="component-error-message"><span class="body"><i class="bi bi-exclamation-triangle"></i> <%=errorMessage%></div>
  <%}%>
       <ul>      	  	
           <li><a href="#tab1<%=inputSuffix%>">${i18n.edit["global.content"]}</a></li>
@@ -166,7 +166,7 @@ for (IContentVisualComponent comp : components) {
         	%><li><a href="#tab11<%=inputSuffix%>"><%=tabTitle%></a></li><% 
           }
           %>
-          <li class="<%if (!comp.isConfig(ctx)) {%>disabled<%} else {%>enabled<%}%>"><a class="link"<%=linkTag%>>${i18n.edit["global.settings"]}</a></li>          
+          <li class="<%if (!comp.isConfig(ctx)) {%>disabled<%} else {%>enabled<%}%>"><a class="link"<%=linkTag%>>${i18n.edit["global.settings"]}</a></li>
           <%if (admin) {%><li><a href="#tab4<%=inputSuffix%>">raw</a></li><%}%>
       </ul>
     </div>
@@ -197,9 +197,9 @@ for (IContentVisualComponent comp : components) {
       	<%
       	boolean sep=false;
       	if (comp.isRepeat()) {%><span class="repeat" title="${i18n.edit['content.repeat']}"></span><%}
-      	if (comp.isList(ctx)) {%><span class="inlist" title="${i18n.edit['component.inlist']}"></span><%}      	
+      	if (comp.isList(ctx)) {%><span class="inlist" title="${i18n.edit['component.inlist']}"></span><%}
       	if (comp.getComponentCssClass(ctx) != null && comp.getComponentCssClass(ctx).trim().length() > 0) { sep=true;%><span class="style" title="<%=comp.getStyleTitle(ctx)%>"><%=comp.getStyleLabel(ctx)%></span><%}      	
-      	if (comp.getCurrentRenderer(ctx) != null && comp.getCurrentRenderer(ctx).trim().length() > 0) {      		
+      	if (comp.getCurrentRenderer(ctx) != null && comp.getCurrentRenderer(ctx).trim().length() > 0) {
       	%><%if (comp.getComponentCssClass(ctx) != null && comp.getComponentCssClass(ctx).trim().length() > 0) {sep=true;%><span class="sep">-</span><%}%><span class="renderer" title="<%=comp.getCurrentRenderer(ctx)%>"><%=comp.getCurrentRenderer(ctx)%></span><%}
       	if (comp.isRealContent(ctx)) {if(sep) {%><span class="sep">-</span><%}%><span class="realcontent" title="${i18n.edit['component.realcontent']}">${i18n.edit['component.realcontent']}</span><%}
       	if (comp.isContentCachable(ctx)) {if(sep) {%><span class="sep">-</span><%}%><span class="contentcache" title="cache">cache</span><%}

@@ -895,29 +895,64 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 
 		if (isRepeatable()) {
-			out.println("<div class=\"line" + repeatHidden + "\">");
+			out.println("<div class=\"_jv_btn-check" + repeatHidden + "\">");
+			out.println(XHTMLHelper.getCheckbox("repeat-" + getId(), isRepeat()));
 			if (showRepeat) {
 				out.println("<label for=\"repeat-" + getId() + "\">" + i18nAccess.getText("content.repeat") + "</label>");
 			}
-			out.println(XHTMLHelper.getCheckbox("repeat-" + getId(), isRepeat()));
 			out.println("</div>");
 		}
 
 		if (isNoLinkable() && ctx.getGlobalContext().isReversedLink()) {
-			out.println("<div class=\"line\">");
+			out.println("<div class=\"_jv_btn-check\">");
+			out.println(XHTMLHelper.getCheckbox("nolink-" + getId(), isNolink()));
 			if (showRepeat) {
 				out.println("<label for=\"nolink-" + getId() + "\">" + i18nAccess.getText("content.nolink") + "</label>");
 			}
-			out.println(XHTMLHelper.getCheckbox("nolink-" + getId(), isNolink()));
 			out.println("</div>");
 		}
 
 		if (isListable()) {
-			out.println("<div class=\"line\">");
-			out.println("<label for=\"inlist-" + getId() + "\">" + i18nAccess.getText("component.inlist") + "</label>");
+			out.println("<div class=\"_jv_btn-check\">");
 			out.println(XHTMLHelper.getCheckbox("inlist-" + getId(), isList(ctx)));
+			out.println("<label for=\"inlist-" + getId() + "\">" + i18nAccess.getText("component.inlist") + "</label>");
 			out.println("</div>");
 		}
+		
+		String[] styles = getStyleList(ctx);
+		if (!isFreeInputLayout() && styles.length > 1) {
+			String[] stylesLabel = getStyleLabelList(ctx);
+			if (styles.length != stylesLabel.length) {
+				throw new ComponentException("size of styles is'nt the same than size of styles label.");
+			}
+			out.println("<div class=\"line style-selection\">");
+			out.println("<label for=\"style-" + getId() + "\">" + getStyleTitle(ctx) + "</label>");
+			//out.println(XHTMLHelper.getInputOneSelect("style-" + getId(), styles, stylesLabel, getStyle(), "form-control", null, false));
+
+			String name = "style-" + getId();
+			out.println("<div class=\"btn-group\">");
+			for (int i = 0; i < styles.length; i++) {
+				String label = stylesLabel[i];
+				String value = styles[i];
+				out.println("<div class=\"_jv_btn-check\">");
+				String id = "style-" + (getId() + '_' + i);
+				out.println("<input type=\"radio\" name=\"" + name + "\" id=\"" + id + "\" " + (value.equals(getStyle()) ? "checked=\"checked\"" : "") + "/>");
+				out.println("<label for=\"" + id + "\">" + label + "</label>");
+				out.println("</div>");
+			}
+			out.println("</div>");
+
+			out.println("</div>");
+		}
+		
+		out.println("<div class=\"row\">");
+		if (getRenderes(ctx) == null || getRenderes(ctx).size() > 1) {
+			out.println("<div class=\"col-md-6 renderer-selection\">");
+			out.println(getSelectRendererXHTML(ctx, isAutoRenderer()));
+			out.println("</div>");
+		}
+
+		out.println("<div class=\"col-md-6 other-config\">");
 		if (isAutoDeletable() && !ctx.getGlobalContext().isMailing()) {
 			out.println("<div class=\"line\">");
 			out.println("<label for=\"deldate-" + getId() + "\">" + i18nAccess.getText("component.delete-date", "delete on") + "</label>");
@@ -1022,18 +1057,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 			out.println("</div>");
 		}
-
-		String[] styles = getStyleList(ctx);
-		if (!isFreeInputLayout() && styles.length > 1) {
-			String[] stylesLabel = getStyleLabelList(ctx);
-			if (styles.length != stylesLabel.length) {
-				throw new ComponentException("size of styles is'nt the same than size of styles label.");
-			}
-			out.println("<div class=\"line\">");
-			out.println("<label for=\"style-" + getId() + "\">" + getStyleTitle(ctx) + "</label>");
-			out.println(XHTMLHelper.getInputOneSelect("style-" + getId(), styles, stylesLabel, getStyle(), "form-control", null, false));
-			out.println("</div>");
-		}
+		
 		if (isFreeInputLayout()) {
 			String[] stylesLabel = getStyleLabelList(ctx);
 			if (styles.length != stylesLabel.length) {
@@ -1045,65 +1069,86 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("</div>");
 		}
 
-		if (getRenderes(ctx) == null || getRenderes(ctx).size() > 1) {
-			out.println(getSelectRendererXHTML(ctx, isAutoRenderer()));
-		}
+		out.println("</div>"); // close col
+		out.println("</div>"); // close row
 
 		if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser())) {
 			out.println("<div class=\"line\">");
 			out.println("<label>" + i18nAccess.getText("component.display-modes") + "</label>");
+			out.println("<div class=\"_jv_flex-line-start\">");
 			for (int mode : ALL_MODES) {
 				String id = "display-mode-" + mode + "-" + getId();
-				out.println("<label for=\"" + id + "\">");
+				out.println("<div class=\"_jv_btn-check\">");
 				out.println(XHTMLHelper.getCheckbox(id, !isHiddenInMode(ctx, mode, null)));
+				out.println("<label for=\"" + id + "\">");
 				out.println(ContentContext.getRenderModeKey(mode));
-				out.println("</label>");
+				out.println("</label></div>");
 			}
+			out.println("</div>");
 			out.println("</div>");
 		}
 
-		if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser()) && (!isContentCachable(ctx) || isForceCachable())) {
-			out.println("<div class=\"line" + repeatHidden + "\">");
-			if (showRepeat) {
-				out.println("<label for=\"cachable-" + getId() + "\">" + i18nAccess.getText("content.force-cachable", "force cachable") + "</label>");
-			}
-			out.println(XHTMLHelper.getCheckbox("forceCachable-" + getId(), isForceCachable()));
-			out.println("</div>");
-		} else {
-			out.println("<input type=\"hidden\" name=\"forceCachable-" + getId() + "\" value=\"" + isForceCachable() + "\" />");
-		}
+		/*
+		 * if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser()) &&
+		 * (!isContentCachable(ctx) || isForceCachable())) {
+		 * out.println("<div class=\"line" + repeatHidden + "\">"); if (showRepeat) {
+		 * out.println("<label for=\"cachable-" + getId() + "\">" +
+		 * i18nAccess.getText("content.force-cachable", "force cachable") + "</label>");
+		 * } out.println(XHTMLHelper.getCheckbox("forceCachable-" + getId(),
+		 * isForceCachable())); out.println("</div>"); } else {
+		 * out.println("<input type=\"hidden\" name=\"forceCachable-" + getId() +
+		 * "\" value=\"" + isForceCachable() + "\" />"); }
+		 */
 
 		if (ctx.getGlobalContext().isCookies()) {
 			out.println("<div class=\"line\">");
 			out.println("<label>" + i18nAccess.getText("component.display-cookies") + "</label>");
 
 			String id = "display-cookies-" + getId();
-			out.println("<label>");
+			out.println("<div class=\"btn-group\">");
+
+			out.println("<div class=\"_jv_btn-check\">");
+			String lid = id + CookiesService.ALWAYS_STATUS;
 			out.println(XHTMLHelper.getRadio(id, "" + CookiesService.ALWAYS_STATUS, "" + getCookiesDisplayStatus()));
+			out.println("<label for=\"" + lid + "\">");
 			out.println(i18nAccess.getText("component.display-cookies.always"));
 			out.println("</label>");
+			out.println("</div>");
 
-			out.println("<label>");
+			out.println("<div class=\"_jv_btn-check\">");
+			lid = id + CookiesService.ACCEPTED_STATUS;
 			out.println(XHTMLHelper.getRadio(id, "" + CookiesService.ACCEPTED_STATUS, "" + getCookiesDisplayStatus()));
+			out.println("<label for=\"" + lid + "\">");
 			out.println(i18nAccess.getText("component.display-cookies.accepted"));
 			out.println("</label>");
+			out.println("</div>");
 
-			out.println("<label>");
+			out.println("<div class=\"_jv_btn-check\">");
+			lid = id + CookiesService.NOT_ACCEPTED_STATUS;
 			out.println(XHTMLHelper.getRadio(id, "" + CookiesService.NOT_ACCEPTED_STATUS, "" + getCookiesDisplayStatus()));
+			out.println("<label for=\"" + lid + "\">");
 			out.println(i18nAccess.getText("component.display-cookies.not-accepted"));
 			out.println("</label>");
+			out.println("</div>");
 
-			out.println("<label>");
+			out.println("<div class=\"_jv_btn-check\">");
+			lid = id + CookiesService.REFUSED_STATUS;
 			out.println(XHTMLHelper.getRadio(id, "" + CookiesService.REFUSED_STATUS, "" + getCookiesDisplayStatus()));
+			out.println("<label for=\"" + lid + "\">");
 			out.println(i18nAccess.getText("component.display-cookies.refused"));
 			out.println("</label>");
+			out.println("</div>");
 
-			out.println("<label>");
+			out.println("<div class=\"_jv_btn-check\">");
+			lid = id + CookiesService.NOCHOICE_STATUS;
 			out.println(XHTMLHelper.getRadio(id, "" + CookiesService.NOCHOICE_STATUS, "" + getCookiesDisplayStatus()));
+			out.println("<label for=\"" + lid + "\">");
 			out.println(i18nAccess.getText("component.display-cookies.nochoice"));
 			out.println("</label>");
 
 			out.println("</div>");
+
+			out.println("</div></div>");
 		}
 
 		out.close();
@@ -1136,11 +1181,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 		if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser())) {
 			boolean isForceCachable = requestService.getParameter("forceCachable-" + getId(), null) != null;
-			if (isForceCachable != isForceCachable()) {
-				setForceCachable(isForceCachable);
-				setModify();
-				setNeedRefresh(true);
-			}
+			// if (isForceCachable != isForceCachable()) {
+			// setForceCachable(isForceCachable);
+			// setModify();
+			// setNeedRefresh(true);
+			// }
 		}
 
 		boolean isNolink = requestService.getParameter("nolink-" + getId(), null) != null;
@@ -2852,7 +2897,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
-		return isForceCachable();
+		return false;
 	}
 
 	public boolean isContentCachableByQuery(ContentContext ctx) {
@@ -2973,9 +3018,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return componentBean.isRepeat();
 	}
 
-	public boolean isForceCachable() {
-		return componentBean.isForceCachable();
-	}
+	/*
+	 * public boolean isForceCachable() { return componentBean.isForceCachable(); }
+	 */
 
 	public boolean isNolink() {
 		return componentBean.isNolink();
@@ -3273,15 +3318,15 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 	}
 
-	public void setForceCachable(boolean inForceCachable) {
-		if (inForceCachable == componentBean.isForceCachable()) {
-			return;
-		} else {
-			componentBean.setForceCachable(inForceCachable);
-			setModify();
-			setNeedRefresh(true);
-		}
-	}
+	// public void setForceCachable(boolean inForceCachable) {
+	// if (inForceCachable == componentBean.isForceCachable()) {
+	// return;
+	// } else {
+	// componentBean.setForceCachable(inForceCachable);
+	// setModify();
+	// setNeedRefresh(true);
+	// }
+	// }
 
 	public void setNolink(boolean noLink) {
 		if (noLink == componentBean.isNolink()) {

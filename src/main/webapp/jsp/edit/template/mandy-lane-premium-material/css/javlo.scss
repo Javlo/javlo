@@ -614,19 +614,14 @@ ul,li {
 			padding: 0 var(--main-sep);
 			color: var(--javlo-ui-bg-secondary);
 		}
-		h3, .ui-tabs-nav {			
-			border-bottom: 1px solid rgba(0,0,0,.12);
-			background: #fff;
+		h3, .ui-tabs-nav {
 			border-radius: 0;
 			li a {
-				border-top: 2px solid #fff;
-				background: #fff;
 				border-radius: 0;
-				border-bottom: 2px solid #fff;
+				background-color: transparent;
 			}
 			.ui-tabs-selected a {
 				color: #000000;
-				border-bottom: 2px solid #2090f0;
 			}
 		}
 		.content {
@@ -913,7 +908,13 @@ ul,li {
 }
 
 .ui-tabs-nav {
-	height: 31px;
+	height: auto;
+	display: flex;
+	justify-content: flex-start;
+	border: 0 none;
+	li {
+		float: none;
+	}
 }
 
 .jGrowl {
@@ -1441,12 +1442,6 @@ body.previewEdit {
 .maincontent .ui-tabs-nav li a {
 	border: 0 none;
 	padding: 5px 16px 4px 16px;
-}
-
-.maincontent .ui-tabs-nav li.ui-state-active a {
-	border: 0 none;
-	background-color: #aaa;
-	color: #eee;
 }
 
 ul.ui-tabs-nav {

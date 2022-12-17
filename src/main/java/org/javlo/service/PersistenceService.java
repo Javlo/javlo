@@ -856,7 +856,7 @@ public class PersistenceService {
 			ComponentBean bean = new ComponentBean(type, content, lg);
 			bean.setId(id);
 			bean.setRepeat(StringHelper.isTrue(contentNode.getAttributeValue("repeat"), false));
-			bean.setForceCachable(StringHelper.isTrue(contentNode.getAttributeValue("forceCachable"), false));
+			//bean.setForceCachable(StringHelper.isTrue(contentNode.getAttributeValue("forceCachable"), false));
 			bean.setNolink(isNolink);
 			bean.setStyle(style);
 			bean.setList(StringHelper.isTrue(inlist));

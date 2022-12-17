@@ -77,6 +77,20 @@ select {
 	}
 }
 
+body.previewEdit {
+	.insert-line {
+		display: none;
+	} 
+	.insert-line.action {
+		display: block;
+		position: fixed;
+		right: 0;
+		top: 0;
+		padding: 15px;
+		background-color: var(--javlo-ui-bg-primary) !important;
+	}
+}
+
 .action input[type="submit"] {
 	margin-left: .5rem;
 }
