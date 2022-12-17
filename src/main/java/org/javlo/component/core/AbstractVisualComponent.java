@@ -744,8 +744,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 
 		out.println("<div class=\"column-selection-block\"><div class=\"column-selection\">");
-		out.println("<label for=\"" + (getInputNameColomnStyle()) + "\"  style=\"width: " + size + "%\" >");
-		out.println(i18nAccess.getText("align.vertical") + "<br /><br />");
+		out.println("<label class=\"align-label\" title=\""+i18nAccess.getText("align.vertical")+"\" for=\"" + (getInputNameColomnStyle()) + "\">");
+		out.println("<i class=\"bi bi-arrows-expand\"></i>");
 		Map<String, String> option = new LinkedHashMap<>();
 		option.put("", "");
 		option.put("top", i18nAccess.getText("align.vertical.top", "top"));
@@ -758,15 +758,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			if (getColumnSize(ctx) == colSize) {
 				cssClass = " class=\"active\" ";
 			}
-			out.println("<label" + cssClass + " for=\"" + (getInputNameColomn() + colSize) + "\"  style=\"width: " + size + "%\" >");
-			out.println("<div class=\"select-col select-col-" + colSize + "\">");
 			String select = "";
 			if (getColumnSize(ctx) == colSize) {
 				select = " checked=\"checked\" ";
 			}
+			out.println("<div class=\"_jv_btn-check\">");
 			out.println("<input type=\"radio\" id=\"" + (getInputNameColomn() + colSize) + "\" name=\"" + getInputNameColomn() + "\"" + select + "value=\"" + colSize + "\" />");
+			out.println("<label" + cssClass + " for=\"" + (getInputNameColomn() + colSize) + "\">");
+			out.println("<div class=\"select-col select-col-" + colSize + "\">");
 			out.println("<div class=\"fraction\">" + (colSize == 0 ? "auto" : (colSize + "/" + getColumnMaxSize(ctx))) + "</div></div>");
-			out.print(drawColumn(ctx, colSize) + "</label>");
+			out.print(drawColumn(ctx, colSize) + "</label></div>");
 		}
 		out.println("</div><hr /></div>");
 		out.close();

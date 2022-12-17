@@ -1011,11 +1011,37 @@ li.line {
 .column-selection {
 	display: flex;
 	justify-content: space-between;
+	align-content: stretch;
 	margin-bottom: 15px;
 	
 	.select-col {
 		text-align: center;
 	}
+	
+	.align-label {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-content: center;
+		text-align: center;
+		i {
+			font-size: 18px;
+			margin-bottom: 3px;
+		}
+		select {
+			border: 0 none;
+		}
+	}
+	
+	._jv_btn-check {
+		margin: 0 .2% !important;
+		width: 200% !important;
+		label {
+			width: 100% !important; 
+			padding-bottom: 3px !important;
+		}
+	}
+	
 	.column {
 		table {
 			width: 100%;
@@ -1023,7 +1049,7 @@ li.line {
 			td {
 				background-color: var(--grey-3);
 				border: 2px #ffffff solid;
-				height: 30px;
+				height: 15px;
 				width: auto;
 			}
 			td.main-col {
