@@ -743,16 +743,32 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			e.printStackTrace();
 		}
 
+		String colStyle = getComponentBean().getColumnStyle();
 		out.println("<div class=\"column-selection-block\"><div class=\"column-selection\">");
-		out.println("<label class=\"align-label\" title=\""+i18nAccess.getText("align.vertical")+"\" for=\"" + (getInputNameColomnStyle()) + "\">");
+		out.println("<div class=\"column-align\"><label class=\"align-label\" title=\"" + i18nAccess.getText("align.vertical") + "\" for=\"" + (getInputNameColomnStyle()) + "\">");
 		out.println("<i class=\"bi bi-arrows-expand\"></i>");
-		Map<String, String> option = new LinkedHashMap<>();
-		option.put("", "");
-		option.put("top", i18nAccess.getText("align.vertical.top", "top"));
-		option.put("middle", i18nAccess.getText("align.vertical.middle", "middle"));
-		option.put("bottom", i18nAccess.getText("align.vertical.bottom", "bottom"));
-		out.println(XHTMLHelper.getDropDownFromMap(getInputNameColomnStyle(), option, getComponentBean().getColumnStyle(), null, false, null));
 		out.println("</label>");
+
+		out.println("<div class=\"btn-group\">");
+
+		out.println("<div class=\"_jv_btn-check\">");
+		out.println("<input id=\"vtop-" + getId() + "\" type=\"radio\" name=\"" + getInputNameColomnStyle() + "\" value=\"top\" " + ("top".equals(colStyle) ? " checked=\"checked\"" : "") + ">");
+		out.println("<label for=\"vtop-" + getId() + "\" title=\"" + i18nAccess.getText("align.vertical.top", "top") + "+\"><i class=\"bi bi-align-top\"></i></label>");
+		out.println("</div>");
+
+		out.println("<div class=\"_jv_btn-check\">");
+		out.println("<input id=\"vmiddle-" + getId() + "\" type=\"radio\" name=\"" + getInputNameColomnStyle() + "\" value=\"middle\" " + ("middle".equals(colStyle) ? " checked=\"checked\"" : "") + ">");
+		out.println("<label for=\"vmiddle-" + getId() + "\" title=\"" + i18nAccess.getText("align.vertical.middle", "middle") + "+\"><i class=\"bi bi-align-middle\"></i></label>");
+		out.println("</div>");
+
+		out.println("<div class=\"_jv_btn-check\">");
+		out.println("<input id=\"vbottom-" + getId() + "\" type=\"radio\" name=\"" + getInputNameColomnStyle() + "\" value=\"bottom\" " + ("bottom".equals(colStyle) ? " checked=\"checked\"" : "") + ">");
+		out.println("<label for=\"vbottom-" + getId() + "\" title=\"" + i18nAccess.getText("align.vertical.bottom", "bottom") + "+\"><i class=\"bi bi-align-bottom\"></i></label>");
+		out.println("</div>");
+
+		out.println("</div>");
+		out.println("</div>");
+
 		for (Integer colSize : getColumnSizes(ctx)) {
 			String cssClass = "";
 			if (getColumnSize(ctx) == colSize) {

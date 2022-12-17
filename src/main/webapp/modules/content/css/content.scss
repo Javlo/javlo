@@ -1014,6 +1014,20 @@ li.line {
 	align-content: stretch;
 	margin-bottom: 15px;
 	
+	.column-align {
+		margin-right: .5rem;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		._jv_btn-check {
+			label {
+				font-size: 15px;
+				padding: 1px 4px;
+			}
+		}
+	}
+	
 	.select-col {
 		text-align: center;
 	}
