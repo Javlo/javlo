@@ -383,9 +383,9 @@ public class XMLHelper {
 					if (beans[j].isRepeat()) {
 						out.print("\" repeat=\"true");
 					}
-					if (StringHelper.isTrue(beans[j].isForceCachable())) {
-						out.print("\" forceCachable=\"true");
-					}
+//					if (StringHelper.isTrue(beans[j].isForceCachable())) {
+//						out.print("\" forceCachable=\"true");
+//					}
 
 					if (nolink) {
 						out.print("\" nolink=\"");
