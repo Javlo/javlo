@@ -88,6 +88,9 @@ body.previewEdit {
 		top: 0;
 		padding: 15px;
 		background-color: var(--javlo-ui-bg-primary) !important;
+		button {
+			height: 22px;
+		}
 	}
 }
 

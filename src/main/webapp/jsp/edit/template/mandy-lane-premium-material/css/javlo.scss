@@ -611,8 +611,8 @@ ul,li {
 		margin-right: 2px;
 		margin-bottom: 12px;
 		h3 {
-			padding: 0 var(--main-sep);
-			color: var(--javlo-ui-bg-secondary);
+			padding: var(--main-sep);
+			color: #ccc;
 		}
 		h3, .ui-tabs-nav {
 			border-radius: 0;
