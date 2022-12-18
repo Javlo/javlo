@@ -682,8 +682,17 @@ div#preview_command {
 #preview_command #_ep_files {
 	width: 100%;
 
-	.upload-zone {
-		text-align: center;
+	.well {
+		.upload-zone {
+			text-align: center;
+			
+			border: 3px dashed var(--javlo-ui-btn-text-inactive);
+			border-radius: 15px;
+			padding: 1rem;
+		}
+		.upload-zone.drop-selected {
+			border-color: var(--action-color);
+		}
 	}
 }
 

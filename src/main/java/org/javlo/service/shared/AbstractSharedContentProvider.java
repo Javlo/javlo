@@ -155,6 +155,11 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 	public boolean isUploadable(ContentContext ctx) {
 		return false;
 	}
+	
+	@Override
+	public Boolean exist(ContentContext ctx, String fileName, String category) throws IOException {
+		return null;
+	}
 
 	@Override
 	public void upload(ContentContext ctx, String fileName, InputStream in, String category, boolean rename) throws IOException {

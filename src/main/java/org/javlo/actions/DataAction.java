@@ -455,8 +455,6 @@ public class DataAction implements IAction {
 			baseGalleryFolder = ctx.getGlobalContext().getStaticConfig().getImportImageFolder();
 		}
 
-		System.out.println(">>>>>>>>> DataAction.createOrUpdateGallery : pdf = " + pdf); // TODO: remove debug trace
-
 		Multimedia compGalleryFound = null;
 		Collection<IContentVisualComponent> mediaComps;
 		if (pdf) {
@@ -514,7 +512,6 @@ public class DataAction implements IAction {
 		}
 
 		if (!galleryFound && (config.isCreateContentOnImportImage() || content)) {
-			System.out.println(">>>>>>>>> DataAction.createOrUpdateGallery : CRAETE"); // TODO: remove debug trace
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 			PrintStream out = new PrintStream(outStream);
 			out.println(Multimedia.PAGE_SIZE + "=" + 128);
@@ -943,6 +940,24 @@ public class DataAction implements IAction {
 			exist = file.exists();
 		}
 		ctx.getAjaxData().put("exist", exist);
+		return null;
+	}
+	
+	public static String performFileExistShared(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		SharedContentService sharedContentService = SharedContentService.getInstance(ctx);
+		SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx);
+		ISharedContentProvider provider = sharedContentService.getProvider(ctx, sharedContentContext.getProvider());
+		if (!AdminUserSecurity.isCurrentUserCanUpload(ctx) && !sharedContentContext.getProvider().equals(ImportedImageSharedContentProvider.NAME)) {
+			return "you have no right to upload file here.";
+		}
+		boolean fileExist = false;
+		String filename = rs.getParameter("filename");
+		if (provider != null && filename != null) {
+			System.out.println(">>>>>>>>> DataAction.performFileExistShared : sharedContentContext.getCategory() = "+sharedContentContext.getCategory()); //TODO: remove debug trace
+			fileExist = provider.exist(ctx, filename, sharedContentContext.getCategory());
+		}
+		System.out.println(">>>>>>>>> DataAction.performFileExistShared : fileExist = "+fileExist); //TODO: remove debug trace
+		ctx.getAjaxData().put("exist", fileExist);
 		return null;
 	}
 

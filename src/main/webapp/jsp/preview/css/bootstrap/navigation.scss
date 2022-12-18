@@ -489,8 +489,4 @@ body._jv_dragnav>#preview_command {
 		color: var(--javlo-ui-btn-text-inactive) !important;
 	}
 
-	&:hover {
-		border: 1px solid var(--javlo-ui-primary-accent-color-3) !important;
-		cursor: s-resize;
-	}
 }

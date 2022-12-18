@@ -271,6 +271,23 @@ if (!String.prototype.startsWith) {
 		});
 		return fileExist;
 	}
+	
+	editPreview.isFileExistShared = function(filename) {
+		var fileTransformURL = editPreview.addParam(ajaxURL, "webaction=data.fileExistShared&filename=" + filename);
+		var fileExist = false;
+		$.ajax({
+			url: fileTransformURL,
+			cache: true,
+			type: "get",
+			dataType: "json",
+			async: false,
+			processData: false,
+			contentType: false
+		}).done(function(data) {
+			fileExist = data['data']['exist'];
+		});
+		return fileExist;
+	}
 
 	editPreview.updatePDFPosition = function() {
 		pjq("._pdf_page_limit").remove();
@@ -620,8 +637,6 @@ if (!String.prototype.startsWith) {
 					}
 				});
 				el.addEventListener('drop', function(event) {
-
-					console.log(">>>>>>> DROP");
 
 					dragovercomp = false;
 
@@ -1088,7 +1103,7 @@ if (!String.prototype.startsWith) {
 					});
 					pjq(event.dataTransfer.files).each(function() {
 						var fileName = this.name;
-						sameName = editPreview.isFileExist(fileName);
+						sameName = editPreview.isFileExistShared(fileName);
 					});
 					if (sameName) {
 						editPreview.openModalQuestion("Upload file", "File already exists !", "overwrite", "rename", function() {

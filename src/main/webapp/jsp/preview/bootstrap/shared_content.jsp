@@ -2,10 +2,10 @@
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
 %>
 <div class="well drop-files">
-	<c:url var="uploadUrl" value="${info.uploadURL}" context="/">
-		<c:param name="provider" value="${provider.name}" />
-	</c:url>
-	<div class="upload-zone" data-url="${uploadUrl}" data-done="onDoneUpload">
+<%-- 	<c:url var="uploadUrl" value="${info.uploadURL}" context="/"> --%>
+<%-- 		<c:param name="provider" value="${provider.name}" /> --%>
+<%-- 	</c:url> --%>
+	<div class="upload-zone" data-url="${info.uploadSharedURL}" data-done="onDoneUpload">
 	<h3>${i18n.edit['preview.upload-here']}</h3>
 	<div class="picto"><i class="bi bi-box-arrow-in-down"></i></div>	
 	</div>	
@@ -78,7 +78,7 @@
 		</select>		
 		</div>
 		</c:if>
-		<input type="submit" />
+		<input type="submit" class="hidden" />
 	</div>
 </form>
 <c:if test="${not empty provider}">

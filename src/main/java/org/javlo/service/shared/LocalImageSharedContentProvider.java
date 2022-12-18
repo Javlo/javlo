@@ -158,6 +158,15 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 	protected boolean acceptedDocument(ContentContext ctx, String fileName) {
 		return ResourceHelper.isAcceptedImage(ctx, fileName);
 	}
+	
+	@Override
+	public Boolean exist(ContentContext ctx, String fileName, String category) throws IOException {
+		File imageFolder = getRootFolder(ctx);
+		imageFolder = new File(URLHelper.mergePath(imageFolder.getAbsolutePath(), category));
+		File newFile = new File(URLHelper.mergePath(imageFolder.getAbsolutePath(), fileName));
+		System.out.println(">>>>>>>>> LocalImageSharedContentProvider.exist : newFile = "+newFile); //TODO: remove debug trace
+		return newFile.exists();
+	}
 
 	@Override
 	public void upload(ContentContext ctx, String fileName, InputStream in, String category, boolean rename) throws IOException {

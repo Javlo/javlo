@@ -1,6 +1,6 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<c:set var="colsClass" value="cols" />
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+%><c:set var="colsClass" value="cols" />
 <c:forEach var="content" items="${sharedContent}">
 	<c:if test="${not empty content.description}">
 		<c:set var="colsClass" value="no-cols" />
