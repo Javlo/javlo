@@ -69,5 +69,10 @@ public class TaxonomyDisplayComponent extends AbstractVisualComponent {
 	public String getFontAwesome() {	
 		return "sitemap";
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return COMPLEXITY_STANDARD;
+	}
 
 }

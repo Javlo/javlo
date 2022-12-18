@@ -46,5 +46,10 @@ public class DisplayComponent extends AbstractVisualComponent {
 		this.performColumnable(ctx);
 		return super.performEdit(ctx);
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return COMPLEXITY_STANDARD;
+	}
 
 }

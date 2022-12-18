@@ -51,7 +51,6 @@
 		<input type="hidden" name="webaction" value="shared-content.choose" />
 		<div class="form-group form-inline">
 		<select name="provider" class="form-control ${!info.admin && empty provider.URL?'max-width':''}  ${empty provider.URL?'':'min-width'}">
-			<option class="placeholder" value="">${i18n.edit["preview.choose-provider"]}</option>
 			<c:forEach var="provider" items="${sharedContentProviders}">
 				<c:set var="key" value="shared.${provider.name}" />
 				<c:set var="providerLabel" value="${i18n.edit[key]}" /><c:if test="${providerLabel == key}"><c:set var="providerLabel" value="${provider.name}" /></c:if>

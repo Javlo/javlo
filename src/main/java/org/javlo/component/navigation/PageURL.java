@@ -47,4 +47,9 @@ public class PageURL extends AbstractVisualComponent {
 	public boolean isContentCachable(ContentContext ctx) {
 		return true;
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return COMPLEXITY_STANDARD;
+	}
 }

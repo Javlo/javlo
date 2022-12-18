@@ -71,6 +71,12 @@ html.preview-only.preview-standard.preview-command-visible {
 	border-radius: 5px !important;
 	background-color: rgba(0, 0, 0, .2) !important;
 	color: var(--javlo-ui-btn-text-active) !important;
+	border-radius: 0 !important;
+}
+
+body #preview_command .modal-backdrop.in {
+  opacity: 0.75;
+  filter: alpha(opacity=75);
 }
 
 #preview_command li.publish .btn:hover,
@@ -78,7 +84,16 @@ html.preview-only.preview-standard.preview-command-visible {
 	background-color: var(--javlo-ui-primary-accent-color-3) !important;
 }
 
+#preview_command .btn-primary {
+  background-color: var(--action-color);
+  color: var(--action-text);
+  border-radius: 0 !important;
+}
 
+#preview_command .btn-primary:hover {
+	background-color: var(--action-color-hover) !important;
+	border-radius: 0 !important;
+}
 
 #preview_command .disabled .btn:hover {
 	background-color: transparent !important;

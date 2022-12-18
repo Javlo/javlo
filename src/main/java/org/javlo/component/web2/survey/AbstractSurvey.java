@@ -408,6 +408,11 @@ public abstract class AbstractSurvey extends AbstractPropertiesComponent {
 		// }
 
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return COMPLEXITY_STANDARD;
+	}
 
 	@Override
 	public String getSpecificClass(ContentContext ctx) {

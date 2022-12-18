@@ -348,7 +348,7 @@ public class DataAction implements IAction {
 
 	public static String performUploadShared(RequestService rs, ContentContext ctx, GlobalContext gc, ContentService cs, User user, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		SharedContentService sharedContentService = SharedContentService.getInstance(ctx);
-		SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
+		SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx);
 		ISharedContentProvider provider = sharedContentService.getProvider(ctx, sharedContentContext.getProvider());
 		boolean rename = StringHelper.isTrue(rs.getParameter("rename", null), true);
 		if (!AdminUserSecurity.isCurrentUserCanUpload(ctx) && !sharedContentContext.getProvider().equals(ImportedImageSharedContentProvider.NAME)) {
@@ -600,7 +600,7 @@ public class DataAction implements IAction {
 
 				ISharedContentProvider provider = SharedContentService.getInstance(ctx).getProvider(ctx, rs.getParameter("provider"));
 				if (provider != null && provider.isUploadable(ctx)) {
-					SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
+					SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx);
 					targetFolder = provider.getFolder(ctx, sharedContentContext.getCategory());
 				} 
 
@@ -620,7 +620,7 @@ public class DataAction implements IAction {
 						JavaScriptBlob blob = new JavaScriptBlob(new String(item.get()));
 						if (blob.getContentType().equalsIgnoreCase("image/png")) {
 							ResourceHelper.writeBytesToFile(targetImage, blob.getData());
-							SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
+							SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx);
 							sharedContentContext.setProvider(ImportedImageSharedContentProvider.NAME);
 							SharedContentService.getInstance(ctx).clearCache(ctx);
 							// ISharedContentProvider provider =
@@ -662,7 +662,7 @@ public class DataAction implements IAction {
 						if (ctx.getCurrentPage().isChildrenOfAssociation() && !content) {
 							PageAssociationBean pageAssociation = new PageAssociationBean(ctx, ctx.getCurrentPage().getRootOfChildrenAssociation());
 							page = NavigationHelper.createChildPageAutoName(pageAssociation.getArticleRoot().getPage(), ctx);
-							SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
+							SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx);
 							sharedContentContext.setProvider(CloserJavloSharedContentProvider.NAME);
 							SharedContentService.getInstance(ctx).clearCache(ctx);
 							contentCtx.setArea(ComponentBean.DEFAULT_AREA);
@@ -690,7 +690,7 @@ public class DataAction implements IAction {
 						File newFile = ResourceHelper.writeFileItemToFolder(item, targetFolder, true, rename);
 						if (newFile != null && newFile.exists()) {
 
-							SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
+							SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx);
 							SharedContentService sharedContentService = SharedContentService.getInstance(ctx);
 
 							if (provider != null && provider.getFolder(ctx, sharedContentContext.getCategory()) != null) {
@@ -778,7 +778,7 @@ public class DataAction implements IAction {
 					countImages = 2;
 				}
 				
-				SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());				
+				SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx);
 				if (provider != null) {
 					targetFolder = provider.getFolder(ctx, sharedContentContext.getCategory());
 					importFolder = "";

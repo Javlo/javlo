@@ -4,10 +4,11 @@
 
 #preview_command,
 :root {
-	/*OLD*/
-	--action-color: #fff;
+	/*OLD*/	
 	--action-color-darken: #058;
 	--action-color-lighten: #17A;
+	--action-color: var(--action-color-lighten);
+	--action-color-hover: var(--action-color-darken);
 	--action-text: #fff;
 
 	/// Colors

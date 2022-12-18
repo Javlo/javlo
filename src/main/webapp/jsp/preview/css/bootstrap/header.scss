@@ -21,6 +21,10 @@
 		margin: 0 !important;
 		width: inherit !important;
 	}
+	
+	.modal-dialog.modal-sm {
+		max-width: 360px;
+	}
 
 	.btn-default {
 		background-color: var(--javlo-ui-btn-bg-active) !important;

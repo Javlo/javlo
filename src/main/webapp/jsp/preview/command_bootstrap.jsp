@@ -95,9 +95,9 @@ if (StringHelper.isTrue(request.getParameter("preview-command"), true) && !ctx.i
 						<div role="tabpanel">
 							<ul class="nav nav-tabs" role="tablist">
 								<li role="presentation" class="active"><a href="#_ep_navigation" aria-controls="_ep_navigation" role="tab" data-toggle="tab"><i class="bi bi-diagram-3"></i> Navigator</a></li>
-								<li role="presentation" ${!info.pageEditable?'class="disabled"':''}><a href="#_ep_content" aria-controls="_ep_content" role="tab" ${info.pageEditable?'data-toggle="tab"':''}><i class="bi bi-boxes"></i> Elements</a></li>
+								<li role="presentation" ${!info.pageEditable?'class="disabled"':''}><a href="#_ep_content" aria-controls="_ep_content" role="tab" ${info.pageEditable?'data-toggle="tab"':''}><i class="bi bi-boxes"></i> Components</a></li>
 								<c:if test="${userInterface.previewResourcesTab}">
-									<li role="presentation" ${!info.pageEditable?'class="disabled"':''}><a href="#_ep_files" aria-controls="_ep_files" role="tab" ${info.pageEditable?'data-toggle="tab"':''}><i class="bi bi-file-earmark-image"></i> Assets</a></li>
+									<li role="presentation" ${!info.pageEditable?'class="disabled"':''}><a href="#_ep_files" aria-controls="_ep_files" role="tab" ${info.pageEditable?'data-toggle="tab"':''}><i class="bi bi-file-earmark-image"></i> Resources</a></li>
 								</c:if>
 							</ul>
 							<div class="tab-content">
@@ -174,10 +174,12 @@ if (StringHelper.isTrue(request.getParameter("preview-command"), true) && !ctx.i
 				<div class="modal-content fancybox-inner">
 					<div class="for-fancy">
 						<div class="modal-header page-title">
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true"><i class="bi bi-x-lg"></i></span>
-							</button>
 							<h4 class="modal-title">[title]</h4>
+							<div class="modal-btn">
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true"><i class="bi bi-x-lg"></i></span>
+								</button>
+							</div>
 						</div>
 						<div class="box">
 							<div class="modal-body tabs-edit-fancy">

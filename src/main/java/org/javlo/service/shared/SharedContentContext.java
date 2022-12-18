@@ -3,21 +3,33 @@ package org.javlo.service.shared;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import javax.servlet.http.HttpSession;
+import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
 
 public class SharedContentContext {
-	
+
 	private static final String KEY = "sharedContentContext";
-	
+
 	private String provider = null;
 	private String searchQuery = null;
 	private Collection<String> categories = new LinkedList<String>();
-	
-	public static final SharedContentContext getInstance(HttpSession session) {
-		SharedContentContext outContext = (SharedContentContext)session.getAttribute(KEY);
+
+	public static final SharedContentContext getInstance(ContentContext ctx) {
+		SharedContentContext outContext = (SharedContentContext) ctx.getSession().getAttribute(KEY);
 		if (outContext == null) {
 			outContext = new SharedContentContext();
-			session.setAttribute(KEY, outContext);
+			ctx.getSession().setAttribute(KEY, outContext);
+			SharedContentService scService = SharedContentService.getInstance(ctx);
+			if (scService.getActiveProviderNames(ctx).size() > 0) {
+				for (String provider : scService.getActiveProviderNames(ctx)) {
+					if (ImportedImageSharedContentProvider.NAME.equals(provider)) {
+						outContext.setProvider(ImportedImageSharedContentProvider.NAME);
+					}
+				}
+				if (StringHelper.isEmpty(outContext.getProvider())) {
+					outContext.setProvider(scService.getActiveProviderNames(ctx).get(0));
+				}
+			}
 		}
 		return outContext;
 	}
@@ -40,7 +52,7 @@ public class SharedContentContext {
 	public void setCategories(Collection<String> categories) {
 		this.categories = categories;
 	}
-	
+
 	public String getCategory() {
 		if (categories.size() > 0) {
 			return categories.iterator().next();
@@ -56,6 +68,5 @@ public class SharedContentContext {
 	public void setSearchQuery(String searchQuery) {
 		this.searchQuery = searchQuery;
 	}
-	
 
 }

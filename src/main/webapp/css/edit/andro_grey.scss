@@ -48,13 +48,15 @@ select {
 	color: #333;
 }
 
-.btn, .action-button, #tools select, #tools input, .action input[type="submit"] {
+.btn, .action-button, #tools select, #tools input, .action input[type="submit"], #popup_panel input[type="button"] {
 	--btn-height: 28px;
 	--btn-vertical-padding: 3px;
 	padding: var(--btn-vertical-padding) 1em;
 	line-height: calc(var(--btn-height) - var(--btn-vertical-padding) * 2);
 	//background-color: var(--javlo-ui-bg-primary);
 	background-color: #ddd;
+	background-image: none;
+	text-shadow: none;
 	border: 1px #ddd solid;
 	color: #333;
 	border-radius: 0;
@@ -68,6 +70,20 @@ select {
 		display: inline-block;
 		line-height: calc(var(--btn-height) - var(--btn-vertical-padding) * 2);
 	} 
+}
+
+body #popup_container {
+  font-family: inherit;
+  font-size: inherit;
+  min-width: 300px;
+  max-width: 600px;
+  background-image: none;
+  padding: 5px !important;
+  border-size: 1px;
+  color: #666;
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0;
+  border-radius: 0;
 }
 
 .insert-line {

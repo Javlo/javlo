@@ -35,7 +35,7 @@ public class SharedContentService {
 			instance = new SharedContentService();
 			ctx.getRequest().getSession().setAttribute(KEY, instance);		
 		}
-		instance.setContext(SharedContentContext.getInstance(ctx.getRequest().getSession()));
+		instance.setContext(SharedContentContext.getInstance(ctx));
 		return instance;
 	}
 	
@@ -72,7 +72,7 @@ public class SharedContentService {
 	
 	public List<String> getActiveProviderNames(ContentContext ctx) {
 		 List<String> outActive = StringHelper.stringToCollection(ctx.getGlobalContext().getData("shared-content-active"),";");
-		 if (outActive != null) {			 
+		 if (outActive != null) {
 			 return outActive;
 		 } else {
 			 return Collections.EMPTY_LIST;
@@ -149,7 +149,7 @@ public class SharedContentService {
 		ctx.getRequest().setAttribute("userCanUpload", AdminUserSecurity.isCurrentUserCanUpload(ctx));
 		if (modulesContext.searchModule(IMainModuleName.SHARED_CONTENT) != null) {
 			SharedContentService sharedContentService = SharedContentService.getInstance(ctx);
-			SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
+			SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx);
 			ctx.getRequest().setAttribute("sharedContentProviders", sharedContentService.getAllActiveProvider(ctx));
 			if (ctx.getRequest().getAttribute("sharedContent") == null) {
 				if (sharedContentContext.getSearchQuery() == null) {

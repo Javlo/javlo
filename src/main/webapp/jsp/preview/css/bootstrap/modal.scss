@@ -1,10 +1,15 @@
-#preview-modal {
+#preview-modal, #preview-modal-question {
 	.modal-content {
 		background-color: transparent !important;
 	}
 
 	.modal-dialog {
 		transition: none !important;
+		
+		.box {
+			background-color: var(--javlo-ui-bg-primary) !important;
+			color: #fff;
+		}
 
 		.modal-header {
 			display: flex;
@@ -13,6 +18,7 @@
 			padding: calc(var(--javlo-menu-height)/4) !important;
 			background-color: var(--javlo-ui-bg-tertiary);
 			border-bottom: 0 !important;
+			border-radius: 0;
 
 			h4 {
 				flex-grow: 2;

@@ -114,7 +114,7 @@ public class SharedContentAction extends AbstractModuleAction {
 	}
 
 	public static String performChoose(HttpSession session, RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
-		SharedContentContext sharedContentContext = SharedContentContext.getInstance(session);
+		SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx);
 		if (rs.getParameter("provider", "").length() > 0) {
 			sharedContentContext.setProvider(rs.getParameter("provider", ""));
 		}
@@ -171,7 +171,7 @@ public class SharedContentAction extends AbstractModuleAction {
 
 	public static String performRefreshresult(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		SharedContentService sharedContentService = SharedContentService.getInstance(ctx);
-		SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx.getRequest().getSession());
+		SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx);
 		ISharedContentProvider provider = sharedContentService.getProvider(ctx, sharedContentContext.getProvider());
 		
 		if (provider == null) { 

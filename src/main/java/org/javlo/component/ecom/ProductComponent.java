@@ -508,6 +508,11 @@ public class ProductComponent extends AbstractPropertiesComponent implements IAc
 
 		return null;
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return COMPLEXITY_STANDARD;
+	}
 
 	@Override
 	public ProductBean getProductBean(ContentContext ctx) {
