@@ -12,7 +12,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 </a>
 <c:if test="${info.admin}"><a id="pc_edit_mode_button" class="btn btn-default" title="${i18n.edit['global.exit']}" href="${info.currentEditURL}">
 	<span class="button-group-addon"><i class="bi bi-arrow-repeat"></i></span>
-	<span class="label">Admin Dashboard</span>
+	<span class="label">Admin modules</span>
 </a>
 <a id="pc_edit_mode_button" class="btn btn-default" title="${i18n.edit['global.exit']}" href="#" onclick="editPreview.openModal('Site properties','${info.currentEditURL}?module=admin&previewEdit=true'); return false;">
 	<span class="button-group-addon"><i class="bi bi-gear"></i></span>
