@@ -1030,67 +1030,32 @@ body.previewEdit {
 }
 
 .form-list .title {
-	border-bottom: 1px #cccccc solid;
-	position: relative;	
-}
-
-.form-list .title .filename {
-	white-space: nowrap;
-	max-width: 130px;
-}
-
-.form-list .title span {
-	background: url("../images/separator2.png") no-repeat scroll right center transparent;
-    color: #006699;
-    display: inline-block;
-    margin-right: 0;
-    padding: 6px 16px;
-    max-width: 70%;
-    overflow: hidden;
-    vertical-align: middle;
-}
-
-.form-list .title span.last {
-	background: none no-repeat scroll right center transparent;
-    color: #006699;
-    display: inline-block;
-    margin-right: 0;
-    padding: 6px;
-    max-width: 70%;
-    overflow: hidden;
-    vertical-align: middle;
-}
-
-
-.form-list .title .popularity {
-	overflow: visible;
-	padding-top: 0;
-	padding-bottom: 0;
-} 
-
-.form-list .title span a {
-	display: inline-block;
-	max-width: 220px;	
-    overflow: hidden;
-}
-
-.form-list .title span.last {
-	background: none;
-	color: #333333;
-	max-width: 190px;
-}
-
-.form-list .title span.size {
-	float: right;
-	background: none;
-	color: #333333;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 3px;
+	> * {
+		padding: 2px 3px;
+		flex-grow: 2;
+		max-width: 60%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.filename {
+		flex-grow: 3;
+	}
+	.delete {
+		order: 99;
+		width: 12px;
+		flex-grow: 1;
+		text-align: right;
+	}
 }
 
 .form-list .special-action span {
 	display: block;
 	text-align: center;
-	line-height: 30px;	
-	vertical-align: middle;
+	line-height: 30px;
 	font-style: italic;
 	border-bottom: 1px #cccccc solid;
 }
@@ -1104,7 +1069,8 @@ body.previewEdit {
     border-radius: 3px 3px 3px 3px;
     border: 1px solid #CCCCCC;    
     position: relative;
-    background: none repeat scroll 0 0 #FCFCFC;
+    background-color: #FCFCFC;
+    color: #333;
     box-shadow: 1px 1px 2px #DDDDDD;
     display: inline-block;
     width: 535px;    
@@ -1119,7 +1085,7 @@ body.previewEdit {
 }
 
 .form-list .title span a {
-	max-width: 155px;
+	max-width: 200px;
 }
 
 .form-list li.hidden {

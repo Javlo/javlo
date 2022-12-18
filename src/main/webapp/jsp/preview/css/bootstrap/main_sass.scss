@@ -393,6 +393,7 @@ body #preview_command .modal-backdrop.in {
 		height: 38px;
 		font-size: 0.8em;
 		padding: 6px 3px 6px 3px;
+		text-overflow: ellipsis;
 	}
 
 	.thumbnail.large .caption {
