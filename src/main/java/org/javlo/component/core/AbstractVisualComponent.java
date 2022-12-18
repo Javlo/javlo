@@ -936,7 +936,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				String value = styles[i];
 				out.println("<div class=\"_jv_btn-check\">");
 				String id = "style-" + (getId() + '_' + i);
-				out.println("<input type=\"radio\" name=\"" + name + "\" id=\"" + id + "\" " + (value.equals(getStyle()) ? "checked=\"checked\"" : "") + "/>");
+				out.println("<input type=\"radio\" name=\"" + name + "\" value=\"" + value + "\" id=\"" + id + "\" " + (value.equals(getStyle()) ? "checked=\"checked\"" : "") + "/>");
 				out.println("<label for=\"" + id + "\">" + label + "</label>");
 				out.println("</div>");
 			}
@@ -1179,14 +1179,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			setNeedRefresh(true);
 		}
 
-		if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser())) {
-			boolean isForceCachable = requestService.getParameter("forceCachable-" + getId(), null) != null;
+//		if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser())) {
+//			boolean isForceCachable = requestService.getParameter("forceCachable-" + getId(), null) != null;
 			// if (isForceCachable != isForceCachable()) {
 			// setForceCachable(isForceCachable);
 			// setModify();
 			// setNeedRefresh(true);
 			// }
-		}
+//		}
 
 		boolean isNolink = requestService.getParameter("nolink-" + getId(), null) != null;
 		if (isNolink != isNolink()) {
@@ -1287,7 +1287,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			setStyle(ctx, newStyle);
 			setModify();
 			setNeedRefresh(true);
-
 		}
 
 		/** in list **/

@@ -259,5 +259,10 @@ public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 		String html = renderBasket(null, new Basket());
 		ResourceHelper.writeStringToFile(new File("c:/trans/out.html"), html);
 	}
+	
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return COMPLEXITY_STANDARD;
+	}
 
 }

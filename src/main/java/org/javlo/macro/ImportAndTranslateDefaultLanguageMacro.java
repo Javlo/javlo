@@ -62,5 +62,11 @@ public class ImportAndTranslateDefaultLanguageMacro extends AbstractMacro {
 	public boolean isActive() {
 		return active;
 	}
+	
+	@Override
+	public String getIcon() {
+		return "bi bi-globe";
+	}
+	
 
 }

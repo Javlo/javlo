@@ -925,7 +925,6 @@ h2.prize {
 	padding: 20px 0;
 	padding-right: 15px;
 	overflow: hidden;
-	background-color: #ccc;
 }
 
 .maincontent_inner {
@@ -1276,7 +1275,6 @@ button.button:hover,.button:active {
 
 .widgetbox2 h3 {
 	color: #333;
-	border-radius: .25rem;
 	background: var(--javlo-ui-bg-secondary);
 }
 
@@ -1289,7 +1287,7 @@ button.button:hover,.button:active {
 .widgetbox2 .content {
 	background: var(--javlo-ui-bg-secondary);
 	padding: 20px 15px;
-	color: #666;
+	color: #ccc;
 	overflow: hidden;
 	border-top: 0;
 }
