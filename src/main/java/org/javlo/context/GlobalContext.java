@@ -4295,7 +4295,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getFooterBloc() {
 		return StringHelper.neverNull(properties.getProperty("bloc.footer"));
 	}
-
+	
 	public SpecialConfigBean getSpecialConfig() {
 		if (config == null) {
 			File configFile = getSpecialConfigFile();

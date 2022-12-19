@@ -23,6 +23,7 @@ import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
 import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
+import org.javlo.service.remote.CdnService;
 import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.template.Template;
 import org.javlo.ztatic.StaticInfo;
@@ -522,7 +523,7 @@ public abstract class ElementaryURLHelper {
 	
 	public static String addCdn(ContentContext ctx, String url) {
 		
-		if (ctx.getGlobalContext().getSpecialConfig().getMainCdn() != null) {
+		if (CdnService.getInstance(ctx.getGlobalContext()).getMainCdnAuto() != null) {
 			if (!StringHelper.isURL(url) && !StringHelper.isVideo(url)) {
 				url = mergePath(ctx.getGlobalContext().getSpecialConfig().getMainCdn(), url);
 			}

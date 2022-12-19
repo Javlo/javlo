@@ -943,7 +943,7 @@ public class AdminAction extends AbstractModuleAction {
 		TimeTracker.reset(staticConfig);
 		ResourceHelper.deleteFolder(globalContext.getStaticConfig().getWebTempDir());
 		ListService.getInstance(ctx).clear();
-		MacroFactory.getInstance(ctx).clear(ctx);		
+		MacroFactory.getInstance(ctx).clear(ctx);
 		System.gc();
 		return msg;
 	}
