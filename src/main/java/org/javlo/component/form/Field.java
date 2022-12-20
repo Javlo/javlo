@@ -276,14 +276,10 @@ public class Field {
 	}
 
 	public String getConditionOperator() {
-		if (condition.contains("=")) {
-			return "==";
-		}
-		if (condition.contains(">")) {
-			return ">";
-		}
-		if (condition.contains("<")) {
-			return "<";
+		for (String op : OPERATOR) {
+			if (condition.contains(op)) {
+				return op;
+			}
 		}
 		return "-- NO OPERATOR --";
 	}
