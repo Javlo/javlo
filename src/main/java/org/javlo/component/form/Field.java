@@ -268,7 +268,7 @@ public class Field {
 		} else {
 			for (String op : OPERATOR) {
 				if (condition.contains(op)) {
-					return condition.substring(condition.indexOf(op) + 1);
+					return condition.substring(condition.indexOf(op) + op.length());
 				}
 			}
 		}
