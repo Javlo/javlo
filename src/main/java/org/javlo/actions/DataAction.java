@@ -360,7 +360,7 @@ public class DataAction implements IAction {
 		if (provider != null) {
 			for (FileItem item : rs.getAllFileItem()) {
 				InputStream in = item.getInputStream();
-				provider.upload(ctx, item.getName(), in, sharedContentContext.getCategory(), rename);
+				provider.upload(ctx, StringHelper.createFileName(item.getName()), in, sharedContentContext.getCategory(), rename);
 				ResourceHelper.closeResource(in);
 			}
 		}
