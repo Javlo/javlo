@@ -611,7 +611,7 @@ ul,li {
 		margin-right: 2px;
 		margin-bottom: 12px;
 		h3 {
-			padding: var(--main-sep);
+			padding: calc(var(--main-sep) / 2) var(--main-sep);
 			color: #ccc;
 		}
 		h3, .ui-tabs-nav {
