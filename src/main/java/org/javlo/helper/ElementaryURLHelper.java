@@ -28,7 +28,6 @@ import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.template.Template;
 import org.javlo.ztatic.StaticInfo;
 import org.owasp.encoder.Encode;
-import org.springframework.beans.factory.BeanIsAbstractException;
 
 /**
  * countain the method with efficient body for URLHelper.
