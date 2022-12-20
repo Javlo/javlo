@@ -1536,17 +1536,19 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public List<File> getExternComponents() {
 		File dir = new File(getExternComponentFolder());
 		List<File> outFiles = new LinkedList<File>();
-		for (File child : dir.listFiles()) {
-			if (StringHelper.getFileExtension(child.getName()).equalsIgnoreCase("jsp") || StringHelper.getFileExtension(child.getName()).equalsIgnoreCase("html")) {
-				outFiles.add(child);
+		if (dir.listFiles() != null) {
+			for (File child : dir.listFiles()) {
+				if (StringHelper.getFileExtension(child.getName()).equalsIgnoreCase("jsp") || StringHelper.getFileExtension(child.getName()).equalsIgnoreCase("html")) {
+					outFiles.add(child);
+				}
 			}
+			Collections.sort(outFiles, new Comparator<File>() {
+				@Override
+				public int compare(File o1, File o2) {
+					return o1.getName().compareTo(o2.getName());
+				}
+			});
 		}
-		Collections.sort(outFiles, new Comparator<File>() {
-			@Override
-			public int compare(File o1, File o2) {
-				return o1.getName().compareTo(o2.getName());
-			}
-		});
 		return outFiles;
 	}
 
@@ -1918,7 +1920,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getHomePage() {
 		return properties.getString("homepage", "");
 	}
-	
+
 	public String getHomePageLink(ContentContext ctx) throws Exception {
 		if (!StringHelper.isEmpty(getHomePage())) {
 			return URLHelper.replacePageReference(ctx, getHomePage());
@@ -2023,7 +2025,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getMailingSenders() {
 		return properties.getString("mailing.senders", "");
 	}
-	
+
 	public String getMailFrom() {
 		String mailFrom = getSpecialConfig().getMailFrom();
 		if (StringHelper.isMail(mailFrom)) {
@@ -2086,7 +2088,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 									if (pageKeyURL.contains(".")) {
 										pageKeyURL = pageKeyURL.substring(0, pageKeyURL.lastIndexOf("."));
 									}
-									
+
 									localViewPages.put(pageKeyURL, menuElement);
 								}
 							}
@@ -4295,7 +4297,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getFooterBloc() {
 		return StringHelper.neverNull(properties.getProperty("bloc.footer"));
 	}
-	
+
 	public SpecialConfigBean getSpecialConfig() {
 		if (config == null) {
 			File configFile = getSpecialConfigFile();
@@ -4547,22 +4549,22 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		return ecomConfig;
 	}
-	
+
 	public String getCanonicalHost() {
 		return getSpecialConfig().get("canonical.host", null);
 	}
-	
+
 	public String getSecurityCsp() {
 		return properties.getString("security.csp");
 	}
-	
+
 	public void setSecurityCsp(String csp) {
 		synchronized (properties) {
 			properties.setProperty("security.csp", csp);
 			save();
 		}
 	}
-	
+
 	public String getLocaleCountry() {
 		return getStaticConfig().getLocaleCountry();
 	}
