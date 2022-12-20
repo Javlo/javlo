@@ -53,3 +53,18 @@
 	text-align: right;
 	margin-top: 5px;
 }
+.extend-search {
+	.chosen-container {
+		margin-bottom: .5rem;
+	}
+	.action-button {
+		margin-left: .5rem;
+	}
+	input[name="title"], input[name="query"] {
+		margin-left: 1rem;
+		flex-grow: 2;
+	}
+	select[name="type"] {
+		margin-left: 1rem;
+	}
+}

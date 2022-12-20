@@ -488,6 +488,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							 * synchro.initSynchronisationThread(staticConfig, globalContext,
 							 * request.getSession().getServletContext()); synchro.store(); }
 							 */
+							
+							CdnService.getInstance(ctx.getGlobalContext()).internalTestCdn();
+							
 						} catch (Exception e) {
 							e.printStackTrace();
 						}

@@ -84,7 +84,7 @@ public class CdnService {
 				releaseCache = true;
 			}
 			active = newActive;
-			e.printStackTrace();
+			logger.severe("error on connect cdn : " + getMainCdn()+" msg:"+e.getMessage());
 			return false;
 		}
 	}

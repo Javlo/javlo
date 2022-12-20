@@ -13,6 +13,8 @@ import org.javlo.service.RequestService;
 import org.javlo.utils.ListMapValueValue;
 
 public class SearchFilter implements ITaxonomyContainer {
+	
+	private static final String KEY = "searchFilterModule";
 
 	private String global;
 	private String title;
@@ -23,21 +25,19 @@ public class SearchFilter implements ITaxonomyContainer {
 	private Set<String> components = new HashSet<String>();
 
 	public static final SearchFilter getInstance(HttpServletRequest request) {
-		final String KEY = "searchFilterModule";
 		SearchFilter searchFilter = (SearchFilter) request.getSession().getAttribute(KEY);
 		if (searchFilter == null) {
 			searchFilter = new SearchFilter();
 			request.getSession().setAttribute(KEY, searchFilter);
-		}		
+		}
 		return searchFilter;
 	}
-	
-	public void update(HttpServletRequest request) {	
+
+	public SearchFilter update(HttpServletRequest request) {
 		RequestService rs = RequestService.getInstance(request);
 		if (!StringHelper.isEmpty(request.getParameter("reset"))) {
-			global = "";
-			title = "";
-			type = "";
+			request.getSession().removeAttribute(KEY);
+			return getInstance(request);
 		} else {
 			if (request.getParameter("query") != null) {
 				setGlobal(request.getParameter("query"));
@@ -59,8 +59,25 @@ public class SearchFilter implements ITaxonomyContainer {
 				setSmartqueryre(rs.getParameter("smartqueryre"));
 			}
 			taxonomy.clear();
-			taxonomy.addAll(Arrays.asList(rs.getParameterValues("taxonomy", new String[0])));			
+			taxonomy.addAll(Arrays.asList(rs.getParameterValues("taxonomy", new String[0])));
+			return this;
 		}
+	}
+
+	public boolean isExtendSearch() {
+		if (!StringHelper.isEmpty(getTitle())) {
+			return true;
+		}
+		if (!StringHelper.isEmpty(getType())) {
+			return true;
+		}
+		if (getComponents().size() > 0) {
+			return true;
+		}
+		if (getTaxonomy().size() > 0) {
+			return true;
+		}
+		return false;
 	}
 
 	public String getGlobal() {
@@ -91,11 +108,11 @@ public class SearchFilter implements ITaxonomyContainer {
 	public Set<String> getTaxonomy() {
 		return taxonomy;
 	}
-	
+
 	protected boolean isOnlyTaxonomy() {
 		return getTaxonomy().size() > 0 && StringHelper.isEmpty(global) && StringHelper.isEmpty(title);
 	}
-	
+
 	public Set<String> getComponents() {
 		return components;
 	}
@@ -115,8 +132,8 @@ public class SearchFilter implements ITaxonomyContainer {
 	public void setSmartqueryre(String smartqueryre) {
 		this.smartqueryre = smartqueryre;
 	}
-	
-	public Map<String,String> getComponentAsMap() {
+
+	public Map<String, String> getComponentAsMap() {
 		return new ListMapValueValue<String>(components);
 	}
 

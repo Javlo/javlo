@@ -710,4 +710,16 @@ function initJvCollapsedFieldset() {
 			}
 		}
 	});
+	document.querySelectorAll('fieldset._jv_collapsable').forEach(i => {
+		if (!i.classList.contains("_jv_collapsable_default_open")) {
+			i.classList.add("collapsed");
+		}
+		i.querySelector("legend").onclick = function(e) {
+			if (this.parentElement.classList.contains('collapsed')) {
+				this.parentElement.classList.remove('collapsed');
+			} else {
+				this.parentElement.classList.add('collapsed');
+			}
+		}
+	});
 }

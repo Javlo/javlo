@@ -137,7 +137,7 @@ body._jv_modal-open {
 	animation: _jv_spinner-border .75s linear infinite;
 }
 
-fieldset.collapsable {
+fieldset.collapsable, fieldset._jv_collapsable {
 	legend {
 		cursor: pointer;
 	}
@@ -154,7 +154,10 @@ fieldset.collapsable {
 	}
 }
 
-fieldset.collapsable.collapsed {	
+fieldset.collapsable.collapsed, fieldset._jv_collapsable.collapsed {
+	height: 1em;
+	padding-bottom: 0;
+	overflow: hidden;
 	legend:before {
 		border-left: .4em solid;
 		border-bottom: .4em solid transparent;
@@ -164,12 +167,6 @@ fieldset.collapsable.collapsed {
 		margin-left: 0;
 		margin-left: 5px;
 	}
-}
-
-fieldset.collapsable.collapsed {
-	height: 1em;
-	padding-bottom: 0;
-	overflow: hidden;
 }
 
 /** flex **/
