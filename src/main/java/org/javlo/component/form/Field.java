@@ -14,7 +14,7 @@ import org.javlo.service.IListItem;
 import org.javlo.service.ListService;
 
 public class Field {
-	
+
 	private static Logger logger = Logger.getLogger(Field.class.getName());
 
 	private static final int SMALL_SIZE = 8;
@@ -86,10 +86,10 @@ public class Field {
 					this.list = new LinkedList<>();
 					for (IListItem i : items) {
 						this.list.add(i.getValue());
-						
+
 					}
 				} else {
-					logger.warning("list not found : "+listName);
+					logger.warning("list not found : " + listName);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -116,7 +116,7 @@ public class Field {
 	public String getType() {
 		return type;
 	}
-	
+
 	public String getSqlType() {
 		if (TYPE_NUMBER.equals(getType())) {
 			return "integer";
@@ -247,21 +247,45 @@ public class Field {
 		this.condition = condition;
 	}
 
+	private static List<String> OPERATOR = Arrays.asList(new String[] { "=", ">", "<", " in " });
+
 	public String getConditionField() {
-		if (condition == null || !condition.contains("=")) {
+		if (condition == null) {
 			return null;
 		} else {
-			return condition.substring(0, condition.indexOf('='));
+			for (String op : OPERATOR) {
+				if (condition.contains(op)) {
+					return condition.substring(0, condition.indexOf(op));
+				}
+			}
 		}
+		return null;
 	}
 
 	public String getConditionTest() {
-		if (condition == null || !condition.contains("=")) {
+		if (condition == null) {
 			return null;
 		} else {
-			return condition.substring(condition.indexOf('=') + 1);
+			for (String op : OPERATOR) {
+				if (condition.contains(op)) {
+					return condition.substring(condition.indexOf(op) + 1);
+				}
+			}
 		}
+		return null;
+	}
 
+	public String getConditionOperator() {
+		if (condition.contains("=")) {
+			return "==";
+		}
+		if (condition.contains(">")) {
+			return ">";
+		}
+		if (condition.contains("<")) {
+			return "<";
+		}
+		return "-- NO OPERATOR --";
 	}
 
 	public boolean isFilledWidth(String value, boolean firstIsSelection) {
