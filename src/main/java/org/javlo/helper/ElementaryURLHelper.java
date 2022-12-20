@@ -524,9 +524,9 @@ public abstract class ElementaryURLHelper {
 	public static String addCdn(ContentContext ctx, String url) {
 		
 		if (CdnService.getInstance(ctx.getGlobalContext()).getMainCdnAuto() != null) {
-			if (!StringHelper.isURL(url) && !StringHelper.isVideo(url)) {
+			//if (!StringHelper.isURL(url) && !StringHelper.isVideo(url)) {
 				url = mergePath(ctx.getGlobalContext().getSpecialConfig().getMainCdn(), url);
-			}
+			//}
 		}
 		return url;
 	}
