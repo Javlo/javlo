@@ -85,6 +85,7 @@ import org.javlo.macro.interactive.CreateRedirectionForAllLanguages;
 import org.javlo.macro.interactive.DeleteComponent;
 import org.javlo.macro.interactive.DeleteDynamicComponent;
 import org.javlo.macro.interactive.DisplayDashBoard;
+import org.javlo.macro.interactive.DisplaySeoReport;
 import org.javlo.macro.interactive.ImportContent;
 import org.javlo.macro.interactive.ImportExternalPage;
 import org.javlo.macro.interactive.ImportGalleryMacro;
@@ -226,6 +227,7 @@ public class MacroFactory {
 		macros.add(new DeleteTrackerCache());
 		macros.add(new LogAsUser());
 		macros.add(new DisplayDashBoard());
+		macros.add(new DisplaySeoReport());
 		macros.add(new ResetRecaptcha());
 		macros.add(new PublishMacro());
 		macros.add(new TaxonomyMacroModule());

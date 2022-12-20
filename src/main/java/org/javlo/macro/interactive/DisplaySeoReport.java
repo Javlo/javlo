@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import org.javlo.actions.IAction;
 import org.javlo.context.ContentContext;
 import org.javlo.macro.core.IInteractiveMacro;
+import org.javlo.module.dashboard.ReportFactory;
 
 public class DisplaySeoReport implements IInteractiveMacro, IAction {
 
@@ -28,6 +29,11 @@ public class DisplaySeoReport implements IInteractiveMacro, IAction {
 		ctx.getRequest().setAttribute("password", ctx.getGlobalContext().getData(getName() + "-password"));
 		ctx.getRequest().setAttribute("path", ctx.getGlobalContext().getData(getName() + "-path"));
 		ctx.getRequest().setAttribute("email", ctx.getGlobalContext().getData(getName() + "-email"));
+		try {
+			ctx.getRequest().setAttribute("report", ReportFactory.getReport(ctx));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 

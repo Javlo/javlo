@@ -98,6 +98,17 @@ body #popup_container {
 	}
 }
 
+.content {
+	h3 {
+		background-color: transparent !important;
+	}
+	.notification  {
+		p {
+			display: inline;
+		}
+	}
+}
+
 body.previewEdit {
 	.insert-line {
 		display: none;

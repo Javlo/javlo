@@ -27,9 +27,7 @@ public abstract class AbstractModuleAction implements IModuleAction {
 
 	@Override
 	public String prepare(ContentContext ctx, ModulesContext modulesContext) throws Exception {
-		getModuleContext(ctx.getRequest().getSession(), modulesContext.getCurrentModule()); // load
-																							// module
-																							// context
+		getModuleContext(ctx.getRequest().getSession(), modulesContext.getCurrentModule());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		if (i18nAccess.getCurrentModule() == null || !i18nAccess.getCurrentModule().equals(modulesContext.getCurrentModule())) {
