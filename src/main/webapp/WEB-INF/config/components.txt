@@ -94,6 +94,7 @@ org.javlo.component.links.TwitterReader
 org.javlo.component.image.GlobalImage
 org.javlo.component.image.ImageBackground
 org.javlo.component.image.Image
+org.javlo.component.image.LottieAnimationComponent
 org.javlo.component.multimedia.Multimedia
 org.javlo.component.multimedia.PDFMultimedia
 org.javlo.component.multimedia.MultimediaFilter

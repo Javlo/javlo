@@ -127,18 +127,6 @@ input[readonly] {
 	margin-left: 5px;
 }
 
-.file-filter {
-	.btn {
-		margin: 0 0 1px 0;
-		line-height: auto;
-		height: 20px;
-	}
-	input {
-		max-width: 120px;
-		display: inline-block;
-	}	
-}
-
 .form-group {
 	margin-bottom: 0;
 	
@@ -151,7 +139,6 @@ input[readonly] {
 .standard-form table input[type="text"] {
     display: inline-block;
     vertical-align: text-top;
-    width: 80px;
 }
 
 .valid-info {

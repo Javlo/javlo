@@ -20,7 +20,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 				<c:param name="previewEdit" value="true" />
 			</c:url>
 		</c:if>
-		<a class="btn btn-default" aria-label="Left Align" href="${url}" title="${i18n.edit[descriptionKey] != descriptionKey?i18n.edit[descriptionKey]:''}">
+		<a class="btn btn-default" aria-label="Left Align" href="${url}" title="${i18n.edit[descriptionKey] != descriptionKey?i18n.edit[descriptionKey]:macro.name}">
 		<c:set var="descriptionKey" value="macro.description.${macro.name}" />
 		<span class="button-group-addon"><i class="${macro.icon}" aria-hidden="true"></i></span>
 		<span class="label">${i18n.edit[key] != key?i18n.edit[key]:macro.name}</span>
@@ -39,7 +39,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 			</c:url>
 		</c:if>
 		<c:set var="descriptionKey" value="macro.description.${macro.name}" />
-		<button type="button" class="btn btn-default" aria-label="Left Align" onclick="editPreview.openModal('${i18n.edit[key] != key?i18n.edit[key]:key}', '${url}', 'jv-modal-${macro.modalSize}');" title="${i18n.edit[descriptionKey] != descriptionKey?i18n.edit[descriptionKey]:''}">
+		<button type="button" class="btn btn-default" aria-label="Left Align" onclick="editPreview.openModal('${i18n.edit[key] != key?i18n.edit[key]:macro.name}', '${url}', 'jv-modal-${macro.modalSize}');" title="${i18n.edit[descriptionKey] != descriptionKey?i18n.edit[descriptionKey]:''}">
 			<c:set var="key" value="macro.${macro.name}" />
 			<span class="button-group-addon"><i class="${macro.icon}" aria-hidden="true"></i></span> 
 			<span class="label">${i18n.edit[key] != key?i18n.edit[key]:macro.name}</span>

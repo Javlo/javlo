@@ -7,7 +7,7 @@
 	
 	<div class="file-filter">
 		<form id="form-css-template" action="${info.currentURL}" method="post">    
-		<div class="form-group">		
+		<div class="form-group _jv_flex-line">		
 		<input type="hidden" name="templateid" value="${templateid}" />
 		<input type="hidden" name="css" value="${param.css}" />
 		<input type="hidden" name="webaction" value="template.editCSS" />		

@@ -319,6 +319,11 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 	public String validateField(ContentContext ctx, String fieldName, String fieldValue) throws Exception {
 		return null;
 	}
+	
+	@Override
+	protected boolean getColumnableDefaultValue() {
+		return true;
+	}
 
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
