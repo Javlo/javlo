@@ -1947,6 +1947,7 @@ public class Edit extends AbstractModuleAction {
 		}
 
 		if (comp == null) {
+			logger.warning("component not found : "+rs.getParameter("id"));
 			return "component not found : " + rs.getParameter("id");
 		} else {
 			if (comp instanceof IContainer) {
@@ -1961,10 +1962,11 @@ public class Edit extends AbstractModuleAction {
 						previousId = content.createContent(ctx, comp.getComponentBean(), previousId, false);
 						comp = comp.getNextComponent();
 					}
-					content.createContent(ctx, closeComponent.getComponentBean(), previousId, false);
+					String newId = content.createContent(ctx, closeComponent.getComponentBean(), previousId, false);
 				}
 			} else {
-				content.createContent(ctx, comp.getComponentBean(), comp.getId(), true);
+				String newId = content.createContent(ctx, comp.getComponentBean(), comp.getId(), true);
+				content.getComponent(ctx, newId);
 			}
 			if (ctx.isAjax()) {
 				String id = rs.getParameter("id");

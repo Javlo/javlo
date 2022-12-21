@@ -7,6 +7,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
+import org.javlo.service.PersistenceService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 
@@ -35,6 +36,7 @@ public class TransfertComponentBadAreaToContent extends AbstractMacro {
 				}
 			}
 		}
+
 		return countMoved;
 	}
 
@@ -43,10 +45,13 @@ public class TransfertComponentBadAreaToContent extends AbstractMacro {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		ContentService content = ContentService.getInstance(globalContext);
 		MenuElement root = content.getNavigation(ctx);
-		moveComponentInBadArea(ctx, root);
-		int countDeleted = 0;
+		int countDeleted = moveComponentInBadArea(ctx, root);
+		;
 		for (MenuElement child : root.getAllChildrenList()) {
 			countDeleted = countDeleted + moveComponentInBadArea(ctx, child);
+		}
+		if (countDeleted > 0) {
+			PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 		}
 		return "components moved : " + countDeleted;
 	}

@@ -1024,7 +1024,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	}
 
 	public void addContent(String parentId, ComponentBean bean, boolean realeaseCache) {
-
 		assert bean != null;
 		synchronized (getLock()) {
 			synchronized (componentBean) {

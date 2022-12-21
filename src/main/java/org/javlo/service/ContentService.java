@@ -321,6 +321,7 @@ public class ContentService implements IPrintInfo {
 			}
 		}
 		elem.addContent(parentId, bean, releaseCache);
+		PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 		return id;
 	}
 

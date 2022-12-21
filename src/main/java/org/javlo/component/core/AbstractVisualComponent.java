@@ -3803,7 +3803,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public String toString() {
 		if (getPage() != null) {
-			return "id:" + getId() + " type:" + getType() + " lang:" + getPage().getContentLanguage() + " page:" + getPage().getName() + " class:" + getClassName() + " hash:" + hashCode();
+			return "id:" + getId() + " type:" + getType() + " lang:" + getPage().getContentLanguage() + " page:" + getPage().getName() + " area:" + getArea() + " class:" + getClassName() + " hash:" + hashCode();
 		} else {
 			return "id:" + getId() + " type:" + getType() + " class:" + getClassName() + " hash:" + hashCode();
 		}
