@@ -1292,3 +1292,346 @@ li.line {
 .row.taxo-row {
 	padding-bottom: 30px;
 }
+
+/** components **/
+
+body .component-wrapper {
+	margin: 0;
+	overflow: visible;
+}
+
+.tooltip_templates {
+	display: none;
+}
+
+.tooltipster-content {
+	max-width: 900px;
+}
+
+.tooltipster-content h2 {
+	margin-top: 10px;
+	margin-bottom: 15px;
+}
+
+.tooltipster-content ul, .tooltipster-content p, .tooltipster-content img, .tooltipster-content h3, .tooltipster-content h4, .tooltipster-content h5 {
+	margin-bottom: 10px;
+}
+
+.tooltipster-content ul li {
+	list-style: disc;
+}
+
+.tooltipster-content ul li li {
+	list-style: circle;
+}
+
+.tooltipster-content ul {
+	margin-left: 15px;
+}
+
+.component .header {
+	padding: 1px;	
+}
+
+.component .header div {
+	display: inline-block;
+	
+}
+
+.component h3 {
+	margin-top: 12px;
+}
+
+.component table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.component td {
+	width: 50%;
+	padding: 3px;
+	vertical-align: top;
+}
+
+.portlet-wrapper td {
+	width: auto;
+}
+
+.page-list td {
+	width: auto;
+}
+
+.page-list .label {
+	max-width: 600px;
+}
+
+.component .list-container .image-selected {	
+	padding: 2px;	
+	margin: 2px;
+	
+	text-align: center;
+	vertical-align: middle;
+		
+	
+	font-size: 1px;	
+	overflow: hidden;	
+}
+
+.page-list-container {
+	max-height: 300px;
+	overflow: auto;
+}
+
+.component .content {
+    -moz-border-bottom-colors: none;
+    -moz-border-image: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: none repeat scroll 0 0 #FCFCFC;
+    border-color: -moz-use-text-color #CCCCCC #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+    border-style: none solid solid;
+    border-width: 0 1px 1px;
+    color: #666666;
+    overflow: hidden;
+    padding: 5px;
+}
+
+.xhtml .component textarea, .text-editor .component textarea {
+	width: 96%;	
+}
+
+.component .line textarea {
+	width: auto;	
+}
+
+
+.component .help h1, .component .help .hd {
+	display: none;
+}
+
+.component .help {
+	padding-left: 32px;
+}
+
+.component .help h2, .component .help h3 {
+	margin-top: 15px;
+	margin-left: -15px;
+}
+
+.component .full-width {
+	width: 99%;
+}
+
+.components .line {
+	margin-bottom: 3px;
+	min-height: 24px;
+	overflow: hidden;
+}
+
+.component .line label, .component .line .label {
+	float: left;
+	width: 160px;
+}
+
+.component .layout label {
+	width: 100px;
+}
+
+.component .line label.radio {
+	float: none;
+	width: auto;
+	display: inline-block;
+	margin-left: 5px;
+	margin-right: 10px;
+}
+
+.dynamic-component .line textarea {
+	width: 96%;
+}
+
+.component .mceToolbar table {
+	width: auto;
+}
+
+.component .mceToolbar td {
+	width: 20px;
+}
+
+/*** images ***/
+
+.image-list {
+	margin-right: 15px;
+	margin-top: 15px;
+	border-top: 1px #cccccc solid;
+	padding-top: 15px;	
+}
+
+.preview-image-wrapper {
+	overflow: auto;
+	text-align: center;
+	height: 516px;	
+}
+
+.preview-image-wrapper .action {
+	justify-content: center;
+}
+
+.image label {	
+	float: left;
+	width: 160px;
+	height: 16px;	
+}
+
+.image .action {
+	margin-top: 15px;
+}
+
+.component .list-container .image-selected .name {
+	font-size: 11px;
+}
+
+.component .list-container .image-selected .focus-zone {
+	display: inline-block;
+	overflow: hidden;
+	line-height: 155px;
+}
+
+.component .list-container .image-selected img {
+	display: inline;
+	vertical-align: middle;	
+}
+
+.component .preview-image figure {
+	display: block;
+	text-align: center;
+	vertical-align: middle;		
+	overflow: hidden;	
+}
+
+.component .preview-image a {
+	display: block;	
+}
+
+.component .image-list {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.component .preview-image {
+	padding: 2px;
+	box-sizing: border-box;
+	width: 33%;
+	
+}
+
+.preview-image figcaption {
+	width: 100%;
+	height: 42px;
+	text-align: center;
+	overflow: hidden;
+}
+
+.component .preview-image img {
+	display: block;
+	vertical-align: middle;
+	width: 100%;
+}
+
+.component .preview-image figcaption a {
+	display: inline-block;	
+	height: auto;
+	width: 100%;
+	overflow: hidden;
+	text-align: center;
+	
+}
+
+.component .preview-image.selected {
+	font-weight: bold;
+	border: 1px #aa0000 solid;
+}
+
+.dynamic-component .preview {
+	text-align: center;
+}
+
+.smart-link-body img {
+	max-height: 120px;
+}
+
+.smart-link-body .picture {
+	width: 260px;	
+	padding: 0;
+	float: left;
+}
+
+.smart-link-body {	
+	overflow: hidden;	
+	margin-top: 15px;
+}
+
+.smart-link-body li {
+	display: none;
+}
+
+.smart-link-body li.active {
+	display: block;
+}
+
+.smart-link-body figure, .smart-link-body a {
+	margin: 0;	
+	height: 140px;
+	display: block;
+	float: left;
+}
+
+.smart-link-body figure {
+	width: 120px;
+	height: 140px;
+	overflow: hidden;
+	margin-left: 59px; 
+}
+
+.smart-link-body ul figure {
+	margin-left: 0;
+}
+
+.smart-link-body figcaption {
+	display: block;
+	text-align: center;
+}
+
+.smart-link-body a span {
+	display:  block;
+	color: #333333;
+	font-size: 28px;
+	font-weight: bold;
+	padding: 50px 5px 0 5px;
+	text-align: center;
+	font-style: arial;
+}
+
+.smart-link-body a.previous {
+	margin-right: 15px;
+}
+
+.smart-link-body a.next {
+	margin-left: 15px;
+}
+
+div.wysiwyg-paragraph textarea {
+	width: 98%;
+	height: 300px;
+	display: block;
+}
+
+.component textarea.wysiwyg {
+	width: 98%;
+}
+
+.label-right label {
+	text-align: right;
+	display: block;
+}
