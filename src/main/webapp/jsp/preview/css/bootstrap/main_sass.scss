@@ -29,6 +29,10 @@ $header-height: 40px;
 	color: var(--javlo-ui-btn-text-inactive);
 }
 
+#preview_command i {
+	font-size: 12px;
+}
+
 #preview_command .nav-tabs>li.active>a {
 	color: var(--javlo-ui-btn-text-active) !important;
 }
