@@ -1274,7 +1274,7 @@ button.button:hover,.button:active {
 }
 
 .widgetbox2 h3 {
-	color: #333;
+	color: #ccc;
 	background: var(--javlo-ui-bg-secondary);
 }
 
@@ -1290,6 +1290,16 @@ button.button:hover,.button:active {
 	color: #ccc;
 	overflow: hidden;
 	border-top: 0;
+	select, input {
+		color: #000;
+		border: 1px #999 solid;
+		background-color: #eee;
+		box-shadow: none;
+	}
+}
+
+body .jqplot-target {
+  color: #ccc;
 }
 
 .widgetbox2 .content {
