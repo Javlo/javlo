@@ -304,7 +304,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	}
 
 	public void process(HttpServletRequest request, HttpServletResponse response, boolean post) throws ServletException {
-		
+
 		request.getSession(); // create session
 
 		COUNT_ACCESS++;
@@ -342,7 +342,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		ContentContext ctx = null;
 		try {
 			ctx = ContentContext.getContentContext(request, response);
-			
+
 			if (!FIRST_REQUEST_SET.contains(globalContext.getContextKey())) {
 				synchronized (FIRST_REQUEST_SET) {
 					if (!FIRST_REQUEST_SET.contains(globalContext.getContextKey())) {
@@ -488,9 +488,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							 * synchro.initSynchronisationThread(staticConfig, globalContext,
 							 * request.getSession().getServletContext()); synchro.store(); }
 							 */
-							
+
 							CdnService.getInstance(ctx.getGlobalContext()).internalTestCdn();
-							
+
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -546,13 +546,12 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			}
 
 			RequestHelper.initRequestAttributes(ctx);
-			
+
 			CdnService cdnService = CdnService.getInstance(ctx.getGlobalContext());
 			cdnService.testCdn();
 			if (cdnService.isReleaseCache()) {
 				ContentService.clearCache(ctx, globalContext);
 			}
-			
 
 			/* ******** */
 			/* SECURITY */
@@ -881,14 +880,17 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				robotCtx.setDevice(Device.getFakeDevice("robot"));
 				robotCtx.setAbsoluteURL(true);
 				response.addHeader("link", "<" + URLHelper.createURL(robotCtx) + ">; rel=\"canonical\"");
-				
+
 				if (ctx.getRequestCountOnSession() <= 1) {
 					// cdn
 					if (CdnService.getInstance(ctx.getGlobalContext()).getMainCdnAuto() != null) {
-						response.addHeader("link", "<link href='"+StringHelper.extractHostAndProtocol(cdnService.getMainCdn())+"' rel='preconnect' crossorigin>");
-					};
-					for (String host : ctx.getCurrentTemplate().getHostDetected(ctx)) {
-						response.addHeader("link", "<link href='"+host+"' rel='preconnect' crossorigin>");
+						response.addHeader("link", "<link href='" + StringHelper.extractHostAndProtocol(cdnService.getMainCdn()) + "' rel='preconnect' crossorigin>");
+					}
+					;
+					if (ctx.getCurrentTemplate() != null) {
+						for (String host : ctx.getCurrentTemplate().getHostDetected(ctx)) {
+							response.addHeader("link", "<link href='" + host + "' rel='preconnect' crossorigin>");
+						}
 					}
 				}
 
@@ -1192,13 +1194,14 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								if (ctx.getCurrentUser() == null) {
 									if (ctx.getCurrentTemplate().getLoginFile(ctx) != null) {
 										String loginPage = ctx.getCurrentTemplate().getLoginFile(ctx);
-										//System.out.println(">>>>>>>>> AccessServlet.process : forward : "+loginPage); //TODO: remove debug trace
-										//RequestDispatcher view = request.getRequestDispatcher(loginPage);
-										
+										// System.out.println(">>>>>>>>> AccessServlet.process : forward : "+loginPage);
+										// //TODO: remove debug trace
+										// RequestDispatcher view = request.getRequestDispatcher(loginPage);
+
 										getServletContext().getRequestDispatcher(loginPage).include(request, response);
 										return;
-										
-										//view.forward(request, response);
+
+										// view.forward(request, response);
 									} else {
 										ctx.setSpecialContentRenderer("/jsp/view/login.jsp");
 									}
@@ -1228,7 +1231,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 									while (parent != null) {
 										parent = parent.getParent();
 									}
-									logger.info("no access to : "+request.getRequestURL());
+									logger.info("no access to : " + request.getRequestURL());
 									response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 									ctx.setSpecialContentRenderer("/jsp/view/no_access.jsp");
 								}
