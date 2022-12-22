@@ -19,6 +19,22 @@ body #tools .btn-primary, .btn-primary  {
 	}
 }
 
+.ms-1 {
+	margin-left: .25rem !important;
+}
+
+.me-1 {
+	margin-right: .25rem !important;
+}
+
+.mt-1 {
+	margin-top: .25rem !important;
+}
+
+.mb-1 {
+	margin-bottom: .25rem !important;
+}
+
 .topheader{
 	ul{
 		li{
@@ -48,12 +64,12 @@ select {
 	color: #333;
 }
 
-.btn, .action-button, #tools select, #tools input, .action input[type="submit"], #popup_panel input[type="button"] {
+.btn, .action-button, #tools select, #tools input, .action input[type="submit"], #popup_panel input[type="button"], .form-control {
 	--btn-height: 28px;
 	--btn-vertical-padding: 3px;
 	padding: var(--btn-vertical-padding) 1em;
 	line-height: calc(var(--btn-height) - var(--btn-vertical-padding) * 2);
-	//background-color: var(--javlo-ui-bg-primary);
+	height: auto;
 	background-color: #ddd;
 	background-image: none;
 	text-shadow: none;
@@ -62,9 +78,9 @@ select {
 	border-radius: 3px;
 	font-weight: bold;
 	&:hover {
-		background-color: var(--javlo-ui-bg-secondary) !important;
-		color: white !important;;
-		border-color: #fff !important;;
+		background-color: var(--javlo-ui-bg-secondary);
+		color: white;
+		border-color: #fff;
 		text-decoration: none !important;
 	}
 	span {
@@ -74,6 +90,19 @@ select {
 	&::first-letter, span::first-letter { 
 		text-transform: uppercase;
 		 
+	}
+}
+
+.form-control, input[type="text"], #tools input[type="text"] {
+	color: #000;
+	border: 1px #999 solid;
+	background-color: #eee;
+	box-shadow: none;
+	&:hover, &:focus {
+		color: #000;
+		background-color: #eee;
+		border: 1px #333 solid;
+		background-color: #ddd !important;
 	}
 }
 
@@ -150,11 +179,6 @@ body.previewEdit {
 		display: block;
 		width: 100%;
 	}
-}
-
-.form-control {
-	border-radius: 0;
-	box-shadow: none;
 }
 
 .page-properties {

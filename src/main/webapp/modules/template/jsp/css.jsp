@@ -12,7 +12,7 @@
 		<input type="hidden" name="css" value="${param.css}" />
 		<input type="hidden" name="webaction" value="template.editCSS" />		
 		<input type="text" name="search" value="${param.search}" placeholder="search..." id="input-filter" class="form-control" />
-		<input type="submit" value="ok" class="btn btn-default btn-xs" />
+		<input type="submit" value="ok" class="btn btn-default btn-xs ms-1" />
 		</div>
 		</form>
 	</div>
