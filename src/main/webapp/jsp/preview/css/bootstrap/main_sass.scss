@@ -29,8 +29,9 @@ $header-height: 40px;
 	color: var(--javlo-ui-btn-text-inactive);
 }
 
-#preview_command i {
+#preview_command ._jv_menu i {
 	font-size: 12px;
+	line-height: 2;
 }
 
 #preview_command .nav-tabs>li.active>a {
