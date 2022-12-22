@@ -67,7 +67,7 @@ body._jv_modal-open {
 	    display: inline-block;
 	    position: relative;
 	    max-width: 100%;
-	    width: fit-content;
+	    width: fit-content !important;
 	    border: 1px solid var(--grey-3);
 	    padding: 0 10px 1px 10px;
 	    line-height: 1.6rem;
