@@ -6,12 +6,12 @@
 		<div class="col-md-3">
 			<div class="file-filter">
 				<form id="form-css-template" action="${info.currentURL}" method="post">
-					<div class="form-group">
+					<div class="form-group _jv_flex-line">
 						<input type="hidden" name="templateid" value="${templateid}" />
 						<input type="hidden" name="html" value="${param.html}" />
 						<input type="hidden" name="webaction" value="template.editHTML" />
 						<input type="text" name="search" value="${param.search}" placeholder="search..." id="input-filter" class="form-control" />
-						<input type="submit" value="ok" class="btn btn-default btn-xs" />
+						<input type="submit" value="ok" class="btn btn-default btn-xs ms-1" />
 					</div>
 				</form>
 			</div>

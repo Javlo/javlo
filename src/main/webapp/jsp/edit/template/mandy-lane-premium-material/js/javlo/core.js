@@ -12,7 +12,11 @@ jQuery(document).bind("ajaxUpdate",function () {
 	jQuery( ".tabs" ).tabs();
 	
 	//////////// ACCORDION /////////////////
-	jQuery( ".accordion" ).accordion( {active:".accordion .open"} );
+	jQuery(".accordion").accordion({
+			active:".accordion .open",
+			animate: false,
+			heightStyle: "content"
+	});
 	
 	//////////// DATE PICKER /////////////////
 	jQuery.datepicker.setDefaults( jQuery.datepicker.regional[ editLanguage ] );
