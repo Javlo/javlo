@@ -9,7 +9,7 @@ import org.javlo.helper.StringHelper;
 
 public class TemplateData {
 	
-	public static final int COLOR_LIST_SIZE = 12;
+	public static final int COLOR_LIST_SIZE = 6;
 	
 	public static final TemplateData EMPTY = new TemplateData();
 	private CssColor background = null;

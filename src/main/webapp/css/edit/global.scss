@@ -92,6 +92,10 @@ input {
 	padding: 0;
 }
 
+.component-wrapper.action {
+	display: block;
+}
+
 .bloc-info, .bloc-default {
 	margin: var(--main-sep) 0;
 	.row {

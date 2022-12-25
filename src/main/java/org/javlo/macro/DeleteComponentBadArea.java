@@ -7,6 +7,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
+import org.javlo.service.PersistenceService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 
@@ -47,6 +48,7 @@ public class DeleteComponentBadArea extends AbstractMacro {
 		for (MenuElement child : root.getAllChildrenList()) {
 			countDeleted = countDeleted + deleteComponentInBadArea(ctx, child);
 		}
+		PersistenceService.getInstance(globalContext).setAskStore(true);
 		return "components deleted : " + countDeleted;
 	}
 

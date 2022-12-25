@@ -149,3 +149,23 @@ a.nav {
 	margin-bottom: 0;
 	white-space: nowrap; 
 }
+
+.data-line {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.ref-context {
+	vertical-align: center;
+}
+
+.ref-context i {
+	font-size: 14px;
+}
+
+.color-list {
+	display: flex;
+	justify-content: left;
+	align-items: center;	
+}

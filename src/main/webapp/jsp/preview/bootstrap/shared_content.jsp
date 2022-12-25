@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
 %>
-<div class="well drop-files">
+<div class="well drop-files" onclick="document.getElementById('drop-file-form-input').click();">
 <%-- 	<c:url var="uploadUrl" value="${info.uploadURL}" context="/"> --%>
 <%-- 		<c:param name="provider" value="${provider.name}" /> --%>
 <%-- 	</c:url> --%>
@@ -11,6 +11,9 @@
 	</div>	
 </div>
 
+<form id="drop-file-form" action="${fn:replace(info.uploadSharedURL, '/ajax/', '/preview/')}" method="post" enctype="multipart/form-data" class="hidden">
+	<input id="drop-file-form-input" type="file" name="file" multiple="multiple" onchange="this.form.submit();" />
+</form>
 <script>
 	function onDoneUpload() {
 		editPreview.ajaxPreviewRequest('${refreshUrl}', null, null, null);

@@ -229,7 +229,7 @@ public class ComponentHelper {
 				boolean closeFound = nextComp == null;
 				int depth = 0;
 				while (!closeFound) {
-					if (newPrevious != null && nextComp.getId().equals(newPrevious.getId())) { /* if target inside the container */
+					if (newPrevious != null && nextComp != null && nextComp.getId().equals(newPrevious.getId())) { /* if target inside the container */
 						moveComponent(ctx, comp, newPrevious, targetPage, area);
 						return;
 					}

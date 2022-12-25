@@ -92,8 +92,8 @@
 
 #preview_command .integrity-message {
 	position: absolute;
-	left: 291px;
-	top: 39px;
+	left: 7px;
+	top: 40px;
 	width: 512px;
 	z-index: 110;
 
@@ -272,6 +272,8 @@
 	margin-right: 0;
 	display: block;
 	font-size: 0.8rem;
+	border-radius: 0;
+	line-height: 19px;
 }
 
 #preview_command .header .users {
@@ -520,7 +522,7 @@ body #preview_command ._jv_menu {
 	.list-group-item-danger {
 		color: var(--javlo-flash-color) !important;
 		background-color: var(--javlo-flash-color-bg) !important;
-		border: 1px solid var(--javlo-flash-color) !important;
+		border: 1px solid #dddddd;
 
 		&:first-letter {
 			text-transform: capitalize;

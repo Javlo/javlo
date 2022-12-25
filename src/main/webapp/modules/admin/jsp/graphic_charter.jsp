@@ -51,9 +51,9 @@
 					<label>color list</label>
 				</div>
 				<div class="col-xs-8">
-					<div class="row">
+					<div class="color-list">
 						<c:forEach begin="0" end="<%=TemplateData.COLOR_LIST_SIZE - 1%>" varStatus="status">
-							<div class="col-xs-2">
+							<div class="color">
 								<input class="form-control color" type="text" name="colorList${status.index}" value="${currentContext.templateData.colorList[status.index]}" />
 							</div>
 						</c:forEach>
