@@ -2,6 +2,17 @@
 	margin: var(--javlo-main-separator);
 }
 
+#preview_command {
+	.btn-default {
+		background-color: var(--javlo-ui-btn-bg-active) !important;
+		color: var(--javlo-ui-btn-text-active) !important;
+		border-color: var(--javlo-ui-btn-border) !important;
+	}
+	.form-control {
+		border-color: var(--javlo-ui-btn-border) !important;
+	}
+}
+
 body._jv_modal-open {
 	overflow: hidden; // remove scrollbar
 }
@@ -189,6 +200,30 @@ fieldset.collapsable.collapsed, fieldset._jv_collapsable.collapsed {
 ._jv_flex-line-start {
 	@extend ._jv_flex-line;
 	align-items: flex-start;
+}
+
+._jv_btn_group, #preview_command ._jv_btn_group {
+	display: flex;
+	align-items: stretch;
+	input, button, select, .btn, .form-control {
+		flex-grow: 99;
+	}
+	.btn {
+		flex-grow: 1;
+	}
+	input, button, select, .btn, .form-control {
+		width: auto;
+		border-radius: 0;
+		border-right-width: 0;
+		
+		&:first-child {
+			border-radius: 3px 0 0 3px;
+		}
+		&:last-child {
+			border-radius: 0 3px 3px 0;
+			border-right-width: 1px;
+		}
+	}
 }
 
 .btn-no {

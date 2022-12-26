@@ -247,10 +247,8 @@
 
 				<fieldset>
 					<legend>${i18n.edit['admin.form.config']}</legend>
-
 					<div class="row">
 						<div class="col-sm-6">
-
 							<c:if test="${fn:length(contextList) > 0}">
 								<c:if test="${not empty currentContext.aliasActive}">
 									<div class="row">
@@ -623,7 +621,7 @@
 		<textarea class="form-control" id="specialconfig" rows="10" cols="10" name="specialconfig">${currentContext.specialConfig}</textarea>
 	</div>
 </fieldset>
-<fieldset>
+<fieldset class="collapsable">
 	<legend>${i18n.edit['admin.title.html']}</legend>
 	<div class="row">
 		<div class="col-sm-4">

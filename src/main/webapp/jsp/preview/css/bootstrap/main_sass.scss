@@ -73,7 +73,6 @@ html.preview-only.preview-standard.preview-command-visible {
 
 #preview_command .btn:hover,
 #preview_command .btn:focus {
-	border-radius: 5px !important;
 	background-color: rgba(0, 0, 0, .2) !important;
 	color: var(--javlo-ui-btn-text-active) !important;
 }
@@ -780,10 +779,6 @@ div#preview_command {
 #preview_command button.btn-notext .glyphicon,
 #preview_command a.btn-notext .glyphicon {
 	margin-right: 0;
-}
-
-#preview_command #shared-content-search-form .query {
-	width: 50%;
 }
 
 .reverselink-info {
