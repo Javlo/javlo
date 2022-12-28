@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.MacroHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -92,55 +93,76 @@ public class TimeTravelerActions implements IAction {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		ContentService content = ContentService.getInstance(request);
 		Date travelTime = null;
+		Integer newVersion = null;
 		boolean previous = request.getParameter("previous") != null;
 		boolean next = request.getParameter("next") != null;
 		if (next || previous) {
-			travelTime = globalContext.getTimeTravelerContext().getTravelTime();
-			List<Date> dates = PersistenceService.getInstance(globalContext).getBackupDates();
-			if (dates.size() > 0) {
-				Integer currentIndex = null;
-				if (travelTime != null) {
-					long minDiff = Long.MIN_VALUE;
-					for (int i = 0; i < dates.size(); i++) {
-						Date backup = dates.get(i);
-						long diff = backup.getTime() - travelTime.getTime();
-						if (diff <= 0 && diff > minDiff) {
-							minDiff = diff;
-							currentIndex = i;
-						}
-					}
-				}
-				if (currentIndex == null) {
-					if (previous) {
-						travelTime = dates.get(0);
-					}
-				} else {
-					currentIndex += previous ? 1 : -1;
-					if (currentIndex < 0) {
-						travelTime = null;
-					} else if (currentIndex >= dates.size()) {
-						travelTime = dates.get(dates.size() - 1);
-					} else {
-						travelTime = dates.get(currentIndex);
-					}
-				}
+			
+			Integer version = globalContext.getTimeTravelerContext().getVersion();
+			if (version == null) {
+				version = PersistenceService.getInstance(globalContext).getVersion();
 			}
+			
+			if (next) {
+				version++;
+			} else {
+				version--;
+			}
+			
+			if (PersistenceService.getInstance(globalContext).isPreviewVersion(version)) {
+				newVersion = version;
+			}
+			
+//			travelTime = globalContext.getTimeTravelerContext().getTravelTime();
+//			List<Date> dates = PersistenceService.getInstance(globalContext).getBackupDates();
+//			if (dates.size() > 0) {
+//				Integer currentIndex = null;
+//				if (travelTime != null) {
+//					long minDiff = Long.MIN_VALUE;
+//					for (int i = 0; i < dates.size(); i++) {
+//						Date backup = dates.get(i);
+//						long diff = backup.getTime() - travelTime.getTime();
+//						if (diff <= 0 && diff > minDiff) {
+//							minDiff = diff;
+//							currentIndex = i;
+//						}
+//					}
+//				}
+//				if (currentIndex == null) {
+//					if (previous) {
+//						travelTime = dates.get(0);
+//					}
+//				} else {
+//					currentIndex += previous ? 1 : -1;
+//					if (currentIndex < 0) {
+//						travelTime = null;
+//					} else if (currentIndex >= dates.size()) {
+//						travelTime = dates.get(dates.size() - 1);
+//					} else {
+//						travelTime = dates.get(currentIndex);
+//					}
+//				}
+//			}
 		} else {
-			String dateStr = request.getParameter("date");
+			String version = request.getParameter("date");
+			if (StringHelper.isDigit(version)) {
+				newVersion = Integer.parseInt(version);
+			}
 			try {
-				travelTime = new SimpleDateFormat("dd/MM/yy HH:mm:ss").parse(dateStr);
+				travelTime = new SimpleDateFormat("dd/MM/yy HH:mm:ss").parse(version);
 			} catch (Exception ex) {
 				try {
-					travelTime = new SimpleDateFormat("dd/MM/yy HH:mm").parse(dateStr);
+					travelTime = new SimpleDateFormat("dd/MM/yy HH:mm").parse(version);
 				} catch (Exception ex2) {
 					try {
-						travelTime = new SimpleDateFormat("dd/MM/yy").parse(dateStr);
+						travelTime = new SimpleDateFormat("dd/MM/yy").parse(version);
 					} catch (Exception ex3) {
 					}
 				}
 			}
 		}
 		globalContext.getTimeTravelerContext().setTravelTime(travelTime);
+		globalContext.getTimeTravelerContext().setVersion(newVersion);
 		content.releaseTimeTravelerNav(ctx);
 		return null;
 	}
@@ -194,13 +216,9 @@ public class TimeTravelerActions implements IAction {
 			String msg = i18nAccess.getText("time.message.error.page-deleted");
 			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
 		}
-
-		PersistenceService persistenceService = PersistenceService.getInstance(ctx.getGlobalContext());
-		persistenceService.store(ctx, false);
-
+		PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		content.releasePreviewNav(ctx);
-
 		return null;
 
 	}

@@ -62,26 +62,27 @@ if (!rightOnPage) {
 				</div>
 				
 				<div class="page-shortcut">
-						<%-- 									<span><i class="bi bi-gear" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;"></i></span> --%>
-						<div class="btn btn-integrity btn-notext" data-toggle="_eprv_collapse" data-target="#integrity-list" href="#integrity-list" aria-expanded="false" aria-controls="integrity-list">
-							<c:if test="${integrities.levelLabel != 'success'}">
-								<i class="bi bi-exclamation-triangle"></i>
-							</c:if>
-							<c:if test="${integrities.levelLabel == 'success'}">
-								<i class="bi bi-check-circle"></i>
-							</c:if>
-							<div class="integrity-message collapse${integrities.error && contentContext.previewEdit?' in':''}" id="integrity-list">
-								<ul class="list-group">
-									<c:forEach var="checker" items="${integrities.checker}">
-										<c:if test="${checker.errorCount>0}">
-											<li class="list-group-item list-group-item-${checker.levelLabel}"><span class="badge">${checker.errorCount}</span>${checker.errorMessage}</li>
-										</c:if>
-									</c:forEach>
-								</ul>
-							</div>
+					<%-- 									<span><i class="bi bi-gear" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;"></i></span> --%>
+					<div class="btn btn-integrity btn-notext" data-toggle="_eprv_collapse" data-target="#integrity-list" href="#integrity-list" aria-expanded="false" aria-controls="integrity-list">
+						<c:if test="${integrities.levelLabel != 'success'}">
+							<i class="bi bi-exclamation-triangle"></i>
+						</c:if>
+						<c:if test="${integrities.levelLabel == 'success'}">
+							<i class="bi bi-check-circle"></i>
+						</c:if>
+						<div class="integrity-message collapse${integrities.error && contentContext.previewEdit?' in':''}" id="integrity-list">
+							<ul class="list-group">
+								<c:forEach var="checker" items="${integrities.checker}">
+									<c:if test="${checker.errorCount>0}">
+										<li class="list-group-item list-group-item-${checker.levelLabel}"><span class="badge">${checker.errorCount}</span>${checker.errorMessage}</li>
+									</c:if>
+								</c:forEach>
+							</ul>
 						</div>
 					</div>
+				</div>
 
+				<c:if test="${contentContext.preview}">
 				<div class="page-actions">
 					<ul>
 						<c:if test="${!logged}">
@@ -213,10 +214,11 @@ if (!rightOnPage) {
 						</c:if>
 					</ul>
 				</div>
-
+				</c:if>
 			</div>
 
 			<div class="menu">
+
 				<c:if test="${globalContext.previewMode && !contentContext.asTimeMode}">
 					<form id="pc_form" action="${info.currentURL}" method="post">
 						<div class="pc_line">
@@ -234,6 +236,12 @@ if (!rightOnPage) {
 			</div>
 
 			<div class="users">
+			
+				<c:if test="${contentContext.time}">
+					<div class="preview-version">content version : ${info.previewVersion}</div>
+				</c:if>
+			
+				<c:if test="${contentContext.preview}">
 				<li class="publish"><form id="pc_publish_form" action="${info.currentURL}" method="post">
 						<input type="hidden" name="webaction" value="${webaction}" />
 						<c:set var="tooltip" value="" />
@@ -248,24 +256,6 @@ if (!rightOnPage) {
 							<span class="text">${label}</span>
 						</button>
 					</form></li>
-
-				<c:if test="${!userInterface.minimalInterface && !contentContext.asTimeMode}">
-					<li class="undo${contentContext.canUndo?'':' no-access'}"><form class="${!info.page.pageLocalEmpty?'no-access':''}" action="${info.currentURL}" method="get">
-							<c:if test="${not empty param['force-device-code']}">
-								<input type="hidden" name="force-device-code" value="${param['force-device-code']}" />
-							</c:if>
-							<div class="hidden">
-								<input type="hidden" name="webaction" value="time.undoRedo" />
-								<input type="hidden" name="previous" value="true" />
-							</div>
-							<c:set var="tooltip" value="" />
-							<c:if test="${i18n.edit['command.undo.tooltip'] != 'command.undo.tooltip'}">
-								<c:set var="tooltip" value='data-toggle="tooltip" data-placement="bottom" title="${i18n.edit[\'command.undo.tooltip\']}"' />
-							</c:if>
-							<button class="btn btn-default btn-refresh" id="pc_paste_page" type="submit" ${contentContext.canUndo?'':' disabled="disabled"'} ${tooltip}>
-								<i class="bi bi-arrow-counterclockwise"></i> <span class="text">${i18n.edit['global.undo']}</span>
-							</button>
-						</form></li>
 				</c:if>
 
 				<c:if test="${userInterface.search && !userInterface.minimalInterface && !contentContext.asTimeMode}">

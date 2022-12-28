@@ -96,28 +96,7 @@ a.action-button::first-letter,
 	}
 
 }
-.breadcrumbs{
-	.title{
-		background-image: none!important;
-		margin-right:0!important;
-		padding:0;
-	}
-	.children{
-		background: none!important;
-	}
-}
-.breadcrumbs a{
-	background-image: none!important;
-	padding: 5px 5px 5px 0;
-	margin-right:0;
-	&:after{
-		content: "\F27B";
-				font-family: var(--bsicons);
-				margin: 0px 5px;
-				color: var(--grey-3);
-				vertical-align: bottom;
-	}
-}
+
 .notification{
 	padding: 7px;
 	.close{

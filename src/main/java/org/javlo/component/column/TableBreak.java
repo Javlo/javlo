@@ -218,10 +218,10 @@ public class TableBreak extends TableComponent {
 
 		if (previous == null || previous instanceof TableBreak) {
 			String previousId = ComponentHelper.getPreviousComponentId(this, ctx);
-			MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), previousId, OpenCell.TYPE, "", getArea(), "", ctx.getCurrentEditUser());
-			MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), previousId, OpenRow.TYPE, "", getArea(), "", ctx.getCurrentEditUser());
-			MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), previousId, OpenCell.TYPE, "", getArea(), "", ctx.getCurrentEditUser());
-			MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), previousId, OpenCell.TYPE, "", getArea(), "", ctx.getCurrentEditUser());
+			MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), previousId, OpenCell.TYPE, getArea(), "", ctx.getCurrentEditUser());
+			MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), previousId, OpenRow.TYPE, getArea(), "", ctx.getCurrentEditUser());
+			MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), previousId, OpenCell.TYPE, getArea(), "", ctx.getCurrentEditUser());
+			MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), previousId, OpenCell.TYPE, getArea(), "", ctx.getCurrentEditUser());
 		}
 		return true;
 	}
@@ -290,20 +290,20 @@ public class TableBreak extends TableComponent {
 			IContentVisualComponent prvComp = this;
 			while (prvComp != null && !prvComp.getId().equals(tableContext.getFirstComponentId())) {
 				if (prvComp.getType().equals(OpenRow.TYPE)) {
-					MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), ComponentHelper.getPreviousComponentId(prvComp, ctx), OpenCell.TYPE, null, getArea(), "", ctx.getCurrentEditUser());
+					MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), ComponentHelper.getPreviousComponentId(prvComp, ctx), OpenCell.TYPE, getArea(), "", ctx.getCurrentEditUser());
 				}
 				prvComp = ComponentHelper.getPreviousComponent(prvComp, ctx);
 			}
-			MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), ComponentHelper.getPreviousComponentId(this, ctx), OpenCell.TYPE, null, getArea(), "", ctx.getCurrentEditUser());
+			MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), ComponentHelper.getPreviousComponentId(this, ctx), OpenCell.TYPE,  getArea(), "", ctx.getCurrentEditUser());
 		}
 		if (row == 0) {
 			row++;
 		}
 		for (int i = row; i < newRow; i++) {
 			modifContent = true;
-			String rowId = MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), ComponentHelper.getPreviousComponentId(this, ctx), OpenRow.TYPE, null, getArea(), "", ctx.getCurrentEditUser());
+			String rowId = MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), ComponentHelper.getPreviousComponentId(this, ctx), OpenRow.TYPE,  getArea(), "", ctx.getCurrentEditUser());
 			for (int c = 1; c < Math.max(tableContext.getMaxRowSize(), newCol); c++) {
-				MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), rowId, OpenCell.TYPE, null, getArea(), "", ctx.getCurrentEditUser());
+				MacroHelper.addContent(ctx.getRequestContentLanguage(), getPage(), rowId, OpenCell.TYPE,  getArea(), "", ctx.getCurrentEditUser());
 			}
 		}
 		if (newRow > 0) {

@@ -1330,6 +1330,10 @@ public class ContentContext {
 	public boolean isPreview() {
 		return renderMode == PREVIEW_MODE;
 	}
+	
+	public boolean isTime() {
+		return renderMode == TIME_MODE;
+	}
 
 	/**
 	 * return true if render mode in preview only (no tools displayed, like view

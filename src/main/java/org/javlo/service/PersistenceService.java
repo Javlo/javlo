@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -443,6 +444,10 @@ public class PersistenceService {
 				}
 			}
 		}
+		
+		Collections.sort(outList, (a,b) -> {
+			return b.getVersion()-a.getVersion();
+		});
 
 		return outList;
 	}
@@ -511,6 +516,8 @@ public class PersistenceService {
 		Collections.sort(out, Collections.reverseOrder());
 		return out;
 	}
+	
+	
 
 	public String getDirectory() {
 		return URLHelper.mergePath(globalContext.getDataFolder(), _DIRECTORY);
@@ -1313,6 +1320,10 @@ public class PersistenceService {
 	public MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate) throws Exception {
 		return load(ctx, renderMode, contentAttributeMap, timeTravelDate, true, null);
 	}
+	
+	public MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate, Integer version) throws Exception {
+		return load(ctx, renderMode, contentAttributeMap, timeTravelDate, true, version);
+	}
 
 	/**
 	 * check if a preview version exist on FileSystem.
@@ -1408,9 +1419,10 @@ public class PersistenceService {
 			contentAttributeMap = new HashMap(); // fake map
 		}
 		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
-
+			
 			int version = getVersion();
 			if (previewVersion != null) {
+				renderMode = ContentContext.PREVIEW_MODE;
 				version = previewVersion;
 			}
 

@@ -91,12 +91,10 @@ body #preview_command .modal-backdrop.in {
 #preview_command .btn-primary {
   background-color: var(--action-color);
   color: var(--action-text);
-  border-radius: 0 !important;
 }
 
 #preview_command .btn-primary:hover {
 	background-color: var(--action-color-hover) !important;
-	border-radius: 0 !important;
 }
 
 #preview_command .disabled .btn:hover {

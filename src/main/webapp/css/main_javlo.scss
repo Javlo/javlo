@@ -6,10 +6,10 @@
 	.btn-default {
 		background-color: var(--javlo-ui-btn-bg-active) !important;
 		color: var(--javlo-ui-btn-text-active) !important;
-		border-color: var(--javlo-ui-btn-border) !important;
+		border-color: var(--javlo-ui-nav-btn-border-inactive) !important;
 	}
 	.form-control {
-		border-color: var(--javlo-ui-btn-border) !important;
+		border-color: var(--javlo-ui-nav-btn-border-inactive) !important;
 	}
 }
 

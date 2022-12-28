@@ -1,12 +1,14 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><i class="bi bi-house-fill"></i>
-<c:if test="${not empty currentModule.breadcrumbTitle}">
-	<span class="title">${currentModule.breadcrumbTitle}</span>
-</c:if>
+
 
 <c:if test="${empty currentModule.breadcrumbList}">
-	<c:forEach var="page" items="${info.pagePath}">
+	<c:forEach var="page" items="${info.pagePath}" varStatus="status">
 		<c:set var="link" value='<a href="${page.url}">' />
-		${empty param.previewEdit?link:'<span class="title">'}${page.info.title}${empty param.previewEdit?'</a>':'</span>'}
+		<c:set var="spanHtml" value="<span class='title'>"/>
+		<c:if test="${status.first}">
+			<c:set var="spanHtml" value="<span class='title first'>"/>
+		</c:if>
+		${empty param.previewEdit?link:spanHtml}${page.info.title}${empty param.previewEdit?'</a>':'</span>'}
 		<c:if test="${fn:length(page.children) > 1 && empty param.previewEdit}">
 			<div class="children">
 				<div class="container">
@@ -29,7 +31,7 @@
 				</div>
 			</div>
 		</c:if>
-		<c:if test="${fn:length(page.children) == 0}"><div class="no-children"></div></c:if>
+		<c:if test="${fn:length(page.children) == 0 && !status.last}"><div class="no-children 1"></div></c:if>
 	</c:forEach>
 	<c:set var="link" value='<a class="selected" href="${info.currentURL}">' />
 	${empty param.previewEdit?link:'<span class="title">'}
@@ -57,7 +59,7 @@
 			</div>
 		</div>
 	</c:if>
-	<c:if test="${fn:length(info.page.children) == 0}"><div class="no-children"></div></c:if>
+	
 </c:if>
 <c:if test="${not empty currentModule.breadcrumbList}">
 	<c:forEach var="link" items="${currentModule.breadcrumbList}" varStatus="status">
@@ -116,6 +118,6 @@
 				</div>
 			</div>
 		</c:if>
-		<c:if test="${fn:length(link.children) <= 1 && ! status.last}"><div class="no-children"></div></c:if>
+		<c:if test="${fn:length(link.children) <= 1 && !status.last}"><div class="no-children 3"></div></c:if>
 	</c:forEach>
 </c:if>

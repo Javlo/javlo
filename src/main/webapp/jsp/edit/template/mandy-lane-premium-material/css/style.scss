@@ -970,10 +970,11 @@ h2.prize {
 	display: inline-block;
 	position: absolute;
 	margin-left: -22px;
+	margin-top: -2px;
 	font-size: .9em;
 }
 
-.breadcrumbs .children:before, .breadcrumbs .no-children:before {
+.breadcrumbs .children:before, .breadcrumbs .no-children:before, .breadcrumbs .main-bc-title::after {
 	display: inline-block;
 	font-family: bootstrap-icons !important;
 	font-style: normal;
@@ -984,6 +985,11 @@ h2.prize {
 	vertical-align: middle;
 	line-height: 32px;
 	content: "\f231";
+}
+
+.breadcrumbs .main-bc-title::after {
+	content: "\f285";
+	margin: 0 .5em;
 }
 
 .breadcrumbs .children.open:before {

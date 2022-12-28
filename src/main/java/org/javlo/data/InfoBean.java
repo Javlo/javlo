@@ -295,6 +295,10 @@ public class InfoBean {
 	public String getCurrentViewURL() throws Exception {
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getFreeContentContext());
 	}
+	
+	public String getCurrentTimeURL() throws Exception {
+		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.TIME_MODE).getFreeContentContext());
+	}
 
 	public String getCurrentViewURLWidthDevice() throws Exception {
 		String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getFreeContentContext());

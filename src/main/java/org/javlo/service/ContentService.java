@@ -653,12 +653,11 @@ public class ContentService implements IPrintInfo {
 	 * return all the content.
 	 */
 	public MenuElement getNavigation(ContentContext ctx) {
-
 		MenuElement res = null;
 		try {
 			GlobalContext globalContext = ctx.getGlobalContext();
-
-			if (ctx.getRenderMode() == ContentContext.TIME_MODE && globalContext.getTimeTravelerContext().getTravelTime() != null) {
+			
+			if (ctx.getRenderMode() == ContentContext.TIME_MODE && !globalContext.getTimeTravelerContext().isEmpty()) {
 				if (timeTravelerNav == null) {
 					Date timeTravelDate = globalContext.getTimeTravelerContext().getTravelTime();
 					if (timeTravelDate != null && timeTravelDate.after(globalContext.getPublishDate())) {
@@ -666,7 +665,7 @@ public class ContentService implements IPrintInfo {
 					}
 					PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 					Map<String, String> contentAttributeMap = new HashMap<String, String>();
-					timeTravelerNav = persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, timeTravelDate);
+					timeTravelerNav = persistenceService.load(ctx, ContentContext.VIEW_MODE, contentAttributeMap, timeTravelDate, globalContext.getTimeTravelerContext().getVersion());
 					timeTravelerGlobalMap = contentAttributeMap;
 					/** init next and previous component **/
 					for (MenuElement page : timeTravelerNav.getAllChildrenList()) {
@@ -1037,7 +1036,7 @@ public class ContentService implements IPrintInfo {
 		this.previewNav = previewNav;
 	}
 
-	public void setTimeTravelerNav(MenuElement timeTravelerNav) {
+	public void setTimeTravelerNav(MenuElement timeTravelerNav) {	
 		this.timeTravelerNav = timeTravelerNav;
 	}
 

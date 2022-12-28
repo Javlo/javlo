@@ -26,6 +26,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.javlo.component.column.OpenCell;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentLayout;
 import org.javlo.component.core.ContentElementList;
@@ -87,8 +88,12 @@ public class MacroHelper {
 	 * @return the if of the new component
 	 * @throws Exception
 	 */
+	public static final String addContent(String lg, MenuElement page, String parentCompId, String contentType, String value, User authors, String renderer, String colStyle, int colSize) throws Exception {
+		return addContent(lg, page, parentCompId, contentType, null, value, authors, renderer, colStyle, colSize);
+	}
+	
 	public static final String addContent(String lg, MenuElement page, String parentCompId, String contentType, String value, User authors) throws Exception {
-		return addContent(lg, page, parentCompId, contentType, null, value, authors);
+		return addContent(lg, page, parentCompId, contentType, null, value, authors, null, null, 0);
 	}
 
 	/**
@@ -107,8 +112,12 @@ public class MacroHelper {
 	 * @return the if of the new component
 	 * @throws Exception
 	 */
+	public static final String addContent(String lg, MenuElement page, String parentCompId, String contentType, String style, String value, User authors, String renderer, String colStyle, int colSize) throws Exception {
+		return addContent(lg, page, parentCompId, contentType, style, null, value, authors, renderer, colStyle, colSize);
+	}
+	
 	public static final String addContent(String lg, MenuElement page, String parentCompId, String contentType, String style, String value, User authors) throws Exception {
-		return addContent(lg, page, parentCompId, contentType, style, null, value, authors);
+		return addContent(lg, page, parentCompId, contentType, style, null, value, authors, null, null, 0);
 	}
 
 	/**
@@ -131,8 +140,11 @@ public class MacroHelper {
 	 * @return the if of the new component
 	 * @throws Exception
 	 */
-	public static final String addContent(String lg, MenuElement page, String parentCompId, String contentType, String style, String area, String value, User authors) throws Exception {
+	public static final String addContent(String lg, MenuElement page, String parentCompId, String contentType, String style, String area, String value, User authors, String renderer, String colStyle, int colSize) throws Exception {
 		ComponentBean comp = new ComponentBean(StringHelper.getRandomId(), contentType, value, lg, false, authors);
+		comp.setColumnSize(colSize);
+		comp.setColumnStyle(colStyle);
+		comp.setRenderer(renderer);
 		if (area != null) {
 			comp.setArea(area);
 		}
@@ -526,7 +538,9 @@ public class MacroHelper {
 		ContentElementList sourceContent = fromPage.getLocalContentCopy(fromCtx);
 		String parentCompId = "0";
 		for (IContentVisualComponent component : sourceContent.asIterable(fromCtx)) {
-			parentCompId = MacroHelper.addContent(toCtx.getRequestContentLanguage(), toPage, parentCompId, component.getType(), component.getComponentCssClass(fromCtx), component.getArea(), component.getValue(fromCtx), fromCtx.getCurrentEditUser());
+			parentCompId = MacroHelper.addContent(toCtx.getRequestContentLanguage(), toPage, parentCompId, component.getType(), 
+					component.getComponentCssClass(fromCtx), component.getArea(), component.getValue(fromCtx), fromCtx.getCurrentEditUser()
+					,component.getCurrentRenderer(fromCtx), component.getColumnStyle(fromCtx), component.getColumnSize(fromCtx));
 		}
 	}
 
@@ -668,7 +682,7 @@ public class MacroHelper {
 				style = StringUtils.split(type, "|")[1];
 				type = StringUtils.split(type, "|")[0];
 			}
-			contentId = addContent(ctx.getRequestContentLanguage(), page, contentId, type, style, area, value, ctx.getCurrentEditUser());
+			contentId = addContent(ctx.getRequestContentLanguage(), page, contentId, type, style, area, value, ctx.getCurrentEditUser(), null, null, 0);
 		}
 	}
 

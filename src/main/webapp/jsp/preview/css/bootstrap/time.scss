@@ -1,7 +1,32 @@
 #preview_command {
-	#time-title {
-	   margin-top: 0;
-	   font-size: 1.2em;
-	   border-bottom: 1px solid #dddddd;
+	.first-title {
+		display: flex;
+		justify-content: flex-start;
+		color: white;
+		i {
+			margin-right: .5rem;
+		}
+	}
+	.title {
+		font-size: 14px;
+		color: white;
+		margin: 0 0 3px 0;
+	}
+	.pc_line {
+		color: white;
+	}
+	.btn-set.btn {
+		padding-top: 1px;
+		padding-bottom: 1px;
+		border-color: var(--javlo-ui-nav-btn-border-inactive) !important;
+		border-radius: 3px;
+		i {
+			font-size: 22px;
+		}
+	}
+	.preview-version {
+		margin-right: 12px;
+		color: #fff;
+		font-size: 10px;
 	}
 }
