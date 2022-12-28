@@ -89,6 +89,13 @@ body {
 		}
 	}
 }
+
+.previewEdit {
+	#fileManager {
+		height: calc(100vh - 105px) !important;
+	}
+}
+
 .elfinder-dialog-confirm {
 	.ui-dialog-content {
 		min-height: 15px;
@@ -249,6 +256,28 @@ body {
 			height: 1rem;
 			width: 1rem;
 			text-align: left;
+		}
+	}
+}
+
+#breadcrumbs {
+	a, .link {
+		color: #fff;
+	}
+}
+
+
+/** file manager design correction **/
+
+#fileManager {
+	.ui-corner-all, .ui-corner-top, .ui-corner-right, .ui-corner-tr {
+		border-radius: 0;
+	}
+	.ui-widget-content {
+		border: 0 none;
+		.ui-state-default  {
+			background-image: none;
+			border-radius: 0;
 		}
 	}
 }

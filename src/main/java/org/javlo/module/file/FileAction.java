@@ -296,6 +296,11 @@ public class FileAction extends AbstractModuleAction {
 
 		String componentRenderer = editContext.getBreadcrumbsTemplate();
 		ctx.getRequest().setAttribute("currentModule", currentModule);
+		
+		if (!StringHelper.isEmpty(rs.getParameter("previewEdit"))) {
+			componentRenderer = URLHelper.addParam(componentRenderer, "previewEdit", "true");
+		}
+		
 		String breadcrumbsHTML = ServletHelper.executeJSP(ctx, componentRenderer);
 
 		ctx.getAjaxInsideZone().put("breadcrumbs", breadcrumbsHTML);

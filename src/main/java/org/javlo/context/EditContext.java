@@ -204,7 +204,6 @@ public class EditContext implements Serializable {
 				licence.add(element);
 				logger.fine("licence found : " + element);
 			}
-
 		}
 
 		adminUserSecurity = AdminUserSecurity.getInstance();

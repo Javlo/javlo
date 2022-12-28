@@ -37,6 +37,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -48,6 +50,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.TreeSet;
 import java.util.zip.CRC32;
@@ -2109,6 +2112,30 @@ public class ResourceHelper {
         XHTMLConverter.getInstance().convert(document, out, options);
         out.close();
         
+	}
+	
+	public static String sha512(final InputStream in) throws IOException, IllegalArgumentException {
+		return sha(in, "SHA-512");
+	}
+	
+	public static String sha256(final InputStream in) throws IOException, IllegalArgumentException {
+		return sha(in, "SHA-256");
+	}
+	
+	private static String sha(final InputStream in, String algo) throws IOException, IllegalArgumentException {
+		final int BUFFER_SIZE = 1024 * 1024;
+		Objects.requireNonNull(in);
+		try {
+			final byte[] buf = new byte[BUFFER_SIZE];
+			final MessageDigest messageDigest = MessageDigest.getInstance(algo);
+			int bytesRead;
+			while ((bytesRead = in.read(buf)) != -1) {
+				messageDigest.update(buf, 0, bytesRead);
+			}
+			return new String(java.util.Base64.getEncoder().encode(messageDigest.digest()));
+		} catch (NoSuchAlgorithmException e) {
+			throw new IllegalStateException("SHA-256 hashing algorithm unknown in this VM.", e);
+		}
 	}
 
 	public static void main(String[] args) throws IOException {

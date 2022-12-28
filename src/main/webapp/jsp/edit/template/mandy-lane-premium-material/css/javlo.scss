@@ -545,10 +545,18 @@ ul,li {
 	padding: 5px 20px 5px 0;
 }
 
-.breadcrumbs span.title {
-	background: url("../images/separator2.png") no-repeat scroll right
-		center transparent;
-	margin-right: 10px;
+.breadcrumbs span.title:before {
+	display: inline-block;
+	font-family: bootstrap-icons !important;
+	font-style: normal;
+	font-weight: normal !important;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+	vertical-align: middle;
+	font-size: .9em;
+	content: "\f285";
+	margin: 0 5px;
 }
 
 .breadcrumbs span.title:last-child {

@@ -942,7 +942,6 @@ h2.prize {
 		display: inline-block;
 		color: var(--action-color);
 		padding: 5px 20px 5px 0;
-		background: url(../images/separator2.png) no-repeat right center;
 		margin-right: 10px;
 		.link {
 			padding: 0;
@@ -951,14 +950,12 @@ h2.prize {
 		
 	}
 	.link {
-		margin-right: 10px;
 		padding: 5px 20px 5px 0;
 		color: #ccc;
 	}
 }
 
 .breadcrumbs a, .breadcrumbs .link-wrapper {
-	background: url(../images/separator2.png) no-repeat right center;
 	margin-right: 10px;
 	display: inline-block;
 }
@@ -967,22 +964,34 @@ h2.prize {
 	background: none;
 }
 
-.breadcrumbs .children {
+.breadcrumbs .children, .breadcrumbs .no-children {
 	min-width: 20px;
 	height: 28px;
 	display: inline-block;
 	position: absolute;
 	margin-left: -22px;
-	
-	background-image: url('../images/arrow.png');
-	background-repeat: no-repeat;
-	background-position: 1px 10px;
+	font-size: .9em;
 }
 
-.breadcrumbs .children.open {
-	background-image: url('../images/arrow.png');
-	background-repeat: no-repeat;
-	background-position: 1px -31px;
+.breadcrumbs .children:before, .breadcrumbs .no-children:before {
+	display: inline-block;
+	font-family: bootstrap-icons !important;
+	font-style: normal;
+	font-weight: normal !important;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+	vertical-align: middle;
+	line-height: 32px;
+	content: "\f231";
+}
+
+.breadcrumbs .children.open:before {
+	content: "\f229";
+}
+
+.breadcrumbs .no-children:before {
+	content: "\f285";
 }
 
 .breadcrumbs .children .container a, .breadcrumbs .children .container .link {
@@ -1017,8 +1026,7 @@ h2.prize {
 	
 	top: 29px;
 	left: -1px;
-	border: 1px solid $border;	
-	box-shadow: $shadow;
+	border: 1px solid #000;
 }
 
 .breadcrumbs .children .selected {

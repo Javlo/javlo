@@ -101,13 +101,6 @@ a.action-button::first-letter,
 		background-image: none!important;
 		margin-right:0!important;
 		padding:0;
-		&:after{
-		content: "\F27B";
-				font-family: var(--bsicons);
-				margin: 0px 5px;
-				color: var(--grey-3);
-				vertical-align: bottom;
-		}
 	}
 	.children{
 		background: none!important;

@@ -2721,6 +2721,7 @@ public class Template implements Comparable<Template> {
 		// System.out.println(request+"importTemplateInWebApp Request");
 
 		File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolderName()));
+		templateSrc = templateSrc.getCanonicalFile();
 
 		if (templateSrc.exists()) {
 			logger.info("copy parent template from '" + templateSrc + "' to '" + templateTarget + "'");

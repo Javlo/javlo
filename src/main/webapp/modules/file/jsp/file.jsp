@@ -13,6 +13,9 @@
 <c:if test="${not empty param.templateid}">
 <c:set var="params" value="&templateid=${param.templateid}" />
 </c:if>
+<c:if test="${not empty param.previewEdit}">
+<c:set var="params" value="${params}&previewEdit=${param.previewEdit}" />
+</c:if>
 <script type="text/javascript">
 jQuery(document).ready(function() {
 	var language = "${info.editLanguage}";
@@ -29,7 +32,7 @@ jQuery(document).ready(function() {
 	}
 	
 	jQuery('#fileManager').elfinder({
-		url : '${info.staticRootURL eq "/"?"":info.staticRootURL}${currentModule.path}/jsp/connector.jsp${not empty changeRoot?"?changeRoot=true":""}${params}',
+		url : '${info.staticRootURL eq "/"?"":info.staticRootURL}${currentModule.path}/jsp/connector.jsp?v=1${not empty changeRoot?"&changeRoot=true":""}${params}',
 		lang : '${info.editLanguage}',
 		height: footerTop - jQuery("#fileManager").offset().top - (jQuery(".maincontent .left").outerHeight(true) - jQuery(".maincontent .left").height()),
 		handlers: {	

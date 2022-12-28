@@ -1549,6 +1549,10 @@ public class StaticConfig extends Observable {
 		if (JAVLO_HOME != null) {
 			folder = folder.replace("$JAVLO_HOME", JAVLO_HOME);
 		}
+		String CATALINA_HOME = System.getenv("CATALINA_HOME");
+		if (CATALINA_HOME != null) {
+			folder = folder.replace("$CATALINA_HOME", CATALINA_HOME);
+		}
 		return folder;
 	}
 

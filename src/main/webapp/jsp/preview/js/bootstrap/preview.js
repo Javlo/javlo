@@ -193,7 +193,7 @@ if (!String.prototype.startsWith) {
 		}
 	}
 
-	editPreview.openModal = function(title, url, type) {
+	editPreview.openModal = function(title, url, large) {
 		editPreview.layerOver(null);
 		pjq('#preview-modal-frame').attr("src", url);
 		pjq('#previewModalTitle').html(title);
@@ -207,8 +207,9 @@ if (!String.prototype.startsWith) {
 		modal.removeClass("jv-modal-sm");
 		modal.removeClass("jv-modal-md");
 		modal.removeClass("jv-modal-lg");
-		if (type != null) {
-			modal.addClass(type);
+		
+		if (large) {
+			document.getElementById('preview-modal-dialog').classList.add('maximized');
 		}
 
 		modal.modal('show');
