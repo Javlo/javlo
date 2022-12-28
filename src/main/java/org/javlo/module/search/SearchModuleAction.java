@@ -20,6 +20,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.GlobalContextFactory;
 import org.javlo.data.taxonomy.TaxonomyService;
+import org.javlo.data.taxonomy.TaxonomyServiceAgregation;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.SecurityHelper;
@@ -221,7 +222,10 @@ public class SearchModuleAction extends AbstractModuleAction {
 			ctx.getRequest().setAttribute("downloadUrl", URLHelper.createURL(ctx, params));
 		}
 		ctx.getRequest().setAttribute("items", items);
-		ctx.getRequest().setAttribute("taxoSelect", ctx.getGlobalContext().getAllTaxonomy(ctx).getSelectHtml("taxonomy", "form-control chosen-select", searchFilter.getTaxonomy(), true));
+		TaxonomyServiceAgregation taxoService = ctx.getGlobalContext().getAllTaxonomy(ctx);
+		if (taxoService.isActive()) {
+			ctx.getRequest().setAttribute("taxoSelect", taxoService.getSelectHtml("taxonomy", "form-control chosen-select", searchFilter.getTaxonomy(), true));
+		}
 		ctx.getRequest().setAttribute("components", ComponentHelper.getCurrentContextComponentsList(ctx));
 		return null;
 	}

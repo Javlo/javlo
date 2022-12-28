@@ -4448,7 +4448,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		TaxonomyServiceAgregation outTaxonomy = new TaxonomyServiceAgregation(TaxonomyService.getInstance(ctx), TaxonomyService.getMasterInstance(ctx));
 		return outTaxonomy;
 	}
-
+	
 	public TaxonomyService getTaxonomy(ContentContext ctx) {
 		return TaxonomyService.getInstance(ctx);
 	}

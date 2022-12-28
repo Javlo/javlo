@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><form id="delete-comments" action="${info.currentURL}" method="post">
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><form id="delete-comments" action="${info.currentURL}" method="post">
 
 	<%-- 	<label for="taxonomy">${i18n.edit["taxonomy"]}</label>${taxoSelect} --%>
 
@@ -9,7 +9,9 @@
 
 			<legend>Extend search</legend>
 
+			<c:if test="${not empty taxoSelect}">
 			<label for="taxonomy">${i18n.edit["taxonomy"]}</label>${taxoSelect}
+			</c:if>
 
 			<div class="_jv_flex-line">
 
