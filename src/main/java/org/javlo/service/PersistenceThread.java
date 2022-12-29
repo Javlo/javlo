@@ -172,7 +172,7 @@ public class PersistenceThread implements Runnable {
 	}
 
 	protected File getXMLPersistenceFile(int mode) {
-		return new File(persistenceService.getPersistenceFilePrefix(mode) + ".xml");
+		return persistenceService.getXMLPersistenceFile(mode);
 	}
 
 	private File store(MenuElement menuElement, int renderMode, String defaultLg) throws Exception {

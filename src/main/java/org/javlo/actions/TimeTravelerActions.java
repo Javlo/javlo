@@ -234,7 +234,7 @@ public class TimeTravelerActions implements IAction {
 
 		MenuElement timeCurrentPage = timeCtx.getCurrentPage();
 		MenuElement editCurrentPage = content.getNavigation(editCtx);
-
+		
 		if (timeCurrentPage.getParent() != null) {
 			editCurrentPage = editCurrentPage.searchChild(editCtx, timeCurrentPage.getPath());
 		}
@@ -257,14 +257,15 @@ public class TimeTravelerActions implements IAction {
 		} else {
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 			String msg = i18nAccess.getText("time.message.error.page-deleted");
+			logger.severe(msg);
 			MessageRepository.getInstance(ctx).setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
 		}
 
 		PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-		persistenceService.setAskStore(true);
+		persistenceService.store(editCtx);
 
 		content.releaseTimeTravelerNav(timeCtx);
-		content.releasePreviewNav(editCtx);
+		//content.releasePreviewNav(editCtx);
 
 		return null;
 	}

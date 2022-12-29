@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -44,6 +43,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -71,7 +71,6 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.service.location.IpPosition;
 import org.javlo.service.location.LocationService;
-import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.tracking.DayInfo;
 import org.javlo.tracking.Track;
 import org.javlo.tracking.Tracker;
@@ -444,9 +443,9 @@ public class PersistenceService {
 				}
 			}
 		}
-		
-		Collections.sort(outList, (a,b) -> {
-			return b.getVersion()-a.getVersion();
+
+		Collections.sort(outList, (a, b) -> {
+			return b.getVersion() - a.getVersion();
 		});
 
 		return outList;
@@ -516,8 +515,6 @@ public class PersistenceService {
 		Collections.sort(out, Collections.reverseOrder());
 		return out;
 	}
-	
-	
 
 	public String getDirectory() {
 		return URLHelper.mergePath(globalContext.getDataFolder(), _DIRECTORY);
@@ -863,7 +860,8 @@ public class PersistenceService {
 			ComponentBean bean = new ComponentBean(type, content, lg);
 			bean.setId(id);
 			bean.setRepeat(StringHelper.isTrue(contentNode.getAttributeValue("repeat"), false));
-			//bean.setForceCachable(StringHelper.isTrue(contentNode.getAttributeValue("forceCachable"), false));
+			// bean.setForceCachable(StringHelper.isTrue(contentNode.getAttributeValue("forceCachable"),
+			// false));
 			bean.setNolink(isNolink);
 			bean.setStyle(style);
 			bean.setList(StringHelper.isTrue(inlist));
@@ -906,7 +904,7 @@ public class PersistenceService {
 			contentList.add(bean);
 			contentNode = contentNode.getNext("component");
 		}
-		
+
 		if (update) {
 			for (ComponentBean bean : elem.getContent()) {
 				contentList.add(bean);
@@ -1320,7 +1318,7 @@ public class PersistenceService {
 	public MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate) throws Exception {
 		return load(ctx, renderMode, contentAttributeMap, timeTravelDate, true, null);
 	}
-	
+
 	public MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate, Integer version) throws Exception {
 		return load(ctx, renderMode, contentAttributeMap, timeTravelDate, true, version);
 	}
@@ -1337,11 +1335,12 @@ public class PersistenceService {
 	}
 
 	public boolean isFileExist(File file) {
-		if (globalContext.getSpecialConfig().isStorageZipped()) {
-			return SecureFile.isExist(file);
-		} else {
-			return file.exists();
-		}
+		// if (globalContext.getSpecialConfig().isStorageZipped()) {
+		// return SecureFile.isExist(file);
+		// } else {
+		// return file.exists();
+		// }
+		return SecureFile.isExist(file) || file.exists();
 	}
 
 	/**
@@ -1414,12 +1413,15 @@ public class PersistenceService {
 	}
 
 	protected MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate, boolean correctXML, Integer previewVersion) throws Exception {
+
+		System.out.println(DebugHelper.getCaller(8));
+
 		int timeTrackerNumber = TimeTracker.start(ctx.getGlobalContext().getContextKey(), "load");
 		if (contentAttributeMap == null) {
 			contentAttributeMap = new HashMap(); // fake map
 		}
 		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
-			
+
 			int version = getVersion();
 			if (previewVersion != null) {
 				renderMode = ContentContext.PREVIEW_MODE;
@@ -1456,6 +1458,9 @@ public class PersistenceService {
 							}
 							entry = zip.getNextEntry();
 						}
+						if (in != zip) {
+							zip.close();
+						}
 					}
 				}
 				File xmlFile = null;
@@ -1469,12 +1474,10 @@ public class PersistenceService {
 						xmlFile = new File(getPersistenceFilePrefix(renderMode) + ".xml");
 						propFile = new File(getPersistenceFilePrefix(renderMode) + ".properties");
 					}
-					if (ctx.getGlobalContext().getSpecialConfig().isStorageZipped()) {
-						if (SecureFile.isExist(xmlFile)) {
-							ByteArrayOutputStream out = new ByteArrayOutputStream();
-							SecureFile.decodeCyptedFile(xmlFile, ctx.getGlobalContext().getSpecialConfig().getSecureEncryptPassword(), out);
-							in = new ByteArrayInputStream(out.toByteArray());
-						}
+					if (!xmlFile.exists() && SecureFile.isExist(xmlFile)) {
+						ByteArrayOutputStream out = new ByteArrayOutputStream();
+						SecureFile.decodeCyptedFile(xmlFile, ctx.getGlobalContext().getSpecialConfig().getSecureEncryptPassword(), out);
+						in = new ByteArrayInputStream(out.toByteArray());
 					} else {
 						if (xmlFile.exists()) {
 							in = new FileInputStream(xmlFile);
@@ -1901,36 +1904,38 @@ public class PersistenceService {
 		File file = new File(getDirectory() + "/content_" + ContentContext.VIEW_MODE + ".xml");
 
 		if (isFileExist(file)) {
-
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-
 			Date date = globalContext.getPublishDate();
 			if (date != null) {
 				File zipFile = new File(getBackupDirectory() + "/content_" + ContentContext.VIEW_MODE + "." + StringHelper.renderSecondFileTime(date) + ".xml.zip");
-
-				zipFile.getParentFile().mkdirs();
-
-				StaticConfig staticConfig = globalContext.getStaticConfig();
-
-				OutputStream out = null;
-				try {
-					out = new FileOutputStream(zipFile);
-					// ZipOutputStream outZip = new ZipOutputStream(out);
-
-					Set<String> includes = new HashSet<String>();
-					includes.addAll(staticConfig.getBackupIncludePatterns());
-
-					Set<String> excludes = new HashSet<String>();
-					excludes.addAll(staticConfig.getBackupExcludePatterns());
-
-					ZipManagement.zipDirectory(out, globalContext.getDataFolder(), ctx.getRequest(), excludes, includes);
-				} finally {
-					if (out != null) {
-						out.close();
+				if (!zipFile.exists()) {
+					zipFile.getParentFile().mkdirs();
+					File sourceFile = getXMLPersistenceFile(ContentContext.VIEW_MODE);
+					if (sourceFile.exists()) {
+						FileOutputStream fos = new FileOutputStream(zipFile);
+						ZipOutputStream zipOut = new ZipOutputStream(fos);
+						FileInputStream fis = new FileInputStream(sourceFile);
+						try {
+							ZipEntry zipEntry = new ZipEntry(sourceFile.getName());
+							zipOut.putNextEntry(zipEntry);
+							byte[] bytes = new byte[1024];
+							int length;
+							while ((length = fis.read(bytes)) >= 0) {
+								zipOut.write(bytes, 0, length);
+							}
+						} finally {
+							ResourceHelper.closeResource(fis, zipOut, fos);
+						}
+					} else {
+						sourceFile = new File(sourceFile.getAbsolutePath() + ".zip");
+						if (sourceFile.exists()) {
+							ResourceHelper.copyFile(sourceFile, zipFile, true);
+						} else {
+							logger.severe("file not found : " + sourceFile);
+						}
 					}
+					file.delete();
 				}
-
-				file.delete();
 			}
 		}
 	}
@@ -2006,6 +2011,10 @@ public class PersistenceService {
 
 	public File getXMLPersistenceFile(int mode, long version) {
 		return new File(getPersistenceFilePrefix(mode) + '_' + version + ".xml");
+	}
+
+	protected File getXMLPersistenceFile(int mode) {
+		return new File(getPersistenceFilePrefix(mode) + ".xml");
 	}
 
 	public boolean clean(ContentContext ctx) {

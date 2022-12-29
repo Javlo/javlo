@@ -288,7 +288,7 @@ public class Persistence extends AbstractModuleAction {
 			if (!file.exists()) {
 				return "file not found : "+file;
 			} else {
-				persistenceService.getDirectory();				
+				persistenceService.getDirectory();
 				ZipFile zip = new ZipFile(file);
 				try {
 				Enumeration<? extends ZipEntry> entries = zip.entries();

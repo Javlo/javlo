@@ -19,7 +19,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 <c:if test="${contentContext.preview}">
 <a id="pc_edit_mode_button" class="btn btn-default" title="${i18n.edit['global.exit']}" href="${info.currentTimeURL}">
 	<span class="button-group-addon"><i class="bi bi-clock-history"></i></span>
-	<span class="label">time site</span>
+	<span class="label">${i18n.edit['time.title']}</span>
 </a>
 <a id="pc_edit_mode_button" class="btn btn-default" title="${i18n.edit['global.exit']}" href="#" onclick="editPreview.openModal('${i18n.edit['module.file']}','${info.currentEditURL}?module=file&previewEdit=true', true); return false;">
 	<span class="button-group-addon"><i class="bi bi-file-earmark"></i></span>
