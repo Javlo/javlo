@@ -334,8 +334,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public String getArea() {
 		if (componentBean.getArea() == null) {
-			return "content"; // default value, needed for old DC web site
-			// work correctly
+			if (getPreviousComponent() != null) {
+				componentBean.setArea(getPreviousComponent().getArea());
+				logger.warning("restore area from previous component : "+componentBean.getArea());
+			} else {
+				componentBean.setArea(ComponentBean.DEFAULT_AREA);
+				logger.warning("restore default area : "+componentBean.getArea());
+			}
 		}
 		return componentBean.getArea();
 	}

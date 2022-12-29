@@ -217,10 +217,8 @@ public class ComponentHelper {
 			moveComponent(ctx, comp, newPrevious, targetPage, area);
 		} else if (comp instanceof IContainer) {
 			if (!((IContainer) comp).isOpen(ctx)) {
-				System.out.println(">>>>>>>>> ComponentHelper.smartMoveComponent : close"); //TODO: remove debug trace
 				moveComponent(ctx, comp, newPrevious, targetPage, area);
 			} else {
-				System.out.println(">>>>>>>>> ComponentHelper.smartMoveComponent : open"); //TODO: remove debug trace
 				String openType = comp.getType();
 				IContentVisualComponent nextComp = comp;
 				List<IContentVisualComponent> componentToMove = new LinkedList<IContentVisualComponent>();

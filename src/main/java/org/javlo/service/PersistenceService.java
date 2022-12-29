@@ -1414,8 +1414,6 @@ public class PersistenceService {
 
 	protected MenuElement load(ContentContext ctx, int renderMode, Map<String, String> contentAttributeMap, Date timeTravelDate, boolean correctXML, Integer previewVersion) throws Exception {
 
-		System.out.println(DebugHelper.getCaller(8));
-
 		int timeTrackerNumber = TimeTracker.start(ctx.getGlobalContext().getContextKey(), "load");
 		if (contentAttributeMap == null) {
 			contentAttributeMap = new HashMap(); // fake map
