@@ -139,8 +139,9 @@ public class UploadFileComponent extends AbstractVisualComponent implements IAct
 			out.println("<div class=\"focal-image\" stle=\"position: relative;\">");
 			out.println("<img style=\"cursor: crosshair;\" src=\"" + previewUrl + "\" onclick=\"imageClick(this);\" />");
 			out.println("</form>");
+			out.println("</div>");
 		}
-		out.println("</div>");
+		
 		out.close();
 		return new String(outStream.toByteArray());
 	}
