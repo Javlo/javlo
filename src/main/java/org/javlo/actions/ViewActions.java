@@ -3,6 +3,8 @@
  */
 package org.javlo.actions;
 
+import java.io.File;
+import java.io.FileFilter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,6 +19,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.filefilter.FileFileFilter;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.dynamic.DynamicComponent;
@@ -29,17 +32,24 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.io.SessionFolder;
 import org.javlo.mailing.MailingBuilder;
+import org.javlo.message.MessageRepository;
+import org.javlo.module.file.FileBean;
+import org.javlo.module.file.FileModuleContext;
 import org.javlo.module.ticket.TicketAction;
 import org.javlo.navigation.MenuElement;
 import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
+import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.visitors.CookiesService;
 import org.javlo.service.visitors.VisitorsMessageService;
 import org.javlo.servlet.IVersion;
 import org.javlo.template.Template;
 import org.javlo.user.UserFactory;
+import org.javlo.ztatic.FileCache;
+import org.javlo.ztatic.StaticInfo;
 
 /**
  * @author pvandermaesen list of actions for search in cms.
@@ -64,7 +74,6 @@ public class ViewActions implements IAction {
 			ContentContext ctx = ContentContext.getContentContext(request, response);
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			String lang = request.getParameter("lg");
-			System.out.println(">>>>>>>>> ViewActions.performLanguage : lang = "+lang); //TODO: remove debug trace
 			if (lang != null) {				
 				if (globalContext.getLanguages().contains(lang) && !StringHelper.isTrue(request.getParameter("content"))) {
 					ctx.setAllLanguage(lang);
@@ -325,6 +334,58 @@ public class ViewActions implements IAction {
 		ctx.getResponse().addCookie(cookie);
 		CookiesService.getInstance(ctx).setAcceptedTypes(acceptedType);
 		return null;
+	}
+	
+	public String performUpdateFocus(RequestService rs, ContentContext ctx, GlobalContext globalContext, FileModuleContext fileModuleContext, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
+		File folder = null;
+		if (rs.getParameter("image_path", null) != null) {
+			folder = new File(globalContext.getDataFolder(), rs.getParameter("image_path", null));
+		}
+		boolean found = false;
+		String latestFileName = "";
+		FileBean latestFileBean = null;
+		if (folder.exists()) {
+			for (File file : folder.listFiles((FileFilter) FileFileFilter.FILE)) {
+				latestFileName = file.getAbsolutePath();
+				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
+				FileBean fileBean = new FileBean(ctx, staticInfo);
+				latestFileBean = fileBean;
+				String newFocusX = rs.getParameter("posx-" + fileBean.getId(), null);
+				String newFocusY = rs.getParameter("posy-" + fileBean.getId(), null);
+				if (newFocusX != null && newFocusY != null) {
+
+					SessionFolder sessionFolder = SessionFolder.getInstance(ctx);
+					if (sessionFolder.getImage() == null || !sessionFolder.getImage().equals(file)) {
+						return "securtiy error.";
+					}
+
+					found = true;
+					staticInfo.setFocusZoneX(ctx, (int) Math.round(Double.parseDouble(newFocusX)));
+					staticInfo.setFocusZoneY(ctx, (int) Math.round(Double.parseDouble(newFocusY)));
+					if (ctx.isAsViewMode()) {
+						ContentContext editContext = ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE);
+						staticInfo.setFocusZoneX(editContext, (int) Math.round(Double.parseDouble(newFocusX)));
+						staticInfo.setFocusZoneY(editContext, (int) Math.round(Double.parseDouble(newFocusY)));
+					}
+					PersistenceService.getInstance(globalContext).setAskStore(true);
+
+					// messageRepository.setGlobalMessageAndNotification(ctx,
+					// new
+					// GenericMessage(i18nAccess.getText("file.message.updatefocus",
+					// new String[][] { { "file", file.getName() } }),
+					// GenericMessage.INFO));
+
+					FileCache fileCache = FileCache.getInstance(ctx.getRequest().getSession().getServletContext());
+					fileCache.delete(ctx, file.getName());
+				}
+			}
+			if (!found) {
+				return "focus technical error - file not found : " + (latestFileBean != null ? latestFileBean.getId() : "no bean") + " - " + latestFileName;
+			}
+			return null;
+		} else {
+			return "folder not found : " + folder;
+		}
 	}
 	
 	public static String performRefuseCookies(ContentContext ctx) throws Exception {

@@ -60,7 +60,7 @@ public interface IStaticContainer {
 	 * get folder with ressources
 	 * @return
 	 */	
-	public String getDirSelected();
+	public String getDirSelected(ContentContext ctx);
 	
 	public List<File> getFiles(ContentContext ctx);
 

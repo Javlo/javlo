@@ -81,7 +81,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 		if (staticConfig == null) {
 			return "";
 		}
-		String url = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
+		String url = ElementaryURLHelper.mergePath(getDirSelected(ctx), getFileName(ctx));
 		url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + url);
 		return url;
 	}
@@ -93,7 +93,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 			return "";
 		}
 		if (isWrapped(ctx)) {
-			return colPrefix+super.getPrefixViewXHTMLCode(ctx) + "<div class=\"" + getType() + ' ' + StringHelper.neverNull(StringHelper.getFileExtension(getFileName())) + "\">";
+			return colPrefix+super.getPrefixViewXHTMLCode(ctx) + "<div class=\"" + getType() + ' ' + StringHelper.neverNull(StringHelper.getFileExtension(getFileName(ctx))) + "\">";
 		} else {
 			return colPrefix;
 		}
@@ -165,7 +165,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 	@Override
 	public String getURL(ContentContext ctx) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-		String fileLink = URLHelper.mergePath(getDirSelected(), getFileName());
+		String fileLink = URLHelper.mergePath(getDirSelected(ctx), getFileName(ctx));
 		return URLHelper.createMediaURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + fileLink).replace('\\', '/');
 	}
 
@@ -174,16 +174,16 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 		super.prepareView(ctx);
 		final String FILTER = "list";
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		String fullName = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
+		String fullName = ElementaryURLHelper.mergePath(getDirSelected(ctx), getFileName(ctx));
 		fullName = ElementaryURLHelper.mergePath(globalContext.getStaticConfig().getFileFolder(), fullName);
 		ctx.getRequest().setAttribute("imagePreview", URLHelper.createTransformURL(ctx, fullName, FILTER));
 		fullName = ElementaryURLHelper.mergePath(globalContext.getDataFolder(), fullName);
-		ctx.getRequest().setAttribute("ext", StringHelper.getFileExtension(getFileName()).toLowerCase());
+		ctx.getRequest().setAttribute("ext", StringHelper.getFileExtension(getFileName(ctx)).toLowerCase());
 		ctx.getRequest().setAttribute("size", StringHelper.getFileSize(fullName));
 		ctx.getRequest().setAttribute("filter", FILTER);
 		ctx.getRequest().setAttribute("isLabel", !StringHelper.isEmpty(getLabel()));
 		if (getLabel().trim().length() == 0) {
-			ctx.getRequest().setAttribute("label", getFileName());
+			ctx.getRequest().setAttribute("label", getFileName(ctx));
 		} else {
 			ctx.getRequest().setAttribute("label", XHTMLHelper.textToXHTML(getLabel()));
 		}
@@ -205,7 +205,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 		if ((getValue() != null) && (getValue().trim().length() > 0)) {
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 
-			String url = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
+			String url = ElementaryURLHelper.mergePath(getDirSelected(ctx), getFileName(ctx));
 			url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + url);
 
 			String rel = "";
@@ -225,20 +225,20 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 			}
 			res.append("\">");
 			/*
-			 * if (XHTMLHelper.getFileIcone(ctx, getFileName()).length() > 0) {
-			 * res.append(XHTMLHelper.getFileIcone(ctx, getFileName()) +
+			 * if (XHTMLHelper.getFileIcone(ctx, getFileName(ctx)).length() > 0) {
+			 * res.append(XHTMLHelper.getFileIcone(ctx, getFileName(ctx)) +
 			 * "&nbsp;"); }
 			 */
 			if (getLabel().trim().length() == 0) {
-				res.append(getFileName());
+				res.append(getFileName(ctx));
 			} else {
 				res.append(textToXHTML(getLabel()));
 			}
-			String fullName = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
+			String fullName = ElementaryURLHelper.mergePath(getDirSelected(ctx), getFileName(ctx));
 			fullName = ElementaryURLHelper.mergePath(staticConfig.getFileFolder(), fullName);
 
 			fullName = ElementaryURLHelper.mergePath(globalContext.getDataFolder(), fullName);
-			res.append(" <span class=\"info\">(<span class=\"format\">" + StringHelper.getFileExtension(getFileName()) + "</span> <span class=\"size\">" + ctx.getRequest().getAttribute("size") + "</span>)</span></a>");
+			res.append(" <span class=\"info\">(<span class=\"format\">" + StringHelper.getFileExtension(getFileName(ctx)) + "</span> <span class=\"size\">" + ctx.getRequest().getAttribute("size") + "</span>)</span></a>");
 			if ((getDescription().trim().length() > 0) && (ctx.getRenderMode() != ContentContext.EDIT_MODE)) {
 				res.append("<span class=\"description\">" + getDescription() + "</span>");
 			}
@@ -345,7 +345,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 
 	@Override
 	public boolean isImageValid(ContentContext ctx) {
-		return StringHelper.isPDF(getFileName());
+		return StringHelper.isPDF(getFileName(ctx));
 	}
 
 	@Override

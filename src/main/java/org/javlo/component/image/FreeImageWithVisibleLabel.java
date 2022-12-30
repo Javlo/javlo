@@ -15,7 +15,7 @@ public class FreeImageWithVisibleLabel extends Image {
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		StringBuffer res = new StringBuffer();
 		if ((getValue() != null) && (getValue().trim().length() > 0)) {
-			String fileLink = URLHelper.mergePath(getDirSelected(), getFileName());
+			String fileLink = URLHelper.mergePath(getDirSelected(ctx), getFileName(ctx));
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 			String url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getImageFolder()+'/'+fileLink).replace('\\', '/');
 			res.append("<div class=\"" + getCSSClassName(ctx) + "\">");

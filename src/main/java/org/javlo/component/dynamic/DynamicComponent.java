@@ -1128,7 +1128,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	}
 
 	@Override
-	public String getDirSelected() {
+	public String getDirSelected(ContentContext ctx) {
 		return null;
 	}
 

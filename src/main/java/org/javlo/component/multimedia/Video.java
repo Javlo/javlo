@@ -154,11 +154,10 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	 * @Override protected String getPreviewCode(ContentContext ctx) throws
 	 * Exception { GlobalContext globalContext =
 	 * GlobalContext.getInstance(ctx.getRequest()); I18nAccess i18nAccess =
-	 * I18nAccess.getInstance(globalContext, ctx.getRequest().getSession());
-	 * return renderInline(ctx, "300", "235", true) +
-	 * "<div class=\"preview-info\">" +
-	 * i18nAccess.getText("content.video.latest-access") + " : " +
-	 * getAccess(ctx, 30) + "</div>"; }
+	 * I18nAccess.getInstance(globalContext, ctx.getRequest().getSession()); return
+	 * renderInline(ctx, "300", "235", true) + "<div class=\"preview-info\">" +
+	 * i18nAccess.getText("content.video.latest-access") + " : " + getAccess(ctx,
+	 * 30) + "</div>"; }
 	 */
 
 	@Override
@@ -167,7 +166,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 		if (StringHelper.isImage(imageURL)) {
 			return "<a href=\"" + getURL(ctx) + "\"><figure><img src=\"" + imageURL + "\" /><figcaption>" + getFile(ctx).getName() + " #" + getAccess(ctx, 30) + "</figcaption></figure></a>";
 		} else {
-			return "<a target=\"_blanck\" class=\"embedlink\" href=\"" + getURL(ctx) + "\">"+getURL(ctx) +"</a>";
+			return "<a target=\"_blanck\" class=\"embedlink\" href=\"" + getURL(ctx) + "\">" + getURL(ctx) + "</a>";
 		}
 	}
 
@@ -243,7 +242,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	@Override
 	public String getResourceURL(ContentContext ctx, String fileLink) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-		return URLHelper.mergePath(staticConfig.getVideoFolder(), URLHelper.mergePath(getDirSelected(), fileLink));
+		return URLHelper.mergePath(staticConfig.getVideoFolder(), URLHelper.mergePath(getDirSelected(ctx), fileLink));
 	}
 
 	private String getYoutubePreview(ContentContext ctx, String filter) throws Exception {
@@ -313,8 +312,8 @@ public class Video extends GlobalImage implements IAction, IVideo {
 		Collection<Video> videos = getAllVideoOnPage(ctx);
 		Map<String, String> outResourceList = new HashMap<String, String>();
 		for (Video video : videos) {
-			if (video.getResourceLabel() != null) {
-				outResourceList.put(video.getId(), video.getResourceLabel());
+			if (video.getResourceLabel(ctx) != null) {
+				outResourceList.put(video.getId(), video.getResourceLabel(ctx));
 			}
 		}
 		return outResourceList;
@@ -337,9 +336,9 @@ public class Video extends GlobalImage implements IAction, IVideo {
 		return comps;
 	}
 
-	private String getResourceLabel() {
-		if (getFileName() != null && getFileName().trim().length() > 0) {
-			return getFileName();
+	private String getResourceLabel(ContentContext ctx) {
+		if (getFileName(ctx) != null && getFileName(ctx).trim().length() > 0) {
+			return getFileName(ctx);
 		} else if (getLink() != null && getLink().trim().length() > 0) {
 			return getLink();
 		}
@@ -370,8 +369,8 @@ public class Video extends GlobalImage implements IAction, IVideo {
 			if (getLink() != null && getLink().trim().length() > 0) {
 				return getLink();
 			} else {
-				if (getFileName() != null && getFileName().trim().length() > 0) {
-					String fileLink = getResourceURL(ctx, getFileName());
+				if (getFileName(ctx) != null && getFileName(ctx).trim().length() > 0) {
+					String fileLink = getResourceURL(ctx, getFileName(ctx));
 					return URLHelper.createResourceURL(ctx, getPage(), fileLink).replace('\\', '/');
 				} else {
 					return null;
@@ -414,24 +413,24 @@ public class Video extends GlobalImage implements IAction, IVideo {
 		ctx.getRequest().setAttribute("accessURL", accessActionURL);
 		ctx.getRequest().setAttribute("comp_id", getId());
 
-		boolean renderAsLink = (getDecorationImage() != null && getDecorationImage().trim().length() > 0) && preview;
+		boolean renderAsLink = (getDecorationImage(ctx) != null && getDecorationImage(ctx).trim().length() > 0) && preview;
 		if (!renderAsLink) {
 			renderAsLink = !preview && LINK.equals(getComponentCssClass(ctx));
 		}
 		if (renderAsLink) {
 			ctx.getRequest().setAttribute("asLink", true);
-			if (getFileName() != null && getFileName().trim().length() > 0) {
-				String fileLink = getResourceURL(ctx, getFileName());
+			if (getFileName(ctx) != null && getFileName(ctx).trim().length() > 0) {
+				String fileLink = getResourceURL(ctx, getFileName(ctx));
 				ctx.getRequest().setAttribute("url", URLHelper.createResourceURL(ctx, getPage(), fileLink).replace('\\', '/'));
 			} else {
 				if (getLink() != null && getLink().trim().length() > 0) {
 					ctx.getRequest().setAttribute("url", getLink());
 				}
 			}
-			ctx.getRequest().setAttribute("type", ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(getFileName())));
+			ctx.getRequest().setAttribute("type", ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(getFileName(ctx))));
 			ctx.getRequest().setAttribute("label", getLabel());
-			if (getDecorationImage() != null && getDecorationImage().trim().length() > 0) {
-				String imageLink = getResourceURL(ctx, getDecorationImage());
+			if (getDecorationImage(ctx) != null && getDecorationImage(ctx).trim().length() > 0) {
+				String imageLink = getResourceURL(ctx, getDecorationImage(ctx));
 				ctx.getRequest().setAttribute("image", URLHelper.createTransformURL(ctx, imageLink, imageFilter));
 			}
 			ctx.getRequest().setAttribute("width", StringHelper.neverNull(width, getConfig(ctx).getProperty("link.width", "420")));
@@ -445,13 +444,13 @@ public class Video extends GlobalImage implements IAction, IVideo {
 			}
 		} else {
 			String urlCode = getLinkVideoName(link);
-			if (getFileName() != null && getFileName().trim().length() > 0) {
-				String fileLink = getResourceURL(ctx, getFileName());
+			if (getFileName(ctx) != null && getFileName(ctx).trim().length() > 0) {
+				String fileLink = getResourceURL(ctx, getFileName(ctx));
 				ctx.getRequest().setAttribute("file", URLHelper.createResourceURL(ctx, getPage(), fileLink).replace('\\', '/'));
 				ctx.getRequest().setAttribute("url", URLHelper.createResourceURL(ctx, getPage(), fileLink).replace('\\', '/'));
-				ctx.getRequest().setAttribute("type", ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(getFileName())));
-				if (getDecorationImage() != null && getDecorationImage().trim().length() > 0) {
-					String imageLink = getResourceURL(ctx, getDecorationImage());
+				ctx.getRequest().setAttribute("type", ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(getFileName(ctx))));
+				if (getDecorationImage(ctx) != null && getDecorationImage(ctx).trim().length() > 0) {
+					String imageLink = getResourceURL(ctx, getDecorationImage(ctx));
 					ctx.getRequest().setAttribute("image", URLHelper.createTransformURL(ctx, imageLink, imageFilter));
 				}
 				ctx.getRequest().setAttribute("width", StringHelper.neverNull(width, getConfig(ctx).getProperty("local.width", "420")));
@@ -606,7 +605,7 @@ public class Video extends GlobalImage implements IAction, IVideo {
 
 	@Override
 	public String getResourceURL(ContentContext ctx) {
-		return getResourceURL(ctx, getDecorationImage());
+		return getResourceURL(ctx, getDecorationImage(ctx));
 	}
 
 	@Override
@@ -668,13 +667,13 @@ public class Video extends GlobalImage implements IAction, IVideo {
 				setRenderer(ctx, "youtube");
 			} else if (isVimeo()) {
 				setRenderer(ctx, "vimeo");
-			} else if (StringHelper.isVideo(getFileName())) {
+			} else if (StringHelper.isVideo(getFileName(ctx))) {
 				setRenderer(ctx, "local");
 			}
 		}
 		return msg;
 	}
-	
+
 	@Override
 	protected boolean isDisplayMeta(ContentContext ctx) {
 		return false;
@@ -684,46 +683,46 @@ public class Video extends GlobalImage implements IAction, IVideo {
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
 	}
-	
+
 	@Override
 	public String getPreviewURL(ContentContext ctx, String filter) {
-		String decoImage = getDecorationImage();
+		String decoImage = getDecorationImage(ctx);
 		if (decoImage != null && decoImage.trim().length() > 0) {
-			String imageLink = getResourceURL(ctx, getDecorationImage());		
+			String imageLink = getResourceURL(ctx, getDecorationImage(ctx));
 			try {
-				String link = URLHelper.addParam(URLHelper.createTransformURL(ctx, imageLink, filter), "hash", getImageHash(ctx.getBean()));				
+				String link = URLHelper.addParam(URLHelper.createTransformURL(ctx, imageLink, filter), "hash", getImageHash(ctx.getBean()));
 				return link;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} 
-		return null;		
+		}
+		return null;
 	}
-	
+
 	@Override
 	public boolean isDisplayable(ContentContext ctx) throws Exception {
 		if (StringHelper.isImage(getImageURL(ctx))) {
 			return true;
-		} else  {
+		} else {
 			return super.isDispayEmptyXHTMLCode(ctx);
 		}
 	}
-	
+
 	@Override
 	protected boolean isFileNameValid(ContentContext ctx, String fileName) {
 		return ResourceHelper.isAcceptedVideo(ctx, fileName);
 	}
-	
+
 	@Override
-	public String getFontAwesome() {	
+	public String getFontAwesome() {
 		return "video-camera";
 	}
-	
+
 	@Override
-	public String getSpecialTagTitle(ContentContext ctx) throws Exception {	
+	public String getSpecialTagTitle(ContentContext ctx) throws Exception {
 		return getConfig(ctx).getProperty("special-tag-title", null);
 	}
-	
+
 	@Override
 	public boolean isAskWidth(ContentContext ctx) {
 		return false;

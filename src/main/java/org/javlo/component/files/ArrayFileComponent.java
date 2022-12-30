@@ -185,21 +185,21 @@ public class ArrayFileComponent extends GenericFile {
 		if ((getValue() != null) && (getValue().trim().length() > 0)) {
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 
-			String url = URLHelper.mergePath(getDirSelected(), getFileName());
+			String url = URLHelper.mergePath(getDirSelected(ctx), getFileName(ctx));
 			url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + url);
 			res.append("<a href=\"");
 			res.append(url);
 			res.append("\">");
 			if (getLabel().trim().length() == 0) {
-				res.append(getFileName());
+				res.append(getFileName(ctx));
 			} else {
 				res.append(XHTMLHelper.textToXHTML(getLabel()));
 			}
-			String fullName = URLHelper.mergePath(getDirSelected(), getFileName());
+			String fullName = URLHelper.mergePath(getDirSelected(ctx), getFileName(ctx));
 			fullName = URLHelper.mergePath(staticConfig.getCSVFolder(), fullName);
 			GlobalContext globalContext = ctx.getGlobalContext();
 			fullName = URLHelper.mergePath(globalContext.getDataFolder(), fullName);
-			res.append("&nbsp;" + XHTMLHelper.getFileIcone(ctx, getFileName()) + " (" + StringHelper.getFileSize(fullName) + ")</a>");
+			res.append("&nbsp;" + XHTMLHelper.getFileIcone(ctx, getFileName(ctx)) + " (" + StringHelper.getFileSize(fullName) + ")</a>");
 		} else {
 			res.append("&nbsp; <!--FILE NOT DEFINED--> ");
 		}
@@ -282,8 +282,8 @@ public class ArrayFileComponent extends GenericFile {
 	protected Cell[][] getArray(ContentContext ctx) throws Exception {
 		Cell[][] outArray = (Cell[][]) ctx.getRequest().getAttribute(REQUEST_ATTRIBUTE_KEY);
 		if (outArray == null) {
-			String basePath = URLHelper.mergePath(getFileDirectory(ctx), getDirSelected());
-			basePath = URLHelper.mergePath(basePath, getFileName());
+			String basePath = URLHelper.mergePath(getFileDirectory(ctx), getDirSelected(ctx));
+			basePath = URLHelper.mergePath(basePath, getFileName(ctx));
 			File file = new File(basePath);
 			if (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("xlsx")) {
 				outArray = getXLSXArray(ctx, file);
@@ -850,7 +850,7 @@ public class ArrayFileComponent extends GenericFile {
 			// finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(),
 			// ArrayHelper.addFirstElem(getDirList(ctx, getFileDirectory(ctx)),
 			// ""), getDirSelected(), getJSOnChange(ctx), true));
-			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), values, values, getDirSelected(), "form-control", getJSOnChange(ctx), true));
+			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), values, values, getDirSelected(ctx), "form-control", getJSOnChange(ctx), true));
 			finalCode.append("</div>");
 		}
 
@@ -862,7 +862,7 @@ public class ArrayFileComponent extends GenericFile {
 			finalCode.append("</div");
 		}
 
-		String[] fileList = getFileList(getFileDirectory(ctx), getFileFilter());
+		String[] fileList = getFileList(ctx, getFileDirectory(ctx), getFileFilter());
 		if (fileList.length > 0) {
 
 			finalCode.append(getImageChangeTitle(ctx));
@@ -873,14 +873,14 @@ public class ArrayFileComponent extends GenericFile {
 			System.arraycopy(fileList, 0, fileListBlanck, 1, fileList.length);
 
 			finalCode.append("</div><div class=\"row\"><div class=\"col-sm-10\"><div class=\"form-group\">");
-			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, fileListBlanck, getFileName(), "form-control", getJSOnChange(ctx), true));
-			String url = URLHelper.createResourceURL(ctx, URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getFileFolder(), getDirSelected(), getFileName()));
+			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, fileListBlanck, getFileName(ctx), "form-control", getJSOnChange(ctx), true));
+			String url = URLHelper.createResourceURL(ctx, URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getFileFolder(), getDirSelected(ctx), getFileName(ctx)));
 			finalCode.append("</div></div><div class=\"col-sm-2\"><a target=\"_blank\" href=\"" + url + "\"> [" + i18nAccess.getText("global.download") + "]</a></div></div>");
 
 			if (ctx.getRenderMode() == ContentContext.EDIT_MODE && !ctx.isEditPreview()) {
 				if (isLinkToStatic()) {
 					Map<String, String> filesParams = new HashMap<String, String>();
-					filesParams.put("path", URLHelper.mergePath("/", getRelativeFileDirectory(ctx), getDirSelected()));
+					filesParams.put("path", URLHelper.mergePath("/", getRelativeFileDirectory(ctx), getDirSelected(ctx)));
 					String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
 
 					finalCode.append("&nbsp;<a class=\"btn btn-default btn-sm" + IContentVisualComponent.EDIT_ACTION_CSS_CLASS + "\" href=\"" + staticURL + "\" >");
@@ -891,7 +891,7 @@ public class ArrayFileComponent extends GenericFile {
 		}
 
 		// validation
-		if (!isFileNameValid(ctx, getFileName())) {
+		if (!isFileNameValid(ctx, getFileName(ctx))) {
 			setMessage(new GenericMessage(i18nAccess.getText("component.error.file"), GenericMessage.ERROR));
 		}
 

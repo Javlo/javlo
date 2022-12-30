@@ -134,7 +134,7 @@ public class FileServlet extends HttpServlet {
 		}
 
 		/* security */
-		if (StaticConfig.getInstance(request.getSession()).isResourcesSecured()) {
+		if (StaticConfig.getInstance(request.getSession()).isResourcesSecured() && !(this instanceof ImageTransformServlet)) {
 			try {
 				ContentContext ctx = ContentContext.getContentContext(request, response);
 				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);

@@ -116,7 +116,7 @@ public class GlobalImage extends Image implements IImageFilter {
 	@Override
 	protected boolean canUpload(ContentContext ctx) {
 		try {
-			if (getDirSelected().equals(getImportFolderPath(ctx))) {
+			if (getDirSelected(ctx).equals(getImportFolderPath(ctx))) {
 				return true;
 			}
 		} catch (Exception e) {
@@ -212,10 +212,16 @@ public class GlobalImage extends Image implements IImageFilter {
 		try {
 			String url = null;
 			try {
-				url = URLHelper.createTransformURL(ctx, ctx.getCurrentPage(), ctx.getCurrentTemplate(), getResourceURL(ctx, getFileName()), filter, this);
+				url = URLHelper.createTransformURL(ctx, ctx.getCurrentPage(), ctx.getCurrentTemplate(), getResourceURL(ctx, getFileName(ctx)), filter, this);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			
+			String hash = hashForImage(ctx);
+			if (!StringHelper.isEmpty(hash)) {
+				url = URLHelper.addParam(url, "hs", hash);
+			}
+			
 			return url;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -225,7 +231,7 @@ public class GlobalImage extends Image implements IImageFilter {
 
 	@Override
 	public String getImageHash(ContentContextBean ctx) {
-		String hash = "" + getFileName().hashCode();
+		String hash = "" + getFileName(null).hashCode();
 		if (getWidth(ctx) < 0) {
 			return hash;
 		} else {
@@ -234,9 +240,9 @@ public class GlobalImage extends Image implements IImageFilter {
 	}
 
 	protected String getImageURL(ContentContext ctx) throws Exception {
-		String decoImage = getDecorationImage();
+		String decoImage = getDecorationImage(ctx);
 		if (decoImage != null && decoImage.trim().length() > 0) {
-			String imageLink = getResourceURL(ctx, getDecorationImage());
+			String imageLink = getResourceURL(ctx, getDecorationImage(ctx));
 			String imageFilter = getConfig(ctx).getProperty("image.filter", getDefaultFilter());
 			return URLHelper.addParam(URLHelper.createTransformURL(ctx, imageLink, imageFilter), "hash", getImageHash(ctx.getBean()));
 		} else {
@@ -246,6 +252,10 @@ public class GlobalImage extends Image implements IImageFilter {
 
 	protected boolean isEditImage(ContentContext ctx) {
 		return StringHelper.isTrue(getConfig(ctx).getProperty("image.edit", null), true) && canUpload(ctx);
+	}
+	
+	protected String hashForImage(ContentContext ctx) {
+		return getImageHash(ctx.getBean());
 	}
 
 	@Override
@@ -270,7 +280,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		ctx.getRequest().setAttribute("link", link);
 		ctx.getRequest().setAttribute("alt", getAlt(ctx));
 		String imageURL = getImageURL(ctx);
-		String ext = StringHelper.getFileExtension(getFileName());
+		String ext = StringHelper.getFileExtension(getFileName(ctx));
 		if (imageURL != null) {
 			ctx.getRequest().setAttribute("image", imageURL);
 		} else {
@@ -278,8 +288,8 @@ public class GlobalImage extends Image implements IImageFilter {
 		}
 		ctx.getRequest().setAttribute("svg", ext.equalsIgnoreCase("svg"));
 		if (getFilter(ctx).equals(RAW_FILTER) || ext.equalsIgnoreCase("svg")) {
-			ctx.getRequest().setAttribute("previewURL", URLHelper.createMediaURL(ctx, getResourceURL(ctx, getFileName()), true));
-			ctx.getRequest().setAttribute("loadURL", URLHelper.createMediaURL(ctx, getResourceURL(ctx, getFileName())));
+			ctx.getRequest().setAttribute("previewURL", URLHelper.createMediaURL(ctx, getResourceURL(ctx, getFileName(ctx)), true));
+			ctx.getRequest().setAttribute("loadURL", URLHelper.createMediaURL(ctx, getResourceURL(ctx, getFileName(ctx))));
 		} else {
 			String previewURL = getPreviewURL(ctx, getFilter(ctx));
 			ctx.getRequest().setAttribute("previewURL", previewURL);
@@ -289,8 +299,8 @@ public class GlobalImage extends Image implements IImageFilter {
 				ctx.getRequest().setAttribute("loadURL", getPreviewURL(ctx, getFilter(ctx) + ImageTransformServlet.PRELOAD_IMAGE_SUFFIX));
 			}
 		}
-		String smURL = URLHelper.createTransformURL(ctx, ctx.getCurrentPage(), ctx.getCurrentTemplate(), getResourceURL(ctx, getFileName()), getFilter(ctx) + ImageTransformServlet.MOBILE_IMAGE_SUFFIX, this);
-		String lgURL = URLHelper.createTransformURL(ctx, ctx.getCurrentPage(), ctx.getCurrentTemplate(), getResourceURL(ctx, getFileName()), getFilter(ctx) + ImageTransformServlet.LARGE_IMAGE_SUFFIX, this);
+		String smURL = URLHelper.createTransformURL(ctx, ctx.getCurrentPage(), ctx.getCurrentTemplate(), getResourceURL(ctx, getFileName(ctx)), getFilter(ctx) + ImageTransformServlet.MOBILE_IMAGE_SUFFIX, this);
+		String lgURL = URLHelper.createTransformURL(ctx, ctx.getCurrentPage(), ctx.getCurrentTemplate(), getResourceURL(ctx, getFileName(ctx)), getFilter(ctx) + ImageTransformServlet.LARGE_IMAGE_SUFFIX, this);
 		ctx.getRequest().setAttribute("smURL", smURL);
 		ctx.getRequest().setAttribute("lgURL", lgURL);
 		ctx.getRequest().setAttribute("largeURL", getPreviewURL(ctx, getLargeFilter(ctx)));
@@ -363,7 +373,7 @@ public class GlobalImage extends Image implements IImageFilter {
 				if (newFolder.equals(imageFolder)) {
 					newFolder = "/";
 				}
-				if (newFolder.trim().length() > 1 && !getDirSelected().equals(newFolder)) {
+				if (newFolder.trim().length() > 1 && !getDirSelected(ctx).equals(newFolder)) {
 					setDirSelected(newFolder);
 					setFileName("");
 				}
@@ -419,7 +429,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			finalCode.append("</fieldset>");
 		}
 
-		String folder = getDirSelected();
+		String folder = getDirSelected(ctx);
 		Map<String, String> filesParams = new HashMap<String, String>();
 		String path = URLHelper.mergePath(FileAction.getPathPrefix(ctx), StaticConfig.getInstance(ctx.getRequest().getSession()).getImageFolderName(), folder);
 		filesParams.put("path", path);
@@ -515,13 +525,13 @@ public class GlobalImage extends Image implements IImageFilter {
 			logger.severe("template null in GlobalImage");
 		}
 
-		String[] fileList = getFileList(getFileDirectory(ctx), getFileFilter());
+		String[] fileList = getFileList(ctx, getFileDirectory(ctx), getFileFilter());
 		if (fileList.length > 0 && isMutlimediaResource()) {
 			finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\"><label for=\"" + getSelectXHTMLInputName() + "\">" + getImageChangeTitle(ctx) + " : </label></div>");
 			String[] fileListBlanck = new String[fileList.length + 1];
 			fileListBlanck[0] = "";
 			System.arraycopy(fileList, 0, fileListBlanck, 1, fileList.length);
-			String fileName = getFileName();
+			String fileName = getFileName(ctx);
 			if (isFromShared(ctx)) {
 				fileName = fileName.replaceFirst(ctx.getGlobalContext().getStaticConfig().getShareDataFolderKey() + '/', "");
 
@@ -550,7 +560,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			finalCode.append("<div class=\"col-sm-9\"><input class=\"form-control\" id=\"" + getDecoImageFileXHTMLInputName() + "\" name=\"" + getDecoImageFileXHTMLInputName() + "\" type=\"file\"/></div>");
 			finalCode.append("</div>");
 
-			fileList = getFileList(getFileDirectory(ctx), getDecorationFilter());
+			fileList = getFileList(ctx, getFileDirectory(ctx), getDecorationFilter());
 			if (fileList.length > 0) {
 				finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\">");
 				finalCode.append("<label for=\"" + getDecoImageXHTMLInputName() + "\">");
@@ -562,7 +572,7 @@ public class GlobalImage extends Image implements IImageFilter {
 				System.arraycopy(fileList, 0, fileListBlanck, 1, fileList.length);
 
 				finalCode.append("<div class=\"col-sm-9\">");
-				finalCode.append(XHTMLHelper.getInputOneSelect(getDecoImageXHTMLInputName(), fileListBlanck, getDecorationImage(), "form-control", getJSOnChange(ctx), true));
+				finalCode.append(XHTMLHelper.getInputOneSelect(getDecoImageXHTMLInputName(), fileListBlanck, getDecorationImage(ctx), "form-control", getJSOnChange(ctx), true));
 				finalCode.append("</div>");
 
 				// actionURL=actionURL+"?"+RequestHelper.CLOSE_WINDOW_PARAMETER+"=true&"+RequestHelper.CLOSE_WINDOW_URL_PARAMETER+"="+actionURL;
@@ -599,9 +609,9 @@ public class GlobalImage extends Image implements IImageFilter {
 		finalCode.append("</div></div>");
 
 		// validation
-		if ((getFileName().trim().length() > 0) && (getLabel().trim().length() == 0)) {
+		if ((getFileName(ctx).trim().length() > 0) && (getLabel().trim().length() == 0)) {
 			setMessage(new GenericMessage(i18nAccess.getText("component.message.image_no_label"), GenericMessage.ALERT));
-		} else if (!isFileNameValid(ctx, getFileName())) {
+		} else if (!isFileNameValid(ctx, getFileName(ctx))) {
 			setMessage(new GenericMessage(i18nAccess.getText("component.error.file"), GenericMessage.ERROR));
 		}
 
@@ -785,8 +795,8 @@ public class GlobalImage extends Image implements IImageFilter {
 				url = URLHelper.createMediaURL(ctx, url);
 			}
 			return url;
-		} else if (getFileName() != null && !getLink().equals("#")) {
-			String fileLink = getResourceURL(ctx, getFileName());
+		} else if (getFileName(ctx) != null && !getLink().equals("#")) {
+			String fileLink = getResourceURL(ctx, getFileName(ctx));
 			return URLHelper.createMediaURL(ctx, getPage(), fileLink).replace('\\', '/');
 		}
 		return null;
@@ -838,7 +848,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		String filter = getFilter(ctx);
 		StringBuffer res = new StringBuffer();
 		if ((getValue() != null) && (getValue().trim().length() > 0)) {
-			String fileLink = getResourceURL(ctx, getFileName());
+			String fileLink = getResourceURL(ctx, getFileName(ctx));
 
 			String thumbURL;
 			if (RAW_FILTER.equals(filter)) {
@@ -1003,7 +1013,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			}
 		}
 		if (decoImage != null) {
-			if (!decoImage.equals(getDecorationImage())) {
+			if (!decoImage.equals(getDecorationImage(ctx))) {
 				setDecorationImage(decoImage);
 				storeProperties();
 				setModify();
@@ -1117,7 +1127,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		properties.setProperty("deco_image", image);
 	}
 
-	public String getDecorationImage() {
+	public String getDecorationImage(ContentContext ctx) {
 		return properties.getProperty("deco_image");
 	}
 
@@ -1449,7 +1459,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			}
 			out.println("<input type=\"checkbox\" id=\"" + getTextAutoInputName() + "\" name=\"" + getTextAutoInputName() + "\"" + checked + " onchange=\"switchClass('enabled-zone','disabled-zone');\" />");
 			out.println("</div>");
-			String url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), "list");
+			String url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName(ctx)), "list");
 
 			disabled = " enabled-zone";
 			if (isTextAuto()) {

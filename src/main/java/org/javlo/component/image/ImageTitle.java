@@ -107,9 +107,9 @@ public class ImageTitle extends Image {
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		StringBuffer res = new StringBuffer();
 		if ((getValue() != null) && (getValue().trim().length() > 0)) {
-			if ((getFileName() != null) && (getFileName().trim().length() > 0)) {
+			if ((getFileName(ctx) != null) && (getFileName(ctx).trim().length() > 0)) {
 				StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-				String fileLink = URLHelper.mergePath(getDirSelected(), getFileName());
+				String fileLink = URLHelper.mergePath(getDirSelected(ctx), getFileName(ctx));
 				String url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getImageFolder()+'/'+fileLink).replace('\\', '/');
 				res.append("<h1 class=\""+getComponentCssClass(ctx)+"\" style=\"background-image: url('"+url+"')\">");
 			} else {

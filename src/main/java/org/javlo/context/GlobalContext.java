@@ -2617,6 +2617,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public void releaseAllCache() {
+		
+		
+		System.out.println(">>>>>>>>> GlobalContext.releaseAllCache : CALLER : "+DebugHelper.getCaller(20)); //TODO: remove debug trace
+		
+		
 		cleanDataAccess();
 		synchronized (RELEASE_CACHE) {
 			for (String name : getAllCacheName()) {

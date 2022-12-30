@@ -91,10 +91,10 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		StringBuffer res = new StringBuffer();
-		if ((getValue() != null) && (getFileName().trim().length() > 0)) {
+		if ((getValue() != null) && (getFileName(ctx).trim().length() > 0)) {
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 
-			String fileLink = URLHelper.mergePath(getDirSelected(), getFileName());
+			String fileLink = URLHelper.mergePath(getDirSelected(ctx), getFileName(ctx));
 
 			String label = getLabel();
 			if (label.trim().length() == 0) {
@@ -117,7 +117,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
-		super.prepareView(ctx);		
+		super.prepareView(ctx);
 	}
 
 	@Override
@@ -125,8 +125,8 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		return "image";
 	}
 
-	protected String[] getFileList(String directory) {
-		return getFileList(directory, new ImageFileFilter());
+	protected String[] getFileList(ContentContext ctx, String directory) {
+		return getFileList(ctx, directory, new ImageFileFilter());
 	}
 
 	@Override
@@ -207,8 +207,8 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		if (isHiddenInMode(ctx, ctx.getRenderMode(), ctx.isMobile())) {
 			return false;
 		} else {
-			return StringHelper.isImage(getFileName());			
-		}		
+			return StringHelper.isImage(getFileName(ctx));
+		}
 	}
 
 	@Override
@@ -248,7 +248,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 	@Override
 	public String getURL(ContentContext ctx) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-		String fileLink = URLHelper.mergePath(getDirSelected(), getFileName());
+		String fileLink = URLHelper.mergePath(getDirSelected(ctx), getFileName(ctx));
 		String url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + fileLink).replace('\\', '/');
 		return url;
 	}
@@ -273,7 +273,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 	@Override
 	public File getFile(ContentContext ctx) {
 		try {
-			return new File(URLHelper.mergePath(getFileDirectory(ctx.getContextOnPage(getPage())), getDirSelected(), getFileName()));
+			return new File(URLHelper.mergePath(getFileDirectory(ctx.getContextOnPage(getPage())), getDirSelected(ctx), getFileName(ctx)));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -316,7 +316,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 
 	@Override
 	public String getPreviewURL(ContentContext ctx, String filter) {
-		String fileLink = URLHelper.mergePath(getDirSelected(), getFileName());
+		String fileLink = URLHelper.mergePath(getDirSelected(ctx), getFileName(ctx));
 		String url = null;
 		try {
 			url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, fileLink), filter);
@@ -341,10 +341,10 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 
 	@Override
 	public String getActionGroupName() {
-		return "image";		
+		return "image";
 	}
-	
-	protected File getDefaultFile(ContentContext ctx) {		
+
+	protected File getDefaultFile(ContentContext ctx) {
 		File defaultFile = new File(URLHelper.mergePath(getFileDirectory(ctx), "default.jpg"));
 		if (defaultFile.exists()) {
 			return defaultFile;
@@ -355,7 +355,7 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 			}
 		}
 		return null;
-	}	
+	}
 
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {
@@ -404,12 +404,12 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		return staticConfig.getImageFolderName();
 	}
-	
+
 	@Override
-	public String getFontAwesome() {	
+	public String getFontAwesome() {
 		return "picture-o";
 	}
-	
+
 	@Override
 	public boolean isMobileOnly(ContentContext ctx) {
 		return getStyle().equals(MOBILE_TYPE);

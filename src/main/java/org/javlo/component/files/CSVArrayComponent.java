@@ -120,21 +120,21 @@ public class CSVArrayComponent extends AbstractFileComponent {
 		if ((getValue() != null) && (getValue().trim().length() > 0)) {
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 
-			String url = URLHelper.mergePath(getDirSelected(), getFileName());
+			String url = URLHelper.mergePath(getDirSelected(ctx), getFileName(ctx));
 			url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + url);
 			res.append("<a href=\"");
 			res.append(url);
 			res.append("\">");
 			if (getLabel().trim().length() == 0) {
-				res.append(getFileName());
+				res.append(getFileName(ctx));
 			} else {
 				res.append(XHTMLHelper.textToXHTML(getLabel()));
 			}
-			String fullName = URLHelper.mergePath(getDirSelected(), getFileName());
+			String fullName = URLHelper.mergePath(getDirSelected(ctx), getFileName(ctx));
 			fullName = URLHelper.mergePath(staticConfig.getCSVFolder(), fullName);
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			fullName = URLHelper.mergePath(globalContext.getDataFolder(), fullName);
-			res.append("&nbsp;" + XHTMLHelper.getFileIcone(ctx, getFileName()) + " (" + StringHelper.getFileSize(fullName) + ")</a>");
+			res.append("&nbsp;" + XHTMLHelper.getFileIcone(ctx, getFileName(ctx)) + " (" + StringHelper.getFileSize(fullName) + ")</a>");
 		} else {
 			res.append("&nbsp; <!--FILE NOT DEFINED--> ");
 		}
@@ -190,8 +190,8 @@ public class CSVArrayComponent extends AbstractFileComponent {
 	}
 	
 	public File getFile(ContentContext ctx) {
-		String basePath = URLHelper.mergePath(getFileDirectory(ctx), getDirSelected());
-		return new File(URLHelper.mergePath(basePath, getFileName()));
+		String basePath = URLHelper.mergePath(getFileDirectory(ctx), getDirSelected(ctx));
+		return new File(URLHelper.mergePath(basePath, getFileName(ctx)));
 	}
 	
 	@Override

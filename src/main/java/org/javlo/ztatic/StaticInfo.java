@@ -37,6 +37,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.rest.IRestItem;
+import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ExifHelper;
 import org.javlo.helper.PDFHelper;
 import org.javlo.helper.ResourceHelper;
@@ -457,8 +458,6 @@ public class StaticInfo implements IRestItem {
 
 	private int accessFromSomeDays = -1;
 
-	private boolean searchFace = false;
-
 	// private Metadata imageMetadata = null;
 
 	/**
@@ -539,6 +538,13 @@ public class StaticInfo implements IRestItem {
 		}
 		while (inStaticURL.startsWith("/static")) {
 			inStaticURL = inStaticURL.replaceFirst("/static", "");
+		}
+		
+		if (StringHelper.isImage(inStaticURL)) {
+			String newImageName = StringHelper.getFileNameWithoutExtension(inStaticURL);
+			if (StringHelper.isImage(newImageName)) {
+				inStaticURL = newImageName;
+			}
 		}
 
 		GlobalContext globalContext = ctx.getGlobalContext();
@@ -1030,26 +1036,26 @@ public class StaticInfo implements IRestItem {
 		if (!content.isNavigationLoaded(editCtx)) {
 			editCtx = ctx;
 		}
-		if (!searchFace && content.getAttribute(editCtx, getKey(ctx, FOCUS_ZONE_X), null) == null) {
-			searchFace = true;
-			if (StringHelper.isImage(getFile().getName())) {
-				try {
-					if (getFile().exists()) {
-						try {
-							if (ctx.getGlobalContext().getStaticConfig().isAutoFocus() && ctx.isAsPreviewMode()) {
-								logger.info("search point on interest on START : " + getFile() + " [" + ctx.getGlobalContext().getContextKey() + "]");
-								// InitInterest.setPointOfInterestWidthThread(ctx, getFile(), getKey(ctx,
-								// FOCUS_ZONE_X), getKey(ctx, FOCUS_ZONE_Y));
-							}
-						} catch (Throwable t) {
-							logger.warning(t.getMessage());
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
+//		if (content.getAttribute(editCtx, getKey(ctx, FOCUS_ZONE_X), null) == null) {
+//			if (StringHelper.isImage(getFile().getName())) {
+//				try {
+//					if (getFile().exists()) {
+//						try {
+//							if (ctx.getGlobalContext().getStaticConfig().isAutoFocus() && ctx.isAsPreviewMode()) {
+//								logger.info("search point on interest on START : " + getFile() + " [" + ctx.getGlobalContext().getContextKey() + "]");
+//								// InitInterest.setPointOfInterestWidthThread(ctx, getFile(), getKey(ctx,
+//								// FOCUS_ZONE_X), getKey(ctx, FOCUS_ZONE_Y));
+//							}
+//						} catch (Throwable t) {
+//							logger.warning(t.getMessage());
+//						}
+//					}
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}
+		
 		String kzx = content.getAttribute(editCtx, getKey(ctx, FOCUS_ZONE_X), "" + DEFAULT_FOCUS_X);
 		return Integer.parseInt(kzx);
 	}

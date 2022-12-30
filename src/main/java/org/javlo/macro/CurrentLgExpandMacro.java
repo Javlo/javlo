@@ -25,7 +25,7 @@ public class CurrentLgExpandMacro extends AbstractMacro {
 			GlobalImage srcComp = (GlobalImage) baseComp;
 			GlobalImage trgComp = (GlobalImage) targetComp;
 
-			if (srcComp.getFileName().equals(trgComp.getFileName())) {
+			if (srcComp.getFileName(ctx).equals(trgComp.getFileName(ctx))) {
 				trgComp.setLink(srcComp.getLink());
 				trgComp.setStyle(ctx, srcComp.getComponentCssClass(ctx));
 				trgComp.setModify();

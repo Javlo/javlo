@@ -219,8 +219,8 @@ public class OnlineVideo extends GlobalImage implements IAction, IVideo {
 		Collection<OnlineVideo> videos = getAllVideoOnPage(ctx);
 		Map<String, String> outResourceList = new HashMap<String, String>();
 		for (OnlineVideo video : videos) {
-			if (video.getResourceLabel() != null) {
-				outResourceList.put(video.getId(), video.getResourceLabel());
+			if (video.getResourceLabel(ctx) != null) {
+				outResourceList.put(video.getId(), video.getResourceLabel(ctx));
 			}
 		}
 		return outResourceList;
@@ -243,9 +243,9 @@ public class OnlineVideo extends GlobalImage implements IAction, IVideo {
 		return comps;
 	}
 
-	private String getResourceLabel() {
-		if (getFileName() != null && getFileName().trim().length() > 0) {
-			return getFileName();
+	private String getResourceLabel(ContentContext ctx) {
+		if (getFileName(ctx) != null && getFileName(ctx).trim().length() > 0) {
+			return getFileName(ctx);
 		} else if (getLink() != null && getLink().trim().length() > 0) {
 			return getLink();
 		}
@@ -264,7 +264,7 @@ public class OnlineVideo extends GlobalImage implements IAction, IVideo {
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		boolean renderAsLink = (getDecorationImage() != null && getDecorationImage().trim().length() > 0);
+		boolean renderAsLink = (getDecorationImage(ctx) != null && getDecorationImage(ctx).trim().length() > 0);
 		if (!renderAsLink && !LINK.equals(getComponentCssClass(ctx))) {
 			renderInline(ctx, null, null, false, true);
 		}
@@ -279,8 +279,8 @@ public class OnlineVideo extends GlobalImage implements IAction, IVideo {
 			if (getLink() != null && getLink().trim().length() > 0) {
 				return getLink();
 			} else {
-				if (getFileName() != null && getFileName().trim().length() > 0) {
-					String fileLink = getResourceURL(ctx, getFileName());
+				if (getFileName(ctx) != null && getFileName(ctx).trim().length() > 0) {
+					String fileLink = getResourceURL(ctx, getFileName(ctx));
 					return URLHelper.createResourceURL(ctx, getPage(), fileLink).replace('\\', '/');
 				} else {
 					return null;
@@ -322,7 +322,7 @@ public class OnlineVideo extends GlobalImage implements IAction, IVideo {
 		ctx.getRequest().setAttribute("accessURL", accessActionURL);
 		ctx.getRequest().setAttribute("comp_id", getId());
 
-		boolean renderAsLink = (getDecorationImage() != null && getDecorationImage().trim().length() > 0) && preview;
+		boolean renderAsLink = (getDecorationImage(ctx) != null && getDecorationImage(ctx).trim().length() > 0) && preview;
 		if (!renderAsLink) {
 			renderAsLink = !preview && LINK.equals(getComponentCssClass(ctx));
 		}
@@ -530,7 +530,7 @@ public class OnlineVideo extends GlobalImage implements IAction, IVideo {
 				setRenderer(ctx, "youtube");
 			} else if (isVimeo()) {
 				setRenderer(ctx, "vimeo");
-			} else if (StringHelper.isVideo(getFileName())) {
+			} else if (StringHelper.isVideo(getFileName(ctx))) {
 				setRenderer(ctx, "local");
 			}
 		}

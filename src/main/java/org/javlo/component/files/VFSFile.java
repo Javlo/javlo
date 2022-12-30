@@ -55,11 +55,11 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 
 	@Override
 	protected String getPreviewCode(ContentContext ctx) throws Exception {
-		String dirFile = URLHelper.mergePath(getFileDirectory(ctx), getDirSelected());
-		String fileName = StringHelper.createFileName(getFileName());
+		String dirFile = URLHelper.mergePath(getFileDirectory(ctx), getDirSelected(ctx));
+		String fileName = StringHelper.createFileName(getFileName(ctx));
 		File zipFile = new File(URLHelper.mergePath(dirFile, fileName));		 
 		if (zipFile.exists()) {
-			String url = URLHelper.createResourceURL(ctx, URLHelper.mergePath(getRelativeFileDirectory(ctx), getDirSelected(), zipFile.getName()));
+			String url = URLHelper.createResourceURL(ctx, URLHelper.mergePath(getRelativeFileDirectory(ctx), getDirSelected(ctx), zipFile.getName()));
 			return "<a href=\""+url+"\" target=\"_blank\">"+zipFile.getName()+" ("+StringHelper.renderSize(zipFile.length())+")</a>";
 		} else {
 			return "";
@@ -76,8 +76,8 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 	 */
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		String fileName = StringHelper.createFileName(getFileName());
-		String fullRelativeFileName = URLHelper.mergePath(getDirSelected(), fileName);
+		String fileName = StringHelper.createFileName(getFileName(ctx));
+		String fullRelativeFileName = URLHelper.mergePath(getDirSelected(ctx), fileName);
 		String content = getHTMLContent(ctx);		
 		String prefixLink = URLHelper.mergePath(getRelativeFileDirectory(ctx), fullRelativeFileName);
 		content = content.replace("${vfs.url.root}",URLHelper.createVFSURL(ctx, prefixLink, ""));		
@@ -86,8 +86,8 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 	}
 	
 	public File getFile(ContentContext ctx) {
-		String dirFile = URLHelper.mergePath(getFileDirectory(ctx), getDirSelected());
-		String fileName = StringHelper.createFileName(getFileName());
+		String dirFile = URLHelper.mergePath(getFileDirectory(ctx), getDirSelected(ctx));
+		String fileName = StringHelper.createFileName(getFileName(ctx));
 		return new File(URLHelper.mergePath(dirFile, fileName));
 	}
 	
@@ -129,7 +129,7 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 	@Override
 	public String getHeaderContent(ContentContext ctx) {
 		File zipFile = getFile(ctx);
-		String fullRelativeFileName = URLHelper.mergePath(getDirSelected(), zipFile.getName());
+		String fullRelativeFileName = URLHelper.mergePath(getDirSelected(ctx), zipFile.getName());
 		String outStr = null;
 		try {
 			String content = getHTMLContent(ctx);
@@ -197,7 +197,7 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 		if (staticConfig == null) {
 			return "";
 		}
-		String url = URLHelper.mergePath(getDirSelected(), getFileName());
+		String url = URLHelper.mergePath(getDirSelected(ctx), getFileName(ctx));
 		url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + url);
 		return url;
 	}
@@ -237,7 +237,7 @@ public class VFSFile extends AbstractFileComponent implements IReverseLinkCompon
 	
 	@Override
 	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {
-		if (getFileName() == null || getFileName().length() == 0) {
+		if (getFileName(ctx) == null || getFileName(ctx).length() == 0) {
 			return super.getEmptyXHTMLCode(ctx);
 		} else {
 			return getViewXHTMLCode(ctx);

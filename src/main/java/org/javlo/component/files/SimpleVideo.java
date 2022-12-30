@@ -82,14 +82,14 @@ public class SimpleVideo extends AbstractFileComponent implements IReverseLinkCo
 		if (staticConfig == null) {
 			return "";
 		}
-		String url = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
+		String url = ElementaryURLHelper.mergePath(getDirSelected(ctx), getFileName(ctx));
 		url = URLHelper.createResourceURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + url);
 		return url;
 	}
 
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		return super.getPrefixViewXHTMLCode(ctx) + "<div class=\"" + getType() + ' ' + StringHelper.neverNull(StringHelper.getFileExtension(getFileName())) + "\">";
+		return super.getPrefixViewXHTMLCode(ctx) + "<div class=\"" + getType() + ' ' + StringHelper.neverNull(StringHelper.getFileExtension(getFileName(ctx))) + "\">";
 	}
 
 	@Override
@@ -149,7 +149,7 @@ public class SimpleVideo extends AbstractFileComponent implements IReverseLinkCo
 	@Override
 	public String getURL(ContentContext ctx) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-		String fileLink = URLHelper.mergePath(getDirSelected(), getFileName());
+		String fileLink = URLHelper.mergePath(getDirSelected(ctx), getFileName(ctx));
 		return URLHelper.createResourceURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + fileLink).replace('\\', '/');
 	}
 
@@ -158,7 +158,7 @@ public class SimpleVideo extends AbstractFileComponent implements IReverseLinkCo
 		super.prepareView(ctx);		
 		if ((getValue() != null) && (getValue().trim().length() > 0)) {
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-			String url = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
+			String url = ElementaryURLHelper.mergePath(getDirSelected(ctx), getFileName(ctx));
 			url = URLHelper.createMediaURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + url);
 			ctx.getRequest().setAttribute("url", url);
 			ctx.getRequest().setAttribute("previewURL", getPreviewURL(ctx, "preview-video"));
@@ -179,7 +179,7 @@ public class SimpleVideo extends AbstractFileComponent implements IReverseLinkCo
 		StringBuffer res = new StringBuffer();
 		if ((getValue() != null) && (getValue().trim().length() > 0)) {
 			StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-			String url = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
+			String url = ElementaryURLHelper.mergePath(getDirSelected(ctx), getFileName(ctx));
 			url = URLHelper.createMediaURL(ctx, getPage(), staticConfig.getFileFolder() + '/' + url);
 			StaticInfo info = getStaticInfo(ctx);
 			res.append(XHTMLHelper.renderStaticInfo(ctx, info));
@@ -285,14 +285,14 @@ public class SimpleVideo extends AbstractFileComponent implements IReverseLinkCo
 
 	@Override
 	public String getImageLinkURL(ContentContext ctx) {
-		String url = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
+		String url = ElementaryURLHelper.mergePath(getDirSelected(ctx), getFileName(ctx));
 		url = URLHelper.createResourceURL(ctx, getPage(), ctx.getGlobalContext().getStaticConfig().getFileFolder() + '/' + url);
 		return url;
 	}
 
 	@Override
 	public boolean isImageValid(ContentContext ctx) {	
-		return "mp4".equalsIgnoreCase(StringHelper.getFileExtension(getFileName()));
+		return "mp4".equalsIgnoreCase(StringHelper.getFileExtension(getFileName(ctx)));
 	}
 
 	@Override
@@ -308,7 +308,7 @@ public class SimpleVideo extends AbstractFileComponent implements IReverseLinkCo
 		try {
 			String url = null;
 			try {
-				url = URLHelper.createTransformURL(ctx, ctx.getCurrentPage(), TemplateFactory.getTemplate(ctx, ctx.getCurrentPage()), getResourceURL(ctx, getFileName()), filter, null);
+				url = URLHelper.createTransformURL(ctx, ctx.getCurrentPage(), TemplateFactory.getTemplate(ctx, ctx.getCurrentPage()), getResourceURL(ctx, getFileName(ctx)), filter, null);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

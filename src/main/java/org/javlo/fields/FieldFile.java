@@ -650,7 +650,7 @@ public class FieldFile extends Field implements IStaticContainer {
 	}
 
 	@Override
-	public String getDirSelected() {
+	public String getDirSelected(ContentContext ctx) {
 		return null;
 	}
 

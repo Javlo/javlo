@@ -35,6 +35,7 @@ import org.javlo.data.InfoBean;
 import org.javlo.filter.DirectoryFilter;
 import org.javlo.helper.ExifHelper;
 import org.javlo.helper.LangHelper;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.PDFHelper;
 import org.javlo.helper.ResourceHelper;
@@ -43,6 +44,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ImageEngine;
+import org.javlo.io.SessionFolder;
 import org.javlo.io.TransactionFile;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -99,16 +101,15 @@ public class FileAction extends AbstractModuleAction {
 		ctx.getRequest().setAttribute("sort", fileModuleContext.getSort());
 		ctx.getRequest().setAttribute("canUpload", AdminUserSecurity.isCurrentUserCanUpload(ctx));
 		ctx.getRequest().setAttribute("backImage", URLHelper.createStaticResourceURL(ctx, "/images/mimetypes/folder-empty.svg"));
-		
+
 		/*
 		 * File importFolder = new
 		 * File(URLHelper.mergePath(globalContext.getStaticFolder(),
 		 * ctx.getGlobalContext().getStaticConfig().getImportResourceFolder(),
 		 * DataAction.createImportFolder(ctx.getCurrentPage()))); if
-		 * (importFolder.exists()) {
-		 * ctx.getRequest().setAttribute("importFolder",
-		 * URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder()
-		 * , ctx.getGlobalContext().getStaticConfig().getImportResourceFolder(),
+		 * (importFolder.exists()) { ctx.getRequest().setAttribute("importFolder",
+		 * URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder() ,
+		 * ctx.getGlobalContext().getStaticConfig().getImportResourceFolder(),
 		 * DataAction.createImportFolder(ctx.getCurrentPage()))); }
 		 */
 
@@ -130,7 +131,7 @@ public class FileAction extends AbstractModuleAction {
 				} else {
 					logger.warning("file not found : " + editFile);
 					ctx.getRequest().setAttribute("fileFound", false);
-				}				
+				}
 				ctx.getRequest().setAttribute("jpeg", StringHelper.isJpeg(editFileName));
 				modulesContext.getCurrentModule().setRenderer("/jsp/image_editor.jsp");
 			} else {
@@ -171,8 +172,7 @@ public class FileAction extends AbstractModuleAction {
 					fileModuleContext.setCurrentLink(lnk.getName());
 					/*
 					 * if (ctx.getRequest().getParameter("name") == null) {
-					 * modulesContext.getCurrentModule().setToolsRenderer(null);
-					 * } else {
+					 * modulesContext.getCurrentModule().setToolsRenderer(null); } else {
 					 */
 					modulesContext.getCurrentModule().setToolsRenderer("/jsp/actions.jsp");
 					/* } */
@@ -216,11 +216,11 @@ public class FileAction extends AbstractModuleAction {
 		request.setAttribute("changeRoot", "true");
 		return null;
 	}
-	
+
 	public String performUpdateBreadCrumb(RequestService rs, ContentContext ctx, EditContext editContext, ModulesContext moduleContext, Module currentModule, FileModuleContext fileModuleContext) throws Exception {
 		return updateBreadCrumb(rs, ctx, editContext, moduleContext, currentModule, fileModuleContext, false, null);
 	}
-	
+
 	private String updateBreadCrumb(RequestService rs, ContentContext ctx, EditContext editContext, ModulesContext moduleContext, Module currentModule, FileModuleContext fileModuleContext, boolean readonly, String finalFile) throws Exception {
 
 		currentModule.clearBreadcrump();
@@ -281,26 +281,26 @@ public class FileAction extends AbstractModuleAction {
 						}
 						childrenLinks.add(new HtmlLink(childURL, file.getName(), file.getName()));
 					}
-				}				
-				Collections.sort(childrenLinks, new HtmlLink.SortOnLegend());				
-//				if (i<2 && rs.getParameter("select") != null) {
-//					readonly=true;
-//				}
+				}
+				Collections.sort(childrenLinks, new HtmlLink.SortOnLegend());
+				// if (i<2 && rs.getParameter("select") != null) {
+				// readonly=true;
+				// }
 				currentModule.pushBreadcrumb(new HtmlLink(staticURL, path, path, i == pathItems.length - 1, childrenLinks, readonly));
 			}
 		}
-		
+
 		if (finalFile != null) {
-			currentModule.pushBreadcrumb(new HtmlLink(currentPath+'/'+finalFile, finalFile, finalFile, readonly));
+			currentModule.pushBreadcrumb(new HtmlLink(currentPath + '/' + finalFile, finalFile, finalFile, readonly));
 		}
 
 		String componentRenderer = editContext.getBreadcrumbsTemplate();
 		ctx.getRequest().setAttribute("currentModule", currentModule);
-		
+
 		if (!StringHelper.isEmpty(rs.getParameter("previewEdit"))) {
 			componentRenderer = URLHelper.addParam(componentRenderer, "previewEdit", "true");
 		}
-		
+
 		String breadcrumbsHTML = ServletHelper.executeJSP(ctx, componentRenderer);
 
 		ctx.getAjaxInsideZone().put("breadcrumbs", breadcrumbsHTML);
@@ -312,25 +312,36 @@ public class FileAction extends AbstractModuleAction {
 		if (rs.getParameter("image_path", null) != null) {
 			folder = new File(globalContext.getDataFolder(), rs.getParameter("image_path", null));
 		}
-		if (!canModifyFile(ctx, folder)) {
-			return "securtiy error.";
-		}
 		boolean found = false;
 		String latestFileName = "";
+		FileBean latestFileBean = null;
 		if (folder.exists()) {
 			for (File file : folder.listFiles((FileFilter) FileFileFilter.FILE)) {
 				latestFileName = file.getAbsolutePath();
 				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
 				FileBean fileBean = new FileBean(ctx, staticInfo);
-
+				latestFileBean = fileBean;
 				String newFocusX = rs.getParameter("posx-" + fileBean.getId(), null);
 				String newFocusY = rs.getParameter("posy-" + fileBean.getId(), null);
-
 				if (newFocusX != null && newFocusY != null) {
+
+					if (!canModifyFile(ctx, folder)) {
+						SessionFolder sessionFolder = SessionFolder.getInstance(ctx);
+						if (sessionFolder.getImage() == null || !sessionFolder.getImage().equals(file)) {
+							return "securtiy error.";
+						}
+					}
+
 					found = true;
 					staticInfo.setFocusZoneX(ctx, (int) Math.round(Double.parseDouble(newFocusX)));
 					staticInfo.setFocusZoneY(ctx, (int) Math.round(Double.parseDouble(newFocusY)));
+					if (ctx.isAsViewMode()) {
+						ContentContext editContext = ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE);
+						staticInfo.setFocusZoneX(editContext, (int) Math.round(Double.parseDouble(newFocusX)));
+						staticInfo.setFocusZoneY(editContext, (int) Math.round(Double.parseDouble(newFocusY)));
+					}
 					PersistenceService.getInstance(globalContext).setAskStore(true);
+
 					// messageRepository.setGlobalMessageAndNotification(ctx,
 					// new
 					// GenericMessage(i18nAccess.getText("file.message.updatefocus",
@@ -342,7 +353,7 @@ public class FileAction extends AbstractModuleAction {
 				}
 			}
 			if (!found) {
-				return "focus technical error - file not found : "+latestFileName;
+				return "focus technical error - file not found : " + (latestFileBean != null ? latestFileBean.getId() : "no bean") + " - " + latestFileName;
 			}
 			return null;
 		} else {
@@ -388,7 +399,7 @@ public class FileAction extends AbstractModuleAction {
 				if (location != null) {
 					staticInfo.setLocation(ctx, location);
 				}
-				
+
 				String[] taxonomy = rs.getParameterValues("taxonomy-" + fileBean.getId(), null);
 				if (taxonomy != null) {
 					staticInfo.setTaxonomy(ctx, new HashSet<String>(Arrays.asList(taxonomy)));
@@ -397,7 +408,7 @@ public class FileAction extends AbstractModuleAction {
 				if (authors != null) {
 					staticInfo.setAuthors(ctx, authors);
 				}
-				
+
 				String copyright = rs.getParameter("copyright-" + fileBean.getId(), null);
 				if (copyright != null) {
 					staticInfo.setCopyright(ctx, copyright);
@@ -600,14 +611,14 @@ public class FileAction extends AbstractModuleAction {
 			if (!canModifyFile(ctx, file)) {
 				return "securtiy error.";
 			}
-			ResourceHelper.deleteResource(ctx, file);			
+			ResourceHelper.deleteResource(ctx, file);
 		}
 		if (StringHelper.isTrue(rs.getParameter("close", null))) {
 			ctx.setClosePopup(true);
 		}
 		return null;
 	}
-	
+
 	public static String performJpeg(GlobalContext globalContext, RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String filePath = rs.getParameter("file", null);
 		if (filePath == null) {
@@ -615,7 +626,7 @@ public class FileAction extends AbstractModuleAction {
 		} else {
 			File file = new File(URLHelper.mergePath(globalContext.getStaticFolder(), filePath));
 			if (!file.exists()) {
-				return "file not found : "+file;
+				return "file not found : " + file;
 			}
 			if (!canModifyFile(ctx, file)) {
 				return "securtiy error.";
@@ -626,7 +637,7 @@ public class FileAction extends AbstractModuleAction {
 			} else {
 				image = PDFHelper.getPDFImage(file, 1);
 			}
-			File jpeg = new File(StringHelper.getFileNameWithoutExtension(file.getAbsolutePath())+".jpg");			
+			File jpeg = new File(StringHelper.getFileNameWithoutExtension(file.getAbsolutePath()) + ".jpg");
 			jpeg = ResourceHelper.getFreeFileName(jpeg);
 			ImageIO.write(image, "jpg", jpeg);
 		}
@@ -713,7 +724,7 @@ public class FileAction extends AbstractModuleAction {
 		if (rs.getParameter("cancel", null) != null) {
 			return null;
 		}
-		
+
 		File file = new File(URLHelper.mergePath(getFolder(ctx).getAbsolutePath(), rs.getParameter("file", "-- param file undefined --")));
 		if (!canModifyFile(ctx, file)) {
 			return "securtiy error.";
@@ -721,11 +732,11 @@ public class FileAction extends AbstractModuleAction {
 		if (!file.exists() || !file.isFile()) {
 			return "file not found : " + file;
 		}
-		
+
 		if (rs.getParameter("duplicate", null) != null) {
 			File newFile = ResourceHelper.getFreeFileName(file);
 			ResourceHelper.writeFileToFile(file, newFile);
-			Map<String,String> params = new HashMap<String, String>();
+			Map<String, String> params = new HashMap<String, String>();
 			params.put("editFile", newFile.getName());
 			if (rs.getParameter("previewEdit") != null) {
 				params.put("previewEdit", rs.getParameter("previewEdit"));
@@ -739,7 +750,7 @@ public class FileAction extends AbstractModuleAction {
 			if (rs.getParameter("comp_id") != null) {
 				params.put("comp_id", rs.getParameter("comp_id"));
 			}
-			NetHelper.sendRedirectTemporarily(ctx.getResponse(), URLHelper.createURL(ctx, params));			
+			NetHelper.sendRedirectTemporarily(ctx.getResponse(), URLHelper.createURL(ctx, params));
 		} else {
 			StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
 			ImageMetadata md = ExifHelper.readMetadata(file);
@@ -769,7 +780,7 @@ public class FileAction extends AbstractModuleAction {
 				int height = Math.round(cropHeight * image.getHeight() / REFERENCE_SIZE);
 				int x = Math.round(cropLeft * image.getWidth() / REFERENCE_SIZE);
 				int y = Math.round(cropTop * image.getHeight() / REFERENCE_SIZE);
-				image = ImageEngine.cropImage(image, width, height, x, y);				
+				image = ImageEngine.cropImage(image, width, height, x, y);
 				staticInfo.resetImageSize(ctx);
 			}
 			if (transform) {
@@ -791,5 +802,3 @@ public class FileAction extends AbstractModuleAction {
 	}
 
 }
-
-	

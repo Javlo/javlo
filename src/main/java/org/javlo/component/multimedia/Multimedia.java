@@ -1153,7 +1153,7 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 	}
 
 	protected boolean isImported(ContentContext ctx) {
-		return getDirSelected().contains(ctx.getGlobalContext().getStaticConfig().getImportFolder() + '/');
+		return getDirSelected(ctx).contains(ctx.getGlobalContext().getStaticConfig().getImportFolder() + '/');
 	}
 
 	@Override
@@ -1202,7 +1202,7 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 		if (isImported(ctx) && getPage() != null && ctx.isAsModifyMode()) {
 			String importFolder = getImportFolderPath(ctx).replaceFirst("/" + ctx.getGlobalContext().getStaticConfig().getStaticFolder(), "");
 
-			if (!getDirSelected().equals(importFolder)) {
+			if (!getDirSelected(ctx).equals(importFolder)) {
 				File sourceDir = new File(getFilesDirectory(ctx));
 				if (sourceDir.exists() && sourceDir.isDirectory()) {
 					try {
@@ -1573,7 +1573,7 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 	}
 
 	@Override
-	public String getDirSelected() {
+	public String getDirSelected(ContentContext ctx) {
 		return getCurrentRootFolder();
 	}
 
