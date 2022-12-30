@@ -24,6 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -1736,8 +1737,17 @@ public class ImageEngine {
 		int bottomY = p4.getSquare().getY3();
 
 		if (crop) {
-			int width = MathHelper.max(p4.getX1(), p4.getX2(), p4.getX3(), p4.getX4()) - MathHelper.min(p4.getX1(), p4.getX2(), p4.getX3(), p4.getX4());
-			int height = MathHelper.max(p4.getY1(), p4.getY2(), p4.getY3(), p4.getY4()) - MathHelper.min(p4.getY1(), p4.getY2(), p4.getY3(), p4.getY4());
+			
+			int x1 = Math.abs(p4.getX1()-p4.getX2());
+			int y1 = Math.abs(p4.getY1()-p4.getY2());
+			int width = (int)Math.round(Math.sqrt(x1*x1+y1*y1));
+			
+			int x2 = Math.abs(p4.getX2()-p4.getX3());
+			int y2 = Math.abs(p4.getY2()-p4.getY3());
+			int height = (int)Math.round(Math.sqrt(x2*x2+y2*y2));
+			
+			//int width = (int)Math.abs(p4.getSquare().getX1()-p4.getSquare().getX2());
+			//int height = (int)Math.abs(p4.getSquare().getY1()-p4.getSquare().getY4());
 			source = resize(source, width, height, true, false, 0, 0, 0, 0, null, interestX, interestY, true, true);
 		}
 
@@ -2124,10 +2134,10 @@ public class ImageEngine {
 		for (int x = 0; x < image.getWidth(); x++) {
 			for (int y = 0; y < image.getHeight(); y++) {
 				int bd = getBorderDistance(image, x, y, width, direction);
-				float blurFactor = (float)1;
-				int blurSize = (int)Math.round(width*blurFactor);
+				float blurFactor = (float) 1;
+				int blurSize = (int) Math.round(width * blurFactor);
 				if (Math.abs(bd) < blurSize) {
-					float alpha = 1-(float)(bd+blurSize)/(float)(blurSize*2);
+					float alpha = 1 - (float) (bd + blurSize) / (float) (blurSize * 2);
 					Color newCol = combineColor(bg, new Color(image.getRGB(x, y)), alpha);
 					imgNew.setRGB(x, y, newCol.getRGB());
 				} else {
@@ -2145,7 +2155,7 @@ public class ImageEngine {
 	public static void main(String[] args) throws Exception {
 		File imageFile = new File("c:/trans/short_hair_alpha.png");
 		BufferedImage image = ImageIO.read(imageFile);
-		//image = addBlurBorder(image, Color.WHITE, 80, null);
+		// image = addBlurBorder(image, Color.WHITE, 80, null);
 		ImageIO.write(image, "webp", new File("c:/trans/webp_test.webp"));
 	}
 
@@ -2158,19 +2168,24 @@ public class ImageEngine {
 		outImage.createGraphics().drawImage(src, 0, 0, null);
 		return outImage;
 	}
-	
+
 	public static BufferedImage removeBg(GlobalContext globalContext, BufferedImage image) throws IOException {
 		final String KEY = "removebg.key";
 		String apiKey = globalContext.getSpecialConfig().get(KEY, null);
 		if (apiKey == null) {
-			logger.warning("no API key found for removebg : "+KEY);
+			logger.warning("no API key found for removebg : " + KEY);
 			return image;
 		} else {
 			ByteArrayOutputStream arrayOut = new ByteArrayOutputStream();
 			ImageIO.write(image, "png", arrayOut);
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 			RemoveBgService.removeBg(apiKey, new ByteArrayInputStream(arrayOut.toByteArray()), out);
-			return ImageIO.read(new ByteArrayInputStream(out.toByteArray()));
+			BufferedImage outImage = ImageIO.read(new ByteArrayInputStream(out.toByteArray()));
+			if (outImage == null) {
+				logger.severe("error on call remove.bg service.");
+				return image;
+			}
+			return outImage;
 		}
 	}
 

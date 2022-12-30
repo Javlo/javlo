@@ -18,73 +18,75 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.user.AdminUserSecurity;
 
 public class SharedContentService {
-	
+
 	private static Logger logger = Logger.getLogger(SharedContentService.class.getName());
-	
+
 	private static final String KEY = "sharedContentService";
-	
+
 	private Collection<SharedContent> latestReturnedContent = null;
-	
+
 	private List<ISharedContentProvider> sharedContentProvider = null;
-	
+
 	private SharedContentContext context = null;
-	
+
 	public static SharedContentService getInstance(ContentContext ctx) {
-		SharedContentService instance = (SharedContentService)ctx.getRequest().getSession().getAttribute(KEY);
+		SharedContentService instance = (SharedContentService) ctx.getRequest().getSession().getAttribute(KEY);
 		if (instance == null) {
 			instance = new SharedContentService();
-			ctx.getRequest().getSession().setAttribute(KEY, instance);		
+			ctx.getRequest().getSession().setAttribute(KEY, instance);
 		}
 		instance.setContext(SharedContentContext.getInstance(ctx));
 		return instance;
 	}
-	
+
 	private Collection<SharedContent> getAllSharedContent(ContentContext ctx) {
 		if (getContext().getSearchQuery() == null || latestReturnedContent == null) {
 			getContext().setSearchQuery(null);
-			List<SharedContent> outContent = new LinkedList<SharedContent>();		
-			for (ISharedContentProvider provider : getAllActiveProvider(ctx)) {			
+			List<SharedContent> outContent = new LinkedList<SharedContent>();
+			for (ISharedContentProvider provider : getAllActiveProvider(ctx)) {
 				ctx.setContentContextIfNeeded(provider);
 				outContent.addAll(provider.getContent(ctx));
 			}
-		return outContent;
+			return outContent;
 		} else {
-			return latestReturnedContent;			
+			return latestReturnedContent;
 		}
 	}
-	
-	public List<ISharedContentProvider> getAllProvider(ContentContext ctx) {		
+
+	public List<ISharedContentProvider> getAllProvider(ContentContext ctx) {
 		return SharedContentProviderFactory.getInstance(ctx).getAllSharedContentProvider(ctx);
 	}
-	
+
 	public List<ISharedContentProvider> getAllActiveProvider(ContentContext ctx) {
 		if (sharedContentProvider == null) {
 			sharedContentProvider = new LinkedList<ISharedContentProvider>();
 			Collection<String> active = getActiveProviderNames(ctx);
-			for (ISharedContentProvider sharedContent : getAllProvider(ctx)) {
-				if (active.contains(sharedContent.getName()) && !sharedContent.isEmpty(ctx)) {					
-					sharedContentProvider.add(sharedContent);
+			if (active != null) {
+				for (ISharedContentProvider sharedContent : getAllProvider(ctx)) {
+					if (active.contains(sharedContent.getName()) && !sharedContent.isEmpty(ctx)) {
+						sharedContentProvider.add(sharedContent);
+					}
 				}
 			}
 		}
 		return sharedContentProvider;
 	}
-	
+
 	public List<String> getActiveProviderNames(ContentContext ctx) {
-		 List<String> outActive = StringHelper.stringToCollection(ctx.getGlobalContext().getData("shared-content-active"),";");
-		 if (outActive != null) {
-			 return outActive;
-		 } else {
-			 return Collections.EMPTY_LIST;
-		 }
+		List<String> outActive = StringHelper.stringToCollection(ctx.getGlobalContext().getData("shared-content-active"), ";");
+		if (outActive != null) {
+			return outActive;
+		} else {
+			return Collections.EMPTY_LIST;
+		}
 	}
-	
+
 	public void setActiveProviderNames(ContentContext ctx, Collection<String> active) {
 		sharedContentProvider = null;
 		latestReturnedContent = null;
-		ctx.getGlobalContext().setData("shared-content-active", StringHelper.collectionToString(active,";"));
+		ctx.getGlobalContext().setData("shared-content-active", StringHelper.collectionToString(active, ";"));
 	}
-	
+
 	public ISharedContentProvider getProvider(ContentContext ctx, String name) {
 		for (ISharedContentProvider provider : getAllProvider(ctx)) {
 			if (provider.getName().equals(name)) {
@@ -93,14 +95,14 @@ public class SharedContentService {
 		}
 		return null;
 	}
-	
+
 	public SharedContent getSharedContent(ContentContext ctx, String id) {
 		if (id == null) {
 			return null;
 		}
-		if (latestReturnedContent == null) {			
+		if (latestReturnedContent == null) {
 			latestReturnedContent = getAllSharedContent(ctx);
-		}		
+		}
 		for (SharedContent sharedContent : latestReturnedContent) {
 			if (sharedContent != null && sharedContent.getId() != null && sharedContent.getId().equals(id)) {
 				return sharedContent;
@@ -115,25 +117,25 @@ public class SharedContentService {
 		}
 		return null;
 	}
-	
-	public Collection<SharedContent> searchContent (ContentContext ctx, ISharedContentProvider provider, String query) {
+
+	public Collection<SharedContent> searchContent(ContentContext ctx, ISharedContentProvider provider, String query) {
 		if (query != null && query.trim().length() > 0) {
 			getContext().setSearchQuery(query);
-			latestReturnedContent = provider.searchContent(ctx,query);
+			latestReturnedContent = provider.searchContent(ctx, query);
 		} else {
 			getContext().setSearchQuery(null);
 			latestReturnedContent = provider.getContent(ctx);
 		}
 		return latestReturnedContent;
 	}
-	
+
 	public void clearCache(ContentContext ctx) {
 		for (ISharedContentProvider provider : getAllActiveProvider(ctx)) {
 			provider.refresh(ctx);
 			provider.getContent(ctx);
 		}
 		getContext().setSearchQuery(null);
-		latestReturnedContent = null;		
+		latestReturnedContent = null;
 	}
 
 	public SharedContentContext getContext() {
@@ -143,7 +145,7 @@ public class SharedContentService {
 	public void setContext(SharedContentContext context) {
 		this.context = context;
 	}
-	
+
 	public static void prepare(ContentContext ctx) throws ModuleException {
 		ModulesContext modulesContext = ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());
 		ctx.getRequest().setAttribute("userCanUpload", AdminUserSecurity.isCurrentUserCanUpload(ctx));
@@ -162,7 +164,7 @@ public class SharedContentService {
 				if ((sharedContentContext.getCategory() == null || !provider.getCategories(ctx).containsKey(sharedContentContext.getCategory())) && provider.getCategories(ctx).size() > 0) {
 					sharedContentContext.setCategories(new LinkedList<String>(Arrays.asList(provider.getCategories(ctx).keySet().iterator().next())));
 				}
-				ctx.getRequest().setAttribute("provider", new SharedContentProviderBean(ctx, provider));				
+				ctx.getRequest().setAttribute("provider", new SharedContentProviderBean(ctx, provider));
 				if (ctx.getRequest().getAttribute("sharedContent") == null) { // no search
 					if (sharedContentContext.getSearchQuery() == null) {
 						ctx.getRequest().setAttribute("sharedContent", provider.getContent(ctx, sharedContentContext.getCategories()));
@@ -171,7 +173,7 @@ public class SharedContentService {
 					}
 				}
 				ctx.getRequest().setAttribute("sharedContentCategories", provider.getCategories(ctx).entrySet());
-				Map<String,String> params = new HashMap<>();
+				Map<String, String> params = new HashMap<>();
 				params.put("webaction", "shared-content.refreshresult");
 				ctx.getRequest().setAttribute("refreshUrl", URLHelper.createAjaxURL(ctx, params));
 			} else {
@@ -179,5 +181,5 @@ public class SharedContentService {
 			}
 		}
 	}
-	
+
 }
