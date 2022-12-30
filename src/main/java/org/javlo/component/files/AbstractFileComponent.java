@@ -121,7 +121,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		String importFolder;
 		try {
 			importFolder = getImportFolderPath(ctx);
-			if (getDirSelected().equals(importFolder)) {
+			if (getDirSelected(ctx).equals(importFolder)) {
 				return true;
 			}
 		} catch (Exception e) {
@@ -132,7 +132,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 
 	@Override
 	public boolean contains(ContentContext ctx, String inURI) {
-		String uri = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
+		String uri = ElementaryURLHelper.mergePath(getDirSelected(ctx), getFileName(ctx));
 		uri = ElementaryURLHelper.mergePath(getFileDirectory(ctx), uri);
 
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
@@ -176,7 +176,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	@Override
 	public String getURL(ContentContext ctx) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-		String fileLink = URLHelper.mergePath(getDirSelected(), getFileName());
+		String fileLink = URLHelper.mergePath(getDirSelected(ctx), getFileName(ctx));
 		return URLHelper.createResourceURL(ctx, getPage(), staticConfig.getImageFolder() + '/' + fileLink).replace('\\', '/');
 	}
 
@@ -198,7 +198,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		ctx.getRequest().setAttribute("description", getDescription());
 		ctx.getRequest().setAttribute("cleanDescription", Encode.forHtmlAttribute(StringHelper.removeTag(getDescription())));
 		ctx.getRequest().setAttribute("mineType", ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(url)));
-		ctx.getRequest().setAttribute("fileName", getFileName());
+		ctx.getRequest().setAttribute("fileName", getFileName(ctx));
 		StaticInfo staticInfo = getStaticInfo(ctx);
 		ContentContext infoCtx = staticInfo.getContextWithContent(ctx);
 		String cleanLabel = null;
@@ -252,8 +252,8 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	@Override
 	public Collection<Resource> getAllResources(ContentContext ctx) {
 		Collection<Resource> outList = new LinkedList<Resource>();
-		if (getFileName() != null && getFileName().trim().length() > 0) {
-			String fileURI = getFileURL(ctx, getFileName());
+		if (getFileName(ctx) != null && getFileName(ctx).trim().length() > 0) {
+			String fileURI = getFileURL(ctx, getFileName(ctx));
 			Resource resource = new Resource();
 			resource.setUri(fileURI);
 			outList.add(resource);
@@ -264,12 +264,12 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	@Override
 	public Collection<Link> getAllResourcesLinks(ContentContext ctx) {
 		Collection<Link> outList = new LinkedList<Link>();
-		if (getFileName() != null && getFileName().trim().length() > 0) {
+		if (getFileName(ctx) != null && getFileName(ctx).trim().length() > 0) {
 			String desc = getDescription();
 			if (desc == null || desc.trim().length() == 0) {
-				desc = getFileName();
+				desc = getFileName(ctx);
 			}
-			String url = URLHelper.createResourceURL(ctx, getFileURL(ctx, getFileName()));
+			String url = URLHelper.createResourceURL(ctx, getFileURL(ctx, getFileName(ctx)));
 			Link link = new Link(url, desc);
 			outList.add(link);
 		}
@@ -341,7 +341,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		return folders;
 	}
 
-	public String getDirSelected() {
+	public String getDirSelected(ContentContext ctx) {
 		String dir = properties.getProperty(DIR_KEY, "");
 		if (dir.length() > 1 && dir.startsWith("/")) {
 			dir = dir.substring(1);
@@ -460,7 +460,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			finalCode.append("<div class=\"form-group\"><label for=\"" + getDirInputName() + "\">");
 			finalCode.append(getDirLabelTitle(ctx));
 			finalCode.append(" : </label>");
-			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), ArrayHelper.addFirstElem(getDirList(ctx, getFileDirectory(ctx)), ""), getDirSelected(), "form-control", getJSOnChange(ctx), true));
+			finalCode.append(XHTMLHelper.getInputOneSelect(getDirInputName(), ArrayHelper.addFirstElem(getDirList(ctx, getFileDirectory(ctx)), ""), getDirSelected(ctx), "form-control", getJSOnChange(ctx), true));
 			finalCode.append("</div>");
 		}
 
@@ -481,7 +481,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 
 		boolean canUploadInImport = false;
 
-		canUploadInImport = getDirSelected().equals(getImportFolderPath(ctx));
+		canUploadInImport = getDirSelected(ctx).equals(getImportFolderPath(ctx));
 		if (canUpload(ctx)) {
 			finalCode.append("<div class=\"row\"><div class=\"col-md-6\">");
 			finalCode.append("<div class=\"form-group\"><label for=\"new_dir_" + getId() + "\">");
@@ -500,7 +500,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			finalCode.append("</div></div>");
 		}
 
-		String[] fileList = getFileList(getFileDirectory(ctx), getFileFilter());
+		String[] fileList = getFileList(ctx, getFileDirectory(ctx), getFileFilter());
 		if (fileList.length > 0) {
 			finalCode.append("<div class=\"form-group\">");
 			finalCode.append("<label for=\"" + getSelectXHTMLInputName() + "\">");
@@ -511,12 +511,12 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			fileListBlanck[0] = "";
 			System.arraycopy(fileList, 0, fileListBlanck, 1, fileList.length);
 
-			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, getFileName(), "form-control", getJSOnChange(ctx), true));
+			finalCode.append(XHTMLHelper.getInputOneSelect(getSelectXHTMLInputName(), fileListBlanck, getFileName(ctx), "form-control", getJSOnChange(ctx), true));
 
 			if (ctx.getRenderMode() == ContentContext.EDIT_MODE && !ctx.isEditPreview() && canUpload(ctx)) {
 				if (isLinkToStatic()) {
 					Map<String, String> filesParams = new HashMap<String, String>();
-					filesParams.put("path", URLHelper.mergePath("/", getRelativeFileDirectory(ctx), getDirSelected()));
+					filesParams.put("path", URLHelper.mergePath("/", getRelativeFileDirectory(ctx), getDirSelected(ctx)));
 					String staticURL = URLHelper.createModuleURL(ctx, ctx.getPath(), "file", filesParams);
 
 					finalCode.append("<a class=\"" + IContentVisualComponent.EDIT_ACTION_CSS_CLASS + "\" href=\"" + staticURL + "\" >");
@@ -552,7 +552,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		finalCode.append("</div></div>");
 
 		// validation
-		if (!isFileNameValid(ctx, getFileName())) {
+		if (!isFileNameValid(ctx, getFileName(ctx))) {
 			setMessage(new GenericMessage(i18nAccess.getText("component.error.file"), GenericMessage.ERROR));
 		}
 
@@ -571,8 +571,8 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		return "encoding" + ID_SEPARATOR + getId();
 	}
 
-	protected String[] getFileList(String directory) {
-		return getFileList(directory, null);
+	protected String[] getFileList(ContentContext ctx, String directory) {
+		return getFileList(ctx, directory, null);
 	}
 
 	protected FilenameFilter getFileFilter() {
@@ -583,8 +583,8 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		return null;
 	}
 
-	protected String[] getFileList(String directory, FilenameFilter filter) {
-		File dir = new File(ElementaryURLHelper.mergePath(directory, getDirSelected()));
+	protected String[] getFileList(ContentContext ctx, String directory, FilenameFilter filter) {
+		File dir = new File(ElementaryURLHelper.mergePath(directory, getDirSelected(ctx)));
 		String[] res = new String[0];
 		if (dir.exists()) {
 			File[] files = dir.listFiles(filter);
@@ -609,12 +609,12 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		return res;
 	}
 
-	public String getFileName() {
+	public String getFileName(ContentContext ctx) {
 		return properties.getProperty(FILE_NAME_KEY, "");
 	}
 
 	protected String getFileURL(ContentContext ctx, String fileLink) {
-		return URLHelper.mergePath("/", getRelativeFileDirectory(ctx), ElementaryURLHelper.mergePath(getDirSelected(), fileLink));
+		return URLHelper.mergePath("/", getRelativeFileDirectory(ctx), ElementaryURLHelper.mergePath(getDirSelected(ctx), fileLink));
 	}
 
 	protected String getFileXHTMLInputName() {
@@ -701,7 +701,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	}
 
 	public String getResourceURL(ContentContext ctx) {
-		return getResourceURL(ctx, getFileName());
+		return getResourceURL(ctx, getFileName(ctx));
 	}
 
 	protected String getMainFolder(ContentContext ctx) {
@@ -711,9 +711,9 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	public String getResourceURL(ContentContext ctx, String fileLink) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		if (isFromShared(ctx)) {
-			return URLHelper.mergePath(staticConfig.getShareDataFolderKey(), getMainFolder(ctx), getDirSelected(), fileLink.replaceFirst(staticConfig.getShareDataFolderKey(), ""));
+			return URLHelper.mergePath(staticConfig.getShareDataFolderKey(), getMainFolder(ctx), getDirSelected(ctx), fileLink.replaceFirst(staticConfig.getShareDataFolderKey(), ""));
 		} else {
-			return URLHelper.mergePath(staticConfig.getStaticFolder(), getMainFolder(ctx), URLHelper.mergePath(getDirSelected(), fileLink));
+			return URLHelper.mergePath(getRelativeFileDirectory(ctx), URLHelper.mergePath(getDirSelected(ctx), fileLink));
 		}
 	}
 
@@ -740,7 +740,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	public File getFile(ContentContext ctx) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		String fullName = ElementaryURLHelper.mergePath(getDirSelected(), getFileName());
+		String fullName = ElementaryURLHelper.mergePath(getDirSelected(ctx), getFileName(ctx));
 		fullName = ElementaryURLHelper.mergePath(staticConfig.getFileFolder(), fullName);
 		fullName = ElementaryURLHelper.mergePath(globalContext.getDataFolder(), fullName);
 		return new File(fullName);
@@ -754,8 +754,8 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		StringWriter res = new StringWriter();
 		PrintWriter out = new PrintWriter(res);
 
-		String[] images = getFileList(getFileDirectory(ctx));
-		String currentFileLink = URLHelper.mergePath(getDirSelected(), getFileName());
+		String[] images = getFileList(ctx, getFileDirectory(ctx));
+		String currentFileLink = URLHelper.mergePath(getDirSelected(ctx), getFileName(ctx));
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 		out.println("<div class=\"preview-image-wrapper " + (imageList ? "list" : "no-list") + "\">");
@@ -766,7 +766,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		params.put("components", getId());
 		params.put("id-" + getId(), "true");
 		params.put(getFileXHTMLInputName(), "file.png"); // fake file name
-		params.put(getDirInputName(), getDirSelected()); // fake file name
+		params.put(getDirInputName(), getDirSelected(ctx)); // fake file name
 		String uploadURL = URLHelper.createURL(ctx, params);
 		out.println("<div class=\"image-selected\" data-fieldname=\"" + getFileXHTMLInputName() + "\" data-url=\"" + uploadURL + "\">");
 
@@ -775,8 +775,8 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		out.println("<div id=\"" + getPreviewZoneId() + "\" class=\"list-container\">");
 
 		String url;
-		if (getFileName().trim().length() > 0) {
-			url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName()), "list");
+		if (getFileName(ctx).trim().length() > 0) {
+			url = URLHelper.createTransformURL(ctx, getPage(), getResourceURL(ctx, getFileName(ctx)), "list");
 			//url = URLHelper.addParam(url, "hash", getStaticInfo(ctx).getVersionHash(ctx));
 			if (isFromShared(ctx)) {
 				out.println("<img src=\"" + url + "\" />&nbsp;");
@@ -785,7 +785,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 				out.println("<div class=\"focus-point\">x</div>");
 				out.println("<input class=\"posx\" type=\"hidden\" name=\"posx-" + file.getId() + "\" value=\"" + file.getFocusZoneX() + "\" />");
 				out.println("<input class=\"posy\" type=\"hidden\" name=\"posy-" + file.getId() + "\" value=\"" + file.getFocusZoneY() + "\" />");
-				out.println("<input class=\"path\" type=\"hidden\" name=\"image_path-" + file.getId() + "\" value=\"" + URLHelper.mergePath(getRelativeFileDirectory(ctx), getDirSelected()) + "\" /></div>&nbsp;");
+				out.println("<input class=\"path\" type=\"hidden\" name=\"image_path-" + file.getId() + "\" value=\"" + URLHelper.mergePath(getRelativeFileDirectory(ctx), getDirSelected(ctx)) + "\" /></div>&nbsp;");
 			}
 		} else {
 			imageList = true;
@@ -795,12 +795,12 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			out.println("<script type=\"text/javascript\">document.addEventListener(\"DOMContentLoaded\", function(event) { initFocusPoint();}); initFocusPoint();</script>");
 		}
 		if (imageList) {
-			out.println("<div class=\"name\">" + getFileName() + "</div>");
+			out.println("<div class=\"name\">" + getFileName(ctx) + "</div>");
 			out.println("<div class=\"image-list\">");
 			for (String image : images) {
 				if ((image != null) && (image.trim().length() > 0)) {
 					StaticInfo staticInfo = StaticInfo.getInstance(ctx, getFileURL(ctx, image));
-					String fileLink = URLHelper.mergePath(getDirSelected(), image);
+					String fileLink = URLHelper.mergePath(getDirSelected(ctx), image);
 					String selected = "class=\"preview-image\"";
 					if (fileLink.equals(currentFileLink)) {
 						selected = " class=\"preview-image selected\"";
@@ -876,7 +876,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	public StaticInfo getStaticInfo(ContentContext ctx) {
 		StaticInfo staticInfo;
 		try {
-			staticInfo = StaticInfo.getInstance(ctx, getFileURL(ctx, getFileName()));
+			staticInfo = StaticInfo.getInstance(ctx, getFileURL(ctx, getFileName(ctx)));
 			return staticInfo;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -900,7 +900,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		if (getValue().trim().length() == 0) {
 			// if (!AdminUserSecurity.isCurrentUserCanUpload(ctx)) {
 			setDirSelected(getImportFolderPath(ctx));
-			File dir = new File(ElementaryURLHelper.mergePath(getFileDirectory(ctx), getDirSelected()));
+			File dir = new File(ElementaryURLHelper.mergePath(getFileDirectory(ctx), getDirSelected(ctx)));
 			if (!dir.exists()) {
 				logger.info("create import folder : " + dir);
 				dir.mkdirs();
@@ -918,7 +918,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 
 		if (isImported(ctx) && getPage() != null) {
 			String importFolder = getImportFolderPath(ctx);
-			if (!getDirSelected().equals(importFolder)) {
+			if (!getDirSelected(ctx).equals(importFolder)) {
 				File oldFile = getFile(ctx);
 				setDirSelected(importFolder);
 				File newFile = getFile(ctx);
@@ -937,7 +937,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 	}
 
 	protected boolean isImported(ContentContext ctx) {
-		return getDirSelected().startsWith(URLHelper.removeFirstSlash(ctx.getGlobalContext().getStaticConfig().getImportFolder()));
+		return getDirSelected(ctx).startsWith(URLHelper.removeFirstSlash(ctx.getGlobalContext().getStaticConfig().getImportFolder()));
 	}
 
 	@Override
@@ -977,7 +977,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 
 	protected boolean isFromShared(ContentContext ctx) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-		return getFileName().startsWith(staticConfig.getShareDataFolderKey());
+		return getFileName(ctx).startsWith(staticConfig.getShareDataFolderKey());
 	}
 
 	@Override
@@ -1031,7 +1031,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			fileName = URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getShareDataFolderKey(), fileName);
 		}
 
-		if ((!label.equals(getLabel())) || (!fileName.equals(getFileName()))) {
+		if ((!label.equals(getLabel())) || (!fileName.equals(getFileName(ctx)))) {
 			setModify();
 		}
 		if (!reverseLink.equals(properties.getProperty(REVERSE_LINK_KEY))) {
@@ -1043,7 +1043,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			reverlinkService.clearCache();
 		}
 
-		if (!getDirSelected().equals(selectedDir)) {
+		if (!getDirSelected(ctx).equals(selectedDir)) {
 			fileName = "";
 			if (fromShared) {
 				fileName = ctx.getGlobalContext().getStaticConfig().getShareDataFolderKey();
@@ -1112,7 +1112,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		if (oldName.equals(newName)) {
 			return false;
 		}
-		String currentFile = URLHelper.mergePath(getFileDirectory(ctx), getDirSelected(), getFileName());
+		String currentFile = URLHelper.mergePath(getFileDirectory(ctx), getDirSelected(ctx), getFileName(ctx));
 
 		File file = new File(currentFile);
 
@@ -1142,7 +1142,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		fileName = ResourceHelper.getWindowsFileName(name);
 		String imageName = fileName;
 		if ((fileName != null) && (fileName.length() > 0)) {
-			String dirFile = ElementaryURLHelper.mergePath(getFileDirectory(ctx), getDirSelected());
+			String dirFile = ElementaryURLHelper.mergePath(getFileDirectory(ctx), getDirSelected(ctx));
 
 			imageName = StringHelper.createFileName(fileName);
 
@@ -1324,7 +1324,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 
 	@Override
 	public boolean isDisplayable(ContentContext ctx) throws Exception {
-		return !StringHelper.isEmpty(getFileName());
+		return !StringHelper.isEmpty(getFileName(ctx));
 	}
 
 	@Override

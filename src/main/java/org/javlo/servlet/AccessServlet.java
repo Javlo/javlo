@@ -68,6 +68,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.XMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ImageEngine;
+import org.javlo.io.SessionFolder;
 import org.javlo.macro.ClearDataAccessCount;
 import org.javlo.mailing.MailService;
 import org.javlo.mailing.MailingThread;
@@ -490,6 +491,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							 */
 
 							CdnService.getInstance(ctx.getGlobalContext()).internalTestCdn();
+							SessionFolder.clearAllSessionFolder(globalContext);
 
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -551,6 +553,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			cdnService.testCdn();
 			if (cdnService.isReleaseCache()) {
 				ContentService.clearCache(ctx, globalContext);
+				cdnService.setReleaseCache(false);
 			}
 
 			/* ******** */
