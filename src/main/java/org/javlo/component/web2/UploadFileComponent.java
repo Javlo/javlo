@@ -1,6 +1,7 @@
 package org.javlo.component.web2;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,6 +18,8 @@ import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.ComponentHelper;
+import org.javlo.helper.PDFHelper;
+import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
@@ -48,13 +51,26 @@ public class UploadFileComponent extends AbstractVisualComponent implements IAct
 
 	public static String performUpload(ContentContext ctx, RequestService rs) throws Exception {
 		IContentVisualComponent comp = ComponentHelper.getComponentFromRequest(ctx);
+		SessionFolder sessionFolder = SessionFolder.getInstance(ctx);
 		if (comp.getValue(ctx).equals(SESSION_IMAGE)) {
 			FileItem fileItem = rs.getFileItem("_image-" + comp.getId());
 			if (fileItem != null) {
+
+				if (StringHelper.isPDF(fileItem.getName())) {
+					File tempFile = new File(URLHelper.mergePath(sessionFolder.getSessionFolder().getAbsolutePath(), StringHelper.getRandomId() + ".pdf"));
+					try (InputStream in = fileItem.getInputStream()) {
+						ResourceHelper.writeStreamToFile(in, tempFile);
+					}
+					BufferedImage image = PDFHelper.getPDFImage(tempFile, 1);
+					ByteArrayOutputStream out = new ByteArrayOutputStream();
+					ImageIO.write(image, "webp", out);
+					sessionFolder.addImage("session-image.webp", new ByteArrayInputStream(out.toByteArray()));
+					tempFile.delete();
+				}
+
 				try (InputStream in = fileItem.getInputStream()) {
 					logger.info("upload : " + fileItem.getName());
 					if (StringHelper.isImage(fileItem.getName())) {
-						SessionFolder sessionFolder = SessionFolder.getInstance(ctx);
 						sessionFolder.addImage("session-image.webp", in);
 						try {
 							BufferedImage image = ImageIO.read(sessionFolder.getImage());
