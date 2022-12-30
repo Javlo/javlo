@@ -1,10 +1,15 @@
 package org.javlo.component.web2;
 
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.logging.Logger;
+
+import javax.imageio.ImageIO;
 
 import org.apache.commons.fileupload.FileItem;
 import org.javlo.actions.IAction;
@@ -16,6 +21,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.image.ImageEngine;
 import org.javlo.io.SessionFolder;
 import org.javlo.service.RequestService;
 import org.javlo.ztatic.StaticInfo;
@@ -34,7 +40,7 @@ public class UploadFileComponent extends AbstractVisualComponent implements IAct
 	public String getType() {
 		return TYPE;
 	}
-	
+
 	@Override
 	public String getActionGroupName() {
 		return TYPE;
@@ -48,7 +54,21 @@ public class UploadFileComponent extends AbstractVisualComponent implements IAct
 				try (InputStream in = fileItem.getInputStream()) {
 					logger.info("upload : " + fileItem.getName());
 					if (StringHelper.isImage(fileItem.getName())) {
-						SessionFolder.getInstance(ctx).addImage("session-image." + StringHelper.getFileExtension(fileItem.getName()).toLowerCase(), in);
+						SessionFolder sessionFolder = SessionFolder.getInstance(ctx);
+						sessionFolder.addImage("session-image.webp", in);
+						try {
+							BufferedImage image = ImageIO.read(sessionFolder.getImage());
+							if (image.getWidth() > 2048) {
+								image = ImageEngine.resizeWidth(image, 2048, true);
+							}
+							try (OutputStream out = new FileOutputStream(sessionFolder.getImage())) {
+								ImageIO.write(image, "webp", out);
+							}
+						} catch (Exception e) {
+							logger.warning("bad image uploaded : " + e.getMessage());
+							sessionFolder.resetImage();
+						}
+
 					} else {
 						return "bad image format.";
 					}
@@ -113,10 +133,10 @@ public class UploadFileComponent extends AbstractVisualComponent implements IAct
 		out.println(getJs());
 		out.println("<h2>" + title + "</h2>");
 		out.println("<form id=\"upload-form-" + getId() + "\" method=\"post\" enctype=\"multipart/form-data\">");
-		out.println("<input type=\"hidden\" name=\"webaction\" value=\""+TYPE+".upload\">");
-		out.println("<input type=\"hidden\" name=\""+IContentVisualComponent.COMP_ID_REQUEST_PARAM+"\" value=\""+getId()+"\">");
+		out.println("<input type=\"hidden\" name=\"webaction\" value=\"" + TYPE + ".upload\">");
+		out.println("<input type=\"hidden\" name=\"" + IContentVisualComponent.COMP_ID_REQUEST_PARAM + "\" value=\"" + getId() + "\">");
 		out.println("<input class=\"form-control\" type=\"file\" name=\"_image-" + getId() + "\" />");
-		out.println("<button class=\"btn btn-secondary\" type=\"submit\">"+i18nAccess.getViewText("global.upload")+"</button>");
+		out.println("<button class=\"btn btn-secondary\" type=\"submit\">" + i18nAccess.getViewText("global.upload") + "</button>");
 		out.println("</form>");
 
 		String previewUrl = null;
@@ -141,7 +161,7 @@ public class UploadFileComponent extends AbstractVisualComponent implements IAct
 			out.println("</form>");
 			out.println("</div>");
 		}
-		
+
 		out.close();
 		return new String(outStream.toByteArray());
 	}

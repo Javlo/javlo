@@ -69,4 +69,8 @@ public class SessionFolder {
 		return Encode.forHtmlAttribute(getImage().getName().replace('.', '_'));
 	}
 
+	public void resetImage() {
+		image = null;
+	}
+
 }
