@@ -1646,7 +1646,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public long getTransformingSize() {
-		return properties.getLong("transforming.size", 2);
+		return properties.getLong("transforming.size", 4);
 	}
 
 	public void shutdown() {
