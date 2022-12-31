@@ -1730,6 +1730,13 @@ public class ImageEngine {
 		}
 	}
 
+	public static BufferedImage duplicateBuffuredImage(BufferedImage bi) {
+		ColorModel cm = bi.getColorModel();
+		boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+		WritableRaster raster = bi.copyData(null);
+		return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
+	}
+
 	public static BufferedImage projectionImage(BufferedImage back, BufferedImage top, BufferedImage source, Polygon4 p4, float alpha, boolean crop, int interestX, int interestY) throws Exception {
 		int leftX = p4.getSquare().getX1();
 		int topY = p4.getSquare().getY1();
@@ -1737,17 +1744,17 @@ public class ImageEngine {
 		int bottomY = p4.getSquare().getY3();
 
 		if (crop) {
-			
-			int x1 = Math.abs(p4.getX1()-p4.getX2());
-			int y1 = Math.abs(p4.getY1()-p4.getY2());
-			int width = (int)Math.round(Math.sqrt(x1*x1+y1*y1));
-			
-			int x2 = Math.abs(p4.getX2()-p4.getX3());
-			int y2 = Math.abs(p4.getY2()-p4.getY3());
-			int height = (int)Math.round(Math.sqrt(x2*x2+y2*y2));
-			
-			//int width = (int)Math.abs(p4.getSquare().getX1()-p4.getSquare().getX2());
-			//int height = (int)Math.abs(p4.getSquare().getY1()-p4.getSquare().getY4());
+
+			int x1 = Math.abs(p4.getX1() - p4.getX2());
+			int y1 = Math.abs(p4.getY1() - p4.getY2());
+			int width = (int) Math.round(Math.sqrt(x1 * x1 + y1 * y1));
+
+			int x2 = Math.abs(p4.getX2() - p4.getX3());
+			int y2 = Math.abs(p4.getY2() - p4.getY3());
+			int height = (int) Math.round(Math.sqrt(x2 * x2 + y2 * y2));
+
+			// int width = (int)Math.abs(p4.getSquare().getX1()-p4.getSquare().getX2());
+			// int height = (int)Math.abs(p4.getSquare().getY1()-p4.getSquare().getY4());
 			source = resize(source, width, height, true, false, 0, 0, 0, 0, null, interestX, interestY, true, true);
 		}
 

@@ -2300,6 +2300,10 @@ public class StaticConfig extends Observable {
 		return properties.getString("locale.country", "be");
 	}
 	
+	public int getLayerCacheMaxSize() {
+		return properties.getInt("image.layer.cache.size", 6);
+	}
+	
 	public IFirstRequestListner getFirstRequestLister() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		String firstRequestClass = properties.getString("listner.first-request", null);
 		logger.info("first request lister : "+firstRequestClass);

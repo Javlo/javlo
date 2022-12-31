@@ -61,6 +61,7 @@ import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.UserFactory;
 import org.javlo.utils.NamedThreadFactory;
+import org.javlo.utils.TimeMap;
 import org.javlo.utils.TimeTracker;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.StaticInfo;
@@ -84,13 +85,13 @@ import com.jhlabs.image.GrayscaleFilter;
 public class ImageTransformServlet extends FileServlet {
 
 	public static final String RESOURCE_TOKEN_KEY = "rstk";
-	
+
 	public static final String PRELOAD_IMAGE_SUFFIX = "-load";
-	
+
 	public static final String LARGE_IMAGE_SUFFIX = "-lg";
-	
+
 	public static final String SMALL_IMAGE_SUFFIX = "-sm";
-	
+
 	public static final String MOBILE_IMAGE_SUFFIX = "-mob";
 
 	public static long COUNT_ACCESS = 0;
@@ -102,7 +103,9 @@ public class ImageTransformServlet extends FileServlet {
 	public static final String COMPONENT_ID_URL_DIR_PREFIX = "/comp-";
 
 	public static final String HASH_PREFIX = "/h";
-	
+
+	private static TimeMap<String, BufferedImage> layerCache; // A month cache
+
 	private static final class ImageTransformThread implements Callable<Void> {
 
 		HttpSession session;
@@ -122,19 +125,19 @@ public class ImageTransformServlet extends FileServlet {
 		int focusY;
 		ImageConfig.ImageParameters imageParam;
 
-		public ImageTransformThread(ContentContext ctx, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File imageFile, String imageName, String inFileExtention, ImageConfig.ImageParameters imageParam) {			
+		public ImageTransformThread(ContentContext ctx, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File imageFile, String imageName, String inFileExtention, ImageConfig.ImageParameters imageParam) {
 			super();
 			if (DEBUG) {
 				System.out.println("");
 				System.out.println("---------------------------  IMAGE FOLDER  -----------------------------");
-				System.out.println("filter     : "+filter);
-				System.out.println("area       : "+area);				
-				System.out.println("template   : "+(template != null?template.getName():"no template"));
-				System.out.println("imageName  : "+imageName);
-				System.out.println("device     : "+ctx.getDevice());
-				System.out.println("cfg.width  : "+config.getWidth(ctx.getDevice(), filter, area));
-				System.out.println("cfg.height : "+config.getHeight(ctx.getDevice(), filter, area));
-				System.out.println("imageName  : "+imageName);
+				System.out.println("filter     : " + filter);
+				System.out.println("area       : " + area);
+				System.out.println("template   : " + (template != null ? template.getName() : "no template"));
+				System.out.println("imageName  : " + imageName);
+				System.out.println("device     : " + ctx.getDevice());
+				System.out.println("cfg.width  : " + config.getWidth(ctx.getDevice(), filter, area));
+				System.out.println("cfg.height : " + config.getHeight(ctx.getDevice(), filter, area));
+				System.out.println("imageName  : " + imageName);
 				System.out.println("------------------------------- IMAGE CONFIG -------------------------------");
 				System.out.println(config.printConfig(ctx.getDevice(), filter, area));
 				System.out.println("----------------------------------------------------------------------------");
@@ -159,7 +162,7 @@ public class ImageTransformServlet extends FileServlet {
 			}
 			this.globalContext = GlobalContext.getMainInstance(ctx.getRequest());
 			this.imageParam = imageParam;
-			
+
 			focusX = StaticInfo.DEFAULT_FOCUS_X;
 			focusY = StaticInfo.DEFAULT_FOCUS_Y;
 			if (staticInfo != null) {
@@ -278,6 +281,7 @@ public class ImageTransformServlet extends FileServlet {
 		super.init();
 		getServletContext().setAttribute("imagesTransforming", imageTransforming);
 		StaticConfig staticConfig = StaticConfig.getInstance(getServletContext());
+		layerCache = new TimeMap<>(60 * 60 * 24 * 30, staticConfig.getLayerCacheMaxSize());
 		int tc = (int) staticConfig.getTransformingSize();
 		NamedThreadFactory tf = new NamedThreadFactory(ImageTransformServlet.class.getSimpleName() + "-executor");
 		executor = Executors.newFixedThreadPool(tc, tf);
@@ -285,8 +289,22 @@ public class ImageTransformServlet extends FileServlet {
 
 	@Override
 	public void destroy() {
-		executor.shutdownNow(); 
+		executor.shutdownNow();
 		super.destroy();
+	}
+
+	protected static BufferedImage loadLayer(File file) throws IOException {
+		if (layerCache.getMaxSize() > 0) {
+			String key = file.getName() + "-" + file.length();
+			BufferedImage out = layerCache.get(key);
+			if (out == null) {
+				out = ImageIO.read(file);
+				layerCache.put(key, out);
+			}
+			return out;
+		} else {
+			return ImageIO.read(file);
+		}
 	}
 
 	/**
@@ -329,25 +347,25 @@ public class ImageTransformServlet extends FileServlet {
 
 	private void folderTransform(ContentContext ctx, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File folderFile, String imageName, String inFileExtention, ImageConfig.ImageParameters imageParam) throws Exception {
 		logger.info("image (folder) not found in cache (generate it) : " + folderFile);
-		
+
 		if (DEBUG) {
 			System.out.println("");
 			System.out.println("---------------------------  TRANSFORM FOLDER  -----------------------------");
-			System.out.println("filter     : "+filter);
-			System.out.println("area       : "+area);
-			System.out.println("template   : "+template.getName());
-			System.out.println("folderFile : "+folderFile);
-			System.out.println("imageName  : "+imageName);
-			System.out.println("device     : "+ctx.getDevice());
-			System.out.println("cfg.width  : "+config.getWidth(ctx.getDevice(), filter, area));
-			System.out.println("cfg.height : "+config.getHeight(ctx.getDevice(), filter, area));
-			System.out.println("imageName  : "+imageName);
+			System.out.println("filter     : " + filter);
+			System.out.println("area       : " + area);
+			System.out.println("template   : " + template.getName());
+			System.out.println("folderFile : " + folderFile);
+			System.out.println("imageName  : " + imageName);
+			System.out.println("device     : " + ctx.getDevice());
+			System.out.println("cfg.width  : " + config.getWidth(ctx.getDevice(), filter, area));
+			System.out.println("cfg.height : " + config.getHeight(ctx.getDevice(), filter, area));
+			System.out.println("imageName  : " + imageName);
 			System.out.println("------------------------------- IMAGE CONFIG -------------------------------");
 			System.out.println(config.printConfig(ctx.getDevice(), filter, area));
 			System.out.println("----------------------------------------------------------------------------");
 			System.out.println("");
 		}
-		
+
 		ContentContextBean ctxb = ctx.getBean();
 
 		int w = config.getFolderWidth(ctx.getDevice(), filter, area);
@@ -415,7 +433,7 @@ public class ImageTransformServlet extends FileServlet {
 		if (config.isRemoveBg(ctx.getDevice(), filter, area)) {
 			img = ImageEngine.removeBg(ctx.getGlobalContext(), img);
 		}
-		
+
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 2.2");
 		if (config.isCrystallize(ctx.getDevice(), filter, area)) {
@@ -471,7 +489,7 @@ public class ImageTransformServlet extends FileServlet {
 			String dir = ImageHelper.createSpecialDirectory(ctx.getBean(), globalContext.getContextKey(), filter, area, deviceCode, template, comp, imageParam);
 
 			String fileExtension = config.getFileExtension(ctx.getDevice(), filter, area);
-			
+
 			if (fileExtension == null) {
 				fileExtension = DEFAULT_IMAGE_TYPE;
 			}
@@ -495,7 +513,7 @@ public class ImageTransformServlet extends FileServlet {
 					writer.setOutput(ios);
 					writer.write(img);
 				} else {
-					//ImageIO.write(img, fileExtension, outImage);
+					// ImageIO.write(img, fileExtension, outImage);
 					ImageEngine.storeImage(img, fileExtension, outImage);
 				}
 
@@ -522,11 +540,11 @@ public class ImageTransformServlet extends FileServlet {
 	}
 
 	private static void imageTransformForThread(HttpSession session, ContentContextBean ctxb, GlobalContext globalContext, Device device, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File imageFile, String imageName, String inFileExtention, int focusX, int focusY, ImageConfig.ImageParameters imageParam) throws IOException {
-		
+
 		ServletContext application = session.getServletContext();
 
 		String fileSize = StringHelper.renderSize(imageFile.length());
-		
+
 		if (template != null) {
 			logger.info("image transform, file:" + imageFile + " (size:" + fileSize + ") filter:" + filter + " area: " + area + " template:" + template.getName());
 		} else {
@@ -545,27 +563,27 @@ public class ImageTransformServlet extends FileServlet {
 
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation");
-		
+
 		boolean preloadImage = false;
-		String originalFilter=filter;
+		String originalFilter = filter;
 		if (filter.endsWith(PRELOAD_IMAGE_SUFFIX)) {
 			filter = filter.substring(0, filter.lastIndexOf(PRELOAD_IMAGE_SUFFIX));
 			preloadImage = true;
-			inFileExtention="png";
-		}	
-		
-		boolean largeImage = false;		
+			inFileExtention = "png";
+		}
+
+		boolean largeImage = false;
 		if (filter.endsWith(LARGE_IMAGE_SUFFIX)) {
 			largeImage = true;
 			filter = filter.substring(0, filter.lastIndexOf(LARGE_IMAGE_SUFFIX));
 		}
-		
-		boolean smallImage = false;		
+
+		boolean smallImage = false;
 		if (filter.endsWith(SMALL_IMAGE_SUFFIX)) {
 			smallImage = true;
 			filter = filter.substring(0, filter.lastIndexOf(SMALL_IMAGE_SUFFIX));
 		}
-		
+
 		boolean mobileImage = false;
 		if (filter.endsWith(MOBILE_IMAGE_SUFFIX)) {
 			if (!config.isFilter(filter)) {
@@ -573,16 +591,16 @@ public class ImageTransformServlet extends FileServlet {
 				filter = filter.substring(0, filter.lastIndexOf(MOBILE_IMAGE_SUFFIX));
 			}
 		}
-		
+
 		int width = config.getWidth(device, filter, area);
 		int height = config.getHeight(device, filter, area);
-		
+
 		BufferedImage layer = null;
 		if (config.getLayer(device, filter, area) != null) {
-			String layerName = ResourceHelper.getRealPath(application,config.getLayer(device, filter, area));
+			String layerName = ResourceHelper.getRealPath(application, config.getLayer(device, filter, area));
 			File layerFile = new File(layerName);
 			if (layerFile.exists()) {
-				layer = ImageIO.read(layerFile);
+				layer = loadLayer(layerFile);
 			} else {
 				logger.warning("layer not found : " + layerName);
 			}
@@ -615,7 +633,7 @@ public class ImageTransformServlet extends FileServlet {
 					e.printStackTrace();
 				}
 				imageType = DEFAULT_IMAGE_TYPE;
-			} else if (inFileExtention.equalsIgnoreCase("pdf")) {				
+			} else if (inFileExtention.equalsIgnoreCase("pdf")) {
 				img = getPDFImage(globalContext, imageFile, imageParam.getPage());
 				imageType = DEFAULT_IMAGE_TYPE;
 			} else if (inFileExtention.equalsIgnoreCase("svg")) {
@@ -638,7 +656,7 @@ public class ImageTransformServlet extends FileServlet {
 				StaticConfig staticConfig = globalContext.getStaticConfig();
 				String defaultMimeTypeImage = staticConfig.getEditDefaultMimeTypeImage();
 				defaultMimeTypeImage = URLHelper.mergePath(staticConfig.getEditTemplateFolder(), defaultMimeTypeImage);
-				defaultMimeTypeImage = ResourceHelper.getRealPath(application,defaultMimeTypeImage);
+				defaultMimeTypeImage = ResourceHelper.getRealPath(application, defaultMimeTypeImage);
 				mimeTypeImageFile = new File(defaultMimeTypeImage);
 			}
 			if (mimeTypeImageFile != null) {
@@ -648,7 +666,7 @@ public class ImageTransformServlet extends FileServlet {
 		}
 		if (img == null || imageType == null) {
 			logger.warning("could'nt read : " + imageFile);
-			//ctx.getResponse().setStatus(404);
+			// ctx.getResponse().setStatus(404);
 			return;
 		}
 		IIOMetadata metadata = null;
@@ -656,13 +674,13 @@ public class ImageTransformServlet extends FileServlet {
 		try {
 			metadata = ResourceHelper.getImageMetadata(imageFile);
 		} catch (Exception e) {
-			//e.printStackTrace();
-			logger.warning("error on reading meta data : "+imageFile);
+			// e.printStackTrace();
+			logger.warning("error on reading meta data : " + imageFile);
 			logger.warning(e.getMessage());
 		}
-		
+
 		/** if add image border and vertical image >> add image border **/
-		if (config.isAddImageBorder(device, filter, area) && img.getWidth()<img.getHeight()) {
+		if (config.isAddImageBorder(device, filter, area) && img.getWidth() < img.getHeight()) {
 			Color bgc = config.getBGColor(device, filter, area);
 			if (bgc == null) {
 				bgc = ImageEngine.DETECT_COLOR;
@@ -673,21 +691,24 @@ public class ImageTransformServlet extends FileServlet {
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 2 (src image size :
 		// "+img.getWidth()+","+img.getHeight()+")");
-		
+
 		ProjectionConfig projection = config.getProjection(globalContext, template, device, filter, area);
 		if (projection != null) {
-			BufferedImage bgImage = ImageIO.read(projection.getBackground());
+			BufferedImage bgImage = loadLayer(projection.getBackground());
 			BufferedImage fgImage = null;
 			if (projection.getForeground() != null) {
-				fgImage = ImageIO.read(projection.getForeground());
+				fgImage = loadLayer(projection.getForeground());
 			}
 			try {
+				if (layerCache.getMaxSize()>0) {
+					bgImage = ImageEngine.duplicateBuffuredImage(bgImage);
+				}
 				img = ImageEngine.projectionImage(bgImage, fgImage, img, projection.getPolygon(), projection.getAlpha(), projection.isCrop(), focusX, focusY);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 		if (config.isBackGroudColor(device, filter, area) && img.getColorModel().hasAlpha()) {
 			img = ImageEngine.applyBgColor(img, config.getBGColor(device, filter, area));
 		}
@@ -702,7 +723,7 @@ public class ImageTransformServlet extends FileServlet {
 		if (config.isGlow(device, filter, area)) {
 			img = (new GlowFilter()).filter(img, null);
 		}
-		
+
 		if (config.isRemoveBg(device, filter, area)) {
 			img = ImageEngine.removeBg(globalContext, img);
 		}
@@ -748,8 +769,8 @@ public class ImageTransformServlet extends FileServlet {
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 2.5");
 		img = ImageEngine.RBGAdjust(img, config.getAdjustColor(device, filter, area));
-		
-		Color trimColor = config.getTrimColor(device, filter, area);		
+
+		Color trimColor = config.getTrimColor(device, filter, area);
 		if (trimColor != null) {
 			img = ImageEngine.trim(img, trimColor, config.getTrimTolerance(device, filter, area));
 		}
@@ -773,7 +794,7 @@ public class ImageTransformServlet extends FileServlet {
 		}
 
 		boolean hq = config.isHighQuality(device, filter, area);
-		
+
 		if (config.getZoom(device, filter, area) > 1) {
 			double zoom = config.getZoom(device, filter, area);
 			img = ImageEngine.zoom(img, zoom, focusX, focusY);
@@ -784,12 +805,12 @@ public class ImageTransformServlet extends FileServlet {
 		// resize and border
 		if (layer == null) {
 			if ((height > 0) && (width > 0)) {
-				
+
 				if (largeImage) {
-					width=width*2;
-					height=height*2;					
+					width = width * 2;
+					height = height * 2;
 				}
-				
+
 				if (config.isFraming(device, filter, area)) {
 					// org.javlo.helper.Logger.stepCount("transform",
 					// "start - transformation - 3.1");
@@ -805,7 +826,7 @@ public class ImageTransformServlet extends FileServlet {
 					int mb = config.getMarginBottom(device, filter, area);
 					int newHeight = height;
 					if (mobileImage) {
-						newHeight=height*2;
+						newHeight = height * 2;
 					}
 					img = ImageEngine.resize(img, width, newHeight, config.isCropResize(device, filter, area), config.isAddBorder(device, filter, area), mt, ml, mr, mb, config.getBGColor(device, filter, area), focusX, focusY, config.isFocusZone(device, filter, area), hq);
 				}
@@ -814,9 +835,9 @@ public class ImageTransformServlet extends FileServlet {
 				int ml = config.getMarginLeft(device, filter, area);
 				int mr = config.getMarginRigth(device, filter, area);
 				int mb = config.getMarginBottom(device, filter, area);
-				
+
 				if (largeImage) {
-					width = width*2;
+					width = width * 2;
 				}
 
 				if (config.isCropResize(device, filter, area)) {
@@ -824,7 +845,7 @@ public class ImageTransformServlet extends FileServlet {
 					// "start - transformation - 3.3");
 					int newHeight = height;
 					if (mobileImage) {
-						newHeight=height*2;
+						newHeight = height * 2;
 					}
 					img = ImageEngine.resize(img, width, newHeight, true, false, mt, ml, mr, mb, null, focusX, focusY, config.isFocusZone(device, filter, area), hq);
 				} else {
@@ -844,7 +865,7 @@ public class ImageTransformServlet extends FileServlet {
 				}
 				if (imageParam.isLowDef()) {
 					if (img.getWidth() > 120) {
-						img = ImageEngine.resizeWidth(img, img.getWidth()/2, 0, 0, 0, 0, null, hq);
+						img = ImageEngine.resizeWidth(img, img.getWidth() / 2, 0, 0, 0, 0, null, hq);
 					}
 				}
 
@@ -877,7 +898,7 @@ public class ImageTransformServlet extends FileServlet {
 				img = ImageEngine.web2(img, null, config.getWeb2Height(device, filter, area), config.getWeb2Separation(device, filter, area));
 			}
 		}
-		
+
 		if (config.isBluringBorder(device, filter, area)) {
 			Color bg = config.getBluringBorderBgColor(device, originalFilter, area);
 			if (bg == null) {
@@ -885,7 +906,7 @@ public class ImageTransformServlet extends FileServlet {
 			}
 			int borderWidth = config.getBluringBorderWidth(device, originalFilter, area);
 			Integer direction = config.getBluringBorderWidth(device, originalFilter, area);
-			img = ImageEngine.addBlurBorder(img,bg , borderWidth, direction);
+			img = ImageEngine.addBlurBorder(img, bg, borderWidth, direction);
 		}
 
 		// org.javlo.helper.Logger.stepCount("transform",
@@ -933,20 +954,20 @@ public class ImageTransformServlet extends FileServlet {
 		if (config.getResizeDashed(device, filter, area) > 0) {
 			img = ImageEngine.resizeDashed(img, config.getResizeDashed(device, filter, area));
 		}
-		
+
 		if (preloadImage) {
 			img = ImageEngine.ultraLight(img);
 			filter = originalFilter;
 		}
-		
+
 		if (largeImage) {
 			filter = originalFilter;
 		}
-		
+
 		if (smallImage || mobileImage) {
-			img = ImageEngine.resize(img, img.getWidth()/2, img.getHeight()/2, config.getBGColor(device, filter, area), true);
+			img = ImageEngine.resize(img, img.getWidth() / 2, img.getHeight() / 2, config.getBGColor(device, filter, area), true);
 			filter = originalFilter;
-		}		
+		}
 
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 7");
@@ -959,7 +980,7 @@ public class ImageTransformServlet extends FileServlet {
 			String deviceCode = "no-device";
 			if (device != null) {
 				deviceCode = device.getCode();
-			}	
+			}
 			String dir = ImageHelper.createSpecialDirectory(ctxb, globalContext.getContextKey(), filter, area, deviceCode, template, comp, imageParam);
 			TransactionFile transFile = fc.saveFileTransactional(dir, imageName);
 			OutputStream outImage = transFile.getOutputStream();
@@ -971,12 +992,12 @@ public class ImageTransformServlet extends FileServlet {
 				if (comp != null && StringHelper.trimAndNullify(comp.getImageFilterKey(ctxb)) != null) {
 					img = ((IImageFilter) comp).filterImage(session.getServletContext(), ctxb, img);
 				}
-				
+
 				if (!"png".equals(imageType) && !"gif".equals(imageType)) {
 					img = ImageEngine.removeAlpha(img);
 				}
-				
-				//ImageIO.write(img, imageType, outImage);
+
+				// ImageIO.write(img, imageType, outImage);
 				ImageEngine.storeImage(img, imageType, outImage);
 				if (metadata != null) {
 					ResourceHelper.writeImageMetadata(metadata, fc.getFileName(dir, dir).getCanonicalFile());
@@ -996,7 +1017,7 @@ public class ImageTransformServlet extends FileServlet {
 		return PDFHelper.getPDFImage(imageFile, page);
 	}
 
-	private File loadFileFromDisk(ContentContext ctx, String name, String filter, String area, Device device, Template template, IImageFilter comp, long lastModificationDate,ImageConfig.ImageParameters imageParam) throws IOException {
+	private File loadFileFromDisk(ContentContext ctx, String name, String filter, String area, Device device, Template template, IImageFilter comp, long lastModificationDate, ImageConfig.ImageParameters imageParam) throws IOException {
 		String deviceCode = "no-device";
 		if (device != null) {
 			deviceCode = device.getCode();
@@ -1004,7 +1025,7 @@ public class ImageTransformServlet extends FileServlet {
 		FileCache fc = FileCache.getInstance(getServletContext());
 		return fc.getFile(ImageHelper.createSpecialDirectory(ctx.getBean(), GlobalContext.getMainInstance(ctx.getRequest()).getContextKey(), filter, area, deviceCode, template, comp, imageParam), name, lastModificationDate);
 	}
-	
+
 	/**
 	 * get the text and the picture and build a button
 	 * 
@@ -1012,83 +1033,86 @@ public class ImageTransformServlet extends FileServlet {
 	 */
 	@Override
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response, boolean content) throws IOException {
-		
+
 		// org.javlo.helper.Logger.startCount("transform");
 		// org.javlo.helper.Logger.stepCount("transform", "start");
 
 		servletRun++;
 
 		COUNT_ACCESS++;
-		
+
 		if (DEBUG) {
-			System.out.println(">>> ProcessRequest URI = "+request.getRequestURI());
+			System.out.println(">>> ProcessRequest URI = " + request.getRequestURI());
 		}
-		
+
 		GlobalContext globalContext = GlobalContext.getMainInstance(request);
-		
+
 		int trackerNumber = TimeTracker.start(globalContext.getContextKey(), ImageTransformServlet.class.getName());
 
 		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
-		ContentContext ctx=null;
+		ContentContext ctx = null;
 		try {
 			ctx = ContentContext.getFreeContentContext(request, response);
-		} catch (Exception e2) {			
+		} catch (Exception e2) {
 			e2.printStackTrace();
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			return;
 		}
 		ctx.setRenderMode(ContentContext.PREVIEW_MODE); // user for staticInfo
 														// storage
-		//RequestHelper.traceMailingFeedBack(ctx);
-		
+		// RequestHelper.traceMailingFeedBack(ctx);
+
 		OutputStream out = null;
 
 		/* TRACKING */
 		Thread.currentThread().setName("ImageTransformServlet-" + globalContext.getContextKey());
 
-//		IUserFactory fact = UserFactory.createUserFactory(globalContext, request.getSession());
-//		User user = fact.getCurrentUser(globalContext, request.getSession());
-//		String userName = null;
-//		if (user != null) {
-//			userName = user.getLogin();
-//		}
-//		try {
-//			Tracker tracker = Tracker.getTracker(globalContext, request.getSession());
-//			Track track = new Track(userName, VIEW_PICTURE_ACTION, request.getRequestURI(), System.currentTimeMillis(), request.getHeader("referer"), request.getHeader("User-Agent"));
-//			track.setIP(request.getRemoteAddr());
-//			track.setSessionId(request.getSession().getId());
-//			tracker.addTrack(track);
-//		} catch (Exception e2) {
-//			e2.printStackTrace();
-//		}
+		// IUserFactory fact = UserFactory.createUserFactory(globalContext,
+		// request.getSession());
+		// User user = fact.getCurrentUser(globalContext, request.getSession());
+		// String userName = null;
+		// if (user != null) {
+		// userName = user.getLogin();
+		// }
+		// try {
+		// Tracker tracker = Tracker.getTracker(globalContext, request.getSession());
+		// Track track = new Track(userName, VIEW_PICTURE_ACTION,
+		// request.getRequestURI(), System.currentTimeMillis(),
+		// request.getHeader("referer"), request.getHeader("User-Agent"));
+		// track.setIP(request.getRemoteAddr());
+		// track.setSessionId(request.getSession().getId());
+		// tracker.addTrack(track);
+		// } catch (Exception e2) {
+		// e2.printStackTrace();
+		// }
 		/* END TRACKING */
 
 		// org.javlo.helper.Logger.stepCount("transform", "end tracking");
 
-		String pathInfo = request.getPathInfo().substring(1);		
+		String pathInfo = request.getPathInfo().substring(1);
 		pathInfo = pathInfo.replace('\\', '/'); // for windows server
 		String realURL = globalContext.getTransformShortURL(pathInfo);
 		if (realURL != null) {
 			realURL = URLHelper.cleanPath(realURL, false);
-			pathInfo = realURL;			
+			pathInfo = realURL;
 		}
-		
+
 		String imageName = pathInfo;
 		imageName = imageName.replace('\\', '/');
 		logger.finest("apply fitler on image : " + imageName);
 
-		String imageKey = null;		
+		String imageKey = null;
 		try {
 			String filter = "default";
 			String area = null;
 			Template template = null;
 			IImageFilter comp = null;
 			int slachIndex = pathInfo.indexOf('/');
-			
+
 			boolean imageFromTemplateFolder = false;
 			if (slachIndex > 0) {
 				try {
-					filter = pathInfo.substring(0, slachIndex);					
+					filter = pathInfo.substring(0, slachIndex);
 					pathInfo = pathInfo.substring(slachIndex + 1);
 					slachIndex = pathInfo.indexOf('/');
 					String templateId = "";
@@ -1096,10 +1120,10 @@ public class ImageTransformServlet extends FileServlet {
 						templateId = pathInfo.substring(0, slachIndex);
 					}
 					/** AREA **/
-					if (!filter.startsWith("template")) {						
+					if (!filter.startsWith("template")) {
 						pathInfo = pathInfo.substring(slachIndex + 1);
 						slachIndex = pathInfo.indexOf('/');
-						if (slachIndex<0) {
+						if (slachIndex < 0) {
 							response.sendError(HttpServletResponse.SC_NOT_FOUND);
 							return;
 						}
@@ -1121,7 +1145,7 @@ public class ImageTransformServlet extends FileServlet {
 							comp = (IImageFilter) c;
 						}
 					}
-					if (pathInfo.startsWith(HASH_PREFIX)) {					
+					if (pathInfo.startsWith(HASH_PREFIX)) {
 						slachIndex = pathInfo.indexOf('/', 1);
 						pathInfo = pathInfo.substring(slachIndex);
 					}
@@ -1139,7 +1163,7 @@ public class ImageTransformServlet extends FileServlet {
 					}
 					imageName = pathInfo;
 				} catch (NumberFormatException e1) {
-					logger.warning("parsing path error on : "+request.getRequestURI());
+					logger.warning("parsing path error on : " + request.getRequestURI());
 					e1.printStackTrace();
 				}
 			}
@@ -1159,10 +1183,10 @@ public class ImageTransformServlet extends FileServlet {
 			} else if (imageName.startsWith("/local")) {
 				localFile = true;
 				imageName = imageName.replaceFirst("/local", "");
-				staticInfo = StaticInfo.getInstance(ctx, new File(ResourceHelper.getRealPath(getServletContext(),imageName)));
+				staticInfo = StaticInfo.getInstance(ctx, new File(ResourceHelper.getRealPath(getServletContext(), imageName)));
 			} else {
 				staticInfo = StaticInfo.getInstance(ctx, imageName);
-			}		
+			}
 			if (staticInfo != null && staticInfo.getFile() != null && !staticInfo.getFile().exists()) {
 				File newFile = new File(StringHelper.getFileNameWithoutExtension(staticInfo.getFile().getAbsolutePath()));
 				if (newFile.exists()) {
@@ -1170,7 +1194,7 @@ public class ImageTransformServlet extends FileServlet {
 				}
 			}
 			ImageConfig.ImageParameters imageParam = new ImageConfig.ImageParameters(request);
-			
+
 			if (staticInfo != null) {
 				if (AdminUserFactory.createUserFactory(GlobalContext.getMainInstance(ctx.getRequest()), request.getSession()).getCurrentUser(request.getSession()) == null) {
 					if (!staticInfo.canRead(ctx, UserFactory.createUserFactory(globalContext, request.getSession()).getCurrentUser(globalContext, request.getSession()), request.getParameter(RESOURCE_TOKEN_KEY))) {
@@ -1184,7 +1208,7 @@ public class ImageTransformServlet extends FileServlet {
 					staticInfo.addAccess(ctx);
 				}
 			}
-			
+
 			out = response.getOutputStream();
 
 			// org.javlo.helper.Logger.stepCount("transform",
@@ -1192,8 +1216,8 @@ public class ImageTransformServlet extends FileServlet {
 
 			/** * CHECK CACHE ** */
 			if (imageName != null) {
-				
-				response.setHeader("link", "<"+URLHelper.createResourceURL(ctx.getContextForAbsoluteURL(), imageName)+">; rel=\"canonical\"");
+
+				response.setHeader("link", "<" + URLHelper.createResourceURL(ctx.getContextForAbsoluteURL(), imageName) + ">; rel=\"canonical\"");
 
 				boolean returnImageDescription = false;
 
@@ -1212,18 +1236,18 @@ public class ImageTransformServlet extends FileServlet {
 												// we do'nt need static folder
 												// ????
 				if (filter.startsWith("template") || localFile) {
-					baseFolder = ResourceHelper.getRealPath(getServletContext(),"/");
+					baseFolder = ResourceHelper.getRealPath(getServletContext(), "/");
 				}
-				
+
 				File imageFile = new File(URLHelper.mergePath(baseFolder, imageName));
-				
+
 				String baseExtension = StringHelper.getFileExtension(imageFile.getName());
 				if (!imageFile.exists()) {
 					imageFile = new File(URLHelper.mergePath(baseFolder, StringHelper.getFileNameWithoutExtension(imageName)));
 					baseExtension = StringHelper.getFileExtension(imageFile.getName());
 				}
 				if (!imageFile.exists()) {
-					logger.warning("image not found : "+imageFile);
+					logger.warning("image not found : " + imageFile);
 					imageName = NO_IMAGE_FILE;
 					imageFile = new File(ResourceHelper.getRealPath(ctx.getRequest().getSession().getServletContext(), imageName));
 				}
@@ -1254,7 +1278,7 @@ public class ImageTransformServlet extends FileServlet {
 				/* last modified management */
 				long lastModified = getLastModified(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageParam);
 				response.setHeader("Cache-Control", "public,max-age=600");
-				if (NetHelper.insertEtag(ctx, imageFile,""+lastModified)) {
+				if (NetHelper.insertEtag(ctx, imageFile, "" + lastModified)) {
 					return;
 				}
 				// response.setHeader("Accept-Ranges", "bytes");
@@ -1274,20 +1298,20 @@ public class ImageTransformServlet extends FileServlet {
 				}
 
 				File file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified(), imageParam);
-				
+
 				if ((file != null)) {
 					super.processRequest(request, response, file, content);
-//					if (file.length() > 0) {
-//						response.setContentLength((int) file.length());
-//					}
-//					fileStream = new FileInputStream(file);
-//					try {
-//						ResourceHelper.writeStreamToStream(fileStream, out);
-//					} finally {
-//						ResourceHelper.closeResource(fileStream);
-//					}
-//					// org.javlo.helper.Logger.stepCount("transform",
-//					// "cache readed");
+					// if (file.length() > 0) {
+					// response.setContentLength((int) file.length());
+					// }
+					// fileStream = new FileInputStream(file);
+					// try {
+					// ResourceHelper.writeStreamToStream(fileStream, out);
+					// } finally {
+					// ResourceHelper.closeResource(fileStream);
+					// }
+					// // org.javlo.helper.Logger.stepCount("transform",
+					// // "cache readed");
 				} else {
 					/*** TRANSFORM IMAGE ***/
 					int maxWidth = staticConfig.getImageMaxWidth();
@@ -1307,9 +1331,9 @@ public class ImageTransformServlet extends FileServlet {
 											logger.warning(e.getMessage());
 										} finally {
 											image.flush();
-										}										
+										}
 									}
-									
+
 								} else {
 									logger.warning("Could'nt read image : " + imageFile);
 								}
@@ -1352,47 +1376,47 @@ public class ImageTransformServlet extends FileServlet {
 						}
 						imageTransforming.put(imageKey, new ImageTransforming(ctx, imageFile));
 					}
-					
+
 					if (!foundInSet) {
 						file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified(), imageParam);
 						if ((file == null)) {
 							long currentTime = System.currentTimeMillis();
-							synchronized (imageTransforming.get(imageKey)) {								
+							synchronized (imageTransforming.get(imageKey)) {
 								if (imageFile.isFile()) {
 									imageTransform(ctx, ImageConfig.getNewInstance(globalContext, request.getSession(), template), staticInfo, filter, area, template, comp, imageFile, imageName, baseExtension, imageParam);
 								} else {
 									folderTransform(ctx, ImageConfig.getNewInstance(globalContext, request.getSession(), template), staticInfo, filter, area, template, comp, imageFile, imageName, baseExtension, imageParam);
 								}
-							}							
+							}
 							logger.info("transform image (" + StringHelper.renderSize(size) + ") : '" + imageName + "' in site '" + globalContext.getContextKey() + "' page : " + ctx.getRequestContentLanguage() + ctx.getPath() + " time : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - currentTime) + " sec.  #transformation:" + imageTransforming.size());
 							file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified(), imageParam);
-							if (file != null) {								
-								//fileStream = new FileInputStream(file);
+							if (file != null) {
+								// fileStream = new FileInputStream(file);
 								super.processRequest(request, response, file, content);
-							}							
-						}						
+							}
+						}
 						imageTransforming.remove(imageKey);
 						imageKey = null;
 					} else {
 						synchronized (imageTransforming.get(imageKey)) {
 							file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified(), imageParam);
 							super.processRequest(request, response, file, content);
-							//fileStream = new FileInputStream(file);							
+							// fileStream = new FileInputStream(file);
 						}
 					}
 
 					/*********************/
 
-//					if (fileStream != null) {
-//						if (file.length() > 0) {
-//							response.setContentLength((int) file.length());
-//						}
-//						try {
-//							ResourceHelper.writeStreamToStream(fileStream, out);
-//						} finally {
-//							ResourceHelper.closeResource(fileStream);
-//						}
-//					}
+					// if (fileStream != null) {
+					// if (file.length() > 0) {
+					// response.setContentLength((int) file.length());
+					// }
+					// try {
+					// ResourceHelper.writeStreamToStream(fileStream, out);
+					// } finally {
+					// ResourceHelper.closeResource(fileStream);
+					// }
+					// }
 
 				}
 			}
@@ -1422,6 +1446,5 @@ public class ImageTransformServlet extends FileServlet {
 		servletRun--;
 
 	}
-	
-}
 
+}
