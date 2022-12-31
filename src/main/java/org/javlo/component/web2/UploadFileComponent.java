@@ -168,7 +168,7 @@ public class UploadFileComponent extends AbstractVisualComponent implements IAct
 		if (getValue().equals(SESSION_IMAGE)) {
 			file = SessionFolder.getInstance(ctx).getImage();
 			if (file != null) {
-				previewUrl = URLHelper.createMediaURL(ctx, file);
+				previewUrl = URLHelper.createTransformURL(ctx, file, "standard");
 			}
 		}
 		if (previewUrl != null && file != null) {
