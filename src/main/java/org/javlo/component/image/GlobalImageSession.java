@@ -30,7 +30,7 @@ public class GlobalImageSession extends GlobalImage {
 			StaticInfo si;
 			try {
 				si = StaticInfo.getInstance(ctx, sessionFolder.getImage());
-				return ""+si.getFocusZoneX(ctx)+"_"+si.getFocusZoneY(ctx) +"_"+ si.getFile().lastModified();
+				return ""+si.getFocusZoneX(ctx)+"_"+si.getFocusZoneY(ctx) +"_"+ si.getFile().length();
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
