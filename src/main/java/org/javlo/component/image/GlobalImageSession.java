@@ -1,6 +1,7 @@
 package org.javlo.component.image;
 
 import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
 import org.javlo.io.SessionFolder;
 import org.javlo.ztatic.StaticInfo;
 
@@ -29,7 +30,7 @@ public class GlobalImageSession extends GlobalImage {
 			StaticInfo si;
 			try {
 				si = StaticInfo.getInstance(ctx, sessionFolder.getImage());
-				return si.getVersionHash(ctx);
+				return ""+si.getFocusZoneX(ctx)+"_"+si.getFocusZoneY(ctx) +"_"+ si.getFile().lastModified();
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
