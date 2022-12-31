@@ -4,15 +4,20 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.servlet.http.HttpSession;
+
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.owasp.encoder.Encode;
 
 public class SessionFolder {
 	
 	public static final String SESSION_PATH_KEY = "_sid";
+	
+	public static final String SESSION_PATH_PREFIX = SESSION_PATH_KEY+'-';
 
 	private static final String KEY = "sessionFolder";
 
@@ -31,19 +36,22 @@ public class SessionFolder {
 		return URLHelper.mergePath(globalContext.getDataFolder(), SESSION_FOLDER);
 	}
 	
-	public SessionFolder(ContentContext ctx) {
-		this.sessionId = ctx.getSession().getId();
-		sessionFolder = new File(getSessionMainFolder(ctx.getGlobalContext()), this.sessionId);
-		sessionFolder.mkdirs();
+	private SessionFolder(HttpSession session, GlobalContext globalContext) {
+		this.sessionId = session.getId();
+		sessionFolder = new File(getSessionMainFolder(globalContext), getSessionId());
 	}
 
-	public static final SessionFolder getInstance(ContentContext ctx) {
-		SessionFolder out = (SessionFolder) ctx.getSession().getAttribute(KEY);
+	public static final SessionFolder getInstance(HttpSession session, GlobalContext globalContext) {
+		SessionFolder out = (SessionFolder) session.getAttribute(KEY);
 		if (out == null) {
-			out = new SessionFolder(ctx);
-			ctx.getSession().setAttribute(KEY, out);
+			out = new SessionFolder(session, globalContext);
+			session.setAttribute(KEY, out);
 		}
 		return out;
+	}
+	
+	public static final SessionFolder getInstance(ContentContext ctx) {
+		return getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());
 	}
 
 	public File getSessionFolder() {
@@ -51,6 +59,7 @@ public class SessionFolder {
 	}
 
 	public void addImage(String name, InputStream in) throws IOException {
+		sessionFolder.mkdirs();
 		this.image = new File(sessionFolder.getAbsoluteFile(), name);
 		this.image = ResourceHelper.getFreeFileName(this.image);
 		ResourceHelper.writeStreamToFile(in, this.image);
@@ -61,7 +70,7 @@ public class SessionFolder {
 	}
 	
 	public String getSessionId() {
-		return sessionId;
+		return SESSION_PATH_PREFIX+sessionId;
 	}
 	
 	public String getImageFileId() {
@@ -73,6 +82,22 @@ public class SessionFolder {
 
 	public void resetImage() {
 		image = null;
+	}
+	
+	public String correctAndcheckUrl(String pathInfo) {
+		if (!pathInfo.contains(SESSION_PATH_KEY)) {
+			return pathInfo;
+		} else {
+			if (pathInfo.contains(SESSION_PATH_PREFIX)) {
+				String sessionid = StringHelper.extractItem(pathInfo, SESSION_PATH_PREFIX, "/").get(0);
+				if (!sessionid.equals(this.sessionId)) {
+					throw new SecurityException("bad session");
+				}
+				return pathInfo;
+			} else {
+				return pathInfo.replace(SESSION_PATH_KEY, SESSION_PATH_PREFIX+sessionId);
+			}
+		}
 	}
 
 }

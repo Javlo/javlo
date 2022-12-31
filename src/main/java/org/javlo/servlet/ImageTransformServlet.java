@@ -697,7 +697,7 @@ public class ImageTransformServlet extends FileServlet {
 			return;
 		}
 		IIOMetadata metadata = null;
-
+		
 		try {
 			metadata = ResourceHelper.getImageMetadata(imageFile);
 		} catch (Exception e) {
@@ -995,6 +995,16 @@ public class ImageTransformServlet extends FileServlet {
 			img = ImageEngine.resize(img, img.getWidth() / 2, img.getHeight() / 2, config.getBGColor(device, filter, area), true);
 			filter = originalFilter;
 		}
+		
+		if (config.isLogoBottomRigth(device, filter, area) && globalContext.getLogo() != null) {
+			File layerFile = globalContext.getLogo();
+			if (layerFile.exists()) {
+				layer = loadLayer(layerFile);
+				img = ImageEngine.createLogoFramingBottomRight(img, layer);
+			} else {
+				logger.warning("logo not found : " + globalContext.getLogo());
+			}
+		}
 
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 7");
@@ -1116,7 +1126,7 @@ public class ImageTransformServlet extends FileServlet {
 
 		String pathInfo = request.getPathInfo().substring(1);
 		
-		pathInfo = pathInfo.replace(SessionFolder.SESSION_PATH_KEY, request.getSession().getId());		
+		pathInfo = SessionFolder.getInstance(request.getSession(), globalContext).correctAndcheckUrl(pathInfo);
 		
 		pathInfo = pathInfo.replace('\\', '/'); // for windows server
 		String realURL = globalContext.getTransformShortURL(pathInfo);

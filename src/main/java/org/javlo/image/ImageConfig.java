@@ -390,6 +390,12 @@ public class ImageConfig {
 		String deviceValue = properties.getString(key, device != null ? getLayer(null, ALL, null) : null);
 		return deviceValue;
 	}
+	
+	public boolean isLogoBottomRigth(Device device, String filter, String area) {
+		String key = getKey(device, filter, area, "logo-bottom-right");
+		String logo = properties.getString(key, properties.getString(getKey(null, ALL, null, "logo-bottom-right"), null));
+		return StringHelper.isTrue(logo);
+	}
 
 	public boolean isBackGroudColor(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "background-color");

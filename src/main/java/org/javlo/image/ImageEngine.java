@@ -24,7 +24,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -49,7 +48,6 @@ import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.batik.util.SVGConstants;
 import org.apache.commons.io.FileUtils;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.MathHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.service.remote.RemoveBgService;
@@ -788,6 +786,9 @@ public class ImageEngine {
 	}
 
 	public static BufferedImage borderCorner(BufferedImage image, int radius, Color bg) {
+		if (bg == null) {
+			bg = new Color(128, 128, 128, 0);
+		}
 		BufferedImage imgNew = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
 		for (int x = 0; x < image.getWidth(); x++) {
 			for (int y = 0; y < image.getHeight(); y++) {
@@ -1885,6 +1886,24 @@ public class ImageEngine {
 	 * @return
 	 */
 
+	public static BufferedImage createLogoFramingBottomRight(BufferedImage source, BufferedImage logo) {
+		
+		final int SCALE = 4;
+		final int MARGIN = 30;
+		
+		int logoWith = source.getWidth() / SCALE;
+		logo = trim(logo, new Color(0,0,0,0), 1);
+		logo = resizeWidth(logo, logoWith, true);
+		Graphics2D bGr = source.createGraphics();
+		int logoy = source.getHeight() - logo.getHeight() - MARGIN;
+		int logox = source.getWidth() - logo.getWidth() - MARGIN;
+		if (logoy > 10 && logox > 10) {
+			bGr.drawImage(logo, logox, logoy, null);
+			bGr.dispose();
+		}
+		return source;
+	}
+
 	public static BufferedImage addPictureBorder(BufferedImage image, Color backgroundColors) {
 		if (backgroundColors == DETECT_COLOR) {
 			if (isDark(image)) {
@@ -2160,28 +2179,27 @@ public class ImageEngine {
 	}
 
 	public static void main(String[] args) throws Exception {
-//		File imageFile = new File("c:/trans/short_hair_alpha.png");
-//		BufferedImage image = ImageIO.read(imageFile);
-//		// image = addBlurBorder(image, Color.WHITE, 80, null);
-//		ImageIO.write(image, "webp", new File("c:/trans/webp_test.webp"));
-		
+		// File imageFile = new File("c:/trans/short_hair_alpha.png");
+		// BufferedImage image = ImageIO.read(imageFile);
+		// // image = addBlurBorder(image, Color.WHITE, 80, null);
+		// ImageIO.write(image, "webp", new File("c:/trans/webp_test.webp"));
+
 		File png = new File("c:/trans/test_speed.png");
 		File webp = new File("c:/trans/test_speed.webp");
 		File jpg = new File("c:/trans/test_speed.jpg");
-		
+
 		long start = System.currentTimeMillis();
 		ImageIO.read(png);
-		System.out.println("png : "+StringHelper.renderTimeInSecond(System.currentTimeMillis()-start));
-		
+		System.out.println("png : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - start));
+
 		start = System.currentTimeMillis();
 		ImageIO.read(jpg);
-		System.out.println("jpg : "+StringHelper.renderTimeInSecond(System.currentTimeMillis()-start));
-		
+		System.out.println("jpg : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - start));
+
 		start = System.currentTimeMillis();
 		ImageIO.read(webp);
-		System.out.println("webp : "+StringHelper.renderTimeInSecond(System.currentTimeMillis()-start));
-		
-		
+		System.out.println("webp : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - start));
+
 	}
 
 	public static BufferedImage convertRGBAToIndexed(BufferedImage src) {

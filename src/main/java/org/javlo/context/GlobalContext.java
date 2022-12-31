@@ -310,8 +310,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public static final String LICENCE_CORPORATE = "corporate";
 
-	public static final String LOGO_FILE_NAME = "dynamic_template/logo.png";
-
 	public static final String USERS_FOLDER = "users_files";
 
 	public String getInstanceId() {
@@ -1991,7 +1989,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public File getLogo() {
-		File logo = new File(ElementaryURLHelper.mergePath(ElementaryURLHelper.mergePath(getDataFolder(), staticConfig.getStaticFolder()), LOGO_FILE_NAME));
+		File logo = new File(ElementaryURLHelper.mergePath(ElementaryURLHelper.mergePath(getDataFolder(), staticConfig.getStaticFolder()), getTemplateData().getLogo()));
+		System.out.println(">>>>>>>>> GlobalContext.getLogo : logo = "+logo); //TODO: remove debug trace
 		if (logo.exists()) {
 			return logo;
 		} else {
@@ -3399,30 +3398,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		synchronized (properties) {
 			properties.setProperty("visible", visible);
 			save();
-		}
-	}
-
-	/**
-	 * store the logo of the website.
-	 * 
-	 * @param ctx
-	 *            context
-	 * @param in
-	 *            inputStream, if null old logo is deleted.
-	 * @throws IOException
-	 */
-	public void storeLogo(ContentContext ctx, InputStream in) throws IOException {
-		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-		File logo = new File(ElementaryURLHelper.mergePath(ElementaryURLHelper.mergePath(getDataFolder(), staticConfig.getStaticFolder()), LOGO_FILE_NAME));
-		if (in != null) {
-			if (!logo.exists()) {
-				logo.getParentFile().mkdirs();
-			}
-			ResourceHelper.writeStreamToFile(in, logo);
-		} else {
-			if (logo.exists()) {
-				logo.delete();
-			}
 		}
 	}
 

@@ -102,8 +102,6 @@ public class FileServlet extends HttpServlet {
 		// Get requested file by path info.
 		String requestedFile = request.getPathInfo();
 		
-		requestedFile = requestedFile.replace(SessionFolder.SESSION_PATH_KEY, request.getSession().getId());
-
 		// Check if file is actually supplied to the request URL.
 		if (requestedFile == null) {
 			// Do your thing if the file is not supplied to the request URL.
@@ -114,6 +112,7 @@ public class FileServlet extends HttpServlet {
 		}
 
 		GlobalContext globalContext = GlobalContext.getMainInstance(request);
+		requestedFile = SessionFolder.getInstance(request.getSession(), globalContext).correctAndcheckUrl(requestedFile);
 
 		// URL-decode the file name (might contain spaces and on) and prepare file
 		// object.
