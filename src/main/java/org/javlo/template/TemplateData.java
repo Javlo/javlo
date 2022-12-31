@@ -206,6 +206,11 @@ public class TemplateData {
 			setLarge(StringHelper.isTrue(map.get("large")));
 			setSmall(StringHelper.isTrue(map.get("small")));
 			setFixSidebar(StringHelper.isTrue(map.get("fixSidebar")));
+			
+			setMenuLeft(StringHelper.isTrue(map.get("menuLeft")));
+			setMenuRight(StringHelper.isTrue(map.get("menuRight")));
+			setMenuCenter(StringHelper.isTrue(map.get("menuCenter")));
+			setMenuAround(StringHelper.isTrue(map.get("menuAround")));
 		}
 	}
 	
@@ -246,6 +251,7 @@ public class TemplateData {
 		outData.put("menuRight", ""+isMenuRight());
 		outData.put("menuCenter", ""+isMenuCenter());
 		outData.put("menuAround", ""+isMenuAround());
+		outData.put("dropdown", ""+isDropdownMenu());
 		
 		String colors = "";
 		String sep = "";
