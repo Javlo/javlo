@@ -2160,10 +2160,28 @@ public class ImageEngine {
 	}
 
 	public static void main(String[] args) throws Exception {
-		File imageFile = new File("c:/trans/short_hair_alpha.png");
-		BufferedImage image = ImageIO.read(imageFile);
-		// image = addBlurBorder(image, Color.WHITE, 80, null);
-		ImageIO.write(image, "webp", new File("c:/trans/webp_test.webp"));
+//		File imageFile = new File("c:/trans/short_hair_alpha.png");
+//		BufferedImage image = ImageIO.read(imageFile);
+//		// image = addBlurBorder(image, Color.WHITE, 80, null);
+//		ImageIO.write(image, "webp", new File("c:/trans/webp_test.webp"));
+		
+		File png = new File("c:/trans/test_speed.png");
+		File webp = new File("c:/trans/test_speed.webp");
+		File jpg = new File("c:/trans/test_speed.jpg");
+		
+		long start = System.currentTimeMillis();
+		ImageIO.read(png);
+		System.out.println("png : "+StringHelper.renderTimeInSecond(System.currentTimeMillis()-start));
+		
+		start = System.currentTimeMillis();
+		ImageIO.read(jpg);
+		System.out.println("jpg : "+StringHelper.renderTimeInSecond(System.currentTimeMillis()-start));
+		
+		start = System.currentTimeMillis();
+		ImageIO.read(webp);
+		System.out.println("webp : "+StringHelper.renderTimeInSecond(System.currentTimeMillis()-start));
+		
+		
 	}
 
 	public static BufferedImage convertRGBAToIndexed(BufferedImage src) {

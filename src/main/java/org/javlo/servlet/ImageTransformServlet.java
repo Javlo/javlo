@@ -65,6 +65,7 @@ import org.javlo.utils.TimeMap;
 import org.javlo.utils.TimeTracker;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.StaticInfo;
+import org.python.modules.synchronize;
 
 import com.jhlabs.image.ContrastFilter;
 import com.jhlabs.image.CrystallizeFilter;
@@ -105,6 +106,12 @@ public class ImageTransformServlet extends FileServlet {
 	public static final String HASH_PREFIX = "/h";
 
 	private static TimeMap<String, BufferedImage> layerCache; // A month cache
+
+	private static BufferedImage imageCache = null;
+
+	private static String imageCacheKey = null;
+
+	private static Object imageCacheLock = new Object();
 
 	private static final class ImageTransformThread implements Callable<Void> {
 
@@ -305,6 +312,26 @@ public class ImageTransformServlet extends FileServlet {
 		} else {
 			return ImageIO.read(file);
 		}
+	}
+
+	protected static BufferedImage loadSourceImage(File file) throws IOException {
+		String key = file.getName() + "-" + file.length();
+		BufferedImage out = null;
+		if (key.equals(imageCacheKey)) {
+			synchronized (imageCacheLock) {
+				if (key.equals(imageCacheKey)) {
+					out = imageCache;
+				}
+			}
+		}
+		if (out == null) {
+			out = ImageIO.read(file);
+			synchronized (imageCacheLock) {
+				imageCacheKey = key;
+				imageCache = out;
+			}
+		}
+		return ImageEngine.duplicateBuffuredImage(out);
 	}
 
 	/**
@@ -640,7 +667,7 @@ public class ImageTransformServlet extends FileServlet {
 				img = SVGHelper.getSVGImage(imageFile);
 				imageType = DEFAULT_IMAGE_TYPE;
 			} else if (StringHelper.isImage(imageFile.getName())) {
-				img = ImageIO.read(imageFile);
+				img = loadSourceImage(imageFile);
 				imageType = inFileExtention;
 			}
 		}
@@ -700,7 +727,7 @@ public class ImageTransformServlet extends FileServlet {
 				fgImage = loadLayer(projection.getForeground());
 			}
 			try {
-				if (layerCache.getMaxSize()>0) {
+				if (layerCache.getMaxSize() > 0) {
 					bgImage = ImageEngine.duplicateBuffuredImage(bgImage);
 				}
 				img = ImageEngine.projectionImage(bgImage, fgImage, img, projection.getPolygon(), projection.getAlpha(), projection.isCrop(), focusX, focusY);
