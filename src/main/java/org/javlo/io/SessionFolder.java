@@ -11,6 +11,8 @@ import org.javlo.helper.URLHelper;
 import org.owasp.encoder.Encode;
 
 public class SessionFolder {
+	
+	public static final String SESSION_PATH_KEY = "_sid";
 
 	private static final String KEY = "sessionFolder";
 

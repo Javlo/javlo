@@ -23,6 +23,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
+import org.javlo.io.SessionFolder;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
@@ -100,6 +101,8 @@ public class FileServlet extends HttpServlet {
 
 		// Get requested file by path info.
 		String requestedFile = request.getPathInfo();
+		
+		requestedFile = requestedFile.replace(SessionFolder.SESSION_PATH_KEY, request.getSession().getId());
 
 		// Check if file is actually supplied to the request URL.
 		if (requestedFile == null) {

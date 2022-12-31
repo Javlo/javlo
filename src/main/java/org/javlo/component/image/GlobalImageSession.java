@@ -74,7 +74,8 @@ public class GlobalImageSession extends GlobalImage {
 		if (sessionFolder.getImage() == null || !ctx.isAsViewMode()) {
 			return super.getDirSelected(ctx);
 		} else {
-			return sessionFolder.getSessionId();
+			//return sessionFolder.getSessionId();
+			return SessionFolder.SESSION_PATH_KEY;
 		}
 	}
 	

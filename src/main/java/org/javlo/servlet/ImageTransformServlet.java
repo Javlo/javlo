@@ -53,6 +53,7 @@ import org.javlo.image.ImageConfig;
 import org.javlo.image.ImageEngine;
 import org.javlo.image.ImageHelper;
 import org.javlo.image.ProjectionConfig;
+import org.javlo.io.SessionFolder;
 import org.javlo.io.TransactionFile;
 import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
@@ -65,7 +66,6 @@ import org.javlo.utils.TimeMap;
 import org.javlo.utils.TimeTracker;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.StaticInfo;
-import org.python.modules.synchronize;
 
 import com.jhlabs.image.ContrastFilter;
 import com.jhlabs.image.CrystallizeFilter;
@@ -1085,9 +1085,7 @@ public class ImageTransformServlet extends FileServlet {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			return;
 		}
-		ctx.setRenderMode(ContentContext.PREVIEW_MODE); // user for staticInfo
-														// storage
-		// RequestHelper.traceMailingFeedBack(ctx);
+		ctx.setRenderMode(ContentContext.PREVIEW_MODE); // user for staticInfostorage
 
 		OutputStream out = null;
 
@@ -1117,6 +1115,9 @@ public class ImageTransformServlet extends FileServlet {
 		// org.javlo.helper.Logger.stepCount("transform", "end tracking");
 
 		String pathInfo = request.getPathInfo().substring(1);
+		
+		pathInfo = pathInfo.replace(SessionFolder.SESSION_PATH_KEY, request.getSession().getId());		
+		
 		pathInfo = pathInfo.replace('\\', '/'); // for windows server
 		String realURL = globalContext.getTransformShortURL(pathInfo);
 		if (realURL != null) {
