@@ -127,6 +127,12 @@ public class UploadFileComponent extends AbstractVisualComponent implements IAct
 		out.println("	document.getElementById('posy-" + getId() + "').value=focusRealY;");
 		out.println("	document.getElementById('upload-form-focus-" + getId() + "').submit();");
 		out.println("  };");
+		out.println("   window.addEventListener('load', function () {"
+				+ "document.getElementById('upload-wrapper-" + getId() + "').style='display: block;';"
+				+ "document.getElementById('upload-spinner-" + getId() + "').style='display: none;';"
+				+ "});");
+		
+		
 		out.println("</script>");
 		out.close();
 		return new String(outStream.toByteArray());
@@ -147,6 +153,8 @@ public class UploadFileComponent extends AbstractVisualComponent implements IAct
 		}
 
 		out.println(getJs());
+		out.println("<div style=\"margin: 0 auto;\" id=\"upload-spinner-" + getId()+"\" class=\"_jv_spinner\"></div>");
+		out.println("<div style=\"display: none;\" id=\"upload-wrapper-" + getId() + "\">");
 		out.println("<h2>" + title + "</h2>");
 		out.println("<form id=\"upload-form-" + getId() + "\" method=\"post\" enctype=\"multipart/form-data\">");
 		out.println("<input type=\"hidden\" name=\"webaction\" value=\"" + TYPE + ".upload\">");
@@ -177,6 +185,7 @@ public class UploadFileComponent extends AbstractVisualComponent implements IAct
 			out.println("</form>");
 			out.println("</div>");
 		}
+		out.println("</div>");
 
 		out.close();
 		return new String(outStream.toByteArray());
