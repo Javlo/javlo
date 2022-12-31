@@ -15,6 +15,7 @@ import javax.imageio.ImageIO;
 import org.apache.commons.fileupload.FileItem;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.AbstractVisualComponent;
+import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.ComponentHelper;
@@ -168,7 +169,7 @@ public class UploadFileComponent extends AbstractVisualComponent implements IAct
 		if (getValue().equals(SESSION_IMAGE)) {
 			file = SessionFolder.getInstance(ctx).getImage();
 			if (file != null) {
-				previewUrl = URLHelper.createTransformURL(ctx, file, "standard");
+				previewUrl = URLHelper.createTransformURL(ctx.getContextWithArea(ComponentBean.DEFAULT_AREA), file, "standard");
 			}
 		}
 		if (previewUrl != null && file != null) {
