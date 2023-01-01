@@ -1029,8 +1029,6 @@ public class ImageTransformServlet extends FileServlet {
 				imageType = StringHelper.neverNull(config.getFileExtension(device, filter, area), imageType);
 				logger.info("write image : " + imageType + " width: " + img.getWidth() + " height: " + img.getHeight());
 
-				ImageIO.write(img, "webp", new File("C:/trans/out/end.webp"));
-				
 				if (comp != null && StringHelper.trimAndNullify(comp.getImageFilterKey(ctxb)) != null) {
 					img = ((IImageFilter) comp).filterImage(session.getServletContext(), ctxb, img);
 				}
