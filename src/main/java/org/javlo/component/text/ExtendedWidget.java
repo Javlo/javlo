@@ -62,7 +62,7 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 		String errorMsg = "<strong>Error : NO SCRIPLET</strong>";
 		xhtml = xhtml.replace("<%", errorMsg);
 		xhtml = xhtml.replace(errorMsg + '@', "<%@");
-		xhtml = XHTMLHelper.replaceLinks(ctx, xhtml);
+		//xhtml = XHTMLHelper.replaceLinks(ctx, xhtml);
 		ResourceHelper.writeStringToFile(renderer, filePrefix+style+xhtml);
 	}
 	
