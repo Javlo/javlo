@@ -71,11 +71,8 @@ public class GlobalImageSession extends GlobalImage {
 	public String getDirSelected(ContentContext ctx) {
 		SessionFolder sessionFolder = SessionFolder.getInstance(ctx);
 		if (sessionFolder.getImage() == null || !ctx.isAsViewMode()) {
-			System.out.println(">>>>>>>>> GlobalImageSession.getDirSelected : NO SESSION"); //TODO: remove debug trace
 			return super.getDirSelected(ctx);
 		} else {
-			System.out.println(">>>>>>>>> GlobalImageSession.getDirSelected : SESSION"); //TODO: remove debug trace
-			//return sessionFolder.getSessionId();
 			return SessionFolder.SESSION_PATH_KEY;
 		}
 	}
