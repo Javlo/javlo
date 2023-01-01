@@ -1990,7 +1990,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public File getLogo() {
 		File logo = new File(ElementaryURLHelper.mergePath(ElementaryURLHelper.mergePath(getDataFolder(), staticConfig.getStaticFolder()), getTemplateData().getLogo()));
-		System.out.println(">>>>>>>>> GlobalContext.getLogo : logo = "+logo); //TODO: remove debug trace
 		if (logo.exists()) {
 			return logo;
 		} else {

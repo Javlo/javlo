@@ -9,10 +9,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
@@ -24,6 +24,7 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.rendering.Device;
+import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.template.Template;
 import org.javlo.utils.ConfigurationProperties;
 
@@ -382,6 +383,9 @@ public class ImageConfig {
 	public String getFileExtension(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "file-extension");
 		String deviceValue = properties.getString(key, device != null ? getFileExtension(null, ALL, null) : null);
+		if (deviceValue == null) {
+			return ImageTransformServlet.DEFAULT_IMAGE_TYPE;
+		}
 		return deviceValue;
 	}
 
@@ -750,18 +754,12 @@ public class ImageConfig {
 	
 	public static void main(String[] args) throws Exception {
 		System.out.println("*** start ***");
-		File javloFile = new File("c:/trans/xxx/image4.jpg");
+		File javloFile = new File("c:/trans/img3_removebg.jpg");
 		BufferedImage image = ImageIO.read(javloFile);
-		File backFile = new File("c:/trans/xxx/title2.png");
-		BufferedImage back = ImageIO.read(backFile);
-		
-		
-		Polygon4 poly = new Polygon4(0,0,660,0,660,222,0,222);
-		image = ImageEngine.projectionImage(back, null, image, poly, 1, true, 500, 500);
-		
-		
+		image = ImageEngine.borderCorner(image, 30, new Color(0,0,0,0));
+		image = ImageEngine.resizeWidth(image, 320, true);
 		if (image != null) {
-			ImageEngine.storeImage(image, new File("c:/trans/xxx/out.jpg"));
+			ImageEngine.storeImage(image, new File("c:/trans/out/out_"+StringHelper.renderTimeInSecond(System.currentTimeMillis())+".webp"));
 		}
 		
 		System.out.println("*** done ***");

@@ -265,7 +265,7 @@ public class ImageTransformServlet extends FileServlet {
 
 	static final String MINETYPES_DIR = "/images/minetypes";
 
-	static final String[] IMAGES_EXT = { "jpg", "jpeg", "png", "gif", "webp" };
+	static final String[] IMAGES_EXT = { "webp", "jpg", "jpeg", "png", "gif" };
 
 	static final Set<String> IMAGES_EXT_SET = new TreeSet<String>(Arrays.asList(IMAGES_EXT));
 
@@ -273,7 +273,7 @@ public class ImageTransformServlet extends FileServlet {
 
 	private static final Map<String, Object> imageTransforming = new ConcurrentHashMap<String, Object>();
 
-	private static final String DEFAULT_IMAGE_TYPE = "webp";
+	public static final String DEFAULT_IMAGE_TYPE = "webp";
 
 	public static final String LOCAL_TEMPLATE_SUFFIX = "-local";
 
@@ -652,6 +652,7 @@ public class ImageTransformServlet extends FileServlet {
 				}
 			}
 		}
+		
 		if (img == null) { // Image from content
 			if (inFileExtention.equalsIgnoreCase("mp4")) {
 				try {
@@ -671,6 +672,7 @@ public class ImageTransformServlet extends FileServlet {
 				imageType = inFileExtention;
 			}
 		}
+		
 		if (img == null) { // Icon from template
 			File mimeTypeImageFile = null;
 			if (template != null) {
@@ -696,6 +698,7 @@ public class ImageTransformServlet extends FileServlet {
 			// ctx.getResponse().setStatus(404);
 			return;
 		}
+		
 		IIOMetadata metadata = null;
 		
 		try {
@@ -914,7 +917,7 @@ public class ImageTransformServlet extends FileServlet {
 			layer.flush();
 			layer = null;
 		}
-
+		
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 5");
 
@@ -935,7 +938,7 @@ public class ImageTransformServlet extends FileServlet {
 			Integer direction = config.getBluringBorderWidth(device, originalFilter, area);
 			img = ImageEngine.addBlurBorder(img, bg, borderWidth, direction);
 		}
-
+		
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 6");
 
@@ -959,7 +962,7 @@ public class ImageTransformServlet extends FileServlet {
 				}
 			}
 		}
-
+		
 		/** align on grid **/
 		int newWidth = ImageConfig.alignToGrid(img.getWidth(), config.getGridWidth(device, filter, area));
 		int newHeight = ImageConfig.alignToGrid(img.getHeight(), config.getGridHeight(device, filter, area));
@@ -1026,13 +1029,15 @@ public class ImageTransformServlet extends FileServlet {
 				imageType = StringHelper.neverNull(config.getFileExtension(device, filter, area), imageType);
 				logger.info("write image : " + imageType + " width: " + img.getWidth() + " height: " + img.getHeight());
 
+				ImageIO.write(img, "webp", new File("C:/trans/out/end.webp"));
+				
 				if (comp != null && StringHelper.trimAndNullify(comp.getImageFilterKey(ctxb)) != null) {
 					img = ((IImageFilter) comp).filterImage(session.getServletContext(), ctxb, img);
 				}
 
-				if (!"png".equals(imageType) && !"gif".equals(imageType)) {
-					img = ImageEngine.removeAlpha(img);
-				}
+//				if (!ImageEngine.isAlphaImageType(imageType)) {
+//					img = ImageEngine.removeAlpha(img);
+//				}
 
 				// ImageIO.write(img, imageType, outImage);
 				ImageEngine.storeImage(img, imageType, outImage);

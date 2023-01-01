@@ -123,6 +123,13 @@ public class ImageEngine {
 		}
 		return AWTUtil.toBufferedImage(picture);
 	}
+	
+	public static boolean isAlphaImageType(String ext) {
+		if (ext == null) {
+			return false;
+		}
+		return ext.equalsIgnoreCase("webp") || ext.equalsIgnoreCase("png") || ext.equalsIgnoreCase("gif");
+	}
 
 	public static void storeImage(BufferedImage img, File file) throws IOException {
 		String ext = StringHelper.getFileExtension(file.getName()).toLowerCase();
@@ -130,7 +137,7 @@ public class ImageEngine {
 			if (img.getType() != BufferedImage.TYPE_3BYTE_BGR) {
 				img = removeAlpha(img);
 			}
-		} else if (ext.equalsIgnoreCase("png")) {
+		} else if (isAlphaImageType(ext)) {
 			img = autoReduceColor(img);
 		}
 		ImageIO.write(img, ext, file);
@@ -141,7 +148,7 @@ public class ImageEngine {
 		if (ext.equalsIgnoreCase("jpg") || ext.equalsIgnoreCase("jpeg")) {
 			if (img.getType() != BufferedImage.TYPE_3BYTE_BGR) {
 				img = removeAlpha(img);
-			} else if (ext.equalsIgnoreCase("png")) {
+			} else if (isAlphaImageType(ext)) {
 				img = autoReduceColor(img);
 			}
 			// writeJPEG2000(img, outImage);
