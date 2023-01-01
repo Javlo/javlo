@@ -17,6 +17,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.image.ImageConfig;
+import org.javlo.io.SessionFolder;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.IURLFactory;
@@ -492,13 +493,15 @@ public abstract class ElementaryURLHelper {
 		url = ElementaryURLHelper.mergePath(baseUrl, url);
 
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE && ctx.getGlobalContext().getStaticConfig().isImageShortURL() && !ctx.getGlobalContext().isMailingPlatform()) {
-			File file = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), fileURL));
-			StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
-			String fileName = null;
-			if (staticInfo != null && !StringHelper.isEmpty(staticInfo.getTitle(ctx))) {
-				fileName = staticInfo.getTitle(ctx);
+			if (!url.contains(SessionFolder.SESSION_PATH_KEY)) {
+				File file = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), fileURL));
+				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
+				String fileName = null;
+				if (staticInfo != null && !StringHelper.isEmpty(staticInfo.getTitle(ctx))) {
+					fileName = staticInfo.getTitle(ctx);
+				}
+				url = URLHelper.mergePath(IMG_SERVLET_PATH, ctx.getGlobalContext().setTransformShortURL(url.replace(TRANSFORM + '/', ""), filter, fileName));
 			}
-			url = URLHelper.mergePath(IMG_SERVLET_PATH, ctx.getGlobalContext().setTransformShortURL(url.replace(TRANSFORM + '/', ""), filter, fileName));
 		}
 		if (ctx.getRenderMode() != ContentContext.VIEW_MODE) {
 			File file = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), fileURL));

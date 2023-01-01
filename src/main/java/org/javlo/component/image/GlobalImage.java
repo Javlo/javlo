@@ -215,7 +215,6 @@ public class GlobalImage extends Image implements IImageFilter {
 				
 				System.out.println(">>>>>>>>> GlobalImage.getPreviewURL : getResourceURL(ctx, getFileName(ctx)) = "+getResourceURL(ctx, getFileName(ctx))); //TODO: remove debug trace
 				
-				
 				url = URLHelper.createTransformURL(ctx, ctx.getCurrentPage(), ctx.getCurrentTemplate(), getResourceURL(ctx, getFileName(ctx)), filter, this);
 				
 				System.out.println(">>>>>>>>> GlobalImage.getPreviewURL : url = "+url); //TODO: remove debug trace
