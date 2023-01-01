@@ -713,7 +713,9 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		if (isFromShared(ctx)) {
 			return URLHelper.mergePath(staticConfig.getShareDataFolderKey(), getMainFolder(ctx), getDirSelected(ctx), fileLink.replaceFirst(staticConfig.getShareDataFolderKey(), ""));
 		} else {
-			return URLHelper.mergePath(getRelativeFileDirectory(ctx), URLHelper.mergePath(getDirSelected(ctx), fileLink));
+			String out = URLHelper.mergePath(getRelativeFileDirectory(ctx), URLHelper.mergePath(getDirSelected(ctx), fileLink));
+		System.out.println(">>>>>>>>> AbstractFileComponent.getResourceURL : out = "+out); //TODO: remove debug trace
+			return out;
 		}
 	}
 
