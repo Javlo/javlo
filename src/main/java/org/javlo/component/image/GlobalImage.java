@@ -292,6 +292,7 @@ public class GlobalImage extends Image implements IImageFilter {
 			ctx.getRequest().setAttribute("loadURL", URLHelper.createMediaURL(ctx, getResourceURL(ctx, getFileName(ctx))));
 		} else {
 			String previewURL = getPreviewURL(ctx, getFilter(ctx));
+			System.out.println(">>>>>>>>> GlobalImage.prepareView : previewURL = "+previewURL); //TODO: remove debug trace
 			ctx.getRequest().setAttribute("previewURL", previewURL);
 			if (ctx.isAjax() || ctx.isContentStatic() || ctx.isOnlyArea() || (ctx.getDevice() != null && ctx.getDevice().isPdf())) {
 				ctx.getRequest().setAttribute("loadURL", previewURL);
