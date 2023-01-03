@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -707,10 +708,10 @@ public class StringHelper {
 			}
 		}
 	}
-	
+
 	/** replace all space repeatition with one space */
 	public static String trimInternal(String str) {
-		if (str==null) {
+		if (str == null) {
 			return null;
 		} else {
 			while (str.contains("  ")) {
@@ -1069,7 +1070,7 @@ public class StringHelper {
 			return file;
 		}
 		if (!ext.startsWith(".")) {
-			ext = '.'+ext;
+			ext = '.' + ext;
 		}
 		if (!file.contains(".")) {
 			return file + '.' + ext;
@@ -2085,10 +2086,6 @@ public class StringHelper {
 
 	public static Date smartParseDate(String inDate) {
 		return smartParseDate(inDate, "en");
-	}
-
-	public static void main(String[] args) throws IOException {
-		System.out.println(extractHostAndProtocol("https://cdn.javlo.org/test.html"));
 	}
 
 	public static LocalTime smartParseTime(String inTime) {
@@ -4669,7 +4666,7 @@ public class StringHelper {
 		}
 		return host;
 	}
-	
+
 	public static String extractHostAndProtocol(String inUrl) {
 		if (!StringHelper.isURL(inUrl)) {
 			return "";
@@ -4681,7 +4678,7 @@ public class StringHelper {
 			e.printStackTrace();
 			return "";
 		}
-		return url.getProtocol()+"://"+url.getHost();
+		return url.getProtocol() + "://" + url.getHost();
 	}
 
 	public static String quote(String string) {
@@ -4829,6 +4826,66 @@ public class StringHelper {
 			}
 		}
 		return out;
+	}
+
+	public static String indentScss (String scss) {
+		return indentText(scss, '{', '}', '\\', "   ");
+	}
+
+	public static String indentText(String text, char tokenOpen, char tokenClose, char escapeChar, String alignStr) {
+		try {
+			int depth = 0;
+			boolean inStringSimple = false;
+			boolean inStringDouble = false;
+			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+			PrintStream out = new PrintStream(outStream);
+			BufferedReader reader = new BufferedReader(new StringReader(text));
+			String line = reader.readLine();
+			while (line != null) {
+				line = line.trim();
+				int newDepth = depth;
+				for (int i = 0; i < line.length(); i++) {
+					if (line.charAt(i) == '\'') {
+						inStringSimple = !inStringSimple;
+					}
+					if (line.charAt(i) == '"') {
+						inStringDouble = !inStringDouble;
+					}
+					if (!inStringSimple && !inStringDouble) {
+						if (i == 0 || line.charAt(i - 1) != escapeChar) {
+							if (line.charAt(i) == tokenOpen) {
+								newDepth++;
+							} else if (line.charAt(i) == tokenClose) {
+								depth--;
+								newDepth--;
+							}
+						}
+					}
+				}
+				String newLine = "";
+				for (int i = 0; i < depth; i++) {
+					newLine += alignStr;
+				}
+				depth = newDepth;
+				newLine += line;
+				out.println(newLine);
+				line = reader.readLine();
+			}
+			out.close();
+			return new String(outStream.toByteArray());
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static void main(String[] args) throws IOException {
+		File in = new File("c:/trans/in.scss");
+		File out = new File("c:/trans/out.scss");
+		String scss = ResourceHelper.loadStringFromFile(in);
+		scss = indentText(scss, '{', '}', '\\', "   ");
+		ResourceHelper.writeStringToFile(out, scss);
+		System.out.println(">>>>>>>>> StringHelper.main : out = " + out); // TODO: remove debug trace
 	}
 
 	public static void copyInClipbaord(String content) {

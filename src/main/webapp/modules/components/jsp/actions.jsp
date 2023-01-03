@@ -16,11 +16,11 @@
 	<c:param name="component" value="${param.component}" />
 </c:url>
 
-<c:if test="${!cssExist}"><a class="action-button more" href="${addFileUrl}&type=css"><span><i class="fa fa-plus-circle" aria-hidden="true"></i> CSS</span></a></c:if>
-<c:if test="${cssExist}"><a class="action-button more needconfirm" href="${deleteFileUrl}&type=css"><span><i class="fa fa-trash" aria-hidden="true"></i> CSS</span></a></c:if>
-<c:if test="${!cssExist}"><a class="action-button more" href="${addFileUrl}&type=scss"><span><i class="fa fa-plus-circle" aria-hidden="true"></i> SCSS</span></a></c:if>
-<c:if test="${!propertiesExist}"><a class="action-button more" href="${addFileUrl}&type=properties"><span><i class="fa fa-plus-circle" aria-hidden="true"></i> properties</span></a></c:if>
-<c:if test="${propertiesExist}"><a class="action-button more" href="${deleteFileUrl}&type=properties"><span><i class="fa fa-trash" aria-hidden="true"></i> properties</span></a></c:if>
+<c:if test="${!cssExist}"><a class="action-button more" href="${addFileUrl}&type=css"><span><i class="bi bi-plus-circle"></i> CSS</span></a></c:if>
+<c:if test="${cssExist}"><a class="action-button more needconfirm" href="${deleteFileUrl}&type=css"><span><i class="bi bi-trash"></i> CSS</span></a></c:if>
+<c:if test="${!cssExist}"><a class="action-button more" href="${addFileUrl}&type=scss"><span><i class="bi bi-plus-circle"></i> SCSS</span></a></c:if>
+<c:if test="${!propertiesExist}"><a class="action-button more" href="${addFileUrl}&type=properties"><span><i class="bi bi-plus-circle"></i> properties</span></a></c:if>
+<c:if test="${propertiesExist}"><a class="action-button more" href="${deleteFileUrl}&type=properties"><span><i class="bi bi-trash"></i> properties</span></a></c:if>
 <a class="action-button" href="${commitTemplate}"><span><i class="fa fa-upload" aria-hidden="true"></i> commit</span></a>
 
 </c:if>

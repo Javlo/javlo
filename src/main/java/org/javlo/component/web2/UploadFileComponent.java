@@ -58,6 +58,7 @@ public class UploadFileComponent extends AbstractVisualComponent implements IAct
 			if (fileItem != null) {
 
 				if (StringHelper.isPDF(fileItem.getName())) {
+					logger.info("upload : " + fileItem.getName());
 					File tempFile = new File(URLHelper.mergePath(sessionFolder.getSessionFolder().getAbsolutePath(), StringHelper.getRandomId() + ".pdf"));
 					try (InputStream in = fileItem.getInputStream()) {
 						ResourceHelper.writeStreamToFile(in, tempFile);
@@ -67,28 +68,32 @@ public class UploadFileComponent extends AbstractVisualComponent implements IAct
 					ImageIO.write(image, "webp", out);
 					sessionFolder.addImage("session-image.webp", new ByteArrayInputStream(out.toByteArray()));
 					tempFile.delete();
-				}
-
-				try (InputStream in = fileItem.getInputStream()) {
-					logger.info("upload : " + fileItem.getName());
-					if (StringHelper.isImage(fileItem.getName())) {
-						sessionFolder.addImage("session-image.webp", in);
-						try {
-							BufferedImage image = ImageIO.read(sessionFolder.getImage());
-							if (image.getWidth() > 2048) {
-								image = ImageEngine.resizeWidth(image, 2048, true);
+				} else {
+					try (InputStream in = fileItem.getInputStream()) {
+						logger.info("upload : " + fileItem.getName());
+						if (StringHelper.isImage(fileItem.getName())) {
+							sessionFolder.addImage("session-image.webp", in);
+							try {
+								BufferedImage image = ImageIO.read(sessionFolder.getImage());
+								if (image.getWidth() > 2048) {
+									image = ImageEngine.resizeWidth(image, 2048, true);
+								}
+								if (image.getHeight() > 2048) {
+									image = ImageEngine.resizeHeight(image, 2048, true);
+								}
+								try (OutputStream out = new FileOutputStream(sessionFolder.getImage())) {
+									ImageIO.write(image, "webp", out);
+								}
+							} catch (Exception e) {
+								logger.warning("bad image uploaded : " + e.getMessage());
+								sessionFolder.resetImage();
 							}
-							try (OutputStream out = new FileOutputStream(sessionFolder.getImage())) {
-								ImageIO.write(image, "webp", out);
-							}
-						} catch (Exception e) {
-							logger.warning("bad image uploaded : " + e.getMessage());
-							sessionFolder.resetImage();
+	
+						} else {
+							return "bad image format.";
 						}
-
-					} else {
-						return "bad image format.";
 					}
+				
 				}
 			}
 		} else {

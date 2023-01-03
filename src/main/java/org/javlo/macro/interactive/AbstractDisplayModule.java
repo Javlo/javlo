@@ -3,8 +3,8 @@ package org.javlo.macro.interactive;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.javlo.actions.AbstractModuleAction;
 import org.javlo.actions.IAction;
+import org.javlo.actions.IModuleAction;
 import org.javlo.context.ContentContext;
 import org.javlo.macro.core.IInteractiveMacro;
 import org.javlo.module.core.Module;
@@ -17,11 +17,11 @@ public abstract class AbstractDisplayModule implements IInteractiveMacro, IActio
 	@Override
 	public abstract String getName();
 	
-	protected abstract AbstractModuleAction getModuleAction(ContentContext ctx);
+	protected abstract IModuleAction getModuleAction(ContentContext ctx);
 
 	@Override
 	public String prepare(ContentContext ctx) {
-		AbstractModuleAction moduleAction = getModuleAction(ctx);
+		IModuleAction moduleAction = getModuleAction(ctx);
 		try {
 			ModulesContext modulesContext = ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());
 			Module module = modulesContext.getModule(getName());
