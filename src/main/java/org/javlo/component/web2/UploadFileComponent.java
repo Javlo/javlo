@@ -78,10 +78,10 @@ public class UploadFileComponent extends AbstractVisualComponent implements IAct
 							try {
 								BufferedImage image = ImageIO.read(sessionFolder.getImage());
 								if (image.getWidth() > MAX_IMAGE_SIZE) {
-									image = ImageEngine.resizeWidth(image, 2048, true);
+									image = ImageEngine.resizeWidth(image, MAX_IMAGE_SIZE, true);
 								}
 								if (image.getHeight() > MAX_IMAGE_SIZE) {
-									image = ImageEngine.resizeHeight(image, 2048, true);
+									image = ImageEngine.resizeHeight(image, MAX_IMAGE_SIZE, true);
 								}
 								try (OutputStream out = new FileOutputStream(sessionFolder.getImage())) {
 									ImageIO.write(image, "webp", out);

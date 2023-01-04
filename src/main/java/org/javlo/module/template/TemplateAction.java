@@ -88,6 +88,7 @@ public class TemplateAction extends AbstractModuleAction {
 		textProperties.add("margin-bottom");
 		textProperties.add("margin-left");
 		textProperties.add("adjust-color");
+		textProperties.add("brightness");
 		textProperties.add("replace-alpha");
 		textProperties.add("web2.height");
 		textProperties.add("web2.separation");
