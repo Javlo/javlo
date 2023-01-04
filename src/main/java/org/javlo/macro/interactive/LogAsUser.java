@@ -60,16 +60,13 @@ public class LogAsUser implements IInteractiveMacro, IAction {
 	@Override
 	public String prepare(ContentContext ctx) {
 		if (haveRight(ctx, "login")) {
-			System.out.println(">>>>>>>>> LogAsUser.prepare : 1"); //TODO: remove debug trace
 			List<IUserInfo> users = UserFactory.createUserFactory(ctx.getRequest()).getUserInfoList();
-			System.out.println(">>>>>>>>> LogAsUser.prepare : 2"); //TODO: remove debug trace
 			Collections.sort(users, new Comparator<IUserInfo>() {
 				@Override
 				public int compare(IUserInfo o1, IUserInfo o2) {
 					return o1.getLogin().compareTo(o2.getLogin());
 				}
 			});
-			System.out.println(">>>>>>>>> LogAsUser.prepare : 3"); //TODO: remove debug trace
 			ctx.getRequest().setAttribute("users", users);
 		}
 		return null;

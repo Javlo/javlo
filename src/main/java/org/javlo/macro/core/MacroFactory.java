@@ -235,6 +235,7 @@ public class MacroFactory {
 		macros.add(new TemplateMacroModule());
 		macros.add(new ComponentsMacroModule());
 		macros.add(new MailingMacroModule());
+		macros.add(new ClearImageCache());
 		
 		/** macro bean **/
 		initMacroBean(macros);
