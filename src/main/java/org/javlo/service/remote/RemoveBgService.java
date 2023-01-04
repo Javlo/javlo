@@ -16,6 +16,7 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.HttpEntity;
+import org.javlo.helper.ResourceHelper;
 
 public class RemoveBgService {
 
@@ -43,7 +44,7 @@ public class RemoveBgService {
 		File file = new File("c:/trans/img3.jpg");
 		File outFile = new File("c:/trans/img3_out.jpg");
 		FileOutputStream out = new FileOutputStream(outFile);
-		proxyService.executeRequest("https://api.remove.bg/v1.0/removebg", header, "POST", new FileInputStream(file), out);
+		proxyService.executeRequest("https://www.javlo.org/test.webp", header, "POST", new FileInputStream(file), out);
 		System.out.println(">>>>>>>>> RemoveBgService.main : DONE"); //TODO: remove debug trace
 		
 //		File file = new File("c:/trans/charley_source.jpg");

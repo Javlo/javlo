@@ -62,8 +62,6 @@ public class RemoteServiceProxyService {
 		ResourceHelper.writeStreamToStream(body, outBytes);
 		String hash = ResourceHelper.sha512(new ByteArrayInputStream(outBytes.toByteArray()));
 		
-		proxyUrl = URLHelper.addParam(proxyUrl, "_HASH_FILE", hash);
-		
 		System.out.println(">>>>>>>>> RemoteServiceProxyService.executeRequest : proxyUrl = "+proxyUrl); //TODO: remove debug trace
 		
 		HttpURLConnection connection = (HttpURLConnection) new URL(proxyUrl).openConnection();
@@ -80,6 +78,7 @@ public class RemoteServiceProxyService {
 		} else {
 			try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
 				HttpPost httpPost = new HttpPost(proxyUrl);
+				httpPost.addHeader("_USP_HASH", hash);
 				for (Map.Entry<String, String> entry : header.entrySet()) {
 					//httpPost.addHeader(entry.getKey(), entry.getValue());
 				}

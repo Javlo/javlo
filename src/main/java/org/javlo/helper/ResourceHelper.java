@@ -2114,6 +2114,12 @@ public class ResourceHelper {
         
 	}
 	
+	public static String sha512(File file) throws IOException, IllegalArgumentException {
+		try (InputStream in = new FileInputStream(file)) {
+			return sha(in, "SHA-512");
+		}
+	}
+	
 	public static String sha512(final InputStream in) throws IOException, IllegalArgumentException {
 		return sha(in, "SHA-512");
 	}
