@@ -15,6 +15,7 @@ import org.javlo.macro.CleanResourceNameMacro;
 import org.javlo.macro.CleanStaticInfoPersistence;
 import org.javlo.macro.ClearContext;
 import org.javlo.macro.ClearDataAccessCount;
+import org.javlo.macro.ClearImageCache;
 import org.javlo.macro.ClearTransformURLCache;
 import org.javlo.macro.CommitTemplate;
 import org.javlo.macro.ConvertUserForComansys;
