@@ -166,7 +166,7 @@ public class UploadFileComponent extends AbstractVisualComponent implements IAct
 		out.println("<input type=\"hidden\" name=\"webaction\" value=\"" + TYPE + ".upload\">");
 		out.println("<input type=\"hidden\" name=\"" + IContentVisualComponent.COMP_ID_REQUEST_PARAM + "\" value=\"" + getId() + "\">");
 		out.println("<input class=\"form-control\" type=\"file\" name=\"_image-" + getId() + "\" />");
-		out.println("<button class=\"btn btn-secondary\" type=\"submit\">" + i18nAccess.getViewText("global.upload") + "</button>");
+		out.println("<button class=\"btn btn-secondary\" type=\"submit\"><i class=\"bi bi-upload\"></i> " + i18nAccess.getViewText("global.upload") + "</button>");
 		out.println("</form>");
 
 		String previewUrl = null;
