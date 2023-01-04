@@ -31,5 +31,11 @@ public class ClearImageCache extends AbstractMacro {
 	@Override
 	public String getIcon() {
 		return "bi bi-stars";
+	}
+	
+	@Override
+	public boolean isAdmin() {
+		return true;
+	}
 
 }
