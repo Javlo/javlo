@@ -33,6 +33,8 @@ import org.javlo.ztatic.StaticInfo;
 public class UploadFileComponent extends AbstractVisualComponent implements IAction {
 
 	private static Logger logger = Logger.getLogger(UploadFileComponent.class.getName());
+	
+	private static int MAX_IMAGE_SIZE = 1024;
 
 	public static final String TYPE = "upload-file";
 
@@ -75,10 +77,10 @@ public class UploadFileComponent extends AbstractVisualComponent implements IAct
 							sessionFolder.addImage("session-image.webp", in);
 							try {
 								BufferedImage image = ImageIO.read(sessionFolder.getImage());
-								if (image.getWidth() > 2048) {
+								if (image.getWidth() > MAX_IMAGE_SIZE) {
 									image = ImageEngine.resizeWidth(image, 2048, true);
 								}
-								if (image.getHeight() > 2048) {
+								if (image.getHeight() > MAX_IMAGE_SIZE) {
 									image = ImageEngine.resizeHeight(image, 2048, true);
 								}
 								try (OutputStream out = new FileOutputStream(sessionFolder.getImage())) {
