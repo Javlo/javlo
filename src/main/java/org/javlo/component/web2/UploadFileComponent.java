@@ -58,9 +58,8 @@ public class UploadFileComponent extends AbstractVisualComponent implements IAct
 		if (comp.getValue(ctx).equals(SESSION_IMAGE)) {
 			FileItem fileItem = rs.getFileItem("_image-" + comp.getId());
 			if (fileItem != null) {
-
 				if (StringHelper.isPDF(fileItem.getName())) {
-					logger.info("upload : " + fileItem.getName());
+					logger.info("upload PDF : " + fileItem.getName());
 					File tempFile = new File(URLHelper.mergePath(sessionFolder.getSessionFolder().getAbsolutePath(), StringHelper.getRandomId() + ".pdf"));
 					try (InputStream in = fileItem.getInputStream()) {
 						ResourceHelper.writeStreamToFile(in, tempFile);
@@ -72,15 +71,17 @@ public class UploadFileComponent extends AbstractVisualComponent implements IAct
 					tempFile.delete();
 				} else {
 					try (InputStream in = fileItem.getInputStream()) {
-						logger.info("upload : " + fileItem.getName());
 						if (StringHelper.isImage(fileItem.getName())) {
 							sessionFolder.addImage("session-image.webp", in);
+							logger.info("upload IMAGE : " + fileItem.getName()+ " #="+StringHelper.renderSize(sessionFolder.getImage().length()));
 							try {
 								BufferedImage image = ImageIO.read(sessionFolder.getImage());
 								if (image.getWidth() > MAX_IMAGE_SIZE) {
+									logger.info("resize image width");
 									image = ImageEngine.resizeWidth(image, MAX_IMAGE_SIZE, true);
 								}
 								if (image.getHeight() > MAX_IMAGE_SIZE) {
+									logger.info("resize image height");
 									image = ImageEngine.resizeHeight(image, MAX_IMAGE_SIZE, true);
 								}
 								try (OutputStream out = new FileOutputStream(sessionFolder.getImage())) {
