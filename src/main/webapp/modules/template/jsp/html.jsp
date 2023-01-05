@@ -63,7 +63,7 @@
 						</c:if>
 						<div class="action">
 							<input type="submit" name="back" value="${i18n.edit['global.back']}" />
-							<input type="submit" value="${i18n.edit['global.ok']}" />
+							<input type="submit" value="${i18n.edit['global.save']}" />
 						</div>
 					</div>
 			</form>

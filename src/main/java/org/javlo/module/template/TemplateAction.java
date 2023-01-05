@@ -691,7 +691,9 @@ public class TemplateAction extends AbstractModuleAction {
 					return "file not found : " + cssFile;
 				} else {
 					String text = ResourceHelper.loadStringFromFile(cssFile);
-					text = StringHelper.indentScss(text);
+					if (rs.getParameter("indent") != null) {
+						text = StringHelper.indentScss(text);
+					}
 					ctx.getRequest().setAttribute("text", text);
 				}
 			}
