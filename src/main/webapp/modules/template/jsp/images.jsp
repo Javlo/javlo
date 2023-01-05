@@ -5,7 +5,7 @@
 	<form id="form-properties-template" action="${info.currentURL}" class="standard-form" method="post">
 
 		<div>
-			<input type="hidden" name="webaction" value="updateFilter" />
+			<input type="hidden" name="webaction" value="template.updateFilter" />
 			<input type="hidden" name="templateid" value="${currentTemplate.name}" />
 		</div>
 
@@ -21,7 +21,7 @@
 
 		<script type="text/javascript">	
 		function imagePreview(area) {
-			jQuery("#image-preview img").attr("src", "${info.staticRootURL}transform/${param.filter}/${currentTemplate.name}/"+area+"/local/images/demo.jpg?random="+Math.floor(Math.random()*10000));
+			jQuery("#image-preview img").attr("src", "${info.staticRootURL}transform/${param.filter}/${currentTemplate.name}/"+area+"/local/images/demo.jpg?ts="+Math.floor(Date.now() / 1000));
 			jQuery("#image-preview legend").html("preview : "+area);
 		}
 	</script>
@@ -35,7 +35,9 @@
 							<th>area :</th>
 							<th>${i18n.edit['global.all']}</th>
 							<c:forEach var="area" items="${areas}">
-								<th>${area}<a class="action-button" href="#image-preview" onclick="imagePreview('${area}');">preview</a></th>
+								<th>${area}<div>
+										<a class="action-button" href="#image-preview" onclick="imagePreview('${area}');">preview</a>
+									</div></th>
 							</c:forEach>
 						</tr>
 					</thead>
@@ -55,25 +57,34 @@
 							<th>${prop}</th>
 							<c:set var="key" value="${param.filter}.${prop}" />
 							<td>
-								<!-- input type="checkbox" name="${key}" ${values[key] == "true"?'checked="checked"':''} />
-				<input type="checkbox" readonly="readonly" ${allValues[key] == "true"?'checked="checked"':''} / --> <select name="${key}">
-									<option ${values[key] == ""?'selected="selected"':''}></option>
-									<option ${values[key] == "true"?'selected="selected"':''}>true</option>
-									<option ${values[key] == "false"?'selected="selected"':''}>false</option>
-								</select>
+								<div class="_jv_flex-line">
+									<select name="${key}">
+										<option ${values[key] == ""?'selected="selected"':''}></option>
+										<option ${values[key] == "true"?'selected="selected"':''}>true</option>
+										<option ${values[key] == "false"?'selected="selected"':''}>false</option>
+									</select>
 
-								<div class="default">${allValues[key]}</div> <input type="hidden" name="_${key}" value="true" />
+									<c:if test="${not empty allValues[key]}">
+										<div class="default">${allValues[key]}</div>
+										<input type="hidden" name="_${key}" value="true" />
+									</c:if>
+								</div>
 							</td>
 							<c:forEach var="area" items="${areas}">
 								<c:set var="key" value="${param.filter}.${area}.${prop}" />
 								<td>
-									<!-- input type="checkbox" name="${key}" ${values[key] == "true"?'checked="checked"':''} onchange="jQuery(this).append('<input type=\'hidden\' name=\'_${key}\' value=\'true\' />');" / --> <select name="${key}" onchange="jQuery(this).append('<input type=\' hidden\' name=\ '_${key}\' value=\ 'true\' />');">
-									<option ${values[key] == ""?'selected="selected"':''}></option>
-									<option ${values[key] == "true"?'selected="selected"':''}>true</option>
-									<option ${values[key] == "false"?'selected="selected"':''}>false</option> </select>
+									<div class="_jv_flex-line">
+										<select name="${key}" onchange="jQuery(this).parent().append('<input type=\'hidden\' name=\'_CK_${key}\' value=\'true\' />');">
+										<option ${values[key] == ""?'selected="selected"':''}></option>
+										<option ${values[key] == "true"?'selected="selected"':''}>true</option>
+										<option ${values[key] == "false"?'selected="selected"':''}>false</option>
+										</select>
 
-									<div class="default">${allValues[key]}</div> <!--  input type="checkbox" readonly="readonly" ${allValues[key] == "true"?'checked="checked"':''} / -->
-
+										<c:if test="${not empty allValues[key]}">
+											<div class="default">${allValues[key]}</div>
+											<!--  input type="checkbox" readonly="readonly" ${allValues[key] == "true"?'checked="checked"':''} / -->
+										</c:if>
+									</div>
 								</td>
 							</c:forEach>
 						</tr>
@@ -81,6 +92,11 @@
 				</table>
 			</div>
 		</c:if>
+
+		<div class="action">
+			<input type="submit" name="back" value="${i18n.edit['global.back']}" />
+			<input type="submit" value="${i18n.edit['global.ok']}" />
+		</div>
 
 		<c:if test="${not empty param.filter}">
 			<fieldset id="image-preview">
@@ -94,10 +110,7 @@
 	</script>
 		</c:if>
 
-		<div class="action">
-			<input type="submit" name="back" value="${i18n.edit['global.back']}" />
-			<input type="submit" value="${i18n.edit['global.ok']}" />
-		</div>
+
 
 	</form>
 

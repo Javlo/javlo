@@ -593,7 +593,7 @@ public class TemplateAction extends AbstractModuleAction {
 
 			boolean val = StringHelper.isTrue(rs.getParameter(key, null));
 
-			if (rs.getParameter('_' + key, null) != null) {
+			if (rs.getParameter("_CK_" + key, null) != null) {
 				if (rs.getParameter(key, "").trim().length() == 0) {
 					imageConfig.remove(key);
 					modifiy = true;
@@ -607,22 +607,23 @@ public class TemplateAction extends AbstractModuleAction {
 
 			for (String area : template.getAreas()) {
 				key = filter + '.' + area + '.' + prop;
-				val = rs.getParameter(key, null) != null;
-
-				if (rs.getParameter('_' + key, null) != null) {
+				val = StringHelper.isTrue(rs.getParameter(key, null));
+				if (rs.getParameter("_CK_" + key, null) != null) {
+					System.out.println(">>>>>>>>> TemplateAction.performUpdateFilter : 1.key = "+key); //TODO: remove debug trace
 					if (rs.getParameter(key, "").trim().length() == 0) {
 						imageConfig.remove(key);
 						modifiy = true;
 						ctx.getRequest().setAttribute("modifiedArea", area);
 					} else {
+						System.out.println(">>>>>>>>> TemplateAction.performUpdateFilter : 2.key = "+key); //TODO: remove debug trace
 						if (val != StringHelper.isTrue(imageConfig.getProperty(key, null)) || imageConfig.getProperty(key, null) == null) {
+							System.out.println(">>>>>>>>> TemplateAction.performUpdateFilter : val = "+val); //TODO: remove debug trace
 							imageConfig.setProperty(key, "" + val);
 							modifiy = true;
 							ctx.getRequest().setAttribute("modifiedArea", area);
 						}
 					}
 				}
-
 			}
 		}
 

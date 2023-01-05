@@ -49,6 +49,13 @@ table th, table td {
 	border: 0 none;
 }
 
+.sTable {
+	input[type="text"], select {
+	  width: auto;
+	  max-width: 60px;
+	}
+}
+
 .template table thead th {
 	background: none repeat scroll 0 0 #555555;	
 	border-right: 1px solid #777777;
@@ -94,14 +101,14 @@ input[readonly] {
 }
 
 #form-properties-template .default {
-	margin-left: 12px;
-	box-shadow: 1px 1px 3px #CCCCCC inset;
+	margin-left: 12px;	
 	border: 1px solid #CCCCCC;
-    padding: 5px;
+	background-color: #eee;
+    padding: 3px;
     display: inline-block;
     vertical-align: text-top;
-    height: 18px;
     width: 36px;
+    font-size: .9rem;
 }
 
 .static-tabs {
