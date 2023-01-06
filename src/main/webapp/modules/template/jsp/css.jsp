@@ -37,10 +37,7 @@
 	
 	</div>
 	
-	
 	<div class="col-md-9">
-	
-	
 
 	<form id="form-css-template" action="${info.currentURL}" class="standard-form js-change-submit" method="post">
 		<div>
@@ -49,7 +46,7 @@
 		<div class="widgetbox2">
 		<h3>${param.css}</h3>
 		<div class="content nopadding">
-		<c:if test="${not empty param.css && not empty text}">
+		<c:if test="${not empty param.css}">
 			<input type="hidden" name="file" value="${param.css}" />
 			<input type="hidden" name="css" value="${param.css}" />
 			<textarea name="text" class="text-editor" id="text-editor" rows="10" cols="10" data-ext="css" data-mode="text/x-scss">${text}</textarea>
