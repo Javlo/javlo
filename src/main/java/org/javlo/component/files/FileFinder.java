@@ -143,6 +143,10 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 														matchScore = matchScore + 1;
 														found = true;
 													}
+													if (StringHelper.containsNoCase(StringHelper.collectionToString(file.getKeywords(ctx)), t)) {
+														matchScore = matchScore + 1;
+														found = true;
+													}
 													if (!found) {
 														matchScore = 0;
 														break;

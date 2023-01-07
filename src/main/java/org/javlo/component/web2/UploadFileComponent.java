@@ -34,7 +34,7 @@ public class UploadFileComponent extends AbstractVisualComponent implements IAct
 
 	private static Logger logger = Logger.getLogger(UploadFileComponent.class.getName());
 	
-	private static int MAX_IMAGE_SIZE = 1024;
+	private static int MAX_IMAGE_SIZE = 1280;
 
 	public static final String TYPE = "upload-file";
 

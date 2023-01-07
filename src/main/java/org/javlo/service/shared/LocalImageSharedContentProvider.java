@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.context.ContentContext;
+import org.javlo.filter.DirectoryFilter;
 import org.javlo.filter.ImageFileFilter;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -73,41 +74,50 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 	public Collection<SharedContent> getContent(ContentContext ctx) {
 		setCategories(new HashMap<String, String>());
 		content.clear();
-		File rootFolder = getRootFolder(ctx);		
-		for (File file : ResourceHelper.getAllFiles(rootFolder, getFilter())) {			
-			String category = StringHelper.cleanPath(file.getParentFile().getAbsolutePath().replace(rootFolder.getAbsolutePath(), ""));
+		File rootFolder = getRootFolder(ctx);
+		if (!categories.containsKey("")) {
+			categories.put("", "");
+		}
+		for (File file : ResourceHelper.getAllFiles(rootFolder, DirectoryFilter.instance)) {
+			String category = StringHelper.cleanPath(file.getAbsolutePath().replace(rootFolder.getAbsolutePath(), ""));
 			if (category.startsWith("/")) {
 				category = category.substring(1);
 			}
 			if (!categories.containsKey(category)) {
 				categories.put(category, category);
 			}
-			ComponentBean compBean = getComponentBean(file.getName(), category, GlobalImage.IMAGE_FILTER + "=full", ctx.getRequestContentLanguage());
-			compBean.setArea(ctx.getArea());
-			SharedContent sharedContent;
-			try {
-				if (isCategoryAccepted(ctx, category, ctx.getCurrentPage(), ctx.getCurrentTemplate())) {
-					StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
-					sharedContent = new SharedContent("" + file.hashCode(), compBean);
-					sharedContent.addCategory(category);
-					sharedContent.setSortOn(staticInfo.getCreationDate(ctx).getTime());
-					content.add(sharedContent);
-
-					sharedContent.setTitle(file.getName());
-					sharedContent.setDescription(staticInfo.getTitle(ctx));
-					sharedContent.setImageUrl(getPreviewURL(ctx, compBean));
-					sharedContent.setEditAsModal(true);
-					String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE));
-					url = URLHelper.addParam(url, "webaction", "file.previewEdit");
-					url = URLHelper.addParam(url, "module", "file");
-					url = URLHelper.addParam(url, "nobreadcrumbs", "true");
-					url = URLHelper.addParam(url, "file", URLHelper.encodePathForAttribute(file.getPath()));
-					url = URLHelper.addParam(url, "previewEdit", "true");
-					sharedContent.setEditURL(url);
+		}
+		for (File file : ResourceHelper.getAllFiles(rootFolder, getFilter())) {
+				String category = StringHelper.cleanPath(file.getParentFile().getAbsolutePath().replace(rootFolder.getAbsolutePath(), ""));
+				if (category.startsWith("/")) {
+					category = category.substring(1);
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+				ComponentBean compBean = getComponentBean(file.getName(), category, GlobalImage.IMAGE_FILTER + "=full", ctx.getRequestContentLanguage());
+				compBean.setArea(ctx.getArea());
+				SharedContent sharedContent;
+				try {
+					if (isCategoryAccepted(ctx, category, ctx.getCurrentPage(), ctx.getCurrentTemplate())) {
+						StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
+						sharedContent = new SharedContent("" + file.hashCode(), compBean);
+						sharedContent.addCategory(category);
+						sharedContent.setSortOn(staticInfo.getCreationDate(ctx).getTime());
+						content.add(sharedContent);
+
+						sharedContent.setTitle(file.getName());
+						sharedContent.setDescription(staticInfo.getTitle(ctx));
+						sharedContent.setImageUrl(getPreviewURL(ctx, compBean));
+						sharedContent.setEditAsModal(true);
+						String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE));
+						url = URLHelper.addParam(url, "webaction", "file.previewEdit");
+						url = URLHelper.addParam(url, "module", "file");
+						url = URLHelper.addParam(url, "nobreadcrumbs", "true");
+						url = URLHelper.addParam(url, "file", URLHelper.encodePathForAttribute(file.getPath()));
+						url = URLHelper.addParam(url, "previewEdit", "true");
+						sharedContent.setEditURL(url);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 		}
 		return content;
 	}
@@ -115,7 +125,7 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 	@Override
 	protected boolean isCategoryAccepted(ContentContext ctx, String category, MenuElement cp, Template template) {
 		if (!category.startsWith("/")) {
-			category = '/'+category;
+			category = '/' + category;
 		}
 		if (!category.startsWith(ctx.getGlobalContext().getStaticConfig().getImportFolder()) && !category.startsWith(ctx.getGlobalContext().getStaticConfig().getImportImageFolder()) && !category.startsWith(ctx.getGlobalContext().getStaticConfig().getImportGalleryFolder()) && !category.startsWith(ctx.getGlobalContext().getStaticConfig().getImportResourceFolder())) {
 			return true;
@@ -154,17 +164,16 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 	public boolean isUploadable(ContentContext ctx) {
 		return AdminUserSecurity.isCurrentUserCanUpload(ctx);
 	}
-	
+
 	protected boolean acceptedDocument(ContentContext ctx, String fileName) {
 		return ResourceHelper.isAcceptedImage(ctx, fileName);
 	}
-	
+
 	@Override
 	public Boolean exist(ContentContext ctx, String fileName, String category) throws IOException {
 		File imageFolder = getRootFolder(ctx);
 		imageFolder = new File(URLHelper.mergePath(imageFolder.getAbsolutePath(), category));
 		File newFile = new File(URLHelper.mergePath(imageFolder.getAbsolutePath(), fileName));
-		System.out.println(">>>>>>>>> LocalImageSharedContentProvider.exist : newFile = "+newFile); //TODO: remove debug trace
 		return newFile.exists();
 	}
 
@@ -179,7 +188,7 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 		File imageFolder = getRootFolder(ctx);
 		imageFolder = new File(URLHelper.mergePath(imageFolder.getAbsolutePath(), category));
 		File newFile = new File(URLHelper.mergePath(imageFolder.getAbsolutePath(), fileName));
-		System.out.println("rename = "+rename);
+		System.out.println("rename = " + rename);
 		if (rename) {
 			newFile = ResourceHelper.getFreeFileName(newFile);
 		}

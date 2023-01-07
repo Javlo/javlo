@@ -680,6 +680,10 @@ public class StringHelper {
 			return trim(value, '-').toLowerCase();
 		}
 	}
+	
+	public static String trim(String text) {
+		return trim(text, ' ');
+	}
 
 	/**
 	 * replace trimChar at the start and the end of text string. sample : --test-, -

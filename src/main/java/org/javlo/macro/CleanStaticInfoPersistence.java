@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.javlo.context.ContentContext;
-import org.javlo.helper.LocalLogger;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.ztatic.StaticInfo;

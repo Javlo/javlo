@@ -1,6 +1,7 @@
 package org.javlo.fields;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -106,7 +107,7 @@ public class FieldFile extends Field implements IStaticContainer {
 		List<String> list = new ArrayList<String>();
 		list.add("");
 		if (dir.exists()) {
-			File[] files = dir.listFiles(new DirectoryFilter());
+			File[] files = dir.listFiles((FilenameFilter)new DirectoryFilter());
 			if (!isCategoryRecursive()) {
 				Comparator fileComparator = new FileComparator(FileComparator.NAME, true);
 				Arrays.sort(files, fileComparator);

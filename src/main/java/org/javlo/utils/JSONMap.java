@@ -110,7 +110,7 @@ public class JSONMap implements Map<String, Object> {
 	public boolean containsKey(Object key) {
 		return object.has("" + key);
 	}
-
+	
 	@Override
 	public boolean containsValue(Object value) {
 		throw new NotImplementedException("containsValue");
@@ -119,6 +119,27 @@ public class JSONMap implements Map<String, Object> {
 	@Override
 	public Object get(Object key) {
 		return transform(object.get("" + key));
+	}
+	
+	/**
+	 * get item from a path separeted by '.'
+	 * @param path path to item like 'parent1.parent2.2.key, number in index is array
+	 * @return null if not found.
+	 */
+	public Object getItem(String inPath) {
+		String[] path = inPath.split("\\.");
+		Object crt = this;
+		for (int i = 0; i < path.length; i++) {
+			if (crt instanceof JSONMap) {
+				crt = ((JSONMap)crt).get(path[i]);
+			} else if (crt instanceof List) {
+				crt = ((List)crt).get(Integer.parseInt(path[i]));
+			}
+			if (crt == null) {
+				return null;
+			}
+		}
+		return crt;
 	}
 
 	public JSONMap getMap(Object key) {

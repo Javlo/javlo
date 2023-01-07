@@ -157,6 +157,10 @@ public class StaticInfoBean implements ITaxonomyContainer {
 	public String getName() {
 		return staticInfo.getFile().getName();
 	}
+	
+	public String getKeywords() {
+		return StringHelper.collectionToString(staticInfo.getKeywords(ctx),",");
+	}
 
 	public String getURL() throws IOException {
 		return URLHelper.createMediaURL(ctx, staticInfo.getFile());

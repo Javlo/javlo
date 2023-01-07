@@ -203,6 +203,7 @@ public abstract class ElementaryURLHelper {
 	}
 
 	protected static final String createNoProtocolURL(ContentContext ctx, GlobalContext globalContext, String servletPath, String uri, boolean ajax, boolean withPathPrefix, boolean widthEncodeURL) {
+		
 		String newUri;
 
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
@@ -323,7 +324,7 @@ public abstract class ElementaryURLHelper {
 	}
 
 	protected static String createStaticURL(ContentContext ctx, MenuElement referencePage, String inUrl, boolean withPathPrefix) {
-
+		
 		if (StringHelper.isMail(inUrl)) {
 			return "mailto:" + inUrl;
 		}

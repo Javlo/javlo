@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -183,9 +184,9 @@ public class FileAction extends AbstractModuleAction {
 					modulesContext.getCurrentModule().setToolsRenderer("/jsp/actions.jsp");
 					modulesContext.getCurrentModule().clearAllBoxes();
 					File folder = getFolder(ctx);
-					if (folder.exists() && folder.listFiles(new DirectoryFilter()) != null) {
+					if (folder.exists() && folder.listFiles((FilenameFilter)new DirectoryFilter()) != null) {
 						List<FileBean> allFileInfo = new LinkedList<FileBean>();
-						for (File file : folder.listFiles(new DirectoryFilter())) {
+						for (File file : folder.listFiles((FilenameFilter)new DirectoryFilter())) {
 							allFileInfo.add(new FileBean(ctx, StaticInfo.getInstance(ctx, file)));
 						}
 						List<FileBean> fileList = new LinkedList<FileBean>();
@@ -260,7 +261,7 @@ public class FileAction extends AbstractModuleAction {
 
 				// search children
 				File currentDir = new File(URLHelper.mergePath(getContextROOTFolder(ctx), currentPath));
-				File[] children = currentDir.listFiles(new DirectoryFilter());
+				File[] children = currentDir.listFiles((FilenameFilter)new DirectoryFilter());
 				List<HtmlLink> childrenLinks = new LinkedList<Module.HtmlLink>();
 				if (children != null) {
 					for (File file : children) {
@@ -390,6 +391,10 @@ public class FileAction extends AbstractModuleAction {
 				String title = rs.getParameter("title-" + fileBean.getId(), null);
 				if (title != null) {
 					staticInfo.setTitle(ctx, title);
+				}
+				String keywords = rs.getParameter("keywords-" + fileBean.getId(), null);
+				if (keywords != null) {
+					staticInfo.setKeywords(ctx, StringHelper.stringToCollection(keywords, ","));
 				}
 				String description = rs.getParameter("description-" + fileBean.getId(), null);
 				if (description != null) {

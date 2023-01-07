@@ -213,6 +213,11 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 		return staticInfo.getManualDescription(ctx);
 	}
 	
+	public String getKeywords() {
+		return StringHelper.collectionToString(staticInfo.getKeywords(ctx),",");
+	}
+
+	
 	public String getReference() {
 		if (staticInfo == null) {
 			return null;

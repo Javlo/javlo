@@ -953,10 +953,8 @@ public class DataAction implements IAction {
 		boolean fileExist = false;
 		String filename = rs.getParameter("filename");
 		if (provider != null && filename != null) {
-			System.out.println(">>>>>>>>> DataAction.performFileExistShared : sharedContentContext.getCategory() = "+sharedContentContext.getCategory()); //TODO: remove debug trace
 			fileExist = provider.exist(ctx, filename, sharedContentContext.getCategory());
 		}
-		System.out.println(">>>>>>>>> DataAction.performFileExistShared : fileExist = "+fileExist); //TODO: remove debug trace
 		ctx.getAjaxData().put("exist", fileExist);
 		return null;
 	}

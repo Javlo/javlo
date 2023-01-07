@@ -55,6 +55,8 @@ public class AjaxServlet extends HttpServlet {
 
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		
+		//System.out.println(">>>>>>>>> AjaxServlet.process : url = "+request.getRequestURL()); //TODO: remove debug trace
+		
 		try {
 			ContentContext ctx = ContentContext.getContentContext(request, response);
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());

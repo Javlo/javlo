@@ -1,5 +1,6 @@
 package org.javlo.ztatic;
 
+import java.awt.Point;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -37,8 +38,8 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.rest.IRestItem;
-import org.javlo.helper.DebugHelper;
 import org.javlo.helper.ExifHelper;
+import org.javlo.helper.LocalLogger;
 import org.javlo.helper.PDFHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -49,6 +50,8 @@ import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.service.location.LocationService;
+import org.javlo.service.remote.imagga.ImaggaConfig;
+import org.javlo.service.remote.imagga.ImaggaService;
 import org.javlo.user.User;
 import org.javlo.xml.NodeXML;
 import org.owasp.encoder.Encode;
@@ -429,6 +432,8 @@ public class StaticInfo implements IRestItem {
 
 	private List<String> tags = null;
 
+	private Boolean autoFill = null;
+
 	private Set<String> taxonomy = null;
 
 	private List<String> readRoles = null;
@@ -474,10 +479,14 @@ public class StaticInfo implements IRestItem {
 	}
 
 	private String getKey(ContentContext ctx, String key) {
-		return getKey(ctx, staticURL, key);
+		return getKey(ctx, staticURL, key, null);
 	}
 
-	private String getKey(ContentContext ctx, String inStaticURL, String key) {
+	private String getKeyWidthLanguage(ContentContext ctx, String key) {
+		return getKey(ctx, staticURL, key, ctx.getRequestContentLanguage());
+	}
+
+	private String getKey(ContentContext ctx, String inStaticURL, String key, String lg) {
 		// if (key.contains("-")) {
 		// if (ctx != null) {
 		// ContentService content = ContentService.getInstance(ctx.getGlobalContext());
@@ -488,7 +497,7 @@ public class StaticInfo implements IRestItem {
 		// }
 		// key = key.replace("-", "_");
 		// }
-		return KEY + inStaticURL + '-' + key;
+		return KEY + inStaticURL + '-' + key + (lg != null ? "-" + lg : "");
 	}
 
 	public static String getStaticUrlFromKey(Object key) {
@@ -539,7 +548,7 @@ public class StaticInfo implements IRestItem {
 		while (inStaticURL.startsWith("/static")) {
 			inStaticURL = inStaticURL.replaceFirst("/static", "");
 		}
-		
+
 		if (StringHelper.isImage(inStaticURL)) {
 			String newImageName = StringHelper.getFileNameWithoutExtension(inStaticURL);
 			if (StringHelper.isImage(newImageName)) {
@@ -583,7 +592,55 @@ public class StaticInfo implements IRestItem {
 			globalContext.setTimeAttribute(KEY, outStaticInfo);
 		}
 
+		if (!outStaticInfo.isAutoFill(ctx)) {
+			outStaticInfo.autoFill(ctx);
+		}
+
 		return outStaticInfo;
+	}
+
+	private void autoFill(ContentContext ctx) throws IOException {
+		logger.info("auto fill : " + getFile());
+
+		/** Imagga service **/
+
+		ImaggaConfig imaggaConfig = ImaggaConfig.getInstance(ctx.getGlobalContext());
+		if (imaggaConfig.isActive() && StringHelper.isImage(getFile().getName())) {
+			if (imaggaConfig.isFocus()) {
+				try {
+					if (getFocusZoneX(ctx) == DEFAULT_FOCUS_X && getFocusZoneY(ctx) == DEFAULT_FOCUS_Y) {
+						Point point = ImaggaService.getImageFacesPoint(imaggaConfig, getFile());
+						if (point != null) {
+							logger.info("search focus on : " + getFile());
+							setFocusZoneX(ctx, (int) Math.round((point.getX() * 1000) / getImageSize(ctx).getWidth()));
+							setFocusZoneY(ctx, (int) Math.round((point.getY() * 1000) / getImageSize(ctx).getHeight()));
+						} else {
+							setFocusZoneX(ctx, DEFAULT_FOCUS_X + 1);
+							logger.warning("error on search faces on " + getFile());
+						}
+					}
+				} catch (Exception e) {
+					logger.severe("error imaggaConfig focus on : " + getFile() + " -> " + e.getMessage());
+				}
+			}
+			if (imaggaConfig.isTag()) {
+				try {
+					if (getKeywords(ctx) == null || getKeywords(ctx).size() == 0) {
+						logger.info("update keywords : " + getFile());
+						Collection<String> langs = ctx.getGlobalContext().getContentLanguages();
+						Map<String, List<String>> tags = ImaggaService.getImageTags(imaggaConfig, getFile(), langs);
+						ContentContext langCtx = new ContentContext(ctx);
+						for (String lg : langs) {
+							langCtx.setAllLanguage(lg);
+							setKeywords(langCtx, tags.get(lg));
+						}
+					}
+				} catch (Exception e) {
+					logger.severe("error imaggaConfig tag on : " + getFile() + " -> " + e.getMessage());
+				}
+			}
+		}
+		setAutoFill(ctx, true);
 	}
 
 	private void init(ContentContext ctx) throws IOException, SAXException, TikaException {
@@ -608,7 +665,7 @@ public class StaticInfo implements IRestItem {
 			setAuthors(ctx, StringHelper.mergeString(" - ", metadata.get("xmpDM:artist"), metadata.get("xmpDM:composer")));
 			setDescription(ctx, StringHelper.mergeString(" - ", metadata.get("xmpDM:genre"), metadata.get("xmpDM:album")));
 		}
-		
+
 		if (StringHelper.isPDF(getFile().getName())) {
 			PDDocumentInformation data = PDFHelper.getPdfMeta(getFile());
 			if (data != null) {
@@ -1036,26 +1093,28 @@ public class StaticInfo implements IRestItem {
 		if (!content.isNavigationLoaded(editCtx)) {
 			editCtx = ctx;
 		}
-//		if (content.getAttribute(editCtx, getKey(ctx, FOCUS_ZONE_X), null) == null) {
-//			if (StringHelper.isImage(getFile().getName())) {
-//				try {
-//					if (getFile().exists()) {
-//						try {
-//							if (ctx.getGlobalContext().getStaticConfig().isAutoFocus() && ctx.isAsPreviewMode()) {
-//								logger.info("search point on interest on START : " + getFile() + " [" + ctx.getGlobalContext().getContextKey() + "]");
-//								// InitInterest.setPointOfInterestWidthThread(ctx, getFile(), getKey(ctx,
-//								// FOCUS_ZONE_X), getKey(ctx, FOCUS_ZONE_Y));
-//							}
-//						} catch (Throwable t) {
-//							logger.warning(t.getMessage());
-//						}
-//					}
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		}
-		
+		// if (content.getAttribute(editCtx, getKey(ctx, FOCUS_ZONE_X), null) == null) {
+		// if (StringHelper.isImage(getFile().getName())) {
+		// try {
+		// if (getFile().exists()) {
+		// try {
+		// if (ctx.getGlobalContext().getStaticConfig().isAutoFocus() &&
+		// ctx.isAsPreviewMode()) {
+		// logger.info("search point on interest on START : " + getFile() + " [" +
+		// ctx.getGlobalContext().getContextKey() + "]");
+		// // InitInterest.setPointOfInterestWidthThread(ctx, getFile(), getKey(ctx,
+		// // FOCUS_ZONE_X), getKey(ctx, FOCUS_ZONE_Y));
+		// }
+		// } catch (Throwable t) {
+		// logger.warning(t.getMessage());
+		// }
+		// }
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
+		// }
+		// }
+
 		String kzx = content.getAttribute(editCtx, getKey(ctx, FOCUS_ZONE_X), "" + DEFAULT_FOCUS_X);
 		return Integer.parseInt(kzx);
 	}
@@ -1264,6 +1323,55 @@ public class StaticInfo implements IRestItem {
 		return tags;
 	}
 
+	private void storeKeywords(ContentContext ctx, List<String> keywords) {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		String key = getKeyWidthLanguage(ctx, "keywords");
+		String rawTags = StringHelper.collectionToString(keywords);
+		globalContext.setData(key, rawTags);
+	}
+
+	public List<String> getKeywords(ContentContext ctx) {
+		List<String> keywords;
+		String key = getKeyWidthLanguage(ctx, "keywords");
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		String rawKw = globalContext.getData(key);
+		if (rawKw == null) {
+			keywords = Collections.EMPTY_LIST;
+		} else {
+			keywords = StringHelper.stringToCollection(rawKw);
+		}
+		return keywords;
+	}
+
+	public void setKeywords(ContentContext ctx, List<String> keywords) {
+		storeKeywords(ctx, keywords);
+	}
+
+	public boolean isAutoFill(ContentContext ctx) {
+		if (autoFill == null) {
+			String key = getKey(ctx, "auto-fill");
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			autoFill = StringHelper.isTrue(globalContext.getData(key), false);
+		}
+		return autoFill;
+	}
+
+	private void storeAutoFill(ContentContext ctx) {
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		String key = getKey(ctx, "auto-fill");
+		boolean autoFill = isAutoFill(ctx);
+		if (autoFill) {
+			globalContext.setData(key, "true");
+		} else {
+			globalContext.removeData(key);
+		}
+	}
+
+	public void setAutoFill(ContentContext ctx, boolean value) {
+		this.autoFill = value;
+		storeAutoFill(ctx);
+	}
+
 	public Set<String> getTaxonomy(ContentContext ctx) {
 		if (taxonomy == null) {
 			String key = getKey(ctx, "taxonomy");
@@ -1372,7 +1480,7 @@ public class StaticInfo implements IRestItem {
 	}
 
 	public String getVersionHash(ContentContext ctx) {
-		return ""+getFocusZoneX(ctx)+"_"+getFocusZoneY(ctx) +"_"+ StringHelper.asBase64(getCRC32());
+		return "" + getFocusZoneX(ctx) + "_" + getFocusZoneY(ctx) + "_" + StringHelper.asBase64(getCRC32());
 	}
 
 	public Date getExifDate() {
@@ -1632,7 +1740,7 @@ public class StaticInfo implements IRestItem {
 			return imageSize;
 		} else {
 			try {
-				//String key = getKey(ctx, "imageSize-" + ctx.getRequestContentLanguage());
+				// String key = getKey(ctx, "imageSize-" + ctx.getRequestContentLanguage());
 				String key = getKey(ctx, IMAGE_SIZE_PREFIX);
 				ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 				String imageSizeRAW = content.getAttribute(ctx, key, null);
@@ -1643,7 +1751,7 @@ public class StaticInfo implements IRestItem {
 						return imageSize;
 					}
 				}
-				logger.info("load image size for : "+file);
+				logger.info("load image size for : " + file);
 				imageSize = ImageHelper.getImageSize(file);
 				content.setAttribute(ctx, key, imageSize.storeToString());
 			} catch (Throwable e) {
@@ -1657,11 +1765,11 @@ public class StaticInfo implements IRestItem {
 			return imageSize;
 		}
 	}
-	
+
 	public static void main(String[] args) throws IOException {
 		File image = new File("c:/trans/image.jpg");
 		ImageSize size = ImageHelper.getImageSize(image);
-		System.out.println(">>>>>>>>> StaticInfo.main : size = "+size); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> StaticInfo.main : size = " + size); // TODO: remove debug trace
 	}
 
 	@Override
@@ -1714,4 +1822,3 @@ public class StaticInfo implements IRestItem {
 	}
 
 }
-

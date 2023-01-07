@@ -488,7 +488,7 @@ public class ResourceHelper {
 				outFiles.add(file);
 			}
 		}
-		files = dir.listFiles(new DirectoryFilter());
+		files = dir.listFiles((FilenameFilter)new DirectoryFilter());
 		if (files != null) {
 			for (File file : files) {
 				outFiles.addAll(getAllFiles(file, filter, comp));

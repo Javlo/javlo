@@ -168,7 +168,6 @@ var openSelect = function(selector){
 
 jQuery(document).ready(function() {
 	
-	
 	jQuery( window ).mousemove(function( event ) {
 		mouseX = event.pageX;
 		mouseY = event.pageY;

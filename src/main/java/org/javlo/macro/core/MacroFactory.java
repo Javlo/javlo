@@ -69,6 +69,7 @@ import org.javlo.macro.RebuitTemplateHtml;
 import org.javlo.macro.ReduceSubtitleLevelMacro;
 import org.javlo.macro.ResetRecaptcha;
 import org.javlo.macro.SortChildren;
+import org.javlo.macro.StaticInfoAutoFill;
 import org.javlo.macro.TransfertComponentBadAreaToContent;
 import org.javlo.macro.UndeletePage;
 import org.javlo.macro.UnlinkMirrorComponent;
@@ -226,6 +227,7 @@ public class MacroFactory {
 		macros.add(new RebuitTemplate());
 		macros.add(new RebuitTemplateHtml());
 		macros.add(new CleanStaticInfoPersistence());
+		macros.add(new StaticInfoAutoFill());
 		macros.add(new DeleteTrackerCache());
 		macros.add(new LogAsUser());
 		macros.add(new DisplayDashBoard());

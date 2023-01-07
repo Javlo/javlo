@@ -1,6 +1,7 @@
 package org.javlo.template;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
@@ -44,7 +45,7 @@ public class TemplatePluginFactory {
 		}
 		List<TemplatePlugin> allTemplatePlungin = new LinkedList<TemplatePlugin>();
 		if (dir.isDirectory()) {
-			File[] templatePluginFolders = dir.listFiles(new DirectoryFilter());
+			File[] templatePluginFolders = dir.listFiles((FilenameFilter)new DirectoryFilter());
 			for (File folder : templatePluginFolders) {
 				try {
 					TemplatePlugin tp = TemplatePlugin.getInstance(folder);
@@ -55,7 +56,7 @@ public class TemplatePluginFactory {
 			}
 		}
 		if (localDir.isDirectory()) {
-			File[] templatePluginFolders = localDir.listFiles(new DirectoryFilter());
+			File[] templatePluginFolders = localDir.listFiles((FilenameFilter)new DirectoryFilter());
 			for (File folder : templatePluginFolders) {
 				try {
 					TemplatePlugin tp = TemplatePlugin.getInstance(folder);
