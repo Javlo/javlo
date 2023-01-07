@@ -13,7 +13,9 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.text.ParseException;
@@ -43,6 +45,8 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.naming.ConfigurationException;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
@@ -51,6 +55,7 @@ import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.bean.SortBean;
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -64,6 +69,7 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.XMLManipulationHelper;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.helper.filefilter.HTMLFileFilter;
+import org.javlo.helper.filefilter.StyleSheetFileFilter;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ExtendedColor;
 import org.javlo.mailing.Mail;
@@ -1073,6 +1079,31 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
+	protected void createMainComponentSass(GlobalContext globalContext) throws IOException {
+		synchronized (globalContext.getLockImportTemplate()) {
+			String templateFolder = getWorkTemplateFolder();
+			String path = URLHelper.mergePath(URLHelper.mergePath(templateFolder, getFolder(globalContext)), DYNAMIC_COMPONENTS_PROPERTIES_FOLDER);
+			File dynCompDir = new File(path);
+			if (!dynCompDir.exists()) {
+				return;
+			}
+			List<File> files = new LinkedList<File>();
+			files.addAll(Arrays.asList(dynCompDir.listFiles(new PropertiesFilter())));
+			files.addAll(Arrays.asList(dynCompDir.listFiles(new HTMLFileFilter())));
+
+			File targetScssFile = new File(URLHelper.mergePath(URLHelper.mergePath(templateFolder, getFolder(globalContext)), "/scss/_dynamic_component.scss"));
+			targetScssFile.getParentFile().mkdirs();
+			OutputStream outStream = new FileOutputStream(targetScssFile);
+			PrintStream out = new PrintStream(outStream);
+			for (File file : dynCompDir.listFiles(new StyleSheetFileFilter())) {
+				out.println("/* insert file : " + file.getName() + " */");
+				out.println(ResourceHelper.loadStringFromFile(file));
+			}
+			out.close();
+			outStream.close();
+		}
+	}
+
 	public Map<String, List<String>> getCSSByFolder(String filter) throws IOException {
 		if (dir == null) {
 			return Collections.EMPTY_MAP;
@@ -1594,7 +1625,7 @@ public class Template implements Comparable<Template> {
 	public List<String> getHostDetected(ContentContext ctx) throws FileNotFoundException, IOException {
 		if (this.hosts == null) {
 			File HTMLFile = new File(URLHelper.mergePath(getTemplateTargetFolder(ctx.getGlobalContext()), getHTMLFile(ctx.getDevice())));
-			
+
 			String html = ResourceHelper.getFileContent(HTMLFile);
 			Collection<String> links = XHTMLHelper.extractUnsedLinks(html, true);
 			List<String> outHosts = new LinkedList<>();
@@ -1605,7 +1636,7 @@ public class Template implements Comparable<Template> {
 				}
 			}
 			this.hosts = outHosts;
-			logger.info("found "+outHosts.size()+" host(s) in : "+HTMLFile);
+			logger.info("found " + outHosts.size() + " host(s) in : " + HTMLFile);
 		}
 		return this.hosts;
 	}
@@ -2941,6 +2972,9 @@ public class Template implements Comparable<Template> {
 
 		LocalLogger.stepCount(LOG_KEY, "parent");
 
+		importExternalDynamicComponent(globalContext);
+		createMainComponentSass(globalContext);
+
 		// Clear Template Thymeleaf Cache
 
 		TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(ctx.getServletContext());
@@ -2951,6 +2985,18 @@ public class Template implements Comparable<Template> {
 
 		LocalLogger.stepCount(LOG_KEY, "clearTemplateCache");
 
+	}
+
+	private void importExternalDynamicComponent(GlobalContext globalContext) throws IOException {
+		File dynamicComponentFolder = new File(URLHelper.mergePath(URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext)), DYNAMIC_COMPONENTS_PROPERTIES_FOLDER));
+		File externalComponentFolder = new File(globalContext.getExternComponentFolder());
+		if (dynamicComponentFolder.exists()) {
+			if (!externalComponentFolder.exists()) {
+				logger.warning("directory external not found  : " + externalComponentFolder);
+			} else {
+				ResourceHelper.copyDir(externalComponentFolder, dynamicComponentFolder, true, null);
+			}
+		}
 	}
 
 	public boolean isAlternativeTemplate(ContentContext ctx) {

@@ -1,6 +1,7 @@
 package org.javlo.servlet;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.LinkedList;
@@ -14,15 +15,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.fields.Field;
 import org.javlo.helper.ComponentHelper;
-import org.javlo.helper.LocalLogger;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.template.TemplateFactory;
@@ -46,29 +48,29 @@ public class ExportComponents extends HttpServlet {
 		process(request, response);
 	}
 	
-//	private void renderDynamicComponent(String type, HttpServletRequest request, HttpServletResponse response) throws Exception {
-//		ContentContext ctx = ContentContext.getContentContext(request, response, false);		
-//		File compFile=null;
-//		for (File comp : ctx.getGlobalContext().getExternComponents()) {
-//			if (StringHelper.getFileNameWithoutExtension(comp.getName()).equals(type)) {
-//				compFile=comp;
-//			}
-//		}
-//		System.out.println(">>>>>>>>> ExportComponents.renderDynamicComponent : compFile = "+compFile); //TODO: remove debug trace
-//		if (compFile == null) {
-//			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-//			return;
-//		}
-//		File tempFolder = new File(getServletContext().getRealPath(URLHelper.mergePath(TEMP_DYANAMIC_COMPONENT_FOLDER, ctx.getGlobalContext().getContextKey())));
-//		if (!tempFolder.exists()) {
-//			tempFolder.mkdirs();
-//		}
-//		File destFile = new File(URLHelper.mergePath(tempFolder.getAbsolutePath(), compFile.getName()));
-//		FileUtils.copyFile(compFile, destFile);
-//		DynamicComponent dc = new DynamicComponent();
-//		dc.init(new ComponentBean(type, ResourceHelper.loadStringFromFile(destFile), "en"), ctx);
-//		response.getWriter().print(dc.getViewXHTMLCode(ctx));
-//	}
+	private void renderDynamicComponent(String type, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ContentContext ctx = ContentContext.getContentContext(request, response, false);		
+		File compFile=null;
+		for (File comp : ctx.getGlobalContext().getExternComponents()) {
+			if (StringHelper.getFileNameWithoutExtension(comp.getName()).equals(type)) {
+				compFile=comp;
+			}
+		}
+		System.out.println(">>>>>>>>> ExportComponents.renderDynamicComponent : compFile = "+compFile); //TODO: remove debug trace
+		if (compFile == null) {
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
+		}
+		File tempFolder = new File(getServletContext().getRealPath(URLHelper.mergePath(TEMP_DYANAMIC_COMPONENT_FOLDER, ctx.getGlobalContext().getContextKey())));
+		if (!tempFolder.exists()) {
+			tempFolder.mkdirs();
+		}
+		File destFile = new File(URLHelper.mergePath(tempFolder.getAbsolutePath(), compFile.getName()));
+		ResourceHelper.copyFile(compFile, destFile, true);
+		DynamicComponent dc = new DynamicComponent();
+		dc.init(new ComponentBean(type, ResourceHelper.loadStringFromFile(destFile), "en"), ctx);
+		response.getWriter().print(dc.getViewXHTMLCode(ctx));
+	}
 
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 

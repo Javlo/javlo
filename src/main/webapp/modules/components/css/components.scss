@@ -29,7 +29,8 @@
 
 .action {
 	text-align: center;
-	margin: 15px;
+	padding: 15px;
+	background: var(--javlo-ui-bg-secondary);
 }
 
 .tabloading .ui-tabs-hide {
@@ -38,4 +39,51 @@
 
 .add-component {
 	margin: 15px 0 0 15px;
+}
+
+.select-group {
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	display: flex;
+	justify-content: space-between;
+	 a {
+		--btn-height: 28px;
+		--btn-vertical-padding: 3px;
+		padding: var(--btn-vertical-padding) 1em;
+		line-height: calc(var(--btn-height) - var(--btn-vertical-padding) * 2);
+		height: auto;
+		background-color: #ddd;
+		background-image: none;
+		text-shadow: none;
+		border: 1px #ddd solid;
+		color: #555;
+		border-radius: 3px;
+		font-weight: bold;
+		&.active {
+			background-color: var(--javlo-ui-btn-toggle-bg-active) !important;
+			color: #fff !important;
+		}
+	}
+}
+
+#form-add-component {
+	.input {
+		margin-right: .5rem;
+		input {
+			width: auto;
+		}
+	}
+}
+
+.editor-wrapper {
+	display: flex;
+	.editor {
+		flex-grow: 5;
+		margin-right: 1rem;
+	}
+	.help {
+		ul {
+			margin-left: 3rem;
+		}
+	}
 }

@@ -1,6 +1,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib
 	prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <div class="content">
+
+<div class="editor-wrapper">
+<div class="editor">
+<jsp:include page="navigation_components.jsp" />
 <c:if test="${not empty param.component}">
 <div class="tabs tabloading component ui-tabs ui-widget ui-widget-content ui-corner-all">
 <form id="tabs-form" action="${info.currentURL}" method="post">
@@ -44,6 +48,10 @@
 	<input value="${i18n.edit['global.save']}" type="submit">
 </div>
 </form>
+</div>
+</div>
+<div class="help">
+	<jsp:include page="help.html" />
 </div>
 </c:if>
 </div>

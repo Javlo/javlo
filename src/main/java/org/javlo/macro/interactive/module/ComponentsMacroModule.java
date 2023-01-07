@@ -18,6 +18,7 @@ public class ComponentsMacroModule extends AbstractDisplayModule {
 	@Override
 	public String prepare(ContentContext ctx) {
 		String out = null;
+		super.prepare(ctx);
 		try {
 			getModuleAction(ctx).prepare(ctx, ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext()));
 		} catch (Exception e) {
