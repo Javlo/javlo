@@ -248,7 +248,7 @@ public class TemplateAction extends AbstractModuleAction {
 					}
 				} else if (requestService.getParameter("back", null) != null) {
 					module.restoreAll();
-					module.createMainBox("edit_template", i18nAccess.getText("template.edit.title") + " : " + template.getName(), "/jsp/edit_template.jsp", false);
+					//module.createMainBox("edit_template", i18nAccess.getText("template.edit.title") + " : " + template.getName(), "/jsp/edit_template.jsp", false);
 				}
 			}
 		} else if (requestService.getParameter("list", null) == null) {
@@ -295,7 +295,7 @@ public class TemplateAction extends AbstractModuleAction {
 				e.printStackTrace();
 			}
 			I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
-			module.createMainBox("edit_template", i18nAccess.getText("template.edit.title") + " : " + template.getName(), "/jsp/edit_template.jsp", false);
+			//module.createMainBox("edit_template", i18nAccess.getText("template.edit.title") + " : " + template.getName(), "/jsp/edit_template.jsp", false);
 		}
 		return msg;
 	}
