@@ -115,6 +115,7 @@ import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 import org.javlo.utils.HtmlPart;
+import org.javlo.utils.NeverEmptyMap;
 import org.javlo.utils.TimeMap;
 import org.javlo.utils.TimeRange;
 import org.javlo.xml.NodeXML;
@@ -1475,13 +1476,13 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	}
 
 	protected String getCacheKey(ContentContext ctx, String subkey) {
-		
+
 		String deviceStr = "laptop";
 		if (ctx.getDevice() != null) {
-			deviceStr = "dv-"+ctx.getDevice().isMobileDevice();
+			deviceStr = "dv-" + ctx.getDevice().isMobileDevice();
 		}
-		
-		String key = this.getClass().getName() + '_' + getId() + '_' + subkey+'_'+deviceStr;
+
+		String key = this.getClass().getName() + '_' + getId() + '_' + subkey + '_' + deviceStr;
 		if (ctx.getGlobalContext().isCollaborativeMode() && ctx.getCurrentEditUser() != null) {
 			key = key + '_' + ctx.getCurrentEditUser().getLogin();
 		}
@@ -2635,7 +2636,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		if (template != null) {
 			defaultArea = template.getDefaultArea();
 		}
-		
+
 		boolean mobileDevice = false;
 		if (ctx.getDevice() != null) {
 			mobileDevice = ctx.getDevice().isMobileDevice();
@@ -2650,12 +2651,12 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			IContentVisualComponent elem = contentList.next(specialCtx);
 			if ((elem instanceof IImageTitle) && !(elem instanceof ImageBackground) && (!elem.isRepeat())) {
 				IImageTitle imageComp = (IImageTitle) elem;
-				
+
 				if (mobileDevice && imageComp.isMobileOnly(specialCtx)) {
 					desc.imageLink = new ImageTitleBean(specialCtx, imageComp);
 					return imageComp;
 				}
-				
+
 				if (imageComp.isImageValid(specialCtx)) {
 					int priority = imageComp.getPriority(specialCtx);
 					if (priority > bestPriority) {
@@ -2709,7 +2710,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		if (template != null) {
 			defaultArea = template.getDefaultArea();
 		}
-		
+
 		res = new LinkedList<IImageTitle>();
 		IContentComponentsList contentList = getAllContent(ctx);
 		while (contentList.hasNext(ctx)) {
@@ -2753,13 +2754,13 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 				}
 			}
 		}
-		
+
 		if (res.size() > 1) {
 			Collections.sort(res, new SortImageTitleByPriority(ctx));
 		} else if (res.size() == 0) {
 			res = Collections.emptyList();
 		}
-		
+
 		desc.images = res;
 		return desc.images;
 	}
@@ -4179,7 +4180,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			if (!isActive()) {
 				return false;
 			}
-			
+
 			if (isChildrenAssociation()) {
 				return true;
 			}
@@ -5033,7 +5034,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	public String getShortURL() {
 		return shortURL;
 	}
-	
+
 	public String getShortURL(ContentContext ctx) throws Exception {
 		return getShortURL(ctx, true);
 	}
@@ -5424,7 +5425,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		desc.event = Event.NO_EVENT;
 		return null;
 	}
-
+	
 	public String getAreaClass(ContentContext ctx, String area) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 		String clazz = desc.areaAsMap.get(area);
@@ -5450,6 +5451,16 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			} else if (containContainer) {
 				clazz = "area-contain-container area-contain-container-not-first";
 			}
+			
+			List<String> compTypes = getComponentTypes(ctx).get(area);
+			if (compTypes != null) {
+				clazz += ' ' + "_cp_type_size_" + compTypes.size();
+				clazz += ' ' + "_cp_size_" + getContent(ctxArea).size(ctxArea);
+				for (String type : compTypes) {
+					clazz += ' ' + "_cp-" + type;
+				}
+			}
+			
 			desc.areaAsMap.put(area, clazz);
 		}
 		return clazz;
@@ -5635,12 +5646,11 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	}
 
 	public boolean isLayout() {
-		/*MenuElement parent = getParent();
-		if (parent != null && getName().equals(LAYOUTS_PREFIX + parent.getName())) {
-			return true;
-		} else {
-			return false;
-		}*/
+		/*
+		 * MenuElement parent = getParent(); if (parent != null &&
+		 * getName().equals(LAYOUTS_PREFIX + parent.getName())) { return true; } else {
+		 * return false; }
+		 */
 		return isModel();
 	}
 
@@ -5730,6 +5740,31 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		this.noValidation = noValidation;
 	}
 
+	/**
+	 * get list of component type by area
+	 * 
+	 * @param ctx
+	 * @return map of list with area as key
+	 * @throws Exception
+	 */
+	public Map<String, List<String>> getComponentTypes(ContentContext ctx) throws Exception {
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+		if (desc.componentTypes == null) {
+			Map<String, List<String>> out = new NeverEmptyMap<>(LinkedList.class);
+			ContentContext noAreaCtx = ctx.getContextWithArea(null);
+			ContentElementList content = getContent(noAreaCtx);
+			while (content.hasNext(noAreaCtx)) {
+				IContentVisualComponent comp = content.next(noAreaCtx);
+				if (!out.get(comp.getArea()).contains(comp.getType())) {
+					out.get(comp.getArea()).add(comp.getType());
+				}
+			}
+			desc.componentTypes = out;
+		}
+		return desc.componentTypes;
+	}
+
+	
 	@Override
 	public Set<String> getTaxonomy() {
 		return taxonomy;

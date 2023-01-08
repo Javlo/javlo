@@ -82,6 +82,7 @@ public class PageDescription implements Serializable {
 	Map<String, Object> contentAsMap;
 	Map<String, String> areaAsMap = new HashMap();
 	ProductBean product = null;
+	Map<String, List<String>> componentTypes;
 
 	String forward = null;
 
@@ -428,6 +429,14 @@ public class PageDescription implements Serializable {
 	
 	public void setProduct(ProductBean product) {
 		this.product = product;
+	}
+	
+	public void setComponentTypes(Map<String, List<String>> componentTypes) {
+		this.componentTypes = componentTypes;
+	}
+	
+	public Map<String, List<String>> getComponentTypes() {
+		return componentTypes;
 	}
 
 }

@@ -937,6 +937,7 @@ Security in case of vulnerabilities.
   - detect host in html (template) for set preconnect in http head
   - upload file on click on "drop files here"
   - Imagga Service - tags + focus zone
+  - components status as class on area
 ### Modified
   - detect less and scss modification on all files
 ### fixed
