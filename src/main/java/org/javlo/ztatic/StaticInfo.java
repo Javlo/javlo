@@ -600,47 +600,49 @@ public class StaticInfo implements IRestItem {
 	}
 
 	private void autoFill(ContentContext ctx) throws IOException {
-		logger.info("auto fill : " + getFile());
+		if (ctx.isAsModifyMode()) {
+			logger.info("auto fill : " + getFile());
 
-		/** Imagga service **/
+			/** Imagga service **/
 
-		ImaggaConfig imaggaConfig = ImaggaConfig.getInstance(ctx.getGlobalContext());
-		if (imaggaConfig.isActive() && StringHelper.isImage(getFile().getName())) {
-			if (imaggaConfig.isFocus()) {
-				try {
-					if (getFocusZoneX(ctx) == DEFAULT_FOCUS_X && getFocusZoneY(ctx) == DEFAULT_FOCUS_Y) {
-						Point point = ImaggaService.getImageFacesPoint(imaggaConfig, getFile());
-						if (point != null) {
-							logger.info("search focus on : " + getFile());
-							setFocusZoneX(ctx, (int) Math.round((point.getX() * 1000) / getImageSize(ctx).getWidth()));
-							setFocusZoneY(ctx, (int) Math.round((point.getY() * 1000) / getImageSize(ctx).getHeight()));
-						} else {
-							setFocusZoneX(ctx, DEFAULT_FOCUS_X + 1);
-							logger.warning("error on search faces on " + getFile());
+			ImaggaConfig imaggaConfig = ImaggaConfig.getInstance(ctx.getGlobalContext());
+			if (imaggaConfig.isActive() && StringHelper.isImage(getFile().getName())) {
+				if (imaggaConfig.isFocus()) {
+					try {
+						if (getFocusZoneX(ctx) == DEFAULT_FOCUS_X && getFocusZoneY(ctx) == DEFAULT_FOCUS_Y) {
+							Point point = ImaggaService.getImageFacesPoint(imaggaConfig, getFile());
+							if (point != null) {
+								logger.info("search focus on : " + getFile());
+								setFocusZoneX(ctx, (int) Math.round((point.getX() * 1000) / getImageSize(ctx).getWidth()));
+								setFocusZoneY(ctx, (int) Math.round((point.getY() * 1000) / getImageSize(ctx).getHeight()));
+							} else {
+								setFocusZoneX(ctx, DEFAULT_FOCUS_X + 1);
+								logger.warning("error on search faces on " + getFile());
+							}
 						}
+					} catch (Exception e) {
+						logger.severe("error imaggaConfig focus on : " + getFile() + " -> " + e.getMessage());
 					}
-				} catch (Exception e) {
-					logger.severe("error imaggaConfig focus on : " + getFile() + " -> " + e.getMessage());
+				}
+				if (imaggaConfig.isTag()) {
+					try {
+						if (getKeywords(ctx) == null || getKeywords(ctx).size() == 0) {
+							logger.info("update keywords : " + getFile());
+							Collection<String> langs = ctx.getGlobalContext().getContentLanguages();
+							Map<String, List<String>> tags = ImaggaService.getImageTags(imaggaConfig, getFile(), langs);
+							ContentContext langCtx = new ContentContext(ctx);
+							for (String lg : langs) {
+								langCtx.setAllLanguage(lg);
+								setKeywords(langCtx, tags.get(lg));
+							}
+						}
+					} catch (Exception e) {
+						logger.severe("error imaggaConfig tag on : " + getFile() + " -> " + e.getMessage());
+					}
 				}
 			}
-			if (imaggaConfig.isTag()) {
-				try {
-					if (getKeywords(ctx) == null || getKeywords(ctx).size() == 0) {
-						logger.info("update keywords : " + getFile());
-						Collection<String> langs = ctx.getGlobalContext().getContentLanguages();
-						Map<String, List<String>> tags = ImaggaService.getImageTags(imaggaConfig, getFile(), langs);
-						ContentContext langCtx = new ContentContext(ctx);
-						for (String lg : langs) {
-							langCtx.setAllLanguage(lg);
-							setKeywords(langCtx, tags.get(lg));
-						}
-					}
-				} catch (Exception e) {
-					logger.severe("error imaggaConfig tag on : " + getFile() + " -> " + e.getMessage());
-				}
-			}
+			setAutoFill(ctx, true);
 		}
-		setAutoFill(ctx, true);
 	}
 
 	private void init(ContentContext ctx) throws IOException, SAXException, TikaException {
@@ -1324,17 +1326,17 @@ public class StaticInfo implements IRestItem {
 	}
 
 	private void storeKeywords(ContentContext ctx, List<String> keywords) {
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		String key = getKeyWidthLanguage(ctx, "keywords");
 		String rawTags = StringHelper.collectionToString(keywords);
-		globalContext.setData(key, rawTags);
+		content.setAttribute(ctx, key, rawTags);
 	}
 
 	public List<String> getKeywords(ContentContext ctx) {
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 		List<String> keywords;
 		String key = getKeyWidthLanguage(ctx, "keywords");
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		String rawKw = globalContext.getData(key);
+		String rawKw = content.getAttribute(ctx, key);
 		if (rawKw == null) {
 			keywords = Collections.EMPTY_LIST;
 		} else {

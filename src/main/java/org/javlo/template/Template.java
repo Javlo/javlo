@@ -1260,6 +1260,23 @@ public class Template implements Comparable<Template> {
 	public String getEscapeMenuId() {
 		return properties.getString("nav.escape_id", getParent().getEscapeMenuId());
 	}
+	
+	public static Map<String,String> extractPropertiesFromHtml(String html) {
+		Pattern fieldPattern = Pattern.compile("\\$\\{field.*?\\}");
+		Matcher matcher = fieldPattern.matcher(html);
+		int i = 0;
+		Map<String, String> out = new LinkedHashMap<>();
+		while (matcher.find()) {
+			i++;
+			String field = matcher.group();
+			String[] data = field.substring(2, field.length() - 1).split("\\.");
+			if (data.length >= 3) {
+				out.put("field." + data[2] + ".order", "" + i);
+				out.put("field." + data[2] + ".type", data[1]);
+			}
+		}
+		return out;
+	}
 
 	public final List<Properties> getDynamicComponentsProperties(GlobalContext globalContext) throws IOException {
 		if (dynamicsComponents == null) {
@@ -1270,7 +1287,6 @@ public class Template implements Comparable<Template> {
 
 					List<File> files = getComponentFile(globalContext);
 					List<Properties> outProperties = new LinkedList<Properties>();
-					Pattern fieldPattern = Pattern.compile("\\$\\{field.*?\\}");
 					for (File file : files) {
 						if (StringHelper.isProperties(file.getName())) {
 							if (activeComps == null || activeComps.contains(StringHelper.getFileNameWithoutExtension(file.getName()))) {
@@ -1296,17 +1312,9 @@ public class Template implements Comparable<Template> {
 								}
 								properties.setProperty("component.type", StringHelper.getFileNameWithoutExtension(file.getName()));
 								properties.setProperty("component.renderer", ResourceHelper.removePath(file.getAbsolutePath(), getFolder(globalContext)));
-								Matcher matcher = fieldPattern.matcher(html);
-								int i = 0;
-								while (matcher.find()) {
-									i++;
-									String field = matcher.group();
-									String[] data = field.substring(2, field.length() - 1).split("\\.");
-									if (data.length >= 3) {
-										properties.setProperty("field." + data[2] + ".order", "" + i);
-										properties.setProperty("field." + data[2] + ".type", data[1]);
-									}
-								}
+								
+								properties.putAll(extractPropertiesFromHtml(html));
+								
 								outProperties.add(properties);
 							}
 						}

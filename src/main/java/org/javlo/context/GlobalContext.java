@@ -2878,7 +2878,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			}
 			askStoreData();
 		}
-
 	}
 
 	private void askStoreData() {

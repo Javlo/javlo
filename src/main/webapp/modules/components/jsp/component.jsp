@@ -50,7 +50,24 @@
 </form>
 </div>
 </div>
-<div class="help">
+<div class="help-wrapper">
+
+	<c:if test="${not empty detectedFields}">
+	<div class="detected-fields">
+		<fieldset>
+			<legend>detected fields</legend>
+			<ul>
+				<c:forEach var="field" items="${detectedFields}" varStatus="status">
+					<li class="_jv_flex-line ${status.index % 2 == 0?'fist':'last'}">
+						<span>${field.key}</span>
+						<span>${field.value}</span>
+					</li>
+				</c:forEach>
+			</ul>
+		</fieldset>
+	</div>
+	</c:if>
+
 	<jsp:include page="help.html" />
 </div>
 </c:if>

@@ -113,6 +113,10 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 			return Encode.forHtmlAttribute(StringHelper.removeTag(StringHelper.removeCR(getValue())));
 		}
 		
+		public String getHtml() {
+			return Field.this.getHtml(ctx);
+		}
+		
 		public String getXHTMLValue() {
 			return Field.this.getXHTMLValue();
 		}
@@ -723,6 +727,15 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	
 	public String getXHTMLValue() {
 		return XHTMLHelper.textToXHTML(getValue());
+	}
+	
+	public String getHtml(ContentContext ctx) {
+		try {
+			return getViewXHTMLCode(ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "Error in field ["+getType()+"] : "+e.getMessage();
+		}
 	}
 	
 	public String getInitValue() {

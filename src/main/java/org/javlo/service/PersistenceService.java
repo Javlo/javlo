@@ -1914,10 +1914,17 @@ public class PersistenceService {
 						ZipOutputStream zipOut = new ZipOutputStream(fos);
 						FileInputStream fis = new FileInputStream(sourceFile);
 						try {
-							ZipEntry zipEntry = new ZipEntry(sourceFile.getName());
-							zipOut.putNextEntry(zipEntry);
 							byte[] bytes = new byte[1024];
 							int length;
+							/** content **/
+							ZipEntry zipEntry = new ZipEntry(sourceFile.getName());
+							zipOut.putNextEntry(zipEntry);
+							while ((length = fis.read(bytes)) >= 0) {
+								zipOut.write(bytes, 0, length);
+							}
+							/** resource meta data **/
+							zipEntry = new ZipEntry(sourceFile.getName());
+							zipOut.putNextEntry(zipEntry);
 							while ((length = fis.read(bytes)) >= 0) {
 								zipOut.write(bytes, 0, length);
 							}

@@ -15,6 +15,7 @@ import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+import org.javlo.template.Template;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
@@ -115,6 +116,7 @@ public class ComponentsAction implements IModuleAction {
 			componentsContext.setCss(cssText);
 			componentsContext.setHtml(htmlText);
 			ctx.getRequest().setAttribute("previousUrl", URLHelper.createStaticURL(ctx, "/modules/components/jsp/previous.jsp"));
+			ctx.getRequest().setAttribute("detectedFields", Template.extractPropertiesFromHtml(htmlText));
 			// ctx.getRequest().setAttribute("previousHTML", getPreviewCode(cssText,
 			// htmlText));
 		}
@@ -134,12 +136,11 @@ public class ComponentsAction implements IModuleAction {
 
 	public String performAddcomponent(ContentContext ctx, ModulesContext modulesContext, RequestService rs) throws Exception {
 		checkAccess(ctx);
-		String comp = rs.getParameter("component");
+		String comp = StringHelper.createFileName(rs.getParameter("component"));
 		String ext = StringHelper.getFileExtension(comp);
 		if (!(ext.equals("html") || ext.equals("jsp"))) {
-			return "bad file extension only html and jsp will be accepted.";
+			comp += ".html";
 		}
-		comp = StringHelper.createFileName(comp);
 		File file = new File(URLHelper.mergePath(ctx.getGlobalContext().getExternComponentFolder(), comp));
 		if (!file.exists()) {
 			file.getParentFile().mkdirs();
