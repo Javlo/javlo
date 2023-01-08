@@ -5429,7 +5429,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	public String getAreaClass(ContentContext ctx, String area) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 		String clazz = desc.areaAsMap.get(area);
-		if (clazz == null) {
+		if (clazz == null || ctx.isAsModifyMode()) {
 			ContentContext ctxArea = ctx.getContextWithArea(area);
 			ContentElementList content = getContent(ctx);
 			Boolean firstContainer = null;
