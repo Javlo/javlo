@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
+import org.javlo.actions.DataAction;
 import org.javlo.bean.Link;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.config.StaticConfig;
@@ -32,6 +33,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.Comparator.FileComparator;
 import org.javlo.module.file.FileAction;
+import org.javlo.navigation.MenuElement;
 import org.javlo.service.RequestService;
 import org.javlo.service.google.translation.ITranslator;
 import org.javlo.service.resource.Resource;
@@ -101,8 +103,37 @@ public class FieldFile extends Field implements IStaticContainer {
 	protected String getFileDirectory() {
 		return URLHelper.mergePath(getGlobalContext().getDataFolder(), getFileTypeFolder());
 	}
+	
+	public static String getImportFolderPath(ContentContext ctx) {
+		try {
+			MenuElement page = ctx.getCurrentPage();
+			String importFolder = ctx.getGlobalContext().getStaticConfig().getImportFolder();
+			if (importFolder.length() > 1 && importFolder.startsWith("/")) {
+				importFolder = importFolder.substring(1);
+			}
+			return importFolder + '/' + DataAction.createImportFolder(page);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	@Override
+	public boolean initContent(ContentContext ctx) throws Exception {
+		
+		String currentImportFolder = getImportFolderPath(ctx);
+		setCurrentFolder(currentImportFolder);
+		
+		return super.initContent(ctx);
+	}
 
-	protected List<String> getFolderListForSelection() {
+	protected List<String> getFolderListForSelection(ContentContext ctx) {
+		String importFolder = ctx.getGlobalContext().getStaticConfig().getImportFolder();
+		if (importFolder.length() > 1 && importFolder.startsWith("/")) {
+			importFolder = importFolder.substring(1);
+		}
+		String currentImportFolder = getImportFolderPath(ctx);
+		
 		File dir = new File(getFileDirectory());
 		List<String> list = new ArrayList<String>();
 		list.add("");
@@ -117,7 +148,16 @@ public class FieldFile extends Field implements IStaticContainer {
 			} else {
 				for (File file : ResourceHelper.getAllDirList(dir)) {
 					String name = StringUtils.replaceOnce(file.getAbsolutePath(), dir.getAbsolutePath(), "");
-					list.add(name);
+					name = StringHelper.cleanPath(name);
+					if (name.startsWith("/")) {
+						name = name.substring(1);
+					}
+					if (!name.startsWith(importFolder) || name.startsWith(currentImportFolder)) {
+						list.add(name);
+					}
+				}
+				if (!list.contains(currentImportFolder)) {
+					list.add(currentImportFolder);
 				}
 			}
 		}
@@ -228,7 +268,7 @@ public class FieldFile extends Field implements IStaticContainer {
 
 			out.println("<div class=\"row form-group folder\"><div class=\"" + LABEL_CSS + "\">");
 			out.println("<label for=\"" + getInputFolderName() + "\">" + getFolderLabel() + " : </label></div><div class=\"" + SMALL_VALUE_SIZE + "\">");
-			out.println(XHTMLHelper.getInputOneSelect(getInputFolderName(), getFolderListForSelection(), getCurrentFolder(), "form-control", "jQuery(this.form).trigger('submit');", true));
+			out.println(XHTMLHelper.getInputOneSelect(getInputFolderName(), getFolderListForSelection(ctx), getCurrentFolder(), "form-control", "jQuery(this.form).trigger('submit');", true));
 			out.println("</div></div>");
 
 			if (!ctx.getGlobalContext().isMailingPlatform()) {
