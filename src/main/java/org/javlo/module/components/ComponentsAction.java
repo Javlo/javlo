@@ -100,6 +100,7 @@ public class ComponentsAction implements IModuleAction {
 					}
 					if (css.exists()) {
 						cssText = ResourceHelper.loadStringFromFile(css);
+						cssText = StringHelper.indentScss(cssText);
 						ctx.getRequest().setAttribute("css", cssText);
 						ctx.getRequest().setAttribute("cssExist", true);
 					}
