@@ -1923,11 +1923,11 @@ public class PersistenceService {
 								zipOut.write(bytes, 0, length);
 							}
 							/** resource meta data **/
-							zipEntry = new ZipEntry(sourceFile.getName());
-							zipOut.putNextEntry(zipEntry);
-							while ((length = fis.read(bytes)) >= 0) {
-								zipOut.write(bytes, 0, length);
-							}
+//							zipEntry = new ZipEntry(sourceFile.getName());
+//							zipOut.putNextEntry(zipEntry);
+//							while ((length = fis.read(bytes)) >= 0) {
+//								zipOut.write(bytes, 0, length);
+//							}
 						} finally {
 							ResourceHelper.closeResource(fis, zipOut, fos);
 						}
