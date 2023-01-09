@@ -302,7 +302,7 @@ public class Edit extends AbstractModuleAction {
 		public String getFontAwesome() {
 			return comp.getFontAwesome();
 		}
-		
+
 		public String getIcon() {
 			return comp.getIcon();
 		}
@@ -802,7 +802,7 @@ public class Edit extends AbstractModuleAction {
 		}
 
 		String newId = null;
-		
+
 		if (type.equals("clipboard")) {
 			ClipBoard cb = ClipBoard.getInstance(ctx.getRequest());
 			Object copied = cb.getCopied();
@@ -1094,7 +1094,7 @@ public class Edit extends AbstractModuleAction {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
 			return null;
 		}
-		
+
 		org.javlo.helper.LocalLogger.forceStartCount("save");
 
 		String message = null;
@@ -1777,16 +1777,16 @@ public class Edit extends AbstractModuleAction {
 		NavigationService navigationService = NavigationService.getInstance(globalContext);
 		navigationService.clearPage(ctx);
 		ReverseLinkService.getInstance(globalContext).clearCache();
-		
+
 		if (ctx.isEditPreview()) {
 			ctx.setRenderMode(ContentContext.PREVIEW_MODE);
 		}
-		
+
 		ctx.setPath(newPath);
 		String forwardURL = ctx.getResponse().encodeRedirectURL(URLHelper.createURL(ctx));
 		ctx.setClosePopup(true);
 		ctx.setParentURL(forwardURL);
-		//ctx.getResponse().sendRedirect(forwardURL);
+		// ctx.getResponse().sendRedirect(forwardURL);
 		return message;
 	}
 
@@ -1947,7 +1947,7 @@ public class Edit extends AbstractModuleAction {
 		}
 
 		if (comp == null) {
-			logger.warning("component not found : "+rs.getParameter("id"));
+			logger.warning("component not found : " + rs.getParameter("id"));
 			return "component not found : " + rs.getParameter("id");
 		} else {
 			if (comp instanceof IContainer) {
@@ -2417,12 +2417,16 @@ public class Edit extends AbstractModuleAction {
 			ComponentHelper.updateNextAndPrevious(ctx, targetPage, area);
 
 			if (sharedContent.getLinkInfo() == null) {
-				List<ComponentBean> beans = new LinkedList<ComponentBean>(sharedContent.getContent());
-				for (ComponentBean componentBean : beans) {
-					componentBean.setArea(areaKey);
+				if (sharedContent.getContent() != null) {
+					List<ComponentBean> beans = new LinkedList<ComponentBean>(sharedContent.getContent());
+					for (ComponentBean componentBean : beans) {
+						componentBean.setArea(areaKey);
+					}
+					String newId = content.createContent(ctx, targetPage, beans, previousId, true);
+					ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, newId);
+				} else {
+					logger.warning("content not found : "+sharedContent.getTitle())
 				}
-				String newId = content.createContent(ctx, targetPage, beans, previousId, true);
-				ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, newId);
 			} else {
 				ComponentBean mirrorBean = new ComponentBean(PageMirrorComponent.TYPE, sharedContent.getLinkInfo(), ctx.getRequestContentLanguage());
 				mirrorBean.setArea(areaKey);
@@ -2475,8 +2479,9 @@ public class Edit extends AbstractModuleAction {
 			}
 		}
 		return null;
+
 	}
-	
+
 	public static String performClosepopup(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		ctx.setParentURL(rs.getParameter("url", null));
 		ctx.setClosePopup(true);
