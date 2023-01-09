@@ -268,7 +268,7 @@ public class ContentService implements IPrintInfo {
 		}
 		bean.setAuthors(ctx.getCurrentUserId());
 		page.addContent(parentId, bean, releaseCache);
-		
+
 		if (bean.getType().equals(MirrorComponent.TYPE) && mirrorNeedMoving != null && sourcePage != null) {
 			String compSrcId = bean.getValue();
 			IContentVisualComponent comp = ContentService.getInstance(ctx.getGlobalContext()).getComponent(ctx, compSrcId);
@@ -282,10 +282,10 @@ public class ContentService implements IPrintInfo {
 					mirrorNeedMoving.get(mComp.getValue()).add(mComp);
 				}
 			} else {
-				logger.warning("component not found : "+compSrcId);
+				logger.warning("component not found : " + compSrcId);
 			}
 		}
-		
+
 		return id;
 	}
 
@@ -307,7 +307,7 @@ public class ContentService implements IPrintInfo {
 			}
 		}
 		bean.setRepeat(inBean.isRepeat());
-		//bean.setForceCachable(inBean.isForceCachable());
+		// bean.setForceCachable(inBean.isForceCachable());
 		bean.setRenderer(inBean.getRenderer());
 		bean.setModify(true);
 		bean.setCookiesDisplayStatus(inBean.getCookiesDisplayStatus());
@@ -334,7 +334,7 @@ public class ContentService implements IPrintInfo {
 		bean.setStyle(inBean.getStyle());
 		bean.setArea(inBean.getArea());
 		bean.setRepeat(inBean.isRepeat());
-		//bean.setForceCachable(inBean.isForceCachable());
+		// bean.setForceCachable(inBean.isForceCachable());
 		bean.setRenderer(inBean.getRenderer());
 		bean.setModify(true);
 		bean.setCookiesDisplayStatus(bean.getCookiesDisplayStatus());
@@ -459,15 +459,15 @@ public class ContentService implements IPrintInfo {
 			}
 		}
 	}
-	
+
 	public int cleanAttribute(ContentContext ctx, String keySuffix) {
-		Map<String,String> map = getAttributeMap(ctx);
+		Map<String, String> map = getAttributeMap(ctx);
 		int startSize = map.size();
 		map.entrySet().removeIf(entry -> entry.getKey().endsWith(keySuffix));
-		return startSize-map.size();
+		return startSize - map.size();
 	}
-	
-	private Map<String,String> getAttributeMap(ContentContext ctx) {
+
+	private Map<String, String> getAttributeMap(ContentContext ctx) {
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE && ctx.getGlobalContext().isPreviewMode()) {
 			if (viewGlobalMap == null) {
 				try {
@@ -509,8 +509,8 @@ public class ContentService implements IPrintInfo {
 	}
 
 	public String getAttribute(ContentContext ctx, String key) {
-		Map<String,String> map = getAttributeMap(ctx);
-		if (map==null) {
+		Map<String, String> map = getAttributeMap(ctx);
+		if (map == null) {
 			return null;
 		}
 		if (key != null) {
@@ -656,7 +656,7 @@ public class ContentService implements IPrintInfo {
 		MenuElement res = null;
 		try {
 			GlobalContext globalContext = ctx.getGlobalContext();
-			
+
 			if (ctx.getRenderMode() == ContentContext.TIME_MODE && !globalContext.getTimeTravelerContext().isEmpty()) {
 				if (timeTravelerNav == null) {
 					Date timeTravelDate = globalContext.getTimeTravelerContext().getTravelTime();
@@ -880,7 +880,7 @@ public class ContentService implements IPrintInfo {
 			releaseShortUrlMap(globalContext);
 		}
 	}
-	
+
 	public void releaseShortUrlMap(GlobalContext globalContext) throws Exception {
 		shortURLMap = null;
 	}
@@ -1036,7 +1036,7 @@ public class ContentService implements IPrintInfo {
 		this.previewNav = previewNav;
 	}
 
-	public void setTimeTravelerNav(MenuElement timeTravelerNav) {	
+	public void setTimeTravelerNav(MenuElement timeTravelerNav) {
 		this.timeTravelerNav = timeTravelerNav;
 	}
 
@@ -1048,18 +1048,23 @@ public class ContentService implements IPrintInfo {
 		return previewNav != null;
 	}
 
+	private static final Object createSortUrl = new Object();
+
 	public MenuElement getPageWithShortURL(ContentContext ctx, String shortURL) throws Exception {
 		if (ctx.isAsViewMode()) {
 			if (shortURLMap == null) {
-				shortURLMap = new HashMap<String, MenuElement>();
-				MenuElement root = getNavigation(ctx);
-				if (root.isShortURL()) {
-					shortURLMap.put(root.getShortURL(ctx, false), root);
-				}
-				for (MenuElement child : root.getAllChildrenList()) {
-					//if (child.isShortURL()) {
-						shortURLMap.put(child.getShortURL(ctx, false), child);
-					//}
+				synchronized (createSortUrl) {
+					Map<String, MenuElement> localShortURLMap = new HashMap<String, MenuElement>();
+					MenuElement root = getNavigation(ctx);
+					if (root.isShortURL()) {
+						localShortURLMap.put(root.getShortURL(ctx, false), root);
+					}
+					for (MenuElement child : root.getAllChildrenList()) {
+						// if (child.isShortURL()) {
+						localShortURLMap.put(child.getShortURL(ctx, false), child);
+						// }
+					}
+					this.shortURLMap = localShortURLMap;
 				}
 			}
 			return shortURLMap.get(shortURL);
