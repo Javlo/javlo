@@ -2425,7 +2425,7 @@ public class Edit extends AbstractModuleAction {
 					String newId = content.createContent(ctx, targetPage, beans, previousId, true);
 					ctx.getRequest().setAttribute(AbstractVisualComponent.SCROLL_TO_COMP_ID_ATTRIBUTE_NAME, newId);
 				} else {
-					logger.warning("content not found : "+sharedContent.getTitle())
+					logger.warning("content not found : "+sharedContent.getTitle());
 				}
 			} else {
 				ComponentBean mirrorBean = new ComponentBean(PageMirrorComponent.TYPE, sharedContent.getLinkInfo(), ctx.getRequestContentLanguage());
