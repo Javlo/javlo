@@ -1942,7 +1942,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return false;
 		} else {
 			try {
-				return ComponentHelper.getFinalType(ctx, this).equals(ComponentHelper.getFinalType(ctx, nextComp));
+				if (!this.getArea().equals(nextComp.getArea())) {
+					return false;
+				} else {
+					return ComponentHelper.getFinalType(ctx, this).equals(ComponentHelper.getFinalType(ctx, nextComp));
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				return false;
@@ -1956,7 +1960,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return false;
 		} else {
 			try {
-				return ComponentHelper.getFinalType(ctx, this).equals(ComponentHelper.getFinalType(ctx, previousComp));
+				if (!this.getArea().equals(previousComp.getArea())) {
+					return false;
+				} else {
+					return ComponentHelper.getFinalType(ctx, this).equals(ComponentHelper.getFinalType(ctx, previousComp));
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				return false;
