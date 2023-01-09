@@ -5456,6 +5456,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			if (compTypes != null) {
 				clazz += ' ' + "_cp_type_size_" + compTypes.size();
 				clazz += ' ' + "_cp_size_" + getContent(ctxArea).size(ctxArea);
+				if (compTypes.size() > 0) {
+					clazz += ' ' + "_cp_first_-" + compTypes.get(0);
+				}
 				for (String type : compTypes) {
 					clazz += ' ' + "_cp-" + type;
 				}
