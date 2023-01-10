@@ -28,7 +28,6 @@ import org.javlo.service.ContentService;
 
 public class DynamicComponentFactory extends AbstractVisualComponent {
 
-
 	protected Properties properties = new Properties();
 
 	public static final String TYPE = "dynamic-component-factory";
@@ -43,30 +42,29 @@ public class DynamicComponentFactory extends AbstractVisualComponent {
 	private static final String HTML_SOURCE_TYPE = "html";
 	private static final String JSON_SOURCE_TYPE = "json";
 
-
 	public DynamicComponentFactory() {
 	}
 
 	@Override
 	public String getType() {
-		return 	TYPE;
+		return TYPE;
 	}
-	
+
 	@Override
-	protected void init(ComponentBean bean, ContentContext ctx) throws Exception {	
+	protected void init(ComponentBean bean, ContentContext ctx) throws Exception {
 		super.init(bean, ctx);
 		properties.load(stringToStream(getValue()));
 	}
-	
+
 	@Override
-	public String getHexColor() {	
+	public String getHexColor() {
 		return CONTAINER_COLOR;
 	}
-	
+
 	protected String getDynamicComponentType() {
 		return properties.getProperty(COMP_TYPE);
 	}
-	
+
 	protected String getSourceType() {
 		return properties.getProperty(SOURCE_TYPE);
 	}
@@ -85,7 +83,7 @@ public class DynamicComponentFactory extends AbstractVisualComponent {
 
 	public void update(ContentContext ctx) throws Exception {
 
-		String dynamicComponentType = StringHelper.trimAndNullify(getDynamicComponentType());		
+		String dynamicComponentType = StringHelper.trimAndNullify(getDynamicComponentType());
 		String idField = StringHelper.trimAndNullify(getIdField());
 		if (dynamicComponentType == null || idField == null) {
 			return;
@@ -130,7 +128,7 @@ public class DynamicComponentFactory extends AbstractVisualComponent {
 						try {
 							String extension = StringHelper.getFileExtension(value);
 							String imageFileName = StringHelper.createFileName(idValue) + "." + extension;
-							File imageFile = new File(imageFolder, imageFileName);							
+							File imageFile = new File(imageFolder, imageFileName);
 							ResourceHelper.writeUrlToFile(new URL(value), imageFile);
 							FieldImage img = (FieldImage) field;
 							img.setCurrentFolder(imageFolderSubPath);
@@ -139,7 +137,7 @@ public class DynamicComponentFactory extends AbstractVisualComponent {
 							ex.printStackTrace();
 						}
 					} else if (field instanceof FieldExternalLink) {
-						((FieldExternalLink)field).setCurrentLink(value);
+						((FieldExternalLink) field).setCurrentLink(value);
 					} else {
 						field.setValue(value);
 					}
@@ -169,7 +167,7 @@ public class DynamicComponentFactory extends AbstractVisualComponent {
 		} else if (JSON_SOURCE_TYPE.equals(sourceType)) {
 			fetcher = new JsonFetcher();
 		} else {
-			//Wrong config
+			// Wrong config
 			return null;
 		}
 		fetcher.setSourceUrl(sourceUrl);
@@ -177,7 +175,7 @@ public class DynamicComponentFactory extends AbstractVisualComponent {
 		fetcher.setFields(fields);
 		return fetcher;
 	}
-	
+
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		return "";
@@ -218,14 +216,14 @@ public class DynamicComponentFactory extends AbstractVisualComponent {
 	}
 
 	@Override
-	public String performEdit(ContentContext ctx) throws Exception {	
+	public String performEdit(ContentContext ctx) throws Exception {
 		String msg = super.performEdit(ctx);
 		properties.clear();
 		properties.load(stringToStream(getValue()));
 		update(ctx);
 		return msg;
 	}
-	
+
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);

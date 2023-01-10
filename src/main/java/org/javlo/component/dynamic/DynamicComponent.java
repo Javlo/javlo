@@ -246,7 +246,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 					if (!jspFile.exists()) {
 						String html = JSP_HEADER + ResourceHelper.loadStringFromFile(htmlFile);
 						for (Field field : getFields(ctx)) {
-							html = html.replace("${field." + field.getType() + "." + field.getName(), "${" + field.getName());
+							html = html.replace("field." + field.getType() + "." + field.getName()+'.', field.getName()+'.');
 						}
 						if (!isWrapped()) {
 							html = html.replace(Template.PREVIEW_EDIT_CODE, "${previewAttributes}");
