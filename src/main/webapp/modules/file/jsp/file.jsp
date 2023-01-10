@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="${info.currentModuleURL}/elfinder/css/elfinder.full.css">
 <link rel="stylesheet" href="${info.currentModuleURL}/elfinder/css/theme-javlo.css">
 
-<c:if test="${not info.editLanguage eq 'en'}"><script type="text/javascript" src="${currentModule.path}/js/i18n/elfinder.${info.editLanguage}.js"></script></c:if>
+<c:if test="${not info.editLanguage eq 'en'}"><script type="text/javascript" src="${info.currentModuleURL}/elfinder/js/i18n/elfinder.${info.editLanguage}.js"></script></c:if>
 <div class="content nopadding">
 <div id="fileManager" class="elfinder"></div>
 </div>
