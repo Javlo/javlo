@@ -108,6 +108,11 @@ body._jv_dragnav>#preview_command {
 					text-align: center;
 				}
 			}
+			&.tabs-size-2 {
+				li {
+					width: 50%;
+				}
+			}
 		}
 	}
 

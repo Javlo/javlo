@@ -93,7 +93,7 @@ if (StringHelper.isTrue(request.getParameter("preview-command"), true) && !ctx.i
 					</c:if>
 					<c:if test="${not empty editUser}">
 						<div role="tabpanel">
-							<ul class="nav nav-tabs" role="tablist">
+							<ul class="nav nav-tabs tabs-size-${userInterface.previewResourcesTab?3:2}" role="tablist">
 								<li role="presentation" class="active"><a href="#_ep_navigation" aria-controls="_ep_navigation" role="tab" data-toggle="tab"><i class="bi bi-diagram-3"></i> Navigator</a></li>
 								<li role="presentation" ${!info.pageEditable?'class="disabled"':''}><a href="#_ep_content" aria-controls="_ep_content" role="tab" ${info.pageEditable?'data-toggle="tab"':''}><i class="bi bi-boxes"></i> Components</a></li>
 								<c:if test="${userInterface.previewResourcesTab}">
