@@ -63,6 +63,9 @@ public class CdnService {
 	}
 
 	public boolean internalTestCdn() {
+		if (StringHelper.isEmpty(getMainCdn())) {
+			return false;
+		}
 		try {
 			String retrunCdn = NetHelper.readPage(new URL(URLHelper.mergePath(getMainCdn(), "check")));
 			boolean newActive = retrunCdn.trim().equalsIgnoreCase("ok");
