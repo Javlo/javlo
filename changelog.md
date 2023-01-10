@@ -940,5 +940,6 @@ Security in case of vulnerabilities.
   - components status as class on area
 ### Modified
   - detect less and scss modification on all files
+  - elFinder - Version 2.1.61 
 ### fixed
   - link without scheme usable in field external link
