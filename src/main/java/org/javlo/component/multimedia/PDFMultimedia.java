@@ -175,5 +175,10 @@ public class PDFMultimedia extends Multimedia {
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
 	}
+	
+	@Override
+	public boolean isRealContent(ContentContext ctx) {
+		return true;
+	}
 
 }
