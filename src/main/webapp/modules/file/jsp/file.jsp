@@ -5,6 +5,10 @@
 <c:if test="${not empty param.path}">
 	<c:set var="ELPath" value="${param.path}" scope="session" />
 </c:if>
+
+<link rel="stylesheet" href="${info.currentModuleURL}/elfinder/css/elfinder.full.css">
+<link rel="stylesheet" href="${info.currentModuleURL}/elfinder/css/theme-javlo.css">
+
 <c:if test="${not info.editLanguage eq 'en'}"><script type="text/javascript" src="${currentModule.path}/js/i18n/elfinder.${info.editLanguage}.js"></script></c:if>
 <div class="content nopadding">
 <div id="fileManager" class="elfinder"></div>
@@ -32,7 +36,7 @@ jQuery(document).ready(function() {
 	}
 	
 	jQuery('#fileManager').elfinder({
-		url : '${info.staticRootURL eq "/"?"":info.staticRootURL}${currentModule.path}/jsp/connector.jsp?v=1${not empty changeRoot?"&changeRoot=true":""}${params}',
+		url : '${info.staticRootURL eq "/"?"":info.staticRootURL}${currentModule.path}/jsp/connector.jsp?v=1${not empty changeRoot?"&changeRoot=true":""}${params}  ',
 		lang : '${info.editLanguage}',
 		height: footerTop - jQuery("#fileManager").offset().top - (jQuery(".maincontent .left").outerHeight(true) - jQuery(".maincontent .left").height()),
 		handlers: {	

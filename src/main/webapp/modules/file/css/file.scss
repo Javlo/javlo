@@ -1,11 +1,11 @@
-@import "elfinder/smoothness/jquery-ui-1.8.19.custom.css";
+/*@import "elfinder/smoothness/jquery-ui-1.8.19.custom.css";
 @import "elfinder/elfinder.min.css";
-@import "elfinder/theme.css";
+@import "elfinder/theme.css";*/
 
 #tools {
 	margin-bottom: 10px;
 }
-.elfinder-cwd-view-icons {
+/*.elfinder-cwd-view-icons {
 	.elfinder-cwd-file-wrapper {
 		width: 118px;
 		height: 118px;
@@ -77,11 +77,7 @@ body {
 		font-family: inherit;
 	}
 }
-.maincontent.file {
-	.left {
-		padding: 20px 15px 20px 15px;
-	}
-}
+
 .elfinder-cwd-icon-jsp {
 	background-position: 0 -550px;
 }
@@ -93,13 +89,18 @@ body {
 		}
 	}
 }
-
+*/
+.maincontent.file {
+	.left {
+		padding: 20px 15px 20px 15px;
+	}
+}
 .previewEdit {
 	#fileManager {
 		height: calc(100vh - 155px) !important;
 	}
 }
-
+/*
 .elfinder-dialog-confirm {
 	.ui-dialog-content {
 		min-height: 15px;
@@ -109,7 +110,7 @@ body {
 	.ui-dialog-content {
 		min-height: 15px;
 	}
-}
+}*/
 .form-list {
 	.taxonomy {
 		li {
@@ -272,7 +273,7 @@ body {
 
 
 /** file manager design correction **/
-
+/*
 #fileManager {
 	.ui-corner-all, .ui-corner-top, .ui-corner-right, .ui-corner-tr {
 		border-radius: 0;
@@ -307,7 +308,7 @@ body {
 body .ui-widget-header .ui-icon {
   background-image: url(elfinder/smoothness/images/ui-icons_222222_256x240.png);
 }
-
+*/
 .CodeMirror {
 	height: calc(100% + 5px);
 }

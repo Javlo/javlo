@@ -1,0 +1,16 @@
+.elfinder-cwd-view-icons .elfinder-cwd-file {
+	border: 1px rgba(0,0,0,.01) solid;
+}
+
+.elfinder-cwd-view-icons .elfinder-cwd-filename {
+  font-size: 10px;
+}
+
+.elfinder-cwd-icon::before {
+	color: var(--javlo-ui-text);
+	background-color: var(--javlo-ui-bg-secondary); 
+}
+
+.ui-state-active {
+	background-color: transparent !important;
+}
