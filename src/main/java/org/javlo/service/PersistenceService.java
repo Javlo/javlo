@@ -142,6 +142,14 @@ public class PersistenceService {
 		public void setSize(String size) {
 			this.size = size;
 		}
+		public String getHumanDate() {
+			try {
+				return StringHelper.renderTime(StringHelper.parseSortableTime(date));
+			} catch (ParseException e) {
+				e.printStackTrace();
+				return e.getMessage();
+			}
+		}
 
 	}
 

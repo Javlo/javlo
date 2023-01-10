@@ -3,6 +3,8 @@ package org.javlo.context;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.javlo.helper.StringHelper;
+
 public class TimeTravelerContext implements Serializable {
 
 	private Date travelTime;
@@ -23,5 +25,9 @@ public class TimeTravelerContext implements Serializable {
 	
 	public boolean isEmpty() {
 		return version == null && travelTime == null;
+	}
+	
+	public String getLabel() {
+		return StringHelper.renderTime(travelTime);
 	}
 }

@@ -95,6 +95,11 @@ body._jv_modal-open {
 	}
 }
 
+select.form-control {
+	background-color: var(--javlo-ui-bg-primary);
+	color: #fff;
+}
+
 .btn-group {
 	display: flex;
 	._jv_btn-check {
