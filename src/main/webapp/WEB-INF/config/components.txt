@@ -34,6 +34,7 @@ org.javlo.component.meta.ContactInformation
 org.javlo.component.meta.DefinitionComponent
 org.javlo.component.meta.HeadMeta
 org.javlo.component.meta.GraphicCharter
+org.javlo.component.meta.PageCss
 org.javlo.component.navigation.PageURL
 
 --content.title.text

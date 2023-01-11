@@ -3,6 +3,7 @@ package org.javlo.navigation;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -72,6 +73,7 @@ import org.javlo.component.meta.Layouts;
 import org.javlo.component.meta.LocationComponent;
 import org.javlo.component.meta.MetaDescription;
 import org.javlo.component.meta.NotSearchPage;
+import org.javlo.component.meta.PageCss;
 import org.javlo.component.meta.Slogan;
 import org.javlo.component.meta.Tags;
 import org.javlo.component.meta.TimeRangeComponent;
@@ -5838,6 +5840,30 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		InfoBean.updateInfoBean(newCtx);
 		pdfData = XHTMLHelper.replaceJSTLData(newCtx, pdfData);
 		return pdfData;
+	}
+	
+	public String getCss(ContentContext ctx) throws Exception {
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+		if (desc.css == null) {
+			ContentContext ctxAllArea = ctx.getContextWithArea(null);
+			ContentElementList content = getContent(ctx);
+			while (content.hasNext(ctxAllArea)) {
+				IContentVisualComponent comp = content.next(ctx);
+				if (comp instanceof PageCss) {
+					String scss = comp.getValue(ctx);
+					if (scss == null || scss.length() == 0) {
+						desc.css = "";
+						return "";
+					} else {
+						desc.css = StringHelper.neverNull(XHTMLHelper.compileScss(scss));
+					}
+				}
+			}
+			if (desc.css == null) {
+				desc.css = "";
+			}
+		}
+		return desc.css;
 	}
 
 	/**

@@ -83,6 +83,7 @@ public class PageDescription implements Serializable {
 	Map<String, String> areaAsMap = new HashMap();
 	ProductBean product = null;
 	Map<String, List<String>> componentTypes;
+	String css = null;
 
 	String forward = null;
 

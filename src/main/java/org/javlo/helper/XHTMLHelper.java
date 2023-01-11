@@ -25,6 +25,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -83,6 +85,12 @@ import org.jsoup.select.Elements;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import com.itextpdf.text.DocumentException;
+
+import io.bit3.jsass.CompilationException;
+import io.bit3.jsass.Compiler;
+import io.bit3.jsass.Options;
+import io.bit3.jsass.Output;
+import io.bit3.jsass.context.FileContext;
 
 /**
  * This class is a helper for construct XHTML code.
@@ -1995,7 +2003,7 @@ public class XHTMLHelper {
 			return "<!-- resource type not identified : " + resource + " -->";
 		}
 	}
-	
+
 	public static String renderHeaderResourceInsertion(ContentContext ctx, String resource) throws Exception {
 		if (!alreadyInserted(ctx, resource)) {
 			if (StringHelper.getFileExtension(resource).equalsIgnoreCase("css")) {
@@ -2010,7 +2018,7 @@ public class XHTMLHelper {
 			return "<!-- resource already insered : " + resource + " -->";
 		}
 	}
-	
+
 	public static String renderHeaderModuleInsertion(ContentContext ctx, String resource, String buildId) throws Exception {
 		if (!alreadyInserted(ctx, resource)) {
 			if (StringHelper.getFileExtension(resource).equalsIgnoreCase("css")) {
@@ -2381,7 +2389,7 @@ public class XHTMLHelper {
 	}
 
 	public static final String stringToAttribute(String str) {
-		if (str == null) { 
+		if (str == null) {
 			return null;
 		}
 		return escapeXHTML(str.replace("\"", "&quot;"));
@@ -2396,13 +2404,7 @@ public class XHTMLHelper {
 	}
 
 	public static void main(String[] args) throws MalformedURLException, Exception {
-		String html = NetHelper.readPage(new URL("https://penthouse.com/"));
-		
-		Collection<String> links = extractUnsedLinks(html, true);
-		for (String link : links) {
-			System.out.println("link = "+URLHelper.extractHost(link));
-		}
-		
+		System.out.println("css = "+compileScss("p { color: red; span { display: block; margin-left: 1rem; }}"));
 	}
 
 	public static String textToXHTMLNewWin(String text) {
@@ -2566,16 +2568,16 @@ public class XHTMLHelper {
 		return content;
 
 	}
-	
-	public static List<String> extractUnsedLinks (String html, boolean absolute) {
-		
+
+	public static List<String> extractUnsedLinks(String html, boolean absolute) {
+
 		List<String> outLinks = new LinkedList<>();
-		
+
 		Document doc = Jsoup.parse(html, "UTF-8");
 
 		Elements hrefs = doc.select("link[href]");
 		Elements srcs = doc.select("[src]");
-		
+
 		for (int i = 0; i < hrefs.size(); i++) {
 			Element href = hrefs.get(i);
 			String lnk = href.attr("href");
@@ -2583,7 +2585,7 @@ public class XHTMLHelper {
 				outLinks.add(lnk);
 			}
 		}
-		
+
 		for (int i = 0; i < srcs.size(); i++) {
 			Element src = srcs.get(i);
 			String lnk = src.attr("src");
@@ -2591,7 +2593,7 @@ public class XHTMLHelper {
 				outLinks.add(lnk);
 			}
 		}
-		
+
 		return outLinks;
 
 	}
@@ -2865,16 +2867,16 @@ public class XHTMLHelper {
 				if (src != null) {
 					if (!StringHelper.isURL(src) && !src.startsWith("${")) { // relative path
 						if (ctx == null) {
-							item.attr("src", "[TEST]-src:"+src);
+							item.attr("src", "[TEST]-src:" + src);
 						} else {
-						String urlPrefix = URLHelper.mergePath("/", ctx.getRequest().getContextPath(), ctx.getPathPrefix(), "/");
-						if (src.startsWith(urlPrefix)) {
-							InfoBean info = InfoBean.getCurrentInfoBean(ctx);
-							src = URLHelper.mergePath(info.getHostURLPrefix(), src);
-						} else {
-							src = URLHelper.createResourceURL(ctx, src);
-						}
-						item.attr("src", src);
+							String urlPrefix = URLHelper.mergePath("/", ctx.getRequest().getContextPath(), ctx.getPathPrefix(), "/");
+							if (src.startsWith(urlPrefix)) {
+								InfoBean info = InfoBean.getCurrentInfoBean(ctx);
+								src = URLHelper.mergePath(info.getHostURLPrefix(), src);
+							} else {
+								src = URLHelper.createResourceURL(ctx, src);
+							}
+							item.attr("src", src);
 						}
 					}
 				}
@@ -3286,6 +3288,25 @@ public class XHTMLHelper {
 		}
 		out.println("</td></tr></table></td></tr></table></td></tr></table></body></html>");
 		return new String(outStream.toByteArray());
+	}
+
+	public static String compileScss(String sass) throws IOException {
+
+		File tempFile = File.createTempFile("css-", ".scss");
+		ResourceHelper.writeStringToFile(tempFile, sass);
+
+		Compiler compiler = new Compiler();
+		Options options = new Options();
+		try {
+			FileContext context = new FileContext(tempFile.toURI(), null, options);
+			Output output = compiler.compile(context);
+			return output.getCss();
+
+		} catch (CompilationException e) {
+			throw new IOException(e);
+		} finally {
+			tempFile.delete();
+		}
 	}
 
 	public static final void convert(final File xhtmlFile, final File pdfFile) throws IOException, DocumentException {

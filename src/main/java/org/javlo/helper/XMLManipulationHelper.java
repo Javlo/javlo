@@ -775,7 +775,9 @@ public class XMLManipulationHelper {
 					
 					String pageModules = "<!-- comp modules --><%for (String uri : currentPage.getExternalModules(ctx)) {%><%=XHTMLHelper.renderHeaderModuleInsertion(ctx, uri, \""+template.getBuildId()+"\")%><%}%><!-- /comp modules -->";
 					
-					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart(), getHTMLSufixHead(globalContext.getStaticConfig(), template) + new String(outStream.toByteArray()) + pageModules);
+					String pageCss = "<%if (currentPage.getCss(ctx).length() > 0) {%><style><%=currentPage.getCss(ctx)%></style><%}%>";
+					
+					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart(), getHTMLSufixHead(globalContext.getStaticConfig(), template) + new String(outStream.toByteArray()) + pageModules + pageCss);
 				}
 
 				/* title */
