@@ -202,7 +202,7 @@ public class UserRegistration extends MapComponent implements IAction {
 				ResourceHelper.safeClose(in);
 			}
 		}
-		String avatarFileName = ctx.getCurrentUser().getUserInfo().getUserFolder() + ".png";
+		String avatarFileName = ctx.getCurrentUser().getUserInfo().getUserFolder() + ".webp";
 		File avatarFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getAvatarFolder(), avatarFileName));
 		if (StringHelper.isTrue(rs.getParameter("deleteAvatar", null))) {
 			avatarFile.delete();
@@ -215,7 +215,8 @@ public class UserRegistration extends MapComponent implements IAction {
 				BufferedImage img = ImageIO.read(in);
 				img = ImageEngine.resizeWidth(img, 255, true);
 				avatarFile.getParentFile().mkdirs();
-				ImageIO.write(img, "png", avatarFile);
+				logger.info("upload avatar : "+avatarFile);
+				ImageIO.write(img, "webp", avatarFile);
 			} finally {
 				ResourceHelper.safeClose(in);
 			}

@@ -71,13 +71,12 @@ public class URLHelper extends ElementaryURLHelper {
 		}
 		return false;
 	}
-	
-	
+
 	public static String getLogoUrl(ContentContext ctx) throws Exception {
 		String logo = ctx.getGlobalContext().getTemplateData().getLogo();
-		File logoPath = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), AdminAction.LOGO_PATH, "logo_"+ctx.getLanguage()+".png"));
+		File logoPath = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), AdminAction.LOGO_PATH, "logo_" + ctx.getLanguage() + ".png"));
 		if (logoPath.exists()) {
-			logo = URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), AdminAction.LOGO_PATH, "logo_"+ctx.getLanguage()+".png");
+			logo = URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), AdminAction.LOGO_PATH, "logo_" + ctx.getLanguage() + ".png");
 		}
 		if (logo == null || logo.equals("null")) {
 			return null;
@@ -85,12 +84,12 @@ public class URLHelper extends ElementaryURLHelper {
 			return URLHelper.createTransformURL(ctx, URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), logo), "logo");
 		}
 	}
-	
+
 	public static String getLogoRawUrl(ContentContext ctx) throws Exception {
 		String logo = ctx.getGlobalContext().getTemplateData().getLogo();
-		File logoPath = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), AdminAction.LOGO_PATH, "logo_"+ctx.getLanguage()+".png"));
+		File logoPath = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), AdminAction.LOGO_PATH, "logo_" + ctx.getLanguage() + ".png"));
 		if (logoPath.exists()) {
-			logo = URLHelper.mergePath(AdminAction.LOGO_PATH, "logo_"+ctx.getLanguage()+".png");
+			logo = URLHelper.mergePath(AdminAction.LOGO_PATH, "logo_" + ctx.getLanguage() + ".png");
 		}
 		if (logo == null || logo.equals("null")) {
 			return null;
@@ -171,36 +170,36 @@ public class URLHelper extends ElementaryURLHelper {
 		otherContext.setLanguage(lg);
 		return createURL(otherContext);
 	}
-	
+
 	public static String createFileURL(ContentContext ctx, String url, boolean hash) {
 		return createFileURL(ctx, null, url, hash);
 	}
-	
+
 	public static String createFileURL(ContentContext ctx, String url) {
 		return createMediaURL(ctx, null, url);
 	}
-	
+
 	public static String createMediaURL(ContentContext ctx, MenuElement currentPage, String url) {
-		return createFileURL(ctx,currentPage,url);
+		return createFileURL(ctx, currentPage, url);
 	}
-	
+
 	public static String createMediaURL(ContentContext ctx, String url) {
 		return createFileURL(ctx, null, url);
 	}
-	
+
 	public static String createMediaURL(ContentContext ctx, String url, boolean hash) {
 		return createFileURL(ctx, null, url, hash);
 	}
-	
+
 	public static String createFileURL(ContentContext ctx, MenuElement currentPage, String url) {
 		return createFileURL(ctx, currentPage, url, false);
 	}
-	
+
 	public static String createFileURL(ContentContext ctx, MenuElement currentPage, String url, boolean hash) {
 		if (url == null) {
 			return null;
 		}
-		
+
 		GlobalContext globalContext = ctx.getGlobalContext();
 		String fullFileName = URLHelper.mergePath(globalContext.getDataFolder(), url);
 
@@ -213,8 +212,7 @@ public class URLHelper extends ElementaryURLHelper {
 		}
 
 		url = url.replace('\\', '/');
-		
-		
+
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE && ctx.getGlobalContext().getStaticConfig().isResourceShortURL()) {
 			File file = new File(fullFileName);
 			StaticInfo staticInfo;
@@ -224,7 +222,7 @@ public class URLHelper extends ElementaryURLHelper {
 				if (staticInfo != null && !StringHelper.isEmpty(staticInfo.getTitle(ctx))) {
 					fileName = staticInfo.getTitle(ctx);
 					url = URLHelper.mergePath(RESOURCE_SERVLET_PATH, ctx.getGlobalContext().setTransformShortURL(url, "", fileName));
-					url = createStaticURL(ctx,url);
+					url = createStaticURL(ctx, url);
 				} else {
 					if (url.charAt(0) == '/') {
 						url = createStaticURL(ctx, currentPage, MEDIA + url);
@@ -235,7 +233,7 @@ public class URLHelper extends ElementaryURLHelper {
 				if (staticInfo != null && hash) {
 					url = URLHelper.addParam(url, "rsrhash", staticInfo.getVersionHash(ctx));
 				}
-			} catch (Exception e) { 
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else if (url != null) {
@@ -245,9 +243,9 @@ public class URLHelper extends ElementaryURLHelper {
 				url = createStaticURL(ctx, currentPage, MEDIA + '/' + url);
 			}
 		}
-		
+
 		url = addCdn(ctx, url);
-		
+
 		return url;
 	}
 
@@ -255,7 +253,7 @@ public class URLHelper extends ElementaryURLHelper {
 		if (url == null) {
 			return null;
 		}
-		
+
 		GlobalContext globalContext = ctx.getGlobalContext();
 		String fullFileName = URLHelper.mergePath(globalContext.getDataFolder(), url);
 
@@ -268,8 +266,7 @@ public class URLHelper extends ElementaryURLHelper {
 		}
 
 		url = url.replace('\\', '/');
-		
-		
+
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE && ctx.getGlobalContext().getStaticConfig().isResourceShortURL()) {
 			File file = new File(fullFileName);
 			StaticInfo staticInfo;
@@ -279,15 +276,15 @@ public class URLHelper extends ElementaryURLHelper {
 				if (staticInfo != null && !StringHelper.isEmpty(staticInfo.getTitle(ctx))) {
 					fileName = staticInfo.getTitle(ctx);
 					url = URLHelper.mergePath(RESOURCE_SERVLET_PATH, ctx.getGlobalContext().setTransformShortURL(url, "", fileName));
-					url = createStaticURL(ctx,url);
+					url = createStaticURL(ctx, url);
 				} else {
 					if (url.charAt(0) == '/') {
 						url = createStaticURL(ctx, currentPage, RESOURCE + url);
 					} else {
 						url = createStaticURL(ctx, currentPage, RESOURCE + '/' + url);
 					}
-				}				
-			} catch (Exception e) { 
+				}
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else if (url != null) {
@@ -297,7 +294,7 @@ public class URLHelper extends ElementaryURLHelper {
 				url = createStaticURL(ctx, currentPage, RESOURCE + '/' + url);
 			}
 		}
-		
+
 		return url;
 	}
 
@@ -309,16 +306,18 @@ public class URLHelper extends ElementaryURLHelper {
 		File avatarFile = new File(mergePath(ctx.getGlobalContext().getDataFolder(), url));
 		if (avatarFile.exists()) {
 			try {
-				return URLHelper.addParam(createTransformURL(ctx, url, "avatar"), "fd", ""+avatarFile.lastModified());
+				return URLHelper.addParam(createTransformURL(ctx, url, "avatar"), "fd", "" + avatarFile.lastModified());
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		} else {
-			url = mergePath(ctx.getGlobalContext().getStaticConfig().getAvatarFolder(), userInfo.getUserFolder() + ".jpg");
+			url = mergePath(ctx.getGlobalContext().getStaticConfig().getAvatarFolder(), userInfo.getUserFolder() + ".webp");
 			avatarFile = new File(mergePath(ctx.getGlobalContext().getDataFolder(), url));
+			System.out.println(">>>>>>>>> URLHelper.createAvatarUrl : avatarFile = "+avatarFile); //TODO: remove debug trace
 			if (avatarFile.exists()) {
+				System.out.println(">>>>>>>>> URLHelper.createAvatarUrl : FOUND"); //TODO: remove debug trace
 				try {
-					return URLHelper.addParam(createTransformURL(ctx, url, "avatar"), "fd", ""+avatarFile.lastModified());
+					return URLHelper.addParam(createTransformURL(ctx, url, "avatar"), "fd", "" + avatarFile.lastModified());
 				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
@@ -339,7 +338,7 @@ public class URLHelper extends ElementaryURLHelper {
 				return url;
 			}
 		}
-		return URLHelper.createStaticURL(ctx,  "/images/avatar.svg");
+		return URLHelper.createStaticURL(ctx, "/images/avatar.svg");
 	}
 
 	public static String createQRCodeLink(ContentContext ctx, IContentVisualComponent comp) {
@@ -369,7 +368,7 @@ public class URLHelper extends ElementaryURLHelper {
 		ctx.getGlobalContext().setTimeAttribute(code, data);
 		return createStaticURL(ctx, "/qrcode/" + command + "/" + code + ".png");
 	}
-	
+
 	public static String createTransformURL(ContentContext ctx, File file, String filter) throws Exception {
 		GlobalContext globalContext = ctx.getGlobalContext();
 		String url = file.getCanonicalPath();
@@ -381,6 +380,7 @@ public class URLHelper extends ElementaryURLHelper {
 	@Deprecated
 	/**
 	 * use create createMediaURL
+	 * 
 	 * @param ctx
 	 * @param file
 	 * @return
@@ -389,13 +389,14 @@ public class URLHelper extends ElementaryURLHelper {
 	public static String createResourceURL(ContentContext ctx, File file) throws IOException {
 		GlobalContext globalContext = ctx.getGlobalContext();
 		String url = file.getCanonicalPath();
-		url = StringHelper.cleanPath(url);				
+		url = StringHelper.cleanPath(url);
 		url = StringUtils.removeStart(url, StringHelper.cleanPath(globalContext.getDataFolder()));
 		return createResourceURL(ctx, url);
 	}
-	
+
 	/**
 	 * create a link to the file from media servlet
+	 * 
 	 * @param ctx
 	 * @param file
 	 * @return
@@ -404,26 +405,25 @@ public class URLHelper extends ElementaryURLHelper {
 	public static String createMediaURL(ContentContext ctx, File file) throws IOException {
 		GlobalContext globalContext = ctx.getGlobalContext();
 		String url = file.getCanonicalPath();
-		url = StringHelper.cleanPath(url);				
+		url = StringHelper.cleanPath(url);
 		url = StringUtils.removeStart(url, StringHelper.cleanPath(globalContext.getDataFolder()));
 		return createMediaURL(ctx, url);
 	}
-	
+
 	public static String createFileURL(ContentContext ctx, File file) throws IOException {
 		GlobalContext globalContext = ctx.getGlobalContext();
 		String url = file.getCanonicalPath();
-		url = StringHelper.cleanPath(url);				
+		url = StringHelper.cleanPath(url);
 		url = StringUtils.removeStart(url, StringHelper.cleanPath(globalContext.getDataFolder()));
 		return createFileURL(ctx, url);
 	}
-
 
 	public static String createLocalURI(ContentContext ctx, File file) {
 		GlobalContext globalContext = ctx.getGlobalContext();
 		String url = cleanPath(file.getAbsolutePath(), false);
 		return StringUtils.removeStart(url, cleanPath(globalContext.getDataFolder(), false));
 	}
-	
+
 	public static String createStaticFolderURI(ContentContext ctx, File file) {
 		GlobalContext globalContext = ctx.getGlobalContext();
 		String url = cleanPath(file.getAbsolutePath(), false);
@@ -601,25 +601,25 @@ public class URLHelper extends ElementaryURLHelper {
 
 		return createStaticURL(ctx, null, URLHelper.mergePath(templateFullPath, url), true);
 	}
-	
+
 	public static String createActionURL(ContentContext ctx, String action) {
 		return createActionURL(ctx, action, "/");
 	}
-	
-	public static String createActionURL(ContentContext ctx, String action, String inUrl) { 
-		return createStaticURL(ctx, mergePath("webaction",action,inUrl));
+
+	public static String createActionURL(ContentContext ctx, String action, String inUrl) {
+		return createStaticURL(ctx, mergePath("webaction", action, inUrl));
 	}
 
 	public static String createStaticURL(ContentContext ctx, MenuElement referencePage, String inUrl) {
 		return createStaticURL(ctx, referencePage, inUrl, true);
 	}
-	
+
 	public static String createAbsoluteURL(ContentContext ctx, String inUrl) {
 		if (StringHelper.isURL(inUrl)) {
 			return inUrl;
 		} else {
 			return addHost(ctx, inUrl);
-		}		
+		}
 	}
 
 	public static String createStaticTemplateURL(ContentContext ctx, Template template, String url) throws Exception {
@@ -631,11 +631,11 @@ public class URLHelper extends ElementaryURLHelper {
 		if (template.getFolder(globalContext) == null) {
 			template = Template.getApplicationInstance(ctx.getRequest().getSession().getServletContext(), ctx, globalContext.getDefaultTemplate());
 		}
-		
+
 		if (template == null) {
 			return null;
 		}
-		
+
 		String templateFullPath;
 		templateFullPath = URLHelper.mergePath(template.getLocalWorkTemplateFolder(), template.getFolder(globalContext));
 
@@ -706,19 +706,19 @@ public class URLHelper extends ElementaryURLHelper {
 			MenuElement elem = ctx.getCurrentPage();
 			template = TemplateFactory.getTemplates(ctx.getRequest().getSession().getServletContext()).get(elem.getTemplateId());
 		}
-		
+
 		if (template == null) {
 			return null;
 		}
-		
+
 		if (template.getFolder(globalContext) == null) {
 			template = Template.getApplicationInstance(ctx.getRequest().getSession().getServletContext(), ctx, globalContext.getDefaultTemplate());
 		}
-		
+
 		if (template == null) {
 			return null;
 		}
-		
+
 		String templateFolder;
 		templateFolder = template.getLocalWorkTemplateFolder();
 
@@ -740,59 +740,61 @@ public class URLHelper extends ElementaryURLHelper {
 			return null;
 		}
 		url = url.replace('\\', '/');
-		url = URLHelper.mergePath(TRANSFORM, filter, template + ImageTransformServlet.LOCAL_TEMPLATE_SUFFIX, ctx.getGlobalContext().getContextKey(), url);		
+		url = URLHelper.mergePath(TRANSFORM, filter, template + ImageTransformServlet.LOCAL_TEMPLATE_SUFFIX, ctx.getGlobalContext().getContextKey(), url);
 		return createStaticURL(ctx, url);
 	}
 
 	public static String createURL(ContentContext ctx) {
 		try {
 			if (ctx.getCurrentPage() != null) {
-				return createURL(ctx, ctx.getCurrentPage());	
+				return createURL(ctx, ctx.getCurrentPage());
 			} else {
 				return createURL(ctx, ctx.getPath());
-			}			
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
+
 	public static String createVirtualURL(ContentContext ctx) {
 		try {
 			MenuElement page = ctx.getVirtualCurrentPage();
 			if (page != null) {
-				return createURL(ctx, page);	
+				return createURL(ctx, page);
 			} else {
 				return createURL(ctx);
-			}			
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-	
+
 	/**
 	 * transform document data to param for url
+	 * 
 	 * @param ctx
-	 * @param category the category of the document
+	 * @param category
+	 *            the category of the document
 	 * @param id
 	 * @param url
 	 * @return
 	 */
 	public static String createDataDocumentURL(ContentContext ctx, DataDocument doc, String url) {
-		String id = ""+doc.getId();
+		String id = "" + doc.getId();
 		if (doc.getToken() != null) {
-			id = id+'-'+doc.getToken();
+			id = id + '-' + doc.getToken();
 		}
-		return createURLWithServletPath(ctx, "datadoc/"+doc.getCategory()+"/"+id, url);
+		return createURLWithServletPath(ctx, "datadoc/" + doc.getCategory() + "/" + id, url);
 	}
-	
+
 	public static String createURLWithoutURLFacotry(ContentContext ctx, String path) {
 		ContentContext noFactCtx = new ContentContext(ctx);
 		noFactCtx.setURLFactory(null);
 		return createURL(noFactCtx, path);
 	}
-	
+
 	public static String createPDFURL(ContentContext ctx) {
 		ContentContext pdfCtx = new ContentContext(ctx);
 		pdfCtx.setFormat("pdf");
@@ -819,27 +821,27 @@ public class URLHelper extends ElementaryURLHelper {
 	public static String createURL(ContentContext ctx, Map params) {
 		return createURL(ctx, ctx.getPath(), params);
 	}
-	
+
 	public static String createURL(ContentContext ctx, MenuElement page, Map params) {
 		if (page == null) {
 			return null;
 		}
 		String path = page.getPath();
-		try {			
+		try {
 		} catch (Exception e) {
 			e.printStackTrace();
-		}		
+		}
 		return createURL(ctx, path, params);
 	}
 
 	public static String createURL(ContentContext ctx, MenuElement page) {
-		String path = page.getPath();		
+		String path = page.getPath();
 		if (!ctx.getGlobalContext().isForcedHttps() && page.isHttps() && (!ctx.getURLProtocolPrefix().equalsIgnoreCase("https"))) {
 			ContentContext httpsCtx = new ContentContext(ctx);
 			httpsCtx.setAbsoluteURL(true);
 			httpsCtx.setURLProtocolPrefix("https");
 			return createURL(httpsCtx, page.getPath());
-		} else if (!ctx.getGlobalContext().isForcedHttps() &&  !page.isHttps() && (ctx.getURLProtocolPrefix().equals("https"))) {
+		} else if (!ctx.getGlobalContext().isForcedHttps() && !page.isHttps() && (ctx.getURLProtocolPrefix().equals("https"))) {
 			ContentContext httpCtx = new ContentContext(ctx);
 			httpCtx.setAbsoluteURL(true);
 			httpCtx.setURLProtocolPrefix("http");
@@ -851,8 +853,8 @@ public class URLHelper extends ElementaryURLHelper {
 
 	/**
 	 * add suffix to the URL. sample (suffix: #suffix) : www.javlo.org >>
-	 * www.javlo.org#suffix sample 2 (suffix: #suffix) : www.javlo.org?test=test
-	 * >> www.javlo.org#suffix?test=test
+	 * www.javlo.org#suffix sample 2 (suffix: #suffix) : www.javlo.org?test=test >>
+	 * www.javlo.org#suffix?test=test
 	 * 
 	 * @param URL
 	 * @param suffix
@@ -880,13 +882,11 @@ public class URLHelper extends ElementaryURLHelper {
 		GlobalContext globalContext = ctx.getGlobalContext();
 		return createURL(ctx, globalContext, null, uri, false, false, true, true);
 	}
-	
+
 	public static String createURLWithServletPath(ContentContext ctx, String servletPath, String uri) {
 		GlobalContext globalContext = ctx.getGlobalContext();
 		return createURL(ctx, globalContext, servletPath, uri, false, false, true, true);
 	}
-	
-	
 
 	/**
 	 * create url without context and without encoreURL (remove jsessionid)
@@ -940,10 +940,10 @@ public class URLHelper extends ElementaryURLHelper {
 		}
 		return createURL(ctx, finalURL.toString());
 	}
-	
+
 	public static String createStaticFileUrl(ContentContext ctx, File file) {
 		String relativeURL = file.getAbsolutePath().replace(ctx.getGlobalContext().getStaticFolder(), "");
-		return createStaticURL(ctx,relativeURL);
+		return createStaticURL(ctx, relativeURL);
 	}
 
 	public static String createStaticURL(ContentContext ctx, String path, Map params) {
@@ -1022,8 +1022,8 @@ public class URLHelper extends ElementaryURLHelper {
 		return createURL(ctx, uri, lgFound);
 
 	}
-	
-	public static String createURLFromPageName(ContentContext ctx, String pageName, Map<String,String> params) throws Exception {
+
+	public static String createURLFromPageName(ContentContext ctx, String pageName, Map<String, String> params) throws Exception {
 		GlobalContext globalContext = ctx.getGlobalContext();
 		NavigationService navService = NavigationService.getInstance(globalContext);
 		MenuElement page = navService.getPage(ctx, pageName);
@@ -1152,8 +1152,8 @@ public class URLHelper extends ElementaryURLHelper {
 	 * extract a host name from a url
 	 * 
 	 * @param url
-	 *            a url sample : http://www.host.ext/view/fr/test.html (extract
-	 *            name : host)
+	 *            a url sample : http://www.host.ext/view/fr/test.html (extract name
+	 *            : host)
 	 * @return return a name (hostname without last extension)
 	 */
 	public static String extractName(String url) {
@@ -1301,7 +1301,7 @@ public class URLHelper extends ElementaryURLHelper {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String createInterModuleURL(ContentContext ctx, String url, String moduleName, Map<String, String> inParams) throws Exception {		
+	public static String createInterModuleURL(ContentContext ctx, String url, String moduleName, Map<String, String> inParams) throws Exception {
 		ModulesContext moduleContext = ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());
 		return createInterModuleURL(ctx, url, moduleName, moduleContext.getCurrentModule().getName(), inParams);
 	}
@@ -1352,7 +1352,7 @@ public class URLHelper extends ElementaryURLHelper {
 		String urlLC = url.toLowerCase().trim();
 		return urlLC.startsWith("http://") || urlLC.startsWith("https://") || urlLC.startsWith("ftp://") || urlLC.startsWith("file://") || urlLC.startsWith("//");
 	}
-	
+
 	public static boolean isJavascriptLink(String link) {
 		if (StringHelper.getFileExtension(link).equalsIgnoreCase("js")) {
 			return true;
@@ -1363,7 +1363,7 @@ public class URLHelper extends ElementaryURLHelper {
 			return extractHost(link).toLowerCase().startsWith("js.");
 		}
 	}
-	
+
 	public static String mergePath(String... paths) {
 		String outPath = "";
 		for (String path : paths) {
@@ -1394,13 +1394,15 @@ public class URLHelper extends ElementaryURLHelper {
 		}
 
 	}
-	
+
 	/**
 	 * remove first / on a path if exist
+	 * 
 	 * @param path
-	 * @return the same string if not start width / and the string without first / (all first /)
+	 * @return the same string if not start width / and the string without first /
+	 *         (all first /)
 	 */
-	public static String removeFirstSlash(String path) {		
+	public static String removeFirstSlash(String path) {
 		if (path == null || !path.startsWith("/")) {
 			return path;
 		} else {
@@ -1483,8 +1485,8 @@ public class URLHelper extends ElementaryURLHelper {
 	}
 
 	/**
-	 * transform text to url. if absolute url >> return same link, if contains
-	 * '/' >> search on path, don't contains '/' >> search as page name.
+	 * transform text to url. if absolute url >> return same link, if contains '/'
+	 * >> search on path, don't contains '/' >> search as page name.
 	 * 
 	 * @param ctx
 	 * @param link
@@ -1576,12 +1578,12 @@ public class URLHelper extends ElementaryURLHelper {
 		outPath = outPath.replace("_BSL_", "\\");
 		return outPath;
 	}
-	
-	private static String removeJsessionid (String url) {
+
+	private static String removeJsessionid(String url) {
 		String outURL = url;
 		if (url.contains(";jsessionid=")) {
 			outURL = outURL.substring(0, url.indexOf(";jsessionid="));
-		} 
+		}
 		if (url.contains("&")) {
 			outURL = outURL + url.substring(url.indexOf("?"));
 		}
@@ -1591,18 +1593,18 @@ public class URLHelper extends ElementaryURLHelper {
 	public static String getFileTypeURL(ContentContext ctx, File file) {
 		String fileType = StringHelper.getFileExtension(file.getName());
 		if (fileType.equalsIgnoreCase("docx")) {
-			fileType="doc";
+			fileType = "doc";
 		}
 		if (fileType.equalsIgnoreCase("xlsx")) {
-			fileType="xls";
+			fileType = "xls";
 		}
 		boolean folder = file.isDirectory();
 		String imageFolder = MINETYPE_FOLDER;
 		if (folder) {
-			if (file.listFiles().length==0) {
+			if (file.listFiles().length == 0) {
 				return createStaticURL(ctx, imageFolder + "folder-empty.svg");
 			} else {
-				if (file.getName().contains("import")) {					
+				if (file.getName().contains("import")) {
 					return createStaticURL(ctx, imageFolder + "folder-download.svg");
 				} else if (StringHelper.isImage(file.listFiles()[0].getName())) {
 					return createStaticURL(ctx, imageFolder + "folder-pictures.svg");
@@ -1612,43 +1614,47 @@ public class URLHelper extends ElementaryURLHelper {
 			}
 		} else {
 			String mineType = ResourceHelper.getFileExtensionToMineType(fileType).replace('/', '-').toLowerCase();
-			//File imageFile = new File(URLHelper.mergePath(ctx.getRequest().getSession().getServletContext().getRealPath(imageFolder), mineType + ".svg"));
-			File imageFile = new File(URLHelper.mergePath(ResourceHelper.getRealPath(ctx.getRequest().getSession().getServletContext(),imageFolder), mineType + ".svg"));
+			// File imageFile = new
+			// File(URLHelper.mergePath(ctx.getRequest().getSession().getServletContext().getRealPath(imageFolder),
+			// mineType + ".svg"));
+			File imageFile = new File(URLHelper.mergePath(ResourceHelper.getRealPath(ctx.getRequest().getSession().getServletContext(), imageFolder), mineType + ".svg"));
 			if (imageFile.exists()) {
 				return createStaticURL(ctx, imageFolder + mineType + ".svg");
 			} else {
-				return createStaticURL(ctx, "/mimetype/"+fileType+".svg");
+				return createStaticURL(ctx, "/mimetype/" + fileType + ".svg");
 			}
 		}
 	}
-	
+
 	/**
 	 * replace page:pagename with the correct link to the page.
+	 * 
 	 * @param text
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static String replacePageReference(ContentContext ctx, String text) throws Exception {
 		text += ' ';
 		Pattern pattern = Pattern.compile("(page:)(.+?)(>| |,|;|:|\\?)");
-		Matcher matcher = pattern.matcher(text);		
+		Matcher matcher = pattern.matcher(text);
 		String outText = text;
 		while (matcher.find()) {
 			String group = matcher.group();
-			group = group.substring(0, group.length()-1);	
+			group = group.substring(0, group.length() - 1);
 			String pageName = group.replaceFirst("page:", "");
 			if (ctx != null) { // test
 				ContentContext htmlCtx = ctx.getContextWithOtherFormat("html");
 				outText = outText.replaceAll(group, URLHelper.createURLFromPageName(htmlCtx, pageName));
 			} else {
-				outText = outText.replaceAll(group, "/"+pageName);
+				outText = outText.replaceAll(group, "/" + pageName);
 			}
 		}
-		return outText.substring(0, outText.length()-1); // remove space insered at start for matching
+		return outText.substring(0, outText.length() - 1); // remove space insered at start for matching
 	}
-	
+
 	/**
 	 * if url contains ? return & else return ?
+	 * 
 	 * @param url
 	 * @return
 	 */
@@ -1659,21 +1665,23 @@ public class URLHelper extends ElementaryURLHelper {
 			return "&";
 		}
 	}
-	
+
 	public static boolean isCorrectJavloLink(String link) {
 		if (link.startsWith("/") || link.startsWith("page:")) {
 			return true;
-		} else {			
+		} else {
 			return PatternHelper.EXTERNAL_LINK_PATTERN.matcher(link).matches();
 		}
 	}
-	
+
 	/**
-	 * convert external link if start with page: or / to internet link or relative link.
+	 * convert external link if start with page: or / to internet link or relative
+	 * link.
+	 * 
 	 * @param ctx
 	 * @param link
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public static String convertLink(ContentContext ctx, String link) throws Exception {
 		if (link.startsWith('/' + ctx.getGlobalContext().getStaticConfig().getStaticFolder())) {
@@ -1696,7 +1704,7 @@ public class URLHelper extends ElementaryURLHelper {
 			return url;
 		}
 		if (!anchor.startsWith("#")) {
-			anchor = '#'+anchor;
+			anchor = '#' + anchor;
 		}
 		if (url.contains("?")) {
 			return url.replace("?", anchor);
@@ -1704,15 +1712,15 @@ public class URLHelper extends ElementaryURLHelper {
 			return url + anchor;
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		try {
-			System.out.println(">> "+replacePageReference(null,"page:cookie"));
+			System.out.println(">> " + replacePageReference(null, "page:cookie"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static String createNoImageUrl(ContentContext ctx, String filter) throws Exception {
 		Template template = ctx.getCurrentTemplate();
 		if (template != null) {
