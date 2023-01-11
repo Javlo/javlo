@@ -938,6 +938,7 @@ Security in case of vulnerabilities.
   - upload file on click on "drop files here"
   - Imagga Service - tags + focus zone
   - components status as class on area
+  - page css meta-component
 ### Modified
   - detect less and scss modification on all files
   - elFinder - Version 2.1.61 
