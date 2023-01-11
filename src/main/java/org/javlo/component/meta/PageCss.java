@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.module.file.FileAction;
 
@@ -59,7 +60,7 @@ public class PageCss extends AbstractVisualComponent {
 		finalCode.append(getSpecialInputTag());
 		finalCode.append("<textarea class=\"form-control text-editor\" id=\"" + getContentName() + "\" data-mode=\"text/x-scss\" data-ext=\"css\" name=\"" + getContentName() + "\"");
 		finalCode.append(" rows=\"" + (countLine() + 1) + "\">");
-		finalCode.append(getValue());
+		finalCode.append(StringHelper.indentScss(getValue()));
 		finalCode.append("</textarea>");
 		if (getEditorComplexity(ctx) != null) {
 			Map<String, String> filesParams = new HashMap<String, String>();
