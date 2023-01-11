@@ -963,5 +963,7 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 * @return
 	 */
 	public boolean cleanResources(ContentContext ctx);
+
+	Collection<String> getExternalModules(ContentContext ctx);
 	
 }

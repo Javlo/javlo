@@ -1394,6 +1394,34 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 		return Collections.EMPTY_LIST;
 	}
+	
+	@Override
+	public Collection<String> getExternalModules(ContentContext ctx) {
+		String modules = getConfig(ctx).getProperty("modules", null);
+		Template template = null;
+		try {
+			template = ctx.getCurrentTemplate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (modules != null && template != null) {
+			List<String> linkResource = StringHelper.stringToCollection(modules, ",");
+			List<String> outModules = new LinkedList<String>();
+			for (String url : linkResource) {
+				if (url.startsWith("/")) {
+					try {
+						outModules.add(URLHelper.createStaticTemplateURLWithoutContext(ctx, template, url));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				} else {
+					outModules.add(url);
+				}
+			}
+			return outModules;
+		}
+		return Collections.EMPTY_LIST;
+	}
 
 	@Override
 	public String getFirstPrefix(ContentContext ctx) {

@@ -93,6 +93,8 @@ public class PageDescription implements Serializable {
 	public Map<String, ImageTitleBean> imageAreaBackground;
 
 	public Collection<String> needdedResources = null;
+	
+	public Collection<String> needdedModules = null;
 
 	private Map<String, Boolean> emptyArea = Collections.EMPTY_MAP;
 

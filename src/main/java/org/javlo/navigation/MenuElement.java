@@ -2307,6 +2307,28 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		}
 		return desc.needdedResources;
 	}
+	
+	public Collection<String> getExternalModules(ContentContext ctx) throws Exception {
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+		if (desc.needdedModules == null) {
+			Collection<String> outModules = new LinkedList<String>();
+			ContentElementList content = getAllContent(ctx);
+			while (content.hasNext(ctx)) {
+				IContentVisualComponent comp = content.next(ctx);
+				Collection<String> modules = comp.getExternalModules(ctx);
+				if (modules != null) {
+					for (String res : modules) {
+						if (!outModules.contains(res)) {
+							outModules.add(res);
+						}
+					}
+				}
+				// outResources.addAll(comp.getExternalResources());
+			}
+			desc.needdedModules = outModules;
+		}
+		return desc.needdedModules;
+	}
 
 	/**
 	 * return the field value of the first component match with the component type
