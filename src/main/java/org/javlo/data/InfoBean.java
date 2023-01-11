@@ -860,7 +860,6 @@ public class InfoBean {
 	}
 
 	public String getCurrentUserAvatarUrl() {
-		System.out.println(">>>>>>>>> InfoBean.getCurrentUserAvatarUrl : START"); //TODO: remove debug trace
 		if (ctx.getCurrentUser() != null) {
 			return URLHelper.createAvatarUrl(ctx, ctx.getCurrentUser().getUserInfo());
 		} else {

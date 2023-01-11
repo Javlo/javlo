@@ -323,8 +323,10 @@ public class UserRegistration extends MapComponent implements IAction {
 		try {
 			BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo, StringHelper.isTrue(rs.getParameter("reset-boolean"), true));
 			if (emailLogin != null) {
-				userInfo.setLogin(emailLogin);
-				userInfo.setEmail(emailLogin);				
+				if (StringHelper.isEmpty(userInfo.getLogin())) {
+					userInfo.setLogin(emailLogin);
+				}
+				userInfo.setEmail(emailLogin);
 			}
 			
 			if (isSpam(userInfo)) {

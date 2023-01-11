@@ -1,7 +1,6 @@
 package org.javlo.component.users;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,7 +13,6 @@ import javax.mail.internet.InternetAddress;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.fileupload.FileItem;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
@@ -25,7 +23,6 @@ import org.javlo.helper.BeanHelper;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.RequestParameterMap;
-import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -292,8 +289,12 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 			if (userFactory.getUser(email) != null) {
 				return i18nAccess.getViewText("registration.error.login_allreadyexist", "user already exists : ") + email;
 			} else {
-				user.setLogin(email);
-				userInfo.setLogin(email);
+				if(StringHelper.isEmpty(user.getLogin())) {
+					user.setLogin(email);
+				}
+				if(StringHelper.isEmpty(userInfo.getLogin())) {
+					userInfo.setLogin(email);
+				}
 			}
 		}
 
