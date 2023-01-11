@@ -203,7 +203,7 @@ public class UserRegistration extends MapComponent implements IAction {
 			}
 		}
 		String avatarFileName = ctx.getCurrentUser().getUserInfo().getUserFolder() + ".webp";
-		System.out.println(">>>>>>>>> UserRegistration.uploadFile : userInfo.hashCode() = "+userInfo.hashCode()); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> UserRegistration.uploadFile : userInfo.hashCode() = "+ctx.getCurrentUser().getUserInfo().hashCode()); //TODO: remove debug trace
 		System.out.println(">>>>>>>>> UserRegistration.uploadFile : ctx.getCurrentUser().getUserInfo().getLogin() = "+ctx.getCurrentUser().getUserInfo().getLogin()); //TODO: remove debug trace
 		System.out.println(">>>>>>>>> UserRegistration.uploadFile : ctx.getCurrentUser().getUserInfo().getUserFolder() = "+ctx.getCurrentUser().getUserInfo().getUserFolder()); //TODO: remove debug trace
 		File avatarFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getAvatarFolder(), avatarFileName));
