@@ -203,6 +203,7 @@ public class UserRegistration extends MapComponent implements IAction {
 			}
 		}
 		String avatarFileName = ctx.getCurrentUser().getUserInfo().getUserFolder() + ".webp";
+		System.out.println(">>>>>>>>> UserRegistration.uploadFile : ctx.getCurrentUser().getUserInfo().getUserFolder() = "+ctx.getCurrentUser().getUserInfo().getUserFolder()); //TODO: remove debug trace
 		File avatarFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getAvatarFolder(), avatarFileName));
 		if (StringHelper.isTrue(rs.getParameter("deleteAvatar", null))) {
 			avatarFile.delete();

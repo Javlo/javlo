@@ -312,6 +312,7 @@ public class URLHelper extends ElementaryURLHelper {
 			}
 		} else {
 			url = mergePath(ctx.getGlobalContext().getStaticConfig().getAvatarFolder(), userInfo.getUserFolder() + ".webp");
+			System.out.println(">>>>>>>>> URLHelper.createAvatarUrl : userInfo.getUserFolder() = "+userInfo.getUserFolder()); //TODO: remove debug trace
 			avatarFile = new File(mergePath(ctx.getGlobalContext().getDataFolder(), url));
 			System.out.println(">>>>>>>>> URLHelper.createAvatarUrl : avatarFile = "+avatarFile); //TODO: remove debug trace
 			if (avatarFile.exists()) {
