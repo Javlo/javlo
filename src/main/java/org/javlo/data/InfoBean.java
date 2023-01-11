@@ -860,6 +860,7 @@ public class InfoBean {
 	}
 
 	public String getCurrentUserAvatarUrl() {
+		System.out.println(">>>>>>>>> InfoBean.getCurrentUserAvatarUrl : START"); //TODO: remove debug trace
 		if (ctx.getCurrentUser() != null) {
 			return URLHelper.createAvatarUrl(ctx, ctx.getCurrentUser().getUserInfo());
 		} else {
@@ -871,7 +872,6 @@ public class InfoBean {
 		if (avatarFakeMap == null) {
 			avatarFakeMap = new HashMap<IUserInfo, String>(0) {
 				private static final long serialVersionUID = 1L;
-
 				@Override
 				public String get(Object key) {
 					return URLHelper.createAvatarUrl(ctx, (IUserInfo) key);
