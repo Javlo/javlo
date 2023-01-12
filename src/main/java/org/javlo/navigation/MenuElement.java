@@ -2309,7 +2309,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		}
 		return desc.needdedResources;
 	}
-	
+
 	public Collection<String> getExternalModules(ContentContext ctx) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 		if (desc.needdedModules == null) {
@@ -5449,7 +5449,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		desc.event = Event.NO_EVENT;
 		return null;
 	}
-	
+
 	public String getAreaClass(ContentContext ctx, String area) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 		String clazz = desc.areaAsMap.get(area);
@@ -5475,7 +5475,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			} else if (containContainer) {
 				clazz = "area-contain-container area-contain-container-not-first";
 			}
-			
+
 			List<String> compTypes = getComponentTypes(ctx).get(area);
 			if (compTypes != null) {
 				clazz += ' ' + "_cp_type_size_" + compTypes.size();
@@ -5487,7 +5487,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 					clazz += ' ' + "_cp-" + type;
 				}
 			}
-			
+
 			desc.areaAsMap.put(area, clazz);
 		}
 		return clazz;
@@ -5791,7 +5791,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		return desc.componentTypes;
 	}
 
-	
 	@Override
 	public Set<String> getTaxonomy() {
 		return taxonomy;
@@ -5841,10 +5840,12 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		pdfData = XHTMLHelper.replaceJSTLData(newCtx, pdfData);
 		return pdfData;
 	}
-	
+
 	public String getCss(ContentContext ctx) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 		if (desc.css == null) {
+			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+			PrintStream out = new PrintStream(outStream);
 			ContentContext ctxAllArea = ctx.getContextWithArea(null);
 			ContentElementList content = getContent(ctx);
 			while (content.hasNext(ctxAllArea)) {
@@ -5853,15 +5854,19 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 					String scss = comp.getValue(ctx);
 					if (scss == null || scss.length() == 0) {
 						desc.css = "";
-						return "";
 					} else {
-						desc.css = StringHelper.neverNull(XHTMLHelper.compileScss(scss));
+						try {
+							out.println(StringHelper.neverNull(XHTMLHelper.compileScss(scss)));
+						} catch (Exception e) {
+							e.printStackTrace();
+							MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+							messageRepository.setGlobalMessage(new GenericMessage(e.getMessage(), GenericMessage.ERROR));
+						}
 					}
 				}
 			}
-			if (desc.css == null) {
-				desc.css = "";
-			}
+			out.close();
+			desc.css = new String(outStream.toByteArray());
 		}
 		return desc.css;
 	}

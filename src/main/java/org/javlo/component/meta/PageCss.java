@@ -54,6 +54,15 @@ public class PageCss extends AbstractVisualComponent {
 		return "bi bi-filetype-scss";
 	}
 	
+	@Override
+	public String performEdit(ContentContext ctx) throws Exception {
+		String out = super.performEdit(ctx);
+		if (isModify()) {
+			ctx.setNeedRefresh(true);
+		}
+		return out;
+	}
+	
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		StringBuffer finalCode = new StringBuffer();
 		finalCode.append(getDebugHeader(ctx));
