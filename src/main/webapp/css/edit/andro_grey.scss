@@ -64,7 +64,7 @@ select {
 	color: #333;
 }
 
-.btn, .action-button, #tools select, #tools input, .action input[type="submit"], #popup_panel input[type="button"], .form-control {
+.btn, .action-button, #tools select, #tools input, .action input[type="submit"], #popup_panel input[type="button"], .form-control, #main-body .ui-button {
 	--btn-height: 28px;
 	--btn-vertical-padding: 3px;
 	padding: var(--btn-vertical-padding) 1em;
@@ -91,6 +91,16 @@ select {
 		text-transform: uppercase;
 		 
 	}
+	.ui-button-text {
+		padding: 0;
+		line-height: normal;
+		font-weight: normal;
+		font-size: 12px;
+	}
+}
+
+#main-body .ui-button {
+	margin: 1px;
 }
 
 select.form-control {

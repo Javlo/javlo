@@ -85,7 +85,7 @@ body {
 /*ui-front ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable std42-dialog touch-punch elfinder-dialog elfinder-to-editing elfinder-dialog-edit ui-resizable elfinder-frontmost elfinder-dialog-active*/
 
 #fileManager {
-	.ui-dialog.ui-widget-content {
+	.ui-dialog.elfinder-dialog-edit {
 		width: calc(100% - 60px) !important;
 		position: absolute;
 		font-size: 0.9em;
@@ -97,6 +97,34 @@ body {
 			height: calc(100vh - 400px) !important;
 		}
 	}
+	.ui-dialog .ui-dialog-content { 
+ 		 padding-left: 55px;
+	}
+}
+
+
+
+.ui-widget-header .ui-icon {
+	background-image: none !important;
+	text-indent: 0;
+	font-size: 16px;
+	margin-top: 0;
+	opacity: .5 !important;
+	&:hover {
+		opacity: .9 !important;
+	}
+}
+
+.ui-icon-closethick:before {
+	display: inline-block;
+	font-family: bootstrap-icons !important;
+	font-style: normal;
+	font-weight: normal !important;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+	vertical-align: -.125em;
+	content: "\f623";
 }
 
 .maincontent.file {
