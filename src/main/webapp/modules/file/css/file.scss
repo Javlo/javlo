@@ -80,16 +80,25 @@ body {
 
 .elfinder-cwd-icon-jsp {
 	background-position: 0 -550px;
-}
+}*/
+
+/*ui-front ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable std42-dialog touch-punch elfinder-dialog elfinder-to-editing elfinder-dialog-edit ui-resizable elfinder-frontmost elfinder-dialog-active*/
+
 #fileManager {
-	.elfinder-dialog-edit {
+	.ui-dialog.ui-widget-content {
+		width: calc(100% - 60px) !important;
+		position: absolute;
+		font-size: 0.9em;
+		top: 0 !important;
+		left: 0 !important;
+		right: auto !important;
+		margin: 30px;
 		.ui-dialog-content {
-			height: calc(100vh - 250px) !important;
-			font-size: 0.9em;
+			height: calc(100vh - 400px) !important;
 		}
 	}
 }
-*/
+
 .maincontent.file {
 	.left {
 		padding: 20px 15px 20px 15px;
