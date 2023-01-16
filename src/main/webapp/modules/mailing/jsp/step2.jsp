@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%><div class="${contentContext.editPreview?'preview ':'edit '}content wizard">
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%><div class="${contentContext.editPreview?'preview ':'edit '}content wizard step-2">
 	<form class="${contentContext.editPreview?'':'ajax '}" action="${info.currentURL}" method="post">
 		<div class="main">
 			<div>

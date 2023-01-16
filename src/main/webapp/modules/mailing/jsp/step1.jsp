@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
-%><div class="${contentContext.editPreview?'preview ':'edit '}content wizard">
+%><div class="${contentContext.editPreview?'preview ':'edit '}content wizard step-1">
 	<form class="standard-form" action="${info.currentURL}" method="get">
 		<div>
 			<input type="hidden" name="webaction" value="wizard" />

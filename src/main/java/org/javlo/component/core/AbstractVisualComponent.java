@@ -1084,7 +1084,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			for (int mode : ALL_MODES) {
 				String id = "display-mode-" + mode + "-" + getId();
 				out.println("<div class=\"_jv_btn-check\">");
-				out.println(XHTMLHelper.getCheckbox(id, !isHiddenInMode(ctx, mode, null)));
+				out.println(XHTMLHelper.getCheckbox(id, !isHiddenInModeValue(ctx, mode)));
 				out.println("<label for=\"" + id + "\">");
 				out.println(ContentContext.getRenderModeKey(mode));
 				out.println("</label></div>");
@@ -3529,6 +3529,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 			return componentBean.getHiddenModes().contains(mode);
 		}
+	}
+	
+	protected boolean isHiddenInModeValue(ContentContext ctx, int mode) {
+		return componentBean.getHiddenModes().contains(mode);
 	}
 
 	public int getCookiesDisplayStatus() {

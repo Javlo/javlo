@@ -2,6 +2,17 @@
     padding: 0 15px;
 }
 
+.content {
+	background-color: #fff;
+	padding: 1rem;
+
+}
+
+.content.step-2 {
+	margin: 0 auto;
+	max-width: 640px;
+}
+
 .content form {
 	min-height: 45px;
 }

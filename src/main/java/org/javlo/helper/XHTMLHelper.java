@@ -352,6 +352,8 @@ public class XHTMLHelper {
 		}
 		if (!StringHelper.isEmpty(onchange)) {
 			onchange = " onchange=\"" + onchange + "\"";
+		} else {
+			onchange = "";
 		}
 		out.print("<input id=\"" + field + "\" type=\"checkbox\" name=\"");
 		out.print(field);
