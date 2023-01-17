@@ -20,7 +20,6 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileCleaningTracker;
 import org.javlo.context.ContentContext;
-import org.javlo.helper.ResourceHelper;
 import org.javlo.portlet.filter.MultiReadRequestWrapper;
 import org.owasp.encoder.Encode;
 
