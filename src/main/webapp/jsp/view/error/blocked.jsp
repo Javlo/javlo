@@ -60,6 +60,7 @@ img {
 
 h1 {
 	font-size: 1.2rem;
+	text-align: center;
 }
 svg  {
  margin-bottom: 1rem;
@@ -78,8 +79,8 @@ svg  {
 		<div class="bloc">
 
 			<div class="logo">
-				<c:if test="${not empty info.logoURL}">
-					<img src="${info.logoURL}" alt="${info.globalTitle}" />
+				<c:if test="${not empty info.logoUrl}">
+					<img src="${info.logoUrl}" alt="${info.globalTitle}" />
 				</c:if>
 				<h1>${info.globalTitle}</h1>
 			</div>
