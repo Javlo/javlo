@@ -199,7 +199,7 @@ if (!String.prototype.startsWith) {
 		pjq('#previewModalTitle').html(title);
 
 		var modal = pjq('#preview-modal');
-		
+
 		document.body.classList.add("_jv_modal-open");
 
 		// type
@@ -207,7 +207,7 @@ if (!String.prototype.startsWith) {
 		modal.removeClass("jv-modal-sm");
 		modal.removeClass("jv-modal-md");
 		modal.removeClass("jv-modal-lg");
-		
+
 		if (large) {
 			document.getElementById('preview-modal-dialog').classList.add('maximized');
 		}
@@ -272,7 +272,7 @@ if (!String.prototype.startsWith) {
 		});
 		return fileExist;
 	}
-	
+
 	editPreview.isFileExistShared = function(filename) {
 		var fileTransformURL = editPreview.addParam(ajaxURL, "webaction=data.fileExistShared&filename=" + filename);
 		var fileExist = false;
@@ -421,7 +421,7 @@ if (!String.prototype.startsWith) {
 	}
 
 	editPreview.initPreview = function() {
-		
+
 		jvInit();
 
 		var cols = document.querySelectorAll('body');
@@ -450,8 +450,8 @@ if (!String.prototype.startsWith) {
 		/** ******************* */
 
 		if (pjq("#preview-layer").length == 0) {
-			pjq("body").append('<div id="preview-layer"><div class="preview-layer-wrapper"><div class="layer-header">'+
-				'<div class="layer-info"><div class="repeat-icon"><i class="bi bi-repeat"></i></div>'+
+			pjq("body").append('<div id="preview-layer"><div class="preview-layer-wrapper"><div class="layer-header">' +
+				'<div class="layer-info"><div class="repeat-icon"><i class="bi bi-repeat"></i></div>' +
 				'<h4></h4><span class="mirror glyphicon glyphicon-paste" aria-hidden="true"></span><i class="bi bi-layout-sidebar"></i><span id=\"area-name\"></span>' +
 				//'<button class="btn-edit btn btn-primary"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span><span class="text">edit</span></button>' +
 				'</div><div class="commands"><button class="btn-copy btn btn-primary"><i class="bi bi-clipboard-plus"></i><span class="text">copy</span></button>' +
@@ -464,7 +464,7 @@ if (!String.prototype.startsWith) {
 			});
 			pjq("#preview-layer").hide();
 			let editLayerAction = function(event) {
-				
+
 				let layer = this.parentElement;
 				while (layer.id != 'preview-layer') {
 					layer = layer.parentElement;
@@ -484,13 +484,13 @@ if (!String.prototype.startsWith) {
 			pjq("#preview-layer .area-name").on('click', editLayerAction);
 			pjq('#preview-layer .btn-delete').on('click', function(e) {
 				editPreview.layerOver(null);
-				
+
 				let layer = this.parentElement;
 				while (layer.id != 'preview-layer') {
 					layer = layer.parentElement;
 				}
 				var subComp = pjq(layer).data("comp");
-				
+
 				var area = editPreview.searchArea(subComp);
 				var compId = subComp.attr("id").substring(3);
 				var ajaxURL = editPreview.addParam(currentURL, "webaction=edit.delete&previewEdit=true&id=" + compId);
@@ -502,7 +502,7 @@ if (!String.prototype.startsWith) {
 			});
 			pjq('#preview-layer .btn-duplicate').on('click', function(e) {
 				editPreview.layerOver(null);
-				
+
 				let layer = this.parentElement;
 				while (layer.id != 'preview-layer') {
 					layer = layer.parentElement;
@@ -971,9 +971,9 @@ if (!String.prototype.startsWith) {
 					pjq("._ep_new-component-zone").remove();
 				});
 				el.addEventListener('dragstart', function(event) {
-					
+
 					document.body.classList.add("_jv_dragnav");
-					
+
 					var targetPageName = pjq(this).attr("id");
 					event.dataTransfer.setData('text', "page:" + targetPageName);
 					var dragParent = pjq(this).parent();
@@ -1303,7 +1303,11 @@ if (!String.prototype.startsWith) {
 				}
 				var item = pjq(xhtmlId);
 				if (item != null) {
-					item.html(xhtml);
+					try {
+						item.html(xhtml);
+					} catch (err) {
+						console.error(err);
+					}
 				} else {
 					if (console) {
 						console.log("warning : component " + xhtmlId + " not found for insideZone.");
@@ -2635,7 +2639,7 @@ function jvInit() {
 function jvFullHeightItem() {
 	document.querySelectorAll('._jv_full_height_bottom').forEach(i => {
 		let top = i.offsetTop;
-		i.style.height = "calc(100vh - "+top+"px)";
+		i.style.height = "calc(100vh - " + top + "px)";
 		i.style.position = "fixed";
 		i.style.overflowY = "auto";
 	});
@@ -2644,7 +2648,7 @@ function jvFullHeightItem() {
 var _jvOpenMenu = false;
 
 function initJvCollapse() {
-	
+
 	document.body.onclick = function() {
 		if (!_jvOpenMenu) {
 			document.querySelectorAll('._jv_collapse-target').forEach(menu => {
@@ -2654,11 +2658,11 @@ function initJvCollapse() {
 		}
 		_jvOpenMenu = false;
 	}
-	
+
 	document.querySelectorAll('[data-jv-toggle="collapse"]').forEach(i => {
 		let targetItem = document.querySelector(i.getAttribute("data-jv-target"));
 		if (targetItem == null) {
-			console.log("initJvCollapse target not found : "+i.getAttribute("data-jv-target"));
+			console.log("initJvCollapse target not found : " + i.getAttribute("data-jv-target"));
 		}
 		targetItem.classList.add("_jv_hidden");
 		i.onclick = function(e) {
@@ -2674,7 +2678,7 @@ function initJvCollapse() {
 			if (targetItem.classList.contains("_jv_hidden")) {
 				targetItem.classList.remove("_jv_hidden");
 				targetItem.classList.add("_jv_show");
-			} else  {
+			} else {
 				targetItem.classList.add("_jv_hidden");
 				targetItem.classList.remove("_jv_show");
 			}
