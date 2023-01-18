@@ -20,8 +20,6 @@ ContentContext editCtx = new ContentContext(ctx);
 editCtx.setRenderMode(ContentContext.EDIT_MODE);
 ContentService content = ContentService.getInstance(globalContext);
 
-
-
 MenuElement timePage = ctx.getCurrentPage();
 String path = timePage.getPath();
 MenuElement viewPage = content.getNavigation(editCtx).searchChild(editCtx, path);
@@ -32,7 +30,8 @@ boolean pageSame = true;
 if (viewPage == null) {
 	statusKey += ".deleted";
 } else {
-	pageSame = timePage.isMetadataEquals(viewPage) && timePage.isContentEquals(viewPage) && timePage.isChildrenEquals(viewPage);
+	pageSame = timePage.isMetadataEquals(viewPage) && timePage.isContentEquals(viewPage)
+	&& timePage.isChildrenEquals(viewPage);
 }
 request.setAttribute("pageSame", pageSame);
 %>
@@ -42,15 +41,48 @@ request.setAttribute("pageSame", pageSame);
 		<div class="panel-body">
 			<div class="tab-pane">
 				<c:if test="${not empty info.editUser}">
-					<h2 class="first-title">
-						<i class="bi bi-clock-history"></i> ${i18n.edit["time.title"]}
+					<h2 class="first-title _jv_flex-line">
+						<span><i class="bi bi-clock-history"></i> ${i18n.edit["time.title"]}</span>
+						<div class="time-title">
+							<a href="${info.currentPreviewURL}"><i class="bi bi-x-circle"></i></a>
+						</div>
 					</h2>
-					
-					<div class="well"><i class="bi bi-question-circle"></i> ${i18n.edit["time.help"]}</div>
+			</div>
 
+			<div class="time-body">
+
+				<div class="well">
+					<i class="bi bi-question-circle"></i> ${i18n.edit["time.help"]}
+				</div>
+
+				<c:set var="history" value="save" />
+				<c:if test="${not empty param.history}">
+					<c:set var="history" value="${param.history}" />
+				</c:if>
+
+				<div id="time-menu" class="btn-group time-group" role="group">
+					<button type="button" class="btn btn-default btn-xs btn-1 ${history=='save'?'active':''}" role="group" onclick="show(this, 'save-history');">save history</button>
+					<button type="button" class="btn btn-default btn-xs btn-2 ${history=='publish'?'active':''}" role="group" onclick="show(this, 'publish-history');">publish history</button>
+				</div>
+
+				<script>
+						function show(link, tagId) {
+							document.querySelectorAll("#time-menu button").forEach(i => {
+								i.classList.remove("active");
+							});
+							link.classList.add("active");
+							document.getElementById('save-history').classList.add("hidden");
+							document.getElementById('publish-history').classList.add("hidden");
+							document.getElementById(tagId).classList.remove("hidden");
+						}
+					</script>
+
+
+				<div id="save-history" class="${history=='save'?'':'hidden'}">
 					<form action="${info.currentURL}" method="post">
 						<div class="pc_line">
 							<input type="hidden" name="webaction" value="time.settraveltime" />
+							<input type="hidden" name="history" value="save" />
 							<div class="form-group">
 								<select name="date" class="form-control" onchange="this.form.submit();">
 									<option value=""></option>
@@ -58,8 +90,9 @@ request.setAttribute("pageSame", pageSame);
 									MetaPersistenceBean selectBean = null;
 									for (MetaPersistenceBean persBean : PersistenceService.getInstance(globalContext).getPersistences()) {
 										if (persBean.getVersion() > 0) {
-											if (globalContext.getTimeTravelerContext().getVersion() != null && persBean.getVersion() == globalContext.getTimeTravelerContext().getVersion()) {
-												selectBean = persBean;
+											if (globalContext.getTimeTravelerContext().getVersion() != null
+											&& persBean.getVersion() == globalContext.getTimeTravelerContext().getVersion()) {
+										selectBean = persBean;
 											}
 									%>
 									<option <%if (globalContext.getTimeTravelerContext().getVersion() != null
@@ -79,7 +112,7 @@ request.setAttribute("pageSame", pageSame);
 										</button>
 									</div>
 									<div class="time-status">
-										<div class="btn" title="version:<%=selectBean==null?'?':selectBean.getVersion()%>">
+										<div class="btn" title="version:<%=selectBean == null ? '?' : selectBean.getVersion()%>">
 											<%=(selectBean != null ? selectBean.getHumanDate() : "")%>
 										</div>
 									</div>
@@ -92,55 +125,55 @@ request.setAttribute("pageSame", pageSame);
 							</div>
 						</div>
 					</form>
+				</div>
 
 
-<%-- 					<div class="well backup">
-						<div class="title">
-							<i class="bi bi-archive"></i> backup
+				<div id="publish-history" class="backup ${history=='publish'?'':'hidden'}">
+					<form action="${info.currentURL}" method="post">
+						<div class="pc_line">
+							<input type="hidden" name="webaction" value="time.settraveltime" />
+							<input type="hidden" name="history" value="publish" />
+							<div class="form-group">
+								<select name="date" class="form-control" onchange="this.form.submit();">
+									<option value=""></option>
+									<%
+									List<Date> dates = PersistenceService.getInstance(globalContext).getBackupDates();
+									for (Date date : dates) {
+									%><option <%if (date.equals(globalContext.getTimeTravelerContext().getTravelTime())) {%> selected="selected" <%}%> value="<%=StringHelper.renderDate(date, "dd/MM/yy HH:mm:ss")%>"><%=StringHelper.renderDate(date, "dd/MM/yy HH:mm")%></option>
+									<%
+									}
+									%>
+								</select>
+							</div>
 						</div>
-						<form action="${info.currentURL}" method="post">
+					</form>
+				</div>
+
+				<div class="pc_form_line">
+					<div class="form-group">
+						<form id="pc_form" action="${info.currentURL}" method="post">
 							<div class="pc_line">
-								<input type="hidden" name="webaction" value="time.settraveltime" />
-								<div class="form-group">
-									<select name="date" class="form-control" onchange="this.form.submit();">
-										<option value=""></option>
-										<%
-										List<Date> dates = PersistenceService.getInstance(globalContext).getBackupDates();
-										for (Date date : dates) {
-										%><option <%if (date.equals(globalContext.getTimeTravelerContext().getTravelTime())) {%> selected="selected" <%}%> value="<%=StringHelper.renderDate(date, "dd/MM/yy HH:mm:ss")%>"><%=StringHelper.renderDate(date, "dd/MM/yy HH:mm:ss")%></option>
-										<%
-										}
-										%>
-									</select>
-								</div>
+								<input type="hidden" name="webaction" value="time.replacecurrentpage" />
+								<input class="btn btn-primary btn-block" id="tc_replace_current_page_button" ${pageSame?'disabled':''} type="submit" value="${i18n.edit['time.action.replace-current-page']}" class="pc_edit_true" />
 							</div>
 						</form>
-					</div> --%>
-
-					<div class="pc_form_line">
-						<div class="form-group">
-							<form id="pc_form" action="${info.currentURL}" method="post">
-								<div class="pc_line">
-									<input type="hidden" name="webaction" value="time.replacecurrentpage" />
-									<input class="btn btn-primary btn-block" id="tc_replace_current_page_button" ${pageSame?'disabled':''} type="submit" value="${i18n.edit['time.action.replace-current-page']}" class="pc_edit_true" />
-								</div>
-							</form>
-						</div>
-						<div class="form-group">
-							<form id="pc_form" action="${info.currentURL}" method="post">
-								<div class="pc_line">
-									<input type="hidden" name="webaction" value="time.ReplaceCurrentPageAndChildren" />
-									<input class="btn btn-default btn-block" id="tc_replace_current_page_and_children_button" ${pageSame?'disabled':''} type="submit" value="${i18n.edit['time.action.replace-current-page-and-children']}" class="pc_edit_true" />
-								</div>
-							</form>
-						</div>
 					</div>
+					<div class="form-group">
+						<form id="pc_form" action="${info.currentURL}" method="post">
+							<div class="pc_line">
+								<input type="hidden" name="webaction" value="time.ReplaceCurrentPageAndChildren" />
+								<input class="btn btn-default btn-block" id="tc_replace_current_page_and_children_button" ${pageSame?'disabled':''} type="submit" value="${i18n.edit['time.action.replace-current-page-and-children']}" class="pc_edit_true" />
+							</div>
+						</form>
+					</div>
+				</div>
 
 				</c:if>
 			</div>
-			<div class="pc_footer"></div>
 		</div>
+		<div class="pc_footer"></div>
 	</div>
+</div>
 </div>
 <script type="text/javascript">
 	if (top.location != document.location) { // iframe ?		

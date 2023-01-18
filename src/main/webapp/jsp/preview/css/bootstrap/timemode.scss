@@ -2,7 +2,20 @@
 	input.btn {
 		white-space: break-spaces;
 	}
-	
+	.time-body {
+		padding: 0 15px;
+	}
+	.first-title {
+		color: white;
+		margin: 5px 0;
+		span {
+			display: flex;
+			justify-content: flex-start;
+			i {
+				margin-right: .5rem;
+			}
+		}
+	}
 	.alert-header {
 		font-size: 16px;
 		color: #fff;
@@ -17,11 +30,20 @@
 			color: #fff;
 			font-size: 16px;
 			color: #fff;
-			line-height: 36px;
-			margin-right: 15px;
 		}
 	}
 	.well {
 		color: #fff;
+	}
+	.time-group {
+		width: 100%;
+		margin: 0 0 15px 0;
+		display: flex !important;
+		align-content: stretch;
+		align-items: stretch;
+		flex-wrap: wrap;
+		.btn {
+			width: 50%;
+		}
 	}
 }

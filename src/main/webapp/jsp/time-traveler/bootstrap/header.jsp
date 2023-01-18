@@ -52,51 +52,50 @@ if (!rightOnPage) {
 				<div class="name _jv_collapse-container _jv_ajax-hide-on-loading" data-jv-toggle="collapse" data-jv-target="#admin-list">Javlo</div>
 				<ul>
 					<li class="page-title"><span class="page">${not empty info.page.pageTitle?info.page.pageTitle:info.page.name}</span></li>
-
 				</ul>
 
 			</div>
 		</div>
 		<div class="menu">
 			<div class="pc_line">
-						<%
-						MenuElement timePage = ctx.getCurrentPage();
-						String path = timePage.getPath();
-						MenuElement viewPage = content.getNavigation(editCtx).searchChild(editCtx, path);
-						String statusKey = "time.status";
-						String icon = "<i class='bi bi-file-earmark-check'></i>";
-						String messageStatus = "success";
-						if (viewPage == null) {
-							statusKey += ".deleted";
-						} else {
-							boolean metadataEquals = timePage.isMetadataEquals(viewPage);
-							boolean contentEquals = timePage.isContentEquals(viewPage);
-							boolean childrenEquals = timePage.isChildrenEquals(viewPage);
-							if (metadataEquals && contentEquals && childrenEquals) {
-								statusKey += ".same";
-							} else {
-								icon = "<i class='bi bi-file-earmark-x'></i>";
-								messageStatus = "warning";
-								statusKey += ".different.on";
-								if (!metadataEquals) {
-							statusKey += "-metadata";
-								}
-								if (!contentEquals) {
-							statusKey += "-content";
-								}
-								if (!childrenEquals) {
-							statusKey += "-children";
-								}
-							}
+				<%
+				MenuElement timePage = ctx.getCurrentPage();
+				String path = timePage.getPath();
+				MenuElement viewPage = content.getNavigation(editCtx).searchChild(editCtx, path);
+				String statusKey = "time.status";
+				String icon = "<i class='bi bi-file-earmark-check'></i>";
+				String messageStatus = "success";
+				if (viewPage == null) {
+					statusKey += ".deleted";
+				} else {
+					boolean metadataEquals = timePage.isMetadataEquals(viewPage);
+					boolean contentEquals = timePage.isContentEquals(viewPage);
+					boolean childrenEquals = timePage.isChildrenEquals(viewPage);
+					if (metadataEquals && contentEquals && childrenEquals) {
+						statusKey += ".same";
+					} else {
+						icon = "<i class='bi bi-file-earmark-x'></i>";
+						messageStatus = "warning";
+						statusKey += ".different.on";
+						if (!metadataEquals) {
+					statusKey += "-metadata";
 						}
-						pageContext.setAttribute("statusKey", statusKey);
-						%><div class="alert-header alert-<%=messageStatus%>"><%=icon%>
-							${i18n.edit[statusKey]}
-						</div>
-					</div>
+						if (!contentEquals) {
+					statusKey += "-content";
+						}
+						if (!childrenEquals) {
+					statusKey += "-children";
+						}
+					}
+				}
+				pageContext.setAttribute("statusKey", statusKey);
+				%><div class="alert-header alert-<%=messageStatus%>"><%=icon%>
+					${i18n.edit[statusKey]}
+				</div>
+			</div>
 		</div>
 		<div class="time-title">
-			<a href="${info.currentPreviewURL}"><i class="bi bi-x-circle"></i></a>
+			&nbsp;
 		</div>
 	</div>
 </c:if>
