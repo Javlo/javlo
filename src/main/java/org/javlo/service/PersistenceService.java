@@ -857,6 +857,7 @@ public class PersistenceService {
 					hiddenModes.add(Integer.parseInt(modeStr.trim()));
 				}
 			}
+			
 
 			String style = contentNode.getAttributeValue("style");
 
@@ -866,7 +867,9 @@ public class PersistenceService {
 			}
 
 			ComponentBean bean = new ComponentBean(type, content, lg);
+
 			bean.setId(id);
+			bean.setHiddenModes(hiddenModes);
 			bean.setRepeat(StringHelper.isTrue(contentNode.getAttributeValue("repeat"), false));
 			// bean.setForceCachable(StringHelper.isTrue(contentNode.getAttributeValue("forceCachable"),
 			// false));
@@ -892,7 +895,7 @@ public class PersistenceService {
 				bean.setLayout(new ComponentLayout(layout));
 			}
 			bean.setRenderer(renderer);
-			bean.setHiddenModes(hiddenModes);
+			
 			bean.setAuthors(authors);
 			try {
 				bean.setModificationDate(parseDate(contentNode.getAttributeValue("modificationDate", "01/01/1970 00:00:00")));

@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -80,7 +79,6 @@ import org.javlo.navigation.PageBean;
 import org.javlo.rendering.Device;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
-import org.javlo.service.exception.ServiceException;
 import org.javlo.service.google.translation.ITranslator;
 import org.javlo.service.visitors.CookiesService;
 import org.javlo.servlet.IVersion;
@@ -336,10 +334,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (componentBean.getArea() == null) {
 			if (getPreviousComponent() != null) {
 				componentBean.setArea(getPreviousComponent().getArea());
-				logger.warning("restore area from previous component : "+componentBean.getArea());
+				logger.warning("restore area from previous component : " + componentBean.getArea());
 			} else {
 				componentBean.setArea(ComponentBean.DEFAULT_AREA);
-				logger.warning("restore default area : "+componentBean.getArea());
+				logger.warning("restore default area : " + componentBean.getArea());
 			}
 		}
 		return componentBean.getArea();
@@ -923,7 +921,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("<label for=\"inlist-" + getId() + "\">" + i18nAccess.getText("component.inlist") + "</label>");
 			out.println("</div>");
 		}
-		
+
 		String[] styles = getStyleList(ctx);
 		if (!isFreeInputLayout() && styles.length > 1) {
 			String[] stylesLabel = getStyleLabelList(ctx);
@@ -932,7 +930,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 			out.println("<div class=\"line style-selection\">");
 			out.println("<label for=\"style-" + getId() + "\">" + getStyleTitle(ctx) + "</label>");
-			//out.println(XHTMLHelper.getInputOneSelect("style-" + getId(), styles, stylesLabel, getStyle(), "form-control", null, false));
+			// out.println(XHTMLHelper.getInputOneSelect("style-" + getId(), styles,
+			// stylesLabel, getStyle(), "form-control", null, false));
 
 			String name = "style-" + getId();
 			out.println("<div class=\"btn-group\">");
@@ -949,7 +948,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 			out.println("</div>");
 		}
-		
+
 		out.println("<div class=\"row\">");
 		if (getRenderes(ctx) == null || getRenderes(ctx).size() > 1) {
 			out.println("<div class=\"col-md-6 renderer-selection\">");
@@ -1062,7 +1061,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			}
 			out.println("</div>");
 		}
-		
+
 		if (isFreeInputLayout()) {
 			String[] stylesLabel = getStyleLabelList(ctx);
 			if (styles.length != stylesLabel.length) {
@@ -1184,14 +1183,15 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			setNeedRefresh(true);
 		}
 
-//		if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser())) {
-//			boolean isForceCachable = requestService.getParameter("forceCachable-" + getId(), null) != null;
-			// if (isForceCachable != isForceCachable()) {
-			// setForceCachable(isForceCachable);
-			// setModify();
-			// setNeedRefresh(true);
-			// }
-//		}
+		// if (AdminUserSecurity.getInstance().isAdmin(ctx.getCurrentEditUser())) {
+		// boolean isForceCachable = requestService.getParameter("forceCachable-" +
+		// getId(), null) != null;
+		// if (isForceCachable != isForceCachable()) {
+		// setForceCachable(isForceCachable);
+		// setModify();
+		// setNeedRefresh(true);
+		// }
+		// }
 
 		boolean isNolink = requestService.getParameter("nolink-" + getId(), null) != null;
 		if (isNolink != isNolink()) {
@@ -1394,7 +1394,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 		return Collections.EMPTY_LIST;
 	}
-	
+
 	@Override
 	public Collection<String> getExternalModules(ContentContext ctx) {
 		String modules = getConfig(ctx).getProperty("modules", null);
@@ -2911,10 +2911,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		assert bean != null;
 		setComponentBean(bean);
 
-		if (componentBean.getHiddenModes() != null && !componentBean.getHiddenModes().contains(ContentContext.MODULE_DESKTOP_SPECIAL_MODE) && !componentBean.getHiddenModes().contains(ContentContext.MODULE_MOBILE_SPECIAL_MODE)) {
-			componentBean.getHiddenModes().add(ContentContext.MODULE_DESKTOP_SPECIAL_MODE);
-			componentBean.getHiddenModes().add(ContentContext.MODULE_MOBILE_SPECIAL_MODE);
-		}
+//		if (componentBean.getHiddenModes() != null && !componentBean.getHiddenModes().contains(ContentContext.MODULE_DESKTOP_SPECIAL_MODE) && !componentBean.getHiddenModes().contains(ContentContext.MODULE_MOBILE_SPECIAL_MODE)) {
+//			componentBean.getHiddenModes().add(ContentContext.MODULE_DESKTOP_SPECIAL_MODE);
+//			componentBean.getHiddenModes().add(ContentContext.MODULE_MOBILE_SPECIAL_MODE);
+//		}
 
 		init();
 	}
@@ -3509,18 +3509,19 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		} else {
 			if (!ctx.isPreviewEditionMode()) {
 				if (ctx.isPostRequest()) {
-					if (!componentBean.getHiddenModes().contains(ContentContext.POST_MODE)) {
-						return false;
+					if (componentBean.getHiddenModes().contains(ContentContext.POST_MODE)) {
+						return true;
 					}
 				} else {
-					if (!componentBean.getHiddenModes().contains(ContentContext.GET_MODE)) {
-						return false;
+					if (componentBean.getHiddenModes().contains(ContentContext.GET_MODE)) {
+						return true;
 					}
 				}
 				if (mobile != null) {
 					if (mobile) {
 						if (componentBean.getHiddenModes().contains(ContentContext.MODULE_MOBILE_SPECIAL_MODE)) {
 							return true;
+						} else {
 						}
 					} else if (componentBean.getHiddenModes().contains(ContentContext.MODULE_DESKTOP_SPECIAL_MODE)) {
 						return true;
@@ -3530,7 +3531,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return componentBean.getHiddenModes().contains(mode);
 		}
 	}
-	
+
 	protected boolean isHiddenInModeValue(ContentContext ctx, int mode) {
 		if (componentBean.getHiddenModes() == null) {
 			return false;

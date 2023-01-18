@@ -906,8 +906,8 @@ li.line {
 		width: 50px;
 	}
 	td.label {
-		width: 40%;
-		input {			
+		min-width: 200px;
+		input {
 			width: 97%;
 		}
 	}
