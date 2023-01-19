@@ -364,7 +364,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		GlobalContext masterContext = getRealInstance(session, StaticConfig.getInstance(session).getMasterContext(), true);
 		return masterContext;
 	}
-
+	
 	public GlobalContext getMasterContext(ContentContext ctx) throws IOException {
 		final String KEY = "_masterGlobalContext";
 		GlobalContext masterContext = (GlobalContext) ctx.getServletContext().getAttribute(KEY);
@@ -1956,6 +1956,24 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public Set<String> getLanguages() {
 		return getLocalLanguages();
+	}
+	
+	public String getDefaultCurrency() {
+		return getSpecialConfig().get("ecom.currency.default", "EUR");
+	}
+	
+	public String getDefaultCurrencySymbol() {
+		String currency = getDefaultCurrency();
+		if (currency.equalsIgnoreCase("EUR")) {
+			return "€";
+		}
+		if (currency.equalsIgnoreCase("USD")) {
+			return "$";
+		}
+		if (currency.equalsIgnoreCase("JPY")) {
+			return "¥";
+		}
+		return currency;
 	}
 
 	public Date getLatestLoginDate() {

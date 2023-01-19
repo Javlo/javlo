@@ -59,6 +59,7 @@
 #preview_command button,
 #preview_command .btn,
 #preview_command .btn:after,
+#preview_command .menu,
 #preview-layer .btn,
 #preview-layer .btn:after {
 	margin: 0;
@@ -73,6 +74,7 @@
 	letter-spacing: 0;
 	color: inherit;
 	display: block;
+	visibility: visible;
 	list-style: none;
 	font-weight: normal;
 	width: auto;
