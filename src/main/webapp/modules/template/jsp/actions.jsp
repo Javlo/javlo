@@ -43,7 +43,7 @@
        </c:if>
    </c:url>
    
-   <a class="action-button" href="${commit}"><span>${i18n.edit['template.action.commit']}</span></a>
+   <a class="action-button ajax" href="${commit}"><span class="text">${i18n.edit['template.action.commit']}</span></a>
    
    <c:url var="commitChildren" value="${info.currentURL}" context="/">	
        <c:param name="webaction" value="template.commitChildren"></c:param>
@@ -63,7 +63,7 @@
        		<c:param name="filter" value="${param.filter}"></c:param>
        </c:if>
    </c:url>
-   <a class="action-button" href="${commitChildren}"><span>${i18n.edit['template.action.commit-children']}</span></a>   
+   <a class="action-button ajax" href="${commitChildren}"><span>${i18n.edit['template.action.commit-children']}</span></a>   
 </c:if>
 <c:if test="${empty templateid and empty nobrowse}">
 <a href="${info.currentModuleURL}/jsp/upload.jsp?currentURL=${info.currentURL}" class="popup cboxElement action-button"><span>${i18n.edit['action.add-template']}</span></a>

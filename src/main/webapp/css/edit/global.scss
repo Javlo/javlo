@@ -34,8 +34,44 @@ label, legend, .label, h1, h2, h3 {
 	}
 }
 
-.ajax-loader {
+.ajax-loader, .ajax-loader-inline, .ajax-loader-block, .ajax-loader-flex {
 	display: none !important;
+}
+.btn .loader {
+	display: none;
+	._jv_spinner {
+		width: 1rem;
+		height: 1rem;
+	}
+}
+
+body.ajax-loading {
+	.btn .text {
+		display: none;
+	}
+	
+	.btn .loader {
+		display: block;
+		img {
+			height: 18px;
+		}	
+	}
+	
+	.ajax-not-loading {
+		display: none;
+	}
+	
+	.ajax-loader-inline {
+		display: inline-block !important;
+	}
+	
+	.ajax-loader-block, .ajax-loader {
+		display: block !important;
+	}
+	
+	.ajax-loader-flex {
+		display: flex !important;
+	}
 }
 
 .active {

@@ -140,7 +140,7 @@ select.form-control {
     transform: rotate(360deg);
   }
 }
-._jv_spinner {
+._jv_spinner, ._jv_spinner-sm {
 	display: inline-block;
 	width: 2rem;
 	height: 2rem;
@@ -151,6 +151,11 @@ select.form-control {
 	border-radius: 50%;
 	-webkit-animation: _jv_spinner-border .75s linear infinite;
 	animation: _jv_spinner-border .75s linear infinite;
+}
+
+._jv_spinner-sm {
+	width: 1rem;
+	height: 1rem;
 }
 
 fieldset.collapsable, fieldset._jv_collapsable {

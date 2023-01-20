@@ -942,5 +942,6 @@ Security in case of vulnerabilities.
 ### Modified
   - detect less and scss modification on all files
   - elFinder - Version 2.1.61 
+  - template editor, save and commit with ajax request
 ### fixed
   - link without scheme usable in field external link

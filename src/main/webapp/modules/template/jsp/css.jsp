@@ -39,9 +39,9 @@
 	
 	<div class="col-md-9">
 
-	<form id="form-css-template" action="${info.currentURL}" class="standard-form js-change-submit" method="post">
+	<form id="form-css-template" action="${info.currentURL}" class="standard-form js-change-submit ajax" method="post">
 		<div>
-			<input type="hidden" name="webaction" value="editCSS" /> <input type="hidden" name="templateid" value="${templateid}" />
+			<input type="hidden" name="webaction" value="template.editCSS" /> <input type="hidden" name="templateid" value="${templateid}" />
 		</div>	
 		<div class="widgetbox2">
 		<h3>${param.css}</h3>

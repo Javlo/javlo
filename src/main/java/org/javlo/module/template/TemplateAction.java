@@ -652,6 +652,7 @@ public class TemplateAction extends AbstractModuleAction {
 					File htmlFile = new File(URLHelper.mergePath(template.getSourceFolder().getAbsolutePath(), rs.getParameter("file", "")));
 					if (htmlFile.exists() && htmlFile.isFile()) {
 						ResourceHelper.writeStringToFile(htmlFile, rs.getParameter("text", null), ContentContext.CHARACTER_ENCODING);
+						messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("global.file.saved"), GenericMessage.INFO));
 					} else {
 						return "file not found : " + htmlFile;
 					}
@@ -680,7 +681,13 @@ public class TemplateAction extends AbstractModuleAction {
 			if (rs.getParameter("text", null) != null) {
 				File cssFile = new File(URLHelper.mergePath(template.getSourceFolder().getAbsolutePath(), rs.getParameter("file", "")));
 				if (cssFile.exists() && cssFile.isFile()) {
-					ResourceHelper.writeStringToFile(cssFile, rs.getParameter("text", null), ContentContext.CHARACTER_ENCODING);
+					String text = rs.getParameter("text", null);
+					if (rs.getParameter("indent") != null) {
+						text = StringHelper.indentScss(text);
+						ctx.setNeedRefresh(true);
+					}
+					ResourceHelper.writeStringToFile(cssFile, text, ContentContext.CHARACTER_ENCODING);
+					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("global.file.saved"), GenericMessage.INFO));
 				} else {
 					return "file not found : " + cssFile;
 				}
@@ -692,9 +699,6 @@ public class TemplateAction extends AbstractModuleAction {
 					return "file not found : " + cssFile;
 				} else {
 					String text = ResourceHelper.loadStringFromFile(cssFile);
-					if (rs.getParameter("indent") != null) {
-						text = StringHelper.indentScss(text);
-					}
 					ctx.getRequest().setAttribute("text", text);
 				}
 			}

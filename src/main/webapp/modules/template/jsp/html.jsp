@@ -41,10 +41,10 @@
 		</div>
 		<div class="col-md-9">
 
-			<form id="form-css-template" action="${info.currentURL}" class="standard-form js-change-submit" method="post">
+			<form id="form-css-template" action="${info.currentURL}" class="standard-form js-change-submit ajax" method="post">
 
 				<div>
-					<input type="hidden" name="webaction" value="editHTML" />
+					<input type="hidden" name="webaction" value="template.editHTML" />
 					<input type="hidden" name="templateid" value="${templateid}" />
 				</div>
 

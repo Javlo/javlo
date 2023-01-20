@@ -313,7 +313,12 @@
 
 				<c:if test="${currentModule.toolsRenderer != null && info.tools}">
 					<div id="tools">
-						<h3><span class="picto"><i class="bi bi-gear"></i></span>${currentModule.toolsTitle}</h3>
+						<h3>
+							<span class="picto"><i class="bi bi-gear ajax-not-loading"></i>
+								<span class="ajax-loader-inline"><div class="_jv_spinner-sm" role="status"><span class="sr-only" lang="en">Loading...</span></div></span>
+							</span>
+							${currentModule.toolsTitle}
+						</h3>
 						<div class="content"><jsp:include page="${currentModule.toolsRenderer}" /></div>
 					</div>
 				</c:if>
