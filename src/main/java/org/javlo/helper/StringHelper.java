@@ -1068,6 +1068,38 @@ public class StringHelper {
 			return Integer.parseInt(numericString.toString());
 		}
 	}
+	
+	/**
+	 * extract only number of a alpha numeric string
+	 * 
+	 * @param text
+	 * @return 23 from "23px", null from "animal".
+	 */
+	public static Long extractLong(String text) {
+		final StringBuffer numericString = new StringBuffer();
+		text.chars().filter(c -> isDigit((char) c)).forEach(c -> numericString.append((char) c));
+		if (numericString.length() == 0) {
+			return null;
+		} else {
+			return Long.parseLong(numericString.toString());
+		}
+	}
+	
+	/**
+	 * extract only number of a alpha numeric string
+	 * 
+	 * @param text
+	 * @return 23 from "23px", null from "animal".
+	 */
+	public static String extractNumberAsString(String text) {
+		final StringBuffer numericString = new StringBuffer();
+		text.chars().filter(c -> isDigit((char) c)).forEach(c -> numericString.append((char) c));
+		if (numericString.length() == 0) {
+			return null;
+		} else {
+			return numericString.toString();
+		}
+	}
 
 	public static String replaceFileExtension(String file, String ext) {
 		if (ext == null) {

@@ -883,6 +883,29 @@ public class InfoBean {
 	public String getLogoURL() {
 		return URLHelper.createStaticURL(ctx, "/logo.svg");
 	}
+	
+	public String getJavloLogoHtml() {
+		String logoHtml = "<div class=\"logo-javlo\"><svg version=\"1.1\" id=\"Calque_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\r\n"
+				+ "	 viewBox=\"0 0 653.4 173.8\" style=\"enable-background:new 0 0 653.4 173.8;\" xml:space=\"preserve\">\r\n"
+				+ "<g>"
+				+ "	<g>\r\n"
+				+ "		<path class=\"st0\" d=\"M0,110v-1.3h32.6v1.3c0,20.9,10.4,33.1,32.1,33.1c21.1,0,31.5-12.3,31.5-33.1V0h33.4v110\r\n"
+				+ "			c0,38.8-23.2,63.9-65.2,63.9C23.2,173.9,0,148.8,0,110z\"/>\r\n"
+				+ "		<path class=\"st0\" d=\"M296.5,38.3h34.1l38.1,107.2L407,38.3h33.4l-53.3,135.6h-37.3L296.5,38.3z\"/>\r\n"
+				+ "		<path class=\"st0\" d=\"M459.3,10h31v164h-31V10z\"/>\r\n"
+				+ "		<path class=\"st0\" d=\"M216.1,173.8c-0.4,0-0.9,0-1.3,0c-0.5,0-1,0-1.4,0H216.1z\"/>\r\n"
+				+ "		<path class=\"st0\" d=\"M220.9,38.3c-38.7-0.3-69.9,29.5-70.3,68.2c-0.4,43.7,31.2,66.3,62,67.3h8.5h5.2h5.5h0v-29h0h-5.5h-5.2\r\n"
+				+ "			c-4.4,0-8.7-0.5-12.9-1.5c-8.8-2.5-15.8-7.8-20.4-15.1c-4.3-6.3-6.9-13.9-6.9-22.1s2.6-15.8,6.9-22.1c4.6-7.3,11.7-12.7,20.4-15.1\r\n"
+				+ "			c3.9-1.3,8.1-2,12.4-2c21.8,0,39.6,17.4,39.7,39v0.3v12.1v26.6v29v0.1h28.4v-66.8C288.8,65.9,261,38.6,220.9,38.3z\"/>\r\n"
+				+ "		<path class=\"st0\" d=\"M620,92.4c1.4,4.2,2.1,8.8,2.1,13.7c0,22.7-15.1,38.8-37.8,38.8c-22.7,0-38-16.2-38-38.8\r\n"
+				+ "			c0-22.7,15.4-38.8,38-38.8c5.2,0,10,0.9,14.4,2.5l22.2-22.2c-10.4-5.9-22.8-9.2-36.6-9.2c-40.6,0-69.3,28.7-69.3,67.7\r\n"
+				+ "			s28.6,67.7,69.3,67.7c40.6,0,69.3-28.7,69.3-67.7c0-14-3.7-26.6-10.3-37.1L620,92.4z\"/>\r\n"
+				+ "	</g>"
+				+ "</g>"
+				+ "</svg></div>"
+				+ "";
+		return logoHtml;
+	}
 
 	public String getBackgroundURL() {
 		File bgFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getStaticFolder(), "background.png"));

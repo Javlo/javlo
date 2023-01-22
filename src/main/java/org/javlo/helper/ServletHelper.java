@@ -127,7 +127,7 @@ public class ServletHelper {
 			Jsp2String jsp2String = new Jsp2String(ctx.getResponse());
 			ctx.getRequest().getRequestDispatcher(url).include(ctx.getRequest(), jsp2String);
 			String prefix = "";
-			if (!ctx.getGlobalContext().getStaticConfig().isProd()) {
+			if (!ctx.isProd()) {
 				prefix = "<!-- execute jsp : " + Encode.forHtmlContent(url) + " -->\r\n";
 			}
 			return prefix + jsp2String.toString();

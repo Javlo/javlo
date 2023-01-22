@@ -1752,7 +1752,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				return "";
 			}
 		}
-		if (!ctx.getGlobalContext().getStaticConfig().isProd()) {
+		if (!ctx.isProd()) {
 			colPrefix = "<!-- type=" + getType() + " isColumnable(ctx)=" + isColumnable(ctx) + " - columnSize=" + columnSize + " - getColumnMaxSize(ctx)=" + getColumnMaxSize(ctx) + " -->";
 		}
 		if (isColumnable(ctx) && columnSize >= 0 && columnSize != getColumnMaxSize(ctx)) {
@@ -1811,7 +1811,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				e.printStackTrace();
 			}
 		}
-		if (!ctx.getGlobalContext().getStaticConfig().isProd()) {
+		if (!ctx.isProd()) {
 			colSuffix += "<!-- /type=" + getType() + " isColumnable(ctx)=" + isColumnable(ctx) + " - columnSize=" + columnSize + " - getColumnMaxSize(ctx)=" + getColumnMaxSize(ctx) + " -->";
 		}
 		return colSuffix;

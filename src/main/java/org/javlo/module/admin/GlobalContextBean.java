@@ -128,7 +128,10 @@ public class GlobalContextBean {
 	private boolean backupThread;
 	
 	private String ownerName;
+	private String ownerContact;
 	private String ownerAddress;
+	private String ownerPostcode;
+	private String ownerCity;
 	private String ownerNumber;
 	private String ownerPhone;
 	private String ownerEmail;
@@ -246,10 +249,13 @@ public class GlobalContextBean {
 		setBackupThread(globalContext.isBackupThread());
 		
 		setOwnerName(globalContext.getOwnerName());
+		setOwnerContact(globalContext.getOwnerContact());
 		setOwnerAddress(globalContext.getOwnerAddress());
+		setOwnerPostcode(globalContext.getOwnerPostcode());
+		setOwnerCity(globalContext.getOwnerCity());
 		setOwnerNumber(globalContext.getOwnerNumber());
 		setOwnerEmail(globalContext.getOwnerEmail());
-		setOwnerPhone(globalContext.getOwnerPhone());
+		setOwnerPhone(globalContext.getOwnerPhone());		
 		setOwnerTwitter(globalContext.getOwnerTwitter());
 		setOwnerFacebook(globalContext.getOwnerFacebook());
 		setOwnerLinkedin(globalContext.getOwnerLinkedin());
@@ -991,6 +997,22 @@ public class GlobalContextBean {
 	public void setOwnerAddress(String ownerAddress) {
 		this.ownerAddress = ownerAddress;
 	}
+	
+	public String getOwnerPostcode() {
+		return ownerPostcode;
+	}
+
+	public void setOwnerPostcode(String ownerPostcode) {
+		this.ownerPostcode = ownerPostcode;
+	}
+
+	public String getOwnerCity() {
+		return ownerCity;
+	}
+
+	public void setOwnerCity(String ownerCity) {
+		this.ownerCity = ownerCity;
+	}
 
 	public String getOwnerNumber() {
 		return ownerNumber;
@@ -1070,6 +1092,14 @@ public class GlobalContextBean {
 
 	public void setSecurityCsp(String securityCsp) {
 		this.securityCsp = securityCsp;
+	}
+
+	public String getOwnerContact() {
+		return ownerContact;
+	}
+
+	public void setOwnerContact(String ownerContact) {
+		this.ownerContact = ownerContact;
 	}
 	
 	

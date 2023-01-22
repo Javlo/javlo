@@ -491,7 +491,10 @@ public class AdminAction extends AbstractModuleAction {
 					
 					/** owner **/
 					currentGlobalContext.setOwnerName(requestService.getParameter("owner.name", ""));
+					currentGlobalContext.setOwnerContact(requestService.getParameter("owner.contact", ""));
 					currentGlobalContext.setOwnerAddress(requestService.getParameter("owner.address", ""));
+					currentGlobalContext.setOwnerPostcode(requestService.getParameter("owner.postcode", ""));
+					currentGlobalContext.setOwnerCity(requestService.getParameter("owner.city", ""));
 					currentGlobalContext.setOwnerNumber(requestService.getParameter("owner.number", ""));
 					currentGlobalContext.setOwnerPhone(requestService.getParameter("owner.phone", ""));
 					currentGlobalContext.setOwnerEmail(requestService.getParameter("owner.email", ""));

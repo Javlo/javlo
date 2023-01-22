@@ -569,6 +569,8 @@ public class ContentContext {
 	private Map<String, Object> attributes = null;
 
 	private boolean pageManagement = true;
+	
+	private Boolean prod = null;
 
 	public ContentContext(ContentContext ctx) {
 		path = ctx.path;
@@ -2471,6 +2473,18 @@ public class ContentContext {
 	
 	public String getLocalCountry() {
 		return getGlobalContext().getLocaleCountry();
+	}
+
+	public boolean isProd() {
+		if (prod == null) {
+			return getGlobalContext().getStaticConfig().isProd();
+		} else {
+			return prod;
+		}
+	}
+
+	public void setProd(Boolean prod) {
+		this.prod = prod;
 	}
 
 }

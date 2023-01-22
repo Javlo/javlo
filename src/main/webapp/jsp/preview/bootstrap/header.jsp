@@ -51,11 +51,14 @@ if (!rightOnPage) {
 							<div class="_jv_spinner" role="status"><span class="sr-only">Loading...</span></div>
 						</div>
 					</div>
-					<a class="name btn-toggle _jv_collapse-container _jv_ajax-hide-on-loading" href="${info.currentViewURL}" data-jv-toggle="collapse" data-jv-target="#admin-list">Javlo</a>
+					<a class="name btn-toggle _jv_collapse-container _jv_ajax-hide-on-loading" href="${info.currentViewURL}" data-jv-toggle="collapse" data-jv-target="#admin-list">${info.javloLogoHtml}</a>
 					<div id="admin-list" class="_jv_collapse-target _jv_hidden"><jsp:include page="admin_menu.jsp" /></div>
 
 					<ul>
-						<li class="page-title"><a href="#" class="page" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;">${not empty info.page.pageTitle?info.page.pageTitle:info.page.name}</a> <a href="#" class="template" onclick="editPreview.openModal('Template', '${info.currentEditURL}?module=template&webaction=template.changeFromPreview&previewEdit=true');"> ${info.currentPage.templateId == null?'<i class="bi bi-file-earmark-arrow-down"></i>':'<i class="bi bi-file-earmark-code"></i>'} ${info.page.template} </a></li>
+						<li class="page-title">
+						<a href="#" class="page" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;">${not empty info.page.pageTitle?info.page.pageTitle:info.page.name}</a> 
+						<a href="#" class="template" onclick="editPreview.openModal('Template', '${info.currentEditURL}?module=template&webaction=template.changeFromPreview&previewEdit=true');"> ${info.currentPage.templateId == null?'<i class="bi bi-file-earmark-arrow-down"></i>':'<i class="bi bi-file-earmark-code"></i>'} ${info.page.template} </a>
+						</li>
 						
 					</ul>
 					

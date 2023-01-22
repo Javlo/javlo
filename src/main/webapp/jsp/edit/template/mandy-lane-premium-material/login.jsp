@@ -40,9 +40,14 @@ ISocialNetwork googleOauth = socialService.getGoogle();
 <link href="${info.staticRootURL}css/main_edit_and_preview.css" rel="stylesheet" type="text/css" />
 <link href="${info.editTemplateURL}/css/login.css" rel="stylesheet" type="text/css" />
 <style type="text/css">
-@font-face {
-	font-family: "javloFont";
-	src: url('${info.staticRootURL}fonts/javlo-italic.ttf') format("truetype");
+body {
+	background: linear-gradient(140deg, #1B2D49 0%, rgba(255, 255, 255, 1) 100%);
+  background-repeat: repeat;
+  }
+h1 .logo svg {
+	width: 180px;
+	margin-bottom: .5rem;
+	fill: #1B2D49;
 }
 </style>
 <c:if test="${not empty globalContext.staticConfig.oauthGoogleIdClient && not nogoogle}">
@@ -63,7 +68,8 @@ ISocialNetwork googleOauth = socialService.getGoogle();
 			</div>
 		</c:if>
 		<h1>
-			Javlo<span class="version"><%=IVersion.VERSION%></span>
+			<span class="logo">${info.javloLogoHtml}</span>
+			<span class="version"><%=IVersion.VERSION%></span>
 		</h1>
 
 		<c:if test="${empty param.pwtoken}">

@@ -1,5 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
-%><div class="widgetbox site-properties">
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><div class="widgetbox site-properties">
 	<h3>
 		<span>${i18n.edit['admin.site-properties']}</span>
 	</h3>
@@ -69,6 +68,10 @@
 								<input class="form-control" type="text" id="owner.name" name="owner.name" value="${currentContext.ownerName}" />
 							</div>
 							<div class="form-group">
+								<label for="owner.contact">${i18n.edit['admin.form.owner.contact']}</label>
+								<input class="form-control" type="text" id="owner.contact" name="owner.contact" value="${currentContext.ownerContact}" />
+							</div>
+							<div class="form-group">
 								<label for="owner.email">${i18n.edit['admin.form.owner.email']}</label>
 								<input class="form-control" type="email" id="owner.email" name="owner.email" value="${currentContext.ownerEmail}" />
 							</div>
@@ -76,10 +79,23 @@
 								<label for="owner.phone">${i18n.edit['admin.form.owner.phone']}</label>
 								<input class="form-control" type="text" id="owner.phone" name="owner.phone" value="${currentContext.ownerPhone}" />
 							</div>
-
 							<div class="form-group">
 								<label for="owner.address">${i18n.edit['admin.form.owner.address']}</label>
 								<textarea class="form-control" id="owner.address" name="owner.address">${currentContext.ownerAddress}</textarea>
+							</div>
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="owner.address">${i18n.edit['admin.form.owner.postcode']}</label>
+										<textarea class="form-control" id="owner.address" name="owner.postcode">${currentContext.ownerPostcode}</textarea>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="owner.address">${i18n.edit['admin.form.owner.city']}</label>
+										<textarea class="form-control" id="owner.address" name="owner.postcode">${currentContext.ownerCity}</textarea>
+									</div>
+								</div>
 							</div>
 						</div>
 						<div class="col-sm-6">
@@ -205,8 +221,8 @@
 								<input class="form-control" type="text" id="owner.name" name="owner.name" value="${currentContext.ownerName}" />
 							</div>
 							<div class="form-group">
-								<label for="owner.address">${i18n.edit['admin.form.owner.address']}</label>
-								<textarea class="form-control" id="owner.address" name="owner.address">${currentContext.ownerAddress}</textarea>
+								<label for="owner.contact">${i18n.edit['admin.form.owner.contact']}</label>
+								<input class="form-control" type="text" id="owner.contact" name="owner.contact" value="${currentContext.ownerContact}" />
 							</div>
 							<div class="form-group">
 								<label for="owner.email">${i18n.edit['admin.form.owner.email']}</label>
@@ -215,6 +231,24 @@
 							<div class="form-group">
 								<label for="owner.phone">${i18n.edit['admin.form.owner.phone']}</label>
 								<input class="form-control" type="text" id="owner.phone" name="owner.phone" value="${currentContext.ownerPhone}" />
+							</div>
+							<div class="form-group">
+								<label for="owner.address">${i18n.edit['admin.form.owner.address']}</label>
+								<textarea class="form-control" id="owner.address" name="owner.address">${currentContext.ownerAddress}</textarea>
+							</div>
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="owner.postcode">${i18n.edit['admin.form.owner.postcode']}</label>
+										<input class="form-control" type="text" id="owner.postcode" name="owner.postcode" value="${currentContext.ownerPostcode}" />
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="owner.address">${i18n.edit['admin.form.owner.city']}</label>
+										<input class="form-control" type="text" id="owner.city" name="owner.city" value="${currentContext.ownerCity}" />
+									</div>
+								</div>
 							</div>
 						</div>
 						<div class="col-sm-6">
@@ -275,200 +309,200 @@
 							</div>
 						</div>
 					</div>
-					</c:if>
-					</c:if>
-			
-					<div class="form-group">
-						<label for="administrator">${i18n.edit['admin.adminitrator']}</label>
-						<input class="form-control" type="text" id="administrator" name="administrator" value="${currentContext.administrator}" />
-					</div>
-			
-					<div class="form-group">
-						<label for="default-languages">${i18n.edit['admin.form.language']}</label>
-						<input class="form-control" type="text" id="default-languages" name="default-languages" value="${currentContext.defaultLanguages}" />
-					</div>
-			
-					<div class="form-group">
-						<label for="languages">${i18n.edit['admin.form.languages']}</label>
-						<input class="form-control" type="text" id="languages" name="languages" value="${currentContext.languages}" />
-					</div>
-			
-					<div class="form-group">
-						<label for="content-languages">${i18n.edit['admin.form.content-languages']}</label>
-						<input class="form-control" type="text" id="content-languages" name="content-languages" value="${currentContext.contentLanguages}" />
-					</div>
-			
+		</c:if>
+		</c:if>
+
+		<div class="form-group">
+			<label for="administrator">${i18n.edit['admin.adminitrator']}</label>
+			<input class="form-control" type="text" id="administrator" name="administrator" value="${currentContext.administrator}" />
+		</div>
+
+		<div class="form-group">
+			<label for="default-languages">${i18n.edit['admin.form.language']}</label>
+			<input class="form-control" type="text" id="default-languages" name="default-languages" value="${currentContext.defaultLanguages}" />
+		</div>
+
+		<div class="form-group">
+			<label for="languages">${i18n.edit['admin.form.languages']}</label>
+			<input class="form-control" type="text" id="languages" name="languages" value="${currentContext.languages}" />
+		</div>
+
+		<div class="form-group">
+			<label for="content-languages">${i18n.edit['admin.form.content-languages']}</label>
+			<input class="form-control" type="text" id="content-languages" name="content-languages" value="${currentContext.contentLanguages}" />
+		</div>
+
+		<div class="checkbox">
+			<label class="suffix"><input type="checkbox" name="switch-default-language" ${currentContext.autoSwitchToDefaultLanguage?'checked="checked"':""} /> ${i18n.edit['admin.form.switch-default-language']}</label>
+		</div>
+
+		<div class="form-group">
+			<label for="tags">${i18n.edit['admin.title.tags']}</label>
+			<input class="form-control" type="text" id="tags" name="tags" value="${currentContext.tags}" />
+		</div>
+
+		<div class="form-group">
+			<label for="google-ana">${i18n.edit['admin.title.google-ana']}</label>
+			<input class="form-control" type="text" id="google-ana" name="google-ana" value="${currentContext.googleAnalyticsUACCT}" />
+		</div>
+
+		<div class="form-group">
+			<label for="google-key">Google API Key</label>
+			<input class="form-control" type="text" id="google-key" name="google-key" value="${currentContext.googleApiKey}" />
+		</div>
+
+		<div class="form-group">
+			<label for="short-date">${i18n.edit['admin.title.short-date']}</label>
+			<input class="form-control" type="text" id="short-date" name="short-date" value="${currentContext.shortDateFormat}" />
+		</div>
+
+		<div class="form-group">
+			<label for="medium-date">${i18n.edit['admin.title.medium-date']}</label>
+			<input class="form-control" type="text" id="medium-date" name="medium-date" value="${currentContext.mediumDateFormat}" />
+		</div>
+
+		<div class="form-group">
+			<label for="full-date">${i18n.edit['admin.title.full-date']}</label>
+			<input class="form-control" type="text" id="full-date" name="full-date" value="${currentContext.fullDateFormat}" />
+		</div>
+
+		<div class="form-group">
+			<label for="template-mode">${i18n.edit['admin.title.template-mode']}</label>
+			<select class="form-control" id="template-mode" name="template-mode">
+				<c:forEach var="layout" items="${contentContext.globalContext.staticConfig.previewLayout}">
+					<option ${layout == currentContext.editTemplateMode?' selected="selected"':''}>${layout}</option>
+				</c:forEach>
+			</select>
+		</div>
+
+		<div class="form-group">
+			<label for="platform">${i18n.edit['admin.title.platform']}</label>
+			<input class="form-control" type="text" id="platform" name="platform" value="${currentContext.platformType}" />
+		</div>
+
+		<div class="checkbox">
+			<label> <input type="checkbox" id="components-filtered" name="components-filtered" ${currentContext.componentsFiltered?'checked="checked"':""}> ${i18n.edit['admin.title.components-filtered']}
+			</label>
+		</div>
+
+		<div class="checkbox">
+			<label><input type="checkbox" id="cookies" name="cookies" ${currentContext.cookies?'checked="checked"':""} /> ${i18n.edit['admin.form.cookies']}</label>
+		</div>
+
+		<c:if test="${currentContext.cookies}">
+			<div class="cookies-types">
+				<c:forEach var="type" items="${cookiesService.cookiesTypes}">
 					<div class="checkbox">
-						<label class="suffix"><input type="checkbox" name="switch-default-language" ${currentContext.autoSwitchToDefaultLanguage?'checked="checked"':""} /> ${i18n.edit['admin.form.switch-default-language']}</label>
+						<label><input type="checkbox" id="cookies_${type}" name="cookies_${type}" ${currentContext.isCookiesType(type)?'checked="checked"':""} /> ${i18n.view['cookies.type.${type}']} [${type}]</label>
 					</div>
-			
-					<div class="form-group">
-						<label for="tags">${i18n.edit['admin.title.tags']}</label>
-						<input class="form-control" type="text" id="tags" name="tags" value="${currentContext.tags}" />
-					</div>
-			
-					<div class="form-group">
-						<label for="google-ana">${i18n.edit['admin.title.google-ana']}</label>
-						<input class="form-control" type="text" id="google-ana" name="google-ana" value="${currentContext.googleAnalyticsUACCT}" />
-					</div>
-			
-					<div class="form-group">
-						<label for="google-key">Google API Key</label>
-						<input class="form-control" type="text" id="google-key" name="google-key" value="${currentContext.googleApiKey}" />
-					</div>
-			
-					<div class="form-group">
-						<label for="short-date">${i18n.edit['admin.title.short-date']}</label>
-						<input class="form-control" type="text" id="short-date" name="short-date" value="${currentContext.shortDateFormat}" />
-					</div>
-			
-					<div class="form-group">
-						<label for="medium-date">${i18n.edit['admin.title.medium-date']}</label>
-						<input class="form-control" type="text" id="medium-date" name="medium-date" value="${currentContext.mediumDateFormat}" />
-					</div>
-			
-					<div class="form-group">
-						<label for="full-date">${i18n.edit['admin.title.full-date']}</label>
-						<input class="form-control" type="text" id="full-date" name="full-date" value="${currentContext.fullDateFormat}" />
-					</div>
-			
-					<div class="form-group">
-						<label for="template-mode">${i18n.edit['admin.title.template-mode']}</label>
-						<select class="form-control" id="template-mode" name="template-mode">
-							<c:forEach var="layout" items="${contentContext.globalContext.staticConfig.previewLayout}">
-								<option ${layout == currentContext.editTemplateMode?' selected="selected"':''}>${layout}</option>
-							</c:forEach>
-						</select>
-					</div>
-			
-					<div class="form-group">
-						<label for="platform">${i18n.edit['admin.title.platform']}</label>
-						<input class="form-control" type="text" id="platform" name="platform" value="${currentContext.platformType}" />
-					</div>
-			
-					<div class="checkbox">
-						<label> <input type="checkbox" id="components-filtered" name="components-filtered" ${currentContext.componentsFiltered?'checked="checked"':""}> ${i18n.edit['admin.title.components-filtered']}
-						</label>
-					</div>
-			
-					<div class="checkbox">
-						<label><input type="checkbox" id="cookies" name="cookies" ${currentContext.cookies?'checked="checked"':""} /> ${i18n.edit['admin.form.cookies']}</label>
-					</div>
-			
-					<c:if test="${currentContext.cookies}">
-						<div class="cookies-types">
-							<c:forEach var="type" items="${cookiesService.cookiesTypes}">
-								<div class="checkbox">
-									<label><input type="checkbox" id="cookies_${type}" name="cookies_${type}" ${currentContext.isCookiesType(type)?'checked="checked"':""} /> ${i18n.view['cookies.type.${type}']} [${type}]</label>
-								</div>
-							</c:forEach>
-						</div>
-					</c:if>
-			
-					<div class="form-group">
-						<label for="cookies-url">${i18n.edit['admin.form.cookies.url']}</label>
-						<input class="form-control" type="text" id="cookies-url" name="cookies-url" value="${currentContext.cookiesPolicyUrl}" />
-					</div>
-			
+				</c:forEach>
+			</div>
+		</c:if>
+
+		<div class="form-group">
+			<label for="cookies-url">${i18n.edit['admin.form.cookies.url']}</label>
+			<input class="form-control" type="text" id="cookies-url" name="cookies-url" value="${currentContext.cookiesPolicyUrl}" />
+		</div>
+
+	</div>
+
+	<div class="col-sm-6">
+		<div class="form-group">
+			<label for="homepage">${i18n.edit['admin.form.homepage']}</label>
+			<input class="form-control" type="text" id="homepage" name="homepage" value="${currentContext.homepage}" />
+		</div>
+
+		<div class="form-group">
+			<label for="urlfactory">${i18n.edit['admin.form.urlfactory']}</label>
+			<input class="form-control" type="text" id="urlfactory" name="urlfactory" value="${currentContext.urlFactory}" />
+		</div>
+
+		<div class="form-group">
+			<label for="forced-host">${i18n.edit['admin.form.forced-host']}</label>
+			<input class="form-control" type="text" id="forced-host" name="forced-host" value="${currentContext.forcedHost}" />
+		</div>
+
+		<div class="form-group">
+			<label for="nopup-domain">${i18n.edit['admin.form-popup-domain']}</label>
+			<input class="form-control" type="text" id="nopup-domain" name="nopup-domain" value="${currentContext.noPopupDomain}" />
+		</div>
+
+		<div class="checkbox">
+			<label><input type="checkbox" id="link-as-popup" name="link-as-popup" ${currentContext.openExternalLinkAsPopup?'checked="checked"':""} /> ${i18n.edit['admin.form.external-link-popup']}</label>
+		</div>
+
+		<div class="checkbox">
+			<label><input type="checkbox" id="file-as-popup" name="file-as-popup" ${currentContext.openFileAsPopup?'checked="checked"':""} /> ${i18n.edit['admin.form.file-popup']}</label>
+		</div>
+
+		<div class="checkbox">
+			<label><input type="checkbox" id="extend-menu" name="extend-menu" ${currentContext.extendMenu?'checked="checked"':""} /> ${i18n.edit['admin.form.extend-menu']}</label>
+		</div>
+
+		<div class="checkbox">
+			<label><input type="checkbox" id="preview-mode" name="preview-mode" ${currentContext.previewMode?'checked="checked"':""} /> ${i18n.edit['admin.form.preview-mode']}</label>
+		</div>
+
+		<div class="checkbox">
+			<label><input type="checkbox" id="wizz" name="wizz" ${currentContext.wizz?'checked="checked"':""} /> ${i18n.edit['admin.form.wizz']}</label>
+		</div>
+
+		<div class="checkbox">
+			<label><input type="checkbox" id="Reversedlink" name="reversedlink" ${currentContext.reversedlink?'checked="checked"':""} /> ${i18n.edit['admin.form.reversedlink']}</label>
+		</div>
+
+		<div class="form-group">
+			<label for="help-url">${i18n.edit['admin.title.help-url']}</label>
+			<input class="form-control" type="text" id="help-url" name="help-url" value="${currentContext.helpURL}" />
+		</div>
+
+		<div class="form-group">
+			<label for="main-help-url">${i18n.edit['admin.title.main-help-url']}</label>
+			<input class="form-control" type="text" id="main-help-url" name="main-help-url" value="${currentContext.mainHelpURL}" />
+		</div>
+
+		<div class="form-group">
+			<label for="private-help-url">${i18n.edit['admin.title.private-help-url']}</label>
+			<input class="form-control" type="text" id="private-help-url" name="private-help-url" value="${currentContext.privateHelpURL}" />
+		</div>
+
+		<div class="form-group">
+			<label for="uri-alias">${i18n.edit['admin.form.uri-alias']}</label>
+			<textarea class="form-control" id="uri-alias" name="uri-alias">${currentContext.URIAlias}</textarea>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-8">
+				<div class="form-group">
+					<label for="dmz-inter">${i18n.edit['admin.title.dmz-inter']}</label>
+					<input class="form-control" type="text" id="dmz-inter" name="dmz-inter" value="${currentContext.DMZServerInter}" />
 				</div>
-			
-				<div class="col-sm-6">
-					<div class="form-group">
-						<label for="homepage">${i18n.edit['admin.form.homepage']}</label>
-						<input class="form-control" type="text" id="homepage" name="homepage" value="${currentContext.homepage}" />
-					</div>
-			
-					<div class="form-group">
-						<label for="urlfactory">${i18n.edit['admin.form.urlfactory']}</label>
-						<input class="form-control" type="text" id="urlfactory" name="urlfactory" value="${currentContext.urlFactory}" />
-					</div>
-			
-					<div class="form-group">
-						<label for="forced-host">${i18n.edit['admin.form.forced-host']}</label>
-						<input class="form-control" type="text" id="forced-host" name="forced-host" value="${currentContext.forcedHost}" />
-					</div>
-			
-					<div class="form-group">
-						<label for="nopup-domain">${i18n.edit['admin.form-popup-domain']}</label>
-						<input class="form-control" type="text" id="nopup-domain" name="nopup-domain" value="${currentContext.noPopupDomain}" />
-					</div>
-			
-					<div class="checkbox">
-						<label><input type="checkbox" id="link-as-popup" name="link-as-popup" ${currentContext.openExternalLinkAsPopup?'checked="checked"':""} /> ${i18n.edit['admin.form.external-link-popup']}</label>
-					</div>
-			
-					<div class="checkbox">
-						<label><input type="checkbox" id="file-as-popup" name="file-as-popup" ${currentContext.openFileAsPopup?'checked="checked"':""} /> ${i18n.edit['admin.form.file-popup']}</label>
-					</div>
-			
-					<div class="checkbox">
-						<label><input type="checkbox" id="extend-menu" name="extend-menu" ${currentContext.extendMenu?'checked="checked"':""} /> ${i18n.edit['admin.form.extend-menu']}</label>
-					</div>
-			
-					<div class="checkbox">
-						<label><input type="checkbox" id="preview-mode" name="preview-mode" ${currentContext.previewMode?'checked="checked"':""} /> ${i18n.edit['admin.form.preview-mode']}</label>
-					</div>
-			
-					<div class="checkbox">
-						<label><input type="checkbox" id="wizz" name="wizz" ${currentContext.wizz?'checked="checked"':""} /> ${i18n.edit['admin.form.wizz']}</label>
-					</div>
-			
-					<div class="checkbox">
-						<label><input type="checkbox" id="Reversedlink" name="reversedlink" ${currentContext.reversedlink?'checked="checked"':""} /> ${i18n.edit['admin.form.reversedlink']}</label>
-					</div>
-			
-					<div class="form-group">
-						<label for="help-url">${i18n.edit['admin.title.help-url']}</label>
-						<input class="form-control" type="text" id="help-url" name="help-url" value="${currentContext.helpURL}" />
-					</div>
-			
-					<div class="form-group">
-						<label for="main-help-url">${i18n.edit['admin.title.main-help-url']}</label>
-						<input class="form-control" type="text" id="main-help-url" name="main-help-url" value="${currentContext.mainHelpURL}" />
-					</div>
-			
-					<div class="form-group">
-						<label for="private-help-url">${i18n.edit['admin.title.private-help-url']}</label>
-						<input class="form-control" type="text" id="private-help-url" name="private-help-url" value="${currentContext.privateHelpURL}" />
-					</div>
-			
-					<div class="form-group">
-						<label for="uri-alias">${i18n.edit['admin.form.uri-alias']}</label>
-						<textarea class="form-control" id="uri-alias" name="uri-alias">${currentContext.URIAlias}</textarea>
-					</div>
-			
-					<div class="row">
-						<div class="col-sm-8">
-							<div class="form-group">
-								<label for="dmz-inter">${i18n.edit['admin.title.dmz-inter']}</label>
-								<input class="form-control" type="text" id="dmz-inter" name="dmz-inter" value="${currentContext.DMZServerInter}" />
-							</div>
-							<div class="form-group">
-								<label for="dmz-intra">${i18n.edit['admin.title.dmz-intra']}</label>
-								<input class="form-control" type="text" id="dmz-intra" name="dmz-intra" value="${currentContext.DMZServerIntra}" />
-							</div>
-						</div>
-						<div class="col-sm-4">
-							<c:if test="${not empty currentContext.DMZServerInter}">
-								<c:url var="refreshAdmin" value="${info.currentURL}" context="/">
-									<c:param name="webaction" value="file.synchro" />
-									<c:param name="module" value="admin" />
-								</c:url>
-								<div class="form-group">
-									<label>&nbsp;</label><a href="${refreshAdmin}" class="btn btn-default form-control">Synchronize</a>
-								</div>
-							</c:if>
-						</div>
-					</div>
-			
-					<div class="form-group">
-						<label for="proxy-prefix">${i18n.edit['admin.url.proxy-prefix']}</label>
-						<input class="form-control" type="text" id="proxy-prefix" name="proxy-prefix" value="${currentContext.proxyPathPrefix}" />
-					</div>
-			
+				<div class="form-group">
+					<label for="dmz-intra">${i18n.edit['admin.title.dmz-intra']}</label>
+					<input class="form-control" type="text" id="dmz-intra" name="dmz-intra" value="${currentContext.DMZServerIntra}" />
 				</div>
 			</div>
-			</fieldset>
+			<div class="col-sm-4">
+				<c:if test="${not empty currentContext.DMZServerInter}">
+					<c:url var="refreshAdmin" value="${info.currentURL}" context="/">
+						<c:param name="webaction" value="file.synchro" />
+						<c:param name="module" value="admin" />
+					</c:url>
+					<div class="form-group">
+						<label>&nbsp;</label><a href="${refreshAdmin}" class="btn btn-default form-control">Synchronize</a>
+					</div>
+				</c:if>
+			</div>
+		</div>
+
+		<div class="form-group">
+			<label for="proxy-prefix">${i18n.edit['admin.url.proxy-prefix']}</label>
+			<input class="form-control" type="text" id="proxy-prefix" name="proxy-prefix" value="${currentContext.proxyPathPrefix}" />
+		</div>
+
+	</div>
+</div>
+</fieldset>
 
 <fieldset class="collapsable">
 	<legend>${i18n.edit['admin.mailing.title']}</legend>

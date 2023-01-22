@@ -122,9 +122,14 @@
 
 	.spinner_container,
 	.name {
-		width: 80px;
+		width: 120px;
 		color: white;
 		padding: 0 10px;
+		.logo-javlo {
+			display: inline-block;
+			width: 75px;
+			fill: #fff;
+		}
 	}
 
 	.spinner_container {

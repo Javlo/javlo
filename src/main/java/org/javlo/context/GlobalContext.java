@@ -600,7 +600,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				logger.info("create new context file : " + newInstance.contextFile);
 				newInstance.log(Log.INFO, Log.GROUP_INIT_CONTEXT, "create new context file : " + newInstance.contextFile, false);
 				newInstance.contextFile.createNewFile();
-
 				synchronized (newInstance.properties) {
 					newInstance.properties.load(newInstance.contextFile);
 					newInstance.properties.setProperty("creation-date", StringHelper.renderTime(new Date()));
@@ -612,14 +611,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					String password = "" + (1000 + Math.round(Math.random() * 8999));
 					newInstance.setPassword(password);
 					newInstance.setFirstPassword(password);
-
 					if (StringHelper.isEmpty(newInstance.getFolder())) {
 						newInstance.GLOBAL_ERROR = "Error on load : '" + newInstance.contextFile + "' folder in empty.";
 					}
-
 					if (copyDefaultContext) {
 						GlobalContext defaultContext = getDefaultContext(session);
-
 						if (defaultContext.isValid()) {
 							newInstance.setAdministrator(defaultContext.getAdministrator());
 							newInstance.setAdminManagement(defaultContext.isAdminManagement());
@@ -660,10 +656,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 							if (defaultContext.getDMZServerIntra() != null) {
 								newInstance.setDMZServerIntra(defaultContext.getDMZServerIntra().toString());
 							}
-
 							String defaultContentFolder = defaultContext.getDataFolder();
 							String newContentFolder = newInstance.getDataFolder();
-
 							File defaultDir = new File(defaultContentFolder);
 							if (defaultDir.exists()) {
 								File targetDir = new File(newContentFolder);
@@ -1785,6 +1779,14 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getOwnerName() {
 		return properties.getString("owner.name", "");
 	}
+	
+	public String getOwnerContact() {
+		return properties.getString("owner.contact", "");
+	}
+	
+	public void setOwnerContact(String contact) {
+		properties.setProperty("owner.contact", contact);
+	}
 
 	public void setOwnerName(String name) {
 		synchronized (properties) {
@@ -1850,6 +1852,28 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			properties.setProperty("owner.address", add);
 			save();
 		}
+	}
+	
+	public void setOwnerPostcode(String postcode) {
+		synchronized (properties) {
+			properties.setProperty("owner.postcode", postcode);
+			save();
+		}
+	}
+	
+	public String getOwnerPostcode() {
+		return properties.getString("owner.postcode", "");
+	}
+	
+	public void setOwnerCity(String city) {
+		synchronized (properties) {
+			properties.setProperty("owner.city", city);
+			save();
+		}
+	}
+	
+	public String getOwnerCity() {
+		return properties.getString("owner.city", "");
 	}
 
 	public String getOwnerNumber() {
