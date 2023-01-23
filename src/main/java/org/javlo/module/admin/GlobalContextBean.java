@@ -1017,6 +1017,21 @@ public class GlobalContextBean {
 	public String getOwnerNumber() {
 		return ownerNumber;
 	}
+	
+	public String getOwnerNumberNoCountry() {
+		String number = getOwnerNumber();
+		if (number == null) {
+			return null;
+		}
+		if (number.length()<=1) {
+			return number;
+		}
+		if (!StringHelper.isDigit(number.substring(0,2))) {
+			return number.substring(2);
+		} else {
+			return number;
+		}
+	}
 
 	public void setOwnerNumber(String ownerNumber) {
 		this.ownerNumber = ownerNumber;

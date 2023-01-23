@@ -370,6 +370,11 @@ public class SearchResult {
 					int searchLevel = 0;
 					String searchText = StringHelper.createFileName(inSearchText).toLowerCase();
 					
+					String pageTitle = page.getTitle(ctx);
+					if (pageTitle != null && pageTitle.toLowerCase().contains(inSearchText.toLowerCase())) {
+						searchLevel = 2;
+					}
+					
 					while (elemList.hasNext(ctx)) {
 						IContentVisualComponent cpt = elemList.next(ctx);
 

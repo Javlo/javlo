@@ -1879,7 +1879,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getOwnerNumber() {
 		return properties.getString("owner.number", "");
 	}
-
+	
 	public void setOwnerNumber(String num) {
 		synchronized (properties) {
 			properties.setProperty("owner.number", num);

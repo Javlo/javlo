@@ -49,7 +49,7 @@ if (!rightOnPage) {
 						</div>
 					</div>
 				</div>
-				<div class="name _jv_collapse-container _jv_ajax-hide-on-loading" data-jv-toggle="collapse" data-jv-target="#admin-list">Javlo</div>
+				<div class="name _jv_collapse-container _jv_ajax-hide-on-loading" data-jv-toggle="collapse" data-jv-target="#admin-list">${info.javloLogoHtml}</div>
 				<ul>
 					<li class="page-title"><span class="page">${not empty info.page.pageTitle?info.page.pageTitle:info.page.name}</span></li>
 				</ul>
