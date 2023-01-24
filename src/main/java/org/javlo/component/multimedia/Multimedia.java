@@ -1582,9 +1582,14 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 		return null;
 	}
 
-	@Override
+	/*@Override
 	public String getFontAwesome() {
 		return "th-large";
+	}*/
+	
+	@Override
+	public String getIcon() {
+		return "bi bi-images";
 	}
 
 	@Override
