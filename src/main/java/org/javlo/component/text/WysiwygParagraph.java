@@ -243,7 +243,7 @@ public class WysiwygParagraph extends AbstractVisualComponent implements IImageT
 	
 	@Override
 	public String getIcon() {
-		retrun "bi bi-body-text";
+		return  "bi bi-body-text";
 	}
 
 	@Override
