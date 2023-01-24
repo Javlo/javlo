@@ -192,7 +192,9 @@ public class TemplateData {
 				String[] colors = map.get("colors").split(",");
 				int pos = 0;
 				for (String c : colors) {
-					colorList[pos] = CssColor.getInstance(decodeColor('#' + c));
+					if (colorList.length>pos) {
+						colorList[pos] = CssColor.getInstance(decodeColor('#' + c));
+					}
 					pos++;
 				}
 			}
