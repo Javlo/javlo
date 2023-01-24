@@ -3758,7 +3758,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public String getIcon() {
-		return "fa fa-" + getFontAwesome();
+		String fontAwe = getFontAwesome();
+		if (fontAwe.equals("square")) {
+			return "bi bi-layers";
+		} else {
+			return "fa fa-" + fontAwe;
+		}
+		
 	}
 
 	public boolean haveRight(ContentContext ctx, String action) {
