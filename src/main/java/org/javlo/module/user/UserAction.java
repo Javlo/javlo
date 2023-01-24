@@ -503,6 +503,9 @@ public class UserAction extends AbstractModuleAction {
 		if (!StringHelper.isMail(email)) {
 			return i18nAccess.getText("mailing.error.email");
 		} else {
+			
+			logger.info("ask new password : "+email);
+			
 			IUserFactory userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 			User user = userFactory.getUser(email);
 			if (user == null) {
@@ -517,6 +520,7 @@ public class UserAction extends AbstractModuleAction {
 				user = userFactory.getUserByEmail(email);
 			}
 			if (user == null) {
+				logger.info("mail not found : "+email);
 				return i18nAccess.getViewText("user.message.error.change-mail-not-found");
 			} else {
 				String subject = i18nAccess.getViewText("user.message.change-password.email-subject") + ' ' + globalContext.getGlobalTitle();
