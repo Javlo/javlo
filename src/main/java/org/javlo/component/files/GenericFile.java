@@ -357,5 +357,10 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 	public boolean isMobileOnly(ContentContext ctx) {
 		return false;
 	}
+	
+	@Override
+	public String getIcon() {
+		return "bi bi-file-binary";
+	}
 
 }

@@ -236,9 +236,14 @@ public class WysiwygParagraph extends AbstractVisualComponent implements IImageT
 		return true;
 	}
 
-	@Override
+	/*@Override
 	public String getFontAwesome() {
 		return "align-left";
+	}*/
+	
+	@Override
+	public String getIcon() {
+		retrun "bi bi-body-text";
 	}
 
 	@Override

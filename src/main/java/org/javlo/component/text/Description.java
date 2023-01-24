@@ -158,9 +158,14 @@ public class Description extends AbstractVisualComponent {
 		 */
 	}
 
-	@Override
+	/*@Override
 	public String getFontAwesome() {
 		return "sticky-note";
+	}*/
+	
+	@Override
+	public String getIcon() {
+		return "bi bi-file-earmark-post";
 	}
 	
 	@Override

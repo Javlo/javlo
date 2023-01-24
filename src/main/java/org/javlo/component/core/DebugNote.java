@@ -250,9 +250,14 @@ public class DebugNote extends AbstractPropertiesComponent {
 		return msg;
 	}
 	
-	@Override
+	/*@Override
 	public String getFontAwesome() {	
 		return "bug";
+	}*/
+	
+	@Override
+	public String getIcon() {
+		return "bi bi-bug";
 	}
 
 

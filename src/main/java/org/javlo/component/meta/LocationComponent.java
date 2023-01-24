@@ -56,9 +56,14 @@ public class LocationComponent extends AbstractVisualComponent {
 		return false;
 	}
 	
-	@Override
+	/*@Override
 	public String getFontAwesome() {
 		return "map-marker";
+	}*/
+	
+	@Override
+	public String getIcon() {
+		return "bi bi-geo-alt";
 	}
 	
 }

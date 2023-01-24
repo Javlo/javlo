@@ -468,9 +468,14 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 		return latestValidDate;
 	}
 	
+//	@Override
+//	public String getFontAwesome() {	
+//		return "link";
+//	}
+	
 	@Override
-	public String getFontAwesome() {	
-		return "link";
+	public String getIcon() {
+		return "bi bi-link";
 	}
 	
 	@Override
