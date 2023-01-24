@@ -439,9 +439,14 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		return getFieldValue(TEXT, "").trim().length() == 0;
 	}
 
-	@Override
+	/*@Override
 	public String getFontAwesome() {
 		return "header";
+	}*/
+	
+	@Override
+	public String getIcon() {
+		return "bi bi-type-h1";
 	}
 
 	public static void main(String[] args) {

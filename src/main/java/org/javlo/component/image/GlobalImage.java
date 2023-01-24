@@ -1580,9 +1580,14 @@ public class GlobalImage extends Image implements IImageFilter {
 		return null;
 	}
 
+//	@Override
+//	public String getFontAwesome() {
+//		return "picture-o";
+//	}
+	
 	@Override
-	public String getFontAwesome() {
-		return "picture-o";
+	public String getIcon() {
+		return "bi bi-card-image";
 	}
 	
 }
