@@ -129,7 +129,6 @@ public class WysiwygParagraph extends AbstractVisualComponent implements IImageT
 		}
 		setValue("<p>" + LoremIpsumGenerator.getParagraph(120, true, true) + "</p>");
 		setModify();
-		updateCache(ctx);
 		return true;
 	}
 
