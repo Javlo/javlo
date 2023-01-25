@@ -250,7 +250,6 @@ public class ContentElementList implements IContentComponentsList {
 			if (firstSubtitle == null && comp instanceof SubTitle) {
 				firstSubtitle = comp.getTextLabel(ctx);
 			}
-
 		}
 		elems = contentElements.iterator();
 		while (elems.hasNext()) {

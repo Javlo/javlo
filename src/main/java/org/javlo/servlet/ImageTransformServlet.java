@@ -5,12 +5,14 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -35,6 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.imaging.common.ImageMetadata;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IImageFilter;
@@ -57,6 +60,7 @@ import org.javlo.io.SessionFolder;
 import org.javlo.io.TransactionFile;
 import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
+import org.javlo.service.RequestService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserFactory;
@@ -132,51 +136,41 @@ public class ImageTransformServlet extends FileServlet {
 		int focusY;
 		ImageConfig.ImageParameters imageParam;
 
-		public ImageTransformThread(ContentContext ctx, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File imageFile, String imageName, String inFileExtention, ImageConfig.ImageParameters imageParam) {
-			super();
-			if (DEBUG) {
-				System.out.println("");
-				System.out.println("---------------------------  IMAGE FOLDER  -----------------------------");
-				System.out.println("filter     : " + filter);
-				System.out.println("area       : " + area);
-				System.out.println("template   : " + (template != null ? template.getName() : "no template"));
-				System.out.println("imageName  : " + imageName);
-				System.out.println("device     : " + ctx.getDevice());
-				System.out.println("cfg.width  : " + config.getWidth(ctx.getDevice(), filter, area));
-				System.out.println("cfg.height : " + config.getHeight(ctx.getDevice(), filter, area));
-				System.out.println("imageName  : " + imageName);
-				System.out.println("------------------------------- IMAGE CONFIG -------------------------------");
-				System.out.println(config.printConfig(ctx.getDevice(), filter, area));
-				System.out.println("----------------------------------------------------------------------------");
-
-				System.out.println("");
-			}
-			this.session = ctx.getRequest().getSession();
-			this.config = config;
-			this.staticInfo = staticInfo;
-			this.filter = filter;
-			this.area = area;
-			this.template = template;
-			this.comp = comp;
-			this.imageFile = imageFile;
-			this.imageName = imageName;
-			this.inFileExtention = inFileExtention;
-			this.device = ctx.getDevice();
-			try {
-				this.ctxb = ctx.getBean();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			this.globalContext = GlobalContext.getMainInstance(ctx.getRequest());
-			this.imageParam = imageParam;
-
-			focusX = StaticInfo.DEFAULT_FOCUS_X;
-			focusY = StaticInfo.DEFAULT_FOCUS_Y;
-			if (staticInfo != null) {
-				focusX = staticInfo.getFocusZoneX(ctx);
-				focusY = staticInfo.getFocusZoneY(ctx);
-			}
-		}
+		/*
+		 * public ImageTransformThread(ContentContext ctx, ImageConfig config,
+		 * StaticInfo staticInfo, String filter, String area, Template template,
+		 * IImageFilter comp, File imageFile, String imageName, String inFileExtention,
+		 * ImageConfig.ImageParameters imageParam) { super(); if (DEBUG) {
+		 * System.out.println(""); System.out.
+		 * println("---------------------------  IMAGE FOLDER  -----------------------------"
+		 * ); System.out.println("filter     : " + filter);
+		 * System.out.println("area       : " + area);
+		 * System.out.println("template   : " + (template != null ? template.getName() :
+		 * "no template")); System.out.println("imageName  : " + imageName);
+		 * System.out.println("device     : " + ctx.getDevice());
+		 * System.out.println("cfg.width  : " + config.getWidth(ctx.getDevice(), filter,
+		 * area)); System.out.println("cfg.height : " +
+		 * config.getHeight(ctx.getDevice(), filter, area));
+		 * System.out.println("imageName  : " + imageName); System.out.
+		 * println("------------------------------- IMAGE CONFIG -------------------------------"
+		 * ); System.out.println(config.printConfig(ctx.getDevice(), filter, area));
+		 * System.out.println(
+		 * "----------------------------------------------------------------------------"
+		 * );
+		 * 
+		 * System.out.println(""); } this.session = ctx.getRequest().getSession();
+		 * this.config = config; this.staticInfo = staticInfo; this.filter = filter;
+		 * this.area = area; this.template = template; this.comp = comp; this.imageFile
+		 * = imageFile; this.imageName = imageName; this.inFileExtention =
+		 * inFileExtention; this.device = ctx.getDevice(); try { this.ctxb =
+		 * ctx.getBean(); } catch (Exception e) { e.printStackTrace(); }
+		 * this.globalContext = GlobalContext.getMainInstance(ctx.getRequest());
+		 * this.imageParam = imageParam;
+		 * 
+		 * focusX = StaticInfo.DEFAULT_FOCUS_X; focusY = StaticInfo.DEFAULT_FOCUS_Y; if
+		 * (staticInfo != null) { focusX = staticInfo.getFocusZoneX(ctx); focusY =
+		 * staticInfo.getFocusZoneY(ctx); } }
+		 */
 
 		@Override
 		public Void call() throws Exception {
@@ -554,16 +548,16 @@ public class ImageTransformServlet extends FileServlet {
 	}
 
 	private void imageTransform(ContentContext ctx, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File imageFile, String imageName, String inFileExtention, ImageConfig.ImageParameters imageParam) throws Exception {
-		ImageTransformThread imageThread = new ImageTransformThread(ctx, config, staticInfo, filter, area, template, comp, imageFile, imageName, inFileExtention, imageParam);
-		Future<Void> future = executor.submit(imageThread);
-		try {
-			future.get(30, TimeUnit.SECONDS);
-		} catch (TimeoutException ex) {
-			future.cancel(true);
-			throw ex;
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		/*
+		 * ImageTransformThread imageThread = new ImageTransformThread(ctx, config,
+		 * staticInfo, filter, area, template, comp, imageFile, imageName,
+		 * inFileExtention, imageParam); Future<Void> future =
+		 * executor.submit(imageThread); try { future.get(30, TimeUnit.SECONDS); } catch
+		 * (TimeoutException ex) { future.cancel(true); throw ex; } catch
+		 * (InterruptedException e) { e.printStackTrace(); }
+		 */
+
+		imageTransformForThread(ctx.getSession(), ctx.getBean(), GlobalContext.getMainInstance(ctx.getRequest()), ctx.getDevice(), config, staticInfo, filter, area, template, comp, imageFile, imageName, inFileExtention, staticInfo.getFocusZoneX(ctx), staticInfo.getFocusZoneY(ctx), imageParam);
 	}
 
 	private static void imageTransformForThread(HttpSession session, ContentContextBean ctxb, GlobalContext globalContext, Device device, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File imageFile, String imageName, String inFileExtention, int focusX, int focusY, ImageConfig.ImageParameters imageParam) throws IOException {
@@ -652,7 +646,7 @@ public class ImageTransformServlet extends FileServlet {
 				}
 			}
 		}
-		
+
 		if (img == null) { // Image from content
 			if (inFileExtention.equalsIgnoreCase("mp4")) {
 				try {
@@ -672,7 +666,7 @@ public class ImageTransformServlet extends FileServlet {
 				imageType = inFileExtention;
 			}
 		}
-		
+
 		if (img == null) { // Icon from template
 			File mimeTypeImageFile = null;
 			if (template != null) {
@@ -698,9 +692,9 @@ public class ImageTransformServlet extends FileServlet {
 			// ctx.getResponse().setStatus(404);
 			return;
 		}
-		
+
 		IIOMetadata metadata = null;
-		
+
 		try {
 			metadata = ResourceHelper.getImageMetadata(imageFile);
 		} catch (Exception e) {
@@ -917,7 +911,7 @@ public class ImageTransformServlet extends FileServlet {
 			layer.flush();
 			layer = null;
 		}
-		
+
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 5");
 
@@ -938,7 +932,7 @@ public class ImageTransformServlet extends FileServlet {
 			Integer direction = config.getBluringBorderWidth(device, originalFilter, area);
 			img = ImageEngine.addBlurBorder(img, bg, borderWidth, direction);
 		}
-		
+
 		// org.javlo.helper.Logger.stepCount("transform",
 		// "start - transformation - 6");
 
@@ -962,7 +956,7 @@ public class ImageTransformServlet extends FileServlet {
 				}
 			}
 		}
-		
+
 		/** align on grid **/
 		int newWidth = ImageConfig.alignToGrid(img.getWidth(), config.getGridWidth(device, filter, area));
 		int newHeight = ImageConfig.alignToGrid(img.getHeight(), config.getGridHeight(device, filter, area));
@@ -998,7 +992,7 @@ public class ImageTransformServlet extends FileServlet {
 			img = ImageEngine.resize(img, img.getWidth() / 2, img.getHeight() / 2, config.getBGColor(device, filter, area), true);
 			filter = originalFilter;
 		}
-		
+
 		if (config.isLogoBottomRigth(device, filter, area) && globalContext.getLogo() != null) {
 			File layerFile = globalContext.getLogo();
 			if (layerFile.exists()) {
@@ -1033,9 +1027,9 @@ public class ImageTransformServlet extends FileServlet {
 					img = ((IImageFilter) comp).filterImage(session.getServletContext(), ctxb, img);
 				}
 
-//				if (!ImageEngine.isAlphaImageType(imageType)) {
-//					img = ImageEngine.removeAlpha(img);
-//				}
+				// if (!ImageEngine.isAlphaImageType(imageType)) {
+				// img = ImageEngine.removeAlpha(img);
+				// }
 
 				// ImageIO.write(img, imageType, outImage);
 				ImageEngine.storeImage(img, imageType, outImage);
@@ -1102,6 +1096,23 @@ public class ImageTransformServlet extends FileServlet {
 
 		OutputStream out = null;
 
+		File tempImageFile = null;
+		File imageFile = null;
+		FileItem fi = null;
+		if (staticConfig.isImageAsService()) {
+			RequestService rs = RequestService.getInstance(request);
+			fi = rs.getFileItem("file");
+
+			if (fi != null) {
+				tempImageFile = new File(URLHelper.mergePath(staticConfig.getTempDir(), "_image_transform_as_service_" + StringHelper.getRandomId() + "_" + fi.getName()));
+				logger.info("image as service create file : " + tempImageFile);
+				try (InputStream in = fi.getInputStream()) {
+					ResourceHelper.writeStreamToFile(in, tempImageFile);
+				}
+				imageFile = tempImageFile;
+			}
+		}
+
 		/* TRACKING */
 		Thread.currentThread().setName("ImageTransformServlet-" + globalContext.getContextKey());
 
@@ -1128,9 +1139,9 @@ public class ImageTransformServlet extends FileServlet {
 		// org.javlo.helper.Logger.stepCount("transform", "end tracking");
 
 		String pathInfo = request.getPathInfo().substring(1);
-		
+
 		pathInfo = SessionFolder.getInstance(request.getSession(), globalContext).correctAndcheckUrl(pathInfo);
-		
+
 		pathInfo = pathInfo.replace('\\', '/'); // for windows server
 		String realURL = globalContext.getTransformShortURL(pathInfo);
 		if (realURL != null) {
@@ -1280,29 +1291,35 @@ public class ImageTransformServlet extends FileServlet {
 					baseFolder = ResourceHelper.getRealPath(getServletContext(), "/");
 				}
 
-				File imageFile = new File(URLHelper.mergePath(baseFolder, imageName));
-
-				String baseExtension = StringHelper.getFileExtension(imageFile.getName());
-				if (!imageFile.exists()) {
-					imageFile = new File(URLHelper.mergePath(baseFolder, StringHelper.getFileNameWithoutExtension(imageName)));
+				/** image image data uploaded ; image as a service **/
+				String baseExtension;
+				if (imageFile == null) {
+					imageFile = new File(URLHelper.mergePath(baseFolder, imageName));
 					baseExtension = StringHelper.getFileExtension(imageFile.getName());
-				}
-				if (!imageFile.exists()) {
-					logger.warning("image not found : " + imageFile);
-					imageName = NO_IMAGE_FILE;
-					imageFile = new File(ResourceHelper.getRealPath(ctx.getRequest().getSession().getServletContext(), imageName));
-				}
-
-				if (!imageFile.exists() || imageFile.isDirectory()) {
-					File dirFile = new File(StringHelper.getFileNameWithoutExtension(imageFile.getAbsolutePath()));
-					if (!dirFile.exists()) {
-						logger.warning("file not found : " + imageFile);
-						response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-						TimeTracker.end(globalContext.getContextKey(), ImageTransformServlet.class.getName(), trackerNumber);
-						return;
-					} else {
-						imageFile = dirFile;
+					if (!imageFile.exists()) {
+						imageFile = new File(URLHelper.mergePath(baseFolder, StringHelper.getFileNameWithoutExtension(imageName)));
+						baseExtension = StringHelper.getFileExtension(imageFile.getName());
 					}
+					if (!imageFile.exists()) {
+						logger.warning("image not found : " + imageFile);
+						imageName = NO_IMAGE_FILE;
+						imageFile = new File(ResourceHelper.getRealPath(ctx.getRequest().getSession().getServletContext(), imageName));
+					}
+
+					if (!imageFile.exists() || imageFile.isDirectory()) {
+						File dirFile = new File(StringHelper.getFileNameWithoutExtension(imageFile.getAbsolutePath()));
+						if (!dirFile.exists()) {
+							logger.warning("file not found : " + imageFile);
+							response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+							TimeTracker.end(globalContext.getContextKey(), ImageTransformServlet.class.getName(), trackerNumber);
+							return;
+						} else {
+							imageFile = dirFile;
+						}
+					}
+
+				} else {
+					baseExtension = StringHelper.getFileExtension(imageFile.getName());
 				}
 
 				if (returnImageDescription) {
@@ -1338,7 +1355,10 @@ public class ImageTransformServlet extends FileServlet {
 					return;
 				}
 
-				File file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified(), imageParam);
+				File file = null;
+				if (fi == null) {
+					file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified(), imageParam);
+				}
 
 				if ((file != null)) {
 					super.processRequest(request, response, file, content);
@@ -1481,6 +1501,9 @@ public class ImageTransformServlet extends FileServlet {
 			} catch (Exception e) {
 				e.printStackTrace();
 				logger.warning(e.getMessage());
+			}
+			if (tempImageFile != null && tempImageFile.exists()) {
+				tempImageFile.delete();
 			}
 			TimeTracker.end(globalContext.getContextKey(), ImageTransformServlet.class.getName(), trackerNumber);
 		}

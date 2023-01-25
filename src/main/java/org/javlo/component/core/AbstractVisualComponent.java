@@ -3320,7 +3320,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	public void setModify() {
 		componentBean.setModify(true);
-		updateCache();
 	}
 
 	protected void updateCache() {
@@ -3403,6 +3402,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (!inContent.equals(componentBean.getValue())) {
 			componentBean.setValue(StringHelper.escapeWordChar(inContent));
 			setModify();
+			updateCache();
 		}
 	}
 

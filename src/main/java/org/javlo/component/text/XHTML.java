@@ -124,9 +124,14 @@ public class XHTML extends AbstractVisualComponent {
 		return true;
 	}
 
-	@Override
+	/*@Override
 	public String getFontAwesome() {
 		return "code";
+	}*/
+	
+	@Override
+	public String getIcon() {
+		return "bi bi-code-slash";
 	}
 
 	@Override

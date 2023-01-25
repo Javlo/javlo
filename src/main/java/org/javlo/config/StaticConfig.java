@@ -696,6 +696,10 @@ public class StaticConfig extends Observable {
 	public boolean isImageShortURL() {
 		return properties.getBoolean("image.short-url", false);
 	}
+	
+	public boolean isImageAsService() {
+		return properties.getBoolean("image.as-service", false);
+	}
 
 	public boolean isImageMetaEdition() {
 		return properties.getBoolean("image.meta", true);

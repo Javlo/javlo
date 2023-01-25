@@ -2056,9 +2056,14 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 		return StringHelper.stringToSet(properties.getProperty(TAXONOMY, null));
 	}
 
-	@Override
+	/*@Override
 	public String getFontAwesome() {
 		return "list-alt";
+	}*/
+	
+	@Override
+	public String getIcon() {
+		return "bi bi-card-checklist";
 	}
 
 	@Override
