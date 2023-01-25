@@ -939,6 +939,7 @@ Security in case of vulnerabilities.
   - Imagga Service - tags + focus zone
   - components status as class on area
   - page css meta-component
+  - image transform as service
 ### Modified
   - detect less and scss modification on all files
   - elFinder - Version 2.1.61 
