@@ -616,6 +616,7 @@ public class DataAction implements IAction {
 						targetImage = ResourceHelper.getFreeFileName(targetImage);
 						JavaScriptBlob blob = new JavaScriptBlob(new String(item.get()));
 						if (blob.getContentType().equalsIgnoreCase("image/png")) {
+							logger.info("create clipboard file : "+targetImage);
 							ResourceHelper.writeBytesToFile(targetImage, blob.getData());
 							SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx);
 							sharedContentContext.setProvider(ImportedImageSharedContentProvider.NAME);
