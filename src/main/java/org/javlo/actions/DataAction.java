@@ -604,8 +604,6 @@ public class DataAction implements IAction {
 				if (targetFolder == null) {
 					String resourceRelativeFolder = URLHelper.mergePath(gc.getStaticConfig().getStaticFolder(), ctx.getGlobalContext().getStaticConfig().getImportImageFolder(), importFolder);
 					targetFolder = new File(URLHelper.mergePath(gc.getDataFolder(), resourceRelativeFolder));
-					System.out.println(">>>>>>>>> DataAction.uploadContent : gc.getDataFolder() = "+gc.getDataFolder()); //TODO: remove debug trace
-					System.out.println(">>>>>>>>> DataAction.uploadContent : targetFolder = "+targetFolder); //TODO: remove debug trace
 					provider = null;
 				}
 

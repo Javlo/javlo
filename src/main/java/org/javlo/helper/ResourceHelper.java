@@ -1399,6 +1399,7 @@ public class ResourceHelper {
 
 	public static final void writeBytesToFile(File file, byte[] content) throws IOException {
 		if (!file.exists()) {
+			file.getParentFile().mkdirs();
 			file.createNewFile();
 		}
 		OutputStream out = new FileOutputStream(file);
