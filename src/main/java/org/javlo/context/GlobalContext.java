@@ -1470,6 +1470,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 		if (realGlobalContext.dataFolder == null) {
 			log(Log.INFO, Log.GROUP_INIT_CONTEXT, "init data folder with folder : " + getFolder(), false);
+			logger.info("init data folder with folder ["+realGlobalContext.getContextKey()+"] : " + getFolder());
 			realGlobalContext.dataFolder = staticConfig.getAllDataFolder();
 			if (realGlobalContext.getFolder() != null) {
 				realGlobalContext.dataFolder = ElementaryURLHelper.mergePath(realGlobalContext.dataFolder, getFolder());
