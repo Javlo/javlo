@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -175,7 +176,7 @@ public class ImageTransformServlet extends FileServlet {
 		@Override
 		public Void call() throws Exception {
 			try {
-				ImageTransformServlet.imageTransformForThread(session, ctxb, globalContext, device, config, staticInfo, filter, area, template, comp, imageFile, imageName, inFileExtention, focusX, focusY, imageParam);
+				ImageTransformServlet.imageTransformForThread(session, ctxb, globalContext, device, config, staticInfo, filter, area, template, comp, imageFile, imageName, inFileExtention, focusX, focusY, imageParam, null);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				throw ex;
@@ -547,7 +548,7 @@ public class ImageTransformServlet extends FileServlet {
 		}
 	}
 
-	private void imageTransform(ContentContext ctx, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File imageFile, String imageName, String inFileExtention, ImageConfig.ImageParameters imageParam) throws Exception {
+	private void imageTransform(ContentContext ctx, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File imageFile, String imageName, String inFileExtention, ImageConfig.ImageParameters imageParam, File resultFile) throws Exception {
 		/*
 		 * ImageTransformThread imageThread = new ImageTransformThread(ctx, config,
 		 * staticInfo, filter, area, template, comp, imageFile, imageName,
@@ -557,10 +558,10 @@ public class ImageTransformServlet extends FileServlet {
 		 * (InterruptedException e) { e.printStackTrace(); }
 		 */
 
-		imageTransformForThread(ctx.getSession(), ctx.getBean(), GlobalContext.getMainInstance(ctx.getRequest()), ctx.getDevice(), config, staticInfo, filter, area, template, comp, imageFile, imageName, inFileExtention, staticInfo.getFocusZoneX(ctx), staticInfo.getFocusZoneY(ctx), imageParam);
+		imageTransformForThread(ctx.getSession(), ctx.getBean(), GlobalContext.getMainInstance(ctx.getRequest()), ctx.getDevice(), config, staticInfo, filter, area, template, comp, imageFile, imageName, inFileExtention, staticInfo.getFocusZoneX(ctx), staticInfo.getFocusZoneY(ctx), imageParam, resultFile);
 	}
 
-	private static void imageTransformForThread(HttpSession session, ContentContextBean ctxb, GlobalContext globalContext, Device device, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File imageFile, String imageName, String inFileExtention, int focusX, int focusY, ImageConfig.ImageParameters imageParam) throws IOException {
+	private static void imageTransformForThread(HttpSession session, ContentContextBean ctxb, GlobalContext globalContext, Device device, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File imageFile, String imageName, String inFileExtention, int focusX, int focusY, ImageConfig.ImageParameters imageParam, File resultFile) throws IOException {
 
 		ServletContext application = session.getServletContext();
 
@@ -1010,37 +1011,48 @@ public class ImageTransformServlet extends FileServlet {
 			logger.severe("image : " + imageFile + " could not be resized.");
 		} else {
 			/* create cache image */
-			FileCache fc = FileCache.getInstance(application);
-			String deviceCode = "no-device";
-			if (device != null) {
-				deviceCode = device.getCode();
-			}
-			String dir = ImageHelper.createSpecialDirectory(ctxb, globalContext.getContextKey(), filter, area, deviceCode, template, comp, imageParam);
-			TransactionFile transFile = fc.saveFileTransactional(dir, imageName);
-			OutputStream outImage = transFile.getOutputStream();
-
-			try {
+			
+			/**
+			 * put in cache if no result file gived 
+			 */
+			if (resultFile == null) {
+				FileCache fc = FileCache.getInstance(application);
+				String deviceCode = "no-device";
+				if (device != null) {
+					deviceCode = device.getCode();
+				}
+				String dir = ImageHelper.createSpecialDirectory(ctxb, globalContext.getContextKey(), filter, area, deviceCode, template, comp, imageParam);
+				TransactionFile transFile = fc.saveFileTransactional(dir, imageName);
+				OutputStream outImage = transFile.getOutputStream();
+	
+				try {
+					imageType = StringHelper.neverNull(config.getFileExtension(device, filter, area), imageType);
+					logger.info("write image : " + imageType + " width: " + img.getWidth() + " height: " + img.getHeight());
+	
+					if (comp != null && StringHelper.trimAndNullify(comp.getImageFilterKey(ctxb)) != null) {
+						img = ((IImageFilter) comp).filterImage(session.getServletContext(), ctxb, img);
+					}
+	
+					// if (!ImageEngine.isAlphaImageType(imageType)) {
+					// img = ImageEngine.removeAlpha(img);
+					// }
+	
+					// ImageIO.write(img, imageType, outImage);
+					ImageEngine.storeImage(img, imageType, outImage);
+					if (metadata != null) {
+						ResourceHelper.writeImageMetadata(metadata, fc.getFileName(dir, dir).getCanonicalFile());
+					}
+				} finally {
+					outImage.close();
+					transFile.commit();
+					if (img != null) {
+						img.flush();
+					}
+				}
+			} else {
 				imageType = StringHelper.neverNull(config.getFileExtension(device, filter, area), imageType);
-				logger.info("write image : " + imageType + " width: " + img.getWidth() + " height: " + img.getHeight());
-
-				if (comp != null && StringHelper.trimAndNullify(comp.getImageFilterKey(ctxb)) != null) {
-					img = ((IImageFilter) comp).filterImage(session.getServletContext(), ctxb, img);
-				}
-
-				// if (!ImageEngine.isAlphaImageType(imageType)) {
-				// img = ImageEngine.removeAlpha(img);
-				// }
-
-				// ImageIO.write(img, imageType, outImage);
-				ImageEngine.storeImage(img, imageType, outImage);
-				if (metadata != null) {
-					ResourceHelper.writeImageMetadata(metadata, fc.getFileName(dir, dir).getCanonicalFile());
-				}
-			} finally {
-				outImage.close();
-				transFile.commit();
-				if (img != null) {
-					img.flush();
+				try (OutputStream outImage = new FileOutputStream(resultFile)) {
+					ImageEngine.storeImage(img, imageType, outImage);
 				}
 			}
 		}
@@ -1394,7 +1406,6 @@ public class ImageTransformServlet extends FileServlet {
 											image.flush();
 										}
 									}
-
 								} else {
 									logger.warning("Could'nt read image : " + imageFile);
 								}
@@ -1427,7 +1438,7 @@ public class ImageTransformServlet extends FileServlet {
 						while (imageTransforming.size() > staticConfig.getTransformingSize() && i < 10) {
 							i++;
 							logger.warning("too much images in transformation. Waiting [" + i + "]...");
-							Thread.sleep(10000);
+							Thread.sleep(5000);
 						}
 						if (imageTransforming.size() > staticConfig.getTransformingSize()) {
 							logger.severe("too much images in transformation eject image transform : " + imageKey);
@@ -1444,13 +1455,18 @@ public class ImageTransformServlet extends FileServlet {
 							long currentTime = System.currentTimeMillis();
 							synchronized (imageTransforming.get(imageKey)) {
 								if (imageFile.isFile()) {
-									imageTransform(ctx, ImageConfig.getNewInstance(globalContext, request.getSession(), template), staticInfo, filter, area, template, comp, imageFile, imageName, baseExtension, imageParam);
+									imageTransform(ctx, ImageConfig.getNewInstance(globalContext, request.getSession(), template), staticInfo, filter, area, template, comp, imageFile, imageName, baseExtension, imageParam, tempImageFile);
 								} else {
 									folderTransform(ctx, ImageConfig.getNewInstance(globalContext, request.getSession(), template), staticInfo, filter, area, template, comp, imageFile, imageName, baseExtension, imageParam);
 								}
 							}
 							logger.info("transform image (" + StringHelper.renderSize(size) + ") : '" + imageName + "' in site '" + globalContext.getContextKey() + "' page : " + ctx.getRequestContentLanguage() + ctx.getPath() + " time : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - currentTime) + " sec.  #transformation:" + imageTransforming.size());
-							file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified(), imageParam);
+							if (tempImageFile == null) {
+								file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified(), imageParam);
+							} else {
+								file = tempImageFile;
+							}
+							
 							if (file != null) {
 								// fileStream = new FileInputStream(file);
 								super.processRequest(request, response, file, content);
