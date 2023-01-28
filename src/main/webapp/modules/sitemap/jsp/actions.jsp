@@ -3,7 +3,7 @@
 <div class="special">
 <form class="form_default" method="post" action="${info.currentURL}">
 <label>${i18n.edit['sitemap.lable.depth']}
-<select class="with-title" name="max-depth" onchange="filterDepth(jQuery(this).val());" >
+<select name="max-depth" onchange="filterDepth(jQuery(this).val());" >
 	<option value="0">${i18n.edit["global.all"]}</option>
 	<c:forEach var="depth" begin="1" end="6"><option>${depth}</option></c:forEach>
 </select>
