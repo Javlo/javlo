@@ -391,6 +391,10 @@ public class SearchResult {
 					int cptSearchLevel = StringUtils.countMatches(page.getName(), searchText) * IContentVisualComponent.SEARCH_LEVEL_MIDDLE;
 					searchLevel = searchLevel + cptSearchLevel;
 					
+					if (page.getName().contains(inSearchText)) {
+						searchLevel++;
+					}
+					
 					if (searchLevel != 0) {
 						addResult(ctx, page, inSearchText, page.getName(), page.getFullLabel(ctx), URLHelper.createURL(ctx, page.getPath()), page.getDescriptionAsText(ctx), searchLevel);
 					}
