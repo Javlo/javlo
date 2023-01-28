@@ -1,79 +1,85 @@
 @import url("../../content/css/content.css");
 
-table form {
-	display: inline;
-	margin-right: 10px;
-}
+$depthColor: #eec342;
 
-.action.check {
-	padding: 0;
-	width: 50px;
-}
+#sitemap {
+	
+	--basic-depth: 50px;
 
-.action.check input {
-	width: 50px;
-	height: 50px;
-}
+	table form {
+		display: inline;
+		margin-right: 10px;
+	}
+	
+	td {
+		padding: 0 15px;
+	}
+	
+	.action {
+		display: table-cell;
+	} 
+	
+	.action.check input {
+		margin: 6px auto;
+		width: 20px;
+		height: 20px;
+	}
+	
+	.action.button input {
+		margin-right: 10px;
+		margin-top: 2px;
+	}
+	
+	tr.depth-1 td {
+		background-color: $depthColor;	 
+	}
+	
+	tr.depth-2 td {
+		background-color: lighten($depthColor, 10%);
+	}
+	
+	tr.depth-3 td {
+		background-color: lighten($depthColor, 20%);
+	}
+	
+	tr.depth-4 td {
+		background-color: lighten($depthColor, 30%);
+	}
+	
+	tr.depth-5 td {
+		background-color: lighten($depthColor, 40%);
+	}
+	
+	tr.depth-6 td {
+		background-color: lighten($depthColor, 50%);
+	}
+	
+	tr.depth-7 td {
+		background-color: lighten($depthColor, 60%);
+	}
+	
+	tr.depth-1 .link {
+		padding-left: var(--basic-depth); 
+	}
+	
+	tr.depth-2 .link {
+		padding-left: calc(var(--basic-depth) * 2) 
+	}
+	
+	tr.depth-3 .link {
+		padding-left: calc(var(--basic-depth) * 3) 
+	}
+	
+	tr.depth-4 .link {
+		padding-left: calc(var(--basic-depth) * 4) 
+	}
+	
+	tr.depth-5 .link {
+		padding-left: calc(var(--basic-depth) * 5) 
+	}
+	
+	tr.depth-6 .link {
+		padding-left: calc(var(--basic-depth) * 6) 
+	}
 
-.action.button input {
-	margin-right: 10px;
-}
-
-#content tr.depth-2 td.button { 
-    width: 220px;
-}
-
-@depthColor: #eec342;
-
-#content tr.depth-1 td {
-	background-color: @depthColor;	 
-}
-
-#content tr.depth-2 td {
-	background-color: lighten(@depthColor, 10%);
-}
-
-#content tr.depth-3 td {
-	background-color: lighten(@depthColor, 20%);
-}
-
-#content tr.depth-4 td {
-	background-color: lighten(@depthColor, 30%);
-}
-
-#content tr.depth-5 td {
-	background-color: lighten(@depthColor, 40%);
-}
-
-#content tr.depth-6 td {
-	background-color: lighten(@depthColor, 50%);
-}
-
-#content tr.depth-7 td {
-	background-color: lighten(@depthColor, 60%);
-}
-
-
-tr.depth-1 .link {
-	padding-left: 20px; 
-}
-
-tr.depth-2 .link {
-	padding-left: 40px; 
-}
-
-tr.depth-3 .link {
-	padding-left: 60px; 
-}
-
-tr.depth-4 .link {
-	padding-left: 80px; 
-}
-
-tr.depth-5 .link {
-	padding-left: 100px; 
-}
-
-tr.depth-6 .link {
-	padding-left: 120px; 
 }
