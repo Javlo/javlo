@@ -233,7 +233,9 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 			if (ctx.getGlobalContext().isMailingPlatform()) {
 				tag = "div";
 			}
-			return "<" + tag + " class=\"inside-wrapper\"" + style + ">" + XHTMLHelper.replaceJSTLData(ctx, cleanValue(ctx, getTitle(ctx))) + "</" + tag + ">";
+			
+			String anchor = "<span class=\"heading-anchor\" id=\""+getXHTMLId(ctx)+"\"></span>";
+			return anchor+"<" + tag + " class=\"inside-wrapper\"" + style + ">" + XHTMLHelper.replaceJSTLData(ctx, cleanValue(ctx, getTitle(ctx))) + "</" + tag + ">";
 		}
 	}
 
@@ -372,13 +374,13 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		return xhtml;
 	}
 
-	public String getSpecialPreviewCssId(ContentContext ctx) {
+	/*public String getSpecialPreviewCssId(ContentContext ctx) {
 		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 			return " id=\"cp_" + getForcedId(ctx) + "\"";
 		} else {
 			return " id=\"" + getXHTMLId(ctx) + "\"";
 		}
-	}
+	}*/
 
 	@Override
 	protected boolean isHiddable() {
