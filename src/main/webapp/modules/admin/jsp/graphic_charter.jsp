@@ -92,6 +92,9 @@
 							<div class="checkbox">
 								<label><input type="checkbox" name="dropdownMenu" ${currentContext.templateData.dropdownMenu?'checked="checked"':""} /> ${i18n.edit['admin.template.dropdown-menu']}</label>
 							</div>
+							<div class="checkbox">
+								<label><input type="checkbox" name="extendSub" ${currentContext.templateData.extendSub?'checked="checked"':""} /> ${i18n.edit['admin.template.extend-sub']}</label>
+							</div>
 
 							<hr />
 

@@ -36,6 +36,7 @@ public class TemplateData {
 	private String fontHeading = null;
 	private boolean loginMenu = false;
 	private boolean fixMenu = false;
+	private boolean extendSub = false;
 	private boolean largeMenu = false;
 	private boolean searchMenu = false;
 	private boolean jssearchMenu = false;
@@ -201,6 +202,7 @@ public class TemplateData {
 			/* layout */
 			setFixMenu(StringHelper.isTrue(map.get("fixMenu")));
 			setLargeMenu(StringHelper.isTrue(map.get("largeMenu")));
+			setExtendSub(StringHelper.isTrue(map.get("extendSub")));
 			setLoginMenu(StringHelper.isTrue(map.get("loginMenu")));
 			setSearchMenu(StringHelper.isTrue(map.get("search")));
 			setJssearchMenu(StringHelper.isTrue(map.get("jssearch")));
@@ -242,6 +244,7 @@ public class TemplateData {
 		outData.put("fontText", getFontText());
 		outData.put("fontHeading", getFontHeading());
 		outData.put("fixMenu", ""+isFixMenu());
+		outData.put("extendSub", ""+isExtendSub());
 		outData.put("loginMenu", ""+isLoginMenu());
 		outData.put("largeMenu", ""+isLargeMenu());
 		outData.put("large", ""+isLarge());
@@ -651,6 +654,14 @@ public class TemplateData {
 		} else {
 			return "left";
 		}
+	}
+
+	public boolean isExtendSub() {
+		return extendSub;
+	}
+
+	public void setExtendSub(boolean extendSub) {
+		this.extendSub = extendSub;
 	}
 	
 }

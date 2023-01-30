@@ -2317,6 +2317,7 @@ public class Template implements Comparable<Template> {
 			return null;
 		}
 		String params = "?_menufix=" + ctx.getGlobalContext().getTemplateData().isFixMenu();
+		params += "&_extendsub=" + ctx.getGlobalContext().getTemplateData().isExtendSub();
 		params += "&_menularge=" + ctx.getGlobalContext().getTemplateData().isLargeMenu();
 		params += "&_menusearch=" + ctx.getGlobalContext().getTemplateData().isSearchMenu();
 		params += "&_menujssearch=" + ctx.getGlobalContext().getTemplateData().isJssearchMenu();
