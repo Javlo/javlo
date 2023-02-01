@@ -340,11 +340,10 @@ public class BeanHelper {
 			Object key = keys.next();
 			if (map.get(key) instanceof String) {
 				String name = (String) key;
+				
 				name = StringHelper.firstLetterLower(name);
 				String value = (String) map.get(key);
-
 				String methodName = "set" + StringHelper.firstLetterUpper(name);
-
 				try {
 					Method method = bean.getClass().getMethod(methodName, new Class[] { String.class });
 					method.invoke(bean, new Object[] { value });
@@ -354,9 +353,19 @@ public class BeanHelper {
 						method = bean.getClass().getMethod(methodName, new Class[] { Boolean.class });
 						method.invoke(bean, new Object[] { StringHelper.isTrue(value) });
 					} catch (NoSuchMethodException e1) {
-						notFound++;
+						try {
+							method = bean.getClass().getMethod(methodName, new Class[] { int.class });
+							method.invoke(bean, new Object[] { Integer.parseInt(value) });
+						} catch (NoSuchMethodException e2) {
+							e2.printStackTrace();
+							try {
+								method = bean.getClass().getMethod(methodName, new Class[] { long.class });
+								method.invoke(bean, new Object[] { Long.parseLong(value) });
+							} catch (NoSuchMethodException e3) {
+								notFound++;
+							}
+						}
 					}
-
 				}
 			} else if (map.get(key) instanceof Boolean) {
 				String name = (String) key;

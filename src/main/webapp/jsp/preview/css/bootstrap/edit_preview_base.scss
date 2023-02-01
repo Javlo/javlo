@@ -105,6 +105,11 @@
 	font-size: 14px;
 }
 
+#preview_command .nav {
+	flex-wrap: wrap;
+	flex-direction: row;
+}
+
 #preview-layer figure,
 #preview-layer .version,
 #preview-layer .content,
