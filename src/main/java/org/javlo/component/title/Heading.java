@@ -179,6 +179,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+		ctx.setTitleDepth(getDepth(ctx));
 		String link = getFieldValue(LINK);
 		String target = "";
 		if (link != null && link.trim().length() > 0) {

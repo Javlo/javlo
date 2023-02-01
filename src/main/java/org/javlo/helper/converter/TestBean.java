@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 public class TestBean {
 	
+	private long id;
 	private String name;
 	private int age;
 	private LocalDate birthDate;
@@ -25,6 +26,12 @@ public class TestBean {
 	}
 	public void setBirthDate(LocalDate birthDate) {
 		this.birthDate = birthDate;
+	}
+	public long getId() {
+		return id;
+	}
+	public void setId(long id) {
+		this.id = id;
 	}
 
 }
