@@ -941,6 +941,7 @@ Security in case of vulnerabilities.
   - page css meta-component
   - image transform as service
   - extend sub menu
+  - bean tools
 ### Modified
   - detect less and scss modification on all files
   - elFinder - Version 2.1.61 
