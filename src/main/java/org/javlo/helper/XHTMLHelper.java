@@ -2735,7 +2735,6 @@ public class XHTMLHelper {
 				}
 			}
 
-			System.out.println(">>>>>>>>> XHTMLHelper.replaceLinks : 2.script = " + script + "  tag:" + tag.getName() + " end:" + tag.getCloseEnd()); // TODO: remove debug trace
 			if (!script) {
 				if (tag.getName().equalsIgnoreCase("a") || tag.getName().equalsIgnoreCase("area")) {
 					String hrefValue = tag.getAttributes().get("href");

@@ -97,6 +97,13 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 		out.println("<label for=\"" + getInputName(LINK) + "\">" + i18nAccess.getText("content.header.link", "link") + "</label>");
 		out.println("<input class=\"form-control\" type=\"text\" id=\"" + createKeyWithField(LINK) + "\" name=\"" + createKeyWithField(LINK) + "\" value=\"" + getFieldValue(LINK) + "\" >");
 		out.println("</div>");
+		
+		out.println("<div class=\"form-group\">");
+		out.println("<label>id:</label>");
+		out.println(getXHTMLId(ctx));
+		out.println(" <a href=\"#\" onclick=\"navigator.clipboard.writeText('"+getXHTMLId(ctx)+"');\"><i class=\"bi bi-clipboard2-plus\"></i></a>");
+		out.println("</div>");
+		
 		if (!ctx.getGlobalContext().isMailingPlatform()) {
 			out.println("</div></div>");
 		}
