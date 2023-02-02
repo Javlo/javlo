@@ -1378,6 +1378,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 		if (resources != null && template != null) {
 			List<String> linkResource = StringHelper.stringToCollection(resources, ",");
+			if (linkResource.size() == 1 && resources.contains(";")) {
+				linkResource = StringHelper.stringToCollection(resources, ";");
+			}
 			List<String> outResource = new LinkedList<String>();
 			for (String url : linkResource) {
 				if (url.startsWith("/")) {
