@@ -36,6 +36,9 @@ public class ImportedImageSharedContentProvider extends LocalImageSharedContentP
 	@Override
 	protected boolean isCategoryAccepted(ContentContext ctx, String category, MenuElement cp, Template template) {
 		try {
+			if (ctx.getCurrentPage() == null) {
+				return false;
+			}
 			MenuElement page = ctx.getCurrentPage().getRootOfChildrenAssociation();
 			if (page == null) {
 				page = ctx.getCurrentPage();

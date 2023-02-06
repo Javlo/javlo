@@ -357,7 +357,6 @@ public class BeanHelper {
 							method = bean.getClass().getMethod(methodName, new Class[] { int.class });
 							method.invoke(bean, new Object[] { Integer.parseInt(value) });
 						} catch (NoSuchMethodException e2) {
-							e2.printStackTrace();
 							try {
 								method = bean.getClass().getMethod(methodName, new Class[] { long.class });
 								method.invoke(bean, new Object[] { Long.parseLong(value) });

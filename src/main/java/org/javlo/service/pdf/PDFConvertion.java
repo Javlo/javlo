@@ -1,4 +1,4 @@
-package org.javlo.service;
+package org.javlo.service.pdf;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -19,6 +19,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.helper.W3CDom;
 import org.w3c.dom.Document;
 import org.xhtmlrenderer.layout.LayoutContext;
+import org.xhtmlrenderer.layout.SharedContext;
 import org.xhtmlrenderer.render.BlockBox;
 import org.xhtmlrenderer.render.InlineText;
 import org.xhtmlrenderer.render.JustificationInfo;
@@ -68,6 +69,11 @@ public class PDFConvertion {
 			builder.setEntityResolver(FSEntityResolver.instance());
 			org.xhtmlrenderer.pdf.ITextRenderer pdfRenderer = new org.xhtmlrenderer.pdf.ITextRenderer();
 			
+			SharedContext sharedContext = pdfRenderer.getSharedContext();
+			sharedContext.setPrint(true);
+			sharedContext.setInteractive(false);
+			sharedContext.setReplacedElementFactory(new ImageReplacedElementFactory(null));
+			
 			W3CDom w3cDom = new W3CDom();
 			org.w3c.dom.Document doc = w3cDom.fromJsoup(Jsoup.parse(html));
 			
@@ -88,6 +94,11 @@ public class PDFConvertion {
 			builder.setEntityResolver(FSEntityResolver.instance());
 			Document doc = builder.parse(in);
 			org.xhtmlrenderer.pdf.ITextRenderer pdfRenderer = new org.xhtmlrenderer.pdf.ITextRenderer();
+			
+			SharedContext sharedContext = pdfRenderer.getSharedContext();
+			sharedContext.setPrint(true);
+			sharedContext.setInteractive(false);
+			sharedContext.setReplacedElementFactory(new ImageReplacedElementFactory(null));
 			pdfRenderer.setDocument(doc, null);
 			pdfRenderer.layout();
 			// LayoutContext layoutContext =
@@ -141,7 +152,7 @@ public class PDFConvertion {
 		DocumentBuilder builder = documentBuilderFactory.newDocumentBuilder();
 		builder.setEntityResolver(FSEntityResolver.instance());
 
-		String html = ResourceHelper.getFileContent(new File("c:/trans/mail.html"));
+		String html = ResourceHelper.getFileContent(new File("c:/trans/test_pdf.html"));
 
 		InputStream in = new ByteArrayInputStream(html.getBytes(ContentContext.CHARACTER_ENCODING));
 
@@ -151,13 +162,13 @@ public class PDFConvertion {
 		
 		org.xhtmlrenderer.pdf.ITextRenderer pdfRenderer = new org.xhtmlrenderer.pdf.ITextRenderer();
 		pdfRenderer.setDocument(w3cDoc, "");
-		//pdfRenderer.setDocument(doc, null);
+//		pdfRenderer.setDocument(doc, null);
 		pdfRenderer.layout();
 		// LayoutContext layoutContext =
 		// pdfRenderer.getSharedContext().newLayoutContextInstance();
 		// BlockBox rootBox = pdfRenderer.getRootBox();
 		// correctAllLines(layoutContext, rootBox);
-		pdfRenderer.createPDF(new FileOutputStream(new File("c:/trans/doc.pdf")));
+		pdfRenderer.createPDF(new FileOutputStream(new File("c:/trans/test_pdf.pdf")));
 		
 		in.close();
 	}

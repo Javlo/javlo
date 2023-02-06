@@ -50,7 +50,7 @@ import org.javlo.macro.core.IMacro;
 import org.javlo.mailing.feedback.DefaultMailingFeedback;
 import org.javlo.module.mailing.MailingAction;
 import org.javlo.service.ContentService;
-import org.javlo.service.PDFLayout;
+import org.javlo.service.pdf.PDFLayout;
 import org.javlo.servlet.AccessServlet;
 import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.template.TemplateFactory;

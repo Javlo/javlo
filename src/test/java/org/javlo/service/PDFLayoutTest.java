@@ -2,6 +2,8 @@ package org.javlo.service;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.javlo.service.pdf.PDFLayout;
+
 import junit.framework.TestCase;
 
 public class PDFLayoutTest extends TestCase {

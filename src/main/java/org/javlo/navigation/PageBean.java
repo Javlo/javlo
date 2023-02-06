@@ -56,7 +56,7 @@ public class PageBean implements Serializable {
 	 * String> roles = new HashMap<String, String>(); private Map<String, String>
 	 * adminRoles = new HashMap<String, String>();
 	 */
-
+	
 	public PageBean(ContentContext ctx, MenuElement page) {
 		if (page == null) {
 			throw new ParameterException("page can not be null");

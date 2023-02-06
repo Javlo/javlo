@@ -1,4 +1,4 @@
-package org.javlo.service;
+package org.javlo.service.pdf;
 
 import java.lang.reflect.InvocationTargetException;
 

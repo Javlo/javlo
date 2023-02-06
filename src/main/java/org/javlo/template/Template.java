@@ -3091,6 +3091,7 @@ public class Template implements Comparable<Template> {
 	public boolean isRenderer(GlobalContext globalContext) {
 		String renderer = getRendererFile(null);
 		File jspFile = new File(getTemplateTargetFolder(globalContext), renderer);
+		
 		return jspFile.exists();
 	}
 

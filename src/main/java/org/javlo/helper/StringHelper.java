@@ -4916,12 +4916,8 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) throws IOException {
-		File in = new File("c:/trans/in.scss");
-		File out = new File("c:/trans/out.scss");
-		String scss = ResourceHelper.loadStringFromFile(in);
-		scss = indentText(scss, '{', '}', '\\', "   ");
-		ResourceHelper.writeStringToFile(out, scss);
-		System.out.println(">>>>>>>>> StringHelper.main : out = " + out); // TODO: remove debug trace
+		String url  ="http://localhost/javlo2/sexy/transform/standard/bootstrap-5.2.0/content/comp-167567389043488041925/h274435848/static/images/fun/1665216102_28-photosdefillesporno-com-p-porno-shikarnie-kruglie-siski-37.jpg.webp?force-device-code=pdf&hs=274435848";
+		System.out.println("file extension : "+StringHelper.getFileExtension(url));
 	}
 
 	public static void copyInClipbaord(String content) {
