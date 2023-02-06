@@ -68,8 +68,8 @@ public class RepeatContainer extends AbstractVisualComponent {
 	}
 	
 	@Override
-	public String getFontAwesome() {
-		return "sign-in";
+	public String getIcon() {
+		return "bi bi-list-ul";
 	}
 
 }

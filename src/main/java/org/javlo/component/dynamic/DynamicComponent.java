@@ -1194,12 +1194,12 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	}
 
 	@Override
-	public String getFontAwesome() {
-		String defaultFont = "address-card";
+	public String getIcon() {
+		String defaultFont = "bi bi-postcard";
 		if (StringHelper.isHTMLStatic(properties.getProperty("component.renderer", null))) {
-			defaultFont = "code";
+			defaultFont = "bi bi-code-slash";
 		}
-		return properties.getProperty("font-awesome", defaultFont);
+		return properties.getProperty("icon", defaultFont);
 	}
 
 	protected boolean isAutoDeletable() {
