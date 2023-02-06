@@ -44,8 +44,8 @@ public class Font extends AbstractVisualComponent {
 	}
 	
 	@Override
-	public String getFontAwesome() {
-		return "font";
+	public String getIcon() {
+		return "bi bi-fonts";
 	}
 
 }

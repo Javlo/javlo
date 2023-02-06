@@ -189,9 +189,14 @@ public class ContentSeparation extends AbstractVisualComponent {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
 	}
 	
+//	@Override
+//	public String getFontAwesome() {	
+//		return "minus";
+//	}
+	
 	@Override
-	public String getFontAwesome() {	
-		return "minus";
+	public String getIcon() {
+		return "bi bi-file-break";
 	}
 
 }
