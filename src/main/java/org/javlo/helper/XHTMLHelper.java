@@ -1986,20 +1986,15 @@ public class XHTMLHelper {
 	public static String renderHeaderResourceInsertionWithoutalreadyTest(ContentContext ctx, String resource) {
 		if (StringHelper.getFileExtension(resource).equalsIgnoreCase("css")) {
 			return "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + URLHelper.createStaticURL(ctx, resource) + "\" />";
-		} else if (URLHelper.isJavascriptLink(resource)) {
-			return "<script src=\"" + URLHelper.createStaticURL(ctx, resource) + "\" type=\"text/javascript\"></script>";
 		} else {
-			return "<!-- resource type not identified : " + resource + " -->";
+			return "<script src=\"" + URLHelper.createStaticURL(ctx, resource) + "\" type=\"text/javascript\"></script>";
 		}
 	}
-
 	public static String renderHeaderResourceInsertionWithoutalreadyTest(ContentContext ctx, String resource, String buildId) {
 		if (StringHelper.getFileExtension(resource).equalsIgnoreCase("css")) {
 			return "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + URLHelper.addParam(URLHelper.createStaticURL(ctx, resource), "bid", buildId) + "\" />";
-		} else if (URLHelper.isJavascriptLink(resource)) {
-			return "<script src=\"" + URLHelper.addParam(URLHelper.createStaticURL(ctx, resource), "bid", buildId) + "\" type=\"text/javascript\"></script>";
 		} else {
-			return "<!-- resource type not identified : " + resource + " -->";
+			return "<script src=\"" + URLHelper.addParam(URLHelper.createStaticURL(ctx, resource), "bid", buildId) + "\" type=\"text/javascript\"></script>";
 		}
 	}
 
@@ -2007,12 +2002,10 @@ public class XHTMLHelper {
 		if (!alreadyInserted(ctx, resource)) {
 			if (StringHelper.getFileExtension(resource).equalsIgnoreCase("css")) {
 				return "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + URLHelper.createStaticURL(ctx, resource) + "\" />";
-			} else if (URLHelper.isJavascriptLink(resource)) {
+			} else {
 				alreadyClosedIfOpen(ctx, resource); // close </script>
 				return "<script src=\"" + URLHelper.createStaticURL(ctx, resource) + "\" type=\"text/javascript\"></script>";
-			} else {
-				return "<!-- resource type not identified : " + resource + " -->";
-			}
+			} 
 		} else {
 			return "<!-- resource already insered : " + resource + " -->";
 		}
@@ -2022,15 +2015,13 @@ public class XHTMLHelper {
 		if (!alreadyInserted(ctx, resource)) {
 			if (StringHelper.getFileExtension(resource).equalsIgnoreCase("css")) {
 				return "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + URLHelper.addParam(URLHelper.createStaticURL(ctx, resource), "buid", buildId) + "\" />";
-			} else if (URLHelper.isJavascriptLink(resource)) {
+			} else {
 				alreadyClosedIfOpen(ctx, resource); // close </script>
 				if (StringHelper.isURL(resource)) { // cdn
 					return "<script type=\"module\" src=\"" + resource + "\" crossorigin=\"anonymous\" referrerpolicy=\"no-referrer\"></script>";
 				} else {
 					return "<script type=\"module\" src=\"" + URLHelper.addParam(URLHelper.createStaticURL(ctx, resource), "buid", buildId) + "\"></script>";
 				}
-			} else {
-				return "<!-- resource type not identified : " + resource + " -->";
 			}
 		} else {
 			return "<!-- resource already insered : " + resource + " -->";
@@ -2041,11 +2032,9 @@ public class XHTMLHelper {
 		if (!alreadyInserted(ctx, resource)) {
 			if (StringHelper.getFileExtension(resource).equalsIgnoreCase("css")) {
 				return "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + URLHelper.addParam(URLHelper.createStaticURL(ctx, resource), "buid", buildId) + "\" />";
-			} else if (URLHelper.isJavascriptLink(resource)) {
+			} else {
 				alreadyClosedIfOpen(ctx, resource); // close </script>
 				return "<script src=\"" + URLHelper.addParam(URLHelper.createStaticURL(ctx, resource), "buid", buildId) + "\" type=\"text/javascript\"></script>";
-			} else {
-				return "<!-- resource type not identified : " + resource + " -->";
 			}
 		} else {
 			return "<!-- resource already insered : " + resource + " -->";
