@@ -88,6 +88,11 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 			if (file == null || file.getFile() == null) {
 				return 0;
 			} else {
+				
+				if (this.getTaxonomy().size() > 0 && file.getTaxonomy(ctx).size() == 0) {
+					return 0;
+				}
+				
 				TaxonomyService taxonomyService = TaxonomyService.getInstance(ctx);
 				if (acceptDirectory || !file.getFile().isDirectory()) {
 					if (UserSecurity.isCurrentUserCanRead(ctx, file) && file.isShared(ctx)) {
