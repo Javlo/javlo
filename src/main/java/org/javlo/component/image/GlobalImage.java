@@ -143,7 +143,13 @@ public class GlobalImage extends Image implements IImageFilter {
 
 	@Override
 	public String getSpecificClass(ContentContext ctx) {
-		return getFilter(ctx);
+		String css = getFilter(ctx);
+		if (StringHelper.isEmpty(getLink())) {
+			css += " no-link";
+		} else {
+			css += " width-link";
+		}
+		return css;
 	}
 
 	protected boolean isImageFilter() {

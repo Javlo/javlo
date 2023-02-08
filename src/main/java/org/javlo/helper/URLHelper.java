@@ -1686,12 +1686,20 @@ public class URLHelper extends ElementaryURLHelper {
 			link = URLHelper.createResourceURL(ctx, link);
 		} else if (link.startsWith("page:")) {
 			link = link.substring("page:".length());
+			String params="";
+			if (link.contains("|")) {
+				params = link.substring(link.indexOf("|") + 1);
+				link = link.substring(0, link.indexOf("|"));
+			} else if (link.contains("#")) {
+				params = link.substring(link.indexOf("#") );
+				link = link.substring(0, link.indexOf("#"));
+			}
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			MenuElement targetPage = content.getNavigation(ctx).searchChildFromName(link);
 			if (targetPage == null) {
-				link = "page_not_found";
+				link = "page_not_found_:_"+link;
 			} else {
-				link = URLHelper.createURL(ctx, targetPage);
+				link = URLHelper.createURL(ctx, targetPage)+params;
 			}
 		}
 		return link;
