@@ -11,7 +11,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -4916,8 +4915,9 @@ public class StringHelper {
 	}
 
 	public static void main(String[] args) throws IOException {
-		String url  ="http://localhost/javlo2/sexy/transform/standard/bootstrap-5.2.0/content/comp-167567389043488041925/h274435848/static/images/fun/1665216102_28-photosdefillesporno-com-p-porno-shikarnie-kruglie-siski-37.jpg.webp?force-device-code=pdf&hs=274435848";
-		System.out.println("file extension : "+StringHelper.getFileExtension(url));
+		String name = "Patrick Aime l'été";
+		String fileName = createFileName(name);
+		System.out.println(fileName);
 	}
 
 	public static void copyInClipbaord(String content) {

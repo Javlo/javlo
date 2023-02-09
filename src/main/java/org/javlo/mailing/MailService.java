@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -216,13 +217,21 @@ public class MailService {
 				logger.severe("error connection smtp : " + e.getMessage());
 
 				e.printStackTrace();
+				
+				String ip="?";
+				try {
+					InetAddress address = InetAddress.getByName(mailConfig.getSMTPHost()); 
+					ip = address.getHostAddress();
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				} 
 
 				System.out.println("");
 				System.out.println("*********************************");
 				System.out.println("* ERROR MAIL TRANSPORT  : " + StringHelper.renderTime(new Date()));
 				System.out.println("* transport : " + transport);
 				System.out.println("* transport connected ? " + transport.isConnected());
-				System.out.println("* getSMTPHost : " + mailConfig.getSMTPHost());
+				System.out.println("* getSMTPHost : " + mailConfig.getSMTPHost()+" ip:"+ip);
 				System.out.println("* getSMTPPortInt : " + mailConfig.getSMTPPortInt());
 				System.out.println("* getLogin : " + mailConfig.getLogin());
 				System.out.println("* getPassword : " + !StringHelper.isEmpty(mailConfig.getPassword()));
