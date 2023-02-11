@@ -58,7 +58,7 @@
 		<elasticsearch.version>7.17.6</elasticsearch.version>
 		<tika.version>1.28.4</tika.version>
 		<xdocreport.version>2.0.4</xdocreport.version>
-		<poi.version>5.2.2</poi.version>
+		<poi.version>5.2.3</poi.version>
 	</properties>
 
 	<dependencies>
