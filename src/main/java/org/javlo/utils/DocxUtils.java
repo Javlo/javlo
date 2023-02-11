@@ -317,7 +317,7 @@ public class DocxUtils {
 
 	public static String getDocxXmlContent(String docxFile) throws IOException {
 		Path zipFilePath = Paths.get(docxFile);
-		try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, null)) {
+		try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader)null)) {
 			Path source = fs.getPath("/word/document.xml");
 			try (InputStream in = Files.newInputStream(source);) {
 				return cleanTokensDocx(ResourceHelper.writeStreamToString(in, "UTF-8"));
@@ -329,7 +329,7 @@ public class DocxUtils {
 		System.out.println("WRITE 1.1 : " + docxFile);
 		Path zipFilePath = Paths.get(docxFile);
 		ZipOutputStream zipOut = new ZipOutputStream(out);
-		try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, null)) {
+		try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader)null)) {
 			Files.walkFileTree(fs.getPath("/"), new SimpleFileVisitor<Path>() {
 				@Override
 				public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
@@ -381,7 +381,7 @@ public class DocxUtils {
 
 	public static void replaceTokens(String docxFile, Map<String, String> tokens) throws IOException {
 		Path zipFilePath = Paths.get(docxFile);
-		try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, null)) {
+		try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader)null)) {
 
 			// Files.walkFileTree(fs.getPath("/"), new SimpleFileVisitor<Path>() {
 			// @Override
