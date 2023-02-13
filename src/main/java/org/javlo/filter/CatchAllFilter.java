@@ -601,7 +601,7 @@ public class CatchAllFilter implements Filter {
 							}
 							if (login == null && httpRequest.getUserPrincipal() != null) {
 								login = httpRequest.getUserPrincipal().getName();
-							} else if (fact.login(httpRequest, login, request.getParameter("j_password")) == null) {
+							} else if (fact.login(httpRequest, login, request.getParameter("j_password")) == null && adminFact.login(httpRequest, login, request.getParameter("j_password")) == null) {
 								I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, httpRequest.getSession());
 								String msg = i18nAccess.getViewText("login.error");
 								MessageRepository messageRepository = MessageRepository.getInstance(((HttpServletRequest) request));
