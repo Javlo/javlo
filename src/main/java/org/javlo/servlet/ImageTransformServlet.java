@@ -558,10 +558,10 @@ public class ImageTransformServlet extends FileServlet {
 		 * (InterruptedException e) { e.printStackTrace(); }
 		 */
 
-		if (ctx != null) {
+		if (ctx != null && staticInfo != null) {
 			imageTransformForThread(ctx.getSession(), ctx.getBean(), GlobalContext.getMainInstance(ctx.getRequest()), ctx.getDevice(), config, staticInfo, filter, area, template, comp, imageFile, imageName, inFileExtention, staticInfo.getFocusZoneX(ctx), staticInfo.getFocusZoneY(ctx), imageParam, resultFile);
 		} else {
-			logger.severe("ctx null.");
+			logger.severe("ctx | staticInfo null.");
 		}
 	}
 
