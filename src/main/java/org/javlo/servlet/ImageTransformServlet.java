@@ -558,7 +558,11 @@ public class ImageTransformServlet extends FileServlet {
 		 * (InterruptedException e) { e.printStackTrace(); }
 		 */
 
-		imageTransformForThread(ctx.getSession(), ctx.getBean(), GlobalContext.getMainInstance(ctx.getRequest()), ctx.getDevice(), config, staticInfo, filter, area, template, comp, imageFile, imageName, inFileExtention, staticInfo.getFocusZoneX(ctx), staticInfo.getFocusZoneY(ctx), imageParam, resultFile);
+		if (ctx != null) {
+			imageTransformForThread(ctx.getSession(), ctx.getBean(), GlobalContext.getMainInstance(ctx.getRequest()), ctx.getDevice(), config, staticInfo, filter, area, template, comp, imageFile, imageName, inFileExtention, staticInfo.getFocusZoneX(ctx), staticInfo.getFocusZoneY(ctx), imageParam, resultFile);
+		} else {
+			logger.severe("ctx null.");
+		}
 	}
 
 	private static void imageTransformForThread(HttpSession session, ContentContextBean ctxb, GlobalContext globalContext, Device device, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File imageFile, String imageName, String inFileExtention, int focusX, int focusY, ImageConfig.ImageParameters imageParam, File resultFile) throws IOException {
@@ -1011,9 +1015,9 @@ public class ImageTransformServlet extends FileServlet {
 			logger.severe("image : " + imageFile + " could not be resized.");
 		} else {
 			/* create cache image */
-			
+
 			/**
-			 * put in cache if no result file gived 
+			 * put in cache if no result file gived
 			 */
 			if (resultFile == null) {
 				FileCache fc = FileCache.getInstance(application);
@@ -1024,19 +1028,19 @@ public class ImageTransformServlet extends FileServlet {
 				String dir = ImageHelper.createSpecialDirectory(ctxb, globalContext.getContextKey(), filter, area, deviceCode, template, comp, imageParam);
 				TransactionFile transFile = fc.saveFileTransactional(dir, imageName);
 				OutputStream outImage = transFile.getOutputStream();
-	
+
 				try {
 					imageType = StringHelper.neverNull(config.getFileExtension(device, filter, area), imageType);
 					logger.info("write image : " + imageType + " width: " + img.getWidth() + " height: " + img.getHeight());
-	
+
 					if (comp != null && StringHelper.trimAndNullify(comp.getImageFilterKey(ctxb)) != null) {
 						img = ((IImageFilter) comp).filterImage(session.getServletContext(), ctxb, img);
 					}
-	
+
 					// if (!ImageEngine.isAlphaImageType(imageType)) {
 					// img = ImageEngine.removeAlpha(img);
 					// }
-	
+
 					// ImageIO.write(img, imageType, outImage);
 					ImageEngine.storeImage(img, imageType, outImage);
 					if (metadata != null) {
@@ -1466,7 +1470,7 @@ public class ImageTransformServlet extends FileServlet {
 							} else {
 								file = tempImageFile;
 							}
-							
+
 							if (file != null) {
 								// fileStream = new FileInputStream(file);
 								super.processRequest(request, response, file, content);
