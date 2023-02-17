@@ -601,7 +601,14 @@ public class XMLManipulationHelper {
 						previewCode = previewCode + "<img class=\"empty_image\" alt=\"\" style=\"height: 0; width: 0; margin:0; padding: 0;\" width=\"0\" height=\"0\" src=\"<%=URLHelper.createStaticURL(ctx, globalContext.getStaticConfig().getMailingFeedBackURI())%>\" /> ";
 					}
 
-					String footerResourceIndlue = "<!-- comp resources --><%for (String uri : currentPage.getExternalResources(ctx)) {%><%=XHTMLHelper.renderHeaderResourceInsertion(ctx, uri, \""+template.getBuildId()+"\")%><%}%><!-- /comp resources -->";
+					String footerResourceIndlue = "";
+					if (!globalContext.getStaticConfig().isProd()) {
+						footerResourceIndlue  += "<!-- comp resources -->";
+					}
+					footerResourceIndlue  += "<%for (String uri : currentPage.getExternalResources(ctx)) {%><%=XHTMLHelper.renderHeaderResourceInsertion(ctx, uri, \""+template.getBuildId()+"\")%><%}%>";
+					if (!globalContext.getStaticConfig().isProd()) {
+						footerResourceIndlue  += "<!-- /comp resources -->";
+					}
 					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart() - 1, footerResourceIndlue + "<%=ctx.getGlobalContext().getFooterBloc()%>" + previewCode);
 				}
 
@@ -773,8 +780,14 @@ public class XMLManipulationHelper {
 					out.println("<%}%>");
 					out.close();
 					
-					String pageModules = "<!-- comp modules --><%for (String uri : currentPage.getExternalModules(ctx)) {%><%=XHTMLHelper.renderHeaderModuleInsertion(ctx, uri, \""+template.getBuildId()+"\")%><%}%><!-- /comp modules -->";
-					
+					String pageModules = "";
+					if (!globalContext.getStaticConfig().isProd()) {
+						pageModules += "<!-- comp modules -->";
+					}
+					pageModules += "<%for (String uri : currentPage.getExternalModules(ctx)) {%><%=XHTMLHelper.renderHeaderModuleInsertion(ctx, uri, \""+template.getBuildId()+"\")%><%}%>";
+					if (!globalContext.getStaticConfig().isProd()) {
+						pageModules += "<!-- /comp modules -->";
+					}
 					String pageCss = "<%if (currentPage.getCss(ctx).length() > 0) {%><style><%=currentPage.getCss(ctx)%></style><%}%>";
 					
 					remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart(), getHTMLSufixHead(globalContext.getStaticConfig(), template) + new String(outStream.toByteArray()) + pageModules + pageCss);
