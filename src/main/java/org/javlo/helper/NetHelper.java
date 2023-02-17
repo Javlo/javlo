@@ -512,7 +512,7 @@ public class NetHelper {
 		
 
 		System.out.println("");
-		System.out.println("mail content : ");
+		System.out.println("mail content : "+url);
 		System.out.println(content);
 		System.out.println("");
 		
