@@ -268,7 +268,8 @@ public class MailingModuleContext extends AbstractModuleContext {
 		ContentContext pageCtx = ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE);
 		pageCtx.setAbsoluteURL(true);
 		pageCtx.resetDMZServerInter();
-		URL url = new URL(URLHelper.createURL(pageCtx) + ";jsessionid=" + ctx.getRequest().getRequestedSessionId());
+		//URL url = new URL(URLHelper.createURL(pageCtx) + ";jsessionid=" + ctx.getRequest().getRequestedSessionId());
+		URL url = new URL(URLHelper.createURL(pageCtx));
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
