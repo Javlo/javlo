@@ -2248,7 +2248,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				if (getConfig(ctx).isPreviewEditable() && editCtx.isPreviewEditionMode() && (!isRepeat() || getPage().equals(ctx.getCurrentPage()) || sc.isEditRepeatComponent()) && AdminUserSecurity.canModifyPage(ctx, ctx.getCurrentPage(), true)) {
 					I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 					String type = i18nAccess.getText("content." + getType(), getType());
-					String hint = "<b>" + type + "</b><br />" + i18nAccess.getViewText("preview.hint", "click for edit or drag and drop to move.");
+					//String hint = "<b>" + type + "</b><br />" + i18nAccess.getViewText("preview.hint", "click for edit or drag and drop to move.");
+					String hint = i18nAccess.getViewText("preview.hint", "click for edit or drag and drop to move.");
 					String newClass = "";
 					if (isNew(ctx)) {
 						newClass = " new-component";

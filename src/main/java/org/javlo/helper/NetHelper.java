@@ -51,6 +51,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.javlo.bean.Company;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
@@ -510,7 +511,6 @@ public class NetHelper {
 		}
 		String content = new String(out.toByteArray(), ContentContext.CHARACTER_ENCODING);
 		
-
 		System.out.println("");
 		System.out.println("mail content : "+url);
 		System.out.println(content);
@@ -1829,8 +1829,10 @@ public class NetHelper {
 	}
 
 	public static void main(String[] args) throws Exception {
-		System.out.println(">>> localhost 8080 > "+testPort("localhost", 8080));
-		System.out.println(">>> localhost 80   > "+testPort("localhost", 80));
+		String content = FileUtils.readFileToString(new File("c:/trans/mail.html"), ContentContext.CHARACTER_ENCODING);
+		content = XHTMLHelper.prepareToMailing(content);
+		content = CSSParser.mergeCSS(content, false);
+		System.out.println("content = "+content);
 	}
 	
 	public static String getIp(HttpServletRequest request) {
