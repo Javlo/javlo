@@ -119,6 +119,7 @@ public class NetHelper {
 	}
 
 	public static String readPageForMailing(URL url, String token) throws Exception {
+		logger.info("url : "+url);
 		return readPage(url, true, true, null, null, null, token, true);
 	}
 
