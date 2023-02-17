@@ -511,12 +511,6 @@ public class NetHelper {
 		}
 		String content = new String(out.toByteArray(), ContentContext.CHARACTER_ENCODING);
 		
-		System.out.println("");
-		System.out.println("mail content : "+url);
-		System.out.println(content);
-		System.out.println("");
-		
-
 		if (mailing) {
 			content = XHTMLHelper.prepareToMailing(content);
 		}
