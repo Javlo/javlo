@@ -1806,9 +1806,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				if (!isCloseRow(ctx)) {
 					colSuffix = "";
 				}
-				colSuffix = "</" + tpl.getColumnableColTag() + ">" + (!ctx.isProd() ? "<!-- close col : " + getId() + " -->" + colSuffix : "");
+				colSuffix = "</" + tpl.getColumnableColTag() + ">" + (!ctx.isProd() ? "<!-- close col : " + getId() + " -->" : "") + colSuffix;
 				if (!StringHelper.isEmpty(tpl.getColumnableColTagIn())) {
-					colSuffix = "</" + tpl.getColumnableColTagIn() + ">" + (!ctx.isProd() ? "<!-- close in col : " + getId() + " -->" + colSuffix : "");
+					colSuffix = "</" + tpl.getColumnableColTagIn() + ">" + (!ctx.isProd() ? "<!-- close in col : " + getId() + " -->" : "") + colSuffix;
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
