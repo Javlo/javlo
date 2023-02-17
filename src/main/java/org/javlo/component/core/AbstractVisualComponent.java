@@ -1799,16 +1799,16 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			Template tpl;
 			try {
 				tpl = ctx.getCurrentTemplate();
-				colSuffix = "</" + tpl.getColumnableRowTag() + "> </div><!-- close row : " + getId() + " -->";
+				colSuffix = "</" + tpl.getColumnableRowTag() + "> </div>" + (!ctx.isProd() ? "<!-- close row : " + getId() + " -->" : "");
 				if (!StringHelper.isEmpty(tpl.getColumnableRowTagIn())) {
 					colSuffix = "</" + tpl.getColumnableRowTagIn() + '>' + colSuffix;
 				}
 				if (!isCloseRow(ctx)) {
 					colSuffix = "";
 				}
-				colSuffix = "</" + tpl.getColumnableColTag() + "> <!-- close col : " + getId() + " -->" + colSuffix;
+				colSuffix = "</" + tpl.getColumnableColTag() + ">" + (!ctx.isProd() ? "<!-- close col : " + getId() + " -->" + colSuffix : "");
 				if (!StringHelper.isEmpty(tpl.getColumnableColTagIn())) {
-					colSuffix = "</" + tpl.getColumnableColTagIn() + "> <!-- close in col : " + getId() + " -->" + colSuffix;
+					colSuffix = "</" + tpl.getColumnableColTagIn() + ">" + (!ctx.isProd() ? "<!-- close in col : " + getId() + " -->" + colSuffix : "");
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1836,7 +1836,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		String closeComment = "<!-- /close comp:" + getType() + " -->";
+		String closeComment = (!ctx.isProd()?"<!-- /close comp:" + getType() + " -->":"");
 		if (isDisplayHidden() && ctx.isAsViewMode()) {
 			return closeComment;
 		}
@@ -2476,7 +2476,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 		String suffix;
 		if (!componentBean.isList()) {
-			suffix = "</" + getTag(ctx) + "> <!-- /forced suffix t:" + getType() + " -->";
+			suffix = "</" + getTag(ctx) + ">" + (!ctx.isProd() ? "<!-- /forced suffix t:" + getType() + " -->" : "");
 		} else {
 			suffix = "</" + getListItemTag(ctx) + '>';
 		}
@@ -2914,10 +2914,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		assert bean != null;
 		setComponentBean(bean);
 
-//		if (componentBean.getHiddenModes() != null && !componentBean.getHiddenModes().contains(ContentContext.MODULE_DESKTOP_SPECIAL_MODE) && !componentBean.getHiddenModes().contains(ContentContext.MODULE_MOBILE_SPECIAL_MODE)) {
-//			componentBean.getHiddenModes().add(ContentContext.MODULE_DESKTOP_SPECIAL_MODE);
-//			componentBean.getHiddenModes().add(ContentContext.MODULE_MOBILE_SPECIAL_MODE);
-//		}
+		// if (componentBean.getHiddenModes() != null &&
+		// !componentBean.getHiddenModes().contains(ContentContext.MODULE_DESKTOP_SPECIAL_MODE)
+		// &&
+		// !componentBean.getHiddenModes().contains(ContentContext.MODULE_MOBILE_SPECIAL_MODE))
+		// {
+		// componentBean.getHiddenModes().add(ContentContext.MODULE_DESKTOP_SPECIAL_MODE);
+		// componentBean.getHiddenModes().add(ContentContext.MODULE_MOBILE_SPECIAL_MODE);
+		// }
 
 		init();
 	}
@@ -3767,7 +3771,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		} else {
 			return "fa fa-" + fontAwe;
 		}
-		
+
 	}
 
 	public boolean haveRight(ContentContext ctx, String action) {
