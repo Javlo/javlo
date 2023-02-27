@@ -87,7 +87,7 @@
 									<label for="s4">rejected</label>
 								</div>
 								<div class="_jv_btn-check">
-									<input id="s5" type="radio" name="status" value="rejected" ${ticket.status == 'done'?'checked="checked"':''}>
+									<input id="s5" type="radio" name="status" value="done" ${ticket.status == 'done'?'checked="checked"':''}>
 									<label for="s5">done</label>
 								</div>
 								<div class="_jv_btn-check">
