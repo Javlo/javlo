@@ -231,7 +231,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 		menubar : false,
 		convert_urls: false,
 		selector: cssQuery,    	
-		toolbar: "textlang | undo redo | bold italic | pastetext | alignleft aligncenter alignright alignjustify | code"
+		toolbar: "textlang | undo redo | bold italic | pastetext"
 		});	 
 	} else {
 		tinyMCE.init({
