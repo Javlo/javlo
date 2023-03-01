@@ -121,7 +121,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 		            input : field_name
 		        });		    	
 			},
-			toolbar: "undo redo searchreplace | bold italic underline fontsizeselect forecolor backcolor removeformat | charmap nonbreaking | alignleft aligncenter alignright alignjustify | link | bullist numlist outdent indent"
+			toolbar: "undo redo searchreplace | bold italic underline fontsizeselect forecolor backcolor removeformat | charmap nonbreaking | alignleft aligncenter alignright alignjustify | link | bullist numlist outdent indent | code"
 		    //toolbar: "textlang | undo redo searchreplace | bold italic underline fontsizeselect forecolor backcolor removeformat | charmap nonbreaking | alignleft aligncenter alignright alignjustify | link | bullist numlist outdent indent"
 		});
 	} if (complexity == "email") {
@@ -158,7 +158,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 		            input : field_name
 		        });		    	
 			},
-			toolbar: "undo redo searchreplace | bold italic underline strikethrough fontsizeselect removeformat | table charmap nonbreaking code | alignleft aligncenter alignright alignjustify | link"
+			toolbar: "undo redo searchreplace | bold italic underline strikethrough fontsizeselect removeformat | table charmap nonbreaking code | alignleft aligncenter alignright alignjustify | link | code"
 		    //toolbar: "textlang | undo redo searchreplace | bold italic underline strikethrough fontsizeselect removeformat | table charmap nonbreaking code | alignleft aligncenter alignright alignjustify | link"
 		});
 	} else if (complexity == "high") {
@@ -231,7 +231,7 @@ function loadWysiwyg(cssQuery, complexity, chooseFileURL, format, fontsize, wysi
 		menubar : false,
 		convert_urls: false,
 		selector: cssQuery,    	
-		toolbar: "textlang | undo redo | bold italic | pastetext"
+		toolbar: "textlang | undo redo | bold italic | pastetext | alignleft aligncenter alignright alignjustify | code"
 		});	 
 	} else {
 		tinyMCE.init({

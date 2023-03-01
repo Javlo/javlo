@@ -324,6 +324,12 @@ public class TimeHelper {
 		Date d1 = new Date();
 		Date d2 = new Date();
 		System.out.println(">>>>>>>>> TimeHelper.main : d1 <-> s2 = " + getDaysDistance(d1, d2)); // TODO: remove debug trace
+		
+		LocalDate date1 = LocalDate.now();
+		LocalDate date2 = LocalDate.now();
+		date2 = date2.plusDays(10);
+		System.out.println(">>>>>>>>> TimeHelper.main : date1 <-> date2 = " + getDaysDistance(date1, date2)); // TODO: remove debug trace
+		System.out.println(">>>>>>>>> TimeHelper.main : date2 <-> date1 = " + getDaysDistance(date2, date1)); // TODO: remove debug trace
 	}
 
 	/**
