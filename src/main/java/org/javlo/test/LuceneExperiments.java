@@ -25,8 +25,8 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.search.WildcardQuery;
-import org.apache.lucene.store.RAMDirectory;
-import org.apache.lucene.util.Version;
+import org.apache.lucene.store.ByteBuffersDirectory;
+import org.apache.lucene.store.Directory;
 
 public class LuceneExperiments {
 
@@ -38,7 +38,7 @@ public class LuceneExperiments {
 
 	private void start(String searchStrIn) throws Exception {
 		StandardAnalyzer analyzer = new StandardAnalyzer();
-		RAMDirectory index = new RAMDirectory();
+		Directory index = new ByteBuffersDirectory();
 
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);//TODO try finally to close?
 		IndexWriter w = new IndexWriter(index, config);
