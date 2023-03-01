@@ -22,8 +22,8 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopScoreDocCollector;
+import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.RAMDirectory;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.config.StaticConfig;
@@ -187,7 +187,7 @@ public class LuceneSearchEngine implements ISearchEngine {
 	private void indexLanguage(ContentContext ctx, LuceneLanguageIndex langIndex) throws Exception {
 
 		langIndex.analyzer = new StandardAnalyzer();
-		langIndex.index = new RAMDirectory();
+		langIndex.index = new ByteBuffersDirectory();
 
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement nav = content.getNavigation(ctx);
