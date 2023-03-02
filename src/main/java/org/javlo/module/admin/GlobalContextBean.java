@@ -1027,10 +1027,10 @@ public class GlobalContextBean {
 			return number;
 		}
 		if (!StringHelper.isDigit(number.substring(0,2))) {
-			return number.substring(2);
-		} else {
-			return number;
+			number = number.substring(2);
 		}
+		number = number.replace(".", "").trim();
+		return number;
 	}
 
 	public void setOwnerNumber(String ownerNumber) {
