@@ -946,6 +946,8 @@ Security in case of vulnerabilities.
   - detect less and scss modification on all files
   - elFinder - Version 2.1.61 
   - template editor, save and commit with ajax request
-  - exrtact anchor id from heading
+  - extract anchor id from heading
+  - accessibility updates
 ### fixed
   - link without scheme usable in field external link
+## [2.2] - 03/03/2023
