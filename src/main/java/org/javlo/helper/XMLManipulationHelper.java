@@ -976,7 +976,7 @@ public class XMLManipulationHelper {
 		BufferedWriter out = new BufferedWriter(outString);
 		out.append("<%if (ctx.isAsViewMode() && !ctx.isPageAssociation() && !ctx.getCurrentTemplate().isMailing()) {%>");
 		out.append("<a id=\"jv_escape_menu\" href=\"#" + contentId + "\"><%=i18nAccess.getViewText(\"wai.to_content\")%></a>");
-		out.append("<style>#jv_escape_menu {position: absolute; top:-100px;} #jv_escape_menu:focus {position: fixed; margin: 0.5rem auto; max-width: 320px; padding: 0.5rem; color: #000; background-color: #fff; font-size: 16px; border-radius: 5px;}</style>");
+		out.append("<style>#jv_escape_menu {position: absolute; top:-100px;} #jv_escape_menu:focus {position: fixed; margin: 0.5rem auto; max-width: 320px; padding: 0.5rem; color: #000; background-color: #eee; font-size: 16px; border-radius: 5px;}</style>");
 		out.append("<%}%>");
 		out.close();
 		return outString.toString();
