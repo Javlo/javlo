@@ -40,11 +40,11 @@ public class SearchActions implements IAction {
 	 * create a static logger.
 	 */
 	protected static Logger logger = Logger.getLogger(SearchActions.class.getName());
-	
+
 	public static String performDefaultsearch(HttpServletRequest request, HttpServletResponse response) {
 		return search(request, response, true);
 	}
-	
+
 	public static String performSearch(HttpServletRequest request, HttpServletResponse response) {
 		return search(request, response, false);
 	}
@@ -97,7 +97,7 @@ public class SearchActions implements IAction {
 					} else {
 						search = SearchEngineFactory.getEngine(ctx);
 					}
-					logger.info("search action : '" + searchStr+ "' [engine:"+search.getClass().getName()+']');
+					logger.info("search action : '" + searchStr + "' [engine:" + search.getClass().getName() + ']');
 					List<SearchElement> result = search.search(ctx, groupId, searchStr, sort, componentList);
 					if (!ctx.isAjax()) {
 						if (ctx.getCurrentPage().getContentByType(ctx.getContextWithoutArea(), SearchResultComponent.TYPE).size() == 0) {
@@ -113,9 +113,9 @@ public class SearchActions implements IAction {
 						int max = Integer.MAX_VALUE;
 						if (StringHelper.isDigit(maxStr)) {
 							max = Integer.parseInt(maxStr);
-							if (result.size()>max) {
-								List<SearchElement> maximuzedResult  = new LinkedList<>();
-								for (int i=0; i<max; i++) {
+							if (result.size() > max) {
+								List<SearchElement> maximuzedResult = new LinkedList<>();
+								for (int i = 0; i < max; i++) {
 									maximuzedResult.add(result.get(i));
 								}
 								result = maximuzedResult;
@@ -123,6 +123,8 @@ public class SearchActions implements IAction {
 						}
 						ctx.getAjaxData().put("searchResult", result);
 					}
+					I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
+					ctx.setForcePageTitle(i18nAccess.getViewText("search.element-found") + " '" + Encode.forHtmlAttribute(searchStr) + "' : " + result.size());
 				}
 			}
 
@@ -133,20 +135,20 @@ public class SearchActions implements IAction {
 
 		return msg;
 	}
-	
+
 	private static String performSearchresulthtml(ContentContext ctx, boolean defautSearchEngine) throws Exception {
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		search(ctx.getRequest(), ctx.getResponse(), defautSearchEngine);
-		List<SearchElement> result = (List<SearchElement>)ctx.getAjaxData().get("searchResult");
+		List<SearchElement> result = (List<SearchElement>) ctx.getAjaxData().get("searchResult");
 		if (result != null) {
 			ctx.getAjaxData().remove("searchResult");
 			synchronized (result) {
 				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 				PrintStream out = new PrintStream(outStream);
 				if (result.size() == 0) {
-					I18nAccess i18nAccess = I18nAccess.getInstance(ctx);					
+					I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 					String searchStr = rs.getParameter("keywords", rs.getParameter("q", null));
-					out.println("<div class=\"alert alert-warning\">"+i18nAccess.getText("search.title.no-result")+Encode.forHtml(searchStr)+"</div>");
+					out.println("<div class=\"alert alert-warning\">" + i18nAccess.getText("search.title.no-result") + Encode.forHtml(searchStr) + "</div>");
 				}
 				for (SearchElement page : result) {
 					String method = rs.getParameter("method");
@@ -163,11 +165,11 @@ public class SearchActions implements IAction {
 		}
 		return null;
 	}
-	
+
 	public synchronized static String performSearchresulthtml(ContentContext ctx) throws Exception {
 		return performSearchresulthtml(ctx, false);
 	}
-	
+
 	public synchronized static String performSearchdefaultresulthtml(ContentContext ctx) throws Exception {
 		return performSearchresulthtml(ctx, true);
 	}

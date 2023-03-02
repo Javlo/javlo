@@ -592,6 +592,11 @@ public class InfoBean {
 	}
 
 	public String getPageTitle() {
+		
+		if (ctx.getForcePageTitle() != null) {
+			return ctx.getForcePageTitle();
+		}
+		
 		try {
 			MenuElement popupPage = NavigationHelper.getPopupPage(ctx);
 			if (popupPage != null) {

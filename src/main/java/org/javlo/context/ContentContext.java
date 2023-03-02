@@ -156,6 +156,8 @@ public class ContentContext {
 	
 	private Locale locale = null;
 	
+	private String forcePageTitle = null;
+	
 
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free, boolean pageManagement) {
 		ContentContext ctx = new ContentContext();
@@ -619,6 +621,8 @@ public class ContentContext {
 		checkContentArea = ctx.checkContentArea;
 
 		forceGlobalContext = ctx.forceGlobalContext;
+		
+		forcePageTitle = ctx.forcePageTitle;
 	}
 
 	public String getArea() {
@@ -2485,6 +2489,14 @@ public class ContentContext {
 
 	public void setProd(Boolean prod) {
 		this.prod = prod;
+	}
+
+	public String getForcePageTitle() {
+		return forcePageTitle;
+	}
+
+	public void setForcePageTitle(String forcePageTitle) {
+		this.forcePageTitle = forcePageTitle;
 	}
 
 }
