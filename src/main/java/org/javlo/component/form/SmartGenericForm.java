@@ -1386,7 +1386,6 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			}
 			sql += ") VALUES "+values+")";
 			conn = DataBaseService.getInstance(ctx.getGlobalContext()).getConnection(DataBaseService.getDefaultDbName(ctx));
-			System.out.println(">>>>>>>>> SmartGenericForm.performSubmit : sql = "+sql); //TODO: remove debug trace
 			ps = conn.prepareStatement(sql);
 		}
 
@@ -1439,7 +1438,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				if (!field.isFilledWidth(finalValue, !field.getType().equals("list")) && StringHelper.containsUppercase(key.substring(0, 1)) && StringHelper.isEmpty(field.getCondition())) {
 					errorKeyFound.add(key);
 					errorFields.add(key);
-					errorFieldList = errorFieldList + errorFieldSep + field.getLabel();
+					errorFieldList = errorFieldList + errorFieldSep + field.getLabel() + (field.getFormatLabel() != null?" ["+field.getFormatLabel()+"]":"");
 					errorFieldSep = ",";
 					if (badFormatFound) {
 						GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.generic", "please check all fields.") + errorFieldList + ')', GenericMessage.ERROR);

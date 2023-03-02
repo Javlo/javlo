@@ -312,6 +312,16 @@ public class Field {
 			return true;
 		}
 	}
+	
+	public String getFormatLabel() {
+		if (getType().equals(TYPE_EMAIL)) {
+			return "name@host.com";
+		} else if (getType().equals(TYPE_NUMBER)) {
+			return "1234";
+		} else {
+			return null;
+		}
+	}
 
 	public String getRole() {
 		return role;
