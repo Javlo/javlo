@@ -1371,20 +1371,20 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		if (comp.isFilledFromCookies()) {
 			dataMap = new HashMap<>();
 		}
-		
-		String sql=null;
+
+		String sql = null;
 		PreparedStatement ps = null;
 		Connection conn = null;
 		if (comp.isDb(ctx)) {
 			sql = "INSERT INTO " + comp.getTableSqlName() + "(";
 			String values = "(";
-			String sep="";		
+			String sep = "";
 			for (Field field : comp.getFields(ctx)) {
-				sql += sep+field.getName();
-				values += sep+"?";
-				sep=",";
+				sql += sep + field.getName();
+				values += sep + "?";
+				sep = ",";
 			}
-			sql += ") VALUES "+values+")";
+			sql += ") VALUES " + values + ")";
 			conn = DataBaseService.getInstance(ctx.getGlobalContext()).getConnection(DataBaseService.getDefaultDbName(ctx));
 			ps = conn.prepareStatement(sql);
 		}
@@ -1426,7 +1426,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			} else {
 				dataDoc.put(StringHelper.firstLetterLower(key), "" + value);
 			}
-			
+
 			if (ps != null) {
 				ps.setObject(statementIndex, value);
 				statementIndex++;
@@ -1438,7 +1438,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				if (!field.isFilledWidth(finalValue, !field.getType().equals("list")) && StringHelper.containsUppercase(key.substring(0, 1)) && StringHelper.isEmpty(field.getCondition())) {
 					errorKeyFound.add(key);
 					errorFields.add(key);
-					errorFieldList = errorFieldList + errorFieldSep + field.getLabel() + (field.getFormatLabel() != null?" ["+field.getFormatLabel()+"]":"");
+					errorFieldList = errorFieldList + errorFieldSep + field.getLabel() + (field.getFormatLabel() != null ? " - " + field.getFormatLabel() : "");
 					errorFieldSep = ",";
 					if (badFormatFound) {
 						GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.generic", "please check all fields.") + errorFieldList + ')', GenericMessage.ERROR);
@@ -1479,7 +1479,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				} else if (!field.isValueValid(finalValue) && !errorKeyFound.contains(key)) {
 					errorKeyFound.add(key);
 					errorFields.add(key);
-					errorFieldList = errorFieldList + errorFieldSep + field.getLabel();
+					errorFieldList = errorFieldList + errorFieldSep + field.getLabel() + (field.getFormatLabel() != null ? " - " + field.getFormatLabel() : "");
 					errorFieldSep = ",";
 					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.generic", "please check all fields.") + errorFieldList + ')', GenericMessage.ERROR);
 					request.setAttribute("msg", msg);
