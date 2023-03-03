@@ -15,7 +15,7 @@ public class AccessSecurity {
 
 	private TimeMap<String, Integer> requestByMinute = new TimeMap<>(60);
 
-	private static final int MAX_REQUEST_BY_MINUTE = 250;
+	private static final int MAX_REQUEST_BY_MINUTE = 500;
 
 	private static AccessSecurity instance = new AccessSecurity();
 
