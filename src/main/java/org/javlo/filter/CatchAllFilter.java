@@ -96,7 +96,7 @@ public class CatchAllFilter implements Filter {
 		CountService.getInstance(servletContext).touch();
 		
 		if (ALL_COUNT%1000 == 0 && ALL_COUNT > 0) {
-			logger.info("IP Blocking status : VALID_IP:"+VALID_IP+"  BLOCK_IP="+BLOCK_IP+ "  [%BLK:"+StringHelper.renderDoubleAsPercentage(BLOCK_IP/ALL_COUNT)+"]");
+			logger.info("IP Blocking status : VALID_IP:"+VALID_IP+"  BLOCK_IP="+BLOCK_IP+ "  [%BLK:"+StringHelper.renderDoubleAsPercentage((double)BLOCK_IP/(double)ALL_COUNT)+"]");
 		}
 		ALL_COUNT++;
 		
