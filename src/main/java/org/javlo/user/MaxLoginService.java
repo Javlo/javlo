@@ -39,7 +39,7 @@ public class MaxLoginService {
 				if (errorCount < maxErrorLoginHours) {
 					return true;
 				} else  {
-					logger.warning("too many errors on login : "+globalContext.getContextKey());
+					logger.warning("too many errors on login [ bad login:"+errorCount+" ] : "+globalContext.getContextKey());
 					return false;
 				}
 			} else {
