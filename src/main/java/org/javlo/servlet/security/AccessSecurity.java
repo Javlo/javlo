@@ -1,11 +1,17 @@
 package org.javlo.servlet.security;
 
+import java.util.logging.Logger;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.javlo.helper.NetHelper;
 import org.javlo.utils.TimeMap;
 
 public class AccessSecurity {
+	
+	private static int logPrint = 0;
+	
+	private static Logger logger = Logger.getLogger(AccessSecurity.class.getName());
 
 	private TimeMap<String, Integer> requestByMinute = new TimeMap<>(60);
 
@@ -27,7 +33,17 @@ public class AccessSecurity {
 			requestCount++;
 			requestByMinute.update(ip, requestCount);
 		}
-		return requestCount > MAX_REQUEST_BY_MINUTE;
+		
+		boolean out = requestCount > MAX_REQUEST_BY_MINUTE;
+		
+		if (out) {
+			logPrint++;
+			if (logPrint%100 == 0) {
+				logger.severe("BLOCK IP : "+NetHelper.getIp(request));
+			}
+		}
+				
+		return out;
 	}
 
 }
