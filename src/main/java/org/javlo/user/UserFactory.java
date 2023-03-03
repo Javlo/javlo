@@ -455,7 +455,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		logger.fine("try to log : " + login);
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		MaxLoginService maxLoginService = MaxLoginService.getInstance();
-		if (!maxLoginService.isLoginAuthorised(globalContext)) {
+		if (!maxLoginService.isLoginAuthorised(request)) {
 
 			logger.severe("to many login request : " + request.getRequestURL());
 

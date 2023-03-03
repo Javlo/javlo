@@ -3,7 +3,10 @@ package org.javlo.user;
 import java.util.Calendar;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.NetHelper;
 
 public class MaxLoginService {
 	
@@ -31,7 +34,7 @@ public class MaxLoginService {
 		return Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
 	}
 	
-	public boolean isLoginAuthorised(GlobalContext globalContext) {
+	public boolean isLoginAuthorised(HttpServletRequest request) {
 		if (maxErrorLoginHours == 0) {
 			return true;
 		} else {
@@ -39,7 +42,7 @@ public class MaxLoginService {
 				if (errorCount < maxErrorLoginHours) {
 					return true;
 				} else  {
-					logger.warning("too many errors on login [ bad login:"+errorCount+" ] : "+globalContext.getContextKey());
+					logger.warning("too many errors on login [ bad login:"+errorCount+" IP:"+NetHelper.getIp(request)+" ] : "+GlobalContext.getInstance(request).getContextKey());
 					return false;
 				}
 			} else {
