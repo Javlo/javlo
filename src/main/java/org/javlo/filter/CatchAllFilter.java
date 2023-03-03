@@ -63,6 +63,11 @@ import org.javlo.user.UserPrincipal;
 import org.javlo.utils.DebugListening;
 
 public class CatchAllFilter implements Filter {
+	
+	private static long VALID_IP = 0;
+	private static long BLOCK_IP = 0;
+	private static long ALL_COUNT = 0;
+	
 
 	private static final Set<String> COMPRESS_EXT = new HashSet<String>(Arrays.asList(new String[] { "js", "jpg", "jpeg", "png", "css", "font", "woff", "gif" }));
 
@@ -90,11 +95,19 @@ public class CatchAllFilter implements Filter {
 		ServletContext servletContext = httpRequest.getSession().getServletContext();
 		CountService.getInstance(servletContext).touch();
 		
+		if (ALL_COUNT%1000 == 0) {
+			logger.info("IP Blocking status : VALID_IP:"+VALID_IP+"  BLOCK_IP="+BLOCK_IP+ "  [%BLK:"+StringHelper.renderDoubleAsPercentage(BLOCK_IP/ALL_COUNT)+"]");
+		}
+		ALL_COUNT++;
+		
 		/** security : block ip attack **/
 		if (AccessSecurity.getInstance(httpRequest).isIpBlock(httpRequest)) {
 			httpResponse.reset();
 			httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			BLOCK_IP++;
 			return;
+		} else {
+			VALID_IP++;
 		}
 
 		if (request.getParameter(ContentContext.FORWARD_PATH_REQUEST_KEY) != null) {
