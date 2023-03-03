@@ -28,17 +28,15 @@ public class AccessSecurity {
 		Integer requestCount = requestByMinute.get(ip);
 		if (requestCount == null) {
 			requestCount = 1;
-			requestByMinute.put(ip, 1);
 		} else {
 			requestCount++;
-			requestByMinute.update(ip, requestCount);
 		}
+		requestByMinute.update(ip, requestCount);
 		
 		boolean out = requestCount > MAX_REQUEST_BY_MINUTE;
-		
 		if (out) {
 			logPrint++;
-			if (logPrint%100 == 0) {
+			if (logPrint%MAX_REQUEST_BY_MINUTE == 0) {
 				logger.severe("BLOCK IP : "+NetHelper.getIp(request));
 			}
 		}
