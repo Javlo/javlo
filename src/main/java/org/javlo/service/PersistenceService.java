@@ -1696,9 +1696,9 @@ public class PersistenceService {
 								}
 							}
 						} catch (RuntimeException e) { // if fatal error in
-							e.printStackTrace();
+							//e.printStackTrace();
 							// structure -> continue
-							logger.warning(e.getMessage());
+							logger.fine(e.getMessage());
 						}
 						line = bufReader.readLine();
 					}
