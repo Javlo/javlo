@@ -1,9 +1,41 @@
 package org.javlo.filter;
 
-import org.apache.logging.log4j.spi.LoggerContextFactory;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.security.Principal;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.javlo.config.StaticConfig;
-import org.javlo.context.*;
-import org.javlo.helper.*;
+import org.javlo.context.ContentContext;
+import org.javlo.context.ContentManager;
+import org.javlo.context.EditContext;
+import org.javlo.context.GlobalContext;
+import org.javlo.context.UserInterfaceContext;
+import org.javlo.helper.LocalLogger;
+import org.javlo.helper.NetHelper;
+import org.javlo.helper.RequestHelper;
+import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.ServletHelper;
+import org.javlo.helper.StringHelper;
+import org.javlo.helper.StringSecurityUtil;
+import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -19,21 +51,16 @@ import org.javlo.service.DataToIDService;
 import org.javlo.service.RequestService;
 import org.javlo.service.log.Log;
 import org.javlo.servlet.FileServlet;
+import org.javlo.servlet.security.AccessSecurity;
 import org.javlo.template.Template;
 import org.javlo.tracking.Tracker;
-import org.javlo.user.*;
+import org.javlo.user.AdminUserFactory;
+import org.javlo.user.AdminUserSecurity;
+import org.javlo.user.IUserFactory;
+import org.javlo.user.User;
+import org.javlo.user.UserFactory;
+import org.javlo.user.UserPrincipal;
 import org.javlo.utils.DebugListening;
-
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.security.Principal;
-import java.util.*;
-import java.util.logging.Logger;
 
 public class CatchAllFilter implements Filter {
 
@@ -62,6 +89,14 @@ public class CatchAllFilter implements Filter {
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		ServletContext servletContext = httpRequest.getSession().getServletContext();
 		CountService.getInstance(servletContext).touch();
+		
+		/** security : block ip attack **/
+		if (AccessSecurity.getInstance(httpRequest).isIpBlock(httpRequest)) {
+			logger.severe("BLOCK IP : "+NetHelper.getIp(httpRequest));
+			httpResponse.reset();
+			httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return;
+		}
 
 		if (request.getParameter(ContentContext.FORWARD_PATH_REQUEST_KEY) != null) {
 			String forwardURL = request.getParameter(ContentContext.FORWARD_PATH_REQUEST_KEY);

@@ -160,6 +160,23 @@ public class TimeMap<K, V> implements Map<K, V> {
 			return previousValue;
 		}
 	}
+	
+	/**
+	 * update value, without reset time
+	 * @param key
+	 * @param value
+	 * @return previousValue
+	 */
+	public V update(K key, V value) {
+		if (maxSize > 0 && internalTimeMap.size() == maxSize) {
+			release(order.get(0));
+			order.remove(0);
+		}
+		synchronized (internalMap) {
+			V previousValue = internalMap.put(key, value);
+			return previousValue;
+		}
+	}
 
 	@Override
 	public void putAll(Map<? extends K, ? extends V> m) {
