@@ -109,7 +109,6 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 				ctx.getRequest().setAttribute("newEmail", email);
 				setForcedRenderer(ctx, "/jsp/components/user-login/create-with-token.jsp");
 			}
-			
 
 			String pwtoken = rs.getParameter("pwtoken");
 			String userName = ctx.getGlobalContext().getChangePasswordTokenUser(pwtoken, false);
@@ -208,7 +207,7 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 		String password = rs.getParameter("password", "").trim();
 		String password2 = rs.getParameter("passwordbis", "").trim();
 		ctx.getRequest().setAttribute("userInfoMap", new RequestParameterMap(ctx.getRequest()));
-		
+
 		String msg = userFactory.checkUserAviability(ctx, login);
 		if (msg != null) {
 			return msg;
@@ -243,36 +242,41 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 		userInfo.setRoles(StringHelper.stringToSet(comp.getFieldValue(ROLES)));
 		userFactory.addUserInfo(userInfo);
 		userFactory.store();
-		userInfo = userFactory.login(ctx.getRequest(), login, password).getUserInfo();
-		if (StringHelper.isMail(comp.getFieldValue(EMAIL))) {
-			String subject = i18nAccess.getText("user.mail.create.subjet") + ctx.getGlobalContext().getGlobalTitle();
-			Map data = new HashMap();
-			data.put("email", login);
-			if (!StringHelper.isEmpty(userInfo.getFirstName())) {
-				data.put(i18nAccess.getText("user.firstname"), userInfo.getFirstName());
+		User user = userFactory.login(ctx.getRequest(), login, password);
+		if (user != null) {
+			userInfo = userFactory.login(ctx.getRequest(), login, password).getUserInfo();
+			if (StringHelper.isMail(comp.getFieldValue(EMAIL))) {
+				String subject = i18nAccess.getText("user.mail.create.subjet") + ctx.getGlobalContext().getGlobalTitle();
+				Map data = new HashMap();
+				data.put("email", login);
+				if (!StringHelper.isEmpty(userInfo.getFirstName())) {
+					data.put(i18nAccess.getText("user.firstname"), userInfo.getFirstName());
+				}
+				if (!StringHelper.isEmpty(userInfo.getLastName())) {
+					data.put(i18nAccess.getText("user.lastanme"), userInfo.getLastName());
+				}
+				if (!StringHelper.isEmpty(comp.getFieldValue(ROLES))) {
+					data.put("roles", comp.getFieldValue(ROLES));
+				}
+				Map<String, String> params = new HashMap<String, String>();
+				params.put("webaction1", "changemode");
+				params.put("webaction2", "edit");
+				params.put("module", "users");
+				params.put("mode", "view");
+				params.put("cuser", userInfo.getEncryptLogin());
+				ContentContext absCtx = ctx.getContextForAbsoluteURL();
+				absCtx.setRenderMode(ContentContext.EDIT_MODE);
+				String adminMailContent = XHTMLHelper.createAdminMail(subject, null, data, URLHelper.createURL(absCtx, params), "go on page >>", null);
+				MailService mailService = MailService.getInstance(new MailConfig(ctx.getGlobalContext(), ctx.getGlobalContext().getStaticConfig(), null));
+				InternetAddress fromEmail = new InternetAddress(ctx.getGlobalContext().getAdministratorEmail());
+				InternetAddress toEmail = new InternetAddress(comp.getFieldValue(EMAIL));
+				mailService.sendMail(null, fromEmail, toEmail, null, null, subject, adminMailContent, true, null, ctx.getGlobalContext().getDKIMBean());
 			}
-			if (!StringHelper.isEmpty(userInfo.getLastName())) {
-				data.put(i18nAccess.getText("user.lastanme"), userInfo.getLastName());
+			if (!StringHelper.isEmpty(comp.getFieldValue(MSG))) {
+				messageRepository.setGlobalMessage(new GenericMessage(comp.getFieldValue(MSG), GenericMessage.INFO));
 			}
-			if (!StringHelper.isEmpty(comp.getFieldValue(ROLES))) {
-				data.put("roles", comp.getFieldValue(ROLES));
-			}
-			Map<String, String> params = new HashMap<String, String>();
-			params.put("webaction1", "changemode");
-			params.put("webaction2", "edit");
-			params.put("module", "users");
-			params.put("mode", "view");
-			params.put("cuser", userInfo.getEncryptLogin());
-			ContentContext absCtx = ctx.getContextForAbsoluteURL();
-			absCtx.setRenderMode(ContentContext.EDIT_MODE);
-			String adminMailContent = XHTMLHelper.createAdminMail(subject, null, data, URLHelper.createURL(absCtx, params), "go on page >>", null);
-			MailService mailService = MailService.getInstance(new MailConfig(ctx.getGlobalContext(), ctx.getGlobalContext().getStaticConfig(), null));
-			InternetAddress fromEmail = new InternetAddress(ctx.getGlobalContext().getAdministratorEmail());
-			InternetAddress toEmail = new InternetAddress(comp.getFieldValue(EMAIL));
-			mailService.sendMail(null, fromEmail, toEmail, null, null, subject, adminMailContent, true, null, ctx.getGlobalContext().getDKIMBean());
-		}
-		if (!StringHelper.isEmpty(comp.getFieldValue(MSG))) {
-			messageRepository.setGlobalMessage(new GenericMessage(comp.getFieldValue(MSG), GenericMessage.INFO));
+		} else {
+			logger.warning("user not found : "+login);
 		}
 		return null;
 	}
@@ -289,10 +293,10 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 			if (userFactory.getUser(email) != null) {
 				return i18nAccess.getViewText("registration.error.login_allreadyexist", "user already exists : ") + email;
 			} else {
-				if(StringHelper.isEmpty(user.getLogin())) {
+				if (StringHelper.isEmpty(user.getLogin())) {
 					user.setLogin(email);
 				}
-				if(StringHelper.isEmpty(userInfo.getLogin())) {
+				if (StringHelper.isEmpty(userInfo.getLogin())) {
 					userInfo.setLogin(email);
 				}
 			}
@@ -313,21 +317,22 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 				newRoles.remove(getFieldName(OPTOUT));
 			}
 		}
-		
+
 		UserRegistration.uploadFile(ctx);
 
-//		for (FileItem fileItem : rs.getAllFileItem()) {
-//			System.out.println(">>>>>>>>> UserLogin.performUpdate : fileItem.getName() = "+fileItem.getName()); //TODO: remove debug trace
-//			if (StringHelper.isImage(fileItem.getName())) {
-//				InputStream in = null;
-//				try {
-//					in = fileItem.getInputStream();
-//					UserFactory.uploadNewAvatar(ctx, ctx.getCurrentUser().getLogin(), in);
-//				} finally {
-//					ResourceHelper.closeResource(in);
-//				}
-//			}
-//		}
+		// for (FileItem fileItem : rs.getAllFileItem()) {
+		// System.out.println(">>>>>>>>> UserLogin.performUpdate : fileItem.getName() =
+		// "+fileItem.getName()); //TODO: remove debug trace
+		// if (StringHelper.isImage(fileItem.getName())) {
+		// InputStream in = null;
+		// try {
+		// in = fileItem.getInputStream();
+		// UserFactory.uploadNewAvatar(ctx, ctx.getCurrentUser().getLogin(), in);
+		// } finally {
+		// ResourceHelper.closeResource(in);
+		// }
+		// }
+		// }
 
 		userInfo.setRoles(newRoles);
 		/* save password */
