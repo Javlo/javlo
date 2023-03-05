@@ -59,6 +59,7 @@
 		<tika.version>1.28.4</tika.version>
 		<xdocreport.version>2.0.4</xdocreport.version>
 		<poi.version>5.2.3</poi.version>
+		<maven.plugin.version>3.3.2</maven.plugin.version>
 	</properties>
 
 	<dependencies>
@@ -679,23 +680,22 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.5.1</version>
+				<version>3.11.0</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<release>11</release>
 				</configuration>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>3.3.1</version>
+				<version>${maven.plugin.version}</version>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.3.1</version>
+				<version>${maven.plugin.version}</version>
 				<configuration>
 					<aggregate>true</aggregate>
 				</configuration>
@@ -703,21 +703,20 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
-				<version>3.3.1</version>
+				<version>${maven.plugin.version}</version>
 				<configuration>
-					<targetJdk>1.8</targetJdk>
+					<targetJdk>1.11</targetJdk>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>3.3.1</version>
+				<version>${maven.plugin.version}</version>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
-				<version>2.0.1</version>
 				<configuration>
 					<dependencyLocationsEnabled>false</dependencyLocationsEnabled>
 				</configuration>
@@ -753,10 +752,7 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<configuration>
-						<source>1.8</source>
-						<target>1.8</target>
-						<!--<fork>true</fork>
-						<executable>C:\Program Files\Java\jdk1.8.0_321\bin\javac</executable> -->
+						<release>11</release>
 					</configuration>
 				</plugin>
 				<plugin>

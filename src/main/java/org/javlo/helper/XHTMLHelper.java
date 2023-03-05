@@ -3208,7 +3208,7 @@ public class XHTMLHelper {
 				xhtml = xhtml.replace("${action.text}", linkLabel);
 			}
 			xhtml = xhtml.replace("${root}", URLHelper.createURL(ctx.getContextForAbsoluteURL(), "/"));
-			String logoUrl = URLHelper.getLogoRawUrl(ctx.getContextForAbsoluteURL());
+			String logoUrl = URLHelper.getLogoUrl(ctx.getContextForAbsoluteURL(), "mail-logo");
 			if (!StringHelper.isEmpty(logoUrl)) {
 				xhtml = xhtml.replace("${logo}", logoUrl);
 			} else {

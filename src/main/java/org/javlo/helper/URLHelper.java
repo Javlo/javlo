@@ -73,6 +73,10 @@ public class URLHelper extends ElementaryURLHelper {
 	}
 
 	public static String getLogoUrl(ContentContext ctx) throws Exception {
+		return getLogoUrl(ctx, "logo");
+	}
+	
+	public static String getLogoUrl(ContentContext ctx, String filter) throws Exception {
 		String logo = ctx.getGlobalContext().getTemplateData().getLogo();
 		File logoPath = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), AdminAction.LOGO_PATH, "logo_" + ctx.getLanguage() + ".png"));
 		if (logoPath.exists()) {
@@ -81,7 +85,7 @@ public class URLHelper extends ElementaryURLHelper {
 		if (logo == null || logo.equals("null")) {
 			return null;
 		} else {
-			return URLHelper.createTransformURL(ctx, URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), logo), "logo");
+			return URLHelper.createTransformURL(ctx, URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), logo), filter);
 		}
 	}
 
