@@ -753,6 +753,10 @@ public class ImageConfig {
 	}
 	
 	public static void main(String[] args) throws Exception {
+		
+		Color c = Color.decode("#ffffff");
+		System.out.println("c="+c);
+		
 		System.out.println("*** start ***");
 		File javloFile = new File("c:/trans/img3_removebg.jpg");
 		BufferedImage image = ImageIO.read(javloFile);
