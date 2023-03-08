@@ -674,7 +674,9 @@ public class StaticInfo implements IRestItem {
 				setTitle(ctx, data.getTitle());
 				setAuthors(ctx, data.getAuthor());
 				setDescription(ctx, data.getSubject());
-				setDate(ctx, data.getModificationDate().getTime());
+				if (data.getModificationDate() != null) {
+					setDate(ctx, data.getModificationDate().getTime());
+				}
 			}
 		}
 
