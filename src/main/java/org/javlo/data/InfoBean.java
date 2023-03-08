@@ -193,6 +193,14 @@ public class InfoBean {
 			return URLHelper.createURL(ctx);
 		}
 	}
+	
+	public String getCurrentUrl() throws Exception {
+		if (getFakeCurrentURL() != null) {
+			return getFakeCurrentURL();
+		} else {
+			return URLHelper.createURL(ctx);
+		}
+	}
 
 	public String getVirtualCurrentURL() throws Exception {
 		if (getFakeCurrentURL() != null) {

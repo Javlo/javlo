@@ -127,8 +127,6 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 
 	public String getConfirmEmail() {
 		if (getValue().split(DATA_SEPARATOR).length <= 2) { // old version of
-			// the component or
-			// no email confirm
 			return null;
 		} else {
 			String email = getValue().split(DATA_SEPARATOR)[2];
@@ -139,7 +137,7 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 			}
 		}
 	}
-
+	
 	public String getEmailSubject() {
 		if (getValue().split(DATA_SEPARATOR).length <= 3) { // old version
 			return "";
@@ -149,6 +147,19 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 				return "";
 			} else {
 				return subject;
+			}
+		}
+	}
+	
+	public String getTitle() {
+		if (getValue().split(DATA_SEPARATOR).length <= 4) { // old version of
+			return null;
+		} else {
+			String title = getValue().split(DATA_SEPARATOR)[4];
+			if (title.trim().length() == 0) {
+				return null;
+			} else {
+				return title;
 			}
 		}
 	}
@@ -167,6 +178,11 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 		out.println(getDebugHeader(ctx));
 
 		out.println("<div class=\"form-group\">");
+		out.println("<label for=\"" + getInputName("title") + "\">" + i18n.getText("global.title") + "</label>");
+		out.println("<input type=\"text\" id=\"" + getInputName("title") + "\" name=\"" + getInputName("title") + "\" value=\"" + StringHelper.neverEmpty(getTitle(), "") + "\" /> ");
+		out.println("</div>");
+
+		out.println("<div class=\"form-group\">");
 		out.print("<label for=\"");
 		out.print(getInputRolesName());
 		out.print("\">");
@@ -182,8 +198,9 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 		if (isNeedName()) {
 			checked = " checked=\"checked\"";
 		}
+
 		out.println("<label for=\"" + getInputNameName() + "\">");
-		out.println("<input type=\"checkbox\" id=\"" + getInputNameName() + "\" name=\"" + getInputNameName() + "\"" + checked + " /> ");		
+		out.println("<input type=\"checkbox\" id=\"" + getInputNameName() + "\" name=\"" + getInputNameName() + "\"" + checked + " /> ");
 		out.print(i18n.getText("content.form-mailing.use-name"));
 		out.println("</label>");
 		out.println("</div>");
@@ -218,9 +235,11 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 		String emailConfirm = requestService.getParameter(getInputConfirmEmailName(), "");
 
 		String emailSubject = requestService.getParameter(getInputEmailSubjectName(), null);
+		
+		String title = requestService.getParameter(getInputName("title"), null);
 
 		if (emailSubject != null) {
-			String value = StringHelper.arrayToString(newContent) + DATA_SEPARATOR + needName + DATA_SEPARATOR + emailConfirm + DATA_SEPARATOR + emailSubject;
+			String value = StringHelper.arrayToString(newContent) + DATA_SEPARATOR + needName + DATA_SEPARATOR + emailConfirm + DATA_SEPARATOR + emailSubject + DATA_SEPARATOR + title;
 			if (!getValue().equals(value)) {
 				setValue(value);
 				setModify();
@@ -257,9 +276,10 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 		super.prepareView(ctx);
 		ctx.getRequest().setAttribute("name", isNeedName());
 		ctx.getRequest().setAttribute("comp", this);
+		ctx.getRequest().setAttribute("title", getTitle());
 		needForm = true;
 	}
-	
+
 	@Override
 	public boolean haveRight(ContentContext ctx, String action) {
 		return true;
@@ -277,7 +297,7 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 		String firstName = requestService.getParameter("firstname", null);
 		String lastName = requestService.getParameter("lastname", null);
 		String compId = requestService.getParameter(COMP_ID_REQUEST_PARAM, null);
-		
+
 		ContentContext ctx = ContentContext.getContentContext(request, response);
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, request.getSession());
@@ -286,7 +306,7 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 		FormMailingComponent comp = (FormMailingComponent) ContentService.getInstance(request).getComponent(ctx, compId);
 
 		String confirmEmail = comp.getConfirmEmail();
-		if (confirmEmail != null && requestService.getParameter("direct",null) == null) {
+		if (confirmEmail != null && requestService.getParameter("direct", null) == null) {
 			StringBuffer urlParam = new StringBuffer("?webaction=" + comp.getActionGroupName() + ".submit");
 			logger.info("send email confirmation to : " + email + " (" + firstName + ' ' + lastName + ')');
 			urlParam.append("&email=" + email);
@@ -380,8 +400,8 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 			}
 			/*
 			 * if (fact.getCurrentUser() == null) {
-			 * fact.login(GlobalContext.getInstance(request),
-			 * userInfo.getLogin(), userInfo.getPassword()); }
+			 * fact.login(GlobalContext.getInstance(request), userInfo.getLogin(),
+			 * userInfo.getPassword()); }
 			 */
 
 		}
@@ -393,9 +413,14 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 	public String getActionGroupName() {
 		return "mailing-registration";
 	}
-	
+
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_STANDARD);
+	}
+
+	@Override
+	public String getIcon() {
+		return "bi bi-envelope";
 	}
 }
