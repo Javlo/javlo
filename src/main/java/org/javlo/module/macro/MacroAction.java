@@ -101,6 +101,9 @@ public class MacroAction extends AbstractModuleAction {
 
 	public static String performExecuteInteractiveMacro(RequestService rs, ContentContext ctx, StaticConfig staticConfig, MessageRepository messageRepository, I18nAccess i18nAccess) throws FileNotFoundException, InstantiationException, IllegalAccessException, IOException, ModuleException {
 		MacroModuleContext macroContext = MacroModuleContext.getInstance(ctx.getRequest());
+		
+		ModulesContext.getInstance(ctx.getSession(), ctx.getGlobalContext()).setCurrentModule("macro");
+		
 		String macroName = rs.getParameter("macro", null);
 		if (macroName == null) {
 			return "bad request structure : need 'macro'.";
