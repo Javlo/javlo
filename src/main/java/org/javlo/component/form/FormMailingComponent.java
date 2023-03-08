@@ -305,8 +305,8 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 
 		FormMailingComponent comp = (FormMailingComponent) ContentService.getInstance(request).getComponent(ctx, compId);
 
-		String confirmEmail = comp.getConfirmEmail();
-		if (confirmEmail != null && requestService.getParameter("direct", null) == null) {
+		if (!StringHelper.isEmpty(comp.getEmailSubject()) && PatternHelper.MAIL_PATTERN.matcher(email).matches() && !StringHelper.isTrue(request.getAttribute(StringSecurityUtil.REQUEST_ATT_FOR_SECURITY_FORWARD))) {
+			
 			StringBuffer urlParam = new StringBuffer("?webaction=" + comp.getActionGroupName() + ".submit");
 			logger.info("send email confirmation to : " + email + " (" + firstName + ' ' + lastName + ')');
 			urlParam.append("&email=" + email);
@@ -323,18 +323,21 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 			ContentContext absURLCtx = new ContentContext(ctx);
 			absURLCtx.setAbsoluteURL(true);
 			String registerURL = URLHelper.createURL(absURLCtx) + '?' + RequestHelper.CRYPTED_PARAM_NAME + "=" + encodedParam + "#reg_" + comp.getId();
-			if (registerURL != null) {
-				confirmEmail = confirmEmail.replace("##URL##", registerURL);
-			}
+			
+			String body = XHTMLHelper.textToXHTML(comp.getConfirmEmail());
 			if (firstName != null) {
-				confirmEmail = confirmEmail.replace("##firstname##", firstName);
+				body = body.replace("##firstname##", firstName);
+				body = body.replace("${firstname}", firstName);
 			}
 			if (lastName != null) {
-				confirmEmail = confirmEmail.replace("##lastname##", lastName);
+				body = body.replace("##lastname##", lastName);
+				body = body.replace("${lastname}", lastName);
 			}
 
+			String mailBody = XHTMLHelper.createUserMail(ctx, "/images/font/envelope.png", body, "", registerURL, comp.getEmailSubject(), "");
+			
 			MailService mailService = MailService.getInstance(new MailConfig(globalContext, StaticConfig.getInstance(request.getSession()), null));
-			mailService.sendMail(new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(email), comp.getEmailSubject(), confirmEmail, true);
+			mailService.sendMail(new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(email), comp.getEmailSubject(), mailBody, true);
 
 			GenericMessage msg = new GenericMessage(i18nAccess.getContentViewText("user.error.email-send"), GenericMessage.INFO);
 			messageRepository.setGlobalMessage(msg);
