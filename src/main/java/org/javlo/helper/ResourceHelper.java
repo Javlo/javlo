@@ -118,8 +118,7 @@ public class ResourceHelper {
 	/**
 	 * create a static logger.
 	 */
-	protected static java.util.logging.Logger logger = java.util.logging.Logger
-			.getLogger(ResourceHelper.class.getName());
+	protected static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ResourceHelper.class.getName());
 
 	public static Object SYNCHRO_RESOURCE = new Object();
 
@@ -180,8 +179,9 @@ public class ResourceHelper {
 
 	/**
 	 * Return the standard checksum of the specified file. <br/>
-	 * The following functions are complementary: {@link #getChecksumInputStream(InputStream)}, {@link #getChecksumResult(InputStream)},
-	 * {@link #formatChecksum(long)}
+	 * The following functions are complementary:
+	 * {@link #getChecksumInputStream(InputStream)},
+	 * {@link #getChecksumResult(InputStream)}, {@link #formatChecksum(long)}
 	 * 
 	 * @param file
 	 * @return the standard checksum of the specified file
@@ -201,8 +201,7 @@ public class ResourceHelper {
 		return returnDelete;
 	}
 
-	public static void downloadResource(ContentContext ctx, String localDir, String baseURL, NodeXML nodeXML)
-			throws Exception {
+	public static void downloadResource(ContentContext ctx, String localDir, String baseURL, NodeXML nodeXML) throws Exception {
 		NodeXML child = nodeXML.getChild("resource");
 		while (child != null) {
 			Resource resource = new Resource();
@@ -232,12 +231,9 @@ public class ResourceHelper {
 						staticInfo.setDescription(lgCtx, StringHelper.removeQuote(jsonMap.get("description")));
 						staticInfo.setLocation(lgCtx, StringHelper.removeQuote(jsonMap.get("location")));
 						staticInfo.setCopyright(lgCtx, StringHelper.removeQuote(jsonMap.get("copyright")));
-						staticInfo.setDate(lgCtx,
-								StringHelper.parseSortableTime(StringHelper.removeQuote(jsonMap.get("sortableDate"))));
-						staticInfo.setFocusZoneX(lgCtx,
-								Integer.parseInt(StringHelper.removeQuote(jsonMap.get("focusZoneX"))));
-						staticInfo.setFocusZoneY(lgCtx,
-								Integer.parseInt(StringHelper.removeQuote(jsonMap.get("focusZoneY"))));
+						staticInfo.setDate(lgCtx, StringHelper.parseSortableTime(StringHelper.removeQuote(jsonMap.get("sortableDate"))));
+						staticInfo.setFocusZoneX(lgCtx, Integer.parseInt(StringHelper.removeQuote(jsonMap.get("focusZoneX"))));
+						staticInfo.setFocusZoneY(lgCtx, Integer.parseInt(StringHelper.removeQuote(jsonMap.get("focusZoneY"))));
 					}
 				} else {
 					staticInfo.fromXML(ctx, child);
@@ -278,9 +274,12 @@ public class ResourceHelper {
 	/**
 	 * extract a relative path from a full path.
 	 * 
-	 * @param application the servlet context.
-	 * @param fullPath    a full path
-	 * @return retrun a relative path (sample: /var/data/static/test.png -> /static/test.png)
+	 * @param application
+	 *            the servlet context.
+	 * @param fullPath
+	 *            a full path
+	 * @return retrun a relative path (sample: /var/data/static/test.png ->
+	 *         /static/test.png)
 	 */
 	public static String extractNotStaticDir(StaticConfig staticConfig, GlobalContext globalContext, String fullPath) {
 		String realPath = globalContext.getDataFolder();
@@ -297,9 +296,12 @@ public class ResourceHelper {
 	/**
 	 * extract a relative path from a full path.
 	 * 
-	 * @param application the servlet context.
-	 * @param fullPath    a full path
-	 * @return retrun a relative path (sample: /var/data/static/test.png -> /test.png)
+	 * @param application
+	 *            the servlet context.
+	 * @param fullPath
+	 *            a full path
+	 * @return retrun a relative path (sample: /var/data/static/test.png ->
+	 *         /test.png)
 	 */
 	public static String extractResourceDir(StaticConfig staticConfig, GlobalContext globalContext, String fullPath) {
 		String realPath = URLHelper.mergePath(globalContext.getDataFolder(), staticConfig.getStaticFolder());
@@ -354,11 +356,16 @@ public class ResourceHelper {
 	/**
 	 * transactional copy a file other file
 	 * 
-	 * @param source      the source file, must exist
-	 * @param destination the target file, could not exist
-	 * @param overwrite   if true and file desctination exist, this method done nothing
+	 * @param source
+	 *            the source file, must exist
+	 * @param destination
+	 *            the target file, could not exist
+	 * @param overwrite
+	 *            if true and file desctination exist, this method done nothing
 	 * @return true if file is copied, false otherwise
-	 * @throws IOException error width IO, file destination is'nt modified if there are error
+	 * @throws IOException
+	 *             error width IO, file destination is'nt modified if there are
+	 *             error
 	 */
 	public static boolean copyFile(File source, File destination, boolean overwrite) throws IOException {
 		if (!overwrite && destination.exists()) {
@@ -397,8 +404,7 @@ public class ResourceHelper {
 		return url;
 	}
 
-	public static void filteredFileCopyEscapeScriplet(File file1, File file2, Map<String, String> filter,
-			boolean compress, boolean secure) throws IOException {
+	public static void filteredFileCopyEscapeScriplet(File file1, File file2, Map<String, String> filter, boolean compress, boolean secure) throws IOException {
 		if (!file2.exists()) {
 			file2.getParentFile().mkdirs();
 			file2.createNewFile();
@@ -435,7 +441,8 @@ public class ResourceHelper {
 
 	/**
 	 * Standart method to format the checksum into a {@link String}. <br/>
-	 * This method is private because, only the following functions can call it: {@link #getChecksumInputStream(InputStream)},
+	 * This method is private because, only the following functions can call it:
+	 * {@link #getChecksumInputStream(InputStream)},
 	 * {@link #getChecksumResult(InputStream)}, {@link #computeChecksum(File)} <br/>
 	 * and because the implementation of the format can be changed in future.
 	 * 
@@ -490,7 +497,7 @@ public class ResourceHelper {
 				outFiles.add(file);
 			}
 		}
-		files = dir.listFiles((FilenameFilter)new DirectoryFilter());
+		files = dir.listFiles((FilenameFilter) new DirectoryFilter());
 		if (files != null) {
 			for (File file : files) {
 				outFiles.addAll(getAllFiles(file, filter, comp));
@@ -520,16 +527,16 @@ public class ResourceHelper {
 		}
 		return res;
 	}
-	
+
 	public static long getLatestModificationFileOnFolder(File folder, String... exts) {
 		if (folder.isFile()) {
 			return folder.lastModified();
 		}
 		List<String> extsList = Arrays.asList(exts);
 		long latest = Long.MIN_VALUE;
-		for(File file : getAllFilesList(folder)) {
+		for (File file : getAllFilesList(folder)) {
 			String ext = StringHelper.getFileExtension(file.getName()).toLowerCase();
-			if (extsList.size()==0 || extsList.contains(ext)) {
+			if (extsList.size() == 0 || extsList.contains(ext)) {
 				if (file.lastModified() > latest) {
 					latest = file.lastModified();
 				}
@@ -550,9 +557,11 @@ public class ResourceHelper {
 	}
 
 	/*
-	 * public static final int writeStreamToStream(InputStream in, OutputStream out) throws IOException { int read = in.read(); int size = 0;
-	 * while (read >= 0) { size++; out.write(read); byte[] buffer = new byte[in.available()]; read = in.read(buffer); if (read >= 0) {
-	 * out.write(buffer); size = size + buffer.length; read = in.read(); } } return size; }
+	 * public static final int writeStreamToStream(InputStream in, OutputStream out)
+	 * throws IOException { int read = in.read(); int size = 0; while (read >= 0) {
+	 * size++; out.write(read); byte[] buffer = new byte[in.available()]; read =
+	 * in.read(buffer); if (read >= 0) { out.write(buffer); size = size +
+	 * buffer.length; read = in.read(); } } return size; }
 	 */
 
 	public static Collection<File> getAllResources(ContentContext ctx) {
@@ -570,25 +579,32 @@ public class ResourceHelper {
 
 	/**
 	 * Add a checksum computing layer to the given {@link InputStream}. <br/>
-	 * Give the returned {@link InputStream} to {@link #getChecksumResult(InputStream)} to retrieve the checksum result. <br/>
-	 * The following functions are complementary: {@link #getChecksumResult(InputStream)}, {@link #computeChecksum(File)},
+	 * Give the returned {@link InputStream} to
+	 * {@link #getChecksumResult(InputStream)} to retrieve the checksum result.
+	 * <br/>
+	 * The following functions are complementary:
+	 * {@link #getChecksumResult(InputStream)}, {@link #computeChecksum(File)},
 	 * {@link #formatChecksum(long)}
 	 * 
 	 * @param in
-	 * @return an {@link InputStream} computing the checksum during the read, call {@link #getChecksumResult(InputStream)} to retrieve the
-	 *         checksum result.
+	 * @return an {@link InputStream} computing the checksum during the read, call
+	 *         {@link #getChecksumResult(InputStream)} to retrieve the checksum
+	 *         result.
 	 */
 	public static InputStream getChecksumInputStream(InputStream in) {
 		return new CheckedInputStream(in, new CRC32());
 	}
 
 	/**
-	 * Exctract the result from a {@link InputStream} returned by {@link #getChecksumInputStream(InputStream)}. <br/>
-	 * The following functions are complementary: {@link #getChecksumInputStream(InputStream)}, {@link #computeChecksum(File)},
+	 * Exctract the result from a {@link InputStream} returned by
+	 * {@link #getChecksumInputStream(InputStream)}. <br/>
+	 * The following functions are complementary:
+	 * {@link #getChecksumInputStream(InputStream)}, {@link #computeChecksum(File)},
 	 * {@link #formatChecksum(long)}
 	 * 
 	 * @param chkIn
-	 * @return the standard checksum of readed bytes from the given {@link InputStream} previously wrapped by
+	 * @return the standard checksum of readed bytes from the given
+	 *         {@link InputStream} previously wrapped by
 	 *         {@link #getChecksumInputStream(InputStream)}
 	 */
 	public static String getChecksumResult(InputStream chkIn) {
@@ -596,8 +612,7 @@ public class ResourceHelper {
 		return formatChecksum(crc32);
 	}
 
-	public static final InputStream getConfigFile(ServletContext servletContext, String fileName)
-			throws ResourceNotFoundException {
+	public static final InputStream getConfigFile(ServletContext servletContext, String fileName) throws ResourceNotFoundException {
 		String resourceName = CONFIG_DIR + "/" + fileName;
 		InputStream in = servletContext.getResourceAsStream(resourceName);
 		if (in == null) {
@@ -626,8 +641,10 @@ public class ResourceHelper {
 	/**
 	 * return a recursive directory array path
 	 * 
-	 * @param directory the base directory
-	 * @param request   the current request
+	 * @param directory
+	 *            the base directory
+	 * @param request
+	 *            the current request
 	 * @return a array of path
 	 */
 	public static String[] getDirList(String directory) {
@@ -675,7 +692,7 @@ public class ResourceHelper {
 		}
 		return outContent;
 	}
-	
+
 	public static final String getMineTypeToFileExtension(String mineType) {
 		mineType = mineType.trim().toLowerCase();
 		if (mineType.equals("image/gif")) {
@@ -771,7 +788,7 @@ public class ResourceHelper {
 		}
 		return "application/octet-stream";
 	}
-	
+
 	public static File[] getFileList(String directory) {
 		File dir = new File(directory);
 		File[] res;
@@ -793,9 +810,11 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * convert a path to a correct path for current OS. sample: /static/images on windows -> \static\images and on unix no change.
+	 * convert a path to a correct path for current OS. sample: /static/images on
+	 * windows -> \static\images and on unix no change.
 	 * 
-	 * @param path a path to a file
+	 * @param path
+	 *            a path to a file
 	 * @return a correct file for current OS
 	 */
 	public static final String getLinuxPath(String path) {
@@ -805,9 +824,11 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * convert a path to a correct path for current OS. sample: /static/images on windows -> \static\images and on unix no change.
+	 * convert a path to a correct path for current OS. sample: /static/images on
+	 * windows -> \static\images and on unix no change.
 	 * 
-	 * @param path a path to a file
+	 * @param path
+	 *            a path to a file
 	 * @return a correct file for current OS
 	 */
 	public static final String getOSPath(String path) {
@@ -851,8 +872,7 @@ public class ResourceHelper {
 		return outFiles;
 	}
 
-	public static final InputStream getStaticComponentResource(ServletContext application, String componentType,
-			String resource) throws FileNotFoundException {
+	public static final InputStream getStaticComponentResource(ServletContext application, String componentType, String resource) throws FileNotFoundException {
 		String fullName = STATIC_COMPONENT_DIR + "/" + componentType + "/" + resource;
 		InputStream res = application.getResourceAsStream(fullName);
 		if (res == null) {
@@ -863,12 +883,12 @@ public class ResourceHelper {
 	}
 
 	public static String getUserDirName(String userName) {
-		return StringHelper.stringWithoutSpecialChar(userName) + '-'
-				+ StringHelper.encryptPassword(userName).substring(0, 5);
+		return StringHelper.stringWithoutSpecialChar(userName) + '-' + StringHelper.encryptPassword(userName).substring(0, 5);
 	}
 
 	/**
-	 * with iexplorer the name of the file is all the path this method extract the file name from a windows path
+	 * with iexplorer the name of the file is all the path this method extract the
+	 * file name from a windows path
 	 */
 	public static String getWindowsFileName(String fileName) {
 		String name = fileName;
@@ -880,10 +900,14 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * check if a file (or a folder) is under a folder. sample : /tmp/test/me.jpg with /tmp retrun true
+	 * check if a file (or a folder) is under a folder. sample : /tmp/test/me.jpg
+	 * with /tmp retrun true
 	 * 
-	 * @param file   a file, this file must be a real file or method return false.
-	 * @param folder a folder (if file -> return false), this file must be a real file or method return false.
+	 * @param file
+	 *            a file, this file must be a real file or method return false.
+	 * @param folder
+	 *            a folder (if file -> return false), this file must be a real file
+	 *            or method return false.
 	 * @return true if the file is under the folder.
 	 * @throws IOException
 	 */
@@ -903,7 +927,8 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * check if this file is a document (list of extenion define in static-config.properties
+	 * check if this file is a document (list of extenion define in
+	 * static-config.properties
 	 * 
 	 * @param ctx
 	 * @param filename
@@ -924,7 +949,8 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * check if this file is a document (list of extenion define in static-config.properties
+	 * check if this file is a document (list of extenion define in
+	 * static-config.properties
 	 * 
 	 * @param ctx
 	 * @param filename
@@ -955,11 +981,11 @@ public class ResourceHelper {
 	}
 
 	public static boolean isTransformURL(ContentContext ctx, String url) throws Exception {
-		
+
 		if (ctx == null) {
 			return url.contains("/transform");
 		}
-		
+
 		final String FAKE_FILTER = "___FAKE_FILTER___";
 		String startURL = URLHelper.createTransformURL(ctx, "/", FAKE_FILTER);
 		if (startURL.contains(FAKE_FILTER)) {
@@ -1072,7 +1098,8 @@ public class ResourceHelper {
 	 * 
 	 * @param staticConfig
 	 * @param fileOrFolder
-	 * @return <code>true</code> if origin doesn't exist; or the result of {@link File#renameTo(File)}.
+	 * @return <code>true</code> if origin doesn't exist; or the result of
+	 *         {@link File#renameTo(File)}.
 	 */
 	public static boolean moveToGlobalTrash(StaticConfig staticConfig, String fileOrFolder) {
 		File file = new File(fileOrFolder);
@@ -1093,7 +1120,8 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * remove the data folder directory this method is used for obtain a relative file path from a ablute file path.
+	 * remove the data folder directory this method is used for obtain a relative
+	 * file path from a ablute file path.
 	 * 
 	 * @param path
 	 * @return
@@ -1107,7 +1135,8 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * remove the path from a string this method is used for obtain a relative file path from a absolute file path.
+	 * remove the path from a string this method is used for obtain a relative file
+	 * path from a absolute file path.
 	 * 
 	 * @param path
 	 * @return
@@ -1123,7 +1152,8 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * change all the reference to a resource when a resource path or name if changed
+	 * change all the reference to a resource when a resource path or name if
+	 * changed
 	 * 
 	 * @param ctx
 	 * @param oldName
@@ -1189,8 +1219,7 @@ public class ResourceHelper {
 			FileUtils.deleteDirectory(file);
 			return deletedOk;
 		} else {
-			FileCache.getInstance(ctx.getRequest().getSession().getServletContext())
-					.deleteAllFile(ctx.getGlobalContext().getContextKey(), file.getName());
+			FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).deleteAllFile(ctx.getGlobalContext().getContextKey(), file.getName());
 			deleteResourceData(ctx, file);
 			return file.delete();
 		}
@@ -1206,9 +1235,11 @@ public class ResourceHelper {
 	}
 
 	/**
-	 * Close streams, writers, readers, etc without any exception even if they are <code>null</code>.
+	 * Close streams, writers, readers, etc without any exception even if they are
+	 * <code>null</code>.
 	 * 
-	 * @param closeables the objects to close
+	 * @param closeables
+	 *            the objects to close
 	 */
 	public static void safeClose(Closeable... closeables) {
 		for (Closeable closeable : closeables) {
@@ -1294,13 +1325,11 @@ public class ResourceHelper {
 		}
 	}
 
-	public static final File writeFileItemToFolder(FileItem fileItem, File folder, boolean overwrite, boolean rename)
-			throws IOException {
+	public static final File writeFileItemToFolder(FileItem fileItem, File folder, boolean overwrite, boolean rename) throws IOException {
 		if (!folder.isDirectory()) {
 			return null;
 		}
-		File file = new File(URLHelper.mergePath(folder.getAbsolutePath(),
-				StringHelper.createFileName(StringHelper.getFileNameFromPath(fileItem.getName()))));
+		File file = new File(URLHelper.mergePath(folder.getAbsolutePath(), StringHelper.createFileName(StringHelper.getFileNameFromPath(fileItem.getName()))));
 
 		if (!file.exists()) {
 			file.createNewFile();
@@ -1355,11 +1384,16 @@ public class ResourceHelper {
 	/**
 	 * Copy the given byte range of the given input to the given output.
 	 * 
-	 * @param input  The input to copy the given range to the given output for.
-	 * @param output The output to copy the given range from the given input for.
-	 * @param start  Start of the byte range.
-	 * @param length Length of the byte range.
-	 * @throws IOException If something fails at I/O level.
+	 * @param input
+	 *            The input to copy the given range to the given output for.
+	 * @param output
+	 *            The output to copy the given range from the given input for.
+	 * @param start
+	 *            Start of the byte range.
+	 * @param length
+	 *            Length of the byte range.
+	 * @throws IOException
+	 *             If something fails at I/O level.
 	 */
 	public static void copyStream(InputStream input, OutputStream output, long start, long length) throws IOException {
 		byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
@@ -1426,7 +1460,7 @@ public class ResourceHelper {
 			out.write(contentByte);
 		} finally {
 			closeResource(out);
-		} 
+		}
 	}
 
 	public static final void writeStringToStream(String content, OutputStream out, String encoding) throws IOException {
@@ -1528,11 +1562,9 @@ public class ResourceHelper {
 	}
 
 	public static String createModulePath(ContentContext ctx, String path) throws ModuleException, Exception {
-		Module currentModule = ModulesContext
-				.getInstance(ctx.getRequest().getSession(), GlobalContext.getInstance(ctx.getRequest()))
-				.getCurrentModule();
-		String insideModulePath = URLHelper.mergePath("/" + currentModule.getModuleFolder(), currentModule.getName(),
-				path);
+		System.out.println(">>>>>>>>> ResourceHelper.createModulePath : path = "+path); //TODO: remove debug trace
+		Module currentModule = ModulesContext.getInstance(ctx.getRequest().getSession(), GlobalContext.getInstance(ctx.getRequest())).getCurrentModule();
+		String insideModulePath = URLHelper.mergePath("/" + currentModule.getModuleFolder(), currentModule.getName(), path);
 		return insideModulePath;
 	}
 
@@ -1697,8 +1729,7 @@ public class ResourceHelper {
 		return excutePost(targetURL, urlParameters, "application/x-www-form-urlencoded", "en-US", null, null);
 	}
 
-	public static String excutePost(String targetURL, String urlParameters, String contentType, String lang,
-			String user, String pwd) {
+	public static String excutePost(String targetURL, String urlParameters, String contentType, String lang, String user, String pwd) {
 		URL url;
 		HttpURLConnection connection = null;
 		BufferedReader rd = null;
@@ -1728,8 +1759,7 @@ public class ResourceHelper {
 
 			// user authentification
 			if (user != null && pwd != null) {
-				connection.setRequestProperty("Authorization",
-						"Basic " + Base64.encodeBase64((user + ':' + pwd).getBytes()));
+				connection.setRequestProperty("Authorization", "Basic " + Base64.encodeBase64((user + ':' + pwd).getBytes()));
 			}
 
 			// Send request
@@ -1839,8 +1869,7 @@ public class ResourceHelper {
 	private static long fileStructureToHtml(PrintStream out, File file) {
 		long size = 0;
 		if (file.isFile()) {
-			out.println(
-					"<li class=\"file\">" + file.getName() + "[" + StringHelper.renderSize(file.length()) + "]</li>");
+			out.println("<li class=\"file\">" + file.getName() + "[" + StringHelper.renderSize(file.length()) + "]</li>");
 			return file.length();
 		} else {
 			out.println("<li class=\"folder\">" + file.getName());
@@ -1857,8 +1886,7 @@ public class ResourceHelper {
 		boolean canModif = AdminUserSecurity.isCurrentUserCanUpload(ctx);
 		if (!canModif) {
 			try {
-				String importFolder = URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getImportFolder(),
-						DataAction.createImportFolder(ctx.getCurrentPage()));
+				String importFolder = URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getImportFolder(), DataAction.createImportFolder(ctx.getCurrentPage()));
 				importFolder = URLHelper.cleanPath(importFolder, false);
 				if (URLHelper.cleanPath(folder, false).contains(importFolder)) {
 					canModif = true;
@@ -1878,15 +1906,9 @@ public class ResourceHelper {
 	 * @throws Exception
 	 */
 	public static int cleanImportResources(ContentContext ctx) throws Exception {
-		File importImageFolder = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(),
-				ctx.getGlobalContext().getStaticConfig().getImageFolder(),
-				ctx.getGlobalContext().getStaticConfig().getImportFolder()));
-		File importFileFolder = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(),
-				ctx.getGlobalContext().getStaticConfig().getFileFolder(),
-				ctx.getGlobalContext().getStaticConfig().getImportFolder()));
-		File importGallryFolder = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(),
-				ctx.getGlobalContext().getStaticConfig().getGalleryFolder(),
-				ctx.getGlobalContext().getStaticConfig().getImportFolder()));
+		File importImageFolder = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getImageFolder(), ctx.getGlobalContext().getStaticConfig().getImportFolder()));
+		File importFileFolder = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getFileFolder(), ctx.getGlobalContext().getStaticConfig().getImportFolder()));
+		File importGallryFolder = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getGalleryFolder(), ctx.getGlobalContext().getStaticConfig().getImportFolder()));
 		int deleted = 0;
 		deleted = cleanImportResources(ctx, importImageFolder);
 		deleted += cleanImportResources(ctx, importFileFolder);
@@ -1913,8 +1935,7 @@ public class ResourceHelper {
 		if (childImport.isDirectory() && !childImport.getName().equals(root.getName())) {
 			boolean deleteFile = !isImportPageExist(ctx, childImport);
 			if (deleteFile) {
-				logger.info("delete folder (user:" + ctx.getCurrentEditUser() + " context:"
-						+ ctx.getGlobalContext().getContextKey() + ") : " + childImport);
+				logger.info("delete folder (user:" + ctx.getCurrentEditUser() + " context:" + ctx.getGlobalContext().getContextKey() + ") : " + childImport);
 				try {
 					deleteResource(ctx, childImport);
 					deleted++;
@@ -1952,8 +1973,7 @@ public class ResourceHelper {
 		}
 	}
 
-	public static List<IContentVisualComponent> getComponentsUseResource(ContentContext ctx, String uri)
-			throws Exception {
+	public static List<IContentVisualComponent> getComponentsUseResource(ContentContext ctx, String uri) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		List<IContentVisualComponent> outList = new LinkedList<IContentVisualComponent>();
 		ContentContext lgCtx = new ContentContext(ctx);
@@ -2006,8 +2026,7 @@ public class ResourceHelper {
 		if (StringHelper.isEmpty(fileName)) {
 			return true;
 		} else {
-			return ctx.getGlobalContext().getStaticConfig().getDocumentExtension()
-					.contains(StringHelper.getFileExtension(fileName).toLowerCase());
+			return ctx.getGlobalContext().getStaticConfig().getDocumentExtension().contains(StringHelper.getFileExtension(fileName).toLowerCase());
 		}
 	}
 
@@ -2104,33 +2123,33 @@ public class ResourceHelper {
 		minifier.minify(new ByteArrayInputStream(js.getBytes()), out, ContentContext.CHARSET_DEFAULT, null);
 		return new String(out.toByteArray());
 	}
-	
-	public static void docx2html(File docx, File html) throws IOException {
-		InputStream in= new FileInputStream(docx);
-        XWPFDocument document = new XWPFDocument(in);
-        in.close();
 
-        XHTMLOptions options = XHTMLOptions.create().URIResolver(new FileURIResolver(new File(html.getParentFile().getAbsolutePath())));
-        OutputStream out = new FileOutputStream(html);
-        XHTMLConverter.getInstance().convert(document, out, options);
-        out.close();
-        
+	public static void docx2html(File docx, File html) throws IOException {
+		InputStream in = new FileInputStream(docx);
+		XWPFDocument document = new XWPFDocument(in);
+		in.close();
+
+		XHTMLOptions options = XHTMLOptions.create().URIResolver(new FileURIResolver(new File(html.getParentFile().getAbsolutePath())));
+		OutputStream out = new FileOutputStream(html);
+		XHTMLConverter.getInstance().convert(document, out, options);
+		out.close();
+
 	}
-	
+
 	public static String sha512(File file) throws IOException, IllegalArgumentException {
 		try (InputStream in = new FileInputStream(file)) {
 			return sha(in, "SHA-512");
 		}
 	}
-	
+
 	public static String sha512(final InputStream in) throws IOException, IllegalArgumentException {
 		return sha(in, "SHA-512");
 	}
-	
+
 	public static String sha256(final InputStream in) throws IOException, IllegalArgumentException {
 		return sha(in, "SHA-256");
 	}
-	
+
 	private static String sha(final InputStream in, String algo) throws IOException, IllegalArgumentException {
 		final int BUFFER_SIZE = 1024 * 1024;
 		Objects.requireNonNull(in);
@@ -2148,41 +2167,42 @@ public class ResourceHelper {
 	}
 
 	public static void main(String[] args) throws IOException {
-		
+
 		File docx = new File("c:/trans/test_javlo2.docx");
 		File html = new File("c:/trans/test_javlo2.html");
 		docx2html(docx, html);
-		System.out.println("done : "+html);
-		
-//		File file = new File("c:/trans/changelog.txt");
-//		File target = new File("c:/trans/changelog.md");
-//
-//		PrintStream out = new PrintStream(new FileOutputStream(target));
-//		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-//			String line;
-//			while ((line = br.readLine()) != null) {
-//				if (!StringHelper.isEmpty(line)) {
-//					if (line.startsWith("*")) {
-//						if (line.contains("[")) {
-//							line = line.replace("[", "- ");
-//							line = line.replace("]", "");
-//							line = "## [" + line.substring(2).replaceFirst(" ", "] ");
-//						} else {
-//							line = "## [" + line.substring(2).replaceFirst(" ", "] - ");
-//						}
-//						out.println("");
-//						out.println(line);
-//						out.println("### Added");
-//					} else if (line.startsWith(" *")) {
-//						line = line.replaceFirst(" \\*", "-");
-//						out.println(line);
-//					}
-//				}
-//			}
-//		}
-//		out.close();
+		System.out.println("done : " + html);
 
-		//System.out.println(">>>>>>>>> ResourceHelper.mimifyJS : " + mimifyJS("var    js='test'; \njs='test2';")); // TODO: remove debug trace
+		// File file = new File("c:/trans/changelog.txt");
+		// File target = new File("c:/trans/changelog.md");
+		//
+		// PrintStream out = new PrintStream(new FileOutputStream(target));
+		// try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+		// String line;
+		// while ((line = br.readLine()) != null) {
+		// if (!StringHelper.isEmpty(line)) {
+		// if (line.startsWith("*")) {
+		// if (line.contains("[")) {
+		// line = line.replace("[", "- ");
+		// line = line.replace("]", "");
+		// line = "## [" + line.substring(2).replaceFirst(" ", "] ");
+		// } else {
+		// line = "## [" + line.substring(2).replaceFirst(" ", "] - ");
+		// }
+		// out.println("");
+		// out.println(line);
+		// out.println("### Added");
+		// } else if (line.startsWith(" *")) {
+		// line = line.replaceFirst(" \\*", "-");
+		// out.println(line);
+		// }
+		// }
+		// }
+		// }
+		// out.close();
+
+		// System.out.println(">>>>>>>>> ResourceHelper.mimifyJS : " + mimifyJS("var
+		// js='test'; \njs='test2';")); // TODO: remove debug trace
 
 	}
 

@@ -67,6 +67,7 @@ public class MacroAction extends AbstractModuleAction {
 				IInteractiveMacro iMacro = (IInteractiveMacro) macroContext.getActiveMacro();
 				outMsg = iMacro.prepare(ctx);
 				String macroRenderer = iMacro.getRenderer();
+				System.out.println(">>>>>>>>> MacroAction.prepare : macroRenderer = "+macroRenderer); //TODO: remove debug trace
 				macroRenderer = ResourceHelper.createModulePath(ctx, macroRenderer);
 				ctx.getRequest().setAttribute("macroRenderer", macroRenderer);
 			}
