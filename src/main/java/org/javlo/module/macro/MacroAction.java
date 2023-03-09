@@ -51,9 +51,9 @@ public class MacroAction extends AbstractModuleAction {
 		}
 
 		List<IMacro> alliMacros = new LinkedList<IMacro>();
-		for (IMacro macro : macros) {			
-			if (globalContext.getMacros().contains(macro.getName())) {				
-				if (macro instanceof IInteractiveMacro) {					
+		for (IMacro macro : macros) {
+			if (globalContext.getMacros().contains(macro.getName())) {
+				if (macro instanceof IInteractiveMacro) {
 					alliMacros.add(macro);
 				}
 			}
@@ -67,7 +67,6 @@ public class MacroAction extends AbstractModuleAction {
 				IInteractiveMacro iMacro = (IInteractiveMacro) macroContext.getActiveMacro();
 				outMsg = iMacro.prepare(ctx);
 				String macroRenderer = iMacro.getRenderer();
-				System.out.println(">>>>>>>>> MacroAction.prepare : macroRenderer = "+macroRenderer); //TODO: remove debug trace
 				macroRenderer = ResourceHelper.createModulePath(ctx, macroRenderer);
 				ctx.getRequest().setAttribute("macroRenderer", macroRenderer);
 			}
@@ -99,11 +98,12 @@ public class MacroAction extends AbstractModuleAction {
 
 	}
 
-	public static String performExecuteInteractiveMacro(RequestService rs, ContentContext ctx, StaticConfig staticConfig, MessageRepository messageRepository, I18nAccess i18nAccess) throws FileNotFoundException, InstantiationException, IllegalAccessException, IOException, ModuleException {
+	public static String performExecuteInteractiveMacro(RequestService rs, ContentContext ctx, StaticConfig staticConfig, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		MacroModuleContext macroContext = MacroModuleContext.getInstance(ctx.getRequest());
-		
+
 		ModulesContext.getInstance(ctx.getSession(), ctx.getGlobalContext()).setCurrentModule("macro");
-		
+		ModulesContext.getInstance(ctx.getSession(), ctx.getGlobalContext()).getCurrentModule().restoreAll();
+
 		String macroName = rs.getParameter("macro", null);
 		if (macroName == null) {
 			return "bad request structure : need 'macro'.";

@@ -1562,7 +1562,6 @@ public class ResourceHelper {
 	}
 
 	public static String createModulePath(ContentContext ctx, String path) throws ModuleException, Exception {
-		System.out.println(">>>>>>>>> ResourceHelper.createModulePath : path = "+path); //TODO: remove debug trace
 		Module currentModule = ModulesContext.getInstance(ctx.getRequest().getSession(), GlobalContext.getInstance(ctx.getRequest())).getCurrentModule();
 		String insideModulePath = URLHelper.mergePath("/" + currentModule.getModuleFolder(), currentModule.getName(), path);
 		return insideModulePath;
