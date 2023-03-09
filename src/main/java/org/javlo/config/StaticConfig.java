@@ -1770,7 +1770,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getSearchEngineClassName() {
-		return properties.getString("searchengine.class", "org.javlo.search.DefaultSearchEngine").trim();
+		return properties.getString("searchengine.class", "org.javlo.search.LuceneSearchEngine").trim();
 	}
 
 	public String getSearchEngineLucenePattern() {
