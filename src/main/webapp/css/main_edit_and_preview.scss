@@ -1,6 +1,23 @@
-/** version 2.2 **/
+/** version 2.3 **/
 
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css");
+
+body.edition-mode-light {
+	#preview_command,
+	& {
+		--javlo-ui-bg-primary: hsl(208, 14%, 76%);;
+		--javlo-ui-bg-secondary: hsl(210, 13%, 82%);
+		--javlo-ui-bg-tertiary: hsl(210, 13%, 91%);
+		--javlo-ui-bg-tools: hsl(211, 11%, 59%);
+		--javlo-ui-border: hsl(211, 11%, 59%);
+		--javlo-ui-text: #333;
+		--javlo-ui-text-secondary: #676767;
+
+		--javlo-ui-btn-text-active: #333;
+		--javlo-ui-nav-btn-bg-inactive: var(--javlo-ui-bg-tertiary);
+		--javlo-ui-special-action-color: var(--action-color-darken);
+	}
+}
 
 #preview_command,
 :root {
@@ -52,10 +69,10 @@
 
 	/// colors schema
 
-	/*Header*/
 	--javlo-ui-bg-primary: var(--javlo-ui-color-8);
 	--javlo-ui-bg-secondary: var(--javlo-ui-color-9);
 	--javlo-ui-bg-tertiary: var(--javlo-ui-color-10);
+	--javlo-ui-bg-tools: var(--javlo-ui-color-7);
 	--javlo-ui-border: var(--javlo-ui-color-10);
 	--javlo-ui-text: #ccc;
 
@@ -115,6 +132,8 @@
 	--javlo-menu-height: 40px;
 	--javlo-sidebar-width: 330px;
 	--javlo-modal-maximize-border-multi: 6;
+	
+	--javlo-ui-text-secondary: var(--javlo-ui-color-3);
 
 	// Fonts
 	--bsicons: "bootstrap-icons";

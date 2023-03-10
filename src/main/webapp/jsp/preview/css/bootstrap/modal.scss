@@ -8,7 +8,7 @@
 		
 		.box {
 			background-color: var(--javlo-ui-bg-primary) !important;
-			color: #fff;
+			color: var(--javlo-ui-text);
 		}
 
 		.modal-header {
@@ -37,7 +37,7 @@
 					font-size: 16px;
 
 					i {
-						color: white;
+						color: var(--javlo-ui-text);;
 						font-size: 16px;
 					}
 				}
@@ -53,7 +53,7 @@
 			}
 
 			h4 {
-				color: white;
+				color: var(--javlo-ui-text);
 				font-size: 16px !important;
 				font-weight: 600;
 			}

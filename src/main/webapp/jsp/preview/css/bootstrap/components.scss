@@ -39,7 +39,6 @@ body #preview_command .component-list .component .wrapper-in .text {
 	}
 }
 
-
 #preview_command .component .figure {
 	background-color: transparent !important;
 }
@@ -110,7 +109,7 @@ body #preview_command .component-list .component .wrapper-in {
 		display: block;
 		margin: 0 !important;
 		padding: 0 !important;
-		background-color: var(--javlo-ui-color-7);
+		background-color: var(--javlo-ui-bg-tools);
 		border: 1px solid var(--javlo-ui-btn-border);
 		text-align: center;
 		font-weight: bold;

@@ -7,12 +7,11 @@ body #preview_command .component-list {
 }
 
 body #preview_command .component-list {
-
-	.wrapper-in,
+	.wrapper-in:hover {
+	color: #fff !important;
 	i {
-		&:hover {
-			color: var(--javlo-ui-color-1) !important;
-		}
+		color: #fff !important;
+	}
 	}
 }
 
@@ -314,7 +313,7 @@ body._jv_dragnav>#preview_command {
 				height: 30px;
 				line-height: 30px;
 				border-radius: 2px;
-				color: var(--javlo-ui-color-3);
+				color: var(--javlo-ui-text-secondary);
 				font-size: 1em;
 			}
 		}
@@ -485,7 +484,7 @@ body._jv_dragnav>#preview_command {
 }
 
 #preview_command .well {
-	background-color: var(--javlo-ui-color-9) !important;
+	background-color: var(--javlo-ui-bg-secondary) !important;
 	border: 1px solid var(--javlo-ui-border) !important;
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;

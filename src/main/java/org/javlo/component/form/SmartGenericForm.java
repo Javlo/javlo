@@ -84,6 +84,7 @@ import org.javlo.utils.StructuredProperties;
 import org.javlo.utils.TimeMap;
 import org.javlo.utils.XLSTools;
 import org.javlo.ztatic.StaticInfo;
+import org.python.modules.synchronize;
 
 public class SmartGenericForm extends AbstractVisualComponent implements IAction, IEventRegistration, IDataContainer {
 
@@ -100,6 +101,8 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 	private static final String VALID_LINE_PARAM = "_vl";
 
 	private static final String VALIDED = "__valided";
+
+	private static final Object LOCK_SUBMIT = new Object();
 
 	private Properties bundle;
 
@@ -1229,129 +1232,28 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
 	public static String performSubmit(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-		RequestService rs = RequestService.getInstance(request);
-		ContentContext ctx = ContentContext.getContentContext(request, response);
-		ContentService content = ContentService.getInstance(request);
-		SmartGenericForm comp = (SmartGenericForm) content.getComponent(ctx, rs.getParameter("comp_id", null));
-		boolean eventClose = comp.isClose(ctx);
-
-		String code = rs.getParameter("_form-code", "");
-		if (comp.isFormExpire() && !comp.cacheForm.containsKey(code) && !comp.isCaptcha(ctx)) {
-			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-			GenericMessage msg = new GenericMessage(i18nAccess.getViewText("error.bad-from-version", "This form has experied, try again."), GenericMessage.ERROR);
-			request.setAttribute("msg", msg);
-			return "This form has experied, try again.";
-		}
-
-		/** check captcha **/
-		String captcha = rs.getParameter("captcha", null);
-
 		String userIP = request.getHeader("x-real-ip");
 		if (StringHelper.isEmpty(userIP)) {
 			userIP = request.getRemoteAddr();
 		}
 
-		if (comp.isCaptcha(ctx)) {
-			if (StringHelper.isOneEmpty(comp.getRecaptchaKey(), comp.getRecaptchaSecretKey())) {
-				if (captcha == null || CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode() == null || !CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode().equals(captcha)) {
-					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.captcha", "bad captcha."), GenericMessage.ERROR);
-					request.setAttribute("msg", msg);
-					request.setAttribute("error_captcha", "true");
-					CaptchaService.getInstance(request.getSession()).reset();
-					return null;
-				} else {
-					CaptchaService.getInstance(request.getSession()).reset();
-				}
-			} else {
-				Map<String, String> params = new HashMap<String, String>();
-				params.put("secret", comp.getRecaptchaKey());
-				params.put("response", rs.getParameter("g-recaptcha-response", ""));
-				params.put("remoteip", request.getRemoteAddr());
-				String url = URLHelper.addAllParams("https://www.google.com/recaptcha/api/siteverify", "secret=" + comp.getRecaptchaSecretKey(), "response=" + rs.getParameter("g-recaptcha-response", ""), "remoteip=" + userIP);
-				String captchaResponse = NetHelper.readPage(new URL(url));
-				JSONMap map = JSONMap.parseMap(captchaResponse);
-				if (map == null || !StringHelper.isTrue(map.get("success"))) {
-					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.captcha", "bad captcha."), GenericMessage.ERROR);
-					request.setAttribute("msg", msg);
-					request.setAttribute("error_captcha", "true");
-					return null;
-				}
-			}
-		}
-
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-
-		String subject = "GenericForm submit : '" + globalContext.getGlobalTitle() + "' ";
-		String subjectField = comp.getLocalConfig(false).getProperty("mail.subject.field", null);
-		if (subjectField != null && rs.getParameter(subjectField, null) != null) {
-			subject = comp.getLocalConfig(false).getProperty("mail.subject", "") + rs.getParameter(subjectField, null);
-		} else {
-			subject = comp.getLocalConfig(false).getProperty("mail.subject", subject);
-		}
-		InfoBean.getCurrentInfoBean(ctx); // create info bean if not exist
-		subject = XHTMLHelper.replaceJSTLData(ctx, subject);
-		Map<String, Object> params = rs.getParameterMap();
-		Map<String, String> result = new LinkedHashMap<String, String>();
-		List<String> errorFields = new LinkedList<String>();
-		result.put("__registration time", StringHelper.renderSortableTime(new Date()));
-		result.put("__local addr", request.getLocalAddr());
-		result.put("__remote addr", request.getRemoteAddr());
-		result.put("__X-Forwarded-For", request.getHeader("x-forwarded-for"));
-		result.put("__X-Real-IP", request.getHeader("x-real-ip"));
-		result.put("__referer", StringHelper.removeTag(request.getHeader("referer")));
-		result.put("__agent", request.getHeader("User-Agent"));
-		String registrationID = StringHelper.getShortRandomId();
-		result.put("_registrationID", registrationID);
-		result.put("_event-close", "" + comp.isClose(ctx));
-		result.put("_compid", "" + comp.getId());
-
-		result.put(USER_FIELD, StringHelper.neverNull(ctx.getCurrentUserId(), ""));
-		result.put(VALIDED, "false");
+		Object value = null;
+		String finalValue = null;
+		
+		RequestService rs = RequestService.getInstance(request);
+		ContentContext ctx = ContentContext.getContentContext(request, response);
+		ContentService content = ContentService.getInstance(request);
+		SmartGenericForm comp = (SmartGenericForm) content.getComponent(ctx, rs.getParameter("comp_id", null));
+		
 		String fakeField = comp.getLocalConfig(false).getProperty("field.fake", "fake");
 		boolean withXHTML = StringHelper.isTrue(comp.getLocalConfig(false).getProperty("field.xhtml", null));
 		boolean fakeFilled = false;
-
-		List<String> keys = new LinkedList<String>(params.keySet());
-		Collections.sort(keys, new StringComparator());
-
-		/** store attach files **/
-
-		Map<String, String> specialValues = new HashMap<String, String>();
-
-		String badFileFormatRAW = comp.getLocalConfig(false).getProperty("file.bad-file", "exe,bat,scr,bin,obj,lib,dll,bat,sh,com,cmd,msi,jsp,xml,html,htm,vbe,wsf,wsc,asp,php");
-		List<String> badFileFormat = StringHelper.stringToCollection(badFileFormatRAW, ",");
-		long maxFileSize = comp.getMaxFileSize();
-
-		for (FileItem file : rs.getAllFileItem()) {
-			String ext = StringHelper.getFileExtension(file.getName()).toLowerCase();
-			if (badFileFormat.contains(ext)) {
-				logger.warning("file blocked because bad extention : " + file.getName());
-				GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.bad-file", "bad file format."), GenericMessage.ERROR);
-				request.setAttribute("msg", msg);
-				return null;
-			}
-			InputStream in = file.getInputStream();
-			if (in != null) {
-				try {
-					if (file.getName().trim().length() > 0) {
-						String fileName = URLHelper.mergePath(comp.getAttachFolder(ctx).getAbsolutePath(), StringHelper.createFileName(file.getName()));
-						File freeFile = ResourceHelper.getFreeFileName(new File(fileName));
-						if (ResourceHelper.writeStreamToFile(in, freeFile, maxFileSize) < 0) {
-							GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.tobig-file", "file to big."), GenericMessage.ERROR);
-							request.setAttribute("msg", msg);
-							return null;
-						}
-						StaticInfo staticInfo = StaticInfo.getInstance(ctx, freeFile);
-						String fileURL = URLHelper.createResourceURL(ctx.getContextForAbsoluteURL(), URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), staticInfo.getStaticURL()));
-						result.put(file.getFieldName(), fileURL);
-						specialValues.put(file.getFieldName(), fileURL);
-					}
-				} finally {
-					ResourceHelper.closeResource(in);
-				}
-			}
-		}
-
+		
+		Map<String, Object> params = rs.getParameterMap();
+		Map<String, String> result = new LinkedHashMap<String, String>();
+		List<String> errorFields = new LinkedList<String>();
+		
+		
 		Map<String, String> adminMailData = new LinkedHashMap<String, String>();
 		Map<String, String> userMailData = new LinkedHashMap<String, String>();
 		String errorFieldList = " (";
@@ -1359,181 +1261,297 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		Collection<String> errorKeyFound = new HashSet<String>();
 		boolean badFormatFound = false;
 		boolean update = comp.isUpdate(ctx);
+		
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
+		String subject = "GenericForm submit : '" + globalContext.getGlobalTitle() + "' ";
+		String subjectField = comp.getLocalConfig(false).getProperty("mail.subject.field", null);
+		
+		boolean eventClose = comp.isClose(ctx);
 		String loc = ctx.getCurrentPage().getLocation(ctx);
-		if (!StringHelper.isEmpty(loc)) {
-			adminMailData.put("location", loc);
-		}
-
+		
 		Map<String, String> dataDoc = new HashMap<>();
-
 		Map<String, String> dataMap = null;
-		if (comp.isFilledFromCookies()) {
-			dataMap = new HashMap<>();
-		}
+		
+		String registrationID = StringHelper.getShortRandomId();
+		String code = rs.getParameter("_form-code", "");
 
-		String sql = null;
-		PreparedStatement ps = null;
-		Connection conn = null;
-		if (comp.isDb(ctx)) {
-			sql = "INSERT INTO " + comp.getTableSqlName() + "(";
-			String values = "(";
-			String sep = "";
-			for (Field field : comp.getFields(ctx)) {
-				sql += sep + field.getName();
-				values += sep + "?";
-				sep = ",";
-			}
-			sql += ") VALUES " + values + ")";
-			conn = DataBaseService.getInstance(ctx.getGlobalContext()).getConnection(DataBaseService.getDefaultDbName(ctx));
-			ps = conn.prepareStatement(sql);
-		}
-
-		int statementIndex = 1;
-		for (Field field : comp.getFields(ctx)) {
-
-			String key = field.getName();
-			Object value = params.get(key);
-
-			if (dataMap != null) {
-				dataMap.put(key, "" + value);
+		synchronized (LOCK_SUBMIT) {
+			
+			if (comp.isFormExpire() && !comp.cacheForm.containsKey(code) && !comp.isCaptcha(ctx)) {
+				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+				GenericMessage msg = new GenericMessage(i18nAccess.getViewText("error.bad-from-version", "This form has experied, try again."), GenericMessage.ERROR);
+				request.setAttribute("msg", msg);
+				return "This form has experied, try again.";
 			}
 
-			if (value != null && value.toString().contains("//") && !comp.acceptLinks(ctx)) {
-				return I18nAccess.getInstance(ctx).getViewText("global.error.content.no-link");
-			}
+			/** check captcha **/
+			String captcha = rs.getParameter("captcha", null);
 
-			if (specialValues.get(key) != null) {
-				value = specialValues.get(key);
-			}
-			String finalValue = rs.getParameter(key, "");
-			if (specialValues.get(key) != null) {
-				finalValue = specialValues.get(key);
-			}
-
-			if (rs.getParameterListValues(key) != null && rs.getParameterListValues(key).size() > 1) {
-				finalValue = StringHelper.collectionToString(rs.getParameterListValues(key), ",");
-			}
-
-			if (key.equals(fakeField) && finalValue.trim().length() > 0) {
-				fakeFilled = true;
-			} else if (!withXHTML && (finalValue.toLowerCase().contains("</a>") || finalValue.toLowerCase().contains("</div>"))) {
-				fakeFilled = true;
-			}
-
-			if (field.getType().equals("hidden")) {
-				dataDoc.put(StringHelper.firstLetterLower(key), field.getLabel());
-			} else {
-				dataDoc.put(StringHelper.firstLetterLower(key), "" + value);
-			}
-
-			if (ps != null) {
-				ps.setObject(statementIndex, value);
-				statementIndex++;
-			}
-
-			if (!update || !field.getType().equals("file")) {
-				// if (!field.isFilledWidth(finalValue) &&
-				// StringHelper.containsUppercase(key.substring(0, 1))) {
-				if (!field.isFilledWidth(finalValue, !field.getType().equals("list")) && StringHelper.containsUppercase(key.substring(0, 1)) && StringHelper.isEmpty(field.getCondition())) {
-					errorKeyFound.add(key);
-					errorFields.add(key);
-					errorFieldList = errorFieldList + errorFieldSep + field.getLabel() + (field.getFormatLabel() != null ? " - " + field.getFormatLabel() : "");
-					errorFieldSep = ",";
-					if (badFormatFound) {
-						GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.generic", "please check all fields.") + errorFieldList + ')', GenericMessage.ERROR);
+			if (comp.isCaptcha(ctx)) {
+				if (StringHelper.isOneEmpty(comp.getRecaptchaKey(), comp.getRecaptchaSecretKey())) {
+					if (captcha == null || CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode() == null || !CaptchaService.getInstance(request.getSession()).getCurrentCaptchaCode().equals(captcha)) {
+						GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.captcha", "bad captcha."), GenericMessage.ERROR);
 						request.setAttribute("msg", msg);
+						request.setAttribute("error_captcha", "true");
+						CaptchaService.getInstance(request.getSession()).reset();
+						return null;
 					} else {
-						GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.required", "please could you fill all required fields.") + errorFieldList + ')', GenericMessage.ERROR);
+						CaptchaService.getInstance(request.getSession()).reset();
+					}
+				} else {
+//					Map<String, String> paramsLocal = new HashMap<String, String>();
+//					paramsLocal.put("secret", comp.getRecaptchaKey());
+//					paramsLocal.put("response", rs.getParameter("g-recaptcha-response", ""));
+//					paramsLocal.put("remoteip", request.getRemoteAddr());
+					String url = URLHelper.addAllParams("https://www.google.com/recaptcha/api/siteverify", "secret=" + comp.getRecaptchaSecretKey(), "response=" + rs.getParameter("g-recaptcha-response", ""), "remoteip=" + userIP);
+					String captchaResponse = NetHelper.readPage(new URL(url));
+					JSONMap map = JSONMap.parseMap(captchaResponse);
+					if (map == null || !StringHelper.isTrue(map.get("success"))) {
+						GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.captcha", "bad captcha."), GenericMessage.ERROR);
 						request.setAttribute("msg", msg);
+						request.setAttribute("error_captcha", "true");
+						return null;
 					}
 				}
 			}
-			if (!StringHelper.isEmpty(finalValue)) {
-				if (field.getType().equals(Field.TYPE_VAT) && !StringHelper.isEmpty(finalValue)) {
-					Boolean errorVAT = false;
-					Company company = NetHelper.validVATEuroparlEU(ctx, finalValue);
-					if (ctx.getGlobalContext().getStaticConfig().isInternetAccess()) {
-						if (company == null) {
-							errorVAT = true;
-						} else {
-							for (Field f : comp.getFields(ctx)) {
-								if (f.getName().equalsIgnoreCase("adresse") || f.getName().equalsIgnoreCase("address") && StringHelper.isEmpty(f.getValue())) {
-									f.setValue(company.getAddress());
-								}
+
+			if (subjectField != null && rs.getParameter(subjectField, null) != null) {
+				subject = comp.getLocalConfig(false).getProperty("mail.subject", "") + rs.getParameter(subjectField, null);
+			} else {
+				subject = comp.getLocalConfig(false).getProperty("mail.subject", subject);
+			}
+			InfoBean.getCurrentInfoBean(ctx); // create info bean if not exist
+			subject = XHTMLHelper.replaceJSTLData(ctx, subject);
+			result.put("__registration time", StringHelper.renderSortableTime(new Date()));
+			result.put("__local addr", request.getLocalAddr());
+			result.put("__remote addr", request.getRemoteAddr());
+			result.put("__X-Forwarded-For", request.getHeader("x-forwarded-for"));
+			result.put("__X-Real-IP", request.getHeader("x-real-ip"));
+			result.put("__referer", StringHelper.removeTag(request.getHeader("referer")));
+			result.put("__agent", request.getHeader("User-Agent"));			
+			result.put("_registrationID", registrationID);
+			result.put("_event-close", "" + comp.isClose(ctx));
+			result.put("_compid", "" + comp.getId());
+
+			result.put(USER_FIELD, StringHelper.neverNull(ctx.getCurrentUserId(), ""));
+			result.put(VALIDED, "false");
+
+			List<String> keys = new LinkedList<String>(params.keySet());
+			Collections.sort(keys, new StringComparator());
+
+			/** store attach files **/
+
+			Map<String, String> specialValues = new HashMap<String, String>();
+
+			String badFileFormatRAW = comp.getLocalConfig(false).getProperty("file.bad-file", "exe,bat,scr,bin,obj,lib,dll,bat,sh,com,cmd,msi,jsp,xml,html,htm,vbe,wsf,wsc,asp,php");
+			List<String> badFileFormat = StringHelper.stringToCollection(badFileFormatRAW, ",");
+			long maxFileSize = comp.getMaxFileSize();
+
+			for (FileItem file : rs.getAllFileItem()) {
+				String ext = StringHelper.getFileExtension(file.getName()).toLowerCase();
+				if (badFileFormat.contains(ext)) {
+					logger.warning("file blocked because bad extention : " + file.getName());
+					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.bad-file", "bad file format."), GenericMessage.ERROR);
+					request.setAttribute("msg", msg);
+					return null;
+				}
+				InputStream in = file.getInputStream();
+				if (in != null) {
+					try {
+						if (file.getName().trim().length() > 0) {
+							String fileName = URLHelper.mergePath(comp.getAttachFolder(ctx).getAbsolutePath(), StringHelper.createFileName(file.getName()));
+							File freeFile = ResourceHelper.getFreeFileName(new File(fileName));
+							if (ResourceHelper.writeStreamToFile(in, freeFile, maxFileSize) < 0) {
+								GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("message.tobig-file", "file to big."), GenericMessage.ERROR);
+								request.setAttribute("msg", msg);
+								return null;
 							}
+							StaticInfo staticInfo = StaticInfo.getInstance(ctx, freeFile);
+							String fileURL = URLHelper.createResourceURL(ctx.getContextForAbsoluteURL(), URLHelper.mergePath(globalContext.getStaticConfig().getStaticFolder(), staticInfo.getStaticURL()));
+							result.put(file.getFieldName(), fileURL);
+							specialValues.put(file.getFieldName(), fileURL);
 						}
-					} else {
-						errorVAT = StringHelper.isVAT(field.getValue());
+					} finally {
+						ResourceHelper.closeResource(in);
 					}
-					if (errorVAT) {
+				}
+			}
+
+			
+			if (!StringHelper.isEmpty(loc)) {
+				adminMailData.put("location", loc);
+			}
+
+			
+			if (comp.isFilledFromCookies()) {
+				dataMap = new HashMap<>();
+			}
+
+			String sql = null;
+			PreparedStatement ps = null;
+			Connection conn = null;
+			if (comp.isDb(ctx)) {
+				sql = "INSERT INTO " + comp.getTableSqlName() + "(";
+				String values = "(";
+				String sep = "";
+				for (Field field : comp.getFields(ctx)) {
+					sql += sep + field.getName();
+					values += sep + "?";
+					sep = ",";
+				}
+				sql += ") VALUES " + values + ")";
+				conn = DataBaseService.getInstance(ctx.getGlobalContext()).getConnection(DataBaseService.getDefaultDbName(ctx));
+				ps = conn.prepareStatement(sql);
+			}
+
+			int statementIndex = 1;
+			for (Field field : comp.getFields(ctx)) {
+
+				String key = field.getName();
+				value = params.get(key);
+
+				if (dataMap != null) {
+					dataMap.put(key, "" + value);
+				}
+
+				if (value != null && value.toString().contains("//") && !comp.acceptLinks(ctx)) {
+					return I18nAccess.getInstance(ctx).getViewText("global.error.content.no-link");
+				}
+
+				if (specialValues.get(key) != null) {
+					value = specialValues.get(key);
+				}
+				finalValue = rs.getParameter(key, "");
+				if (specialValues.get(key) != null) {
+					finalValue = specialValues.get(key);
+				}
+
+				if (rs.getParameterListValues(key) != null && rs.getParameterListValues(key).size() > 1) {
+					finalValue = StringHelper.collectionToString(rs.getParameterListValues(key), ",");
+				}
+
+				if (key.equals(fakeField) && finalValue.trim().length() > 0) {
+					fakeFilled = true;
+				} else if (!withXHTML && (finalValue.toLowerCase().contains("</a>") || finalValue.toLowerCase().contains("</div>"))) {
+					fakeFilled = true;
+				}
+
+				if (field.getType().equals("hidden")) {
+					dataDoc.put(StringHelper.firstLetterLower(key), field.getLabel());
+				} else {
+					dataDoc.put(StringHelper.firstLetterLower(key), "" + value);
+				}
+
+				if (ps != null) {
+					ps.setObject(statementIndex, value);
+					statementIndex++;
+				}
+
+				if (!update || !field.getType().equals("file")) {
+					// if (!field.isFilledWidth(finalValue) &&
+					// StringHelper.containsUppercase(key.substring(0, 1))) {
+					if (!field.isFilledWidth(finalValue, !field.getType().equals("list")) && StringHelper.containsUppercase(key.substring(0, 1)) && StringHelper.isEmpty(field.getCondition())) {
 						errorKeyFound.add(key);
 						errorFields.add(key);
-						errorFieldList = errorFieldList + errorFieldSep + field.getLabel();
+						errorFieldList = errorFieldList + errorFieldSep + field.getLabel() + (field.getFormatLabel() != null ? " - " + field.getFormatLabel() : "");
 						errorFieldSep = ",";
-						I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-						GenericMessage msg = new GenericMessage(i18nAccess.getViewText("error.vat", "VAT number not idenfied. (sample:BE0824.985.592)") + ')', GenericMessage.ERROR);
+						if (badFormatFound) {
+							GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.generic", "please check all fields.") + errorFieldList + ')', GenericMessage.ERROR);
+							request.setAttribute("msg", msg);
+						} else {
+							GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.required", "please could you fill all required fields.") + errorFieldList + ')', GenericMessage.ERROR);
+							request.setAttribute("msg", msg);
+						}
+					}
+				}
+				if (!StringHelper.isEmpty(finalValue)) {
+					if (field.getType().equals(Field.TYPE_VAT) && !StringHelper.isEmpty(finalValue)) {
+						Boolean errorVAT = false;
+						Company company = NetHelper.validVATEuroparlEU(ctx, finalValue);
+						if (ctx.getGlobalContext().getStaticConfig().isInternetAccess()) {
+							if (company == null) {
+								errorVAT = true;
+							} else {
+								for (Field f : comp.getFields(ctx)) {
+									if (f.getName().equalsIgnoreCase("adresse") || f.getName().equalsIgnoreCase("address") && StringHelper.isEmpty(f.getValue())) {
+										f.setValue(company.getAddress());
+									}
+								}
+							}
+						} else {
+							errorVAT = StringHelper.isVAT(field.getValue());
+						}
+						if (errorVAT) {
+							errorKeyFound.add(key);
+							errorFields.add(key);
+							errorFieldList = errorFieldList + errorFieldSep + field.getLabel();
+							errorFieldSep = ",";
+							I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+							GenericMessage msg = new GenericMessage(i18nAccess.getViewText("error.vat", "VAT number not idenfied. (sample:BE0824.985.592)") + ')', GenericMessage.ERROR);
+							request.setAttribute("msg", msg);
+							badFormatFound = true;
+						}
+					} else if (!field.isValueValid(finalValue) && !errorKeyFound.contains(key)) {
+						errorKeyFound.add(key);
+						errorFields.add(key);
+						errorFieldList = errorFieldList + errorFieldSep + field.getLabel() + (field.getFormatLabel() != null ? " - " + field.getFormatLabel() : "");
+						errorFieldSep = ",";
+						GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.generic", "please check all fields.") + errorFieldList + ')', GenericMessage.ERROR);
 						request.setAttribute("msg", msg);
 						badFormatFound = true;
 					}
-				} else if (!field.isValueValid(finalValue) && !errorKeyFound.contains(key)) {
-					errorKeyFound.add(key);
-					errorFields.add(key);
-					errorFieldList = errorFieldList + errorFieldSep + field.getLabel() + (field.getFormatLabel() != null ? " - " + field.getFormatLabel() : "");
-					errorFieldSep = ",";
-					GenericMessage msg = new GenericMessage(comp.getLocalConfig(false).getProperty("error.generic", "please check all fields.") + errorFieldList + ')', GenericMessage.ERROR);
-					request.setAttribute("msg", msg);
-					badFormatFound = true;
 				}
+
+				// if (!StringHelper.isEmpty(field.getRegisteredList())) {
+				// List<IListItem> list = ListService.getInstance(ctx).getList(ctx,
+				// field.getRegisteredList());
+				// if (list != null) {
+				// for (IListItem item : list) {
+				// if (item.getKey().equals(finalValue)) {
+				// finalValue = finalValue+" ("+item.getValue()+')';
+				// }
+				// }
+				// }
+				// }
+
+				if (ctx.getCurrentUser() != null) {
+					adminMailData.put("user", ctx.getCurrentUser().getLogin());
+				}
+				String pageLink = URLHelper.createVirtualURL(ctx.getContextForAbsoluteURL());
+				adminMailData.put("title", "<a href=\"" + pageLink + "\">" + ctx.getCurrentPage().getPageTitle(ctx) + "</a>");
+
+				if (value instanceof Object[]) {
+					finalValue = StringHelper.arrayToString((Object[]) params.get(key), ",");
+					adminMailData.put(field.getLabel() + " (" + key + ") ", finalValue);
+					userMailData.put(field.getLabel() + MailService.HIDDEN_DIV + key + "</div>", finalValue);
+				} else {
+					adminMailData.put(field.getLabel() + " (" + key + ") ", finalValue);
+					userMailData.put(field.getLabel() + MailService.HIDDEN_DIV + key + "</div>", finalValue);
+				}
+
+				if (comp.isStoreLabel()) {
+					result.put(field.getLabel(), finalValue);
+				} else {
+					result.put(key, finalValue);
+				}
+
+			}
+			
+			if (ps != null) {
+				ps.execute();
+				DataBaseService.getInstance(ctx.getGlobalContext()).releaseConnection(conn);
+			}
+			
+			if (comp.isFilledFromCookies()) {
+				UserDataService userDataService = UserDataService.getInstance(ctx);
+				userDataService.addUserData(ctx, comp.getDataKey(), StringHelper.mapToString(dataMap));
 			}
 
-			// if (!StringHelper.isEmpty(field.getRegisteredList())) {
-			// List<IListItem> list = ListService.getInstance(ctx).getList(ctx,
-			// field.getRegisteredList());
-			// if (list != null) {
-			// for (IListItem item : list) {
-			// if (item.getKey().equals(finalValue)) {
-			// finalValue = finalValue+" ("+item.getValue()+')';
-			// }
-			// }
-			// }
-			// }
-
-			if (ctx.getCurrentUser() != null) {
-				adminMailData.put("user", ctx.getCurrentUser().getLogin());
-			}
-			String pageLink = URLHelper.createVirtualURL(ctx.getContextForAbsoluteURL());
-			adminMailData.put("title", "<a href=\"" + pageLink + "\">" + ctx.getCurrentPage().getPageTitle(ctx) + "</a>");
-
-			if (value instanceof Object[]) {
-				finalValue = StringHelper.arrayToString((Object[]) params.get(key), ",");
-				adminMailData.put(field.getLabel() + " (" + key + ") ", finalValue);
-				userMailData.put(field.getLabel() + MailService.HIDDEN_DIV + key + "</div>", finalValue);
-			} else {
-				adminMailData.put(field.getLabel() + " (" + key + ") ", finalValue);
-				userMailData.put(field.getLabel() + MailService.HIDDEN_DIV + key + "</div>", finalValue);
-			}
-
-			if (comp.isStoreLabel()) {
-				result.put(field.getLabel(), finalValue);
-			} else {
-				result.put(key, finalValue);
-			}
-
-		}
-
-		if (comp.isFilledFromCookies()) {
-			UserDataService userDataService = UserDataService.getInstance(ctx);
-			userDataService.addUserData(ctx, comp.getDataKey(), StringHelper.mapToString(dataMap));
-		}
+		} // Syncronized
 
 		if (fakeFilled) {
 			logger.warning("spam detected fake field filled : " + comp.getPage().getPath());
-		}
-
-		if (ps != null) {
-			ps.execute();
-			DataBaseService.getInstance(ctx.getGlobalContext()).releaseConnection(conn);
 		}
 
 		if (errorFields.size() == 0) {

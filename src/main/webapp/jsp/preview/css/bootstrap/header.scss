@@ -123,12 +123,12 @@
 	.spinner_container,
 	.name {
 		width: 120px;
-		color: white;
+		color: var(--javlo-ui-text);
 		padding: 0 10px;
 		.logo-javlo {
 			display: inline-block;
 			width: 75px;
-			fill: #fff;
+			fill: var(--javlo-ui-text);
 		}
 	}
 
@@ -141,12 +141,10 @@
 		padding: 0 10px;
 		font-size: 20px;
 		font-family: javloFont, sans-serif;
-
 		&:hover {
 			text-decoration: none !important;
 			color: var(--javlo-ui-color-3);
 		}
-
 	}
 
 	.settings {
@@ -169,12 +167,10 @@
 
 #preview_command .page-actions {
 	position: relative;
-
 	ul {
 		display: flex;
 	}
 }
-
 
 #preview_command li.home {
 	padding: 15px;
@@ -195,12 +191,9 @@
 	background-color: #ffffff;
 }
 
-
-
 #preview_command .header .select {
 	margin: 0 5px;
 }
-
 
 #preview_command .header .btn {
 	display: flex !important;
@@ -263,7 +256,6 @@
 	justify-content: space-around;
 	align-items: center;
 }
-
 
 #preview_command .header .list-group li {
 	float: none;
@@ -404,9 +396,9 @@ body #preview_command ._jv_menu {
 	}
 
 	.btn:hover {
-		background-color: var(--javlo-ui-color-9) !important;
+		background-color: var(--javlo-ui-bg-secondary) !important;
 		border-radius: 0 !important;
-		border-color: var(--javlo-ui-color-9) !important;
+		border-color: var(--javlo-ui-bg-secondary) !important;
 	}
 
 	.button-group-addon {
@@ -447,7 +439,7 @@ body #preview_command ._jv_menu {
 		}
 
 		a {
-			color: white;
+			color: var(--javlo-ui-text);
 			max-width: 135px;
 			overflow: hidden;
 			text-overflow: ellipsis;
@@ -460,7 +452,7 @@ body #preview_command ._jv_menu {
 
 		a.template {
 			font-size: .8em;
-			color: var(--javlo-ui-color-3);
+			color: var(--javlo-ui-text-secondary);
 			max-width: 105px;
 			margin-right: .5rem;
 		}

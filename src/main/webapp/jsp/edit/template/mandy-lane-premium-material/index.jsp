@@ -163,7 +163,7 @@
 	<script type="text/javascript" src="${info.editTemplateURL}/js/plugins/jquery.jgrowl.js"></script>
 	</head>
 
-	<body id="main-body" onload="jQuery('#main-loader').remove();" class="bodygrey ${info.admin?'right-admin ':'noright-admin '}${not empty param.previewEdit?'previewEdit':''}${requestService.parameterMap.lightEdit?' light-edit':''}">
+	<body id="main-body" onload="jQuery('#main-loader').remove();" class="bodygrey ${info.admin?'right-admin ':'noright-admin '}${not empty param.previewEdit?'previewEdit':''}${requestService.parameterMap.lightEdit?' light-edit':''} edition-mode-${contentContext.globalContext.editTemplateMode}">
 
 		<div id="main-loader" onclick="jQuery('#main-loader').remove();"><div class="lds-ripple"><div></div><div></div></div></div>
 		
