@@ -831,9 +831,8 @@ div#preview_command {
 	padding: calc(var(--javlo-main-separator) / 2);
 	width: 100%;
 	font-size: 14px;
-	color: #fff;
+	color: var(--javlo-ui-text);
 	z-index: 999999;
-	color: white;
 
 	// background: repeating-linear-gradient(-45deg,
 	// 		var(--javlo-ui-color-9),
@@ -869,7 +868,7 @@ div#preview_command {
 
 	.close-preview-banner {
 		font-size: 14px;
-		color: #fff;
+		color: var(--javlo-ui-text);
 		margin-left: var(--javlo-main-separator);
 		transition: opacity .3;
 

@@ -2022,7 +2022,7 @@ public class StaticConfig extends Observable {
 	}
 
 	public List<String> getPreviewLayout() {
-		return StringHelper.stringToCollection(properties.getString("preview.layout", "light,dark"), ",");
+		return StringHelper.stringToCollection(properties.getString("preview.layout", "light,dark,pink,sea"), ",");
 	}
 
 	public int getBackupInterval() {

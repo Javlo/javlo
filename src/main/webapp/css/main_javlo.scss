@@ -25,9 +25,9 @@ body._jv_modal-open {
 	background-color: var(--light-black) !important;
 	font-size: 1rem !important;
 	text-transform: uppercase;
-	color: white !important;
+	color: var(--javlo-ui-text) !important;
 	a {
-		color: white !important;
+		color: var(--javlo-ui-text) !important;
 	}
 	box-shadow: none !important;
 	width: 100%;
@@ -97,7 +97,7 @@ body._jv_modal-open {
 
 select.form-control {
 	background-color: var(--javlo-ui-bg-primary);
-	color: #fff;
+	color: var(--javlo-ui-text);
 }
 
 .btn-group {
