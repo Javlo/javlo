@@ -12,7 +12,7 @@ public class PatternHelper {
 	public static final Pattern MULTI_MAIL_PATTERN = Pattern.compile("^([\\w\\s]*<?[a-zA-Z][\\w\\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\\w\\.-]*[a-zA-Z0-9]\\.[a-zA-Z][a-zA-Z\\.]*[a-zA-Z]>?\\,?)*$"); //TODO: terminate this pattern
 	public static final Pattern PHONE_PATTERN = Pattern.compile("\\+?+[\\d\\s()]++$");
 	public static final Pattern ALPHANNUM_NOSPACE_PATTERN = Pattern.compile("([a-z]|[A-Z]|[0-9]|_|-)*");
-	public static final Pattern EXTERNAL_LINK_PATTERN = Pattern.compile(".*://.*");
+	public static final Pattern EXTERNAL_LINK_PATTERN = Pattern.compile(".*://.*|tel:.*|TEL:.*|Tel:.*");
 	public static final Pattern HOST_PATTERN = Pattern.compile("([a-z]|[A-Z]|[0-9]|_|-|\\.)*");
 	
 	public static void main(String[] args) {
@@ -28,6 +28,11 @@ public class PatternHelper {
 			String pageName = group.replaceFirst("name=\"", "");
 			System.out.println(pageName);
 		}
+		
+		String link = "http://www.google.be";
+		System.out.println(">>>>>>>>> PatternHelper.main : PatternHelper.EXTERNAL_LINK_PATTERN.matcher(link).matches() = "+PatternHelper.EXTERNAL_LINK_PATTERN.matcher(link).matches()); //TODO: remove debug trace
+		link = "TEL:0216160121";
+		System.out.println(">>>>>>>>> PatternHelper.main : PatternHelper.EXTERNAL_LINK_PATTERN.matcher(link).matches() = "+PatternHelper.EXTERNAL_LINK_PATTERN.matcher(link).matches()); //TODO: remove debug trace
 	}
 
 }
