@@ -653,8 +653,12 @@ div#preview_command {
 }
 
 #preview_command .thumbnail:hover {
-	border-color: var(--action-color);
-	background-color: #eeeeee;
+	border-color: var(--javlo-ui-border);
+	background-color: var(--javlo-ui-bg-hover);
+	color: var(--javlo-ui-text-hover);
+	.caption {
+		color: var(--javlo-ui-text-hover);
+	}
 }
 
 #preview_command .drop-files,

@@ -2,15 +2,38 @@
 
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css");
 
-body.edition-mode-sea {
+body.edition-mode-sky {
 	#preview_command,
 	& {
 		
 		--javlo-ui-bg-primary: #69D2E7;
 		--javlo-ui-bg-secondary: #A7DBD8;
 		--javlo-ui-bg-tertiary: #E0E4CC;
-		--javlo-ui-bg-tools: #F38630;
+		--javlo-ui-bg-tools: #F3863080;
+		--javlo-ui-bg-hover: #F38630;
 		--javlo-ui-border: #FA6900;
+		
+		--javlo-ui-text: #333;
+		--javlo-ui-text-secondary: #676767;
+
+		--javlo-ui-btn-text-active: #232323;
+		--javlo-ui-btn-text-inactive: #757575;
+		
+		--javlo-ui-nav-btn-bg-inactive: var(--javlo-ui-bg-tertiary);
+		--javlo-ui-special-action-color: var(--action-color-darken);
+	}
+}
+
+body.edition-mode-sea {
+	#preview_command,
+	& {
+		
+		--javlo-ui-bg-primary: #53C0CD;
+		--javlo-ui-bg-secondary: #2CBCD1;
+		--javlo-ui-bg-tertiary: #1098B9;
+		--javlo-ui-bg-tools: #088DB280;
+		--javlo-ui-bg-hover: #088DB2;
+		--javlo-ui-border: #50AFC0;
 		
 		--javlo-ui-text: #333;
 		--javlo-ui-text-secondary: #676767;
@@ -30,7 +53,8 @@ body.edition-mode-pink {
 		--javlo-ui-bg-primary: #E6D8CB;
 		--javlo-ui-bg-secondary: #F1BBBB;
 		--javlo-ui-bg-tertiary: #E394A7;
-		--javlo-ui-bg-tools: #9A5071;
+		--javlo-ui-bg-tools: #9A507180;
+		--javlo-ui-bg-hover: #9A5071;
 		--javlo-ui-border: #2F3559;
 		
 		--javlo-ui-text: #333;
@@ -47,28 +71,11 @@ body.edition-mode-pink {
 body.edition-mode-light {
 	#preview_command,
 	& {
-		/*--javlo-ui-bg-primary: #E6E8E3;
-		--javlo-ui-bg-secondary: #D7DACF;
-		--javlo-ui-bg-tertiary: #BEC3BC;
-		--javlo-ui-bg-tools: #8F9A9C;
-		--javlo-ui-border: #65727A;*/
-		
-		/*--javlo-ui-bg-primary: #F5F9FA;
-		--javlo-ui-bg-secondary: #D7E4EC;
-		--javlo-ui-bg-tertiary: #EDF2F7;
-		--javlo-ui-bg-tools: #DAD9D4;
-		--javlo-ui-border: #C0D6E4;*/
-		
-		/*--javlo-ui-bg-primary: #F0F4F5;
-		--javlo-ui-bg-secondary: #E8ECEC;
-		--javlo-ui-bg-tertiary: #DFE5E6;
-		--javlo-ui-bg-tools: #CED7D8;
-		--javlo-ui-border: #B6C2B5;*/
-		
 		--javlo-ui-bg-primary: #F7F5F0;
 		--javlo-ui-bg-secondary: #F0ECE1;
 		--javlo-ui-bg-tertiary: #EBE6D9;
 		--javlo-ui-bg-tools: #E4DECD;
+		--javlo-ui-bg-hover: #676767;
 		--javlo-ui-border: #DBD3BD;
 		
 		--javlo-ui-text: #333;
@@ -90,8 +97,10 @@ body.edition-mode-light {
 	--action-color: var(--action-color-lighten);
 	--action-color-hover: var(--action-color-darken);
 	--action-text: #fff;
-
-	/// Colors
+	
+	--javlo-ui-text-hover: #fff;
+		
+		/// Colors
 	/* Gris - Du plus clair au plus foncé */
 	--javlo-ui-color-1: hsl(210, 12%, 97%);
 	--javlo-ui-color-2: hsl(210, 13%, 91%);
@@ -103,6 +112,8 @@ body.edition-mode-light {
 	--javlo-ui-color-8: hsl(209, 11%, 41%);
 	--javlo-ui-color-9: hsl(209, 14%, 30%);
 	--javlo-ui-color-10: hsl(210, 22%, 20%);
+	
+	--javlo-ui-bg-hover: var(--javlo-ui-color-9);
 
 	/* Couleurs d'accentuation -  Du plus clair au plus foncé */
 	--javlo-ui-primary-accent-color-1: hsl(209, 84%, 81%);
@@ -170,7 +181,7 @@ body.edition-mode-light {
 	--javlo-ui-nav-root-btn-border: var(--javlo-ui-color-9);
 	--javlo-ui-nav-root-btn-text: white;
 
-	--javlo-ui-nav-btn-bg-active: var(--javlo-ui-color-7);
+	--javlo-ui-nav-btn-bg-active: var(--javlo-ui-bg-hover);
 	--javlo-ui-nav-btn-bg-inactive: transparent;
 
 	--javlo-ui-nav-btn-border-inactive: var(--javlo-ui-color-7);

@@ -106,7 +106,7 @@ select {
 select.form-control {
 	&:hover, &:focus {
 		border-color: #fff;
-		color: #fff;
+		color: var(--javlo-ui-text);
 		background-color: var(--javlo-ui-bg-primary) !important;
 	}
 }
