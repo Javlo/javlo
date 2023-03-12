@@ -1669,7 +1669,7 @@ public class URLHelper extends ElementaryURLHelper {
 	}
 
 	public static boolean isCorrectJavloLink(String link) {
-		if (link.startsWith("/") || link.startsWith("page:")) {
+		if (link.startsWith("/") || link.startsWith("page:") || link.startsWith("tel:")) {
 			return true;
 		} else {
 			return PatternHelper.EXTERNAL_LINK_PATTERN.matcher(link).matches();
