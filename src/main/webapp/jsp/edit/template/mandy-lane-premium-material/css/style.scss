@@ -647,7 +647,7 @@ h2.prize {
 }
 
 .tabmenu ul li.current a {
-	color: #fff;
+	color: var(--javlo-ui-text);
 	background: none;
 }
 
@@ -768,7 +768,7 @@ h2.prize {
 .leftmenu li a {
 	display: block;
 	padding: 5px 0 5px 30px;
-	color: #fff;
+	color: var(--javlo-ui-text-secondary);
 }
 
 .leftmenu li.current a {

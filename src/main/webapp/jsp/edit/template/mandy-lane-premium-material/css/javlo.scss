@@ -931,7 +931,7 @@ ul,li {
 	li.ui-state-active {
 		background: var(--javlo-ui-bg-secondary);
 		a {
-			color: #fff !important;
+			color: var(--javlo-ui-text-secondary) !important;
 		}
 	}
 }
