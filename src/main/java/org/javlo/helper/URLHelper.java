@@ -75,7 +75,7 @@ public class URLHelper extends ElementaryURLHelper {
 	public static String getLogoUrl(ContentContext ctx) throws Exception {
 		return getLogoUrl(ctx, "logo");
 	}
-	
+
 	public static String getLogoUrl(ContentContext ctx, String filter) throws Exception {
 		String logo = ctx.getGlobalContext().getTemplateData().getLogo();
 		File logoPath = new File(URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), AdminAction.LOGO_PATH, "logo_" + ctx.getLanguage() + ".png"));
@@ -1690,23 +1690,46 @@ public class URLHelper extends ElementaryURLHelper {
 			link = URLHelper.createResourceURL(ctx, link);
 		} else if (link.startsWith("page:")) {
 			link = link.substring("page:".length());
-			String params="";
+			String params = "";
 			if (link.contains("|")) {
 				params = link.substring(link.indexOf("|") + 1);
 				link = link.substring(0, link.indexOf("|"));
 			} else if (link.contains("#")) {
-				params = link.substring(link.indexOf("#") );
+				params = link.substring(link.indexOf("#"));
 				link = link.substring(0, link.indexOf("#"));
 			}
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			MenuElement targetPage = content.getNavigation(ctx).searchChildFromName(link);
 			if (targetPage == null) {
-				link = "page_not_found_:_"+link;
+				link = "page_not_found_:_" + link;
 			} else {
-				link = URLHelper.createURL(ctx, targetPage)+params;
+				link = URLHelper.createURL(ctx, targetPage) + params;
 			}
 		}
 		return link;
+	}
+
+	public static String reducePath(String path, int numElementsToRemove) {
+		numElementsToRemove++;
+		String[] elements = path.split("/");
+		int numElements = elements.length;
+
+		if (numElementsToRemove >= numElements) {
+			return "";
+		}
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("/");
+		for (int i = numElementsToRemove; i < numElements; i++) {
+			sb.append(elements[i]);
+			sb.append("/");
+		}
+
+		if (sb.length() > 0 && sb.charAt(sb.length() - 1) == '/') {
+			sb.deleteCharAt(sb.length() - 1);
+		}
+
+		return sb.toString();
 	}
 
 	public static String addAnchor(String url, String anchor) {
@@ -1725,7 +1748,7 @@ public class URLHelper extends ElementaryURLHelper {
 
 	public static void main(String[] args) {
 		try {
-			System.out.println(">> " + replacePageReference(null, "page:cookie"));
+			System.out.println("reducePath >> " + reducePath("/fr/null/coucou", 1));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

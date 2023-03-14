@@ -153,10 +153,9 @@ public class DashboardAction extends AbstractModuleAction {
 		ModulesContext dashboardContext = ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());
 		boolean report = false;
 		/*
-		 * for (Box box : dashboardContext.getCurrentModule().getMainBoxes()) {
-		 * if (box.getName().equals("report")) { report = true;
-		 * ctx.getRequest().setAttribute("report",
-		 * ReportFactory.getReport(ctx)); } }
+		 * for (Box box : dashboardContext.getCurrentModule().getMainBoxes()) { if
+		 * (box.getName().equals("report")) { report = true;
+		 * ctx.getRequest().setAttribute("report", ReportFactory.getReport(ctx)); } }
 		 */
 		if (dashboardContext.getCurrentModule().getRenderer() != null && dashboardContext.getCurrentModule().getRenderer().contains("report")) {
 			report = true;
@@ -167,7 +166,7 @@ public class DashboardAction extends AbstractModuleAction {
 			pagelist = true;
 			ctx.getRequest().setAttribute("report", ReportFactory.getReport(ctx));
 		}
-		
+
 		if (dashboardContext.getCurrentModule().getRenderer() != null && dashboardContext.getCurrentModule().getRenderer().contains("use.jsp")) {
 			StatContext statCtx = createStatContext(ctx.getRequest());
 			List<DayInfo> dayInfos = Tracker.getTracker(globalContext, ctx.getRequest().getSession()).getDayInfos(statCtx);
@@ -208,7 +207,7 @@ public class DashboardAction extends AbstractModuleAction {
 		}
 		return msg;
 	}
-	
+
 	private static StatContext createStatContext(HttpServletRequest request) {
 		StatContext statCtx = StatContext.getInstance(request);
 		RequestService rs = RequestService.getInstance(request);
@@ -235,16 +234,17 @@ public class DashboardAction extends AbstractModuleAction {
 		statCtx.setFrom(cal.getTime());
 		return statCtx;
 	}
-	
+
 	public static void main(String[] args) {
 		System.out.println(cleanPath("/fr/test/main.html"));
 		System.out.println(cleanPath("/coucou/test/main.html"));
 	}
+
 	private static final String cleanPath(String path) {
 		if (path != null && path.length() > 3) {
 			path = StringHelper.trim(path, '/');
 			if (path != null) {
-				String[] splitedPath = StringHelper.split(path, "/");	
+				String[] splitedPath = StringHelper.split(path, "/");
 				path = "";
 				for (int i = 0; i < splitedPath.length; i++) {
 					/** remove lang if first **/
@@ -264,7 +264,7 @@ public class DashboardAction extends AbstractModuleAction {
 		}
 		return path;
 	}
-	
+
 	public static String performReadTracker(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, GlobalContext globalContext, HttpSession session, HttpServletRequest request) throws Exception {
 		String type = rs.getParameter("type", null);
 		if (type == null) {
@@ -300,7 +300,7 @@ public class DashboardAction extends AbstractModuleAction {
 			Map<Integer, Integer[]> map = tracker.getSession2ClickByMonth(statCtx);
 			ObjectBuilder ajaxMap = LangHelper.object();
 			ListBuilder datas = ajaxMap.list("datas");
-			ListBuilder[] desktopAndMobile = new ListBuilder[] {datas.addList(), datas.addList()};
+			ListBuilder[] desktopAndMobile = new ListBuilder[] { datas.addList(), datas.addList() };
 			for (Map.Entry<Integer, Integer[]> input : map.entrySet()) {
 				desktopAndMobile[0].add(input.getValue()[0]);
 				desktopAndMobile[1].add(input.getValue()[1]);
@@ -325,7 +325,7 @@ public class DashboardAction extends AbstractModuleAction {
 			cal.set(Calendar.MINUTE, 0);
 			cal.set(Calendar.SECOND, 0);
 			statCtx.setFrom(cal.getTime());
-			
+
 			Map<String, MutableInt> countryVisit = new NeverEmptyMap<>(MutableInt.class);
 			for (DayInfo dayInfo : tracker.getDayInfos(statCtx)) {
 				for (String key : dayInfo.countryVisit.keySet()) {
@@ -335,10 +335,10 @@ public class DashboardAction extends AbstractModuleAction {
 			ObjectBuilder ajaxMap = LangHelper.object();
 			ListBuilder datas = ajaxMap.list("datas");
 			for (Map.Entry<String, MutableInt> entry : countryVisit.entrySet()) {
-				if (entry.getKey().length()<6) {
-					String[] d = new String[2];				
+				if (entry.getKey().length() < 6) {
+					String[] d = new String[2];
 					d[0] = entry.getKey();
-					d[1] = ""+entry.getValue();
+					d[1] = "" + entry.getValue();
 					datas.add(d);
 				}
 			}
@@ -362,20 +362,20 @@ public class DashboardAction extends AbstractModuleAction {
 			cal.set(Calendar.MINUTE, 0);
 			cal.set(Calendar.SECOND, 0);
 			statCtx.setFrom(cal.getTime());
-			
+
 			Map<String, MutableInt> languageVisit = new NeverEmptyMap<>(MutableInt.class);
 			for (DayInfo dayInfo : tracker.getDayInfos(statCtx)) {
 				for (String key : dayInfo.languageVisit.keySet()) {
 					languageVisit.get(key).add(dayInfo.languageVisit.get(key));
 				}
 			}
-			ObjectBuilder ajaxMap = LangHelper.object();
-			ListBuilder datas = ajaxMap.list("datas");
-			for (Map.Entry<String, MutableInt> entry : languageVisit.entrySet()) {
+				ObjectBuilder ajaxMap = LangHelper.object();
+				ListBuilder datas = ajaxMap.list("datas");
+				for (Map.Entry<String, MutableInt> entry : languageVisit.entrySet()) {
 				if (ctx.getGlobalContext().getContentLanguages().contains(entry.getKey())) {
-					String[] d = new String[2];				
+					String[] d = new String[2];
 					d[0] = entry.getKey();
-					d[1] = ""+entry.getValue();
+					d[1] = "" + entry.getValue();
 					datas.add(d);
 				}
 			}
@@ -399,31 +399,47 @@ public class DashboardAction extends AbstractModuleAction {
 			cal.set(Calendar.MINUTE, 0);
 			cal.set(Calendar.SECOND, 0);
 			statCtx.setFrom(cal.getTime());
-			
+
 			Map<String, MutableInt> pagesVisit = new NeverEmptyMap<>(MutableInt.class);
-			
+
 			for (DayInfo dayInfo : tracker.getDayInfos(statCtx)) {
-				Collection<String> keys = new  LinkedList<>(dayInfo.visitPath.keySet());
+
+				Collection<String> keys = new LinkedList<>(dayInfo.visitPath.keySet());
 				for (String key : keys) {
-					
+
 					String path = cleanPath(key);
-					
-					
-					//LocalLogger.log("key = "+key);
-					
-					MenuElement page = globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), path, true);
+					MenuElement page = null;
+					if (!path.contains("/webaction/")) {
+						page = globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), path, true);
+						if (page == null && path.length() > 2) {
+							path = URLHelper.reducePath(path, 1);
+							page = globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), path, true);
+						}
+						if (page == null && path.length() > 2 ) {
+							path = URLHelper.reducePath(path, 1);
+							page = globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), path, true);
+						}
+						if (page == null && path.length() > 2 ) {
+							path = URLHelper.reducePath(path, 1);
+							page = globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), path, true);
+						}
+						if (page == null && path.length() > 2) {
+							path = URLHelper.reducePath(path, 1);
+							page = globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), path, true);
+						}
+					}
 					
 					// no null and no root
 					if (page != null && page.getParent() != null) {
 						pagesVisit.get(key).add(dayInfo.visitPath.get(key));
-					} else if (path.length()>1) {
+					} else if (path.length() > 1) {
 						if (path.startsWith("/")) {
 							path = path.substring(1);
 						}
 						if (path.contains("/")) {
 							path = path.substring(path.indexOf('/'));
 							page = globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), path, true);
-							
+
 							// no root page
 							if (page != null && page.getParent() != null) {
 								pagesVisit.get(key).add(dayInfo.visitPath.get(key));
@@ -435,9 +451,9 @@ public class DashboardAction extends AbstractModuleAction {
 			ObjectBuilder ajaxMap = LangHelper.object();
 			ListBuilder datas = ajaxMap.list("datas");
 			for (Map.Entry<String, MutableInt> entry : pagesVisit.entrySet()) {
-				String[] d = new String[2];				
+				String[] d = new String[2];
 				d[0] = entry.getKey();
-				d[1] = ""+entry.getValue();
+				d[1] = "" + entry.getValue();
 				datas.add(d);
 			}
 			ctx.setAjaxMap(ajaxMap.getMap());
@@ -460,7 +476,7 @@ public class DashboardAction extends AbstractModuleAction {
 			cal.set(Calendar.MINUTE, 0);
 			cal.set(Calendar.SECOND, 0);
 			statCtx.setFrom(cal.getTime());
-			
+
 			Map<String, MutableInt> resourceDownload = new NeverEmptyMap<>(MutableInt.class);
 			for (DayInfo dayInfo : tracker.getDayInfos(statCtx)) {
 				for (String key : dayInfo.visitPath.keySet()) {
@@ -474,7 +490,7 @@ public class DashboardAction extends AbstractModuleAction {
 			for (Map.Entry<String, MutableInt> entry : resourceDownload.entrySet()) {
 				String[] d = new String[2];
 				d[0] = entry.getKey();
-				d[1] = ""+entry.getValue();
+				d[1] = "" + entry.getValue();
 				datas.add(d);
 			}
 			ctx.setAjaxMap(ajaxMap.getMap());
@@ -522,21 +538,21 @@ public class DashboardAction extends AbstractModuleAction {
 			cal.set(Calendar.SECOND, 0);
 			statCtx.setFrom(cal.getTime());
 			List<DayInfo> dayInfoList = tracker.getDayInfos(statCtx);
-			
+
 			Map<Integer, MutableInt> timeVist = new NeverEmptyMap<>(MutableInt.class);
 			for (DayInfo di : dayInfoList) {
-				for (int i=0; i<24; i++) {
+				for (int i = 0; i < 24; i++) {
 					timeVist.get(i).add(di.timeVist.get(i));
 				}
 			}
 			ObjectBuilder ajaxMap = LangHelper.object();
-			ListBuilder datas = ajaxMap.list("datas");	
-			for (Map.Entry<Integer, MutableInt> e : timeVist.entrySet() ) {
+			ListBuilder datas = ajaxMap.list("datas");
+			for (Map.Entry<Integer, MutableInt> e : timeVist.entrySet()) {
 				datas.add(e.getValue().toInteger());
 			}
-			
+
 			ctx.setAjaxMap(ajaxMap.getMap());
-		}   else if (type.equals("days")) {
+		} else if (type.equals("days")) {
 			// Map<String, Integer> ajaxMap = new LinkedHashMap<String,
 			// Integer>();
 			String year = rs.getParameter("y", "" + now.get(Calendar.YEAR));
@@ -556,21 +572,21 @@ public class DashboardAction extends AbstractModuleAction {
 			cal.set(Calendar.SECOND, 0);
 			statCtx.setFrom(cal.getTime());
 			List<DayInfo> dayInfoList = tracker.getDayInfos(statCtx);
-			
+
 			Map<Integer, MutableInt> daysVist = new NeverEmptyMap<>(MutableInt.class);
 			for (DayInfo di : dayInfoList) {
-				for (int i=1; i<=7; i++) {
+				for (int i = 1; i <= 7; i++) {
 					daysVist.get(i).add(di.daysVist.get(i));
 				}
 			}
 			ObjectBuilder ajaxMap = LangHelper.object();
-			ListBuilder datas = ajaxMap.list("datas");	
-			for (Map.Entry<Integer, MutableInt> e : daysVist.entrySet() ) {
+			ListBuilder datas = ajaxMap.list("datas");
+			for (Map.Entry<Integer, MutableInt> e : daysVist.entrySet()) {
 				datas.add(e.getValue().toInteger());
 			}
-			
+
 			ctx.setAjaxMap(ajaxMap.getMap());
-		}  else if (type.equals("languages")) {
+		} else if (type.equals("languages")) {
 			ObjectBuilder ajaxMap = LangHelper.object();
 			List<Entry<String, Integer>> languages = new LinkedList<Map.Entry<String, Integer>>(tracker.getLanguage(statCtx).entrySet());
 			Collections.sort(languages, new Comparator<Entry<String, Integer>>() {
@@ -746,7 +762,7 @@ public class DashboardAction extends AbstractModuleAction {
 		return null;
 
 	}
-	
+
 	public static String performUsePage(RequestService rs, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		ModulesContext dashboardContext = ModulesContext.getInstance(session, ctx.getGlobalContext());
 		dashboardContext.getCurrentModule().clearAllBoxes();
@@ -785,9 +801,9 @@ public class DashboardAction extends AbstractModuleAction {
 			return "ERROR: you have not suffisant right to do this action.";
 		} else {
 			System.gc();
-			
-			DebugHelper.writeInfo(ctx,System.out);
-			
+
+			DebugHelper.writeInfo(ctx, System.out);
+
 			return null;
 		}
 	}
