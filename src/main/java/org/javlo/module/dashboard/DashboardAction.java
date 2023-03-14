@@ -406,10 +406,9 @@ public class DashboardAction extends AbstractModuleAction {
 
 				Collection<String> keys = new LinkedList<>(dayInfo.visitPath.keySet());
 				for (String key : keys) {
-
-					String path = cleanPath(key);
 					MenuElement page = null;
-					if (!path.contains("/webaction/")) {
+					if (!key.contains("/webaction/")) {
+						String path = cleanPath(key);
 						page = globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), path, true);
 						if (page == null && path.length() > 2) {
 							path = URLHelper.reducePath(path, 1);
@@ -427,22 +426,19 @@ public class DashboardAction extends AbstractModuleAction {
 							path = URLHelper.reducePath(path, 1);
 							page = globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), path, true);
 						}
-					}
-					
-					// no null and no root
-					if (page != null && page.getParent() != null) {
-						pagesVisit.get(key).add(dayInfo.visitPath.get(key));
-					} else if (path.length() > 1) {
-						if (path.startsWith("/")) {
-							path = path.substring(1);
-						}
-						if (path.contains("/")) {
-							path = path.substring(path.indexOf('/'));
-							page = globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), path, true);
-
-							// no root page
-							if (page != null && page.getParent() != null) {
-								pagesVisit.get(key).add(dayInfo.visitPath.get(key));
+						if (page != null && page.getParent() != null) {
+							pagesVisit.get(key).add(dayInfo.visitPath.get(key));
+						} else if (path.length() > 1) {
+							if (path.startsWith("/")) {
+								path = path.substring(1);
+							}
+							if (path.contains("/")) {
+								path = path.substring(path.indexOf('/'));
+								page = globalContext.getPageIfExist(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), path, true);
+								// no root page
+								if (page != null && page.getParent() != null) {
+									pagesVisit.get(key).add(dayInfo.visitPath.get(key));
+								}
 							}
 						}
 					}
