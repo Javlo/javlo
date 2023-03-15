@@ -625,7 +625,7 @@ ul,li {
 		margin-bottom: 12px;
 		h3 {
 			padding: calc(var(--main-sep) / 2) var(--main-sep);
-			color: #ccc;
+			color: var(--javlo-ui-text);
 		}
 		h3, .ui-tabs-nav {
 			border-radius: 0;

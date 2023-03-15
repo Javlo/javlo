@@ -708,7 +708,7 @@ h2.prize {
 
 .tabmenu ul li .subnav li a:hover {
 	background: var(--javlo-ui-bg-secondary);
-	color: #fff;
+	color: var(--javlo-ui-text);
 }
 
 .tabmenu ul li .subnav a span {
@@ -717,14 +717,14 @@ h2.prize {
 }
 
 .tabmenu ul li.current .subnav {
-	border-color: #ccc;
+	border-color: var(--javlo-ui-text);
 	border-top: 0;
 }
 
 .tabmenu ul li.current .subnav li a {
 	background: #eee;
 	border-bottom: 1px solid #ccc;
-	color: #333;
+	color: var(--javlo-ui-text);
 }
 
 .tabmenu ul li.current .subnav li a:hover {
