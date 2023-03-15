@@ -9,7 +9,7 @@ body {
 
 body #tools .btn-primary, .btn-primary  {
 	background-color: var(--javlo-ui-btn-toggle-bg-active);
-	color: #fff;
+	color: var(--javlo-ui-text);
 }
 
 .header{
@@ -61,7 +61,7 @@ select {
 	padding: 4px;
 	background-color: transparent;
 	border: 1px rgba(0,0,0,.2) solid;
-	color: #333;
+	color: var(--javlo-ui-text);
 }
 
 .btn, .action-button, #tools select, #tools input, .action input[type="submit"], #popup_panel input[type="button"], .form-control, #main-body .ui-button {
@@ -79,7 +79,7 @@ select {
 	font-weight: bold;
 	&:hover {
 		background-color: var(--javlo-ui-bg-secondary);
-		color: white;
+		color: var(--javlo-ui-text);
 		border-color: #fff;
 		text-decoration: none !important;
 	}
@@ -105,7 +105,7 @@ select {
 
 select.form-control {
 	&:hover, &:focus {
-		border-color: #fff;
+		border-color: var(--javlo-ui-text);
 		color: var(--javlo-ui-text);
 		background-color: var(--javlo-ui-bg-primary) !important;
 	}
@@ -236,7 +236,7 @@ body fieldset {
 		border: 1px var(--javlo-ui-color-4) solid;
 		padding: 2px 5px;
 		background-color: var(--javlo-ui-color-4);
-		color: #fff;
+		color: var(--javlo-ui-text);
 	}
 }
 

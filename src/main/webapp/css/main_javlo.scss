@@ -69,7 +69,7 @@ body._jv_modal-open {
 	}
 	input:checked + label, &:hover input:checked + label {
 		background-color: var(--javlo-ui-btn-toggle-bg-active) !important;
-		color: #fff !important;
+		color: var(--javlo-ui-text) !important;
 	}
 	input:checked + label, label:hover {
 		color: (--javlo-ui-btn-toggle-bg-active);
@@ -90,7 +90,7 @@ body._jv_modal-open {
 	&:hover {
 		label {
 			background-color: var(--javlo-ui-bg-secondary) !important;
-			color: #fff;
+			color: var(--javlo-ui-text);
 		}
 	}
 }
