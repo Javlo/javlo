@@ -229,13 +229,13 @@ h1 a {
 
 body fieldset {
 	border-radius: 0;
-	background-color: var(--javlo-ui-color-1);
-	border: 1px var(--javlo-ui-color-4) solid; 
+	background-color: var(--javlo-ui-bg-muted);
+	border: 1px var(--javlo-ui-border) solid; 
 	legend {
 		border-radius: 0;
-		border: 1px var(--javlo-ui-color-4) solid;
+		border: 1px var(--javlo-ui-border) solid;
 		padding: 2px 5px;
-		background-color: var(--javlo-ui-color-4);
+		background-color: var(--javlo-ui-border);
 		color: var(--javlo-ui-text);
 	}
 }
