@@ -719,7 +719,7 @@ public class MailService {
 		System.out.println("t = " + t.isConnected());
 
 		MailService mailService = MailService.getInstance(mailConfig);
-		mailService.sendMail(t, new InternetAddress("formulaires@centralecredithypothecaire.be"),  new InternetAddress("alessio.ferrari@phidac.com"), new InternetAddress("patrick@andromede.be"), new InternetAddress("arnaud@andromede.be"), "test mail smtp cch : "+new Date(), "mail de test 2", "mail de test 2", false, null);
+		mailService.sendMail(t, new InternetAddress("mail@javlo.org"),  new InternetAddress("p@noctis.be"), null, null, "test mail smtp cch : "+new Date(), "mail de test 2", "mail de test 2", false, null);
 		
 		
 
