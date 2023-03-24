@@ -2417,11 +2417,13 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 					}
 				}
 			}
+			desc.label = StringHelper.removeTag(desc.label);
+			if (StringHelper.isEmpty(desc.label)) {
+				desc.label = name;
+			}
+			desc.label = XHTMLHelper.replaceJSTLData(ctx, desc.label);
 		}
-		desc.label = StringHelper.removeTag(desc.label);
-		if (StringHelper.isEmpty(desc.label)) {
-			desc.label = name;
-		}
+		
 		return desc.label;
 	}
 

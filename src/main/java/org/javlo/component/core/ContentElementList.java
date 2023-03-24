@@ -17,6 +17,7 @@ import org.javlo.component.title.MenuTitle;
 import org.javlo.component.title.PageTitle;
 import org.javlo.component.title.SubTitle;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.XHTMLHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 
@@ -164,10 +165,10 @@ public class ContentElementList implements IContentComponentsList {
 
 	/**
 	 * Return an iterable instance of this {@link ContentElementList} calling
-	 * {@link #hasNext(ContentContext)} and {@link #next(ContentContext)} with
-	 * the <code>ctx</code> parameter. <br/>
-	 * WARNING: {@link #initialize()} is called when {@link Iterable#iterator()}
-	 * is called.
+	 * {@link #hasNext(ContentContext)} and {@link #next(ContentContext)} with the
+	 * <code>ctx</code> parameter. <br/>
+	 * WARNING: {@link #initialize()} is called when {@link Iterable#iterator()} is
+	 * called.
 	 * 
 	 * @param ctx
 	 * @return
@@ -325,7 +326,7 @@ public class ContentElementList implements IContentComponentsList {
 	}
 
 	@Override
-	public String getPrefixXHTMLCode(ContentContext ctx) {		
+	public String getPrefixXHTMLCode(ContentContext ctx) {
 		StringBuffer prefix = new StringBuffer();
 		if (contentElements.size() != 0) {
 			if (ctx.getRenderMode() != ContentContext.EDIT_MODE) {
@@ -468,7 +469,6 @@ public class ContentElementList implements IContentComponentsList {
 			if (comp.getLabelLevel(ctx) > 0 && comp.getLabelLevel(ctx) >= maxLabelLevel && !comp.isRepeat()) {
 				// if (!(comp instanceof MirrorComponent)) {
 				if (comp.getLabelLevel(ctx) > maxLabelLevel && !comp.getArea().equals(ComponentBean.DEFAULT_AREA)) {
-
 					res = comp.getTextTitle(ctx);
 					maxLabelLevel = comp.getLabelLevel(ctx);
 				}
@@ -528,9 +528,15 @@ public class ContentElementList implements IContentComponentsList {
 						return res;
 					}
 				}
-
+			}
+		} else {
+			try {
+				res = XHTMLHelper.replaceJSTLData(ctx, res);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
+
 		return res;
 	}
 
@@ -686,7 +692,7 @@ public class ContentElementList implements IContentComponentsList {
 	public LinkedList<IContentVisualComponent> getContentElements() {
 		return contentElements;
 	}
-	
+
 	public IContentVisualComponent getComponent(String id) {
 		for (IContentVisualComponent comp : contentElements) {
 			if (comp.getId().equals(id)) {
