@@ -56,6 +56,7 @@ import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.css.CssColor;
 import org.javlo.filter.PropertiesFilter;
 import org.javlo.helper.LangHelper;
 import org.javlo.helper.LocalLogger;
@@ -1257,8 +1258,8 @@ public class Template implements Comparable<Template> {
 	public String getEscapeMenuId() {
 		return properties.getString("nav.escape_id", getParent().getEscapeMenuId());
 	}
-	
-	public static Map<String,String> extractPropertiesFromHtml(String html) {
+
+	public static Map<String, String> extractPropertiesFromHtml(String html) {
 		Pattern fieldPattern = Pattern.compile("\\$\\{field.*?\\}");
 		Matcher matcher = fieldPattern.matcher(html);
 		int i = 0;
@@ -1309,9 +1310,9 @@ public class Template implements Comparable<Template> {
 								}
 								properties.setProperty("component.type", StringHelper.getFileNameWithoutExtension(file.getName()));
 								properties.setProperty("component.renderer", ResourceHelper.removePath(file.getAbsolutePath(), getFolder(globalContext)));
-								
+
 								properties.putAll(extractPropertiesFromHtml(html));
-								
+
 								outProperties.add(properties);
 							}
 						}
@@ -2535,6 +2536,24 @@ public class Template implements Comparable<Template> {
 				templateData.setComponentBackground(color);
 			}
 
+			String primaryColor = properties.getString("data.color.primary-color", null);
+			if (primaryColor != null) {
+				Color color = Color.decode('#' + primaryColor);
+				templateData.setPrimaryColor(CssColor.getInstance(color));
+			}
+
+			String secondaryColor = properties.getString("data.color.secondary-color", null);
+			if (secondaryColor != null) {
+				Color color = Color.decode('#' + secondaryColor);
+				templateData.setSecondaryColor(CssColor.getInstance(color));
+			}
+
+			String thirdColor = properties.getString("data.color.third-color", null);
+			if (thirdColor != null) {
+				Color color = Color.decode('#' + thirdColor);
+				templateData.setThirdColor(CssColor.getInstance(color));
+			}
+
 			return templateData;
 		}
 	}
@@ -2616,6 +2635,17 @@ public class Template implements Comparable<Template> {
 		if (templateData.getMessageWarning() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getMessageWarning()), StringHelper.colorToHexStringNotNull(templateDataUser.getMessageWarning()));
 		}
+		
+		if (templateData.getPrimaryColor() != null) {
+			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getPrimaryColor()), StringHelper.colorToHexStringNotNull(templateDataUser.getPrimaryColor()));
+		}
+		if (templateData.getSecondaryColor() != null) {
+			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getSecondaryColor()), StringHelper.colorToHexStringNotNull(templateDataUser.getSecondaryColor()));
+		}
+		if (templateData.getThirdColor() != null) {
+			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getThirdColor()), StringHelper.colorToHexStringNotNull(templateDataUser.getThirdColor()));
+		}
+		
 		return templateDataMap;
 	}
 
@@ -3091,7 +3121,7 @@ public class Template implements Comparable<Template> {
 	public boolean isRenderer(GlobalContext globalContext) {
 		String renderer = getRendererFile(null);
 		File jspFile = new File(getTemplateTargetFolder(globalContext), renderer);
-		
+
 		return jspFile.exists();
 	}
 

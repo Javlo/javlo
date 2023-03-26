@@ -25,7 +25,7 @@ public class FieldImage extends FieldFile {
 			super(ctx);
 		}
 		
-		public String getPreviewURL() {
+		public String getPreviewUrl() {
 			if ( FieldImage.this.getCurrentFile() == null || FieldImage.this.getCurrentFile().trim().length() == 0) {
 				return null;
 			}
@@ -39,7 +39,17 @@ public class FieldImage extends FieldFile {
 			}
 		}
 		
+		@Deprecated
+		public String getPreviewURL() {
+			return getPreviewUrl();
+		}
+		
+		@Deprecated
 		public String getResourceURL() {
+			return getResourceUrl();
+		}
+		
+		public String getResourceUrl() {
 			if ( FieldImage.this.getCurrentFile() == null || FieldImage.this.getCurrentFile().trim().length() == 0) {
 				return null;
 			}
@@ -89,10 +99,6 @@ public class FieldImage extends FieldFile {
 		
 	}
 
-	protected String getFilter() {
-		return properties.getProperty("field." + getUnicName() + ".image.filter", "standard");
-	}
-	
 	protected boolean isDisplayLabel() {
 		return StringHelper.isTrue(properties.getProperty("field." + getUnicName() + ".image.label", "true"));
 	}

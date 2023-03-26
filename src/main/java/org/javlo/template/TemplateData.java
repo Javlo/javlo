@@ -12,6 +12,11 @@ public class TemplateData {
 	public static final int COLOR_LIST_SIZE = 6;
 	
 	public static final TemplateData EMPTY = new TemplateData();
+	
+	private CssColor primaryColor = null;
+	private CssColor secondaryColor = null;
+	private CssColor thirdColor = null;
+	
 	private CssColor background = null;
 	private CssColor componentBackground = null;
 	private CssColor foreground = null;
@@ -148,6 +153,18 @@ public class TemplateData {
 					if (data.length > i && data[i].length() > 0) {
 						setComponentBackground(Color.decode('#' + data[i]));
 					}
+					i++;
+					if (data.length > i && data[i].length() > 0) {
+						setPrimaryColor( CssColor.getInstance(Color.decode('#' + data[i])));
+					}
+					i++;
+					if (data.length > i && data[i].length() > 0) {
+						setSecondaryColor( CssColor.getInstance(Color.decode('#' + data[i])));
+					}
+					i++;
+					if (data.length > i && data[i].length() > 0) {
+						setThirdColor(CssColor.getInstance(Color.decode('#' + data[i])));
+					}
 				}
 			}
 		} catch (NumberFormatException e) {
@@ -215,6 +232,10 @@ public class TemplateData {
 			setMenuRight(StringHelper.isTrue(map.get("menuRight")));
 			setMenuCenter(StringHelper.isTrue(map.get("menuCenter")));
 			setMenuAround(StringHelper.isTrue(map.get("menuAround")));
+			
+			setPrimaryColor(CssColor.getInstance(decodeColor('#' + map.get("primaryColor"))));
+			setSecondaryColor(CssColor.getInstance(decodeColor('#' + map.get("secondaryColor"))));
+			setThirdColor(CssColor.getInstance(decodeColor('#' + map.get("thirdColor"))));
 		}
 	}
 	
@@ -257,6 +278,10 @@ public class TemplateData {
 		outData.put("menuCenter", ""+isMenuCenter());
 		outData.put("menuAround", ""+isMenuAround());
 		outData.put("dropdown", ""+isDropdownMenu());
+		
+		outData.put("primaryColor", StringHelper.colorToHexStringNotNull(getPrimaryColor()));
+		outData.put("secondaryColor", StringHelper.colorToHexStringNotNull(getSecondaryColor()));
+		outData.put("thirdColor", StringHelper.colorToHexStringNotNull(getThirdColor()));
 		
 		String colors = "";
 		String sep = "";
@@ -464,6 +489,11 @@ public class TemplateData {
 		result = prime * result + ((messageDanger == null) ? 0 : messageDanger.hashCode());
 		result = prime * result + ((messageWarning == null) ? 0 : messageWarning.hashCode());
 		result = prime * result + ((messageInfo == null) ? 0 : messageInfo.hashCode());
+		
+		result = prime * result + ((primaryColor == null) ? 0 : primaryColor.hashCode());
+		result = prime * result + ((secondaryColor == null) ? 0 : secondaryColor.hashCode());
+		result = prime * result + ((thirdColor == null) ? 0 : thirdColor.hashCode());
+		
 		return result;
 	}
 
@@ -662,6 +692,30 @@ public class TemplateData {
 
 	public void setExtendSub(boolean extendSub) {
 		this.extendSub = extendSub;
+	}
+
+	public CssColor getPrimaryColor() {
+		return primaryColor;
+	}
+
+	public void setPrimaryColor(CssColor primaryColor) {
+		this.primaryColor = primaryColor;
+	}
+
+	public CssColor getSecondaryColor() {
+		return secondaryColor;
+	}
+
+	public void setSecondaryColor(CssColor secondaryColor) {
+		this.secondaryColor = secondaryColor;
+	}
+
+	public CssColor getThirdColor() {
+		return thirdColor;
+	}
+
+	public void setThirdColor(CssColor thirdColor) {
+		this.thirdColor = thirdColor;
 	}
 	
 }

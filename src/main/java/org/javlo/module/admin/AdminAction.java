@@ -37,6 +37,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.GlobalContextFactory;
+import org.javlo.css.CssColor;
 import org.javlo.data.InfoBean;
 import org.javlo.helper.DebugHelper;
 import org.javlo.helper.LangHelper;
@@ -799,6 +800,10 @@ public class AdminAction extends AbstractModuleAction {
 		td.setMenuCenter(StringHelper.isTrue(requestService.getParameter("menuCenter", null)));
 		td.setMenuAround(StringHelper.isTrue(requestService.getParameter("menuAround", null)));
 		td.setExtendSub(StringHelper.isTrue(requestService.getParameter("extendSub", null)));
+		
+		td.setPrimaryColor(CssColor.getInstance(StringHelper.parseColor(requestService.getParameter("primaryColor", "" + td.getPrimaryColor()))));
+		td.setSecondaryColor(CssColor.getInstance(StringHelper.parseColor(requestService.getParameter("secondaryColor", "" + td.getSecondaryColor()))));
+		td.setThirdColor(CssColor.getInstance(StringHelper.parseColor(requestService.getParameter("thirdColor", "" + td.getThirdColor()))));
 
 		/** message **/
 		td.setMessagePrimary(StringHelper.parseColor(requestService.getParameter("messagePrimary", "" + td.getMessagePrimary())));

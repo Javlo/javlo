@@ -25,6 +25,8 @@ import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.fields.Field.FieldBean;
+import org.javlo.fields.FieldImage.ImageBean;
 import org.javlo.filter.DirectoryFilter;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.ResourceHelper;
@@ -39,8 +41,99 @@ import org.javlo.service.google.translation.ITranslator;
 import org.javlo.service.resource.Resource;
 import org.javlo.ztatic.IStaticContainer;
 import org.javlo.ztatic.StaticInfo;
+import org.javlo.ztatic.StaticInfoBean;
 
 public class FieldFile extends Field implements IStaticContainer {
+	
+public class StaticFileBean extends FieldBean {
+		
+		private String filter = getFilter();
+
+		public StaticFileBean(ContentContext ctx) {
+			super(ctx);
+		}
+		
+		public String getPreviewUrl() {
+			if ( FieldFile.this.getCurrentFile() == null || FieldFile.this.getCurrentFile().trim().length() == 0) {
+				return null;
+			}
+			String relativePath = URLHelper.mergePath(FieldFile.this.getFileTypeFolder(), FieldFile.this.getCurrentFolder());
+			String fileURL = URLHelper.mergePath(relativePath, FieldFile.this.getCurrentFile());
+			try {
+				return URLHelper.createTransformURL(ctx, '/' + fileURL, getImageFilter());
+			} catch (Exception e) {			
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		@Deprecated
+		public String getPreviewURL() {
+			return getPreviewUrl();
+		}
+		
+		public String getResourceUrl() {
+			if ( FieldFile.this.getCurrentFile() == null || FieldFile.this.getCurrentFile().trim().length() == 0) {
+				return null;
+			}
+			String relativePath = URLHelper.mergePath(FieldFile.this.getFileTypeFolder(), FieldFile.this.getCurrentFolder());
+			String fileURL = URLHelper.mergePath(relativePath, FieldFile.this.getCurrentFile());
+			try {
+				return URLHelper.createResourceURL(ctx, '/' + fileURL);
+			} catch (Exception e) {			
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		@Deprecated
+		public String getResourceURL() {
+			return getResourceUrl();
+		}
+		
+		public String getLink() {
+			return FieldFile.this.getCurrentLink();
+		}
+		
+		public String getAlt() {
+			return FieldFile.this.getCurrentLabel();
+		}
+
+		public String getImageFilter() {
+			return filter;
+		}
+
+		public void setImageFilter(String filter) {
+			this.filter = filter;
+		}
+		
+		public String getViewXHTMLCode() throws Exception {
+			return FieldFile.this.getViewXHTMLCode(ctx);
+		}
+		
+		public StaticInfo getStaticInfo() throws Exception {
+			String relativePath = URLHelper.mergePath(FieldFile.this.getFileTypeFolder(), FieldFile.this.getCurrentFolder());
+			String fileURL = URLHelper.mergePath(relativePath, FieldFile.this.getCurrentFile());
+			File file = new File(URLHelper.mergePath(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), fileURL)));
+			return StaticInfo.getInstance(ctx, file);
+		}
+		
+		public StaticInfoBean getStaticInfoBean() throws Exception {
+			String relativePath = URLHelper.mergePath(FieldFile.this.getFileTypeFolder(), FieldFile.this.getCurrentFolder());
+			String fileURL = URLHelper.mergePath(relativePath, FieldFile.this.getCurrentFile());
+			File file = new File(URLHelper.mergePath(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), fileURL)));
+			return new StaticInfoBean (ctx, StaticInfo.getInstance(ctx, file));
+		}
+		
+	}
+
+	protected FieldBean newFieldBean(ContentContext ctx) {
+		return new StaticFileBean(ctx);
+	}
+
+	protected String getFilter() {
+		return properties.getProperty("field." + getUnicName() + ".image.filter", "standard");
+	}
 
 	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FieldFile.class.getName());
 

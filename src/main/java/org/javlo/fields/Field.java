@@ -189,7 +189,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 			String suffix = "";
 			if (isWrapped()) {
 				prefix = "<div class=\"field " + getName() + cssClass + "\">";
-				suffix = "</div>";				
+				suffix = "</div>";
 			}				
 			String unity = getUnity();
 			if (!StringHelper.isEmpty(unity)) {

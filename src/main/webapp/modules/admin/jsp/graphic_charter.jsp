@@ -6,17 +6,31 @@
 	<div class="row">
 		<div class="col-md-4">
 
-			<c:set var="color" value="${currentContext.templateData.background}" scope="request" />
-			<jsp:include page="template_data.jsp?name=background&style=color" />
+<%-- 			<c:set var="color" value="${currentContext.templateData.background}" scope="request" /> --%>
+<%-- 			<jsp:include page="template_data.jsp?name=background&style=color" /> --%>
 
-			<c:set var="color" value="${currentContext.templateData.backgroundMenu}" scope="request" />
-			<jsp:include page="template_data.jsp?name=backgroundMenu&style=color" />
+<%-- 			<c:set var="color" value="${currentContext.templateData.backgroundMenu}" scope="request" /> --%>
+<%-- 			<jsp:include page="template_data.jsp?name=backgroundMenu&style=color" /> 
 
-			<c:set var="color" value="${currentContext.templateData.backgroundActive}" scope="request" />
-			<jsp:include page="template_data.jsp?name=backgroundActive&style=color" />
+				<c:set var="color" value="${currentContext.templateData.backgroundActive}" scope="request" />
+				<jsp:include page="template_data.jsp?name=backgroundActive&style=color" />
+				
+				<c:set var="color" value="${currentContext.templateData.foreground}" scope="request" />
+				<jsp:include page="template_data.jsp?name=foreground&style=color" />
+				
+				<c:set var="color" value="${currentContext.templateData.componentBackground}" scope="request" />
+				<jsp:include page="template_data.jsp?name=componentBackground&style=color" />
 
-			<c:set var="color" value="${currentContext.templateData.foreground}" scope="request" />
-			<jsp:include page="template_data.jsp?name=foreground&style=color" />
+--%>
+			
+			<c:set var="color" value="${currentContext.templateData.primaryColor}" scope="request" />
+			<jsp:include page="template_data.jsp?name=primaryColor&style=color" />
+			
+			<c:set var="color" value="${currentContext.templateData.secondaryColor}" scope="request" />
+			<jsp:include page="template_data.jsp?name=secondaryColor&style=color" />
+			
+			<c:set var="color" value="${currentContext.templateData.thirdColor}" scope="request" />
+			<jsp:include page="template_data.jsp?name=thirdColor&style=color" />
 
 			<c:set var="color" value="${currentContext.templateData.border}" scope="request" />
 			<jsp:include page="template_data.jsp?name=border&style=color" />
@@ -29,9 +43,6 @@
 
 			<c:set var="color" value="${currentContext.templateData.link}" scope="request" />
 			<jsp:include page="template_data.jsp?name=link&style=color" />
-
-			<c:set var="color" value="${currentContext.templateData.componentBackground}" scope="request" />
-			<jsp:include page="template_data.jsp?name=componentBackground&style=color" />
 
 			<c:set var="color" value="${currentContext.templateData.special}" scope="request" />
 			<jsp:include page="template_data.jsp?name=special&style=color" />
@@ -46,18 +57,14 @@
 				<jsp:include page="template_data.jsp?name=messageInfo&value=${currentContext.templateData.messageInfo}&style=color" />
 			</c:if>
 
-			<div class="row">
-				<div class="col-xs-4">
-					<label>color list</label>
-				</div>
-				<div class="col-xs-8">
-					<div class="color-list">
-						<c:forEach begin="0" end="<%=TemplateData.COLOR_LIST_SIZE - 1%>" varStatus="status">
-							<div class="color">
-								<input class="form-control color" type="text" name="colorList${status.index}" value="${currentContext.templateData.colorList[status.index]}" />
-							</div>
-						</c:forEach>
-					</div>
+			<div class="color-list-wrapper mt-3">
+				<label>color list</label>
+				<div class="color-list">
+					<c:forEach begin="0" end="<%=TemplateData.COLOR_LIST_SIZE - 1%>" varStatus="status">
+						<div class="color">
+							<input class="form-control color" type="text" name="colorList${status.index}" value="${currentContext.templateData.colorList[status.index]}" />
+						</div>
+					</c:forEach>
 				</div>
 			</div>
 
