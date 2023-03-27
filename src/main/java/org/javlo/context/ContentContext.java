@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.AjaxHelper.ScheduledRender;
@@ -2412,7 +2413,9 @@ public class ContentContext {
 	}
 
 	public void setColumnableSize(int columnableSize, int depth) {
-		this.columnableSizes.put(depth, columnableSize);
+		if (columnableSize < AbstractVisualComponent.MAX_COL_VALUE) {
+			this.columnableSizes.put(depth, columnableSize);
+		}
 	}
 
 	public Object getAttribute(String key) {

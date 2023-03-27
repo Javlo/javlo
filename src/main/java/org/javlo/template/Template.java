@@ -1594,7 +1594,11 @@ public class Template implements Comparable<Template> {
 		String cssClass = properties.getString("columnable.col.class." + size, null);
 		String style = properties.getString("columnable.row.valign." + inStyle, inStyle);
 		if (cssClass == null) {
-			return StringHelper.neverNull(getParent().getColumnableColClass(size, totalSize, leftSize, style), getColumnableColClassDefault());
+			if (getParent() != null) {
+				return StringHelper.neverNull(getParent().getColumnableColClass(size, totalSize, leftSize, style), getColumnableColClassDefault());
+			} else {
+				return "";
+			}
 		} else {
 			cssClass = cssClass.replace("#size#", "" + size);
 			cssClass = cssClass.replace("#total-size#", "" + totalSize);

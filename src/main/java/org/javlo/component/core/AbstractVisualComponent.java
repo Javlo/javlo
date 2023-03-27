@@ -148,7 +148,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	public static final String MOBILE_TYPE = "mobile-only";
 
-	private static final List<Integer> DEFAULT_COLUMN_SIZE = new LinkedList<Integer>(Arrays.asList(new Integer[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 }));
+	public static final int MAX_COL_VALUE = 1000;
+	
+	public static final int FLUID_COL_SIZE = 10000;
+	
+	private static final List<Integer> DEFAULT_COLUMN_SIZE = new LinkedList<Integer>(Arrays.asList(new Integer[] { FLUID_COL_SIZE, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 }));
 
 	public static final String FORCE_COMPONENT_ID = "___FORCE_COMPONENT_ID";
 
@@ -719,7 +723,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		PrintStream out = new PrintStream(outStream);
 		out.println("<div class=\"column column-" + size + "\">");
 		out.println("<table><tr>");
-		if (size == 0) {
+		if (size == FLUID_COL_SIZE) {
+			out.print("<td style=\"width:33%;\"></td>");
+			out.print("<td class=\"main-col\" style=\"width:34%;\"></td>");
+			out.print("<td style=\"width:33%;\"></td>");
+		} else if (size == 0) {
 			out.print("<td></td>");
 			out.print("<td class=\"main-col\" style=\"width:69%;\"></td>");
 		} else if (size < getColumnMaxSize(ctx)) {
@@ -785,7 +793,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("<input type=\"radio\" id=\"" + (getInputNameColomn() + colSize) + "\" name=\"" + getInputNameColomn() + "\"" + select + "value=\"" + colSize + "\" />");
 			out.println("<label" + cssClass + " for=\"" + (getInputNameColomn() + colSize) + "\">");
 			out.println("<div class=\"select-col select-col-" + colSize + "\">");
-			out.println("<div class=\"fraction\">" + (colSize == 0 ? "auto" : (colSize + "/" + getColumnMaxSize(ctx))) + "</div></div>");
+			out.println("<div class=\"fraction\">" + (colSize == FLUID_COL_SIZE ? "fluid" : colSize == 0 ? "auto" : (colSize + "/" + getColumnMaxSize(ctx))) + "</div></div>");
 			out.print(drawColumn(ctx, colSize) + "</label></div>");
 		}
 		out.println("</div><hr /></div>");
@@ -1694,10 +1702,13 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		if (prev == null) {
 			open = true;
 		} else {
-			if (ctx.getColumnableSize(ctx.getColumnableDepth()) <= 0) {
+			if (getColumnSize(ctx) == FLUID_COL_SIZE) {
+				if (prev.getColumnSize(ctx) != FLUID_COL_SIZE) {
+					open = true;
+				}
+			} else if (ctx.getColumnableSize(ctx.getColumnableDepth()) <= 0) {
 				open = true;
-			}
-			if (ctx.getColumnableSize(ctx.getColumnableDepth()) + getColumnSize(ctx) > max || prev.getColumnSize(ctx) <= 0) {
+			} else if (ctx.getColumnableSize(ctx.getColumnableDepth()) + getColumnSize(ctx) > max || prev.getColumnSize(ctx) == 0) {
 				open = true;
 			}
 		}
@@ -1711,7 +1722,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected boolean isCloseRow(ContentContext ctx) {
-
+		
 		int colSize = getColumnSize(ctx);
 
 		if (this instanceof IContainer) {
@@ -1726,7 +1737,17 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 
 		int max = getColumnMaxSize(ctx);
+		
 		IContentVisualComponent next = getNextComponent();
+		
+		if (getColumnSize(ctx) == FLUID_COL_SIZE) {
+			if ((next != null && next.getColumnSize(ctx) != FLUID_COL_SIZE) || next == null) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		
 		boolean close = false;
 		/* auto */
 		if (getColumnSize(ctx) == 0) {
@@ -1755,13 +1776,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				return "";
 			}
 		}
+		
 		if (!ctx.isProd()) {
 			colPrefix = "<!-- type=" + getType() + " isColumnable(ctx)=" + isColumnable(ctx) + " - columnSize=" + columnSize + " - getColumnMaxSize(ctx)=" + getColumnMaxSize(ctx) + " -->";
 		}
 		if (isColumnable(ctx) && columnSize >= 0 && columnSize != getColumnMaxSize(ctx)) {
 			try {
 				Template tpl = ctx.getCurrentTemplate();
-				colPrefix += "<div class=\"component-row-wrapper\"><" + tpl.getColumnableRowTag() + " style=\"" + tpl.getColumnableRowStyle() + "\" class=\"" + tpl.getColumnableRowClass() + " component-row component-row-" + getType() + "\">";
+				colPrefix += "<div class=\"component-row-wrapper first-col-"+columnSize+"\"><" + tpl.getColumnableRowTag() + " style=\"" + tpl.getColumnableRowStyle() + "\" class=\"" + tpl.getColumnableRowClass() + " component-row component-row-" + getType() + "\">";
 				String firstClass = "columnalbe-first-col ";
 				if (!StringHelper.isEmpty(tpl.getColumnableRowTagIn())) {
 					colPrefix = colPrefix + '<' + tpl.getColumnableRowTagIn() + '>';
@@ -1772,7 +1794,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				}
 				int currentSize = ctx.getColumnableSize(ctx.getColumnableDepth());
 				int leftSize = getColumnMaxSize(ctx) - currentSize;
-
 				colPrefix = colPrefix + "<" + tpl.getColumnableColTag() + " style=\"" + tpl.getColumnableColStyle(getColumnSize(ctx)) + "\" class=\"" + firstClass + tpl.getColumnableColClass(getColumnSize(ctx), currentSize, leftSize, getColumnStyle(ctx)) + "\">";
 				if (!StringHelper.isEmpty(tpl.getColumnableColTagIn())) {
 					colPrefix = colPrefix + '<' + tpl.getColumnableColTagIn() + " class=\"" + tpl.getColumnableClassTagIn() + "\" style=\"" + tpl.getColumnableStyleTagIn() + "\">";
@@ -1785,6 +1806,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected String getColomnableSuffix(ContentContext ctx) {
+		
 		String colSuffix = "";
 		int columnSize = getColumnSize(ctx);
 		if (this instanceof IContainer) {
@@ -1803,6 +1825,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				if (!StringHelper.isEmpty(tpl.getColumnableRowTagIn())) {
 					colSuffix = "</" + tpl.getColumnableRowTagIn() + '>' + colSuffix;
 				}
+
 				if (!isCloseRow(ctx)) {
 					colSuffix = "";
 				}
@@ -1836,7 +1859,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		String closeComment = (!ctx.isProd()?"<!-- /close comp:" + getType() + " -->":"");
+		String closeComment = (!ctx.isProd() ? "<!-- /close comp:" + getType() + " -->" : "");
 		if (isDisplayHidden() && ctx.isAsViewMode()) {
 			return closeComment;
 		}
@@ -2248,7 +2271,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				if (getConfig(ctx).isPreviewEditable() && editCtx.isPreviewEditionMode() && (!isRepeat() || getPage().equals(ctx.getCurrentPage()) || sc.isEditRepeatComponent()) && AdminUserSecurity.canModifyPage(ctx, ctx.getCurrentPage(), true)) {
 					I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
 					String type = i18nAccess.getText("content." + getType(), getType());
-					//String hint = "<b>" + type + "</b><br />" + i18nAccess.getViewText("preview.hint", "click for edit or drag and drop to move.");
+					// String hint = "<b>" + type + "</b><br />" +
+					// i18nAccess.getViewText("preview.hint", "click for edit or drag and drop to
+					// move.");
 					String hint = i18nAccess.getViewText("preview.hint", "click for edit or drag and drop to move.");
 					String newClass = "";
 					if (isNew(ctx)) {
