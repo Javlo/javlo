@@ -131,8 +131,6 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 		boolean duplicate = rs.getParameter("duplicate", null) != null;
 		boolean duplicateChildren = rs.getParameter("children", null) != null;
 		
-		System.out.println(">>>>>>>>> CreateArticle.performCreate : create = "+create); //TODO: remove debug trace
-		
 		if (duplicateChildren) {
 			duplicate = true;
 		}

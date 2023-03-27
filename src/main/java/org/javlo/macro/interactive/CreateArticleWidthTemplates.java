@@ -18,6 +18,7 @@ import org.javlo.actions.IAction;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.meta.DateComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
@@ -202,6 +203,9 @@ public class CreateArticleWidthTemplates implements IInteractiveMacro, IAction {
 							IContentVisualComponent comp = contentList.next(noAreaCtx);
 							if (!comp.isRepeat()) {
 								ComponentBean bean = new ComponentBean(comp.getComponentBean());
+								if (bean.getType().equals(DateComponent.TYPE) && articleDate != null) {
+									bean.setValue(StringHelper.renderInputDate(articleDate));
+								}
 								bean.setId(StringHelper.getRandomId());
 								String parent = parents.get(bean.getArea());
 								if (parent == null) {
