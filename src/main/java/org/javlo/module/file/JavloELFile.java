@@ -10,6 +10,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.image.ImageSize;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.ztatic.StaticInfo;
@@ -130,6 +131,23 @@ public class JavloELFile extends ELFile {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+		return null;
+	}
+	
+	@Override
+	public String getDimension() {
+		File file = getFile();
+		if (file.isFile() && StringHelper.isImage(file.getName())) {
+			try {
+				StaticInfo info = StaticInfo.getInstance(getContentContext(), file);
+				ImageSize size = info.getImageSize(getContentContext());
+				if (size != null && size.getWidth() > 0 && size.getHeight() > 0) {
+					return size.getWidth()+"x"+size.getHeight();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} 
 		}
 		return null;
 	}

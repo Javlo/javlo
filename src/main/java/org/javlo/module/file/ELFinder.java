@@ -42,24 +42,24 @@ public abstract class ELFinder {
 	public void process(Writer out, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		Map<String, Object> apiResponse = new LinkedHashMap<String, Object>();
-		
+
 		boolean writeJSON = true;
-		
+
 		try {
 			RequestService rs = RequestService.getInstance(request);
 			String command = rs.getParameter("cmd", null);
 			if ("file".equals(command)) {
-				ELFile file = getFile(request, "target");				
-				if (file != null) {					
+				ELFile file = getFile(request, "target");
+				if (file != null) {
 					response.addHeader("Content-Descriptionn", "File Transfer");
 					response.addHeader("Content-Type", ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(file.getFile().getName())));
-					response.addHeader("Content-Disposition", "attachment; filename="+ file.getFile().getName()); 
+					response.addHeader("Content-Disposition", "attachment; filename=" + file.getFile().getName());
 					response.addHeader("Content-Transfer-Encoding", "binary");
-					response.addHeader("Connection","Keep-Alive");
-					response.addHeader("Expires","0");
+					response.addHeader("Connection", "Keep-Alive");
+					response.addHeader("Expires", "0");
 					response.addHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
-					response.addHeader("Pragma","public");
-					response.addHeader("Content-Length",""+file.getFile().length());					
+					response.addHeader("Pragma", "public");
+					response.addHeader("Content-Length", "" + file.getFile().length());
 					ResourceHelper.writeFileToStream(file.getFile(), response.getOutputStream());
 					writeJSON = false;
 				} else {
@@ -131,10 +131,9 @@ public abstract class ELFinder {
 		ELFile currentFile = null;
 		if (folders.length > 1) {
 			/*
-			 * String volName = folders[1]; ELFile currentFile = null; for
-			 * (ELFile volume : getVolumeFiles()) { if
-			 * (volume.getFile().getName().equals(volName)) { currentFile =
-			 * volume; } }
+			 * String volName = folders[1]; ELFile currentFile = null; for (ELFile volume :
+			 * getVolumeFiles()) { if (volume.getFile().getName().equals(volName)) {
+			 * currentFile = volume; } }
 			 */
 			currentFile = getVolumeFiles().iterator().next();
 			if (currentFile != null) {
@@ -153,11 +152,10 @@ public abstract class ELFinder {
 	protected abstract void pasteFiles(String srcHashFolder, String dstHashFolder, String[] files, boolean cut, Map<String, Object> apiResponse) throws IOException;
 
 	/*
-	 * ELFile dstFolder = hashToFile(dstHashFolder); List<ELFile> addedFiles =
-	 * new LinkedList<ELFile>(); List<ELFile> removeFiles = new
-	 * LinkedList<ELFile>(); for (String file : files) { ELFile oldFile =
-	 * hashToFile(file); File newFile = new
-	 * File(URLHelper.mergePath(dstFolder.getFile().getAbsolutePath(),
+	 * ELFile dstFolder = hashToFile(dstHashFolder); List<ELFile> addedFiles = new
+	 * LinkedList<ELFile>(); List<ELFile> removeFiles = new LinkedList<ELFile>();
+	 * for (String file : files) { ELFile oldFile = hashToFile(file); File newFile =
+	 * new File(URLHelper.mergePath(dstFolder.getFile().getAbsolutePath(),
 	 * oldFile.getFile().getName())); if (!newFile.exists()) { if
 	 * (oldFile.getFile().isFile()) { ELFile newELFile = createELFile(dstFolder,
 	 * newFile); ResourceHelper.writeFileToFile(oldFile.getFile(), newFile);
@@ -165,8 +163,8 @@ public abstract class ELFinder {
 	 * removeFiles.add(oldFile); } } else {
 	 * FileUtils.moveDirectory(oldFile.getFile(), newFile); ELFile newELFile =
 	 * createELFile(dstFolder, newFile); addedFiles.add(newELFile); } } }
-	 * apiResponse.put("added", printFiles(addedFiles));
-	 * apiResponse.put("removed", printFiles(removeFiles)); }
+	 * apiResponse.put("added", printFiles(addedFiles)); apiResponse.put("removed",
+	 * printFiles(removeFiles)); }
 	 */
 
 	protected abstract ELFile createELFile(ELFile parent, File file);
@@ -184,7 +182,7 @@ public abstract class ELFinder {
 	protected void transformFile(String fileHash, String mode, int width, int height, int x, int y, int degree, Map<String, Object> apiResponse) throws Exception {
 		ELFile file = hashToFile(fileHash);
 		if (file.getFile().exists()) {
-			IIOMetadata metadata = ResourceHelper.getImageMetadata(file.getFile());			
+			IIOMetadata metadata = ResourceHelper.getImageMetadata(file.getFile());
 			if ("resize".equals(mode)) {
 				BufferedImage img = ImageEngine.loadImage(file.getFile());
 				img = ImageEngine.resizeImage(img, width, height);
@@ -203,7 +201,7 @@ public abstract class ELFinder {
 				ImageEngine.storeImage(img, file.getFile());
 				ResourceHelper.writeImageMetadata(metadata, file.getFile());
 				apiResponse.put("changed", printFiles(Arrays.asList(new ELFile[] { file })));
-			}			
+			}
 		}
 	}
 
@@ -365,24 +363,30 @@ public abstract class ELFinder {
 
 	protected Map<String, Object> printFile(ELFile file) {
 		Map<String, Object> out = obj(
-				// (String) name of file/dir. Required
-				prop("name", file.getFile().getName()),
-				// (String) hash of current file/dir path, first symbol must be
-				// letter, symbols before _underline_ - volume id, Required.
-				prop("hash", fileToHash(file)),
-				// (String) mime type. Required.
-				prop("mime", getMimeType(file.getFile())),
-				// (Number) file modification time in unix timestamp. Required.
-				prop("ts", Math.round(file.getFile().lastModified() / 1000)),
-				// (Number) file size in bytes
-				prop("size", file.getFile().length()),
-				// (Number) is readable
-				prop("read", toInt(true)),
-				// (Number) is writable
-				prop("write", toInt(true)),
-				// (Number) is file locked. If locked that object cannot be
-				// deleted and renamed
-				prop("locked", toInt(false)),prop("tmb", file.getThumbnailURL()));
+			// (String) name of file/dir. Required
+			prop("name", file.getFile().getName()),
+			// (String) hash of current file/dir path, first symbol must be
+			// letter, symbols before _underline_ - volume id, Required.
+			prop("hash", fileToHash(file)),
+			// (String) mime type. Required.
+			prop("mime", getMimeType(file.getFile())),
+			// (Number) file modification time in unix timestamp. Required.
+			prop("ts", Math.round(file.getFile().lastModified() / 1000)),
+			// (Number) file size in bytes
+			prop("size", file.getFile().length()),
+			// (Number) is readable
+			prop("read", toInt(true)),
+			// (Number) is writable
+			prop("write", toInt(true)),
+			// (Number) is file locked. If locked that object cannot be
+			// deleted and renamed
+			prop("locked", toInt(false)), prop("tmb", file.getThumbnailURL())
+		);
+
+		String dim = file.getDimension();
+		if (dim != null) {
+			out.put("dim", dim);
+		}
 
 		// (Number) Only for directories. Marks if directory has child
 		// directories inside it. 0 (or not set) - no, 1 - yes. Do not need to
@@ -392,13 +396,12 @@ public abstract class ELFinder {
 			extend(out, prop("childs", toInt(children.size() > 0)));
 			List<ELFile> childDirectories = filterDirectories(children);
 			extend(out, prop("dirs", toInt(childDirectories.size() > 0)));
-		} else {			
+		} else {
 			if (StringHelper.isImage(file.getFile().getName())) {
 				try {
 					/*
-					 * BufferedImage img = ImageIO.read(file.getFile());
-					 * extend(out, prop("dim", "" + img.getWidth() + 'x' +
-					 * img.getHeight()));
+					 * BufferedImage img = ImageIO.read(file.getFile()); extend(out, prop("dim", ""
+					 * + img.getWidth() + 'x' + img.getHeight()));
 					 */
 				} catch (Throwable e) {
 					logger.warning(e.getMessage());
@@ -426,16 +429,7 @@ public abstract class ELFinder {
 				prop("url", url), // (String) Current folder URL
 				prop("tmbURL", file.getThumbnailURL()), // (String) Thumbnails
 														// folder URL
-				prop("separator", "/"),
-				prop("disabled", array()), 
-				prop("copyOverwrite", 1),
-				propObj("archivers", prop("create", array()),
-				prop("extract", array())),
-				prop("tmbCrop", "1"),
-				prop("substituteImg", "true"),
-				prop("onetimeUrl", "true"),
-				prop("tmbReqCustomData", "false")
-				);
+				prop("separator", "/"), prop("disabled", array()), prop("copyOverwrite", 1), propObj("archivers", prop("create", array()), prop("extract", array())), prop("tmbCrop", "1"), prop("substituteImg", "true"), prop("onetimeUrl", "true"), prop("tmbReqCustomData", "false"));
 	}
 
 	protected List<Object> printFiles(List<ELFile> files) {
@@ -477,7 +471,7 @@ public abstract class ELFinder {
 	protected abstract ELFile hashToFile(String hash);
 
 	protected abstract String fileToHash(ELFile file);
-	
+
 	protected abstract void resetHash(String hash);
 
 	protected static List<ELFile> filterDirectories(List<ELFile> children) {

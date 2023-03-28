@@ -7,7 +7,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+import org.javlo.ztatic.StaticInfo;
 
 public abstract class ELFile {
 	
@@ -94,5 +96,9 @@ public abstract class ELFile {
 	
 	public void updateInfo(HttpServletRequest request, HttpServletResponse respones) {
 		return;
+	}
+	
+	public String getDimension() {
+		return null;
 	}
 }
