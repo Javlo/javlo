@@ -382,8 +382,7 @@ public abstract class ELFinder {
 				prop("write", toInt(true)),
 				// (Number) is file locked. If locked that object cannot be
 				// deleted and renamed
-				prop("locked", toInt(true)),
-				prop("tmb", file.getThumbnailURL()));
+				prop("locked", toInt(false)),prop("tmb", file.getThumbnailURL()));
 
 		// (Number) Only for directories. Marks if directory has child
 		// directories inside it. 0 (or not set) - no, 1 - yes. Do not need to
