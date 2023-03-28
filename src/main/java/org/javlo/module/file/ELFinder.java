@@ -382,7 +382,8 @@ public abstract class ELFinder {
 				prop("write", toInt(true)),
 				// (Number) is file locked. If locked that object cannot be
 				// deleted and renamed
-				prop("locked", toInt(false)), prop("tmb", file.getThumbnailURL()));
+				prop("locked", toInt(true)),
+				prop("tmb", file.getThumbnailURL()));
 
 		// (Number) Only for directories. Marks if directory has child
 		// directories inside it. 0 (or not set) - no, 1 - yes. Do not need to
@@ -426,15 +427,16 @@ public abstract class ELFinder {
 				prop("url", url), // (String) Current folder URL
 				prop("tmbURL", file.getThumbnailURL()), // (String) Thumbnails
 														// folder URL
-				prop("separator", "/"), prop("disabled", array()), // (Array)
-																	// List of
-																	// commands
-																	// not
-																	// allowed
-																	// (disabled)
-																	// on this
-																	// volume
-				prop("copyOverwrite", 1), propObj("archivers", prop("create", array()), prop("extract", array())));
+				prop("separator", "/"),
+				prop("disabled", array()), 
+				prop("copyOverwrite", 1),
+				propObj("archivers", prop("create", array()),
+				prop("extract", array())),
+				prop("tmbCrop", "1"),
+				prop("substituteImg", "true"),
+				prop("onetimeUrl", "true"),
+				prop("tmbReqCustomData", "false")
+				);
 	}
 
 	protected List<Object> printFiles(List<ELFile> files) {

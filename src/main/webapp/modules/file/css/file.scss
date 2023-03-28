@@ -84,6 +84,17 @@ body {
 
 /*ui-front ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable std42-dialog touch-punch elfinder-dialog elfinder-to-editing elfinder-dialog-edit ui-resizable elfinder-frontmost elfinder-dialog-active*/
 
+
+.elfinder-dialog-info {
+	z-index: 1000 !important;
+	width: 500px !important;
+	top: -90% !important;
+	left: 50% !important;
+	margin-left: -250px !important;
+	margin-top: -80xp !important;
+	padding: 0 !important;
+}
+
 #fileManager {
 	.ui-dialog.elfinder-dialog-edit {
 		width: calc(100% - 60px) !important;

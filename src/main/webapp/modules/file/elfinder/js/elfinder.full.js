@@ -2319,7 +2319,7 @@ var elFinder = function(elm, opts, bootCallback) {
 	 * @todo
 	 * @return $.Deferred
 	 */
-	this.request = function(opts) {
+	this.request = function(opts) { 
 		var self     = this,
 			o        = this.options,
 			dfrd     = $.Deferred(),
@@ -4219,10 +4219,6 @@ var elFinder = function(elm, opts, bootCallback) {
 		if (!self.isSameOrigin(url)) {
 			url = self.openUrl(hash, true);
 		}
-		console.log("url=",url);
-		console.log("type=",type);
-		console.log("requestOpts=",requestOpts);
-		
 		req = self.request(Object.assign({
 			data    : {cmd : 'get'},
 			options : {
@@ -4239,8 +4235,7 @@ var elFinder = function(elm, opts, bootCallback) {
 				hideCnt: true
 			},
 			cancel : true
-		//}, requestOpts || {}))
-		}, {}))
+		}, requestOpts || {}))
 		.fail(function() {
 			dfd.reject();
 		})
@@ -10802,7 +10797,7 @@ if ($.ui) {
 
 					xhr.open(
 						options.type,
-						options.url,
+						options.url.replace("[","-").replace("]","-"),
 						options.async,
 						options.username,
 						options.password
