@@ -4,8 +4,10 @@
 package org.javlo.user;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,6 +20,7 @@ import java.util.Set;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang3.StringUtils;
+import org.javlo.context.ContentContext;
 import org.javlo.helper.LocalLogger;
 import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
@@ -539,6 +542,25 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	@Override
 	public void setToken(String token) {
 		this.token = token;
+	}
+	
+	@Override
+	public String getTokenCreateIfNotExist() {
+		String token = getToken();
+		if (StringHelper.isEmpty(token)) {
+			resetToken();
+		}
+		return token;
+	}
+	
+	@Override
+	public void resetToken() {
+		try {
+			token = URLEncoder.encode(StringHelper.getRandomIdBase64() + StringHelper.getRandomString(12), ContentContext.CHARACTER_ENCODING);
+			setToken(token);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**

@@ -42,6 +42,10 @@ public interface IUserInfo {
 
 	public String getToken();
 	
+	public String getTokenCreateIfNotExist();
+	
+	public void resetToken();
+	
 	public String getBirthdate();
 	
 	public String[] getPreferredLanguage();

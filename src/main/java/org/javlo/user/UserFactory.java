@@ -759,8 +759,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	public String getTokenCreateIfNotExist(User user) throws IOException {
 		String token = user.getUserInfo().getToken();
 		if (StringHelper.isEmpty(token)) {
-			token = URLEncoder.encode(StringHelper.getRandomIdBase64() + StringHelper.encryptPasswordSHA256(user.getLogin()), ContentContext.CHARACTER_ENCODING);
-			user.getUserInfo().setToken(token);
+			user.userInfo.getTokenCreateIfNotExist();
 			updateUserInfo(user.getUserInfo());
 			store();
 		}
