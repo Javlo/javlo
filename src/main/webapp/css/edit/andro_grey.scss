@@ -16,6 +16,10 @@ body #tools .btn-primary, .btn-primary  {
 	border-bottom: 3px solid var(--javlo-ui-text);
 	.logo{
 		color: var(--javlo-ui-text);
+		svg {
+			width: 80%;
+			fill: var(--javlo-ui-text);
+		}
 	}
 }
 
