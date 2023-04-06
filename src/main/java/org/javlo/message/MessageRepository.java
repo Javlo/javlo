@@ -38,7 +38,7 @@ public class MessageRepository {
 	private final HttpServletRequest request;
 
 	private GenericMessage globalMessage = GenericMessage.EMPTY_MESSAGE;
-	
+
 	private ReverseLinkService reverseLinkService = null;
 	private ContentContext ctx = null;
 
@@ -59,7 +59,7 @@ public class MessageRepository {
 		} catch (ServiceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
+		}
 		return outInstance;
 	}
 
@@ -67,8 +67,8 @@ public class MessageRepository {
 		MessageRepository outRep = (MessageRepository) request.getAttribute(KEY);
 		if (outRep == null) {
 			outRep = new MessageRepository(request);
-			RequestService requestService = RequestService.getInstance(request);			
-			
+			RequestService requestService = RequestService.getInstance(request);
+
 			if (requestService.getParameter(PARAMETER_NAME, null) != null) {
 				outRep.setGlobalMessage(new GenericMessage(requestService.getParameter(PARAMETER_NAME, null)));
 			}
@@ -133,13 +133,13 @@ public class MessageRepository {
 
 	public GenericMessage getGlobalMessage() {
 		if (reverseLinkService != null && globalMessage != null) {
-			String message = globalMessage.getMessage();			
+			String message = globalMessage.getMessage();
 			try {
 				if (!globalMessage.reverseLinkCreate) {
-					GenericMessage rlMsg= new GenericMessage(message, globalMessage.key, globalMessage.type, globalMessage.URL);
+					GenericMessage rlMsg = new GenericMessage(message, globalMessage.key, globalMessage.type, globalMessage.URL);
 					rlMsg.setDisplayed(globalMessage.isDisplayed());
 					message = Encode.forHtmlContent(message);
-					message = reverseLinkService.replaceLink(ctx, null, message);	
+					message = reverseLinkService.replaceLink(ctx, null, message);
 					rlMsg.setCleanMessage(message);
 					globalMessage = rlMsg;
 					globalMessage.reverseLinkCreate = true;
@@ -147,7 +147,7 @@ public class MessageRepository {
 				return globalMessage;
 			} catch (Exception e) {
 				e.printStackTrace();
-			}						
+			}
 		}
 		return globalMessage;
 	}
@@ -171,7 +171,7 @@ public class MessageRepository {
 			this.globalMessage = globalMessage;
 		}
 	}
-	
+
 	/**
 	 * set a new global message. if the type of the current message is more
 	 * important or equal the new message is ignored.
@@ -202,11 +202,11 @@ public class MessageRepository {
 			url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE).getContextForAbsoluteURL());
 		}
 		notifService.addNotification(globalMessage.getMessage(), url, globalMessage.getType(), ctx.getCurrentUserId(), null, admin);
-		notifService.notifExternalService(ctx,globalMessage.getMessage(),globalMessage.getType(),url,ctx.getCurrentUserId(),admin);
+		notifService.notifExternalService(ctx, globalMessage.getMessage(), globalMessage.getType(), url, ctx.getCurrentUserId(), admin);
 	}
-	
+
 	public void setGlobalMessageAndNotification(ContentContext ctx, GenericMessage globalMessage) {
-		setGlobalMessageAndNotification(ctx,globalMessage, false);
+		setGlobalMessageAndNotification(ctx, globalMessage, false);
 	}
 
 	/**
@@ -227,7 +227,7 @@ public class MessageRepository {
 		if (url == null) {
 			url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE).getContextForAbsoluteURL());
 		}
-		notifService.addNotification(globalMessage.getMessage(), url, globalMessage.getType(), ctx.getCurrentUserId(),admin);		
+		notifService.addNotification(globalMessage.getMessage(), url, globalMessage.getType(), ctx.getCurrentUserId(), admin);
 	}
 
 	public void clearGlobalMessage() {

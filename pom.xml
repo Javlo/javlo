@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.javlo</groupId>
@@ -10,10 +12,14 @@
 	<inceptionYear>2012</inceptionYear>
 
 	<description>
-		Javlo is a easy to use and deploy website content management system. Javlo helps content managers worldwide to create and maintain beautiful websites fast and efficiently.
-		The browser based user interface features configurable editors for structured content with well defined fields.
-		A sophisticated template engine enforces a structured layout, W3C standard compliance and accessibility features for all content.
-	 </description>
+		Javlo is a easy to use and deploy website content management system.
+		Javlo helps content managers worldwide to create and maintain beautiful
+		websites fast and efficiently.
+		The browser based user interface features configurable editors for
+		structured content with well defined fields.
+		A sophisticated template engine enforces a structured layout, W3C
+		standard compliance and accessibility features for all content.
+	</description>
 
 	<developers>
 		<developer>
@@ -64,7 +70,8 @@
 
 	<dependencies>
 
-		<!-- https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit -->
+		<!--
+		https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit -->
 		<dependency>
 			<groupId>org.eclipse.jgit</groupId>
 			<artifactId>org.eclipse.jgit</artifactId>
@@ -115,7 +122,8 @@
 			<type>jar</type>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
+		<!--
+		https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
@@ -209,21 +217,24 @@
 			<version>3.1</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5 -->
+		<!--
+		https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5 -->
 		<dependency>
 			<groupId>org.apache.httpcomponents.client5</groupId>
 			<artifactId>httpclient5</artifactId>
 			<version>5.2</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents.core5/httpcore5 -->
+		<!--
+		https://mvnrepository.com/artifact/org.apache.httpcomponents.core5/httpcore5 -->
 		<dependency>
 			<groupId>org.apache.httpcomponents.core5</groupId>
 			<artifactId>httpcore5</artifactId>
 			<version>5.2</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5 -->
+		<!--
+		https://mvnrepository.com/artifact/org.apache.httpcomponents.client5/httpclient5 -->
 		<dependency>
 			<groupId>org.apache.httpcomponents.client5</groupId>
 			<artifactId>httpclient5</artifactId>
@@ -236,8 +247,10 @@
 			<version>1.07.00</version>
 		</dependency>
 
-		<!-- <dependency> <groupId>com.google.code.geocoder-java</groupId> <artifactId>geocoder-java</artifactId> 
-			<version>0.16</version> </dependency> -->
+		<!-- <dependency> <groupId>com.google.code.geocoder-java</groupId>
+		<artifactId>geocoder-java</artifactId> 
+			<version>0.16</version>
+		</dependency> -->
 
 		<dependency>
 			<groupId>javax.servlet.jsp</groupId>
@@ -246,16 +259,20 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.xhtmlrenderer/flying-saucer-pdf-openpdf -->
+		<!--
+		https://mvnrepository.com/artifact/org.xhtmlrenderer/flying-saucer-pdf-openpdf -->
 		<dependency>
 			<groupId>org.xhtmlrenderer</groupId>
 			<artifactId>flying-saucer-pdf-openpdf</artifactId>
 			<version>9.1.22</version>
 		</dependency>
 
-		<!-- <dependency> <groupId>jjil</groupId> <artifactId>jjil.core</artifactId> 
-			<version>0.1</version> </dependency> <dependency> <groupId>jjil</groupId> 
-			<artifactId>jjil.algorithm</artifactId> <version>0.1</version> </dependency> -->
+		<!-- <dependency> <groupId>jjil</groupId>
+		<artifactId>jjil.core</artifactId> 
+			<version>0.1</version>
+		</dependency> <dependency> <groupId>jjil</groupId>
+		<artifactId>jjil.algorithm</artifactId> <version>0.1</version>
+		</dependency> -->
 
 		<dependency>
 			<groupId>junit</groupId>
@@ -293,6 +310,14 @@
 					<groupId>com.fasterxml.jackson.core</groupId>
 					<artifactId>jackson-annotations</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>xerces</groupId>
+					<artifactId>xercesImpl</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -313,6 +338,14 @@
 				<exclusion>
 					<groupId>com.fasterxml.jackson.core</groupId>
 					<artifactId>jackson-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>xerces</groupId>
+					<artifactId>xercesImpl</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -372,35 +405,56 @@
 			<version>1.4</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.document -->
+		<!--
+		https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.document -->
 		<dependency>
 			<groupId>fr.opensagres.xdocreport</groupId>
 			<artifactId>fr.opensagres.xdocreport.document</artifactId>
 			<version>${xdocreport.version}</version>
+
+			<exclusions>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
+			</exclusions>
+
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.core -->
+		<!--
+		https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.core -->
 		<dependency>
 			<groupId>fr.opensagres.xdocreport</groupId>
 			<artifactId>fr.opensagres.xdocreport.core</artifactId>
 			<version>${xdocreport.version}</version>
+
+			<exclusions>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
+			</exclusions>
+
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.converter -->
+		<!--
+		https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.converter -->
 		<dependency>
 			<groupId>fr.opensagres.xdocreport</groupId>
 			<artifactId>fr.opensagres.xdocreport.converter</artifactId>
 			<version>${xdocreport.version}</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.document.docx -->
+		<!--
+		https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.document.docx -->
 		<dependency>
 			<groupId>fr.opensagres.xdocreport</groupId>
 			<artifactId>fr.opensagres.xdocreport.document.docx</artifactId>
 			<version>${xdocreport.version}</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.converter.docx.xwpf -->
+		<!--
+		https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.xdocreport.converter.docx.xwpf -->
 		<dependency>
 			<groupId>fr.opensagres.xdocreport</groupId>
 			<artifactId>fr.opensagres.xdocreport.converter.docx.xwpf</artifactId>
@@ -410,11 +464,15 @@
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>batik-transcoder</artifactId>
-			<version>1.9.1</version>
+			<version>1.16</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.apache.xmlgraphics</groupId>
 					<artifactId>batik-js</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -435,7 +493,8 @@
 			<artifactId>lucene-queries</artifactId>
 			<version>${lucene.version}</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-highlighter -->
+		<!--
+		https://mvnrepository.com/artifact/org.apache.lucene/lucene-highlighter -->
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-highlighter</artifactId>
@@ -492,14 +551,16 @@
 			<version>0.2.5</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/com.google.code.geocoder-java/geocoder-java -->
+		<!--
+		https://mvnrepository.com/artifact/com.google.code.geocoder-java/geocoder-java -->
 		<dependency>
 			<groupId>com.google.code.geocoder-java</groupId>
 			<artifactId>geocoder-java</artifactId>
 			<version>0.16</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/net.sf.uadetector/uadetector-core -->
+		<!--
+		https://mvnrepository.com/artifact/net.sf.uadetector/uadetector-core -->
 		<dependency>
 			<groupId>net.sf.uadetector</groupId>
 			<artifactId>uadetector-core</artifactId>
@@ -552,14 +613,16 @@
 		<!-- <version>1.2.3</version> -->
 		<!-- </dependency> -->
 
-		<!-- https://mvnrepository.com/artifact/org.elasticsearch.client/elasticsearch-rest-client -->
+		<!--
+		https://mvnrepository.com/artifact/org.elasticsearch.client/elasticsearch-rest-client -->
 		<!-- <dependency> -->
 		<!-- <groupId>org.elasticsearch.client</groupId> -->
 		<!-- <artifactId>elasticsearch-rest-client</artifactId> -->
 		<!-- <version>${elasticsearch.version}</version> -->
 		<!-- </dependency> -->
 
-		<!-- https://mvnrepository.com/artifact/org.elasticsearch.client/elasticsearch-rest-high-level-client -->
+		<!--
+		https://mvnrepository.com/artifact/org.elasticsearch.client/elasticsearch-rest-high-level-client -->
 		<!-- <dependency> -->
 		<!-- <groupId>org.elasticsearch.client</groupId> -->
 		<!-- <artifactId>elasticsearch-rest-high-level-client</artifactId> -->
@@ -580,7 +643,8 @@
 			<version>5.2.8.RELEASE</version>
 		</dependency>-->
 
-		<!-- https://mvnrepository.com/artifact/com.mortennobel/java-image-scaling -->
+		<!--
+		https://mvnrepository.com/artifact/com.mortennobel/java-image-scaling -->
 		<dependency>
 			<groupId>com.mortennobel</groupId>
 			<artifactId>java-image-scaling</artifactId>
@@ -605,14 +669,16 @@
 			<version>0.1.6</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.eclipse.mylyn.docs/org.eclipse.mylyn.docs.epub.core -->
+		<!--
+		https://mvnrepository.com/artifact/org.eclipse.mylyn.docs/org.eclipse.mylyn.docs.epub.core -->
 		<dependency>
 			<groupId>org.eclipse.mylyn.docs</groupId>
 			<artifactId>org.eclipse.mylyn.docs.epub.core</artifactId>
 			<version>4.0.6</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/net.sourceforge.htmlcleaner/htmlcleaner -->
+		<!--
+		https://mvnrepository.com/artifact/net.sourceforge.htmlcleaner/htmlcleaner -->
 		<dependency>
 			<groupId>net.sourceforge.htmlcleaner</groupId>
 			<artifactId>htmlcleaner</artifactId>
@@ -639,12 +705,21 @@
 			<version>2.7.0</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/javax.xml.bind/activation -->
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>activation</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<repositories>
 		<repository>
 			<id>com.springsource.repository.bundles.external</id>
-			<name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
+			<name>SpringSource Enterprise Bundle Repository - External Bundle
+				Releases</name>
 			<url>http://repository.springsource.com/maven/bundles/external</url>
 		</repository>
 		<repository>
@@ -670,8 +745,9 @@
 	<scm>
 		<connection>scm:git:https://github.com/Javlo/javlo.git</connection>
 	</scm>
-	<!-- scm> <connection>:pserver:ananymous@cvs.noctis.be:/var/cvs/javlo</connection> 
-		<tag>HEAD</tag> </scm> -->
+	<!-- scm>
+	<connection>:pserver:ananymous@cvs.noctis.be:/var/cvs/javlo</connection>
+	<tag>HEAD</tag> </scm> -->
 
 	<build>
 		<finalName>javlo</finalName>
@@ -733,7 +809,8 @@
 							<goal>create</goal>
 						</goals>
 						<configuration>
-							<format>Rev={0} BuildTime={1,date,yyyy-MM-dd--HH-mm-ss}</format>
+							<format>Rev={0}
+								BuildTime={1,date,yyyy-MM-dd--HH-mm-ss}</format>
 							<items>
 								<item>scmVersion</item>
 								<item>timestamp</item>
@@ -821,7 +898,8 @@
 									<goal>copy-resources</goal>
 								</goals>
 								<configuration>
-									<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/${war.config.dir}</outputDirectory>
+									<outputDirectory>
+										${project.build.directory}/${project.build.finalName}/WEB-INF/${war.config.dir}</outputDirectory>
 									<resources>
 										<resource>
 											<directory>src/main/config</directory>
@@ -838,7 +916,8 @@
 									<goal>copy-resources</goal>
 								</goals>
 								<configuration>
-									<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF</outputDirectory>
+									<outputDirectory>
+										${project.build.directory}/${project.build.finalName}/WEB-INF</outputDirectory>
 									<resources>
 										<resource>
 											<directory>src/main/webapp/WEB-INF</directory>
@@ -858,7 +937,8 @@
 									<goal>copy-resources</goal>
 								</goals>
 								<configuration>
-									<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/lib</outputDirectory>
+									<outputDirectory>
+										${project.build.directory}/${project.build.finalName}/WEB-INF/lib</outputDirectory>
 									<resources>
 										<resource>
 											<directory>src/main/lib</directory>

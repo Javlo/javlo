@@ -595,7 +595,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 				} catch (Throwable t) { // TODO: try to remove this.
 					t.printStackTrace();
 				}
-				ArrayList list = new ArrayList();
+				ArrayList<String> list = new ArrayList<>();
 				for (File file : files) {
 					if (file.isFile()) {
 						list.add(file.getName());

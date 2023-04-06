@@ -2,6 +2,7 @@ package org.javlo.module.remote;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
@@ -11,7 +12,6 @@ import javax.mail.internet.InternetAddress;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
-import org.python.icu.util.Calendar;
 
 public class RemoteThread extends Thread {
 	

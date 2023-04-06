@@ -2,716 +2,290 @@
 [WARNING] 
 [WARNING] Some problems were encountered while building the effective model for org.javlo:javlo2:war:2.1
 [WARNING] 'artifactId' contains an expression but should be a constant. @ org.javlo:javlo2${artifact.extension}:2.1, C:\work\javlo2\pom.xml, line 7, column 14
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: org.apache.httpcomponents.client5:httpclient5:jar -> duplicate declaration of version 5.2 @ org.javlo:javlo2${artifact.extension}:2.1, C:\work\javlo2\pom.xml, line 238, column 15
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: org.thymeleaf:thymeleaf:jar -> duplicate declaration of version 3.0.0.RELEASE @ org.javlo:javlo2${artifact.extension}:2.1, C:\work\javlo2\pom.xml, line 659, column 15
 [WARNING] 
 [WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
 [WARNING] 
 [WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
 [WARNING] 
+[WARNING] The POM for org.apache.maven.plugins:maven-pmd-plugin:jar:3.3.2 is missing, no dependency information available
+[WARNING] Failed to retrieve plugin descriptor for org.apache.maven.plugins:maven-pmd-plugin:3.3.2: Plugin org.apache.maven.plugins:maven-pmd-plugin:3.3.2 or one of its dependencies could not be resolved: Failure to find org.apache.maven.plugins:maven-pmd-plugin:jar:3.3.2 in https://repo.maven.apache.org/maven2 was cached in the local repository, resolution will not be reattempted until the update interval of central has elapsed or updates are forced
+[WARNING] The POM for org.apache.maven.plugins:maven-checkstyle-plugin:jar:3.3.2 is missing, no dependency information available
+[WARNING] Failed to retrieve plugin descriptor for org.apache.maven.plugins:maven-checkstyle-plugin:3.3.2: Plugin org.apache.maven.plugins:maven-checkstyle-plugin:3.3.2 or one of its dependencies could not be resolved: Failure to find org.apache.maven.plugins:maven-checkstyle-plugin:jar:3.3.2 in https://repo.maven.apache.org/maven2 was cached in the local repository, resolution will not be reattempted until the update interval of central has elapsed or updates are forced
+[WARNING] The POM for org.apache.maven.plugins:maven-site-plugin:jar:3.3.1 is missing, no dependency information available
+[WARNING] Failed to retrieve plugin descriptor for org.apache.maven.plugins:maven-site-plugin:3.3.1: Plugin org.apache.maven.plugins:maven-site-plugin:3.3.1 or one of its dependencies could not be resolved: Failure to find org.apache.maven.plugins:maven-site-plugin:jar:3.3.1 in https://repo.maven.apache.org/maven2 was cached in the local repository, resolution will not be reattempted until the update interval of central has elapsed or updates are forced
 [INFO]                                                                         
 [INFO] ------------------------------------------------------------------------
 [INFO] Building Javlo 2 2.1
 [INFO] ------------------------------------------------------------------------
+[WARNING] The POM for org.apache.maven.plugins:maven-pmd-plugin:jar:3.3.2 is missing, no dependency information available
+[WARNING] Failed to retrieve plugin descriptor for org.apache.maven.plugins:maven-pmd-plugin:3.3.2: Plugin org.apache.maven.plugins:maven-pmd-plugin:3.3.2 or one of its dependencies could not be resolved: Failure to find org.apache.maven.plugins:maven-pmd-plugin:jar:3.3.2 in https://repo.maven.apache.org/maven2 was cached in the local repository, resolution will not be reattempted until the update interval of central has elapsed or updates are forced
+[WARNING] The POM for org.apache.maven.plugins:maven-checkstyle-plugin:jar:3.3.2 is missing, no dependency information available
+[WARNING] Failed to retrieve plugin descriptor for org.apache.maven.plugins:maven-checkstyle-plugin:3.3.2: Plugin org.apache.maven.plugins:maven-checkstyle-plugin:3.3.2 or one of its dependencies could not be resolved: Failure to find org.apache.maven.plugins:maven-checkstyle-plugin:jar:3.3.2 in https://repo.maven.apache.org/maven2 was cached in the local repository, resolution will not be reattempted until the update interval of central has elapsed or updates are forced
+[WARNING] The POM for org.apache.maven.plugins:maven-site-plugin:jar:3.3.1 is missing, no dependency information available
+[WARNING] Failed to retrieve plugin descriptor for org.apache.maven.plugins:maven-site-plugin:3.3.1: Plugin org.apache.maven.plugins:maven-site-plugin:3.3.1 or one of its dependencies could not be resolved: Failure to find org.apache.maven.plugins:maven-site-plugin:jar:3.3.1 in https://repo.maven.apache.org/maven2 was cached in the local repository, resolution will not be reattempted until the update interval of central has elapsed or updates are forced
 [INFO] 
 [INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ javlo2 ---
 [INFO] org.javlo:javlo2:war:2.1
+[INFO] +- org.eclipse.jgit:org.eclipse.jgit:jar:6.2.0.202206071550-r:compile
+[INFO] |  +- com.googlecode.javaewah:JavaEWAH:jar:1.1.13:compile
+[INFO] |  \- org.slf4j:slf4j-api:jar:1.7.30:compile
 [INFO] +- javax.servlet:jstl:jar:1.2:compile
+[INFO] +- javax:javaee-web-api:jar:7.0:provided
 [INFO] +- com.github.cage:cage:jar:1.0:compile
-[INFO] +- com.google.code.gson:gson:jar:2.8.5:compile
-[INFO] +- commons-fileupload:commons-fileupload:jar:1.3.3:compile
-[INFO] |  \- (commons-io:commons-io:jar:2.2:compile - omitted for conflict with 2.6)
-[INFO] +- org.apache.pdfbox:pdfbox:jar:2.0.17:compile
-[INFO] |  +- org.apache.pdfbox:fontbox:jar:2.0.17:compile
-[INFO] |  |  \- (commons-logging:commons-logging:jar:1.2:compile - omitted for duplicate)
+[INFO] +- com.google.code.gson:gson:jar:2.10.1:compile
+[INFO] +- commons-fileupload:commons-fileupload:jar:1.5:compile
+[INFO] +- org.apache.pdfbox:pdfbox:jar:2.0.26:compile
+[INFO] |  +- org.apache.pdfbox:fontbox:jar:2.0.26:compile
 [INFO] |  \- commons-logging:commons-logging:jar:1.2:compile
-[INFO] +- org.apache.poi:poi-scratchpad:jar:3.17:compile
-[INFO] |  \- org.apache.poi:poi:jar:3.17:compile
-[INFO] |     +- (commons-codec:commons-codec:jar:1.10:compile - omitted for duplicate)
-[INFO] |     \- org.apache.commons:commons-collections4:jar:4.1:compile
-[INFO] +- org.zeroturnaround:zt-zip:jar:1.13:compile
-[INFO] |  \- org.slf4j:slf4j-api:jar:1.6.6:compile
-[INFO] +- org.apache.poi:poi-ooxml:jar:3.17:compile
-[INFO] |  +- (org.apache.poi:poi:jar:3.17:compile - omitted for duplicate)
-[INFO] |  +- org.apache.poi:poi-ooxml-schemas:jar:3.17:compile
-[INFO] |  |  \- (org.apache.xmlbeans:xmlbeans:jar:2.6.0:compile - omitted for conflict with 2.3.0)
-[INFO] |  \- com.github.virtuald:curvesapi:jar:1.04:compile
+[INFO] +- org.zeroturnaround:zt-zip:jar:1.15:compile
+[INFO] +- org.apache.logging.log4j:log4j-core:jar:2.18.0:compile
+[INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.18.0:compile
+[INFO] +- org.apache.poi:poi-scratchpad:jar:5.2.3:compile
+[INFO] |  +- org.apache.poi:poi:jar:5.2.3:compile
+[INFO] |  |  \- com.zaxxer:SparseBitSet:jar:1.2:compile
+[INFO] |  \- org.apache.commons:commons-math3:jar:3.6.1:compile
+[INFO] +- org.apache.poi:poi-ooxml:jar:5.2.3:compile
+[INFO] |  +- org.apache.poi:poi-ooxml-lite:jar:5.2.3:compile
+[INFO] |  +- org.apache.xmlbeans:xmlbeans:jar:5.1.1:compile
+[INFO] |  +- org.apache.commons:commons-compress:jar:1.21:compile
+[INFO] |  +- com.github.virtuald:curvesapi:jar:1.07:compile
+[INFO] |  \- org.apache.commons:commons-collections4:jar:4.4:compile
 [INFO] +- org.apache.commons:commons-vfs2:jar:2.4.1:compile
-[INFO] |  \- (commons-logging:commons-logging:jar:1.2:compile - omitted for duplicate)
 [INFO] +- commons-beanutils:commons-beanutils:jar:1.9.4:compile
-[INFO] |  +- (commons-logging:commons-logging:jar:1.2:compile - omitted for duplicate)
 [INFO] |  \- commons-collections:commons-collections:jar:3.2.2:compile
-[INFO] +- javax.servlet:servlet-api:jar:2.5:provided (scope not updated to compile)
-[INFO] +- org.apache.commons:commons-lang3:jar:3.5:compile
+[INFO] +- javax.servlet:javax.servlet-api:jar:3.1.0:provided
+[INFO] +- org.apache.commons:commons-lang3:jar:3.12.0:compile
 [INFO] +- javax.mail:mail:jar:1.4:compile
 [INFO] |  \- javax.activation:activation:jar:1.1:compile
-[INFO] +- commons-io:commons-io:jar:2.6:compile
-[INFO] +- commons-codec:commons-codec:jar:1.10:compile
+[INFO] +- commons-io:commons-io:jar:2.7:compile
+[INFO] +- commons-codec:commons-codec:jar:1.15:compile
 [INFO] +- com.jhlabs:filters:jar:2.0.235-1:compile
 [INFO] +- rome:rome:jar:1.0:compile
 [INFO] |  \- jdom:jdom:jar:1.0:compile
 [INFO] +- org.htmlparser:htmlparser:jar:2.1:compile
 [INFO] |  \- org.htmlparser:htmllexer:jar:2.1:compile
 [INFO] +- commons-httpclient:commons-httpclient:jar:3.1:compile
-[INFO] |  +- (commons-logging:commons-logging:jar:1.0.4:compile - omitted for conflict with 1.2)
-[INFO] |  \- (commons-codec:commons-codec:jar:1.2:compile - omitted for conflict with 1.10)
-[INFO] +- org.apache.httpcomponents:httpmime:jar:4.5.2:compile
-[INFO] |  \- (org.apache.httpcomponents:httpclient:jar:4.5.2:compile - omitted for duplicate)
-[INFO] +- org.apache.httpcomponents:httpclient:jar:4.5.2:compile
-[INFO] |  +- org.apache.httpcomponents:httpcore:jar:4.4.4:compile
-[INFO] |  +- (commons-logging:commons-logging:jar:1.2:compile - omitted for duplicate)
-[INFO] |  \- (commons-codec:commons-codec:jar:1.9:compile - omitted for conflict with 1.10)
+[INFO] +- org.apache.httpcomponents.client5:httpclient5:jar:5.2:compile
+[INFO] |  \- org.apache.httpcomponents.core5:httpcore5-h2:jar:5.2:compile
+[INFO] +- org.apache.httpcomponents.core5:httpcore5:jar:5.2:compile
 [INFO] +- org.ostermiller:utils:jar:1.07.00:compile
 [INFO] +- javax.servlet.jsp:jsp-api:jar:2.1:provided
-[INFO] +- org.xhtmlrenderer:flying-saucer-pdf-itext5:jar:9.1.18:compile
-[INFO] |  +- com.itextpdf:itextpdf:jar:5.5.11:compile
-[INFO] |  \- org.xhtmlrenderer:flying-saucer-core:jar:9.1.18:compile
-[INFO] +- junit:junit:jar:4.11:test (scope not updated to compile)
+[INFO] +- org.xhtmlrenderer:flying-saucer-pdf-openpdf:jar:9.1.22:compile
+[INFO] |  +- com.github.librepdf:openpdf:jar:1.3.11:compile
+[INFO] |  |  \- com.github.albfernandez:juniversalchardet:jar:2.3.0:compile
+[INFO] |  \- org.xhtmlrenderer:flying-saucer-core:jar:9.1.22:compile
+[INFO] +- junit:junit:jar:4.13.2:test
 [INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
-[INFO] +- org.apache.commons:commons-imaging:jar:1.0-alpha1:compile
-[INFO] +- org.apache.tika:tika-core:jar:1.22:compile
-[INFO] +- org.apache.tika:tika-parsers:jar:1.22:compile
-[INFO] |  +- (org.apache.tika:tika-core:jar:1.22:compile - omitted for duplicate)
-[INFO] |  +- org.glassfish.jaxb:jaxb-runtime:jar:2.3.2:compile
-[INFO] |  |  +- jakarta.xml.bind:jakarta.xml.bind-api:jar:2.3.2:compile
-[INFO] |  |  +- org.glassfish.jaxb:txw2:jar:2.3.2:compile
-[INFO] |  |  +- com.sun.istack:istack-commons-runtime:jar:3.0.8:compile
-[INFO] |  |  +- org.jvnet.staxex:stax-ex:jar:1.8.1:compile
-[INFO] |  |  |  \- (jakarta.xml.bind:jakarta.xml.bind-api:jar:2.3.2:compile - omitted for duplicate)
-[INFO] |  |  \- com.sun.xml.fastinfoset:FastInfoset:jar:1.2.16:compile
-[INFO] |  +- com.sun.activation:jakarta.activation:jar:1.2.1:compile
-[INFO] |  +- xerces:xercesImpl:jar:2.12.0:compile
-[INFO] |  |  \- xml-apis:xml-apis:jar:1.4.01:compile
-[INFO] |  +- (org.apache.commons:commons-lang3:jar:3.9:compile - omitted for conflict with 3.5)
-[INFO] |  +- javax.annotation:javax.annotation-api:jar:1.3.2:compile
+[INFO] +- org.thymeleaf:thymeleaf:jar:3.0.0.RELEASE:compile
+[INFO] |  +- ognl:ognl:jar:3.1.3:compile
+[INFO] |  +- org.javassist:javassist:jar:3.20.0-GA:compile
+[INFO] |  +- org.attoparser:attoparser:jar:2.0.0.RELEASE:compile
+[INFO] |  \- org.unbescape:unbescape:jar:1.1.3.RELEASE:compile
+[INFO] +- org.apache.commons:commons-imaging:jar:1.0-alpha3:compile
+[INFO] +- org.apache.tika:tika-core:jar:1.28.4:compile
+[INFO] |  +- jakarta.xml.bind:jakarta.xml.bind-api:jar:2.3.3:compile
+[INFO] |  \- jakarta.activation:jakarta.activation-api:jar:1.2.2:compile
+[INFO] +- org.apache.tika:tika-parsers:jar:1.28.4:compile
+[INFO] |  +- com.fasterxml.woodstox:woodstox-core:jar:6.2.8:compile
+[INFO] |  |  \- org.codehaus.woodstox:stax2-api:jar:4.2.1:compile
 [INFO] |  +- org.gagravarr:vorbis-java-tika:jar:0.8:compile
 [INFO] |  +- org.tallison:jmatio:jar:1.5:compile
-[INFO] |  |  \- (org.slf4j:slf4j-api:jar:1.7.25:compile - omitted for conflict with 1.6.6)
-[INFO] |  +- org.apache.james:apache-mime4j-core:jar:0.8.3:compile
-[INFO] |  +- org.apache.james:apache-mime4j-dom:jar:0.8.3:compile
-[INFO] |  |  \- (org.apache.james:apache-mime4j-core:jar:0.8.3:compile - omitted for duplicate)
-[INFO] |  +- org.apache.commons:commons-compress:jar:1.18:compile
-[INFO] |  +- org.tukaani:xz:jar:1.8:compile
-[INFO] |  +- com.epam:parso:jar:2.0.11:compile
-[INFO] |  |  \- (org.slf4j:slf4j-api:jar:1.7.5:compile - omitted for conflict with 1.6.6)
+[INFO] |  +- org.apache.james:apache-mime4j-core:jar:0.8.4:compile
+[INFO] |  +- org.apache.james:apache-mime4j-dom:jar:0.8.4:compile
+[INFO] |  +- com.googlecode.plist:dd-plist:jar:1.23:compile
+[INFO] |  +- org.tukaani:xz:jar:1.9:compile
+[INFO] |  +- com.epam:parso:jar:2.0.14:compile
 [INFO] |  +- org.brotli:dec:jar:0.1.2:compile
-[INFO] |  +- (commons-codec:commons-codec:jar:1.12:compile - omitted for conflict with 1.10)
-[INFO] |  +- (org.apache.pdfbox:pdfbox:jar:2.0.16:compile - omitted for conflict with 2.0.17)
-[INFO] |  +- org.apache.pdfbox:pdfbox-tools:jar:2.0.16:compile
+[INFO] |  +- org.apache.pdfbox:pdfbox-tools:jar:2.0.26:compile
+[INFO] |  +- org.apache.pdfbox:preflight:jar:2.0.26:compile
 [INFO] |  +- org.apache.pdfbox:jempbox:jar:1.8.16:compile
-[INFO] |  +- org.bouncycastle:bcmail-jdk15on:jar:1.62:compile
-[INFO] |  |  +- (org.bouncycastle:bcprov-jdk15on:jar:1.62:compile - omitted for duplicate)
-[INFO] |  |  \- org.bouncycastle:bcpkix-jdk15on:jar:1.62:compile
-[INFO] |  |     \- (org.bouncycastle:bcprov-jdk15on:jar:1.62:compile - omitted for duplicate)
-[INFO] |  +- org.bouncycastle:bcprov-jdk15on:jar:1.62:compile
-[INFO] |  +- (org.apache.poi:poi:jar:4.0.1:compile - omitted for conflict with 3.17)
-[INFO] |  +- (org.apache.poi:poi-scratchpad:jar:4.0.1:compile - omitted for conflict with 3.17)
-[INFO] |  +- (org.apache.poi:poi-ooxml:jar:4.0.1:compile - omitted for conflict with 3.17)
-[INFO] |  +- com.healthmarketscience.jackcess:jackcess:jar:3.0.1:compile
-[INFO] |  +- com.healthmarketscience.jackcess:jackcess-encrypt:jar:3.0.0:compile
+[INFO] |  +- org.apache.pdfbox:xmpbox:jar:2.0.26:compile
+[INFO] |  +- org.bouncycastle:bcmail-jdk15on:jar:1.70:compile
+[INFO] |  |  +- org.bouncycastle:bcutil-jdk15on:jar:1.70:compile
+[INFO] |  |  \- org.bouncycastle:bcpkix-jdk15on:jar:1.70:compile
+[INFO] |  +- org.bouncycastle:bcprov-jdk15on:jar:1.70:compile
+[INFO] |  +- com.healthmarketscience.jackcess:jackcess:jar:4.0.1:compile
+[INFO] |  +- com.healthmarketscience.jackcess:jackcess-encrypt:jar:4.0.1:compile
 [INFO] |  +- org.ccil.cowan.tagsoup:tagsoup:jar:1.2.1:compile
-[INFO] |  +- org.ow2.asm:asm:jar:7.2-beta:compile
-[INFO] |  +- com.googlecode.mp4parser:isoparser:jar:1.1.22:compile
-[INFO] |  +- com.drewnoakes:metadata-extractor:jar:2.11.0:compile
-[INFO] |  |  \- com.adobe.xmp:xmpcore:jar:5.1.3:compile
+[INFO] |  +- org.ow2.asm:asm:jar:9.3:compile
+[INFO] |  +- org.tallison:isoparser:jar:1.9.41.7:compile
+[INFO] |  +- org.tallison:metadata-extractor:jar:2.17.1.0:compile
+[INFO] |  |  \- org.tallison.xmp:xmpcore-shaded:jar:6.1.10:compile
+[INFO] |  |     \- com.adobe.xmp:xmpcore:jar:6.1.10:compile
 [INFO] |  +- de.l3s.boilerpipe:boilerpipe:jar:1.1.0:compile
-[INFO] |  +- com.rometools:rome:jar:1.12.1:compile
-[INFO] |  |  +- com.rometools:rome-utils:jar:1.12.1:compile
-[INFO] |  |  |  \- (org.slf4j:slf4j-api:jar:1.7.16:compile - omitted for conflict with 1.6.6)
-[INFO] |  |  +- (org.jdom:jdom2:jar:2.0.6:compile - omitted for duplicate)
-[INFO] |  |  \- (org.slf4j:slf4j-api:jar:1.7.16:compile - omitted for conflict with 1.6.6)
+[INFO] |  +- com.rometools:rome:jar:1.18.0:compile
+[INFO] |  |  \- com.rometools:rome-utils:jar:1.18.0:compile
 [INFO] |  +- org.gagravarr:vorbis-java-core:jar:0.8:compile
 [INFO] |  +- com.googlecode.juniversalchardet:juniversalchardet:jar:1.0.3:compile
-[INFO] |  +- org.codelibs:jhighlight:jar:1.0.3:compile
-[INFO] |  +- com.pff:java-libpst:jar:0.8.1:compile
-[INFO] |  +- com.github.junrar:junrar:jar:4.0.0:compile
-[INFO] |  +- org.apache.cxf:cxf-rt-rs-client:jar:3.3.2:compile
-[INFO] |  |  +- org.apache.cxf:cxf-rt-transports-http:jar:3.3.2:compile
-[INFO] |  |  |  \- (org.apache.cxf:cxf-core:jar:3.3.2:compile - omitted for duplicate)
-[INFO] |  |  +- org.apache.cxf:cxf-core:jar:3.3.2:compile
-[INFO] |  |  |  +- (org.glassfish.jaxb:jaxb-runtime:jar:2.3.2:compile - omitted for duplicate)
-[INFO] |  |  |  +- com.fasterxml.woodstox:woodstox-core:jar:5.0.3:compile
-[INFO] |  |  |  |  \- org.codehaus.woodstox:stax2-api:jar:3.1.4:compile
-[INFO] |  |  |  +- org.apache.ws.xmlschema:xmlschema-core:jar:2.2.4:compile
-[INFO] |  |  |  +- org.glassfish.jaxb:jaxb-xjc:jar:2.3.2:compile
-[INFO] |  |  |  |  +- (org.glassfish.jaxb:jaxb-runtime:jar:2.3.2:compile - omitted for duplicate)
-[INFO] |  |  |  |  +- org.glassfish.jaxb:xsom:jar:2.3.2:compile
-[INFO] |  |  |  |  |  \- (com.sun.xml.bind.external:relaxng-datatype:jar:2.3.2:compile - omitted for duplicate)
-[INFO] |  |  |  |  +- org.glassfish.jaxb:codemodel:jar:2.3.2:compile
-[INFO] |  |  |  |  +- com.sun.xml.bind.external:rngom:jar:2.3.2:compile
-[INFO] |  |  |  |  |  \- (com.sun.xml.bind.external:relaxng-datatype:jar:2.3.2:compile - omitted for duplicate)
-[INFO] |  |  |  |  +- com.sun.xml.dtd-parser:dtd-parser:jar:1.4.1:compile
-[INFO] |  |  |  |  +- com.sun.istack:istack-commons-tools:jar:3.0.8:compile
-[INFO] |  |  |  |  |  \- (org.apache.ant:ant:jar:1.10.5:compile - omitted for conflict with 1.8.4)
-[INFO] |  |  |  |  +- (com.sun.istack:istack-commons-runtime:jar:3.0.8:compile - omitted for duplicate)
-[INFO] |  |  |  |  \- com.sun.xml.bind.external:relaxng-datatype:jar:2.3.2:compile
-[INFO] |  |  |  \- (jakarta.xml.bind:jakarta.xml.bind-api:jar:2.3.2:compile - omitted for duplicate)
-[INFO] |  |  \- org.apache.cxf:cxf-rt-frontend-jaxrs:jar:3.3.2:compile
-[INFO] |  |     +- (org.apache.cxf:cxf-core:jar:3.3.2:compile - omitted for duplicate)
-[INFO] |  |     +- jakarta.ws.rs:jakarta.ws.rs-api:jar:2.1.5:compile
-[INFO] |  |     +- (org.apache.cxf:cxf-rt-transports-http:jar:3.3.2:compile - omitted for duplicate)
-[INFO] |  |     \- org.apache.cxf:cxf-rt-security:jar:3.3.2:compile
-[INFO] |  |        \- (org.apache.cxf:cxf-core:jar:3.3.2:compile - omitted for duplicate)
+[INFO] |  +- org.codelibs:jhighlight:jar:1.1.0:compile
+[INFO] |  +- com.pff:java-libpst:jar:0.9.3:compile
+[INFO] |  +- com.github.junrar:junrar:jar:7.5.2:compile
+[INFO] |  +- org.apache.cxf:cxf-rt-rs-client:jar:3.5.2:compile
+[INFO] |  |  +- org.apache.cxf:cxf-rt-transports-http:jar:3.5.2:compile
+[INFO] |  |  +- org.apache.cxf:cxf-core:jar:3.5.2:compile
+[INFO] |  |  |  \- org.apache.ws.xmlschema:xmlschema-core:jar:2.3.0:compile
+[INFO] |  |  +- org.apache.cxf:cxf-rt-frontend-jaxrs:jar:3.5.2:compile
+[INFO] |  |  |  +- jakarta.ws.rs:jakarta.ws.rs-api:jar:2.1.6:compile
+[INFO] |  |  |  \- org.apache.cxf:cxf-rt-security:jar:3.5.2:compile
+[INFO] |  |  +- jakarta.annotation:jakarta.annotation-api:jar:1.3.5:compile
+[INFO] |  |  +- jakarta.xml.ws:jakarta.xml.ws-api:jar:2.3.3:compile
+[INFO] |  |  +- jakarta.jws:jakarta.jws-api:jar:2.1.0:compile
+[INFO] |  |  +- jakarta.xml.soap:jakarta.xml.soap-api:jar:1.4.2:compile
+[INFO] |  |  +- com.sun.activation:jakarta.activation:jar:1.2.2:compile
+[INFO] |  |  +- com.sun.xml.messaging.saaj:saaj-impl:jar:1.5.3:runtime
+[INFO] |  |  |  \- org.jvnet.staxex:stax-ex:jar:1.8.3:runtime
+[INFO] |  |  \- org.apache.geronimo.specs:geronimo-jta_1.1_spec:jar:1.1.1:compile
+[INFO] |  +- org.glassfish.jaxb:jaxb-runtime:jar:2.3.5:compile
+[INFO] |  |  +- org.glassfish.jaxb:txw2:jar:2.3.5:compile
+[INFO] |  |  \- com.sun.istack:istack-commons-runtime:jar:3.0.12:compile
 [INFO] |  +- org.apache.commons:commons-exec:jar:1.3:compile
-[INFO] |  +- org.apache.opennlp:opennlp-tools:jar:1.9.1:compile
-[INFO] |  +- (commons-io:commons-io:jar:2.6:compile - omitted for duplicate)
+[INFO] |  +- org.apache.opennlp:opennlp-tools:jar:1.9.4:compile
 [INFO] |  +- com.googlecode.json-simple:json-simple:jar:1.1.1:compile
-[INFO] |  +- com.github.openjson:openjson:jar:1.0.11:compile
-[INFO] |  +- (com.google.code.gson:gson:jar:2.8.5:compile - omitted for duplicate)
-[INFO] |  +- (org.slf4j:slf4j-api:jar:1.7.26:compile - omitted for conflict with 1.6.6)
-[INFO] |  +- org.slf4j:jul-to-slf4j:jar:1.7.26:compile
-[INFO] |  |  \- (org.slf4j:slf4j-api:jar:1.7.26:compile - omitted for conflict with 1.6.6)
-[INFO] |  +- org.slf4j:jcl-over-slf4j:jar:1.7.26:compile
-[INFO] |  |  \- (org.slf4j:slf4j-api:jar:1.7.26:compile - omitted for conflict with 1.6.6)
+[INFO] |  +- com.github.openjson:openjson:jar:1.0.12:compile
+[INFO] |  +- org.slf4j:jul-to-slf4j:jar:1.7.36:compile
+[INFO] |  +- org.slf4j:jcl-over-slf4j:jar:1.7.36:compile
 [INFO] |  +- edu.ucar:netcdf4:jar:4.5.5:compile
-[INFO] |  |  +- (edu.ucar:cdm:jar:4.5.5:compile - omitted for duplicate)
-[INFO] |  |  +- net.jcip:jcip-annotations:jar:1.0:compile
-[INFO] |  |  \- (org.slf4j:slf4j-api:jar:1.7.7:compile - omitted for conflict with 1.6.6)
-[INFO] |  +- org.jdom:jdom2:jar:2.0.6:compile
-[INFO] |  +- com.google.guava:guava:jar:28.0-jre:compile
+[INFO] |  +- org.jdom:jdom2:jar:2.0.6.1:compile
+[INFO] |  +- com.google.guava:guava:jar:31.1-jre:compile
 [INFO] |  |  +- com.google.guava:failureaccess:jar:1.0.1:compile
 [INFO] |  |  +- com.google.guava:listenablefuture:jar:9999.0-empty-to-avoid-conflict-with-guava:compile
-[INFO] |  |  +- (com.google.code.findbugs:jsr305:jar:3.0.2:compile - omitted for conflict with 2.0.3)
-[INFO] |  |  +- org.checkerframework:checker-qual:jar:2.8.1:compile
-[INFO] |  |  +- com.google.errorprone:error_prone_annotations:jar:2.3.2:compile
-[INFO] |  |  +- com.google.j2objc:j2objc-annotations:jar:1.3:compile
-[INFO] |  |  \- org.codehaus.mojo:animal-sniffer-annotations:jar:1.17:compile
+[INFO] |  |  +- com.google.errorprone:error_prone_annotations:jar:2.11.0:compile
+[INFO] |  |  \- com.google.j2objc:j2objc-annotations:jar:1.3:compile
 [INFO] |  +- edu.ucar:grib:jar:4.5.5:compile
-[INFO] |  |  +- (edu.ucar:cdm:jar:4.5.5:compile - omitted for duplicate)
-[INFO] |  |  +- (org.slf4j:slf4j-api:jar:1.7.7:compile - omitted for conflict with 1.6.6)
-[INFO] |  |  +- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
 [INFO] |  |  \- org.itadaki:bzip2:jar:0.9.1:compile
-[INFO] |  +- net.java.dev.jna:jna:jar:5.3.1:compile
-[INFO] |  +- (org.jsoup:jsoup:jar:1.12.1:compile - omitted for conflict with 1.7.3)
-[INFO] |  +- com.google.protobuf:protobuf-java:jar:3.9.0:compile
+[INFO] |  +- net.jcip:jcip-annotations:jar:1.0:compile
+[INFO] |  +- com.beust:jcommander:jar:1.82:compile
+[INFO] |  +- net.java.dev.jna:jna:jar:5.11.0:compile
+[INFO] |  +- com.google.protobuf:protobuf-java:jar:3.19.4:compile
 [INFO] |  +- edu.ucar:cdm:jar:4.5.5:compile
 [INFO] |  |  +- edu.ucar:udunits:jar:4.5.5:compile
-[INFO] |  |  |  +- (joda-time:joda-time:jar:2.2:compile - omitted for duplicate)
-[INFO] |  |  |  \- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
-[INFO] |  |  +- (edu.ucar:httpservices:jar:4.5.5:compile - omitted for duplicate)
 [INFO] |  |  +- joda-time:joda-time:jar:2.2:compile
-[INFO] |  |  +- (org.slf4j:slf4j-api:jar:1.7.7:compile - omitted for conflict with 1.6.6)
-[INFO] |  |  +- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
-[INFO] |  |  +- org.quartz-scheduler:quartz:jar:2.2.0:compile
-[INFO] |  |  |  \- (org.slf4j:slf4j-api:jar:1.6.6:compile - omitted for duplicate)
-[INFO] |  |  +- net.sf.ehcache:ehcache-core:jar:2.6.2:compile
-[INFO] |  |  |  \- (org.slf4j:slf4j-api:jar:1.6.1:compile - omitted for conflict with 1.6.6)
-[INFO] |  |  +- (org.itadaki:bzip2:jar:0.9.1:compile - omitted for duplicate)
-[INFO] |  |  \- com.beust:jcommander:jar:1.35:compile
-[INFO] |  +- com.mchange:c3p0:jar:0.9.5.4:compile
-[INFO] |  |  \- com.mchange:mchange-commons-java:jar:0.2.15:compile
+[INFO] |  |  \- net.sf.ehcache:ehcache-core:jar:2.6.2:compile
+[INFO] |  +- org.quartz-scheduler:quartz:jar:2.3.2:compile
+[INFO] |  |  \- com.zaxxer:HikariCP-java7:jar:2.4.13:compile
+[INFO] |  +- com.mchange:c3p0:jar:0.9.5.5:compile
+[INFO] |  |  \- com.mchange:mchange-commons-java:jar:0.2.19:compile
 [INFO] |  +- edu.ucar:httpservices:jar:4.5.5:compile
-[INFO] |  |  +- (net.jcip:jcip-annotations:jar:1.0:compile - omitted for duplicate)
-[INFO] |  |  \- (org.slf4j:slf4j-api:jar:1.7.7:compile - omitted for conflict with 1.6.6)
-[INFO] |  +- (org.apache.httpcomponents:httpclient:jar:4.5.9:compile - omitted for conflict with 4.5.2)
-[INFO] |  +- (org.apache.httpcomponents:httpmime:jar:4.5.9:compile - omitted for conflict with 4.5.2)
-[INFO] |  +- org.apache.commons:commons-csv:jar:1.7:compile
-[INFO] |  +- org.apache.sis.core:sis-utility:jar:0.8:compile
-[INFO] |  |  +- javax.measure:unit-api:jar:1.0:compile
-[INFO] |  |  \- (org.opengis:geoapi:jar:3.0.1:compile - omitted for duplicate)
-[INFO] |  +- org.apache.sis.storage:sis-netcdf:jar:0.8:compile
-[INFO] |  |  +- org.apache.sis.storage:sis-storage:jar:0.8:compile
-[INFO] |  |  |  +- org.apache.sis.core:sis-feature:jar:0.8:compile
-[INFO] |  |  |  |  +- (org.apache.sis.core:sis-utility:jar:0.8:compile - omitted for duplicate)
-[INFO] |  |  |  |  +- (org.apache.sis.core:sis-metadata:jar:0.8:compile - omitted for duplicate)
-[INFO] |  |  |  |  +- (org.apache.sis.core:sis-referencing:jar:0.8:compile - omitted for duplicate)
-[INFO] |  |  |  |  +- (javax.measure:unit-api:jar:1.0:compile - omitted for duplicate)
-[INFO] |  |  |  |  \- (org.opengis:geoapi:jar:3.0.1:compile - omitted for duplicate)
-[INFO] |  |  |  +- (org.apache.sis.core:sis-metadata:jar:0.8:compile - omitted for duplicate)
-[INFO] |  |  |  +- (org.apache.sis.core:sis-referencing:jar:0.8:compile - omitted for duplicate)
-[INFO] |  |  |  \- (org.opengis:geoapi:jar:3.0.1:compile - omitted for duplicate)
-[INFO] |  |  +- (org.apache.sis.core:sis-metadata:jar:0.8:compile - omitted for duplicate)
-[INFO] |  |  +- org.apache.sis.core:sis-referencing:jar:0.8:compile
-[INFO] |  |  |  +- (org.apache.sis.core:sis-utility:jar:0.8:compile - omitted for duplicate)
-[INFO] |  |  |  +- (org.apache.sis.core:sis-metadata:jar:0.8:compile - omitted for duplicate)
-[INFO] |  |  |  +- (javax.measure:unit-api:jar:1.0:compile - omitted for duplicate)
-[INFO] |  |  |  \- (org.opengis:geoapi:jar:3.0.1:compile - omitted for duplicate)
-[INFO] |  |  \- (org.opengis:geoapi:jar:3.0.1:compile - omitted for duplicate)
-[INFO] |  +- org.apache.sis.core:sis-metadata:jar:0.8:compile
-[INFO] |  |  +- (org.apache.sis.core:sis-utility:jar:0.8:compile - omitted for duplicate)
-[INFO] |  |  +- (javax.measure:unit-api:jar:1.0:compile - omitted for duplicate)
-[INFO] |  |  \- (org.opengis:geoapi:jar:3.0.1:compile - omitted for duplicate)
+[INFO] |  +- org.apache.httpcomponents:httpclient:jar:4.5.13:compile
+[INFO] |  |  \- org.apache.httpcomponents:httpcore:jar:4.4.13:compile
+[INFO] |  +- org.apache.httpcomponents:httpmime:jar:4.5.13:compile
+[INFO] |  +- org.apache.commons:commons-csv:jar:1.9.0:compile
+[INFO] |  +- org.apache.sis.core:sis-utility:jar:1.2:compile
+[INFO] |  |  \- javax.measure:unit-api:jar:1.0:compile
+[INFO] |  +- org.apache.sis.storage:sis-netcdf:jar:1.2:compile
+[INFO] |  |  +- org.apache.sis.storage:sis-storage:jar:1.2:compile
+[INFO] |  |  |  \- org.apache.sis.core:sis-feature:jar:1.2:compile
+[INFO] |  |  \- org.apache.sis.core:sis-referencing:jar:1.2:compile
+[INFO] |  +- org.apache.sis.core:sis-metadata:jar:1.2:compile
 [INFO] |  +- org.opengis:geoapi:jar:3.0.1:compile
-[INFO] |  |  \- (javax.measure:unit-api:jar:1.0:compile - omitted for duplicate)
 [INFO] |  +- edu.usc.ir:sentiment-analysis-parser:jar:0.1:compile
-[INFO] |  +- org.apache.pdfbox:jbig2-imageio:jar:3.0.2:compile
+[INFO] |  +- org.apache.pdfbox:jbig2-imageio:jar:3.0.4:compile
 [INFO] |  \- com.github.jai-imageio:jai-imageio-core:jar:1.4.0:compile
-[INFO] +- org.jsoup:jsoup:jar:1.7.3:compile
+[INFO] +- org.jsoup:jsoup:jar:1.15.3:compile
 [INFO] +- com.paypal.sdk:rest-api-sdk:jar:0.5.2:compile
-[INFO] |  +- (com.google.code.gson:gson:jar:2.2.2:compile - omitted for conflict with 2.8.5)
 [INFO] |  +- org.testng:testng:jar:6.3.1:compile
-[INFO] |  |  +- (junit:junit:jar:3.8.1:compile - omitted for conflict with 4.11)
 [INFO] |  |  +- org.beanshell:bsh:jar:2.0b4:compile
-[INFO] |  |  +- (com.beust:jcommander:jar:1.12:compile - omitted for conflict with 1.35)
 [INFO] |  |  \- org.yaml:snakeyaml:jar:1.6:compile
 [INFO] |  \- com.paypal.sdk:paypal-core:jar:1.2:compile
-[INFO] |     +- (commons-codec:commons-codec:jar:1.3:compile - omitted for conflict with 1.10)
-[INFO] |     \- (javax.servlet:servlet-api:jar:2.5:compile - omitted for duplicate)
+[INFO] |     \- javax.servlet:servlet-api:jar:2.5:compile
 [INFO] +- org.mozilla:rhino:jar:1.7.11:compile
 [INFO] +- org.lesscss:lesscss:jar:1.7.0.1.1:compile
-[INFO] |  \- (org.mozilla:rhino:jar:1.7R4:compile - omitted for conflict with 1.7.11)
-[INFO] +- io.bit3:jsass:jar:5.5.3:compile
-[INFO] |  +- (org.apache.commons:commons-lang3:jar:3.6:compile - omitted for conflict with 3.5)
-[INFO] |  +- (commons-io:commons-io:jar:2.5:compile - omitted for conflict with 2.6)
-[INFO] |  \- (org.slf4j:slf4j-api:jar:1.7.25:compile - omitted for conflict with 1.6.6)
+[INFO] +- io.bit3:jsass:jar:5.10.5:compile
+[INFO] |  +- org.apache.commons:commons-text:jar:1.10.0:compile
+[INFO] |  \- org.sharegov:mjson:jar:1.4.1:compile
 [INFO] +- net.glxn:qrgen:jar:1.4:compile
 [INFO] |  \- com.google.zxing:javase:jar:3.0.0:compile
 [INFO] |     \- com.google.zxing:core:jar:3.0.0:compile
-[INFO] +- fr.opensagres.xdocreport:fr.opensagres.xdocreport.document:jar:2.0.1:compile
-[INFO] |  +- (fr.opensagres.xdocreport:fr.opensagres.xdocreport.core:jar:2.0.1:compile - omitted for duplicate)
-[INFO] |  +- (fr.opensagres.xdocreport:fr.opensagres.xdocreport.converter:jar:2.0.1:compile - omitted for duplicate)
-[INFO] |  \- fr.opensagres.xdocreport:fr.opensagres.xdocreport.template:jar:2.0.1:compile
-[INFO] |     \- (fr.opensagres.xdocreport:fr.opensagres.xdocreport.core:jar:2.0.1:compile - omitted for duplicate)
-[INFO] +- fr.opensagres.xdocreport:fr.opensagres.xdocreport.core:jar:2.0.1:compile
-[INFO] +- fr.opensagres.xdocreport:fr.opensagres.xdocreport.converter:jar:2.0.1:compile
-[INFO] |  \- (fr.opensagres.xdocreport:fr.opensagres.xdocreport.core:jar:2.0.1:compile - omitted for duplicate)
-[INFO] +- fr.opensagres.xdocreport:fr.opensagres.xdocreport.document.docx:jar:2.0.1:compile
-[INFO] |  \- (fr.opensagres.xdocreport:fr.opensagres.xdocreport.document:jar:2.0.1:compile - omitted for duplicate)
-[INFO] +- fr.opensagres.xdocreport:fr.opensagres.xdocreport.converter.docx.xwpf:jar:2.0.1:compile
-[INFO] |  +- (fr.opensagres.xdocreport:fr.opensagres.xdocreport.converter:jar:2.0.1:compile - omitted for duplicate)
-[INFO] |  +- fr.opensagres.xdocreport:fr.opensagres.poi.xwpf.converter.pdf:jar:2.0.1:compile
-[INFO] |  |  +- fr.opensagres.xdocreport:fr.opensagres.poi.xwpf.converter.core:jar:2.0.1:compile
-[INFO] |  |  |  +- (org.apache.poi:poi-ooxml:jar:3.15-beta2:compile - omitted for conflict with 3.17)
-[INFO] |  |  |  \- (org.apache.poi:ooxml-schemas:jar:1.3:compile - omitted for duplicate)
-[INFO] |  |  \- fr.opensagres.xdocreport:fr.opensagres.xdocreport.itext.extension:jar:2.0.1:compile
+[INFO] +- fr.opensagres.xdocreport:fr.opensagres.xdocreport.document:jar:2.0.4:compile
+[INFO] |  \- fr.opensagres.xdocreport:fr.opensagres.xdocreport.template:jar:2.0.4:compile
+[INFO] +- fr.opensagres.xdocreport:fr.opensagres.xdocreport.core:jar:2.0.4:compile
+[INFO] +- fr.opensagres.xdocreport:fr.opensagres.xdocreport.converter:jar:2.0.4:compile
+[INFO] +- fr.opensagres.xdocreport:fr.opensagres.xdocreport.document.docx:jar:2.0.4:compile
+[INFO] +- fr.opensagres.xdocreport:fr.opensagres.xdocreport.converter.docx.xwpf:jar:2.0.4:compile
+[INFO] |  +- fr.opensagres.xdocreport:fr.opensagres.poi.xwpf.converter.pdf:jar:2.0.4:compile
+[INFO] |  |  +- fr.opensagres.xdocreport:fr.opensagres.poi.xwpf.converter.core:jar:2.0.4:compile
+[INFO] |  |  |  \- org.apache.poi:poi-ooxml-full:jar:5.2.0:compile
+[INFO] |  |  \- fr.opensagres.xdocreport:fr.opensagres.xdocreport.itext.extension:jar:2.0.4:compile
 [INFO] |  |     \- com.lowagie:itext:jar:2.1.7:compile
-[INFO] |  \- fr.opensagres.xdocreport:fr.opensagres.poi.xwpf.converter.xhtml:jar:2.0.1:compile
-[INFO] |     +- (fr.opensagres.xdocreport:fr.opensagres.poi.xwpf.converter.core:jar:2.0.1:compile - omitted for duplicate)
-[INFO] |     \- (fr.opensagres.xdocreport:fr.opensagres.xdocreport.core:jar:2.0.1:compile - omitted for duplicate)
-[INFO] +- org.apache.poi:ooxml-schemas:jar:1.3:compile
-[INFO] |  \- org.apache.xmlbeans:xmlbeans:jar:2.3.0:compile
-[INFO] |     \- stax:stax-api:jar:1.0.1:compile
-[INFO] +- org.apache.xmlgraphics:batik-transcoder:jar:1.9.1:compile
-[INFO] |  +- org.apache.xmlgraphics:batik-anim:jar:1.9.1:compile
-[INFO] |  |  +- (org.apache.xmlgraphics:batik-awt-util:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  +- org.apache.xmlgraphics:batik-css:jar:1.9.1:compile
-[INFO] |  |  |  +- (org.apache.xmlgraphics:batik-util:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  |  +- (org.apache.xmlgraphics:xmlgraphics-commons:jar:2.2:compile - omitted for duplicate)
-[INFO] |  |  |  \- (xml-apis:xml-apis-ext:jar:1.3.04:compile - omitted for duplicate)
-[INFO] |  |  +- (org.apache.xmlgraphics:batik-dom:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  +- org.apache.xmlgraphics:batik-ext:jar:1.9.1:compile
-[INFO] |  |  +- org.apache.xmlgraphics:batik-parser:jar:1.9.1:compile
-[INFO] |  |  |  +- (org.apache.xmlgraphics:batik-awt-util:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  |  +- (org.apache.xmlgraphics:batik-util:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  |  +- (org.apache.xmlgraphics:batik-xml:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  |  \- (xml-apis:xml-apis-ext:jar:1.3.04:compile - omitted for duplicate)
-[INFO] |  |  +- org.apache.xmlgraphics:batik-svg-dom:jar:1.9.1:compile
-[INFO] |  |  |  +- (org.apache.xmlgraphics:batik-awt-util:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  |  +- (org.apache.xmlgraphics:batik-css:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  |  +- (org.apache.xmlgraphics:batik-dom:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  |  +- (org.apache.xmlgraphics:batik-ext:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  |  +- (org.apache.xmlgraphics:batik-parser:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  |  +- (org.apache.xmlgraphics:batik-util:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  |  \- (xml-apis:xml-apis-ext:jar:1.3.04:compile - omitted for duplicate)
-[INFO] |  |  +- (org.apache.xmlgraphics:batik-util:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  \- (xml-apis:xml-apis-ext:jar:1.3.04:compile - omitted for duplicate)
-[INFO] |  +- org.apache.xmlgraphics:batik-awt-util:jar:1.9.1:compile
-[INFO] |  |  +- (org.apache.xmlgraphics:batik-util:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  \- org.apache.xmlgraphics:xmlgraphics-commons:jar:2.2:compile
-[INFO] |  |     +- (commons-io:commons-io:jar:1.3.1:compile - omitted for conflict with 2.6)
-[INFO] |  |     \- (commons-logging:commons-logging:jar:1.0.4:compile - omitted for conflict with 1.2)
-[INFO] |  +- org.apache.xmlgraphics:batik-bridge:jar:1.9.1:compile
-[INFO] |  |  +- (org.apache.xmlgraphics:batik-anim:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  +- (org.apache.xmlgraphics:batik-awt-util:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  +- (org.apache.xmlgraphics:batik-css:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  +- (org.apache.xmlgraphics:batik-dom:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  +- (org.apache.xmlgraphics:batik-gvt:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  +- (org.apache.xmlgraphics:batik-parser:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  +- org.apache.xmlgraphics:batik-script:jar:1.9.1:compile
-[INFO] |  |  |  +- (org.apache.xmlgraphics:batik-anim:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  |  +- (org.apache.xmlgraphics:batik-util:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  |  +- (org.mozilla:rhino:jar:1.7.7:compile - omitted for conflict with 1.7.11)
-[INFO] |  |  |  \- org.python:jython:jar:2.7.0:compile
-[INFO] |  |  +- (org.apache.xmlgraphics:batik-svg-dom:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  +- (org.apache.xmlgraphics:batik-util:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  +- (org.apache.xmlgraphics:batik-xml:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  +- (org.apache.xmlgraphics:xmlgraphics-commons:jar:2.2:compile - omitted for duplicate)
-[INFO] |  |  \- (xml-apis:xml-apis-ext:jar:1.3.04:compile - omitted for duplicate)
-[INFO] |  +- org.apache.xmlgraphics:batik-dom:jar:1.9.1:compile
-[INFO] |  |  +- (org.apache.xmlgraphics:batik-css:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  +- (org.apache.xmlgraphics:batik-ext:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  +- (org.apache.xmlgraphics:batik-util:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  +- (org.apache.xmlgraphics:batik-xml:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  +- xalan:xalan:jar:2.7.2:compile
-[INFO] |  |  |  \- xalan:serializer:jar:2.7.2:compile
-[INFO] |  |  |     \- (xml-apis:xml-apis:jar:1.3.04:compile - omitted for conflict with 1.4.01)
-[INFO] |  |  +- (xml-apis:xml-apis:jar:1.3.04:compile - omitted for conflict with 1.4.01)
-[INFO] |  |  \- (xml-apis:xml-apis-ext:jar:1.3.04:compile - omitted for duplicate)
-[INFO] |  +- org.apache.xmlgraphics:batik-gvt:jar:1.9.1:compile
-[INFO] |  |  +- (org.apache.xmlgraphics:batik-awt-util:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  \- (org.apache.xmlgraphics:batik-util:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  +- org.apache.xmlgraphics:batik-svggen:jar:1.9.1:compile
-[INFO] |  |  +- (org.apache.xmlgraphics:batik-awt-util:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  |  \- (org.apache.xmlgraphics:batik-util:jar:1.9.1:compile - omitted for duplicate)
-[INFO] |  +- org.apache.xmlgraphics:batik-util:jar:1.9.1:compile
-[INFO] |  |  +- org.apache.xmlgraphics:batik-constants:jar:1.9.1:compile
-[INFO] |  |  \- org.apache.xmlgraphics:batik-i18n:jar:1.9.1:compile
-[INFO] |  +- org.apache.xmlgraphics:batik-xml:jar:1.9.1:compile
-[INFO] |  |  \- (org.apache.xmlgraphics:batik-util:jar:1.9.1:compile - omitted for duplicate)
+[INFO] |  \- fr.opensagres.xdocreport:fr.opensagres.poi.xwpf.converter.xhtml:jar:2.0.4:compile
+[INFO] +- org.apache.xmlgraphics:batik-transcoder:jar:1.16:compile
+[INFO] |  +- org.apache.xmlgraphics:batik-anim:jar:1.16:compile
+[INFO] |  |  +- org.apache.xmlgraphics:batik-css:jar:1.16:compile
+[INFO] |  |  +- org.apache.xmlgraphics:batik-ext:jar:1.16:compile
+[INFO] |  |  +- org.apache.xmlgraphics:batik-parser:jar:1.16:compile
+[INFO] |  |  \- org.apache.xmlgraphics:batik-svg-dom:jar:1.16:compile
+[INFO] |  +- org.apache.xmlgraphics:batik-awt-util:jar:1.16:compile
+[INFO] |  |  \- org.apache.xmlgraphics:xmlgraphics-commons:jar:2.7:compile
+[INFO] |  +- org.apache.xmlgraphics:batik-bridge:jar:1.16:compile
+[INFO] |  |  \- org.apache.xmlgraphics:batik-script:jar:1.16:compile
+[INFO] |  +- org.apache.xmlgraphics:batik-dom:jar:1.16:compile
+[INFO] |  +- org.apache.xmlgraphics:batik-gvt:jar:1.16:compile
+[INFO] |  +- org.apache.xmlgraphics:batik-shared-resources:jar:1.16:compile
+[INFO] |  +- org.apache.xmlgraphics:batik-svggen:jar:1.16:compile
+[INFO] |  +- org.apache.xmlgraphics:batik-util:jar:1.16:compile
+[INFO] |  |  +- org.apache.xmlgraphics:batik-constants:jar:1.16:compile
+[INFO] |  |  \- org.apache.xmlgraphics:batik-i18n:jar:1.16:compile
+[INFO] |  +- org.apache.xmlgraphics:batik-xml:jar:1.16:compile
 [INFO] |  \- xml-apis:xml-apis-ext:jar:1.3.04:compile
-[INFO] +- org.apache.lucene:lucene-core:jar:7.6.0:compile
-[INFO] +- org.apache.lucene:lucene-queryparser:jar:7.6.0:compile
-[INFO] |  +- (org.apache.lucene:lucene-core:jar:7.6.0:compile - omitted for duplicate)
-[INFO] |  +- (org.apache.lucene:lucene-queries:jar:7.6.0:compile - omitted for duplicate)
-[INFO] |  \- org.apache.lucene:lucene-sandbox:jar:7.6.0:compile
-[INFO] +- org.apache.lucene:lucene-queries:jar:7.6.0:compile
-[INFO] |  \- (org.apache.lucene:lucene-core:jar:7.6.0:compile - omitted for duplicate)
-[INFO] +- org.apache.lucene:lucene-highlighter:jar:7.6.0:compile
-[INFO] |  +- (org.apache.lucene:lucene-analyzers-common:jar:7.6.0:compile - omitted for duplicate)
-[INFO] |  +- (org.apache.lucene:lucene-core:jar:7.6.0:compile - omitted for duplicate)
-[INFO] |  +- org.apache.lucene:lucene-join:jar:7.6.0:compile
-[INFO] |  +- org.apache.lucene:lucene-memory:jar:7.6.0:compile
-[INFO] |  \- (org.apache.lucene:lucene-queries:jar:7.6.0:compile - omitted for duplicate)
-[INFO] +- org.apache.lucene:lucene-analyzers-common:jar:7.6.0:compile
-[INFO] |  \- (org.apache.lucene:lucene-core:jar:7.6.0:compile - omitted for duplicate)
-[INFO] +- com.dropbox.core:dropbox-core-sdk:jar:1.7.7:compile
-[INFO] +- org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:jar:1.0.1:compile
-[INFO] |  +- org.apache.oltu.oauth2:org.apache.oltu.oauth2.common:jar:1.0.1:compile
-[INFO] |  |  +- org.json:json:jar:20140107:compile
-[INFO] |  |  +- (commons-codec:commons-codec:jar:1.9:compile - omitted for conflict with 1.10)
-[INFO] |  |  \- (org.slf4j:slf4j-api:jar:1.7.7:compile - omitted for conflict with 1.6.6)
-[INFO] |  \- (org.slf4j:slf4j-api:jar:1.7.7:compile - omitted for conflict with 1.6.6)
-[INFO] +- de.java2html:java2html:jar:5.0:compile
+[INFO] +- org.apache.lucene:lucene-core:jar:9.5.0:compile
+[INFO] +- org.apache.lucene:lucene-queryparser:jar:9.5.0:compile
+[INFO] |  \- org.apache.lucene:lucene-sandbox:jar:9.5.0:compile
+[INFO] +- org.apache.lucene:lucene-queries:jar:9.5.0:compile
+[INFO] +- org.apache.lucene:lucene-highlighter:jar:9.5.0:compile
+[INFO] |  \- org.apache.lucene:lucene-memory:jar:9.5.0:runtime
+[INFO] +- com.dropbox.core:dropbox-core-sdk:jar:3.1.1:compile
+[INFO] +- org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:jar:1.0.2:compile
+[INFO] |  \- org.apache.oltu.oauth2:org.apache.oltu.oauth2.common:jar:1.0.2:compile
+[INFO] |     \- org.json:json:jar:20140107:compile
 [INFO] +- com.github.sheigutn:pushbullet-java-8:jar:1.3.4:compile
-[INFO] |  +- (org.apache.httpcomponents:httpclient:jar:4.5.1:compile - omitted for conflict with 4.5.2)
-[INFO] |  +- (org.apache.httpcomponents:httpmime:jar:4.5.1:compile - omitted for conflict with 4.5.2)
 [INFO] |  +- javax.websocket:javax.websocket-api:jar:1.1:compile
 [INFO] |  +- org.glassfish.tyrus.bundles:tyrus-standalone-client:jar:1.12:compile
 [INFO] |  \- io.gsonfire:gson-fire:jar:1.4.0:compile
-[INFO] |     \- (com.google.code.gson:gson:jar:2.3.1:compile - omitted for conflict with 2.8.5)
-[INFO] +- org.owasp.encoder:encoder:jar:1.2.2:compile
-[INFO] +- org.jcodec:jcodec:jar:0.1.9:compile
+[INFO] +- org.owasp.encoder:encoder:jar:1.2.3:compile
+[INFO] +- org.jcodec:jcodec:jar:0.2.5:compile
+[INFO] +- org.jcodec:jcodec-javase:jar:0.2.5:compile
 [INFO] +- com.google.code.geocoder-java:geocoder-java:jar:0.16:compile
-[INFO] |  +- (com.google.code.gson:gson:jar:2.2.4:compile - omitted for conflict with 2.8.5)
-[INFO] |  +- (org.slf4j:slf4j-api:jar:1.7.7:compile - omitted for conflict with 1.6.6)
-[INFO] |  \- (commons-httpclient:commons-httpclient:jar:3.1:compile - omitted for duplicate)
 [INFO] +- net.sf.uadetector:uadetector-core:jar:0.9.22:compile
 [INFO] |  +- net.sf.qualitycheck:quality-check:jar:1.3:compile
-[INFO] |  |  \- (com.google.code.findbugs:jsr305:jar:2.0.1:compile - omitted for conflict with 3.0.2)
 [INFO] |  +- com.google.code.findbugs:jsr305:jar:2.0.3:compile
-[INFO] |  +- javax.annotation:jsr250-api:jar:1.0:compile
-[INFO] |  \- (org.slf4j:slf4j-api:jar:1.7.7:compile - omitted for conflict with 1.6.6)
+[INFO] |  \- javax.annotation:jsr250-api:jar:1.0:compile
 [INFO] +- net.sf.uadetector:uadetector-resources:jar:2014.10:compile
-[INFO] |  +- (net.sf.uadetector:uadetector-core:jar:0.9.22:compile - omitted for duplicate)
-[INFO] |  \- (org.slf4j:slf4j-api:jar:1.7.7:compile - omitted for conflict with 1.6.6)
-[INFO] +- commons-net:commons-net:jar:3.6:compile
-[INFO] +- org.openimaj:faces:jar:1.3.9:compile
-[INFO] |  +- org.openimaj:image-processing:jar:1.3.9:compile
-[INFO] |  |  +- org.openimaj:core:jar:1.3.9:compile
-[INFO] |  |  |  +- org.openimaj:core-citation:jar:1.3.9:compile
-[INFO] |  |  |  |  +- org.openimaj:core-aop-support:jar:1.3.9:compile
-[INFO] |  |  |  |  |  +- (org.jbibtex:jbibtex:jar:r16:compile - omitted for conflict with 1.0.2)
-[INFO] |  |  |  |  |  +- javassist:javassist:jar:3.12.1.GA:compile
-[INFO] |  |  |  |  |  +- (org.apache.logging.log4j:log4j-api:jar:2.11.0:compile - omitted for duplicate)
-[INFO] |  |  |  |  |  \- (org.apache.logging.log4j:log4j-core:jar:2.11.0:compile - omitted for duplicate)
-[INFO] |  |  |  |  \- org.jbibtex:jbibtex:jar:1.0.2:compile
-[INFO] |  |  |  +- (org.jsoup:jsoup:jar:1.6.3:compile - omitted for conflict with 1.7.3)
-[INFO] |  |  |  +- net.sf.trove4j:trove4j:jar:3.0.2:compile
-[INFO] |  |  |  +- (com.google.guava:guava:jar:25.1-jre:compile - omitted for conflict with 28.0-jre)
-[INFO] |  |  |  +- colt:colt:jar:1.2.0:compile
-[INFO] |  |  |  |  \- concurrent:concurrent:jar:1.3.4:compile
-[INFO] |  |  |  +- org.apache.logging.log4j:log4j-core:jar:2.11.0:compile
-[INFO] |  |  |  |  \- (org.apache.logging.log4j:log4j-api:jar:2.11.0:compile - omitted for duplicate)
-[INFO] |  |  |  +- (org.apache.logging.log4j:log4j-api:jar:2.11.0:compile - omitted for conflict with 2.11.1)
-[INFO] |  |  |  +- commons-lang:commons-lang:jar:2.6:compile
-[INFO] |  |  |  +- (commons-io:commons-io:jar:2.6:compile - omitted for duplicate)
-[INFO] |  |  |  +- (org.apache.commons:commons-vfs2:jar:2.0:compile - omitted for conflict with 2.4.1)
-[INFO] |  |  |  +- com.esotericsoftware.kryo:kryo:jar:2.21:compile
-[INFO] |  |  |  |  +- com.esotericsoftware.reflectasm:reflectasm:jar:shaded:1.07:compile
-[INFO] |  |  |  |  |  \- (org.ow2.asm:asm:jar:4.0:compile - omitted for conflict with 7.2-beta)
-[INFO] |  |  |  |  +- com.esotericsoftware.minlog:minlog:jar:1.2:compile
-[INFO] |  |  |  |  \- org.objenesis:objenesis:jar:1.2:compile
-[INFO] |  |  |  +- vigna.dsi.unimi.it:jal:jar:20031117:compile
-[INFO] |  |  |  +- (org.apache.ant:ant:jar:1.8.4:compile - omitted for duplicate)
-[INFO] |  |  |  +- (org.apache.httpcomponents:httpclient:jar:4.5.6:compile - omitted for conflict with 4.5.2)
-[INFO] |  |  |  \- uk.com.robust-it:cloning:jar:1.9.10:compile
-[INFO] |  |  |     \- (org.objenesis:objenesis:jar:2.6:compile - omitted for conflict with 1.2)
-[INFO] |  |  +- org.openimaj:core-experiment:jar:1.3.9:compile
-[INFO] |  |  |  +- org.openimaj:IREval:jar:1.3.9:compile
-[INFO] |  |  |  |  \- org.apache.commons:commons-math:jar:2.2:compile
-[INFO] |  |  |  +- (org.openimaj:core-math:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  |  +- com.googlecode.jatl:jatl:jar:0.2.1:compile
-[INFO] |  |  |  |  \- (commons-lang:commons-lang:jar:2.5:compile - omitted for conflict with 2.6)
-[INFO] |  |  |  +- jfree:jfreechart:jar:1.0.13:compile
-[INFO] |  |  |  |  \- jfree:jcommon:jar:1.0.16:compile
-[INFO] |  |  |  +- net.sf.jasperreports:jasperreports:jar:6.6.0:compile
-[INFO] |  |  |  |  +- (commons-beanutils:commons-beanutils:jar:1.9.3:compile - omitted for conflict with 1.9.4)
-[INFO] |  |  |  |  +- (commons-collections:commons-collections:jar:3.2.2:compile - omitted for duplicate)
-[INFO] |  |  |  |  +- commons-digester:commons-digester:jar:2.1:compile
-[INFO] |  |  |  |  |  +- (commons-beanutils:commons-beanutils:jar:1.8.3:compile - omitted for conflict with 1.9.4)
-[INFO] |  |  |  |  |  \- (commons-logging:commons-logging:jar:1.1.1:compile - omitted for conflict with 1.2)
-[INFO] |  |  |  |  +- (commons-logging:commons-logging:jar:1.1.1:compile - omitted for conflict with 1.2)
-[INFO] |  |  |  |  +- (com.lowagie:itext:jar:2.1.7.js6:compile - omitted for conflict with 2.1.7)
-[INFO] |  |  |  |  +- org.jfree:jcommon:jar:1.0.23:compile
-[INFO] |  |  |  |  +- org.jfree:jfreechart:jar:1.0.19:compile
-[INFO] |  |  |  |  |  \- (org.jfree:jcommon:jar:1.0.23:compile - omitted for duplicate)
-[INFO] |  |  |  |  +- org.eclipse.jdt.core.compiler:ecj:jar:4.4.2:compile
-[INFO] |  |  |  |  +- org.codehaus.castor:castor-xml:jar:1.3.3:compile
-[INFO] |  |  |  |  |  +- org.codehaus.castor:castor-core:jar:1.3.3:compile
-[INFO] |  |  |  |  |  |  +- (commons-logging:commons-logging:jar:1.1.1:compile - omitted for conflict with 1.2)
-[INFO] |  |  |  |  |  |  \- (commons-lang:commons-lang:jar:2.6:compile - omitted for duplicate)
-[INFO] |  |  |  |  |  +- (commons-logging:commons-logging:jar:1.1.1:compile - omitted for conflict with 1.2)
-[INFO] |  |  |  |  |  +- (commons-lang:commons-lang:jar:2.6:compile - omitted for duplicate)
-[INFO] |  |  |  |  |  +- (commons-collections:commons-collections:jar:3.2.1:compile - omitted for conflict with 3.2.2)
-[INFO] |  |  |  |  |  +- javax.inject:javax.inject:jar:1:compile
-[INFO] |  |  |  |  |  +- stax:stax:jar:1.2.0:compile
-[INFO] |  |  |  |  |  |  \- (stax:stax-api:jar:1.0.1:compile - omitted for duplicate)
-[INFO] |  |  |  |  |  \- javax.xml.stream:stax-api:jar:1.0-2:compile
-[INFO] |  |  |  |  \- com.ibm.icu:icu4j:jar:57.1:compile
-[INFO] |  |  |  \- org.bethecoder:ascii-table:jar:1.0:compile
-[INFO] |  |  +- org.openimaj:core-feature:jar:1.3.9:compile
-[INFO] |  |  |  \- (org.openimaj:core-math:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  +- org.openimaj:core-image:jar:1.3.9:compile
-[INFO] |  |  |  +- (com.googlecode.json-simple:json-simple:jar:1.1:compile - omitted for conflict with 1.1.1)
-[INFO] |  |  |  +- net.sourceforge.jeuclid:jeuclid-core:jar:3.1.9:compile
-[INFO] |  |  |  |  +- (commons-logging:commons-logging:jar:1.1.1:compile - omitted for conflict with 1.2)
-[INFO] |  |  |  |  +- (org.apache.xmlgraphics:batik-svg-dom:jar:1.7:compile - omitted for conflict with 1.9.1)
-[INFO] |  |  |  |  \- (org.apache.xmlgraphics:xmlgraphics-commons:jar:1.3.1:compile - omitted for conflict with 2.2)
-[INFO] |  |  |  +- uk.ac.ed.ph.snuggletex:snuggletex-core:jar:1.2.2:compile
-[INFO] |  |  |  +- uk.ac.ed.ph.snuggletex:snuggletex-upconversion:jar:1.2.2:compile
-[INFO] |  |  |  |  +- (uk.ac.ed.ph.snuggletex:snuggletex-core:jar:1.2.2:compile - omitted for duplicate)
-[INFO] |  |  |  |  +- net.sf.saxon:saxon9:jar:9.1.0.8:runtime
-[INFO] |  |  |  |  \- net.sf.saxon:saxon9-dom:jar:9.1.0.8:runtime
-[INFO] |  |  |  +- uk.ac.ed.ph.snuggletex:snuggletex-jeuclid:jar:1.2.2:compile
-[INFO] |  |  |  |  +- (uk.ac.ed.ph.snuggletex:snuggletex-core:jar:1.2.2:compile - omitted for duplicate)
-[INFO] |  |  |  |  \- (net.sourceforge.jeuclid:jeuclid-core:jar:3.1.9:compile - omitted for duplicate)
-[INFO] |  |  |  +- com.flickr4java:flickr4java:jar:2.13_jonhare_0408059615bfa8da071c2e54268e3004ce62d6a4:compile
-[INFO] |  |  |  |  +- org.scribe:scribe:jar:1.3.5:compile
-[INFO] |  |  |  |  +- org.apache.axis:axis:jar:1.4:compile
-[INFO] |  |  |  |  \- log4j:log4j:jar:1.2.17:compile
-[INFO] |  |  |  +- (org.openimaj:core:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  |  +- (org.openimaj:core-math:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  |  +- org.apache.sanselan:sanselan:jar:0.97-incubator:compile
-[INFO] |  |  |  +- com.caffeineowl:bezier-utils:jar:1.0.0-RELEASE:compile
-[INFO] |  |  |  +- javax.media:jai-core:jar:1.1.3:compile
-[INFO] |  |  |  +- com.sun.media:jai-codec:jar:1.1.3:compile
-[INFO] |  |  |  |  \- (javax.media:jai-core:jar:1.1.3:compile - omitted for duplicate)
-[INFO] |  |  |  +- com.twelvemonkeys.imageio:imageio-jpeg:jar:3.3.2:compile
-[INFO] |  |  |  |  +- (com.twelvemonkeys.imageio:imageio-core:jar:3.3.2:compile - omitted for duplicate)
-[INFO] |  |  |  |  +- com.twelvemonkeys.imageio:imageio-metadata:jar:3.3.2:compile
-[INFO] |  |  |  |  |  +- (com.twelvemonkeys.imageio:imageio-core:jar:3.3.2:compile - omitted for duplicate)
-[INFO] |  |  |  |  |  +- (com.twelvemonkeys.common:common-lang:jar:3.3.2:compile - omitted for duplicate)
-[INFO] |  |  |  |  |  +- (com.twelvemonkeys.common:common-io:jar:3.3.2:compile - omitted for duplicate)
-[INFO] |  |  |  |  |  \- (com.twelvemonkeys.common:common-image:jar:3.3.2:compile - omitted for duplicate)
-[INFO] |  |  |  |  +- (com.twelvemonkeys.common:common-lang:jar:3.3.2:compile - omitted for duplicate)
-[INFO] |  |  |  |  +- com.twelvemonkeys.common:common-io:jar:3.3.2:compile
-[INFO] |  |  |  |  |  \- (com.twelvemonkeys.common:common-lang:jar:3.3.2:compile - omitted for duplicate)
-[INFO] |  |  |  |  \- com.twelvemonkeys.common:common-image:jar:3.3.2:compile
-[INFO] |  |  |  |     +- (com.twelvemonkeys.common:common-lang:jar:3.3.2:compile - omitted for duplicate)
-[INFO] |  |  |  |     \- (com.twelvemonkeys.common:common-io:jar:3.3.2:compile - omitted for duplicate)
-[INFO] |  |  |  +- com.twelvemonkeys.imageio:imageio-core:jar:3.3.2:compile
-[INFO] |  |  |  |  +- (com.twelvemonkeys.common:common-lang:jar:3.3.2:compile - omitted for duplicate)
-[INFO] |  |  |  |  +- (com.twelvemonkeys.common:common-io:jar:3.3.2:compile - omitted for duplicate)
-[INFO] |  |  |  |  \- (com.twelvemonkeys.common:common-image:jar:3.3.2:compile - omitted for duplicate)
-[INFO] |  |  |  \- com.twelvemonkeys.common:common-lang:jar:3.3.2:compile
-[INFO] |  |  +- org.openimaj:core-video:jar:1.3.9:compile
-[INFO] |  |  |  +- (org.openimaj:core-image:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  |  +- org.openimaj:core-audio:jar:1.3.9:compile
-[INFO] |  |  |  |  \- (org.openimaj:core:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  |  \- org.openimaj.content:animation:jar:1.3.9:compile
-[INFO] |  |  |     \- (org.openimaj:core-image:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  \- org.openimaj:JTransforms:jar:1.3.9:compile
-[INFO] |  +- org.openimaj:image-local-features:jar:1.3.9:compile
-[INFO] |  |  +- (org.openimaj:core:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  +- (org.openimaj:core-feature:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  +- (org.openimaj:image-processing:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  +- org.openimaj:clustering:jar:1.3.9:compile
-[INFO] |  |  |  +- (org.openimaj:core:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  |  +- (org.openimaj:core-experiment:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  |  \- (org.openimaj:nearest-neighbour:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  +- (org.openimaj:core-image:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  \- (org.openimaj:core-video:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  +- org.openimaj:image-feature-extraction:jar:1.3.9:compile
-[INFO] |  |  +- (org.openimaj:image-processing:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  +- (org.openimaj:clustering:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  +- (org.openimaj:core-feature:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  \- (org.openimaj:machine-learning:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  +- org.openimaj:klt-tracker:jar:1.3.9:compile
-[INFO] |  |  +- (org.openimaj:core:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  +- org.openimaj:core-math:jar:1.3.9:compile
-[INFO] |  |  |  +- (org.openimaj:core:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  |  +- gov.nist.math:jama:jar:1.0.3:compile
-[INFO] |  |  |  +- org.la4j:la4j:jar:0.4.0:compile
-[INFO] |  |  |  +- com.googlecode.matrix-toolkits-java:mtj:jar:1.0.2:compile
-[INFO] |  |  |  |  \- com.github.fommil.netlib:all:pom:1.1.2:compile
-[INFO] |  |  |  |     +- net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile
-[INFO] |  |  |  |     +- com.github.fommil.netlib:core:jar:1.1.2:compile
-[INFO] |  |  |  |     |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
-[INFO] |  |  |  |     +- com.github.fommil.netlib:netlib-native_ref-osx-x86_64:jar:natives:1.1:compile
-[INFO] |  |  |  |     |  +- com.github.fommil.netlib:native_ref-java:jar:1.1:compile
-[INFO] |  |  |  |     |  |  +- com.github.fommil:jniloader:jar:1.1:compile
-[INFO] |  |  |  |     |  |  +- (com.github.fommil.netlib:core:jar:1.1:compile - omitted for conflict with 1.1.2)
-[INFO] |  |  |  |     |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
-[INFO] |  |  |  |     |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
-[INFO] |  |  |  |     +- com.github.fommil.netlib:netlib-native_ref-linux-x86_64:jar:natives:1.1:compile
-[INFO] |  |  |  |     |  +- (com.github.fommil.netlib:native_ref-java:jar:1.1:compile - omitted for duplicate)
-[INFO] |  |  |  |     |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
-[INFO] |  |  |  |     +- com.github.fommil.netlib:netlib-native_ref-linux-i686:jar:natives:1.1:compile
-[INFO] |  |  |  |     |  +- (com.github.fommil.netlib:native_ref-java:jar:1.1:compile - omitted for duplicate)
-[INFO] |  |  |  |     |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
-[INFO] |  |  |  |     +- com.github.fommil.netlib:netlib-native_ref-win-x86_64:jar:natives:1.1:compile
-[INFO] |  |  |  |     |  +- (com.github.fommil.netlib:native_ref-java:jar:1.1:compile - omitted for duplicate)
-[INFO] |  |  |  |     |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
-[INFO] |  |  |  |     +- com.github.fommil.netlib:netlib-native_ref-win-i686:jar:natives:1.1:compile
-[INFO] |  |  |  |     |  +- (com.github.fommil.netlib:native_ref-java:jar:1.1:compile - omitted for duplicate)
-[INFO] |  |  |  |     |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
-[INFO] |  |  |  |     +- com.github.fommil.netlib:netlib-native_ref-linux-armhf:jar:natives:1.1:compile
-[INFO] |  |  |  |     |  +- (com.github.fommil.netlib:native_ref-java:jar:1.1:compile - omitted for duplicate)
-[INFO] |  |  |  |     |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
-[INFO] |  |  |  |     +- com.github.fommil.netlib:netlib-native_system-osx-x86_64:jar:natives:1.1:compile
-[INFO] |  |  |  |     |  +- com.github.fommil.netlib:native_system-java:jar:1.1:compile
-[INFO] |  |  |  |     |  |  +- (com.github.fommil:jniloader:jar:1.1:compile - omitted for duplicate)
-[INFO] |  |  |  |     |  |  +- (com.github.fommil.netlib:core:jar:1.1:compile - omitted for conflict with 1.1.2)
-[INFO] |  |  |  |     |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
-[INFO] |  |  |  |     |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
-[INFO] |  |  |  |     +- com.github.fommil.netlib:netlib-native_system-linux-x86_64:jar:natives:1.1:compile
-[INFO] |  |  |  |     |  +- (com.github.fommil.netlib:native_system-java:jar:1.1:compile - omitted for duplicate)
-[INFO] |  |  |  |     |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
-[INFO] |  |  |  |     +- com.github.fommil.netlib:netlib-native_system-linux-i686:jar:natives:1.1:compile
-[INFO] |  |  |  |     |  +- (com.github.fommil.netlib:native_system-java:jar:1.1:compile - omitted for duplicate)
-[INFO] |  |  |  |     |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
-[INFO] |  |  |  |     +- com.github.fommil.netlib:netlib-native_system-linux-armhf:jar:natives:1.1:compile
-[INFO] |  |  |  |     |  +- (com.github.fommil.netlib:native_system-java:jar:1.1:compile - omitted for duplicate)
-[INFO] |  |  |  |     |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
-[INFO] |  |  |  |     +- com.github.fommil.netlib:netlib-native_system-win-x86_64:jar:natives:1.1:compile
-[INFO] |  |  |  |     |  +- (com.github.fommil.netlib:native_system-java:jar:1.1:compile - omitted for duplicate)
-[INFO] |  |  |  |     |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
-[INFO] |  |  |  |     \- com.github.fommil.netlib:netlib-native_system-win-i686:jar:natives:1.1:compile
-[INFO] |  |  |  |        +- (com.github.fommil.netlib:native_system-java:jar:1.1:compile - omitted for duplicate)
-[INFO] |  |  |  |        \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
-[INFO] |  |  |  +- net.jafama:jafama:jar:2.1.0:compile
-[INFO] |  |  |  +- jgrapht:jgrapht:jar:0.8.2:compile
-[INFO] |  |  |  +- org.openimaj:MatrixLib:jar:1.3.9:compile
-[INFO] |  |  |  |  +- com.googlecode.netlib-java:netlib-java:jar:0.9.3:compile
-[INFO] |  |  |  |  |  \- (net.sourceforge.f2j:arpack_combined_all:jar:0.1:compile - omitted for duplicate)
-[INFO] |  |  |  |  \- (net.sourceforge.jmatio:jmatio:jar:1.2:compile - omitted for duplicate)
-[INFO] |  |  |  +- gov.sandia.foundry:gov-sandia-cognition-common-core:jar:3.3.0:compile
-[INFO] |  |  |  |  \- (com.googlecode.matrix-toolkits-java:mtj:jar:0.9.14:compile - omitted for conflict with 1.0.2)
-[INFO] |  |  |  +- com.thoughtworks.xstream:xstream:jar:1.4.3:compile
-[INFO] |  |  |  |  +- (xmlpull:xmlpull:jar:1.1.3.1:compile - omitted for duplicate)
-[INFO] |  |  |  |  \- (xpp3:xpp3_min:jar:1.1.4c:compile - omitted for duplicate)
-[INFO] |  |  |  +- gov.sandia.foundry:gov-sandia-cognition-learning-core:jar:3.3.0:compile
-[INFO] |  |  |  |  \- (gov.sandia.foundry:gov-sandia-cognition-common-core:jar:3.3.0:compile - omitted for duplicate)
-[INFO] |  |  |  +- net.sourceforge.jmatio:jmatio:jar:1.2:compile
-[INFO] |  |  |  \- org.apache.commons:commons-math3:jar:3.3:compile
-[INFO] |  |  +- (org.openimaj:core-image:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  +- (org.openimaj:core-video:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  \- (org.openimaj:image-processing:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  +- org.openimaj:video-processing:jar:1.3.9:compile
-[INFO] |  |  +- (org.openimaj:core:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  +- (org.openimaj:core-feature:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  +- (org.openimaj:core-image:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  +- (org.openimaj:core-video:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  +- (org.openimaj:image-processing:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  +- (org.openimaj:klt-tracker:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  \- (org.openimaj:image-feature-extraction:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  +- org.openimaj:object-detection:jar:1.3.9:compile
-[INFO] |  |  +- (org.openimaj:image-processing:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  +- (org.openimaj:image-feature-extraction:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  +- xpp3:xpp3_min:jar:1.1.4c:compile
-[INFO] |  |  \- xmlpull:xmlpull:jar:1.1.3.1:compile
-[INFO] |  +- org.openimaj:FaceTracker:jar:1.3.9:compile
-[INFO] |  |  +- (org.openimaj:image-processing:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  +- (org.openimaj:object-detection:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  +- org.openimaj:core-video-capture:jar:1.3.9:compile
-[INFO] |  |  |  +- (org.openimaj:core-video:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |  |  \- com.nativelibs4java:bridj:jar:0.7-20140918:compile
-[INFO] |  |  |     +- (org.ow2.asm:asm:jar:4.0:compile - omitted for conflict with 7.2-beta)
-[INFO] |  |  |     \- com.google.android.tools:dx:jar:1.7:compile
-[INFO] |  |  \- org.openimaj:xuggle-video:jar:1.3.9:compile
-[INFO] |  |     +- xuggle:xuggle-xuggler-lgpl:jar:5.5-20140728:compile
-[INFO] |  |     |  +- (org.slf4j:slf4j-api:jar:1.6.4:compile - omitted for conflict with 1.6.6)
-[INFO] |  |     |  +- commons-cli:commons-cli:jar:1.1:compile
-[INFO] |  |     |  +- ch.qos.logback:logback-core:jar:1.2.3:runtime
-[INFO] |  |     |  \- (ch.qos.logback:logback-classic:jar:1.0.0:runtime - omitted for conflict with 1.2.3)
-[INFO] |  |     +- (org.openimaj:core-video:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  |     \- (org.openimaj:core-audio:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |  \- org.openimaj:machine-learning:jar:1.3.9:compile
-[INFO] |     +- (joda-time:joda-time:jar:2.1:compile - omitted for conflict with 2.2)
-[INFO] |     +- (org.openimaj:core-feature:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |     +- (org.openimaj:core-experiment:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |     +- org.openimaj:nearest-neighbour:jar:1.3.9:compile
-[INFO] |     |  +- (org.openimaj:core-math:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |     |  \- (org.openimaj:core-feature:jar:1.3.9:compile - omitted for duplicate)
-[INFO] |     +- de.bwaldvogel:liblinear-dense:jar:1.92:compile
-[INFO] |     \- tw.edu.ntu.csie:libsvm:jar:3.1:compile
-[INFO] +- com.j2html:j2html:jar:1.2.0:compile
-[INFO] +- org.mapdb:mapdb:jar:3.0.6:compile
-[INFO] |  +- org.jetbrains.kotlin:kotlin-stdlib:jar:1.2.71:compile
+[INFO] +- commons-net:commons-net:jar:3.9.0:compile
+[INFO] +- de.java2html:java2html:jar:5.0:compile
+[INFO] +- org.mapdb:mapdb:jar:3.0.8:compile
+[INFO] |  +- org.jetbrains.kotlin:kotlin-stdlib:jar:1.2.71:compile (version selected from constraint [1.2.41,1.2.90))
 [INFO] |  |  +- org.jetbrains.kotlin:kotlin-stdlib-common:jar:1.2.71:compile
 [INFO] |  |  \- org.jetbrains:annotations:jar:13.0:compile
-[INFO] |  +- org.eclipse.collections:eclipse-collections-api:jar:10.0.0:compile
-[INFO] |  +- org.eclipse.collections:eclipse-collections:jar:10.0.0:compile
-[INFO] |  |  \- (org.eclipse.collections:eclipse-collections-api:jar:10.0.0:compile - omitted for duplicate)
-[INFO] |  +- org.eclipse.collections:eclipse-collections-forkjoin:jar:10.0.0:compile
-[INFO] |  |  +- (org.eclipse.collections:eclipse-collections-api:jar:10.0.0:compile - omitted for duplicate)
-[INFO] |  |  \- (org.eclipse.collections:eclipse-collections:jar:10.0.0:compile - omitted for duplicate)
-[INFO] |  +- (com.google.guava:guava:jar:28.0-jre:compile - omitted for duplicate)
+[INFO] |  +- org.eclipse.collections:eclipse-collections-api:jar:12.0.0.M1:compile (version selected from constraint [7.0.0,))
+[INFO] |  +- org.eclipse.collections:eclipse-collections:jar:12.0.0.M1:compile (version selected from constraint [7.0.0,))
+[INFO] |  +- org.eclipse.collections:eclipse-collections-forkjoin:jar:12.0.0.M1:compile (version selected from constraint [7.0.0,))
 [INFO] |  +- net.jpountz.lz4:lz4:jar:1.3.0:compile
 [INFO] |  \- org.mapdb:elsa:jar:3.0.0-M5:compile
-[INFO] +- com.h2database:h2:jar:1.4.197:compile
 [INFO] +- ch.simschla:fast-and-simple-minify:jar:1.0:compile
 [INFO] |  \- org.apache.ant:ant:jar:1.8.4:compile
 [INFO] |     \- org.apache.ant:ant-launcher:jar:1.8.4:compile
-[INFO] +- ch.qos.logback:logback-classic:jar:1.2.3:test (scope not updated to runtime)
-[INFO] |  +- (ch.qos.logback:logback-core:jar:1.2.3:runtime - scope updated from test; omitted for duplicate)
-[INFO] |  \- (org.slf4j:slf4j-api:jar:1.7.25:test - omitted for conflict with 1.6.6)
-[INFO] +- org.elasticsearch.client:elasticsearch-rest-client:jar:7.4.0:compile
-[INFO] |  +- (org.apache.httpcomponents:httpclient:jar:4.5.8:compile - omitted for conflict with 4.5.2)
-[INFO] |  +- (org.apache.httpcomponents:httpcore:jar:4.4.11:compile - omitted for conflict with 4.4.4)
-[INFO] |  +- org.apache.httpcomponents:httpasyncclient:jar:4.1.4:compile
-[INFO] |  +- org.apache.httpcomponents:httpcore-nio:jar:4.4.11:compile
-[INFO] |  +- (commons-codec:commons-codec:jar:1.11:compile - omitted for conflict with 1.10)
-[INFO] |  \- (commons-logging:commons-logging:jar:1.1.3:compile - omitted for conflict with 1.2)
-[INFO] +- org.elasticsearch.client:elasticsearch-rest-high-level-client:jar:7.4.0:compile
-[INFO] |  +- org.elasticsearch:elasticsearch:jar:7.4.0:compile
-[INFO] |  |  +- org.elasticsearch:elasticsearch-core:jar:7.4.0:compile
-[INFO] |  |  +- org.elasticsearch:elasticsearch-secure-sm:jar:7.4.0:compile
-[INFO] |  |  +- org.elasticsearch:elasticsearch-x-content:jar:7.4.0:compile
-[INFO] |  |  |  +- (org.elasticsearch:elasticsearch-core:jar:7.4.0:compile - omitted for duplicate)
-[INFO] |  |  |  +- (org.yaml:snakeyaml:jar:1.17:compile - omitted for conflict with 1.6)
-[INFO] |  |  |  +- com.fasterxml.jackson.dataformat:jackson-dataformat-smile:jar:2.8.11:compile
-[INFO] |  |  |  +- com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:jar:2.8.11:compile
-[INFO] |  |  |  \- com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:jar:2.8.11:compile
-[INFO] |  |  +- org.elasticsearch:elasticsearch-geo:jar:7.4.0:compile
-[INFO] |  |  +- (org.apache.lucene:lucene-core:jar:8.2.0:compile - omitted for conflict with 7.6.0)
-[INFO] |  |  +- (org.apache.lucene:lucene-analyzers-common:jar:8.2.0:compile - omitted for conflict with 7.6.0)
-[INFO] |  |  +- org.apache.lucene:lucene-backward-codecs:jar:8.2.0:compile
-[INFO] |  |  +- org.apache.lucene:lucene-grouping:jar:8.2.0:compile
-[INFO] |  |  +- (org.apache.lucene:lucene-highlighter:jar:8.2.0:compile - omitted for conflict with 7.6.0)
-[INFO] |  |  +- (org.apache.lucene:lucene-join:jar:8.2.0:compile - omitted for conflict with 7.6.0)
-[INFO] |  |  +- (org.apache.lucene:lucene-memory:jar:8.2.0:compile - omitted for conflict with 7.6.0)
-[INFO] |  |  +- org.apache.lucene:lucene-misc:jar:8.2.0:compile
-[INFO] |  |  +- (org.apache.lucene:lucene-queries:jar:8.2.0:compile - omitted for conflict with 7.6.0)
-[INFO] |  |  +- (org.apache.lucene:lucene-queryparser:jar:8.2.0:compile - omitted for conflict with 7.6.0)
-[INFO] |  |  +- (org.apache.lucene:lucene-sandbox:jar:8.2.0:compile - omitted for conflict with 7.6.0)
-[INFO] |  |  +- org.apache.lucene:lucene-spatial:jar:8.2.0:compile
-[INFO] |  |  +- org.apache.lucene:lucene-spatial-extras:jar:8.2.0:compile
-[INFO] |  |  +- org.apache.lucene:lucene-spatial3d:jar:8.2.0:compile
-[INFO] |  |  +- org.apache.lucene:lucene-suggest:jar:8.2.0:compile
-[INFO] |  |  +- org.elasticsearch:elasticsearch-cli:jar:7.4.0:compile
-[INFO] |  |  |  +- net.sf.jopt-simple:jopt-simple:jar:5.0.2:compile
-[INFO] |  |  |  \- (org.elasticsearch:elasticsearch-core:jar:7.4.0:compile - omitted for duplicate)
-[INFO] |  |  +- com.carrotsearch:hppc:jar:0.8.1:compile
-[INFO] |  |  +- (joda-time:joda-time:jar:2.10.3:compile - omitted for conflict with 2.2)
-[INFO] |  |  +- com.tdunning:t-digest:jar:3.2:compile
-[INFO] |  |  +- org.hdrhistogram:HdrHistogram:jar:2.1.9:compile
-[INFO] |  |  +- org.apache.logging.log4j:log4j-api:jar:2.11.1:compile
-[INFO] |  |  \- org.elasticsearch:jna:jar:4.5.1:compile
-[INFO] |  +- (org.elasticsearch.client:elasticsearch-rest-client:jar:7.4.0:compile - omitted for duplicate)
-[INFO] |  +- org.elasticsearch.plugin:mapper-extras:jar:7.4.0:compile
-[INFO] |  +- org.elasticsearch.plugin:parent-join-client:jar:7.4.0:compile
-[INFO] |  +- org.elasticsearch.plugin:aggs-matrix-stats-client:jar:7.4.0:compile
-[INFO] |  +- org.elasticsearch.plugin:rank-eval-client:jar:7.4.0:compile
-[INFO] |  \- org.elasticsearch.plugin:lang-mustache-client:jar:7.4.0:compile
-[INFO] |     \- com.github.spullara.mustache.java:compiler:jar:0.9.3:compile
-[INFO] +- com.fasterxml.jackson.core:jackson-core:jar:2.10.1:compile
-[INFO] +- com.fasterxml.jackson.core:jackson-databind:jar:2.10.1:compile
-[INFO] |  +- (com.fasterxml.jackson.core:jackson-annotations:jar:2.10.1:compile - omitted for duplicate)
-[INFO] |  \- (com.fasterxml.jackson.core:jackson-core:jar:2.10.1:compile - omitted for duplicate)
-[INFO] \- com.fasterxml.jackson.core:jackson-annotations:jar:2.10.1:compile
+[INFO] +- net.lingala.zip4j:zip4j:jar:2.11.3:compile
+[INFO] +- com.mortennobel:java-image-scaling:jar:0.8.6:compile
+[INFO] +- com.stripe:stripe-java:jar:20.44.0:compile
+[INFO] +- org.sejda.imageio:webp-imageio:jar:0.1.6:compile
+[INFO] +- org.eclipse.mylyn.docs:org.eclipse.mylyn.docs.epub.core:jar:4.0.6:compile
+[INFO] |  +- org.eclipse.emf:org.eclipse.emf.ecore:jar:2.12.0:compile
+[INFO] |  +- org.eclipse.emf:org.eclipse.emf.ecore.xmi:jar:2.12.0:compile
+[INFO] |  +- org.eclipse.emf:org.eclipse.emf.common:jar:2.12.0:compile
+[INFO] |  \- org.eclipse.mylyn.docs:org.eclipse.mylyn.wikitext:jar:3.0.9:compile
+[INFO] +- net.sourceforge.htmlcleaner:htmlcleaner:jar:2.26:compile
+[INFO] +- org.zwobble.mammoth:mammoth:jar:1.5.0:compile
+[INFO] +- org.postgresql:postgresql:jar:42.5.1:compile
+[INFO] |  \- org.checkerframework:checker-qual:jar:3.5.0:compile
+[INFO] +- org.apache.commons:commons-dbcp2:jar:2.7.0:compile
+[INFO] |  \- org.apache.commons:commons-pool2:jar:2.7.0:compile
+[INFO] \- javax.xml.bind:activation:jar:1.0.2:compile
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 9.210 s
-[INFO] Finished at: 2019-11-13T17:22:24+01:00
-[INFO] Final Memory: 41M/881M
+[INFO] Total time: 3.757 s
+[INFO] Finished at: 2023-04-06T10:50:02+02:00
+[INFO] Final Memory: 26M/97M
 [INFO] ------------------------------------------------------------------------

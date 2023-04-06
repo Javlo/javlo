@@ -49,7 +49,6 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.xml.utils.XMLChar;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentLayout;
 import org.javlo.config.StaticConfig;
@@ -1554,7 +1553,7 @@ public class PersistenceService {
 			try {
 				writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), ContentContext.CHARACTER_ENCODING));
 				for (char c : content.toCharArray()) {
-					if (XMLChar.isValid(c)) {
+					if (Charset.forName(ContentContext.CHARACTER_ENCODING).newEncoder().canEncode(c)) {
 						writer.write(c);
 					} else {
 						logger.warning("bad char found : " + c);

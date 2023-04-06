@@ -84,7 +84,6 @@ import org.javlo.utils.StructuredProperties;
 import org.javlo.utils.TimeMap;
 import org.javlo.utils.XLSTools;
 import org.javlo.ztatic.StaticInfo;
-import org.python.modules.synchronize;
 
 public class SmartGenericForm extends AbstractVisualComponent implements IAction, IEventRegistration, IDataContainer {
 
