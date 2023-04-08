@@ -180,11 +180,15 @@ public abstract class ElementaryURLHelper {
 	public static String createAbsoluteURL(ContentContext ctx, String uri) {
 		String url = uri;
 		if (ctx.getDMZServerInter() == null) {
+			String host = ctx.getGlobalContext().getHostName();
+			if (host == null) {
+				host = ctx.getHostName();
+			}
 			String port = "";
 			if (ctx.getHostPort() != 80) {
 				port = ":" + ctx.getHostPort();
 			}
-			url = ctx.getURLProtocolPrefix() + "://" + ctx.getHostName() + port + url;
+			url = ctx.getURLProtocolPrefix() + "://" + host + port + url;
 		} else {
 			url = mergePath(ctx.getDMZServerInter().toString(), url);
 		}

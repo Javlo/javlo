@@ -172,6 +172,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private LogContainer logList = new LogContainer();
 	
 	private Boolean host = null;
+	private String hostName = null;
 
 	private static class StorePropertyThread extends Thread {
 
@@ -423,7 +424,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					String host = ServletHelper.getSiteKey(request);
 					globalContext = GlobalContext.getInstance(request.getSession(), host);
 					if (globalContext != null) {
-						globalContext.setHost(true);
+						globalContext.setHost(true, request.getServerName());
 					}
 					contextURI = host;
 				} else {
@@ -435,7 +436,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 							if (!globalContext.getContextKey().equals(contextURI)) { // alias
 								ContentContext.setForcePathPrefix(request, contextURI);
 							}
-							globalContext.setHost(false);
+							globalContext.setHost(false, null);
 							ContentContext.setHostDefineSite(request, false);
 							globalContext.setDefinedByHost(false);
 						} else {
@@ -446,7 +447,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 								logger.severe("error GlobalContext not found : " + request.getRequestURI());
 								return null;
 							}
-							globalContext.setHost(true);
+							globalContext.setHost(true, request.getServerName());
 							if (!globalContext.getContextKey().equals(contextURI)) { // alias
 								ContentContext.setForcePathPrefix(request, contextURI);
 								globalContext.setDefinedByHost(false);
@@ -4601,10 +4602,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return host;
 	}
 
-	public void setHost(boolean host) {
+	public void setHost(boolean host, String name) {
 		// change only if first call or host is true, host=true is prioritary
 		if (this.host == null || host) {
 			this.host = host;
+			this.hostName = name;
 		}
 	}
 
@@ -4614,6 +4616,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		} else {
 			return host;
 		}
+	}
+	
+	public String getHostName() {
+		return hostName;
 	}
 
 }
