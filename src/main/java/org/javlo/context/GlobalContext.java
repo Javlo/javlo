@@ -170,6 +170,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private boolean siteLogStack = false;
 
 	private LogContainer logList = new LogContainer();
+	
+	private Boolean host = null;
 
 	private static class StorePropertyThread extends Thread {
 
@@ -420,6 +422,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				if (staticConfig.isHostDefineSite()) {
 					String host = ServletHelper.getSiteKey(request);
 					globalContext = GlobalContext.getInstance(request.getSession(), host);
+					if (globalContext != null) {
+						globalContext.setHost(true);
+					}
 					contextURI = host;
 				} else {
 					RequestService requestService = RequestService.getInstance(request);
@@ -430,6 +435,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 							if (!globalContext.getContextKey().equals(contextURI)) { // alias
 								ContentContext.setForcePathPrefix(request, contextURI);
 							}
+							globalContext.setHost(false);
 							ContentContext.setHostDefineSite(request, false);
 							globalContext.setDefinedByHost(false);
 						} else {
@@ -4584,6 +4590,29 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public String getLocaleCountry() {
 		return getStaticConfig().getLocaleCountry();
+	}
+
+	/**
+	 * return true, if this globalContext was loaded from host in place of context (uri)
+	 * @return
+	 */
+	public Boolean getHost() {
+		return host;
+	}
+
+	public void setHost(boolean host) {
+		// change only if first call or host is true, host=true is prooritary
+		if (this.host == null || host) {
+			this.host = host;
+		}
+	}
+
+	public boolean isHost() {
+		if (host == null) {
+			return true;
+		} else {
+			return host;
+		}
 	}
 
 }

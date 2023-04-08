@@ -2001,7 +2001,7 @@ public class ContentContext {
 	}
 
 	public String getPathPrefix(HttpServletRequest request) {
-		if (isForceGlobalContext() && !getGlobalContext().isDefinedByHost()) {
+		if (isForceGlobalContext() && !getGlobalContext().isHost()) {
 			return getGlobalContext().getContextKey();
 		}
 		return getPathPrefix(getGlobalContext(), request);
