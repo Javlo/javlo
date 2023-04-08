@@ -1232,6 +1232,8 @@ public class XMLManipulationHelper {
 		out.newLine();
 		out.append("var ajaxURL = \"<%=URLHelper.createAjaxURL(ctx)%>\";");
 		out.newLine();
+		out.append("console.log('host = <%=globalContext.host%>');");
+		out.newLine();
 		out.append("var currentURL = \"<%=URLHelper.createURL(ctx)%>\";");
 		out.newLine();
 		out.append("var currentURLWidthDevice = \"${info.currentURLWidthDevice}\";");
