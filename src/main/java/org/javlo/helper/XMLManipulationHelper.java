@@ -1228,10 +1228,6 @@ public class XMLManipulationHelper {
 			out.append("<%=(ctx.isInteractiveMode() ? \"<script src=\\\"\"+URLHelper.createStaticURL(ctx,\"/js/lib/enscroll-0.6.0.min.js\")+\"\\\"></script>\" : \"\")  %>");
 			out.newLine();
 		}
-		
-		out.append("console.log('host = <%=globalContext.getHost()%>');");
-		out.newLine();
-		
 		out.append("<%if ((ctx.isInteractiveMode())&&(security.haveRight((User)editCtx.getUserPrincipal(), \"update\"))) {%><script>");
 		out.newLine();
 		out.append("var ajaxURL = \"<%=URLHelper.createAjaxURL(ctx)%>\";");

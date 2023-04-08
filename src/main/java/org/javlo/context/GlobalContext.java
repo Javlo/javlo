@@ -446,6 +446,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 								logger.severe("error GlobalContext not found : " + request.getRequestURI());
 								return null;
 							}
+							globalContext.setHost(true);
 							if (!globalContext.getContextKey().equals(contextURI)) { // alias
 								ContentContext.setForcePathPrefix(request, contextURI);
 								globalContext.setDefinedByHost(false);
@@ -4601,7 +4602,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public void setHost(boolean host) {
-		// change only if first call or host is true, host=true is prooritary
+		// change only if first call or host is true, host=true is prioritary
 		if (this.host == null || host) {
 			this.host = host;
 		}
