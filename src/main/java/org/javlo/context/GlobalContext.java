@@ -4606,7 +4606,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		// change only if first call or host is true, host=true is prioritary
 		if (this.host == null || host) {
 			this.host = host;
-			this.hostName = name;
+			if (this.hostName == null) {
+				this.hostName = name;
+			}
 		}
 	}
 
