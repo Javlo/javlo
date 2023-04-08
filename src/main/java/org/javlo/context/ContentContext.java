@@ -2008,7 +2008,7 @@ public class ContentContext {
 	}
 
 	public static String getPathPrefix(GlobalContext globalContext, HttpServletRequest request) {
-		if (isHostDefineSite(request)) {
+		if (isHostDefineSite(request) || globalContext.isHost()) {
 			return "";
 		}
 		if (request.getAttribute(FORCE_PATH_PREFIX) != null) {
