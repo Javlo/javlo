@@ -1137,7 +1137,13 @@ public class ContentContext {
 		if (hostName != null) {
 			return hostName;
 		}
-		return request.getServerName();
+		
+		String host = getGlobalContext().getHostName();
+		if (host == null) {
+			host = request.getServerName();
+		}
+		
+		return host;
 	}
 
 	public int getHostPort() {
