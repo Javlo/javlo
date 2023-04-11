@@ -4603,7 +4603,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public void setHost(boolean host, String name) {
-		// change only if first call or host is true, host=true is prioritary
+		// change only if first call or host is true, host=true is priority
 		if (this.host == null || host) {
 			this.host = host;
 			this.hostName = name;
