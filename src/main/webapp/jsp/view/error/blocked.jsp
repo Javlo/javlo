@@ -89,7 +89,7 @@ svg {
 			</div>
 
 
-			<div class="message">This site is closed for the moment.</div>
+			<div class="message">This page is closed for the moment.</div>
 
 			<c:if test="${empty edit}">
 				<%
