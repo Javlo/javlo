@@ -56,8 +56,6 @@ import org.jcodec.common.model.Picture;
 import org.jcodec.scale.AWTUtil;
 
 import com.jhlabs.image.RGBAdjustFilter;
-import com.mortennobel.imagescaling.ResampleFilters;
-import com.mortennobel.imagescaling.ResampleOp;
 
 public class ImageEngine {
 
@@ -1225,10 +1223,7 @@ public class ImageEngine {
 
 	public static BufferedImage resizeImage(BufferedImage in, int width, int height) throws IOException {
 		logger.fine("resizeImage with:" + width + " height:" + height);
-
-		ResampleOp resizeOp = new ResampleOp(width, height);
-		resizeOp.setFilter(ResampleFilters.getLanczos3Filter());
-		return resizeOp.filter(in, null);
+		return resize(in, width, height, null, true);
 	}
 
 	public static BufferedImage web2(BufferedImage image, Color bgColor, int height, int separation) {
