@@ -416,7 +416,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 			if (isList()) {
 				listTitle = "<td>list</td>";
 			}
-			out.println("<thead><tr><td>name</td><td>label</td><td>condition</td><td>autocomplete</td>" + listTitle + "<td>type</td><td>role</td><td>width</td><td>required</td><td>action</td></tr></thead>");
+			out.println("<thead><tr><td>name</td><td>label</td><td>condition</td><td>autocomplete</td>" + listTitle + "<td>type</td><td>role</td><td>width</td><td>required</td><td>order</td><td>action</td></tr></thead>");
 			out.println("<tbody>");
 			List<Field> fields = getFields(ctx);
 			for (Field field : fields) {
@@ -480,7 +480,8 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 		if (field.isRequire()) {
 			required = " checked=\"checked\"";
 		}
-		out.println("<td class=\"required\"><input type=\"checkbox\" name=\"" + getInputName("require-" + field.getName()) + "\"" + required + " /></td>");
+		out.println("<td class=\"required\" style=\"display: flex; justify-content: center; align-items: center; height: 30px;\"><input type=\"checkbox\" name=\"" + getInputName("require-" + field.getName()) + "\"" + required + " /></td>");
+		out.println("<td class=\"required\"><input style=\"width: 64px\" type=\"number\" min=\"0\" class=\"form-control\" name=\"" + getInputName("order-" + field.getName()) + "\" value=\"" + field.getOrder() + "\" /></td>");
 		out.println("<td class=\"buttons\"><div  class=\"btn-group btn-group-sm\">");
 		out.println("  <button class=\"up btn btn-default btn-sm ajax\" type=\"submit\" name=\"" + getInputName("up-" + field.getName()) + "\" ><span class=\"glyphicon glyphicon-menu-up\" aria-hidden=\"true\"></span></button>");
 		out.println("  <button class=\"down btn btn-default btn-sm ajax\" type=\"submit\" name=\"" + getInputName("down-" + field.getName()) + "\"><span class=\"glyphicon glyphicon-menu-down\" aria-hidden=\"true\"></span></button>");
@@ -949,6 +950,8 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				if (registeredListValue != null) {
 					field.setRegisteredList(registeredListValue);
 				}
+				
+				field.setOrder(Integer.parseInt(rs.getParameter(getInputName("order-" + oldName), "")));
 
 				String up = getInputName("up-" + oldName);
 				if (rs.getParameter(up, null) != null) {
@@ -960,6 +963,13 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 				}
 				store(field);
 			}
+		}
+		
+		pos = 10;
+		for (Field field : getFields(ctx)) {
+			field.setOrder(pos);
+			pos = pos + 10;
+			store(field);
 		}
 
 		String resetFile = rs.getParameter("reset-file");
