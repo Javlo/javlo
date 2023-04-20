@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.InetAddress;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -217,21 +218,21 @@ public class MailService {
 				logger.severe("error connection smtp : " + e.getMessage());
 
 				e.printStackTrace();
-				
-				String ip="?";
+
+				String ip = "?";
 				try {
-					InetAddress address = InetAddress.getByName(mailConfig.getSMTPHost()); 
+					InetAddress address = InetAddress.getByName(mailConfig.getSMTPHost());
 					ip = address.getHostAddress();
 				} catch (Exception e1) {
 					e1.printStackTrace();
-				} 
+				}
 
 				System.out.println("");
 				System.out.println("*********************************");
 				System.out.println("* ERROR MAIL TRANSPORT  : " + StringHelper.renderTime(new Date()));
 				System.out.println("* transport : " + transport);
 				System.out.println("* transport connected ? " + transport.isConnected());
-				System.out.println("* getSMTPHost : " + mailConfig.getSMTPHost()+" ip:"+ip);
+				System.out.println("* getSMTPHost : " + mailConfig.getSMTPHost() + " ip:" + ip);
 				System.out.println("* getSMTPPortInt : " + mailConfig.getSMTPPortInt());
 				System.out.println("* getLogin : " + mailConfig.getLogin());
 				System.out.println("* getPassword : " + !StringHelper.isEmpty(mailConfig.getPassword()));
@@ -248,6 +249,37 @@ public class MailService {
 
 	public String sendMail(EMail email) throws MessagingException {
 		return sendMail(null, email.getSender(), email.getRecipients(), email.getCcRecipients(), email.getBccRecipients(), email.getSubject(), email.getContent(), email.getTxtContent(), email.isHtml(), email.getAttachments(), email.getUnsubscribeLink(), email.getDkim(), null);
+	}
+
+	private static final class MailThread extends Thread {
+
+		private MailService mailService;
+		private Transport transport;
+		private EMail email;
+
+		public MailThread(MailService mailService, Transport transport, EMail email) {
+			super();
+			this.mailService = mailService;
+			this.transport = transport;
+			this.email = email;
+		}
+
+		@Override
+		public void run() {
+			try {
+				mailService.sendMail(transport, email);
+			} catch (MessagingException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void sendMailAsyncron(EMail email) {
+		new MailThread(this, null, email).start();
+	}
+
+	public void sendMailAsyncron(Transport transport, EMail email) {
+		new MailThread(this, transport, email).start();
 	}
 
 	public String sendMail(Transport transport, EMail email) throws MessagingException {
@@ -714,14 +746,19 @@ public class MailService {
 	}
 
 	public static void main(String[] args) throws Exception {
-		MailConfig mailConfig = new MailConfig("proxy.javlo.org",25, null, null);
+		MailConfig mailConfig = new MailConfig("localhost", 30, null, null);
 		Transport t = getMailTransport(mailConfig);
 		System.out.println("t = " + t.isConnected());
 
 		MailService mailService = MailService.getInstance(mailConfig);
-		mailService.sendMail(t, new InternetAddress("mail@javlo.org"),  new InternetAddress("p@noctis.be"), null, null, "test mail smtp cch : "+new Date(), "mail de test 2", "mail de test 2", false, null);
 		
+		EMail email = new EMail();
+		email.setSender(new InternetAddress("mail@javlo.org"));
+		email.addRecipient(new InternetAddress("p@noctis.be"));
+		email.setSubject("test mail smtp cch : " +LocalDateTime.now());
+		email.setContent("mail de test");
 		
+		mailService.sendMailAsyncron(t, email);
 
 	}
 
@@ -738,9 +775,10 @@ public class MailService {
 			return mailParent.getChildMenuElements();
 		}
 	}
-	
+
 	/**
 	 * get the default mail sender.
+	 * 
 	 * @param ctx
 	 * @param email
 	 * @return if email is a email return it
@@ -756,9 +794,10 @@ public class MailService {
 			}
 		}
 	}
-	
+
 	/**
 	 * get the default mail receiver.
+	 * 
 	 * @param ctx
 	 * @param email
 	 * @return if email is a email return it
