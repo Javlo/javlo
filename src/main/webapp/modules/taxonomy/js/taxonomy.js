@@ -4,7 +4,7 @@ jQuery(document).ready(function(){
 		if (action.hasClass('open')) {
 			action.removeClass('open');
 			action.addClass('close');
-			action.parent().parent().find('> ul').addClass("hidden");				
+			action.parent().parent().find('> ul').addClass("hidden");
 		} else {
 			action.removeClass('close');
 			action.addClass('open');
@@ -18,11 +18,10 @@ jQuery(document).ready(function(){
 		jQuery(this).find(".needfocus").removeClass('needfocus');
 		document.getElementById("moveto").value="";
 		document.getElementById("moved").value="";
+		addTaxoDragEvents();
 		return true;
 	});
 
-	
-	
 	function handleDragStart(e) {	
 		dragSrcEl = this;
 		this.style.opacity = '0.4';
@@ -61,9 +60,9 @@ jQuery(document).ready(function(){
 		if (dragSrcEl != this) {
 			moveto = document.getElementById("moveto");
 			moveto.value = this.dataset.id;
-			moved = document.getElementById("moved");			
+			moved = document.getElementById("moved");
 			moved.value = dragSrcEl.dataset.id;
-			aschild = document.getElementById("aschild");			
+			aschild = document.getElementById("aschild");
 			aschild.value = this.dataset.aschild;		
 			//document.getElementById("taxonomy-form").submit();
 			submitForm();
@@ -91,6 +90,7 @@ jQuery(document).ready(function(){
 	}
 	
 	function addTaxoDragEvents() {
+		console.log("...addTaxoDragEvents...");
 		/** drag&drop **/	
 		var dragSrcEl = null;
 		var cols = document.querySelectorAll('.item-wrapper');
