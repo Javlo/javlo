@@ -1,31 +1,5 @@
 package org.javlo.module.user;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
-
-import javax.imageio.ImageIO;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.fileupload.FileItem;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.javlo.actions.AbstractModuleAction;
@@ -34,18 +8,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.ArrayHelper;
-import org.javlo.helper.BeanHelper;
-import org.javlo.helper.JavaHelper;
-import org.javlo.helper.LangHelper;
-import org.javlo.helper.NetHelper;
-import org.javlo.helper.RequestHelper;
-import org.javlo.helper.RequestParameterMap;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.SecurityHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
+import org.javlo.helper.*;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ImageEngine;
 import org.javlo.mailing.MailConfig;
@@ -58,15 +21,7 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.DataToIDService;
 import org.javlo.service.RequestService;
-import org.javlo.user.AdminUserFactory;
-import org.javlo.user.AdminUserInfo;
-import org.javlo.user.AdminUserSecurity;
-import org.javlo.user.IUserFactory;
-import org.javlo.user.IUserInfo;
-import org.javlo.user.User;
-import org.javlo.user.UserFactory;
-import org.javlo.user.UserInfoSorting;
-import org.javlo.user.UserSecurity;
+import org.javlo.user.*;
 import org.javlo.user.exception.UserAllreadyExistException;
 import org.javlo.utils.CSVFactory;
 import org.javlo.utils.JSONMap;
@@ -74,6 +29,19 @@ import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.StaticInfo;
 import org.javlo.ztatic.StaticInfoBean;
 import org.owasp.encoder.Encode;
+
+import javax.imageio.ImageIO;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.Charset;
+import java.util.*;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 public class UserAction extends AbstractModuleAction {
 
@@ -103,7 +71,7 @@ public class UserAction extends AbstractModuleAction {
 			logger.fine("security error no user found.");
 			return null;
 		}
-
+		
 		if (userContext.getCurrentRole() != null && !userFactory.getAllRoles(globalContext, ctx.getRequest().getSession()).contains(userContext.getCurrentRole())) {
 			userContext.setCurrentRole(null);
 		}
@@ -143,6 +111,7 @@ public class UserAction extends AbstractModuleAction {
 						user = userFactory.getUser(userInfo.getLogin());
 					}
 				}
+				
 			}
 			if (userContext.getMode().equals(UserModuleContext.VIEW_MY_SELF)) {
 				Module currentModule = moduleContext.getCurrentModule();
@@ -157,6 +126,14 @@ public class UserAction extends AbstractModuleAction {
 				} else {
 					return null;
 				}
+			}
+			
+			if (globalContext.getAllTaxonomy(ctx) != null && user != null) {
+				Collection<String> taxo = Collections.emptyList();
+				if (user.getUserInfo().getTaxonomy() != null) {
+					taxo = Arrays.asList(user.getUserInfo().getTaxonomy());
+				}
+				ctx.getRequest().setAttribute("taxonomySelect", globalContext.getAllTaxonomy(ctx).getSelectHtml(taxo));
 			}
 
 			Map<String, String> userInfoMap = BeanHelper.bean2Map(user.getUserInfo());
@@ -326,6 +303,8 @@ public class UserAction extends AbstractModuleAction {
 				if (!userInfo.getPassword().equals(pwd)) {
 					userInfo.setPassword(SecurityHelper.encryptPassword(userInfo.getPassword()));
 				}
+
+				userInfo.setTaxonomy(StringHelper.toArrayString(requestService.getParameterListValues("taxonomy").toArray()));
 				userFactory.updateUserInfo(userInfo);
 				Set<String> newRoles = new HashSet<String>();
 				Set<String> allRoles = userFactory.getAllRoles(globalContext, session);
@@ -336,6 +315,9 @@ public class UserAction extends AbstractModuleAction {
 				}
 				boolean admin = userFactory instanceof AdminUserFactory;
 				IUserInfo ui = user.getUserInfo();
+				
+				
+				
 				if (!admin || adminUserSecurity.haveRight(adminUserFactory.getCurrentUser(ctx.getRequest().getSession()), AdminUserSecurity.ADMIN_USER_ROLE, AdminUserSecurity.GENERAL_ADMIN)) {
 					ui.setRoles(newRoles);
 					userFactory.updateUserInfo(ui);

@@ -3,15 +3,12 @@
 %><div class="widgetbox edit-user">
 <h3><span>${i18n.edit['user.title.edit']} : ${user.name}</span></h3>
 <div class="content">
-
 <form id="form-edit-user"  action="${info.currentURL}" method="post" enctype="multipart/form-data">
 
 <div>
 	<input type="hidden" name="webaction" value="update" />
 	<input type="hidden" name="user" value="${user.name}" />
 </div>
-
-
 
 <fieldset>
 <legend>${i18n.edit['user.main-info']}</legend>
@@ -23,7 +20,7 @@
 		<div class="form-group">
 			<label>password <input class="form-control" name="password" value="${userInfoMap['password']}" /></label>
 		</div>
-	</div>	
+	</div>
 	<div class="col-xs-4">
 		<div class="form-group">
 			<label>firstName <input class="form-control" name="firstName" value="${userInfoMap['firstName']}" /></label>
@@ -35,13 +32,22 @@
 	<div class="col-xs-4">
 		<div class="form-group">
 			<label>title <input class="form-control" name="title" value="${userInfoMap['title']}" /></label>
-		</div>	
-		<div class="form-group"> 
+		</div>
+		<div class="form-group">
 			<label>email <input class="form-control" name="email" value="${userInfoMap['email']}" /></label>
-		</div>			
+		</div>
 	</div>
 </div>
 </fieldset>
+
+<c:if test="${taxonomy.active}">
+	<fieldset>
+		<legend>${i18n.edit ['taxonomy']}</legend>
+		<div class="taxonomy">
+				${taxonomySelect}
+		</div>
+	</fieldset>
+</c:if>
 
 <fieldset>
 <legend>${i18n.edit['user.info']}</legend>
@@ -50,15 +56,15 @@
 <c:set var="fieldIndex" value="0" />
 <c:forEach var="key" items="${userInfoKeys}" varStatus="status">
 <c:if test="${key != 'login' && key != 'password' && key != 'email' && key != 'firstName' && key != 'lastName' && key != 'title'}">
-	<div class="form-group">		 
-		<label>${key}	
-		<input class="form-control" type="text" name="${key}" value="${userInfoMap[key]}" /></label>		 
+	<div class="form-group">
+		<label>${key}
+		<input class="form-control" type="text" name="${key}" value="${userInfoMap[key]}" /></label>
 	</div>
 	<c:set var="fieldIndex" value="${fieldIndex+1}" />
 	<c:if test="${fieldIndex>(fn:length(userInfoKeys)-6)/3}"><c:set var="fieldIndex" value="0" />
 		</div><div class="col-xs-4">
 	</c:if>
-	</c:if>	
+	</c:if>
 </c:forEach>
 </div>
 </div>

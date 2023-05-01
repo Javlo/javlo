@@ -1,12 +1,8 @@
 package org.javlo.data.taxonomy;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import org.javlo.helper.StringHelper;
+
+import java.util.*;
 
 public class TaxonomyBean {
 
@@ -306,6 +302,19 @@ public class TaxonomyBean {
 			node = node.getParent();
 		}
 		return out;
+	}
+
+	public TaxonomyBean filter(ITaxonomyFilter filter) {
+		TaxonomyBean newBean = new TaxonomyBean(id, name, parent);
+		newBean.labels = labels;
+		newBean.decoration = decoration;
+		for (TaxonomyBean child : children) {
+			if (filter.accept(child)) {
+				child.setParent(newBean);
+				newBean.children.add(child.filter(filter));
+			}
+		}
+		return newBean;
 	}
 
 }

@@ -153,7 +153,7 @@ public class StringHelper {
 	public static final Pattern RANGE_MATCHER_GREATER = Pattern.compile("^[+>]([0-9]+)$|^([0-9]+)[+>]$");
 
 	public static final long TIMED_TOKEN_DIVIDER = 1000 * 60; // Millis to
-																// minutes
+	// minutes
 
 	public static String addSufixToFileName(String fileName, String sufix) {
 		return FilenameUtils.removeExtension(fileName) + sufix + "." + FilenameUtils.getExtension(fileName);
@@ -178,7 +178,7 @@ public class StringHelper {
 
 	/**
 	 * generate a base 64 string.
-	 * 
+	 *
 	 * @return a unique id.
 	 */
 	public static String asBase64(byte[] bytes) {
@@ -187,7 +187,7 @@ public class StringHelper {
 
 	/**
 	 * generate a base 32 string with a int
-	 * 
+	 *
 	 * @return a unique id.
 	 */
 	public static String asBase32(int value) {
@@ -196,7 +196,7 @@ public class StringHelper {
 
 	/**
 	 * generate a base 32 string with a int
-	 * 
+	 *
 	 * @return a unique id.
 	 */
 	public static String asBase32(byte value) {
@@ -205,7 +205,7 @@ public class StringHelper {
 
 	/**
 	 * generate a base 32 string.
-	 * 
+	 *
 	 * @return a unique id.
 	 */
 	public static String asBase32(byte[] bytes) {
@@ -214,7 +214,7 @@ public class StringHelper {
 
 	/**
 	 * generate a base 64 string with a int
-	 * 
+	 *
 	 * @return a unique id.
 	 */
 	public static String asBase64(int value) {
@@ -223,7 +223,7 @@ public class StringHelper {
 
 	/**
 	 * generate a base 64 string with a long
-	 * 
+	 *
 	 * @return a unique id.
 	 */
 	public static String asBase64(long value) {
@@ -232,7 +232,7 @@ public class StringHelper {
 
 	/**
 	 * change the file extension of the path
-	 * 
+	 *
 	 * @param inFileName
 	 *            a path or a url to a file.
 	 * @param newExt
@@ -277,7 +277,7 @@ public class StringHelper {
 	/**
 	 * convert a collection to text. Each item of the collection will be a line if
 	 * the text.
-	 * 
+	 *
 	 * @param col
 	 * @return
 	 */
@@ -297,7 +297,7 @@ public class StringHelper {
 	/**
 	 * convert a collection to text. Each item of the collection will be a line if
 	 * the text.
-	 * 
+	 *
 	 * @param col
 	 * @return
 	 */
@@ -336,7 +336,7 @@ public class StringHelper {
 
 	/**
 	 * merge string with 'sep' between
-	 * 
+	 *
 	 * @param sep
 	 * @param part
 	 * @return
@@ -362,7 +362,7 @@ public class StringHelper {
 	 * convert a string to another string if math pattern1 and convert to pattern2.
 	 * pattern is a String with one '*' for any characters. sample : /*, /test/*,
 	 * /view/fr --> /test/view/fr
-	 * 
+	 *
 	 * @param pattern1
 	 *            a pattern with one '*'
 	 * @param pattern2
@@ -407,7 +407,7 @@ public class StringHelper {
 
 	/**
 	 * replace CR with <br />
-	 * 
+	 *
 	 * @param text
 	 *            a simple text
 	 * @return XHTML code
@@ -536,103 +536,103 @@ public class StringHelper {
 				res.append(element);
 			} else {
 				switch (element) {
-				case '\u00e9':
-				case '\u00e8':
-				case '\u00eb':
-				case '\u00ea':
-					res.append('e');
-					break;
-				case '\u00c9':
-				case '\u00c8':
-				case '\u00cb':
-				case '\u00ca':
-					res.append('E');
-					break;
-				case '\u00e0':
-				case '\u00e2':
-				case '\u00e4':
-				case '\u00e3':
-				case '\u00e5':
-					res.append('a');
-					break;
-				case '\u00c0':
-				case '\u00c2':
-				case '\u00c4':
-				case '\u00c3':
-				case '\u00c5':
-					res.append('A');
-					break;
-				case '\u00ee':
-				case '\u00ef':
-				case '\u00ec':
-				case '\u00ed':
-					res.append('i');
-					break;
-				case '\u00ce':
-				case '\u00cf':
-				case '\u00cc':
-				case '\u00cd':
-					res.append('I');
-					break;
-				case '\u00f2':
-				case '\u00f3':
-				case '\u00f4':
-				case '\u00f5':
-					res.append('o');
-					break;
-				case '\u00d2':
-				case '\u00d3':
-				case '\u00d4':
-				case '\u00d5':
-					res.append('O');
-					break;
-				case '\u00f9':
-				case '\u00fa':
-				case '\u00fb':
-				case '\u00fc':
-					res.append('u');
-					break;
-				case '\u00d9':
-				case '\u00da':
-				case '\u00db':
-				case '\u00dc':
-					res.append('U');
-					break;
-				case '\u00fd':
-				case '\u00fe':
-				case '\u00ff':
-					res.append('y');
-					break;
-				case '\u0160':
-					res.append('S');
-					break;
-				case '\u0161':
-					res.append('s');
-					break;
-				case '\u00dd':
-				case '\u00de':
-				case '\u0178':
-					res.append('Y');
-					break;
-				case '\u00e7':
-					res.append('c');
-					break;
-				case '\u00c7':
-					res.append('C');
-					break;
-				case '\u20ac':
-					res.append("EUR");
-					break;
-				case '$':
-					res.append("USD");
-					break;
-				case '/':
-				case '\\':
-					res.append("-");
-					break;
-				default:
-					res.append(defaultReplaceChar);
-					break;
+					case '\u00e9':
+					case '\u00e8':
+					case '\u00eb':
+					case '\u00ea':
+						res.append('e');
+						break;
+					case '\u00c9':
+					case '\u00c8':
+					case '\u00cb':
+					case '\u00ca':
+						res.append('E');
+						break;
+					case '\u00e0':
+					case '\u00e2':
+					case '\u00e4':
+					case '\u00e3':
+					case '\u00e5':
+						res.append('a');
+						break;
+					case '\u00c0':
+					case '\u00c2':
+					case '\u00c4':
+					case '\u00c3':
+					case '\u00c5':
+						res.append('A');
+						break;
+					case '\u00ee':
+					case '\u00ef':
+					case '\u00ec':
+					case '\u00ed':
+						res.append('i');
+						break;
+					case '\u00ce':
+					case '\u00cf':
+					case '\u00cc':
+					case '\u00cd':
+						res.append('I');
+						break;
+					case '\u00f2':
+					case '\u00f3':
+					case '\u00f4':
+					case '\u00f5':
+						res.append('o');
+						break;
+					case '\u00d2':
+					case '\u00d3':
+					case '\u00d4':
+					case '\u00d5':
+						res.append('O');
+						break;
+					case '\u00f9':
+					case '\u00fa':
+					case '\u00fb':
+					case '\u00fc':
+						res.append('u');
+						break;
+					case '\u00d9':
+					case '\u00da':
+					case '\u00db':
+					case '\u00dc':
+						res.append('U');
+						break;
+					case '\u00fd':
+					case '\u00fe':
+					case '\u00ff':
+						res.append('y');
+						break;
+					case '\u0160':
+						res.append('S');
+						break;
+					case '\u0161':
+						res.append('s');
+						break;
+					case '\u00dd':
+					case '\u00de':
+					case '\u0178':
+						res.append('Y');
+						break;
+					case '\u00e7':
+						res.append('c');
+						break;
+					case '\u00c7':
+						res.append('C');
+						break;
+					case '\u20ac':
+						res.append("EUR");
+						break;
+					case '$':
+						res.append("USD");
+						break;
+					case '/':
+					case '\\':
+						res.append("-");
+						break;
+					default:
+						res.append(defaultReplaceChar);
+						break;
 				}
 
 			}
@@ -648,7 +648,7 @@ public class StringHelper {
 	 * convert a file name with space, accent and other bad character to a
 	 * acceptable name. sample: "l'\u00e9l\u00e9phant rose.odt" ->
 	 * "l_elephant_rose.odt"
-	 * 
+	 *
 	 * @param fileName
 	 *            a bad file name
 	 * @return a correct file name
@@ -679,7 +679,7 @@ public class StringHelper {
 			return trim(value, '-').toLowerCase();
 		}
 	}
-	
+
 	public static String trim(String text) {
 		return trim(text, ' ');
 	}
@@ -687,7 +687,7 @@ public class StringHelper {
 	/**
 	 * replace trimChar at the start and the end of text string. sample : --test-, -
 	 * >>> test
-	 * 
+	 *
 	 * @param text
 	 * @param trimChar
 	 * @return
@@ -738,7 +738,7 @@ public class StringHelper {
 
 	/**
 	 * replace CR with a space
-	 * 
+	 *
 	 * @param text
 	 *            a simple text
 	 * @return one line text
@@ -763,7 +763,7 @@ public class StringHelper {
 
 	/**
 	 * cut the end of a xhtml code. sample: "aaa&acute;coucou", 5 = "aaa&acute;c"
-	 * 
+	 *
 	 * @param str
 	 *            the string
 	 * @param cut
@@ -818,7 +818,7 @@ public class StringHelper {
 
 	/**
 	 * generate a base 64 string.
-	 * 
+	 *
 	 * @return a unique id.
 	 * @throws IOException
 	 */
@@ -828,7 +828,7 @@ public class StringHelper {
 
 	/**
 	 * insert char from a Sting (encoded with encodeNoChar)
-	 * 
+	 *
 	 * @param data
 	 *            string to be encoded
 	 * @param noChars
@@ -851,7 +851,7 @@ public class StringHelper {
 
 	/**
 	 * encode a string to a CDATA sequence.
-	 * 
+	 *
 	 * @param value
 	 * @return
 	 */
@@ -861,7 +861,7 @@ public class StringHelper {
 
 	/**
 	 * remove char from a Sting
-	 * 
+	 *
 	 * @param data
 	 *            string to be encoded
 	 * @param noChars
@@ -948,7 +948,7 @@ public class StringHelper {
 	/**
 	 * split a String, if there are no character between two token this method place
 	 * a empty String ( != String.split )
-	 * 
+	 *
 	 * @param str
 	 *            a standard str
 	 * @param token
@@ -977,7 +977,7 @@ public class StringHelper {
 
 	/**
 	 * return a ID contruct on with the current date : sample : 20101223-4687
-	 * 
+	 *
 	 * @return
 	 */
 	public static String getDateRandomId() {
@@ -1010,7 +1010,7 @@ public class StringHelper {
 
 	/**
 	 * return a ID contruct on with the current date : sample : 20101223-4687
-	 * 
+	 *
 	 * @return
 	 */
 	public static String getDateRandomIdWithCheck() {
@@ -1054,7 +1054,7 @@ public class StringHelper {
 
 	/**
 	 * extract only number of a alpha numeric string
-	 * 
+	 *
 	 * @param text
 	 * @return 23 from "23px", null from "animal".
 	 */
@@ -1067,10 +1067,10 @@ public class StringHelper {
 			return Integer.parseInt(numericString.toString());
 		}
 	}
-	
+
 	/**
 	 * extract only number of a alpha numeric string
-	 * 
+	 *
 	 * @param text
 	 * @return 23 from "23px", null from "animal".
 	 */
@@ -1083,10 +1083,10 @@ public class StringHelper {
 			return Long.parseLong(numericString.toString());
 		}
 	}
-	
+
 	/**
 	 * extract only number of a alpha numeric string
-	 * 
+	 *
 	 * @param text
 	 * @return 23 from "23px", null from "animal".
 	 */
@@ -1116,7 +1116,7 @@ public class StringHelper {
 
 	/**
 	 * retreive the file extension.
-	 * 
+	 *
 	 * @param inFileName
 	 *            a file name
 	 * @return a file extension without dot ( pdf, zip, ... )
@@ -1152,7 +1152,7 @@ public class StringHelper {
 
 	/**
 	 * retreive the file extension.
-	 * 
+	 *
 	 * @param inFileName
 	 *            a file name
 	 * @return a file name
@@ -1215,7 +1215,7 @@ public class StringHelper {
 
 	/**
 	 * retreive the file extension.
-	 * 
+	 *
 	 * @param inFileName
 	 *            a file name
 	 * @return a file extension without dot ( pdf, zip, ... )
@@ -1231,7 +1231,7 @@ public class StringHelper {
 
 	/**
 	 * return a formated size in a String.
-	 * 
+	 *
 	 * @param filePath
 	 *            a path to a file
 	 * @return a string represent a size (sample : 45KB)
@@ -1261,7 +1261,7 @@ public class StringHelper {
 
 	/**
 	 * return a short id (length 10 chars).
-	 * 
+	 *
 	 * @return
 	 */
 	public synchronized static String getShortRandomId() {
@@ -1278,7 +1278,7 @@ public class StringHelper {
 	/**
 	 * transform a string of number (length 10) to a structured communication, last
 	 * number is the mod 97 of the first number
-	 * 
+	 *
 	 * @param code
 	 *            a string of length 10 with only number
 	 * @return a string on length 12 with the the last number is the mod 97
@@ -1307,7 +1307,7 @@ public class StringHelper {
 
 	/**
 	 * generate a id in a String.
-	 * 
+	 *
 	 * @return a unique id.
 	 */
 	public synchronized static String getRandomIdBase10() {
@@ -1322,7 +1322,7 @@ public class StringHelper {
 
 	/**
 	 * generate a id in a String.
-	 * 
+	 *
 	 * @return a unique id.
 	 */
 	public synchronized static String getLargeRandomIdBase64() {
@@ -1345,7 +1345,7 @@ public class StringHelper {
 
 	/**
 	 * generate a id in a String.
-	 * 
+	 *
 	 * @return a unique id.
 	 */
 	public synchronized static String getRandomIdBase64() {
@@ -1390,7 +1390,7 @@ public class StringHelper {
 
 	/**
 	 * retreive the size of a String with html code. sample: "aaa&acute;" = 4.
-	 * 
+	 *
 	 * @param str
 	 *            the string
 	 * @return the size of the String;
@@ -1435,20 +1435,20 @@ public class StringHelper {
 
 	public static boolean isDigit(char c) {
 		switch (c) {
-		case '0':
-		case '1':
-		case '2':
-		case '3':
-		case '4':
-		case '5':
-		case '6':
-		case '7':
-		case '8':
-		case '9':
-			// case '-':
-			return true;
-		default:
-			return false;
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+			case '8':
+			case '9':
+				// case '-':
+				return true;
+			default:
+				return false;
 		}
 	}
 
@@ -1458,7 +1458,7 @@ public class StringHelper {
 
 	/**
 	 * check if string contains somthing similar to digital number
-	 * 
+	 *
 	 * @param str
 	 * @return
 	 */
@@ -1469,7 +1469,7 @@ public class StringHelper {
 
 	/**
 	 * check if stirng contains only digital number
-	 * 
+	 *
 	 * @param str
 	 * @return
 	 */
@@ -1495,7 +1495,7 @@ public class StringHelper {
 
 	/**
 	 * check if stirng contains only digital number
-	 * 
+	 *
 	 * @param str
 	 * @return
 	 */
@@ -1548,7 +1548,7 @@ public class StringHelper {
 
 	/**
 	 * return true if the filename in a html image).
-	 * 
+	 *
 	 * @param fileName
 	 *            file name with extension
 	 * @return true if file name is a image
@@ -1579,7 +1579,7 @@ public class StringHelper {
 	/**
 	 * return true if the filename in a image for wcms (sp. : tif or psd in not a
 	 * image).
-	 * 
+	 *
 	 * @param fileName
 	 *            file name with extension
 	 * @return true if file name is a image
@@ -1598,7 +1598,7 @@ public class StringHelper {
 	/**
 	 * return true if the filename in a image for wcms (sp. : tif or psd in not a
 	 * image).
-	 * 
+	 *
 	 * @param fileName
 	 *            file name with extension
 	 * @return true if file name is a image
@@ -1617,7 +1617,7 @@ public class StringHelper {
 	/**
 	 * return true if the filename in a image for wcms (sp. : tif or psd in not a
 	 * image).
-	 * 
+	 *
 	 * @param fileName
 	 *            file name with extension
 	 * @return true if file name is a image
@@ -1636,7 +1636,7 @@ public class StringHelper {
 	/**
 	 * return true if the filename in a image for wcms (sp. : tif or psd in not a
 	 * image).
-	 * 
+	 *
 	 * @param fileName
 	 *            file name with extension
 	 * @return true if file name is a image
@@ -1655,7 +1655,7 @@ public class StringHelper {
 	/**
 	 * return true if the file extension is an image for wcms (sp. : tif or psd is
 	 * not an image).
-	 * 
+	 *
 	 * @param fileExtension
 	 *            file extension
 	 * @return true if file name is a image
@@ -1680,7 +1680,7 @@ public class StringHelper {
 	/**
 	 * return true if the file extension is an image for wcms (sp. : tif or psd is
 	 * not an image).
-	 * 
+	 *
 	 * @param fileExtension
 	 *            file extension
 	 * @return true if file name is a image
@@ -1694,7 +1694,7 @@ public class StringHelper {
 
 	/**
 	 * return true if the filename in a document (sp. : word, libreoffice...).
-	 * 
+	 *
 	 * @param fileName
 	 *            file name with extension
 	 * @return true if file name is a image
@@ -1718,7 +1718,7 @@ public class StringHelper {
 
 	/**
 	 * return true if the filename in a PDF file.
-	 * 
+	 *
 	 * @param fileName
 	 *            file name with extension
 	 * @return true if file name is a image
@@ -1765,7 +1765,7 @@ public class StringHelper {
 
 	/**
 	 * return true if the filename in a sound file image.
-	 * 
+	 *
 	 * @param fileName
 	 *            file name with extension
 	 * @return true if file name is a sound
@@ -1841,7 +1841,7 @@ public class StringHelper {
 
 	/**
 	 * return true if the filename in a url file).
-	 * 
+	 *
 	 * @param fileName
 	 *            file name with extension
 	 * @return true if file name is a url file
@@ -1854,7 +1854,7 @@ public class StringHelper {
 
 	/**
 	 * return true if the filename in a video file image).
-	 * 
+	 *
 	 * @param fileName
 	 *            file name with extension
 	 * @return true if file name is a video
@@ -1881,7 +1881,7 @@ public class StringHelper {
 	 * assert matchStarPattern("eAe", "e*e"); <br/>
 	 * assert !matchStarPattern("eAe", "ee"); <br/>
 	 * assert matchStarPattern("ee", "ee");
-	 * 
+	 *
 	 * @param str
 	 * @param pattern
 	 * @return
@@ -1903,7 +1903,7 @@ public class StringHelper {
 
 	/**
 	 * Test if a string match with a pattern using '?'. <br/>
-	 * 
+	 *
 	 * @param str
 	 * @param pattern
 	 * @return
@@ -1925,7 +1925,7 @@ public class StringHelper {
 
 	/**
 	 * Test if a string match with a pattern using '?' and '*'. <br/>
-	 * 
+	 *
 	 * @param str
 	 * @param pattern
 	 * @return
@@ -1948,7 +1948,7 @@ public class StringHelper {
 
 	/**
 	 * transform a string empty to a other string
-	 * 
+	 *
 	 * @param inStr
 	 *            a string can be null
 	 * @param replaceWith
@@ -1965,7 +1965,7 @@ public class StringHelper {
 
 	/**
 	 * transform a string null in a empty String.
-	 * 
+	 *
 	 * @param inStr
 	 *            a string can be null
 	 * @return never null ( empty string if input is null)
@@ -1976,7 +1976,7 @@ public class StringHelper {
 
 	/**
 	 * transform a string null in a empty String.
-	 * 
+	 *
 	 * @param inStr
 	 *            a string can be null
 	 * @param replaceWith
@@ -2061,7 +2061,7 @@ public class StringHelper {
 
 	/**
 	 * null save parse int.
-	 * 
+	 *
 	 * @param value
 	 *            a string with a int inside
 	 * @param defaultValue
@@ -2419,7 +2419,7 @@ public class StringHelper {
 
 	/**
 	 * remove CR from a String
-	 * 
+	 *
 	 * @param text
 	 *            a simple String
 	 * @return a string without CR.
@@ -2476,7 +2476,7 @@ public class StringHelper {
 	/**
 	 * remove repeated char inside string. sample : "javlo--love" "-" =
 	 * "javlo-love".
-	 * 
+	 *
 	 * @param str
 	 * @param c
 	 * @return
@@ -2495,7 +2495,7 @@ public class StringHelper {
 	/**
 	 * remove sequence from a string. sample : removeSequence ("slkqfj #dlskj#
 	 * sdljf", "#", "#") -> slkqfj sdljf.
-	 * 
+	 *
 	 * @param text
 	 *            a simple text
 	 * @param prefix
@@ -2525,7 +2525,7 @@ public class StringHelper {
 
 	/**
 	 * remove tag. sample: <a href="#">link</a> -> link
-	 * 
+	 *
 	 * @param text
 	 *            XHTML Code
 	 * @return simple text
@@ -2557,7 +2557,7 @@ public class StringHelper {
 
 	/**
 	 * render a date, search the format in I18n files.
-	 * 
+	 *
 	 * @param session
 	 * @param locale
 	 * @param date
@@ -2908,7 +2908,7 @@ public class StringHelper {
 
 	/**
 	 * return a formated size in a String.
-	 * 
+	 *
 	 * @param filePath
 	 *            a path to a file
 	 * @return a string represent a size (sample : 45KB)
@@ -2978,7 +2978,7 @@ public class StringHelper {
 
 	/**
 	 * render a date, search the format in I18n files.
-	 * 
+	 *
 	 * @param session
 	 * @param locale
 	 * @param date
@@ -3085,7 +3085,7 @@ public class StringHelper {
 
 	/**
 	 * extract email from a free text
-	 * 
+	 *
 	 * @param text
 	 *            a free text
 	 * @return a collection of email address
@@ -3115,7 +3115,7 @@ public class StringHelper {
 
 	/**
 	 * extract email from a free text
-	 * 
+	 *
 	 * @param text
 	 *            a free text
 	 * @return a collection of email address
@@ -3145,7 +3145,7 @@ public class StringHelper {
 
 	/**
 	 * extract external link from a free text
-	 * 
+	 *
 	 * @param text
 	 *            a free text, can be html
 	 * @return a collection of URL
@@ -3177,7 +3177,7 @@ public class StringHelper {
 	/**
 	 * split a String, if there are no character between two token this method place
 	 * a empty String ( != String.split )
-	 * 
+	 *
 	 * @param str
 	 *            a standard str
 	 * @param token
@@ -3202,7 +3202,7 @@ public class StringHelper {
 	/**
 	 * split a String, if there are no character between two token this method place
 	 * a empty String ( != String.split )
-	 * 
+	 *
 	 * @param str
 	 *            a standard str
 	 * @param token
@@ -3230,7 +3230,7 @@ public class StringHelper {
 	/**
 	 * split a String, if there are no character between two token this method place
 	 * a empty String ( != String.split )
-	 * 
+	 *
 	 * @param str
 	 *            a standard str
 	 * @param token
@@ -3514,7 +3514,7 @@ public class StringHelper {
 
 	/**
 	 * transform a String to insert in a JavaScript.
-	 * 
+	 *
 	 * @param inStr
 	 *            a Simple String
 	 * @return a String with replacement for insert into a javascript.
@@ -3539,7 +3539,7 @@ public class StringHelper {
 	/**
 	 * transform a String to a max size. sample: "Welcome in the new wave party" -->
 	 * "Welcome in the..."
-	 * 
+	 *
 	 * @param str
 	 *            the string must be cut.
 	 * @param size
@@ -3560,7 +3560,7 @@ public class StringHelper {
 
 	/**
 	 * transform a free value to a attribute xml value
-	 * 
+	 *
 	 * @param value
 	 * @return
 	 */
@@ -3577,7 +3577,7 @@ public class StringHelper {
 
 	/**
 	 * transform a free value to a attribute xml value
-	 * 
+	 *
 	 * @param value
 	 * @return
 	 */
@@ -3614,7 +3614,7 @@ public class StringHelper {
 	/**
 	 * replace CR with <br />
 	 * and replace special char to html code
-	 * 
+	 *
 	 * @param text
 	 *            a simple text
 	 * @return XHTML code
@@ -3692,7 +3692,7 @@ public class StringHelper {
 
 	/**
 	 * return the type of a path (video, image...)
-	 * 
+	 *
 	 * @param path
 	 * @param prefix
 	 * @return
@@ -3741,7 +3741,7 @@ public class StringHelper {
 
 	/**
 	 * extract a subtext from a text.
-	 * 
+	 *
 	 * @param text
 	 * @param prefix
 	 * @param suffix
@@ -3771,7 +3771,7 @@ public class StringHelper {
 
 	/**
 	 * replace a bloc, between two prefix and suffix and with char pos inside.
-	 * 
+	 *
 	 * @param content
 	 * @param newBloc
 	 * @param prefix
@@ -3799,7 +3799,7 @@ public class StringHelper {
 
 	/**
 	 * replace text in larger text
-	 * 
+	 *
 	 * @param text
 	 *            the original text
 	 * @param newItem
@@ -3875,7 +3875,7 @@ public class StringHelper {
 
 	/**
 	 * create a new unic key.
-	 * 
+	 *
 	 * @param length
 	 *            the length of the key.
 	 * @param keys
@@ -3956,58 +3956,58 @@ public class StringHelper {
 			char c = field.charAt(i);
 
 			switch (c) {
-			case 0: /* Must be escaped for 'mysql' */
-				sBuilder.append('\\');
-				sBuilder.append('0');
-
-				break;
-
-			case '\n': /* Must be escaped for logs */
-				sBuilder.append('\\');
-				sBuilder.append('n');
-
-				break;
-
-			case '\r':
-				sBuilder.append('\\');
-				sBuilder.append('r');
-
-				break;
-
-			case '\\':
-				sBuilder.append('\\');
-				sBuilder.append('\\');
-
-				break;
-
-			case '\'':
-				sBuilder.append('\\');
-				sBuilder.append('\'');
-
-				break;
-
-			case '"': /* Better safe than sorry */
-				if (escapeDoubleQuotes) {
+				case 0: /* Must be escaped for 'mysql' */
 					sBuilder.append('\\');
-				}
+					sBuilder.append('0');
 
-				sBuilder.append('"');
+					break;
 
-				break;
+				case '\n': /* Must be escaped for logs */
+					sBuilder.append('\\');
+					sBuilder.append('n');
 
-			case '\032': /* This gives problems on Win32 */
-				sBuilder.append('\\');
-				sBuilder.append('Z');
+					break;
 
-				break;
+				case '\r':
+					sBuilder.append('\\');
+					sBuilder.append('r');
 
-			case '\u00a5':
-			case '\u20a9':
-				// escape characters interpreted as backslash by mysql
-				// fall through
+					break;
 
-			default:
-				sBuilder.append(c);
+				case '\\':
+					sBuilder.append('\\');
+					sBuilder.append('\\');
+
+					break;
+
+				case '\'':
+					sBuilder.append('\\');
+					sBuilder.append('\'');
+
+					break;
+
+				case '"': /* Better safe than sorry */
+					if (escapeDoubleQuotes) {
+						sBuilder.append('\\');
+					}
+
+					sBuilder.append('"');
+
+					break;
+
+				case '\032': /* This gives problems on Win32 */
+					sBuilder.append('\\');
+					sBuilder.append('Z');
+
+					break;
+
+				case '\u00a5':
+				case '\u20a9':
+					// escape characters interpreted as backslash by mysql
+					// fall through
+
+				default:
+					sBuilder.append(c);
 			}
 		}
 
@@ -4016,7 +4016,7 @@ public class StringHelper {
 
 	/**
 	 * clean path, remove double "/" and replace "\" by "/"
-	 * 
+	 *
 	 * @param path
 	 * @return "//web/path" >> "/web/path"
 	 */
@@ -4036,7 +4036,7 @@ public class StringHelper {
 	/**
 	 * check if a text contains uppercase char. test > false, Test > true, TEST >
 	 * true
-	 * 
+	 *
 	 * @param text
 	 * @return
 	 */
@@ -4089,7 +4089,7 @@ public class StringHelper {
 
 	/**
 	 * Method copied from the private method java.util.Properties#saveConvert(...)
-	 * 
+	 *
 	 * @param theString
 	 * @param escapeSpace
 	 * @param escapeUnicode
@@ -4117,45 +4117,45 @@ public class StringHelper {
 				continue;
 			}
 			switch (aChar) {
-			case ' ':
-				if (x == 0 || escapeSpace)
+				case ' ':
+					if (x == 0 || escapeSpace)
+						outBuffer.append('\\');
+					outBuffer.append(' ');
+					break;
+				case '\t':
 					outBuffer.append('\\');
-				outBuffer.append(' ');
-				break;
-			case '\t':
-				outBuffer.append('\\');
-				outBuffer.append('t');
-				break;
-			case '\n':
-				outBuffer.append('\\');
-				outBuffer.append('n');
-				break;
-			case '\r':
-				outBuffer.append('\\');
-				outBuffer.append('r');
-				break;
-			case '\f':
-				outBuffer.append('\\');
-				outBuffer.append('f');
-				break;
-			case '=': // Fall through
-			case ':': // Fall through
-			case '#': // Fall through
-			case '!':
-				outBuffer.append('\\');
-				outBuffer.append(aChar);
-				break;
-			default:
-				if (((aChar < 0x0020) || (aChar > 0x007e)) & escapeUnicode) {
+					outBuffer.append('t');
+					break;
+				case '\n':
 					outBuffer.append('\\');
-					outBuffer.append('u');
-					outBuffer.append(hexDigit[(aChar >> 12) & 0xF]);
-					outBuffer.append(hexDigit[(aChar >> 8) & 0xF]);
-					outBuffer.append(hexDigit[(aChar >> 4) & 0xF]);
-					outBuffer.append(hexDigit[aChar & 0xF]);
-				} else {
+					outBuffer.append('n');
+					break;
+				case '\r':
+					outBuffer.append('\\');
+					outBuffer.append('r');
+					break;
+				case '\f':
+					outBuffer.append('\\');
+					outBuffer.append('f');
+					break;
+				case '=': // Fall through
+				case ':': // Fall through
+				case '#': // Fall through
+				case '!':
+					outBuffer.append('\\');
 					outBuffer.append(aChar);
-				}
+					break;
+				default:
+					if (((aChar < 0x0020) || (aChar > 0x007e)) & escapeUnicode) {
+						outBuffer.append('\\');
+						outBuffer.append('u');
+						outBuffer.append(hexDigit[(aChar >> 12) & 0xF]);
+						outBuffer.append(hexDigit[(aChar >> 8) & 0xF]);
+						outBuffer.append(hexDigit[(aChar >> 4) & 0xF]);
+						outBuffer.append(hexDigit[aChar & 0xF]);
+					} else {
+						outBuffer.append(aChar);
+					}
 			}
 		}
 		return outBuffer.toString();
@@ -4285,7 +4285,7 @@ public class StringHelper {
 
 	/**
 	 * parse error without fault, return null if color is unidentified.
-	 * 
+	 *
 	 * @param color
 	 * @return
 	 */
@@ -4308,7 +4308,7 @@ public class StringHelper {
 
 	/**
 	 * trim all items of the list.
-	 * 
+	 *
 	 * @param list
 	 * @return
 	 */
@@ -4323,7 +4323,7 @@ public class StringHelper {
 	/**
 	 * get the item from a string with separator. sample : text1,text2,text3
 	 * getItem(sample,",",1) = text1
-	 * 
+	 *
 	 * @param text
 	 * @param sep
 	 * @param i
@@ -4346,7 +4346,7 @@ public class StringHelper {
 
 	/**
 	 * transform a string with size in pixel in integer.
-	 * 
+	 *
 	 * @param pxSize
 	 *            a size in px (sp. '12px').
 	 * @return null if bad param (sp. 12%, tralala, null) and the value in pixel if
@@ -4482,7 +4482,7 @@ public class StringHelper {
 
 	/**
 	 * Test if the value is included in the range.
-	 * 
+	 *
 	 * @param range
 	 *            Range values are like -25,25-30,31-35,35+
 	 * @param value
@@ -4592,7 +4592,7 @@ public class StringHelper {
 
 	/**
 	 * convert to latin alphabet
-	 * 
+	 *
 	 * @param text
 	 * @return
 	 */
@@ -4603,15 +4603,15 @@ public class StringHelper {
 		while (i < text.length()) {
 			char c = lowerText.charAt(i);
 			switch (c) {
-			case 'α':
-				outText.append('a');
-				break;
-			case 'β':
-				outText.append('b');
-				break;
-			default:
-				outText.append(text.charAt(i));
-				break;
+				case 'α':
+					outText.append('a');
+					break;
+				case 'β':
+					outText.append('b');
+					break;
+				default:
+					outText.append(text.charAt(i));
+					break;
 			}
 			i++;
 		}
@@ -4620,7 +4620,7 @@ public class StringHelper {
 
 	/**
 	 * remote " on the start and the end of text, if quote was found.
-	 * 
+	 *
 	 * @param text
 	 * @return
 	 */
@@ -4638,7 +4638,7 @@ public class StringHelper {
 
 	/**
 	 * format number to number like : +32486123456
-	 * 
+	 *
 	 * @param phone
 	 * @param countryPrefix
 	 * @return
@@ -4731,38 +4731,38 @@ public class StringHelper {
 		for (i = 0; i < len; i += 1) {
 			c = string.charAt(i);
 			switch (c) {
-			case '\\':
-			case '"':
-				sb.append('\\');
-				sb.append(c);
-				break;
-			case '/':
-				// if (b == '<') {
-				// }
-				sb.append(c);
-				break;
-			case '\b':
-				sb.append("\\b");
-				break;
-			case '\t':
-				sb.append("\\t");
-				break;
-			case '\n':
-				sb.append("\\n");
-				break;
-			case '\f':
-				sb.append("\\f");
-				break;
-			case '\r':
-				sb.append("\\r");
-				break;
-			default:
-				if (c < ' ') {
-					t = "000" + Integer.toHexString(c);
-					sb.append("\\u" + t.substring(t.length() - 4));
-				} else {
+				case '\\':
+				case '"':
+					sb.append('\\');
 					sb.append(c);
-				}
+					break;
+				case '/':
+					// if (b == '<') {
+					// }
+					sb.append(c);
+					break;
+				case '\b':
+					sb.append("\\b");
+					break;
+				case '\t':
+					sb.append("\\t");
+					break;
+				case '\n':
+					sb.append("\\n");
+					break;
+				case '\f':
+					sb.append("\\f");
+					break;
+				case '\r':
+					sb.append("\\r");
+					break;
+				default:
+					if (c < ' ') {
+						t = "000" + Integer.toHexString(c);
+						sb.append("\\u" + t.substring(t.length() - 4));
+					} else {
+						sb.append(c);
+					}
 			}
 		}
 		sb.append('"');
@@ -4771,7 +4771,7 @@ public class StringHelper {
 
 	/**
 	 * parse txt, if is'nt integer return 0
-	 * 
+	 *
 	 * @param txt
 	 * @return
 	 */
@@ -4782,7 +4782,7 @@ public class StringHelper {
 
 	/**
 	 * parse int, if txt is'nt integer return default value.
-	 * 
+	 *
 	 * @param txt
 	 * @param defaultValue
 	 * @return
@@ -4912,6 +4912,14 @@ public class StringHelper {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public static String[] toArrayString(Object[] objArray) {
+		String[] out = new String[objArray.length];
+		for (int i = 0; i < objArray.length; i++) {
+			out[i] = objArray[i].toString();
+		}
+		return out;
 	}
 
 	public static void main(String[] args) throws IOException {

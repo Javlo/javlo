@@ -3,27 +3,20 @@
  */
 package org.javlo.user;
 
+import org.apache.commons.lang3.StringUtils;
+import org.javlo.context.ContentContext;
+import org.javlo.helper.LocalLogger;
+import org.javlo.helper.SecurityHelper;
+import org.javlo.helper.StringHelper;
+
+import javax.mail.internet.InternetAddress;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URLEncoder;
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Set;
-
-import javax.mail.internet.InternetAddress;
-
-import org.apache.commons.lang3.StringUtils;
-import org.javlo.context.ContentContext;
-import org.javlo.helper.LocalLogger;
-import org.javlo.helper.SecurityHelper;
-import org.javlo.helper.StringHelper;
+import java.util.*;
 
 /**
  * @author pvandermaesen
@@ -82,6 +75,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	protected Date creationDate = new Date();
 	protected Date modificationDate = new Date();
 	protected Map<String,String> data = null;
+	protected String[] taxonomy;
 
 	@Override
 	public String getTitle() {
@@ -735,5 +729,37 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	
 	public void setFood(String food) {
 		this.food = food;
+	}
+
+	public String getTaxonomyRaw() {
+		if (getTaxonomy() == null) {
+			return null;
+		}
+		StringBuffer res = new StringBuffer();
+		String sep = "";
+		for (String tx : getTaxonomy()) {
+			res.append(sep);
+			res.append(tx);
+			sep = "" + ROLES_SEPARATOR;
+		}
+		return res.toString();
+	}
+
+	public void setTaxonomyRaw(String taxonomyRaw) {
+		if (taxonomyRaw != null) {
+			if (taxonomyRaw.trim().length() > 0) {
+				taxonomy = StringHelper.split(taxonomyRaw, ""+ROLES_SEPARATOR);
+			}
+		}
+	}
+	
+	@Override
+	public String[] getTaxonomy() {
+		return taxonomy;
+	}
+	
+	@Override
+	public void setTaxonomy(String[] taxonomy) {
+		this.taxonomy = taxonomy;
 	}
 }

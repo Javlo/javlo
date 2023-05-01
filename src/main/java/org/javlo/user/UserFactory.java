@@ -3,41 +3,11 @@
  */
 package org.javlo.user;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.imageio.ImageIO;
-import javax.mail.internet.InternetAddress;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.BeanHelper;
-import org.javlo.helper.JavaHelper;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.SecurityHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
+import org.javlo.helper.*;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ImageHelper;
 import org.javlo.io.TransactionFile;
@@ -48,6 +18,15 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.user.exception.UserAllreadyExistException;
 import org.javlo.utils.CSVFactory;
 import org.javlo.utils.TimeMap;
+
+import javax.imageio.ImageIO;
+import javax.mail.internet.InternetAddress;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 /**
  * @author pvandermaesen
@@ -71,7 +50,7 @@ public class UserFactory implements IUserFactory, Serializable {
 
 	private String userInfoFile = null;
 
-	private static Map<String, IUserInfo> changePasswordReference = new TimeMap<String, IUserInfo>();
+	private static final Map<String, IUserInfo> changePasswordReference = new TimeMap<String, IUserInfo>();
 
 	protected List<IUserInfo> userInfoList = null; // TODO: create a external
 	// application scope class
@@ -162,7 +141,6 @@ public class UserFactory implements IUserFactory, Serializable {
 		User user = getUser(login);
 		if (user != null) {
 			UserSecurity.storeShadowUser(request.getSession());
-			;
 			user.setContext(globalContext.getContextKey());
 			request.getSession().setAttribute(getSessionKey(), user);
 		}
@@ -334,9 +312,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	@Override
 	public List<IUserInfo> getUserInfoForRoles(String[] inRoles) {
 		Set<String> roles = new HashSet<String>();
-		for (String inRole : inRoles) {
-			roles.add(inRole);
-		}
+		Collections.addAll(roles, inRoles);
 		List<IUserInfo> outUserList = new LinkedList<IUserInfo>();
 		List<IUserInfo> allUserInfo = getUserInfoList();
 		for (IUserInfo element : allUserInfo) {
@@ -492,7 +468,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		if (user == null || (!logged && user.getPassword() != null && !passwordEqual)) {
 			if (editCtx.getEditUser(login) != null && (logged || editCtx.hardLogin(login, password))) {
 				logger.info("log user with password : " + login + " obtain general admin mode and full control role.");
-				user = createUser(login, (new HashSet(Arrays.asList(new String[] { AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE }))));
+				user = createUser(login, (new HashSet(Arrays.asList(AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE))));
 				editCtx.setEditUser(user);
 				/** reload module **/
 				try {
@@ -621,6 +597,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		String[][] csvArray = new String[userInfoList.size() + 1][];
 
 		csvArray[0] = createUserInfos().getAllLabels();
+
 
 		for (int i = 0; i < userInfoList.size(); i++) {
 			String[] values = userInfoList.get(i).getAllValues();
@@ -829,3 +806,4 @@ public class UserFactory implements IUserFactory, Serializable {
 	}
 
 }
+

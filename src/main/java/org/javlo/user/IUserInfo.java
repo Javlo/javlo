@@ -1,10 +1,9 @@
 package org.javlo.user;
 
+import javax.mail.internet.InternetAddress;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.Set;
-
-import javax.mail.internet.InternetAddress;
 
 public interface IUserInfo {
 
@@ -103,6 +102,10 @@ public interface IUserInfo {
 	public String encryptPassword(String pwd);
 	
 	public String getSite();
+	
+	public String[] getTaxonomy();
+	
+	public void setTaxonomy(String[] taxonomy);
 	
 	public void setSite(String site);
 
