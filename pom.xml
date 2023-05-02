@@ -65,7 +65,7 @@
 		<tika.version>1.28.5</tika.version>
 		<xdocreport.version>2.0.4</xdocreport.version>
 		<poi.version>5.2.3</poi.version>
-		<maven.plugin.version>3.3.2</maven.plugin.version>
+		<maven.plugin.version>3.20.0</maven.plugin.version>
 	</properties>
 
 	<dependencies>
@@ -757,13 +757,13 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>${maven.plugin.version}</version>
+				<version>3.3.2</version>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>${maven.plugin.version}</version>
+				<version>3.5.0</version>
 				<configuration>
 					<aggregate>true</aggregate>
 				</configuration>
@@ -779,12 +779,13 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>${maven.plugin.version}</version>
+				<version>3.2.2</version>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
+				<version>3.12.1</version>
 				<configuration>
 					<dependencyLocationsEnabled>false</dependencyLocationsEnabled>
 				</configuration>
