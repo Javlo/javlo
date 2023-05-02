@@ -4438,7 +4438,7 @@ public class StringHelper {
 
 	public static Map<String, String> textToMap(String encodedMap) throws IOException {
 		if (StringHelper.isEmpty(encodedMap)) {
-			return Collections.emptyMap();
+			return new HashMap<String, String>();
 		}
 		Map<String, String> outMap = new HashMap<String, String>();
 		BufferedReader reader = new BufferedReader(new StringReader(encodedMap));
