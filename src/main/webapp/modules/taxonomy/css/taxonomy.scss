@@ -94,3 +94,10 @@
 .collapse .close .glyphicon-minus-sign {
 	display: none;
 }
+
+.edit-text {
+	textarea {
+		width: 95%;
+		font-family: "Courier New", Courier, monospace;
+	}
+}

@@ -1,36 +1,23 @@
 package org.javlo.data.taxonomy;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.StringReader;
-import java.util.AbstractMap;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.google.gson.Gson;
+import org.javlo.context.ContentContext;
+import org.javlo.context.GlobalContext;
+import org.javlo.helper.Comparator.MapEntryComparator;
+import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
+import org.javlo.service.IListItem;
+import org.jcodec.common.StringUtils;
+
+import java.io.*;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.javlo.context.ContentContext;
-import org.javlo.context.GlobalContext;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.Comparator.MapEntryComparator;
-import org.javlo.service.IListItem;
-import org.jcodec.common.StringUtils;
-
-import com.google.gson.Gson;
-
 public class TaxonomyService {
 
+	private static final String PREFIX_LINE = ">";
 	private static Logger logger = Logger.getLogger(TaxonomyService.class.getName());
 
 	public static final String KEY = "taxonomy";
@@ -71,6 +58,7 @@ public class TaxonomyService {
 			outService.context = "master:" + globalContext.getContextKey();
 			globalContext.setAttribute(KEY + renderMode, outService);
 		}
+
 		return outService;
 	}
 
@@ -138,7 +126,7 @@ public class TaxonomyService {
 
 	/**
 	 * get all source bean, key of map is target name (start with '>')
-	 * 
+	 *
 	 * @return
 	 */
 	public Map<String, TaxonomyBean> getAllSources() {
@@ -364,7 +352,7 @@ public class TaxonomyService {
 		}
 		return true;
 	}
-	
+
 	public boolean isAllMatch(ITaxonomyContainer container, ITaxonomyContainer filter, int depth) {
 		for (String taxonomy : filter.getTaxonomy()) {
 			if (!isMatch(container, new TaxonomyContainerBean(taxonomy), depth)) {
@@ -376,7 +364,7 @@ public class TaxonomyService {
 
 	/**
 	 * add all parent of the selection in the filter
-	 * 
+	 *
 	 * @param container
 	 * @param filter
 	 * @return
@@ -392,7 +380,7 @@ public class TaxonomyService {
 		}
 		return !Collections.disjoint(container.getTaxonomy(), newFilter);
 	}
-	
+
 	public int getDepth(TaxonomyBean bean) {
 		if (bean == null) {
 			return -1;
@@ -420,14 +408,14 @@ public class TaxonomyService {
 			return new TaxonomyContainerBean(allTaxo);
 		}
 	}
-	
+
 	public boolean isMatch(ITaxonomyContainer container, ITaxonomyContainer filter) {
 		return isMatch(container, filter, 1);
 	}
 
 	/**
 	 * check if a taxonomy group match
-	 * 
+	 *
 	 * @param container
 	 * @param filter
 	 * @param minDepth : min depth of the latest node (0=root, 1=child of root...)
@@ -505,7 +493,7 @@ public class TaxonomyService {
 
 	/**
 	 * convert list of taxonomybean id to a list of taxonomybean instance.
-	 * 
+	 *
 	 * @param ids
 	 * @return
 	 */
@@ -584,7 +572,7 @@ public class TaxonomyService {
 
 	/**
 	 * add a taxonomy filter in the session
-	 * 
+	 *
 	 * @param ctx
 	 * @param key
 	 *            a reference to the component or the filter generator
@@ -632,6 +620,14 @@ public class TaxonomyService {
 	}
 
 	public void importText(String text) {
+		this.root = importTextStatic(text);
+		clearCache();
+	}
+
+	private static TaxonomyBean importTextStatic(String text) {
+
+		TaxonomyBean out = null;
+
 		Pattern patternId = Pattern.compile("(.*?)\\|");
 		Pattern patternName = Pattern.compile("\\|(.*?)\\[");
 		Pattern patternLabels = Pattern.compile("\\[(.*?)\\]");
@@ -641,15 +637,20 @@ public class TaxonomyService {
 			line = reader.readLine();
 			int lineNumber = 0;
 			int latestDepth = 0;
-			TaxonomyBean latestNode = null;
+			final int MAX_DEPTH = 1000;
+			TaxonomyBean[] latestNode = new TaxonomyBean[MAX_DEPTH]; // max depth 10000
 			while (line != null) {
 				lineNumber++;
 				TaxonomyBean bean = new TaxonomyBean();
 
 				int depth = 0;
-				while (line.startsWith("-")) {
+				while (line.startsWith(PREFIX_LINE)) {
 					line = line.substring(1);
 					depth++;
+				}
+
+				if (depth >= MAX_DEPTH) {
+					throw new RuntimeException("too many depth in text file. (max:"+MAX_DEPTH+")");
 				}
 
 				if (!line.contains("[")) {
@@ -672,36 +673,32 @@ public class TaxonomyService {
 				} else {
 					logger.severe("error name import taxonomy on line " + lineNumber + " : " + line);
 				}
-
 				matcher = patternLabels.matcher(line);
 				if (matcher.find()) {
 					bean.setLabels(StringHelper.textToMap(matcher.group(1)));
 				}
 
 				if (lineNumber == 1) {
-					root = bean;
+					out = bean;
 				} else {
-					if (depth > latestDepth) {
-						latestNode.addChild(bean, null);
+					if (depth == latestDepth) {
+						latestNode[depth-1].addChildAsLast(bean);
+					} else if (depth > latestDepth) {
+						latestNode[latestDepth].addChildAsLast(bean);
 					} else if (depth < latestDepth) {
-						latestNode.getParent().addChild(bean, null);
-					} else {
-						latestNode.getParent().addChild(bean, latestNode.getId());
+						latestNode[depth-1].addChildAsLast(bean);
 					}
 				}
-
 				latestDepth = depth;
-				latestNode = bean;
-
+				latestNode[depth] = bean;
 				line = reader.readLine();
-
 			}
-
-			clearCache();
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+		return out;
 	}
 
 	private static String exportAsText(TaxonomyBean bean, String prefix) {
@@ -721,7 +718,7 @@ public class TaxonomyService {
 			out.println("");
 		}
 
-		prefix += "-";
+		prefix += PREFIX_LINE;
 		for (TaxonomyBean child : bean.getChildren()) {
 			out.print(exportAsText(child, prefix));
 		}
@@ -736,8 +733,23 @@ public class TaxonomyService {
 	}
 
 	public static void main(String[] args) {
+		String taxoText = "0|root\n" +
+				"-168206759389121245356|test\n" +
+				"--168206759800211570424|a\n" +
+				"-168206759865511601576|test2\n" +
+				"--168206759800211570425|b\n";
+
+		TaxonomyBean bean = importTextStatic(taxoText);
+
+		for (TaxonomyBean child : bean.getAllChildren()) {
+			System.out.println("child:"+child.getName()+" depth:"+child.getDepth()+ " parent:"+child.getParent().getName());
+		}
+
+	}
+
+	public static void test_main(String[] args) {
 		TaxonomyService taxo = new TaxonomyService();
-		taxo.createDebugStructure();		
+		taxo.createDebugStructure();
 
 		int i = 0;
 		for (TaxonomyBean bean : taxo.getRoot().getAllChildren()) {
@@ -748,7 +760,7 @@ public class TaxonomyService {
 		for (TaxonomyBean bean : taxo.getLinkedRoot().getAllChildren()) {
 			System.out.println("> "+(i++)+" = "+bean.getName()+" id="+bean.getId()+" path="+bean.getPath());
 		}
-		
+
 		System.out.println("");
 
 		TaxonomyBean child = taxo.getRoot().getAllChildren().get(0);
@@ -756,7 +768,7 @@ public class TaxonomyService {
 		TaxonomyBean subChild2 = taxo.getRoot().getAllChildren().get(3);
 		TaxonomyBean subSubChild = taxo.getRoot().getAllChildren().get(2);
 		TaxonomyBean otherChild = taxo.getRoot().getAllChildren().get(5);
-		
+
 		System.out.println("subChild    = "+subChild.getName());
 		System.out.println("subChild2   = "+subChild2.getName());
 		System.out.println("subSubChild = "+subSubChild.getName());
@@ -769,8 +781,8 @@ public class TaxonomyService {
 		System.out.println("true="+taxo.isMatch(new TaxonomyContainerBean(subChild.getId()), new TaxonomyContainerBean(subChild.getId(), otherChild.getId())));
 		System.out.println("false="+taxo.isAllMatch(new TaxonomyContainerBean(child.getId()), new TaxonomyContainerBean(subChild.getId(), otherChild.getId())));
 		System.out.println("-");
-		
-		
+
+
 		System.out.println(">>>>>>>>> TaxonomyService.main : child.getId() = "+child.getId()); //TODO: remove debug trace
 		System.out.println(">>>>>>>>> TaxonomyService.main : subChild.getParent().getId() = "+subChild.getParent().getId()); //TODO: remove debug trace
 		System.out.println(">>>>>>>>> TaxonomyService.main : subChild2.getParent().getId() = "+subChild2.getParent().getId()); //TODO: remove debug trace
