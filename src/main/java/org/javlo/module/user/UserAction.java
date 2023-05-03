@@ -109,6 +109,9 @@ public class UserAction extends AbstractModuleAction {
 				for (IUserInfo userInfo : userContext.getUserFactory(ctx).getUserInfoList()) {
 					if (userInfo.getEncryptLogin().equals(cuser)) {
 						user = userFactory.getUser(userInfo.getLogin());
+						if (user == null) {
+							logger.severe("encrypt login found : '"+cuser+"' but no user correspond for login : "+userInfo.getLogin());
+						}
 					}
 				}
 				
