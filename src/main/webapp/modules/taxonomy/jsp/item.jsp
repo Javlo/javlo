@@ -3,7 +3,7 @@
 %><c:set var="node" value="${taxonomy.taxonomyBeanMap[param.id]}" />
 <div id="item-wrapper-${node.id}" class="item-wrapper" draggable="true" data-id="${node.id}" data-aschild="false">
 	<a href="#" class="command action-list ${fn:length(node.children)>0?'open':'close'}" title="expand"><span class="glyphicon glyphicon-menu-down"></span><span class="glyphicon glyphicon-menu-right"></span></a>
-	<a href="#" class="command delete" title="delete" onclick="jQuery('#input-delete').val('${param.id}'); jQuery('#taxonomy-form').submit();"><span class="glyphicon glyphicon-trash"></span></a>
+	<a href="#" class="command delete" title="delete" onclick="jQuery('#input-delete').val('${param.id}'); jQuery('#taxonomy-form').submit(); return false;"><span class="glyphicon glyphicon-trash"></span></a>
 	<a href="#" class="command move" title="move"><span class="glyphicon glyphicon-sort"></span></a>	
 	<div class="item">	
 		<span class="name"><input type="text" name="name-${param.id}" class="hidden-input form-control" value="${node.name}" /></span>

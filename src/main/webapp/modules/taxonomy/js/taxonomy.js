@@ -1,5 +1,8 @@
 jQuery(document).ready(function(){
-	jQuery('.action-list').live("click", function() {
+	jQuery('.action-list').live("click", function(e) {
+		if (e.preventDefault) {
+			e.preventDefault(); // Necessary. Allows us to drop.
+		}
 		action = jQuery(this);
 		if (action.hasClass('open')) {
 			action.removeClass('open');
@@ -35,7 +38,10 @@ jQuery(document).ready(function(){
 		return false;
 	}
 	
-	function submitForm() {
+	function submitForm(e) {
+		if (e != null && e.preventDefault) {
+			e.preventDefault(); // Necessary. Allows us to drop.
+		}
 		var	form = jQuery("#taxonomy-form");
 		var ajaxSubmit = true;
 		if (form.data("ajaxSubmit") != null) {
