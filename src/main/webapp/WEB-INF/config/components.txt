@@ -179,6 +179,7 @@ org.javlo.component.web2.survey.ResultSurvey
 org.javlo.component.web2.survey.DisplayResult
 org.javlo.component.web2.EpubConverterComponent
 org.javlo.component.web2.UploadFileComponent
+org.javlo.component.form.FormInputComponent
 
 --content.title.special
 

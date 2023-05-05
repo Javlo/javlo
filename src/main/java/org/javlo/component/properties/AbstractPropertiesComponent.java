@@ -1,16 +1,5 @@
 package org.javlo.component.properties;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
@@ -20,6 +9,9 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.service.RequestService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.service.google.translation.ITranslator;
+
+import java.io.*;
+import java.util.*;
 
 public abstract class AbstractPropertiesComponent extends AbstractVisualComponent {
 
@@ -67,7 +59,7 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		}
 	}
 	
-	public List<Map.Entry<String, String>> getFieldChoice(ContentContext ctx, String fieldName) {
+	public Collection<Map.Entry<String, String>> getFieldChoice(ContentContext ctx, String fieldName) {
 		return null;
 	}
 	
@@ -105,7 +97,7 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 			out.println("<label for=\"" + createKeyWithField(fieldName) + "\">");
 			out.println(getLabel(i18nAccess, fieldName));
 			out.println("</label>");
-			List<Map.Entry<String, String>> choices = getFieldChoice(ctx, fieldName);
+			Collection<Map.Entry<String, String>> choices = getFieldChoice(ctx, fieldName);
 			if (choices == null) {
 				out.print("<textarea"+readonly+" class=\"form-control\" rows=\"" + getRowSize(fieldName) + "\" id=\"");
 				out.print(createKeyWithField(field));

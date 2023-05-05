@@ -1,34 +1,5 @@
 package org.javlo.navigation;
 
-import java.awt.Color;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.logging.Logger;
-
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.actions.IEventRegistration;
@@ -37,47 +8,16 @@ import org.javlo.cache.ICache;
 import org.javlo.cache.MapCache;
 import org.javlo.comparator.MenuElementPriorityComparator;
 import org.javlo.component.container.IContainer;
-import org.javlo.component.core.AbstractVisualComponent;
-import org.javlo.component.core.ComponentBean;
-import org.javlo.component.core.ComponentFactory;
-import org.javlo.component.core.ContentElementList;
-import org.javlo.component.core.IContentComponentsList;
-import org.javlo.component.core.IContentVisualComponent;
-import org.javlo.component.core.IDate;
-import org.javlo.component.core.ILink;
-import org.javlo.component.core.IPageRank;
+import org.javlo.component.core.*;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.ecom.IProductContainer;
-import org.javlo.component.image.IImageTitle;
-import org.javlo.component.image.ImageBackground;
-import org.javlo.component.image.ImageBean;
-import org.javlo.component.image.ImageTitleBean;
-import org.javlo.component.image.SortImageTitleByPriority;
+import org.javlo.component.image.*;
 import org.javlo.component.layout.PDFLayoutComponent;
 import org.javlo.component.links.ChildrenLink;
 import org.javlo.component.links.PageMirrorComponent;
 import org.javlo.component.links.PageReferenceComponent;
-import org.javlo.component.meta.Category;
-import org.javlo.component.meta.ColorComponent;
-import org.javlo.component.meta.ContactBean;
-import org.javlo.component.meta.ContactInformation;
-import org.javlo.component.meta.DateComponent;
-import org.javlo.component.meta.EventDefinitionComponent;
 import org.javlo.component.meta.Font;
-import org.javlo.component.meta.ForceRealContent;
-import org.javlo.component.meta.Forward;
-import org.javlo.component.meta.HeadMeta;
-import org.javlo.component.meta.I18nComponent;
-import org.javlo.component.meta.Keywords;
-import org.javlo.component.meta.Layouts;
-import org.javlo.component.meta.LocationComponent;
-import org.javlo.component.meta.MetaDescription;
-import org.javlo.component.meta.NotSearchPage;
-import org.javlo.component.meta.PageCss;
-import org.javlo.component.meta.Slogan;
-import org.javlo.component.meta.Tags;
-import org.javlo.component.meta.TimeRangeComponent;
-import org.javlo.component.meta.ToTheTopComponent;
+import org.javlo.component.meta.*;
 import org.javlo.component.title.GroupTitle;
 import org.javlo.component.title.WebSiteTitle;
 import org.javlo.component.web2.ReactionComponent;
@@ -89,15 +29,7 @@ import org.javlo.data.InfoBean;
 import org.javlo.data.rest.IRestItem;
 import org.javlo.data.taxonomy.ITaxonomyContainer;
 import org.javlo.ecom.Product.ProductBean;
-import org.javlo.helper.BeanHelper;
-import org.javlo.helper.ComponentHelper;
-import org.javlo.helper.LangHelper;
-import org.javlo.helper.NavigationHelper;
-import org.javlo.helper.NetHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
-import org.javlo.helper.XMLManipulationHelper;
+import org.javlo.helper.*;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.image.EmptyColor;
 import org.javlo.image.ExtendedColor;
@@ -123,6 +55,15 @@ import org.javlo.utils.TimeRange;
 import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
 import org.javlo.ztatic.IStaticContainer;
+
+import java.awt.*;
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.text.ParseException;
+import java.util.List;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * @author pvanderm
@@ -2693,7 +2634,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			}
 		}
 
-		if (bestImageTitle == null) {
+		//if (bestImageTitle == null) {
 			/** search on all area **/
 			specialCtx = ctx.getContextWithArea(null);
 			contentList = getAllContent(specialCtx);
@@ -2704,17 +2645,17 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 					IImageTitle imageComp = (IImageTitle) elem;
 					if (imageComp.isImageValid(specialCtx)) {
 						int priority = imageComp.getPriority(specialCtx);
-						if (priority == 9) {
-							desc.imageLink = new ImageTitleBean(specialCtx, imageComp);
-							return imageComp;
-						} else if (priority > bestPriority) {
+						if (elem.getArea().equals(defaultArea)) {
+							priority = priority*2;
+						}
+						if (priority > bestPriority) {
 							bestPriority = priority;
 							bestImageTitle = imageComp;
 						}
 					}
 				}
 			}
-		}
+		//}
 		if (bestImageTitle != null) {
 			desc.imageLink = new ImageTitleBean(specialCtx, bestImageTitle);
 		}
