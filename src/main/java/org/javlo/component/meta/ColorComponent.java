@@ -26,10 +26,10 @@ public class ColorComponent extends AbstractVisualComponent {
 		if ( ctx.getGlobalContext().getTemplateData().getColorList() != null &&  ctx.getGlobalContext().getTemplateData().getColorList().length > 0) {
 			finalCode.append("<div class=\"color-list d-flex\">");
 			for (CssColor c : ctx.getGlobalContext().getTemplateData().getColorList()) {
-
 				String js = "document.getElementById('"+getContentName()+"').value='"+c+"';";
-
-				finalCode.append("<button class=\"btn btn-primary mb-3\" style=\"background-color: "+c.toString()+"\" onclick=\""+js+"\">"+c+"</button>");
+				if (c!=null) {
+					finalCode.append("<button class=\"btn btn-primary mb-3\" style=\"background-color: " + c + "\" onclick=\"" + js + "\">" + c + "</button>");
+				}
 			}
 			finalCode.append("</div>");
 		}
