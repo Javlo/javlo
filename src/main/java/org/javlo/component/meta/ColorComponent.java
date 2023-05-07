@@ -67,7 +67,12 @@ public class ColorComponent extends AbstractVisualComponent {
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		return "";
 	}
-	
+
+	@Override
+	public boolean isDispayEmptyXHTMLCode(ContentContext ctx) throws Exception {
+		return true;
+	}
+
 	@Override
 	protected String getEmptyCode(ContentContext ctx) throws Exception {
 		if (getValue() != null && getValue().trim().length()>6) {
