@@ -1,19 +1,6 @@
 package org.javlo.navigation;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
-import java.text.ParseException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
+import com.beust.jcommander.ParameterException;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.image.IImageTitle;
@@ -33,7 +20,13 @@ import org.javlo.user.AdminUserSecurity;
 import org.javlo.utils.CollectionAsMap;
 import org.javlo.utils.HtmlPart;
 
-import com.beust.jcommander.ParameterException;
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+import java.util.*;
 
 /**
  * bean for the page, can be use in JSTL.
@@ -444,6 +437,7 @@ public class PageBean implements Serializable {
 			return null;
 		}
 	}
+
 
 	public String getTechnicalTitle() {
 		return page.getTechnicalTitle(ctx);

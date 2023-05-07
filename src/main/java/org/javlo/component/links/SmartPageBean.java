@@ -1,19 +1,5 @@
 package org.javlo.component.links;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
-
 import org.javlo.actions.IEventRegistration;
 import org.javlo.bean.DateBean;
 import org.javlo.bean.Link;
@@ -45,6 +31,12 @@ import org.javlo.user.User;
 import org.javlo.utils.SmartTimeRange;
 import org.javlo.utils.TimeRange;
 import org.owasp.encoder.Encode;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class SmartPageBean {
 
@@ -1096,5 +1088,9 @@ public class SmartPageBean {
 	
 	public ProductBean getProduct() throws Exception {
 		return page.getProduct(ctx);
+	}
+
+	public Map<String, Object> getContentAsMap() throws Exception {
+		return page.getContentAsMap(ctx);
 	}
 }
