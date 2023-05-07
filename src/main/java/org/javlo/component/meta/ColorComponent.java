@@ -3,12 +3,13 @@
  */
 package org.javlo.component.meta;
 
-import java.awt.Color;
-
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.css.CssColor;
 import org.javlo.image.ExtendedColor;
 import org.javlo.image.ImageEngine;
+
+import java.awt.*;
 
 /**
  * @author pvandermaesen
@@ -21,6 +22,18 @@ public class ColorComponent extends AbstractVisualComponent {
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		StringBuffer finalCode = new StringBuffer();
 		finalCode.append(getSpecialInputTag());
+
+		if ( ctx.getGlobalContext().getTemplateData().getColorList() != null &&  ctx.getGlobalContext().getTemplateData().getColorList().length > 0) {
+			finalCode.append("<div class=\"color-list d-flex\">");
+			for (CssColor c : ctx.getGlobalContext().getTemplateData().getColorList()) {
+
+				String js = "document.getElementById('"+getContentName()+"').value='"+c+"';";
+
+				finalCode.append("<button class=\"btn btn-primary mb-3\" style=\"background-color: "+c.toString()+"\" onclick=\""+js+"\">"+c+"</button>");
+			}
+			finalCode.append("</div>");
+		}
+
 		finalCode.append("<div id=\"" + getValue() + "\"><input class=\"color\" type=\"text\" id=\"" + getContentName() + "\" name=\"" + getContentName() + "\" value=\"" + getValue() + "\"/></div>");
 		return finalCode.toString();
 	}
