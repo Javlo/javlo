@@ -63,6 +63,14 @@ public class ExtendedColor extends Color {
 	public boolean isDark() {
 		return ImageEngine.getColorDistance(this, Color.BLACK)<0.5;
 	}
+
+	public boolean isDarker() {
+		return ImageEngine.getColorDistance(this, Color.BLACK)<0.25;
+	}
+
+	public boolean isLighter() {
+		return ImageEngine.getColorDistance(this, Color.BLACK)>0.75;
+	}
 	
 	public ExtendedColor getText() {
 		if (isDark()) {
