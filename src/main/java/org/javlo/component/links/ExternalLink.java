@@ -3,33 +3,24 @@
  */
 package org.javlo.component.links;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Date;
-
-import org.javlo.component.core.ComplexPropertiesLink;
-import org.javlo.component.core.ComponentBean;
-import org.javlo.component.core.ComponentLayout;
-import org.javlo.component.core.ILink;
-import org.javlo.component.core.IReverseLinkComponent;
+import org.javlo.component.core.*;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
-import org.javlo.module.mailing.MailingAction;
-import org.javlo.navigation.MenuElement;
-import org.javlo.service.NavigationService;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
-import org.javlo.service.exception.ServiceException;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Date;
 
 /**
  * @author pvandermaesen
@@ -190,6 +181,11 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 	}
 
 	@Override
+	protected boolean getColumnableDefaultValue() {
+		return true;
+	}
+
+	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 
 		StringWriter writer = new StringWriter();
@@ -284,6 +280,8 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
+
+		super.performColumnable(ctx);
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String label = requestService.getParameter(getLinkLabelName(), null);
 		String link = requestService.getParameter(getLinkName(), "");
