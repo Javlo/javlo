@@ -130,14 +130,16 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+		String closeComment = (!ctx.isProd() ? "<!-- /close comp:" + getType() + " -->" : "");
+		String colSuffix = getColomnableSuffix(ctx) + closeComment;
 		if (isWrapped(ctx)) {
 			if (getComponentBean().isList()) {
-				return "</a></li>";
+				return "</a></li>"+colSuffix;
 			} else {
-				return "</a>";
+				return "</a>"+colSuffix;
 			}
 		} else {
-			return "";
+			return colSuffix;
 		}
 	}
 
@@ -207,11 +209,10 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 				} else if (latestValidDate == null
 						&& StaticConfig.getInstance(ctx.getRequest().getSession()).isInternetAccess()) {
 					try {
-						if (NetHelper.isURLValid(new URL(link), true)) {
+						if (link.startsWith("tel:") || NetHelper.isURLValid(new URL(link), true)) {
 							latestValidDate = new Date();
 						} else {
-							setMessage(new GenericMessage(i18nAccess.getText("component.error.external-link.404"),
-									GenericMessage.ERROR));
+							setMessage(new GenericMessage(i18nAccess.getText("component.error.external-link.404"), GenericMessage.ERROR));
 						}
 					} catch (Exception e) {
 						setMessage(new GenericMessage(i18nAccess.getText("component.error.external-link"),
