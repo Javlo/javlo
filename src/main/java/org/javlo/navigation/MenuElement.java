@@ -5554,7 +5554,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 		List<Map<String, Object>> contentArray = new LinkedList<Map<String, Object>>();
 		Map<String, Object> dynamicComponent = new HashMap<String, Object>();
-		dynamicComponent.put("test", "test-2508");
 		for (String lg : langs) {
 			ContentContext langCtx = ctx.getContextWidthOtherRequestLanguage(lg);
 			langCtx.setArea(null);

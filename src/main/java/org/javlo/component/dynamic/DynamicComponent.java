@@ -3,41 +3,13 @@
  */
 package org.javlo.component.dynamic;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.logging.Logger;
-
 import org.javlo.bean.Link;
-import org.javlo.component.core.AbstractVisualComponent;
-import org.javlo.component.core.ComponentBean;
-import org.javlo.component.core.IContentVisualComponent;
-import org.javlo.component.core.IDate;
-import org.javlo.component.core.ILink;
-import org.javlo.component.core.ISubTitle;
+import org.javlo.component.core.*;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.fields.Field;
-import org.javlo.fields.FieldFactory;
-import org.javlo.fields.FieldImage;
-import org.javlo.fields.IFieldContainer;
-import org.javlo.fields.MetaField;
+import org.javlo.fields.*;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -55,12 +27,16 @@ import org.javlo.template.Template;
 import org.javlo.utils.StructuredProperties;
 import org.javlo.ztatic.IStaticContainer;
 
+import java.io.*;
+import java.util.*;
+import java.util.logging.Logger;
+
 /**
  * @author pvandermaesen
  */
 public class DynamicComponent extends AbstractVisualComponent implements IStaticContainer, IFieldContainer, IDate, ILink, IImageTitle, ISubTitle {
 
-	public static final String JSP_HEADER = "<%@ taglib uri=\"http://java.sun.com/jsp/jstl/core\" prefix=\"c\"%><%@ taglib prefix=\"fn\" uri=\"http://java.sun.com/jsp/jstl/functions\"%><%@ taglib uri=\"/WEB-INF/javlo.tld\" prefix=\"jv\"%>";
+	public static final String JSP_HEADER = "<%@ page contentType=\"text/html; charset=UTF-8\" %><%@ taglib uri=\"http://java.sun.com/jsp/jstl/core\" prefix=\"c\"%><%@ taglib prefix=\"fn\" uri=\"http://java.sun.com/jsp/jstl/functions\"%><%@ taglib uri=\"/WEB-INF/javlo.tld\" prefix=\"jv\"%>";
 
 	public static final String HIDDEN = "hidden";
 
