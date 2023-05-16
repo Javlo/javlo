@@ -5,6 +5,7 @@ package org.javlo.component.meta;
 
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.context.EditContext;
 import org.javlo.css.CssColor;
 import org.javlo.image.ExtendedColor;
 import org.javlo.image.ImageEngine;
@@ -74,10 +75,11 @@ public class ColorComponent extends AbstractVisualComponent {
 	}
 
 	@Override
-	protected String getEmptyCode(ContentContext ctx) throws Exception {
-		if (getValue() != null && getValue().trim().length()>6) {
+	protected String renderViewXHTMLCode(ContentContext ctx) throws Exception {
+		System.out.println("DEBUG getValue().trim().length() = "+getValue().trim().length());
+		if (getValue() != null && getValue().trim().length()>6 && ctx.getRenderMode() == ContentContext.PREVIEW_MODE && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isPreviewEditionMode() && !ctx.isPreviewOnly()) {
 			ExtendedColor color = new ExtendedColor(ImageEngine.getTextColorOnBackground(Color.decode(getValue(ctx))));
-			return ("<div style=\"background-color:"+getValue(ctx)+"; color: "+color.getHTMLCode()+"; text-align: center; padding: 3px;\">"+getValue(ctx)+"</div>");
+			return ("<div style=\"background-color:"+getValue(ctx)+"; color: "+color.getHTMLCode()+"; text-align: center; padding: 3px; width: 180px; margin: 0 auto;\">"+getType()+" : "+getValue(ctx)+"</div>");
 		} else {
 			return super.getEmptyCode(ctx);
 		}
