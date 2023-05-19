@@ -360,3 +360,33 @@ body .ui-widget-header .ui-icon {
 .CodeMirror {
 	height: calc(100% + 5px);
 }
+
+.menu-file {
+	position: absolute;
+	top: 30px;
+	right: 0;
+	a {
+		padding: 0.5rem 1rem;
+		border: 1px #888 solid;
+		color: #eee;
+		margin-right: 1rem;
+		margin-bottom: 1rem;
+	}
+
+	a.active, a:hover, a:focus {
+		color: #000;
+		background-color: #eee;
+		text-decoration: none;
+	}
+}
+
+#tools .content {
+	flex-wrap: wrap;
+	.part-1 {
+		width: 100%;
+		display: flex;
+		justify-content: flex-end;
+		margin-bottom: 6px;
+		padding-right: 4px;
+	}
+}

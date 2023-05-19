@@ -34,7 +34,7 @@ public class FileModuleContext extends AbstractModuleContext {
 	 */
 	@Override
 	public void init() {
-		loadNavigation();
+		/*loadNavigation();*/
 	};
 
 	public static FileModuleContext getInstance(HttpServletRequest request) throws FileNotFoundException, InstantiationException, IllegalAccessException, IOException, ModuleException {
@@ -44,9 +44,9 @@ public class FileModuleContext extends AbstractModuleContext {
 	}
 
 	public void loadNavigation() {
-		navigation.clear();
+		/*navigation.clear();
 		navigation.add(getHomeLink());
-		navigation.add(new LinkToRenderer(i18nAccess.getText("file.navigation.meta"), PAGE_META, "/jsp/meta.jsp"));
+		navigation.add(new LinkToRenderer(i18nAccess.getText("file.navigation.meta"), PAGE_META, "/jsp/meta.jsp"));*/
 	}
 
 	public void clear() {

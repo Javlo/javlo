@@ -8,6 +8,7 @@ params:
 
  --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<jsp:include page="menu.jsp" />
 <c:url var="uploadURL" value="${info.currentURL}" context="/">
 	<c:if test="${not empty param.select}">
 		<c:param name="select" value="${param.select}"></c:param>

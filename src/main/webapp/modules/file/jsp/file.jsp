@@ -6,6 +6,8 @@
 	<c:set var="ELPath" value="${param.path}" scope="session" />
 </c:if>
 
+<jsp:include page="menu.jsp" />
+
 <link rel="stylesheet" href="${info.currentModuleURL}/elfinder/css/elfinder.full.css">
 <link rel="stylesheet" href="${info.currentModuleURL}/elfinder/css/theme-javlo.css">
 

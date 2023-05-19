@@ -1,6 +1,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
 %><c:if test="${fn:length(info.contentLanguages) > 1 and empty param.previewEdit && empty param.templateid}">
+
+	<div class="part-1">
+
 <form id="form-languages" action="${info.currentURL}" method="get" class="js-submit">
 <div class="select-languages form_default">
 	<input type="hidden" name="webaction" value="file.changeLanguage" />
@@ -55,6 +58,8 @@
 	<option value="4"${sort == '4'?' selected="selected"':''}>${i18n.edit['action.sort.creation-date']}</option>
 </select>
 </form>
+
+</div>
 
 <c:if test="${empty param.templateid}">
 <input class="action-field filter-field" type="text" name="filter" placeholder="${i18n.edit['global.filter']}" onkeyup="filter(this.value, '#form-meta li');"/>
