@@ -2,6 +2,8 @@
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
 %>
 
+<c:if test="${empty fromModule}">
+
 <ul class="menu-file">
 	<a href="${info.currentUrl}?webaction=changeRenderer&page=explorer&path=/static/file/legals" class="${fn:contains(currentModule.renderer, 'file.jsp')?'active':'unactive'}">
 		<i class="bi bi-folder2-open"></i> ${i18n.edit['file.navigation.explorer']}
@@ -11,3 +13,4 @@
 	</a>
 </ul>
 
+</c:if>
