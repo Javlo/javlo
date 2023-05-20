@@ -3,10 +3,7 @@
  */
 package org.javlo.component.text;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-
+import io.bit3.jsass.CompilationException;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
@@ -18,7 +15,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-import io.bit3.jsass.CompilationException;
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author pvandermaesen
@@ -26,6 +25,8 @@ import io.bit3.jsass.CompilationException;
 public class ExtendedWidget extends AbstractPropertiesComponent {
 	
 	private List<String> FIELDS = Arrays.asList(new String[] {"xhtml", "css", "file"});
+
+	private static String[] STYLE = new String[] {"no-filtered", "filtered"};
 
 	public static final String TYPE = "extendedWidget";
 
@@ -42,7 +43,12 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 			createRenderer(ctx);
 		}
 	}
-	
+
+	@Override
+	public String[] getStyleList(ContentContext ctx) {
+		return STYLE;
+	}
+
 	public void createRenderer(ContentContext ctx) throws Exception {
 		File renderer = getRendererFile(ctx);
 		final String filePrefix = "<%@ taglib uri=\"http://java.sun.com/jsp/jstl/core\" prefix=\"c\"%><%@ taglib prefix=\"fn\" uri=\"http://java.sun.com/jsp/jstl/functions\"%><%@ taglib uri=\"/WEB-INF/javlo.tld\" prefix=\"jv\"%>";
@@ -62,7 +68,9 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 		String errorMsg = "<strong>Error : NO SCRIPLET</strong>";
 		xhtml = xhtml.replace("<%", errorMsg);
 		xhtml = xhtml.replace(errorMsg + '@', "<%@");
-		//xhtml = XHTMLHelper.replaceLinks(ctx, xhtml);
+		if (getStyle() != null && !getStyle().contains("no-")) {
+			xhtml = XHTMLHelper.replaceLinks(ctx, xhtml);
+		}
 		ResourceHelper.writeStringToFile(renderer, filePrefix+style+xhtml);
 	}
 	

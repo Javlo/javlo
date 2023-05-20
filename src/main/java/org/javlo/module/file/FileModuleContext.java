@@ -1,12 +1,5 @@
 package org.javlo.module.file;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.javlo.bean.LinkToRenderer;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.LangHelper;
@@ -15,6 +8,12 @@ import org.javlo.module.core.AbstractModuleContext;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 public class FileModuleContext extends AbstractModuleContext {
 
@@ -34,7 +33,7 @@ public class FileModuleContext extends AbstractModuleContext {
 	 */
 	@Override
 	public void init() {
-		/*loadNavigation();*/
+		loadNavigation();
 	};
 
 	public static FileModuleContext getInstance(HttpServletRequest request) throws FileNotFoundException, InstantiationException, IllegalAccessException, IOException, ModuleException {
@@ -44,9 +43,9 @@ public class FileModuleContext extends AbstractModuleContext {
 	}
 
 	public void loadNavigation() {
-		/*navigation.clear();
+		navigation.clear();
 		navigation.add(getHomeLink());
-		navigation.add(new LinkToRenderer(i18nAccess.getText("file.navigation.meta"), PAGE_META, "/jsp/meta.jsp"));*/
+		navigation.add(new LinkToRenderer(i18nAccess.getText("file.navigation.meta"), PAGE_META, "/jsp/meta.jsp"));
 	}
 
 	public void clear() {

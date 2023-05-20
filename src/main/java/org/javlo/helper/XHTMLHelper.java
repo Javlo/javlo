@@ -3,45 +3,12 @@
  */
 package org.javlo.helper;
 
-import java.awt.Color;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.CharArrayReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URLDecoder;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.logging.Level;
-
-import javax.servlet.ServletContext;
-
+import com.lowagie.text.DocumentException;
+import io.bit3.jsass.CompilationException;
+import io.bit3.jsass.Compiler;
+import io.bit3.jsass.Options;
+import io.bit3.jsass.Output;
+import io.bit3.jsass.context.FileContext;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -54,10 +21,10 @@ import org.javlo.context.GlobalContext;
 import org.javlo.data.InfoBean;
 import org.javlo.ecom.Basket;
 import org.javlo.exception.ResourceNotFoundException;
-import org.javlo.helper.XMLManipulationHelper.BadXMLException;
-import org.javlo.helper.XMLManipulationHelper.TagDescription;
 import org.javlo.helper.Comparator.DoubleArrayComparator;
 import org.javlo.helper.Comparator.MapEntryComparator;
+import org.javlo.helper.XMLManipulationHelper.BadXMLException;
+import org.javlo.helper.XMLManipulationHelper.TagDescription;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.i18n.RequestI18nAccess;
 import org.javlo.image.ExtendedColor;
@@ -81,13 +48,15 @@ import org.jsoup.safety.Safelist;
 import org.jsoup.select.Elements;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
-import com.lowagie.text.DocumentException;
-
-import io.bit3.jsass.CompilationException;
-import io.bit3.jsass.Compiler;
-import io.bit3.jsass.Options;
-import io.bit3.jsass.Output;
-import io.bit3.jsass.context.FileContext;
+import javax.servlet.ServletContext;
+import java.awt.*;
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URLDecoder;
+import java.util.List;
+import java.util.*;
+import java.util.logging.Level;
 
 /**
  * This class is a helper for construct XHTML code.
@@ -2823,6 +2792,16 @@ public class XHTMLHelper {
 								ContentContext pageContext = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
 								pageContext.setFormat("html");
 								item.attr("href", URLHelper.createURLFromPageName(pageContext, pageName) + params);
+							}
+						} else if (hrefValue.startsWith("file:")) {
+							String fileUrl = hrefValue.substring("file:".length());
+							String params = "";
+							if (ctx == null) {
+								item.attr("href", "[TEST]-file:" + fileUrl);
+							} else {
+								ContentContext pageContext = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
+								pageContext.setFormat("html");
+								item.attr("href", URLHelper.createMediaURL(ctx, fileUrl));
 							}
 						} else if (hrefValue.toLowerCase().startsWith("rss")) {
 							String channel = "";
