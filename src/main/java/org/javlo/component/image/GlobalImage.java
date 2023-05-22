@@ -3,46 +3,15 @@
  */
 package org.javlo.component.image;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.net.URL;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
-import javax.servlet.ServletContext;
-
 import org.apache.commons.fileupload.FileItem;
 import org.javlo.component.core.ComponentContext;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IImageFilter;
 import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.config.StaticConfig;
-import org.javlo.context.ContentContext;
-import org.javlo.context.ContentContextBean;
-import org.javlo.context.EditContext;
-import org.javlo.context.GlobalContext;
-import org.javlo.context.UserInterfaceContext;
+import org.javlo.context.*;
 import org.javlo.exception.ResourceNotFoundException;
-import org.javlo.helper.ComponentHelper;
-import org.javlo.helper.ElementaryURLHelper;
-import org.javlo.helper.NetHelper;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
-import org.javlo.helper.XMLManipulationHelper;
+import org.javlo.helper.*;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ImageEngine;
@@ -65,6 +34,14 @@ import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 import org.javlo.ztatic.StaticInfo;
 import org.owasp.encoder.Encode;
+
+import javax.servlet.ServletContext;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.URL;
+import java.text.ParseException;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * standard image component.
@@ -378,7 +355,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		if (ctx.getRequest().getParameter("path") != null) {
 			String path = ctx.getRequest().getParameter("path");
 			if (StringHelper.getFileExtension(path).length() > 0) {
-				setLink(path);
+				setLink('/'+URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(), path));
 			} else {
 				String newFolder = URLHelper.removeStaticFolderPrefix(ctx, path);
 				String imageFolder = "/" + ctx.getGlobalContext().getStaticConfig().getImageFolderName();
