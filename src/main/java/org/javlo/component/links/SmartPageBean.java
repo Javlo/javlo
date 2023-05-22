@@ -1017,6 +1017,15 @@ public class SmartPageBean {
 		}
 	}
 
+	public ExtendedColor getBackgroundColor() {
+		try {
+			return page.getBackgroundColor(realContentCtx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public int getPriority() {
 		return page.getPriority();
 	}

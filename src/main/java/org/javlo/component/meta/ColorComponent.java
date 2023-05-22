@@ -19,6 +19,10 @@ public class ColorComponent extends AbstractVisualComponent {
 
 	public static final String TYPE = "color";
 
+	public static final String BACKGROUND_COLOR = "background";
+
+	private String[] TYPES = new String[]  {"font", BACKGROUND_COLOR};
+
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		StringBuffer finalCode = new StringBuffer();
@@ -37,6 +41,11 @@ public class ColorComponent extends AbstractVisualComponent {
 
 		finalCode.append("<div id=\"" + getValue() + "\"><input class=\"color\" type=\"text\" id=\"" + getContentName() + "\" name=\"" + getContentName() + "\" value=\"" + getValue() + "\"/></div>");
 		return finalCode.toString();
+	}
+
+	@Override
+	public String[] getStyleList(ContentContext ctx) {
+		return TYPES;
 	}
 
 	@Override

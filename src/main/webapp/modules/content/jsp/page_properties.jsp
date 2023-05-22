@@ -98,10 +98,8 @@
 									</label>
 								</div>
 								<div class="col-sm-6">
-									<div class="form-group">
-										<label for="end_publish">${i18n.edit['item.end-publish']} <input class="datepicker form-control" type="text" id="end_publish" name="end_publish" value="${page.endPublish}" />
-										</label>
-									</div>
+									<label for="end_publish">${i18n.edit['item.end-publish']} <input class="datepicker form-control" type="text" id="end_publish" name="end_publish" value="${page.endPublish}" />
+									</label>
 								</div>
 							</div>
 						</fieldset>

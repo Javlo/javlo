@@ -1572,7 +1572,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	}
 
 	/**
-	 * get the slogan of the page (slogan component)
+	 * get the color of the page
 	 * 
 	 * @param ctx
 	 * @return
@@ -1595,7 +1595,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		IContentComponentsList contentList = getContent(noAreaCtx);
 		while (contentList.hasNext(noAreaCtx)) {
 			IContentVisualComponent elem = contentList.next(noAreaCtx);
-			if (elem.getType().equals(ColorComponent.TYPE) && !StringHelper.isEmpty(elem.getValue(noAreaCtx))) {
+			if (elem.getType().equals(ColorComponent.TYPE) && !StringHelper.isEmpty(elem.getValue(noAreaCtx)) && !ColorComponent.BACKGROUND_COLOR.equals(elem.getStyle())) {
 				try {
 					res = new ExtendedColor(Color.decode(elem.getValue(noAreaCtx)));
 				} catch (Exception e) {
@@ -1605,6 +1605,42 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		}
 		desc.color = res;
 		return desc.color;
+	}
+
+	/**
+	 * get the background color
+	 *
+	 * @param ctx
+	 * @return
+	 * @throws Exception
+	 */
+	public ExtendedColor getBackgroundColor(ContentContext ctx) throws Exception {
+
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+
+		if (desc.backgroundColor != null) {
+			return desc.backgroundColor;
+		}
+		ExtendedColor res = EmptyColor.instance;
+		ContentContext noAreaCtx = ctx.getContextWithoutArea();
+
+		if (noAreaCtx.getRenderMode() == ContentContext.EDIT_MODE) {
+			noAreaCtx.setRenderMode(ContentContext.PREVIEW_MODE);
+		}
+
+		IContentComponentsList contentList = getContent(noAreaCtx);
+		while (contentList.hasNext(noAreaCtx)) {
+			IContentVisualComponent elem = contentList.next(noAreaCtx);
+			if (elem.getType().equals(ColorComponent.TYPE) && !StringHelper.isEmpty(elem.getValue(noAreaCtx)) && ColorComponent.BACKGROUND_COLOR.equals(elem.getStyle())) {
+				try {
+					res = new ExtendedColor(Color.decode(elem.getValue(noAreaCtx)));
+				} catch (Exception e) {
+					res = EmptyColor.instance;
+				}
+			}
+		}
+		desc.backgroundColor = res;
+		return desc.backgroundColor;
 	}
 
 	ArrayList<MenuElement> getChildElementRecursive(ContentContext ctx, MenuElement elem, String type, int deph) throws Exception {

@@ -1,13 +1,5 @@
 package org.javlo.component.container;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Stack;
-
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.image.ImageBackground;
@@ -17,6 +9,10 @@ import org.javlo.context.EditContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.service.RequestService;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.*;
 
 public class Box extends AbstractVisualComponent implements IContainer {
 	
@@ -70,6 +66,8 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		ctx.getRequest().setAttribute(CLOSE_BOX_ATTRIBUTE, isCloseBox());
 		ctx.getRequest().setAttribute("titleBox", getTitle());
 		ctx.getRequest().setAttribute("footerBox", getFooter());
+		ctx.getRequest().setAttribute("cssStyle", getCSSStyle(ctx));
+
 		//ctx.getRequest().setAttribute("closeRow", isCloseRow(ctx));
 		ImageBackground bg = getBackgroundImage(ctx);
 		if (bg != null) {

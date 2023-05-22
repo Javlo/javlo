@@ -242,6 +242,15 @@ public class PageBean implements Serializable {
 		}
 	}
 
+	public ExtendedColor getBackgroundColor() {
+		try {
+			return page.getBackgroundColor(ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public String getHumanName() {
 		return page.getHumanName();
 	}
@@ -692,11 +701,9 @@ public class PageBean implements Serializable {
 			return page.isValid();
 		}
 	}
-
 	public boolean isNeedValidation() {
 		return page.isNeedValidation();
 	}
-
 	public boolean isNoValidation() {
 		return page.isNoValidation();
 	}
