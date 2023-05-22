@@ -3,46 +3,6 @@
  */
 package org.javlo.component.core;
 
-import java.awt.Color;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.actions.DataAction;
@@ -57,19 +17,11 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.UserInterfaceContext;
+import org.javlo.css.CssColor;
 import org.javlo.exception.ResourceNotFoundException;
-import org.javlo.helper.BeanHelper;
-import org.javlo.helper.ComponentHelper;
-import org.javlo.helper.ConfigHelper;
-import org.javlo.helper.ElementaryURLHelper;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.ServletHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
-import org.javlo.helper.XMLManipulationHelper;
-import org.javlo.helper.XMLManipulationHelper.BadXMLException;
+import org.javlo.helper.*;
 import org.javlo.helper.Comparator.StringSizeComparator;
+import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ExtendedColor;
 import org.javlo.message.GenericMessage;
@@ -90,6 +42,21 @@ import org.javlo.utils.DebugListening;
 import org.javlo.utils.StructuredProperties;
 import org.javlo.utils.SuffixPrefix;
 import org.owasp.encoder.Encode;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.awt.*;
+import java.io.*;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.List;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class is the first class for component.
@@ -1044,11 +1011,22 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("</div>");
 		}
 
+		List<ExtendedColor> colors = ctx.getCurrentTemplate().getColorList();
+
+		if (ctx.getGlobalContext().getTemplateData().getColorList() != null && ctx.getGlobalContext().getTemplateData().getColorList().length > 0) {
+			colors = new LinkedList<>();
+			for (CssColor newColor : Arrays.asList(ctx.getGlobalContext().getTemplateData().getColorList())) {
+				if (newColor != null) {
+					colors.add(0, new ExtendedColor(newColor.getRGB()));
+				}
+			}
+		}
+
 		if (getConfig(ctx).isChooseBackgoundColor()) {
 			out.println("<div class=\"line\">");
 			String bgColInputName = "bgcol-" + getId();
 			out.println("<label for=\"" + bgColInputName + "\">" + i18nAccess.getText("component.background-color") + "</label>");
-			List<ExtendedColor> colors = ctx.getCurrentTemplate().getColorList();
+
 			if (colors.size() > 0) {
 				out.println(XHTMLHelper.renderColorChooser(bgColInputName, "", colors, StringHelper.neverNull(getBackgroundColor())));
 			} else {
@@ -1061,7 +1039,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("<div class=\"line\">");
 			String textColInputName = "textcol-" + getId();
 			out.println("<label for=\"" + textColInputName + "\">" + i18nAccess.getText("component.text-color") + "</label>");
-			List<ExtendedColor> colors = ctx.getCurrentTemplate().getColorList();
+
 			if (colors.size() > 0) {
 				out.println(XHTMLHelper.renderColorChooser(textColInputName, "", colors, StringHelper.neverNull(getTextColor())));
 			} else {
