@@ -1,15 +1,15 @@
 package org.javlo.template;
 
-import java.awt.Color;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.javlo.css.CssColor;
 import org.javlo.helper.StringHelper;
 
+import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
+
 public class TemplateData {
 	
-	public static final int COLOR_LIST_SIZE = 6;
+	public static final int COLOR_LIST_SIZE = 9;
 	
 	public static final TemplateData EMPTY = new TemplateData();
 	
