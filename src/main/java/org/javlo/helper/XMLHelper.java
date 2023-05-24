@@ -3,21 +3,6 @@
  */
 package org.javlo.helper;
 
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.context.ContentContext;
@@ -32,6 +17,13 @@ import org.javlo.servlet.AccessServlet;
 import org.javlo.servlet.IVersion;
 import org.javlo.ztatic.StaticInfo;
 import org.owasp.encoder.Encode;
+
+import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * @author pvandermaesen
@@ -379,6 +371,10 @@ public class XMLHelper {
 					if (beans[j].getTextColor() != null && beans[j].getTextColor().trim().length() > 0) {
 						out.print("\" txtcol=\"");
 						out.print(beans[j].getTextColor());
+					}
+					if (beans[j].getTextPosition() != null && beans[j].getTextPosition().trim().length() > 0) {
+						out.print("\" txtpos=\"");
+						out.print(beans[j].getTextPosition());
 					}
 					if (beans[j].isRepeat()) {
 						out.print("\" repeat=\"true");

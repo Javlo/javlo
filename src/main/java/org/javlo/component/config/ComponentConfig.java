@@ -1,20 +1,15 @@
 package org.javlo.component.config;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.logging.Logger;
-
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.template.Template;
 import org.javlo.utils.ConfigurationProperties;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class ComponentConfig {
 	
@@ -238,6 +233,13 @@ public class ComponentConfig {
 			return false;
 		}
 		return StringHelper.isTrue(properties.getString("comp.color.text", null));
+	}
+
+	public boolean isChooseTextPosition() {
+		if (properties == null) {
+			return false;
+		}
+		return StringHelper.isTrue(properties.getString("comp.position.text", null));
 	}
 	
 	public boolean isFontStyle() {

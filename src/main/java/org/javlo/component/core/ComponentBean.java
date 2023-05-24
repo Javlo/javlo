@@ -3,16 +3,15 @@
  */
 package org.javlo.component.core;
 
+import org.apache.commons.beanutils.BeanUtils;
+import org.javlo.helper.StringHelper;
+import org.javlo.service.visitors.CookiesService;
+import org.javlo.user.User;
+
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.Set;
-
-import org.apache.commons.beanutils.BeanUtils;
-import org.javlo.helper.DebugHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.service.visitors.CookiesService;
-import org.javlo.user.User;
 
 /**
  * @author pvandermaesen component state less.
@@ -39,6 +38,8 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 	private String authors = "";
 	private String backgroundColor = null;
 	private String textColor = null;
+
+	private String textPosition = null;
 	private ComponentLayout layout = null;
 	private String manualCssClass = null; 
 	private int columnSize = -1;
@@ -344,4 +345,10 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 		this.columnStyle = columnStyle;
 	}
 
+	public String getTextPosition() {
+		return textPosition;
+	}
+	public void setTextPosition(String textPosition) {
+		this.textPosition = textPosition;
+	}
 }

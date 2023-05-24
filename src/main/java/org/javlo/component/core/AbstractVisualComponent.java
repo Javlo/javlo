@@ -71,7 +71,7 @@ import java.util.regex.Pattern;
  * <li>{@link String} type : the component type. See {@link #getType()}</li>
  * <li>{@link String} layout : the layout of the component is css (can be null).
  * </li>
- * <li>{@link STring} componentWidth : the width of component forced by
+ * <li>{@link String} componentWidth : the width of component forced by
  * contributor (if component manage it)
  * <li>{@link String} style : the style selected for the component. See
  * <li>{@link String} previewAttributes : a string with attribute for preview
@@ -1048,6 +1048,41 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("</div>");
 		}
 
+		if (getConfig(ctx).isChooseTextPosition()) {
+			out.println("<div class=\"text-position\">");
+			out.println("<label class=\"text-position-label\">"+i18nAccess.getText("component.text-position", "text position")+"</label>");
+			out.println("<div class=\"line btn-group\">");
+			String textColInputName = "textpos-" + getId();
+			for (int i=1; i<=9; i++) {
+				String textColInputId = textColInputName+"-"+i;
+
+				/* L = left, M = middle, R = right, T = top, B = bottom */
+				String h="L";
+				String v="T";
+				if (i==1 || i==4 || i==7) {
+					h="L";
+				}
+				if (i==2 || i==5 || i==8) {
+					h="M";
+				}
+				if (i==3 || i==6 || i==9) {
+					h="R";
+				}
+				if (i>6) {
+					v="B";
+				} else if (i>3) {
+					v="M";
+				}
+
+				out.println("<div class=\"_jv_btn-check\">");
+				out.println("<input id=\"" + textColInputId + "\" name=\"" + textColInputName + "\" class=\"pos-"+i+"\" type=\"radio\" value=\"" + i + "\" "+((""+i).equals(getTextPosition())?" checked=\"checked\"":"")+" />");
+				out.println("<label for=\"" + textColInputId + "\"><i class=\"bi bi-dot\"></i></label>");
+				out.println("</div>");
+			}
+			out.println("</div>");
+			out.println("</div>");
+		}
+
 		if (isFreeInputLayout()) {
 			String[] stylesLabel = getStyleLabelList(ctx);
 			if (styles.length != stylesLabel.length) {
@@ -1232,6 +1267,17 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				getComponentBean().setDeleteDate(date);
 			}
 			setModify();
+		}
+
+		String textPos = requestService.getParameter("textpos-" + getId(), null);
+		if (textPos != null && !textPos.equals(getTextPosition())) {
+			try {
+				setTextPosition(textPos);
+				setModify();
+				setNeedRefresh(true);
+			} catch (Exception e) {
+				logger.warning(e.getLocalizedMessage());
+			}
 		}
 
 		String textCol = requestService.getParameter("textcol-" + getId(), null);
@@ -1870,6 +1916,26 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 		if (isBackgroundColored()) {
 			style = style + " colored-wrapper";
+		}
+		if (StringHelper.isDigit(getTextPosition())) {
+			int tPos = Integer.parseInt(getTextPosition());
+			String styleVertical = "text-position-vertical-";
+			String styleHorizontal = "text-position-horizontal-";
+			if (tPos<4) {
+				styleVertical += "top";
+			} else if (tPos<7) {
+				styleVertical += "center";
+			} else {
+				styleVertical += "bottom";
+			}
+			if (tPos == 1 || tPos == 4 || tPos == 7) {
+				styleHorizontal += "left";
+			} else if (tPos == 2 || tPos == 5 || tPos == 8) {
+				styleHorizontal += "center";
+			} else if (tPos == 3 || tPos == 6 || tPos == 9) {
+				styleHorizontal += "right";
+			}
+			style = style + " "+styleHorizontal+" "+styleVertical+" ";
 		}
 		if (previousComp == null || !previousComp.getType().equals(getType())) {
 			style = style + " first ";
@@ -2532,6 +2598,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	public String getTextColor() {
 		return componentBean.getTextColor();
+	}
+
+	public String getTextPosition() {
+		return componentBean.getTextPosition();
 	}
 
 	@Override
@@ -3323,6 +3393,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	public void setTextColor(String textcol) {
 		componentBean.setTextColor(textcol);
+	}
+
+	public void setTextPosition(String textPos) {
+		componentBean.setTextPosition(textPos);
 	}
 
 	public void setMessage(GenericMessage inMsg) {

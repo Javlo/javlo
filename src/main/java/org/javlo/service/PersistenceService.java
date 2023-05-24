@@ -1,53 +1,5 @@
 package org.javlo.service;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.Writer;
-import java.net.URLDecoder;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
-
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-
 import org.apache.commons.io.FileUtils;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentLayout;
@@ -56,13 +8,8 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.taxonomy.TaxonomyBean;
 import org.javlo.data.taxonomy.TaxonomyService;
-import org.javlo.helper.DebugHelper;
+import org.javlo.helper.*;
 import org.javlo.helper.DebugHelper.StructureException;
-import org.javlo.helper.NetHelper;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.TimeHelper;
-import org.javlo.helper.URLHelper;
 import org.javlo.io.SecureFile;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -80,6 +27,22 @@ import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
 import org.javlo.ztatic.StaticInfo;
 import org.xml.sax.SAXParseException;
+
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import java.io.*;
+import java.net.URLDecoder;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 public class PersistenceService {
 
@@ -886,6 +849,7 @@ public class PersistenceService {
 			bean.setBackgroundColor(contentNode.getAttributeValue("bgcol", null));
 			bean.setManualCssClass(contentNode.getAttributeValue("css", null));
 			bean.setTextColor(contentNode.getAttributeValue("txtcol", null));
+			bean.setTextPosition(contentNode.getAttributeValue("txtpos", null));
 			if (contentNode.getAttributeValue("displayCookiesStatus", null) != null) {
 				bean.setCookiesDisplayStatus(Integer.parseInt(contentNode.getAttributeValue("displayCookiesStatus", null)));
 			}

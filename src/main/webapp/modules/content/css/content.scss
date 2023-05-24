@@ -1592,3 +1592,26 @@ div.wysiwyg-paragraph textarea {
 	text-align: right;
 	display: block;
 }
+
+.text-position {
+
+	.btn-group {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		border: 1px #999 solid;
+		width: 90px;
+		border-radius: 3px;
+		._jv_btn-check {
+			label {
+				border-radius: 0 !important;
+				font-size: .8rem;
+				text-align: center;
+				padding: 0;
+				width: 30px !important;
+				display: inline-block;
+				float: none;
+			}
+			margin-bottom: 0;
+		}
+	}
+}
