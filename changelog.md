@@ -951,3 +951,5 @@ Security in case of vulnerabilities.
 ### fixed
   - link without scheme usable in field external link
 ## [2.2] - 03/03/2023
+### Added
+- text position
