@@ -1935,7 +1935,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			} else if (tPos == 3 || tPos == 6 || tPos == 9) {
 				styleHorizontal += "right";
 			}
-			style = style + " "+styleHorizontal+" "+styleVertical+" ";
+			style = style + " "+styleHorizontal+" "+styleVertical+" text-pos-"+tPos;
 		}
 		if (previousComp == null || !previousComp.getType().equals(getType())) {
 			style = style + " first ";
