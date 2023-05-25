@@ -1,32 +1,7 @@
 package org.javlo.helper;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.lang.reflect.InvocationTargetException;
-import java.text.DateFormatSymbols;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.javlo.component.column.OpenCell;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentLayout;
 import org.javlo.component.core.ContentElementList;
@@ -59,6 +34,12 @@ import org.javlo.service.NavigationService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.google.translation.TranslatorFactory;
 import org.javlo.user.User;
+
+import javax.servlet.http.HttpSession;
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.text.DateFormatSymbols;
+import java.util.*;
 
 public class MacroHelper {
 
@@ -512,10 +493,8 @@ public class MacroHelper {
 							newComp.setDisplayHidden(comp.isDisplayHidden());
 							newComp.setRepeat(comp.isRepeat());
 							newComp.getComponentBean().setLayout(ComponentLayout.getNewInstance(comp.getComponentBean().getLayout()));
-							if (translate && currentPage.isRealContentAnyLanguage(ctxNoArea)) {
+							if (translate) {
 								newComp.transflateFrom(lgCtx, TranslatorFactory.getTranslator(ctx.getGlobalContext()), ctxNoArea.getRequestContentLanguage());
-							} else if (translate) {
-								logger.warning("content not found : " + currentPage.getPath());
 							}
 						}
 					}
