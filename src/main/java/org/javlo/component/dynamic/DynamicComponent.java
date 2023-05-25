@@ -1196,6 +1196,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 					field.transflateFrom(ctx, translator, lang);
 				}
 				setModify();
+				updateCache();
 				return true;
 			} catch (Exception e) {
 				e.printStackTrace();
