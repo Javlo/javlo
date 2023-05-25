@@ -501,6 +501,7 @@ public class MacroHelper {
 				}
 			}
 		}
+		PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 	}
 
 	/**
