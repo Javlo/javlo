@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class TemplateData {
 	
-	public static final int COLOR_LIST_SIZE = 9;
+	public static final int COLOR_LIST_SIZE = 12;
 	
 	public static final TemplateData EMPTY = new TemplateData();
 	

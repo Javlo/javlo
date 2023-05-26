@@ -28,7 +28,7 @@
 			
 			<c:set var="color" value="${currentContext.templateData.secondaryColor}" scope="request" />
 			<jsp:include page="template_data.jsp?name=secondaryColor&style=color" />
-			
+
 			<c:set var="color" value="${currentContext.templateData.thirdColor}" scope="request" />
 			<jsp:include page="template_data.jsp?name=thirdColor&style=color" />
 
@@ -198,7 +198,7 @@
 								<p>0123456789</p>
 								<p>abcdefghijklmnopqrstuvwxyz</p>
 								<p>ABCDEFGHIJKLMNOPQRSTUVWXYZ</p>
-								<p>ιθηΰλδοφω</p>
+								<p>οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½</p>
 							</div>
 						</div>
 					</div>
@@ -228,7 +228,7 @@
 								<p>0123456789</p>
 								<p>abcdefghijklmnopqrstuvwxyz</p>
 								<p>ABCDEFGHIJKLMNOPQRSTUVWXYZ</p>
-								<p>ιθηΰλδοφω</p>
+								<p>οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½</p>
 							</div>
 						</div>
 					</div>

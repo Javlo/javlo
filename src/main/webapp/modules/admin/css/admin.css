@@ -167,5 +167,12 @@ a.nav {
 .color-list {
 	display: flex;
 	justify-content: left;
-	align-items: center;	
+	align-items: center;
+}
+
+.color-list input {
+	padding: 2px 1px;
+	font-size: .6rem;
+	font-weight: normal;
+	text-align: center;
 }
