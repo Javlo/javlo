@@ -1,22 +1,10 @@
 package org.javlo.servlet;
 
-import java.net.URL;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.InfoBean;
 import org.javlo.filter.CatchAllFilter;
 import org.javlo.helper.NetHelper;
-import org.javlo.helper.RequestHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -25,6 +13,16 @@ import org.javlo.module.mailing.MailingModuleContext;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.net.URL;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.logging.Logger;
 
 public class ContentOnlyServlet extends HttpServlet {
 	
@@ -74,6 +72,7 @@ public class ContentOnlyServlet extends HttpServlet {
 				path = "/";
 			}
 			if (globalContext.getPageIfExist(ctx, path, false) == null) {
+				logger.warning("page not found in globalContext : "+path);
 				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			}
 			

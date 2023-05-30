@@ -33,6 +33,10 @@ public interface IUserInfo {
 
 	public String getPassword();
 
+	String getNationalRegister();
+
+	void setNationalRegister(String nationalRegister);
+
 	public String getEmail();
 	
 	public String getUrl();
@@ -51,6 +55,18 @@ public interface IUserInfo {
 
 	public Set<String> getRoles();
 
+	String getAddress();
+
+	void setAddress(String address);
+
+	String getCity();
+
+	void setCity(String city);
+
+	String getPostCode();
+
+	void setPostCode(String postCode);
+
 	public void setId(String id);
 
 	public void setLogin(String login);
@@ -68,6 +84,8 @@ public interface IUserInfo {
 	public void setInfo(String info);
 
 	public void setToken(String token);
+
+	public void setBirthdate(String date);
 	
 	public void setPreferredLanguage(String[] preferredLanguage);
 
@@ -76,6 +94,12 @@ public interface IUserInfo {
 	public void addRoles(Set<String> strings);
 	
 	public void removeRoles(Set<String> strings);
+
+	void setCountry(String country);
+
+	String getPhone();
+
+	void setPhone(String phone);
 
 	public void setCreationDate(Date creationDate);
 

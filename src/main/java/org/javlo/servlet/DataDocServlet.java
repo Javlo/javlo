@@ -1,13 +1,5 @@
 package org.javlo.servlet;
 
-import java.net.URL;
-import java.util.logging.Logger;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.NetHelper;
@@ -15,6 +7,13 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.service.document.DataDocument;
 import org.javlo.service.document.DataDocumentService;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.net.URL;
+import java.util.logging.Logger;
 
 public class DataDocServlet extends HttpServlet {
 	
@@ -75,6 +74,7 @@ public class DataDocServlet extends HttpServlet {
 			}
 			DataDocument doc = docService.getDocumentData(category, Long.parseLong(idStr), token);
 			if (doc == null) {
+				logger.warning("document not found : "+token);
 				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 				return;
 			} else {

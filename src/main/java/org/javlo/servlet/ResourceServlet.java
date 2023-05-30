@@ -1,20 +1,5 @@
 package org.javlo.servlet;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Logger;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -36,6 +21,15 @@ import org.javlo.utils.JSONMap;
 import org.javlo.utils.XLSTools;
 import org.javlo.ztatic.StaticInfo;
 import org.javlo.ztatic.StaticInfoBean;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * @author pvandermaesen
@@ -248,6 +242,7 @@ public class ResourceServlet extends HttpServlet {
 									csvFile = new File(URLHelper.mergePath(dataFolder, FilenameUtils.removeExtension(resourceURI)));
 								}
 								if (!csvFile.exists()) {
+									logger.warning("csv not found : "+csvFile);
 									response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 									return;
 								}
@@ -263,6 +258,7 @@ public class ResourceServlet extends HttpServlet {
 								return;
 							}
 						}
+						logger.warning("file not found : "+file);
 						response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 						return;
 					}

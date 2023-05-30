@@ -67,6 +67,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	protected String memberdate = null;
 	protected String site = null;
 	protected String idNumber;
+	protected String nationalRegister;
 	protected String nickname;
 	protected String health;
 	protected String food;
@@ -85,6 +86,16 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	@Override
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	@Override
+	public String getNationalRegister() {
+		return nationalRegister;
+	}
+
+	@Override
+	public void setNationalRegister(String nationalRegister) {
+		this.nationalRegister = nationalRegister;
 	}
 
 	/**
@@ -152,7 +163,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	}
 
 	/**
-	 * @param string
+	 * @param String
 	 */
 	@Override
 	public void setLogin(String login) {
@@ -166,7 +177,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	}
 
 	/**
-	 * @param string
+	 * @param String
 	 */
 	@Override
 	public void setPassword(String inPwd) {
@@ -392,26 +403,32 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 		this.organization = organization;
 	}
 
+	@Override
 	public String getAddress() {
 		return address;
 	}
 
+	@Override
 	public void setAddress(String address) {
 		this.address = address;
 	}
 
+	@Override
 	public String getCity() {
 		return city;
 	}
 
+	@Override
 	public void setCity(String city) {
 		this.city = city;
 	}
 
+	@Override
 	public String getPostCode() {
 		return postCode;
 	}
 
+	@Override
 	public void setPostCode(String postCode) {
 		this.postCode = postCode;
 	}
@@ -431,18 +448,22 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 		this.info = info;
 	}
 
+	@Override
 	public String getCountry() {
 		return country;
 	}
 
+	@Override
 	public void setCountry(String country) {
 		this.country = country;
 	}
 
+	@Override
 	public String getPhone() {
 		return phone;
 	}
 
+	@Override
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
@@ -492,7 +513,8 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	public String getBirthdate() {
 		return birthdate;
 	}
-	
+
+	@Override
 	public void setBirthdate(String date) {
 		birthdate = date;
 	}
@@ -762,4 +784,6 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	public void setTaxonomy(String[] taxonomy) {
 		this.taxonomy = taxonomy;
 	}
+
+
 }

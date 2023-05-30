@@ -1,24 +1,5 @@
 package org.javlo.component.users;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.imageio.ImageIO;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.fileupload.FileItem;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.ComponentBean;
@@ -27,18 +8,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.context.SpecialConfigBean;
-import org.javlo.helper.BeanHelper;
-import org.javlo.helper.ComponentHelper;
-import org.javlo.helper.LangHelper;
-import org.javlo.helper.NetHelper;
-import org.javlo.helper.PatternHelper;
-import org.javlo.helper.RequestParameterMap;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.SecurityHelper;
-import org.javlo.helper.ServletHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
+import org.javlo.helper.*;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ImageEngine;
 import org.javlo.mailing.MailConfig;
@@ -52,17 +22,19 @@ import org.javlo.service.ListService;
 import org.javlo.service.RequestService;
 import org.javlo.service.social.Facebook;
 import org.javlo.service.social.SocialService;
-import org.javlo.user.AdminUserFactory;
-import org.javlo.user.AdminUserInfo;
-import org.javlo.user.IUserFactory;
-import org.javlo.user.IUserInfo;
-import org.javlo.user.User;
-import org.javlo.user.UserFactory;
-import org.javlo.user.UserInfo;
+import org.javlo.user.*;
 import org.javlo.utils.CollectionAsMap;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.StaticInfo;
 import org.javlo.ztatic.StaticInfoBean;
+
+import javax.imageio.ImageIO;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.servlet.http.HttpSession;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.util.*;
 
 public class UserRegistration extends MapComponent implements IAction {
 
@@ -280,7 +252,7 @@ public class UserRegistration extends MapComponent implements IAction {
 		IUserFactory userFactory;
 		IUserInfo userInfo;
 
-		if (comp == null || comp.isAdminRegistration()) {
+		if (comp != null && comp.isAdminRegistration()) {
 			userFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 			userInfo = new AdminUserInfo();
 		} else {
@@ -316,6 +288,10 @@ public class UserRegistration extends MapComponent implements IAction {
 			}
 		}
 
+		if (rs.getParameter("address","").length()>128) {
+			return i18nAccess.getViewText("registration.error.address-size", "address max size : 128 chars");
+		}
+
 		List<String> functions = rs.getParameterListValues("function", Collections.EMPTY_LIST);
 		if (functions.size() > 0 && userInfo instanceof AdminUserInfo) {
 			((AdminUserInfo) userInfo).setFunction(StringHelper.collectionToString(functions, ";"));
@@ -333,6 +309,18 @@ public class UserRegistration extends MapComponent implements IAction {
 				logger.warning("spam detected on '"+ctx.getGlobalContext().getContextKey()+"' from ip:"+NetHelper.getIp(ctx.getRequest()));
 				return "do not use link.";
 			}
+
+			userInfo.setFirstName(rs.getParameter("firstname", ""));
+			userInfo.setLastName(rs.getParameter("lastname", ""));
+
+			userInfo.setBirthdate(rs.getParameter("birthdate"));
+			userInfo.setNationalRegister(rs.getParameter("nationalRegister", ""));
+			userInfo.setPhone(rs.getParameter("phone"));
+
+			userInfo.setAddress(rs.getParameter("address"));
+			userInfo.setCity(rs.getParameter("city"));
+			userInfo.setPostCode(rs.getParameter("postcode"));
+			userInfo.setCountry(rs.getParameter("country"));
 
 			userInfo.setSite(ctx.getGlobalContext().getContextKey());
 			userInfo.setPassword(SecurityHelper.encryptPassword(userInfo.getPassword()));
@@ -362,9 +350,10 @@ public class UserRegistration extends MapComponent implements IAction {
 			}
 
 			String mailAdminContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), "Registration on : " + globalContext.getGlobalTitle(), mapMailData, URLHelper.createURL(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE)), "go on page >>", null);
+			String mailUserContent = XHTMLHelper.createUserMail(ctx.getGlobalContext().getTemplateData(), i18nAccess.getViewText("user.new-account") + globalContext.getGlobalTitle(),"" , mapMailData, null, null, null);
 
 			mailService.sendMail(admin, admin, "new user : " + userInfo.getLogin(), mailAdminContent, true);
-			mailService.sendMail(admin, newUser, i18nAccess.getViewText("user.new-account") + globalContext.getGlobalTitle(), mailAdminContent, true);
+			mailService.sendMail(admin, newUser, i18nAccess.getViewText("user.new-account") + globalContext.getGlobalTitle(), mailUserContent, true);
 
 			ctx.getRequest().setAttribute("noform", "true");
 		} catch (Exception e) {

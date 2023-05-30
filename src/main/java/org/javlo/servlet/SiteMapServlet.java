@@ -1,5 +1,18 @@
 package org.javlo.servlet;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.javlo.context.ContentContext;
+import org.javlo.context.GlobalContext;
+import org.javlo.helper.*;
+import org.javlo.navigation.MenuElement;
+import org.javlo.service.ContentService;
+import org.javlo.utils.HtmlPart;
+import org.owasp.encoder.Encode;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -9,25 +22,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.javlo.context.ContentContext;
-import org.javlo.context.GlobalContext;
-import org.javlo.helper.MacroHelper;
-import org.javlo.helper.NetHelper;
-import org.javlo.helper.SiteMapBloc;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.XMLHelper;
-import org.javlo.navigation.MenuElement;
-import org.javlo.service.ContentService;
-import org.javlo.utils.HtmlPart;
-import org.owasp.encoder.Encode;
 
 public class SiteMapServlet extends HttpServlet {
 	
@@ -193,6 +187,7 @@ public class SiteMapServlet extends HttpServlet {
 			if (number > 0) {
 				SiteMapBloc sitemap = XMLHelper.getSiteMapBloc(ctx, root, number, lastestDate, sitemapResource);
 				if (StringHelper.isEmpty(sitemap.getText())) {
+					logger.warning("");
 					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 				} else {
 					Writer writer = new OutputStreamWriter(response.getOutputStream(), "UTF8");		

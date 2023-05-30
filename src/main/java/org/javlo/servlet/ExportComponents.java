@@ -1,19 +1,5 @@
 package org.javlo.servlet;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.logging.Logger;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
@@ -31,6 +17,19 @@ import org.javlo.template.TemplateFactory;
 import org.javlo.utils.CSVFactory;
 import org.javlo.utils.Cell;
 import org.javlo.utils.XLSTools;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.logging.Logger;
 
 public class ExportComponents extends HttpServlet {
 	
@@ -56,8 +55,8 @@ public class ExportComponents extends HttpServlet {
 				compFile=comp;
 			}
 		}
-		System.out.println(">>>>>>>>> ExportComponents.renderDynamicComponent : compFile = "+compFile); //TODO: remove debug trace
 		if (compFile == null) {
+			logger.warning("document not found.");
 			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			return;
 		}
@@ -97,6 +96,7 @@ public class ExportComponents extends HttpServlet {
 							comp = content.getComponent(ctx, compId);
 						}
 						if (comp == null) {
+							logger.warning("compenent not found : "+compId);
 							response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 							return;
 						} else {
