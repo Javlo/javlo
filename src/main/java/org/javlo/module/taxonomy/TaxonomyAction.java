@@ -1,10 +1,5 @@
 package org.javlo.module.taxonomy;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpSession;
-
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.context.ContentContext;
 import org.javlo.data.taxonomy.TaxonomyBean;
@@ -20,6 +15,12 @@ import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.user.AdminUserSecurity;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TaxonomyAction extends AbstractModuleAction {
 	
@@ -105,7 +106,11 @@ public class TaxonomyAction extends AbstractModuleAction {
 				if (bean.searchChildByName(newName) != null) {
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("taxonomy.name-exist", "Name already exist."), GenericMessage.ERROR));
 				} else {
-					bean.addChildAsFirst(new TaxonomyBean(StringHelper.getRandomId(),newName));
+					TaxonomyBean newBean = new TaxonomyBean(StringHelper.getRandomId(),newName);
+					Map<String,String> labels = new HashMap<>();
+					labels.put(ctx.getRequestContentLanguage(), nName);
+					newBean.setLabels(labels);
+					bean.addChildAsFirst(newBean);
 					taxonomyService.clearCache();
 					updateList=true;
 				}
