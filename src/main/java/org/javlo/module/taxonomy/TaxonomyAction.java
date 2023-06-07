@@ -21,8 +21,11 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class TaxonomyAction extends AbstractModuleAction {
+
+	public static Logger logger = Logger.getLogger(TaxonomyAction.class.getName());
 	
 	public static final String NAME = "taxonomy";
 
@@ -60,6 +63,7 @@ public class TaxonomyAction extends AbstractModuleAction {
 		Boolean asChild = StringHelper.isTrue(rs.getParameter("aschild", null));		
 		
 		if (!StringHelper.isEmpty(moveto) && !StringHelper.isEmpty(moved)) {
+			logger.info("move item to : "+moveto+" [moved:"+moved+", asChild="+asChild+"]");
 			if (taxonomyService.move(moved, moveto, asChild)) {
 				String parentId = moveto;
 				for (TaxonomyBean bean : taxonomyService.getAllBeans()) {
