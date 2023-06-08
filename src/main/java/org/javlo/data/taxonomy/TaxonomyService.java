@@ -80,7 +80,7 @@ public class TaxonomyService {
 	}
 
 	private void createDebugStructure() {
-		TaxonomyBean geo = root.addChildAsFirst(new TaxonomyBean("0", "#geo"));
+		TaxonomyBean geo = root.addChildAsFirst(new TaxonomyBean("0-0", "#geo"));
 		geo.addChildAsFirst(new TaxonomyBean("0-1", "be"));
 		geo.addChildAsFirst(new TaxonomyBean("0-2", "fr"));
 		root.addChildAsFirst(new TaxonomyBean("1", "child 1"));
@@ -363,22 +363,22 @@ public class TaxonomyService {
 	}
 
 	/**
-	 * add all parent of the selection in the filter
+	 * add all parent of the selection in the list
 	 *
 	 * @param container
 	 * @param filter
 	 * @return
 	 */
 	public boolean isMatchWidthParent(ITaxonomyContainer container, ITaxonomyContainer filter) {
-		Set<String> newFilter = new HashSet<String>(filter.getTaxonomy());
-		for (String id : filter.getTaxonomy()) {
+		Set<String> newContainer = new HashSet<String>(container.getTaxonomy());
+		for (String id : container.getTaxonomy()) {
 			TaxonomyBean bean = getTaxonomyBeanMap().get(id);
 			while (bean != null && bean.getParent() != null) {
-				newFilter.add(bean.getParent().getId());
+				newContainer.add(bean.getParent().getId());
 				bean = bean.getParent();
 			}
 		}
-		return !Collections.disjoint(container.getTaxonomy(), newFilter);
+		return !Collections.disjoint(container.getTaxonomy(), newContainer);
 	}
 
 	public int getDepth(TaxonomyBean bean) {
@@ -732,7 +732,7 @@ public class TaxonomyService {
 		clearCache();
 	}
 
-	public static void main(String[] args) {
+	public static void __main(String[] args) {
 		String taxoText = "0|root\n" +
 				"-168206759389121245356|test\n" +
 				"--168206759800211570424|a\n" +
@@ -747,7 +747,7 @@ public class TaxonomyService {
 
 	}
 
-	public static void test_main(String[] args) {
+	public static void main(String[] args) {
 		TaxonomyService taxo = new TaxonomyService();
 		taxo.createDebugStructure();
 
@@ -769,8 +769,9 @@ public class TaxonomyService {
 		TaxonomyBean subSubChild = taxo.getRoot().getAllChildren().get(2);
 		TaxonomyBean otherChild = taxo.getRoot().getAllChildren().get(5);
 
-		System.out.println("subChild    = "+subChild.getName());
-		System.out.println("subChild2   = "+subChild2.getName());
+		System.out.println("child    = "+child.getId());
+		System.out.println("subChild    = "+subChild.getName()+" [parent="+subChild.getParent()+"]");
+		System.out.println("subChild2   = "+subChild2.getName()+" [parent="+subChild2.getParent()+"]");
 		System.out.println("subSubChild = "+subSubChild.getName());
 		System.out.println("otherChild  = "+otherChild.getName());
 		System.out.println("");
@@ -789,6 +790,7 @@ public class TaxonomyService {
 		System.out.println("-");
 		System.out.println("true = "+taxo.isMatch(new TaxonomyContainerBean(subChild.getId()), new TaxonomyContainerBean(child.getId())));
 		System.out.println("true = "+taxo.isMatch(new TaxonomyContainerBean(subChild2.getId()), new TaxonomyContainerBean(child.getId())));
+		System.out.println("true = "+taxo.isAllMatch(new TaxonomyContainerBean(subChild.getId()), new TaxonomyContainerBean(child.getId())));
 		System.out.println("true = "+taxo.isAllMatch(new TaxonomyContainerBean(subChild.getId(), subChild2.getId()), new TaxonomyContainerBean(child.getId())));
 	}
 
@@ -807,7 +809,7 @@ public class TaxonomyService {
 
 	}
 
-	public static void __main(String[] args) {
+	public static void ___main(String[] args) {
 		String line = "0|root[]";
 		Matcher matcher = Pattern.compile("\\[(.*?)\\]").matcher(line);
 		if (matcher.find()) {
