@@ -370,15 +370,15 @@ public class TaxonomyService {
 	 * @return
 	 */
 	public boolean isMatchWidthParent(ITaxonomyContainer container, ITaxonomyContainer filter) {
-		Set<String> newContainer = new HashSet<String>(container.getTaxonomy());
+		Set<String> newContainer = new HashSet<String>();
 		for (String id : container.getTaxonomy()) {
 			TaxonomyBean bean = getTaxonomyBeanMap().get(id);
 			while (bean != null && bean.getParent() != null) {
-				newContainer.add(bean.getParent().getId());
+				newContainer.add(bean.getId());
 				bean = bean.getParent();
 			}
 		}
-		return !Collections.disjoint(container.getTaxonomy(), newContainer);
+		return !Collections.disjoint(filter.getTaxonomy(), newContainer);
 	}
 
 	public int getDepth(TaxonomyBean bean) {
