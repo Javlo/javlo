@@ -1,21 +1,5 @@
 package org.javlo.data;
 
-import java.io.File;
-import java.text.DateFormatSymbols;
-import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.ISubTitle;
@@ -28,14 +12,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.ElementaryURLHelper;
-import org.javlo.helper.NavigationHelper;
-import org.javlo.helper.NetHelper;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.ServletHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
+import org.javlo.helper.*;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IInteractiveMacro;
 import org.javlo.macro.core.IMacro;
@@ -62,15 +39,16 @@ import org.javlo.servlet.AccessServlet;
 import org.javlo.template.Template;
 import org.javlo.template.Template.TemplateBean;
 import org.javlo.template.TemplateFactory;
-import org.javlo.user.AdminUserFactory;
-import org.javlo.user.AdminUserSecurity;
-import org.javlo.user.IUserFactory;
-import org.javlo.user.IUserInfo;
-import org.javlo.user.User;
-import org.javlo.user.UserFactory;
+import org.javlo.user.*;
 import org.javlo.utils.HtmlPart;
 import org.joda.time.LocalTime;
 import org.owasp.encoder.Encode;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.text.DateFormatSymbols;
+import java.text.ParseException;
+import java.util.*;
 
 public class InfoBean {
 
@@ -1391,12 +1369,7 @@ public class InfoBean {
 			return null;
 		}
 	}
-
-	public Template getTemplate() {
-		Template currentTemplate = ctx.getCurrentTemplate();
-		return currentTemplate;
-	}
-
+	
 	public String getPathPrefix() {
 		return URLHelper.getPathPrefix(ctx);
 	}
