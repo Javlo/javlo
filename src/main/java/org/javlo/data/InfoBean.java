@@ -1392,6 +1392,11 @@ public class InfoBean {
 		}
 	}
 
+	public Template getTemplate() {
+		Template currentTemplate = ctx.getCurrentTemplate();
+		return currentTemplate;
+	}
+
 	public String getPathPrefix() {
 		return URLHelper.getPathPrefix(ctx);
 	}
