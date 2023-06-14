@@ -238,6 +238,10 @@ input[readonly] {
 	height: auto !important;
 }
 
+.files .btn::first-letter {
+	text-transform: none;
+}
+
 @media screen and (max-width: 1710px) {
 	.gallery .display-list ul li {
 		width: 33%;
