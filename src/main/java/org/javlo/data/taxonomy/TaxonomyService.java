@@ -372,7 +372,7 @@ public class TaxonomyService {
 	public boolean isMatchWidthParent(ITaxonomyContainer container, ITaxonomyContainer filter) {
 		Set<String> newContainer = new HashSet<String>();
 		for (String id : container.getTaxonomy()) {
-			TaxonomyBean bean = getTaxonomyBeanMap().get(id);
+			TaxonomyBean bean = getTaxonomyBeanMap(true).get(id);
 			while (bean != null && bean.getParent() != null) {
 				newContainer.add(bean.getId());
 				bean = bean.getParent();
