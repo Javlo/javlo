@@ -953,3 +953,5 @@ Security in case of vulnerabilities.
 ## [2.2] - 03/03/2023
 ### Added
 - text position 
+### Modified
+- minimize html in extended widget
