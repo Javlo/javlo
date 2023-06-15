@@ -1369,7 +1369,7 @@ public class InfoBean {
 			return null;
 		}
 	}
-	
+
 	public String getPathPrefix() {
 		return URLHelper.getPathPrefix(ctx);
 	}

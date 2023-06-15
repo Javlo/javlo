@@ -375,7 +375,7 @@ public class XHTMLHelper {
 
 	/**
 	 * create a drop down from a map.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the field.
 	 * @param map
@@ -394,7 +394,7 @@ public class XHTMLHelper {
 
 	/**
 	 * create a drop down from a map.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the field.
 	 * @param map
@@ -536,7 +536,7 @@ public class XHTMLHelper {
 
 	/**
 	 * generate a list of navigation element. replace #id with the page id.
-	 * 
+	 *
 	 * @param startTag
 	 *            insert before path sample : <option value=#id>.
 	 * @param endTag
@@ -725,7 +725,7 @@ public class XHTMLHelper {
 	/**
 	 * call .toString on all object, create String array and call the same method
 	 * with array as param.
-	 * 
+	 *
 	 * @param name
 	 * @param content
 	 * @param value
@@ -755,7 +755,7 @@ public class XHTMLHelper {
 	/**
 	 * call .toString on all object, create String array and call the same method
 	 * with array as param.
-	 * 
+	 *
 	 * @param name
 	 * @param content
 	 * @param value
@@ -868,7 +868,7 @@ public class XHTMLHelper {
 
 	/**
 	 * generate a one select widget in XHTML
-	 * 
+	 *
 	 * @param content
 	 *            a double array with id in 0 index and label in 1 index
 	 * @param value
@@ -1053,7 +1053,7 @@ public class XHTMLHelper {
 
 	/**
 	 * generate a one select widget in XHTML
-	 * 
+	 *
 	 * @param name
 	 *            the name of the parameter
 	 * @param content
@@ -1091,7 +1091,7 @@ public class XHTMLHelper {
 
 	/**
 	 * generate a one select widget in XHTML
-	 * 
+	 *
 	 * @param name
 	 *            the name of the parameter
 	 * @param content
@@ -1926,7 +1926,7 @@ public class XHTMLHelper {
 
 	/**
 	 * return false if a tag is open but not closed.
-	 * 
+	 *
 	 * @param ctx
 	 * @param resource
 	 * @return true if tag is'nt closed but opened.
@@ -1959,6 +1959,7 @@ public class XHTMLHelper {
 			return "<script src=\"" + URLHelper.createStaticURL(ctx, resource) + "\" type=\"text/javascript\"></script>";
 		}
 	}
+
 	public static String renderHeaderResourceInsertionWithoutalreadyTest(ContentContext ctx, String resource, String buildId) {
 		if (StringHelper.getFileExtension(resource).equalsIgnoreCase("css")) {
 			return "<link rel=\"stylesheet\" type=\"text/css\" href=\"" + URLHelper.addParam(URLHelper.createStaticURL(ctx, resource), "bid", buildId) + "\" />";
@@ -1974,7 +1975,7 @@ public class XHTMLHelper {
 			} else {
 				alreadyClosedIfOpen(ctx, resource); // close </script>
 				return "<script src=\"" + URLHelper.createStaticURL(ctx, resource) + "\" type=\"text/javascript\"></script>";
-			} 
+			}
 		} else {
 			return "<!-- resource already insered : " + resource + " -->";
 		}
@@ -2277,7 +2278,7 @@ public class XHTMLHelper {
 
 	/**
 	 * replace text out test tag.
-	 * 
+	 *
 	 * @param html
 	 *            a html
 	 * @param token
@@ -2308,7 +2309,7 @@ public class XHTMLHelper {
 
 	/**
 	 * replace text out test tag.
-	 * 
+	 *
 	 * @param html
 	 *            a html
 	 * @param token
@@ -2361,7 +2362,19 @@ public class XHTMLHelper {
 	}
 
 	public static void main(String[] args) throws MalformedURLException, Exception {
-		System.out.println("css = "+compileScss("p { color: red; span { display: block; margin-left: 1rem; }}"));
+		String testHtml = "<div class=\"col-lg-3 col-md-12 footer-contact text-center text-md-start\">\n" +
+				"\t\t\t<h4>Contact Us</h4>\n" +
+				"<p><strong>HOTREC AISBL</strong><br>\n" +
+				"              <span class=\"less\">7955861942-03<br>\n" +
+				"                BE 0451258945</span><br>\n" +
+				"\t\t\t\t\t36-38 Rue Dautzenberg<br> B-1050 Brussels<br> Belgium <br> <br> <strong>Phone:</strong>\n" +
+				"  \t\t\t\t\t<a class=\"white-link\" href=\"tel:003225136323\">+32 2 513 63 23</a><br> <strong>Email:</strong>\n" +
+				"  <a class=\"white-link\" href=\"mailto:info@hotrec.eu\">info@hotrec.eu</a></p>\n" +
+				"\t</div>";
+
+		testHtml = minimizeHtml(replaceLinks(null, testHtml));
+
+		System.out.println(testHtml);
 	}
 
 	public static String textToXHTMLNewWin(String text) {
@@ -2557,7 +2570,7 @@ public class XHTMLHelper {
 
 	/**
 	 * transform a value to a span with key as class and value inside.
-	 * 
+	 *
 	 * @param list
 	 * @param key
 	 * @return the key if list null, and empty string if key not found in the list.
@@ -2576,7 +2589,7 @@ public class XHTMLHelper {
 
 	/**
 	 * transform a value to a span with key as class and value inside.
-	 * 
+	 *
 	 * @param list
 	 * @param key
 	 * @return the key if list null, and empty string if key not found in the list.
@@ -2665,7 +2678,7 @@ public class XHTMLHelper {
 
 	/**
 	 * replace link in xhtml with createURL call.
-	 * 
+	 *
 	 * @param ctx
 	 * @param content
 	 * @return
@@ -2699,7 +2712,7 @@ public class XHTMLHelper {
 							if (hrefValue.startsWith("page:")) {
 								String pageName = hrefValue.substring("page:".length());
 								String params = "";
-								
+
 								if (pageName.contains("|")) {
 									params = pageName.substring(pageName.indexOf("|") + 1);
 									pageName = hrefValue.substring(0, pageName.indexOf("|"));
@@ -2764,7 +2777,7 @@ public class XHTMLHelper {
 
 	/**
 	 * replace link in xhtml with createURL call.
-	 * 
+	 *
 	 * @param ctx
 	 * @param content
 	 * @return
@@ -3224,6 +3237,30 @@ public class XHTMLHelper {
 
 	}
 
+	public static String minimizeHtml(String html)  {
+		if (html == null) {
+			return null;
+		}
+		String out = "";
+		BufferedReader reader = new BufferedReader(new StringReader(html));
+		try {
+			String line = reader.readLine();
+			while (line != null) {
+				while (line.contains("  ")) {
+					line = line.replace("  "," ");
+				}
+				while (line.contains("\t\t")) {
+					line = line.replace("\t\t","\t");
+				}
+				out += line;
+				line = reader.readLine();
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		return out;
+	}
+
 	public static String createUserMail(TemplateData templateData, String title, String content, Map data, String link, String linkLabel, String footer) {
 
 		String backgroundColor = "#ffffff";
@@ -3308,5 +3345,7 @@ public class XHTMLHelper {
 		}
 		return newContent;
 	}
+
+
 
 }

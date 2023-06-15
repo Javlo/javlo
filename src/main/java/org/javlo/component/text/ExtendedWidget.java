@@ -71,6 +71,7 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 		if (getStyle() != null && !getStyle().contains("no-")) {
 			xhtml = XHTMLHelper.replaceLinks(ctx, xhtml);
 		}
+		xhtml = XHTMLHelper.minimizeHtml(xhtml);
 		ResourceHelper.writeStringToFile(renderer, filePrefix+style+xhtml);
 	}
 	
