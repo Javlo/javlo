@@ -1,20 +1,24 @@
 package org.javlo.data.taxonomy;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.service.IListItem;
 import org.javlo.service.ListService;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 public class TaxonomyDisplayBean {
 
 	private ContentContext ctx;
 	private TaxonomyBean bean;
 	private boolean displayParentLabel = false;
-	
+
+	public TaxonomyBean getBean() {
+		return bean;
+	}
+
 	public final static List<TaxonomyDisplayBean> convert (ContentContext ctx, List<TaxonomyBean> inBeans) {
 		if (inBeans == null) {
 			return null;
@@ -127,5 +131,9 @@ public class TaxonomyDisplayBean {
 	
 	public int getDepth() {
 		return this.bean.getDepth();
+	}
+
+	public String getImage() {
+		return this.bean.getImage();
 	}
 }

@@ -1,14 +1,15 @@
 package org.javlo.component.meta;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.Set;
-
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.data.taxonomy.TaxonomyDisplayBean;
+import org.javlo.data.taxonomy.TaxonomyService;
 import org.javlo.helper.StringHelper;
 import org.owasp.encoder.Encode;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.Set;
 
 public class TaxonomyDisplayComponent extends AbstractVisualComponent {
 
@@ -30,8 +31,21 @@ public class TaxonomyDisplayComponent extends AbstractVisualComponent {
 				out.println("<span class=\"prefix\">" + Encode.forHtmlContent(getValue()) + "</span>");
 			}
 			int i=1;
+
+			TaxonomyService ts = TaxonomyService.getInstance(ctx);
+
 			for (TaxonomyDisplayBean bean : TaxonomyDisplayBean.convert(ctx, ctx.getGlobalContext().getAllTaxonomy(ctx).convert(taxonomy))) {
-				out.println("<span class=\"item-"+i+" label label-default badge badge-secondary bg-secondary name-" + Encode.forHtmlAttribute(bean.getName()) + "\">" + Encode.forHtmlContent(StringHelper.neverEmpty(bean.getLabel(), bean.getName())) + "</span>");
+
+				ts.setImage(ctx, bean.getBean());
+
+				String image = "";
+				if (bean.getImage() != null) {
+						image += "<span class=\"image\"><img style=\"max-width: 100px\" src=\""+bean.getImage()+"\" /></span>";
+				}  else {
+					image += "no-image";
+				}
+
+				out.println("<span class=\"item-"+i+" label label-default badge badge-secondary bg-secondary name-" + Encode.forHtmlAttribute(bean.getName()) + "\">" + Encode.forHtmlContent(StringHelper.neverEmpty(bean.getLabel(), bean.getName())) + image + "</span>");
 				i++;
 			}
 			out.println("</div>");

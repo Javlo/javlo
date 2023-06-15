@@ -9,6 +9,7 @@ public class TaxonomyBean {
 	private String id;
 	private String name;
 	private String decoration;
+	private String image;
 	private transient TaxonomyBean parent;
 	private List<TaxonomyBean> children = new LinkedList<TaxonomyBean>();
 	private Map<String, String> labels = new HashMap<String, String>();
@@ -317,4 +318,11 @@ public class TaxonomyBean {
 		return newBean;
 	}
 
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
 }

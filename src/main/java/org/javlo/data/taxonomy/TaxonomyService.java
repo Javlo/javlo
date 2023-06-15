@@ -284,6 +284,32 @@ public class TaxonomyService {
 		return getTaxonomyBeanMap(false);
 	}
 
+	public void setImage(ContentContext ctx, TaxonomyBean bean) throws IOException {
+		File file = new File(ctx.getGlobalContext().getDataFolder()+"/static/taxonomy/"+bean.getPath().replace(" > ", "/")+".jpg");
+		if (file.exists()) {
+			bean.setImage(URLHelper.createMediaURL(ctx, file));
+			return;
+		}
+		file = new File(ctx.getGlobalContext().getDataFolder()+"/static/taxonomy/"+bean.getPath().replace(" > ", "/")+".png");
+		if (file.exists()) {
+			bean.setImage(URLHelper.createMediaURL(ctx, file));
+			return;
+		}
+		file = new File(ctx.getGlobalContext().getDataFolder()+"/static/taxonomy/"+bean.getPath().replace(" > ", "/")+".webp");
+		if (file.exists()) {
+			bean.setImage(URLHelper.createMediaURL(ctx, file));
+			return;
+		}
+		file = new File(ctx.getGlobalContext().getDataFolder()+"/static/taxonomy/"+bean.getPath().replace(" > ", "/")+".svg");
+		if (file.exists()) {
+			bean.setImage(URLHelper.createMediaURL(ctx, file));
+			return;
+		}
+		if (!file.getParentFile().exists()) {
+			file.getParentFile().mkdirs();
+		}
+	}
+
 	public Map<String, TaxonomyBean> getTaxonomyBeanMap(boolean resolveLink) {
 		Map<String, TaxonomyBean> taxonomyBeanMap = getTaxonomyMap(resolveLink);
 		if (taxonomyBeanMap.size() == 0) {
