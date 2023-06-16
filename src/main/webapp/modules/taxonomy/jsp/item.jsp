@@ -2,7 +2,7 @@
 %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
 %><c:set var="node" value="${taxonomy.taxonomyBeanMap[param.id]}" />
 <div id="item-wrapper-${node.id}" class="item-wrapper" draggable="true" data-id="${node.id}" data-aschild="false">
-	<a href="#" class="command action-list ${fn:length(node.children)>0?'open':'close'}" title="expand"><span class="glyphicon glyphicon-menu-down"></span><span class="glyphicon glyphicon-menu-right"></span></a>
+	<a id="action-list-${node.id}" href="#" class="command action-list ${fn:length(node.children)>0?'open':'close'}" title="expand"><span class="glyphicon glyphicon-menu-down"></span><span class="glyphicon glyphicon-menu-right"></span></a>
 	<a href="#" class="command delete" title="delete" onclick="jQuery('#input-delete').val('${param.id}'); jQuery('#taxonomy-form').submit(); return false;"><span class="glyphicon glyphicon-trash"></span></a>
 	<a href="#" class="command move" title="move"><span class="glyphicon glyphicon-sort"></span></a>	
 	<div class="item">	
@@ -15,7 +15,7 @@
 		<ul class="translation bloc hidden">
 		<li class="label id">			
 				<label class="lang" for="change-id-${param.id}">ID</label>
-				<span class="text"><input type="text" name="change-id-${param.id}" id="change-id-${param.id}" class="hidden-input form-control" value="${param.id}" placeholder="ID" /></span>			
+				<span class="text"><input type="text" name="change-id-${param.id}" id="change-id-${param.id}" class="hidden-input form-control" value="${param.id}" placeholder="ID" /></span>
 			</li>
 		<li class="label deco">			
 			<label class="lang" for="change-deco-${param.id}"><i class="fa fa-font" aria-hidden="true"></i></label>

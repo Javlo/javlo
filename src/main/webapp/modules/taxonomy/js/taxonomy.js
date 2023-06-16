@@ -1,3 +1,65 @@
+console.log(">>> taxonomy.js V2.0.2");
+
+var actionItemOpen = [];
+
+function isOpen(item) {
+	if (actionItemOpen[item.id] == null) {
+		return true;
+	} else {
+		return actionItemOpen[item.id];
+	}
+}
+
+function close(item) {
+	if (item.classList.contains("open")) {
+		actionItemOpen[item.id] = false;
+		item.classList.remove("open");
+		item.classList.add("close");
+		children = item.parentElement.parentElement.getElementsByTagName("ul");
+		for (var i = 0; i < children.length; i++) {
+			if (children[i].parentElement == item.parentElement.parentElement) {
+				children[i].classList.add("hidden");
+			}
+		}
+	}
+}
+
+function open(item) {
+	if (item.classList.contains("close")) {
+		actionItemOpen[item.id] = true;
+		item.classList.remove("close");
+		item.classList.add("open");
+		children = item.parentElement.parentElement.getElementsByTagName("ul");
+		for (var i = 0; i < children.length; i++) {
+			if (children[i].parentElement == item.parentElement.parentElement) {
+				children[i].classList.remove("hidden");
+			}
+		}
+	}
+}
+
+function changeAllStatus(status) {
+	document.querySelectorAll(".action-list").forEach(i =>  {
+		if (!i.id.endsWith("-0") || status) {
+			if (status) {
+				open(i);
+			} else {
+				close(i);
+			}
+		}
+	});
+}
+
+function refreshAllStatus() {
+	document.querySelectorAll(".action-list").forEach(i =>  {
+		if (isOpen(i)) {
+			open(i);
+		} else {
+			close(i);
+		}
+	});
+}
+
 jQuery(document).ready(function(){
 	jQuery('.action-list').live("click", function(e) {
 		if (e.preventDefault) {
@@ -5,13 +67,9 @@ jQuery(document).ready(function(){
 		}
 		action = jQuery(this);
 		if (action.hasClass('open')) {
-			action.removeClass('open');
-			action.addClass('close');
-			action.parent().parent().find('> ul').addClass("hidden");
+			close(this);
 		} else {
-			action.removeClass('close');
-			action.addClass('open');
-			action.parent().parent().find('> ul').removeClass("hidden");
+			open(this);
 		}
 		return false;
 	});	
@@ -22,6 +80,7 @@ jQuery(document).ready(function(){
 		document.getElementById("moveto").value="";
 		document.getElementById("moved").value="";
 		addTaxoDragEvents();
+		refreshAllStatus();
 		return true;
 	});
 
