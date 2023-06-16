@@ -156,7 +156,13 @@ public class TaxonomyService {
 
 	public boolean move(String srcId, String destId, boolean asChild) {
 		TaxonomyBean src = getTaxonomyBeanMap().get(srcId);
+		if (src == null) {
+			logger.severe("src not found : "+srcId);
+		}
 		TaxonomyBean target = getTaxonomyBeanMap().get(destId);
+		if (target == null) {
+			logger.severe("target not found : "+srcId);
+		}
 		if (!asChild) {
 			target = target.getParent();
 		} else {
