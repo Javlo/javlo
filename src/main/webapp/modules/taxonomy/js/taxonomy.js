@@ -3,8 +3,11 @@ console.log(">>> taxonomy.js V2.0.2");
 var actionItemOpen = [];
 
 function isOpen(item) {
-	if (actionItemOpen[item.id] == null) {
+	if (item.id.endsWith("-0")) {
 		return true;
+	}
+	if (actionItemOpen[item.id] == null) {
+		return false;
 	} else {
 		return actionItemOpen[item.id];
 	}
@@ -128,7 +131,12 @@ jQuery(document).ready(function(){
 			moved = document.getElementById("moved");
 			moved.value = dragSrcEl.dataset.id;
 			aschild = document.getElementById("aschild");
-			aschild.value = this.dataset.aschild;		
+			aschild.value = this.dataset.aschild;
+
+			console.log("moveto   = "+this.dataset.id);
+			console.log("moved    = "+dragSrcEl.dataset.id);
+			console.log("aschild  = "+this.dataset.aschild);
+
 			//document.getElementById("taxonomy-form").submit();
 			submitForm();
 		}
@@ -169,5 +177,7 @@ jQuery(document).ready(function(){
 		});
 	}
 	addTaxoDragEvents();
+
+	refreshAllStatus();
 	
 });
