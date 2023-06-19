@@ -202,7 +202,6 @@ public class UserAction extends AbstractModuleAction {
 			userContext.setMode(UserModuleContext.ADMIN_USERS_LIST);
 			return "bad user mode : " + mode;
 		}
-
 		return null;
 	}
 
