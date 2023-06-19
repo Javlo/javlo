@@ -1,15 +1,5 @@
 package org.javlo.module.file;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.javlo.bean.Link;
 import org.javlo.comparator.LanguageListSorter;
 import org.javlo.comparator.LanguageListSorter.ILanguage;
@@ -28,14 +18,19 @@ import org.javlo.ztatic.StaticInfo;
 import org.javlo.ztatic.StaticInfo.Position;
 import org.owasp.encoder.Encode;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.*;
+
 public class FileBean implements ILanguage, ITaxonomyContainer {
 
 	public static class FileBeanComparator implements Comparator<FileBean> {
 
 		private final ContentContext ctx;
 		private final int sort;
-		private int order = 1;				
-		
+		private int order = 1;
+
 		public FileBeanComparator(ContentContext inCtx, int inSort) {
 			this(inCtx, inSort, false);
 		}
@@ -62,7 +57,7 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 				return -file1.getStaticInfo().getDate(ctx).compareTo(file2.getStaticInfo().getDate(ctx))*order;
 			}
 		}
-		
+
 	}
 
 	ContentContext ctx;
@@ -81,7 +76,7 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public FileBean(ContentContext ctx, File file, String beanLanguage) {
 		this.ctx = ctx;
 		try {
@@ -117,7 +112,7 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 			return null;
 		}
 	}
-	
+
 	public String getAbsoluteURL() {
 		ContentContext ctx = this.ctx.getContextForAbsoluteURL();
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -142,15 +137,15 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 	public boolean isImage() {
 		return StringHelper.isImage(getName());
 	}
-	
+
 	public boolean isEditable() {
 		return StringHelper.isEditable(getName());
 	}
-	
+
 	public boolean isVideo() {
 		return StringHelper.isVideo(getName());
 	}
-	
+
 	public String getFileExtension() {
 		return StringHelper.getFileExtension(getName()).toLowerCase();
 	}
@@ -162,7 +157,7 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 			return StringHelper.getFileExtension(getName()).toLowerCase();
 		}
 	}
-	
+
 	public String getThumbURL() throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (StringHelper.isImage(getName()) || StringHelper.isPDF(getName()) || StringHelper.getFileExtension(getName()).equalsIgnoreCase("mp4")) {
@@ -180,13 +175,13 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 			return URLHelper.createTransformURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), null, (staticInfo.isStaticFolder()?globalContext.getStaticConfig().getStaticFolder():"") + staticInfo.getStaticURL(), "free", "${info.templateName}");
 		} else {
 			return staticInfo.getURL(ctx);
-			/*System.out.println("***** FileBean.getFreeURL : file = "+staticInfo.getFile()); //TODO: remove debug trace
+            /*System.out.println("***** FileBean.getFreeURL : file = "+staticInfo.getFile()); //TODO: remove debug trace
 			System.out.println("***** FileBean.getFreeURL : staticInfo.getURL(ctx) = "+staticInfo.getURL(ctx)); //TODO: remove debug trace
 			System.out.println("***** FileBean.getFreeURL : URLHelper.createStaticURL(ctx, staticInfo.getURL(ctx)) = "+URLHelper.createStaticURL(ctx, staticInfo.getURL(ctx))); //TODO: remove debug trace
 			return URLHelper.createStaticURL(ctx, staticInfo.getURL(ctx));*/
 		}
 	}
-	
+
 	public String getDynamicUrl() {
 		return "${info.mediaRootURL}"+URLHelper.mergePath(ctx.getGlobalContext().getStaticConfig().getStaticFolder(),getPath());
 	}
@@ -212,19 +207,19 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 		}
 		return staticInfo.getManualDescription(ctx);
 	}
-	
+
 	public String getKeywords() {
 		return StringHelper.collectionToString(staticInfo.getKeywords(ctx),",");
 	}
 
-	
+
 	public String getReference() {
 		if (staticInfo == null) {
 			return null;
 		}
 		return staticInfo.getReference(ctx);
 	}
-	
+
 	public String getLanguage() {
 		if (staticInfo == null) {
 			return null;
@@ -245,12 +240,19 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 		}
 		return StringHelper.renderTime(staticInfo.getDate(ctx));
 	}
-	
+
 	public String getDate() {
 		if (staticInfo == null) {
 			return null;
 		}
 		return StringHelper.renderDate(staticInfo.getDate(ctx));
+	}
+
+	public String getSortableDate() throws ParseException {
+		if (staticInfo == null) {
+			return null;
+		}
+		return StringHelper.renderInputDate(staticInfo.getDate(ctx));
 	}
 
 	public String getManualDate() {
@@ -259,7 +261,7 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 		}
 		return StringHelper.renderTime(staticInfo.getManualDate(ctx));
 	}
-	
+
 	public String getCreationDate() {
 		if (staticInfo == null) {
 			return null;
@@ -273,14 +275,14 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 		}
 		return staticInfo.getTitle(ctx);
 	}
-	
+
 	public String getCopyright() {
 		if (staticInfo == null) {
 			return null;
 		}
 		return staticInfo.getCopyright(ctx);
 	}
-	
+
 	public String getAuthors() {
 		if (staticInfo == null) {
 			return null;
@@ -315,7 +317,15 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 		}
 		return StringHelper.renderSize(staticInfo.getFile().length());
 	}
-	
+
+	public String getSortableSize() {
+		return String.format("%19d",staticInfo.getFile().length());
+	}
+
+	public static void main(String[] args) {
+		System.out.println(String.format("%19d",468757));
+	}
+
 	public Position getPosition() {
 		if (staticInfo == null) {
 			return null;
@@ -339,7 +349,7 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 		}
 		return tags;
 	}
-	
+
 	public Map<String, String> getReadRoles() {
 		if (staticInfo == null) {
 			return null;
@@ -385,7 +395,7 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 		}
 		return staticInfo.getStaticURL();
 	}
-	
+
 	public boolean isFoundInContent() {
 		try {
 			return ResourceHelper.isComponentsUseResource(ctx, getURL());
@@ -394,7 +404,7 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 			return false;
 		}
 	}
-	
+
 	public List<Link> getComponentWithReference() {
 		if (staticInfo == null) {
 			return null;
@@ -407,17 +417,17 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 				String url = URLHelper.createURL(lgCtx, comp.getPage());
 				url = URLHelper.addParam(url, "pushcomp", comp.getId());
 				url = URLHelper.addParam(url, "area", comp.getArea());
-				url = URLHelper.addParam(url, "webaction", "changeArea");				
-				url = URLHelper.addParam(url, "module", "content");				
+				url = URLHelper.addParam(url, "webaction", "changeArea");
+				url = URLHelper.addParam(url, "module", "content");
 				links.add(new Link(url, comp.getPage().getPath(), comp.getPage().getTitle(ctx)));
 			}
 			return links;
 		} catch (Exception e) {
-			e.printStackTrace();			
+			e.printStackTrace();
 		}
 		return Collections.EMPTY_LIST;
 	}
-	
+
 	public void addTranslation(FileBean fileBean) {
 		if (staticInfo == null) {
 			return;
@@ -425,17 +435,17 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 		if (!StringHelper.isEmpty(fileBean.getLanguage())) {
 			if (translation == Collections.EMPTY_LIST) {
 				translation = new LinkedList<FileBean>();
-			}	
+			}
 			translation.add(fileBean);
 			if (fileBean.getLanguage().equals(getBeanLanguage())) {
-			    staticInfo=fileBean.staticInfo;
+				staticInfo=fileBean.staticInfo;
 			}
-		}	
+		}
 		if (staticInfo == null) {
 			staticInfo = StaticInfo.EMPTY_INSTANCE;
 		}
 	}
-	
+
 	public List<FileBean> getTranslation() {
 		LanguageListSorter.sort(ctx.getGlobalContext(), translation);
 		return translation;
@@ -450,10 +460,10 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 	}
 
 	@Override
-	public String getSortLanguage() {		
+	public String getSortLanguage() {
 		return getBeanLanguage();
 	}
-	
+
 	public String getVersionHash() {
 		if (staticInfo != null) {
 			return staticInfo.getVersionHash(ctx);
@@ -461,11 +471,11 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 			return null;
 		}
 	}
-	
+
 	public boolean isJpeg() {
 		return StringHelper.isJpeg(getName());
 	}
-	
+
 	public boolean isToJpeg() {
 		if (staticInfo == null || staticInfo == StaticInfo.EMPTY_INSTANCE || staticInfo.getFile().isDirectory()) {
 			return false;
@@ -473,12 +483,12 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 			return StringHelper.isPDF(getName()) || StringHelper.getFileExtension(getName()).equalsIgnoreCase("png");
 		}
 	}
-	
+
 	@Override
 	public Set<String> getTaxonomy() {
 		return staticInfo.getTaxonomy(ctx);
 	}
-	
+
 	public String getTaxonomySelect() {
 		try {
 			return ctx.getGlobalContext().getAllTaxonomy(ctx).getSelectHtml("taxonomy-"+getId(), staticInfo.getTaxonomy(ctx));
@@ -487,22 +497,22 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 			return e.getMessage();
 		}
 	}
-	
+
 	public int getLastDayVisit() throws ServiceException, IOException {
-		Tracker tracker = Tracker.getTracker(ctx.getGlobalContext(), ctx.getRequest().getSession()); 
+		Tracker tracker = Tracker.getTracker(ctx.getGlobalContext(), ctx.getRequest().getSession());
 		return tracker.getLastDayPathReading(getURL());
 	}
-	
+
 	public int getLastMountVisit() throws ServiceException, IOException {
 		Tracker tracker = Tracker.getTracker(ctx.getGlobalContext(), ctx.getRequest().getSession());
 		return tracker.getLastMountPathReading(getURL());
 	}
-	
+
 	public int getLastYearVisit() throws ServiceException, IOException {
 		Tracker tracker = Tracker.getTracker(ctx.getGlobalContext(), ctx.getRequest().getSession());
 		return tracker.getLastYearPathReading(getURL());
 	}
-	
+
 	public int getWeight() {
 		return weight;
 	}
@@ -510,5 +520,5 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 	public void setWeight(int weight) {
 		this.weight = weight;
 	}
-	
+
 }
