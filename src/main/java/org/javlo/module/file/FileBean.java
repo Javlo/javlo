@@ -161,7 +161,7 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 	public String getThumbURL() throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (StringHelper.isImage(getName()) || StringHelper.isPDF(getName()) || StringHelper.getFileExtension(getName()).equalsIgnoreCase("mp4")) {
-			String fileURL = URLHelper.createTransformURL(ctx, (staticInfo.isStaticFolder()?globalContext.getStaticConfig().getStaticFolder():"") + staticInfo.getStaticURL(), "list");
+			String fileURL = URLHelper.createTransformURL(ctx, (staticInfo.isStaticFolder()?globalContext.getStaticConfig().getStaticFolder():"") + staticInfo.getStaticURL(), "file");
 			fileURL = URLHelper.addParam(fileURL, "ts", ""+staticInfo.getFile().lastModified());
 			return  fileURL;
 		} else {
