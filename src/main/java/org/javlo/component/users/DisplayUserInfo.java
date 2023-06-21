@@ -15,6 +15,7 @@ import java.io.PrintStream;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DisplayUserInfo extends AbstractVisualComponent implements IAction {
 
@@ -133,7 +134,7 @@ public class DisplayUserInfo extends AbstractVisualComponent implements IAction 
 		if (users.size() > 500) {
 			finalCode.append("<div class=\"alert alert-warning mt-3 mb-3\">too many users for display.</div>");
 		} else {
-			users.stream().sorted(Comparator.comparing(IUserInfo::getLogin));
+			users = users.stream().sorted(Comparator.comparing(IUserInfo::getLogin)).collect(Collectors.toList());
 			finalCode.append("<div class=\"large-list mt-3\">");
 			String sep="";
 			for (IUserInfo ui : users) {
