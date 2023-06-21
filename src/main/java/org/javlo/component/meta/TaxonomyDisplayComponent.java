@@ -41,10 +41,7 @@ public class TaxonomyDisplayComponent extends AbstractVisualComponent {
 				String image = "";
 				if (bean.getImage() != null) {
 						image += "<span class=\"image\"><img style=\"max-width: 100px\" src=\""+bean.getImage()+"\" /></span>";
-				}  else {
-					image += "no-image";
 				}
-
 				out.println("<span class=\"item-"+i+" label label-default badge badge-secondary bg-secondary name-" + Encode.forHtmlAttribute(bean.getName()) + "\">" + Encode.forHtmlContent(StringHelper.neverEmpty(bean.getLabel(), bean.getName())) + image + "</span>");
 				i++;
 			}
