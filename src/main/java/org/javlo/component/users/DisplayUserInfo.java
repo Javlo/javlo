@@ -85,7 +85,11 @@ public class DisplayUserInfo extends AbstractVisualComponent implements IAction 
 			users = (List<User>) ctx.getRequest().getAttribute("usersToDisplay");
 		}
 		if (users == null || users.size() == 0) {
-			return "<div class=\"alert alert-warning\">user not found : "+getValue()+"</div>";
+			if (ctx.isAsViewMode()) {
+				return "<!-- no user defined -->";
+			} else {
+				return "<div class=\"alert alert-warning\">user not found : " + getValue() + "</div>";
+			}
 		}
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
