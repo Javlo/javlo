@@ -55,8 +55,13 @@ public class CreateFakeUsers extends AbstractMacro {
 			userInfo.setLastName(lastName.get((int) Math.round(Math.random() * (lastName.size()-1))));
 			userInfo.setOrganization(COMPAGNIES.get((int) Math.round(Math.random() * (COMPAGNIES.size()-1))));
 			userInfo.setEmail(userInfo.getFirstName().toLowerCase() + '.' + userInfo.getLastName().toLowerCase() + "@javlo.org");
-			userInfo.setPhone(generateRandomPhoneNumber());
-			userInfo.setMobile(generateRandomMobileNumber());
+			Random random = new Random();
+			if (random.nextInt(2) == 0) {
+				userInfo.setPhone(generateRandomPhoneNumber());
+			}
+			if (random.nextInt(2) == 0) {
+				userInfo.setMobile(generateRandomMobileNumber());
+			}
 			userInfo.setRoles(new HashSet<String>(Arrays.asList(new String[] { "test" })));
 			userFactory.addUserInfo(userInfo);
 			createAvatar(ctx, userInfo);
