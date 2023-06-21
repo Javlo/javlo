@@ -1,10 +1,5 @@
 package org.javlo.component.users;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.javlo.actions.IAction;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.IContentVisualComponent;
@@ -13,13 +8,19 @@ import org.javlo.data.InfoBean;
 import org.javlo.helper.StringHelper;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
-import org.javlo.user.User;
-import org.javlo.user.UserFactory;
-import org.javlo.user.UserInfo;
+import org.javlo.user.*;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
 
 public class DisplayUserInfo extends AbstractVisualComponent implements IAction {
 
 	public static final String TYPE = "display-user-info";
+
+	public static final String[] STYLES = new String[] { "admin", "visitor" };
 
 	@Override
 	public String getType() {
@@ -37,6 +38,11 @@ public class DisplayUserInfo extends AbstractVisualComponent implements IAction 
 	}
 
 	@Override
+	public String[] getStyleList(ContentContext ctx) {
+		return STYLES;
+	}
+
+	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
 
@@ -44,7 +50,15 @@ public class DisplayUserInfo extends AbstractVisualComponent implements IAction 
 
 		List<String> logins = StringHelper.stringToCollection(getValue(), ",");
 		for (String login : logins) {
-			User user = UserFactory.createUserFactory(ctx.getRequest()).getUser(login);
+
+			IUserFactory userFactory;
+			if (getStyle() != null && !getStyle().contains("admin")) {
+				userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getSession());
+			} else {
+				userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getSession());
+			}
+
+			User user = userFactory.getUser(login);
 			if (user != null) {
 				users.add(user);
 			}
@@ -70,7 +84,7 @@ public class DisplayUserInfo extends AbstractVisualComponent implements IAction 
 			users = (List<User>) ctx.getRequest().getAttribute("usersToDisplay");
 		}
 		if (users.size() == 0) {
-			return "user(s) not found : " + getValue();
+			return "<div class=\"alert alert-warning\">user not found : "+getValue()+"</div>";
 		}
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
@@ -101,6 +115,39 @@ public class DisplayUserInfo extends AbstractVisualComponent implements IAction 
 		}
 		out.close();
 		return new String(outStream.toByteArray());
+	}
+
+	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
+		StringBuffer finalCode = new StringBuffer();
+		finalCode.append(getDebugHeader(ctx));
+		finalCode.append(getSpecialInputTag());
+		finalCode.append("<input class=\"form-control full-width\" id=\"" + getContentName() + "\" name=\"" + getContentName() + "\" value=\""+getValue()+"\" />");
+		IUserFactory userFactory;
+		if (getStyle() != null && !getStyle().contains("admin")) {
+			userFactory = UserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getSession());
+		} else {
+			userFactory = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getSession());
+		}
+
+		List<IUserInfo> users = userFactory.getUserInfoList();
+		if (users.size() > 500) {
+			finalCode.append("<div class=\"alert alert-warning mt-3 mb-3\">too many users for display.</div>");
+		} else {
+			users.stream().sorted(Comparator.comparing(IUserInfo::getLogin));
+			finalCode.append("<div class=\"large-list mt-3\">");
+			String sep="";
+			for (IUserInfo ui : users) {
+				String moreinfo = "";
+				if (!StringHelper.isAllEmpty(ui.getFirstName(), ui.getLastName())) {
+					moreinfo += " ("+ui.getFirstName()+' '+ui.getLastName()+')';
+				}
+				finalCode.append(sep+"<a href=\"javascript:void\" onclick=\"javascript:document.getElementById('"+getContentName()+"').value='"+ui.getLogin()+"'; return false;\">"+ui.getLogin()+moreinfo+"</a>");
+				sep = " | ";
+			}
+			finalCode.append("</div>");
+		}
+
+		return finalCode.toString();
 	}
 
 	@Override
