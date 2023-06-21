@@ -67,6 +67,11 @@ public class TaxonomyDisplayComponent extends AbstractVisualComponent {
 	}
 
 	@Override
+	protected boolean getColumnableDefaultValue() {
+		return true;
+	}
+
+	@Override
 	public boolean isContentCachable(ContentContext ctx) {
 		return true;
 	}
