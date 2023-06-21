@@ -97,10 +97,10 @@ public class DisplayUserInfo extends AbstractVisualComponent implements IAction 
 			if (user != null) {
 				out.println("<div class=\"row user-item mb-3\"><div class=\"col\"><ul class=\"list-group\">");
 				if (!StringHelper.isEmpty(user.getUserInfo().getFirstName()) || !StringHelper.isEmpty(user.getUserInfo().getLastName())) {
-					out.println("<li class=\"list-group-item\">" + user.getUserInfo().getFirstName() + ' ' + user.getUserInfo().getLastName() + "</li>");
+					out.println("<li class=\"list-group-item field-name\">" + user.getUserInfo().getFirstName() + ' ' + user.getUserInfo().getLastName() + "</li>");
 				}
 				if (!StringHelper.isEmpty(user.getUserInfo().getEmail())) {
-					out.println("<li class=\"list-group-item\"><a href=\"mailto:" + user.getUserInfo().getEmail() + "\">" + user.getUserInfo().getEmail() + "</a></li>");
+					out.println("<li class=\"list-group-item field-email\"><a href=\"mailto:" + user.getUserInfo().getEmail() + "\">" + user.getUserInfo().getEmail() + "</a></li>");
 				}
 				if (user.getUserInfo() instanceof UserInfo) {
 					UserInfo userInfo = (UserInfo) user.getUserInfo();
@@ -110,7 +110,7 @@ public class DisplayUserInfo extends AbstractVisualComponent implements IAction 
 				}
 				out.println("</ul></div>");
 
-				out.println("<div class=\"col-3\">");
+				out.println("<div class=\"col-3 image\">");
 				InfoBean info = InfoBean.getCurrentInfoBean(ctx);
 				out.println("<img src=\"" + info.getAvatarURL().get(user.getUserInfo()) + "\" class=\"img-thumbnail\" alt=\"" + user.getUserInfo().getFirstName() + "\">");
 				out.println("</div>");
