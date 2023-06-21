@@ -955,3 +955,4 @@ Security in case of vulnerabilities.
 - text position 
 ### Modified
 - minimize html in extended widget
+- filter page reference
