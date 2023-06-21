@@ -4885,6 +4885,15 @@ public class StringHelper {
 		return out;
 	}
 
+	public static boolean isContains(String src, String token) {
+		if (src == null || token == null) {
+			return false;
+		}
+		src = createFileName(src.toLowerCase());
+		token = createFileName(token.toLowerCase());
+		return src.contains(token);
+	}
+
 	public static void main(String[] args) throws IOException {
 		String name = "Patrick Aime l'été";
 		String fileName = createFileName(name);
