@@ -14,7 +14,8 @@ ${js}
 		<c:if test="${fn:length(pages)>0}">
 			<div class="${fn:length(pages)==1?'hidden':'form-group'}">
 				<label for="root">group</label>
-				<select class="form-control" id="root" name="root" onchange="updateLayoutsImage();">
+				<select class="form-control" id="root" name="root" onchange="updateLayoutsImage();" required>
+					<c:if test="${fn:length(pages)>1}"><option></option></c:if>
 					<c:forEach var="page" items="${pages}">
 						<option value="${page.key}">${page.value}</option>
 					</c:forEach>
