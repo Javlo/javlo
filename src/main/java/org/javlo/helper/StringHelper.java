@@ -2320,6 +2320,13 @@ public class StringHelper {
 		return parseDate(date, "yyyy-MM-dd");
 	}
 
+	public static LocalDate parseSortableLocalDate(String date) throws ParseException {
+		if (date == null) {
+			return null;
+		}
+		return parseLocalDate(date, "yyyy-MM-dd");
+	}
+
 	/*
 	 * public static String encodeBase64ToURLParam(String base64Code) { return
 	 * base64Code.replace('+', '_').replace('/', '-').replace('=','*'); }

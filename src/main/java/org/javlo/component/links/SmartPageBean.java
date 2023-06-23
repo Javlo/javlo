@@ -169,6 +169,15 @@ public class SmartPageBean {
 		}
 	}
 
+	public String getDateInfo() throws Exception {
+		SmartTimeRange tr = getTimeRange();
+		if (tr != null && !tr.getStartDate().equals(tr.getEndDate())) {
+			return tr.toString();
+		} else {
+			return StringHelper.renderShortDate(ctx,page.getContentDateNeverNull(ctx));
+		}
+	}
+
 	public DateBean getDate() {
 		try {
 			return new DateBean(lgCtx, page.getContentDate(lgCtx));
@@ -1091,8 +1100,8 @@ public class SmartPageBean {
 		}
 	}
 	
-	public String getContentDateNeverNull() throws FileNotFoundException, IOException, Exception {
-		return StringHelper.renderShortDate(ctx, page.getContentDateNeverNull(ctx));
+	public DateBean getContentDateNeverNull() throws FileNotFoundException, IOException, Exception {
+		return new DateBean(ctx, page.getContentDateNeverNull(ctx));
 	}
 	
 	public ProductBean getProduct() throws Exception {

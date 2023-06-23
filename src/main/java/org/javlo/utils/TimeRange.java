@@ -1,11 +1,15 @@
 package org.javlo.utils;
 
-import java.io.Serializable;
-import java.util.Calendar;
-import java.util.Date;
-
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.TimeHelper;
+
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class TimeRange implements Serializable {
 
@@ -38,6 +42,18 @@ public class TimeRange implements Serializable {
 		return startDateCal.getTime();
 	}
 
+	public LocalDate getStartLocalDate() {
+		TimeZone tz = startDateCal.getTimeZone();
+		ZoneId zid = tz == null ? ZoneId.systemDefault() : tz.toZoneId();
+		return LocalDateTime.ofInstant(startDateCal.toInstant(), zid).toLocalDate();
+	}
+
+	public LocalDate getEndLocalDate() {
+		TimeZone tz = endDateCal.getTimeZone();
+		ZoneId zid = tz == null ? ZoneId.systemDefault() : tz.toZoneId();
+		return LocalDateTime.ofInstant(endDateCal.toInstant(), zid).toLocalDate();
+	}
+
 	public void setEndData(Date endDate) {
 		if (endDateCal == null) {
 			endDateCal = Calendar.getInstance();
@@ -63,6 +79,10 @@ public class TimeRange implements Serializable {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 		return cal.before(refCal);
+	}
+
+	public boolean isInside(LocalDate date) {
+		return isInside(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant()));
 	}
 
 	public boolean isInside(Date date) {

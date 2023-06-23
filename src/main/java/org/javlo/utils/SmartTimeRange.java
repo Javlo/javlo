@@ -1,12 +1,12 @@
 package org.javlo.utils;
 
+import org.javlo.bean.DateBean;
+import org.javlo.context.ContentContext;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Date;
-
-import org.javlo.bean.DateBean;
-import org.javlo.context.ContentContext;
 
 public class SmartTimeRange extends TimeRange {
 	
@@ -28,6 +28,14 @@ public class SmartTimeRange extends TimeRange {
 	
 	public DateBean getEndDateBean() throws FileNotFoundException, IOException {
 		return new DateBean(ctx.get(), getEndDate());
+	}
+
+	public String toString() {
+		try {
+			return getStartDateBean().getShortDate() + " - " + getEndDateBean().getShortDate();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

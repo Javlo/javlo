@@ -3,12 +3,14 @@
  */
 package org.javlo.component.links;
 
+import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.actions.IAction;
 import org.javlo.component.config.ComponentConfig;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComplexPropertiesLink;
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.meta.Tags;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -33,6 +35,7 @@ import javax.servlet.http.HttpSession;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -364,6 +367,13 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
                 String pageInfo = page.getTitle(ctx) + ' ' + page.getDescription(ctx) + ' ' + page.getTaxonomy();
                 return StringHelper.isContains(pageInfo, query);
             }
+
+            String dateParam = rs.getParameter("date");
+            if (!StringHelper.isEmpty(dateParam)) {
+                LocalDate date = StringHelper.parseSortableLocalDate(dateParam);
+                return page.getTimeRange(ctx).isInside(date);
+            }
+
         }
         return out;
     }
@@ -1427,6 +1437,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         ctx.getRequest().setAttribute("tags", globalContext.getTags());
         ctx.getRequest().setAttribute("popup", isPopup());
         ctx.getRequest().setAttribute("interactive", isInteractive());
+        String jUrl = URLHelper.addParam(URLHelper.createActionURL(ctx, getActionGroupName()+".pages", "/"), IContentVisualComponent.COMP_ID_REQUEST_PARAM, getId());
+        ctx.getRequest().setAttribute("jsonUrl", jUrl);
         if (globalContext.getAllTaxonomy(ctx).isActive()) {
             ctx.getRequest().setAttribute("taxonomyList", TaxonomyDisplayBean.convert(ctx, globalContext.getAllTaxonomy(ctx).convert(getTaxonomy())));
         }
@@ -1501,6 +1513,21 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         for (SmartPageBean page : maxElement) {
             pages.add(0, page);
         }
+    }
+
+
+    public static String performPages(ContentContext ctx) throws Exception {
+        PageReferenceComponent comp = (PageReferenceComponent)ComponentHelper.getComponentFromRequest(ctx);
+        comp.prepareView(ctx);
+        Collection<SmartPageBean> pages = (Collection<SmartPageBean>)ctx.getRequest().getAttribute("pages");
+        List<JsonPageBean> outPages = new LinkedList<>();
+        for (SmartPageBean p : pages) {
+            outPages.add(new JsonPageBean(p));
+        }
+        String json = new Gson().toJson(outPages);
+        ResourceHelper.writeStringToStream(json, ctx.getResponse().getOutputStream(), ContentContext.CHARACTER_ENCODING);
+        ctx.setStopRendering(true);
+        return null;
     }
 
     @Override

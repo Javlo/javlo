@@ -142,7 +142,7 @@ if (!String.prototype.startsWith) {
 			}
 			var parent = comp.parent();
 			var area = "";
-			c = 1;
+			var c = 1;
 			while (comp.attr("id") != "top" && c < 20) {
 				c++;
 				if (parent.hasClass("_area")) {
