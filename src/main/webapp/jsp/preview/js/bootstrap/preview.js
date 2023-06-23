@@ -1,4 +1,4 @@
-/* preview.js V 2.0.0.6 */
+/* preview.js V 2.0.0.7 */
 
 var PREVIEWLOG = false;
 
