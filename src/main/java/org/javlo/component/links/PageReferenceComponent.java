@@ -276,7 +276,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
             return false;
         }
 
-        if (ctx.getGlobalContext().getAllTaxonomy(ctx).isActive()) {
+        if (ctx.getGlobalContext().getAllTaxonomy(ctx).isActive() && !isInteractive()) {
             if (this.getTaxonomy() != null && this.getTaxonomy().size() > 0) {
                 if (page.getTaxonomy() == null || page.getTaxonomy().size() == 0) {
                     return false;
@@ -372,6 +372,15 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
             if (!StringHelper.isEmpty(dateParam)) {
                 LocalDate date = StringHelper.parseSortableLocalDate(dateParam);
                 return page.getTimeRange(ctx).isInside(date);
+            }
+
+            String[] taxonomies = rs.getParameterValues("taxonomy");
+            if (taxonomies != null && taxonomies.length > 0) {
+                for (String taxonomy : taxonomies) {
+                    if (page.getTaxonomy() == null || !page.getTaxonomy().contains(taxonomy)) {
+                        return false;
+                    }
+                }
             }
 
         }
@@ -1438,9 +1447,29 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         ctx.getRequest().setAttribute("popup", isPopup());
         ctx.getRequest().setAttribute("interactive", isInteractive());
         String jUrl = URLHelper.addParam(URLHelper.createActionURL(ctx, getActionGroupName()+".pages", "/"), IContentVisualComponent.COMP_ID_REQUEST_PARAM, getId());
+        if (isInteractive()) {
+            RequestService rs = RequestService.getInstance(ctx.getRequest());
+            String query = rs.getParameter("query", null);
+            if (!StringHelper.isEmpty(query)) {
+                jUrl = URLHelper.addParam(jUrl, "query", query);
+            }
+            String taxonomy = rs.getParameter("taxonomy", null);
+            if (!StringHelper.isEmpty(taxonomy)) {
+                jUrl = URLHelper.addParam(jUrl, "taxonomy", taxonomy);
+            }
+            ctx.getRequest().setAttribute("taxonomySelectedIdString", StringHelper.collectionToString(rs.getParameterValues("taxonomy")));
+        }
         ctx.getRequest().setAttribute("jsonUrl", jUrl);
         if (globalContext.getAllTaxonomy(ctx).isActive()) {
             ctx.getRequest().setAttribute("taxonomyList", TaxonomyDisplayBean.convert(ctx, globalContext.getAllTaxonomy(ctx).convert(getTaxonomy())));
+        }
+        if (isInteractive() && getTaxonomy() != null && getTaxonomy().size() > 0) {
+            List<TaxonomyDisplayBean> taxonomySelected = new LinkedList<>();
+            TaxonomyService rs = TaxonomyService.getInstance(ctx);
+            for (String taxoId : getTaxonomy()) {
+                taxonomySelected.add(new TaxonomyDisplayBean(ctx, rs.getTaxonomyBean(taxoId, true)));
+            }
+            ctx.getRequest().setAttribute("taxonomySelected", taxonomySelected);
         }
 
         LocalLogger.PRINT_TIME = false;
