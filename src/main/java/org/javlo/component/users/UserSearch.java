@@ -1,40 +1,22 @@
 package org.javlo.component.users;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-
+import com.google.gson.Gson;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.BeanHelper;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
+import org.javlo.helper.*;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.MessageRepository;
 import org.javlo.service.IListItem;
 import org.javlo.service.ListService;
 import org.javlo.service.RequestService;
-import org.javlo.user.AdminUserFactory;
-import org.javlo.user.IUserFactory;
-import org.javlo.user.IUserInfo;
-import org.javlo.user.UserFactory;
-import org.javlo.user.UserInfo;
-import org.javlo.user.UserInfoWrapper;
+import org.javlo.user.*;
 import org.javlo.ztatic.StaticInfo;
 
-import com.google.gson.Gson;
+import java.io.*;
+import java.util.*;
 
 public class UserSearch extends AbstractVisualComponent implements IAction {
 
@@ -66,6 +48,28 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 		String searchUrl = URLHelper.createActionURL(ctx.setAjax(true), TYPE + ".ajaxsearch", "/");
 		ctx.getRequest().setAttribute("searchUrl", searchUrl);
 		ctx.getRequest().setAttribute("showAll", StringHelper.isTrue(getValue()));
+
+		IUserFactory userFactory = UserFactory.createUserFactory(ctx.getRequest());
+		List<IUserInfo> users = userFactory.getUserInfoList();
+
+		List<String> compagnies = new LinkedList<>();
+		List<String> countries = new LinkedList<>();
+		for (IUserInfo ui : users) {
+			if (!StringHelper.isEmpty(ui.getOrganization())) {
+				if (!compagnies.contains(ui.getOrganization())) {
+					compagnies.add(ui.getOrganization());
+				}
+			}
+			if (!StringHelper.isEmpty(ui.getCountry())) {
+				if (!countries.contains(ui.getCountry())) {
+					countries.add(ui.getCountry());
+				}
+			}
+		}
+		Collections.sort(compagnies);
+		Collections.sort(countries);
+		ctx.getRequest().setAttribute("compagnies", compagnies);
+		ctx.getRequest().setAttribute("countries", countries);
 	}
 
 	@Override
@@ -367,6 +371,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 		String text = rs.getParameter("text", "").trim();
 		String country = rs.getParameter("country", "").trim();
 		String domain = rs.getParameter("domain", "").trim();
+		String organization = rs.getParameter("organization", "").trim();
 		String role = rs.getParameter("role", "").trim();
 		IUserFactory userFactory = UserFactory.createUserFactory(ctx.getRequest());
 		List<IUserInfo> users = userFactory.getUserInfoList();
@@ -376,7 +381,9 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 				if (country.length() == 0 || ((UserInfo) user).getCountry().equals(country)) {
 					if (domain.length() == 0 || ((UserInfo) user).getFunction().contains(domain)) {
 						if (role.length() == 0 || ((UserInfo) user).getRoles().contains(role)) {
-							result.add(new UserInfoWrapper(ctx, user));
+							if (organization.length() == 0 || ((UserInfo) user).getOrganization().equals(organization)) {
+								result.add(new UserInfoWrapper(ctx, user));
+							}
 						}
 					}
 				}
@@ -410,3 +417,4 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 		return getType();
 	}
 }
+

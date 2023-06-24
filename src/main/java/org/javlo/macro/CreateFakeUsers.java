@@ -25,6 +25,8 @@ public class CreateFakeUsers extends AbstractMacro {
 
 	private static final List<String> COMPAGNIES = Arrays.asList(new String[] {"Amnesty International", "Médecins Sans Frontières", "Greenpeace", "Oxfam", "Save the Children", "WWF", "Human Rights Watch", "ActionAid", "CARE International", "Friends of the Earth"});
 
+	private static  final List<String> COUNTRIES = Arrays.asList(new String[] {"Albania", "Andorra", "Armenia", "Austria", "Azerbaijan", "Belarus", "Belgium", "Bulgaria", "Croatia", "Cyprus", "Czech Republic", "Denmark", "Estonia", "Finland", "France", "Georgia", "Germany", "Greece", "Hungary", "Iceland", "Ireland", "Italy", "Kazakhstan", "Kosovo", "Latvia", "Lithuania", "Luxembourg", "Malta", "Moldova", "Monaco", "Montenegro", "Netherlands", "North Macedonia", "Norway", "Poland", "Portugal", "Romania", "San Marino", "Serbia", "Slovakia", "Slovenia", "Spain", "Sweden", "Switzerland", "Turkey", "Ukraine", "United Kingdom"});
+
 	@Override
 	public String getName() {
 		return "create-3-fake-users";
@@ -54,6 +56,7 @@ public class CreateFakeUsers extends AbstractMacro {
 			userInfo.setFirstName(firstName.get((int) Math.round(Math.random() * (firstName.size()-1))));
 			userInfo.setLastName(lastName.get((int) Math.round(Math.random() * (lastName.size()-1))));
 			userInfo.setOrganization(COMPAGNIES.get((int) Math.round(Math.random() * (COMPAGNIES.size()-1))));
+			userInfo.setCountry(COUNTRIES.get((int) Math.round(Math.random() * (COUNTRIES.size()-1))));
 			userInfo.setEmail(userInfo.getFirstName().toLowerCase() + '.' + userInfo.getLastName().toLowerCase() + "@javlo.org");
 			Random random = new Random();
 			if (random.nextInt(2) == 0) {
