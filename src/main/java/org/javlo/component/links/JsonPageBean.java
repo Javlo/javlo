@@ -12,6 +12,7 @@ public class JsonPageBean {
         title = pageBean.getTitle();
         description = pageBean.getDescription();
         url = pageBean.getLinkOn();
+
         startDate = pageBean.getTimeRange().getStartDateBean().getSortableDate();
         endDate = pageBean.getTimeRange().getEndDateBean().getSortableDate();
     }
