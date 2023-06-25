@@ -1883,9 +1883,8 @@ public class ContentContext {
 	 * @param format
 	 *            sample : pdf, html, png...
 	 */
-	public ContentContext setFormat(String format) {
+	public void setFormat(String format) {
 		this.format = format;
-		return this;
 	}
 
 	/**
