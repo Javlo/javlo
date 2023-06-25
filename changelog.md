@@ -956,3 +956,4 @@ Security in case of vulnerabilities.
 ### Modified
 - minimize html in extended widget
 - filter page reference
+- add date range possibility in dynamic content
