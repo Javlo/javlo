@@ -2051,7 +2051,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		if (contentDate != null) {
 			return contentDate;
 		} else {
-			return getCreationDate();
+			return getTimeRange(ctx).getStartDate();
 		}
 	}
 
@@ -3720,9 +3720,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	 * @throws Exception
 	 */
 	public TimeRange getTimeRange(ContentContext ctx) throws Exception {
-
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
-
 		if (desc.timeRange != null) {
 			return desc.timeRange;
 		}
@@ -3739,10 +3737,26 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			}
 			desc.timeRange = new TimeRange(startDate, endDate);
 		} else {
-			Date contentDate = getContentDateNeverNull(ctx);
+
+			ContentContext ctxNoArea = ctx.getContextWithArea(null);
+			ContentElementList content = getContent(ctxNoArea);
+			while (content.hasNext(ctxNoArea)) {
+				IContentVisualComponent c = content.next(ctxNoArea);
+				if (c instanceof ITimeRange) {
+					ITimeRange tr = (ITimeRange)c;
+					if (tr.isTimeRangeValid(ctx)) {
+						desc.timeRange = new TimeRange(ctx, tr);
+						return desc.timeRange;
+					}
+				}
+			}
+
+			Date contentDate = getContentDate(ctx);
+			if (contentDate == null) {
+				contentDate = getCreationDate();
+			}
 			desc.timeRange = new TimeRange(contentDate, contentDate);
 		}
-
 		return desc.timeRange;
 	}
 

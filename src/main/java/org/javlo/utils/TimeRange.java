@@ -1,5 +1,7 @@
 package org.javlo.utils;
 
+import org.javlo.component.meta.ITimeRange;
+import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.TimeHelper;
 
@@ -16,6 +18,13 @@ public class TimeRange implements Serializable {
 	private Calendar startDateCal = null;
 
 	private Calendar endDateCal = null;
+
+	public TimeRange(ContentContext ctx, ITimeRange tr) {
+		startDateCal = Calendar.getInstance();
+		startDateCal.setTime(java.util.Date.from(tr.getTimeRangeStart(ctx).atZone(ZoneId.systemDefault()).toInstant()));
+		endDateCal = Calendar.getInstance();
+		endDateCal.setTime(java.util.Date.from(tr.getTimeRangeEnd(ctx).atZone(ZoneId.systemDefault()).toInstant()));
+	}
 
 	public TimeRange(Date startDate, Date endDate) {
 		if (startDate != null) {
@@ -124,6 +133,14 @@ public class TimeRange implements Serializable {
 
 	public boolean isNull() {
 		return startDateCal == null && endDateCal == null;
+	}
+
+	public String getRenderDates() {
+		if (!getStartDate().equals(getEndDate())) {
+			return StringHelper.renderDate(getStartDate()) + " - " + StringHelper.renderDate(getEndDate());
+		} else {
+			return StringHelper.renderDate(getStartDate());
+		}
 	}
 
 	@Override

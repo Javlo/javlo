@@ -1,10 +1,9 @@
 package org.javlo.utils;
 
-import java.util.Date;
-
+import junit.framework.TestCase;
 import org.javlo.helper.StringHelper;
 
-import junit.framework.TestCase;
+import java.util.Date;
 
 public class TimeRangeTest extends TestCase {
 	
@@ -23,7 +22,7 @@ public class TimeRangeTest extends TestCase {
 		assertTrue(dateRange.isBefore(StringHelper.parseDate("20/11/1975")));
 		assertTrue(dateRange.isBefore(StringHelper.parseDate("20/12/1975")));
 		assertFalse(dateRange.isBefore(StringHelper.parseDate("20/11/1977")));
-		dateRange = new TimeRange(null, null);
+		dateRange = new TimeRange((Date)null, null);
 		assertTrue(dateRange.isBefore(StringHelper.parseDate("20/11/1975")));
 		assertTrue(dateRange.isBefore(StringHelper.parseDate("20/12/1975")));
 		assertTrue(dateRange.isBefore(StringHelper.parseDate("20/11/1977")));
@@ -44,7 +43,7 @@ public class TimeRangeTest extends TestCase {
 		assertFalse(dateRange.isAfter(StringHelper.parseDate("20/11/1975")));
 		assertFalse(dateRange.isAfter(StringHelper.parseDate("20/12/1975")));
 		assertTrue(dateRange.isAfter(StringHelper.parseDate("20/11/1977")));
-		dateRange = new TimeRange(null, null);
+		dateRange = new TimeRange((Date)null, null);
 		assertTrue(dateRange.isAfter(StringHelper.parseDate("20/11/1975")));
 		assertTrue(dateRange.isAfter(StringHelper.parseDate("20/12/1975")));
 		assertTrue(dateRange.isAfter(StringHelper.parseDate("20/11/1977")));
@@ -65,7 +64,7 @@ public class TimeRangeTest extends TestCase {
 		assertFalse(dateRange.isInside(StringHelper.parseDate("20/11/1975")));
 		assertFalse(dateRange.isInside(StringHelper.parseDate("20/12/1975")));
 		assertFalse(dateRange.isInside(StringHelper.parseDate("20/11/1977")));
-		dateRange = new TimeRange(null, null);
+		dateRange = new TimeRange((Date)null, null);
 		assertTrue(dateRange.isInside(StringHelper.parseDate("20/11/1975")));
 		assertTrue(dateRange.isInside(StringHelper.parseDate("20/12/1975")));
 		assertTrue(dateRange.isInside(StringHelper.parseDate("20/11/1977")));

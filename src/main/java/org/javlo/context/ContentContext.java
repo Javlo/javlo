@@ -3,30 +3,6 @@
  */
 package org.javlo.context;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.lang.ref.WeakReference;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRequest;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
@@ -44,13 +20,24 @@ import org.javlo.service.RequestService;
 import org.javlo.service.log.Log;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
-import org.javlo.user.AdminUserFactory;
-import org.javlo.user.AdminUserSecurity;
-import org.javlo.user.IUserFactory;
-import org.javlo.user.User;
-import org.javlo.user.UserFactory;
+import org.javlo.user.*;
 import org.javlo.utils.NeverEmptyMap;
 import org.javlo.utils.downloader.Html2Directory;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.lang.ref.WeakReference;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * @author pvanderm

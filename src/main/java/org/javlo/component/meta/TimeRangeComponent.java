@@ -3,22 +3,24 @@
  */
 package org.javlo.component.meta;
 
-import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.logging.Logger;
-
 import org.javlo.context.ContentContext;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.TimeHelper;
 import org.javlo.service.RequestService;
 
+import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.logging.Logger;
+
 /**
  * @author pvandermaesen
  */
-public class TimeRangeComponent extends DateComponent {
+public class TimeRangeComponent extends DateComponent implements ITimeRange {
 
 	public static final String VALUE_SEPARATOR = "%";
 
@@ -200,6 +202,26 @@ public class TimeRangeComponent extends DateComponent {
 	@Override
 	public boolean isMirroredByDefault(ContentContext ctx) {	
 		return true;
-	}	
+	}
 
+	public LocalDateTime getTimeRangeStart(ContentContext ctx) {
+		Date startDate = getStartDate(ctx);
+		if (startDate != null) {
+			return  startDate.toInstant()
+					.atZone(ZoneId.systemDefault())
+					.toLocalDate().atTime(0,0);
+		}
+		return null;
+	}
+
+	@Override
+	public LocalDateTime getTimeRangeEnd(ContentContext ctx) {
+		Date startDate = getEndDate(ctx);
+		if (startDate != null) {
+			return  startDate.toInstant()
+					.atZone(ZoneId.systemDefault())
+					.toLocalDate().atTime(0,0);
+		}
+		return null;
+	}
 }

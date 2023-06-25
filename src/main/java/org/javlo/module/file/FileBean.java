@@ -42,7 +42,6 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 				order = -1;
 			}
 		}
-
 		@Override
 		public int compare(FileBean file1, FileBean file2) {
 			if (sort == 2) {

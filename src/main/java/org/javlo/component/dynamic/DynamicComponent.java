@@ -6,6 +6,7 @@ package org.javlo.component.dynamic;
 import org.javlo.bean.Link;
 import org.javlo.component.core.*;
 import org.javlo.component.image.IImageTitle;
+import org.javlo.component.meta.ITimeRange;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -28,13 +29,15 @@ import org.javlo.utils.StructuredProperties;
 import org.javlo.ztatic.IStaticContainer;
 
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.logging.Logger;
 
 /**
  * @author pvandermaesen
  */
-public class DynamicComponent extends AbstractVisualComponent implements IStaticContainer, IFieldContainer, IDate, ILink, IImageTitle, ISubTitle {
+public class DynamicComponent extends AbstractVisualComponent implements IStaticContainer, IFieldContainer, IDate, ILink, IImageTitle, ISubTitle, ITimeRange {
 
 	public static final String JSP_HEADER = "<%@ page contentType=\"text/html; charset=UTF-8\" %><%@ taglib uri=\"http://java.sun.com/jsp/jstl/core\" prefix=\"c\"%><%@ taglib prefix=\"fn\" uri=\"http://java.sun.com/jsp/jstl/functions\"%><%@ taglib uri=\"/WEB-INF/javlo.tld\" prefix=\"jv\"%>";
 
@@ -1210,5 +1213,34 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 	public boolean isMobileOnly(ContentContext ctx) {
 		return false;
 	}
-	
+
+	@Override
+	public LocalDateTime getTimeRangeStart(ContentContext ctx) {
+		try {
+			for (Field field : getFields(ctx)) {
+				if (field instanceof IDate && field.getName().contains("start")) {
+					IDate date = (IDate)field;
+					return date.getDate(ctx).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+				}
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return null;
+	}
+
+	@Override
+	public LocalDateTime getTimeRangeEnd(ContentContext ctx) {
+		try {
+			for (Field field : getFields(ctx)) {
+				if (field instanceof IDate && field.getName().contains("end")) {
+					IDate date = (IDate)field;
+					return date.getDate(ctx).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+				}
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return null;
+	}
 }

@@ -153,7 +153,13 @@
 							</div>
 							<div class="col-sm-4">
 								<div class="line">
-									<label>${i18n.edit['item.content-date']}</label> <span>${page.contentDateValue}</span>
+									<label>${i18n.edit['item.content-date']}</label>
+									<c:if test="${page.timeRange == null || page.timeRange.startDate == page.timeRange.endDate}">
+										<span>${page.contentDateValue}</span>
+									</c:if>
+									<c:if test="${page.timeRange != null && page.timeRange.startDate != page.timeRange.endDate}">
+										<span>${page.timeRange.renderDates}</span>
+									</c:if>
 								</div>
 
 							</div>

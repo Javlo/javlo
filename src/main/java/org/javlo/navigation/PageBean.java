@@ -19,6 +19,7 @@ import org.javlo.tracking.Tracker;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.utils.CollectionAsMap;
 import org.javlo.utils.HtmlPart;
+import org.javlo.utils.TimeRange;
 
 import java.io.File;
 import java.io.IOException;
@@ -518,6 +519,10 @@ public class PageBean implements Serializable {
 
 	public boolean isInsideTimeRange() {
 		return page.isInsideTimeRange();
+	}
+
+	public TimeRange getTimeRange() throws Exception {
+		return page.getTimeRange(ctx);
 	}
 
 	public boolean isVisible() {
