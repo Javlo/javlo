@@ -1301,7 +1301,6 @@ button.button:hover,.button:active {
 .widgetbox2 .content {
 	background: var(--javlo-ui-bg-secondary);
 	padding: 20px 15px;
-	color: #ccc;
 	overflow: hidden;
 	border-top: 0;
 	select, input {
@@ -1309,6 +1308,12 @@ button.button:hover,.button:active {
 		border: 1px #999 solid;
 		background-color: #eee;
 		box-shadow: none;
+	}
+}
+
+.edition-mode-dark {
+	.widgetbox2 .content {
+		color: #ccc;
 	}
 }
 
