@@ -3729,7 +3729,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		if (comp != null) {
 			Date startDate = comp.getStartDate(ctx);
 			if (startDate == null) {
-				startDate = getContentDateNeverNull(ctx);
+				startDate = getContentDate(ctx);
+				if (startDate == null) {
+					startDate = getCreationDate();
+				}
 			}
 			Date endDate = comp.getEndDate(ctx);
 			if (endDate == null) {
