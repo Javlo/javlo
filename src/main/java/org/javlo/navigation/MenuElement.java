@@ -4250,6 +4250,19 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 				}
 			}
 
+			// search force real content
+			if (!template.isRealContentFromAnyArea()) {
+				contentAreaCtx.setArea(null);
+				comps = getContent(contentAreaCtx);
+				while (comps.hasNext(contentAreaCtx)) {
+					IContentVisualComponent comp = comps.next(contentAreaCtx);
+					if (comp instanceof ForceRealContent) {
+						desc.realContent = !StringHelper.isTrue(comp.getValue(contentAreaCtx));
+						return desc.realContent;
+					}
+				}
+			}
+
 			if (isChildrenAssociation()) {
 				desc.realContent = true; // added: 12/01/2017
 				return true;
