@@ -4387,9 +4387,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			if (isAdmin() && ctx.getCurrentEditUser() == null) {
 				return false;
 			}
-			ContentContext contentAreaCtx = new ContentContext(ctx);
-			contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
-			ContentElementList content = this.getContent(contentAreaCtx);
 
 			if (ctx.getGlobalContext().isCollaborativeMode() && ctx.getCurrentEditUser() != null) {
 				if (getEditorRoles().size() > 0 && !ctx.getCurrentEditUser().validForRoles(getEditorRoles())) {
@@ -4397,11 +4394,19 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 				}
 			}
 
+			/*ContentContext contentAreaCtx = new ContentContext(ctx);
+			contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
+			ContentElementList content = this.getContent(contentAreaCtx);
 			while (content.hasNext(contentAreaCtx)) {
 				if (content.next(contentAreaCtx).isRealContent(contentAreaCtx)) {
 					return isInsideTimeRange();
 				}
+			}*/
+
+			if (isRealContent(ctx)) {
+				return isInsideTimeRange();
 			}
+
 			if (ctx.getGlobalContext().isAutoSwitchToDefaultLanguage()) {
 				for (String lg : ctx.getGlobalContext().getDefaultLanguages()) {
 					ContentContext lgCtx = ctx.getContextWidthOtherRequestLanguage(lg);
@@ -4415,7 +4420,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			}
 
 			for (MenuElement child : getAllChildrenList()) {
-				content = child.getContent(ctx);
+				ContentElementList content = child.getContent(ctx);
 				while (content.hasNext(contentAreaCtx)) {
 					if (content.next(contentAreaCtx).isRealContent(contentAreaCtx)) {
 						return isInsideTimeRange();
