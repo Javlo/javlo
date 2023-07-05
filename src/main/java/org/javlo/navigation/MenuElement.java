@@ -4419,6 +4419,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 				}
 			}
 
+			ContentContext contentAreaCtx = new ContentContext(ctx);
+			contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
 			for (MenuElement child : getAllChildrenList()) {
 				ContentElementList content = child.getContent(ctx);
 				while (content.hasNext(contentAreaCtx)) {
