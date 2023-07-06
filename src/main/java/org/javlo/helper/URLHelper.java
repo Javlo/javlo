@@ -3,19 +3,6 @@
  */
 package org.javlo.helper;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.component.core.IContentVisualComponent;
@@ -38,6 +25,15 @@ import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserInfo;
 import org.javlo.user.IUserInfo;
 import org.javlo.ztatic.StaticInfo;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author pvanderm
@@ -1676,6 +1672,8 @@ public class URLHelper extends ElementaryURLHelper {
 		}
 	}
 
+	public static final String ERROR_PREFIX = "page_not_found_:_";
+
 	/**
 	 * convert external link if start with page: or / to internet link or relative
 	 * link.
@@ -1701,7 +1699,7 @@ public class URLHelper extends ElementaryURLHelper {
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			MenuElement targetPage = content.getNavigation(ctx).searchChildFromName(link);
 			if (targetPage == null) {
-				link = "page_not_found_:_" + link;
+				link = ERROR_PREFIX + link;
 			} else {
 				link = URLHelper.createURL(ctx, targetPage) + params;
 			}

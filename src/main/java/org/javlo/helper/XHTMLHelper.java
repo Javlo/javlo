@@ -46,6 +46,7 @@ import org.jsoup.nodes.Entities.EscapeMode;
 import org.jsoup.parser.Parser;
 import org.jsoup.safety.Safelist;
 import org.jsoup.select.Elements;
+import org.owasp.encoder.Encode;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import javax.servlet.ServletContext;
@@ -218,6 +219,11 @@ public class XHTMLHelper {
 		} else {
 			return inContent;
 		}
+	}
+
+	public static String getAgnosticMessageHtml(String msg) {
+		msg = Encode.forHtml(msg);
+		return "<div style=\"margin: 0.5rem 0; padding: 2px 4px; background-color: rgba(255,0,0,0.1); border: rgba(255,0,0,0.8); solid 1x; border-radius: 3px;\">"+msg+"</div>";
 	}
 
 	private static String createHTMLLink(String url, boolean notFollow, boolean newWin, GlobalContext globalContext) {

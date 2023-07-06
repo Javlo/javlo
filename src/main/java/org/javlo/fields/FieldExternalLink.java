@@ -1,10 +1,5 @@
 package org.javlo.fields;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Date;
-import java.util.logging.Logger;
-
 import org.javlo.component.core.ILink;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -14,6 +9,11 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Date;
+import java.util.logging.Logger;
 
 public class FieldExternalLink extends MetaField implements ILink {
 
@@ -97,6 +97,14 @@ public class FieldExternalLink extends MetaField implements ILink {
 
 		String link = getCurrentLink().trim();
 		link=URLHelper.convertLink(ctx, link);
+
+		if (link.startsWith(URLHelper.ERROR_PREFIX)) {
+			if (ctx.isAsPreviewMode()) {
+				return XHTMLHelper.getAgnosticMessageHtml("bad link : "+link);
+			} else {
+				return "<!-- bad link : "+link+" -->";
+			}
+		}
 
 		if (label.trim().length() > 0) {
 			out.println("<span class=\"" + getType() + "\">");
