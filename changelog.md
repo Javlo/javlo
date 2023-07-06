@@ -957,3 +957,4 @@ Security in case of vulnerabilities.
 - minimize html in extended widget
 - filter page reference
 - add date range possibility in dynamic content
+- don't display not found link with 'page:'
