@@ -16,7 +16,7 @@ public class FieldXhtml extends FieldLargeText {
         if (refCode != null) {
             return refCode;
         }
-        return XHTMLHelper.replaceJSTLData( ctx, super.getDisplayValue(ctx, locale));
+        return XHTMLHelper.replaceJSTLData( ctx, getValue());
     }
 
 }
