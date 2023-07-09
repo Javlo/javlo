@@ -112,8 +112,8 @@ public class OpenMultiList extends Field {
 					if (getValue().equals(value.getKey())) {
 						selected = " selected=\"selected\"";
 					}
-					if (!displayed.contains(value.getValue())) {
-						displayed.add(value.getValue());
+					if (!displayed.contains(value.getValue().trim())) {
+						displayed.add(value.getValue().trim());
 						if (value.getKey() != null) {
 							out.println("		<option value=\"" + value.getKey() + "\"" + selected + ">" + value.getValue() + "</option>");
 						} else {
