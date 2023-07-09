@@ -1,15 +1,5 @@
 package org.javlo.fields;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.context.ContentContext;
@@ -17,6 +7,10 @@ import org.javlo.helper.JavaHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.*;
 
 public class OpenMultiList extends Field {
 
@@ -111,17 +105,21 @@ public class OpenMultiList extends Field {
 		} else {
 			out.println("<div class=\"col-sm-5\"><select class=\"form-control\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");
 
+			Set<String> displayed = new HashSet<>();
 			for (Map.Entry<String, String> value : values) {
 				String selected = "";
 				if (getValue() != null) {
 					if (getValue().equals(value.getKey())) {
 						selected = " selected=\"selected\"";
 					}
-				}
-				if (value.getKey() != null) {
-					out.println("		<option value=\"" + value.getKey() + "\"" + selected + ">" + value.getValue() + "</option>");
-				} else {
-					out.println("		<option" + selected + ">" + value.getValue() + "</option>");
+					if (!displayed.contains(value.getValue())) {
+						displayed.add(value.getValue());
+						if (value.getKey() != null) {
+							out.println("		<option value=\"" + value.getKey() + "\"" + selected + ">" + value.getValue() + "</option>");
+						} else {
+							out.println("		<option" + selected + ">" + value.getValue() + "</option>");
+						}
+					}
 				}
 			}
 

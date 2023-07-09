@@ -1,14 +1,5 @@
 package org.javlo.component.container;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import org.javlo.actions.IAction;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.IContentVisualComponent;
@@ -29,6 +20,10 @@ import org.javlo.message.MessageRepository;
 import org.javlo.service.ContentService;
 import org.javlo.service.DynamicComponentService;
 import org.javlo.service.RequestService;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.*;
 
 /**
  * Display a search for in view mode.
@@ -165,7 +160,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
 					}					
 				}
 			}
-			out.println("</div><div class=\"action-group form-group text-right\"><input type=\"submit\" class=\"btn btn-default\" name=\"filter\" value=\"" + i18nAccess.getViewText("global.search") + "\" /></div>");
+			out.println("</div><div class=\"action-group form-group text-right\"><input type=\"submit\" class=\"btn btn-primary\" name=\"filter\" value=\"" + i18nAccess.getViewText("global.search") + "\" /></div>");
 			out.println("</div></form></div>");
 		} else if (ctx.isAsPreviewMode()) {
 			out.println("[no - form]");
