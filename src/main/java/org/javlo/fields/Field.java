@@ -1,23 +1,5 @@
 package org.javlo.fields;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.dynamic.DynamicComponent;
@@ -25,20 +7,19 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.rest.IRestItem;
-import org.javlo.helper.BeanHelper;
-import org.javlo.helper.ComponentHelper;
-import org.javlo.helper.JavaHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.XHTMLHelper;
+import org.javlo.helper.*;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
-import org.javlo.service.ContentService;
-import org.javlo.service.IListItem;
-import org.javlo.service.ListService;
-import org.javlo.service.RequestService;
-import org.javlo.service.ReverseLinkService;
+import org.javlo.service.*;
 import org.javlo.service.google.translation.ITranslator;
 import org.owasp.encoder.Encode;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	
@@ -46,7 +27,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	
 	protected static final String DEFAULT_SEARCH_TYPE = "default";
 	
-	public static String LABEL_CSS = "col-sm-4 col-form-label";
+	public static String LABEL_CSS = "col-sm-4 _col-form-label";
 	public static String VALUE_SIZE = "col-sm-8";
 	public static String SMALL_VALUE_SIZE = "col-sm-6";
 	public static String SMALL_PART_SIZE = "col-sm-2";
