@@ -27,7 +27,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	
 	protected static final String DEFAULT_SEARCH_TYPE = "default";
 	
-	public static String LABEL_CSS = "col-sm-4 _col-form-label";
+	public static String LABEL_CSS = "col-sm-4 col-form-label";
 	public static String VALUE_SIZE = "col-sm-8";
 	public static String SMALL_VALUE_SIZE = "col-sm-6";
 	public static String SMALL_PART_SIZE = "col-sm-2";
@@ -526,7 +526,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		if (StringHelper.isEmpty(label)) {
 			label = getLabel(ctx, ctx.getLocale());
 		}
-		out.println("	<label class=\"col-form-label\" for=\"" + getInputName() + "\">" + label + " : </label>");
+		out.println("	<label for=\"" + getInputName() + "\">" + label + " : </label>");
 		String readOnlyHTML = "";
 		if (isReadOnly()) {
 			readOnlyHTML = " readonly=\"readonly\"";

@@ -1,13 +1,12 @@
 package org.javlo.fields;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Locale;
-
 import org.javlo.context.ContentContext;
 import org.javlo.css.CssColor;
 import org.javlo.helper.StringHelper;
 import org.owasp.encoder.Encode;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 public class FieldColor extends Field {
 
@@ -34,7 +33,7 @@ public class FieldColor extends Field {
 		if (StringHelper.isEmpty(label)) {
 			label = getLabel(ctx, ctx.getLocale());
 		}
-		out.println("	<label class=\"col-form-label\" for=\"" + getInputName() + "\">" + label + " : </label>");
+		out.println("	<label for=\"" + getInputName() + "\">" + label + " : </label>");
 		String readOnlyHTML = "";
 		if (isReadOnly()) {
 			readOnlyHTML = " readonly=\"readonly\"";
