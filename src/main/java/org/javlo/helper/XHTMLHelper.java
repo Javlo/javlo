@@ -2186,7 +2186,7 @@ public class XHTMLHelper {
 
 	public static String replaceJSTLData(ContentContext ctx, String xhtml) throws Exception {
 
-		if (!xhtml.contains("${")) {
+		if (xhtml == null || !xhtml.contains("${")) {
 			return xhtml;
 		}
 		Collection<String> params = StringHelper.extractItem(xhtml, "${param.", "}");
