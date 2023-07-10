@@ -103,7 +103,7 @@ public class OpenMultiList extends Field {
 			}
 			out.println("</div>");
 		} else {
-			out.println("<div class=\"col-sm-5\"><select class=\"form-control\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");
+			out.println("<div class=\"col-sm-5\"><select class=\"form-control form-select\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");
 
 			Set<String> displayed = new HashSet<>();
 			for (Map.Entry<String, String> value : values) {
