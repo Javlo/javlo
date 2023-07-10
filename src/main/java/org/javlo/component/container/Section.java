@@ -1,5 +1,7 @@
 package org.javlo.component.container;
 
+import org.javlo.context.ContentContext;
+
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -39,6 +41,11 @@ public class Section extends Box {
 	@Override
 	protected Collection<String> getColors() {
 		return colors;
+	}
+
+	@Override
+	public String getSpecificClass(ContentContext ctx) {
+		return "content-section";
 	}
 	
 	public boolean isParallax() {

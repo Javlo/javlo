@@ -374,6 +374,11 @@ public class Box extends AbstractVisualComponent implements IContainer {
 	}
 
 	@Override
+	public String getSpecificClass(ContentContext ctx) {
+		return "content-box";
+	}
+
+	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		final String BOX_KEY = getType() + "_stack_int";
 		if (!isCloseBox()) {
