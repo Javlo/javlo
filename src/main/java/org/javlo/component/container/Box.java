@@ -45,7 +45,7 @@ public class Box extends AbstractVisualComponent implements IContainer {
 
 	protected String getCSSClass(ContentContext ctx) {
 		if (getComponentCssClass(ctx) == null || getComponentCssClass(ctx).trim().length() == 0) {
-			return getType().toLowerCase();
+			return getType().toLowerCase() + " " + getComponentCssClass(ctx) + " content-box";
 		} else {
 			return getType().toLowerCase() + " " + getComponentCssClass(ctx) + " content-box";
 		}

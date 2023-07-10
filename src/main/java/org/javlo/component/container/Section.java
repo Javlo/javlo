@@ -53,7 +53,7 @@ public class Section extends Box {
 
 	protected String getCSSClass(ContentContext ctx) {
 		if (getComponentCssClass(ctx) == null || getComponentCssClass(ctx).trim().length() == 0) {
-			return getType().toLowerCase();
+			return getType().toLowerCase() + " " + getComponentCssClass(ctx) + " content-section";
 		} else {
 			return getType().toLowerCase() + " " + getComponentCssClass(ctx) + " content-section";
 		}
