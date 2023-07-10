@@ -47,7 +47,7 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		if (getComponentCssClass(ctx) == null || getComponentCssClass(ctx).trim().length() == 0) {
 			return getType().toLowerCase();
 		} else {
-			return getType().toLowerCase() + " " + getComponentCssClass(ctx);
+			return getType().toLowerCase() + " " + getComponentCssClass(ctx) + " content-box";
 		}
 	}
 
@@ -371,11 +371,6 @@ public class Box extends AbstractVisualComponent implements IContainer {
 			ctx.getRequest().setAttribute(BOX_KEY, boxStack);
 		}
 		return boxStack;
-	}
-
-	@Override
-	public String getSpecificClass(ContentContext ctx) {
-		return "content-box";
 	}
 
 	@Override

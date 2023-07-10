@@ -42,11 +42,6 @@ public class Section extends Box {
 	protected Collection<String> getColors() {
 		return colors;
 	}
-
-	@Override
-	public String getSpecificClass(ContentContext ctx) {
-		return "content-section";
-	}
 	
 	public boolean isParallax() {
 		return getContainerLayout().contains(PARALLAX_KEY);
@@ -54,5 +49,13 @@ public class Section extends Box {
 	
 	public boolean isFix() {
 		return PARALLAX_NEUTRAL.equals(FIX_BACKGROUND);
+	}
+
+	protected String getCSSClass(ContentContext ctx) {
+		if (getComponentCssClass(ctx) == null || getComponentCssClass(ctx).trim().length() == 0) {
+			return getType().toLowerCase();
+		} else {
+			return getType().toLowerCase() + " " + getComponentCssClass(ctx) + " content-section";
+		}
 	}
 }
