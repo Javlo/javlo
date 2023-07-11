@@ -17,8 +17,8 @@ public class TemplateData {
 	private CssColor secondaryColor = null;
 	private CssColor thirdColor = null;
 	
-	private CssColor background = null;
-	private CssColor componentBackground = null;
+	private CssColor primaryBackground = null;
+	private CssColor secondaryBackground = null;
 	private CssColor foreground = null;
 	private CssColor text = null;
 	private CssColor title = null;
@@ -64,7 +64,7 @@ public class TemplateData {
 			if (data.length > 7) {
 				int i = 0;
 				if (data[i].length() > 0) {
-					setBackground(Color.decode('#' + data[i]));
+					setPrimaryBackground(Color.decode('#' + data[i]));
 				}
 				i++;
 				if (data[i].length() > 0) {
@@ -151,7 +151,7 @@ public class TemplateData {
 					}
 					i++;
 					if (data.length > i && data[i].length() > 0) {
-						setComponentBackground(Color.decode('#' + data[i]));
+						setSecondaryBackground(Color.decode('#' + data[i]));
 					}
 					i++;
 					if (data.length > i && data[i].length() > 0) {
@@ -185,7 +185,7 @@ public class TemplateData {
 			oldDataLoader(rawData);
 		} else {
 			Map<String, String> map = StringHelper.stringToMap(rawData.substring(4));
-			setBackground(decodeColor('#' + map.get("background")));
+			setPrimaryBackground(decodeColor('#' + map.get("primaryBackground")));
 			setForeground(decodeColor('#' + map.get("foreground")));
 			setText(decodeColor('#' + map.get("text")));
 			setBackgroundMenu(decodeColor('#' + map.get("backgroundMenu")));
@@ -197,7 +197,7 @@ public class TemplateData {
 			setToolsServer(map.get("toolsServer"));
 			setLogo(map.get("logo"));
 			setBackgroundActive(decodeColor('#' + map.get("backgroundActive")));
-			setComponentBackground(decodeColor('#' + map.get("componentBackground")));
+			setSecondaryBackground(decodeColor('#' + map.get("secondaryBackground")));
 			setFontText(map.get("fontText"));
 			setFontHeading(map.get("fontHeading"));
 			setMessagePrimary(decodeColor('#' + map.get("messagePrimary")));
@@ -243,7 +243,7 @@ public class TemplateData {
 	public String toString() {
 		Map<String,String> outData = new HashMap<String,String>();
 		
-		outData.put("background", StringHelper.colorToHexStringNotNull(getBackground()));
+		outData.put("primaryBackground", StringHelper.colorToHexStringNotNull(getPrimaryBackground()));
 		outData.put("foreground", StringHelper.colorToHexStringNotNull(getForeground()));
 		outData.put("text", StringHelper.colorToHexStringNotNull(getText()));
 		outData.put("backgroundMenu", StringHelper.colorToHexStringNotNull(getBackgroundMenu()));
@@ -255,7 +255,7 @@ public class TemplateData {
 		outData.put("toolsServer", getToolsServer());
 		outData.put("logo", getLogo());
 		outData.put("backgroundActive", StringHelper.colorToHexStringNotNull(getBackgroundActive()));
-		outData.put("componentBackground", StringHelper.colorToHexStringNotNull(getComponentBackground()));
+		outData.put("secondaryBackground", StringHelper.colorToHexStringNotNull(getSecondaryBackground()));
 		outData.put("messagePrimary", StringHelper.colorToHexStringNotNull(getMessagePrimary()));
 		outData.put("messageSecondary", StringHelper.colorToHexStringNotNull(getMessageSecondary()));
 		outData.put("messageSuccess", StringHelper.colorToHexStringNotNull(getMessageSuccess()));
@@ -361,8 +361,8 @@ public class TemplateData {
 		return false;
 	}
 
-	public Color getBackground() {
-		return background;
+	public Color getPrimaryBackground() {
+		return primaryBackground;
 	}
 
 	public Color getBackgroundMenu() {
@@ -401,8 +401,8 @@ public class TemplateData {
 		return toolsServer;
 	}
 
-	public void setBackground(Color background) {
-		this.background = CssColor.getInstance(background);
+	public void setPrimaryBackground(Color background) {
+		this.primaryBackground = CssColor.getInstance(background);
 	}
 
 	public void setBackgroundMenu(Color backgroundMenu) {
@@ -468,10 +468,10 @@ public class TemplateData {
 	public int hashCodeForDeployTemplate() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((background == null) ? 0 : background.hashCode());
+		result = prime * result + ((primaryBackground == null) ? 0 : primaryBackground.hashCode());
 		result = prime * result + ((backgroundMenu == null) ? 0 : backgroundMenu.hashCode());
 		result = prime * result + ((backgroundActive == null) ? 0 : backgroundActive.hashCode());
-		result = prime * result + ((componentBackground == null) ? 0 : componentBackground.hashCode());
+		result = prime * result + ((secondaryBackground == null) ? 0 : secondaryBackground.hashCode());
 		result = prime * result + ((border == null) ? 0 : border.hashCode());
 		result = prime * result + ((colorList == null) ? 0 : colorList.hashCode());
 		result = prime * result + ((foreground == null) ? 0 : foreground.hashCode());
@@ -554,12 +554,12 @@ public class TemplateData {
 		this.messageInfo = CssColor.getInstance(messageInfo);
 	}
 
-	public CssColor getComponentBackground() {
-		return componentBackground;
+	public CssColor getSecondaryBackground() {
+		return secondaryBackground;
 	}
 
-	public void setComponentBackground(Color componentBackground) {
-		this.componentBackground = CssColor.getInstance(componentBackground);
+	public void setSecondaryBackground(Color secondaryBackground) {
+		this.secondaryBackground = CssColor.getInstance(secondaryBackground);
 	}
 
 	public boolean isFixMenu() {

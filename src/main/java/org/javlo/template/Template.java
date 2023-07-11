@@ -1,52 +1,5 @@
 package org.javlo.template;
 
-import java.awt.Color;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.naming.ConfigurationException;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
@@ -58,13 +11,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.css.CssColor;
 import org.javlo.filter.PropertiesFilter;
-import org.javlo.helper.LangHelper;
-import org.javlo.helper.LocalLogger;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
-import org.javlo.helper.XMLManipulationHelper;
+import org.javlo.helper.*;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.helper.filefilter.HTMLFileFilter;
 import org.javlo.helper.filefilter.StyleSheetFileFilter;
@@ -79,13 +26,24 @@ import org.javlo.service.IListItem;
 import org.javlo.service.ListService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.utilThymeleaf.TemplateEngineUtil;
-import org.javlo.utils.ConfigurationProperties;
-import org.javlo.utils.ListAsMap;
-import org.javlo.utils.ListMapValueValue;
-import org.javlo.utils.ReadOnlyPropertiesConfigurationMap;
-import org.javlo.utils.StructuredConfigurationProperties;
-import org.javlo.utils.TimeMap;
+import org.javlo.utils.*;
 import org.thymeleaf.TemplateEngine;
+
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.naming.ConfigurationException;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
+import java.awt.*;
+import java.io.*;
+import java.text.ParseException;
+import java.util.List;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Template implements Comparable<Template> {
 
@@ -2430,10 +2388,10 @@ public class Template implements Comparable<Template> {
 		if (!templateDataDefined) {
 			return getParent().getTemplateData();
 		} else {
-			String background = properties.getString("data.color.background", null);
+			String background = properties.getString("data.color.primary-background", null);
 			if (background != null) {
 				Color backgroundColor = Color.decode('#' + background);
-				templateData.setBackground(backgroundColor);
+				templateData.setPrimaryBackground(backgroundColor);
 			}
 			for (int i = 0; i < TemplateData.COLOR_LIST_SIZE; i++) {
 				String color = properties.getString("data.color.colorList" + i, null);
@@ -2534,10 +2492,10 @@ public class Template implements Comparable<Template> {
 				Color color = Color.decode('#' + messageInfo);
 				templateData.setMessageInfo(color);
 			}
-			String componentBackground = properties.getString("data.color.component-background", null);
+			String componentBackground = properties.getString("data.color.secondary-background", null);
 			if (componentBackground != null) {
 				Color color = Color.decode('#' + componentBackground);
-				templateData.setComponentBackground(color);
+				templateData.setSecondaryBackground(color);
 			}
 
 			String primaryColor = properties.getString("data.color.primary-color", null);
@@ -2570,8 +2528,8 @@ public class Template implements Comparable<Template> {
 		Map<String, String> templateDataMap = new HashMap<String, String>();
 		templateDataMap.putAll(getFreeData());
 		TemplateData templateData = getTemplateData();
-		if (templateData.getBackground() != null) {
-			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getBackground()), StringHelper.colorToHexStringNotNull(templateDataUser.getBackground()));
+		if (templateData.getPrimaryBackground() != null) {
+			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getPrimaryBackground()), StringHelper.colorToHexStringNotNull(templateDataUser.getPrimaryBackground()));
 		}
 
 		for (int i = 0; i < 6; i++) {
@@ -2602,8 +2560,8 @@ public class Template implements Comparable<Template> {
 		if (templateData.getBorder() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getBorder()), StringHelper.colorToHexStringNotNull(templateDataUser.getBorder()));
 		}
-		if (templateData.getComponentBackground() != null) {
-			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getComponentBackground()), StringHelper.colorToHexStringNotNull(templateDataUser.getComponentBackground()));
+		if (templateData.getSecondaryBackground() != null) {
+			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getSecondaryBackground()), StringHelper.colorToHexStringNotNull(templateDataUser.getSecondaryBackground()));
 		}
 		if (templateData.getTitle() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getTitle()), StringHelper.colorToHexStringNotNull(templateDataUser.getTitle()));

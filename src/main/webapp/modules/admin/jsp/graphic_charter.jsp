@@ -32,6 +32,12 @@
 			<c:set var="color" value="${currentContext.templateData.thirdColor}" scope="request" />
 			<jsp:include page="template_data.jsp?name=thirdColor&style=color" />
 
+			<c:set var="color" value="${currentContext.templateData.primaryBackground}" scope="request" />
+			<jsp:include page="template_data.jsp?name=primaryBackground&style=color" />
+
+			<c:set var="color" value="${currentContext.templateData.secondaryBackground}" scope="request" />
+			<jsp:include page="template_data.jsp?name=secondaryBackground&style=color" />
+
 			<c:set var="color" value="${currentContext.templateData.border}" scope="request" />
 			<jsp:include page="template_data.jsp?name=border&style=color" />
 

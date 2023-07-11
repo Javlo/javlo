@@ -211,6 +211,23 @@ public class PageBean implements Serializable {
 		return childrenBean;
 	}
 
+	public List<PageBean> getVisibleChildren() {
+		List<PageBean> childrenBean = new LinkedList<PageBean>();
+		List<MenuElement> children = page.getChildMenuElementsList();
+		for (MenuElement child : children) {
+			try {
+				if (child.isActive() || ctx.isEdition()) {
+					if (child.isVisible()) {
+						childrenBean.add(child.getPageBean(ctx));
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return childrenBean;
+	}
+
 	public String getName() {
 		return page.getName();
 	}
