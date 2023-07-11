@@ -211,7 +211,7 @@ public class PageBean implements Serializable {
 		return childrenBean;
 	}
 
-	public List<PageBean> getVisibleChildren() {
+	public List<PageBean> getVisibleChildrenList() {
 		List<PageBean> childrenBean = new LinkedList<PageBean>();
 		List<MenuElement> children = page.getChildMenuElementsList();
 		for (MenuElement child : children) {
