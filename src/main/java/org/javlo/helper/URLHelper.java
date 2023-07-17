@@ -336,7 +336,17 @@ public class URLHelper extends ElementaryURLHelper {
 				return url;
 			}
 		}
-		return URLHelper.createStaticURL(ctx, "/images/avatar.svg");
+
+		String text = "";
+		if (userInfo.getFirstName() != null && userInfo.getFirstName().length() > 0) {
+			text += userInfo.getFirstName().charAt(0);
+		}
+		if (userInfo.getLastName() != null && userInfo.getLastName().length() > 0) {
+			text += userInfo.getLastName().charAt(0);
+		}
+		text = text.toUpperCase();
+
+		return URLHelper.createStaticURL(ctx, "/avatar.svg?text="+text);
 	}
 
 	public static String createQRCodeLink(ContentContext ctx, IContentVisualComponent comp) {

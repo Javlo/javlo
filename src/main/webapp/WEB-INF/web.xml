@@ -55,12 +55,9 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
-
-
 	<listener>
 		<listener-class>org.javlo.utilThymeleaf.ThymeleafConfig</listener-class>
 	</listener>
-
 
 	<servlet>
 		<servlet-name>DataDocServlet</servlet-name>
@@ -215,7 +212,6 @@
 		<url-pattern>/oauth2callback</url-pattern>
 	</servlet-mapping>
 
-
 	<servlet-mapping>
 		<servlet-name>oauth2callback</servlet-name>
 		<url-pattern>/oauth2callback_admin</url-pattern>
@@ -231,6 +227,7 @@
 		<servlet-class>org.javlo.servlet.ZIPServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
+
 	<servlet-mapping>
 		<servlet-name>ZIPServlet</servlet-name>
 		<url-pattern>/zip/*</url-pattern>
@@ -241,6 +238,7 @@
 		<servlet-class>org.javlo.servlet.RestDataServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
+
 	<servlet-mapping>
 		<servlet-name>rest</servlet-name>
 		<url-pattern>/rest/*</url-pattern>
@@ -296,6 +294,16 @@
 	<servlet-mapping>
 		<servlet-name>resource</servlet-name>
 		<url-pattern>/robots.txt</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>avatar</servlet-name>
+		<servlet-class>org.javlo.servlet.AvatarServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>avatar</servlet-name>
+		<url-pattern>/avatar.svg</url-pattern>
 	</servlet-mapping>
 
 

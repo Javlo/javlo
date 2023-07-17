@@ -1,0 +1,27 @@
+package org.javlo.servlet;
+
+import org.javlo.helper.ResourceHelper;
+
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.io.IOException;
+
+public class AvatarServlet extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String text = request.getParameter("text");
+        if (text == null) {
+            text = "";
+        }
+        String svg = "<svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"#ddd\" viewBox=\"0 0 160 160\">" +
+                "<circle cx=\"80\" cy=\"80\" r=\"70\"/>" +
+                "<text x=\"50%\" y=\"50%\" dominant-baseline=\"middle\" text-anchor=\"middle\" fill=\"#777\" style=\"font-family: Arial; font-size: 70px\">"+text+"</text>" +
+                "</svg>";
+        ResourceHelper.writeStringToStream(svg, response.getOutputStream());
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+    }
+}
