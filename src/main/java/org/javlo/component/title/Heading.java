@@ -1,13 +1,5 @@
 package org.javlo.component.title;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentLayout;
@@ -26,6 +18,10 @@ import org.javlo.service.ContentService;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.service.exception.ServiceException;
 import org.owasp.encoder.Encode;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.*;
 
 public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 
@@ -51,6 +47,7 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
 		ctx.getRequest().setAttribute("title", getTitle(ctx));
+		ctx.getRequest().setAttribute("depth", getDepth(ctx));
 		ctx.setTitleDepth(getDepth(ctx));
 	}
 
