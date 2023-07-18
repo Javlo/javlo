@@ -242,6 +242,31 @@ input[readonly] {
 	text-transform: none;
 }
 
+.css-variable-list {
+	.form-control {
+		width: 90%;
+	}
+	.css-variable {
+		a:hover {
+			text-decoration: none;
+		}
+		a:hover:before {
+			content: "\F290";
+			display: inline-block;
+			font-family: bootstrap-icons !important;
+			font-style: normal;
+			font-weight: normal !important;
+			font-variant: normal;
+			text-transform: none;
+			line-height: 1;
+			vertical-align: -.125em;
+			width: 16px;
+			padding-left: 8px;
+			margin-left: -24px;
+		}
+	}
+}
+
 @media screen and (max-width: 1710px) {
 	.gallery .display-list ul li {
 		width: 33%;

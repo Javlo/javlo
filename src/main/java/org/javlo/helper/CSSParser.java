@@ -1,12 +1,9 @@
 package org.javlo.helper;
 
-import java.io.IOException;
-import java.util.EmptyStackException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
-import java.util.StringTokenizer;
-
+import io.bit3.jsass.CompilationException;
+import io.bit3.jsass.Compiler;
+import io.bit3.jsass.Options;
+import io.bit3.jsass.Output;
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.css.CSSElement;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
@@ -16,10 +13,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import io.bit3.jsass.CompilationException;
-import io.bit3.jsass.Compiler;
-import io.bit3.jsass.Options;
-import io.bit3.jsass.Output;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CSSParser {
 
@@ -329,8 +329,41 @@ public class CSSParser {
 		return output.getCss();
 	}
 	
-	public static void main(String[] args) throws CompilationException {
-		System.out.println(prefixAllQueries(".cp-wrp", "h2 { color: red; } p { size: 1.2em}"));
+	public static void main(String[] args) {
+		String filePath = "c:/trans/test.scss"; // Remplacez par votre chemin
+		Map<String, String> variables = extractVariables(new File(filePath));
+
+		for (Map.Entry<String, String> entry : variables.entrySet()) {
+			System.out.println(entry.getKey() + " = " + entry.getValue());
+		}
+	}
+
+	public static Map<String, String> extractVariables(File file) {
+		Map<String, String> variables = new TreeMap<>();
+		String fileContent = readCSSFile(file);
+		if (fileContent != null) {
+			Pattern pattern = Pattern.compile("((--|[\\$])[a-zA-Z0-9_-]+)\\s*:\\s*([^;]+)");
+			Matcher matcher = pattern.matcher(fileContent);
+			while (matcher.find()) {
+				String variableName = matcher.group(1).trim();
+				String variableValue = matcher.group(3).trim();
+				variables.put(variableName, variableValue);
+			}
+		}
+		return variables;
+	}
+
+	private static String readCSSFile(File file) {
+		StringBuilder content = new StringBuilder();
+		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				content.append(line).append("\n");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return content.toString();
 	}
 
 }

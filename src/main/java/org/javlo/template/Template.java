@@ -2520,6 +2520,22 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
+	public Map<String, String> getCssVariables(ContentContext ctx) {
+		String templateFolder = config.getTemplateFolder();
+		File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolderName()));
+		Map<String,String> out = new TreeMap<>();
+		for (File file : ResourceHelper.getAllFiles(templateSrc, null)) {
+			String ext = StringHelper.getFileExtension(file.getName());
+			if (ext!=null && ext.length() > 2) {
+				ext = ext.trim().toLowerCase();
+				if (ext.equals("css") || ext.equals("scss")) {
+					out.putAll(CSSParser.extractVariables(file));
+				}
+			}
+		}
+		return out;
+	}
+
 	private Map<String, String> getTemplateDataMap(GlobalContext globalContext) {
 		if (globalContext == null) {
 			return Collections.EMPTY_MAP;

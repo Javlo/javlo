@@ -1,31 +1,5 @@
 package org.javlo.module.template;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
-import java.net.URL;
-import java.text.ParseException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.logging.Logger;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.fileupload.FileItem;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.config.StaticConfig;
@@ -63,6 +37,15 @@ import org.javlo.user.RoleWrapper;
 import org.javlo.utils.ReadOnlyPropertiesConfigurationMap;
 import org.javlo.utils.StructuredProperties;
 import org.javlo.ztatic.FileCache;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.*;
+import java.net.URL;
+import java.text.ParseException;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class TemplateAction extends AbstractModuleAction {
 	
@@ -203,6 +186,7 @@ public class TemplateAction extends AbstractModuleAction {
 				ctx.getRequest().setAttribute("currentTemplate", new Template.TemplateBean(ctx, template));
 				ctx.getRequest().setAttribute("cssFolder", folders);
 				ctx.getRequest().setAttribute("htmlFolder", htmlFolders);
+				ctx.getRequest().setAttribute("cssVariables", template.getCssVariables(ctx));
 				params.put("templateid", templateName);
 				FileModuleContext fileModuleContext = FileModuleContext.getInstance(ctx.getRequest());
 				fileModuleContext.clear();

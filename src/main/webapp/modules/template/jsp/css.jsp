@@ -4,13 +4,13 @@
 
 	<div class="row">
 	<div class="col-md-3">
-	
+
 	<div class="file-filter">
-		<form id="form-css-template" action="${info.currentURL}" method="post">    
-		<div class="form-group _jv_flex-line">		
+		<form id="form-css-template" action="${info.currentURL}" method="post">
+		<div class="form-group _jv_flex-line">
 		<input type="hidden" name="templateid" value="${templateid}" />
 		<input type="hidden" name="css" value="${param.css}" />
-		<input type="hidden" name="webaction" value="template.editCSS" />		
+		<input type="hidden" name="webaction" value="template.editCSS" />
 		<input type="text" name="search" value="${param.search}" placeholder="search..." id="input-filter" class="form-control" />
 		<input type="submit" value="ok" class="btn btn-default btn-xs ms-1" />
 		</div>
@@ -34,15 +34,15 @@
 			</div></div>
 		</c:forEach>
 	</div>
-	
+
 	</div>
-	
-	<div class="col-md-9">
+
+	<div class="col-md-7">
 
 	<form id="form-css-template" action="${info.currentURL}" class="standard-form js-change-submit ajax" method="post">
 		<div>
 			<input type="hidden" name="webaction" value="template.editCSS" /> <input type="hidden" name="templateid" value="${templateid}" />
-		</div>	
+		</div>
 		<div class="widgetbox2">
 		<h3>${param.css}</h3>
 		<div class="content nopadding">
@@ -58,8 +58,55 @@
 			<input type="submit" name="indent" value="${i18n.edit['global.save']} & indent" />
 		</div>
 	</form>
-	
+
 	</div>
+
+		<script>
+			function filterCssVariable() {
+				var text = document.getElementById("filter-input").value;
+				var css = document.getElementById("filter-css").checked;
+				var scss = document.getElementById("filter-sass").checked;
+				document.querySelectorAll(".css-variable-list .css-variable a").forEach(i => {
+						if (i.innerHTML.indexOf(text)>=0) {
+							i.classList.remove("hidden");
+						} else {
+							i.classList.add("hidden");
+						}
+						if (css && !i.innerHTML.startsWith("--")) {
+							i.classList.add("hidden");
+						}
+						if (scss && !i.innerHTML.startsWith("$")) {
+							i.classList.add("hidden");
+						}
+				});
+			}
+		</script>
+
+		<div class="col-md-2 css-variable-list">
+			<h4>CSS/SCSS Variables</h4>
+			<input id="filter-input" class="form-control mb-3" onkeyup="filterCssVariable();" placeholder="filter" />
+
+			<div class="btn-group mb-3">
+				<div class="_jv_btn-check">
+					<input id="filter-all" type="radio" name="filter" value="all" checked onchange="filterCssVariable();">
+					<label for="filter-all">All</label>
+				</div>
+				<div class="_jv_btn-check">
+					<input id="filter-css" type="radio" name="filter" value="css" onchange="filterCssVariable();">
+					<label for="filter-css">CSS</label>
+				</div>
+				<div class="_jv_btn-check">
+					<input id="filter-sass" type="radio" name="filter" value="sass" onchange="filterCssVariable();">
+					<label for="filter-sass">SASS</label>
+				</div>
+			</div>
+
+			<c:forEach var="cssVar" items="${cssVariables}">
+				<div class="css-variable">
+					<a href="javascript:navigator.clipboard.writeText('${cssVar.key}');" title="<c:out value="${cssVar.value}" escapeXml="true"/>">${cssVar.key}</a>
+				</div>
+			</c:forEach>
+		</div>
 	</div>
-	
+
 </div>
