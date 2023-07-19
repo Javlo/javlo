@@ -15,13 +15,58 @@
 		<input type="submit" value="ok" class="btn btn-default btn-xs ms-1" />
 		</div>
 		</form>
+
 	</div>
 	<br />
-	<div class="accordion">
+	<div class="file-list">
+
+		<input id="filter-files" class="form-control mb-3" onkeyup="filterFilesList();" placeholder="filter" />
+
+		<script>
+			function openCloseFileList(e, i) {
+				let wrapper = i.parentElement.parentElement;
+				if (wrapper.classList.contains("active")) {
+					wrapper.classList.remove("active");
+				} else {
+					wrapper.classList.add("active");
+				}
+				event.preventDefault();
+			}
+
+			function filterFilesList() {
+				var query = document.getElementById("filter-files").value.toLowerCase();
+				document.querySelectorAll(".file-block").forEach(i => {
+					i.classList.remove("low-active");
+				});
+				document.querySelectorAll(".file-list .files a").forEach(i => {
+					let text = i.innerHTML;
+					if (query.length > 0) {
+						if ((query.length > 0 && text.indexOf(query) >= 0)) {
+							i.classList.remove("hidden");
+							i.parentElement.parentElement.classList.add("low-active");
+						} else {
+							i.classList.add("hidden");
+						}
+					} else {
+						i.classList.remove("hidden");
+					}
+				});
+			}
+
+			function openSection() {
+				document.querySelectorAll(".file-list .files a.active").forEach(i => {
+					let wrapper = i.parentElement.parentElement;
+					wrapper.classList.add("active");
+				});
+			}
+
+		</script>
+
 		<c:forEach var="folder" items="${cssFolder}">
-			<h4><a role="button" data-toggle="collapse" href="#${folder.key}" aria-expanded="false" aria-controls="${folder.key}">${folder.key}</a></h4>
-			<div><div class="files">
-				<c:forEach var="css" items="${folder.value}">
+			<div class="file-block">
+			<div class="title"><a onclick="openCloseFileList(event, this)" role="button" data-toggle="collapse" href="#${folder.key}" aria-expanded="false" aria-controls="${folder.key}">${folder.key}</a></div>
+			<div class="files" id="${folder.key}">
+				<c:forEach var="css" items="${folder.value}" varStatus="status">
 					<c:set var="file" value="${folder.key}/${css}" />
 					<c:url var="cssUrl" value="${info.currentURL}" context="/">
 						<c:param name="css" value="${file}" />
@@ -29,10 +74,13 @@
 						<c:param name="webaction" value="editCSS" />
 						<c:param name="search" value="${param.search}" />
 					</c:url>
-					<a ${file == param.css?' class="btn btn-sm btn-primary"':'class="btn btn-sm btn-default"'} id="${folder.key}" href="${cssUrl}">${css}</a>
+					<a id="${folder.key}-${status.index}" ${file == param.css?' class="file-link active"':'class="file-link"'} href="${cssUrl}">${css}</a>
 				</c:forEach>
-			</div></div>
+			</div>
+			</div>
 		</c:forEach>
+
+		<c:if test="${not empty param.css}"><script>openSection();</script></c:if>
 	</div>
 
 	</div>

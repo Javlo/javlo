@@ -124,9 +124,80 @@ input[readonly] {
 	text-align: left;
 }
 
-.files {
-	display: flex;
-	flex-flow: row wrap;
+.file-list {
+
+	.title {
+		a {
+			display: block;
+			background-color: #999;
+			padding: 3px 0.5rem;
+			margin-top: 0.5rem;
+			margin-bottom: 3px;
+			color: #fff;
+			padding-right: 24px;
+			position: relative;
+			&:after {
+				position: absolute;
+				right: 4px;
+				top: 4px;
+				content: "\F4FD";
+				display: inline-block;
+				font-family: bootstrap-icons !important;
+				font-style: normal;
+				font-weight: normal !important;
+				font-variant: normal;
+				text-transform: none;
+				line-height: 1;
+				vertical-align: -.125em;
+				width: 16px;
+				font-size: 16px;
+			}
+			&:hover {
+				text-decoration: none;
+				background-color: #777;
+			}
+			&.hidden {
+				display: none;
+			}
+		}
+	}
+
+	.active, .low-active {
+		.title {
+			a:after {
+				content: "\F2E9";
+			}
+		}
+		.files {
+			display: flex;
+		}
+		a.active {
+			font-weight: bold;
+		}
+	}
+
+	.low-active {
+		.title {
+			a:after {
+				content: "\F124  \F2E9";
+				width: 36px;
+			}
+		}
+	}
+
+	.files {
+		display: none;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		align-items: stretch;
+		align-content: center;
+
+		a {
+			width: 50%;
+			display: block;
+		}
+	}
+
 }
 
 .btn {
