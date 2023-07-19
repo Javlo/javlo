@@ -13,7 +13,7 @@ public class AvatarServlet extends HttpServlet {
         if (text == null) {
             text = "";
         }
-        String svg = "<svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"#ddd\" viewBox=\"0 0 160 160\">" +
+        String svg = "<svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"#eee\" viewBox=\"0 0 160 160\">" +
                 "<circle cx=\"80\" cy=\"80\" r=\"70\"/>" +
                 "<text x=\"50%\" y=\"85\" dominant-baseline=\"middle\" text-anchor=\"middle\" fill=\"#999\" style=\"font-family: Arial; font-size: 50px\">"+text+"</text>" +
                 "</svg>";
