@@ -63,14 +63,20 @@
 
 		<script>
 			function filterCssVariable() {
-				var text = document.getElementById("filter-input").value;
+				var textIn = document.getElementById("filter-input-in").value.toLowerCase();
+				var textOut = document.getElementById("filter-input-out").value.toLowerCase();
 				var css = document.getElementById("filter-css").checked;
 				var scss = document.getElementById("filter-sass").checked;
 				document.querySelectorAll(".css-variable-list .css-variable a").forEach(i => {
-						if (i.innerHTML.indexOf(text)>=0) {
-							i.classList.remove("hidden");
+						let text = (i.innerHTML + ' ' + i.getAttribute("title")).toLowerCase();
+						if (textIn.length > 0 || textOut.length > 0) {
+							if ((textIn.length > 0 && text.indexOf(textIn) >= 0) || (textOut.length > 0 && text.indexOf(textOut) < 0)) {
+								i.classList.remove("hidden");
+							} else {
+								i.classList.add("hidden");
+							}
 						} else {
-							i.classList.add("hidden");
+							i.classList.remove("hidden");
 						}
 						if (css && !i.innerHTML.startsWith("--")) {
 							i.classList.add("hidden");
@@ -84,7 +90,8 @@
 
 		<div class="col-md-2 css-variable-list">
 			<h4>CSS/SCSS Variables</h4>
-			<input id="filter-input" class="form-control mb-3" onkeyup="filterCssVariable();" placeholder="filter" />
+			<input id="filter-input-in" class="form-control mb-3" onkeyup="filterCssVariable();" placeholder="filter +" />
+			<input id="filter-input-out" class="form-control mb-3" onkeyup="filterCssVariable();" placeholder="filter -" />
 
 			<div class="btn-group mb-3">
 				<div class="_jv_btn-check">

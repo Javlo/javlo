@@ -347,7 +347,7 @@ public class CSSParser {
 			while (matcher.find()) {
 				String variableName = matcher.group(1).trim();
 				String variableValue = matcher.group(3).trim();
-				variables.put(variableName, variableValue);
+				variables.put(variableName, variableValue + " > "+file.getName());
 			}
 		}
 		return variables;
