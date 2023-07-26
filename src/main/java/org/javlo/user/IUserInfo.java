@@ -33,9 +33,9 @@ public interface IUserInfo {
 
 	public String getPassword();
 
-	String getNationalRegister();
+	public String getNationalRegister();
 
-	void setNationalRegister(String nationalRegister);
+	public void setNationalRegister(String nationalRegister);
 
 	public String getEmail();
 	
