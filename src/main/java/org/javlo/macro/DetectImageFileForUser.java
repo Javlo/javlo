@@ -43,7 +43,7 @@ public class DetectImageFileForUser extends AbstractMacro {
 		return null;
 	}
 	public static void detectAvatar(ContentContext ctx, IUserInfo userInfo) throws IOException {
-		String avatarFileName = userInfo.getLogin() + ".webp";
+		String avatarFileName = userInfo.getUserFolder() + ".webp";
 		File avatarDir = new File(ElementaryURLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), "avatar_to_import"));
 		File avatarFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getAvatarFolder(), avatarFileName));
 		if (!avatarFile.exists()) {
