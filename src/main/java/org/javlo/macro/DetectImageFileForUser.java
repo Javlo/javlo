@@ -82,6 +82,22 @@ public class DetectImageFileForUser extends AbstractMacro {
 					}
 				}
 			}
+			for (File imageFile : avatarDir.listFiles()) {
+				if (StringHelper.isImage(imageFile.getName())) {
+					if (StringHelper.containsWidthTransliteration(imageFile.getName(), userInfo.getLastName().replace(' ', '-')) == 1) {
+						try (InputStream in = new FileInputStream(imageFile)) {
+							logger.info("create avatar file (lastname) : " + avatarFile);
+							BufferedImage img = ImageIO.read(in);
+							img = ImageEngine.resizeWidth(img, 640, true);
+							avatarFile.getParentFile().mkdirs();
+							avatarFile.createNewFile();
+							ImageIO.write(img, "webp", avatarFile);
+						}
+						logger.info("delete file : " + imageFile);
+						imageFile.delete();
+					}
+				}
+			}
 			FileCache.getInstance(ctx.getRequest().getSession().getServletContext()).deleteAllFile(ctx.getGlobalContext().getContextKey(), avatarFileName);
 		}
 	}
