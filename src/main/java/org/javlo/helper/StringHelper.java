@@ -4838,22 +4838,38 @@ public class StringHelper {
     }
 
     public static void main(String[] args) throws IOException {
-        Locale locale = Locale.US;
-        String text = "(sea transport) - 1234.39 EUR. pp";
-        Float price = extractPrice(text, "EUR.", null);
-        System.out.println("price = " + price);
-        text = "100 pcs (sea transport) - 45.66 € pp";
-        price = extractPrice(text, "€", ".");
-        System.out.println("price = " + price);
-        text = "100 pcs (sea transport) - 548,65 $ pp";
-        price = extractPrice(text, "$", ",");
-        System.out.println("price = " + price);
+        System.out.println(containsWidthTransliteration("Patrick Vandermaesen", "patrick", "vandermaesen", "maesen"));
     }
 
     private static Pattern SPECIAL_REGEX_CHARS = Pattern.compile("[{}()\\[\\].+*?^$\\\\|]");
 
     public static String escapeSpecialRegexChars(String str) {
         return SPECIAL_REGEX_CHARS.matcher(str).replaceAll("\\\\$0");
+    }
+
+    /**
+     * search a list of token (tokeninzed search)
+      * @param source
+     * @param tokens
+     * @return the number of tokens found
+     */
+    public static int containsWidthTransliteration(String source, String... tokens) {
+        if (StringHelper.isEmpty(source)) {
+            return 0;
+        }
+        int found = 0;
+        source = removeSpecialChars(source);
+        source = source.trim().toLowerCase();
+        for (String token : tokens) {
+            if (!StringHelper.isEmpty(token)) {
+                token = removeSpecialChars(token);
+                token = token.trim().toLowerCase();
+                if (source.contains(token)) {
+                    found++;
+                }
+            }
+        }
+        return found;
     }
 
     public static Float extractPrice(String text, String inCurrency, String sep) {

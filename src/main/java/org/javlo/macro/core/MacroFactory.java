@@ -38,6 +38,7 @@ public class MacroFactory {
 
 	private MacroFactory() {
 		macros.add(new CreateFakeUsers());
+		macros.add(new DetectImageFileForUser());
 		macros.add(new CreateContentChildren());
 		macros.add(new DeleteDynamicComponent());
 		macros.add(new DeleteComponent());
