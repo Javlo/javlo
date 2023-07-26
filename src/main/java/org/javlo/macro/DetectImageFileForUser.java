@@ -56,12 +56,9 @@ public class DetectImageFileForUser extends AbstractMacro {
 						try (InputStream in = new FileInputStream(imageFile)) {
 							logger.info("create avatar file : " + avatarFile);
 							BufferedImage img = ImageIO.read(in);
-							System.out.println("1/ img width : "+img.getWidth());
 							img = ImageEngine.resizeWidth(img, 640, true);
-							System.out.println("2/ img width : "+img.getWidth());
-							//avatarFile.getParentFile().mkdirs();
+							avatarFile.getParentFile().mkdirs();
 							avatarFile.createNewFile();
-							System.out.println("3/ created : "+avatarFile);
 							ImageIO.write(img, "webp", avatarFile);
 						}
 						logger.info("delete file : " + imageFile);
