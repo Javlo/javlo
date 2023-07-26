@@ -54,7 +54,23 @@ public class DetectImageFileForUser extends AbstractMacro {
 				if (StringHelper.isImage(imageFile.getName())) {
 					if (StringHelper.containsWidthTransliteration(imageFile.getName(), userInfo.getFirstName(), userInfo.getLastName()) == 2) {
 						try (InputStream in = new FileInputStream(imageFile)) {
-							logger.info("create avatar file : " + avatarFile);
+							logger.info("create avatar file (firstname + lastname) : " + avatarFile);
+							BufferedImage img = ImageIO.read(in);
+							img = ImageEngine.resizeWidth(img, 640, true);
+							avatarFile.getParentFile().mkdirs();
+							avatarFile.createNewFile();
+							ImageIO.write(img, "webp", avatarFile);
+						}
+						logger.info("delete file : " + imageFile);
+						imageFile.delete();
+					}
+				}
+			}
+			for (File imageFile : avatarDir.listFiles()) {
+				if (StringHelper.isImage(imageFile.getName())) {
+					if (StringHelper.containsWidthTransliteration(imageFile.getName(), userInfo.getLastName()) == 1) {
+						try (InputStream in = new FileInputStream(imageFile)) {
+							logger.info("create avatar file (lastname) : " + avatarFile);
 							BufferedImage img = ImageIO.read(in);
 							img = ImageEngine.resizeWidth(img, 640, true);
 							avatarFile.getParentFile().mkdirs();

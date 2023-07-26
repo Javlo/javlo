@@ -368,7 +368,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 	}
 
 	public synchronized static String performAjaxsearch(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
-		String text = rs.getParameter("text", "").trim();
+		String text = rs.getParameter("text", "").trim().toLowerCase();
 		String country = rs.getParameter("country", "").trim();
 		String domain = rs.getParameter("domain", "").trim();
 		String organization = rs.getParameter("organization", "").trim();
@@ -377,7 +377,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 		List<IUserInfo> users = userFactory.getUserInfoList();
 		List<UserInfoWrapper> result = new LinkedList<>();
 		for (IUserInfo user : users) {
-			if (BeanHelper.beanToString(user).toLowerCase().contains(text.toLowerCase()) || StringHelper.isEmpty(text)) {
+			if ((BeanHelper.beanToString(user) + ' ' + user.getLastName()+' '+user.getFirstName()).toLowerCase().contains(text) || StringHelper.isEmpty(text)) {
 				if (country.length() == 0 || ((UserInfo) user).getCountry().equals(country)) {
 					if (domain.length() == 0 || ((UserInfo) user).getFunction().contains(domain)) {
 						if (role.length() == 0 || ((UserInfo) user).getRoles().contains(role)) {
