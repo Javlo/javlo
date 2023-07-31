@@ -1,34 +1,5 @@
 package org.javlo.config;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.Proxy;
-import java.net.ProxySelector;
-import java.net.URI;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Observable;
-import java.util.Properties;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.actions.DefaultEcomLister;
@@ -39,13 +10,7 @@ import org.javlo.bean.InstallBean;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.source.TestDataSource;
-import org.javlo.helper.ElementaryURLHelper;
-import org.javlo.helper.NetHelper;
-import org.javlo.helper.PatternHelper;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.SecurityHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
+import org.javlo.helper.*;
 import org.javlo.macro.core.IMacro;
 import org.javlo.mailing.feedback.DefaultMailingFeedback;
 import org.javlo.module.mailing.MailingAction;
@@ -60,8 +25,21 @@ import org.javlo.user.User;
 import org.javlo.user.UserInfo;
 import org.javlo.utils.ConfigurationProperties;
 import org.javlo.utils.request.IFirstRequestListner;
-import org.javlo.utils.request.IFirstRequestListner;
 import org.javlo.ztatic.FileCache;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.net.*;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class StaticConfig extends Observable {
 	
@@ -686,9 +664,27 @@ public class StaticConfig extends Observable {
 		return properties.getString("deploy.env", "dev");
 	}
 
+	public String getInfra() {
+		return properties.getString("deploy.infra", "back");
+	}
+
 	public boolean isProd() {
 		if (prod == null) {
 			prod = getEnv().equalsIgnoreCase("prod");
+		}
+		return prod;
+	}
+
+	public boolean isBack() {
+		if (prod == null) {
+			prod = getEnv().equalsIgnoreCase("back");
+		}
+		return prod;
+	}
+
+	public boolean isFront() {
+		if (prod == null) {
+			prod = getEnv().equalsIgnoreCase("front");
 		}
 		return prod;
 	}
