@@ -677,7 +677,7 @@ public class StaticConfig extends Observable {
 
 	public boolean isBack() {
 		if (prod == null) {
-			prod = getEnv().equalsIgnoreCase("back");
+			prod = getInfra().equalsIgnoreCase("back");
 		}
 		return prod;
 	}
