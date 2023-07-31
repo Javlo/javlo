@@ -144,6 +144,8 @@ public class StaticConfig extends Observable {
 	
 	private Boolean prod = null;
 
+	private Boolean back = null;
+
 	private Class<IUserFactory> adminUserFactoryClass = null;
 
 	private AdminUserFactory admimUserFactory = null;
@@ -676,10 +678,10 @@ public class StaticConfig extends Observable {
 	}
 
 	public boolean isBack() {
-		if (prod == null) {
-			prod = getInfra().equalsIgnoreCase("back");
+		if (back == null) {
+			back = getInfra().equalsIgnoreCase("back");
 		}
-		return prod;
+		return back;
 	}
 
 	public boolean isFront() {
