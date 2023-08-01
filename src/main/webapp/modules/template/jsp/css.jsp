@@ -20,7 +20,10 @@
 	<br />
 	<div class="file-list">
 
-		<input id="filter-files" class="form-control mb-3" onkeyup="filterFilesList();" placeholder="filter" />
+		<div class="form-group _jv_flex-line  mb-3">
+			<input id="filter-files" class="form-control" onkeyup="filterFilesList();" placeholder="filter" />
+			<button type="button" class="btn btn-default btn-xs ms-1" onclick="document.getElementById('filter-files').value=''; filterFilesList();"><i class="bi bi-x-lg"></i></button>
+		</div>
 
 		<script>
 			function openCloseFileList(e, i) {
@@ -37,20 +40,24 @@
 				var query = document.getElementById("filter-files").value.toLowerCase();
 				document.querySelectorAll(".file-block").forEach(i => {
 					i.classList.remove("low-active");
+					i.classList.remove("empty");
 				});
-				document.querySelectorAll(".file-list .files a").forEach(i => {
-					let text = i.innerHTML;
-					if (query.length > 0) {
-						if ((query.length > 0 && text.indexOf(query) >= 0)) {
-							i.classList.remove("hidden");
-							i.parentElement.parentElement.classList.add("low-active");
+				if  (query != null && query.length > 0) {
+					document.querySelectorAll(".file-list .files a").forEach(i => {
+						let text = i.innerHTML;
+						if (query.length > 0) {
+							if ((query.length > 0 && text.indexOf(query) >= 0)) {
+								i.classList.remove("hidden");
+								i.parentElement.parentElement.classList.add("low-active");
+							} else {
+								i.classList.add("hidden");
+								i.parentElement.parentElement.classList.add("empty");
+							}
 						} else {
-							i.classList.add("hidden");
+							i.classList.remove("hidden");
 						}
-					} else {
-						i.classList.remove("hidden");
-					}
-				});
+					});
+				}
 			}
 
 			function openSection() {

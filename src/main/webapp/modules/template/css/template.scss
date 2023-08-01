@@ -3,6 +3,10 @@
 	overflow: hidden;
 }
 
+.hidden, .file-block.empty {
+	display: none !important;
+}
+
 .content h3 {
 	text-align: center;
 	padding: 3px;

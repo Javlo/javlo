@@ -102,12 +102,12 @@ if (StringHelper.isTrue(request.getParameter("preview-command"), true) && !ctx.i
 							</ul>
 							<div class="tab-content">
 								<div role="tabpanel" class="tab-pane fade in active navigation_panel " id="_ep_navigation">
-									<c:if test="${contentContext.currentTemplate.mailing}">
+									<%--<c:if test="${contentContext.currentTemplate.mailing}">
 										<jsp:include page="bootstrap/navigation_mailing.jsp"></jsp:include>
-									</c:if>
-									<c:if test="${!contentContext.currentTemplate.mailing}">
+									</c:if>--%>
+<%--									<c:if test="${!contentContext.currentTemplate.mailing}">--%>
 										<jsp:include page="bootstrap/navigation.jsp"></jsp:include>
-									</c:if>
+<%--									</c:if>--%>
 								</div>
 								<div role="tabpanel" class="tab-pane fade" id="_ep_content"><jsp:include page="bootstrap/component.jsp" /></div>
 								<c:if test="${userInterface.previewResourcesTab}">
