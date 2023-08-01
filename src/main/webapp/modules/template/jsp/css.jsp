@@ -1,18 +1,34 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
 %><c:set var="templateid" value="${param.templateid}" /><c:if test="${not empty currentTemplate && empty templateid}"><c:set var="templateid" value="${currentTemplate.name}" /></c:if>
-<div class="content css">
+
+<script>
+	function startLoading() {
+		document.getElementById("loader").classList.remove("hidden");
+		document.getElementById("main-wrapper").classList.add("hidden");
+	}
+	function endLoading() {
+		document.getElementById("main-wrapper").classList.remove("hidden");
+		document.getElementById("loader").classList.add("hidden");
+	}
+</script>
+
+<div id="loader" class="hidden">
+	<div class="_jv_spinner" role="status"><span class="sr-only" lang="en">Loading...</span></div>
+</div>
+
+<div class="content css" id="main-wrapper">
 
 	<div class="row">
 	<div class="col-md-3">
 
 	<div class="file-filter">
-		<form id="form-css-template" action="${info.currentURL}" method="post">
+		<form id="form-css-template" action="${info.currentURL}" method="get" onsubmit="startLoading();">
 		<div class="form-group _jv_flex-line">
 		<input type="hidden" name="templateid" value="${templateid}" />
 		<input type="hidden" name="css" value="${param.css}" />
 		<input type="hidden" name="webaction" value="template.editCSS" />
 		<input type="text" name="search" value="${param.search}" placeholder="search..." id="input-filter" class="form-control" />
-		<input type="submit" value="ok" class="btn btn-default btn-xs ms-1" />
+		<button type="button" class="btn btn-default btn-xs ms-1" onclick="startLoading(); document.getElementById('input-filter').value='';document.getElementById('form-css-template').submit();"><i class="bi bi-x-lg"></i></button>
 		</div>
 		</form>
 
