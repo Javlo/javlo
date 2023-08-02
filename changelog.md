@@ -953,8 +953,10 @@ Security in case of vulnerabilities.
 ## [2.2] - 03/03/2023
 ### Added
 - text position 
+- mailing on smartgenericform
 ### Modified
 - minimize html in extended widget
 - filter page reference
 - add date range possibility in dynamic content
 - don't display not found link with 'page:'
+- event + optimise dynamiccomponent html field detection
