@@ -1,37 +1,5 @@
 package org.javlo.mailing;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.text.ParseException;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.servlet.ServletContext;
-
 import org.apache.commons.io.FileUtils;
 import org.javlo.config.MailingStaticConfig;
 import org.javlo.config.StaticConfig;
@@ -45,6 +13,14 @@ import org.javlo.user.UserFactory;
 import org.javlo.utils.CSVFactory;
 import org.javlo.utils.ConfigurationProperties;
 import org.javlo.utils.NeverEmptyMap;
+
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.servlet.ServletContext;
+import java.io.*;
+import java.text.ParseException;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class Mailing {
 
@@ -258,13 +234,13 @@ public class Mailing {
 		return true;
 	}
 
-	public void load(MailingStaticConfig staticConfig, String inID) throws IOException {
+	public boolean load(MailingStaticConfig staticConfig, String inID) throws IOException {
 		setId(staticConfig, inID);
 		loadedDir = new File(dir.getAbsolutePath());
 		File contentFile = new File(dir.getAbsolutePath() + '/' + CONTENT_FILE);
-		if (!contentFile.exists()) {
-			return;
-		}
+//		if (!contentFile.exists()) {
+//			return false;
+//		}
 		File errorReceiversFile = new File(dir.getAbsolutePath() + '/' + ERROR_RECEIVERS_FILE);
 		errorReceivers = new LinkedHashSet<InternetAddress>();
 		if (errorReceiversFile.exists()) {
@@ -278,20 +254,24 @@ public class Mailing {
 		}
 		File receiversFile = new File(dir.getAbsolutePath() + '/' + RECEIVERS_FILE);
 		receivers = new LinkedHashSet<InternetAddress>();
-		for (String line : FileUtils.readLines(receiversFile, ContentContext.CHARACTER_ENCODING)) {
-			try {
-				receivers.add(new InternetAddress(line));
-			} catch (Exception ex) {
-				ex.printStackTrace();
+		if (receiversFile.exists()) {
+			for (String line : FileUtils.readLines(receiversFile, ContentContext.CHARACTER_ENCODING)) {
+				try {
+					receivers.add(new InternetAddress(line));
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
 			}
 		}
 		ConfigurationProperties config = new ConfigurationProperties();
 		File configFile = new File(dir.getAbsolutePath() + '/' + CONFIG_FILE);
-		InputStream in = new FileInputStream(configFile);
-		try {
-			config.load(in);
-		} finally {
-			ResourceHelper.closeResource(in);
+		if (configFile.exists()) {
+			InputStream in = new FileInputStream(configFile);
+			try {
+				config.load(in);
+			} finally {
+				ResourceHelper.closeResource(in);
+			}
 		}
 		try {
 			TEST = config.getBoolean("test", false);
@@ -330,7 +310,9 @@ public class Mailing {
 				}
 			}
 			setSend(config.getBoolean("send", true));
-			content = FileUtils.readFileToString(contentFile, encoding);
+			if (contentFile.exists()) {
+				content = FileUtils.readFileToString(contentFile, encoding);
+			}
 
 			File userFile = new File(dir.getAbsolutePath() + '/' + USERS_FILE);
 			if (userFile.exists()) {
@@ -362,6 +344,7 @@ public class Mailing {
 			logger.finest("bad 'notif' address found in '" + CONFIG_FILE + "' : " + config.getString("notif"));
 		}
 		logger.finest("load mailing subject : " + subject);
+		return true;
 	}
 
 	Map<String, String> loadSent() throws IOException {
@@ -428,11 +411,13 @@ public class Mailing {
 			
 			File receiversFile = new File(dir.getAbsolutePath() + '/' + RECEIVERS_FILE);
 			Collection<String> lines = new LinkedList<String>();
-			for (InternetAddress receiver : receivers) {
-				if (receiver != null) {
-					lines.add(receiver.toUnicodeString());
+			if (receivers != null) {
+				for (InternetAddress receiver : receivers) {
+					if (receiver != null) {
+						lines.add(receiver.toUnicodeString());
+					}
 				}
-			}			
+			}
 			FileUtils.writeLines(receiversFile, lines);
 
 			ConfigurationProperties config = new ConfigurationProperties();
@@ -491,6 +476,9 @@ public class Mailing {
 			if (adminEmail != null) {
 				config.setProperty("admin.email", adminEmail);
 			}
+
+			logger.info("write mailing info : "+configFile);
+
 			ResourceHelper.writePropertiesToFile(config, configFile);
 
 			if (getUsers() != null) {

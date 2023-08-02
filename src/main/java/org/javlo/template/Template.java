@@ -1218,19 +1218,31 @@ public class Template implements Comparable<Template> {
 	}
 
 	public static Map<String, String> extractPropertiesFromHtml(String html) {
-		Pattern fieldPattern = Pattern.compile("\\$\\{field.*?\\}");
+		String regex = "\\bfield\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\b";
+		Pattern fieldPattern = Pattern.compile(regex);
 		Matcher matcher = fieldPattern.matcher(html);
-		int i = 0;
 		Map<String, String> out = new LinkedHashMap<>();
+		List<String[]> dataList = new LinkedList<>();
+		int order=0;
 		while (matcher.find()) {
-			i++;
+			order++;
 			String field = matcher.group();
 			String[] data = field.substring(2, field.length() - 1).split("\\.");
 			if (data.length >= 3) {
-				out.put("field." + data[2] + ".order", "" + i);
+				dataList.add(data);
+				out.put("field." + data[2] + ".order", "" + order);
 				out.put("field." + data[2] + ".type", data[1]);
 			}
 		}
+		for (int i=0; i<dataList.size(); i++){
+			String[] data = dataList.get(i);
+			if (data[1].equalsIgnoreCase("boolean")) {
+				out.put("field." + data[2] + ".width-edit", "3");
+			} else {
+				out.put("field." + data[2] + ".width-edit", "12");
+			}
+		}
+
 		return out;
 	}
 
@@ -3785,20 +3797,15 @@ public class Template implements Comparable<Template> {
 	}
 
 	public static void main(String[] args) throws IOException {
-		File file1 = new File("C:\\work\\template\\marie-poppies\\scss\\javlo\\mutimedia.scss");
-		File file2 = new File("C:\\opt\\tomcat8\\webapps\\javlo2\\wktp\\marie-poppies\\marie-poppies\\scss\\javlo\\mutimedia.scss");
+		String html = "<div class=\"content-bloc ${(field.boolean.imageLeft.value=='true'?'image-left':'image-right')} ${(field.boolean.blob.value=='true'?'image-blob':'')}\" ${(field.boolean.important.value=='true'?'image-blob':'')}\"> ${field.wysiwyg-text.body.viewXHTMLCode}";
+		String regex = "\\bfield\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\b";
 
-		System.out.println("file1 exist : " + file1.exists());
-
-		System.out.println("file1.lastModified() = " + file1.lastModified());
-		System.out.println("file2.lastModified() = " + file2.lastModified());
-
-		if (file1.lastModified() > file2.lastModified()) {
-			System.out.println("COPY");
-		} else {
-			System.out.println("NO COPY");
+		Pattern fieldPattern = Pattern.compile(regex);
+		Matcher matcher = fieldPattern.matcher(html);
+		while (matcher.find()) {
+			System.out.println(matcher.group());
+			System.out.println("---");
 		}
-
 	}
 
 }

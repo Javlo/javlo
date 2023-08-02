@@ -1375,6 +1375,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 						prefix = getForcedPrefixViewXHTMLCode(ctx);
 						suffix = getForcedSuffixViewXHTMLCode(ctx);
 					}
+
 					return (prefix + "<div " + getPrefixCssClass(ctx, "pc_empty-component") + getSpecialPreviewCssId(ctx) + getDataAttributes(ctx) + ">" + getEmptyXHTMLCode(ctx) + "</div>" + suffix);
 				}
 			}
@@ -3588,7 +3589,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	@Override
-	public boolean isHiddenInMode(ContentContext ctx, int mode, Boolean mobile) {
+	public boolean
+	isHiddenInMode(ContentContext ctx, int mode, Boolean mobile) {
 		if (componentBean.getHiddenModes() == null) {
 			return false;
 		} else {
@@ -3676,6 +3678,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return getComponentBean().compareTo(componentBean) == 0;
 	}
 
+	protected String getEmptyLabel(ContentContext ctx) {
+		return getTextTitle(ctx);
+	}
+
 	@Override
 	public String getEmptyXHTMLCode(ContentContext ctx) throws Exception {
 		if (isHiddenInMode(ctx, ctx.getRenderMode(), ctx.isMobile()) || !AdminUserSecurity.getInstance().canModifyConponent(ctx, getId())) {
@@ -3687,7 +3693,15 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				prefix = getForcedPrefixViewXHTMLCode(ctx);
 				suffix = getForcedSuffixViewXHTMLCode(ctx);
 			}
-			return prefix + "<span class=\"" + EDIT_CLASS + "\">" + getComponentLabel(ctx, ctx.getGlobalContext().getEditLanguage(ctx.getSession())) + "</span>" + suffix;
+			String emptyLabel = getEmptyLabel(ctx);
+			System.out.println("1.emptyLabel = "+emptyLabel);
+			if (!StringHelper.isEmpty(emptyLabel)) {
+				emptyLabel = " : "+emptyLabel;
+			} else {
+				emptyLabel = "";
+			}
+			System.out.println("2.emptyLabel = "+emptyLabel);
+			return prefix + "<span class=\"" + EDIT_CLASS + "\">" + getComponentLabel(ctx, ctx.getGlobalContext().getEditLanguage(ctx.getSession())) + emptyLabel + "</span>" + suffix;
 		}
 	}
 

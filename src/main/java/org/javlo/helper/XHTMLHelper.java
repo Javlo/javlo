@@ -169,6 +169,7 @@ public class XHTMLHelper {
 
 	private static String autoLink(String inContent, boolean notFollow, boolean newWin, GlobalContext globalContext) {
 		String content = inContent;
+
 		boolean linkFound = false;
 		if (content == null) {
 			return "";

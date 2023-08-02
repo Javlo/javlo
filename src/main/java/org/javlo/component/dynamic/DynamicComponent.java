@@ -976,16 +976,17 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
     @Override
     public String getTextTitle(ContentContext ctx) {
+        String title = null;
         try {
             for (Field field : getFields(ctx)) {
                 if (field.isTitle()) {
-                    return field.getValue();
+                    title = StringHelper.neverNull(title).trim()+ ' ' + StringHelper.neverNull(field.getValue()).trim();
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return title;
     }
 
     @Override

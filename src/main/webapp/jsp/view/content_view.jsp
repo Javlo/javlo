@@ -197,7 +197,7 @@ String xhtmlCode = elem.getXHTMLCode(ctx);
 %><c:if test="${editPreview}"><%
 if (!elem.isDisplayable(ctx)) {
 	I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
-	xhtmlCode = elem.getEmptyXHTMLCode(ctx);	
+	xhtmlCode = elem.getEmptyXHTMLCode(ctx);
 }%></c:if><%if (!elem.isHiddenInMode(ctx, ctx.getRenderMode(), ctx.isMobile())) {%><%=elem.isVisibleFromCookies(ctx)?elem.getPrefixViewXHTMLCode(ctx):""%><%=xhtmlCode%><%=elem.isVisibleFromCookies(ctx)?elem.getSuffixViewXHTMLCode(ctx):""%><%}
 previousElem = elem;
 if (elems != null) {%><%=elems.getSufixXHTMLCode(ctx)

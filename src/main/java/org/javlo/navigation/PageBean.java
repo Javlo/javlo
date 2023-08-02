@@ -687,6 +687,11 @@ public class PageBean implements Serializable {
 		return getUrl().equals(getLinkOn());
 	}
 
+	/**
+	 * get the link on the page, if page do not contains real content, the link can be a external link or a link to a ressources.
+	 * @return
+	 * @throws Exception
+	 */
 	public String getLink() throws Exception {
 		if (page.isRealContent(ctx)) {
 			return getUrl();
@@ -699,7 +704,12 @@ public class PageBean implements Serializable {
 			}
 		}
 	}
-	
+
+	/**
+	 * returns the first link found in a component (external link, link to a file, etc.)
+	 * @return
+	 * @throws Exception
+	 */
 	public String getLinkOn() throws Exception {
 		return page.getLinkOn(ctx);
 	}

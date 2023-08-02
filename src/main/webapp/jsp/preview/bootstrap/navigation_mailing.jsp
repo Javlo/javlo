@@ -14,16 +14,16 @@
 </a></c:if><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>Navigation</h2>
 	<div class="height-to-bottom minus-50">
 	<form id="children_list" action="${info.currentURL}" method="post">
-	<div class="pages mailing">		
-	   <ul class="navigation">	   
+	<div class="pages mailing">
+	   <ul class="navigation">
 	   <li class="title ${rootAssociation.associationPage.url eq info.currentURL?'current ':''}${rootAssociation.associationPage.info.realContent?'real-content':''}">
-	   		<a id="page-${rootAssociation.associationPage.name}" class="construction" href="${rootAssociation.associationPage.url}">${i18n.edit["composition.main-title"]}</a>	   			   		
+	   		<a id="page-${rootAssociation.associationPage.name}" class="construction" href="${rootAssociation.associationPage.url}">${i18n.edit["composition.main-title"]}</a>
 	   </li>
-	   <li><ul class="children sortable">	   
+	   <li><ul class="children sortable">
 	   <c:forEach var="page" items="${rootAssociation.pages}" varStatus="bcl">
 	   			<li class="${page.url eq info.currentURL?'current ':''}${page.info.realContent?'real-content':''}">
 	   				<a id="page-${page.name}" class="draggable" href="${page.url}" title="${page.pageTitle}">page-${bcl.index+1}<span class="move ui-sortable-handle"></span></a>
-	   			</li>	   			
+	   			</li>
 	   		</c:forEach></ul>
 	   </li>
 	   </ul>
@@ -32,35 +32,35 @@
 	   	 <div class="actions">
 	   		<form id="add-page" action="${info.currentURL}" method="post">
 	   			<div>
-	   				<input type="hidden" value="edit.addPage" name="webaction" />				
+	   				<input type="hidden" value="edit.addPage" name="webaction" />
 					<input type="hidden" name="parent" value="${rootAssociation.associationPage.name}" />
 	   				<button type="submit" class="btn btn-plus btn-default btn-xsm" value="+" title="Add a page" lang="en"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>Add a page</button>
 	   			</div>
-	   		</form>	   		
-	   </div>	   	
+	   		</form>
+	   </div>
 	   </li>
 	   </ul>
 	   <c:if test="${globalContext.staticConfig.sharedImportDocument}">
 	   <ul class="navigation articles">
-	   <li class="title"><h4>articles</h4></li>   
+	   <li class="title"><h4>articles</h4></li>
 	   <li><ul class="children sortable ${fn:length(rootAssociation.articles)==0?'empty':'not-empty'}"><c:forEach var="page" items="${rootAssociation.articles}" varStatus="bcl">
 	   			<li class="${page.url eq info.currentURL?'current ':''}${page.info.realContent?'real-content':''}">
 	   				<a id="page-${page.name}" class="draggable" href="${page.url}" title="${page.pageTitle}">${page.titleOrSubtitle}</a>
-	   			</li>	   			
+	   			</li>
 	   		</c:forEach>
-	   		</ul>	   	
+	   		</ul>
 	   </li>
 	   </ul><ul class="navigation actions">
 	   <li>
 	   	 <div class="actions">
 	   		<form id="add-page" action="${info.currentURL}" method="post">
-	   			<div>	   			
-					<input type="hidden" value="edit.addPage" name="webaction" />				
+	   			<div>
+					<input type="hidden" value="edit.addPage" name="webaction" />
 					<input type="hidden" name="parent" value="${rootAssociation.articleRoot.name}" />
 		   			<button type="submit" class="btn btn-plus btn-default btn-xsm" value="+" title="Add an article" lang="en"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>Add an article</button>
 	   			</div>
-	   		</form>	   		
-	   </div>	   	
+	   		</form>
+	   </div>
 	   </li>
 	   </ul></c:if>
     </div>

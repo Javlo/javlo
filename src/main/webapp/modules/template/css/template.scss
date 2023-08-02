@@ -3,6 +3,13 @@
 	overflow: hidden;
 }
 
+#loader {
+	height: 450px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
 .hidden, .file-block.empty {
 	display: none !important;
 }

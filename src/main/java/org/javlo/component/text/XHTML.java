@@ -3,9 +3,6 @@
  */
 package org.javlo.component.text;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
@@ -14,6 +11,9 @@ import org.javlo.service.ReverseLinkService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /**
  * @author pvandermaesen
@@ -97,8 +97,9 @@ public class XHTML extends AbstractVisualComponent {
 				Elements body = doc.select("body");
 				xhtml = body.html();
 			}
+			xhtml = XHTMLHelper.replaceJSTLData(ctx, XHTMLHelper.replaceLinks(ctx, xhtml));
 			xhtml = ReverseLinkService.getInstance(ctx.getGlobalContext()).replaceLink(ctx, null, xhtml);
-			return XHTMLHelper.replaceLinks(ctx, XHTMLHelper.replaceJSTLData(ctx, xhtml));
+			return xhtml;
 		}
 	}
 
