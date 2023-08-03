@@ -3,11 +3,6 @@
  */
 package org.javlo.component.meta;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.Date;
-
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.IDate;
 import org.javlo.context.ContentContext;
@@ -15,6 +10,11 @@ import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.service.RequestService;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Date;
 
 /**
  * @author pvandermaesen
@@ -33,6 +33,8 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 
 	private static final String VISIBLE_DATE_TYPE = "visible-date";
 
+	private static final String VISIBLE_MONTH_TYPE = "visible-month";
+
 	private final String VISIBLE_TIME_TYPE = "visible-time";
 
 	public static final String NOT_VISIBLE_TYPE = "not-visible";
@@ -45,7 +47,7 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 	@Override
 	public String[] getStyleList(ContentContext ctx) {		
 		if (getConfig(ctx).getStyleList() == null || getConfig(ctx).getStyleList().length == 0) {
-			return new String[] { USER_FRIENDLY_DATE_TYPE, MEDIUM_DATE_TYPE, SHORT_DATE_TYPE, SHORT_DATE_WIDTH_DAY, VISIBLE_DATE_TYPE, VISIBLE_TIME_TYPE, NOT_VISIBLE_TYPE };
+			return new String[] { USER_FRIENDLY_DATE_TYPE, MEDIUM_DATE_TYPE, SHORT_DATE_TYPE, SHORT_DATE_WIDTH_DAY, VISIBLE_DATE_TYPE, VISIBLE_TIME_TYPE, NOT_VISIBLE_TYPE, VISIBLE_MONTH_TYPE };
 		} else {
 			return getConfig(ctx).getStyleList();
 		}
@@ -170,6 +172,8 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 			return StringHelper.renderDate(date);
 		} else if (getStyle().equals(VISIBLE_TIME_TYPE)) {
 			return StringHelper.renderTime(date);
+		} else if (getStyle().equals(VISIBLE_MONTH_TYPE)) {
+			return StringHelper.renderRenderDateOnlyMonth(ctx, date);
 		} else if (getStyle().equals(NOT_VISIBLE_TYPE)) {
 			return "";
 		} else {

@@ -2912,6 +2912,10 @@ public class StringHelper {
      * @throws IOException
      * @throws FileNotFoundException
      */
+
+    public static final String renderRenderDateOnlyMonth(ContentContext ctx, Date date) {
+        return StringHelper.renderDate(new Locale(ctx.getLanguage()), date, "MMMM yyyy");
+    }
     public static String renderUserFriendlyDate(ContentContext ctx, Date date) throws FileNotFoundException, IOException {
         if (date == null) {
             return null;
