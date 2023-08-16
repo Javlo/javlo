@@ -99,7 +99,12 @@ public class BankTransfert {
 		out.println(getBic());
 		out.println(getName());
 		out.println(getIban());
-		out.println(getCurrency()+getAmount());
+		Double amount = getAmount();
+		if (amount == null) {
+			amount = 0.0;
+		}
+		amount = ((double)Math.round(amount*100))/100;
+		out.println(getCurrency()+amount);
 		if (getStructuredReference() == null) {
 			out.println("CHAR");
 		}
