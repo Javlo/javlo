@@ -24,7 +24,6 @@ import org.javlo.module.content.Edit;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageBean;
 import org.javlo.navigation.ReactionMenuElementComparator;
-import org.javlo.navigation.ReactionSmartPageBeanComparator;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.utils.TimeRange;
@@ -466,7 +465,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
     }
 
     protected boolean isUILargeSorting(ContentContext ctx) {
-        return StringHelper.isTrue(getConfig(ctx).getProperty("ui.large-sorting", null), true);
+        return StringHelper.isTrue(getConfig(ctx).getProperty("ui.large-sorting", null), false);
     }
 
     @Override
@@ -652,6 +651,12 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         out.println("<div class=\"line date\">");
         out.println(XHTMLHelper.getRadio(getOrderInputName(), "date", getOrder()));
         out.println("<label for=\"date\">" + i18nAccess.getText("content.page-teaser.order-date") + "</label></div>");
+        out.println("<div class=\"line\">");
+        out.println(XHTMLHelper.getRadio(getOrderInputName(), "content", getOrder()));
+        out.println("<label for=\"popularity\">" + i18nAccess.getText("content.page-teaser.order-content", "like content structure") + "</label></div>");
+        out.println("<div class=\"line\">");
+        out.println(XHTMLHelper.getRadio(getOrderInputName(), "random", getOrder()));
+        out.println("<label for=\"popularity\">" + i18nAccess.getText("content.page-teaser.order-random", "random") + "</label></div>");
         if (isUILargeSorting(ctx)) {
             out.println("<div class=\"line\">");
             out.println(XHTMLHelper.getRadio(getOrderInputName(), "creation", getOrder()));
@@ -662,9 +667,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
             out.println("<div class=\"line\">");
             out.println(XHTMLHelper.getRadio(getOrderInputName(), "popularity", getOrder()));
             out.println("<label for=\"popularity\">" + i18nAccess.getText("content.page-teaser.order-popularity") + "</label></div>");
-            out.println("<div class=\"line\">");
-            out.println(XHTMLHelper.getRadio(getOrderInputName(), "content", getOrder()));
-            out.println("<label for=\"popularity\">" + i18nAccess.getText("content.page-teaser.order-content", "like content structure") + "</label></div>");
         }
         out.println("</fieldset>");
         out.println("</div></div>"); // row
@@ -959,6 +961,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
             specialClass = " visit-order" + specialClass;
         } else if (isPopularityOrder(ctx)) {
             specialClass = " popularity-order" + specialClass;
+        } else if (isRandomOrder(ctx)) {
+            specialClass = " random-order" + specialClass;
         }
         return colPrefix + "<div " + getPrefixCssClass(ctx, "page-reference" + specialClass + ' ' + getComponentCssClass(ctx)) + getSpecialPreviewCssId(ctx) + ">";
     }
@@ -1140,6 +1144,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         return checkOrder(ctx, "creation");
     }
 
+    private boolean isRandomOrder(ContentContext ctx) {
+        return checkOrder(ctx, "random");
+    }
+
     private boolean isDateOrder(ContentContext ctx) {
         return checkOrder(ctx, "date");
     }
@@ -1211,24 +1219,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
                 Collections.sort(pages, new MenuElementPopularityComparator(ctx, ascending));
             } else if (isContentOrder(ctx)) {
                 Collections.sort(pages, new MenuElementPriorityComparator(!ascending));
-            }
-        }
-    }
-
-    private void sortSmartPageBean(ContentContext ctx, List<SmartPageBean> pages, boolean ascending) throws Exception {
-        if (!isNoOrder(ctx)) {
-            if (isReactionOrder(ctx)) {
-                Collections.sort(pages, new ReactionSmartPageBeanComparator(ascending));
-            } else if (isDateOrder(ctx)) {
-                Collections.sort(pages, new SmartPageBeanGlobalDateComparator(ctx, ascending));
-            } else if (isCreationOrder(ctx)) {
-                Collections.sort(pages, new SmartPageBeanCreationDateComparator(ascending));
-            } else if (isVisitOrder(ctx)) {
-                Collections.sort(pages, new SmartPageBeanVisitComparator(ctx, ascending));
-            } else if (isPopularityOrder(ctx)) {
-                Collections.sort(pages, new SmartPageBeanPopularityComparator(ctx, ascending));
-            } else if (isContentOrder(ctx)) {
-                Collections.sort(pages, new SmartPageBeanPriorityComparator(!ascending));
+            } else if (isRandomOrder(ctx)) {
+                Collections.shuffle(pages);
             }
         }
     }
