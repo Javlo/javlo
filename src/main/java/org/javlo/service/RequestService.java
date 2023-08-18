@@ -1,27 +1,21 @@
 package org.javlo.service;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileCleaningTracker;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
 import org.javlo.portlet.filter.MultiReadRequestWrapper;
 import org.owasp.encoder.Encode;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.*;
 
 public class RequestService {
 
@@ -34,7 +28,7 @@ public class RequestService {
 	private final Map<String, String[]> savedParameters = new HashMap<String, String[]>();
 
 	private final Map<String, FileItem[]> fileItems = new HashMap<String, FileItem[]>();
-	
+
 	private static final String[] EMPTY_STRING_ARRAY = new String[0];
 
 	private HttpServletRequest request;
@@ -130,7 +124,7 @@ public class RequestService {
 		instance.request = request;
 		return instance;
 	}
-	
+
 	public String getParameter(String key) {
 		return getParameter(key, null);
 	}
@@ -139,7 +133,7 @@ public class RequestService {
 		String[] values = parameters.get(key);
 		if (values == null || values.length == 0 || values[0] == null) {
 			if (request.getParameter(key) == null) { // TODO: check why sometime
-														// we need this.
+				// we need this.
 				return outDefault;
 			} else {
 				return request.getParameter(key);
@@ -148,7 +142,23 @@ public class RequestService {
 			return values[0];
 		}
 	}
-	
+
+	public String getParameterNoTag(String key, String outDefault) {
+		return StringHelper.removeTag(getParameter(key, outDefault));
+	}
+
+	public String getParameterNoTag(String key) {
+		return StringHelper.removeTag(getParameter(key, null));
+	}
+
+	public String getParameterFoHtml(String key, String outDefault) {
+		return Encode.forHtml(getParameter(key, outDefault));
+	}
+
+	public String getParameterFoHtml(String key) {
+		return Encode.forHtml(getParameter(key, null));
+	}
+
 	public String[] getParameterValues(String key) {
 		return  getParameterValues(key, EMPTY_STRING_ARRAY);
 	}
@@ -160,7 +170,7 @@ public class RequestService {
 		}
 		return res;
 	}
-	
+
 	public List<String> getParameterListValues(String key) {
 		return getParameterListValues(key, Collections.EMPTY_LIST);
 	}
@@ -191,13 +201,13 @@ public class RequestService {
 					outMap.put(entry.getKey(), entry.getValue());
 				}*/
 			}
-			
+
 			parameterMap = outMap;
 		}
 
 		return parameterMap;
 	}
-	
+
 	Map<String, String> parameterForAttributeMap = null;
 	Map<String, Map<String,String>> parameterForAttributesMap = null;
 
@@ -210,13 +220,13 @@ public class RequestService {
 					outMap.put(entry.getKey(), Encode.forHtmlAttribute(entry.getValue()[0]));
 				}
 			}
-			
+
 			parameterForAttributeMap = outMap;
 		}
 
 		return parameterForAttributeMap;
 	}
-	
+
 	public Map<String,Map<String,String>> getParameterForAttributesMap() {
 		if (parameterForAttributesMap == null) {
 			Map<String, Map<String,String>> outMap = new HashMap<>();
@@ -228,10 +238,10 @@ public class RequestService {
 						entryMap.put(value, value);
 					}
 					outMap.put(entry.getKey(), entryMap);
-				}				
+				}
 			}
-			
-			
+
+
 			parameterForAttributesMap = outMap;
 		}
 
@@ -326,11 +336,11 @@ public class RequestService {
 		parameters.clear();
 		parameters.putAll(savedParameters);
 	}
-	
+
 	public boolean removeParameter(String name) {
 		return parameters.remove(name) != null;
 	}
-	
+
 	public String getBody() throws IOException {
 		BufferedReader reader = request.getReader();
 		String out = "";
