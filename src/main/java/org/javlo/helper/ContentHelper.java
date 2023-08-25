@@ -586,7 +586,7 @@ public class ContentHelper {
 
     public static final void importWordPressXML(ContentContext ctx, InputStream wpStream, String host) throws Exception {
 
-        final int MAX_IMPORT = 150;
+        final int MAX_IMPORT = 10000;
 
         System.out.println("### host = "+host);
 
