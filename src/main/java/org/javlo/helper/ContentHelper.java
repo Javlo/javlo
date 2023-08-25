@@ -19,6 +19,8 @@ import org.javlo.component.title.SubTitle;
 import org.javlo.component.title.Title;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.data.taxonomy.TaxonomyBean;
+import org.javlo.data.taxonomy.TaxonomyService;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
 import org.javlo.helper.XMLManipulationHelper.TagDescription;
 import org.javlo.navigation.MenuElement;
@@ -726,6 +728,7 @@ public class ContentHelper {
                         MenuElement newPage = MacroHelper.addPage(ctx, newCat, pageName, false, false);
 
                         if (tags.size() > 0) {
+                            TaxonomyService ts = ctx.getGlobalContext().getTaxonomy(ctx);
                             logger.info("add tags on : " + newPage.getName() + " -> " + tags);
                             Set<String> taxo = newPage.getTaxonomy();
                             if (taxo == null) {
@@ -735,8 +738,19 @@ public class ContentHelper {
                                 if (!taxo.contains(tag)) {
                                     taxo.add(tag);
                                 }
+                                if (ts.getTaxonomyBeanMap().get(tag)==null) {
+                                    TaxonomyBean taxoWp = ts.getRoot().getChildByName("_wp_import");
+                                    if (taxoWp == null) {
+                                        taxoWp = new TaxonomyBean(StringHelper.getRandomId(), "_wp_import");
+                                        ts.getRoot().addChild(taxoWp, null);
+                                    }
+                                    if (taxoWp.getChildByName(tag) == null) {
+                                        taxoWp.addChild(new TaxonomyBean(StringHelper.getRandomId(), tag), null);
+                                    }
+                                }
                             }
                             newPage.setTaxonomy(taxo);
+                            ts.clearCache();
                         }
 
                         if (newPage == null) {
@@ -767,8 +781,6 @@ public class ContentHelper {
                                     String imageName = StringHelper.getFileNameFromPath(imageUrl);
                                     String importFolder = AbstractVisualComponent.getImportFolderPath(ctx, newPage);
                                     String fullPathImport = URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getImageFolder(), importFolder, imageName);
-                                    System.out.println("### imageName = " + imageName);
-                                    System.out.println("### fullPathImport = " + fullPathImport);
 
                                     ResourceHelper.writeUrlToFile(new URL(imageUrl), new File(fullPathImport));
 
@@ -803,8 +815,6 @@ public class ContentHelper {
                                     String fileName = StringHelper.getFileNameFromPath(fileUrl);
                                     String importFolder = AbstractVisualComponent.getImportFolderPath(ctx, newPage);
                                     String fullPathImport = URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getFileFolder(), importFolder, fileName);
-                                    System.out.println("### fileName = " + fileName);
-                                    System.out.println("### fullPathImport = " + fullPathImport);
 
                                     ResourceHelper.writeUrlToFile(new URL(fileUrl), new File(fullPathImport));
 

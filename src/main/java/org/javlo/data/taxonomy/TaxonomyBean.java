@@ -220,6 +220,15 @@ public class TaxonomyBean {
 		}
 		return false;
 	}
+
+	public TaxonomyBean getChildByName(String name) {
+		for (TaxonomyBean child : children) {
+			if (child.getName().equals(name)) {
+				return child;
+			}
+		}
+		return null;
+	}
 	
 	public boolean hasParent(String id) {
 		TaxonomyBean parent = getParent();
