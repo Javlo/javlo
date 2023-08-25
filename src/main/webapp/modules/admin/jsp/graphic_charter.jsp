@@ -204,7 +204,6 @@
 								<p>0123456789</p>
 								<p>abcdefghijklmnopqrstuvwxyz</p>
 								<p>ABCDEFGHIJKLMNOPQRSTUVWXYZ</p>
-								<p>���������</p>
 							</div>
 						</div>
 					</div>
@@ -234,7 +233,6 @@
 								<p>0123456789</p>
 								<p>abcdefghijklmnopqrstuvwxyz</p>
 								<p>ABCDEFGHIJKLMNOPQRSTUVWXYZ</p>
-								<p>���������</p>
 							</div>
 						</div>
 					</div>

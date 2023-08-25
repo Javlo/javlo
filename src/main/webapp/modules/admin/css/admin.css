@@ -168,6 +168,8 @@ a.nav {
 	display: flex;
 	justify-content: left;
 	align-items: center;
+
+	flex-wrap: wrap;
 }
 
 .color-list input {
@@ -175,4 +177,6 @@ a.nav {
 	font-size: .6rem;
 	font-weight: normal;
 	text-align: center;
+	min-width: 45px;
+	margin-bottom: 3px;
 }
