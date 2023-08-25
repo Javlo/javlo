@@ -199,6 +199,15 @@ public class TaxonomyService {
 		}
 	}
 
+	public TaxonomyBean getTaxonomyBeanByName(String name) {
+		for (TaxonomyBean bean : getTaxonomyBeanMap().values()) {
+			if (bean.getName().equals(name)) {
+				return bean;
+			}
+		}
+		return null;
+	}
+
 	private void fillMap(Map<String, TaxonomyBean> sources, List<TaxonomyBean> tobeDeleted, TaxonomyBean currentBean, boolean resolveLink) {
 		if (resolveLink && currentBean.isSource()) {
 			tobeDeleted.add(currentBean);

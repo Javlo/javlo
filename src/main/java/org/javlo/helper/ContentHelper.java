@@ -587,6 +587,20 @@ public class ContentHelper {
         return "";
     }
 
+    private static String encodeNonAscii(String input) {
+        StringBuilder encoded = new StringBuilder();
+
+        for (char c : input.toCharArray()) {
+            if (c < 128) {
+                encoded.append(c);
+            } else {
+                encoded.append("&#").append((int) c).append(";");
+            }
+        }
+
+        return encoded.toString();
+    }
+
     public static final void importWordPressXML(ContentContext ctx, InputStream wpStream, String host) throws Exception {
 
         final int MAX_IMPORT = 10000;
@@ -735,9 +749,6 @@ public class ContentHelper {
                                 taxo = new HashSet<>();
                             }
                             for (String tag : tags) {
-                                if (!taxo.contains(tag)) {
-                                    taxo.add(tag);
-                                }
                                 if (ts.getTaxonomyBeanMap().get(tag)==null) {
                                     TaxonomyBean taxoWp = ts.getRoot().getChildByName("_wp_import");
                                     if (taxoWp == null) {
@@ -747,10 +758,14 @@ public class ContentHelper {
                                     if (taxoWp.getChildByName(tag) == null) {
                                         taxoWp.addChild(new TaxonomyBean(StringHelper.getRandomId(), tag), null);
                                     }
+                                    ts.clearCache();
+                                }
+                                TaxonomyBean tabBean = ts.getTaxonomyBeanByName(tag);
+                                if (!taxo.contains(tabBean.getId())) {
+                                    taxo.add(tabBean.getId());
                                 }
                             }
                             newPage.setTaxonomy(taxo);
-                            ts.clearCache();
                         }
 
                         if (newPage == null) {
@@ -759,7 +774,7 @@ public class ContentHelper {
                             Map<String, String> parents = new HashMap<String, String>();
                             ComponentBean bean = new ComponentBean();
                             bean.setType(Heading.TYPE);
-                            bean.setValue("depth=1\ntext=" + Encode.forHtml(title));
+                            bean.setValue("depth=1\ntext=" + encodeNonAscii(title));
                             bean.setArea(ComponentBean.DEFAULT_AREA);
                             bean.setModify(true);
                             bean.setLanguage(ctx.getRequestContentLanguage());
@@ -776,7 +791,6 @@ public class ContentHelper {
                             }
 
                             if (!StringHelper.isEmpty(imageUrl)) {
-
                                 try {
                                     String imageName = StringHelper.getFileNameFromPath(imageUrl);
                                     String importFolder = AbstractVisualComponent.getImportFolderPath(ctx, newPage);
@@ -786,7 +800,7 @@ public class ContentHelper {
 
                                     logger.info("image downloaded : " + imageUrl);
 
-                                    String val = "file-name=" + imageName + "\n" + "dir=" + importFolder;
+                                    String val = "file-name=" + imageName + "\n" + "dir=" + importFolder+"\nlink=#";
 
                                     bean = new ComponentBean();
                                     bean.setType(GlobalImage.TYPE);
