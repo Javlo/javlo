@@ -1,12 +1,5 @@
 package org.javlo.helper;
 
-import java.io.File;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Collection;
-import java.util.LinkedList;
-
 import org.htmlparser.Node;
 import org.htmlparser.NodeFilter;
 import org.htmlparser.Parser;
@@ -20,19 +13,32 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.navigation.MenuElement;
 
+import java.io.File;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Collection;
+import java.util.LinkedList;
+
 public class ImportHelper {
 
 	public static class ContentSelector {
 		private String title;
 		private String image;
+
+		private String file;
 		private String content;
 		private String dir;
 
-		public ContentSelector(String title, String image, String content, String dir) {
+		private String date;
+
+		public ContentSelector(String title, String image, String file, String content, String dir, String date) {
 			this.title = title;
 			this.image = image;
+			this.file=file;
 			this.content = content;
 			this.dir = dir;
+			this.date = date;
 		}
 
 		public String getTitle() {
@@ -67,6 +73,14 @@ public class ImportHelper {
 			this.dir = dir;
 		}
 
+		public String getFile() {
+			return file;
+		}
+
+		public void setFile(String file) {
+			this.file = file;
+		}
+
 	}
 
 	private static void getAllChildren(Node inNode, Collection<Node> children) {
@@ -85,7 +99,7 @@ public class ImportHelper {
 		return outNodes;
 	}
 
-	public static String importHTML(ContentContext ctx, String url, ContentSelector selector) throws Exception {
+	public static String importHTML(ContentContext ctx, String url, String user, String login, ContentSelector selector) throws Exception {
 		try {
 			String msg = null;
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -150,7 +164,7 @@ public class ImportHelper {
 			} else {
 				for (Node parentNode : nodeList.toNodeArray()) {
 					for (Node node : getAllChildren(parentNode)) {
-						if (node.getStartPosition() == imageNode.getStartPosition()) {
+						if (node != null && node.getStartPosition() == imageNode.getStartPosition()) {
 							node.getParent().getChildren().remove(node);
 						}
 					}

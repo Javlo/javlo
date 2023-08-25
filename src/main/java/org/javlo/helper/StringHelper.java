@@ -1195,6 +1195,15 @@ public class StringHelper {
         }
     }
 
+    public static String getNotEmpty(String... values) {
+        for (String v : values) {
+            if (v!=null && v.length()>0) {
+                return v;
+            }
+        }
+        return null;
+    }
+
     public static String getPropertieskey(String key) {
         key = key.replace(" ", "__BLK__");
         key = key.replace("=", "__EQL__");

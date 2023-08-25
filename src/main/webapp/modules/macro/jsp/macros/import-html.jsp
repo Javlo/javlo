@@ -16,18 +16,29 @@
 <legend>Import gallery</legend>
 <c:if test="${empty browse}">
 <input type="hidden" name="webaction" value="macro-import-html.import" />
-
-
-
 <div class="line">
 	<label for="url">url :</label>
 	<input type="text" name="url" id="url" value="${param.url}" />
 </div>
 
 <fieldset>
+	<legend>login</legend>
+	<div class="line">
+		<label for="login">login :</label>
+		<input type="text" name="login" id="login" value="${not empty login?login:''}"/>
+	</div>
+	<div class="line">
+		<label for="password">password :</label>
+		<input type="password" name="password" id="password" value="${not empty password?password:''}"/>
+	</div>
+</fieldset>
+
+
+<fieldset class="mt-3">
 <legend>CSS Selector</legend>
 <div class="line">
 	<label for="title">title :</label>
+	<c:set var="titleSelector" value="${not empty param.title?title:'h1'}" />
 	<input type="text" name="title" id="title" value="${not empty titleSelector?titleSelector:'h1'}" />
 </div>
 
@@ -37,14 +48,24 @@
 </div>
 
 <div class="line">
+	<label for="file">file :</label>
+	<input type="text" name="file" id="file" value="${not empty fileSelector?fileSelector:'img'}"/>
+</div>
+
+<div class="line">
 	<label for="content">content :</label>
 	<input type="text" name="content" id="content" value="${not empty contentSelector?contentSelector:'.content'}" />
+</div>
+
+<div class="line">
+	<label for="content">date :</label>
+	<input type="text" name="date" id="date" value="${not empty dateSelector?dateSelector:'.date'}" />
 </div>
 
 </fieldset>
 
 <div class="action">
-	<input type="submit" name="import" value="import" />
+	<button type="submit" name="import">import</button>
 </div>
 </c:if>
 </fieldset>

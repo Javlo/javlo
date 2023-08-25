@@ -66,6 +66,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
 
@@ -88,6 +90,39 @@ public class ResourceHelper {
 	public static final String PRIVATE_DIR = "_private";
 
 	static final String STATIC_COMPONENT_DIR = "/static/components";
+
+	public static final List<String> STATIC_FILE_EXTENSION = List.of(
+			"txt",  // Text file
+			"doc",  // Microsoft Word (ancien format)
+			"docx", // Microsoft Word (format OpenXML)
+			"xls",  // Microsoft Excel (ancien format)
+			"xlsx", // Microsoft Excel (format OpenXML)
+			"ppt",  // Microsoft PowerPoint (ancien format)
+			"pptx", // Microsoft PowerPoint (format OpenXML)
+			"pdf",  // Adobe Portable Document Format
+			"jpg",  // Image JPEG
+			"jpeg", // Image JPEG (autre extension)
+			"png",  // Image PNG
+			"gif",  // Image GIF
+			"bmp",  // Image BMP
+			"mp3",  // Audio MP3
+			"mp4",  // Vidéo MP4
+			"avi",  // Vidéo AVI
+			"mkv",  // Vidéo MKV
+			"zip",  // Archive ZIP
+			"rar",  // Archive RAR
+			"7z",   // Archive 7-Zip
+			"tar",  // Archive TAR
+			"gz",   // Archive GZipped
+			"java", // Code source Java
+			"odt",  // Document texte OpenDocument
+			"ods",  // Feuille de calcul OpenDocument
+			"odp",  // Présentation OpenDocument
+			"odg",  // Dessin/graphique OpenDocument
+			"odf",  // Formule mathématique OpenDocument
+			"odb",  // Base de données OpenDocument
+			"odm"   // Document maître texte OpenDocument
+	);
 
 	public static class ImageFilenameFilter implements FilenameFilter {
 
@@ -140,7 +175,7 @@ public class ResourceHelper {
 	 * The following functions are complementary:
 	 * {@link #getChecksumInputStream(InputStream)},
 	 * {@link #getChecksumResult(InputStream)}, {@link #formatChecksum(long)}
-	 * 
+	 *
 	 * @param file
 	 * @return the standard checksum of the specified file
 	 * @throws IOException
@@ -179,7 +214,7 @@ public class ResourceHelper {
 				if (child.getAttributeValue("id") != null) {
 					for (String lg : ctx.getGlobalContext().getContentLanguages()) {
 						lgCtx.setAllLanguage(lg);
-						String jsonURL = url.toString() + ".json?lg=" + lg;
+						String jsonURL = url.toString() + "json?lg=" + lg;
 						JsonElement jsonElement = NetHelper.readJson(new URL(jsonURL));
 						Map<String, String> jsonMap = new HashMap<String, String>();
 						for (Entry entry : jsonElement.getAsJsonObject().entrySet()) {
@@ -231,7 +266,7 @@ public class ResourceHelper {
 
 	/**
 	 * extract a relative path from a full path.
-	 * 
+	 *
 	 * @param application
 	 *            the servlet context.
 	 * @param fullPath
@@ -253,7 +288,7 @@ public class ResourceHelper {
 
 	/**
 	 * extract a relative path from a full path.
-	 * 
+	 *
 	 * @param application
 	 *            the servlet context.
 	 * @param fullPath
@@ -313,7 +348,7 @@ public class ResourceHelper {
 
 	/**
 	 * transactional copy a file other file
-	 * 
+	 *
 	 * @param source
 	 *            the source file, must exist
 	 * @param destination
@@ -403,7 +438,7 @@ public class ResourceHelper {
 	 * {@link #getChecksumInputStream(InputStream)},
 	 * {@link #getChecksumResult(InputStream)}, {@link #computeChecksum(File)} <br/>
 	 * and because the implementation of the format can be changed in future.
-	 * 
+	 *
 	 * @param crc32
 	 * @return a standard formatted checksum
 	 */
@@ -417,7 +452,7 @@ public class ResourceHelper {
 
 	/**
 	 * get all directories under a directory (recursivly).
-	 * 
+	 *
 	 * @param dir
 	 * @return a list of directories (without files).
 	 */
@@ -467,7 +502,7 @@ public class ResourceHelper {
 
 	/**
 	 * get all files under a directory (recursivly).
-	 * 
+	 *
 	 * @param dir
 	 * @return a list of files (without directories).
 	 */
@@ -543,7 +578,7 @@ public class ResourceHelper {
 	 * The following functions are complementary:
 	 * {@link #getChecksumResult(InputStream)}, {@link #computeChecksum(File)},
 	 * {@link #formatChecksum(long)}
-	 * 
+	 *
 	 * @param in
 	 * @return an {@link InputStream} computing the checksum during the read, call
 	 *         {@link #getChecksumResult(InputStream)} to retrieve the checksum
@@ -559,7 +594,7 @@ public class ResourceHelper {
 	 * The following functions are complementary:
 	 * {@link #getChecksumInputStream(InputStream)}, {@link #computeChecksum(File)},
 	 * {@link #formatChecksum(long)}
-	 * 
+	 *
 	 * @param chkIn
 	 * @return the standard checksum of readed bytes from the given
 	 *         {@link InputStream} previously wrapped by
@@ -598,7 +633,7 @@ public class ResourceHelper {
 
 	/**
 	 * return a recursive directory array path
-	 * 
+	 *
 	 * @param directory
 	 *            the base directory
 	 * @param request
@@ -664,7 +699,7 @@ public class ResourceHelper {
 		} else if (mineType.equals("application/xml")) {
 			return "xml";
 		}
-		return ".bin";
+		return "bin";
 	}
 
 	public static final String getFileExtensionToMineType(String ext) {
@@ -767,10 +802,16 @@ public class ResourceHelper {
 		return file.length();
 	}
 
+	public static boolean isStaticFile(String filePath) {
+		String fileExt = StringHelper.getFileExtension(filePath);
+		fileExt = fileExt.toLowerCase();
+		return STATIC_FILE_EXTENSION.contains(fileExt);
+	}
+
 	/**
 	 * convert a path to a correct path for current OS. sample: /static/images on
 	 * windows -> \static\images and on unix no change.
-	 * 
+	 *
 	 * @param path
 	 *            a path to a file
 	 * @return a correct file for current OS
@@ -784,7 +825,7 @@ public class ResourceHelper {
 	/**
 	 * convert a path to a correct path for current OS. sample: /static/images on
 	 * windows -> \static\images and on unix no change.
-	 * 
+	 *
 	 * @param path
 	 *            a path to a file
 	 * @return a correct file for current OS
@@ -860,7 +901,7 @@ public class ResourceHelper {
 	/**
 	 * check if a file (or a folder) is under a folder. sample : /tmp/test/me.jpg
 	 * with /tmp retrun true
-	 * 
+	 *
 	 * @param file
 	 *            a file, this file must be a real file or method return false.
 	 * @param folder
@@ -887,7 +928,7 @@ public class ResourceHelper {
 	/**
 	 * check if this file is a document (list of extenion define in
 	 * static-config.properties
-	 * 
+	 *
 	 * @param ctx
 	 * @param filename
 	 * @return
@@ -909,7 +950,7 @@ public class ResourceHelper {
 	/**
 	 * check if this file is a document (list of extenion define in
 	 * static-config.properties
-	 * 
+	 *
 	 * @param ctx
 	 * @param filename
 	 * @return
@@ -930,7 +971,7 @@ public class ResourceHelper {
 
 	public static boolean isResourceURL(ContentContext ctx, String url) {
 		if (ctx == null) {
-			return url.endsWith(".doc");
+			return url.endsWith("doc");
 		}
 		String startURL = URLHelper.createResourceURL(ctx, "/");
 		String fileURL = URLHelper.createFileURL(ctx, "/");
@@ -1053,7 +1094,7 @@ public class ResourceHelper {
 
 	/**
 	 * Move a file or a folder to the global trash, depending on staticConfig.
-	 * 
+	 *
 	 * @param staticConfig
 	 * @param fileOrFolder
 	 * @return <code>true</code> if origin doesn't exist; or the result of
@@ -1068,7 +1109,7 @@ public class ResourceHelper {
 			String version = "";
 			do {
 				dest = new File(trashFolder + '/' + file.getName() + version);
-				version = "." + i;
+				version = "" + i;
 				i++;
 			} while (dest.exists());
 			dest.getParentFile().mkdirs();
@@ -1080,7 +1121,7 @@ public class ResourceHelper {
 	/**
 	 * remove the data folder directory this method is used for obtain a relative
 	 * file path from a ablute file path.
-	 * 
+	 *
 	 * @param path
 	 * @return
 	 */
@@ -1095,7 +1136,7 @@ public class ResourceHelper {
 	/**
 	 * remove the path from a string this method is used for obtain a relative file
 	 * path from a absolute file path.
-	 * 
+	 *
 	 * @param path
 	 * @return
 	 */
@@ -1112,7 +1153,7 @@ public class ResourceHelper {
 	/**
 	 * change all the reference to a resource when a resource path or name if
 	 * changed
-	 * 
+	 *
 	 * @param ctx
 	 * @param oldName
 	 * @param newName
@@ -1146,7 +1187,7 @@ public class ResourceHelper {
 
 	/**
 	 * duplicate static info of a resource to a new file
-	 * 
+	 *
 	 * @param ctx
 	 * @param oldName
 	 * @param newName
@@ -1195,7 +1236,7 @@ public class ResourceHelper {
 	/**
 	 * Close streams, writers, readers, etc without any exception even if they are
 	 * <code>null</code>.
-	 * 
+	 *
 	 * @param closeables
 	 *            the objects to close
 	 */
@@ -1321,7 +1362,7 @@ public class ResourceHelper {
 
 	/**
 	 * write a InputStream in a OuputStream, without close.
-	 * 
+	 *
 	 * @return the size of transfered data in byte.
 	 */
 	public static final int writeStreamToStream(InputStream in, OutputStream out, long maxSize) throws IOException {
@@ -1341,7 +1382,7 @@ public class ResourceHelper {
 
 	/**
 	 * Copy the given byte range of the given input to the given output.
-	 * 
+	 *
 	 * @param input
 	 *            The input to copy the given range to the given output for.
 	 * @param output
@@ -1435,7 +1476,7 @@ public class ResourceHelper {
 
 	/**
 	 * return a free file name. if file exist add a number as suffix.
-	 * 
+	 *
 	 * @param file
 	 * @return
 	 */
@@ -1459,7 +1500,7 @@ public class ResourceHelper {
 
 	/**
 	 * return true if file is insise template folder
-	 * 
+	 *
 	 * @param globalContext
 	 * @param file
 	 * @return
@@ -1472,7 +1513,7 @@ public class ResourceHelper {
 
 	/**
 	 * return the name of the template
-	 * 
+	 *
 	 * @param globalContext
 	 * @param file
 	 * @return
@@ -1497,20 +1538,20 @@ public class ResourceHelper {
 		boolean eol = false;
 		while (!eol) {
 			switch (b = file.read()) {
-			case -1:
-			case '\n':
-				eol = true;
-				break;
-			case '\r':
-				eol = true;
-				long cur = file.getFilePointer();
-				if ((file.read()) != '\n') {
-					file.seek(cur);
-				}
-				break;
-			default:
-				lineBytes.write(b);
-				break;
+				case -1:
+				case '\n':
+					eol = true;
+					break;
+				case '\r':
+					eol = true;
+					long cur = file.getFilePointer();
+					if ((file.read()) != '\n') {
+						file.seek(cur);
+					}
+					break;
+				default:
+					lineBytes.write(b);
+					break;
 			}
 		}
 
@@ -1750,7 +1791,7 @@ public class ResourceHelper {
 
 	/**
 	 * clear a folder list, remove '/' if found as first char and replace '\' by '/'
-	 * 
+	 *
 	 * @param folders
 	 * @return
 	 */
@@ -1805,7 +1846,10 @@ public class ResourceHelper {
 					e.printStackTrace();
 				}
 			}
-			conn.setRequestProperty("User-Agent", NetHelper.JAVLO_USER_AGENT);
+			if(!imageFile.getParentFile().exists()) {
+				imageFile.getParentFile().mkdirs();
+			}
+				conn.setRequestProperty("User-Agent", NetHelper.JAVLO_USER_AGENT);
 			in = conn.getInputStream();
 			out = new FileOutputStream(imageFile);
 			writeStreamToStream(in, out);
@@ -1859,7 +1903,7 @@ public class ResourceHelper {
 
 	/**
 	 * delete import without reference to a existing page.
-	 * 
+	 *
 	 * @param ctx
 	 * @return nomber of deleted import folder.
 	 * @throws Exception
@@ -1996,7 +2040,7 @@ public class ResourceHelper {
 
 	/**
 	 * normalize all file name from a dir
-	 * 
+	 *
 	 * @param file
 	 * @return true one file name has changed
 	 * @throws IOException
@@ -2127,10 +2171,14 @@ public class ResourceHelper {
 
 	public static void main(String[] args) throws IOException {
 
-		File docx = new File("c:/trans/test_javlo2.docx");
-		File html = new File("c:/trans/test_javlo2.html");
-		docx2html(docx, html);
-		System.out.println("done : " + html);
+
+
+
+
+//		File docx = new File("c:/trans/test_javlo2.docx");
+//		File html = new File("c:/trans/test_javlo2.html");
+//		docx2html(docx, html);
+//		System.out.println("done : " + html);
 
 		// File file = new File("c:/trans/changelog.txt");
 		// File target = new File("c:/trans/changelog.md");
