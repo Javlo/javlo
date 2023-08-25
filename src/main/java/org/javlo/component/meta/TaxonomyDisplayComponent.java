@@ -46,6 +46,8 @@ public class TaxonomyDisplayComponent extends AbstractVisualComponent {
 				i++;
 			}
 			out.println("</div>");
+		} else {
+			out.println("<!-- no taxonomy found on page : "+ctx.getCurrentPage().getName()+" !-->");
 		}
 		out.close();
 		return new String(outStream.toByteArray());

@@ -796,7 +796,10 @@ public class ContentHelper {
                                     String importFolder = AbstractVisualComponent.getImportFolderPath(ctx, newPage);
                                     String fullPathImport = URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getImageFolder(), importFolder, imageName);
 
-                                    ResourceHelper.writeUrlToFile(new URL(imageUrl), new File(fullPathImport));
+                                    File imageFile = new File(fullPathImport);
+                                    if (!imageFile.exists()) {
+                                        ResourceHelper.writeUrlToFile(new URL(imageUrl), imageFile);
+                                    }
 
                                     logger.info("image downloaded : " + imageUrl);
 
@@ -830,7 +833,10 @@ public class ContentHelper {
                                     String importFolder = AbstractVisualComponent.getImportFolderPath(ctx, newPage);
                                     String fullPathImport = URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getFileFolder(), importFolder, fileName);
 
-                                    ResourceHelper.writeUrlToFile(new URL(fileUrl), new File(fullPathImport));
+                                    File file = new File(fullPathImport);
+                                    if (!file.exists()) {
+                                        ResourceHelper.writeUrlToFile(new URL(fileUrl), file);
+                                    }
 
                                     logger.info("file downloaded : " + fileUrl);
 
