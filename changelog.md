@@ -954,6 +954,7 @@ Security in case of vulnerabilities.
 ### Added
 - text position 
 - mailing on smartgenericform
+- import WordPress xml
 ### Modified
 - minimize html in extended widget
 - filter page reference
