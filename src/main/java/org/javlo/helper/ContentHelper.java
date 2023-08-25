@@ -37,6 +37,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -590,13 +591,12 @@ public class ContentHelper {
 
         final int MAX_IMPORT = 10000;
 
-        System.out.println("### host = "+host);
-
         logger.info("import WordPress XML (host:"+host+")");
 
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-        Document doc = dBuilder.parse(wpStream);
+        InputStreamReader reader = new InputStreamReader(wpStream, "UTF-8");
+        Document doc = dBuilder.parse(new InputSource(reader));
         doc.getDocumentElement().normalize();
 
         NodeList nodeList = doc.getElementsByTagName("item");
