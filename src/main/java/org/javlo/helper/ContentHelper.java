@@ -830,9 +830,8 @@ public class ContentHelper {
                                     File imageFile = new File(fullPathImport);
                                     if (!imageFile.exists()) {
                                         ResourceHelper.writeUrlToFile(new URL(imageUrl), imageFile);
+                                        logger.info("image downloaded : " + imageUrl);
                                     }
-
-                                    logger.info("image downloaded : " + imageUrl);
 
                                     String val = "file-name=" + imageName + "\n" + "dir=" + importFolder+"\nlink=#";
 
