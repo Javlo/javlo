@@ -18,7 +18,6 @@ import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.service.RequestService;
 import org.javlo.service.document.DataDocument;
-import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.servlet.ProxyServlet;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
@@ -748,7 +747,7 @@ public class URLHelper extends ElementaryURLHelper {
 			return null;
 		}
 		url = url.replace('\\', '/');
-		url = URLHelper.mergePath(TRANSFORM, filter, template + ImageTransformServlet.LOCAL_TEMPLATE_SUFFIX, ctx.getGlobalContext().getContextKey(), url);
+		url = URLHelper.mergePath(TRANSFORM, filter, template/* + ImageTransformServlet.LOCAL_TEMPLATE_SUFFIX*/, ctx.getGlobalContext().getContextKey(), url);
 		return createStaticURL(ctx, url);
 	}
 
