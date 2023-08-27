@@ -1249,7 +1249,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 
 		out.println("<div class=\"form-group "+StringHelper.neverNull(cssClass)+"\">");
 		out.println(getEditLabelCode());
-		out.println("<div class=\"row\"><div class=\"col-sm-3\"><label for=\"" + getInputName() + "\">" + label + " : </label></div>");
+		out.println("<div class=\"row\"><div class=\"col-sm-3\"><label for=\"" + getInputName() + "\">" + label + "</label></div>");
 		out.println("<div class=\"col-sm-9\"><select class=\"form-control\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");
  
 		for (Map.Entry<String, String> value : values) {

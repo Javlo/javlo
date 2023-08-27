@@ -402,18 +402,18 @@ public class GlobalImage extends Image implements IImageFilter {
 			finalCode.append("<fieldset>");
 			finalCode.append("<legend>" + i18nAccess.getText("global.metadata") + "</legend>");
 			finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\">");
-			finalCode.append("<label for=\"" + getInputNameDate() + "\">" + i18nAccess.getText("global.date") + " : </label></div><div class=\"col-sm-9\">");
+			finalCode.append("<label for=\"" + getInputNameDate() + "\">" + i18nAccess.getText("global.date") + "</label></div><div class=\"col-sm-9\">");
 			finalCode.append("<input class=\"form-control\" type=\"text\" name=\"" + getInputNameDate() + "\" value=\"" + StringHelper.neverNull(StringHelper.renderTime(getDate())) + "\" />");
 			finalCode.append("</div></div><div class=\"row form-group\"><div class=\"col-sm-3\">");
-			finalCode.append("<label for=\"" + getInputNameLocation() + "\">" + i18nAccess.getText("global.location") + " : </label></div>");
+			finalCode.append("<label for=\"" + getInputNameLocation() + "\">" + i18nAccess.getText("global.location") + "</label></div>");
 			finalCode.append("<div class=\"col-sm-9\"><input class=\"form-control\" type=\"text\" name=\"" + getInputNameLocation() + "\" value=\"" + getLocation() + "\" /></div>");
 			finalCode.append("</div><div class=\"row form-group\"><div class=\"col-sm-3\">");
-			finalCode.append("<label for=\"" + getInputNameTitle() + "\">" + i18nAccess.getText("global.title") + " : </label></div>");
+			finalCode.append("<label for=\"" + getInputNameTitle() + "\">" + i18nAccess.getText("global.title") + "</label></div>");
 			finalCode.append("<div class=\"col-sm-9\"><input class=\"form-control\" type=\"text\" name=\"" + getInputNameTitle() + "\" value=\"" + getTitle() + "\" /></div>");
 			finalCode.append("</div>");
 			if (getTranslatableResources(ctx).size() > 0) {
 				finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\">");
-				finalCode.append("<label for=\"" + getInputNameTranslation() + "\">" + i18nAccess.getText("content.resource.translationof") + " : </label></div><div class=\"col-sm-9\">");
+				finalCode.append("<label for=\"" + getInputNameTranslation() + "\">" + i18nAccess.getText("content.resource.translationof") + "</label></div><div class=\"col-sm-9\">");
 				finalCode.append(XHTMLHelper.getDropDownFromMap(getInputNameTranslation(), getTranslatableResources(ctx), getTranslatedID(), "", true, "form-control"));
 				finalCode.append("</div></div>");
 			}
@@ -439,7 +439,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		filesParams.put(ElementaryURLHelper.BACK_PARAM_NAME, backURL);
 		if (isLink()) {
 			finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\"><label for=\"img_link_" + getId() + "\">");
-			finalCode.append(getImageLinkTitle(ctx) + " : </label></div>");
+			finalCode.append(getImageLinkTitle(ctx) + "</label></div>");
 			String linkToResources = "";
 			if (!ctx.getGlobalContext().isMailingPlatform() && canUpload(ctx)) {
 				linkToResources = "<div class=\"col-sm-2\"><a class=\"browse-link btn btn-default btn-xs\" href=\"" + URLHelper.addParam(staticLinkURL, "select", "back") + "\">" + i18nAccess.getText("content.goto-static") + "</a></div>";
@@ -464,7 +464,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		} else if ((getDirList(ctx, getFileDirectory(ctx)) != null) && (getDirList(ctx, getFileDirectory(ctx)).length > 0)) {
 			finalCode.append("<div class=\"row form-group\"><div class=\"col-sm-3\"><label for=\"" + getDirInputName() + "\">");
 			finalCode.append(getDirLabelTitle(ctx));
-			finalCode.append(" : </label></div>");
+			finalCode.append("</label></div>");
 			List<String> dirsCol = new LinkedList<String>();
 			dirsCol.add("");
 			String[] dirs = getDirList(ctx, getFileDirectory(ctx));

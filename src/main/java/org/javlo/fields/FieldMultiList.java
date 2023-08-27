@@ -1,18 +1,14 @@
 package org.javlo.fields;
 
+import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
+import org.javlo.service.RequestService;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import org.javlo.context.ContentContext;
-import org.javlo.helper.StringHelper;
-import org.javlo.service.RequestService;
+import java.util.*;
 
 public class FieldMultiList extends Field {
 	
@@ -42,7 +38,7 @@ public class FieldMultiList extends Field {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 		out.println("<div class=\"form-row\"><div class=\""+LABEL_CSS+"\">");
-		out.println("<label>" + getLabel(ctx, ctx.getLocale()) + " : </label></div>");
+		out.println("<label>" + getLabel(ctx, ctx.getLocale()) + "</label></div>");
 		out.println(getEditLabelCode());
 		out.println("<div class=\""+VALUE_SIZE+"\">");
 

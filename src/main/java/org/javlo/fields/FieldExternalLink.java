@@ -132,7 +132,7 @@ public class FieldExternalLink extends MetaField implements ILink {
 		out.println("<legend>" + getUserLabel(ctx, ctx.getLocale()) + "</legend>");
 		out.println("<div class=\"row\"><div class=\"col-sm-6\">");
 		out.println("<div class=\"row form-group\"><div class=\"col-sm-2\">");
-		out.println("<label for=\"" + getInputLinkName() + "\">" + getLinkLabel() + " : </label></div>");
+		out.println("<label for=\"" + getInputLinkName() + "\">" + getLinkLabel() + "</label></div>");
 		out.println("<div class=\"col-sm-10\"><input class=\"form-control\" id=\"" + getInputLinkName() + "\" name=\"" + getInputLinkName() + "\" value=\"" + StringHelper.neverNull(getCurrentLink()) + "\"/></div></div>");
 		if (getCurrentLinkErrorMessage().trim().length() > 0) {
 			out.println("<div class=\"alert alert-danger\" role=\"alert\">");
@@ -141,7 +141,7 @@ public class FieldExternalLink extends MetaField implements ILink {
 		}
 		out.println("</div><div class=\"col-sm-6\">");
 		out.println("<div class=\"row form-group\"><div class=\"col-sm-2\">");
-		out.println("<label for=\"" + getInputLabelName() + "\">" + getLabelLabel() + " : </label></div>");
+		out.println("<label for=\"" + getInputLabelName() + "\">" + getLabelLabel() + "</label></div>");
 		out.println("<div class=\"col-sm-10\"><input class=\"form-control\" id=\"" + getInputLabelName() + "\" name=\"" + getInputLabelName() + "\" value=\"" + StringHelper.neverNull(getCurrentLabel()) + "\"/></div>");
 		out.println("</div>");
 		out.println("</div></div>");
