@@ -788,14 +788,9 @@ public class ContentHelper {
                         if (newPage == null) {
                             logger.severe("could not create page : " + pageName);
                         } else {
-                            Map<String, String> parents = new HashMap<String, String>();
-                            ComponentBean bean = new ComponentBean();
-                            bean.setType(Heading.TYPE);
-                            bean.setValue("depth=1\ntext=" + encodeNonAscii(title));
-                            bean.setArea(ComponentBean.DEFAULT_AREA);
-                            bean.setModify(true);
-                            bean.setLanguage(ctx.getRequestContentLanguage());
-                            String parentId = content.createContent(ctx, newPage, bean, "0", false);
+
+                            String parentId = "0";
+                            ComponentBean bean;
 
                             if (publicationDate != null) {
                                 bean = new ComponentBean();
@@ -806,6 +801,15 @@ public class ContentHelper {
                                 bean.setLanguage(ctx.getRequestContentLanguage());
                                 parentId = content.createContent(ctx, newPage, bean, parentId, false);
                             }
+
+                            Map<String, String> parents = new HashMap<String, String>();
+                            bean = new ComponentBean();
+                            bean.setType(Heading.TYPE);
+                            bean.setValue("depth=1\ntext=" + encodeNonAscii(title));
+                            bean.setArea(ComponentBean.DEFAULT_AREA);
+                            bean.setModify(true);
+                            bean.setLanguage(ctx.getRequestContentLanguage());
+                            parentId = content.createContent(ctx, newPage, bean, parentId, false);
 
                             if (!StringHelper.isEmpty(description)) {
                                 bean = new ComponentBean();
