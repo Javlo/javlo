@@ -625,6 +625,10 @@ public class ContentHelper {
         int countArticlePublished = 0;
 
 
+        MenuElement mainPage = null;
+        if (ctx != null) {
+            mainPage = ctx.getCurrentPage();
+        }
 
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node node = nodeList.item(i);
@@ -736,8 +740,6 @@ public class ContentHelper {
                 html = html.replaceAll("\\[.*?\\]", "");
 
                 if (ctx != null) {
-
-                    MenuElement mainPage = ctx.getCurrentPage();
 
                     if (status.equalsIgnoreCase("publish") && countArticlePublished < MAX_IMPORT && !StringHelper.isEmpty(html)) {
 
