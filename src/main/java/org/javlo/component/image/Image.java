@@ -1,10 +1,5 @@
 package org.javlo.component.image;
 
-import java.io.File;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IPreviewable;
 import org.javlo.component.core.IStaticResource;
@@ -19,10 +14,15 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ImageConfig;
 import org.javlo.ztatic.StaticInfo;
 
+import java.io.File;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * simple image without filter.
  * 
- * @author Patrick Vandermaesen
+ * @author Patrick VandermaesenG
  * 
  */
 public class Image extends AbstractFileComponent implements IImageTitle, IPreviewable, IStaticResource {
@@ -412,6 +412,9 @@ public class Image extends AbstractFileComponent implements IImageTitle, IPrevie
 
 	@Override
 	public boolean isMobileOnly(ContentContext ctx) {
+		if (getStyle()==null) {
+			return false;
+		}
 		return getStyle().equals(MOBILE_TYPE);
 	}
 }
