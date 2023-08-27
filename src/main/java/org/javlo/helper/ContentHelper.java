@@ -802,7 +802,7 @@ public class ContentHelper {
                                 bean.setArea(ComponentBean.DEFAULT_AREA);
                                 bean.setModify(true);
                                 bean.setLanguage(ctx.getRequestContentLanguage());
-                                parentId = content.createContent(ctx, newPage, bean, "0", false);
+                                parentId = content.createContent(ctx, newPage, bean, parentId, false);
                             }
 
                             if (!StringHelper.isEmpty(description)) {
