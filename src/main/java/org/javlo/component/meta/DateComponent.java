@@ -23,13 +23,13 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 
 	public static final String TYPE = "date";
 
-	private static final String USER_FRIENDLY_DATE_TYPE = "userfriendly-date";
+	public static final String USER_FRIENDLY_DATE_TYPE = "userfriendly-date";
 
-	private static final String MEDIUM_DATE_TYPE = "medium-date";
+	public static final String MEDIUM_DATE_TYPE = "medium-date";
 
-	private static final String SHORT_DATE_TYPE = "short-date";
+	public static final String SHORT_DATE_TYPE = "short-date";
 
-	private static final String SHORT_DATE_WIDTH_DAY = "short-date-width-day";
+	public static final String SHORT_DATE_WIDTH_DAY = "short-date-width-day";
 
 	private static final String VISIBLE_DATE_TYPE = "visible-date";
 

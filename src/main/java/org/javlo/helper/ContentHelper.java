@@ -795,6 +795,7 @@ public class ContentHelper {
                             if (publicationDate != null) {
                                 bean = new ComponentBean();
                                 bean.setType(DateComponent.TYPE);
+                                bean.setStyle(DateComponent.USER_FRIENDLY_DATE_TYPE);
                                 bean.setValue(StringHelper.renderTime(publicationDate));
                                 bean.setArea(ComponentBean.DEFAULT_AREA);
                                 bean.setModify(true);
