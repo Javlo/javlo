@@ -526,7 +526,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		if (StringHelper.isEmpty(label)) {
 			label = getLabel(ctx, ctx.getLocale());
 		}
-		out.println("	<label for=\"" + getInputName() + "\">" + label + " : </label>");
+		out.println("	<label for=\"" + getInputName() + "\">" + label + "</label>");
 		String readOnlyHTML = "";
 		if (isReadOnly()) {
 			readOnlyHTML = " readonly=\"readonly\"";
