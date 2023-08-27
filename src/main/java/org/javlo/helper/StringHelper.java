@@ -2166,6 +2166,10 @@ public class StringHelper {
             try {
                 outDate = parseDate(inDate, "yyyy-MM-dd");
             } catch (ParseException e) {
+                try {
+                    outDate = parsesDateAsRFC822String(inDate);
+                } catch (ParseException e2) {
+                }
             }
         }
         return outDate;
@@ -2661,6 +2665,13 @@ public class StringHelper {
             return null;
         }
         return RFC822DATEFORMAT.format(date);
+    }
+
+    public static Date parsesDateAsRFC822String(String date) throws ParseException {
+        if (date == null) {
+            return null;
+        }
+        return RFC822DATEFORMAT.parse(date);
     }
 
     public static String renderDateAsRFC822String(LocalDateTime date) {

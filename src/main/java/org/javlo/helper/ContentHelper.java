@@ -550,32 +550,39 @@ public class ContentHelper {
     }
 
     public static void main(String[] args) throws Exception {
-        String text = "[et_pb_section bb_built=\"1\"][et_pb_row][et_pb_column type=\"4_4\"][et_pb_text _builder_version=\"3.2.2\" textorientation=\"justified\"] UPUHH created a new web market place, where supply and demand for hotel related products and services can meet easily, without intermediaries. See below the related presentation, delivered in the General Assembly in Bratislava on 28 April 2016. [/et_pb_text][et_pb_button _builder_version=\"3.2.2\" button_text=\"ACCESS THE PRESENTATION HERE \" button_url=\"https://www.hotrec.eu/wp-content/uploads/2018/05/Web_market_place_Croatia.pdf\" button_alignment=\"center\" url_new_window=\"on\" /][/et_pb_column][/et_pb_row][/et_pb_section]";
+//        String text = "[et_pb_section bb_built=\"1\"][et_pb_row][et_pb_column type=\"4_4\"][et_pb_text _builder_version=\"3.2.2\" textorientation=\"justified\"] UPUHH created a new web market place, where supply and demand for hotel related products and services can meet easily, without intermediaries. See below the related presentation, delivered in the General Assembly in Bratislava on 28 April 2016. [/et_pb_text][et_pb_button _builder_version=\"3.2.2\" button_text=\"ACCESS THE PRESENTATION HERE \" button_url=\"https://www.hotrec.eu/wp-content/uploads/2018/05/Web_market_place_Croatia.pdf\" button_alignment=\"center\" url_new_window=\"on\" /][/et_pb_column][/et_pb_row][/et_pb_section]";
+////
+////        text = text.replaceAll("\\[.*?\\]", "");
+////
+////        Pattern pattern = Pattern.compile("\\[(.*?)\\]");
+////        Matcher matcher = pattern.matcher(text);
+////
+////        while (matcher.find()) {
+////            String wpTag = matcher.group(1);
+////
+////            System.out.println("wpTag = "+wpTag);
+////
+////            Pattern pattern2 = Pattern.compile("(\\w+)=\"(.*?)\"");
+////            Matcher matcher2 = pattern2.matcher(wpTag);
+////
+////            while (matcher2.find()) {
+////                String nom = matcher2.group(1);
+////                String valeur = matcher2.group(2);
+////
+////                System.out.println("   Nom: " + nom + ", Valeur: " + valeur);
+////            }
+////        }
+////
+////        text = text.replaceAll("\\[.*?\\]", "");
+////
+////        System.out.println("text = "+text);
 
-        text = text.replaceAll("\\[.*?\\]", "");
+        File file = new File("c:/trans/hotrec.WordPress.2023-08-24.xml");
 
-        Pattern pattern = Pattern.compile("\\[(.*?)\\]");
-        Matcher matcher = pattern.matcher(text);
-
-        while (matcher.find()) {
-            String wpTag = matcher.group(1);
-
-            System.out.println("wpTag = "+wpTag);
-
-            Pattern pattern2 = Pattern.compile("(\\w+)=\"(.*?)\"");
-            Matcher matcher2 = pattern2.matcher(wpTag);
-
-            while (matcher2.find()) {
-                String nom = matcher2.group(1);
-                String valeur = matcher2.group(2);
-
-                System.out.println("   Nom: " + nom + ", Valeur: " + valeur);
-            }
+        try (InputStream in = new FileInputStream(file)) {
+            importWordPressXML(null, in, "www.hotrec.eu");
         }
 
-        text = text.replaceAll("\\[.*?\\]", "");
-
-        System.out.println("text = "+text);
     }
 
     private static String extractSubNodeValue(Node node, String name) {
@@ -617,13 +624,18 @@ public class ContentHelper {
         int countArticle = 0;
         int countArticlePublished = 0;
 
-        MenuElement mainPage = ctx.getCurrentPage();
+
 
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node node = nodeList.item(i);
             String title = extractSubNodeValue(node, "title");
             String description = extractSubNodeValue(node, "description");
             String pubDate = extractSubNodeValue(node, "pubDate");
+            Date publicationDate = null;
+            if (!StringHelper.isEmpty(pubDate)) {
+                publicationDate = StringHelper.smartParseDate(pubDate);
+
+            }
             String creator = extractSubNodeValue(node, "dc:creator");
             String postId = extractSubNodeValue(node, "wp:post_id");
             String status = extractSubNodeValue(node, "wp:status");
@@ -725,6 +737,8 @@ public class ContentHelper {
 
                 if (ctx != null) {
 
+                    MenuElement mainPage = ctx.getCurrentPage();
+
                     if (status.equalsIgnoreCase("publish") && countArticlePublished < MAX_IMPORT && !StringHelper.isEmpty(html)) {
 
                         ContentService content = ContentService.getInstance(ctx.getRequest());
@@ -740,6 +754,7 @@ public class ContentHelper {
                         String pageName = "wp_post_" + postId;
 
                         MenuElement newPage = MacroHelper.addPage(ctx, newCat, pageName, false, false);
+                        newPage.setCreator(creator);
 
                         if (tags.size() > 0) {
                             TaxonomyService ts = ctx.getGlobalContext().getTaxonomy(ctx);
@@ -779,6 +794,16 @@ public class ContentHelper {
                             bean.setModify(true);
                             bean.setLanguage(ctx.getRequestContentLanguage());
                             String parentId = content.createContent(ctx, newPage, bean, "0", false);
+
+                            if (publicationDate != null) {
+                                bean = new ComponentBean();
+                                bean.setType(DateComponent.TYPE);
+                                bean.setValue(StringHelper.renderTime(publicationDate));
+                                bean.setArea(ComponentBean.DEFAULT_AREA);
+                                bean.setModify(true);
+                                bean.setLanguage(ctx.getRequestContentLanguage());
+                                parentId = content.createContent(ctx, newPage, bean, "0", false);
+                            }
 
                             if (!StringHelper.isEmpty(description)) {
                                 bean = new ComponentBean();
@@ -866,6 +891,7 @@ public class ContentHelper {
                         countArticle++;
                         System.out.println(title);
                         System.out.println("pubDate:" + pubDate);
+                        System.out.println("publicationDate:" + publicationDate);
                         System.out.println("category:" + category);
                         System.out.println("tags:" + tags);
                         System.out.println("imageUrl:" + imageUrl);
@@ -874,7 +900,7 @@ public class ContentHelper {
                         }
 
                         System.out.println("----------");
-                        System.out.println(html);
+                        //System.out.println(html);
 
                         System.out.println("##########");
 
