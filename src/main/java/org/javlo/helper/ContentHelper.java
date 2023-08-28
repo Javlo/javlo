@@ -744,6 +744,11 @@ public class ContentHelper {
                     if (status.equalsIgnoreCase("publish") && countArticlePublished < MAX_IMPORT && !StringHelper.isEmpty(html)) {
 
                         ContentService content = ContentService.getInstance(ctx.getRequest());
+
+                        if (!StringHelper.isEmpty(category)) {
+                            tags.add(category);
+                        }
+
                         if (StringHelper.isEmpty(category)) {
                             category = "_no_category";
                         } else {
@@ -764,9 +769,6 @@ public class ContentHelper {
                             Set<String> taxo = newPage.getTaxonomy();
                             if (taxo == null) {
                                 taxo = new HashSet<>();
-                            }
-                            if (!StringHelper.isEmpty(category)) {
-                                tags.add(category);
                             }
                             for (String tag : tags) {
                                 if (ts.getTaxonomyBeanMap().get(tag)==null) {
