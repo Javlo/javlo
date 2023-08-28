@@ -765,6 +765,9 @@ public class ContentHelper {
                             if (taxo == null) {
                                 taxo = new HashSet<>();
                             }
+                            if (!StringHelper.isEmpty(category)) {
+                                tags.add(category);
+                            }
                             for (String tag : tags) {
                                 if (ts.getTaxonomyBeanMap().get(tag)==null) {
                                     TaxonomyBean taxoWp = ts.getRoot().getChildByName("_wp_import");
