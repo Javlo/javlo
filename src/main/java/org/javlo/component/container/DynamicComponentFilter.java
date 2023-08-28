@@ -8,6 +8,7 @@ import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.fields.Field;
+import org.javlo.fields.FieldMultiList;
 import org.javlo.fields.IFieldContainer;
 import org.javlo.fields.SortContainer;
 import org.javlo.helper.ComponentHelper;
@@ -136,9 +137,9 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
             out.println("<div class=\"filter-form card panel panel-default\"><form role=\"form\" class=\"generic-form\" id=\"form-filter-" + getId() + "\" name=\"form-filter-" + getId() + "\" action=\"" + URLHelper.createURL(ctx) + "\" method=\"post\">");
             out.println("<div class=\"fields panel-body card-body\"><input type=\"hidden\" name=\"webaction\" value=\"" + getActionGroupName() + ".filter\" />");
             out.println("<input type=\"hidden\" name=\"" + IContentVisualComponent.COMP_ID_REQUEST_PARAM + "\" value=\"" + getId() + "\"><div class=\"row field-row first-row\">");
-            /*final int SIZE = 6;
+            final int SIZE = 6;
             int col = 0;
-            int size = 0;*/
+            int size = 0;
             List<Field> fields = (List<Field>) ctx.getRequest().getAttribute("fields");
             for (Field field : fields) {
                 /*int localSize = SIZE;
@@ -149,15 +150,15 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
                     }
                     localSize = 12;
                 }*/
-                out.println("<div class=\"col-4\">" + field.getSearchEditXHTMLCode(ctx) + "</div>");
-                /*col = col + localSize;
+                out.println("<div class=\"col-lg-" + localSize + "\">" + field.getSearchEditXHTMLCode(ctx) + "</div>");
+                col = col + localSize;
                 size = size + 1;
                 if (col == 12) {
                     if (size < fields.size()) {
                         out.println("</div><div class=\"row field-row\">");
                         col = 0;
                     }
-                }*/
+                }
             }
             out.println("</div><div class=\"action-group form-group text-right\"><input type=\"submit\" class=\"btn btn-primary\" name=\"filter\" value=\"" + i18nAccess.getViewText("global.search") + "\" /></div>");
             out.println("</div></form></div>");
