@@ -142,14 +142,14 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
             int size = 0;
             List<Field> fields = (List<Field>) ctx.getRequest().getAttribute("fields");
             for (Field field : fields) {
-                /*int localSize = SIZE;
+                int localSize = SIZE;
                 if (field.getType().equals(FieldMultiList.TYPE)) {
                     if (col > 0) {
                         out.println("</div><div class=\"row field-row\">");
                         col = 0;
                     }
                     localSize = 12;
-                }*/
+                }
                 out.println("<div class=\"col-lg-" + localSize + "\">" + field.getSearchEditXHTMLCode(ctx) + "</div>");
                 col = col + localSize;
                 size = size + 1;
