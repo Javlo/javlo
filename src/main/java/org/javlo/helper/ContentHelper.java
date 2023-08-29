@@ -655,10 +655,10 @@ public class ContentHelper {
                 String titleText = subNode.item(0).getTextContent();
                 for (int j = 0; j < subNode.getLength(); j++) {
                     Element subElement = (Element) subNode.item(j);
-                    if (subElement.getAttribute("domain").equalsIgnoreCase("post_tag")) {
-                        tags.add(StringHelper.getNotEmpty(subElement.getAttribute("nicename"), subElement.getTextContent()));
-                    } else if (subElement.getAttribute("domain").equalsIgnoreCase("category")) {
+                    if (subElement.getAttribute("domain").equalsIgnoreCase("category")) {
                         category = StringHelper.getNotEmpty(subElement.getAttribute("nicename"), subElement.getTextContent());
+                    } else {
+                        tags.add(StringHelper.getNotEmpty(subElement.getAttribute("nicename"), subElement.getTextContent()));
                     }
                 }
             }
