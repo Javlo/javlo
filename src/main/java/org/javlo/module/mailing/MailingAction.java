@@ -1,25 +1,5 @@
 package org.javlo.module.mailing;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -44,11 +24,19 @@ import org.javlo.service.RequestService;
 import org.javlo.service.syncro.SynchroHelper;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
-import org.javlo.user.AdminUserFactory;
-import org.javlo.user.AdminUserSecurity;
-import org.javlo.user.IUserFactory;
-import org.javlo.user.User;
-import org.javlo.user.UserFactory;
+import org.javlo.user.*;
+
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.net.URL;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class MailingAction extends AbstractModuleAction {
 
@@ -142,6 +130,10 @@ public class MailingAction extends AbstractModuleAction {
 				request.setAttribute("currentTemplate", mailingContext.getCurrentTemplate());
 			} else {
 				Box b = currentModule.getBox(SEND_WIZARD_BOX);
+
+				System.out.println(">>>>>>>>>> b = "+b);
+				System.out.println(">>>>>>>>>> mailingContext = "+mailingContext);
+
 				BoxStep s = b.getSteps().get(mailingContext.getWizardStep(SEND_WIZARD_BOX) - 1);
 				currentModule.setRenderer(s.getRenderer());
 			}
