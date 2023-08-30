@@ -130,12 +130,12 @@ public class MailingAction extends AbstractModuleAction {
 				request.setAttribute("currentTemplate", mailingContext.getCurrentTemplate());
 			} else {
 				Box b = currentModule.getBox(SEND_WIZARD_BOX);
-
-				System.out.println(">>>>>>>>>> b = "+b);
-				System.out.println(">>>>>>>>>> mailingContext = "+mailingContext);
-
-				BoxStep s = b.getSteps().get(mailingContext.getWizardStep(SEND_WIZARD_BOX) - 1);
-				currentModule.setRenderer(s.getRenderer());
+				if (b==null) {
+					logger.severe("box '"+SEND_WIZARD_BOX+"' not found, please active mailing module.");
+				} else {
+					BoxStep s = b.getSteps().get(mailingContext.getWizardStep(SEND_WIZARD_BOX) - 1);
+					currentModule.setRenderer(s.getRenderer());
+				}
 			}
 		} else {
 			if (mailingContext.getCurrentLink().equals("send")) {

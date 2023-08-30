@@ -1,11 +1,5 @@
 package org.javlo.fields;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.context.ContentContext;
@@ -16,10 +10,16 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.module.file.FileAction;
 import org.javlo.service.google.translation.ITranslator;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
 public class FieldWysiwyg extends Field {
 
 	protected String getEditorComplexity(ContentContext ctx) throws Exception {
-		return getMetaData("editor-complexity", "middle");
+		return getMetaData("editor-complexity", "high");
 	}
 
 	protected int getMaxParagraph() {
