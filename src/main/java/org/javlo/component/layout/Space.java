@@ -19,13 +19,13 @@ public class Space extends AbstractVisualComponent {
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 
 		String cssClass = "space-";
-		if (getType().equals("1px")) {
+		if (getStyle().equals("1px")) {
 			cssClass += "tiny";
-		} else if (getType().equals("3px")) {
+		} else if (getStyle().equals("3px")) {
 			cssClass += "small";
-		} else if (getType().equals("5px")) {
+		} else if (getStyle().equals("5px")) {
 			cssClass += "normal";
-		} else if (getType().equals("9px")) {
+		} else if (getStyle().equals("9px")) {
 			cssClass += "large";
 		} else {
 			cssClass += "rem";
