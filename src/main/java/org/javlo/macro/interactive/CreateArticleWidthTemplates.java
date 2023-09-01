@@ -330,7 +330,7 @@ public class CreateArticleWidthTemplates implements IInteractiveMacro, IAction {
 
     @Override
     public String getModalSize() {
-        return "md";
+        return SMALL_MODAL_SIZE;
     }
 
     @Override

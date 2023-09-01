@@ -3694,13 +3694,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 				suffix = getForcedSuffixViewXHTMLCode(ctx);
 			}
 			String emptyLabel = getEmptyLabel(ctx);
-			System.out.println("1.emptyLabel = "+emptyLabel);
 			if (!StringHelper.isEmpty(emptyLabel)) {
 				emptyLabel = " : "+emptyLabel;
 			} else {
 				emptyLabel = "";
 			}
-			System.out.println("2.emptyLabel = "+emptyLabel);
 			return prefix + "<span class=\"" + EDIT_CLASS + "\">" + getComponentLabel(ctx, ctx.getGlobalContext().getEditLanguage(ctx.getSession())) + emptyLabel + "</span>" + suffix;
 		}
 	}

@@ -1,9 +1,5 @@
 package org.javlo.fields;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Locale;
-
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -12,6 +8,9 @@ import org.javlo.helper.XHTMLNavigationHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 public class FieldInternalLink extends Field {
 	
@@ -26,6 +25,10 @@ public class FieldInternalLink extends Field {
 		private String param;
 
 		public String getLink() {
+			return internalLink;
+		}
+
+		public String getUrl() {
 			return internalLink;
 		}
 

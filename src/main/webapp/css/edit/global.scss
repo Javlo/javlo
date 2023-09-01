@@ -191,7 +191,7 @@ input {
 			background-color: #ffffff;
 			align-items: center;
 			img, .no-image {
-				max-height: var(--image-width);
+				max-height: calc(var(--image-width) - 2rem);
 				max-width: var(--image-width);
 			}
 			.no-image, .no-image:hover {
