@@ -3,13 +3,12 @@
  */
 package org.javlo.component.layout;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
-import org.javlo.context.GlobalContext;
 import org.javlo.i18n.I18nAccess;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * @author pvandermaesen
@@ -18,11 +17,25 @@ public class Space extends AbstractVisualComponent {
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+
+		String cssClass = "space-";
+		if (getType().equals("1px")) {
+			cssClass += "tiny";
+		} else if (getType().equals("3px")) {
+			cssClass += "small";
+		} else if (getType().equals("5px")) {
+			cssClass += "normal";
+		} else if (getType().equals("9px")) {
+			cssClass += "large";
+		} else {
+			cssClass += "rem";
+		}
+
 		StringBuffer finalCode = new StringBuffer();
 		if (ctx.getCurrentTemplate().isMailing()) {
-			finalCode.append("<table class=\"" + getType() + "\"><tr><td height=\""+getStyle()+"\"  style=\"font-size: 0px; height: " + getStyle() + "px;\">&nbsp;.</td></tr></table>");
+			finalCode.append("<table class=\"" + getType() + " " + cssClass + "\"><tr><td height=\""+getStyle()+"\"  style=\"font-size: 0px; height: " + getStyle() + "px;\">&nbsp;.</td></tr></table>");
 		} else {
-			finalCode.append("<div class=\"" + getType() + "\" style=\"font-size: 0px; height: " + getStyle() + ";\">&nbsp;.</div>");
+			finalCode.append("<div class=\"" + getType() + " " + cssClass +  "\" style=\"font-size: 0px; height: " + getStyle() + ";\">&nbsp;.</div>");
 		}
 		return finalCode.toString();
 	}
