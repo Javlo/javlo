@@ -41,6 +41,24 @@ public class Space extends AbstractVisualComponent {
 	}
 
 	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
+		String cssClass = "space-";
+		if (getType().equals("1px")) {
+			cssClass += "tiny";
+		} else if (getType().equals("3px")) {
+			cssClass += "small";
+		} else if (getType().equals("5px")) {
+			cssClass += "normal";
+		} else if (getType().equals("9px")) {
+			cssClass += "large";
+		} else {
+			cssClass += "rem";
+		}
+		ctx.getRequest().setAttribute("cssClass", cssClass);
+	}
+
+	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		StringBuffer finalCode = new StringBuffer();
 		finalCode.append(getSpecialInputTag());
