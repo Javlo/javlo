@@ -955,6 +955,7 @@ Security in case of vulnerabilities.
 - text position 
 - mailing on smartgenericform
 - import WordPress xml
+- add class "jvl-component" on all components
 ### Modified
 - minimize html in extended widget
 - filter page reference
