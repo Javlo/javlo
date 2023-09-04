@@ -2345,10 +2345,12 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected String getPrefixCssClass(ContentContext ctx, String currentClass) {
-		String cssClass = getPreviewCssClass(ctx, currentClass);
+		String cssClass = "jvl-component "+StringHelper.neverNull(getPreviewCssClass(ctx, currentClass));
+		cssClass = cssClass.trim();
 		if (!StringHelper.isEmpty(getManualCssClass())) {
-			cssClass += ' ' + getManualCssClass();
+			cssClass += ' ' + StringHelper.neverNull(getManualCssClass());
 		}
+		cssClass = cssClass.trim();
 		if (getLayout() != null && !StringHelper.isEmpty(getLayout().getCssClass())) {
 			cssClass = getLayout().getCssClass().trim() + ' ' + cssClass.trim();
 		}
