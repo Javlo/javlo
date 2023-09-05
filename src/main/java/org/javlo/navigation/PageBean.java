@@ -7,6 +7,8 @@ import org.javlo.component.image.IImageTitle;
 import org.javlo.component.image.ImageBean;
 import org.javlo.component.meta.ContactBean;
 import org.javlo.context.ContentContext;
+import org.javlo.data.taxonomy.TaxonomyDisplayBean;
+import org.javlo.data.taxonomy.TaxonomyService;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.image.ExtendedColor;
@@ -916,6 +918,11 @@ public class PageBean implements Serializable {
 	
 	public Set<String> getTaxonomy() {
 		return page.getTaxonomy();
+	}
+
+	public List<TaxonomyDisplayBean> getTaxonomyBean() throws IOException {
+		TaxonomyService ts = TaxonomyService.getInstance(ctx);
+		return TaxonomyDisplayBean.convert(ctx, ctx.getGlobalContext().getAllTaxonomy(ctx).convert(page.getTaxonomy()));
 	}
 	
 }

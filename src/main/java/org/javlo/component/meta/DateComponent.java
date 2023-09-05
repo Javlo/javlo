@@ -6,13 +6,18 @@ package org.javlo.component.meta;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.IDate;
 import org.javlo.context.ContentContext;
+import org.javlo.data.taxonomy.TaxonomyDisplayBean;
+import org.javlo.data.taxonomy.TaxonomyService;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.service.RequestService;
+import org.owasp.encoder.Encode;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.text.ParseException;
 import java.util.Date;
 
@@ -39,6 +44,8 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 
 	public static final String NOT_VISIBLE_TYPE = "not-visible";
 
+	public static final String DATE_TAXONOMY = "date-taxonomy";
+
 	@Override
 	public String getType() {
 		return TYPE;
@@ -47,7 +54,7 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 	@Override
 	public String[] getStyleList(ContentContext ctx) {		
 		if (getConfig(ctx).getStyleList() == null || getConfig(ctx).getStyleList().length == 0) {
-			return new String[] { USER_FRIENDLY_DATE_TYPE, MEDIUM_DATE_TYPE, SHORT_DATE_TYPE, SHORT_DATE_WIDTH_DAY, VISIBLE_DATE_TYPE, VISIBLE_TIME_TYPE, VISIBLE_MONTH_TYPE, NOT_VISIBLE_TYPE };
+			return new String[] { USER_FRIENDLY_DATE_TYPE, MEDIUM_DATE_TYPE, SHORT_DATE_TYPE, SHORT_DATE_WIDTH_DAY, VISIBLE_DATE_TYPE, VISIBLE_TIME_TYPE, VISIBLE_MONTH_TYPE, DATE_TAXONOMY, NOT_VISIBLE_TYPE };
 		} else {
 			return getConfig(ctx).getStyleList();
 		}
@@ -59,7 +66,7 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 			I18nAccess i18n = I18nAccess.getInstance(ctx.getRequest());
 			String[] styleList = getConfig(ctx).getStyleList();
 			if (styleList == null || styleList.length == 0) {
-				return new String[] { i18n.getText("content.date.userfriendly-date"), i18n.getText("content.date.medium-date"), i18n.getText("content.date.short-date"), i18n.getText("content.date.short-date-width-day"), i18n.getText("content.date.visible-date"), i18n.getText("content.date.visible-time"), i18n.getText("content.date.visible-month", "month year"), i18n.getText("global.hidden") };
+				return new String[] { i18n.getText("content.date.userfriendly-date"), i18n.getText("content.date.medium-date"), i18n.getText("content.date.short-date"), i18n.getText("content.date.short-date-width-day"), i18n.getText("content.date.visible-date"), i18n.getText("content.date.visible-time"), i18n.getText("content.date.visible-month", "month year"), i18n.getText("content.date.taxonomy", "taxonomy"), i18n.getText("global.hidden") };
 			} else {
 				String[] outStyleLabel = new String[styleList.length];
 				int i=0;
@@ -160,7 +167,7 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 		if (getStyle() == null) {
 			return StringHelper.renderDate(date);
 		}
-		if (getStyle().equals(USER_FRIENDLY_DATE_TYPE)) {
+		if (getStyle().equals(USER_FRIENDLY_DATE_TYPE) || getStyle().equals(DATE_TAXONOMY)) {
 			return StringHelper.renderUserFriendlyDate(ctx, date);
 		} else if (getStyle().equals(MEDIUM_DATE_TYPE)) {
 			return StringHelper.renderMediumDate(ctx, date);
@@ -189,7 +196,25 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		return renderDate(ctx, getDate());
+
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		PrintStream out = new PrintStream(outStream);
+
+		out.println(renderDate(ctx, getDate()));
+
+
+		if (getStyle() != null && getStyle().equals(DATE_TAXONOMY) && getPage().getTaxonomy().size() > 0) {
+			out.println("<div class=\"taxonomy\">");
+			int i=1;
+			TaxonomyService ts = TaxonomyService.getInstance(ctx);
+			for (TaxonomyDisplayBean bean : TaxonomyDisplayBean.convert(ctx, ctx.getGlobalContext().getAllTaxonomy(ctx).convert(getPage().getTaxonomy()))) {
+				out.println("<span class=\"item-"+i+" label label-default badge badge-secondary bg-secondary name-" + Encode.forHtmlAttribute(bean.getName()) + "\">" + Encode.forHtmlContent(StringHelper.neverEmpty(bean.getLabel(), bean.getName())) + "</span>");
+				i++;
+			}
+			out.println("</div>");
+		}
+
+		return new String(outStream.toByteArray());
 	}
 
 	@Override
