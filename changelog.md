@@ -962,3 +962,4 @@ Security in case of vulnerabilities.
 - add date range possibility in dynamic content
 - don't display not found link with 'page:'
 - event + optimise dynamiccomponent html field detection
+- taxonomy in date
