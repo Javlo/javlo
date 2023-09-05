@@ -200,7 +200,7 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
 
-		out.println(renderDate(ctx, getDate()));
+		out.println("<span class=\"date-only\">"+renderDate(ctx, getDate())+"</span>");
 
 
 		if (getStyle() != null && getStyle().equals(DATE_TAXONOMY) && getPage().getTaxonomy().size() > 0) {
