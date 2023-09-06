@@ -633,6 +633,14 @@ public class ContentHelper {
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node node = nodeList.item(i);
             String title = extractSubNodeValue(node, "title");
+            String link = extractSubNodeValue(node, "link");
+            if (StringHelper.isURL(link)) {
+                link = link.replace("http://"+host, "");
+                link = link.replace("https://"+host, "");
+                link = link.replace("//"+host, "");
+            } else {
+                link = null;
+            }
             String description = extractSubNodeValue(node, "description");
             String pubDate = extractSubNodeValue(node, "pubDate");
             Date publicationDate = null;
@@ -797,17 +805,6 @@ public class ContentHelper {
                             String parentId = "0";
                             ComponentBean bean;
 
-                            if (publicationDate != null) {
-                                bean = new ComponentBean();
-                                bean.setType(DateComponent.TYPE);
-                                bean.setStyle(DateComponent.USER_FRIENDLY_DATE_TYPE);
-                                bean.setValue(StringHelper.renderTime(publicationDate));
-                                bean.setArea(ComponentBean.DEFAULT_AREA);
-                                bean.setModify(true);
-                                bean.setLanguage(ctx.getRequestContentLanguage());
-                                parentId = content.createContent(ctx, newPage, bean, parentId, false);
-                            }
-
                             Map<String, String> parents = new HashMap<String, String>();
                             bean = new ComponentBean();
                             bean.setType(Heading.TYPE);
@@ -816,6 +813,17 @@ public class ContentHelper {
                             bean.setModify(true);
                             bean.setLanguage(ctx.getRequestContentLanguage());
                             parentId = content.createContent(ctx, newPage, bean, parentId, false);
+
+                            if (publicationDate != null) {
+                                bean = new ComponentBean();
+                                bean.setType(DateComponent.TYPE);
+                                bean.setStyle(DateComponent.DATE_TAXONOMY);
+                                bean.setValue(StringHelper.renderTime(publicationDate));
+                                bean.setArea(ComponentBean.DEFAULT_AREA);
+                                bean.setModify(true);
+                                bean.setLanguage(ctx.getRequestContentLanguage());
+                                parentId = content.createContent(ctx, newPage, bean, parentId, false);
+                            }
 
                             if (!StringHelper.isEmpty(description)) {
                                 bean = new ComponentBean();
@@ -891,6 +899,10 @@ public class ContentHelper {
                                 }
                             }
 
+                            if (link != null) {
+                                ctx.getGlobalContext().getRedirectUrlMap().put(link, "page:"+newPage.getName());
+                            }
+
                             countArticlePublished++;
                         }
 
@@ -919,6 +931,7 @@ public class ContentHelper {
                 }
             }
         }
+        ctx.getGlobalContext().storeRedirectUrlList();
         PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
         logger.info("#countArticle = "+countArticle);
         logger.info("#countArticlePublished = "+countArticlePublished);
