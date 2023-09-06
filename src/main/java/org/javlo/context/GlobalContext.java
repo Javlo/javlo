@@ -1,56 +1,5 @@
 package org.javlo.context;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.Serializable;
-import java.io.StringReader;
-import java.io.Writer;
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.Principal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.WeakHashMap;
-import java.util.logging.Logger;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -61,24 +10,11 @@ import org.javlo.config.StaticConfig;
 import org.javlo.data.taxonomy.TaxonomyService;
 import org.javlo.data.taxonomy.TaxonomyServiceAgregation;
 import org.javlo.ecom.EcomConfig;
-import org.javlo.helper.ContentHelper;
-import org.javlo.helper.DebugHelper;
-import org.javlo.helper.ElementaryURLHelper;
+import org.javlo.helper.*;
 import org.javlo.helper.ElementaryURLHelper.Code;
-import org.javlo.helper.LangHelper;
-import org.javlo.helper.NavigationHelper;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.ServletHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
 import org.javlo.io.AppendableTextFile;
 import org.javlo.io.TransactionFile;
-import org.javlo.mailing.DKIMBean;
-import org.javlo.mailing.DKIMFactory;
-import org.javlo.mailing.MailConfig;
-import org.javlo.mailing.MailService;
-import org.javlo.mailing.POPThread;
+import org.javlo.mailing.*;
 import org.javlo.module.core.IPrintInfo;
 import org.javlo.module.remote.RemoteService;
 import org.javlo.module.ticket.TicketAction;
@@ -86,12 +22,7 @@ import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.NoURLFactory;
 import org.javlo.navigation.URLTriggerThread;
-import org.javlo.service.ContentService;
-import org.javlo.service.NotificationService;
-import org.javlo.service.PersistenceService;
-import org.javlo.service.PersistenceThread;
-import org.javlo.service.RequestService;
-import org.javlo.service.ReverseLinkService;
+import org.javlo.service.*;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.service.log.Log;
 import org.javlo.service.log.LogContainer;
@@ -111,6 +42,23 @@ import org.javlo.utils.TimeMap;
 import org.javlo.utils.backup.BackupBean;
 import org.javlo.utils.backup.BackupThread;
 import org.owasp.encoder.Encode;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.*;
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.Principal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class GlobalContext implements Serializable, IPrintInfo {
 
@@ -2800,6 +2748,15 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		synchronized (properties) {
 			properties.setProperty("alias", alias);
 			save();
+		}
+	}
+
+	public void addAliasUri(String uri, String alias) {
+		synchronized (properties) {
+			Properties newAlias = new Properties();
+			newAlias.putAll(getURIAlias());
+			newAlias.put(uri, alias);
+			setAliasURI(newAlias);
 		}
 	}
 

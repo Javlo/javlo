@@ -634,6 +634,7 @@ public class ContentHelper {
             Node node = nodeList.item(i);
             String title = extractSubNodeValue(node, "title");
             String link = extractSubNodeValue(node, "link");
+
             if (StringHelper.isURL(link)) {
                 link = link.replace("http://"+host, "");
                 link = link.replace("https://"+host, "");
@@ -641,6 +642,7 @@ public class ContentHelper {
             } else {
                 link = null;
             }
+
             String description = extractSubNodeValue(node, "description");
             String pubDate = extractSubNodeValue(node, "pubDate");
             Date publicationDate = null;
@@ -900,7 +902,7 @@ public class ContentHelper {
                             }
 
                             if (link != null) {
-                                ctx.getGlobalContext().getRedirectUrlMap().put(link, "page:"+newPage.getName());
+                                ctx.getGlobalContext().addAliasUri(link, "page:"+newPage.getName());
                             }
 
                             countArticlePublished++;
@@ -931,7 +933,6 @@ public class ContentHelper {
                 }
             }
         }
-        ctx.getGlobalContext().storeRedirectUrlList();
         PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
         logger.info("#countArticle = "+countArticle);
         logger.info("#countArticlePublished = "+countArticlePublished);
