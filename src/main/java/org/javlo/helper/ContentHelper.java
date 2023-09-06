@@ -690,15 +690,15 @@ public class ContentHelper {
                     }
                 }
 
-                for (org.jsoup.nodes.Element link : docJsoup.select("a")) {
-                    String href = link.attr("href");
+                for (org.jsoup.nodes.Element jsLink : docJsoup.select("a")) {
+                    String href = jsLink.attr("href");
                     if (href.toLowerCase().contains("//" + host.toLowerCase())) {
                         if (ResourceHelper.isStaticFile(href)) {
                             if (fileUrl == null) {
                                 fileUrl = href;
-                                fileLabel = link.text();
+                                fileLabel = jsLink.text();
                             }
-                            link.remove();
+                            jsLink.remove();
                         }
                     }
                 }
