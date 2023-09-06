@@ -486,7 +486,7 @@ public class AdminAction extends AbstractModuleAction {
 					if (uriAlias != null) {
 						StructuredProperties prop = new StructuredProperties();
 						Properties properties = new Properties();
-						Reader reader = new InputStreamReader(new ByteArrayInputStream(uriAlias.getBytes()));
+						Reader reader = new InputStreamReader(new ByteArrayInputStream(uriAlias.getBytes()), ContentContext.CHARSET_DEFAULT);
 						properties.load(reader);
 						reader.close();
 						currentGlobalContext.setAliasURI(properties);
