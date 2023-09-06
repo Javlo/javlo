@@ -392,7 +392,7 @@ public class CatchAllFilter implements Filter {
 			if (cmsURI.length() > 1) {
 				for (Map.Entry<String, String> entry : entries) {
 					String pattern1 = entry.getKey();
-					String pattern2 = entry.getValue();
+					String pattern2 = entry.getValue().trim();
 					if (!pattern1.contains("*")) {
 						if (cmsURI.equals(pattern1)) {
 							if (httpRequest.getQueryString() != null && httpRequest.getQueryString().length() > 0) {
@@ -411,17 +411,20 @@ public class CatchAllFilter implements Filter {
 								} else {
 									pattern2 += '?' + httpRequest.getQueryString();
 								}
+							}
 
-								if (pattern2.startsWith("page:")) {
-									pattern2 = pattern2.replace("page:", "");
-									try {
-										URLHelper.createURLFromPageName(ContentContext.getContentContext(httpRequest, httpResponse), pattern2);
-									} catch (Exception e) {
-										e.printStackTrace();
-									}
+							boolean isPage = false;
+							if (pattern2.startsWith("page:")) {
+								isPage= true;
+								pattern2 = pattern2.replace("page:", "");
+								try {
+									pattern2 = URLHelper.createURLFromPageName(ContentContext.getContentContext(httpRequest, httpResponse), pattern2);
+								} catch (Exception e) {
+									e.printStackTrace();
 								}
 							}
-							logger.info("manual redirect : " + pattern1 + " --> " + pattern2);
+
+							logger.info("manual redirect (page:"+isPage+") : " + pattern1 + " --> " + pattern2);
 							if (DEBUG) {
 								LocalLogger.log("1.sendRedirectPermanently");
 								LocalLogger.log("pattern1 : " + pattern1);
