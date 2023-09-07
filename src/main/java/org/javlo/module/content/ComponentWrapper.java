@@ -84,18 +84,18 @@ public class ComponentWrapper {
 
     private Map<String, Field.FieldBean> fields = null;
     public Map<String, Field.FieldBean> getFields() throws Exception {
-        if (fields != null) {
-            return fields;
+        if (fields == null) {
+            if (!isDynamicComponent()) {
+                fields = Collections.emptyMap();
+            } else {
+                DynamicComponent dc = (DynamicComponent) comp;
+                fields = new HashMap<>();
+                dc.getFields(ctx).forEach(f -> {
+                    fields.put(f.getName(), f.getBean(ctx));
+                });
+            }
         }
-        if (!isDynamicComponent()) {
-            return Collections.emptyMap();
-        } else {
-            DynamicComponent dc = (DynamicComponent) comp;
-            fields = new HashMap<>();
-            dc.getFields(ctx).forEach(f -> {
-                fields.put(f.getName(), f.getBean(ctx));
-            });
-        }
+        return fields;
     }
 
 
