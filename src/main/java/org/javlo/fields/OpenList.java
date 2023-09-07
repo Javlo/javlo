@@ -75,9 +75,9 @@ public class OpenList extends Field {
 		out.println("<div class=\"row\"><div class=\""+LABEL_CSS+"\"><label for=\"" + getInputName() + "\">" + getLabel(ctx, ctx.getLocale()) + "</label></div>");
 		out.println("<div class=\""+(ctx.isVisualMode()?VALUE_SIZE:SMALL_VALUE_SIZE)+"\"><select class=\"form-control form-select\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");
  
-		if (search) {
+		//if (search) {
 			out.println("		<option></option>");
-		}
+		//}
 
 		Set<String> displayed = new HashSet<>();
 		displayed.add("");
