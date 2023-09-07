@@ -963,3 +963,4 @@ Security in case of vulnerabilities.
 - don't display not found link with 'page:'
 - event + optimise dynamiccomponent html field detection
 - taxonomy in date
+- convert external link to local link if possible.
