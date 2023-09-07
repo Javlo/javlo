@@ -2121,4 +2121,10 @@ public class InfoBean {
 		return URLHelper.createStaticURL(ctx, "/sitemap.json");
 	}
 
+	public Map<String, Collection<IContentVisualComponent>> getComponentByType() {
+		return new ComponentTypeMap(ctx);
+	}
+
+
+
 }

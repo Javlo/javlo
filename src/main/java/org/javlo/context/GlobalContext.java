@@ -4579,4 +4579,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return hostName;
 	}
 
+	public ContentService getContentService() {
+		return ContentService.getInstance(this);
+	}
+
 }
