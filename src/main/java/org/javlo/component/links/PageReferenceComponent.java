@@ -373,8 +373,17 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
                 return page.getTimeRange(ctx).isInside(date);
             }
 
-            String[] taxonomies = rs.getParameterValues("taxonomy");
-            if (taxonomies != null && taxonomies.length > 0) {
+            List<String> taxonomies  = new LinkedList<>();
+            taxonomies.addAll(Arrays.asList(rs.getParameterValues("taxonomy")));
+            int i=0;
+            while (rs.getParameter("taxonomy-"+i) != null) {
+                String taxo = rs.getParameter("taxonomy-"+i);
+                if (!StringHelper.isEmpty(taxo)) {
+                    taxonomies.add(taxo);
+                }
+                i++;
+            }
+            if (taxonomies.size() > 0) {
                 for (String taxonomy : taxonomies) {
                     if (page.getTaxonomy() == null || !page.getTaxonomy().contains(taxonomy)) {
                         return false;
