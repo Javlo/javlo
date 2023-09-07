@@ -3,6 +3,11 @@ package org.javlo.module.content;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.fields.Field;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ComponentWrapper {
     private ContentContext ctx;
@@ -75,4 +80,23 @@ public class ComponentWrapper {
     public String getXHTMLCode() throws Exception {
         return comp.getXHTMLCode(ctx);
     }
+
+
+    private Map<String, Field.FieldBean> fields = null;
+    public Map<String, Field.FieldBean> getFields() throws Exception {
+        if (fields != null) {
+            return fields;
+        }
+        if (!isDynamicComponent()) {
+            return Collections.emptyMap();
+        } else {
+            DynamicComponent dc = (DynamicComponent) comp;
+            fields = new HashMap<>();
+            dc.getFields(ctx).forEach(f -> {
+                fields.put(f.getName(), f.getBean(ctx));
+            });
+        }
+    }
+
+
 }
