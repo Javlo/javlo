@@ -58,7 +58,9 @@ public class XHTML extends AbstractVisualComponent {
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
 		cachable = null;
-		return super.performEdit(ctx);
+		String out = super.performEdit(ctx);
+		setValue(XHTMLHelper.replaceAbsoluteLinks(ctx, getValue()));
+		return out;
 	}
 
 	/*

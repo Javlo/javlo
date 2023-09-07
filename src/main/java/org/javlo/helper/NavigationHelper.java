@@ -1,22 +1,8 @@
 package org.javlo.helper;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.apache.commons.beanutils.BeanUtils;
 import org.javlo.comparator.MenuElementPriorityComparator;
-import org.javlo.component.core.ComponentBean;
-import org.javlo.component.core.ComponentFactory;
-import org.javlo.component.core.ContentElementList;
-import org.javlo.component.core.IContentVisualComponent;
-import org.javlo.component.core.IInternalLink;
+import org.javlo.component.core.*;
 import org.javlo.component.links.RSSRegistration;
 import org.javlo.component.title.SubTitle;
 import org.javlo.context.ContentContext;
@@ -27,7 +13,14 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.ConvertToCurrentVersion;
 import org.javlo.service.PersistenceService;
+import org.javlo.service.RequestService;
 import org.javlo.xml.NodeXML;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.util.*;
 
 public class NavigationHelper {
 
@@ -97,7 +90,7 @@ public class NavigationHelper {
 
 	/**
 	 * copy all element attribute (without children)
-	 * 
+	 *
 	 * @param src
 	 *            source MenuElement
 	 * @param target
@@ -153,7 +146,7 @@ public class NavigationHelper {
 
 	/**
 	 * extract the content of a element.
-	 * 
+	 *
 	 * @param elem
 	 *            a menu element
 	 * @return a copy of the element content.
@@ -201,7 +194,7 @@ public class NavigationHelper {
 
 	/**
 	 * get the linked url of the current page, maybe defined in a parent node.
-	 * 
+	 *
 	 * @param elem
 	 * @return
 	 */
@@ -360,7 +353,7 @@ public class NavigationHelper {
 
 	/**
 	 * search page with a link to a specific page
-	 * 
+	 *
 	 * @param elem
 	 *            a specific page
 	 * @return a list of page
@@ -376,7 +369,7 @@ public class NavigationHelper {
 
 	/**
 	 * check if a page is a parent of a other page.
-	 * 
+	 *
 	 * @param page
 	 *            a page with parent
 	 * @param parent
@@ -396,7 +389,7 @@ public class NavigationHelper {
 
 	/**
 	 * check if pages are parent of a other page.
-	 * 
+	 *
 	 * @param page
 	 *            a page with parent
 	 * @param parent
@@ -434,7 +427,7 @@ public class NavigationHelper {
 
 	/**
 	 * get the page bookmark for the html header. used for pdf generation.
-	 * 
+	 *
 	 * @return
 	 * @throws Exception
 	 */
@@ -548,14 +541,14 @@ public class NavigationHelper {
 		}
 		return null;
 	}
-	
+
 	public static final String getNewName(MenuElement page) {
 		return getNewName(page, null);
 	}
 
 	/**
 	 * create a new name (numeroted -N) with a page name
-	 * 
+	 *
 	 * @param page
 	 *            the 'source' page.
 	 * @return a new name (this name not exist in the current context)
@@ -579,6 +572,29 @@ public class NavigationHelper {
 			index++;
 		}
 		return newPageName;
+	}
+
+	public static MenuElement getPageFromAbsoluteUrl(ContentContext ctx, String url) throws Exception {
+
+		if (!new URL(url).getHost().equalsIgnoreCase(ctx.getRequest().getServerName())) {
+			return null;
+		}
+
+		ContentContext urlCtx = new ContentContext(ctx);
+		urlCtx.setFree(true);
+		urlCtx.setRenderMode(ContentContext.VIEW_MODE);
+
+		String uri = RequestService.getURI(ctx.getRequest(), url);
+		String path = ContentManager.getPath(uri);
+
+		urlCtx.setPath(path);
+		MenuElement outPage = urlCtx.getCurrentPage(true);
+
+		if (outPage.isRoot()) {
+			return null;
+		} else {
+			return outPage;
+		}
 	}
 
 }

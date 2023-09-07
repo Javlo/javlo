@@ -3108,14 +3108,11 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		if (ctx.getPath().equals("/")) {
 			return this;
 		} else {
-
 			Collection<MenuElement> pastNode = new LinkedList<MenuElement>();
 			MenuElement elem = searchChild(this, ctx, ctx.getPath(), pastNode);
 			if (elem == null) {
 				elem = this;
 			}
-			// DebugHelper.checkAssert(elem == null, "current page (" +
-			// ctx.getPath() + ") not found.");
 			return elem;
 		}
 	}

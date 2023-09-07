@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.*;
 
@@ -315,6 +317,24 @@ public class RequestService {
 			uri = uri.substring(contextPath.length());
 		}
 		return uri;
+	}
+
+	public static String getURI(HttpServletRequest request, String url) throws URISyntaxException {
+ 		URI uri = new URI(url);
+
+		URI noHostURI = new URI(null, null, uri.getPath(), uri.getQuery(), uri.getFragment());
+		String contextPath = request.getContextPath();
+		String out;
+		try {
+			out = URLDecoder.decode(noHostURI.toString(), ContentContext.CHARACTER_ENCODING);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			out = URLDecoder.decode(request.getRequestURI());
+		}
+		if (contextPath.length() > 0) {
+			out = out.substring(contextPath.length());
+		}
+		return out;
 	}
 
 	public HttpServletRequest getRequest() {

@@ -2878,6 +2878,39 @@ public class XHTMLHelper {
 		return doc.html();
 	}
 
+	/**
+	 * replace absolute url by local url (page:#page_name#) if page found.
+	 *
+	 * @param ctx
+	 * @param html
+	 * @return
+	 * @throws Exception
+	 */
+	public static String replaceAbsoluteLinks(ContentContext ctx, String html) throws Exception {
+		Document doc = Jsoup.parse(html, "", Parser.xmlParser());
+		doc.getElementsByAttribute("href").forEach(item -> {
+			try {
+				String hrefValue = item.attr("href");
+				if (hrefValue != null) {
+					hrefValue = hrefValue.trim();
+					if (StringHelper.isURL(hrefValue)) {
+							if (ctx != null) {
+								MenuElement page = NavigationHelper.getPageFromAbsoluteUrl(ctx, hrefValue);
+								if (page != null) {
+									item.attr("href", "page:"+page.getName());
+								}
+							}
+						}
+					}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+
+		doc.outputSettings().escapeMode(EscapeMode.xhtml);
+		return doc.html();
+	}
+
 	public static void compressCSS(File targetFile) throws IOException {
 		String newContent;
 		FileInputStream in = null;

@@ -145,7 +145,7 @@ public class ContentContext {
 	private Locale locale = null;
 	
 	private String forcePageTitle = null;
-	
+
 
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free, boolean pageManagement) {
 		ContentContext ctx = new ContentContext();
@@ -946,8 +946,8 @@ public class ContentContext {
 		return pageManagement;
 	}
 
-	private MenuElement getCurrentPage(boolean urlFacotry) throws Exception {
-		
+	public MenuElement getCurrentPage(boolean urlFacotry) throws Exception {
+
 		if (!isPageManagement()) {
 			return ContentService.getInstance(getGlobalContext()).getNavigation(this);
 		}

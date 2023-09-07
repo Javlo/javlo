@@ -7,10 +7,7 @@ import io.bit3.jsass.CompilationException;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
-import org.javlo.helper.CSSParser;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.XHTMLHelper;
+import org.javlo.helper.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -123,6 +120,8 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
 		String msg = super.performEdit(ctx);
+		setFieldValue("xhtml", XHTMLHelper.replaceAbsoluteLinks(ctx, getFieldValue(ctx, "xhtml")));
+		storeProperties();
 		if (isModify()) {
 			createRenderer(ctx);
 		}

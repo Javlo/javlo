@@ -3,21 +3,13 @@
  */
 package org.javlo.component.text;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.InfoBean;
-import org.javlo.helper.LoremIpsumGenerator;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
+import org.javlo.helper.*;
 import org.javlo.module.file.FileAction;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
@@ -26,6 +18,10 @@ import org.javlo.utils.SuffixPrefix;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author pvandermaesen
@@ -222,6 +218,9 @@ public class WysiwygParagraph extends AbstractVisualComponent implements IImageT
 				if (StringHelper.isTrue(getConfig(ctx).getProperty("clean-html", "false"))) {
 					newContent = XHTMLHelper.cleanHTML(newContent);
 				}
+
+				newContent = XHTMLHelper.replaceAbsoluteLinks(ctx, newContent);
+
 				setValue(newContent);
 				setModify();
 			}

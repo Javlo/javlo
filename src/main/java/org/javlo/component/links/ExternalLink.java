@@ -288,6 +288,13 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 		String link = requestService.getParameter(getLinkName(), "");
 		String reverseLinkName = requestService.getParameter(getReverseLinkName(), ReverseLinkService.NONE);
 
+//		try {
+//			MenuElement page = NavigationHelper.getPageFromAbsoluteUrl(ctx, link);
+//			if (page != null) {
+//				link = "page:"+page.getName();
+//			}
+//		} catch (Exception e) {};
+
 		if (requestService.getParameter(getDownloadTitleInputName(), null) != null) {
 			String url = link;
 			if (!StringHelper.isURL(url)) {
