@@ -1,12 +1,5 @@
 package org.javlo.macro.interactive;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.ComponentBean;
@@ -20,12 +13,15 @@ import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IInteractiveMacro;
 import org.javlo.message.MessageRepository;
-import org.javlo.module.content.Edit.ComponentWrapper;
+import org.javlo.module.content.ComponentWrapper;
 import org.javlo.module.macro.MacroModuleContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
+
+import java.util.*;
+import java.util.logging.Logger;
 
 public class CreateBusinessComponent implements IInteractiveMacro, IAction {
 

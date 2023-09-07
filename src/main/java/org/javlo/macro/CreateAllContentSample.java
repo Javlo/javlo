@@ -1,8 +1,5 @@
 package org.javlo.macro;
 
-import java.util.Map;
-import java.util.logging.Logger;
-
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentFactory;
@@ -10,8 +7,11 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.title.Heading;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
-import org.javlo.module.content.Edit;
+import org.javlo.module.content.ComponentWrapper;
 import org.javlo.service.ContentService;
+
+import java.util.Map;
+import java.util.logging.Logger;
 
 public class CreateAllContentSample extends AbstractMacro {
 
@@ -32,7 +32,7 @@ public class CreateAllContentSample extends AbstractMacro {
 		String previousID = "0";
 		ContentContext contentCtx = ctx.getContextWithArea(ComponentBean.DEFAULT_AREA);
 		ContentService content = ContentService.getInstance(ctx.getRequest());
-		for (Edit.ComponentWrapper comp : ComponentFactory.getComponentForDisplay(ctx, false)) {
+		for (ComponentWrapper comp : ComponentFactory.getComponentForDisplay(ctx, false)) {
 			if (comp.getComponent() instanceof AbstractVisualComponent) {
 
 				ComponentBean heading = new ComponentBean(Heading.TYPE, "depth=2\ntext=" + comp.getType(), previousID);

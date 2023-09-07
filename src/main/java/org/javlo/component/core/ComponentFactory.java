@@ -3,33 +3,7 @@
  */
 package org.javlo.component.core;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.servlet.ServletContext;
-
-import org.apache.commons.vfs2.FileObject;
-import org.apache.commons.vfs2.FileSelectInfo;
-import org.apache.commons.vfs2.FileSelector;
-import org.apache.commons.vfs2.FileSystemManager;
-import org.apache.commons.vfs2.FileType;
-import org.apache.commons.vfs2.VFS;
+import org.apache.commons.vfs2.*;
 import org.apache.commons.vfs2.impl.VFSClassLoader;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.config.StaticConfig;
@@ -39,13 +13,22 @@ import org.javlo.context.GlobalContext;
 import org.javlo.context.UserInterfaceContext;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.ConfigHelper;
-import org.javlo.module.content.Edit;
-import org.javlo.module.content.Edit.ComponentWrapper;
+import org.javlo.module.content.ComponentWrapper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.utils.StructuredProperties;
+
+import javax.servlet.ServletContext;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author pvanderm
@@ -642,7 +625,7 @@ public class ComponentFactory {
 			}
 		}
 
-		List<ComponentWrapper> listWithoutEmptyTitle = new LinkedList<Edit.ComponentWrapper>();
+		List<ComponentWrapper> listWithoutEmptyTitle = new LinkedList<ComponentWrapper>();
 		ComponentWrapper title = null;
 		UserInterfaceContext uiContext = UserInterfaceContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());
 		for (ComponentWrapper comp : comps) {

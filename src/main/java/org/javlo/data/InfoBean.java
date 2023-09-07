@@ -20,6 +20,7 @@ import org.javlo.macro.core.MacroFactory;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.admin.MacroBean;
+import org.javlo.module.content.ComponentWrapper;
 import org.javlo.module.content.Edit;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
@@ -2121,7 +2122,7 @@ public class InfoBean {
 		return URLHelper.createStaticURL(ctx, "/sitemap.json");
 	}
 
-	public Map<String, Collection<IContentVisualComponent>> getComponentByType() {
+	public Map<String, Collection<ComponentWrapper>> getComponentByType() {
 		return new ComponentTypeMap(ctx);
 	}
 

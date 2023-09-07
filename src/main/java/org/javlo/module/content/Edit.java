@@ -1,56 +1,18 @@
 package org.javlo.module.content;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.column.TableBreak;
 import org.javlo.component.container.IContainer;
-import org.javlo.component.core.AbstractVisualComponent;
-import org.javlo.component.core.ComponentBean;
-import org.javlo.component.core.ComponentContext;
-import org.javlo.component.core.ComponentFactory;
-import org.javlo.component.core.ContentElementList;
-import org.javlo.component.core.IContentComponentsList;
-import org.javlo.component.core.IContentVisualComponent;
-import org.javlo.component.core.IReverseLinkComponent;
-import org.javlo.component.core.IUploadResource;
-import org.javlo.component.dynamic.DynamicComponent;
+import org.javlo.component.core.*;
 import org.javlo.component.links.MirrorComponent;
 import org.javlo.component.links.PageMirrorComponent;
 import org.javlo.component.title.Heading;
 import org.javlo.component.title.Title;
 import org.javlo.config.StaticConfig;
-import org.javlo.context.ContentContext;
-import org.javlo.context.ContextException;
-import org.javlo.context.EditContext;
-import org.javlo.context.GlobalContext;
-import org.javlo.context.UserInterfaceContext;
+import org.javlo.context.*;
 import org.javlo.data.InfoBean;
-import org.javlo.helper.ComponentHelper;
-import org.javlo.helper.DebugHelper;
-import org.javlo.helper.ElementaryURLHelper;
-import org.javlo.helper.LangHelper;
-import org.javlo.helper.NavigationHelper;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.ServletHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
+import org.javlo.helper.*;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -65,17 +27,11 @@ import org.javlo.module.mailing.MailingModuleContext;
 import org.javlo.module.ticket.Ticket;
 import org.javlo.module.ticket.TicketBean;
 import org.javlo.module.ticket.TicketService;
-import org.javlo.module.user.UserAction;
 import org.javlo.navigation.MenuElement;
 import org.javlo.search.SearchEngineFactory;
 import org.javlo.search.SearchResult;
 import org.javlo.search.SearchResult.SearchElement;
-import org.javlo.service.ClipBoard;
-import org.javlo.service.ContentService;
-import org.javlo.service.NavigationService;
-import org.javlo.service.PersistenceService;
-import org.javlo.service.RequestService;
-import org.javlo.service.ReverseLinkService;
+import org.javlo.service.*;
 import org.javlo.service.integrity.IntegrityFactory;
 import org.javlo.service.resource.ResourceStatus;
 import org.javlo.service.shared.ISharedContentProvider;
@@ -85,13 +41,17 @@ import org.javlo.service.shared.SharedContentService;
 import org.javlo.service.syncro.SynchroHelper;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
-import org.javlo.user.AdminUserFactory;
-import org.javlo.user.AdminUserSecurity;
-import org.javlo.user.IUserFactory;
-import org.javlo.user.IUserInfo;
-import org.javlo.user.User;
+import org.javlo.user.*;
 import org.javlo.utils.TimeTracker;
 import org.javlo.ztatic.FileCache;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class Edit extends AbstractModuleAction {
 
@@ -243,75 +203,6 @@ public class Edit extends AbstractModuleAction {
 		return FileModuleContext.getInstance(session, GlobalContext.getSessionInstance(session), module, ContentModuleContext.class);
 	}
 
-	public static class ComponentWrapper {
-		private ContentContext ctx;
-		private IContentVisualComponent comp;
-		private boolean selected;
-		private String hexColor;
-
-		public ComponentWrapper(ContentContext ctx, IContentVisualComponent comp) {
-			this.ctx = ctx;
-			this.comp = comp;
-			hexColor = comp.getHexColor();
-		}
-
-		public String getType() {
-			return comp.getType();
-		}
-
-		public String getLabel() {
-			return comp.getComponentLabel(ctx, ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession()));
-		}
-
-		public String getValue() {
-			return comp.getValue(ctx);
-		}
-
-		public boolean isMetaTitle() {
-			return comp.isMetaTitle();
-		}
-
-		public boolean isSelected() {
-			return selected;
-		}
-
-		public void setSelected(boolean selected) {
-			this.selected = selected;
-		}
-
-		public int getComplexityLevel() {
-			return comp.getComplexityLevel(ctx);
-		}
-
-		public boolean isDynamicComponent() {
-			return comp instanceof DynamicComponent;
-		}
-
-		public String getHexColor() {
-			return hexColor;
-		}
-
-		public void setHexColor(String hexColor) {
-			this.hexColor = hexColor;
-		}
-
-		public IContentVisualComponent getComponent() {
-			return comp;
-		}
-
-		public String getFontAwesome() {
-			return comp.getFontAwesome();
-		}
-
-		public String getIcon() {
-			return comp.getIcon();
-		}
-
-		public String getGroup() {
-			return comp.getGroup();
-		}
-	}
-
 	@Override
 	public String getActionGroupName() {
 		return "edit";
@@ -435,7 +326,7 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	private static void loadComponentList(ContentContext ctx) throws Exception {
-		Collection<Edit.ComponentWrapper> comps = ComponentFactory.getComponentForDisplay(ctx, false);
+		Collection<ComponentWrapper> comps = ComponentFactory.getComponentForDisplay(ctx, false);
 		/*
 		 * for (IContentComponentsList iContentComponentsList : comps) { System.out
 		 * .println( "***** Edit.loadComponentList : iContentComponentsList = "
