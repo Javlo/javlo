@@ -635,6 +635,11 @@ public class ContentHelper {
             String title = extractSubNodeValue(node, "title");
             String link = extractSubNodeValue(node, "link");
 
+            String lg = "en";
+            if (ctx != null) {
+                lg = ctx.getGlobalContext().getDefaultLanguage();
+            }
+
             if (StringHelper.isURL(link)) {
                 link = link.replace("http://"+host, "");
                 link = link.replace("https://"+host, "");
@@ -667,6 +672,8 @@ public class ContentHelper {
                     Element subElement = (Element) subNode.item(j);
                     if (subElement.getAttribute("domain").equalsIgnoreCase("category")) {
                         category = StringHelper.getNotEmpty(subElement.getAttribute("nicename"), subElement.getTextContent());
+                    } else if (subElement.getAttribute("domain").equalsIgnoreCase("language")) {
+                        lg = StringHelper.getNotEmpty(subElement.getAttribute("nicename"), subElement.getTextContent());
                     } else {
                         tags.add(StringHelper.getNotEmpty(subElement.getAttribute("nicename"), subElement.getTextContent()));
                     }
@@ -813,7 +820,7 @@ public class ContentHelper {
                             bean.setValue("depth=1\ntext=" + encodeNonAscii(title));
                             bean.setArea(ComponentBean.DEFAULT_AREA);
                             bean.setModify(true);
-                            bean.setLanguage(ctx.getRequestContentLanguage());
+                            bean.setLanguage(lg);
                             parentId = content.createContent(ctx, newPage, bean, parentId, false);
 
                             if (publicationDate != null) {
@@ -823,7 +830,7 @@ public class ContentHelper {
                                 bean.setValue(StringHelper.renderTime(publicationDate));
                                 bean.setArea(ComponentBean.DEFAULT_AREA);
                                 bean.setModify(true);
-                                bean.setLanguage(ctx.getRequestContentLanguage());
+                                bean.setLanguage(lg);
                                 parentId = content.createContent(ctx, newPage, bean, parentId, false);
                             }
 
@@ -833,7 +840,7 @@ public class ContentHelper {
                                 bean.setValue(Encode.forHtml(description));
                                 bean.setArea(ComponentBean.DEFAULT_AREA);
                                 bean.setModify(true);
-                                bean.setLanguage(ctx.getRequestContentLanguage());
+                                bean.setLanguage(lg);
                                 parentId = content.createContent(ctx, newPage, bean, parentId, true);
                             }
 
@@ -856,7 +863,7 @@ public class ContentHelper {
                                     bean.setValue(val);
                                     bean.setArea(ComponentBean.DEFAULT_AREA);
                                     bean.setModify(true);
-                                    bean.setLanguage(ctx.getRequestContentLanguage());
+                                    bean.setLanguage(lg);
                                     parentId = content.createContent(ctx, newPage, bean, parentId, true);
 
                                 } catch (Exception e) {
@@ -869,7 +876,7 @@ public class ContentHelper {
                             bean.setValue(html);
                             bean.setArea(ComponentBean.DEFAULT_AREA);
                             bean.setModify(true);
-                            bean.setLanguage(ctx.getRequestContentLanguage());
+                            bean.setLanguage(lg);
                             parentId = content.createContent(ctx, newPage, bean, parentId, true);
 
                             if (!StringHelper.isEmpty(fileUrl)) {
@@ -893,7 +900,7 @@ public class ContentHelper {
                                     bean.setValue(val);
                                     bean.setArea(ComponentBean.DEFAULT_AREA);
                                     bean.setModify(true);
-                                    bean.setLanguage(ctx.getRequestContentLanguage());
+                                    bean.setLanguage(lg);
                                     parentId = content.createContent(ctx, newPage, bean, parentId, true);
 
                                 } catch (Exception e) {
