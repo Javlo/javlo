@@ -59,6 +59,15 @@ public class TaxonomyDisplayBean {
 		}
 		return children;
 	}
+
+	public List<TaxonomyDisplayBean> getChildrenSortByLabel() {
+		List<TaxonomyDisplayBean> children = new LinkedList<>();
+		for (TaxonomyBean bean : bean.getChildren()) {
+			children.add(new TaxonomyDisplayBean(ctx, bean));
+		}
+		Collections.sort(children, (o1, o2) -> o1.getLabel().compareTo(o2.getLabel()));
+		return children;
+	}
 	
 	public List<TaxonomyDisplayBean> getAllChildren() {
 		List<TaxonomyDisplayBean> children = new LinkedList<>();

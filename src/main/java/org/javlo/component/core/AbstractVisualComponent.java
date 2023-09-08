@@ -2411,7 +2411,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	public String getAjaxId() {
-		return "cp-" + getId();
+		return AJAX_ID_PREFIX + getId();
 	}
 
 	public String getStyle() {

@@ -134,7 +134,8 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
         boolean componentManager = ctx.isUserWebSiteManager() && !ctx.getGlobalContext().isPreviewMode();
 
         if (!getStyle().equals(HIDE_FORM) && !getStyle().equals(HIDE_FORM_USER_ONLY) || componentManager) {
-            out.println("<div class=\"filter-form card panel panel-default\"><form role=\"form\" class=\"generic-form\" id=\"form-filter-" + getId() + "\" name=\"form-filter-" + getId() + "\" action=\"" + URLHelper.createURL(ctx) + "\" method=\"post\">");
+            out.println("<div class=\"filter-form card panel panel-default\">");
+            out.println("<form role=\"form\" class=\"generic-form ajax-form\" id=\"form-filter-" + getId() + "\" name=\"form-filter-" + getId() + "\" action=\""+URLHelper.createURL(ctx)+"\" data-ajaxaction=\"" + URLHelper.createAjaxURL(ctx) + "\" method=\"post\">");
             out.println("<div class=\"fields panel-body card-body\"><input type=\"hidden\" name=\"webaction\" value=\"" + getActionGroupName() + ".filter\" />");
             out.println("<input type=\"hidden\" name=\"" + IContentVisualComponent.COMP_ID_REQUEST_PARAM + "\" value=\"" + getId() + "\"><div class=\"row field-row first-row\">");
             final int SIZE = 6;
@@ -162,6 +163,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
             }
             out.println("</div><div class=\"action-group form-group text-right\"><input type=\"submit\" class=\"btn btn-primary\" name=\"filter\" value=\"" + i18nAccess.getViewText("global.search") + "\" /></div>");
             out.println("</div></form></div>");
+            out.println("<script>if (typeof updateAjaxForms === 'function') {updateAjaxForms();} else {console.log('updateAjaxForms not found');}</script>");
         } else if (ctx.isAsPreviewMode()) {
             out.println("[no - form]");
         }
@@ -283,6 +285,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
                 }
             }
         }
+
         return fields;
     }
 
@@ -333,6 +336,12 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
                 field.setValue(rs.getParameter(field.getInputName(), ""));
             }
         }
+
+        if (ctx.isAjax()) {
+            ctx.getAjaxZone().put(IContentVisualComponent.AJAX_ID_PREFIX+comp.getId(), comp.getXHTMLCode(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE)));
+            ctx.setStopRendering(true);
+        }
+
         return null;
     }
 

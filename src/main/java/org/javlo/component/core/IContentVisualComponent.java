@@ -4,13 +4,6 @@
  */
 package org.javlo.component.core;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import org.javlo.component.config.ComponentConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.data.rest.IRestItem;
@@ -19,6 +12,9 @@ import org.javlo.message.GenericMessage;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.google.translation.ITranslator;
 import org.javlo.utils.SuffixPrefix;
+
+import java.io.IOException;
+import java.util.*;
 
 /**
  * @author pvandermaesen
@@ -53,6 +49,8 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	static public String DYN_COMP_COLOR = "99CCF9";
 	static public String WEB2_COLOR = "5A4C93";
 	static public String CONTAINER_COLOR = "D57C60";
+
+	public static final String AJAX_ID_PREFIX = "cp_";
 	
 	public static final String COLORED_WRAPPER_CLASS = "colored-wrapper";
 	

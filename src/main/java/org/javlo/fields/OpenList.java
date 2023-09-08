@@ -70,10 +70,15 @@ public class OpenList extends Field {
 		List<Map.Entry<String, String>> values = new LinkedList(valuesMap.entrySet());
 		Collections.sort(values, new JavaHelper.MapEntriesSortOnValue());
 
+		String event = "";
+		if (search) {
+			event=" onchange=\"submitForm(this.form);\"";
+		}
+
 		out.println("<div class=\"form-group field-"+getName()+"\">");
 		out.println(getEditLabelCode());
 		out.println("<div class=\"row\"><div class=\""+LABEL_CSS+"\"><label for=\"" + getInputName() + "\">" + getLabel(ctx, ctx.getLocale()) + "</label></div>");
-		out.println("<div class=\""+(ctx.isVisualMode()?VALUE_SIZE:SMALL_VALUE_SIZE)+"\"><select class=\"form-control form-select\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");
+		out.println("<div class=\""+(ctx.isVisualMode()?VALUE_SIZE:SMALL_VALUE_SIZE)+"\"><select"+event+" class=\"form-control form-select\" id=\"" + getInputName() + "\" name=\"" + getInputName() + "\" value=\"" + StringHelper.neverNull(getValue()) + "\">");
  
 		//if (search) {
 			out.println("		<option></option>");

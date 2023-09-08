@@ -445,4 +445,8 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		}
 	}
 
+	public boolean isAjaxWrapper(ContentContext ctx) {
+		return true;
+	}
+
 }

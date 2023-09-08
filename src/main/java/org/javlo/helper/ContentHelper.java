@@ -701,6 +701,10 @@ public class ContentHelper {
                     debugNote += " / warning: IMG more than 1 found in page.";
                 }
 
+                if (docJsoup.select("svg").size() > 1) {
+                    debugNote += " / warning: SVG found in page.";
+                }
+
                 for (org.jsoup.nodes.Element element : docJsoup.select("[style]")) {
                     element.removeAttr("style");
                 }
