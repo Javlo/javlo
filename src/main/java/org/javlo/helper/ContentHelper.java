@@ -909,9 +909,8 @@ public class ContentHelper {
                             }
 
                             if (link != null) {
-                                ctx.getGlobalContext().addAliasUri(link, "page:"+newPage.getName());
+                                ctx.getGlobalContext().addAliasUri(link, "page:"+lg+'/'+newPage.getName());
                             }
-
                             countArticlePublished++;
                         }
 

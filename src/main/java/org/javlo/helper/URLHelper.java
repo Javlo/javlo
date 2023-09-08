@@ -1044,6 +1044,15 @@ public class URLHelper extends ElementaryURLHelper {
 	public static String createURLFromPageName(ContentContext ctx, String pageName) throws Exception {
 		GlobalContext globalContext = ctx.getGlobalContext();
 		NavigationService navService = NavigationService.getInstance(globalContext);
+
+		if (pageName.contains("/")) {
+			String[] pageSplit = pageName.split("/");
+			String lg = pageSplit[0];
+			pageName = pageSplit[0];
+			ctx = new ContentContext(ctx);
+			ctx.setAllLanguage(lg);
+		}
+
 		MenuElement page = navService.getPage(ctx, pageName);
 		if (page != null) {
 			return createURL(ctx, page.getPath());
