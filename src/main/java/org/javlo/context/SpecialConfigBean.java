@@ -1,11 +1,10 @@
 package org.javlo.context;
 
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
-
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.StringHelper;
+
+import java.util.List;
+import java.util.Map;
 
 public class SpecialConfigBean {
 	
@@ -49,7 +48,7 @@ public class SpecialConfigBean {
 	}
 	
 	public boolean isContentAddTitle() {
-		return StringHelper.isTrue(config.get("content.add-title"), true);
+		return StringHelper.isTrue(config.get("content.add-title"), false);
 	}
 
 	public boolean isSitemapResources() {
