@@ -686,19 +686,19 @@ public class ContentHelper {
                 org.jsoup.nodes.Document docJsoup = Jsoup.parse(html);
 
                 if (docJsoup.select("form").size() > 0) {
-                    debugNote += " / warning:<form> found in page.";
+                    debugNote += " / warning: FORM found in page.";
                 }
 
                 if (docJsoup.select("script").size() > 0) {
-                    debugNote += " / warning:<script> found in page.";
+                    debugNote += " / warning: SCRIPT found in page.";
                 }
 
                 if (docJsoup.select("iframe").size() > 0) {
-                    debugNote += " / warning:<iframe> found in page.";
+                    debugNote += " / warning: IFRAME found in page.";
                 }
 
                 if (docJsoup.select("img").size() > 1) {
-                    debugNote += " / warning:<img> more than 1 found in page.";
+                    debugNote += " / warning: IMG more than 1 found in page.";
                 }
 
                 for (org.jsoup.nodes.Element element : docJsoup.select("[style]")) {
