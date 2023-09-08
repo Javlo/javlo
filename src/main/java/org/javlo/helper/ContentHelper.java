@@ -1,9 +1,6 @@
 package org.javlo.helper;
 
-import org.javlo.component.core.AbstractVisualComponent;
-import org.javlo.component.core.ComponentBean;
-import org.javlo.component.core.ContentElementList;
-import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.core.*;
 import org.javlo.component.files.GenericFile;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.component.image.Image;
@@ -631,6 +628,9 @@ public class ContentHelper {
         }
 
         for (int i = 0; i < nodeList.getLength(); i++) {
+
+            String debugNote = "";
+
             Node node = nodeList.item(i);
             String title = extractSubNodeValue(node, "title");
             String link = extractSubNodeValue(node, "link");
@@ -684,6 +684,23 @@ public class ContentHelper {
             String html = extractSubNodeValue(node, "content:encoded").trim();
             if (!StringHelper.isEmpty(html)) {
                 org.jsoup.nodes.Document docJsoup = Jsoup.parse(html);
+
+                if (docJsoup.select("form").size() > 0) {
+                    debugNote += " / warning:<form> found in page.";
+                }
+
+                if (docJsoup.select("script").size() > 0) {
+                    debugNote += " / warning:<script> found in page.";
+                }
+
+                if (docJsoup.select("iframe").size() > 0) {
+                    debugNote += " / warning:<iframe> found in page.";
+                }
+
+                if (docJsoup.select("img").size() > 1) {
+                    debugNote += " / warning:<img> more than 1 found in page.";
+                }
+
                 for (org.jsoup.nodes.Element element : docJsoup.select("[style]")) {
                     element.removeAttr("style");
                 }
@@ -906,6 +923,16 @@ public class ContentHelper {
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
+                            }
+
+                            if (!StringHelper.isEmpty(debugNote)) {
+                                bean = new ComponentBean();
+                                bean.setType(DebugNote.TYPE);
+                                bean.setValue(debugNote);
+                                bean.setArea(ComponentBean.DEFAULT_AREA);
+                                bean.setModify(true);
+                                bean.setLanguage(lg);
+                                parentId = content.createContent(ctx, newPage, bean, parentId, true);
                             }
 
                             if (link != null) {
