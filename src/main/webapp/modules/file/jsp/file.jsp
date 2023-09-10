@@ -26,7 +26,7 @@
 jQuery(document).ready(function() {
 	var language = "${info.editLanguage}";
 	changeFooter();
-	
+
 	if (document.getElementById("footer") != null) {
 		var footerTop = jQuery("#footer").offset().top;
 	} else {
@@ -36,15 +36,15 @@ jQuery(document).ready(function() {
 			var footerTop = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
 		}
 	}
-	
+
 	jQuery('#fileManager').elfinder({
 		url : '${info.staticRootURL eq "/"?"":info.staticRootURL}${currentModule.path}/jsp/connector.jsp?v=1${not empty changeRoot?"&changeRoot=true":""}${params}  ',
 		lang : '${info.editLanguage}',
 		height: footerTop - jQuery("#fileManager").offset().top - (jQuery(".maincontent .left").outerHeight(true) - jQuery(".maincontent .left").height()),
-		handlers: {	
+		handlers: {
 			open: function(event) { ajaxRequest("${info.currentURL}?webaction=updateBreadcrumb${not empty changeRoot?"&changeRoot=true":""}${params}"); }
 		},
-		
+
 		uiOptions : {
 			contextmenu : {
 				// navbarfolder menu
@@ -97,13 +97,13 @@ jQuery(document).ready(function() {
 		          close : function(textarea, instance) {
 		            closeEditor(textarea);
 		          },
-		          save : function(textarea, editor) {		            
+		          save : function(textarea, editor) {
 		            saveEditor(textarea);
 		          }
-		        }		        
+		        }
 		      ]
 		    }
 		  }
-	}).elfinder('instance');	
+	}).elfinder('instance');
 });
 </script>

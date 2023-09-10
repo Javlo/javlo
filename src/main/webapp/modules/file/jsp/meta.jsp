@@ -43,9 +43,9 @@ params:
 
 				<!-- <c:if test="${not empty param.select}">
       <li class="directory small select unlock item">
-      		<div class="body">		
-		<div class="download">			
-			<div class="no-focus">			
+      		<div class="body">
+		<div class="download">
+			<div class="no-focus">
 			<c:url var="fileSelectURL" value="/.." context="/">
 				<c:if test="${not empty param.select}"><c:param name="select" value="${param.select}" /></c:if>
 				<c:if test="${not empty param.editPreview}"><c:param name="previewEdit" value="${param.previewEdit}" /></c:if>
@@ -53,14 +53,14 @@ params:
 					<c:param name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" />
 				</c:if>
 			</c:url>
-			<a href="${fileSelectURL}"><img src="/" alt=".."/></a>			
+			<a href="${fileSelectURL}"><img src="/" alt=".."/></a>
 			<div class="label">
 				<span>..</span>
 			</div>
 			</div>
-		</div>		
-      
-      
+		</div>
+
+
 	  </li>
 </c:if> -->
 
@@ -319,9 +319,9 @@ params:
 		jQuery(".select-item").click(function() {
 			if (parent.tinyMCE !== undefined) {
 				var url = jQuery(this).data("url");
-				var fieldName = parent.jQuery("body").data("fieldName");				
+				var fieldName = parent.jQuery("body").data("fieldName");
 				parent.jQuery("#"+fieldName).val(url);
-				parent.tinyMCE.activeEditor.windowManager.close(window);				
+				parent.tinyMCE.activeEditor.windowManager.close(window);
 			}
 		});
 	</script>

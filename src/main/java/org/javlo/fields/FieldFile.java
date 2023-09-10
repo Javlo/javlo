@@ -1,22 +1,5 @@
 package org.javlo.fields;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.actions.DataAction;
@@ -25,15 +8,9 @@ import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.fields.Field.FieldBean;
-import org.javlo.fields.FieldImage.ImageBean;
 import org.javlo.filter.DirectoryFilter;
-import org.javlo.helper.ElementaryURLHelper;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.Comparator.FileComparator;
+import org.javlo.helper.*;
 import org.javlo.module.file.FileAction;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.RequestService;
@@ -42,6 +19,9 @@ import org.javlo.service.resource.Resource;
 import org.javlo.ztatic.IStaticContainer;
 import org.javlo.ztatic.StaticInfo;
 import org.javlo.ztatic.StaticInfoBean;
+
+import java.io.*;
+import java.util.*;
 
 public class FieldFile extends Field implements IStaticContainer {
 	
@@ -323,7 +303,24 @@ public class StaticFileBean extends FieldBean {
 
 		/** select feed back **/
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
-		if (!StringHelper.isEmpty(rs.getParameter(getInputFileNameSelect())) && rs.getParameter("backreturn") == null) {
+
+		String path = ctx.getRequest().getParameter("path");
+		if (path != null) {
+			path = path.substring(path.indexOf("/",1));
+			String fileName = StringHelper.getFileNameFromPath(path);
+			path = path.replace(fileName, "");
+			if (path.startsWith("/")) {
+				path = path.substring(1);
+			}
+			if (path.endsWith("/")) {
+				path = path.substring(0,path.length()-1);
+			}
+			setCurrentFolder(path);
+			setCurrentFile(fileName);
+		} else if (!StringHelper.isEmpty(rs.getParameter(getInputFileNameSelect())) && rs.getParameter("backreturn") == null) {
+
+			// vérifier, il me semble qu'on n'entre jamais ici, car le lien contient toujours "path"
+
 			String file = StringHelper.getFileNameFromPath(rs.getParameter(getInputFileNameSelect()));
 			setCurrentFile(file);
 			String folder = new File(rs.getParameter(getInputFileNameSelect())).getParentFile().getPath();
@@ -344,7 +341,7 @@ public class StaticFileBean extends FieldBean {
 			out.println("</div></div>");
 
 			Map<String, String> filesParams = new HashMap<String, String>();
-			String path = URLHelper.mergePath(FileAction.getPathPrefix(ctx), StaticConfig.getInstance(ctx.getRequest().getSession()).getImageFolderName(), getCurrentFolder());
+			path = URLHelper.mergePath(FileAction.getPathPrefix(ctx), StaticConfig.getInstance(ctx.getRequest().getSession()).getImageFolderName(), getCurrentFolder());
 			filesParams.put("path", path);
 			filesParams.put("webaction", "changeRenderer");
 			filesParams.put("page", "meta");
