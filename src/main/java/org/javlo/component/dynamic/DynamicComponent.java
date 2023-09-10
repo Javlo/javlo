@@ -56,6 +56,8 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
      */
     protected static Logger logger = Logger.getLogger(DynamicComponent.class.getName());
 
+    protected boolean wrapped = true;
+
     @Override
     public void prepareView(ContentContext ctx) throws Exception {
         if (getNextComponent() == null) {
@@ -224,6 +226,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                     File jspFile = new File(StringHelper.getFileNameWithoutExtension(htmlFile.getAbsolutePath()) + ".jsp");
                     if (!jspFile.exists()) {
                         String html = JSP_HEADER + ResourceHelper.loadStringFromFile(htmlFile);
+                        wrapped = !html.contains(AbstractVisualComponent.PREVIEW_ATTRIBUTES);
                         for (Field field : getFields(ctx)) {
                             html = html.replace("field." + field.getType() + "." + field.getName() + '.', field.getName() + '.');
                         }
@@ -387,7 +390,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
     }
 
     public boolean isWrapped() {
-        return StringHelper.isTrue(properties.getProperty("component.wrapped", "true"));
+        return StringHelper.isTrue(properties.getProperty("component.wrapped", null), wrapped);
     }
 
     protected boolean getColumnableDefaultValue() {
