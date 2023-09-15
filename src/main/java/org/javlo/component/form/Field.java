@@ -76,10 +76,11 @@ public class Field {
 		this.setWidth(width);
 		if (ctx != null && (list.startsWith(">") || list.startsWith("#>")) ) {
 			boolean insertBlank = false;
+			String listName;
 			if (list.startsWith(">")) {
-				String listName = list.substring(1);
+				listName = list.substring(1);
 			} else {
-				String listName = list.substring(2);
+				listName = list.substring(2);
 				insertBlank = true;
 			}
 			try {
