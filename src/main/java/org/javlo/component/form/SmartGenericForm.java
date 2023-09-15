@@ -453,7 +453,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
             out.println("<table class=\"sTable2\">");
             String listTitle = "";
             if (isList()) {
-                listTitle = "<td>list</td>";
+                listTitle = "<td>list (>list name, #> start empty)</td>";
             }
             out.println("<thead><tr><td>name</td><td>label</td><td>condition</td><td>autocomplete</td>" + listTitle + "<td>type</td><td>role</td><td>width</td><td>required</td><td>order</td><td>action</td></tr></thead>");
             out.println("<tbody>");

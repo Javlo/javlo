@@ -1,17 +1,13 @@
 package org.javlo.component.form;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Logger;
-
 import org.javlo.context.ContentContext;
-import org.javlo.helper.StringHelper;
 import org.javlo.helper.Comparator.StringComparator;
+import org.javlo.helper.StringHelper;
 import org.javlo.service.IListItem;
 import org.javlo.service.ListService;
+
+import java.util.*;
+import java.util.logging.Logger;
 
 public class Field {
 
@@ -78,15 +74,23 @@ public class Field {
 		this.role = role;
 		this.autocomplete = autocomplete;
 		this.setWidth(width);
-		if (ctx != null && list.startsWith(">")) {
-			String listName = list.substring(1);
+		if (ctx != null && (list.startsWith(">") || list.startsWith("#>")) ) {
+			boolean insertBlank = false;
+			if (list.startsWith(">")) {
+				String listName = list.substring(1);
+			} else {
+				String listName = list.substring(2);
+				insertBlank = true;
+			}
 			try {
 				List<IListItem> items = ListService.getInstance(ctx).getList(ctx, listName);
 				if (items != null) {
 					this.list = new LinkedList<>();
+					if(insertBlank) {
+						this.list.add("");
+					}
 					for (IListItem i : items) {
 						this.list.add(i.getValue());
-
 					}
 				} else {
 					logger.warning("list not found : " + listName);
