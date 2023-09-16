@@ -1,10 +1,5 @@
 package org.javlo.helper;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Collection;
-import java.util.List;
-
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.links.RSSLink;
@@ -16,6 +11,11 @@ import org.javlo.search.SearchResult.SearchElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.template.Template;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Collection;
+import java.util.List;
 
 public class XHTMLNavigationHelper {
 
@@ -218,6 +218,31 @@ public class XHTMLNavigationHelper {
 				out.println("<option title=\""+StringHelper.toXMLAttribute(page.getTitle(ctx))+"\" value=\"" + page.getPath() + "\" selected=\"true\">");
 			} else {
 				out.print("<option title=\""+StringHelper.toXMLAttribute(page.getTitle(ctx))+"\" value=\"" + page.getPath() + "\">");
+			}
+			out.print(page.getPath());
+			out.println("</option>");
+		}
+		out.println("</select>");
+		if (filter) {
+			out.println("</div></div>");
+		}
+		out.close();
+		return res.toString();
+	}
+
+	public static String renderComboNavigationWidthName(ContentContext ctx, MenuElement rootPage, String id, String currentValue, boolean filter) throws Exception {
+		StringWriter res = new StringWriter();
+		PrintWriter out = new PrintWriter(res);
+		if (filter) {
+			out.println("<div class=\"row\"><div class=\"col-sm-3\"><input type=\"text\" data-filtered=\""+id+"\" class=\"form-control filter max-width\" placeholder=\"filter...\" /></div><div class=\"col-sm-9\">");
+		}
+		out.println("<select class=\"form-control max-width\" name=\"" + id + "\" id=\"" + id + "\"><option></option>");
+		MenuElement elem = rootPage;
+		for (MenuElement page : elem.getAllChildrenList()) {
+			if ((currentValue != null) && (currentValue.equals(page.getPath()))) {
+				out.println("<option title=\""+StringHelper.toXMLAttribute(page.getTitle(ctx))+"\" value=\"" + page.getName() + "\" selected=\"true\">");
+			} else {
+				out.print("<option title=\""+StringHelper.toXMLAttribute(page.getTitle(ctx))+"\" value=\"" + page.getName() + "\">");
 			}
 			out.print(page.getPath());
 			out.println("</option>");

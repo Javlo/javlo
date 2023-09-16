@@ -69,7 +69,10 @@ public class FieldInternalLink extends Field {
 		String param = getCurrentParam();
 		String url = null;
 		try {
-			MenuElement page = ctx.getGlobalContext().getPageIfExist(ctx, getCurrentLink(), false);
+			MenuElement page = ctx.getCurrentPage().getRoot().searchChildFromName(getCurrentLink());
+			if (page == null) {
+				page = ctx.getGlobalContext().getPageIfExist(ctx, getCurrentLink(), false);
+			}
 			if (page != null) {
 				url = page.getLinkOn(ctx);
 			}
@@ -87,7 +90,6 @@ public class FieldInternalLink extends Field {
 				}
 				url += param;
 			}
-			
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
@@ -128,7 +130,17 @@ public class FieldInternalLink extends Field {
 		out.println("<label for=\"" + getInputLinkName() + "\">" + getLinkLabel() + " : </label>");
 
 		ContentService content = ContentService.getInstance(ctx.getRequest());
-		out.println(XHTMLNavigationHelper.renderComboNavigation(ctx, content.getNavigation(ctx), getInputLinkName(), getCurrentLink(), true));
+		String pageName =  getCurrentLink();
+
+		/** transform link to page name (old content version) **/
+		if (pageName.contains("/")) {
+			MenuElement page = ctx.getGlobalContext().getPageIfExist(ctx, pageName, false);
+			if (page != null) {
+				pageName = page.getName();
+			}
+		}
+
+		out.println(XHTMLNavigationHelper.renderComboNavigationWidthName(ctx, content.getNavigation(ctx), getInputLinkName(), pageName, true));
 
 		out.println("</div>");
 
