@@ -1818,6 +1818,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
                             if (to != null) {
                                 for (Field field : comp.getFields(ctx)) {
                                     email = email.replace("${field." + field.getName() + "}", rs.getParameter(field.getName(), ""));
+                                    email = email.replace("${field." + field.getName().toLowerCase() + "}", rs.getParameter(field.getName(), ""));
                                 }
                                 email = email.replace("${registrationID}", registrationID);
                                 email = email.replace("${communication}", StringHelper.encodeAsStructuredCommunicationMod97(registrationID));
