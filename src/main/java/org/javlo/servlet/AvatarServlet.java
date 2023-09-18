@@ -9,6 +9,7 @@ import java.io.IOException;
 public class AvatarServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("image/svg+xml");
         String text = request.getParameter("text");
         if (text == null) {
             text = "";
