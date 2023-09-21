@@ -1,11 +1,10 @@
 package org.javlo.servlet.security;
 
-import java.util.logging.Logger;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.javlo.helper.NetHelper;
 import org.javlo.utils.TimeMap;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.logging.Logger;
 
 public class AccessSecurity {
 	
@@ -15,7 +14,7 @@ public class AccessSecurity {
 
 	private TimeMap<String, Integer> requestByMinute = new TimeMap<>(60);
 
-	private static final int MAX_REQUEST_BY_MINUTE = 500;
+	private static final int MAX_REQUEST_BY_MINUTE = 2500;
 
 	private static AccessSecurity instance = new AccessSecurity();
 
