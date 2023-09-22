@@ -10,7 +10,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
@@ -146,6 +145,6 @@ public class ChargeTest {
     }
 
     public static void main(String[] args) throws Exception {
-        runTest("https://s1.humind.eu/fr/d%C3%A9signons-des-ambassadeurs-au-sein-de-titeca.html", 20, 20);
+        runTest("https://s1.humind.eu/fr/d%C3%A9signons-des-ambassadeurs-au-sein-de-titeca.html", 50, 20);
     }
 }
