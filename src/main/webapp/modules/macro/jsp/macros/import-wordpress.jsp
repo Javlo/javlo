@@ -15,6 +15,11 @@
 </div>
 
 <div class="line">
+    <label for="image">Main image css path</label>
+    <input class="action-button" type="text" name="image" placeholder="#content img" id="image" />
+</div>
+
+<div class="line">
     <label for="file">File</label>
     <input class="action-button" type="file" name="file" id="file" />
 </div>

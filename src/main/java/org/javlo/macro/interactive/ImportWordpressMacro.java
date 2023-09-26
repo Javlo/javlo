@@ -1,7 +1,6 @@
 package org.javlo.macro.interactive;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.htmlparser.Node;
 import org.htmlparser.util.NodeList;
 import org.javlo.actions.IAction;
@@ -10,22 +9,18 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ContentHelper;
 import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IInteractiveMacro;
-import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.ModulesContext;
-import org.javlo.navigation.MenuElement;
-import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 
-import java.io.*;
+import java.io.File;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.*;
 import java.util.logging.Logger;
-import java.util.zip.ZipException;
 
 public class ImportWordpressMacro implements IInteractiveMacro, IAction {
 
@@ -138,7 +133,7 @@ public class ImportWordpressMacro implements IInteractiveMacro, IAction {
 		} else {
 			FileItem fileItem = rs.getAllFileItem().iterator().next();
 			try (InputStream in = fileItem.getInputStream()) {
-				ContentHelper.importWordPressXML(ctx, in, rs.getParameter("host", null));
+				ContentHelper.importWordPressXML(ctx, in, rs.getParameter("host", null), rs.getParameter("image", null));
 			}
 		}
 		return null;

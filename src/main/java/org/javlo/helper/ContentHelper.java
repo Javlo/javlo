@@ -30,7 +30,7 @@ import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
 import org.javlo.ztatic.IStaticContainer;
 import org.jsoup.Jsoup;
-import org.owasp.encoder.Encode;
+import org.jsoup.select.Elements;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -578,7 +578,7 @@ public class ContentHelper {
         File file = new File("c:/trans/hotrec.WordPress.2023-08-24.xml");
 
         try (InputStream in = new FileInputStream(file)) {
-            importWordPressXML(null, in, "www.hotrec.eu");
+            importWordPressXML(null, in, "www.hotrec.eu", null);
         }
 
     }
@@ -606,7 +606,7 @@ public class ContentHelper {
         return encoded.toString();
     }
 
-    public static final void importWordPressXML(ContentContext ctx, InputStream wpStream, String host) throws Exception {
+    public static final void importWordPressXML(ContentContext ctx, InputStream wpStream, String host, String imageCssPath) throws Exception {
 
         final int MAX_IMPORT = 10000;
 
@@ -652,16 +652,6 @@ public class ContentHelper {
 
             String description = extractSubNodeValue(node, "description");
             String pageTitle = null;
-            if (StringHelper.isEmpty(description)) {
-                try {
-                    logger.info("description not found read on : "+mainLink);
-                    String pageHTML = NetHelper.readPage(new URL(mainLink));
-                    description = NetHelper.getPageDescription(pageHTML);
-                    pageTitle = NetHelper.getPageTitle(pageHTML);
-                } catch (Exception e) {
-                    e.printStackTrace();;
-                }
-            }
 
             String pubDate = extractSubNodeValue(node, "pubDate");
             Date publicationDate = null;
@@ -734,6 +724,30 @@ public class ContentHelper {
                     }
                 }
 
+                if (StringHelper.isEmpty(description) || (imageUrl == null & !StringHelper.isEmpty(imageCssPath))) {
+                    try {
+                        logger.info("description or image not found read on : "+mainLink);
+                        String pageHTML = NetHelper.readPage(new URL(mainLink));
+                        description = NetHelper.getPageDescription(pageHTML);
+                        pageTitle = NetHelper.getPageTitle(pageHTML);
+                        if (imageUrl == null & !StringHelper.isEmpty(imageCssPath)) {
+                            org.jsoup.nodes.Document jsDoc = Jsoup.parse(pageHTML);
+                            Elements elements = jsDoc.select(imageCssPath);
+                            for (org.jsoup.nodes.Element element : elements) {
+                                if (element.tagName().equals("img")) {
+                                    String src = element.attr("src");
+                                    if (StringHelper.isURL(src)) {
+                                        imageUrl = src;
+                                        imageAlt = element.attr("alt");
+                                    }
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();;
+                    }
+                }
+
                 for (org.jsoup.nodes.Element jsLink : docJsoup.select("a")) {
                     String href = jsLink.attr("href");
                     if (href.toLowerCase().contains("//" + host.toLowerCase())) {
@@ -754,6 +768,10 @@ public class ContentHelper {
                 }
 
                 docJsoup.select("script").remove();
+                Elements emptyLinks = docJsoup.select("a[href='']");
+                for (org.jsoup.nodes.Element badLink : emptyLinks) {
+                    badLink.unwrap();
+                }
 
                 html = docJsoup.body().html();
 
@@ -854,7 +872,7 @@ public class ContentHelper {
                             if (pageTitle != null && !pageTitle.equals(title)) {
                                 bean = new ComponentBean();
                                 bean.setType(PageTitle.TYPE);
-                                bean.setValue(encodeNonAscii(title));
+                                bean.setValue(title);
                                 bean.setArea(ComponentBean.DEFAULT_AREA);
                                 bean.setModify(true);
                                 bean.setLanguage(lg);
@@ -864,7 +882,7 @@ public class ContentHelper {
                             if (!StringHelper.isEmpty(description)) {
                                 bean = new ComponentBean();
                                 bean.setType(Description.TYPE);
-                                bean.setValue(Encode.forHtml(description));
+                                bean.setValue(description);
                                 bean.setArea(ComponentBean.DEFAULT_AREA);
                                 bean.setModify(true);
                                 bean.setLanguage(lg);
@@ -903,7 +921,7 @@ public class ContentHelper {
                                         logger.info("image downloaded : " + imageUrl);
                                     }
 
-                                    String val = "file-name=" + imageName + "\n" + "dir=" + importFolder+"\nlink=#";
+                                    String val = "file-name=" + imageName + "\n" + "dir=" + importFolder+"\nlink=#\nlabel="+imageAlt;
 
                                     bean = new ComponentBean();
                                     bean.setType(GlobalImage.TYPE);

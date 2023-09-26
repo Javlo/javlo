@@ -1776,7 +1776,7 @@ public class StringHelper {
 
     // TODO: create a better method
     public static boolean isURL(String url) {
-        if (url == null) {
+        if (url == null || url.startsWith("data:")) {
             return false;
         }
         return url.contains("://") || url.startsWith("//") || url.startsWith("tel:");
