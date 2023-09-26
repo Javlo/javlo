@@ -12,6 +12,7 @@ import org.javlo.component.text.Description;
 import org.javlo.component.text.Paragraph;
 import org.javlo.component.text.WysiwygParagraph;
 import org.javlo.component.title.Heading;
+import org.javlo.component.title.PageTitle;
 import org.javlo.component.title.SubTitle;
 import org.javlo.component.title.Title;
 import org.javlo.context.ContentContext;
@@ -640,6 +641,7 @@ public class ContentHelper {
                 lg = ctx.getGlobalContext().getDefaultLanguage();
             }
 
+            String mainLink = link;
             if (StringHelper.isURL(link)) {
                 link = link.replace("http://"+host, "");
                 link = link.replace("https://"+host, "");
@@ -649,6 +651,18 @@ public class ContentHelper {
             }
 
             String description = extractSubNodeValue(node, "description");
+            String pageTitle = null;
+            if (StringHelper.isEmpty(description)) {
+                try {
+                    logger.info("description not found read on : "+mainLink);
+                    String pageHTML = NetHelper.readPage(new URL(mainLink));
+                    description = NetHelper.getPageDescription(pageHTML);
+                    pageTitle = NetHelper.getPageTitle(pageHTML);
+                } catch (Exception e) {
+                    e.printStackTrace();;
+                }
+            }
+
             String pubDate = extractSubNodeValue(node, "pubDate");
             Date publicationDate = null;
             if (!StringHelper.isEmpty(pubDate)) {
@@ -836,6 +850,28 @@ public class ContentHelper {
                             ComponentBean bean;
 
                             Map<String, String> parents = new HashMap<String, String>();
+
+                            if (pageTitle != null && !pageTitle.equals(title)) {
+                                bean = new ComponentBean();
+                                bean.setType(PageTitle.TYPE);
+                                bean.setValue(encodeNonAscii(title));
+                                bean.setArea(ComponentBean.DEFAULT_AREA);
+                                bean.setModify(true);
+                                bean.setLanguage(lg);
+                                parentId = content.createContent(ctx, newPage, bean, parentId, false);
+                            }
+
+                            if (!StringHelper.isEmpty(description)) {
+                                bean = new ComponentBean();
+                                bean.setType(Description.TYPE);
+                                bean.setValue(Encode.forHtml(description));
+                                bean.setArea(ComponentBean.DEFAULT_AREA);
+                                bean.setModify(true);
+                                bean.setLanguage(lg);
+                                bean.setHidden(true);
+                                parentId = content.createContent(ctx, newPage, bean, parentId, true);
+                            }
+
                             bean = new ComponentBean();
                             bean.setType(Heading.TYPE);
                             bean.setValue("depth=1\ntext=" + encodeNonAscii(title));
@@ -853,16 +889,6 @@ public class ContentHelper {
                                 bean.setModify(true);
                                 bean.setLanguage(lg);
                                 parentId = content.createContent(ctx, newPage, bean, parentId, false);
-                            }
-
-                            if (!StringHelper.isEmpty(description)) {
-                                bean = new ComponentBean();
-                                bean.setType(Description.TYPE);
-                                bean.setValue(Encode.forHtml(description));
-                                bean.setArea(ComponentBean.DEFAULT_AREA);
-                                bean.setModify(true);
-                                bean.setLanguage(lg);
-                                parentId = content.createContent(ctx, newPage, bean, parentId, true);
                             }
 
                             if (!StringHelper.isEmpty(imageUrl)) {
