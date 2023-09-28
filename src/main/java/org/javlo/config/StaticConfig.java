@@ -1157,6 +1157,10 @@ public class StaticConfig extends Observable {
 		return properties.getString("shared.pixabay.key", null);
 	}
 
+	public String getSharedFreepikAPIKey() {
+		return properties.getString("shared.freepik.key", null);
+	}
+
 	public String getSharedStockvaultAPIKey() {
 		return properties.getString("shared.stockvault.key", null);
 	}

@@ -269,7 +269,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		return outFilter;
 	}
 
-	private List<String> FIELDS = Arrays.asList(new String[] { "root", "tags", "ext", "noext", "taxonomy", "display" });
+	private List<String> FIELDS = Arrays.asList(new String[] { "root", "tags", "ext", "noext", "taxonomy", "display", "max" });
 
 	public List<String> getSelectedTaxonomy(ContentContext ctx) {
 		List<String> out = new LinkedList<>();
@@ -350,6 +350,14 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		ctx.getRequest().setAttribute("taxonomySelectedIdString", StringHelper.collectionToString(getSelectedTaxonomy(ctx), ","));
 
 		ctx.getRequest().setAttribute("languages", lg);
+
+		if (StringHelper.isDigit(getFieldValue(ctx, "max"))) {
+			int max = Integer.parseInt(getFieldValue(ctx, "max"));
+			while (files.size() > max) {
+				files.remove(files.size() - 1);
+			}
+		}
+
 		ctx.getRequest().setAttribute("files", files);
 		if (taxonomyIds.size() > 0) {
 			List<TaxonomyDisplayBean> beans = new LinkedList<>();
@@ -454,6 +462,11 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + createKeyWithField("ext") + "\">accepted files</label>");
 		out.println("<input type=\"text\" name=\"" + createKeyWithField("ext") + "\" value=\"" + getFieldValue("ext") + "\" />");
+		out.println("</div>");
+
+		out.println("<div class=\"line\">");
+		out.println("<label for=\"" + createKeyWithField("max") + "\">max files</label>");
+		out.println("<input type=\"number\" name=\"" + createKeyWithField("max") + "\" value=\"" + getFieldValue("max") + "\" />");
 		out.println("</div>");
 
 		out.println("<div class=\"line\">");
