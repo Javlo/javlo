@@ -8,6 +8,8 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.InfoBean;
 import org.javlo.data.taxonomy.ITaxonomyContainer;
+import org.javlo.data.taxonomy.TaxonomyBean;
+import org.javlo.data.taxonomy.TaxonomyService;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -26,7 +28,6 @@ import java.util.*;
 public class FileBean implements ILanguage, ITaxonomyContainer {
 
 	public static class FileBeanComparator implements Comparator<FileBean> {
-
 		private final ContentContext ctx;
 		private final int sort;
 		private int order = 1;
@@ -56,7 +57,6 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 				return -file1.getStaticInfo().getDate(ctx).compareTo(file2.getStaticInfo().getDate(ctx))*order;
 			}
 		}
-
 	}
 
 	ContentContext ctx;
@@ -486,6 +486,11 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 	@Override
 	public Set<String> getTaxonomy() {
 		return staticInfo.getTaxonomy(ctx);
+	}
+
+	public Collection<TaxonomyBean> getTaxonomyBean() {
+		TaxonomyService ts = TaxonomyService.getInstance(ctx);
+		return ts.convert(getTaxonomy());
 	}
 
 	public String getTaxonomySelect() {
