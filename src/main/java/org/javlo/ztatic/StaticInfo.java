@@ -1359,6 +1359,9 @@ public class StaticInfo implements IRestItem {
 			String key = getKey(ctx, "taxonomy");
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			String rawTaxonomy = globalContext.getData(key);
+			if (rawTaxonomy != null) {
+				rawTaxonomy = rawTaxonomy.trim();
+			}
 			if (StringHelper.isEmpty(rawTaxonomy)) {
 				taxonomy = Collections.EMPTY_SET;
 			} else {
