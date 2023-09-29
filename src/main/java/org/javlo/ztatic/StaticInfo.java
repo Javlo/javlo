@@ -1,30 +1,5 @@
 package org.javlo.ztatic;
 
-import java.awt.Point;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import javax.naming.ConfigurationException;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
@@ -38,12 +13,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.rest.IRestItem;
-import org.javlo.helper.ExifHelper;
-import org.javlo.helper.LocalLogger;
-import org.javlo.helper.PDFHelper;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
+import org.javlo.helper.*;
 import org.javlo.image.ImageHelper;
 import org.javlo.image.ImageSize;
 import org.javlo.service.ContentService;
@@ -58,6 +28,14 @@ import org.owasp.encoder.Encode;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import javax.naming.ConfigurationException;
+import java.awt.*;
+import java.io.*;
+import java.text.ParseException;
+import java.util.List;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class StaticInfo implements IRestItem {
 
@@ -1381,7 +1359,7 @@ public class StaticInfo implements IRestItem {
 			String key = getKey(ctx, "taxonomy");
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			String rawTaxonomy = globalContext.getData(key);
-			if (rawTaxonomy == null) {
+			if (StringHelper.isEmpty(rawTaxonomy)) {
 				taxonomy = Collections.EMPTY_SET;
 			} else {
 				taxonomy = new HashSet(StringHelper.stringToCollection(rawTaxonomy));
