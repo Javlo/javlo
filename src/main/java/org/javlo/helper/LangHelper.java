@@ -1,21 +1,5 @@
 package org.javlo.helper;
 
-import java.lang.ref.WeakReference;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.javlo.component.core.ComponentContext;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -28,11 +12,7 @@ import org.javlo.module.core.AbstractModuleContext;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.MenuElement;
-import org.javlo.service.ClipBoard;
-import org.javlo.service.ContentService;
-import org.javlo.service.NotificationService;
-import org.javlo.service.PersistenceService;
-import org.javlo.service.RequestService;
+import org.javlo.service.*;
 import org.javlo.service.shared.SharedContentService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
@@ -40,6 +20,13 @@ import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.StaticContext;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.lang.ref.WeakReference;
+import java.util.*;
 
 public class LangHelper {
 
@@ -386,6 +373,29 @@ public class LangHelper {
 		}else {
 			return StringHelper.isTrue(obj.toString());
 		}
+	}
+
+	public static boolean haveCommonElements(Collection<?> coll1, Collection<?> coll2) {
+		if (coll1 == null || coll2 == null) return false;
+		if (coll1.isEmpty() || coll2.isEmpty()) return false;
+
+		Collection<?> smaller = coll1;
+		Collection<?> larger = coll2;
+
+		if (coll1.size() > coll2.size()) {
+			smaller = coll2;
+			larger = coll1;
+		}
+
+		Set<Object> setOfSmaller = new HashSet<>(smaller);
+
+		for (Object obj : larger) {
+			if (setOfSmaller.contains(obj)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 }
