@@ -100,7 +100,7 @@ public class FreepikSharedContentProvider extends AbstractSharedContentProvider 
 
 	public static void main(String[] args) throws MalformedURLException, Exception {
 		String basicURL = "https://api.freepik.com/v1/resources?locale=en&page=1&limit=100&order=latest&term=woman";
-
+w²
 		String apiKey = "";
 
 		Map<String,String> header = new HashMap<>();
