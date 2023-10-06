@@ -17,6 +17,10 @@
 				<label class="lang" for="change-id-${param.id}">ID</label>
 				<span class="text"><input type="text" name="change-id-${param.id}" id="change-id-${param.id}" class="hidden-input form-control" value="${param.id}" placeholder="ID" /></span>
 			</li>
+			<li class="label path">
+				<label class="lang" for="path-${param.id}">Path</label>
+				<span class="text"><input readonly="readonly" type="text" id="path-${param.id}" class="hidden-input form-control" value="${param.path}" placeholder="ID" /></span>
+			</li>
 		<li class="label deco">			
 			<label class="lang" for="change-deco-${param.id}"><i class="fa fa-font" aria-hidden="true"></i></label>
 			<span class="text"><input type="text" name="change-deco-${param.id}" id="change-deco-${param.id}" class="hidden-input form-control" value="${node.decoration}" placeholder="deco" /></span>			

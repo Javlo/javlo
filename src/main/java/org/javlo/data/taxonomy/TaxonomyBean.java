@@ -7,6 +7,8 @@ import java.util.*;
 public class TaxonomyBean {
 
 	private String id;
+
+	private String primaryId;
 	private String name;
 	private String decoration;
 	private String image;
@@ -14,13 +16,13 @@ public class TaxonomyBean {
 	private List<TaxonomyBean> children = new LinkedList<TaxonomyBean>();
 	private Map<String, String> labels = new HashMap<String, String>();
 	private Map<String, String> pathLabels = null;
-
 	public TaxonomyBean() {
 	}
 	
 	public TaxonomyBean duplicateForLink (TaxonomyBean parent, String prefixId) {
 		TaxonomyBean newBean = new TaxonomyBean(prefixId+id, name, parent);
 		newBean.labels = labels;
+		newBean.primaryId = id;
 		newBean.id = prefixId+id;
 		newBean.decoration = decoration;
 		for (TaxonomyBean child : children) {
@@ -66,6 +68,18 @@ public class TaxonomyBean {
 			id = StringHelper.getRandomId();
 		}
 		this.id = id;
+	}
+
+	public String getPrimaryId() {
+		if (primaryId == null) {
+			return id;
+		} else {
+			return primaryId;
+		}
+	}
+
+	public void setPrimaryId(String primaryId) {
+		this.primaryId = primaryId;
 	}
 
 	public String getName() {

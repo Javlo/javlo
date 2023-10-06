@@ -8,6 +8,7 @@ import org.javlo.component.links.ExternalLink;
 import org.javlo.component.list.DataList;
 import org.javlo.component.meta.DateComponent;
 import org.javlo.component.multimedia.Video;
+import org.javlo.component.navigation.PageURL;
 import org.javlo.component.text.Description;
 import org.javlo.component.text.Paragraph;
 import org.javlo.component.text.WysiwygParagraph;
@@ -758,6 +759,9 @@ public class ContentHelper {
                             }
                             jsLink.remove();
                         }
+                    } else if (StringHelper.isEmpty(href)) {
+                        jsLink.tagName("span");
+                        jsLink.addClass("_empty_link");
                     }
                 }
 
@@ -869,6 +873,16 @@ public class ContentHelper {
 
                             Map<String, String> parents = new HashMap<String, String>();
 
+                            if (link != null) {
+                                bean = new ComponentBean();
+                                bean.setType(PageURL.TYPE);
+                                bean.setValue(link);
+                                bean.setArea(ComponentBean.DEFAULT_AREA);
+                                bean.setModify(true);
+                                bean.setLanguage(lg);
+                                parentId = content.createContent(ctx, newPage, bean, parentId, false);
+                            }
+
                             if (pageTitle != null && !pageTitle.equals(title)) {
                                 bean = new ComponentBean();
                                 bean.setType(PageTitle.TYPE);
@@ -890,13 +904,15 @@ public class ContentHelper {
                                 parentId = content.createContent(ctx, newPage, bean, parentId, true);
                             }
 
-                            bean = new ComponentBean();
-                            bean.setType(Heading.TYPE);
-                            bean.setValue("depth=1\ntext=" + encodeNonAscii(title));
-                            bean.setArea(ComponentBean.DEFAULT_AREA);
-                            bean.setModify(true);
-                            bean.setLanguage(lg);
-                            parentId = content.createContent(ctx, newPage, bean, parentId, false);
+                            if (html != null && !html.toLowerCase().contains("<h1")) {
+                                bean = new ComponentBean();
+                                bean.setType(Heading.TYPE);
+                                bean.setValue("depth=1\ntext=" + encodeNonAscii(title));
+                                bean.setArea(ComponentBean.DEFAULT_AREA);
+                                bean.setModify(true);
+                                bean.setLanguage(lg);
+                                parentId = content.createContent(ctx, newPage, bean, parentId, false);
+                            }
 
                             if (publicationDate != null) {
                                 bean = new ComponentBean();

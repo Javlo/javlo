@@ -1387,22 +1387,7 @@ public class StringHelper {
     }
 
     public static boolean isDigit(char c) {
-        switch (c) {
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-                // case '-':
-                return true;
-            default:
-                return false;
-        }
+        return Character.isDigit(c);
     }
 
     public static boolean isLetter(char c) {
@@ -1427,23 +1412,19 @@ public class StringHelper {
      * @return
      */
     public static boolean isDigit(String str) {
-        if (str != null) {
-            // str = str.trim();
-            if (str.length() == 0) {
-                return false;
-            }
-            if (str.charAt(0) == '-') {
-                str = str.substring(1);
-            }
-            for (char c : str.toCharArray()) {
-                if (!isDigit(c)) {
-                    return false;
-                }
-            }
-            return true;
-        } else {
+        if (str == null || str.isBlank()) {
             return false;
         }
+
+        int startIndex = (str.charAt(0) == '-') ? 1 : 0;
+
+        for (int i = startIndex; i < str.length(); i++) {
+            if (!Character.isDigit(str.charAt(i))) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
