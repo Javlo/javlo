@@ -74,7 +74,7 @@ public class FieldInternalLink extends Field {
 				page = ctx.getGlobalContext().getPageIfExist(ctx, getCurrentLink(), false);
 			}
 			if (page != null) {
-				url = page.getLinkOn(ctx);
+				url = URLHelper.createURL(ctx, page);
 			}
 			if (url == null) {
 				url = URLHelper.createURL(ctx.getContentContextForInternalLink(), getCurrentLink());
