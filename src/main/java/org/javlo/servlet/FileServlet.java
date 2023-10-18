@@ -1,24 +1,5 @@
 package org.javlo.servlet;
 
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Logger;
-import java.util.zip.GZIPOutputStream;
-
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -28,6 +9,20 @@ import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.ztatic.StaticInfo;
+
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Logger;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * A file servlet supporting resume of downloads and client-side caching and
@@ -40,6 +35,7 @@ import org.javlo.ztatic.StaticInfo;
  */
 public class FileServlet extends HttpServlet {
 
+	public static final String FORCE_OCTET_STREAM_PARAM = "_fos";
 	private static Logger logger = Logger.getLogger(FileServlet.class.getName());
 
 	// Constants
@@ -287,7 +283,8 @@ public class FileServlet extends HttpServlet {
 		// If content type is unknown, then set the default value.
 		// For all content types, see: http://www.w3schools.com/media/media_mimeref.asp
 		// To add new content types, add new mime-mapping entry in web.xml.
-		if (contentType == null) {
+
+		if (contentType == null || StringHelper.isTrue(request.getParameter(FORCE_OCTET_STREAM_PARAM))) {
 			contentType = "application/octet-stream";
 		}
 

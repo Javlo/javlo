@@ -956,6 +956,7 @@ Security in case of vulnerabilities.
 - mailing on smartgenericform
 - import WordPress xml
 - add class "jvl-component" on all components
+- login by header
 ### Modified
 - minimize html in extended widget
 - filter page reference
@@ -964,3 +965,4 @@ Security in case of vulnerabilities.
 - event + optimise dynamiccomponent html field detection
 - taxonomy in date
 - convert external link to local link if possible.
+- direct download image with param _fos

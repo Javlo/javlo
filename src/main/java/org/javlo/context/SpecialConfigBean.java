@@ -3,6 +3,7 @@ package org.javlo.context;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.StringHelper;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -73,6 +74,16 @@ public class SpecialConfigBean {
 			out = getSecureEncryptPassword() != null;
 		}
 		return out;
+	}
+
+
+	public Collection<String> getSecureHeaderLoginKey() {
+		String keyRaw = (String)config.get("security.auto-login.header.keys");
+		if (keyRaw == null || StringHelper.isEmpty(keyRaw)) {
+			return null;
+		} else {
+			return StringHelper.stringToCollection(keyRaw,",");
+		}
 	}
 	
 	public String getSecureEncryptPassword() {

@@ -14,3 +14,4 @@ src/main/webapp/.vscode/sftp.json
 /temp/
 /dependancy.txt
 *.gitignore
+/javlo.git/

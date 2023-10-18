@@ -660,9 +660,31 @@ public class CatchAllFilter implements Filter {
 
 			boolean newUser = false;
 
+			if (fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null && adminFact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null) {
+				/* LOGIN FROM HEADER */
+				Collection<String> keys = globalContext.getSpecialConfig().getSecureHeaderLoginKey();
+				if (keys != null) {
+					IUserFactory userFactory = UserFactory.createUserFactory(globalContext, httpRequest.getSession());
+					IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, httpRequest.getSession());
+					for (String key : keys) {
+						String login = ((HttpServletRequest) request).getHeader(key);
+						logger.info("auto login user with request header : "+key+" -> "+login);
+						if (!StringHelper.isEmpty(login)) {
+							User principalUser = adminUserFactory.autoLogin((HttpServletRequest) request, login);
+							if (principalUser == null) {
+								principalUser = userFactory.autoLogin((HttpServletRequest) request, login);
+							}
+							if (principalUser != null) {
+								globalContext.addPrincipal(principalUser);
+								globalContext.eventLogin(principalUser.getLogin());
+							}
+						}
+					}
+				}
+			}
+
 			/** EDIT LOGIN **/
 			if (fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null && adminFact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null) {
-
 				/* AUTO LOGIN */
 				String autoLoginId = RequestHelper.getCookieValue(httpRequest, UserAction.JAVLO_LOGIN_ID);
 				String autoLoginUser = null;
