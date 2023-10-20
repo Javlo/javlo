@@ -963,5 +963,11 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	public boolean cleanResources(ContentContext ctx);
 
 	Collection<String> getExternalModules(ContentContext ctx);
-	
+
+	/**
+	 * get the title, in full html
+	 * @param ctx
+	 * @return
+	 */
+	public String getXHTMLTitle(ContentContext ctx);
 }

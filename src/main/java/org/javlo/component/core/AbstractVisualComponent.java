@@ -2764,6 +2764,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return 0;
 	}
 
+	public String getXHTMLTitle(ContentContext ctx) {
+		return getXHTMLCode(ctx);
+	}
+
 	@Override
 	public String getXHTMLCode(ContentContext ctx) {
 		try {

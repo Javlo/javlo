@@ -5,6 +5,7 @@ package org.javlo.component.text;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.javlo.component.core.AbstractVisualComponent;
+import org.javlo.component.core.ComponentBean;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -126,6 +127,17 @@ public class WysiwygParagraph extends AbstractVisualComponent implements IImageT
 		setValue("<p>" + LoremIpsumGenerator.getParagraph(120, true, true) + "</p>");
 		setModify();
 		return true;
+	}
+
+	@Override
+	protected void init(ComponentBean bean, ContentContext ctx) throws Exception {
+		super.init(bean, ctx);
+		updateCache(ctx);
+	}
+
+	@Override
+	public String getXHTMLTitle(ContentContext ctx) {
+		return title;
 	}
 
 	public void updateCache(ContentContext ctx) {

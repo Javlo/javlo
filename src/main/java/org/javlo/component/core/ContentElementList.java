@@ -3,12 +3,6 @@
  */
 package org.javlo.component.core;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.lang3.NotImplementedException;
 import org.javlo.component.container.RepeatContainer;
 import org.javlo.component.links.MirrorComponent;
@@ -20,6 +14,8 @@ import org.javlo.context.ContentContext;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
+
+import java.util.*;
 
 /**
  * @author pvanderm
@@ -547,7 +543,7 @@ public class ContentElementList implements IContentComponentsList {
 		while (elems.hasNext()) {
 			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
 			if (comp.getLabelLevel(ctx) > maxLabelLevel) {
-				res = comp.getXHTMLCode(ctx);
+				res = comp.getXHTMLTitle(ctx);
 				maxLabelLevel = comp.getLabelLevel(ctx);
 			}
 		}
