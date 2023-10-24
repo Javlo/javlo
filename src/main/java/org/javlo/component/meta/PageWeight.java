@@ -22,31 +22,24 @@ public class PageWeight extends AbstractVisualComponent implements IPageRank {
 
 	@Override
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
-		StringBuffer finalCode = new StringBuffer();
+		StringBuilder finalCode = new StringBuilder();
 		I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
 		finalCode.append(getSpecialInputTag());
 
-		String lowSelected = "";
-		String middleSelected = "";
-		String highSelected = "";
+		finalCode.append("<div class=\"btn-group\">");
+		for (int i = 0; i<11; i++) {
+			String weightId = "weight-" + getId() + "-" + i;
+			String selected = "";
+			if (Math.abs(getWeight() - ((float)i)/10) < 0.01) {
+				selected = " checked=\"checked\"";
+			}
 
-		if (getWeight() > 0.6) {
-			highSelected = " checked=\"checked\"";
-		} else if (getWeight() < 0.4) {
-			lowSelected = " checked=\"checked\"";
-		} else {
-			middleSelected = " checked=\"checked\"";
+			finalCode.append("<div class=\"_jv_btn-check\"><input type=\"radio\" name=\"" + getContentName() + "\" id=\"" + weightId + "\" value=\"0." + i + "\"" + selected + ">");
+			finalCode.append("<label for=\"" + weightId + "\">" + i + "</label></div>");
+
+
 		}
-
-		String weightId = "low-" + getId();
-		finalCode.append("<input type=\"radio\" name=\"" + getContentName() + "\" id=\"" + weightId + "\" value=\"0.1\"" + lowSelected + ">");
-		finalCode.append("<label for=\"" + weightId + "\">" + i18nAccess.getText("global.low") + "</label><br />");
-		weightId = "middle-" + getId();
-		finalCode.append("<input type=\"radio\" name=\"" + getContentName() + "\" id=\"" + weightId + "\" value=\"0.5\"" + middleSelected + ">");
-		finalCode.append("<label for=\"" + weightId + "\">" + i18nAccess.getText("global.middle") + "</label><br />");
-		weightId = "high-" + getId();
-		finalCode.append("<input type=\"radio\" name=\"" + getContentName() + "\" id=\"" + weightId + "\" value=\"0.9\"" + highSelected + ">");
-		finalCode.append("<label for=\"" + weightId + "\">" + i18nAccess.getText("global.high") + "</label><br />");
+		finalCode.append("</div>");
 
 		return finalCode.toString();
 	}

@@ -1,13 +1,5 @@
 package org.javlo.navigation;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.javlo.bean.Link;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.component.image.ImageTitleBean;
@@ -18,6 +10,9 @@ import org.javlo.image.ExtendedColor;
 import org.javlo.service.event.Event;
 import org.javlo.utils.HtmlPart;
 import org.javlo.utils.TimeRange;
+
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * the description bean of the page, use for cache and JSTL.
@@ -88,6 +83,8 @@ public class PageDescription implements Serializable {
 	String css = null;
 
 	String forward = null;
+
+	Double weight = null;
 
 	public ImageTitleBean imageLink;
 

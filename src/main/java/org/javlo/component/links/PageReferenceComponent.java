@@ -666,6 +666,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         out.println("<div class=\"line\">");
         out.println(XHTMLHelper.getRadio(getOrderInputName(), "random", getOrder()));
         out.println("<label for=\"popularity\">" + i18nAccess.getText("content.page-teaser.order-random", "random") + "</label></div>");
+        out.println("<div class=\"line\">");
+        out.println(XHTMLHelper.getRadio(getOrderInputName(), "weight", getOrder()));
+        out.println("<label for=\"weight\">" + i18nAccess.getText("content.page-teaser.order-random", "weight") + "</label></div>");
+
         if (isUILargeSorting(ctx)) {
             out.println("<div class=\"line\">");
             out.println(XHTMLHelper.getRadio(getOrderInputName(), "creation", getOrder()));
@@ -1177,6 +1181,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         return checkOrder(ctx, "content");
     }
 
+    private boolean isWeightOrder(ContentContext ctx) {
+        return checkOrder(ctx, "weight");
+    }
+
     protected boolean isReverseOrder(ContentContext ctx) {
         if (isDynamicOrder(ctx) && StringHelper.isTrue(ctx.getRequest().getParameter("reverse_order"))) {
             return true;
@@ -1228,7 +1236,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
                 Collections.sort(pages, new MenuElementPopularityComparator(ctx, ascending));
             } else if (isContentOrder(ctx)) {
                 Collections.sort(pages, new MenuElementPriorityComparator(!ascending));
-            } else if (isRandomOrder(ctx)) {
+            } else if (isWeightOrder(ctx)) {
+                Collections.sort(pages, new MenuElementWeightComparator(ctx, !ascending));
+            }else if (isRandomOrder(ctx)) {
                 Collections.shuffle(pages);
             }
         }

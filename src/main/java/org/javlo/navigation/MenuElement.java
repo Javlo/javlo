@@ -2126,6 +2126,42 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		return desc.description;
 	}
 
+	public double getWeight(ContentContext ctx) throws Exception {
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+
+		if (desc.weight != null) {
+			return desc.weight;
+		}
+
+		String res = "";
+		ContentContext newCtx = new ContentContext(ctx);
+		newCtx.setArea(null);
+
+		if (newCtx.getRenderMode() == ContentContext.EDIT_MODE) {
+			newCtx.setRenderMode(ContentContext.PREVIEW_MODE);
+		}
+
+		IContentComponentsList contentList = getAllContent(newCtx);
+		PageMirrorComponent pageMirror = null;
+		while (contentList.hasNext(newCtx)) {
+			IContentVisualComponent elem = ComponentHelper.getRealComponent(newCtx, contentList.next(newCtx));
+			if (elem != null) {
+				if (elem instanceof PageMirrorComponent) {
+					pageMirror = (PageMirrorComponent) elem;
+				} else {
+					if (elem instanceof PageWeight) {
+						desc.weight = ((PageWeight)elem).getWeight();
+					}
+				}
+			}
+		}
+		if (desc.weight == null) {
+			desc.weight = 0.5;
+		}
+		return desc.weight;
+	}
+
+
 	/**
 	 * get description of the page (description component)
 	 * 

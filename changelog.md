@@ -966,3 +966,5 @@ Security in case of vulnerabilities.
 - taxonomy in date
 - convert external link to local link if possible.
 - direct download image with param _fos
+### fixed
+- extract title from wysiwyg / correction
