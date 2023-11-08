@@ -4287,14 +4287,20 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				config = new SpecialConfigBean(Collections.EMPTY_MAP, getStaticConfig());
 			} else {
 				Properties p = new Properties();
-				Reader fileReader = null;
+				InputStreamReader fileReader = null;
 				try {
-					fileReader = new FileReader(configFile);
+					fileReader = new InputStreamReader(new FileInputStream(configFile), ContentContext.CHARACTER_ENCODING);
 					p.load(fileReader);
 				} catch (IOException e) {
 					e.printStackTrace();
 				} finally {
-					ResourceHelper.closeResource(fileReader);
+					if (fileReader != null) {
+						try {
+							fileReader.close();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
 				}
 				config = new SpecialConfigBean(p, getStaticConfig());
 			}
@@ -4522,7 +4528,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public boolean isBusinessTicket() {
-		return StringHelper.isTrue(getSpecialConfig().getMap().get("ticket.business"));
+		return StringHelper.isTrue(getSpecialConfig().get("ticket.business", null));
 	}
 
 	public EcomConfig getEcomConfig() {

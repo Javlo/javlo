@@ -553,8 +553,23 @@ public class AdminAction extends AbstractModuleAction {
 
 					/** special config **/
 					String specialConfig = requestService.getParameter("specialconfig", "");
+					/*if (!StringHelper.isEmpty(specialConfig)) {
+						ResourceHelper.writeStringToFile(currentGlobalContext.getSpecialConfigFile(), specialConfig, ContentContext.CHARACTER_ENCODING);
+					}*/
+
 					if (!StringHelper.isEmpty(specialConfig)) {
-						ResourceHelper.writeStringToFile(currentGlobalContext.getSpecialConfigFile(), specialConfig);
+						Properties properties = new Properties();
+						try (StringReader reader = new StringReader(specialConfig)) {
+							properties.load(reader);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						File configFile = currentGlobalContext.getSpecialConfigFile();
+						try (OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(configFile), ContentContext.CHARACTER_ENCODING)) {
+							properties.store(writer, "SpecialConfig");
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
 					}
 
 					/** POP **/
