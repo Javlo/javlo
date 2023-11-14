@@ -1131,6 +1131,7 @@ public class PersistenceService {
 				root.setSeoWeight(StringHelper.parseInt(page.getAttributeValue("seoWeight", null), MenuElement.SEO_HEIGHT_INHERITED));
 				root.setHttps(StringHelper.isTrue(page.getAttributeValue("https", "false")));
 				root.setCreator(page.getAttributeValue("creator", ""));
+				root.setUserRoles(new HashSet<>(StringHelper.stringToCollection(page.getAttributeValue("userRoles"), ";")));
 
 				try {
 					root.setCreationDate(StringHelper.parseDate(page.getAttributeValue("creationDate", StringHelper.renderTime(new Date()))));
