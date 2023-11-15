@@ -230,9 +230,7 @@ public class WysiwygParagraph extends AbstractVisualComponent implements IImageT
 				if (StringHelper.isTrue(getConfig(ctx).getProperty("clean-html", "false"))) {
 					newContent = XHTMLHelper.cleanHTML(newContent);
 				}
-
 				newContent = XHTMLHelper.replaceAbsoluteLinks(ctx, newContent);
-
 				setValue(newContent);
 				setModify();
 			}

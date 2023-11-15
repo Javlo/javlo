@@ -19,4 +19,8 @@ public class FieldXhtml extends FieldLargeText {
         return XHTMLHelper.replaceJSTLData( ctx, getValue());
     }
 
+    @Override
+    protected boolean isHtml() {
+        return true;
+    }
 }

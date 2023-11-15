@@ -155,4 +155,8 @@ public class FieldWysiwyg extends Field {
 		}
 	}
 
+	@Override
+	protected boolean isHtml() {
+		return true;
+	}
 }

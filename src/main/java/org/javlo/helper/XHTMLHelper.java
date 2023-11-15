@@ -168,22 +168,17 @@ public class XHTMLHelper {
 	}
 
 	private static String autoLink(String inContent, boolean notFollow, boolean newWin, GlobalContext globalContext) {
-		String content = inContent;
-
 		boolean linkFound = false;
-		if (content == null) {
+		if (inContent == null) {
 			return "";
 		}
-		// content = content.replace("&nbsp;", " ");
 		StringWriter out = new StringWriter();
 		BufferedWriter writer = new BufferedWriter(out);
-		BufferedReader reader = new BufferedReader(new StringReader(content));
+		BufferedReader reader = new BufferedReader(new StringReader(inContent));
 		try {
 			String line = reader.readLine();
 			while (line != null) {
-
 				String[] splitLine = StringHelper.splitStaySeparator(line, " ,()[]{}<>\n");
-
 				boolean inLink = false;
 				boolean inTag = false;
 				for (String element : splitLine) {

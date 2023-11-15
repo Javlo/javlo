@@ -644,6 +644,8 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		outValue = XHTMLHelper.autoLink(outValue, globalContext);
 		outValue = XHTMLHelper.replaceJSTLData(ctx, outValue);
 		outValue = ReverseLinkService.getInstance(globalContext).replaceLink(ctx, comp, outValue);
+		outValue = XHTMLHelper.replaceLinks(ctx, outValue);
+
 		String unity = getUnity(ctx);
 		if (!StringHelper.isEmpty(unity)) {
 			return outValue+"<span class=\"unity\">"+unity+"</span>";
@@ -858,7 +860,6 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 			key = createKey("value-" + getCurrentLocale());
 		}
 		properties.setProperty(key, StringHelper.neverNull(value));
-
 	}
 	
 	public void setValues(List<String> values) {
@@ -1013,10 +1014,12 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		return getName();
 	}
 
+	protected boolean isHtml() {
+		return false;
+	}
+
 	/**
 	 * process the field
-	 * 
-	 * @param request
 	 * @return true if the field is modified.
 	 */
 	public boolean process(ContentContext ctx) {
@@ -1036,6 +1039,13 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 				value = StringHelper.collectionToString(values, ", ");
 			} else {
 				value = requestService.getParameter(getInputName(), "");
+			}
+			if (isHtml()) {
+				try {
+					value = XHTMLHelper.replaceAbsoluteLinks(ctx, value);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 			if (!value.equals(getValue())) {
 				setValue(value);
