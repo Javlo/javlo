@@ -412,6 +412,23 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         return properties.getProperty("content-title", "");
     }
 
+    private String getContentLinkTitle() {
+        return properties.getProperty("content-link-title", "");
+    }
+
+    private String getFinalContentLinkTitle(ContentContext ctx) {
+        String linkName = getContentLinkTitle();
+        if (linkName.startsWith("page:")) {
+            linkName = linkName.substring(5);
+            try {
+                return URLHelper.createURLFromPageName(ctx, linkName);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return linkName;
+    }
+
     private String getOnlyDepth() {
         return properties.getProperty("only-depth", "");
     }
@@ -490,10 +507,15 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
         String wrapperId = "pageref-wrapper-" + getId();
 
-        out.println("<div class=\"row\"><div class=\"col-sm-8\">");
+        out.println("<div class=\"row\"><div class=\"col-sm-4\">");
         out.println("<div class=\"line\">");
         out.println("<label for=\"" + getInputNameTitle() + "\">" + i18nAccess.getText("global.title") + " : </label>");
-        out.println("<input type=\"text\" id=\"" + getInputNameTitle() + "\" name=\"" + getInputNameTitle() + "\" value=\"" + getContentTitle() + "\"  />");
+        out.println("<input type=\"text\" id=\"" + getInputNameTitle() + "\" name=\"" + getInputNameTitle() + "\" value=\"" + getContentLinkTitle() + "\"  />");
+        out.println("</div>");
+        out.println("</div><div class=\"col-sm-4\">");
+        out.println("<div class=\"line\">");
+        out.println("<label for=\"" + getInputLinkTitle() + "\">" + i18nAccess.getText("global.link-title", "link") + " : </label>");
+        out.println("<input type=\"text\" id=\"" + getInputLinkTitle() + "\" name=\"" + getInputLinkTitle() + "\" value=\"" + getContentLinkTitle() + "\"  />");
         out.println("</div>");
         out.println("</div><div class=\"col-sm-4\">");
         if (!ctx.getContentLanguage().equals(ctx.getGlobalContext().getDefaultLanguage())) {
@@ -842,6 +864,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
     private String getInputNameTitle() {
         return "title_" + getId();
+    }
+
+    private String getInputLinkTitle() {
+        return "link_title_" + getId();
     }
 
     private String getInputNameOnlyDepth() {
@@ -1452,6 +1478,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         ctx.getRequest().setAttribute("pagesStatus", pagesStatus);
         ctx.getRequest().setAttribute("pages", pageBeans);
         ctx.getRequest().setAttribute("title", getContentTitle());
+        ctx.getRequest().setAttribute("linkTitle", getFinalContentLinkTitle(ctx));
         ctx.getRequest().setAttribute("comp", this);
         ctx.getRequest().setAttribute("months", months);
         ctx.getRequest().setAttribute("tags", globalContext.getTags());
@@ -1646,6 +1673,21 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
                 setModify();
             }
 
+            String linkTitle = requestService.getParameter(getInputLinkTitle(), "");
+            if (!linkTitle.trim().isEmpty()) {
+                if (StringHelper.isURL(linkTitle)) {
+                    MenuElement page = NavigationHelper.getPageFromAbsoluteUrl(ctx, linkTitle);
+                    if (page != null) {
+                        linkTitle="page:"+page.getName();
+                    }
+                }
+                if (!getContentLinkTitle().equals(linkTitle)) {
+                    setContentLinkTitle(linkTitle);
+                    storeProperties();
+                    setModify();
+                }
+            }
+
             String onlyDepth = requestService.getParameter(getInputNameOnlyDepth(), "");
             if (!getOnlyDepth().equals(onlyDepth)) {
                 setOnlyDepth(onlyDepth);
@@ -1773,6 +1815,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
     private void setContentTitle(String title) {
         properties.setProperty("content-title", title);
+    }
+
+    private void setContentLinkTitle(String link) {
+        properties.setProperty("content-link-title", link);
     }
 
     private void setDefaultSelected(boolean selected) {
