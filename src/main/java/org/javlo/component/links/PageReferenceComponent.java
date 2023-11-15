@@ -510,7 +510,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         out.println("<div class=\"row\"><div class=\"col-sm-4\">");
         out.println("<div class=\"line\">");
         out.println("<label for=\"" + getInputNameTitle() + "\">" + i18nAccess.getText("global.title") + " : </label>");
-        out.println("<input type=\"text\" id=\"" + getInputNameTitle() + "\" name=\"" + getInputNameTitle() + "\" value=\"" + getContentLinkTitle() + "\"  />");
+        out.println("<input type=\"text\" id=\"" + getInputNameTitle() + "\" name=\"" + getInputNameTitle() + "\" value=\"" + getContentTitle() + "\"  />");
         out.println("</div>");
         out.println("</div><div class=\"col-sm-4\">");
         out.println("<div class=\"line\">");
