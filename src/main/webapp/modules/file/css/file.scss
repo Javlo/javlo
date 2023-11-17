@@ -196,6 +196,7 @@ body {
 		}
 	}
 }
+
 .filter-field {
 	width: 80px;
 	-webkit-transition: width 200ms ease-in-out;
@@ -372,14 +373,14 @@ body .ui-widget-header .ui-icon {
 	a {
 		padding: 0.5rem 1rem;
 		border: 1px #888 solid;
-		color: #eee;
+		color: var(--javlo-ui-text);
 		margin-right: 1rem;
 		margin-bottom: 1rem;
 	}
 
 	a.active, a:hover, a:focus {
-		color: #000;
-		background-color: #eee;
+		color: var(--javlo-ui-text);
+		background-color: var(--javlo-ui-btn-toggle-bg-active);
 		text-decoration: none;
 	}
 }
@@ -392,5 +393,31 @@ body .ui-widget-header .ui-icon {
 		justify-content: flex-end;
 		margin-bottom: 6px;
 		padding-right: 4px;
+	}
+}
+
+.edit-form {
+	.copy {
+		--btn-height: 28px;
+		--btn-vertical-padding: 3px;
+		padding: var(--btn-vertical-padding) 15px;
+		line-height: calc(var(--btn-height) - var(--btn-vertical-padding) * 2);
+		height: auto;
+		background-color: #ddd;
+		background-image: none;
+		text-shadow: none;
+		border: 1px #ddd solid;
+		color: #555;
+		border-radius: 3px;
+		font-weight: bold;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		&:hover, &:focus {
+			background-color: var(--javlo-ui-bg-secondary);
+			color: var(--javlo-ui-text);
+			border-color: #fff;
+			text-decoration: none !important;
+		}
 	}
 }

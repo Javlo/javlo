@@ -18,6 +18,20 @@ params:
 	</c:if>
 	<c:param name="webaction" value="file.upload" />
 </c:url>
+
+<script>
+	function copyToClipboard(element) {
+		// Crée un élément input temporaire
+		var tempInput = document.createElement("input");
+		tempInput.style = "position: absolute; left: -1000px; top: -1000px"; // Position hors de l'écran
+		tempInput.value = element.value; // Utilise la valeur du bouton
+		document.body.appendChild(tempInput); // Ajoute l'input au body
+		tempInput.select(); // Sélectionne le texte de l'input
+		document.execCommand("copy"); // Copie le texte sélectionné
+		document.body.removeChild(tempInput); // Supprime l'input temporaire
+	}
+</script>
+
 <div class="upload-zone" data-url="${uploadURL}">
 	<div id="meta-edit" class="form-list">
 
@@ -81,7 +95,7 @@ params:
 										<a class="lock" href="#" onclick="var list=jQuery(this).parent().parent();list.removeClass('lock'); list.addClass('unlock'); return false;"><span class="glyphicon glyphicon-lock"></span></a>
 										<a class="unlock" href="#" onclick="var list=jQuery(this).parent().parent();list.removeClass('unlock'); list.addClass('lock'); return false;"><span class="glyphicon glyphicon-link"></span></a>
 									</c:if>
-									<span class="filename"><a href="${fileURL}" title="${file.name}">${file.name}</a></span>
+									<span class="filename"><a target="_blank" href="${fileURL}" title="${file.name}">${file.name}</a></span>
 									<c:if test="${empty param.select && !metaReadOnly}">
 										<c:url value="${info.currentURL}" var="deleteURL" context="/">
 											<c:param name="webaction" value="file.delete" />
@@ -188,6 +202,15 @@ params:
 								</div>
 
 								<c:if test="${empty param.select}">
+
+                                    <div class="line">
+                                        <label for="copy-${file.id}">${i18n.edit["field.copy"]}</label>
+                                        <button type="button" class="copy"  id="copy-${file.id}" value="file:/static${file.path}" onclick="copyToClipboard(this)">
+												${file.name}
+										</button>
+                                    </div>
+
+                                    <hr />
 
 									<div class="line">
 										<label for="rename-${file.id}">${i18n.edit["field.rename"]}</label>

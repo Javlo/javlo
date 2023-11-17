@@ -203,7 +203,7 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 		out.println("<span class=\"date-only\">"+renderDate(ctx, getDate())+"</span>");
 
 
-		if (getStyle() != null && getStyle().equals(DATE_TAXONOMY) && getPage().getTaxonomy().size() > 0) {
+		if (getStyle() != null && getStyle().equals(DATE_TAXONOMY) && !getPage().getTaxonomy().isEmpty()) {
 			out.println("<div class=\"taxonomy\">");
 			int i=1;
 			TaxonomyService ts = TaxonomyService.getInstance(ctx);

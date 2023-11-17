@@ -330,7 +330,7 @@
 							<span class="picto"><i class="bi bi-gear ajax-not-loading"></i>
 								<span class="ajax-loader-inline"><div class="_jv_spinner-sm" role="status"><span class="sr-only" lang="en">Loading...</span></div></span>
 							</span>
-							${currentModule.toolsTitle}
+							<span class="hidden">${currentModule.toolsTitle}</span>
 						</h3>
 						<div class="content"><jsp:include page="${currentModule.toolsRenderer}" /></div>
 					</div>
