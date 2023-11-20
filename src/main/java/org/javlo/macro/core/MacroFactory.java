@@ -147,7 +147,8 @@ public class MacroFactory {
 		macros.add(new MailingMacroModule());
 		macros.add(new ClearImageCache());
 
-		macros.add(new UserMacroModule());
+		macros.add(new UserMacroModule(true));
+		macros.add(new UserMacroModule(false));
 		
 		/** macro bean **/
 		initMacroBean(macros);

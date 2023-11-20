@@ -975,7 +975,7 @@ public class UserAction extends AbstractModuleAction {
 					params.put("webaction", "edit");
 					params.put("cuser", userInfo.getEncryptLogin());
 					String editURL = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE), params);
-					out.print(StringHelper.toJsonValue("<a href=\"" + editURL + "\">"+userInfo.getLogin()+"</a>") + ',');
+					out.print(StringHelper.toJsonValue("<a class=\"edit-user-link\" href=\"" + editURL + "\">"+userInfo.getLogin()+"</a>") + ',');
 					out.print(StringHelper.toJsonValue(userInfo.getFirstName()) + ',');
 					out.print(StringHelper.toJsonValue(userInfo.getLastName()) + ',');
 					out.print(StringHelper.toJsonValue(userInfo.getEmail()) + ',');

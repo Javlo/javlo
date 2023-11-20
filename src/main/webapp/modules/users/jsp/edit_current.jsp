@@ -9,14 +9,15 @@
 <div>
 	<input type="hidden" name="webaction" value="changePassword" />
 	<input type="hidden" name="user" value="${user.name}" />
+	<input type="hidden" name="previewEdit" value="${param.previewEdit}" />
 </div>
 <div class="col-sm-6">
 <div class="form-group">
-	<label>${i18n.edit['user.current-password']}<input class="form-control" type="password" id="password" name="password" value="" /></label> 
+	<label>${i18n.edit['user.current-password']}<input class="form-control" type="password" id="password" name="password" value="" /></label>
 </div>
 </div><div class="col-sm-6">
 <div class="form-group">
-	<label>${i18n.edit['user.new-password']}<input class="form-control" type="password" id="newpassword" name="newpassword" value="" /></label>	 
+	<label>${i18n.edit['user.new-password']}<input class="form-control" type="password" id="newpassword" name="newpassword" value="" /></label>
 </div>
 <div class="form-group"><input type="submit"  class="btn btn-default" name="ok" value="${i18n.edit['global.ok']}" /></div>
 </div>
@@ -50,66 +51,66 @@
 <div class="col-sm-4">
 	<div class="form-group login">
 		<label for="login">login
-		<input class="form-control" type="text" id="login" name="login" value="${userInfoMap['login']}" /></label> 
+		<input class="form-control" type="text" id="login" name="login" value="${userInfoMap['login']}" /></label>
 	</div>
 	<c:if test="${not empty webaction}">
 		<div class="form-group password">
 			<label for="password">${i18n.view['form.password']}
-			<input class="form-control" type="password" id="password" name="password" value="" /></label> 
-		</div>	
+			<input class="form-control" type="password" id="password" name="password" value="" /></label>
+		</div>
 		<div class="form-group password">
 			<label for="password2">${i18n.view['form.password2']}
-			<input class="form-control" type="password" id="password2" name="password2" value="" /></label>		 
+			<input class="form-control" type="password" id="password2" name="password2" value="" /></label>
 		</div>
 	</c:if>
 	<div class="form-group firstName">
 		<label for="firstName">firstName
-		<input class="form-control" type="text" id="firstName" name="firstName" value="${userInfoMap['firstName']}" /></label> 
+		<input class="form-control" type="text" id="firstName" name="firstName" value="${userInfoMap['firstName']}" /></label>
 	</div>
 	<div class="form-group lastName">
 		<label for="lastName">lastName
-		<input class="form-control" type="text" id="lastName" name="lastName" value="${userInfoMap['lastName']}" /></label> 
+		<input class="form-control" type="text" id="lastName" name="lastName" value="${userInfoMap['lastName']}" /></label>
 	</div>
 	<div class="form-group email">
 		<label for="email">email
-		<input class="form-control" type="text" id="email" name="email" value="${userInfoMap['email']}" /></label> 
+		<input class="form-control" type="text" id="email" name="email" value="${userInfoMap['email']}" /></label>
 	</div>
 	<div class="form-group organization">
 		<label for="organization">${i18n.edit['field.organization']}
 		<c:if test="${empty list.organization}">
 		<input class="form-control" type="text" id="organization" name="organization" value="${userInfoMap['organization']}" />
-		</c:if> 
+		</c:if>
 		<c:if test="${not empty list.organization}">
 		 	<select id="organization" name="organization" class="form-control">
 		 		<option></option>
 		 		<c:forEach var="organization" items="${list.organization}">
 		 			<option value="${organization.key}"${userInfoMap["organization"] == organization.key?' selected="selected"':''}>${organization.value}</option>
-		 		</c:forEach>		 		
+		 		</c:forEach>
 		 	</select>
-		 </c:if> 
+		 </c:if>
 		 </label>
 	</div>
 	<div class="form-group phone">
 		<label for="phone">phone
-		<input type="text" class="form-control" id="phone" name="phone" value="${userInfoMap['phone']}" /></label> 
+		<input type="text" class="form-control" id="phone" name="phone" value="${userInfoMap['phone']}" /></label>
 	</div>
 	<div class="form-group mobile">
 		<label for="mobile">mobile
-		<input type="text" id="mobile" class="form-control" name="mobile" value="${userInfoMap['mobile']}" /></label> 
+		<input type="text" id="mobile" class="form-control" name="mobile" value="${userInfoMap['mobile']}" /></label>
 	</div>
 </div>
 <div class="col-sm-4 address">
 	<div class="form-group">
 		<label for="address">address
-		<input type="text" id="address" class="form-control" name="address" value="${userInfoMap['address']}" /></label> 
+		<input type="text" id="address" class="form-control" name="address" value="${userInfoMap['address']}" /></label>
 	</div>
 	<div class="form-group postCode">
 		<label for="postCode">postCode
-		<input type="text" id="postCode" class="form-control" name="postCode" value="${userInfoMap['postCode']}" /></label> 
+		<input type="text" id="postCode" class="form-control" name="postCode" value="${userInfoMap['postCode']}" /></label>
 	</div>
 	<div class="form-group city">
 		<label for="city">city
-		<input type="text" class="form-control" id="city" name="city" value="${userInfoMap['city']}" /></label> 
+		<input type="text" class="form-control" id="city" name="city" value="${userInfoMap['city']}" /></label>
 	</div>
 	<div class="form-group country">
 		<label for="country">country
@@ -121,22 +122,22 @@
 		 		<option></option>
 		 		<c:forEach var="country" items="${list.countries}">
 		 			<option value="${country.key}"${userInfoMap['country'] == country.key?' selected="selected"':''}>${country.value}</option>
-		 		</c:forEach>		 		
+		 		</c:forEach>
 		 	</select>
 		 </c:if>
 		 </label>
 	</div>
 	<div class="form-group url">
 		<label for="url">url
-		<input class="form-control" type="text" id="url" name="url" value="${userInfoMap['url']}" /></label> 
+		<input class="form-control" type="text" id="url" name="url" value="${userInfoMap['url']}" /></label>
 	</div>
 	<div class="form-group">
 		<label for="specialFunction">Special function
-		<input class="form-control" type="text" id="specialFunction" name="specialFunction" value="${userInfoMap['specialFunction']}" /></label> 
+		<input class="form-control" type="text" id="specialFunction" name="specialFunction" value="${userInfoMap['specialFunction']}" /></label>
 	</div>
 	<div class="form-group preferredLanguageRaw">
 		<label for="preferredLanguageRaw">preferred Language
-		<input type="text" id="preferredLanguageRaw" class="form-control" name="preferredLanguageRaw" value="${userInfoMap['preferredLanguageRaw']}" /></label> 
+		<input type="text" id="preferredLanguageRaw" class="form-control" name="preferredLanguageRaw" value="${userInfoMap['preferredLanguageRaw']}" /></label>
 	</div>
 	<c:if test="${empty webaction}">
 	<div class="form-group token">
@@ -146,12 +147,12 @@
 			<span id="token" class="value">${userInfoMap['token']}</span>
 			</a>
 		</c:if>
-		<input class="action-button" class="form-control" type="submit" name="token" value="${i18n.edit['global.reset']}" /></label> 
+		<input class="action-button" class="form-control" type="submit" name="token" value="${i18n.edit['global.reset']}" /></label>
 		<c:if test="${fn:length(userInfoMap['token']) > 0}">
 			<input class="btn btn-default" type="submit" name="notoken" value="${i18n.edit['global.delete']}" />
 		</c:if>
 	</div>
-	</c:if>	
+	</c:if>
 </div>
 <div class="col-sm-4">
 <div class="form-group">
@@ -179,8 +180,8 @@
 		 	<div class="form-group">
 		 	<c:forEach var="function" items="${list.functions}" varStatus="status"><div class="form-check form-check-inline">
 	 		<label class="checkbox-inline form-check-label" for="function-${status.index}"><input class="form-check-input" type="checkbox" name="function" id="function-${status.index}" value="${function.key}" ${not empty functions[function.key]?' checked="checked"':''}/> ${function.value}</label>
-	 		</div></c:forEach>	 		
-	 		</div>		
+	 		</div></c:forEach>
+	 		</div>
 		 </c:if>
 </div>
 
@@ -196,27 +197,27 @@
 	<div class="col-sm-4">
 		<div class="form-group">
 			<label for="facebook">facebook
-			<input class="form-control" type="text" id="facebook" name="facebook" value="${userInfoMap['facebook']}" /></label> 
+			<input class="form-control" type="text" id="facebook" name="facebook" value="${userInfoMap['facebook']}" /></label>
 		</div>
 		<div class="form-group">
 			<label for="googleplus">google+
-			<input class="form-control" type="text" id="googleplus" name="googleplus" value="${userInfoMap['googleplus']}" /></label> 
+			<input class="form-control" type="text" id="googleplus" name="googleplus" value="${userInfoMap['googleplus']}" /></label>
 		</div>
 	</div>
 	<div class="col-sm-4">
 	<div class="form-group">
 		<label for="linkedin">linkedin
-		<input class="form-control" type="text" id="linkedin" name="linkedin" value="${userInfoMap['linkedin']}" /></label> 
+		<input class="form-control" type="text" id="linkedin" name="linkedin" value="${userInfoMap['linkedin']}" /></label>
 	</div>
 	<div class="form-group">
 		<label for="twitter">twitter
-		<input class="form-control" type="text" id="twitter" name="twitter" value="${userInfoMap['twitter']}" /></label> 
+		<input class="form-control" type="text" id="twitter" name="twitter" value="${userInfoMap['twitter']}" /></label>
 	</div>
 	</div>
 	<div class="col-sm-4">
 	<div class="form-group">
 		<label for="pushbulletToken">pushbullet token
-		<input class="form-control" type="text" id="pushbulletToken" name="pushbulletToken" value="${userInfoMap['pushbulletToken']}" /></label> 
+		<input class="form-control" type="text" id="pushbulletToken" name="pushbulletToken" value="${userInfoMap['pushbulletToken']}" /></label>
 	</div>
 	</div>
 </fieldset>
@@ -230,11 +231,11 @@
 				<c:when test="${not empty info.currentUserAvatarUrl}">
 					<img src="${info.currentUserAvatarUrl}?rnd=${info.randomId}" />
 					<div class="checkbox">
-					<label><input type="checkbox" name="deleteAvatar" value="true" />${i18n.edit['global.delete']}</label> 
+					<label><input type="checkbox" name="deleteAvatar" value="true" />${i18n.edit['global.delete']}</label>
 					</div>
 				</c:when>
 				<c:otherwise>
-					${i18n.edit['user.no-avatar']} 
+					${i18n.edit['user.no-avatar']}
 				</c:otherwise>
 			</c:choose>
 		</div>
@@ -242,7 +243,7 @@
 	<div class="col-sm-6">
 		<div class="form-group">
 			<label for="avatar">${i18n.edit['user.new-avatar']}</label>
-			<input type="file" id="avatar" name="avatar" /> 
+			<input type="file" id="avatar" name="avatar" />
 		</div>
 	</div>
 </fieldset>
@@ -266,15 +267,15 @@
 		</div>
 	</div>
 	<div class="col-sm-6">
-		<div class="form-group">			
+		<div class="form-group">
 			<label for="userFile">${i18n.edit['user.new-files']}</label>
-			<input type="file" id="userFile" name="userFile" /> 
+			<input type="file" id="userFile" name="userFile" />
 		</div>
 	</div>
 </fieldset>
 
 
-<div class="form-group btn-group pull-right">	
+<div class="form-group btn-group pull-right">
 	<input class="btn btn-default btn-primary btn-color btn-back" type="submit" name="back" value="${i18n.edit['global.back']}" />
 	<input class="btn btn-default" type="submit" name="ok" value="${i18n.edit['global.ok']}" />
 </div>

@@ -9,9 +9,25 @@ import org.javlo.module.user.UserModuleContext;
 public class UserMacroModule extends AbstractDisplayModule {
 	
 	private UserAction action = null;
+	private boolean admin = false;
+
+	public UserMacroModule(boolean admin) {
+		super();
+		this.admin = admin;
+	}
+
 
 	@Override
 	public String getName() {
+		if (admin) {
+			return "admin-users";
+		} else {
+			return "users";
+		}
+	}
+
+	@Override
+	public String getModuleName() {
 		return "users";
 	}
 
@@ -21,14 +37,21 @@ public class UserMacroModule extends AbstractDisplayModule {
 			action = new UserAction();
 		}
 		UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
-		userContext.setMode(UserModuleContext.VIEW_USERS_LIST);
-
+		if (admin) {
+			userContext.setMode(UserModuleContext.ADMIN_USERS_LIST);
+		} else {
+			userContext.setMode(UserModuleContext.VIEW_USERS_LIST);
+		}
 		return action;
 	}
 	
 	@Override
-	public String getIcon() {	
-		return "bi bi-person";
+	public String getIcon() {
+		if (admin) {
+			return "bi bi-person-gear";
+		} else {
+			return "bi bi-person";
+		}
 	}
 
 }

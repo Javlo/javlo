@@ -4,6 +4,7 @@
 	<form id="form-select-user" action="${info.currentURL}" method="post">
 		<div>
 			<input type="hidden" name="webaction" value="deleteUser" />
+			<input type="hidden" name="previewEdit" value="${previewEdit}" />
 		</div>
 		<table cellpadding="0" cellspacing="0" border="0" class="dyntable cell-border compact stripe display" id="sitelist">
 			<thead>
@@ -12,7 +13,7 @@
 					<th class="head1">${i18n.edit['user.login']}</th>
 					<th class="head0">${i18n.edit['user.firstname']}</th>
 					<th class="head1">${i18n.edit['user.lastname']}</th>
-					<th class="head0">${i18n.edit['user.email']}</th>					
+					<th class="head0">${i18n.edit['user.email']}</th>
 				</tr>
 			</thead>
 			<colgroup>
@@ -26,11 +27,11 @@
 				<c:forEach var="user" items="${users}">
 					<tr class="gradeX">
 						<td class="con0"><input type="checkbox" name="${user.login}" /> </td>
-						<td class="con1"><a href="${info.currentURL}?webaction=edit&cuser=${user.encryptLogin}">${user.login}</a></td>
+						<td class="con1"><a href="${info.currentURL}?webaction=edit&cuser=${user.encryptLogin}&previewEdit=${previewEdit}">${user.login}</a></td>
 						<td class="con0"><c:out value="${user.firstName}" default="" /></td>
 						<td class="con1">${user.lastName}</td>
 						<td class="con0"><a href="mailto:${user.email}">${user.email}</a></td>
-						
+
 					</tr>
 				</c:forEach>
 			</tbody>
@@ -40,7 +41,7 @@
 					<th class="head1">${i18n.edit['user.login']}</th>
 					<th class="head0">${i18n.edit['user.firstname']}</th>
 					<th class="head1">${i18n.edit['user.lastname']}</th>
-					<th class="head0">${i18n.edit['user.email']}</th>	
+					<th class="head0">${i18n.edit['user.email']}</th>
 				</tr>
 			</tfoot>
 		</table>

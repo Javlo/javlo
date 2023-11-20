@@ -1,14 +1,14 @@
 package org.javlo.macro.interactive;
 
-import java.util.Map;
-import java.util.logging.Logger;
-
 import org.javlo.actions.IAction;
 import org.javlo.actions.IModuleAction;
 import org.javlo.context.ContentContext;
 import org.javlo.macro.core.IInteractiveMacro;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
+
+import java.util.Map;
+import java.util.logging.Logger;
 
 public abstract class AbstractDisplayModule implements IInteractiveMacro, IAction {
 
@@ -24,9 +24,9 @@ public abstract class AbstractDisplayModule implements IInteractiveMacro, IActio
 		IModuleAction moduleAction = getModuleAction(ctx);
 		try {
 			ModulesContext modulesContext = ModulesContext.getInstance(ctx.getRequest().getSession(), ctx.getGlobalContext());
-			Module module = modulesContext.getModule(getName());
+			Module module = modulesContext.getModule(getModuleName());
 			if (module == null) {
-				logger.severe("module not found : "+getName());
+				logger.severe("module not found : "+getModuleName());
 			} else {
 				modulesContext.setCurrentModule(module.getName());
 			}
@@ -46,6 +46,10 @@ public abstract class AbstractDisplayModule implements IInteractiveMacro, IActio
 	@Override
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 		return null;
+	}
+
+	public String getModuleName() {
+		return getName();
 	}
 
 	@Override
