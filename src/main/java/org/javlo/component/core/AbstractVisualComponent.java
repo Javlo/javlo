@@ -2309,6 +2309,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected String getDataAttributes(ContentContext ctx) {
+
+		if (!ctx.isAsPreviewMode()) {
+			return "";
+		}
+
 		try {
 			EditContext editCtx = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
 			RequestService rs = RequestService.getInstance(ctx.getRequest());
