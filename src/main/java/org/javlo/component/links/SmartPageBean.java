@@ -604,20 +604,24 @@ public class SmartPageBean {
 		try {
 			MenuElement firstChild = page.getFirstChild();
 			if (firstChild != null && firstChild.isChildrenAssociation()) {
-//				ContentContext ctxLg = ctx;
-//				if (ctx.getGlobalContext().isAutoSwitchToDefaultLanguage()) {
-//					ctxLg = ctx.getContextWithContent(firstChild);
-//				}
 				return URLHelper.createURL(ctx, firstChild.getPath());
 			} else {
-//				ContentContext ctxLg = ctx;
-//				if (ctx.getGlobalContext().isAutoSwitchToDefaultLanguage()) {
-//					ctxLg = ctx.getContextWithContent(page);
-//					if (ctxLg == null) {
-//						ctxLg = ctx;
-//					}
-//				}
 				return URLHelper.createURL(ctx, page.getPath());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public String getViewUrl() {
+		ContentContext viewCtx = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
+		try {
+			MenuElement firstChild = page.getFirstChild();
+			if (firstChild != null && firstChild.isChildrenAssociation()) {
+				return URLHelper.createURL(viewCtx, firstChild.getPath());
+			} else {
+				return URLHelper.createURL(viewCtx, page.getPath());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
