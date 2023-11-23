@@ -72,7 +72,7 @@
 </fieldset>
 
 <c:if test="${fn:length(roles) > 0}">
-<fieldset>
+<fieldset class="flex-grid">
 <legend>${i18n.edit['user.roles']}</legend>
 <c:forEach var="role" items="${roles}">
 	<c:set var="contains" value="false" />
@@ -81,7 +81,7 @@
    		 <c:set var="contains" value="true" />
  		 </c:if>
 	</c:forEach>
-	<label class="checkbox-inline"><input type="checkbox" id="role-${role}" name="role-${role}" <c:if test="${contains}">checked="checked"</c:if> />${role}</label>
+	<label><input type="checkbox" id="role-${role}" name="role-${role}" <c:if test="${contains}">checked="checked"</c:if> /> ${role}</label>
 </c:forEach>
 </fieldset>
 </c:if>

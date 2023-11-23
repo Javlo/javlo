@@ -334,7 +334,7 @@
 					<c:if test="${fn:length(info.roles) > 0}">
 
 						<c:if test="${fn:length(adminRoles) > 0}">
-							<fieldset>
+							<fieldset class="flex-grid">
 								<legend>${i18n.edit['item.title.admin-roles']}</legend>
 								<c:forEach var="role" items="${adminRoles}">
 									<label class="checkbox-inline"> <input type="checkbox" name="admin-${role}" id="admin-${role}" ${not empty page.adminRoles[role]?'checked="checked"':''} /> ${role}
@@ -348,7 +348,7 @@
 								</div>
 							</fieldset>
 						</c:if>
-						<fieldset>
+						<fieldset class="flex-grid">
 							<legend>${i18n.edit['item.title.view-roles']}</legend>
 							<c:forEach var="role" items="${info.roles}">
 								<label class="checkbox-inline"> <input type="checkbox" name="user-${role}" id="user-${role}" ${not empty page.roles[role]?'checked="checked"':''} /> ${role}
