@@ -1371,7 +1371,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
             tagFilter = ctx.getRequest().getParameter("tag");
             catFilter = ctx.getRequest().getParameter("category");
             monthFilter = ctx.getRequest().getParameter("month");
-            if (monthFilter != null && monthFilter.trim().length() > 0) {
+            if (monthFilter != null && !monthFilter.trim().isEmpty()) {
                 startDate = Calendar.getInstance();
                 endDate = Calendar.getInstance();
                 Date mount = format.parse(monthFilter);
@@ -1473,6 +1473,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         }
 
         LocalLogger.stepCount("pageref", "step 8");
+
+        MenuElement parentNode = ctx.getCurrentPage().getRoot().searchChild(ctx, getParentNode(ctx));
+        if (parentNode != null && !parentNode.isRoot()) {
+            ctx.getRequest().setAttribute("referenceLink", URLHelper.createURL(ctx, parentNode));
+        }
 
         ctx.getRequest().setAttribute("pagination", pagination);
         ctx.getRequest().setAttribute("pagesStatus", pagesStatus);
