@@ -1495,6 +1495,12 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
             if (!StringHelper.isEmpty(taxonomy)) {
                 jUrl = URLHelper.addParam(jUrl, "taxonomy", taxonomy);
             }
+            for (int i = 0; i < 10; i++) {
+                taxonomy = rs.getParameter("taxonomy-"+i, null);
+                if (!StringHelper.isEmpty(taxonomy)) {
+                    jUrl = URLHelper.addParam(jUrl, "taxonomy-"+i, taxonomy);
+                }
+            }
             ctx.getRequest().setAttribute("taxonomySelectedIdString", StringHelper.collectionToString(rs.getParameterValues("taxonomy")));
         }
         ctx.getRequest().setAttribute("jsonUrl", jUrl);
