@@ -3294,9 +3294,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		String newContent;
 		if (arraysContent.size() < 2) {
 			newContent = requestService.getParameter(getContentName(), null);
-			if (getEditorComplexity(ctx) != null && getEditorComplexity(ctx).equals("soft")) {
-				newContent = XHTMLHelper.removeTag(newContent, "p");
-			}
+//			if (getEditorComplexity(ctx) != null && getEditorComplexity(ctx).equals("soft")) {
+//				newContent = XHTMLHelper.removeTag(newContent, "p");
+//			}
 
 		} else {
 			newContent = StringHelper.collectionToString(arraysContent, ",");

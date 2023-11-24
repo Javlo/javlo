@@ -5,6 +5,8 @@ public class JsonPageBean {
     private String title;
     private String description;
     private String url;
+
+    private String[] taxonomies;
     private String startDate;
     private String endDate;
 
@@ -55,4 +57,6 @@ public class JsonPageBean {
     public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
+
+
 }
