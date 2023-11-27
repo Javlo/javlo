@@ -1,12 +1,5 @@
 package org.javlo.service.shared;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.logging.Logger;
-
 import org.javlo.actions.DataAction;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.ResourceHelper;
@@ -16,6 +9,13 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.template.Template;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.logging.Logger;
 
 public class ImportedFileSharedContentProvider extends LocalFileSharedContentProvider {
 	
@@ -38,15 +38,39 @@ public class ImportedFileSharedContentProvider extends LocalFileSharedContentPro
 		return super.getContent(ctx, categories);
 	}
 
+//	@Override
+//	protected boolean isCategoryAccepted(ContentContext ctx, String category, MenuElement cp, Template template) {
+//		try {
+//			MenuElement page = ctx.getCurrentPage().getRootOfChildrenAssociation();
+//			if (page == null) {
+//				page = ctx.getCurrentPage();
+//			}
+//			String importFolder = DataAction.createImportFolder(page);
+//			if (category.endsWith(importFolder)) {
+//				return true;
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		return false;
+//	}
+
 	@Override
 	protected boolean isCategoryAccepted(ContentContext ctx, String category, MenuElement cp, Template template) {
 		try {
+			if (ctx.getCurrentPage() == null) {
+				return false;
+			}
 			MenuElement page = ctx.getCurrentPage().getRootOfChildrenAssociation();
 			if (page == null) {
 				page = ctx.getCurrentPage();
 			}
-			String importFolder = DataAction.createImportFolder( page);
-			if (category.endsWith(importFolder)) {				
+			String importFolder = DataAction.createImportFolder(ctx.getCurrentPage());
+			String importPrefix = ctx.getGlobalContext().getStaticConfig().getImportFolder();
+			if (importPrefix.startsWith("/")) {
+				importPrefix = importPrefix.substring(1);
+			}
+			if (category.endsWith(importFolder) && (category.startsWith(importPrefix) || category.startsWith(ctx.getGlobalContext().getStaticConfig().getImportFolder()))) {
 				return true;
 			}
 		} catch (Exception e) {
