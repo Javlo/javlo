@@ -280,7 +280,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		return outFilter;
 	}
 
-	private List<String> FIELDS = Arrays.asList(new String[] { "root", "tags", "ext", "noext", "taxonomy", "display", "max" });
+	private List<String> FIELDS = Arrays.asList(new String[] { "title", "root", "tags", "ext", "noext", "taxonomy", "display", "max" });
 
 	public List<String> getSelectedTaxonomy(ContentContext ctx) {
 		List<String> out = new LinkedList<>();
@@ -422,6 +422,11 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		PrintStream out = new PrintStream(outStream);
+
+		out.println("<div class=\"line\">");
+		out.println("<label for=\"" + createKeyWithField("title") + "\">title</label>");
+		out.println("<input type=\"text\" name=\"" + createKeyWithField("title") + "\" value=\"" + getFieldValue("title") + "\" />");
+		out.println("</div>");
 
 		if (ctx.getRequest().getParameter("path") != null) {
 			String newFolder = URLHelper.removeStaticFolderPrefix(ctx, ctx.getRequest().getParameter("path"));
