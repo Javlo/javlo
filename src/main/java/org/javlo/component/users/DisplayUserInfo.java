@@ -62,6 +62,11 @@ public class DisplayUserInfo extends AbstractVisualComponent implements IAction 
 			User user = userFactory.getUser(login);
 			if (user != null) {
 				users.add(user);
+			} else {
+				user = userFactory.getUserByEmail(login);
+				if (user != null) {
+					users.add(user);
+				}
 			}
 		}
 
