@@ -3,12 +3,6 @@
  */
 package org.javlo.component.files;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.component.image.IImageTitle;
@@ -23,6 +17,12 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.ztatic.StaticInfo;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * @author pvandermaesen
  */
@@ -35,9 +35,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 	@Override
 	public String createFileURL(ContentContext ctx, String inURL) {
 		StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-		String url = ElementaryURLHelper.createStaticURL(ctx, staticConfig.getFileFolder() + '/' + inURL).replace('\\', '/');
-
-		return url;
+		return ElementaryURLHelper.createStaticURL(ctx, staticConfig.getFileFolder() + '/' + inURL).replace('\\', '/');
 	}
 
 	@Override
@@ -49,8 +47,7 @@ public class GenericFile extends AbstractFileComponent implements IReverseLinkCo
 	@Override
 	public String getFileDirectory(ContentContext ctx) {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		String folder = ElementaryURLHelper.mergePath(globalContext.getDataFolder(), getRelativeFileDirectory(ctx));
-		return folder;
+		return ElementaryURLHelper.mergePath(globalContext.getDataFolder(), getRelativeFileDirectory(ctx));
 	}
 
 	@Override

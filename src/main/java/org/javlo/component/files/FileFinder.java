@@ -253,6 +253,17 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		return outFileList;
 	}
 
+	@Override
+	public boolean initContent(ContentContext ctx) throws Exception {
+		String root= getImportFolderPath(ctx, ctx.getCurrentPage());
+		if (!root.startsWith("/")) {
+			root = "/" + root;
+		}
+		setFieldValue("root", root);
+		setFieldValue("display", "true");
+		return super.initContent(ctx);
+	}
+
 	public FileFilter getFileFilterInstance(ContentContext ctx) {
 		FileFilter outFilter = new FileFilter();
 		outFilter.text = ctx.getRequest().getParameter("text");
