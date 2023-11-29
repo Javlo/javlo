@@ -3441,6 +3441,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public void setPreviousComponent(IContentVisualComponent previousComponent) {
+		if (previousComponent != null && !previousComponent.getComponentBean().getLanguage().equals(getComponentBean().getLanguage())) {
+			logger.severe("bad previous component lang : "+getId()+ " / previous id : "+previousComponent.getId());
+		}
 		this.previousComponent = previousComponent;
 	}
 

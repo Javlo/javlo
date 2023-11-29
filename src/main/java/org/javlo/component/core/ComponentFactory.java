@@ -439,7 +439,7 @@ public class ComponentFactory {
 		return comp;
 	}
 
-	public static AbstractVisualComponent CreateComponent(ContentContext ctx, ComponentBean bean, MenuElement inPage, IContentVisualComponent previous, IContentVisualComponent next) throws Exception {		
+	private static AbstractVisualComponent CreateComponent(ContentContext ctx, ComponentBean bean, MenuElement inPage, IContentVisualComponent previous, IContentVisualComponent next) throws Exception {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		List<String> selectedComponents = globalContext.getComponents();
 		Collection<IContentVisualComponent> components = getComponents(ctx, inPage);
