@@ -23,9 +23,11 @@ public class JsonPageBean {
         endDate = pageBean.getTimeRange().getEndDateBean().getSortableDate();
 
         List<TaxonomyDisplayBean> taxoList = pageBean.getTaxonomy();
-        taxonomies = new String[taxoList.size()];
-        for (int i = 0; i < taxonomies.length; i++) {
-            taxonomies[i] = taxoList.get(i).getLabel();
+        if (taxoList != null) {
+            taxonomies = new String[taxoList.size()];
+            for (int i = 0; i < taxonomies.length; i++) {
+                taxonomies[i] = taxoList.get(i).getLabel();
+            }
         }
     }
     public String getTitle() {
