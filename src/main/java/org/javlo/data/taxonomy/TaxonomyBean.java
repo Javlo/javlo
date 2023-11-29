@@ -7,7 +7,6 @@ import java.util.*;
 public class TaxonomyBean {
 
 	private String id;
-
 	private String primaryId;
 	private String name;
 	private String decoration;

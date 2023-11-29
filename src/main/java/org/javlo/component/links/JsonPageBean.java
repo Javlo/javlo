@@ -1,5 +1,9 @@
 package org.javlo.component.links;
 
+import org.javlo.data.taxonomy.TaxonomyDisplayBean;
+
+import java.util.List;
+
 public class JsonPageBean {
 
     private String title;
@@ -17,6 +21,12 @@ public class JsonPageBean {
 
         startDate = pageBean.getTimeRange().getStartDateBean().getSortableDate();
         endDate = pageBean.getTimeRange().getEndDateBean().getSortableDate();
+
+        List<TaxonomyDisplayBean> taxoList = pageBean.getTaxonomy();
+        taxonomies = new String[taxoList.size()];
+        for (int i = 0; i < taxonomies.length; i++) {
+            taxonomies[i] = taxoList.get(i).getLabel();
+        }
     }
     public String getTitle() {
         return title;
