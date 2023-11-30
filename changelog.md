@@ -957,6 +957,7 @@ Security in case of vulnerabilities.
 - import WordPress xml
 - add class "jvl-component" on all components
 - login by header
+- img leasy loading in edit and preview
 ### Modified
 - minimize html in extended widget
 - filter page reference
