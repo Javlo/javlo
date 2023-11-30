@@ -158,7 +158,7 @@ params:
 										<c:if test="${not empty param.select && !file.directory}">
 											<c:set var="dataURL" value='data-url="${file.absoluteURL}"' />
 										</c:if>
-										<a ${!file.directory && not empty param.select?'class="select-item"':''} href="${fileSelectURL}" ${dataURL}><img src="${file.thumbURL}" /></a>
+										<a ${!file.directory && not empty param.select?'class="select-item"':''} href="${fileSelectURL}" ${dataURL}><img src="${info.viewAjaxLoaderURL}" data-src-on-visible="${file.thumbURL}" /></a>
 										<c:if test="${file.image && !metaReadOnly && empty param.select}">
 											<div class="focus-point">x</div>
 											<input class="posx" type="hidden" name="posx-${file.id}" value="${file.focusZoneX}" />

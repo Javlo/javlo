@@ -1,4 +1,4 @@
-/* preview.js V 2.0.0.7 */
+/* preview.js V 2.0.0.8 */
 
 var PREVIEWLOG = false;
 
@@ -2629,7 +2629,33 @@ if (!String.prototype.startsWith) {
 
 document.addEventListener("DOMContentLoaded", function(event) {
 	jvInit();
+	editPreviewPrepareImageLoadingIfVisible();
 });
+
+function editPreviewPrepareImageLoadingIfVisible() {
+	let images = document.querySelectorAll('img[data-src-on-visible-preview]');
+
+	images.forEach(i => {
+		i.classList.add("_lazy_loading_image");
+	})
+
+	let imageObserver = new IntersectionObserver(function(entries, observer) {
+		entries.forEach(entry => {
+			// Si l'image est visible
+			if (entry.isIntersecting) {
+				let image = entry.target;
+				image.src = image.getAttribute('data-src-on-visible-preview');
+				image.removeAttribute('data-src-on-visible-preview');
+				// L'image a été chargée, il n'est plus nécessaire de l'observer
+				observer.unobserve(image);
+			}
+		});
+	});
+
+	images.forEach(image => {
+		imageObserver.observe(image);
+	});
+}
 
 function jvInit() {
 	initJvCollapse();
@@ -2686,3 +2712,4 @@ function initJvCollapse() {
 		}
 	});
 }
+

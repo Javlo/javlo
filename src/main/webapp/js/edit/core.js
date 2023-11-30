@@ -372,6 +372,8 @@ jQuery(document).ready(function() {
 		var item = jQuery(this);
 		item.append("<div class=\"tool-tip\">"+item.data("tooltip")+"</div>");
 	});
+
+	prepareImageLoadingIfVisible();
 });
 
 jQuery.fn.extend({
@@ -720,5 +722,31 @@ function initJvCollapsedFieldset() {
 				this.parentElement.classList.add('collapsed');
 			}
 		}
+	});
+}
+
+function prepareImageLoadingIfVisible() {
+	let images = document.querySelectorAll('img[data-src-on-visible]');
+
+	images.forEach(i => {
+		i.classList.add("_lazy_loading_image");
+	})
+
+	let imageObserver = new IntersectionObserver(function(entries, observer) {
+		entries.forEach(entry => {
+			// Si l'image est visible
+			if (entry.isIntersecting) {
+				let image = entry.target;
+				image.src = image.getAttribute('data-src-on-visible');
+				image.removeAttribute('data-src-on-visible');
+
+				// L'image a été chargée, il n'est plus nécessaire de l'observer
+				observer.unobserve(image);
+			}
+		});
+	});
+
+	images.forEach(image => {
+		imageObserver.observe(image);
 	});
 }

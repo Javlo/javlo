@@ -21,7 +21,7 @@
 <a href="${content.editURL}" title="edit" lang="en" onclick="editPreview.openModal('${content.title}', '${content.editURL}'); return false;">
 </c:if></c:if>	
 	<c:if test="${not empty content.imageURL}">
-		<figure><img id="img-${status.index}" src="${content.imageURL}"/></figure>
+		<figure><img id="img-${status.index}" data-src-on-visible-preview="${content.imageURL}" /></figure>
 	</c:if>	
 	<div class="caption">${content.title}</div>
 	<c:if test="${not empty content.photoPageLink}"><div class="links"><a target="_blank" href="${content.photoPageLink}"><i class="fa fa-external-link" aria-hidden="true"></i> download HD</a></div></c:if>
