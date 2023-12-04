@@ -40,7 +40,6 @@ public class CatchAllFilter implements Filter {
 	private static long VALID_IP = 0;
 	private static long BLOCK_IP = 0;
 	private static long ALL_COUNT = 0;
-	
 
 	private static final Set<String> COMPRESS_EXT = new HashSet<String>(Arrays.asList(new String[] { "js", "jpg", "jpeg", "png", "css", "font", "woff", "gif" }));
 

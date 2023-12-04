@@ -253,9 +253,17 @@ public class UserFactory implements IUserFactory, Serializable {
 	@Override
 	public User getUser(String login) {
 		List<IUserInfo> users = getUserInfoList();
-		for (IUserInfo user : users) {
-			if (user.getLogin().equals(login)) {
-				return new User(user);
+		if (StringHelper.isMail(login)) {
+			for (IUserInfo user : users) {
+				if (user.getLogin().equalsIgnoreCase(login)) {
+					return new User(user);
+				}
+			}
+		} else {
+			for (IUserInfo user : users) {
+				if (user.getLogin().equals(login)) {
+					return new User(user);
+				}
 			}
 		}
 		return null;
