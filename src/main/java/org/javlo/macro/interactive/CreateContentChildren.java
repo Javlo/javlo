@@ -1,8 +1,5 @@
 package org.javlo.macro.interactive;
 
-import java.util.Map;
-import java.util.logging.Logger;
-
 import org.javlo.actions.IAction;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ContentElementList;
@@ -19,6 +16,9 @@ import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+
+import java.util.Map;
+import java.util.logging.Logger;
 
 public class CreateContentChildren implements IInteractiveMacro, IAction {
 
@@ -159,6 +159,11 @@ public class CreateContentChildren implements IInteractiveMacro, IAction {
 	@Override
 	public int getPriority() {
 		return DEFAULT_PRIORITY;
+	}
+
+	@Override
+	public int getType() {
+		return TYPE_TOOLS;
 	}
 
 }

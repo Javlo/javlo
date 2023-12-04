@@ -1,8 +1,5 @@
 package org.javlo.macro.interactive;
 
-import java.util.Map;
-import java.util.logging.Logger;
-
 import org.javlo.actions.IAction;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
@@ -12,6 +9,9 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.RequestService;
+
+import java.util.Map;
+import java.util.logging.Logger;
 
 public class RenameChildren implements IInteractiveMacro, IAction {
 
@@ -121,6 +121,11 @@ public class RenameChildren implements IInteractiveMacro, IAction {
 	@Override
 	public int getPriority() {
 		return DEFAULT_PRIORITY;
+	}
+
+	@Override
+	public int getType() {
+		return TYPE_TOOLS;
 	}
 
 }

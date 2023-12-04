@@ -1,12 +1,5 @@
 package org.javlo.macro.interactive;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
 import org.javlo.actions.IAction;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
@@ -16,12 +9,14 @@ import org.javlo.macro.core.IInteractiveMacro;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.service.RequestService;
-import org.javlo.user.AdminUserFactory;
-import org.javlo.user.AdminUserSecurity;
-import org.javlo.user.IUserFactory;
-import org.javlo.user.IUserInfo;
-import org.javlo.user.User;
-import org.javlo.user.UserFactory;
+import org.javlo.user.*;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 public class LogAsUser implements IInteractiveMacro, IAction {
 
@@ -144,6 +139,11 @@ public class LogAsUser implements IInteractiveMacro, IAction {
 	@Override
 	public int getPriority() {
 		return DEFAULT_PRIORITY;
+	}
+
+	@Override
+	public int getType() {
+		return TYPE_TOOLS;
 	}
 
 }

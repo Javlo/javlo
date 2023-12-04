@@ -121,4 +121,9 @@ public abstract class AbstractDisplayModule implements IInteractiveMacro, IActio
 		return DEFAULT_PRIORITY;
 	}
 
+	@Override
+	public int getType() {
+		return TYPE_MODULE;
+	}
+
 }

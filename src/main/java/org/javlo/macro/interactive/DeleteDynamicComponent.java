@@ -1,11 +1,5 @@
 package org.javlo.macro.interactive;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Map;
-import java.util.Properties;
-import java.util.logging.Logger;
-
 import org.javlo.actions.IAction;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.dynamic.DynamicComponent;
@@ -17,6 +11,12 @@ import org.javlo.macro.core.IInteractiveMacro;
 import org.javlo.message.MessageRepository;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Map;
+import java.util.Properties;
+import java.util.logging.Logger;
 
 public class DeleteDynamicComponent implements IInteractiveMacro, IAction {
 
@@ -143,6 +143,11 @@ public class DeleteDynamicComponent implements IInteractiveMacro, IAction {
 	@Override
 	public int getPriority() {
 		return DEFAULT_PRIORITY;
+	}
+
+	@Override
+	public int getType() {
+		return TYPE_TOOLS;
 	}
 
 }

@@ -1,14 +1,5 @@
 package org.javlo.macro.interactive;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
-
 import org.javlo.actions.IAction;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
@@ -23,6 +14,10 @@ import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class UpdateUserRole implements IInteractiveMacro, IAction {
 
@@ -167,6 +162,11 @@ public class UpdateUserRole implements IInteractiveMacro, IAction {
 	@Override
 	public int getPriority() {
 		return DEFAULT_PRIORITY;
+	}
+
+	@Override
+	public int getType() {
+		return TYPE_TOOLS;
 	}
 
 }

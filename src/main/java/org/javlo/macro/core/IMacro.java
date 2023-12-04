@@ -1,11 +1,15 @@
 package org.javlo.macro.core;
 
-import java.util.Map;
-
 import org.javlo.context.ContentContext;
 
+import java.util.Map;
+
 public interface IMacro {
-	
+
+	public static final int TYPE_TOOLS = 10;
+
+	public static final int TYPE_MODULE = 20;
+
 	public static final String DEFAULT_MAX_MODAL_SIZE = "df";
 	
 	public static final String LARGE_MODAL_SIZE = "lg";
@@ -57,5 +61,7 @@ public interface IMacro {
 	public String getUrl();
 	
 	public int getPriority();
+
+	public int getType();
 	
 }

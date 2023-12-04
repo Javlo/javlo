@@ -1,14 +1,5 @@
 package org.javlo.macro.interactive;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
-
 import org.javlo.actions.IAction;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentFactory;
@@ -24,8 +15,11 @@ import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
-import org.javlo.template.Template;
 import org.javlo.user.AdminUserSecurity;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class DeleteComponent implements IInteractiveMacro, IAction {
 
@@ -173,6 +167,11 @@ public class DeleteComponent implements IInteractiveMacro, IAction {
 	@Override
 	public int getPriority() {
 		return DEFAULT_PRIORITY;
+	}
+
+	@Override
+	public int getType() {
+		return TYPE_TOOLS;
 	}
 
 }

@@ -1,10 +1,5 @@
 package org.javlo.macro.interactive;
 
-import java.io.BufferedReader;
-import java.io.StringReader;
-import java.util.Map;
-import java.util.logging.Logger;
-
 import org.javlo.actions.IAction;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.component.title.Heading;
@@ -20,6 +15,11 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.RequestService;
 import org.javlo.service.social.SocialService;
 import org.owasp.encoder.Encode;
+
+import java.io.BufferedReader;
+import java.io.StringReader;
+import java.util.Map;
+import java.util.logging.Logger;
 
 public class SocialShare implements IInteractiveMacro, IAction {
 
@@ -156,5 +156,10 @@ public class SocialShare implements IInteractiveMacro, IAction {
 	@Override
 	public int getPriority() {
 		return DEFAULT_PRIORITY;
+	}
+
+	@Override
+	public int getType() {
+		return TYPE_TOOLS;
 	}
 }

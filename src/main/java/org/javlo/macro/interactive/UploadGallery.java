@@ -1,17 +1,5 @@
 package org.javlo.macro.interactive;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileExistsException;
 import org.javlo.actions.IAction;
@@ -30,6 +18,11 @@ import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.user.User;
 import org.javlo.ztatic.StaticInfo;
+
+import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class UploadGallery implements IInteractiveMacro, IAction {
 	
@@ -237,6 +230,11 @@ public class UploadGallery implements IInteractiveMacro, IAction {
 	@Override
 	public int getPriority() {
 		return DEFAULT_PRIORITY;
+	}
+
+	@Override
+	public int getType() {
+		return TYPE_TOOLS;
 	}
 
 }

@@ -1,9 +1,9 @@
 package org.javlo.macro.core;
 
-import java.util.Map;
-
 import org.javlo.context.ContentContext;
 import org.javlo.helper.URLHelper;
+
+import java.util.Map;
 
 public class MacroBean implements IMacro, IInteractiveMacro {
 
@@ -160,6 +160,11 @@ public class MacroBean implements IMacro, IInteractiveMacro {
 	@Override
 	public int getPriority() {
 		return priority;
+	}
+
+	@Override
+	public int getType() {
+		return TYPE_TOOLS;
 	}
 
 }

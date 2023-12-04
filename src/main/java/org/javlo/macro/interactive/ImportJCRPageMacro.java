@@ -314,6 +314,11 @@ public class ImportJCRPageMacro implements IInteractiveMacro, IAction {
 		return DEFAULT_PRIORITY;
 	}
 
+	@Override
+	public int getType() {
+		return TYPE_TOOLS;
+	}
+
 	public static void main(String[] args) {
 		System.out.println("***** ImportZIPPageMacro.main : locale = " + getLocalBySuffix("index_fr")); // TODO: remove debug trace
 		System.out.println("***** ImportZIPPageMacro.main : locale = " + getLocalBySuffix("index_fr_BE")); // TODO: remove debug trace

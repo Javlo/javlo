@@ -373,4 +373,9 @@ public class CreateArticle implements IInteractiveMacro, IAction {
 	public int getPriority() {
 		return DEFAULT_PRIORITY;
 	}
+
+	@Override
+	public int getType() {
+		return TYPE_TOOLS;
+	}
 }

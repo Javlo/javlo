@@ -1,17 +1,13 @@
 package org.javlo.macro.interactive;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
 import org.javlo.actions.IAction;
 import org.javlo.context.ContentContext;
 import org.javlo.macro.core.IInteractiveMacro;
 import org.javlo.mailing.Mailing;
 import org.javlo.mailing.MailingFactory;
+
+import java.util.*;
+import java.util.logging.Logger;
 
 public class MailingStat implements IInteractiveMacro, IAction {
 
@@ -125,6 +121,11 @@ public class MailingStat implements IInteractiveMacro, IAction {
 	@Override
 	public int getPriority() {
 		return DEFAULT_PRIORITY;
+	}
+
+	@Override
+	public int getType() {
+		return TYPE_TOOLS;
 	}
 	
 }

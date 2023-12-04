@@ -1,15 +1,5 @@
 package org.javlo.macro.interactive;
 
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.text.ParseException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
 import org.apache.commons.fileupload.FileItem;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.ComponentBean;
@@ -21,11 +11,7 @@ import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.fields.Field;
 import org.javlo.fields.FieldDate;
-import org.javlo.helper.ContentHelper;
-import org.javlo.helper.MacroHelper;
-import org.javlo.helper.NetHelper;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.StringHelper;
+import org.javlo.helper.*;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IInteractiveMacro;
 import org.javlo.message.MessageRepository;
@@ -34,6 +20,16 @@ import org.javlo.service.RequestService;
 import org.javlo.utils.Cell;
 import org.javlo.utils.StructuredProperties;
 import org.javlo.utils.XLSTools;
+
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.text.ParseException;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 public class ImportContent implements IInteractiveMacro, IAction {
 
@@ -219,7 +215,12 @@ public class ImportContent implements IInteractiveMacro, IAction {
 	public int getPriority() {
 		return DEFAULT_PRIORITY;
 	}
-	
+
+	@Override
+	public int getType() {
+		return TYPE_TOOLS;
+	}
+
 	public static void main(String[] args) throws ParseException {
 		Date date = StringHelper.parseExcelDate("2/19/13");
 		System.out.println(">>>>>>>>> ImportContent.main : date = "+StringHelper.renderDate(date)); //TODO: remove debug trace

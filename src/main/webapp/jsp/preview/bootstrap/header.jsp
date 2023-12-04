@@ -321,7 +321,15 @@ if (!rightOnPage) {
 							<i class="bi bi-tools"></i>
 						</button>
 						<div id="macro-list" class="_jv_collapse-target _jv_hidden">
-							<jsp:include page="macro.jsp" />
+							<jsp:include page="macro.jsp?type=10" />
+						</div>
+					</li>
+					<li class="macro">
+						<button class="btn btn-default btn-toggle _jv_collapse-container" data-jv-toggle="collapse" data-jv-target="#module-list">
+							<i class="bi bi-boxes"></i>
+						</button>
+						<div id="module-list" class="_jv_collapse-target _jv_hidden">
+							<jsp:include page="macro.jsp?type=20" />
 						</div>
 					</li>
 					<li class="user _jv_collapse-container"><button class=" btn btn-user btn-toggle" data-jv-target="#_jv_user-collapse" data-jv-toggle="collapse">

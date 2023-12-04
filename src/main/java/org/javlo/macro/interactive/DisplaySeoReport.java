@@ -111,4 +111,9 @@ public class DisplaySeoReport implements IInteractiveMacro, IAction {
 		return DEFAULT_PRIORITY;
 	}
 
+	@Override
+	public int getType() {
+		return TYPE_TOOLS;
+	}
+
 }

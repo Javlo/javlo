@@ -1,12 +1,5 @@
 package org.javlo.macro.interactive;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Date;
-import java.util.Map;
-import java.util.logging.Logger;
-
 import org.apache.commons.net.ftp.FTPClient;
 import org.javlo.actions.IAction;
 import org.javlo.context.ContentContext;
@@ -21,6 +14,13 @@ import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.service.RequestService;
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Date;
+import java.util.Map;
+import java.util.logging.Logger;
 
 public class PushStaticOnFtp implements IInteractiveMacro, IAction {
 
@@ -186,6 +186,11 @@ public class PushStaticOnFtp implements IInteractiveMacro, IAction {
 	@Override
 	public int getPriority() {
 		return DEFAULT_PRIORITY;
+	}
+
+	@Override
+	public int getType() {
+		return TYPE_TOOLS;
 	}
 
 }

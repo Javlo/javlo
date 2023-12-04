@@ -25,4 +25,9 @@ public abstract class AbstractInteractiveMacro implements IInteractiveMacro {
 		return true;
 	}
 
+	@Override
+	public int getType() {
+		return TYPE_TOOLS;
+	}
+
 }

@@ -166,4 +166,9 @@ public class ImportGalleryMacro implements IInteractiveMacro, IAction {
 		return DEFAULT_PRIORITY;
 	}
 
+	@Override
+	public int getType() {
+		return TYPE_TOOLS;
+	}
+
 }

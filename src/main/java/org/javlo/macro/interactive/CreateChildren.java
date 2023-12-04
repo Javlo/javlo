@@ -1,12 +1,5 @@
 package org.javlo.macro.interactive;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.io.StringReader;
-import java.util.Map;
-import java.util.logging.Logger;
-
 import org.javlo.actions.IAction;
 import org.javlo.component.title.Heading;
 import org.javlo.context.ContentContext;
@@ -18,6 +11,13 @@ import org.javlo.macro.core.IInteractiveMacro;
 import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.RequestService;
+
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.io.StringReader;
+import java.util.Map;
+import java.util.logging.Logger;
 
 public class CreateChildren implements IInteractiveMacro, IAction {
 
@@ -151,6 +151,11 @@ public class CreateChildren implements IInteractiveMacro, IAction {
 	@Override
 	public int getPriority() {
 		return DEFAULT_PRIORITY;
+	}
+
+	@Override
+	public int getType() {
+		return TYPE_TOOLS;
 	}
 
 }

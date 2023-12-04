@@ -1,9 +1,5 @@
 package org.javlo.macro.interactive;
 
-import java.net.MalformedURLException;
-import java.util.Map;
-import java.util.logging.Logger;
-
 import org.javlo.actions.IAction;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
@@ -16,6 +12,10 @@ import org.javlo.macro.core.IInteractiveMacro;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.service.RequestService;
+
+import java.net.MalformedURLException;
+import java.util.Map;
+import java.util.logging.Logger;
 
 public class ChangeImageFilter implements IInteractiveMacro, IAction {
 
@@ -134,6 +134,11 @@ public class ChangeImageFilter implements IInteractiveMacro, IAction {
 	@Override
 	public int getPriority() {
 		return DEFAULT_PRIORITY;
+	}
+
+	@Override
+	public int getType() {
+		return TYPE_TOOLS;
 	}
 
 }

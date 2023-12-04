@@ -1,10 +1,5 @@
 package org.javlo.macro.interactive;
 
-import java.io.*;
-import java.util.Map;
-import java.util.Properties;
-import java.util.logging.Logger;
-
 import org.javlo.actions.IAction;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
@@ -13,6 +8,13 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IInteractiveMacro;
 import org.javlo.message.MessageRepository;
 import org.javlo.service.RequestService;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.Map;
+import java.util.logging.Logger;
 
 public class CreateRedirectionForAllLanguages implements IInteractiveMacro, IAction {
 
@@ -122,6 +124,11 @@ public class CreateRedirectionForAllLanguages implements IInteractiveMacro, IAct
 	@Override
 	public int getPriority() {
 		return DEFAULT_PRIORITY;
+	}
+
+	@Override
+	public int getType() {
+		return TYPE_TOOLS;
 	}
 
 }
