@@ -970,3 +970,4 @@ Security in case of vulnerabilities.
 - direct download image with param _fos
 ### fixed
 - extract title from wysiwyg / correction
+## [2.2.1] - 04/12/2023
