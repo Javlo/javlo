@@ -958,6 +958,7 @@ Security in case of vulnerabilities.
 - add class "jvl-component" on all components
 - login by header
 - img leasy loading in edit and preview
+- PREVIEW : module list
 ### Modified
 - minimize html in extended widget
 - filter page reference
