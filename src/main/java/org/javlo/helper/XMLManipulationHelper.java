@@ -339,8 +339,8 @@ public class XMLManipulationHelper {
         try {
             tags = searchAllTag(content, true);
         } catch (BadXMLException e) {
-            String error = "Error ["+template.getName()+"] position:" + e.getLocalisation() + " tag:" + e.getTag();
-            content = "<html>\n<head>\n<title>Error rendering : "+template.getName()+"</title>\n</head>\n<body>\n<div class=\"main-error\" style=\"margin: 100px auto; width: 320px; border: 1px red solid; background-color: rgba(255,0,0,0.1); color: #000; border-radius: 6px; padding: 0.5rem; text-align: center;\">" + error + "</div>\n</body>\n</html>";
+            String error = "Error ["+template.getName()+"] position:" + e.getLocalisation() + " tag:" + e.getTag()+" <br /><br /><code>"+XHTMLHelper.escapeXHTML(e.getText())+"</code>";
+            content = "<html>\n<head>\n<meta charset=\"utf-8\">\n<title>Error rendering : "+template.getName()+"</title>\n</head>\n<body>\n<div class=\"main-error\" style=\"margin: 100px auto; width: 320px; border: 1px red solid; background-color: rgba(255,0,0,0.1); color: #000; border-radius: 6px; padding: 0.5rem; text-align: center;\">" + error + "</div>\n</body>\n</html>";
             try {
                 tags = searchAllTag(content, true);
             } catch (BadXMLException ex) {

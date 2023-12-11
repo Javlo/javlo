@@ -971,3 +971,6 @@ Security in case of vulnerabilities.
 ### fixed
 - extract title from wysiwyg / correction
 ## [2.2.1] - 04/12/2023
+### Modified
+- display preview interface when error on template parsing
+
