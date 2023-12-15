@@ -172,13 +172,16 @@ public class ComponentConfig {
 		}
 	}
 
-	public String[] getStyleList() {
+	public String[] getStyleList(String renderer) {
 		if (properties == null) {
 			return StringHelper.EMPTY_STRING_ARRAY;
 		}
-		String styleList = properties.getString("style-list", null);
+		String styleList = properties.getString("style-list."+renderer, null);
 		if (styleList == null) {
-			return StringHelper.EMPTY_STRING_ARRAY;
+			styleList = properties.getString("style-list", null);
+			if (styleList == null) {
+				return StringHelper.EMPTY_STRING_ARRAY;
+			}
 		}
 		return StringHelper.stringToArray(styleList, ";");
 	}

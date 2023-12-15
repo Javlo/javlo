@@ -2529,7 +2529,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public String[] getStyleList(ContentContext ctx) {
-		return getConfig(ctx).getStyleList();
+		return getConfig(ctx).getStyleList(getCurrentRenderer(ctx));
 	}
 
 	@Override

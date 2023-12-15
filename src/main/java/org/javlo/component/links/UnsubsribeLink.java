@@ -24,12 +24,7 @@ public class UnsubsribeLink extends InternalLink {
 		}
 		return null;
 	}
-	
-	@Override
-	public String[] getStyleList(ContentContext ctx) {
-		return getConfig(ctx).getStyleList();
-	}
-	
+
 	@Override
 	public String getType() {
 		return "unsubscribe-link";

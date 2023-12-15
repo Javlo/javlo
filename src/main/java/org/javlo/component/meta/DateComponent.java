@@ -53,10 +53,10 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 
 	@Override
 	public String[] getStyleList(ContentContext ctx) {		
-		if (getConfig(ctx).getStyleList() == null || getConfig(ctx).getStyleList().length == 0) {
+		if (super.getStyleList(ctx) == null || super.getStyleList(ctx).length == 0) {
 			return new String[] { USER_FRIENDLY_DATE_TYPE, MEDIUM_DATE_TYPE, SHORT_DATE_TYPE, SHORT_DATE_WIDTH_DAY, VISIBLE_DATE_TYPE, VISIBLE_TIME_TYPE, VISIBLE_MONTH_TYPE, DATE_TAXONOMY, NOT_VISIBLE_TYPE };
 		} else {
-			return getConfig(ctx).getStyleList();
+			return super.getStyleList(ctx);
 		}
 	}
 
@@ -64,7 +64,7 @@ public class DateComponent extends AbstractVisualComponent implements IDate {
 	public String[] getStyleLabelList(ContentContext ctx) {
 		try {			
 			I18nAccess i18n = I18nAccess.getInstance(ctx.getRequest());
-			String[] styleList = getConfig(ctx).getStyleList();
+			String[] styleList = super.getStyleList(ctx);
 			if (styleList == null || styleList.length == 0) {
 				return new String[] { i18n.getText("content.date.userfriendly-date"), i18n.getText("content.date.medium-date"), i18n.getText("content.date.short-date"), i18n.getText("content.date.short-date-width-day"), i18n.getText("content.date.visible-date"), i18n.getText("content.date.visible-time"), i18n.getText("content.date.visible-month", "month year"), i18n.getText("content.date.taxonomy", "taxonomy"), i18n.getText("global.hidden") };
 			} else {
