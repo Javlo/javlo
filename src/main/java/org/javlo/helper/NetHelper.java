@@ -222,9 +222,9 @@ public class NetHelper {
 	}
 
 	public static String readPageGet(URL url) throws Exception {
+		url = followURL(url);
 		URLConnection conn = url.openConnection();
-		String content = readPageGet(conn, true);
-		return content;
+		return readPageGet(conn, true);
 	}
 
 	public static String readPageGet(URL url, Map<String,String> header) throws Exception {
