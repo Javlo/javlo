@@ -13,6 +13,7 @@
     	    org.javlo.message.MessageRepository,
     	    org.javlo.message.GenericMessage,
     	    org.javlo.helper.StringHelper"%>
+<%@ page import="java.net.URLEncoder" %>
 <%
 ContentContext ctx = ContentContext.getContentContext(request, response);
 ContentContext editCtx = new ContentContext(ctx);
@@ -197,5 +198,12 @@ if (StringHelper.isTrue(request.getParameter("preview-command"), true) && !ctx.i
 	</div>
 </div>
 <%
+}
+if (ctx.isAsPreviewMode() && ctx.getErrorTitle() != null) {
+    String url = URLHelper.createStaticURL(ctx, "jsp/display_error.jsp");
+    url += "?title=" + XHTMLHelper.escapeXML(URLEncoder.encode(ctx.getErrorTitle(), "UTF-8")) + "&body=";
+    String body = URLEncoder.encode(XHTMLHelper.textToXHTML(ctx.getErrorMessage()), "UTF-8").substring(0, 1850 - url.length());
+    url += body;
+    %><script>editPreview.openModal('Technical error', '<%=url%>', 'jv-modal-df');</script><%
 }
 %>

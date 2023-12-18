@@ -146,6 +146,10 @@ public class ContentContext {
 	
 	private String forcePageTitle = null;
 
+	private String errorTitle = null;
+
+	private String errorMessage = null;
+
 
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free, boolean pageManagement) {
 		ContentContext ctx = new ContentContext();
@@ -2496,4 +2500,19 @@ public class ContentContext {
 		this.forcePageTitle = forcePageTitle;
 	}
 
+	public String getErrorTitle() {
+		return errorTitle;
+	}
+
+	public void setErrorTitle(String errorTitle) {
+		this.errorTitle = errorTitle;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
 }

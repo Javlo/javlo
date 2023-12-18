@@ -4842,9 +4842,7 @@ public class StringHelper {
         clipboard.setContents(stringSelection, null);
     }
 
-    public static void main(String[] args) throws IOException {
-        System.out.println(containsWidthTransliteration("Patrick Vandermaesen", "patrick", "vandermaesen", "maesen"));
-    }
+
 
     private static Pattern SPECIAL_REGEX_CHARS = Pattern.compile("[{}()\\[\\].+*?^$\\\\|]");
 
@@ -4894,6 +4892,17 @@ public class StringHelper {
             return Float.parseFloat(priceString);
         }
         return null; // price not found
+    }
+
+    public static String minimizeStackTrace(String input) {
+        if (input == null) {
+            return null;
+        }
+        return input.replaceAll("\\b(\\w)\\w+\\b(\\.)", "$1$2");
+    }
+
+    public static void main(String[] args) throws IOException {
+        System.out.println(minimizeStackTrace("org.javlo.test = coucou"));
     }
 
 }

@@ -2429,7 +2429,7 @@ public class XHTMLHelper {
 			}
 
 			for (p = in.readLine(); p != null; p = in.readLine()) {
-				out.println(separation);
+				out.print(separation);
 				out.print(p);
 				if (paragraph) {
 					separation = "</p><p>";

@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -133,48 +134,39 @@ public class ServletHelper {
 			return prefix + jsp2String.toString();
 		} catch (Exception e) {
 			e.printStackTrace();
+			if (ctx.getErrorTitle() == null) {
+				Throwable cause = e;
+				while (cause.getCause() != null) {
+
+					cause = cause.getCause();
+				}
+				StringWriter sw = new StringWriter();
+				PrintWriter pw = new PrintWriter(sw);
+				cause.printStackTrace(pw);
+				String stackTrace = sw.toString();
+				ctx.setErrorTitle("error on : " + url + " [" + cause.getMessage() + "]");
+				ctx.setErrorMessage(StringHelper.minimizeStackTrace(stackTrace));
+			}
+
 			logger.severe(e.getMessage());
 			return null;
 		}
 	}
 
 	public static final String executeThymeleaf(HttpServletRequest request, HttpServletResponse response, String url) throws ServletException, IOException {
-		System.out.println("******* Thymeleafffff *******");
-
-
-
-
-
-
-
 		try {
-
-
-
-			//System.out.println(url+" ******* Engine break 1 *******");
-
 			TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(request.getServletContext());
 
-
-			//System.out.println( engine + " ******* Engine break 2 *******");
-
 			WebContext context = new WebContext(request, response, request.getServletContext());
-			//System.out.println( context + " ******* Engine break 4 *******");
 			context.setVariable("recipient", "World");
 
 			// engine.process(option, context, response.getWriter());
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			PrintWriter writer = new PrintWriter(stream);
-			//System.out.println( writer+ " ******* Engine break 3 *******");
 
 			engine.process(url,context, writer);
 
-
-
-
 			return new String(stream.toByteArray());
-
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.severe(e.getMessage());
