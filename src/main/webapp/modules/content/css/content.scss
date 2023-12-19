@@ -945,14 +945,23 @@ li.line {
 }
 
 .page-properties .flow {
-	float: right;
     border-radius: 3px 3px 3px 3px;
     background: none repeat scroll 0 0 #FCFCFC;
     border: 1px solid var(--grey-3);
-    box-shadow: 1px 1px 2px --grey-4DDD;
+    box-shadow: 1px 1px 2px #ccc;
     padding: 5px 10px 10px 10px;
-    margin-left: 24px;
-    z-index: 1; 
+    margin-bottom: 2rem;
+    z-index: 1;
+	max-width: 370px;
+
+	.btn-primary {
+		background-color: var(--javlo-ui-btn-toggle-bg-active) !important;
+		color: #fff;
+	}
+
+	.btn[disabled] {
+		opacity: 0.8;
+	}
 }
 
 .dynamic-component .row {

@@ -828,6 +828,22 @@ public class PageBean implements Serializable {
 		}
 	}
 
+	public int getChildrenFlowIndex() {
+		int minIndex = 4;
+		for(PageBean child : getChildren()) {
+			if (child.getFlowIndex() < minIndex) {
+				minIndex = child.getFlowIndex();
+			}
+			if (!child.getId().equals(getId())) {
+				int childFlowIndex = child.getChildrenFlowIndex();
+				if (childFlowIndex < minIndex) {
+					minIndex = childFlowIndex;
+				}
+			}
+		}
+		return minIndex;
+	}
+
 	/**
 	 * current user can validated this page ?
 	 * 

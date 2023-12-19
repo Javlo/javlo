@@ -1520,13 +1520,33 @@ public class Edit extends AbstractModuleAction {
 
 			if (!globalContext.isPortail()) {
 				persistenceService.publishPreviewFile(ctx);
+				globalContext.setPublishDate(new Date());
+				globalContext.setLatestPublisher(ctx.getCurrentEditUser().getLogin());
+				globalContext.storeRedirectUrlList();
+				content.releaseViewNav(globalContext);
+				String msg = i18nAccess.getText("content.published");
+				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), new GenericMessage(msg, GenericMessage.INFO), false);
 			} else {
 				ContentContext viewCtx = new ContentContext(ctx);
 				viewCtx.setRenderMode(ContentContext.VIEW_MODE);
-
 				MenuElement viewNav = content.getNavigation(viewCtx);
-				NavigationHelper.publishNavigation(ctx, content.getNavigation(ctx), viewNav);
-				persistenceService.store(viewCtx, ContentContext.VIEW_MODE);
+				MenuElement previewNav = content.getNavigation(ctx);
+				int modif = NavigationHelper.publishNavigation(ctx, previewNav, viewNav);
+				if (modif>0) {
+					persistenceService.store(viewCtx, ContentContext.VIEW_MODE, false);
+					persistenceService.store(ctx, ContentContext.PREVIEW_MODE, false);
+					globalContext.setPublishDate(new Date());
+					globalContext.setLatestPublisher(ctx.getCurrentEditUser().getLogin());
+					globalContext.storeRedirectUrlList();
+					content.releaseViewNav(globalContext);
+					content.releasePreviewNav(ctx);
+					content.getNavigation(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE));
+					String msg = i18nAccess.getText("content.published-portail")+' '+modif;
+					MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), new GenericMessage(msg, GenericMessage.INFO), false);
+				} else {
+					String msg = i18nAccess.getText("content.no-published");
+					MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), new GenericMessage(msg, GenericMessage.INFO), false);
+				}
 			}
 
 			globalContext.setPublishDate(new Date());
@@ -1534,6 +1554,7 @@ public class Edit extends AbstractModuleAction {
 			globalContext.storeRedirectUrlList();
 
 			content.releaseViewNav(globalContext);
+			content.getNavigation(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE));
 
 			String msg = i18nAccess.getText("content.published");
 			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), new GenericMessage(msg, GenericMessage.INFO), false);
@@ -1547,59 +1568,6 @@ public class Edit extends AbstractModuleAction {
 
 			// clean component list when publish
 			ComponentFactory.cleanComponentList(request.getSession().getServletContext(), globalContext);
-
-			// /*** check url ***/
-			// ContentContext lgCtx = new ContentContext(ctx);
-			// Collection<String> lgs = globalContext.getContentLanguages();
-			// IURLFactory urlFactory = globalContext.getURLFactory(lgCtx);
-			// String dblURL = null;
-			// Collection<String> errorPageNames = null;
-			// if (urlFactory != null) {
-			// Map<String, String> pages = new HashMap<String, String>();
-			// errorPageNames = new LinkedList<String>();
-			// // correct identical URL.
-			// List<MenuElement> children =
-			// ContentService.getInstance(globalContext).getNavigation(lgCtx).getAllChildrenList();
-			// NavigationService.checkSameUrl(ctx,children);
-			// for (String lg : lgs) {
-			// lgCtx.setRequestContentLanguage(lg);
-			// for (MenuElement menuElement : children) {
-			// if (menuElement.isRealContent(lgCtx)) {
-			// String url = lgCtx.getRequestContentLanguage() +
-			// urlFactory.createURL(lgCtx, menuElement);
-			// String otherPageName = pages.get(url);
-			// if (otherPageName != null &&
-			// !otherPageName.equals(menuElement.getName())) {
-			// if (!errorPageNames.contains(menuElement.getName())) {
-			// errorPageNames.add(menuElement.getName());
-			// }
-			// if (!errorPageNames.contains(pages.get(url))) {
-			// errorPageNames.add(pages.get(url));
-			// }
-			// if (menuElement.isRealContent(lgCtx)) {
-			// dblURL = url;
-			// }
-			// logger.warning("page : " + menuElement.getName() + " is refered
-			// by a url already used : " + url + " (page : " + otherPageName +
-			// ")");
-			// } else {
-			// pages.put(url, menuElement.getName());
-			// }
-			// }
-			// }
-			// }
-			// }
-			//
-			// if (dblURL != null) {
-			// String msg = i18nAccess.getText("action.publish.error.same-url",
-			// new String[][] { { "url", dblURL }, { "pages",
-			// StringHelper.collectionToString(errorPageNames, ",") } });
-			// MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx,
-			// new GenericMessage(msg, GenericMessage.ALERT), false);
-			// }
-
-			// trick for PortletManager to clear view data, but should be
-			// generalized in some PublishManager
 
 			ReverseLinkService.getInstance(globalContext).clearCache();
 

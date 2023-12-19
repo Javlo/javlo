@@ -1,12 +1,12 @@
 package org.javlo.macro;
 
-import java.util.Map;
-
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.PersistenceService;
 import org.javlo.user.AdminUserSecurity;
+
+import java.util.Map;
 
 public class ValidAllChildren extends AbstractMacro {
 
@@ -44,4 +44,8 @@ public class ValidAllChildren extends AbstractMacro {
 		return true;
 	}
 
+	@Override
+	public String getIcon() {
+		return "bi bi-check2-square";
+	}
 };

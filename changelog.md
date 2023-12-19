@@ -973,6 +973,8 @@ Security in case of vulnerabilities.
 ## [2.2.1] - 04/12/2023
 ### Added
 - style depend of renderer "style-list.#renderer key#"
+- flow publication
 ### Modified
 - display preview interface when error on template parsing
+- ## [2.2.2] - 19/12/2023
 

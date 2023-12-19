@@ -277,9 +277,22 @@ public class NavigationHelper {
 		AdminAction.clearCache(ctx);
 	}
 
-	public static void publishNavigation(ContentContext ctx, MenuElement srcRoot, MenuElement targetRoot) throws Exception {
-		if (srcRoot.isValid() || srcRoot.isNoValidation()) {
+	/**
+	 * publish all valid pages
+	 * @param ctx
+	 * @param srcRoot
+	 * @param targetRoot
+	 * @return true if modification
+	 * @throws Exception
+	 */
+	public static int publishNavigation(ContentContext ctx, MenuElement srcRoot, MenuElement targetRoot) throws Exception {
+		int out = 0;
+		if ((srcRoot.isValid() && srcRoot.isNeedValidation()) || srcRoot.isNoValidation()) {
+			if (srcRoot.isNeedValidation()) {
+				out++;
+			}
 			srcRoot.setNeedValidation(false);
+			PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 			copyElement(ctx, srcRoot, targetRoot);
 		}
 		Collection<MenuElement> children = srcRoot.getChildMenuElements();
@@ -292,7 +305,7 @@ public class NavigationHelper {
 				}
 			}
 			if (oldVersion != null) {
-				publishNavigation(ctx, element, oldVersion);
+				out += publishNavigation(ctx, element, oldVersion);
 			}
 			// TODO: remove page in view mode when she is removed is edit
 			// mode (preview).
@@ -308,7 +321,9 @@ public class NavigationHelper {
 		}
 		for (MenuElement element : needRemove) {
 			targetRoot.removeChild(element);
+			out++;
 		}
+		return out;
 	}
 
 	public static void publishOneComponent(ContentContext ctx, String componentId) throws Exception {

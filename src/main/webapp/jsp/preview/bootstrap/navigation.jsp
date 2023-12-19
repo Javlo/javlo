@@ -46,7 +46,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 								</a>
 							</div>
 						</c:if>
-						<a class="draggable flow-${info.parent.flowIndex}" id="page-${info.parent.name}" data-pageid="${info.parent.id}" href="${info.parent.url}" title="${info.parent.path}">
+						<a class="draggable flow-${info.parent.flowIndex}" children-flow-${info.parent.childrenFlowIndex}" id="page-${info.parent.name}" data-pageid="${info.parent.id}" href="${info.parent.url}" title="${info.parent.path}">
 							${info.parent.info.label}${info.parent.haveChildren?'...':''}
 						</a>
 					</li>
@@ -55,7 +55,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 					<c:set var="asTitle" value="true" />
 					<li class="page-item parent ${!info.parent.parent.trash?'title':'trash'}">
 						<div class="nav-item">
-							<a class="draggable flow-${info.parent.parent.flowIndex} ${!brother.trash?'editor':'trash'}" data-pageid="${info.parent.id}" id="page-${info.parent.parent.name}" href="${info.parent.parent.url}" title="${info.parent.parent.path}">
+							<a class="draggable flow-${info.parent.parent.flowIndex} children-flow-${info.parent.parent.childrenFlowIndex} ${!brother.trash?'editor':'trash'}" data-pageid="${info.parent.id}" id="page-${info.parent.parent.name}" href="${info.parent.parent.url}" title="${info.parent.parent.path}">
 							${info.parent.parent.info.label}${info.parent.parent.haveChildren?'...':''}
 							</a>
 						</div>
@@ -66,7 +66,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 			<c:forEach var="brother" items="${page.info.previousBrothers}">
 				<li class="page-item" ${brother.trash?'class="trash"':''}>
 					<div class="nav-item ">
-						<a id="page-${brother.name}" class="draggable ${!brother.trash?'editor':'trash'} ${brother.active?'active':'unactive'} flow-${brother.flowIndex}" data-pageid="${info.parent.id}" title="${brother.path}" href="${brother.url}">
+						<a id="page-${brother.name}" class="draggable ${!brother.trash?'editor':'trash'} children-flow-${brother.childrenFlowIndex} ${brother.active?'active':'unactive'} flow-${brother.flowIndex}" data-pageid="${info.parent.id}" title="${brother.path}" href="${brother.url}">
 						${brother.info.label}${info.parent.parent.haveChildren?'...':''}
 						</a>
 					</div>
@@ -76,7 +76,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 			<li class="page-item ${page.trash?'trash ':''}${page.url eq info.currentURL?'selected ':''}${!asTitle?' title':''}${page.selected?' selected':''}" id="page-${page.name}">
 				<c:if test="${!page.root}">
 					<div class="nav-item editor draggable ${page.active?'active':'unactive'} flow-${page.flowIndex}" data-pageid="${child.id}" title="${page.path}">
-						<a href="${page.url}">${page.info.label}${page.haveChildren?'...':''}</a>
+						<a href="${page.url}" class="flow-${page.flowIndex} children-flow-${page.childrenFlowIndex}"><span>${page.info.label}${page.haveChildren?'...':''}</span></a>
 						<c:if test="${not empty info.contextForCopy && (page.url eq info.currentURL)}">
 							<a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}"> <i class="bi bi-arrow-down-square"></i></a>
 						</c:if> 
@@ -99,7 +99,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 				
 				<li class="page-item ${child.trash?'trash ':''}${child.url eq info.currentURL?'selected ':''}${child.info.realContent?'real-content':''} ${fn:length(child.children) > 0?'have-children ':''}">
 					<div class="nav-item editor draggable">
-						<a id="page-${child.name}" class="draggable ${!child.trash?'editor':'trash'} ${child.active?'active':'unactive'} flow-${child.flowIndex}" data-pageid="${info.parent.id}" title="${child.path}" href="${child.url}">
+						<a id="page-${child.name}" class="draggable ${!child.trash?'editor':'trash'} ${child.active?'active':'unactive'} flow-${child.flowIndex} children-flow-${child.childrenFlowIndex}" data-pageid="${info.parent.id}" title="${child.path}" href="${child.url}">
 						<span>${child.info.label}${child.haveChildren?'...':''}</span>
 						<c:if test="${not empty info.contextForCopy && (child.url eq info.currentURL)}"> 
 							<a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}"> <i class="bi bi-arrow-down-square"></i></a>
@@ -127,7 +127,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 		<c:forEach var="brother" items="${page.info.nextBrothers}">
 			<li class="page-item" ${brother.trash?'class="trash"':''}>
 				<div class="nav-item ">
-					<a class="draggable editor" id="page-${brother.name}" title="${brother.path}" href="${brother.url}">${brother.info.label}${info.parent.parent.haveChildren?'...':''}</a>
+					<a class="draggable editor flow-${brother.flowIndex} children-flow-${brother.childrenFlowIndex}" id="page-${brother.name}" title="${brother.path}" href="${brother.url}">${brother.info.label}${info.parent.parent.haveChildren?'...':''}</a>
 				</div>
 			</li>
 		</c:forEach>

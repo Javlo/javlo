@@ -204,9 +204,14 @@ body._jv_dragnav>#preview_command {
 			border: 1px var(--javlo-ui-nav-btn-border-inactive) solid;
 
 			a {
-				max-width: 90%;
+				//max-width: 90%;
 				overflow: hidden;
 				height: 32px;
+
+			}
+
+			a:first-child {
+				flex-grow: 1;
 			}
 		}
 
@@ -453,6 +458,18 @@ body._jv_dragnav>#preview_command {
 	.pages ul.navigation li.page-item a.flow-1 {
 		color: #ffffff !important;
 		background-color: #d9534f;
+	}
+
+	.pages ul.navigation li.page-item a.children-flow-1 {
+		border-left: 5px #d9534f solid;
+	}
+
+	.pages ul.navigation li.page-item a.children-flow-2 {
+		border-left: 5px #f0ad4e solid;
+	}
+
+	.pages ul.navigation li.page-item a.children-flow-3 {
+		border-left: 5px #5cb85c solid;
 	}
 
 	.pages ul.navigation li.page-item a.flow-2 {
