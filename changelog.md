@@ -977,4 +977,6 @@ Security in case of vulnerabilities.
 ### Modified
 - display preview interface when error on template parsing
 - ## [2.2.2] - 19/12/2023
+### Added
+- template mode
 
