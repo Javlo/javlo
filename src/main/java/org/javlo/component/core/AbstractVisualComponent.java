@@ -925,6 +925,36 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			out.println("</div>");
 		}
 
+		List<String> templateClass = ctx.getCurrentTemplate().getComponentClass(getType());
+		if (templateClass != null && templateClass.size() > 0) {
+			out.println("<div class=\"line style-selection\">");
+			out.println("<label>Template mode</label>");
+			// out.println(XHTMLHelper.getInputOneSelect("style-" + getId(), styles,
+			// stylesLabel, getStyle(), "form-control", null, false));
+
+			String name = "csstemplate-" + getId();
+			out.println("<div class=\"btn-group\">");
+
+			out.println("<div class=\"_jv_btn-check\">");
+			String id = "csstemplate_0";
+			String classNone = "none";
+			out.println("<input type=\"radio\" name=\"" + name + "\" value=\"" + classNone + "\" id=\"" + id + "\" " + (classNone.equals(getCssTemplate()) ? "checked=\"checked\"" : "") + "/>");
+			out.println("<label for=\"" + id + "\"><i>" + classNone + "</i></label>");
+			out.println("</div>");
+
+			for (String className : templateClass) {
+				out.println("<div class=\"_jv_btn-check\">");
+				id = "csstemplate_" + className;
+				out.println("<input type=\"radio\" name=\"" + name + "\" value=\"" + className + "\" id=\"" + id + "\" " + (className.equals(getCssTemplate()) ? "checked=\"checked\"" : "") + "/>");
+				out.println("<label for=\"" + id + "\">" + className + "</label>");
+				out.println("</div>");
+			}
+
+			out.println("</div>");
+
+			out.println("</div>");
+		}
+
 		out.println("<div class=\"row\">");
 		if (getRenderes(ctx) == null || getRenderes(ctx).size() > 1) {
 			out.println("<div class=\"col-md-6 renderer-selection\">");
@@ -1236,6 +1266,15 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		boolean hidden = requestService.getParameter("hidden-" + getId(), null) != null;
 		if (isHiddable() && hidden != isDisplayHidden()) {
 			setDisplayHidden(hidden);
+			setModify();
+			setNeedRefresh(true);
+		}
+
+		String cssTemplate = requestService.getParameter("csstemplate-" + getId(), null);
+		System.out.println("\"csstemplate-\" + getId() = "+"csstemplate-" + getId());
+		System.out.println("cssTemplate = "+cssTemplate);
+		if (cssTemplate != null && !cssTemplate.equals(getCssTemplate())) {
+			setCssTemplate(cssTemplate);
 			setModify();
 			setNeedRefresh(true);
 		}
@@ -2424,6 +2463,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return componentBean.getStyle();
 	}
 
+	public String getCssTemplate() {
+		return componentBean.getCssTemplate();
+	}
+
+	public void setCssTemplate(String name) {
+		componentBean.setCssTemplate(name);
+	}
+
 	@Override
 	public final String getComponentCssClass(ContentContext ctx) {
 		if (componentBean.getStyle() == null) {
@@ -2464,6 +2511,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		// }
 		if (!StringHelper.isEmpty(getSpecificCssClass(ctx))) {
 			style = style + ' ' + getSpecificCssClass(ctx) + ' ';
+		}
+		if (getCssTemplate() != null) {
+			style = style + ' ' + Template.createCssClass(getType(), getCssTemplate()) + ' ';
 		}
 		if (isColored()) {
 			style = style + " colored";

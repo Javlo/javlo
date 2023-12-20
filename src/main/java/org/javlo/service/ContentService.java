@@ -3,27 +3,8 @@
  */
 package org.javlo.service;
 
-import java.io.PrintStream;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang3.StringUtils;
-import org.javlo.component.core.ComponentBean;
-import org.javlo.component.core.ComponentFactory;
-import org.javlo.component.core.ContentElementList;
-import org.javlo.component.core.IContentVisualComponent;
-import org.javlo.component.core.Unknown;
+import org.javlo.component.core.*;
 import org.javlo.component.links.MirrorComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
@@ -38,6 +19,12 @@ import org.javlo.message.GenericMessage;
 import org.javlo.module.core.IPrintInfo;
 import org.javlo.navigation.MenuElement;
 import org.javlo.template.TemplateFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.PrintStream;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * @author pvanderm represent a content
@@ -295,6 +282,7 @@ public class ContentService implements IPrintInfo {
 		bean.setList(inBean.isList());
 		bean.setHidden(inBean.isHidden());
 		bean.setStyle(inBean.getStyle());
+		bean.setCssTemplate(inBean.getCssTemplate());
 		bean.setColumnSize(inBean.getColumnSize());
 		IContentVisualComponent previousComp = ContentService.getInstance(ctx.getRequest()).getComponent(ctx, parentId);
 		if (previousComp != null) {
@@ -332,6 +320,7 @@ public class ContentService implements IPrintInfo {
 		bean.setHidden(inBean.isHidden());
 		bean.setColumnSize(inBean.getColumnSize());
 		bean.setStyle(inBean.getStyle());
+		bean.setCssTemplate(inBean.getCssTemplate());
 		bean.setArea(inBean.getArea());
 		bean.setRepeat(inBean.isRepeat());
 		// bean.setForceCachable(inBean.isForceCachable());

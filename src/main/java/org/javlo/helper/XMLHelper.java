@@ -360,6 +360,10 @@ public class XMLHelper {
 						out.print("\" style=\"");
 						out.print(StringHelper.toXMLAttribute(style));
 					}
+					if (beans[j].getCssTemplate() != null) {
+						out.print("\" csstpl=\"");
+						out.print(StringHelper.toXMLAttribute(beans[j].getCssTemplate()));
+					}
 					if (beans[j].getBackgroundColor() != null && beans[j].getBackgroundColor().trim().length() > 0) {
 						out.print("\" bgcol=\"");
 						out.print(beans[j].getBackgroundColor());

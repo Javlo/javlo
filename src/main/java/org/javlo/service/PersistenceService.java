@@ -837,6 +837,7 @@ public class PersistenceService {
 			// false));
 			bean.setNolink(isNolink);
 			bean.setStyle(style);
+			bean.setCssTemplate(contentNode.getAttributeValue("csstpl", null));
 			bean.setList(StringHelper.isTrue(inlist));
 			bean.setHidden(StringHelper.isTrue(contentNode.getAttributeValue("hidden")));
 			bean.setArea(contentNode.getAttributeValue("area", ComponentBean.DEFAULT_AREA));

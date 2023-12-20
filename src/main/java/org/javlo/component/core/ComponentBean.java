@@ -56,6 +56,8 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 	private Date modificationDate = new Date();
 	private Date deleteDate = null;
 
+	private String cssTemplate = null;
+
 	private String area = DEFAULT_AREA;
 
 	public ComponentBean() {		
@@ -351,4 +353,13 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 	public void setTextPosition(String textPosition) {
 		this.textPosition = textPosition;
 	}
+
+	public String getCssTemplate() {
+		return cssTemplate;
+	}
+
+	public void setCssTemplate(String cssTemplate) {
+		this.cssTemplate = cssTemplate;
+	}
+
 }

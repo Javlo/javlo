@@ -36,6 +36,10 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import java.awt.*;
 import java.io.*;
+import java.nio.file.FileVisitOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.List;
 import java.util.*;
@@ -44,6 +48,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class Template implements Comparable<Template> {
 
@@ -507,6 +512,8 @@ public class Template implements Comparable<Template> {
 	private List<Integer> sizes = null;
 
 	private List<String> hosts = null;
+
+	public Map<String, List<String>> componentClass;
 
 	public static Template getApplicationInstance(ServletContext application, ContentContext ctx, String templateDir) throws Exception {
 
@@ -2743,6 +2750,7 @@ public class Template implements Comparable<Template> {
 		}
 		synchronized (getLockImport(globalContext)) {
 			if (!isTemplateInWebapp(ctx) || !clear) {
+				componentClass = null;
 				String templateFolder = config.getTemplateFolder();
 				File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolderName()));
 				if (templateSrc.exists()) {
@@ -3796,16 +3804,61 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
-	public static void main(String[] args) throws IOException {
-		String html = "<div class=\"content-bloc ${(field.boolean.imageLeft.value=='true'?'image-left':'image-right')} ${(field.boolean.blob.value=='true'?'image-blob':'')}\" ${(field.boolean.important.value=='true'?'image-blob':'')}\"> ${field.wysiwyg-text.body.viewXHTMLCode}";
-		String regex = "\\bfield\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\b";
-
-		Pattern fieldPattern = Pattern.compile(regex);
-		Matcher matcher = fieldPattern.matcher(html);
-		while (matcher.find()) {
-			System.out.println(matcher.group());
-			System.out.println("---");
+	public List<String> getComponentClass(String compName) {
+		if (componentClass == null) {
+			componentClass = new HashMap<>();
 		}
+		return getComponentClass(compName, getFolder(), componentClass);
+	}
+
+	private static List<String> getComponentClass(String compName, File folder, Map<String, List<String>> componentClass) {
+		FilenameFilter filter = (dir, name) -> name.endsWith(".css") || name.endsWith(".scss") || name.endsWith(".less");
+				Path startPath = Paths.get(folder.getAbsolutePath());
+				try (Stream<Path> stream = Files.walk(startPath, FileVisitOption.FOLLOW_LINKS)) {
+					stream.filter(Files::isRegularFile)
+							.filter(path -> path.toString().endsWith(".css") || path.toString().endsWith(".scss") || path.toString().endsWith(".less"))
+							.forEach(path -> processFile(path, componentClass));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+		return componentClass.get(compName);
+	}
+
+	public static final String COMP_CSS_CLASS_PREFIX = "__";
+
+    //private static final Pattern PATTERN = Pattern.compile("\\."+COMP_CSS_CLASS_PREFIX+"([^\\s_]+)"+COMP_CSS_CLASS_PREFIX+"([^\\s,{]+)");
+
+	private static final Pattern PATTERN = Pattern.compile("\\.__([^_]+)__([^\\s,{]+)");
+
+	private static void processFile(Path file, Map<String, List<String>> componentClass) {
+		try (Stream<String> stream = Files.lines(file)) {
+			stream.forEach(line -> extractClassNames(line, componentClass));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void extractClassNames(String line, Map<String, List<String>> componentClass) {
+		Matcher matcher = PATTERN.matcher(line);
+
+		while (matcher.find()) {
+			String key = matcher.group(1);
+			if (componentClass.get(key) == null) {
+				componentClass.put(key, new LinkedList<>());
+			}
+			String value = matcher.group(2);
+			if (!componentClass.get(key).contains(value)) {
+				componentClass.get(key).add(value);
+			}
+		}
+	}
+
+	public static String createCssClass (String component, String mode) {
+		return "__"+component+"__"+mode;
+	}
+
+	public static void main(String[] args) {
+		getComponentClass("coucou", new File("C:\\work\\template\\bootstrap-5.2.0\\scss"), new HashMap<String, List<String>>());
 	}
 
 }
