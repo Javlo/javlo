@@ -588,11 +588,11 @@ public class XMLManipulationHelper {
                 }
 
                 String footerResourceIndlue = "";
-                if (!globalContext.getStaticConfig().isProd()) {
+                if (!globalContext.isProd()) {
                     footerResourceIndlue += "<!-- comp resources -->";
                 }
                 footerResourceIndlue += "<%for (String uri : currentPage.getExternalResources(ctx)) {%><%=XHTMLHelper.renderHeaderResourceInsertion(ctx, uri, \"" + template.getBuildId() + "\")%><%}%>";
-                if (!globalContext.getStaticConfig().isProd()) {
+                if (!globalContext.isProd()) {
                     footerResourceIndlue += "<!-- /comp resources -->";
                 }
                 remplacement.addReplacement(tags[i].getCloseStart() - 1, tags[i].getCloseStart() - 1, footerResourceIndlue + "<%=ctx.getGlobalContext().getFooterBloc()%>" + previewCode);
@@ -772,11 +772,11 @@ public class XMLManipulationHelper {
                 out.close();
 
                 String pageModules = "";
-                if (!globalContext.getStaticConfig().isProd()) {
+                if (!globalContext.isProd()) {
                     pageModules += "<!-- comp modules -->";
                 }
                 pageModules += "<%for (String uri : currentPage.getExternalModules(ctx)) {%><%=XHTMLHelper.renderHeaderModuleInsertion(ctx, uri, \"" + template.getBuildId() + "\")%><%}%>";
-                if (!globalContext.getStaticConfig().isProd()) {
+                if (!globalContext.isProd()) {
                     pageModules += "<!-- /comp modules -->";
                 }
                 String pageCss = "<%if (currentPage.getCss(ctx).length() > 0) {%><style><%=currentPage.getCss(ctx)%></style><%}%>";

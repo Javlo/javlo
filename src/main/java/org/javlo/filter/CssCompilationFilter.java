@@ -1,23 +1,10 @@
 package org.javlo.filter;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.net.URI;
-import java.util.logging.Logger;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.io.FileUtils;
+import io.bit3.jsass.CompilationException;
+import io.bit3.jsass.Compiler;
+import io.bit3.jsass.Options;
+import io.bit3.jsass.Output;
+import io.bit3.jsass.context.FileContext;
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -25,11 +12,11 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.lesscss.LessCompiler;
 
-import io.bit3.jsass.CompilationException;
-import io.bit3.jsass.Compiler;
-import io.bit3.jsass.Options;
-import io.bit3.jsass.Output;
-import io.bit3.jsass.context.FileContext;
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import java.io.*;
+import java.net.URI;
+import java.util.logging.Logger;
 
 public class CssCompilationFilter implements Filter {
 
@@ -48,7 +35,7 @@ public class CssCompilationFilter implements Filter {
 		File cssFile = new File(ResourceHelper.getRealPath(httpRequest.getSession().getServletContext(), path));
 		boolean compileFile = !cssFile.exists();
 		if (!compileFile) {
-			if (!StaticConfig.getInstance(((HttpServletRequest) request).getSession().getServletContext()).isProd()) {
+			if (!globalContext.isProd()) {
 				File lessFile = new File(cssFile.getAbsolutePath().substring(0, cssFile.getAbsolutePath().length() - 4) + ".less");
 				File sassFile = new File(cssFile.getAbsolutePath().substring(0, cssFile.getAbsolutePath().length() - 4) + ".scss"); 
 				
@@ -83,11 +70,9 @@ public class CssCompilationFilter implements Filter {
 					if (sassFile.exists()) {
 						sass = true;
 						StaticConfig staticConfig = StaticConfig.getInstance(httpRequest.getSession().getServletContext());
-						if (compileSass(staticConfig.isProd(), sassFile, tempCssFile)) {
-						}
+						compileSass(globalContext.isProd(), sassFile, tempCssFile);
 					} else if (lessFile.exists()) {
-						if (compile(lessFile, tempCssFile, globalContext.getStaticConfig().isProd())) {
-						}
+						compile(lessFile, tempCssFile, globalContext.isProd());
 					}
 					if (!tempCssFile.renameTo(cssFile)) {
 						logger.severe("error : rename file:" + tempCssFile + " to " + cssFile);

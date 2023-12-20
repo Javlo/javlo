@@ -66,7 +66,14 @@ if (!rightOnPage) {
 				
 				<div class="page-shortcut">
 					<%-- 									<span><i class="bi bi-gear" onclick="editPreview.openModal('Page properties', '${urlPageProperties}'); return false;"></i></span> --%>
+
+						<div class="btn btn-integrity btn-notext btn-prod">
+						<c:if test="${globalContext.prod}"><i class="bi bi-airplane" title="prod"></i></c:if>
+						<c:if test="${!globalContext.prod}"><i class="bi bi-cone-striped" title="staging"></i></c:if>
+						</div>
+
 					<div class="btn btn-integrity btn-notext" data-toggle="_eprv_collapse" data-target="#integrity-list" href="#integrity-list" aria-expanded="false" aria-controls="integrity-list">
+
 						<c:if test="${integrities.levelLabel != 'success'}">
 							<i class="bi bi-exclamation-triangle"></i>
 						</c:if>

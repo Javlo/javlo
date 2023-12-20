@@ -4580,6 +4580,15 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			return host;
 		}
 	}
+
+	public boolean isProd() {
+		Boolean prod = getSpecialConfig().isProd();
+		if (prod == null) {
+			return getStaticConfig().isProd();
+		} else {
+			return prod;
+		}
+	}
 	
 	public String getHostName() {
 		return hostName;

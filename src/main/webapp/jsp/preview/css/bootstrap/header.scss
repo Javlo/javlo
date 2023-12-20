@@ -235,6 +235,7 @@
 
 #preview_command .page-shortcut {
 	position: relative;
+	display: flex;
 
 	&:before {
 		content: "";

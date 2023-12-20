@@ -403,7 +403,6 @@ public class Box extends AbstractVisualComponent implements IContainer {
 	}
 
 	public boolean isCloseBox() {
-		
 		if (getValue().contains(";")) {
 			return StringHelper.isTrue(StringHelper.stringToCollection(getValue(), ";").get(0));
 		} else {
@@ -452,6 +451,19 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		} else {
 			return "";
 		}
+	}
+
+	@Override
+	public String performConfig(ContentContext ctx) throws Exception {
+		String msg = super.performConfig(ctx);
+		Box refcomp = getCloseComponent(ctx);
+		if (refcomp == null) {
+			refcomp = getOpenComponent(ctx);
+		}
+		if (refcomp != null) {
+			refcomp.setRenderer(ctx, getRenderer(ctx));
+		}
+		return msg;
 	}
 
 	@Override

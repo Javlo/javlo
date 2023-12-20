@@ -2482,7 +2482,7 @@ public class ContentContext {
 
 	public boolean isProd() {
 		if (prod == null) {
-			return getGlobalContext().getStaticConfig().isProd();
+			return getGlobalContext().isProd();
 		} else {
 			return prod;
 		}

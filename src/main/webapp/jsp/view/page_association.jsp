@@ -21,7 +21,7 @@ boolean interactiveMode = ctx.isInteractiveMode();
 int pageNumber = 1;
 int lastPage = currentPage.getChildMenuElements().size();
 
-if (!ctx.getGlobalContext().getStaticConfig().isProd()) {
+if (!ctx.getGlobalContext().isProd()) {
 %><!-- page association on : <%=currentPage.getName()%> --><%
 }
 

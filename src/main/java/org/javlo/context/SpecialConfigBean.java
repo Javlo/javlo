@@ -31,6 +31,14 @@ public class SpecialConfigBean {
 		return StringHelper.isTrue(config.get("content.pasteasmirror"));
 	}
 
+	public Boolean isProd() {
+		if (config.get("prod") == null) {
+			return null;
+		} else {
+			return StringHelper.isTrue(config.get("prod"));
+		}
+	}
+
 	/**
 	 * track access to resource and page. Use for display the most readed picture or
 	 * page. false by default

@@ -1,39 +1,23 @@
 package org.javlo.filter;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintStream;
-import java.io.Writer;
-import java.net.URI;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.logging.Logger;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-
+import io.bit3.jsass.CompilationException;
+import io.bit3.jsass.Compiler;
+import io.bit3.jsass.Options;
+import io.bit3.jsass.Output;
+import io.bit3.jsass.context.FileContext;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.lesscss.LessCompiler;
 
-import io.bit3.jsass.CompilationException;
-import io.bit3.jsass.Compiler;
-import io.bit3.jsass.Options;
-import io.bit3.jsass.Output;
-import io.bit3.jsass.context.FileContext;
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import java.io.*;
+import java.net.URI;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.logging.Logger;
 
 public class JSMergeFilter implements Filter {
 
@@ -78,7 +62,7 @@ public class JSMergeFilter implements Filter {
 			out.flush();
 			jsFile.createNewFile();
 			String finalJS = new String(outStream.toByteArray());
-			if (globalContext != null && globalContext.getStaticConfig().isProd()) {
+			if (globalContext != null && globalContext.isProd()) {
 				finalJS = ResourceHelper.mimifyJS(finalJS);
 			}
 			ResourceHelper.writeStringToFile(jsFile, finalJS, ContentContext.CHARACTER_ENCODING);
