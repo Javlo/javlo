@@ -3,23 +3,10 @@
  */
 package org.javlo.component.links;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Date;
-import java.util.logging.Logger;
-
-import org.javlo.component.core.ComplexPropertiesLink;
-import org.javlo.component.core.ComponentBean;
-import org.javlo.component.core.IInternalLink;
-import org.javlo.component.core.ILink;
-import org.javlo.component.core.IReverseLinkComponent;
+import org.javlo.component.core.*;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.ElementaryURLHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
-import org.javlo.helper.XHTMLNavigationHelper;
+import org.javlo.helper.*;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.module.mailing.MailingAction;
 import org.javlo.navigation.MenuElement;
@@ -28,6 +15,11 @@ import org.javlo.service.ContentService;
 import org.javlo.service.NavigationService;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Date;
+import java.util.logging.Logger;
 
 /**
  * @author pvandermaesen
@@ -244,15 +236,11 @@ public class InternalLink extends ComplexPropertiesLink implements IInternalLink
 		if (style == null) {
 			style = TITLE;
 		}
-
 		if (style.equals(HIDDEN)) {
 			return "";
 		}
-
 		StringBuffer res = new StringBuffer();
-
 		String linkId = properties.getProperty(LINK_KEY, "/");
-
 		// MenuElement child = nav.searchChildFromId(linkId);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		NavigationService navigationService = NavigationService.getInstance(globalContext);

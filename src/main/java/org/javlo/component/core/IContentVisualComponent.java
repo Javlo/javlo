@@ -32,8 +32,8 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 
 	static public int SEARCH_LEVEL_NONE = 0;
 	static public int SEARCH_LEVEL_LOW = 1;
-	static public int SEARCH_LEVEL_MIDDLE = 2;
-	static public int SEARCH_LEVEL_HIGH = 3;
+	static public int SEARCH_LEVEL_MIDDLE = 5;
+	static public int SEARCH_LEVEL_HIGH = 10;
 
 	static public int COMPLEXITY_EASY = 1;
 	static public int COMPLEXITY_STANDARD = 2;

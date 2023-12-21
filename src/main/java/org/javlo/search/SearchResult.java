@@ -3,18 +3,6 @@
  */
 package org.javlo.search;
 
-import java.io.Serializable;
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Logger;
-
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
@@ -29,6 +17,11 @@ import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.owasp.encoder.Encode;
+
+import java.io.Serializable;
+import java.lang.ref.WeakReference;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * @author pvandermaesen
@@ -377,7 +370,6 @@ public class SearchResult {
 					
 					while (elemList.hasNext(ctx)) {
 						IContentVisualComponent cpt = elemList.next(ctx);
-
 						if (componentType == null || componentType.contains(cpt.getType())) {
 							if (cpt.getSearchLevel() > 0) {
 								String compSearchText = StringHelper.createFileName(cpt.getTextForSearch(ctx)).toLowerCase();
