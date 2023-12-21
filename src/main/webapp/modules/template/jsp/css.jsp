@@ -85,23 +85,25 @@
 
 		</script>
 
-		<c:forEach var="folder" items="${cssFolder}">
-			<div class="file-block">
-			<div class="title"><a onclick="openCloseFileList(event, this)" role="button" data-toggle="collapse" href="#${folder.key}" aria-expanded="false" aria-controls="${folder.key}">${folder.key}</a></div>
-			<div class="files" id="${folder.key}">
-				<c:forEach var="css" items="${folder.value}" varStatus="status">
-					<c:set var="file" value="${folder.key}/${css}" />
-					<c:url var="cssUrl" value="${info.currentURL}" context="/">
-						<c:param name="css" value="${file}" />
-						<c:param name="templateid" value="${templateid}" />
-						<c:param name="webaction" value="editCSS" />
-						<c:param name="search" value="${param.search}" />
-					</c:url>
-					<a id="${folder.key}-${status.index}" ${file == param.css?' class="file-link active"':'class="file-link"'} href="${cssUrl}">${css}</a>
-				</c:forEach>
-			</div>
-			</div>
-		</c:forEach>
+		<div class="file-list-scroll">
+			<c:forEach var="folder" items="${cssFolder}">
+				<div class="file-block">
+				<div class="title"><a onclick="openCloseFileList(event, this)" role="button" data-toggle="collapse" href="#${folder.key}" aria-expanded="false" aria-controls="${folder.key}">${folder.key}</a></div>
+				<div class="files" id="${folder.key}">
+					<c:forEach var="css" items="${folder.value}" varStatus="status">
+						<c:set var="file" value="${folder.key}/${css}" />
+						<c:url var="cssUrl" value="${info.currentURL}" context="/">
+							<c:param name="css" value="${file}" />
+							<c:param name="templateid" value="${templateid}" />
+							<c:param name="webaction" value="editCSS" />
+							<c:param name="search" value="${param.search}" />
+						</c:url>
+						<a id="${folder.key}-${status.index}" ${file == param.css?' class="file-link active"':'class="file-link"'} href="${cssUrl}">${css}</a>
+					</c:forEach>
+				</div>
+				</div>
+			</c:forEach>
+		</div>
 
 		<c:if test="${not empty param.css}"><script>openSection();</script></c:if>
 	</div>
@@ -179,11 +181,13 @@
 				</div>
 			</div>
 
-			<c:forEach var="cssVar" items="${cssVariables}">
-				<div class="css-variable">
-					<a href="javascript:navigator.clipboard.writeText('${cssVar.key}');" title="<c:out value="${cssVar.value}" escapeXml="true"/>">${cssVar.key}</a>
-				</div>
-			</c:forEach>
+			<div class="list-var">
+				<c:forEach var="cssVar" items="${cssVariables}">
+					<div class="css-variable">
+						<a href="javascript:navigator.clipboard.writeText('${cssVar.key}');" title="<c:out value="${cssVar.value}" escapeXml="true"/>">${cssVar.key}</a>
+					</div>
+				</c:forEach>
+			</div>
 		</div>
 	</div>
 

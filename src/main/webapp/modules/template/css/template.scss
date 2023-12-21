@@ -209,6 +209,11 @@ input[readonly] {
 		}
 	}
 
+	.file-list-scroll {
+		height: calc(100vh - 325px);
+		overflow: auto;
+	}
+
 }
 
 .btn {
@@ -221,9 +226,7 @@ input[readonly] {
 	
 }
 
-
 /** edit images **/
-
 
 .standard-form table input[type="text"] {
     display: inline-block;
@@ -346,6 +349,11 @@ input[readonly] {
 			padding-left: 8px;
 			margin-left: -24px;
 		}
+	}
+
+	.list-var {
+		height: calc(100vh - 400px);
+		overflow: auto;
 	}
 }
 
