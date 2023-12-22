@@ -120,7 +120,14 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
 		String msg = super.performEdit(ctx);
-		setFieldValue("xhtml", XHTMLHelper.replaceAbsoluteLinks(ctx, getFieldValue(ctx, "xhtml")));
+
+		// no escape '&' in jsoup
+		final String ANDKEY = "____AND___JVL___";
+		String xhtml = getFieldValue(ctx, "xhtml");
+		xhtml = xhtml.replace("&", ANDKEY);
+		xhtml = XHTMLHelper.replaceAbsoluteLinks(ctx,xhtml );
+		xhtml = xhtml.replace(ANDKEY,"&");
+		setFieldValue("xhtml", xhtml);
 		storeProperties();
 		if (isModify()) {
 			createRenderer(ctx);

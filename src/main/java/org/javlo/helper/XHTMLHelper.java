@@ -2364,19 +2364,10 @@ public class XHTMLHelper {
 	}
 
 	public static void main(String[] args) throws MalformedURLException, Exception {
-		String testHtml = "<div class=\"col-lg-3 col-md-12 footer-contact text-center text-md-start\">\n" +
-				"\t\t\t<h4>Contact Us</h4>\n" +
-				"<p><strong>HOTREC AISBL</strong><br>\n" +
-				"              <span class=\"less\">7955861942-03<br>\n" +
-				"                BE 0451258945</span><br>\n" +
-				"\t\t\t\t\t36-38 Rue Dautzenberg<br> B-1050 Brussels<br> Belgium <br> <br> <strong>Phone:</strong>\n" +
-				"  \t\t\t\t\t<a class=\"white-link\" href=\"tel:003225136323\">+32 2 513 63 23</a><br> <strong>Email:</strong>\n" +
-				"  <a class=\"white-link\" href=\"mailto:info@hotrec.eu\">info@hotrec.eu</a></p>\n" +
-				"\t</div>";
-
-		testHtml = minimizeHtml(replaceLinks(null, testHtml));
-
-		System.out.println(testHtml);
+		String testHtml = "<div>Javlo <c:if test='p>1 && d>1'>not null</c:if></div>";
+		Document doc = Jsoup.parse(testHtml, "", Parser.htmlParser());
+		//doc.outputSettings().escapeMode(EscapeMode.base);
+		System.out.println("base = "+doc.html());
 	}
 
 	public static String textToXHTMLNewWin(String text) {
