@@ -976,7 +976,11 @@ Security in case of vulnerabilities.
 - flow publication
 ### Modified
 - display preview interface when error on template parsing
-- ## [2.2.2] - 19/12/2023
+## [2.2.2] - 19/12/2023
 ### Added
 - template mode
+### Modified
+- jakarta.servlet 5.0
+- remove social network code
+## [2.3] - 21/12/2023
 
