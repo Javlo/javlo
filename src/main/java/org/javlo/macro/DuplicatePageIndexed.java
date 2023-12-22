@@ -1,10 +1,5 @@
 package org.javlo.macro;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.javlo.actions.IAction;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ContentElementList;
@@ -22,6 +17,11 @@ import org.javlo.module.content.Edit;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DuplicatePageIndexed extends AbstractMacro implements IInteractiveMacro, IAction {
 
@@ -160,4 +160,8 @@ public class DuplicatePageIndexed extends AbstractMacro implements IInteractiveM
 		return true;
 	}
 
+	@Override
+	public boolean isInterative() {
+		return true;
+	}
 }

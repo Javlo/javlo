@@ -1,6 +1,7 @@
 <%@ taglib uri="jakarta.tags.core" prefix="c"
 %><%@ taglib prefix="fn" uri="jakarta.tags.functions"
-%><c:set var="colsClass" value="cols" />
+%>
+<c:set var="colsClass" value="cols" />
 <c:forEach var="content" items="${sharedContent}">
 	<c:if test="${not empty content.description}">
 		<c:set var="colsClass" value="no-cols" />
@@ -21,7 +22,10 @@
 <a href="${content.editURL}" title="edit" lang="en" onclick="editPreview.openModal('${content.title}', '${content.editURL}'); return false;">
 </c:if></c:if>	
 	<c:if test="${not empty content.imageURL}">
-		<figure><img id="img-${status.index}" data-src-on-visible-preview="${content.imageURL}" /></figure>
+		<figure>
+			<c:if test="${!contentContext.ajax}"><img id="img-${status.index}" data-src-on-visible-preview="${content.imageURL}" /></c:if>
+			<c:if test="${contentContext.ajax}"><img id="img-${status.index}" src="${content.imageURL}" /></c:if>
+		</figure>
 	</c:if>	
 	<div class="caption">${content.title}</div>
 	<c:if test="${not empty content.photoPageLink}"><div class="links"><a target="_blank" href="${content.photoPageLink}"><i class="fa fa-external-link" aria-hidden="true"></i> download HD</a></div></c:if>
