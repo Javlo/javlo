@@ -59,6 +59,9 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<maven.compiler.release>17</maven.compiler.release>
+
 		<jackson.version>2.13.4</jackson.version>
 		<lucene.version>9.6.0</lucene.version>
 		<elasticsearch.version>7.17.6</elasticsearch.version>
@@ -66,6 +69,7 @@
 		<xdocreport.version>2.0.4</xdocreport.version>
 		<poi.version>5.2.4</poi.version>
 		<maven.plugin.version>3.20.0</maven.plugin.version>
+		<langchain.version>0.23.0</langchain.version>
 	</properties>
 
 	<dependencies>
@@ -78,11 +82,6 @@
 			<version>6.2.0.202206071550-r</version>
 		</dependency>
 
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>jstl</artifactId>
-			<version>1.2</version>
-		</dependency>
 		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-web-api</artifactId>
@@ -103,10 +102,11 @@
 			<version>2.10.1</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
 		<dependency>
-			<groupId>commons-fileupload</groupId>
-			<artifactId>commons-fileupload</artifactId>
-			<version>1.5</version>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.15.1</version>
 		</dependency>
 
 		<dependency>
@@ -160,13 +160,42 @@
 		<!-- <version>8.0.11</version> -->
 		<!-- </dependency> -->
 
-		<!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
+		<!-- https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api -->
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+			<version>5.0.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+			<version>6.0.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.servlet.jsp</groupId>
+			<artifactId>jakarta.servlet.jsp-api</artifactId>
 			<version>3.1.0</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>jakarta.servlet.jsp.jstl</groupId>
+			<artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.el</groupId>
+			<artifactId>jakarta.el-api</artifactId>
+			<version>5.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.web</groupId>
+			<artifactId>jakarta.servlet.jsp.jstl</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+
 
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
 		<dependency>
@@ -182,15 +211,16 @@
 		</dependency>
 
 		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.15.0</version>
-		</dependency>
-
-		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 			<version>1.16.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-fileupload2-jakarta -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-fileupload2-jakarta</artifactId>
+			<version>2.0.0-M1</version>
 		</dependency>
 
 		<dependency>
@@ -244,12 +274,13 @@
 			<version>0.16</version>
 		</dependency> -->
 
+		<!-- https://mvnrepository.com/artifact/jakarta.servlet.jsp.jstl/jakarta.servlet.jsp.jstl-api -->
 		<dependency>
-			<groupId>javax.servlet.jsp</groupId>
-			<artifactId>jsp-api</artifactId>
-			<version>2.1</version>
-			<scope>provided</scope>
+			<groupId>jakarta.servlet.jsp.jstl</groupId>
+			<artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+			<version>3.0.0</version>
 		</dependency>
+
 
 		<!--
 		https://mvnrepository.com/artifact/org.xhtmlrenderer/flying-saucer-pdf-openpdf -->
@@ -351,7 +382,7 @@
 		<dependency>
 			<groupId>com.paypal.sdk</groupId>
 			<artifactId>rest-api-sdk</artifactId>
-			<version>0.5.2</version>
+			<version>1.14.0</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.mozilla/rhino -->
@@ -496,7 +527,7 @@
 		<dependency>
 			<groupId>com.dropbox.core</groupId>
 			<artifactId>dropbox-core-sdk</artifactId>
-			<version>3.1.1</version>
+			<version>6.0.0</version>
 			<exclusions>
 				<exclusion>
 					<groupId>com.fasterxml.jackson.core</groupId>
@@ -513,11 +544,11 @@
 			</exclusions>
 		</dependency>
 
-		<dependency>
-			<groupId>org.apache.oltu.oauth2</groupId>
-			<artifactId>org.apache.oltu.oauth2.client</artifactId>
-			<version>1.0.2</version>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.apache.oltu.oauth2</groupId>-->
+<!--			<artifactId>org.apache.oltu.oauth2.client</artifactId>-->
+<!--			<version>1.0.2</version>-->
+<!--		</dependency>-->
 
 		<dependency>
 			<groupId>com.github.sheigutn</groupId>
@@ -643,7 +674,7 @@
 		<dependency>
 			<groupId>org.thymeleaf</groupId>
 			<artifactId>thymeleaf</artifactId>
-			<version>3.0.0.RELEASE</version>
+			<version>3.1.2.RELEASE</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.sejda.imageio/webp-imageio -->
@@ -696,6 +727,47 @@
 			<version>1.0.2</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit -->
+		<dependency>
+			<groupId>org.eclipse.jgit</groupId>
+			<artifactId>org.eclipse.jgit</artifactId>
+			<version>6.7.0.202309050840-r</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/dev.langchain4j/langchain4j-core -->
+		<dependency>
+			<groupId>dev.langchain4j</groupId>
+			<artifactId>langchain4j-core</artifactId>
+			<version>${langchain.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/dev.langchain4j/langchain4j-open-ai -->
+		<dependency>
+			<groupId>dev.langchain4j</groupId>
+			<artifactId>langchain4j-open-ai</artifactId>
+			<version>${langchain.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/dev.langchain4j/langchain4j -->
+		<dependency>
+			<groupId>dev.langchain4j</groupId>
+			<artifactId>langchain4j</artifactId>
+			<version>${langchain.version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.apache.ftpserver/ftpserver-core -->
+		<dependency>
+			<groupId>org.apache.ftpserver</groupId>
+			<artifactId>ftpserver-core</artifactId>
+			<version>1.1.4</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-beans -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>6.1.2</version>
+		</dependency>
 
 	</dependencies>
 
@@ -704,14 +776,14 @@
 			<id>com.springsource.repository.bundles.external</id>
 			<name>SpringSource Enterprise Bundle Repository - External Bundle
 				Releases</name>
-			<url>http://repository.springsource.com/maven/bundles/external</url>
+			<url>https://repository.springsource.com/maven/bundles/external</url>
 		</repository>
 		<repository>
 			<id>sonatype</id>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
-			<url>http://oss.sonatype.org/content/repositories/snapshots/</url>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
 		</repository>
 		<repository>
 			<id>apache.snapshots</id>
@@ -741,9 +813,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.11.0</version>
-				<configuration>
-					<release>11</release>
-				</configuration>
 			</plugin>
 
 			<plugin>
@@ -765,7 +834,7 @@
 				<artifactId>maven-pmd-plugin</artifactId>
 				<version>${maven.plugin.version}</version>
 				<configuration>
-					<targetJdk>1.11</targetJdk>
+					<targetJdk>1.17</targetJdk>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -813,9 +882,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<configuration>
-						<release>11</release>
-					</configuration>
+
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
