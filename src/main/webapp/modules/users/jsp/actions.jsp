@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <a class="action-button delete" onclick="document.getElementById('form-select-user').submit(); return false;" href="#"><span>${i18n.edit['edit-users.action.delete']}</span></a>
 <c:if test="${not empty CSVLink}">
 	<div class="link"><a href="${CSVLink}">${CSVName}</a><c:if test="${not empty ExcelLink}"> - <a href="${ExcelLink}">[excel]</a></c:if></div>

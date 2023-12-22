@@ -3,7 +3,7 @@
  */
 package org.javlo.component.image;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.javlo.component.core.ComponentContext;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IImageFilter;
@@ -35,7 +35,7 @@ import org.javlo.user.User;
 import org.javlo.ztatic.StaticInfo;
 import org.owasp.encoder.Encode;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;

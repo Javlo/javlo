@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"
+<%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib uri="jakarta.tags.functions" prefix="fn"
 %><%@ taglib uri="/WEB-INF/javlo.tld" prefix="jv"%><jv:changeFilter var="previewURL" url="${previewURL}" filter="full" newFilter="float" />
 <c:set var="loadEvent" value="" />
 <c:set var="styleWidth" value="" /><c:set var="styleWidthWidthoutStyle" value="" /><c:if test="${not empty componentWidth && !param['clean-html']}"><c:set var="styleWidthWidthoutStyle" value='width: ${componentWidth};' /><c:set var="styleWidth" value=' style="width: ${componentWidth};"' /></c:if>

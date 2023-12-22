@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <div id="content" class="content ${not empty lightInterface?'light':''}">
 <c:if test="${not empty event}">	
 	<div class="row">

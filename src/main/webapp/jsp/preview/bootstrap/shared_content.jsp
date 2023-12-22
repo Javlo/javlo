@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib uri="jakarta.tags.core" prefix="c"%><%@ taglib prefix="fn" uri="jakarta.tags.functions"%>
 <div class="well drop-files" onclick="document.getElementById('drop-file-form-input').click();">
 	<%-- 	<c:url var="uploadUrl" value="${info.uploadURL}" context="/"> --%>
 	<%-- 		<c:param name="provider" value="${provider.name}" /> --%>

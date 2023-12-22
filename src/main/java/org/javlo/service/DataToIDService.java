@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;

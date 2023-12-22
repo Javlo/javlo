@@ -3,7 +3,7 @@
  */
 package org.javlo.component.form;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.javlo.context.ContentContext;
 

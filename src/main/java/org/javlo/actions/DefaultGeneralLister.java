@@ -2,7 +2,7 @@ package org.javlo.actions;
 
 import java.util.logging.Logger;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;

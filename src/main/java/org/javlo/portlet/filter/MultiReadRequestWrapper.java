@@ -10,15 +10,15 @@ import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.ReadListener;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ReadListener;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.ResourceHelper;
 
-public class MultiReadRequestWrapper extends javax.servlet.http.HttpServletRequestWrapper {
+public class MultiReadRequestWrapper extends jakarta.servlet.http.HttpServletRequestWrapper {
 
 	protected static Logger logger = Logger.getLogger(MultiReadRequestWrapper.class.getName());
 

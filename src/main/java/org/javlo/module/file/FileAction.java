@@ -20,11 +20,11 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.imaging.common.ImageMetadata;
 import org.apache.commons.io.filefilter.FileFileFilter;
 import org.javlo.actions.AbstractModuleAction;

@@ -1,6 +1,6 @@
 package org.javlo.component.web2;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.javlo.actions.IAction;

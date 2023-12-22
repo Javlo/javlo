@@ -2,7 +2,7 @@ package org.javlo.message;
 
 import java.net.URL;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.XHTMLHelper;

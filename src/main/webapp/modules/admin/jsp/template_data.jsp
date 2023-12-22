@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" 
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+<%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions"
 %><c:if test="${info.admin || not empty contentContext.currentTemplate.templateData[param.name]}"><div class="row data-line">
 	<div class="col-xs-6 col-6">
 	<label for="${param.name}">${param.name}</label>

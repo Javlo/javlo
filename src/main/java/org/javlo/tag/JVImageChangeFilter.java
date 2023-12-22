@@ -1,15 +1,13 @@
 package org.javlo.tag;
 
-import java.util.logging.Logger;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
-
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.jsp.tagext.TagSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.URLHelper;
+
+import java.util.logging.Logger;
 
 public class JVImageChangeFilter extends TagSupport {
 
@@ -26,7 +24,7 @@ public class JVImageChangeFilter extends TagSupport {
 	private String url = null;
 
 	@Override
-	public int doStartTag() throws JspException {
+	public int doStartTag() {
 		try {
 			ContentContext ctx = ContentContext.getContentContext((HttpServletRequest) pageContext.getRequest(), (HttpServletResponse) pageContext.getResponse());
 			String newURL;
@@ -65,7 +63,6 @@ public class JVImageChangeFilter extends TagSupport {
 			ctx.getRequest().setAttribute(getVar(), newURL);
 		} catch (Exception ioe) {
 			ioe.printStackTrace();
-			throw new JspException("Error: " + ioe.getMessage());
 		}
 		return SKIP_BODY;
 	}

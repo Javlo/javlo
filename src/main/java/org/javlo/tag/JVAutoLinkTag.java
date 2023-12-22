@@ -1,25 +1,25 @@
 package org.javlo.tag;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.BodyTagSupport;
-
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.jsp.JspTagException;
+import jakarta.servlet.jsp.tagext.BodyTagSupport;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.service.ReverseLinkService;
+
 
 public class JVAutoLinkTag extends BodyTagSupport {
 
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public int doStartTag() throws JspException {
+	public int doStartTag() throws JspTagException {
 		return EVAL_BODY_TAG;
 	}
 
 	@Override
-	public int doAfterBody() throws JspException {
+	public int doAfterBody() throws JspTagException {
 		try {
 			String body = getBodyContent().getString();			
 			String html = body;		
@@ -29,7 +29,7 @@ public class JVAutoLinkTag extends BodyTagSupport {
 			html=XHTMLHelper.autoLink(html);
 			getBodyContent().getEnclosingWriter().print(html);
 		} catch (Exception ioe) {
-			throw new JspException("Error: " + ioe.getMessage());
+			throw new JspTagException("Error: " + ioe.getMessage());
 		}
 		return EVAL_PAGE;
 	}

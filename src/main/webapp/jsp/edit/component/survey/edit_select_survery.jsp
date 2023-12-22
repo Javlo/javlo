@@ -1,6 +1,6 @@
 <%@page import="org.javlo.servlet.IVersion"%><%@ taglib
-	uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib
-	prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+	uri="jakarta.tags.core" prefix="c"%><%@ taglib
+	prefix="fn" uri="jakarta.tags.functions"%>
 	
 	
 <div class="form-group">

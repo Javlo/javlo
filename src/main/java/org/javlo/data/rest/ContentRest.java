@@ -1,6 +1,6 @@
 package org.javlo.data.rest;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.javlo.context.ContentContext;
 import org.javlo.navigation.MenuElement;

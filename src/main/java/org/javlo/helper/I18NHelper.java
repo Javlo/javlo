@@ -6,7 +6,7 @@ package org.javlo.helper;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.javlo.context.GlobalContext;
 import org.javlo.i18n.I18nAccess;

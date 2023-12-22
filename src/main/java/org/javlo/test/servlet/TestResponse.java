@@ -1,15 +1,14 @@
 package org.javlo.test.servlet;
 
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import org.javlo.context.ContentContext;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Locale;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
-
-import org.javlo.context.ContentContext;
 
 public class TestResponse implements HttpServletResponse {
 
@@ -132,18 +131,9 @@ public class TestResponse implements HttpServletResponse {
 		return url;
 	}
 
-	@Override
-	public String encodeRedirectUrl(String url) {
-		return url;
-	}
 
 	@Override
 	public String encodeURL(String url) {
-		return url;
-	}
-
-	@Override
-	public String encodeUrl(String url) {
 		return url;
 	}
 
@@ -173,10 +163,6 @@ public class TestResponse implements HttpServletResponse {
 
 	@Override
 	public void setStatus(int arg0) {
-	}
-
-	@Override
-	public void setStatus(int arg0, String arg1) {
 	}
 
 	@Override

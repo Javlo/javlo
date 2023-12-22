@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" 
+<%@ taglib uri="jakarta.tags.core" prefix="c"
 %><c:if test="${not empty param.color}"><c:set var="color" value="${param.color}" /></c:if>
 <c:if test="${empty param.color}">	
 	<c:if test="${param.value < 75}">

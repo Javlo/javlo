@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+<%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions"
 %><li class="${template.valid?'valid':'unvalid'}${info.page.templateId == template.name?' active':''}">
 		<c:if test="${not empty selectUrl}"><a href="${selectUrl}&template=${template.name}" title="select ${template.name}" class="select-template"></c:if>		
         <div class="thumb">  

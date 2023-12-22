@@ -6,7 +6,7 @@ org.javlo.user.AdminUserFactory,
 org.javlo.user.User,
 org.javlo.helper.URLHelper,
 org.javlo.context.ContentContext
-"%><%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%><%
+"%><%@taglib prefix="c" uri="jakarta.tags.core"%><%
 GlobalContext globalContext = GlobalContext.getInstance(request);
 AdminUserFactory userFactory = AdminUserFactory.createAdminUserFactory(globalContext, request.getSession());
 User user = userFactory.getUser(""+request.getAttribute("creator"));

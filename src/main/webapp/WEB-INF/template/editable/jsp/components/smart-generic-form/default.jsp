@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+<%@ taglib uri="jakarta.tags.core" prefix="c"
 %><div class="smart-form">
 	<c:if test="${not empty msg}">	<div class="message">
 		<div class="${msg.typeLabel}"><p>${msg.message}</p></div>

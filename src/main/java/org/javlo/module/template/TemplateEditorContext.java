@@ -1,7 +1,7 @@
 package org.javlo.module.template;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpSession;
 
 import org.javlo.component.core.ComponentBean;
 import org.javlo.template.Area;

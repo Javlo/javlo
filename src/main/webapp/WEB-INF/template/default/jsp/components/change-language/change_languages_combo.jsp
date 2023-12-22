@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" 
+<%@ taglib uri="jakarta.tags.core" prefix="c"
 %><c:choose><c:when test="${isContentLanguages}"><ul class="content-language-selector">
 <c:forEach var="lg" items="${languagesList}"><c:if test="${lg.realContent}"><li><a href="${lg.url}" class="${lg.language == info.requestContentLanguage ? 'selected' : ''}" lang="${lg.language}" hreflang="${lg.language}" xml:lang="${lg.language}" title="${lg.label}">${lg.language}</a></li></c:if>
 </c:forEach>

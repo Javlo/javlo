@@ -16,7 +16,7 @@ import org.javlo.utils.NeverEmptyMap;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 import java.io.*;
 import java.text.ParseException;
 import java.util.*;

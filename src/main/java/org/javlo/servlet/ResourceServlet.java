@@ -22,10 +22,10 @@ import org.javlo.utils.XLSTools;
 import org.javlo.ztatic.StaticInfo;
 import org.javlo.ztatic.StaticInfoBean;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,7 +50,7 @@ public class ResourceServlet extends HttpServlet {
 	static int servletRun = 0;
 
 	/**
-	 * @see javax.servlet.http.HttpServlet#doGet(HttpServletRequest,
+	 * @see jakarta.servlet.http.HttpServlet#doGet(HttpServletRequest,
 	 *      HttpServletResponse)
 	 */
 	@Override
@@ -59,7 +59,7 @@ public class ResourceServlet extends HttpServlet {
 	}
 
 	/**
-	 * @see javax.servlet.http.HttpServlet#doPost(HttpServletRequest,
+	 * @see jakarta.servlet.http.HttpServlet#doPost(HttpServletRequest,
 	 *      HttpServletResponse)
 	 */
 	@Override
@@ -93,7 +93,7 @@ public class ResourceServlet extends HttpServlet {
 						if (request.getServletPath().equals("/robots.txt")) {
 							RobotsTxt.renderRobotTxt(ContentContext.getContentContext(request, response), response.getOutputStream());
 						} else {
-							response.setStatus(404, "not found : " + filePath);
+							response.setStatus(404);
 						}
 						return;
 					}

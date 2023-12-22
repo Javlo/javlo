@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+<%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions"
 %><form class="full-height" id="children_list" action="${info.currentURL}" method="post">	<fieldset class="closable full-height">
 <div class="legend">${i18n.edit['content.navigation']}</div>
 <c:set var="page" value="${info.page}" />

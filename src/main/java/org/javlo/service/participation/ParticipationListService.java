@@ -12,7 +12,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.apache.commons.codec.binary.Base32;
 import org.javlo.context.ContentContext;

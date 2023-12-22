@@ -10,7 +10,7 @@ import java.io.StringWriter;
 import java.util.Hashtable;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.javlo.io.AppendableTextFile;
 

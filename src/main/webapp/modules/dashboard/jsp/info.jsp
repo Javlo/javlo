@@ -1,7 +1,7 @@
 <%@page import="org.javlo.utils.backup.BackupThread"
 %><%@page import="org.javlo.component.core.ComponentBean"
 %><%@page import="org.javlo.navigation.MenuElement"
-%><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+%><%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <div id="info" class="content">
 <fieldset>
 <legend>Site</legend>

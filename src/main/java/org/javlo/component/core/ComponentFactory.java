@@ -20,7 +20,7 @@ import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.utils.StructuredProperties;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;

@@ -1,15 +1,15 @@
 /*
- * Created on 19-sept.-2003 
+ * Created on 19-sept.-2003
  */
 package org.javlo.component.gadget;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.logging.Logger;
 
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.URLHelper;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.logging.Logger;
 
 /**
  * @author pvandermaesen
@@ -41,7 +41,7 @@ public class Map extends AbstractVisualComponent {
 		String mapID = "maps_" + getId();
 		out.println("<div id=\"" + mapID + "\" class=\"element map map-large\"></div>");
 		//if (!isJSImported(ctx)) {
-			//out.println("<script src=\"https://maps.googleapis.com/maps/api/js?v=3.exp&amp;sensor=false\"></script>");
+		//out.println("<script src=\"https://maps.googleapis.com/maps/api/js?v=3.exp&amp;sensor=false\"></script>");
 		//}
 		out.println("<script type=\"text/javascript\">");
 		out.println("$(document).ready(function() {");
@@ -88,18 +88,18 @@ public class Map extends AbstractVisualComponent {
 		out.println("var marker = new google.maps.Marker({");
 		out.println("position: myLatLng,");
 		out.println("map: map,");
-		out.println("title: '"+ctx.getGlobalContext().getGlobalTitle()+"',");		
+		out.println("title: '"+ctx.getGlobalContext().getGlobalTitle()+"',");
 		out.println("icon: \""+URLHelper.createStaticTemplateURL(ctx, "/img/pin.png")+"\"");
 		out.println("});");
 
 		out.println("google.maps.event.addDomListener(window, 'load', initialize);");
 		out.println(" });");
 		out.println("</script>");
-		
+
 		out.close();
 		return new String(outStream.toByteArray());
 	}
-	
+
 	@Override
 	public boolean isContentCachable(ContentContext ctx) {
 		return false;
@@ -109,7 +109,7 @@ public class Map extends AbstractVisualComponent {
 	public boolean isContentCachableByQuery(ContentContext ctx) {
 		return false;
 	}
-	
+
 	@Override
 	public String getType() {
 		return TYPE;
@@ -119,7 +119,7 @@ public class Map extends AbstractVisualComponent {
 	public String getHexColor() {
 		return WEB2_COLOR;
 	}
-	
+
 	@Override
 	public int getComplexityLevel(ContentContext ctx) {
 		return getConfig(ctx).getComplexity(COMPLEXITY_ADMIN);

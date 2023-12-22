@@ -2,7 +2,7 @@ package org.javlo.module.demo;
 
 import java.lang.reflect.Method;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.context.ContentContext;

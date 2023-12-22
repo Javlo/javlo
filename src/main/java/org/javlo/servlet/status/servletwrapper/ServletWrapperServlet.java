@@ -3,10 +3,10 @@ package org.javlo.servlet.status.servletwrapper;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -33,7 +33,7 @@ public class ServletWrapperServlet extends HttpServlet {
 	protected static Logger logger = Logger.getLogger(ServletWrapperServlet.class.getName());
 
 	/**
-	 * @see javax.servlet.http.HttpServlet#doGet(HttpServletRequest, HttpServletResponse)
+	 * @see jakarta.servlet.http.HttpServlet#doGet(HttpServletRequest, HttpServletResponse)
 	 */
 	@Override
 	protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
@@ -41,7 +41,7 @@ public class ServletWrapperServlet extends HttpServlet {
 	}
 
 	/**
-	 * @see javax.servlet.http.HttpServlet#doPost(HttpServletRequest, HttpServletResponse)
+	 * @see jakarta.servlet.http.HttpServlet#doPost(HttpServletRequest, HttpServletResponse)
 	 */
 	@Override
 	protected void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {

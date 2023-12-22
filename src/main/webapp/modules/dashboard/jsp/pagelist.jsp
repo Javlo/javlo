@@ -1,6 +1,6 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+<%@ taglib uri="jakarta.tags.core" prefix="c"
 %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <div class="content">
     <br clear="all"/>
     <div class="invoice three_fourth">

@@ -1,16 +1,16 @@
 package org.javlo.service;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.fileupload2.core.DiskFileItemFactory;
+import org.apache.commons.fileupload2.core.FileItem;
+import org.apache.commons.fileupload2.core.FileUploadException;
+import org.apache.commons.fileupload2.jakarta.JakartaServletFileUpload;
 import org.apache.commons.io.FileCleaningTracker;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.portlet.filter.MultiReadRequestWrapper;
 import org.owasp.encoder.Encode;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -73,10 +73,10 @@ public class RequestService {
 				// System.out.println(e1.getMessage());
 				e1.printStackTrace();
 			}
-			boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+			boolean isMultipart = JakartaServletFileUpload.isMultipartContent(request);
 			if (isMultipart) {
-				DiskFileItemFactory factory = new DiskFileItemFactory();
-				ServletFileUpload upload = new ServletFileUpload(factory);
+				DiskFileItemFactory factory = DiskFileItemFactory.builder().setFileCleaningTracker(instance.tracker).get();
+				JakartaServletFileUpload upload = new JakartaServletFileUpload(factory);
 				upload.setFileSizeMax(MultiReadRequestWrapper.MAX_UPLOAD_SIZE);
 				List<FileItem> items = null;
 
@@ -91,15 +91,15 @@ public class RequestService {
 							String[] values = instance.parameters.get(item.getFieldName());
 							if (values == null) {
 								try {
-									values = new String[] { item.getString(ContentContext.CHARACTER_ENCODING) };
-								} catch (UnsupportedEncodingException e) {
+									values = new String[] { item.getString(ContentContext.CHARSET_DEFAULT) };
+								} catch (Exception e) {
 									e.printStackTrace();
 								}
 							} else {
 								List<String> list = new LinkedList<String>(Arrays.asList(values));
 								try {
-									list.add(item.getString(ContentContext.CHARACTER_ENCODING));
-								} catch (UnsupportedEncodingException e) {
+									list.add(item.getString(ContentContext.CHARSET_DEFAULT));
+								} catch (Exception e) {
 									e.printStackTrace();
 								}
 								values = list.toArray(values);
@@ -119,7 +119,6 @@ public class RequestService {
 						}
 					}
 				}
-				factory.setFileCleaningTracker(instance.tracker);
 			}
 		}
 

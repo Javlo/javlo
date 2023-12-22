@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <ul class="navigation">
 <c:forEach var="link" items="${templateContext.localNavigation}">	
 <c:url var="navURL" value="${info.currentURL}" context="/"><c:param name="webaction" value="changeRenderer" /><c:param name="list" value="${link.url}" /></c:url>

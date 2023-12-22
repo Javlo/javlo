@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import org.javlo.actions.IModuleAction;
 import org.javlo.context.ContentContext;
@@ -169,8 +169,8 @@ public class DropboxAction implements IModuleAction {
 	private void initWebAuth(ContentContext ctx) {
 		DbxRequestConfig requestConfig = new DbxRequestConfig("text-edit/0.1", ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession()));
 
-		javax.servlet.http.HttpServletRequest request = ctx.getRequest();
-		javax.servlet.http.HttpSession session = request.getSession(true);
+		jakarta.servlet.http.HttpServletRequest request = ctx.getRequest();
+		jakarta.servlet.http.HttpSession session = request.getSession(true);
 		String sessionKey = "dropbox-auth-csrf-token";
 		DbxSessionStore csrfTokenStore = new DbxStandardSessionStore(session, sessionKey);
 

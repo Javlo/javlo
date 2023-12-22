@@ -1,8 +1,8 @@
 <%@page import="org.javlo.context.ContentContext"
 %><%@page import="org.javlo.context.GlobalContext"
 %><%@page import="org.javlo.service.NotificationService"
-%><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %><%
+%><%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions" %><%
 GlobalContext globalContext = GlobalContext.getInstance(request);
 NotificationService notifService = NotificationService.getInstance(globalContext);						
 ContentContext ctx = ContentContext.getContentContext(request, response);

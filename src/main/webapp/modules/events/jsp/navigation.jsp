@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <ul class="navigation">	
 	<li class="${calendarPage?'current':''}"><a href="${info.currentURL}?calendar=true">Calendar</a></li>
 	<c:forEach var="eventItem" items="${events}">		

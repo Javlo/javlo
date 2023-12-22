@@ -1,25 +1,11 @@
 package org.javlo.servlet;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.fileupload2.core.FileItem;
+import org.apache.commons.fileupload2.jakarta.JakartaServletFileUpload;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -38,6 +24,10 @@ import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
 import org.javlo.ztatic.FileCache;
+
+import java.io.*;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class SynchronisationServlet extends HttpServlet {
 
@@ -210,7 +200,7 @@ public class SynchronisationServlet extends HttpServlet {
 					}
 				}
 
-				boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+				boolean isMultipart = JakartaServletFileUpload.isMultipartContent(request);
 
 				if (isMultipart) {
 					Collection<FileItem> fileIme = requestService.getAllFileItem();

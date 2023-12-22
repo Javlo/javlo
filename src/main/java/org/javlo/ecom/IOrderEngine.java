@@ -2,7 +2,7 @@ package org.javlo.ecom;
 
 import java.net.URL;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 public interface IOrderEngine {
 	

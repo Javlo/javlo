@@ -43,10 +43,10 @@ import org.javlo.utils.StructuredProperties;
 import org.javlo.utils.SuffixPrefix;
 import org.owasp.encoder.Encode;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.io.*;
 import java.text.DecimalFormat;

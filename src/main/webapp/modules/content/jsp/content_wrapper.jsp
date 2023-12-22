@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <div class="area-label">${info.area}</div>
 <div id="content-edit" class="full-height ${not empty userInterface.light?'light':''}">
 <c:url var="formURL" value="${info.currentURL}" context="/"><c:if test="${not empty requestService.parameterMap.previewEdit}"><c:param name="previewEdit" value="true" /></c:if></c:url>

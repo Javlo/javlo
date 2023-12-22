@@ -1,6 +1,6 @@
 package org.javlo.module.admin;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.IContentVisualComponent;
@@ -43,9 +43,9 @@ import org.javlo.ztatic.StaticInfo;
 
 import javax.mail.MessagingException;
 import javax.mail.Transport;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;

@@ -1,6 +1,6 @@
 package org.javlo.user;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.javlo.navigation.PageBean;
 

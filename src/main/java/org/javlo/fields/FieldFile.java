@@ -1,6 +1,7 @@
 package org.javlo.fields;
 
-import org.apache.commons.fileupload.FileItem;
+
+import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.actions.DataAction;
 import org.javlo.bean.Link;

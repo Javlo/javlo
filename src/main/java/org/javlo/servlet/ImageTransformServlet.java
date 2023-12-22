@@ -32,13 +32,13 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.imaging.common.ImageMetadata;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.IImageFilter;
@@ -330,7 +330,7 @@ public class ImageTransformServlet extends FileServlet {
 	}
 
 	/**
-	 * @see javax.servlet.http.HttpServlet#doGet(HttpServletRequest,
+	 * @see jakarta.servlet.http.HttpServlet#doGet(HttpServletRequest,
 	 *      HttpServletResponse)
 	 */
 	@Override
@@ -344,7 +344,7 @@ public class ImageTransformServlet extends FileServlet {
 	}
 
 	/**
-	 * @see javax.servlet.http.HttpServlet#doPost(HttpServletRequest,
+	 * @see jakarta.servlet.http.HttpServlet#doPost(HttpServletRequest,
 	 *      HttpServletResponse)
 	 */
 	@Override

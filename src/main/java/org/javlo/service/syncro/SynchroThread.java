@@ -2,7 +2,7 @@ package org.javlo.service.syncro;
 
 import java.util.logging.Level;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.javlo.config.StaticConfig;
 import org.javlo.context.GlobalContext;

@@ -1,6 +1,6 @@
 package org.javlo.component.files;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.javlo.component.core.IUploadResource;
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.config.StaticConfig;

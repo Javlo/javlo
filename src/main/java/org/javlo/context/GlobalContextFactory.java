@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.javlo.config.StaticConfig;
 import org.javlo.filter.PropertiesFilter;

@@ -3,7 +3,7 @@ package org.javlo.user;
 import java.util.Calendar;
 import java.util.logging.Logger;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.NetHelper;

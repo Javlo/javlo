@@ -1,5 +1,11 @@
 package org.javlo.servlet;
 
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.javlo.bean.InstallBean;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentFactory;
@@ -38,7 +44,6 @@ import org.javlo.service.remote.RemoteMessage;
 import org.javlo.service.remote.RemoteMessageService;
 import org.javlo.service.resource.Resource;
 import org.javlo.service.shared.SharedContentService;
-import org.javlo.service.social.SocialService;
 import org.javlo.service.syncro.SynchroThread;
 import org.javlo.service.visitors.CookiesService;
 import org.javlo.servlet.zip.ZipManagement;
@@ -60,12 +65,6 @@ import org.xhtmlrenderer.util.FSImageWriter;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.management.ManagementFactory;
@@ -315,9 +314,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				}
 			}
 
-			if (globalContext.getStaticConfig().isOauthView()) {
-				SocialService.getInstance(ctx).prepare(ctx);
-			}
 			if (!staticConfig.isFoundFile()) {
 				try {
 					boolean install = StringHelper.isTrue(request.getParameter("install"));
@@ -856,8 +852,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 					}
 				}
 
-				request.setAttribute("social", SocialService.getInstance(ctx));
-
 				localLogger.startCount("content");
 
 				if (request.getServletPath().equals("/preview") && !ctx.isPreviewOnly()) {
@@ -1226,7 +1220,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 								}
 							}
 							logger.warn("page not found (" + globalContext.getContextKey() + ") : " + ctx.getPath());
-							ctx.getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND, "page not found : " + ctx.getPath());
+							ctx.getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND);
 							if (ctx.isAsViewMode()) {
 								MenuElement page404 = content.getNavigation(ctx).searchChildFromName(staticConfig.get404PageName());
 								if (page404 != null) {

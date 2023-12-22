@@ -20,8 +20,8 @@ import org.javlo.module.core.IPrintInfo;
 import org.javlo.navigation.MenuElement;
 import org.javlo.template.TemplateFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.io.PrintStream;
 import java.util.*;
 import java.util.logging.Logger;

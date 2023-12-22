@@ -1,6 +1,6 @@
 package org.javlo.user;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.javlo.context.GlobalContext;
 

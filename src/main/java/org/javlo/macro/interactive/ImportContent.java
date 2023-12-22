@@ -1,6 +1,6 @@
 package org.javlo.macro.interactive;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentFactory;

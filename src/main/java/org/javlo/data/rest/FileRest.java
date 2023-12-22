@@ -2,7 +2,7 @@ package org.javlo.data.rest;
 
 import java.io.File;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.javlo.context.ContentContext;
 import org.javlo.helper.URLHelper;

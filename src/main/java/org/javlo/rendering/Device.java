@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;

@@ -1,6 +1,6 @@
 package org.javlo.actions;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.javlo.context.ContentContext;
 import org.javlo.module.core.ModuleException;

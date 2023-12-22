@@ -1,6 +1,6 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
-%><%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt"
+<%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions"
+%><%@ taglib uri="jakarta.tags.fmt" prefix="fmt"
 %>
 <c:set var="basketPage" value="${info.pageByName.basket}" />
 <c:if test="${not empty basketPage && empty param.basketLink}"><a href="${basketPage.url}"></c:if>

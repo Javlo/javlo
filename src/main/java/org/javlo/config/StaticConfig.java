@@ -27,8 +27,8 @@ import org.javlo.utils.ConfigurationProperties;
 import org.javlo.utils.request.IFirstRequestListner;
 import org.javlo.ztatic.FileCache;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;

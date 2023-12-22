@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+<%@ taglib uri="jakarta.tags.core" prefix="c"
 %><script>
 	function form${compid}Change() {
 		var form = document.getElementById('form-${compid}');		

@@ -2,7 +2,7 @@ package org.javlo.component.core;
 
 import java.awt.image.BufferedImage;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.javlo.context.ContentContextBean;
 

@@ -1,12 +1,11 @@
 package org.javlo.tag;
 
-import java.io.IOException;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.TagSupport;
-
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.tagext.TagSupport;
 import org.javlo.helper.StringHelper;
+
+import java.io.IOException;
 
 public class TableBox extends TagSupport {
 
@@ -19,7 +18,7 @@ public class TableBox extends TagSupport {
 	private String style = null;
 
 	@Override
-	public int doStartTag() throws JspException {
+	public int doStartTag() throws JspException    {
 		try {
 			if (margin==null) {
 				margin=0;

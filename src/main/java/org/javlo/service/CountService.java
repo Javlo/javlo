@@ -1,13 +1,12 @@
 package org.javlo.service;
 
+import jakarta.servlet.ServletContext;
+import org.javlo.context.GlobalContext;
+
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.servlet.ServletContext;
-
-import org.javlo.context.GlobalContext;
 
 public class CountService {
 

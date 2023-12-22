@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" 
+<%@ taglib uri="jakarta.tags.core" prefix="c"
 %><%@page import="org.javlo.helper.LoremIpsumGenerator"
 %><%@page contentType="text/html"
 %><c:if test="${not empty param.form}"><%=LoremIpsumGenerator.getParagraph(Integer.parseInt(request.getParameter("words")), request.getParameter("start") != null, request.getParameter("ponctuation") != null)%></c:if><c:if test="${empty param.form}">

@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"
+<%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib uri="jakarta.tags.functions" prefix="fn"
 %><c:set var="imageWidthTag" value='width="${imageWidth}" ' /><c:if test="${contentContext.asPreviewMode && filter != 'raw'}"><c:set var="imageClass" value='class="return-size" data-compid="${compid}"' /></c:if>
 <c:set var="imageAlt" value="${not empty label?cleanLabel:cleanDescription}" />
 <c:if test="${not empty file && not empty file.title || not empty file.description}">

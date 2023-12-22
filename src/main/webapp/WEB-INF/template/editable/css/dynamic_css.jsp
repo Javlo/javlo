@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"
+<%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib uri="jakarta.tags.functions" prefix="fn"
 %><c:if test="${empty rows}"><c:set var="rows" value="${info.template.rows}" scope="request" /></c:if><c:forEach var="row" items="${rows}"><c:forEach var="area" items="${row.areas}">
 <c:forEach var = "i" begin = "1" end = "6" varStatus="status">${param.prefix}#${area.name} h${i}, ${param.prefix}#${area.name} h${i} div, ${param.prefix}#${area.name} h${i} a${status.last?'':','}</c:forEach> {	
 	<c:if test="${not empty area.finalTitleColor}">color: ${area.finalTitleColor};</c:if>

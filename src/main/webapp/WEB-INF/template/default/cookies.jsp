@@ -1,6 +1,6 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib
-	prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><%@ taglib
-	prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%><%@ taglib
+<%@ taglib uri="jakarta.tags.core" prefix="c"%><%@ taglib
+	prefix="fn" uri="jakarta.tags.functions"%><%@ taglib
+	prefix="fmt" uri="jakarta.tags.fmt"%><%@ taglib
 	uri="/WEB-INF/javlo.tld" prefix="jv"%>
 
 <div id="cookies-message" style="z-index: 100; font-size: 14px;">

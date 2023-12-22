@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><form method="post" action="${info.currentURL}" class="standard-form">
+<%@ taglib uri="jakarta.tags.core" prefix="c"%><%@ taglib prefix="fn" uri="jakarta.tags.functions"%><form method="post" action="${info.currentURL}" class="standard-form">
 	<fieldset>
 		<legend>Duplicate page</legend>
 		<input type="hidden" name="webaction" value="duplicate-page-indexed.duplicate" />

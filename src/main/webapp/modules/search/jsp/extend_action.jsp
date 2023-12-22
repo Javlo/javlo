@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><form id="delete-comments" action="${info.currentURL}" method="post">
+<%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions"%><form id="delete-comments" action="${info.currentURL}" method="post">
 
 	<%-- 	<label for="taxonomy">${i18n.edit["taxonomy"]}</label>${taxoSelect} --%>
 

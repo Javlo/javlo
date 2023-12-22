@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <div id="content" class="content ${not empty lightInterface?'light':''}">
 	<h2>${rolesContext.role}</h2>
 	<form id="roles-form" action="${info.currentURL}" method="get">

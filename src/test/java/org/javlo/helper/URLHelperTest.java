@@ -3,7 +3,7 @@ package org.javlo.helper;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.javlo.context.ContentContext;
 import org.javlo.test.servlet.FakeHttpContext;

@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <ul class="navigation">			
 	<li class="${page eq 'main'?'current':''}"><a href="${info.currentURL}?webaction=mainPage">main</a></li>	
 	<c:if test="${info.admin}"><li class="${page eq 'tracker'?'current':''}"><a href="${info.currentURL}?webaction=trackerPage">tracker</a></li></c:if>

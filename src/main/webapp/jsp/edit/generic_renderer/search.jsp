@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <div id="search-result" class="left">
 <h1>${i18n.edit['search.title']} ${param.query}</h1>
 <table cellpadding="0" cellspacing="0" border="0" class="dyntable display" id="sitelist">

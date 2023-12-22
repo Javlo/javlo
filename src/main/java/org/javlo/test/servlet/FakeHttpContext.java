@@ -2,8 +2,8 @@ package org.javlo.test.servlet;
 
 import java.net.MalformedURLException;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpSession;
 
 public class FakeHttpContext {
 	

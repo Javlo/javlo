@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <div id="charge-wrapper" class="content">
 <div id="charge" class="charge"></div>
 </div>

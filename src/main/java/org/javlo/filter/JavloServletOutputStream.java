@@ -5,12 +5,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.WriteListener;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.WriteListener;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * The implementation of javax.servlet.ServletOutputStream.
+ * The implementation of jakarta.servlet.ServletOutputStream.
  *
  * When a flush or close method is called on an implementation of this class,
  * any data buffered by the servlet engine is sent to the client and the

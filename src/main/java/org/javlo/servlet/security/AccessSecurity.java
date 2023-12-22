@@ -3,7 +3,7 @@ package org.javlo.servlet.security;
 import org.javlo.helper.NetHelper;
 import org.javlo.utils.TimeMap;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.logging.Logger;
 
 public class AccessSecurity {

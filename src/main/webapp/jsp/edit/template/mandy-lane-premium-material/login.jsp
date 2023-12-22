@@ -1,5 +1,11 @@
-<%@page import="org.javlo.helper.URLHelper"%><%@page import="org.javlo.service.social.ISocialNetwork
-"%><%@page import="org.javlo.context.ContentContext"%><%@page import="org.javlo.service.social.SocialService"%><%@page import="org.javlo.servlet.IVersion"%><%@page import="org.javlo.message.MessageRepository"%><%@page import="org.javlo.message.GenericMessage"%><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><!doctype html>
+<%@page import="org.javlo.helper.URLHelper"
+%><%@page import="org.javlo.context.ContentContext"
+%><%@page import="org.javlo.servlet.IVersion"
+%><%@page import="org.javlo.message.MessageRepository"
+%><%@page import="org.javlo.message.GenericMessage"
+%><%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions"
+%><!doctype html>
 <%
 MessageRepository msgRepo = MessageRepository.getInstance(request); // load request message
 GenericMessage msg = msgRepo.getGlobalMessage();
@@ -22,11 +28,6 @@ switch (msg.getType()) {
 		break;
 }
 ContentContext ctx = ContentContext.getContentContext(request, response);
-SocialService socialService = SocialService.getInstance(ctx);
-ISocialNetwork googleOauth = socialService.getGoogle();
-//googleOauth.setRedirectURL(URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), "/oauth2callbackadmin"));
-//googleOauth.setClientId(ctx.getGlobalContext().getStaticConfig().getOauthGoogleIdClient());
-//googleOauth.setClientSecret(ctx.getGlobalContext().getStaticConfig().getOauthGoogleSecret());
 %><html>
 <head>
 <meta name="GOOGLEBOT" content="NOSNIPPET" />
@@ -50,9 +51,6 @@ h1 .logo svg {
 	fill: #1B2D49;
 }
 </style>
-<c:if test="${not empty globalContext.staticConfig.oauthGoogleIdClient && not nogoogle}">
-	<meta name="google-signin-client_id" content="${globalContext.staticConfig.oauthGoogleIdClient}" />
-</c:if>
 </head>
 
 <body class="login-page bg${info.random10+1} ${not empty param.err || not empty messages.globalMessage && messages.globalMessage.type > 0 && not empty messages.globalMessage.message?'wmsg':'nomsg'}">

@@ -1,6 +1,6 @@
 package org.javlo.macro.interactive;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.io.FileExistsException;
 import org.javlo.actions.IAction;
 import org.javlo.context.ContentContext;
@@ -19,7 +19,7 @@ import org.javlo.service.RequestService;
 import org.javlo.user.User;
 import org.javlo.ztatic.StaticInfo;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 import java.io.File;
 import java.util.*;
 import java.util.logging.Logger;

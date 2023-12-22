@@ -9,10 +9,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpSession;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;

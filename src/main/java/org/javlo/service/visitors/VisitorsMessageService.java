@@ -3,7 +3,7 @@ package org.javlo.service.visitors;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 public class VisitorsMessageService {
 	

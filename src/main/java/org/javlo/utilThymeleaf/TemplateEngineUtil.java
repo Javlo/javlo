@@ -2,7 +2,7 @@ package org.javlo.utilThymeleaf;
 
 import org.thymeleaf.TemplateEngine;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 public class TemplateEngineUtil {
 

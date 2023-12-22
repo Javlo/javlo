@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 
 import org.javlo.context.ContentContext;
 import org.javlo.helper.NetHelper;

@@ -1,15 +1,13 @@
 package org.javlo.test.servlet;
 
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpSession;
+import org.javlo.test.javlo.TestGlobalContext;
+import org.javlo.utils.IteratorAsEnumeration;
+
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionContext;
-
-import org.javlo.test.javlo.TestGlobalContext;
-import org.javlo.utils.IteratorAsEnumeration;
 
 public class TestSession implements HttpSession {
 	
@@ -56,23 +54,6 @@ public class TestSession implements HttpSession {
 		return servletContext;
 	}
 
-	@Override
-	public HttpSessionContext getSessionContext() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object getValue(String arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String[] getValueNames() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public void invalidate() {
@@ -86,22 +67,13 @@ public class TestSession implements HttpSession {
 		return false;
 	}
 
-	@Override
-	public void putValue(String arg0, Object arg1) {
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public void removeAttribute(String key) {
 		attributes.remove(key);
 	}
 
-	@Override
-	public void removeValue(String arg0) {
-		// TODO Auto-generated method stub
 
-	}
 
 	@Override
 	public void setAttribute(String key, Object value) {

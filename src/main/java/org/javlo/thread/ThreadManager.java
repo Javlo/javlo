@@ -3,7 +3,7 @@ package org.javlo.thread;
 import java.io.File;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.javlo.helper.URLHelper;
 import org.javlo.service.NotificationService;

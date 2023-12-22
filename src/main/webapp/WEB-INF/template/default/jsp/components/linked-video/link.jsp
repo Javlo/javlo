@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <a href="${url}">
 <c:if test="${not empty image}">
 	<img src="${image}" alt="${title}" title="${label}" />

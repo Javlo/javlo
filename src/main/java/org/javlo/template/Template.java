@@ -1,5 +1,7 @@
 package org.javlo.template;
 
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpSession;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
@@ -32,8 +34,6 @@ import org.thymeleaf.TemplateEngine;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.naming.ConfigurationException;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 import java.awt.*;
 import java.io.*;
 import java.nio.file.FileVisitOption;
@@ -2642,6 +2642,11 @@ public class Template implements Comparable<Template> {
 		if (templateData.getThirdColor() != null) {
 			templateDataMap.put(StringHelper.colorToHexStringNotNull(templateData.getThirdColor()), StringHelper.colorToHexStringNotNull(templateDataUser.getThirdColor()));
 		}
+
+		templateDataMap.put("http://java.sun.com/jsp/jstl/core", "jakarta.tags.core");
+		templateDataMap.put("http://java.sun.com/jsp/jstl/functions", "jakarta.tags.functions");
+		templateDataMap.put("http://java.sun.com/jsp/jstl/fmt", "jakarta.tags.fmt");
+		templateDataMap.put("http://java.sun.com/jstl/fmt", "jakarta.tags.fmt");
 		
 		return templateDataMap;
 	}
@@ -2737,10 +2742,10 @@ public class Template implements Comparable<Template> {
 	}
 
 	public void importTemplateInWebapp(StaticConfig config, ContentContext ctx) throws IOException {
-		importTemplateInWebapp(config, ctx, true);
+		importTemplateInWebapp(config, ctx, true, false);
 	}
 
-	public void importTemplateInWebapp(StaticConfig config, ContentContext ctx, boolean clear) throws IOException {
+	public void importTemplateInWebapp(StaticConfig config, ContentContext ctx, boolean clear, boolean soft) throws IOException {
 		if (templateErrorMap.containsKey(getName())) {
 			return;
 		}
@@ -2757,14 +2762,16 @@ public class Template implements Comparable<Template> {
 					File templateTgt = new File(getTemplateTargetFolder(globalContext));
 					long startTime = System.currentTimeMillis();
 					logger.info("copy template from '" + templateSrc + "' to '" + templateTgt + "'");
-					if (clear) {
+					if (clear && !soft) {
 						FileUtils.deleteDirectory(templateTgt);
 					} else {
-						rebuildTemplate(ctx, false);
+						if (!soft) {
+							rebuildTemplate(ctx, false);
+						}
 					}
 					// importTemplateInWebapp(config, ctx, globalContext, templateTgt, null, true,
 					// false, getRawCssFile(globalContext), null, clear);
-					importTemplateInWebapp(config, ctx, globalContext, templateTgt, null, true, false, null, clear);
+					importTemplateInWebapp(config, ctx, globalContext, templateTgt, null, true, false, null, clear, soft);
 					logger.info("import template : " + getName() + " in " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - startTime));
 				} else {
 					logger.severe("folder not found : " + templateSrc + "   templateImportationError=" + templateErrorMap.containsKey(getName()));
@@ -2774,7 +2781,7 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
-	protected void importTemplateInWebapp(StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget, Map<String, String> childrenData, boolean compressResource, boolean parent, Boolean importComponents, boolean clear) throws IOException {
+	protected void importTemplateInWebapp(StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget, Map<String, String> childrenData, boolean compressResource, boolean parent, Boolean importComponents, boolean clear, boolean soft) throws IOException {
 
 		String templateFolder = config.getTemplateFolder();
 
@@ -2867,13 +2874,13 @@ public class Template implements Comparable<Template> {
 										// inRawCssFile);
 										// }
 										if (fileExt.equalsIgnoreCase("jsp") || fileExt.equalsIgnoreCase("html")) {
-											ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map, ctx.getGlobalContext().getStaticConfig().isCompressJsp(), ctx.getGlobalContext().getStaticConfig().isHighSecure());
+											ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map, ctx.getGlobalContext().getStaticConfig().isCompressJsp(), ctx.getGlobalContext().getStaticConfig().isHighSecure(), soft);
 										} else {
-											ResourceHelper.filteredFileCopy(file, targetFile, map);
+											ResourceHelper.filteredFileCopy(file, targetFile, map, soft);
 										}
 									} else {
 										if (file.isFile()) {
-											ResourceHelper.copyFile(file, targetFile, false);
+											ResourceHelper.copyFile(file, targetFile, false, soft);
 										}
 									}
 								} catch (Exception e) {
@@ -2992,7 +2999,7 @@ public class Template implements Comparable<Template> {
 				// getParent().importTemplateInWebapp(config, ctx, globalContext,
 				// templateTarget, childrenData, false, true, inRawCssFile, importComponents,
 				// clear);
-				getParent().importTemplateInWebapp(config, ctx, globalContext, templateTarget, childrenData, false, true, importComponents, clear);
+				getParent().importTemplateInWebapp(config, ctx, globalContext, templateTarget, childrenData, false, true, importComponents, clear, false);
 			} else {
 				logger.warning("parent template not found : " + getParent().getName());
 				File indexFile = new File(URLHelper.mergePath(templateTarget.getAbsolutePath(), "index.jsp"));

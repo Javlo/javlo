@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.javlo.actions.IAction;
 import org.javlo.component.core.ComplexPropertiesLink;

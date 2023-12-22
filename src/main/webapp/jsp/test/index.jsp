@@ -15,7 +15,7 @@
 		org.javlo.helper.XHTMLNavigationHelper,
 		org.javlo.context.GlobalContext"
 %>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="c" uri="jakarta.tags.core"%>
 <%
 ContentContext ctx = ContentContext.getContentContext(request, response);
 ContentService content = ContentService.getInstance(request);

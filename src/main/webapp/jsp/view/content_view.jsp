@@ -2,8 +2,8 @@
 <%@page import="org.javlo.data.InfoBean"%>
 <%@page import="java.util.List"
 %><%@page import="org.javlo.component.core.ComponentFactory"
-%><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+%><%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions"
 %><%@page contentType="text/html"
         import="
         java.util.Map,

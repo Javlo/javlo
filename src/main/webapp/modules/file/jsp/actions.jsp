@@ -1,6 +1,6 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+<%@ taglib uri="jakarta.tags.core" prefix="c"
 %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+<%@ taglib prefix="fn" uri="jakarta.tags.functions"
 %>
 <div class="part-1">
 <c:if test="${fn:length(info.contentLanguages) > 1 and empty param.previewEdit && empty param.templateid}">

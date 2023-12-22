@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" 
+<%@ taglib uri="jakarta.tags.core" prefix="c"
 %><c:if test="${!asLink}">
 <div class="video-wrapper">
 <iframe width="${width}" height="${height}" src="${url}" frameborder="0" allowfullscreen></iframe>

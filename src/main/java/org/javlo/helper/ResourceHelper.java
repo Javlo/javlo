@@ -9,7 +9,8 @@ import fr.opensagres.poi.xwpf.converter.core.FileURIResolver;
 import fr.opensagres.poi.xwpf.converter.xhtml.XHTMLConverter;
 import fr.opensagres.poi.xwpf.converter.xhtml.XHTMLOptions;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -51,8 +52,8 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.net.ssl.HttpsURLConnection;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
 import java.awt.image.BufferedImage;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
@@ -66,8 +67,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
 
@@ -308,14 +307,31 @@ public class ResourceHelper {
 		return fullPath;
 	}
 
-	public static void filteredFileCopy(File file1, File file2, Map<String, String> filter) throws IOException {
-		if (!file2.exists()) {
-			file2.getParentFile().mkdirs();
-			file2.createNewFile();
+	/**
+	 * filter copy file
+	 * @param source
+	 * @param target
+	 * @param filter list of key,value to be replaced
+	 * @param soft if true target file is replaced only if source file is more recent
+	 * @throws IOException
+	 */
+	public static void filteredFileCopy(File source, File target, Map<String, String> filter, boolean soft) throws IOException {
+
+		if (soft && target.exists() && source.lastModified() <= target.lastModified()) {
+			return;
+		}
+
+		if (soft) {
+			logger.info("copy file in soft mode : "+target);
+		}
+
+		if (!target.exists()) {
+			target.getParentFile().mkdirs();
+			target.createNewFile();
 		} else {
 			return;
 		}
-		String content = FileUtils.readFileToString(file1, ContentContext.CHARACTER_ENCODING);
+		String content = FileUtils.readFileToString(source, ContentContext.CHARACTER_ENCODING);
 		List<String> keys = new LinkedList<String>(filter.keySet());
 		Collections.sort(keys, new Comparator<String>() {
 			public int compare(String s1, String s2) {
@@ -328,7 +344,7 @@ public class ResourceHelper {
 				content = content.replace(key.toUpperCase(), filter.get(key));
 			}
 		}
-		FileUtils.writeStringToFile(file2, content, ContentContext.CHARACTER_ENCODING);
+		FileUtils.writeStringToFile(target, content, ContentContext.CHARACTER_ENCODING);
 	}
 
 	public static void copyDir(File dir1, File dir2, boolean overwrite, FileFilter filter) throws IOException {
@@ -361,9 +377,28 @@ public class ResourceHelper {
 	 *             error
 	 */
 	public static boolean copyFile(File source, File destination, boolean overwrite) throws IOException {
+		return copyFile(source, destination, overwrite, false);
+	}
+
+	/**
+	 *
+	 * @param source
+	 * @param destination
+	 * @param overwrite
+	 * @param soft if true copy only if modification date in more recent in source.
+	 * @return
+	 * @throws IOException
+	 */
+	public static boolean copyFile(File source, File destination, boolean overwrite, boolean soft) throws IOException {
 		if (!overwrite && destination.exists()) {
 			return false;
 		} else {
+			if (soft && destination.exists() && (source.lastModified() <= destination.lastModified())) {
+				return false;
+			}
+			if (soft) {
+				logger.info("copy file in soft mode : "+destination);
+			}
 			FileInputStream in = null;
 			try {
 				TransactionFile transactionFile = new TransactionFile(destination);
@@ -397,7 +432,24 @@ public class ResourceHelper {
 		return url;
 	}
 
-	public static void filteredFileCopyEscapeScriplet(File file1, File file2, Map<String, String> filter, boolean compress, boolean secure) throws IOException {
+	/**
+	 *
+	 * @param file1
+	 * @param file2
+	 * @param compress
+	 * @param secure
+	 * @param filter list of key,value to be replaced
+	 * @param soft if true target file is replaced only if source file is more recent
+	 * @throws IOException
+	 */
+	public static void filteredFileCopyEscapeScriplet(File file1, File file2, Map<String, String> filter, boolean compress, boolean secure, boolean soft) throws IOException {
+
+		if (soft && file2.exists()) {
+			if (file2.lastModified() <= file1.lastModified()) {
+				return;
+			}
+		}
+
 		if (!file2.exists()) {
 			file2.getParentFile().mkdirs();
 			file2.createNewFile();

@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib uri="jakarta.tags.functions" prefix="fn" %>
 <div class="content">
 <table cellpadding="0" cellspacing="0" border="0" class="dyntable cell-border compact stripe display" id="baskets">
  <thead>

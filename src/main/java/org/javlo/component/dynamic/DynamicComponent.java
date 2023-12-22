@@ -39,7 +39,7 @@ import java.util.logging.Logger;
  */
 public class DynamicComponent extends AbstractVisualComponent implements IStaticContainer, IFieldContainer, IDate, ILink, IImageTitle, ISubTitle, ITimeRange {
 
-    public static final String JSP_HEADER = "<%@ page contentType=\"text/html; charset=UTF-8\" %><%@ taglib uri=\"http://java.sun.com/jsp/jstl/core\" prefix=\"c\"%><%@ taglib prefix=\"fn\" uri=\"http://java.sun.com/jsp/jstl/functions\"%><%@ taglib uri=\"/WEB-INF/javlo.tld\" prefix=\"jv\"%>";
+    public static final String JSP_HEADER = "<%@ page contentType=\"text/html; charset=UTF-8\" %><%@ taglib uri=\"https://jakarta.ee/jsp/jstl/core\" prefix=\"c\"%><%@ taglib prefix=\"fn\" uri=\"https://jakarta.ee/jsp/jstl/functions\"%><%@ taglib uri=\"/WEB-INF/javlo.tld\" prefix=\"jv\"%>";
 
     public static final String HIDDEN = "hidden";
 

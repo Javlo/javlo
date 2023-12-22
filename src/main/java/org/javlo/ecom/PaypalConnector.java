@@ -1,32 +1,20 @@
 package org.javlo.ecom;
 
-import java.awt.Desktop;
+import com.paypal.api.payments.*;
+import com.paypal.base.rest.OAuthTokenCredential;
+import com.paypal.base.rest.PayPalRESTException;
+import org.javlo.context.ContentContext;
+import org.javlo.ecom.Product.ProductBean;
+
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
-
-import org.javlo.context.ContentContext;
-import org.javlo.ecom.Product.ProductBean;
-
-import com.paypal.api.payments.Amount;
-import com.paypal.api.payments.Item;
-import com.paypal.api.payments.ItemList;
-import com.paypal.api.payments.Link;
-import com.paypal.api.payments.Payer;
-import com.paypal.api.payments.Payment;
-import com.paypal.api.payments.PaymentExecution;
-import com.paypal.api.payments.RedirectUrls;
-import com.paypal.api.payments.Transaction;
-import com.paypal.core.rest.OAuthTokenCredential;
-import com.paypal.core.rest.PayPalRESTException;
+import java.util.*;
 
 public class PaypalConnector {
 
@@ -143,7 +131,7 @@ public class PaypalConnector {
 		System.out.println(json);
 		System.out.println("");
 
-		for (Link link : payment.getLinks()) {
+		for (Links link : payment.getLinks()) {
 			if (link.getRel().equals("approval_url")) {
 				finalLink = link.getHref();
 			}
@@ -158,7 +146,7 @@ public class PaypalConnector {
 		PaymentExecution paymentExecution = new PaymentExecution();
 		paymentExecution.setPayerId(payerID);
 		Payment newPayment = payment.execute(accessToken, paymentExecution);
-		for (Link link : newPayment.getLinks()) {
+		for (Links link : newPayment.getLinks()) {
 			return link.getHref();
 		}
 		return null;

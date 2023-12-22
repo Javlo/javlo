@@ -31,7 +31,7 @@ public class FooterGenerator {
 		try {
 			OutputStream outStream = new FileOutputStream(new File(templateFolder.getAbsolutePath() + '/' + "footer_bottom.jsp"));
 			PrintStream out = new PrintStream(outStream);
-			out.println("<%@ taglib uri=\"http://java.sun.com/jsp/jstl/core\" prefix=\"c\"%><div class=\"galaxynav\">");
+			out.println("<%@ taglib uri=\"jakarta.tags.core\" prefix=\"c\"%><div class=\"galaxynav\">");
 
 			final Sheet sheet = SpreadSheet.createFromFile(file).getSheet(0);
 			int indice = 2;

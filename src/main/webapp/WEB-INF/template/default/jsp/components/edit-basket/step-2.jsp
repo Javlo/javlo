@@ -1,6 +1,6 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
-%><%@taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions"
+%><%@taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <c:if test="${empty contentContext.currentUser}">
 <jsp:include page="${info.rootTemplateFolder}/jsp/login.jsp" />
 <c:if test="${not empty info.pageByName.register}">

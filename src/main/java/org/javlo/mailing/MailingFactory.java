@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.javlo.config.MailingStaticConfig;
 import org.javlo.config.StaticConfig;

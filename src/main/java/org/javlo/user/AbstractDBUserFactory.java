@@ -13,8 +13,8 @@ import java.util.logging.Logger;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import javax.sql.DataSource;
 
 import org.javlo.context.ContentContext;

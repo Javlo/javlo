@@ -13,7 +13,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.apache.commons.io.FileUtils;
 import org.javlo.config.StaticConfig;

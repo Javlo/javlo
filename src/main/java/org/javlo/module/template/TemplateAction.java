@@ -1,6 +1,6 @@
 package org.javlo.module.template;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -38,9 +38,9 @@ import org.javlo.utils.ReadOnlyPropertiesConfigurationMap;
 import org.javlo.utils.StructuredProperties;
 import org.javlo.ztatic.FileCache;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.io.*;
 import java.net.URL;
 import java.text.ParseException;
@@ -463,7 +463,12 @@ public class TemplateAction extends AbstractModuleAction {
 
 	public String performCommit(RequestService requestService, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("templateid", null));
-		template.clearRenderer(ctx);
+		boolean soft = StringHelper.isTrue(requestService.getParameter("soft"));
+		if (soft) {
+			template.importTemplateInWebapp(ctx.getGlobalContext().getStaticConfig(), ctx, false, true);
+		} else {
+			template.clearRenderer(ctx);
+		}
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("template.message.commited", new String[][] { { "name", requestService.getParameter("templateid", null) } }), GenericMessage.INFO));
 		I18nAccess.getInstance(ctx).resetViewLanguage(ctx);
 		return null;

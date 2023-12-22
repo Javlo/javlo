@@ -2,7 +2,7 @@
 %><%@page import="java.net.URL"
 %><%@page import="org.javlo.helper.URLHelper"
 %><%@page import="org.javlo.helper.NetHelper"
-%><%@page import="javax.servlet.http.HttpServletResponse"
+%><%@page import="jakarta.servlet.http.HttpServletResponse"
 %><%@page import="org.javlo.context.GlobalContext"
 %><%@page import="org.javlo.context.ContentContext"
 %><%@page import="org.javlo.service.ContentService"%><%

@@ -1,6 +1,6 @@
 <%@page import="org.javlo.context.ContentContext"
 %><%@page import="org.javlo.helper.ServletHelper"
-%><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+%><%@ taglib uri="jakarta.tags.core" prefix="c"
 %><%
 ServletHelper.execAction(ContentContext.getContentContext(request, response));
 %><!DOCTYPE html>

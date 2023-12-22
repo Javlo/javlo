@@ -17,8 +17,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Stack;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpSession;
 
 import org.javlo.actions.IModuleAction;
 import org.javlo.context.ContentContext;

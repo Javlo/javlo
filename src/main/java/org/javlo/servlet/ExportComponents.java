@@ -18,10 +18,10 @@ import org.javlo.utils.CSVFactory;
 import org.javlo.utils.Cell;
 import org.javlo.utils.XLSTools;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.OutputStreamWriter;
@@ -125,7 +125,7 @@ public class ExportComponents extends HttpServlet {
 						if (splittedPath[0].length() == 2) {
 							if (!globalContext.getContentLanguages().contains(splittedPath[0])) {
 								logger.warning("bad path structure : " + componentType);
-								response.setStatus(HttpServletResponse.SC_NOT_FOUND, "lang not found.");
+								response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 								return;
 							}
 						}
@@ -133,7 +133,7 @@ public class ExportComponents extends HttpServlet {
 
 					} else if (splittedPath.length != 1) {
 						logger.warning("bad path structure : " + componentType);
-						response.setStatus(HttpServletResponse.SC_NOT_FOUND, "bad path structure : $lang/$comp_type.");
+						response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 						return;
 					}
 					componentType = componentType.replace(".xlsx", "").replace("/", "");
@@ -158,7 +158,7 @@ public class ExportComponents extends HttpServlet {
 						lg = splittedPath[0];
 					} else {
 						logger.warning("bad path structure : " + componentType);
-						response.setStatus(HttpServletResponse.SC_NOT_FOUND, "lang not found.");
+						response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 						return;
 					}
 				}
@@ -166,7 +166,7 @@ public class ExportComponents extends HttpServlet {
 
 			} else if (splittedPath.length != 1) {
 				logger.warning("bad path structure : " + componentType);
-				response.setStatus(HttpServletResponse.SC_NOT_FOUND, "bad path structure : $lang/$comp_type.");
+				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 				return;
 			}
 			componentType = componentType.replace(".csv", "").replace("/", "");

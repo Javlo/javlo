@@ -45,9 +45,9 @@ import org.owasp.encoder.Encode;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.io.*;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;

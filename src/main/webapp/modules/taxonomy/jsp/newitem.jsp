@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+<%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions"
 %><div class="item-wrapper" id="newname-${param.id}" data-id="${param.id}" data-aschild="true">
 <div class="item">
 <c:set var="focusKey" value="focus${param.id}" />

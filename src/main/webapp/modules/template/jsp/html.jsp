@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+<%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions"
 %><c:set var="templateid" value="${param.templateid}" /><c:if test="${not empty currentTemplate}"><c:set var="templateid" value="${currentTemplate.name}" /></c:if><div class="content css">
 
 	<div class="row">

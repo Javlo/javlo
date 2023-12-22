@@ -1,13 +1,10 @@
 package org.javlo.utilThymeleaf;
 
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ITemplateResolver;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 
 public class ThymeleafConfig implements ServletContextListener {
 
@@ -31,10 +28,11 @@ public class ThymeleafConfig implements ServletContextListener {
     }
 
     private ITemplateResolver templateResolver(final ServletContext servletContext) {
-        ServletContextTemplateResolver resolver = new ServletContextTemplateResolver(servletContext);
+       /* ServletContextTemplateResolver resolver = new ServletContextTemplateResolver(servletContext);
 
         resolver.setTemplateMode(TemplateMode.HTML);
-        return resolver;
+        return resolver;*/
+        return null;
     }
 
 

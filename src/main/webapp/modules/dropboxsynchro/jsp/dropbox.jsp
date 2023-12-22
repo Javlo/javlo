@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <div class="content">
 	<c:if test="${not empty dropboxUrl}">
 		<a class="dropboxUrl" href="${dropboxUrl}"><span>init drop box acccess.</span></a>	

@@ -2,7 +2,7 @@ package org.javlo.module.dashboard;
 
 import java.util.Date;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.javlo.helper.StringHelper;
 

@@ -8,9 +8,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.javlo.actions.IAction;
 import org.javlo.component.core.AbstractVisualComponent;

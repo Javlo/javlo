@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %><%@
-taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+<%@ taglib uri="jakarta.tags.core" prefix="c" %><%@
+taglib prefix="fn" uri="jakarta.tags.functions"
 %>
 <c:set var="width" value="1200" />
 <c:set var="max" value="${array[2][2].info.max}" />

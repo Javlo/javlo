@@ -35,7 +35,7 @@ import org.javlo.service.PersistenceService;
 import org.javlo.service.google.translation.TranslatorFactory;
 import org.javlo.user.User;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormatSymbols;

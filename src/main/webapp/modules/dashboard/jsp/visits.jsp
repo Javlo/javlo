@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.functions" prefix="fn" %>
 <div id="visits" class="content">
 <div id="visits-chart" class="pie" style="height: 300px;"></div>
 <button class="dashboard-visits-load" data-range="WEEK">${i18n.edit['dashboard.action.load-week']}</button>

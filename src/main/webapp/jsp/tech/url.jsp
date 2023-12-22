@@ -3,8 +3,8 @@
 <%@page import="org.javlo.navigation.MenuElement"%>
 <%@page import="java.util.Map"%>
 <%@page import="org.javlo.context.GlobalContext"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" 
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+<%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions"
  
 %><%
 GlobalContext globalContext = GlobalContext.getInstance(request);

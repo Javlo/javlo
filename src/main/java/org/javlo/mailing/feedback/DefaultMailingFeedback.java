@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;

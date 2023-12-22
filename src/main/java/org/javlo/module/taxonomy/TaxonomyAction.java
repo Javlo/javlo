@@ -16,8 +16,8 @@ import org.javlo.service.RequestService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.user.AdminUserSecurity;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;

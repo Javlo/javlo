@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+<%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions"
 %><c:if test="${not empty social.facebook.clientId && empty param.token && empty logoutDone}">
 <div id="fb-login-button"></div>
 <form id="fb-login-form" action="${info.currentURL}" method="post">

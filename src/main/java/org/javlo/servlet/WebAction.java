@@ -1,14 +1,10 @@
 package org.javlo.servlet;
 
-import java.io.UnsupportedEncodingException;
-import java.util.logging.Logger;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
@@ -19,8 +15,10 @@ import org.javlo.helper.StringHelper;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
-import org.javlo.service.social.SocialService;
 import org.javlo.utils.DebugListening;
+
+import java.io.UnsupportedEncodingException;
+import java.util.logging.Logger;
 
 public class WebAction extends HttpServlet {
 
@@ -64,7 +62,6 @@ public class WebAction extends HttpServlet {
 			ctx.setActionServlet(true);
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			RequestService rs = RequestService.getInstance(request);
-			request.setAttribute("social", SocialService.getInstance(ctx));
 			try {
 				// Tracker.trace(request, response);
 				if (rs.getParameter(ContentContext.FORCE_MODE_PARAMETER_NAME, null) != null) {

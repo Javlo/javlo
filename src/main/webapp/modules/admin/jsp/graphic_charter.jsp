@@ -1,4 +1,4 @@
-<%@page import="org.javlo.template.TemplateData"%><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><fieldset>
+<%@page import="org.javlo.template.TemplateData"%><%@ taglib uri="jakarta.tags.core" prefix="c"%><%@ taglib prefix="fn" uri="jakarta.tags.functions"%><fieldset>
 	<legend>${i18n.edit['admin.title.graphic-charter']}</legend>
 
 	<input type="hidden" name="graphic-charter" value="true" />

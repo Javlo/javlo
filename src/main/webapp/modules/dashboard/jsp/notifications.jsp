@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <div id="notification" class="content">
 
 <table cellpadding="0" cellspacing="0" border="0" class="dyntable display" id="notifications">

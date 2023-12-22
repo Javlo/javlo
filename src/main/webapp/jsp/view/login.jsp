@@ -1,5 +1,5 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+<%@ taglib prefix="c" uri="jakarta.tags.core"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions"
 %><%@page contentType="text/html"
 import="org.javlo.i18n.I18nAccess,
         org.javlo.user.User,

@@ -15,7 +15,7 @@ import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.naming.ConfigurationException;
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.javlo.config.MailingStaticConfig;
 import org.javlo.config.StaticConfig;

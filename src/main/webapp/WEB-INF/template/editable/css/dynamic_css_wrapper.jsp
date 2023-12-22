@@ -1,6 +1,6 @@
 <%@page language="java" contentType="text/css; charset=UTF-8"
-%><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"
+%><%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib uri="jakarta.tags.functions" prefix="fn"
 %><%@ taglib uri="/WEB-INF/javlo.tld" prefix="jv" %><jv:infoBean /><c:set var="template" value="${info.template}" /><c:if test="${not empty param.template}"><c:set var="template" value="${info.templatesMap[param.template]}" /></c:if>
 <c:set var="rows" value="${template.rows}" scope="request" />
 <c:set var="dynamicCSSTemplate" value="${info.template}" scope="request" />

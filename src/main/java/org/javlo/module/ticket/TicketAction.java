@@ -18,7 +18,7 @@ import java.util.Map.Entry;
 import javax.imageio.ImageIO;
 import javax.mail.internet.InternetAddress;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.actions.ViewActions;
 import org.javlo.config.StaticConfig;

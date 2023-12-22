@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="jakarta.tags.core" prefix="c"%>
 <c:if test="${basket.step==4 || !contentContext.asViewMode}">
 	<div class="btn-pay-group">
 		<button id="stripe-checkout-button-${compid}" class="btn btn-outline-primary btn-stripe btn-pay btn-cc mt-3 mb-3 d-flex justify-content-between align-items-center" ${basket.step!=4?'disabled':''}>

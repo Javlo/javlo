@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.logging.Logger;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.javlo.helper.StringHelper;
 import org.javlo.utils.TimeMap;

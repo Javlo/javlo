@@ -1,14 +1,10 @@
 package org.javlo.macro;
 
-import java.io.File;
-import java.util.Collection;
+import org.javlo.context.ContentContext;
+import org.javlo.template.Template;
+
 import java.util.Map;
 import java.util.logging.Logger;
-
-import org.javlo.context.ContentContext;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.template.Template;
 
 public class UpdateTemplate extends AbstractMacro {
 	
@@ -23,7 +19,7 @@ public class UpdateTemplate extends AbstractMacro {
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 		Template template = ctx.getCurrentTemplate();
 		logger.info("template : "+template.getName());
-		template.importTemplateInWebapp(ctx.getGlobalContext().getStaticConfig(), ctx, false);
+		template.importTemplateInWebapp(ctx.getGlobalContext().getStaticConfig(), ctx, false, true);
 		template.reload();		
 //		Collection<File> allFiles = ResourceHelper.getAllFilesList(new File(template.getWorkTemplateRealPath(ctx.getGlobalContext())));
 //		long olderModifDate = 0;

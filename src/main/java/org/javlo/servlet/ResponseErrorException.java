@@ -1,6 +1,6 @@
 package org.javlo.servlet;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 
 public class ResponseErrorException extends ServletException {
 	

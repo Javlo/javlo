@@ -8,11 +8,11 @@ import java.io.OutputStream;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.javlo.helper.ResourceHelper;
 import org.javlo.image.ColorImageEngine;
@@ -153,14 +153,14 @@ public class ColorServlet extends HttpServlet {
 	}
 
 	/**
-	 * @see javax.servlet.http.HttpServlet#doGet(HttpServletRequest, HttpServletResponse)
+	 * @see jakarta.servlet.http.HttpServlet#doGet(HttpServletRequest, HttpServletResponse)
 	 */
 	protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
 		processRequest(httpServletRequest, httpServletResponse);
 	}
 
 	/**
-	 * @see javax.servlet.http.HttpServlet#doPost(HttpServletRequest, HttpServletResponse)
+	 * @see jakarta.servlet.http.HttpServlet#doPost(HttpServletRequest, HttpServletResponse)
 	 */
 	protected void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
 		processRequest(httpServletRequest, httpServletResponse);

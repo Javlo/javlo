@@ -1,6 +1,6 @@
 package org.javlo.service;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 public class CaptchaService {
 	

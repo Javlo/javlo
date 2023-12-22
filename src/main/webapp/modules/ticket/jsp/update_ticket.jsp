@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%><div class="content">
+<%@ taglib uri="jakarta.tags.core" prefix="c"%><%@ taglib prefix="fn" uri="jakarta.tags.functions"%><div class="content">
 	<form class="standard-form" id="create-ticket" method="post" action="${info.currentURL}">
 		<div class="row">
 			<div class="col-md-2">

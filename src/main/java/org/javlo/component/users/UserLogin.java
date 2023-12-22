@@ -1,32 +1,14 @@
 package org.javlo.component.users;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.mail.internet.InternetAddress;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.BeanHelper;
-import org.javlo.helper.ComponentHelper;
-import org.javlo.helper.PatternHelper;
-import org.javlo.helper.RequestParameterMap;
-import org.javlo.helper.SecurityHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
+import org.javlo.helper.*;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
@@ -35,13 +17,14 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.user.UserAction;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
-import org.javlo.service.social.Facebook;
-import org.javlo.service.social.SocialService;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
-import org.javlo.user.TransientUserInfo;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
+
+import javax.mail.internet.InternetAddress;
+import java.io.File;
+import java.util.*;
 
 public class UserLogin extends AbstractPropertiesComponent implements IAction {
 
@@ -81,7 +64,6 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		SocialService.getInstance(ctx).prepare(ctx);
 		if (ctx.getCurrentUser() != null) {
 			ctx.getRequest().setAttribute("user", ctx.getCurrentUser());
 			ctx.getRequest().setAttribute("userInfoMap", ctx.getCurrentUser().getUserInfo());
@@ -142,27 +124,6 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 		File imageFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getUserFolder(ctx.getCurrentUser()), StringHelper.getFileNameFromPath(rs.getParameter("file"))));
 		if (imageFile.exists()) {
 			imageFile.delete();
-		}
-		return null;
-	}
-
-	public static String performFacebookLogin(RequestService rs, ContentContext ctx, HttpSession session, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
-		String token = rs.getParameter("token", null);
-		Facebook facebook = SocialService.getInstance(ctx).getFacebook();
-		IUserInfo ui = facebook.getInitialUserInfo(token);
-		TransientUserInfo.getInstance(session).setToken(token);
-		if (!StringHelper.isMail(ui.getEmail())) {
-			return "technical error : facebook have not returned a valid email (" + ui.getEmail() + ')';
-		}
-		IUserFactory userFactory = UserFactory.createUserFactory(globalContext, session);
-		User user = userFactory.getUser(ui.getLogin());
-		if (user == null) {
-			ui.setExternalLoginUser();
-			userFactory.addUserInfo(ui);
-			userFactory.store();
-			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("user.message.facebook-login"), GenericMessage.INFO));
-		} else {
-			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("user.message.facebook-login"), GenericMessage.INFO));
 		}
 		return null;
 	}

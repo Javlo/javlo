@@ -2,7 +2,7 @@ package org.javlo.user;
 
 import java.util.Collections;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;

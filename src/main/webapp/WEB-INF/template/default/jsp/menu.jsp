@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %><%@
-taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+<%@ taglib uri="jakarta.tags.core" prefix="c" %><%@
+taglib prefix="fn" uri="jakarta.tags.functions"
 %><c:if test="${empty menuCurrentPage}"><c:set var="menuCurrentPage" value="${info.root}" scope="request" /></c:if>
 <c:if test="${not empty menuDepth}"><c:set var="menuDepth" value="${menuDepth+1}" scope="request" /></c:if>
 <c:if test="${empty menuDepth}"><c:set var="menuDepth" value="1" scope="request" /></c:if>

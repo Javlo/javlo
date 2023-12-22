@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+<%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions"
 %><c:if test="${style == 'focus'}">
     <div style="margin: 10px; padding: 10px; background-color: #aa2222; border: 1px #333333 solid;">
 </c:if><c:if test="${style == 'border-left-top'}">

@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
+<%@ taglib uri="jakarta.tags.core" prefix="c"
 %><c:set var="template" value="${areaStyle}" scope="request"
 /><c:set var="colspan" value="1" /><c:if test="${not empty areaStyle.name}">
 <td id="${areaStyle.name}" class="_area responsive-${row.responsive}" width="${areaStyle.finalWidth}" valign="top" align="left" >

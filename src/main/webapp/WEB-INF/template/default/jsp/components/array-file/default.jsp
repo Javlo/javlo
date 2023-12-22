@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+<%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions"
 %><c:set var="colTag" value="${colHead}" /><c:set var="rowTag" value="${rowHead}" /><c:set var="blocTag" value="${colHead eq 'td'?'tbody':'thead'}" /><c:set var="titlebloc" value="${not (colHead eq 'td')}" />
 <table class="table"><c:if test="${not empty summary}"><caption>${summary}</caption></c:if><${blocTag}><c:set var="closeLastBloc" value="</${colHead eq 'td'?'tbody':'thead'}>" />
 <c:forEach var="row" items="${array}" varStatus="status"><c:set var="line" value="${status.count % 2 == 0?'odd':'even'}" /><c:set var="cssClass" value=' class="${cell.type} ${line}"' />

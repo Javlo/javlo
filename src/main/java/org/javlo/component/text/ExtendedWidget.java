@@ -48,7 +48,7 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 
 	public void createRenderer(ContentContext ctx) throws Exception {
 		File renderer = getRendererFile(ctx);
-		final String filePrefix = "<%@ taglib uri=\"http://java.sun.com/jsp/jstl/core\" prefix=\"c\"%><%@ taglib prefix=\"fn\" uri=\"http://java.sun.com/jsp/jstl/functions\"%><%@ taglib uri=\"/WEB-INF/javlo.tld\" prefix=\"jv\"%>";
+		final String filePrefix = "<%@ taglib uri=\"jakarta.tags.core\" prefix=\"c\"%><%@ taglib prefix=\"fn\" uri=\"jakarta.tags.functions\"%><%@ taglib uri=\"/WEB-INF/javlo.tld\" prefix=\"jv\"%>";
 		String css = getFieldValue("css");
 		String style = "";
 		if (!StringHelper.isEmpty(css)) {

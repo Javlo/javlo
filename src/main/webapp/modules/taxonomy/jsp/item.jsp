@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+<%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions"
 %><c:set var="node" value="${taxonomy.taxonomyBeanMap[param.id]}" />
 <div id="item-wrapper-${node.id}" class="item-wrapper" draggable="true" data-id="${node.id}" data-aschild="false">
 	<a id="action-list-${node.id}" href="#" class="command action-list ${fn:length(node.children)>0?'open':'close'}" title="expand"><span class="glyphicon glyphicon-menu-down"></span><span class="glyphicon glyphicon-menu-right"></span></a>

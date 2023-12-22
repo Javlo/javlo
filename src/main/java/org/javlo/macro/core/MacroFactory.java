@@ -120,7 +120,6 @@ public class MacroFactory {
 		macros.add(new ClearTransformURLCache());
 		macros.add(new ChangeImageFilter());
 		macros.add(new MailingStat());
-		macros.add(new SocialShare());
 		macros.add(new ValidAllChildren());
 		macros.add(new CleanPersistenceFolder());
 		macros.add(new FileInListMacro());

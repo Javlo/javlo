@@ -6,7 +6,7 @@ package org.javlo.i18n;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.javlo.message.GenericMessage;
 

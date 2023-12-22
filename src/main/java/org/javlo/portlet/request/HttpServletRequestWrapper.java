@@ -10,7 +10,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.service.RequestService;
 
 
-public class HttpServletRequestWrapper extends javax.servlet.http.HttpServletRequestWrapper {
+public class HttpServletRequestWrapper extends jakarta.servlet.http.HttpServletRequestWrapper {
 
 	private final RequestService requestService;
 	private final String suffix;

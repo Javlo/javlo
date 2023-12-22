@@ -1,6 +1,6 @@
 package org.javlo.search;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;

@@ -9,9 +9,9 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.mail.internet.InternetAddress;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;

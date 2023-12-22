@@ -3,7 +3,7 @@
  */
 package org.javlo.component.core;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 /**
  * @author pvandermaesen

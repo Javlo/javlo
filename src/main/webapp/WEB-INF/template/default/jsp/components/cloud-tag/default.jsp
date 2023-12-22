@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+<%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions"
 %>
 <c:if test="${not empty comp.value}"><h${contentContext.titleDepth}>${comp.value}</h${contentContext.titleDepth}></c:if>
 <ul class="clouds-tag">

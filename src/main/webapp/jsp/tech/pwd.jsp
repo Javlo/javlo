@@ -2,8 +2,8 @@
 <%@page import="org.javlo.context.ContentContext"%>
 <%@page import="org.javlo.cache.ICache"%>
 <%@page import="org.javlo.context.GlobalContext"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" 
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" 
+<%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions"
 %><div class="container"><br />
 <%
 ContentContext ctx = ContentContext.getContentContext(request, response);

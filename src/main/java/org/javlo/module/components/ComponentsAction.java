@@ -2,7 +2,7 @@ package org.javlo.module.components;
 
 import java.io.File;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.javlo.actions.IModuleAction;

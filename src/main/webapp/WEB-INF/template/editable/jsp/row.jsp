@@ -1,5 +1,5 @@
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+<%@taglib uri="jakarta.tags.core" prefix="c"
+%><%@taglib prefix="fn" uri="jakarta.tags.functions"
 %><c:set var="rowEmpty" value="true" />
 <c:forEach var="currentArea" items="${row.areas}"><c:if test="${empty info.areaEmpty[currentArea.name]}"><c:set var="rowEmpty" value="false" /></c:if></c:forEach>
 <c:if test="${(not rowEmpty) || editPreview || param['_display-zone']}">

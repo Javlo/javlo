@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
@@ -18,7 +18,7 @@ public class CssMapServlet extends HttpServlet {
 	}
 	
 	@Override
-	protected void doGet(HttpServletRequest httpRequest, javax.servlet.http.HttpServletResponse resp) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest httpRequest, jakarta.servlet.http.HttpServletResponse resp) throws ServletException, IOException {
 		String path = httpRequest.getServletPath();
 		GlobalContext globalContext = GlobalContext.getInstance(httpRequest);
 		if (path.startsWith('/' + globalContext.getContextKey())) {

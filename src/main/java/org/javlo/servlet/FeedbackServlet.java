@@ -11,10 +11,10 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FilenameUtils;
 import org.javlo.config.StaticConfig;
@@ -105,14 +105,14 @@ public class FeedbackServlet extends HttpServlet {
 	}
 
 	/**
-	 * @see javax.servlet.http.HttpServlet#doGet(HttpServletRequest, HttpServletResponse)
+	 * @see jakarta.servlet.http.HttpServlet#doGet(HttpServletRequest, HttpServletResponse)
 	 */
 	protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
 		processRequest(httpServletRequest, httpServletResponse);
 	}
 
 	/**
-	 * @see javax.servlet.http.HttpServlet#doPost(HttpServletRequest, HttpServletResponse)
+	 * @see jakarta.servlet.http.HttpServlet#doPost(HttpServletRequest, HttpServletResponse)
 	 */
 	protected void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
 		processRequest(httpServletRequest, httpServletResponse);

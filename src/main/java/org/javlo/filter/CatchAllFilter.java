@@ -1,5 +1,6 @@
 package org.javlo.filter;
 
+import jakarta.servlet.*;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.*;
 import org.javlo.helper.*;
@@ -24,9 +25,8 @@ import org.javlo.tracking.Tracker;
 import org.javlo.user.*;
 import org.javlo.utils.DebugListening;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -154,7 +154,7 @@ public class CatchAllFilter implements Filter {
 			if (DEBUG) {
 				LocalLogger.log("context not found : " + httpRequest.getRequestURI());
 			}
-			((HttpServletResponse) response).setStatus(HttpServletResponse.SC_NOT_FOUND, "context not found.");
+			((HttpServletResponse) response).setStatus(HttpServletResponse.SC_NOT_FOUND);
 			return;
 		} else {
 			globalContext.touch();

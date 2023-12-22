@@ -3,7 +3,7 @@ package org.javlo.context;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.StringHelper;

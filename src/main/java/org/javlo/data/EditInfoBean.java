@@ -1,6 +1,6 @@
 package org.javlo.data;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;

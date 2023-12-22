@@ -1,5 +1,8 @@
 package org.javlo.helper;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.javlo.actions.ActionManager;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
@@ -11,15 +14,8 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.service.NotificationService;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserSecurity;
-import org.javlo.utilThymeleaf.TemplateEngineUtil;
 import org.owasp.encoder.Encode;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.WebContext;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -154,7 +150,7 @@ public class ServletHelper {
 	}
 
 	public static final String executeThymeleaf(HttpServletRequest request, HttpServletResponse response, String url) throws ServletException, IOException {
-		try {
+		/*try {
 			TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(request.getServletContext());
 
 			WebContext context = new WebContext(request, response, request.getServletContext());
@@ -171,7 +167,9 @@ public class ServletHelper {
 			e.printStackTrace();
 			logger.severe(e.getMessage());
 			return null;
-		}
+		}*/
+
+		return null;
 	}
 
 	public static void includeBlocked(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

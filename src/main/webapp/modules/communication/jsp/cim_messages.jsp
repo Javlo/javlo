@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="jakarta.tags.core" prefix="c"%>
 <c:forEach var="message" items="${comm.messages}">
 	<li style="color: ${comm.sitesByKey[message.fromSite].usersByName[message.fromUser].color};">
 		<span class="user" data-user="${message.fromSite}::${message.fromUser}">

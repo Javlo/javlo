@@ -9,7 +9,7 @@ import org.javlo.message.GenericMessage;
 import org.javlo.template.Template;
 import org.javlo.template.TemplatePlugin;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 import java.io.*;
 import java.util.*;
 import java.util.logging.Logger;

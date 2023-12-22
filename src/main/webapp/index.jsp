@@ -3,7 +3,7 @@
 %><%@page import="org.javlo.helper.URLHelper"
 %><%@page import="org.javlo.helper.StringHelper"
 %><%@page import="org.javlo.helper.NetHelper"
-%><%@page import="javax.servlet.http.HttpServletResponse"
+%><%@page import="jakarta.servlet.http.HttpServletResponse"
 %><%@page import="org.javlo.context.GlobalContext"
 %><%@page import="org.javlo.i18n.I18nAccess"
 %><%@page import="org.javlo.template.Template"

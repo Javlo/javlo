@@ -49,7 +49,7 @@ import org.jsoup.select.Elements;
 import org.owasp.encoder.Encode;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 import java.awt.*;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;

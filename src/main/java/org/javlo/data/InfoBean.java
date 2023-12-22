@@ -45,7 +45,7 @@ import org.javlo.utils.HtmlPart;
 import org.joda.time.LocalTime;
 import org.owasp.encoder.Encode;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.text.DateFormatSymbols;
 import java.text.ParseException;

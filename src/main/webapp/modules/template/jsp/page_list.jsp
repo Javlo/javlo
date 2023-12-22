@@ -2,8 +2,8 @@
 %><%@page import="org.javlo.module.template.TemplateAction"
 %><%@page import="org.javlo.module.template.PageTemplateRef"
 %><%@page import="java.util.Collection"
-%><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+%><%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions"
 %><%
 ContentContext ctx = ContentContext.getContentContext(request, response);
 Collection<PageTemplateRef> pages = TemplateAction.searchPageTemplate(ctx, request.getParameter("name"));

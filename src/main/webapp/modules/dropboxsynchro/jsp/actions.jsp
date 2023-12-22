@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <div class="special">
 <c:if test="${empty dropboxThread}">
 <c:if test="${empty config || !config.valid}">

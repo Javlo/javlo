@@ -1,7 +1,7 @@
 package org.javlo.test.javlo;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.javlo.config.StaticConfig;
 import org.javlo.context.GlobalContext;

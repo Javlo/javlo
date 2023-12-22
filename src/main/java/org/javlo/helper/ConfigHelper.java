@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.filter.PropertiesFilter;

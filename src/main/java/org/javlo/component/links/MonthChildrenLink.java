@@ -12,8 +12,8 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.logging.Logger;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.javlo.actions.IAction;
 import org.javlo.component.core.AbstractVisualComponent;

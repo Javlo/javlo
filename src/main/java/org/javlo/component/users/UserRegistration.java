@@ -1,6 +1,7 @@
 package org.javlo.component.users;
 
-import org.apache.commons.fileupload.FileItem;
+import jakarta.servlet.http.HttpSession;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.MapComponent;
@@ -20,8 +21,6 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.module.ecom.DeliveryPrice;
 import org.javlo.service.ListService;
 import org.javlo.service.RequestService;
-import org.javlo.service.social.Facebook;
-import org.javlo.service.social.SocialService;
 import org.javlo.user.*;
 import org.javlo.utils.CollectionAsMap;
 import org.javlo.ztatic.FileCache;
@@ -31,7 +30,6 @@ import org.javlo.ztatic.StaticInfoBean;
 import javax.imageio.ImageIO;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
@@ -73,7 +71,6 @@ public class UserRegistration extends MapComponent implements IAction {
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		SocialService.getInstance(ctx).prepare(ctx);
 		DeliveryPrice deliveryPrice = DeliveryPrice.getInstance(ctx);
 		if (deliveryPrice != null) {
 			ListService.getInstance(ctx).addList("countries", deliveryPrice.getZone());
@@ -446,26 +443,6 @@ public class UserRegistration extends MapComponent implements IAction {
 		} else {
 			return i18nAccess.getViewText("form.error.email");
 		}
-	}
-
-	public static String performFacebookLogin(RequestService rs, ContentContext ctx, HttpSession session, GlobalContext globalContext, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
-		String token = rs.getParameter("token", null);
-		Facebook facebook = SocialService.getInstance(ctx).getFacebook();
-		IUserInfo ui = facebook.getInitialUserInfo(token);
-		if (!StringHelper.isMail(ui.getEmail())) {
-			return "technical error : facebook have not returned a valid email (" + ui.getEmail() + ')';
-		}
-		IUserFactory userFactory = UserFactory.createUserFactory(globalContext, session);
-		User user = userFactory.getUser(ui.getLogin());
-		if (user == null) {
-			ui.setExternalLoginUser();
-			userFactory.addUserInfo(ui);
-			userFactory.store();
-			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("user.message.facebook-login"), GenericMessage.INFO));
-		} else {
-			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("user.message.facebook-login"), GenericMessage.INFO));
-		}
-		return null;
 	}
 
 	@Override

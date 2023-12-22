@@ -1,6 +1,6 @@
 package org.javlo.module.user;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.files.Cell;
@@ -33,8 +33,8 @@ import org.owasp.encoder.Encode;
 import javax.imageio.ImageIO;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;

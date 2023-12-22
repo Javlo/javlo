@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <ul name="children-link">
 <c:forEach var="child" items="${children}" varStatus="status">
 	<li ${child.selected?'class="selected"':'class="unselected"'}><a href="${child.url}">${child.fullLabel}</a>

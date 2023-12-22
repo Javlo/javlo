@@ -1,6 +1,6 @@
 package org.javlo.component.form;
 
-import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.actions.IAction;
@@ -40,8 +40,8 @@ import org.javlo.utils.*;
 import org.javlo.ztatic.StaticInfo;
 
 import javax.mail.internet.InternetAddress;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.net.URL;

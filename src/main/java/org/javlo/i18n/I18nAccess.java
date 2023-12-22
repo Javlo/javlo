@@ -25,9 +25,9 @@ import java.util.Stack;
 import java.util.logging.Logger;
 
 import javax.naming.ConfigurationException;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;

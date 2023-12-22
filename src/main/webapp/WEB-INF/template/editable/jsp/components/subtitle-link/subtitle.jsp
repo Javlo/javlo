@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="jakarta.tags.core" prefix="c"%>
 <c:forEach items="${links}" var="link">
 <ul class="subtitle-link">
 <c:if test="${link.level ==  '2'}">

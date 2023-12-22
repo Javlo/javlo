@@ -1,5 +1,5 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+<%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions"
 %><div class="event-registration panel panel-${(!confirmed && !canceled)?'default':confirmed?'success':'danger'}">
   <c:if test="${!confirmed && !canceled}"><div class="panel-heading">${fields.question}</div></c:if>
   <c:if test="${confirmed}"><div class="panel-heading">${fields.confirmed}</div></c:if>

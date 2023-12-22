@@ -11,8 +11,8 @@ org.javlo.service.IMService,
 org.javlo.service.IMService.IMItem,
 org.javlo.helper.XHTMLHelper,
 org.javlo.helper.StringHelper
-"%><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %><%
+"%><%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions" %><%
 GlobalContext globalContext = GlobalContext.getInstance(request);
 IMService imService = IMService.getInstance(session);
 ContentContext ctx = ContentContext.getContentContext(request, response);

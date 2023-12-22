@@ -1,6 +1,6 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
-%><%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"
+<%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions"
+%><%@ taglib prefix="fmt" uri="jakarta.tags.fmt"
 %><c:if test="${pagination.pageSize > 0}"> 
 <div class="pagination">
 	<c:if test="${pagination.page > 1 && pagination.maxPage > 1}">

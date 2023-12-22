@@ -24,7 +24,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.component.core.IImageFilter;

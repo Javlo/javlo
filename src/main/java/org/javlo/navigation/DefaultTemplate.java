@@ -1,18 +1,5 @@
 package org.javlo.navigation;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.logging.Logger;
-
-import javax.mail.internet.InternetAddress;
-
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -27,6 +14,12 @@ import org.javlo.rendering.Device;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateData;
 import org.javlo.utils.ConfigurationProperties;
+
+import javax.mail.internet.InternetAddress;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class DefaultTemplate extends Template {
 
@@ -345,7 +338,7 @@ public class DefaultTemplate extends Template {
 	}
 
 	@Override
-	protected void importTemplateInWebapp(StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget, Map<String, String> childrenData, boolean compressResource, boolean parent, Boolean importComponent, boolean clear) throws IOException {
+	protected void importTemplateInWebapp(StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget, Map<String, String> childrenData, boolean compressResource, boolean parent, Boolean importComponent, boolean clear, boolean soft) throws IOException {
 		return;
 	}
 

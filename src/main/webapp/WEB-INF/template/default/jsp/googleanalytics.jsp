@@ -1,4 +1,4 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %><c:if test="${!info.device.pdf}">
+<%@ taglib uri="jakarta.tags.core" prefix="c" %><c:if test="${!info.device.pdf}">
   <!-- Global site tag (gtag.js) - Google Analytics 23/01/2019 -->
 <c:if test="${cookiesService.accepted}">
 <script async src="https://www.googletagmanager.com/gtag/js?id=${globalContext.googleAnalyticsUACCT}"></script>

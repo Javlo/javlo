@@ -1,7 +1,7 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" 
-%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" 
-%><%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"
-%><%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
+<%@ taglib prefix="c" uri="jakarta.tags.core"
+%><%@ taglib prefix="fn" uri="jakarta.tags.functions"
+%><%@ taglib uri="jakarta.tags.core" prefix="c"
+%><%@ taglib uri="jakarta.tags.functions" prefix="fn" %><%@ taglib prefix="fn" uri="jakarta.tags.functions"
 %><table width="100%" style="width: 100%;">
 	<tr>
 		<td class="title" width="33%" style="width: 33%; text-align: left;">${title.value}</td>
