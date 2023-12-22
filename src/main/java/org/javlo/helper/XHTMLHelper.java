@@ -2364,9 +2364,9 @@ public class XHTMLHelper {
 	}
 
 	public static void main(String[] args) throws MalformedURLException, Exception {
-		String testHtml = "<div>Javlo <c:if test='p>1 && d>1'>not null</c:if></div>";
+		String testHtml = " <c:if test=\"${param.promo > 9 && param.promo <= 99}\">";
 		Document doc = Jsoup.parse(testHtml, "", Parser.htmlParser());
-		//doc.outputSettings().escapeMode(EscapeMode.base);
+		doc.outputSettings().escapeMode(EscapeMode.base);
 		System.out.println("base = "+doc.html());
 	}
 
@@ -2893,7 +2893,7 @@ public class XHTMLHelper {
 			}
 		});
 
-		doc.outputSettings().escapeMode(EscapeMode.xhtml);
+		doc.outputSettings().escapeMode(EscapeMode.base);
 		return doc.html();
 	}
 
