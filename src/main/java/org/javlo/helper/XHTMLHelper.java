@@ -2892,8 +2892,7 @@ public class XHTMLHelper {
 				e.printStackTrace();
 			}
 		});
-
-		doc.outputSettings().escapeMode(EscapeMode.base);
+		//doc.outputSettings().escapeMode(EscapeMode.base);
 		return doc.html();
 	}
 

@@ -124,9 +124,9 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 		// no escape '&' in jsoup
 		final String ANDKEY = "____AND___JVL___";
 		String xhtml = getFieldValue(ctx, "xhtml");
-		xhtml = xhtml.replace("&", ANDKEY);
+		/*xhtml = xhtml.replace("&", ANDKEY);
 		xhtml = XHTMLHelper.replaceAbsoluteLinks(ctx,xhtml );
-		xhtml = xhtml.replace(ANDKEY,"&");
+		xhtml = xhtml.replace(ANDKEY,"&");*/
 		setFieldValue("xhtml", xhtml);
 		storeProperties();
 		if (isModify()) {
