@@ -2,99 +2,102 @@
 [WARNING] 
 [WARNING] Some problems were encountered while building the effective model for org.javlo:javlo2:war:2.1
 [WARNING] 'artifactId' contains an expression but should be a constant. @ org.javlo:javlo2${artifact.extension}:2.1, C:\work\javlo2\pom.xml, line 7, column 14
-[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: org.apache.httpcomponents.client5:httpclient5:jar -> duplicate declaration of version 5.2 @ org.javlo:javlo2${artifact.extension}:2.1, C:\work\javlo2\pom.xml, line 238, column 15
-[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: org.thymeleaf:thymeleaf:jar -> duplicate declaration of version 3.0.0.RELEASE @ org.javlo:javlo2${artifact.extension}:2.1, C:\work\javlo2\pom.xml, line 659, column 15
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: jakarta.servlet:jakarta.servlet-api:jar -> version 5.0.0 vs 6.0.0 @ org.javlo:javlo2${artifact.extension}:2.1, C:\work\javlo2\pom.xml, line 171, column 15
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:jar -> duplicate declaration of version 3.0.0 @ org.javlo:javlo2${artifact.extension}:2.1, C:\work\javlo2\pom.xml, line 278, column 15
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: org.thymeleaf:thymeleaf:jar -> version 3.0.15.RELEASE vs 3.1.2.RELEASE @ org.javlo:javlo2${artifact.extension}:2.1, C:\work\javlo2\pom.xml, line 674, column 15
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: org.eclipse.jgit:org.eclipse.jgit:jar -> version 6.2.0.202206071550-r vs 6.7.0.202309050840-r @ org.javlo:javlo2${artifact.extension}:2.1, C:\work\javlo2\pom.xml, line 731, column 15
 [WARNING] 
 [WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
 [WARNING] 
 [WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
 [WARNING] 
-[WARNING] The POM for org.apache.maven.plugins:maven-pmd-plugin:jar:3.3.2 is missing, no dependency information available
-[WARNING] Failed to retrieve plugin descriptor for org.apache.maven.plugins:maven-pmd-plugin:3.3.2: Plugin org.apache.maven.plugins:maven-pmd-plugin:3.3.2 or one of its dependencies could not be resolved: Failure to find org.apache.maven.plugins:maven-pmd-plugin:jar:3.3.2 in https://repo.maven.apache.org/maven2 was cached in the local repository, resolution will not be reattempted until the update interval of central has elapsed or updates are forced
-[WARNING] The POM for org.apache.maven.plugins:maven-checkstyle-plugin:jar:3.3.2 is missing, no dependency information available
-[WARNING] Failed to retrieve plugin descriptor for org.apache.maven.plugins:maven-checkstyle-plugin:3.3.2: Plugin org.apache.maven.plugins:maven-checkstyle-plugin:3.3.2 or one of its dependencies could not be resolved: Failure to find org.apache.maven.plugins:maven-checkstyle-plugin:jar:3.3.2 in https://repo.maven.apache.org/maven2 was cached in the local repository, resolution will not be reattempted until the update interval of central has elapsed or updates are forced
-[WARNING] The POM for org.apache.maven.plugins:maven-site-plugin:jar:3.3.1 is missing, no dependency information available
-[WARNING] Failed to retrieve plugin descriptor for org.apache.maven.plugins:maven-site-plugin:3.3.1: Plugin org.apache.maven.plugins:maven-site-plugin:3.3.1 or one of its dependencies could not be resolved: Failure to find org.apache.maven.plugins:maven-site-plugin:jar:3.3.1 in https://repo.maven.apache.org/maven2 was cached in the local repository, resolution will not be reattempted until the update interval of central has elapsed or updates are forced
-[INFO]                                                                         
-[INFO] ------------------------------------------------------------------------
-[INFO] Building Javlo 2 2.1
-[INFO] ------------------------------------------------------------------------
-[WARNING] The POM for org.apache.maven.plugins:maven-pmd-plugin:jar:3.3.2 is missing, no dependency information available
-[WARNING] Failed to retrieve plugin descriptor for org.apache.maven.plugins:maven-pmd-plugin:3.3.2: Plugin org.apache.maven.plugins:maven-pmd-plugin:3.3.2 or one of its dependencies could not be resolved: Failure to find org.apache.maven.plugins:maven-pmd-plugin:jar:3.3.2 in https://repo.maven.apache.org/maven2 was cached in the local repository, resolution will not be reattempted until the update interval of central has elapsed or updates are forced
-[WARNING] The POM for org.apache.maven.plugins:maven-checkstyle-plugin:jar:3.3.2 is missing, no dependency information available
-[WARNING] Failed to retrieve plugin descriptor for org.apache.maven.plugins:maven-checkstyle-plugin:3.3.2: Plugin org.apache.maven.plugins:maven-checkstyle-plugin:3.3.2 or one of its dependencies could not be resolved: Failure to find org.apache.maven.plugins:maven-checkstyle-plugin:jar:3.3.2 in https://repo.maven.apache.org/maven2 was cached in the local repository, resolution will not be reattempted until the update interval of central has elapsed or updates are forced
-[WARNING] The POM for org.apache.maven.plugins:maven-site-plugin:jar:3.3.1 is missing, no dependency information available
-[WARNING] Failed to retrieve plugin descriptor for org.apache.maven.plugins:maven-site-plugin:3.3.1: Plugin org.apache.maven.plugins:maven-site-plugin:3.3.1 or one of its dependencies could not be resolved: Failure to find org.apache.maven.plugins:maven-site-plugin:jar:3.3.1 in https://repo.maven.apache.org/maven2 was cached in the local repository, resolution will not be reattempted until the update interval of central has elapsed or updates are forced
 [INFO] 
-[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ javlo2 ---
+[INFO] --------------------------< org.javlo:javlo2 >--------------------------
+[INFO] Building Javlo 2 2.1
+[INFO]   from pom.xml
+[INFO] --------------------------------[ war ]---------------------------------
+[WARNING] The POM for jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:jar:3.0.0-RC1 is missing, no dependency information available
+Downloading from com.springsource.repository.bundles.external: https://repository.springsource.com/maven/bundles/external/com/paypal/sdk/rest-api-sdk/1.14.0/rest-api-sdk-1.14.0.pom
+Downloading from sonatype: https://oss.sonatype.org/content/repositories/snapshots/com/paypal/sdk/rest-api-sdk/1.14.0/rest-api-sdk-1.14.0.pom
+Downloading from central: https://repo.maven.apache.org/maven2/com/paypal/sdk/rest-api-sdk/1.14.0/rest-api-sdk-1.14.0.pom
+Progress (1): 1.4/2.8 kBProgress (1): 2.8 kB                        Downloaded from central: https://repo.maven.apache.org/maven2/com/paypal/sdk/rest-api-sdk/1.14.0/rest-api-sdk-1.14.0.pom (2.8 kB at 10 kB/s)
+[INFO] 
+[INFO] --- dependency:3.6.1:tree (default-cli) @ javlo2 ---
 [INFO] org.javlo:javlo2:war:2.1
-[INFO] +- org.eclipse.jgit:org.eclipse.jgit:jar:6.2.0.202206071550-r:compile
-[INFO] |  +- com.googlecode.javaewah:JavaEWAH:jar:1.1.13:compile
-[INFO] |  \- org.slf4j:slf4j-api:jar:1.7.30:compile
-[INFO] +- javax.servlet:jstl:jar:1.2:compile
+[INFO] +- org.eclipse.jgit:org.eclipse.jgit:jar:6.7.0.202309050840-r:compile
+[INFO] |  +- com.googlecode.javaewah:JavaEWAH:jar:1.2.3:compile
+[INFO] |  \- org.slf4j:slf4j-api:jar:1.7.36:compile
 [INFO] +- javax:javaee-web-api:jar:7.0:provided
 [INFO] +- com.github.cage:cage:jar:1.0:compile
 [INFO] +- com.google.code.gson:gson:jar:2.10.1:compile
-[INFO] +- commons-fileupload:commons-fileupload:jar:1.5:compile
-[INFO] +- org.apache.pdfbox:pdfbox:jar:2.0.26:compile
-[INFO] |  +- org.apache.pdfbox:fontbox:jar:2.0.26:compile
+[INFO] +- commons-io:commons-io:jar:2.15.1:compile
+[INFO] +- org.apache.pdfbox:pdfbox:jar:2.0.30:compile
+[INFO] |  +- org.apache.pdfbox:fontbox:jar:2.0.30:compile
 [INFO] |  \- commons-logging:commons-logging:jar:1.2:compile
-[INFO] +- org.zeroturnaround:zt-zip:jar:1.15:compile
-[INFO] +- org.apache.logging.log4j:log4j-core:jar:2.18.0:compile
-[INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.18.0:compile
-[INFO] +- org.apache.poi:poi-scratchpad:jar:5.2.3:compile
-[INFO] |  +- org.apache.poi:poi:jar:5.2.3:compile
-[INFO] |  |  \- com.zaxxer:SparseBitSet:jar:1.2:compile
+[INFO] +- org.zeroturnaround:zt-zip:jar:1.16:compile
+[INFO] +- org.apache.logging.log4j:log4j-core:jar:2.22.0:compile
+[INFO] |  \- org.apache.logging.log4j:log4j-api:jar:2.22.0:compile
+[INFO] +- org.apache.poi:poi-scratchpad:jar:5.2.4:compile
+[INFO] |  +- org.apache.poi:poi:jar:5.2.4:compile
+[INFO] |  |  \- com.zaxxer:SparseBitSet:jar:1.3:compile
 [INFO] |  \- org.apache.commons:commons-math3:jar:3.6.1:compile
-[INFO] +- org.apache.poi:poi-ooxml:jar:5.2.3:compile
-[INFO] |  +- org.apache.poi:poi-ooxml-lite:jar:5.2.3:compile
+[INFO] +- org.apache.poi:poi-ooxml:jar:5.2.4:compile
+[INFO] |  +- org.apache.poi:poi-ooxml-lite:jar:5.2.4:compile
 [INFO] |  +- org.apache.xmlbeans:xmlbeans:jar:5.1.1:compile
-[INFO] |  +- org.apache.commons:commons-compress:jar:1.21:compile
-[INFO] |  +- com.github.virtuald:curvesapi:jar:1.07:compile
+[INFO] |  +- org.apache.commons:commons-compress:jar:1.24.0:compile
+[INFO] |  +- com.github.virtuald:curvesapi:jar:1.08:compile
 [INFO] |  \- org.apache.commons:commons-collections4:jar:4.4:compile
-[INFO] +- org.apache.commons:commons-vfs2:jar:2.4.1:compile
+[INFO] +- org.apache.commons:commons-vfs2:jar:2.9.0:compile
+[INFO] |  \- org.apache.hadoop:hadoop-hdfs-client:jar:3.3.1:compile
+[INFO] |     +- com.squareup.okhttp:okhttp:jar:2.7.5:compile
+[INFO] |     |  \- com.squareup.okio:okio:jar:1.6.0:compile
+[INFO] |     +- com.fasterxml.jackson.core:jackson-annotations:jar:2.10.5:compile
+[INFO] |     \- com.fasterxml.jackson.core:jackson-databind:jar:2.10.5.1:compile
+[INFO] |        \- com.fasterxml.jackson.core:jackson-core:jar:2.10.5:compile
 [INFO] +- commons-beanutils:commons-beanutils:jar:1.9.4:compile
 [INFO] |  \- commons-collections:commons-collections:jar:3.2.2:compile
-[INFO] +- javax.servlet:javax.servlet-api:jar:3.1.0:provided
-[INFO] +- org.apache.commons:commons-lang3:jar:3.12.0:compile
-[INFO] +- javax.mail:mail:jar:1.4:compile
+[INFO] +- jakarta.servlet:jakarta.servlet-api:jar:6.0.0:provided
+[INFO] +- jakarta.servlet.jsp:jakarta.servlet.jsp-api:jar:3.1.0:provided
+[INFO] +- jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:jar:3.0.0:compile
+[INFO] +- jakarta.el:jakarta.el-api:jar:5.0.1:compile
+[INFO] +- org.glassfish.web:jakarta.servlet.jsp.jstl:jar:3.0.0:compile
+[INFO] +- org.apache.commons:commons-lang3:jar:3.14.0:compile
+[INFO] +- javax.mail:mail:jar:1.4.7:compile
 [INFO] |  \- javax.activation:activation:jar:1.1:compile
-[INFO] +- commons-io:commons-io:jar:2.7:compile
-[INFO] +- commons-codec:commons-codec:jar:1.15:compile
+[INFO] +- commons-codec:commons-codec:jar:1.16.0:compile
+[INFO] +- org.apache.commons:commons-fileupload2-jakarta:jar:2.0.0-M1:compile
+[INFO] |  \- org.apache.commons:commons-fileupload2-core:jar:2.0.0-M1:compile
 [INFO] +- com.jhlabs:filters:jar:2.0.235-1:compile
 [INFO] +- rome:rome:jar:1.0:compile
 [INFO] |  \- jdom:jdom:jar:1.0:compile
 [INFO] +- org.htmlparser:htmlparser:jar:2.1:compile
 [INFO] |  \- org.htmlparser:htmllexer:jar:2.1:compile
-[INFO] +- commons-httpclient:commons-httpclient:jar:3.1:compile
-[INFO] +- org.apache.httpcomponents.client5:httpclient5:jar:5.2:compile
-[INFO] |  \- org.apache.httpcomponents.core5:httpcore5-h2:jar:5.2:compile
-[INFO] +- org.apache.httpcomponents.core5:httpcore5:jar:5.2:compile
+[INFO] +- org.apache.httpcomponents.core5:httpcore5:jar:5.2.3:compile
+[INFO] +- org.apache.httpcomponents.client5:httpclient5:jar:5.2.2:compile
+[INFO] |  \- org.apache.httpcomponents.core5:httpcore5-h2:jar:5.2.3:compile
 [INFO] +- org.ostermiller:utils:jar:1.07.00:compile
-[INFO] +- javax.servlet.jsp:jsp-api:jar:2.1:provided
-[INFO] +- org.xhtmlrenderer:flying-saucer-pdf-openpdf:jar:9.1.22:compile
-[INFO] |  +- com.github.librepdf:openpdf:jar:1.3.11:compile
-[INFO] |  |  \- com.github.albfernandez:juniversalchardet:jar:2.3.0:compile
-[INFO] |  \- org.xhtmlrenderer:flying-saucer-core:jar:9.1.22:compile
+[INFO] +- org.xhtmlrenderer:flying-saucer-pdf-openpdf:jar:9.3.1:compile
+[INFO] |  +- com.github.librepdf:openpdf:jar:1.3.30:compile
+[INFO] |  \- org.xhtmlrenderer:flying-saucer-core:jar:9.3.1:compile
 [INFO] +- junit:junit:jar:4.13.2:test
 [INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
-[INFO] +- org.thymeleaf:thymeleaf:jar:3.0.0.RELEASE:compile
-[INFO] |  +- ognl:ognl:jar:3.1.3:compile
-[INFO] |  +- org.javassist:javassist:jar:3.20.0-GA:compile
-[INFO] |  +- org.attoparser:attoparser:jar:2.0.0.RELEASE:compile
-[INFO] |  \- org.unbescape:unbescape:jar:1.1.3.RELEASE:compile
+[INFO] +- org.thymeleaf:thymeleaf:jar:3.1.2.RELEASE:compile
+[INFO] |  +- ognl:ognl:jar:3.3.4:compile
+[INFO] |  |  \- org.javassist:javassist:jar:3.29.0-GA:compile
+[INFO] |  +- org.attoparser:attoparser:jar:2.0.7.RELEASE:compile
+[INFO] |  \- org.unbescape:unbescape:jar:1.1.6.RELEASE:compile
 [INFO] +- org.apache.commons:commons-imaging:jar:1.0-alpha3:compile
-[INFO] +- org.apache.tika:tika-core:jar:1.28.4:compile
+[INFO] +- org.apache.tika:tika-core:jar:1.28.5:compile
 [INFO] |  +- jakarta.xml.bind:jakarta.xml.bind-api:jar:2.3.3:compile
 [INFO] |  \- jakarta.activation:jakarta.activation-api:jar:1.2.2:compile
-[INFO] +- org.apache.tika:tika-parsers:jar:1.28.4:compile
-[INFO] |  +- com.fasterxml.woodstox:woodstox-core:jar:6.2.8:compile
+[INFO] +- org.apache.tika:tika-parsers:jar:1.28.5:compile
+[INFO] |  +- com.fasterxml.woodstox:woodstox-core:jar:6.3.1:compile
 [INFO] |  |  \- org.codehaus.woodstox:stax2-api:jar:4.2.1:compile
 [INFO] |  +- org.gagravarr:vorbis-java-tika:jar:0.8:compile
 [INFO] |  +- org.tallison:jmatio:jar:1.5:compile
 [INFO] |  +- org.apache.james:apache-mime4j-core:jar:0.8.4:compile
 [INFO] |  +- org.apache.james:apache-mime4j-dom:jar:0.8.4:compile
-[INFO] |  +- com.googlecode.plist:dd-plist:jar:1.23:compile
+[INFO] |  +- com.googlecode.plist:dd-plist:jar:1.24:compile
 [INFO] |  +- org.tukaani:xz:jar:1.9:compile
 [INFO] |  +- com.epam:parso:jar:2.0.14:compile
 [INFO] |  +- org.brotli:dec:jar:0.1.2:compile
@@ -106,7 +109,7 @@
 [INFO] |  |  +- org.bouncycastle:bcutil-jdk15on:jar:1.70:compile
 [INFO] |  |  \- org.bouncycastle:bcpkix-jdk15on:jar:1.70:compile
 [INFO] |  +- org.bouncycastle:bcprov-jdk15on:jar:1.70:compile
-[INFO] |  +- com.healthmarketscience.jackcess:jackcess:jar:4.0.1:compile
+[INFO] |  +- com.healthmarketscience.jackcess:jackcess:jar:4.0.2:compile
 [INFO] |  +- com.healthmarketscience.jackcess:jackcess-encrypt:jar:4.0.1:compile
 [INFO] |  +- org.ccil.cowan.tagsoup:tagsoup:jar:1.2.1:compile
 [INFO] |  +- org.ow2.asm:asm:jar:9.3:compile
@@ -121,14 +124,14 @@
 [INFO] |  +- com.googlecode.juniversalchardet:juniversalchardet:jar:1.0.3:compile
 [INFO] |  +- org.codelibs:jhighlight:jar:1.1.0:compile
 [INFO] |  +- com.pff:java-libpst:jar:0.9.3:compile
-[INFO] |  +- com.github.junrar:junrar:jar:7.5.2:compile
-[INFO] |  +- org.apache.cxf:cxf-rt-rs-client:jar:3.5.2:compile
-[INFO] |  |  +- org.apache.cxf:cxf-rt-transports-http:jar:3.5.2:compile
-[INFO] |  |  +- org.apache.cxf:cxf-core:jar:3.5.2:compile
+[INFO] |  +- com.github.junrar:junrar:jar:7.5.3:compile
+[INFO] |  +- org.apache.cxf:cxf-rt-rs-client:jar:3.5.3:compile
+[INFO] |  |  +- org.apache.cxf:cxf-rt-transports-http:jar:3.5.3:compile
+[INFO] |  |  +- org.apache.cxf:cxf-core:jar:3.5.3:compile
 [INFO] |  |  |  \- org.apache.ws.xmlschema:xmlschema-core:jar:2.3.0:compile
-[INFO] |  |  +- org.apache.cxf:cxf-rt-frontend-jaxrs:jar:3.5.2:compile
+[INFO] |  |  +- org.apache.cxf:cxf-rt-frontend-jaxrs:jar:3.5.3:compile
 [INFO] |  |  |  +- jakarta.ws.rs:jakarta.ws.rs-api:jar:2.1.6:compile
-[INFO] |  |  |  \- org.apache.cxf:cxf-rt-security:jar:3.5.2:compile
+[INFO] |  |  |  \- org.apache.cxf:cxf-rt-security:jar:3.5.3:compile
 [INFO] |  |  +- jakarta.annotation:jakarta.annotation-api:jar:1.3.5:compile
 [INFO] |  |  +- jakarta.xml.ws:jakarta.xml.ws-api:jar:2.3.3:compile
 [INFO] |  |  +- jakarta.jws:jakarta.jws-api:jar:2.1.0:compile
@@ -157,8 +160,8 @@
 [INFO] |  |  \- org.itadaki:bzip2:jar:0.9.1:compile
 [INFO] |  +- net.jcip:jcip-annotations:jar:1.0:compile
 [INFO] |  +- com.beust:jcommander:jar:1.82:compile
-[INFO] |  +- net.java.dev.jna:jna:jar:5.11.0:compile
-[INFO] |  +- com.google.protobuf:protobuf-java:jar:3.19.4:compile
+[INFO] |  +- net.java.dev.jna:jna:jar:5.12.1:compile
+[INFO] |  +- com.google.protobuf:protobuf-java:jar:3.21.5:compile
 [INFO] |  +- edu.ucar:cdm:jar:4.5.5:compile
 [INFO] |  |  +- edu.ucar:udunits:jar:4.5.5:compile
 [INFO] |  |  +- joda-time:joda-time:jar:2.2:compile
@@ -183,13 +186,8 @@
 [INFO] |  +- edu.usc.ir:sentiment-analysis-parser:jar:0.1:compile
 [INFO] |  +- org.apache.pdfbox:jbig2-imageio:jar:3.0.4:compile
 [INFO] |  \- com.github.jai-imageio:jai-imageio-core:jar:1.4.0:compile
-[INFO] +- org.jsoup:jsoup:jar:1.15.3:compile
-[INFO] +- com.paypal.sdk:rest-api-sdk:jar:0.5.2:compile
-[INFO] |  +- org.testng:testng:jar:6.3.1:compile
-[INFO] |  |  +- org.beanshell:bsh:jar:2.0b4:compile
-[INFO] |  |  \- org.yaml:snakeyaml:jar:1.6:compile
-[INFO] |  \- com.paypal.sdk:paypal-core:jar:1.2:compile
-[INFO] |     \- javax.servlet:servlet-api:jar:2.5:compile
+[INFO] +- org.jsoup:jsoup:jar:1.16.1:compile
+[INFO] +- com.paypal.sdk:rest-api-sdk:jar:1.14.0:compile
 [INFO] +- org.mozilla:rhino:jar:1.7.11:compile
 [INFO] +- org.lesscss:lesscss:jar:1.7.0.1.1:compile
 [INFO] +- io.bit3:jsass:jar:5.10.5:compile
@@ -210,35 +208,32 @@
 [INFO] |  |  \- fr.opensagres.xdocreport:fr.opensagres.xdocreport.itext.extension:jar:2.0.4:compile
 [INFO] |  |     \- com.lowagie:itext:jar:2.1.7:compile
 [INFO] |  \- fr.opensagres.xdocreport:fr.opensagres.poi.xwpf.converter.xhtml:jar:2.0.4:compile
-[INFO] +- org.apache.xmlgraphics:batik-transcoder:jar:1.16:compile
-[INFO] |  +- org.apache.xmlgraphics:batik-anim:jar:1.16:compile
-[INFO] |  |  +- org.apache.xmlgraphics:batik-css:jar:1.16:compile
-[INFO] |  |  +- org.apache.xmlgraphics:batik-ext:jar:1.16:compile
-[INFO] |  |  +- org.apache.xmlgraphics:batik-parser:jar:1.16:compile
-[INFO] |  |  \- org.apache.xmlgraphics:batik-svg-dom:jar:1.16:compile
-[INFO] |  +- org.apache.xmlgraphics:batik-awt-util:jar:1.16:compile
-[INFO] |  |  \- org.apache.xmlgraphics:xmlgraphics-commons:jar:2.7:compile
-[INFO] |  +- org.apache.xmlgraphics:batik-bridge:jar:1.16:compile
-[INFO] |  |  \- org.apache.xmlgraphics:batik-script:jar:1.16:compile
-[INFO] |  +- org.apache.xmlgraphics:batik-dom:jar:1.16:compile
-[INFO] |  +- org.apache.xmlgraphics:batik-gvt:jar:1.16:compile
-[INFO] |  +- org.apache.xmlgraphics:batik-shared-resources:jar:1.16:compile
-[INFO] |  +- org.apache.xmlgraphics:batik-svggen:jar:1.16:compile
-[INFO] |  +- org.apache.xmlgraphics:batik-util:jar:1.16:compile
-[INFO] |  |  +- org.apache.xmlgraphics:batik-constants:jar:1.16:compile
-[INFO] |  |  \- org.apache.xmlgraphics:batik-i18n:jar:1.16:compile
-[INFO] |  +- org.apache.xmlgraphics:batik-xml:jar:1.16:compile
+[INFO] +- org.apache.xmlgraphics:batik-transcoder:jar:1.17:compile
+[INFO] |  +- org.apache.xmlgraphics:batik-anim:jar:1.17:compile
+[INFO] |  |  +- org.apache.xmlgraphics:batik-css:jar:1.17:compile
+[INFO] |  |  +- org.apache.xmlgraphics:batik-ext:jar:1.17:compile
+[INFO] |  |  +- org.apache.xmlgraphics:batik-parser:jar:1.17:compile
+[INFO] |  |  \- org.apache.xmlgraphics:batik-svg-dom:jar:1.17:compile
+[INFO] |  +- org.apache.xmlgraphics:batik-awt-util:jar:1.17:compile
+[INFO] |  |  \- org.apache.xmlgraphics:xmlgraphics-commons:jar:2.9:compile
+[INFO] |  +- org.apache.xmlgraphics:batik-bridge:jar:1.17:compile
+[INFO] |  |  \- org.apache.xmlgraphics:batik-script:jar:1.17:compile
+[INFO] |  +- org.apache.xmlgraphics:batik-dom:jar:1.17:compile
+[INFO] |  +- org.apache.xmlgraphics:batik-gvt:jar:1.17:compile
+[INFO] |  +- org.apache.xmlgraphics:batik-shared-resources:jar:1.17:compile
+[INFO] |  +- org.apache.xmlgraphics:batik-svggen:jar:1.17:compile
+[INFO] |  +- org.apache.xmlgraphics:batik-util:jar:1.17:compile
+[INFO] |  |  +- org.apache.xmlgraphics:batik-constants:jar:1.17:compile
+[INFO] |  |  \- org.apache.xmlgraphics:batik-i18n:jar:1.17:compile
+[INFO] |  +- org.apache.xmlgraphics:batik-xml:jar:1.17:compile
 [INFO] |  \- xml-apis:xml-apis-ext:jar:1.3.04:compile
-[INFO] +- org.apache.lucene:lucene-core:jar:9.5.0:compile
-[INFO] +- org.apache.lucene:lucene-queryparser:jar:9.5.0:compile
-[INFO] |  \- org.apache.lucene:lucene-sandbox:jar:9.5.0:compile
-[INFO] +- org.apache.lucene:lucene-queries:jar:9.5.0:compile
-[INFO] +- org.apache.lucene:lucene-highlighter:jar:9.5.0:compile
-[INFO] |  \- org.apache.lucene:lucene-memory:jar:9.5.0:runtime
-[INFO] +- com.dropbox.core:dropbox-core-sdk:jar:3.1.1:compile
-[INFO] +- org.apache.oltu.oauth2:org.apache.oltu.oauth2.client:jar:1.0.2:compile
-[INFO] |  \- org.apache.oltu.oauth2:org.apache.oltu.oauth2.common:jar:1.0.2:compile
-[INFO] |     \- org.json:json:jar:20140107:compile
+[INFO] +- org.apache.lucene:lucene-core:jar:9.6.0:compile
+[INFO] +- org.apache.lucene:lucene-queryparser:jar:9.6.0:compile
+[INFO] |  \- org.apache.lucene:lucene-sandbox:jar:9.6.0:compile
+[INFO] +- org.apache.lucene:lucene-queries:jar:9.6.0:compile
+[INFO] +- org.apache.lucene:lucene-highlighter:jar:9.6.0:compile
+[INFO] |  \- org.apache.lucene:lucene-memory:jar:9.6.0:runtime
+[INFO] +- com.dropbox.core:dropbox-core-sdk:jar:6.0.0:compile
 [INFO] +- com.github.sheigutn:pushbullet-java-8:jar:1.3.4:compile
 [INFO] |  +- javax.websocket:javax.websocket-api:jar:1.1:compile
 [INFO] |  +- org.glassfish.tyrus.bundles:tyrus-standalone-client:jar:1.12:compile
@@ -247,6 +242,7 @@
 [INFO] +- org.jcodec:jcodec:jar:0.2.5:compile
 [INFO] +- org.jcodec:jcodec-javase:jar:0.2.5:compile
 [INFO] +- com.google.code.geocoder-java:geocoder-java:jar:0.16:compile
+[INFO] |  \- commons-httpclient:commons-httpclient:jar:3.1:compile
 [INFO] +- net.sf.uadetector:uadetector-core:jar:0.9.22:compile
 [INFO] |  +- net.sf.qualitycheck:quality-check:jar:1.3:compile
 [INFO] |  +- com.google.code.findbugs:jsr305:jar:2.0.3:compile
@@ -254,20 +250,19 @@
 [INFO] +- net.sf.uadetector:uadetector-resources:jar:2014.10:compile
 [INFO] +- commons-net:commons-net:jar:3.9.0:compile
 [INFO] +- de.java2html:java2html:jar:5.0:compile
-[INFO] +- org.mapdb:mapdb:jar:3.0.8:compile
-[INFO] |  +- org.jetbrains.kotlin:kotlin-stdlib:jar:1.2.71:compile (version selected from constraint [1.2.41,1.2.90))
+[INFO] +- org.mapdb:mapdb:jar:3.0.9:compile
+[INFO] |  +- org.jetbrains.kotlin:kotlin-stdlib:jar:1.2.71:compile
 [INFO] |  |  +- org.jetbrains.kotlin:kotlin-stdlib-common:jar:1.2.71:compile
 [INFO] |  |  \- org.jetbrains:annotations:jar:13.0:compile
-[INFO] |  +- org.eclipse.collections:eclipse-collections-api:jar:12.0.0.M1:compile (version selected from constraint [7.0.0,))
-[INFO] |  +- org.eclipse.collections:eclipse-collections:jar:12.0.0.M1:compile (version selected from constraint [7.0.0,))
-[INFO] |  +- org.eclipse.collections:eclipse-collections-forkjoin:jar:12.0.0.M1:compile (version selected from constraint [7.0.0,))
+[INFO] |  +- org.eclipse.collections:eclipse-collections-api:jar:10.4.0:compile
+[INFO] |  +- org.eclipse.collections:eclipse-collections:jar:10.4.0:compile
+[INFO] |  +- org.eclipse.collections:eclipse-collections-forkjoin:jar:10.4.0:compile
 [INFO] |  +- net.jpountz.lz4:lz4:jar:1.3.0:compile
 [INFO] |  \- org.mapdb:elsa:jar:3.0.0-M5:compile
 [INFO] +- ch.simschla:fast-and-simple-minify:jar:1.0:compile
 [INFO] |  \- org.apache.ant:ant:jar:1.8.4:compile
 [INFO] |     \- org.apache.ant:ant-launcher:jar:1.8.4:compile
-[INFO] +- net.lingala.zip4j:zip4j:jar:2.11.3:compile
-[INFO] +- com.mortennobel:java-image-scaling:jar:0.8.6:compile
+[INFO] +- net.lingala.zip4j:zip4j:jar:2.11.5:compile
 [INFO] +- com.stripe:stripe-java:jar:20.44.0:compile
 [INFO] +- org.sejda.imageio:webp-imageio:jar:0.1.6:compile
 [INFO] +- org.eclipse.mylyn.docs:org.eclipse.mylyn.docs.epub.core:jar:4.0.6:compile
@@ -275,17 +270,35 @@
 [INFO] |  +- org.eclipse.emf:org.eclipse.emf.ecore.xmi:jar:2.12.0:compile
 [INFO] |  +- org.eclipse.emf:org.eclipse.emf.common:jar:2.12.0:compile
 [INFO] |  \- org.eclipse.mylyn.docs:org.eclipse.mylyn.wikitext:jar:3.0.9:compile
-[INFO] +- net.sourceforge.htmlcleaner:htmlcleaner:jar:2.26:compile
+[INFO] +- net.sourceforge.htmlcleaner:htmlcleaner:jar:2.29:compile
 [INFO] +- org.zwobble.mammoth:mammoth:jar:1.5.0:compile
 [INFO] +- org.postgresql:postgresql:jar:42.5.1:compile
 [INFO] |  \- org.checkerframework:checker-qual:jar:3.5.0:compile
 [INFO] +- org.apache.commons:commons-dbcp2:jar:2.7.0:compile
 [INFO] |  \- org.apache.commons:commons-pool2:jar:2.7.0:compile
-[INFO] \- javax.xml.bind:activation:jar:1.0.2:compile
+[INFO] +- javax.xml.bind:activation:jar:1.0.2:compile
+[INFO] +- dev.langchain4j:langchain4j-core:jar:0.23.0:compile
+[INFO] |  \- com.github.spullara.mustache.java:compiler:jar:0.9.10:compile
+[INFO] +- dev.langchain4j:langchain4j-open-ai:jar:0.23.0:compile
+[INFO] |  +- dev.ai4j:openai4j:jar:0.9.0:compile
+[INFO] |  |  +- com.squareup.retrofit2:converter-gson:jar:2.9.0:compile
+[INFO] |  |  \- com.squareup.okhttp3:okhttp-sse:jar:4.10.0:compile
+[INFO] |  |     \- org.jetbrains.kotlin:kotlin-stdlib-jdk8:jar:1.6.10:compile
+[INFO] |  |        \- org.jetbrains.kotlin:kotlin-stdlib-jdk7:jar:1.6.10:compile
+[INFO] |  \- com.knuddels:jtokkit:jar:0.6.1:compile
+[INFO] +- dev.langchain4j:langchain4j:jar:0.23.0:compile
+[INFO] |  +- com.squareup.retrofit2:retrofit:jar:2.9.0:compile
+[INFO] |  \- com.squareup.okhttp3:okhttp:jar:4.10.0:compile
+[INFO] |     \- com.squareup.okio:okio-jvm:jar:3.0.0:compile
+[INFO] +- org.apache.ftpserver:ftpserver-core:jar:1.1.4:compile
+[INFO] |  +- org.apache.ftpserver:ftplet-api:jar:1.1.4:compile
+[INFO] |  \- org.apache.mina:mina-core:jar:2.1.6:compile
+[INFO] \- org.springframework:spring-beans:jar:6.1.2:compile
+[INFO]    \- org.springframework:spring-core:jar:6.1.2:compile
+[INFO]       \- org.springframework:spring-jcl:jar:6.1.2:compile
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 3.757 s
-[INFO] Finished at: 2023-04-06T10:50:02+02:00
-[INFO] Final Memory: 26M/97M
+[INFO] Total time:  7.619 s
+[INFO] Finished at: 2023-12-21T22:21:34+01:00
 [INFO] ------------------------------------------------------------------------
