@@ -3,11 +3,11 @@
  */
 package org.javlo.helper.Comparator;
 
+import org.javlo.navigation.MenuElement;
+
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
-
-import org.javlo.navigation.MenuElement;
 
 
 /**
@@ -19,18 +19,26 @@ import org.javlo.navigation.MenuElement;
  */
 public class MenuElementCreationDateComparator implements Comparator<MenuElement> {
 	
-	private int multiply = 1;	
+	private int multiply = 1;
+
+	private boolean seoOrder = false;
 	
-	public MenuElementCreationDateComparator (boolean ascending ) {		
+	public MenuElementCreationDateComparator (boolean ascending, boolean seoOrder ) {
 		if (!ascending) {
 			multiply = -1;
-		}		
+		}
+		this.seoOrder = seoOrder;
 	}
 
 	/**
 	 * compare two array of Comparable
 	 */
 	public int compare(MenuElement elem1, MenuElement elem2) {
+
+		if (seoOrder && elem1.getSeoWeight() != elem2.getSeoWeight()) {
+			return elem2.getSeoWeight() - elem1.getSeoWeight();
+		}
+
 		Calendar cal1 = GregorianCalendar.getInstance();
 		Calendar cal2 = GregorianCalendar.getInstance();
 		cal1.setTime(elem1.getCreationDate());

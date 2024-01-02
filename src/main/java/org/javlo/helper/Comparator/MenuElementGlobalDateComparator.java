@@ -3,13 +3,13 @@
  */
 package org.javlo.helper.Comparator;
 
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.GregorianCalendar;
-
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.navigation.MenuElement;
+
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.GregorianCalendar;
 
 /**
  * compare two element of the menu in Content Date if exist and on modification date else.
@@ -20,15 +20,17 @@ import org.javlo.navigation.MenuElement;
  */
 public class MenuElementGlobalDateComparator implements Comparator<MenuElement> {
 
+	private boolean seoOrder = false;
 	private int multiply = 1;
 	private final ContentContext ctx;
 	private boolean autoSwitchToDefaultLanguage = false;
 
-	public MenuElementGlobalDateComparator(ContentContext ctx, boolean ascending) {
+	public MenuElementGlobalDateComparator(ContentContext ctx, boolean ascending, boolean seoOrder) {
 		if (!ascending) {
 			multiply = -1;
 		}
 		this.ctx = ctx;
+		this.seoOrder = seoOrder;
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		autoSwitchToDefaultLanguage = globalContext.isAutoSwitchToDefaultLanguage();
 	}
@@ -38,6 +40,10 @@ public class MenuElementGlobalDateComparator implements Comparator<MenuElement> 
 	 */
 	@Override
 	public int compare(MenuElement elem1, MenuElement elem2) {
+
+		if (seoOrder && elem1.getSeoWeight() != elem2.getSeoWeight()) {
+			return elem2.getSeoWeight() - elem1.getSeoWeight();
+		}
 		
 		try {
 			if (elem1.getToTheTopLevel(ctx) != elem2.getToTheTopLevel(ctx)) {				

@@ -36,7 +36,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 	<c:forEach var="macro" items="${info.addMacro}">
 		<c:if test="${macro.type == param.type}">
 			<c:set var="key" value="macro.${macro.name}" />
-			
+
 			<c:if test="${macro.interative}">
 				<c:set var="url" value="${macro.url}" />
 				<c:if test="${empty url}">

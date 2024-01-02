@@ -3,10 +3,10 @@
  */
 package org.javlo.helper.Comparator;
 
-import java.util.Comparator;
-
 import org.javlo.context.ContentContext;
 import org.javlo.navigation.MenuElement;
+
+import java.util.Comparator;
 
 /**
  * @author pvanderm
@@ -18,6 +18,16 @@ public class MenuElementVisitComparator implements Comparator<MenuElement> {
 	private int multiply = 1;
 	private ContentContext ctx = null;
 
+	private boolean seoOrder = false;
+
+	public MenuElementVisitComparator(ContentContext inCtx, boolean ascending, boolean seoOrder) {
+		if (ascending) {
+			multiply = -1;
+		}
+		ctx = inCtx;
+		this.seoOrder = seoOrder;
+	}
+
 	public MenuElementVisitComparator(ContentContext inCtx, boolean ascending) {
 		if (ascending) {
 			multiply = -1;
@@ -26,7 +36,7 @@ public class MenuElementVisitComparator implements Comparator<MenuElement> {
 	}
 
 	public static int compareVisit(ContentContext ctx, int multiply, MenuElement elem1, MenuElement elem2) {
-		
+
 		try {
 			if (elem1.getToTheTopLevel(ctx) != elem2.getToTheTopLevel(ctx)) {				
 				return elem2.getToTheTopLevel(ctx)-elem1.getToTheTopLevel(ctx);
@@ -53,6 +63,9 @@ public class MenuElementVisitComparator implements Comparator<MenuElement> {
 
 	@Override
 	public int compare(MenuElement elem1, MenuElement elem2) {
+		if (seoOrder && elem1.getSeoWeight() != elem2.getSeoWeight()) {
+			return elem2.getSeoWeight() - elem1.getSeoWeight();
+		}
 		return compareVisit(ctx, multiply, elem1, elem2);
 	}
 

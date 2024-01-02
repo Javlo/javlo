@@ -1,21 +1,27 @@
 package org.javlo.navigation;
 
-import java.util.Comparator;
-
 import org.javlo.context.ContentContext;
+
+import java.util.Comparator;
 
 public class ReactionMenuElementComparator implements Comparator<MenuElement> {
 
 	private boolean reverse = false;
+
+	private boolean seoOrdre = false;
 	private ContentContext ctx = null;
 
-	public ReactionMenuElementComparator(ContentContext ctx, boolean reverse) {
+	public ReactionMenuElementComparator(ContentContext ctx, boolean reverse, boolean seoOrder) {
 		this.reverse = reverse;
 		this.ctx = ctx;
+		this.seoOrdre = seoOrder;
 	}
 
 	@Override
 	public int compare(MenuElement o1, MenuElement o2) {
+		if (seoOrdre && o1.getSeoWeight() != o2.getSeoWeight()) {
+			return o2.getSeoWeight() - o1.getSeoWeight();
+		}
 		try {
 			if (o1.getToTheTopLevel(ctx) != o2.getToTheTopLevel(ctx)) {
 				return o2.getToTheTopLevel(ctx)-o1.getToTheTopLevel(ctx);

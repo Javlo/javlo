@@ -142,6 +142,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
     private static final String CHANGE_ORDER_KEY = "reverse-order";
 
+    private static final String SEO_ORDER_KEY = "seo-order";
+
     private static final String SESSION_TAXONOMY_KEY = "session-taxonomy";
 
     private static final String DYNAMIC_ORDER_KEY = "dynamic-order";
@@ -676,6 +678,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         out.println(XHTMLHelper.getCheckbox(getReverseOrderInput(), isReverseOrder(ctx)));
         out.println("<label for=\"" + getReverseOrderInput() + "\">" + i18nAccess.getText("content.page-teaser.reverse-order") + "</label></div>");
 
+        out.println("<div class=\"line reverse\">");
+        out.println(XHTMLHelper.getCheckbox(getSeoOrderInput(), isSeoOrder(ctx)));
+        out.println("<label for=\"" + getSeoOrderInput() + "\">" + i18nAccess.getText("content.page-teaser.seo-order") + "</label></div>");
+
         out.println("<div class=\"line no\">");
         out.println(XHTMLHelper.getRadio(getOrderInputName(), "no-order", getOrder()));
         out.println("<label for=\"date\">" + i18nAccess.getText("content.page-teaser.no-order") + "</label></div>");
@@ -1010,6 +1016,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         return "reserve-order-" + getId();
     }
 
+    protected String getSeoOrderInput() {
+        return "seo-order-" + getId();
+    }
+
     protected String getDynamicOrderInput() {
         return "dynamic-order-" + getId();
     }
@@ -1219,6 +1229,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         }
     }
 
+    protected boolean isSeoOrder(ContentContext ctx) {
+       return StringHelper.isTrue(properties.getProperty(SEO_ORDER_KEY), false);
+    }
+
     protected boolean isSessionTaxonomy(ContentContext ctx) {
         return StringHelper.isTrue(properties.getProperty(SESSION_TAXONOMY_KEY), true);
     }
@@ -1251,19 +1265,19 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
     private void sort(ContentContext ctx, List<MenuElement> pages, boolean ascending) throws Exception {
         if (!isNoOrder(ctx)) {
             if (isReactionOrder(ctx)) {
-                Collections.sort(pages, new ReactionMenuElementComparator(ctx, ascending));
+                Collections.sort(pages, new ReactionMenuElementComparator(ctx, ascending, isSeoOrder(ctx)));
             } else if (isDateOrder(ctx)) {
-                Collections.sort(pages, new MenuElementGlobalDateComparator(ctx, ascending));
+                Collections.sort(pages, new MenuElementGlobalDateComparator(ctx, ascending,  isSeoOrder(ctx)));
             } else if (isCreationOrder(ctx)) {
-                Collections.sort(pages, new MenuElementCreationDateComparator(ascending));
+                Collections.sort(pages, new MenuElementCreationDateComparator(ascending,  isSeoOrder(ctx)));
             } else if (isVisitOrder(ctx)) {
-                Collections.sort(pages, new MenuElementVisitComparator(ctx, ascending));
+                Collections.sort(pages, new MenuElementVisitComparator(ctx, ascending,  isSeoOrder(ctx)));
             } else if (isPopularityOrder(ctx)) {
-                Collections.sort(pages, new MenuElementPopularityComparator(ctx, ascending));
+                Collections.sort(pages, new MenuElementPopularityComparator(ctx, ascending,  isSeoOrder(ctx)));
             } else if (isContentOrder(ctx)) {
-                Collections.sort(pages, new MenuElementPriorityComparator(!ascending));
+                Collections.sort(pages, new MenuElementPriorityComparator(!ascending,  isSeoOrder(ctx)));
             } else if (isWeightOrder(ctx)) {
-                Collections.sort(pages, new MenuElementWeightComparator(ctx, !ascending));
+                Collections.sort(pages, new MenuElementWeightComparator(ctx, !ascending,  isSeoOrder(ctx)));
             }else if (isRandomOrder(ctx)) {
                 Collections.shuffle(pages);
             }
@@ -1732,6 +1746,13 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
                 setModify();
             }
 
+            String seoOrder = requestService.getParameter(getSeoOrderInput(), "false");
+            boolean newSeoOrder = StringHelper.isTrue(seoOrder);
+            if (isSeoOrder(ctx) != newSeoOrder) {
+                setSeoOrder(newSeoOrder);
+                setModify();
+            }
+
             String eventOnly = requestService.getParameter(getEventInputName(), "false");
             boolean newEventOnly = StringHelper.isTrue(eventOnly);
             if (isOnlyEvent() != newEventOnly) {
@@ -1869,6 +1890,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
     protected void setReverseOrder(boolean reverseOrder) {
         properties.setProperty(CHANGE_ORDER_KEY, "" + reverseOrder);
+    }
+
+    protected void setSeoOrder(boolean seoOrder) {
+        properties.setProperty(SEO_ORDER_KEY, "" + seoOrder);
     }
 
     protected void setEventOnly(boolean onlyEvent) {

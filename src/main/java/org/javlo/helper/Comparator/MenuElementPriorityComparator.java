@@ -3,9 +3,9 @@
  */
 package org.javlo.helper.Comparator;
 
-import java.util.Comparator;
-
 import org.javlo.navigation.MenuElement;
+
+import java.util.Comparator;
 
 
 /**
@@ -15,16 +15,23 @@ import org.javlo.navigation.MenuElement;
  */
 public class MenuElementPriorityComparator implements Comparator<MenuElement> {
 	
-	private int multiply = 1;	
+	private int multiply = 1;
+
+	private boolean seoOrder = false;
 	
-	public MenuElementPriorityComparator ( boolean ascending ) {		
+	public MenuElementPriorityComparator ( boolean ascending, boolean seoOrder ) {
 		if (ascending) {
 			multiply = -1;
-		}		
+		}
+		this.seoOrder = seoOrder;
 	}
 	
 	public int compare(MenuElement elem1, MenuElement elem2) {
-		
+
+		if (seoOrder && elem1.getSeoWeight() != elem2.getSeoWeight()) {
+			return elem2.getSeoWeight() - elem1.getSeoWeight();
+		}
+
 		try {
 			return (int)Math.round((elem1.getPriority()-elem2.getPriority())*100)*multiply;
 		} catch (Exception e) { 
