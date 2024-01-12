@@ -593,7 +593,7 @@ public class InfoBean {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
+			return "";
 		}
 	}
 

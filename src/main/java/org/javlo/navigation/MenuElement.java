@@ -3308,7 +3308,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		PageDescription desc = getPageDescriptionCached(ctx, newCtx.getRequestContentLanguage());
 
 		if (desc.pageTitle != null) {
-			// return desc.pageTitle;
+			return desc.pageTitle;
 		}
 
 		desc.pageTitle = getForcedPageTitle(newCtx);
@@ -3319,7 +3319,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 				desc.pageTitle = getLabel(newCtx);
 			}
 		}
-		return desc.pageTitle;
+		return StringHelper.neverNull(desc.pageTitle);
 	}
 
 	/**
