@@ -1442,7 +1442,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public Collection<String> getExternalResources(ContentContext ctx) {
-		String resources = getConfig(ctx).getProperty("resources", null);
+		String resources = getConfig(ctx).getProperty("resources."+getCurrentRenderer(ctx), null);
+		if (resources == null) {
+			resources = getConfig(ctx).getProperty("resources", null);
+		}
 		Template template = null;
 		try {
 			template = ctx.getCurrentTemplate();

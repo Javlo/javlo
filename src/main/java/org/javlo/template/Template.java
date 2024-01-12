@@ -3825,7 +3825,8 @@ public class Template implements Comparable<Template> {
 					stream.filter(Files::isRegularFile)
 							.filter(path -> path.toString().endsWith(".css") || path.toString().endsWith(".scss") || path.toString().endsWith(".less"))
 							.forEach(path -> processFile(path, componentClass));
-				} catch (IOException e) {
+				} catch (Exception e) {
+					logger.severe("error on folder : "+folder+" : "+e.getMessage());
 					e.printStackTrace();
 				}
 		return componentClass.get(compName);
@@ -3840,7 +3841,8 @@ public class Template implements Comparable<Template> {
 	private static void processFile(Path file, Map<String, List<String>> componentClass) {
 		try (Stream<String> stream = Files.lines(file)) {
 			stream.forEach(line -> extractClassNames(line, componentClass));
-		} catch (IOException e) {
+		} catch (Exception e) {
+			logger.severe("error on : "+file+" : "+e.getMessage());
 			e.printStackTrace();
 		}
 	}

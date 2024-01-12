@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.javlo</groupId>
 	<artifactId>javlo2${artifact.extension}</artifactId>
-	<version>2.1</version>
+	<version>2.3</version>
 	<packaging>${packaging.type}</packaging>
 	<name>Javlo 2</name>
 	<url>http://www.javlo.org/</url>
@@ -62,7 +62,7 @@
 
 		<maven.compiler.release>17</maven.compiler.release>
 
-		<jackson.version>2.13.4</jackson.version>
+		<jackson.version>2.16.1</jackson.version>
 		<lucene.version>9.6.0</lucene.version>
 		<elasticsearch.version>7.17.6</elasticsearch.version>
 		<tika.version>1.28.5</tika.version>
@@ -73,6 +73,24 @@
 	</properties>
 
 	<dependencies>
+
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+
 
 		<!--
 		https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit -->
