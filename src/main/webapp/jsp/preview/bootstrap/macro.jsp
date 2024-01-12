@@ -6,6 +6,8 @@ ContentContext editCtx = new ContentContext(ctx);
 editCtx.setRenderMode(ContentContext.EDIT_MODE);
 %>
 <div class="macro-btn-list _jv_menu">
+<c:set var="topSeparator" value="false" />
+<c:set var="bottomSeparator" value="false" />
 <c:forEach var="macro" items="${info.addMacro}">
 	<c:if test="${macro.type == param.type}">
 		<c:set var="key" value="macro.${macro.name}" />
@@ -21,6 +23,10 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 					<c:param name="previewEdit" value="true" />
 				</c:url>
 			</c:if>
+			<c:set var="topSeparator" value="true" />
+			<c:if test="${macro.type == param.type}">
+				<c:set var="bottomSeparator" value="true" />
+			</c:if>
 			<a class="btn btn-default" aria-label="Left Align" href="${url}" title="${i18n.edit[descriptionKey] != descriptionKey?i18n.edit[descriptionKey]:macro.name}">
 			<c:set var="descriptionKey" value="macro.description.${macro.name}" />
 			<span class="button-group-addon"><i class="${macro.icon}" aria-hidden="true"></i></span>
@@ -31,7 +37,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 	</c:if>
 </c:forEach>
 
-	<hr />
+	<c:if test="${topSeparator && topSeparator}"><hr /></c:if>
 
 	<c:forEach var="macro" items="${info.addMacro}">
 		<c:if test="${macro.type == param.type}">
