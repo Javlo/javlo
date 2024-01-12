@@ -589,7 +589,12 @@ public class InfoBean {
 			if (popupPage != null) {
 				return popupPage.getPageTitle(ctx);
 			} else {
-				return getCurrentPage().getPageTitle(ctx);
+				MenuElement cp = getCurrentPage();
+				if (cp != null) {
+					return cp.getPageTitle(ctx);
+				} else {
+					return "";
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
