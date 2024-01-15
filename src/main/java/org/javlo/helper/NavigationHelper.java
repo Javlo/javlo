@@ -118,6 +118,9 @@ public class NavigationHelper {
 		target.setActive(src.isActive());
 		target.setUserRoles(src.getUserRoles());
 		target.setEditRoles(src);
+		if (src.getTaxonomy() != null) {
+			target.setTaxonomy(new LinkedHashSet<>(src.getTaxonomy()));
+		}
 		List<MenuElement> vParent = new LinkedList<MenuElement>();
 		vParent.addAll(src.getVirtualParent());
 		target.setVirtualParent(vParent);
