@@ -170,7 +170,12 @@ public class ContentContext {
 	}
 	
 	public int getRequestCountOnSession() {
-		return (int)request.getSession().getAttribute(COUNT_REQUEST_BY_SESSION_KEY);
+		Integer out = (Integer)request.getSession().getAttribute(COUNT_REQUEST_BY_SESSION_KEY);
+		if (out == null) {
+			return 0;
+		} else {
+			return out;
+		}
 	}
 
 	/**
