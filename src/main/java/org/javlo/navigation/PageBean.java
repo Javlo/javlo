@@ -1,6 +1,7 @@
 package org.javlo.navigation;
 
 import com.beust.jcommander.ParameterException;
+import org.javlo.component.container.ISection;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.image.IImageTitle;
@@ -939,6 +940,10 @@ public class PageBean implements Serializable {
 	public List<TaxonomyDisplayBean> getTaxonomyBean() throws IOException {
 		TaxonomyService ts = TaxonomyService.getInstance(ctx);
 		return TaxonomyDisplayBean.convert(ctx, ctx.getGlobalContext().getAllTaxonomy(ctx).convert(page.getTaxonomy()));
+	}
+
+	public List<ISection> getSection() throws Exception {
+		return page.getSection(ctx);
 	}
 	
 }

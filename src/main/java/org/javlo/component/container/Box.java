@@ -14,7 +14,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.*;
 
-public class Box extends AbstractVisualComponent implements IContainer {
+public class Box extends AbstractVisualComponent implements ISection {
 	
 	
 	private static final String TYPE = "box";
@@ -374,6 +374,20 @@ public class Box extends AbstractVisualComponent implements IContainer {
 	}
 
 	@Override
+	public String getCurrentRenderer(ContentContext ctx) {
+		if (!isCloseBox()) {
+			return super.getCurrentRenderer(ctx);
+		} else {
+			IContentVisualComponent open = getOpenComponent(ctx);
+			if (open != null && open != this) {
+				return open.getCurrentRenderer(ctx);
+			} else {
+				return super.getCurrentRenderer(ctx);
+			}
+		}
+	}
+
+	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		final String BOX_KEY = getType() + "_stack_int";
 		if (!isCloseBox()) {
@@ -541,4 +555,8 @@ public class Box extends AbstractVisualComponent implements IContainer {
 		return true;
 	}
 
+	@Override
+	public String getSectionId() {
+		return "B"+getId();
+	}
 }

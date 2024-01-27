@@ -8,6 +8,7 @@ import org.javlo.cache.ICache;
 import org.javlo.cache.MapCache;
 import org.javlo.comparator.MenuElementPriorityComparator;
 import org.javlo.component.container.IContainer;
+import org.javlo.component.container.ISection;
 import org.javlo.component.core.*;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.ecom.IProductContainer;
@@ -5951,6 +5952,21 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			componentBean = newList.toArray(new ComponentBean[0]);
 		}
 		releaseCache();
+	}
+
+	public List<ISection> getSection(ContentContext ctx) throws Exception {
+		ContentContext ctxAllArea = ctx.getContextWithArea(null);
+		ContentElementList content = getContent(ctx);
+		List<ISection> sections = new LinkedList<>();
+		while (content.hasNext(ctxAllArea)) {
+			IContentVisualComponent comp = content.next(ctx);
+			if (comp instanceof ISection) {
+				if (((ISection)comp).isOpen(ctx)) {
+					sections.add((ISection)comp);
+				}
+			}
+		}
+		return sections;
 	}
 
 }

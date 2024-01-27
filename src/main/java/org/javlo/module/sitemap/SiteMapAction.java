@@ -1,14 +1,5 @@
 package org.javlo.module.sitemap;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.NavigationHelper;
@@ -20,6 +11,10 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.*;
 
 public class SiteMapAction extends AbstractModuleAction {
 
@@ -123,9 +118,9 @@ public class SiteMapAction extends AbstractModuleAction {
 		PrintStream out = new PrintStream(outStream);
 
 		String pasteAction = "";
-		pasteAction = "<input type=\"submit\" name=\"paste-child-" + item.getId() + "\" value=\"move as child\" />";
+		pasteAction = "<input type=\"submit\" name=\"paste-child-" + item.getId() + "\" value=\"move selection as child\" />";
 		if (!item.isRoot()) {
-			pasteAction += "<input type=\"submit\" name=\"paste-brother-" + item.getId() + "\" value=\"move as brother\" />";
+			pasteAction += "<input type=\"submit\" name=\"paste-brother-" + item.getId() + "\" value=\"move selection as brother\" />";
 		}
 
 		out.println("<td class=\"action check\"><input type=\"checkbox\" name=\"selection\" value=\"" + item.getId() + "\" /></td>");
