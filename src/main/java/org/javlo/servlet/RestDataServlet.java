@@ -1,13 +1,9 @@
 package org.javlo.servlet;
 
-import java.io.IOException;
-import java.util.logging.Logger;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -16,6 +12,9 @@ import org.javlo.data.rest.IRestItem;
 import org.javlo.data.rest.RestContainerFactory;
 import org.javlo.helper.StringHelper;
 import org.javlo.utils.JSONMap;
+
+import java.io.IOException;
+import java.util.logging.Logger;
 
 public class RestDataServlet extends HttpServlet {
 
@@ -59,6 +58,7 @@ public class RestDataServlet extends HttpServlet {
 				logger.warning("RestFactory not found : " + restFactoryName);
 				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			} else {
+				logger.info("rest factory : "+restFactory.getClass());
 				ContentContext ctx;
 				try {
 					response.setContentType("application/json; charset=" + ContentContext.CHARACTER_ENCODING);

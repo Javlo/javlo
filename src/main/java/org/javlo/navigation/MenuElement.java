@@ -15,6 +15,7 @@ import org.javlo.component.ecom.IProductContainer;
 import org.javlo.component.image.*;
 import org.javlo.component.layout.PDFLayoutComponent;
 import org.javlo.component.links.ChildrenLink;
+import org.javlo.component.links.InternalLink;
 import org.javlo.component.links.PageMirrorComponent;
 import org.javlo.component.links.PageReferenceComponent;
 import org.javlo.component.meta.Font;
@@ -779,6 +780,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	private int urlNumber = 0;
 
 	private boolean restWidthChildren = false;
+
+	private boolean restWidthContent = true;
 
 	private String ipSecurityErrorPageName = null;
 
@@ -5589,6 +5592,25 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		return null;
 	}
 
+	public List<MenuElement> getInternalLinks(ContentContext ctx) throws Exception {
+		List<MenuElement> out = new LinkedList<>();
+		ContentElementList content = getContent(ctx);
+		IEventRegistration eventRegistration = getEventRegistration(ctx);
+		while (content.hasNext(ctx)) {
+			IContentVisualComponent comp = content.next(ctx);
+			if (comp instanceof InternalLink) {
+				InternalLink linkComp = (InternalLink)comp;
+				MenuElement target = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx).searchChildFromId(linkComp.getLinkId());
+				if (target == null) {
+					logger.warning("target page not found  : "+linkComp.getLinkURL(ctx));
+				} else {
+					out.add(target);
+				}
+			}
+		}
+		return out;
+	}
+
 	public boolean isEditabled(ContentContext ctx) throws Exception {
 		return Edit.checkPageSecurity(ctx, parent);
 	}
@@ -5659,25 +5681,46 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		map.put("creator", getCreator());
 		map.put("latestEditor", getLatestEditor());
 
-		List<Map<String, Object>> contentArray = new LinkedList<Map<String, Object>>();
-		Map<String, Object> dynamicComponent = new HashMap<String, Object>();
-		for (String lg : langs) {
-			ContentContext langCtx = ctx.getContextWidthOtherRequestLanguage(lg);
-			langCtx.setArea(null);
-			ContentElementList content = getLocalContent(langCtx);
-			while (content.hasNext(langCtx)) {
-				IContentVisualComponent comp = content.next(langCtx);
-				if (comp instanceof DynamicComponent) {
-					if (dynamicComponent.get(comp.getType()) == null || lg.equals(ctx.getRequestContentLanguage())) {
-						DynamicComponent dynComp = (DynamicComponent) comp;
-						dynamicComponent.put(dynComp.getType(), dynComp.getContentAsMap(ctx));
-					}
-				}
-				contentArray.add(comp.getContentAsMap(langCtx));
-			}
+		if (getImage(ctx) != null) {
+			map.put("imageUrl", getImage(ctx).getResourceURL(ctx));
+			map.put("imageAlt", getImage(ctx).getImageDescription(ctx));
 		}
-		map.put("content", contentArray);
-		map.put("dynamicComponent", dynamicComponent); // shortcut to access directly to data of a dynamicComponent
+
+		if (getFont(ctx) != null) {
+			map.put("font", getFont(ctx));
+		}
+
+		List<MenuElement> links = getInternalLinks(ctx);
+		if (links.size() > 0) {
+			List<String> paths = new LinkedList<>();
+			for (MenuElement page : links) {
+				paths.add(page.getPath());
+			}
+			map.put("ilinks", paths);
+		}
+
+		if (this.restWidthContent) {
+			List<Map<String, Object>> contentArray = new LinkedList<Map<String, Object>>();
+			Map<String, Object> dynamicComponent = new HashMap<String, Object>();
+			for (String lg : langs) {
+				ContentContext langCtx = ctx.getContextWidthOtherRequestLanguage(lg);
+				langCtx.setArea(null);
+				ContentElementList content = getLocalContent(langCtx);
+				while (content.hasNext(langCtx)) {
+					IContentVisualComponent comp = content.next(langCtx);
+					if (comp instanceof DynamicComponent) {
+						if (dynamicComponent.get(comp.getType()) == null || lg.equals(ctx.getRequestContentLanguage())) {
+							DynamicComponent dynComp = (DynamicComponent) comp;
+							dynamicComponent.put(dynComp.getType(), dynComp.getContentAsMap(ctx));
+						}
+					}
+					contentArray.add(comp.getContentAsMap(langCtx));
+				}
+			}
+			map.put("content", contentArray);
+			map.put("dynamicComponent", dynamicComponent); // shortcut to access directly to data of a dynamicComponent
+		}
+
 		if (isRestWidthChildren()) {
 			Collection<MenuElement> childrenMenuElement = getChildMenuElements();
 			List<Map<String, Object>> childrenArray = new LinkedList<Map<String, Object>>();
@@ -5696,6 +5739,14 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 	public void setRestWidthChildren(boolean restWidthChildren) {
 		this.restWidthChildren = restWidthChildren;
+	}
+
+	public boolean isRestWidthContent() {
+		return restWidthContent;
+	}
+
+	public void setRestWidthContent(boolean restWidthhContent) {
+		this.restWidthContent = restWidthhContent;
 	}
 
 	public String getSavedParent() {

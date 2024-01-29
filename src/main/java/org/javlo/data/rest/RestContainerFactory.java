@@ -15,9 +15,13 @@ public class RestContainerFactory {
 			factories = new HashMap<String, IRestFactory>();
 			IRestFactory fact = new TestRest();
 			factories.put(fact.getName(), fact);
-			fact = new ContentRest(false);
+			fact = new ContentRest(false, true);
 			factories.put(fact.getName(), fact);
-			fact = new ContentRest(true);
+			fact = new ContentRest(true, true);
+			factories.put(fact.getName(), fact);
+			fact = new ContentRest(false, false);
+			factories.put(fact.getName(), fact);
+			fact = new ContentRest(true, false);
 			factories.put(fact.getName(), fact);
 			fact = new ComponentRestFactory();
 			factories.put(fact.getName(), fact);

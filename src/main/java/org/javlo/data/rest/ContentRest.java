@@ -10,17 +10,27 @@ import org.javlo.servlet.ResponseErrorException;
 public class ContentRest implements IRestFactory {
 	
 	private boolean children = true;
+	private boolean content = true;
 	
-	public ContentRest(boolean children) {
+	public ContentRest(boolean children, boolean content) {
 		this.children = children;
+		this.content = content;
 	}
 
 	@Override
 	public String getName() {
-		if (children) {
-			return "content-children";
+		if (content) {
+			if (children) {
+				return "content-children";
+			} else {
+				return "content";
+			}
 		} else {
-			return "content";
+			if (children) {
+				return "content-children-page";
+			} else {
+				return "content-page";
+			}
 		}
 	}
 
@@ -35,7 +45,8 @@ public class ContentRest implements IRestFactory {
 			throw new ResponseErrorException(HttpServletResponse.SC_FORBIDDEN);
 		}
 		if (root != null) {
-			root.setRestWidthChildren(children);
+			root.setRestWidthChildren(this.children);
+			root.setRestWidthContent(this.content);
 		}
 		return root;
 	}
