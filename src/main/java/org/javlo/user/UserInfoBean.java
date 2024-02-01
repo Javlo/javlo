@@ -10,6 +10,9 @@ public class UserInfoBean {
     private String email;
     private Set<String> roles;
 
+    public UserInfoBean() {
+    }
+
     public UserInfoBean(IUserInfo userInfo) {
         this.login = userInfo.getLogin();
         this.firstname = userInfo.getFirstName();

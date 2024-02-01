@@ -1,21 +1,19 @@
 package org.javlo.user;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Logger;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.URLHelper;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Logger;
 
 public class AdminUserFactory extends UserFactory {
 
@@ -30,6 +28,10 @@ public class AdminUserFactory extends UserFactory {
 	private String dataFolder = null;
 
 	private boolean master = false;
+
+	protected String getRemoteLoginUri() {
+		return "/webaction/user.adminajaxlogin/";
+	}
 
 	public static AdminUserFactory createUserFactory(GlobalContext globalContext, HttpSession session) {
 		AdminUserFactory res = null;

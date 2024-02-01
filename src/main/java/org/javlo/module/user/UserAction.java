@@ -1090,11 +1090,9 @@ public class UserAction extends AbstractModuleAction {
 	}
 
 	public static String performAjaxLogin(ContentContext ctx, HttpServletRequest request, RequestService rs, GlobalContext globalContext, I18nAccess i18nAccess) throws Exception {
-		System.out.println("### performAjaxLogin");
 		return ajaxLogin(ctx, request, rs, globalContext, i18nAccess, UserFactory.createUserFactory(request));
 	}
 	public static String performAdminAjaxLogin(ContentContext ctx, HttpServletRequest request, RequestService rs, GlobalContext globalContext, I18nAccess i18nAccess) throws Exception {
-		System.out.println("### performAdminAjaxLogin");
 		return ajaxLogin(ctx, request, rs, globalContext, i18nAccess, AdminUserFactory.createUserFactory(globalContext, request.getSession()));
 	}
 

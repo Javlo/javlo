@@ -282,7 +282,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	}
 
 	protected String getRemoteLoginUri() {
-		return "/webaction/user.remotelogin/";
+		return "/webaction/user.ajaxlogin/";
 	}
 
 	protected User remoteLogin(GlobalContext globalContext, String login, String pwd) throws Exception {
@@ -536,6 +536,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		if (user == null) {
 			try {
 				user = remoteLogin(globalContext, login, password);
+				request.getSession().setAttribute(getSessionKey(), user);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
