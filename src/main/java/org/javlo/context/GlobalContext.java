@@ -1,5 +1,8 @@
 package org.javlo.context;
 
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -45,9 +48,6 @@ import org.owasp.encoder.Encode;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import java.io.*;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
@@ -1632,6 +1632,15 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public String getAdminUserFactoryClassName() {
 		String userFactoryClass = properties.getString("adminuserfactory.class", getDefaultAdminUserFactoryClassName()).trim();
 		return userFactoryClass;
+	}
+
+	public String getRemoteLoginUrl() {
+		return properties.getString("remotelogin.url", "").trim();
+	}
+
+	public void setRemoteLoginUrl(String url) {
+		properties.setProperty("remotelogin.url", url);
+		save();
 	}
 
 	private String getDefaultAdminUserFactoryClassName() {

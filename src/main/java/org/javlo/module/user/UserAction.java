@@ -1,5 +1,8 @@
 package org.javlo.module.user;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.javlo.actions.AbstractModuleAction;
@@ -33,8 +36,6 @@ import org.owasp.encoder.Encode;
 import javax.imageio.ImageIO;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -1085,6 +1086,40 @@ public class UserAction extends AbstractModuleAction {
 		}
 		RequestHelper.setJSONType(ctx.getResponse());
 		JSONMap.JSON.toJson(data, ctx.getResponse().getWriter());
+		return null;
+	}
+
+	public static String performAjaxLogin(ContentContext ctx, HttpServletRequest request, RequestService rs, GlobalContext globalContext, I18nAccess i18nAccess) throws Exception {
+		System.out.println("### performAjaxLogin");
+		return ajaxLogin(ctx, request, rs, globalContext, i18nAccess, UserFactory.createUserFactory(request));
+	}
+	public static String performAdminAjaxLogin(ContentContext ctx, HttpServletRequest request, RequestService rs, GlobalContext globalContext, I18nAccess i18nAccess) throws Exception {
+		System.out.println("### performAdminAjaxLogin");
+		return ajaxLogin(ctx, request, rs, globalContext, i18nAccess, AdminUserFactory.createUserFactory(globalContext, request.getSession()));
+	}
+
+	private static synchronized String ajaxLogin(ContentContext ctx, HttpServletRequest request, RequestService rs, GlobalContext globalContext, I18nAccess i18nAccess, IUserFactory fact) throws Exception {
+		if (!ctx.getGlobalContext().getStaticConfig().isRemoteLogin()) {
+			ctx.getResponse().setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return null;
+		}
+		Thread.sleep(500);
+		User loggedUser = null;
+		String login = request.getParameter("login");
+		logger.info("try ajax login : "+login+" UserFactory = "+fact.getClass().getName());
+		if (login != null) {
+			loggedUser = fact.login(request, login, request.getParameter("password"));
+		}
+		if (loggedUser != null) {
+			RequestHelper.setJSONType(ctx.getResponse());
+			String userjson = JsonHelper.toJson(loggedUser.getUserInfo());
+			System.out.println("userjson = "+userjson);
+			JsonHelper.toJson(new UserInfoBean(loggedUser.getUserInfo()), ctx.getResponse().getWriter());
+			logger.info("valid ajax login : "+login+ " / IP:"+NetHelper.getIp(ctx.getRequest()));
+		} else {
+			logger.warning("bad ajax login : "+login+ " / IP:"+NetHelper.getIp(ctx.getRequest()));
+			ctx.getResponse().setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		}
 		return null;
 	}
 

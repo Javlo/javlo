@@ -3,6 +3,8 @@
  */
 package org.javlo.user;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
@@ -21,11 +23,10 @@ import org.javlo.utils.TimeMap;
 
 import javax.imageio.ImageIO;
 import javax.mail.internet.InternetAddress;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.*;
 
 /**
@@ -280,6 +281,30 @@ public class UserFactory implements IUserFactory, Serializable {
 		return null;
 	}
 
+	protected String getRemoteLoginUri() {
+		return "/webaction/user.remotelogin/";
+	}
+
+	protected User remoteLogin(GlobalContext globalContext, String login, String pwd) throws Exception {
+		if (!globalContext.getRemoteLoginUrl().isEmpty()) {
+			String url = URLHelper.mergePath(globalContext.getRemoteLoginUrl(), getRemoteLoginUri());
+			logger.info("try remote login on : "+url);
+			url = URLHelper.addParam(url, "login", login);
+			url = URLHelper.addParam(url, "password", pwd);
+			String json = NetHelper.readPage(new URL(url));
+			if (!json.isEmpty()) {
+				UserInfoBean userInfoBean = JsonHelper.fromJson(json, UserInfoBean.class);
+				User user = new User();
+				user.setLogin(userInfoBean.getLogin());
+				IUserInfo ui = user.getUserInfo();
+				BeanHelper.copyBean(userInfoBean, ui);
+				user.setUserInfo(ui);
+				return user;
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public User login(HttpServletRequest request, String token) {
 		logger.info("try login with token token = " + token);
@@ -507,6 +532,15 @@ public class UserFactory implements IUserFactory, Serializable {
 				}
 			}
 		}
+
+		if (user == null) {
+			try {
+				user = remoteLogin(globalContext, login, password);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
 		if (user == null) {
 			maxLoginService.addBadPassword();
 		}

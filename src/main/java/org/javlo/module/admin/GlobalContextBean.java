@@ -1,19 +1,6 @@
 package org.javlo.module.admin;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
 import jakarta.servlet.http.HttpSession;
-
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -22,6 +9,12 @@ import org.javlo.helper.StringHelper;
 import org.javlo.service.ContentService;
 import org.javlo.template.TemplateData;
 import org.javlo.utils.ListMapValueValue;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 //TODO: remove off attribute and replace with call to globalContext
 public class GlobalContextBean {
@@ -94,6 +87,7 @@ public class GlobalContextBean {
 	private boolean editability;
 	private String userFactoryClassName = "";
 	private String adminUserFactoryClassName = "";
+	private String remoteLoginUrl;
 	
 	private String mailingSenders = "";
 	private String mailingSubject = "";
@@ -260,6 +254,8 @@ public class GlobalContextBean {
 		setOwnerFacebook(globalContext.getOwnerFacebook());
 		setOwnerLinkedin(globalContext.getOwnerLinkedin());
 		setOwnerInstagram(globalContext.getOwnerInstagram());
+
+		setRemoteLoginUrl(globalContext.getRemoteLoginUrl());
 		
 		try {
 			setSpecialConfig(ResourceHelper.loadStringFromFile(globalContext.getSpecialConfigFile()));
@@ -464,6 +460,14 @@ public class GlobalContextBean {
 
 	public void setAdminUserFactoryClassName(String adminUserFactoryClassName) {
 		this.adminUserFactoryClassName = adminUserFactoryClassName;
+	}
+
+	public String getRemoteLoginUrl() {
+		return remoteLoginUrl;
+	}
+
+	public void setRemoteLoginUrl(String remoteLoginUrl) {
+		this.remoteLoginUrl = remoteLoginUrl;
 	}
 
 	public String getUsersAccess() {

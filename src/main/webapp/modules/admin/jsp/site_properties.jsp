@@ -694,6 +694,11 @@
 			</div>
 
 			<div class="form-group">
+				<label for="remote-login-url">Remote login URL</label>
+				<input class="form-control" type="text" id="remote-login-url" name="remote-login-url" value="${currentContext.remoteLoginUrl}" />
+			</div>
+
+			<div class="form-group">
 				<label for="user-roles">${i18n.edit['admin.form.user-roles']}</label>
 				<input class="form-control" type="text" id="user-roles" name="user-roles" value="${currentContext.userRoles}" />
 			</div>

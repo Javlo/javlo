@@ -1,5 +1,8 @@
 package org.javlo.module.admin;
 
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.apache.commons.fileupload2.core.FileItem;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.core.ComponentFactory;
@@ -43,9 +46,6 @@ import org.javlo.ztatic.StaticInfo;
 
 import javax.mail.MessagingException;
 import javax.mail.Transport;
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -693,6 +693,8 @@ public class AdminAction extends AbstractModuleAction {
 						e.printStackTrace();
 						messageRepository.setGlobalMessage(new GenericMessage(e.getMessage(), GenericMessage.ERROR));
 					}
+
+					currentGlobalContext.setRemoteLoginUrl(requestService.getParameter("remote-login-url"));
 
 					currentGlobalContext.setBlockPassword(requestService.getParameter("block-password", ""));
 					
