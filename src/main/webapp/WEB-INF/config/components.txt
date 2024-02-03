@@ -201,3 +201,4 @@ org.javlo.component.core.RendererReferenceComponent
 org.javlo.component.extranet.LaunchMacro
 org.javlo.component.extranet.LoginLogoutLink
 org.javlo.component.core.TestComponent
+org.javlo.component.files.DisplayExcel
