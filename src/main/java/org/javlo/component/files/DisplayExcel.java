@@ -94,7 +94,7 @@ public class DisplayExcel extends AbstractPropertiesComponent  {
 
     public static final String TYPE = "display-excel";
 
-    private static final List<String> FIELDS = Arrays.asList(new String[] {"file", "fields", "averageMax"});
+    private static final List<String> FIELDS = Arrays.asList(new String[] {"file", "fields", "averageMax", "cutSeparator"});
 
     @Override
     public String getType() {
@@ -104,6 +104,16 @@ public class DisplayExcel extends AbstractPropertiesComponent  {
     @Override
     public List<String> getFields(ContentContext ctx) throws Exception {
         return FIELDS;
+    }
+
+    private String cleanLabel(ContentContext ctx, String label) {
+        String sep = getFieldValue(ctx, "cutSeparator");
+        if (!StringHelper.isEmpty(sep)) {
+            if (label.contains(sep)) {
+                return label.substring(0, label.indexOf(sep));
+            }
+        }
+        return label;
     }
 
     @Override
@@ -128,12 +138,12 @@ public class DisplayExcel extends AbstractPropertiesComponent  {
                 for (int c=0; c<cData[0].length; c++) {
                     CellResult result = new CellResult();
                     if (!StringHelper.isEmpty(cData[0][c].getValue()) && !cData[0][c].getValue().startsWith("_")) {
-                        result.label = cData[0][c].getValue();
+                        result.label = cleanLabel(ctx,cData[0][c].getValue());
                         int type = CellResult.NUMBER;
                         double average=0;
                         for (int i=1; i<cData.length; i++) {
                             if (!cData[i][c].getValue().isEmpty()) {
-                                result.count.put(cData[i][c].getValue(), result.count.get(cData[i][c].getValue()) + 1);
+                                result.count.put(cleanLabel(ctx,cData[i][c].getValue()), result.count.get(cleanLabel(ctx,cData[i][c].getValue())) + 1);
                             }
                             if (!StringHelper.isDigit(cData[i][c].getValue())) {
                                 type = CellResult.TEXT;

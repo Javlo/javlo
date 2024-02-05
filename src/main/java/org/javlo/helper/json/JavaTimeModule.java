@@ -127,7 +127,6 @@ public class JavaTimeModule extends SimpleModule {
                     } else {
                         ac = AnnotatedClassResolver.resolve(config, config.constructType(ZoneId.class), config);
                     }
-
                     if (!inst.canCreateFromString()) {
                         AnnotatedMethod factory = JavaTimeModule.this._findFactory(ac, "of", String.class);
                         if (factory != null) {
