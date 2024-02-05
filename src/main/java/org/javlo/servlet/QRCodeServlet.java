@@ -69,7 +69,7 @@ public class QRCodeServlet extends HttpServlet {
 					String data = request.getParameter("link");
 					QRCode.from(data).to(ImageType.PNG).withSize(1024, 1024).writeTo(out); //74 = estimation of margin
 					BufferedImage image = ImageIO.read(new ByteArrayInputStream(out.toByteArray()));
-					image = removeBorder(image);
+					//image = removeBorder(image);
 					ImageIO.write(image, "png", response.getOutputStream());
 				}
 			} else {
