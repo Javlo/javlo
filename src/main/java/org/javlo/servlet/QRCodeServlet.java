@@ -54,12 +54,6 @@ public class QRCodeServlet extends HttpServlet {
 			return;
 		}
 
-		String category = splittedPath[0];
-		String file = splittedPath[1];
-		String[] splittedFile = StringUtils.split(file, ".");
-
-
-		
 		try {
 			ContentContext ctx = ContentContext.getContentContext(request, response);
 
@@ -75,6 +69,9 @@ public class QRCodeServlet extends HttpServlet {
 					ImageIO.write(image, "png", response.getOutputStream());
 				}
 			} else {
+				String category = splittedPath[0];
+				String file = splittedPath[1];
+				String[] splittedFile = StringUtils.split(file, ".");
 
 				if (category.endsWith("_preview")) {
 					ctx.setRenderMode(ContentContext.PREVIEW_MODE);
