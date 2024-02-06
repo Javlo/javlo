@@ -326,6 +326,7 @@ public class NavigationHelper {
 			targetRoot.removeChild(element);
 			out++;
 		}
+
 		return out;
 	}
 

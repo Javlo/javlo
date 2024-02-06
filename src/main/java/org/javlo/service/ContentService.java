@@ -456,6 +456,11 @@ public class ContentService implements IPrintInfo {
 		return startSize - map.size();
 	}
 
+	public void publishAttributeMap(ContentContext ctx) {
+		viewGlobalMap = new HashMap<>(previewGlobalMap);
+		System.out.println("viewGlobalMap = "+viewGlobalMap);
+	}
+
 	private Map<String, String> getAttributeMap(ContentContext ctx) {
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE && ctx.getGlobalContext().isPreviewMode()) {
 			if (viewGlobalMap == null) {

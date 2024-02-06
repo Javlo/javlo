@@ -1531,6 +1531,10 @@ public class Edit extends AbstractModuleAction {
 				viewCtx.setRenderMode(ContentContext.VIEW_MODE);
 				MenuElement viewNav = content.getNavigation(viewCtx);
 				MenuElement previewNav = content.getNavigation(ctx);
+
+				// PULISH STATIC INFO
+				content.publishAttributeMap(ctx);
+
 				int modif = NavigationHelper.publishNavigation(ctx, previewNav, viewNav);
 				if (modif>0) {
 					persistenceService.store(viewCtx, ContentContext.VIEW_MODE, false);
