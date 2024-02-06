@@ -48,7 +48,7 @@ public class QRCodeServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 
 		String[] splittedPath = StringUtils.split(request.getPathInfo(), "/");
-		if (splittedPath.length < 2) {
+		if (splittedPath.length < 2 && request.getParameter("link") == null) {
 			logger.warning("bad request structure : " + request.getPathInfo());
 			response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			return;
