@@ -1242,7 +1242,7 @@ public class StringHelper {
             return null;
         }
         if (code.length() != 10) {
-            throw new ParameterException("length of code must be 10.");
+            logger.warning("length of code must be 10 : "+code);
         } else {
             Long codeAsLong = Long.parseLong(code);
             Long mod = codeAsLong % 97;
