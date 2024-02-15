@@ -1,29 +1,8 @@
 package org.javlo.module.file;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
-import javax.imageio.ImageIO;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-
 import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.imaging.common.ImageMetadata;
 import org.apache.commons.io.filefilter.FileFileFilter;
@@ -34,15 +13,7 @@ import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.InfoBean;
 import org.javlo.filter.DirectoryFilter;
-import org.javlo.helper.ExifHelper;
-import org.javlo.helper.LangHelper;
-import org.javlo.helper.LocalLogger;
-import org.javlo.helper.NetHelper;
-import org.javlo.helper.PDFHelper;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.ServletHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
+import org.javlo.helper.*;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ImageEngine;
 import org.javlo.io.SessionFolder;
@@ -65,6 +36,17 @@ import org.javlo.user.User;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.ResourceFactory;
 import org.javlo.ztatic.StaticInfo;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.URI;
+import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class FileAction extends AbstractModuleAction {
 
@@ -596,9 +578,30 @@ public class FileAction extends AbstractModuleAction {
 			URL url = new URL(urlStr);
 			InputStream in = url.openConnection().getInputStream();
 			try {
-				File newFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), StringHelper.createFileName(StringHelper.getFileNameFromPath(urlStr))));
-				newFile = ResourceHelper.getFreeFileName(newFile);
-				ResourceHelper.writeStreamToFile(in, newFile);
+				try {
+					HttpClient client = HttpClient.newHttpClient();
+					HttpRequest request = HttpRequest.newBuilder()
+							.uri(URI.create(urlStr))
+							.build();
+					HttpResponse<Void> response = client.send(request, HttpResponse.BodyHandlers.discarding());
+					Optional<String> contentDisposition = response.headers().firstValue("Content-Disposition");
+
+					String fileName = rs.getParameter("filename", "");
+					if (StringHelper.isEmpty(fileName)) {
+						if (contentDisposition.isPresent()) {
+							String disposition = contentDisposition.get();
+							fileName = disposition.replaceFirst("(?i)^.*filename=\"?([^\"]+)\"?.*$", "$1");
+						} else {
+							fileName = StringHelper.getFileNameFromPath(urlStr);
+						}
+					}
+					File newFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), StringHelper.createFileName(fileName)));
+					NetHelper.downloadFile(new URL(urlStr), newFile);
+					//newFile = ResourceHelper.getFreeFileName(newFile);
+					//ResourceHelper.writeStreamToFile(in, newFile);
+				} catch (IOException | InterruptedException e) {
+					e.printStackTrace();
+				}
 			} finally {
 				ResourceHelper.closeResource(in);
 			}

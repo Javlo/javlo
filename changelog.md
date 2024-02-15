@@ -983,4 +983,6 @@ Security in case of vulnerabilities.
 - jakarta.servlet 5.0
 - remove social network code
 ## [2.3] - 21/12/2023
+### Added
+- direct upload from google drive and dropbox
 

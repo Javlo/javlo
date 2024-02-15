@@ -2,11 +2,13 @@ package org.javlo.helper;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import net.sf.uadetector.ReadableUserAgent;
 import net.sf.uadetector.UserAgentStringParser;
 import net.sf.uadetector.UserAgentType;
 import net.sf.uadetector.service.UADetectorServiceFactory;
-import org.apache.commons.io.FileUtils;
 import org.javlo.bean.Company;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
@@ -36,9 +38,6 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.net.ssl.*;
 import javax.security.cert.X509Certificate;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.*;
@@ -1798,10 +1797,10 @@ public class NetHelper {
 	}
 
 	public static void main(String[] args) throws Exception {
-		String content = FileUtils.readFileToString(new File("c:/trans/mail.html"), ContentContext.CHARACTER_ENCODING);
-		content = XHTMLHelper.prepareToMailing(content);
-		content = CSSParser.mergeCSS(content, false);
-		System.out.println("content = "+content);
+		String dropbox = "https://www.dropbox.com/scl/fi/c5spscisjvbspcfwy1xvv/1783334614.jpg?rlkey=1p1zq9lbag422ff77ue230v5a&dl=0";
+		downloadFile(new URL(dropbox), new File("c:/trans/dropbox.jpg"));
+		String drive = "https://drive.google.com/open?id=12ro3x6wZtg56RFh-wEygLEvu1sTQklkz&usp=drive_fs";
+		downloadFile(new URL(drive), new File("c:/trans/drive.jpg"));
 	}
 	
 	public static String getIp(HttpServletRequest request) {
@@ -1810,6 +1809,52 @@ public class NetHelper {
 			userIP = request.getRemoteAddr();
 		}
 		return userIP;
+	}
+
+	public static void downloadFile(URL url, File file) {
+
+		String newURL = url.toString();
+		if (newURL.contains("dl=0")) {
+			newURL = newURL.replace("dl=0", "dl=1");
+		}
+
+		if (newURL.contains("drive.google.com")) {
+			String fileId = "";
+			if (newURL.contains("/file/d/")) {
+				fileId = newURL.split("/file/d/")[1].split("/")[0];
+			} else if (newURL.contains("id=")) {
+				fileId = newURL.split("id=")[1];
+				int ampersandPosition = fileId.indexOf('&');
+				if (ampersandPosition != -1) {
+					fileId = fileId.substring(0, ampersandPosition);
+				}
+			}
+			newURL = "https://drive.google.com/uc?export=download&id=" + fileId;
+		}
+
+		try {
+			url = new URL(newURL);
+		} catch (MalformedURLException e) {
+			throw new RuntimeException(e);
+		}
+
+		System.out.println(">>> url = "+url);
+
+		try {
+			URLConnection conn = url.openConnection();
+			conn.setRequestProperty("User-Agent", JAVLO_USER_AGENT);
+			conn.setRequestProperty("Referer", url.toString());
+			conn.setRequestProperty("Host", url.getHost());
+			conn.setReadTimeout(5000);
+			InputStream in = conn.getInputStream();
+			try {
+				ResourceHelper.writeStreamToFile(in, file);
+			} finally {
+				ResourceHelper.closeResource(in);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }
