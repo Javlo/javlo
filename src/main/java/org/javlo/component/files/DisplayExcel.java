@@ -90,11 +90,21 @@ public class DisplayExcel extends AbstractPropertiesComponent  {
                     ));
             return sortedMap;
         }
+
+        @Override
+        public String toString() {
+            return "CellResult{" +
+                    "label='" + label + '\'' +
+                    ", type=" + type +
+                    ", average=" + average +
+                    ", count=" + count +
+                    '}';
+        }
     }
 
     public static final String TYPE = "display-excel";
 
-    private static final List<String> FIELDS = Arrays.asList(new String[] {"file", "fields", "averageMax", "cutSeparator"});
+    private static final List<String> FIELDS = Arrays.asList(new String[] {"file", "fields", "averageMax", "cutSeparator", "filter"});
 
     @Override
     public String getType() {
@@ -129,6 +139,8 @@ public class DisplayExcel extends AbstractPropertiesComponent  {
             msgRepo.setGlobalMessage(new GenericMessage("file found : "+arrayFile, GenericMessage.INFO));
         }
 
+        List<String> filters = StringHelper.stringToCollection(getFieldValue("filter"), ",");
+
         String[][] data = null;
         List<CellResult> averageList = new LinkedList<>();
         if (arrayFile.getName().endsWith(".csv")) {
@@ -141,20 +153,32 @@ public class DisplayExcel extends AbstractPropertiesComponent  {
                         result.label = cleanLabel(ctx,cData[0][c].getValue());
                         int type = CellResult.NUMBER;
                         double average=0;
+                        int countLine = 0;
                         for (int i=1; i<cData.length; i++) {
-                            if (!cData[i][c].getValue().isEmpty()) {
-                                result.count.put(cleanLabel(ctx,cData[i][c].getValue()), result.count.get(cleanLabel(ctx,cData[i][c].getValue())) + 1);
+
+                            boolean escapeLine = false;
+                            for (int j=0; j<cData[i].length; j++) {
+                                if (ctx.getRequest().getParameter("c"+j) != null && !ctx.getRequest().getParameter("c"+j).equals(cData[i][j].getValue())) {
+                                    escapeLine = true;
+                                    break;
+                                }
                             }
-                            if (!StringHelper.isDigit(cData[i][c].getValue())) {
-                                type = CellResult.TEXT;
-                            } else {
-                                average += Integer.parseInt(cData[i][c].getValue());
+                            if (!escapeLine) {
+                                countLine++;
+                                if (!cData[i][c].getValue().isEmpty()) {
+                                    result.count.put(cleanLabel(ctx, cData[i][c].getValue()), result.count.get(cleanLabel(ctx, cData[i][c].getValue())) + 1);
+                                }
+                                if (!StringHelper.isDigit(cData[i][c].getValue())) {
+                                    type = CellResult.TEXT;
+                                } else {
+                                    average += Integer.parseInt(cData[i][c].getValue());
+                                }
                             }
                         }
                         result.type = type;
                         if (type == CellResult.NUMBER) {
                             result.count.clear();
-                            result.average = average / (cData.length - 1);
+                            result.average = average / countLine;
                         }
                     }
                     if (!result.isEmpty()) {
@@ -170,36 +194,54 @@ public class DisplayExcel extends AbstractPropertiesComponent  {
 
     public static void main(String[] args) {
         File arrayFile = new File("C:\\Users\\user\\data\\javlo\\data-ctx\\data-sexy\\static\\dynamic-form-result\\survey\\dieteren_test.csv");
+
+        List<String> filters = StringHelper.stringToCollection("What entity do you represent in the project ?", ",");
+        Map<String,String> values = new HashMap<>();
+        values.put("c13", "DMC");
         String[][] data = null;
+        List<CellResult> averageList = new LinkedList<>();
         if (arrayFile.getName().endsWith(".csv")) {
             Cell[][] cData = new Cell[0][];
             try {
                 cData = CSVFactory.loadContentAsCell(arrayFile);
                 for (int c=0; c<cData[0].length; c++) {
                     CellResult result = new CellResult();
+                    averageList.add(result);
                     if (!StringHelper.isEmpty(cData[0][c].getValue()) && !cData[0][c].getValue().startsWith("_")) {
-                        System.out.println("Title : "+cData[0][c].getValue());
+                        //System.out.println("Title : "+cData[0][c].getValue());
                         int type = CellResult.NUMBER;
                         double average=0;
                         for (int i=1; i<cData.length; i++) {
-                            result.count.put(cData[i][c].getValue(), result.count.get(cData[i][c].getValue())+1);
-                            if (!StringHelper.isDigit(cData[i][c].getValue())) {
-                                type = CellResult.TEXT;
+                            boolean escapeLine = false;
+                            for (int j=0; j<cData[i].length; j++) {
+                                if (values.get("c"+j) != null && !values.get("c"+j).equals(cData[i][j].getValue())) {
+                                    escapeLine = true;
+                                    break;
+                                }
+                            }
+                            if (!escapeLine) {
+                                result.count.put(cData[i][c].getValue(), result.count.get(cData[i][c].getValue())+1);
+                                if (!StringHelper.isDigit(cData[i][c].getValue())) {
+                                    type = CellResult.TEXT;
+                                } else {
+                                    average += Integer.parseInt(cData[i][c].getValue());
+                                }
                             } else {
-                                average += Integer.parseInt(cData[i][c].getValue());
+                                System.out.println("escape : "+cData[i][c].getValue());
                             }
                         }
                         result.type = type;
                         if (type == CellResult.NUMBER) {
                             result.count.clear();
                             average = average / (cData.length - 1);
-                            System.out.println("average : "+average);
+                            //System.out.println("average : "+average);
                         } else {
-                            System.out.println("text average");
-                            System.out.println(result.count.size());
+                            //System.out.println("text average");
+                            //System.out.println(result.count.size());
                         }
                     }
                 }
+                System.out.println("averageList = "+averageList);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

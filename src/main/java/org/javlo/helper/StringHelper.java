@@ -3,7 +3,6 @@
  */
 package org.javlo.helper;
 
-import com.beust.jcommander.ParameterException;
 import com.google.gson.Gson;
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base64;
