@@ -99,7 +99,7 @@ public class Description extends AbstractVisualComponent {
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		StringBuffer finalCode = new StringBuffer();
+		StringBuilder finalCode = new StringBuilder();
 		String content = applyReplacement(getValue());
 		if (!isNotDisplayHTML(ctx)) {
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -109,7 +109,14 @@ public class Description extends AbstractVisualComponent {
 			content = reverserLinkService.replaceLink(ctx, this, content);
 			finalCode.append(content);
 		}
-		ctx.getRequest().setAttribute("xhtml", finalCode.toString());
+
+		String xhtml = finalCode.toString();
+		if (xhtml.contains("<p>")) {
+			xhtml = xhtml.replace("<p>", "");
+			xhtml = xhtml.replace("</p>", "");
+		}
+
+		ctx.getRequest().setAttribute("xhtml", xhtml);
 	}
 
 	/**
@@ -118,12 +125,7 @@ public class Description extends AbstractVisualComponent {
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		prepareView(ctx);
-		String xhtml = ""+ctx.getRequest().getAttribute("xhtml");
-		if (xhtml.contains("<p>")) {
-			xhtml = xhtml.replace("<p>", "");
-			xhtml = xhtml.replace("</p>", "");
-		}
-		return xhtml;
+		return ""+ctx.getRequest().getAttribute("xhtml");
 	}
 
 	private boolean isNotDisplayHTML(ContentContext ctx) {
