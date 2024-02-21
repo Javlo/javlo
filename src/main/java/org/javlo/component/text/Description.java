@@ -3,8 +3,6 @@
  */
 package org.javlo.component.text;
 
-import java.util.List;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
@@ -16,6 +14,8 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.service.google.translation.ITranslator;
 import org.javlo.utils.SuffixPrefix;
+
+import java.util.List;
 
 /**
  * @author pvandermaesen
@@ -118,7 +118,12 @@ public class Description extends AbstractVisualComponent {
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		prepareView(ctx);
-		return "" + ctx.getRequest().getAttribute("xhtml");
+		String xhtml = ""+ctx.getRequest().getAttribute("xhtml");
+		if (xhtml.contains("<p>")) {
+			xhtml = xhtml.replace("<p>", "");
+			xhtml = xhtml.replace("</p>", "");
+		}
+		return xhtml;
 	}
 
 	private boolean isNotDisplayHTML(ContentContext ctx) {
