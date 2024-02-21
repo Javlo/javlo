@@ -98,7 +98,11 @@ public class StaticConfig extends Observable {
 	private static class FolderBean {
 		String thread = null;
 		String data = null;
+
+		String archiveData = null;
 		String context = null;
+
+		String archiveContext = null;
 		String share = null;
 		String template = null;
 		String mailing = null;
@@ -406,6 +410,19 @@ public class StaticConfig extends Observable {
 		return folderBean.data;
 	}
 
+	public String getAllDataArchiveFolder() {
+		if (folderBean.archiveData == null) {
+			synchronized (folderBean) {
+				folderBean.archiveData = properties.getString("data-archive-folder", "/WEB-INF/data-ctx.bk/");
+				folderBean.archiveData = replaceFolderVariable(folderBean.archiveData);
+				if (isDataFolderRelative() && application != null) {
+					folderBean.archiveData = ResourceHelper.getRealPath(application, folderBean.archiveData);
+				}
+			}
+		}
+		return folderBean.archiveData;
+	}
+
 	public String getExternalComponentFolder() {
 		return URLHelper.mergePath(getAllDataFolder(), properties.getString("external-components-folder", "external-components"));
 	}
@@ -493,6 +510,19 @@ public class StaticConfig extends Observable {
 			}
 		}
 		return folderBean.context;
+	}
+
+	public String getContextArchiveFolder() {
+		if (folderBean.archiveContext == null) {
+			synchronized (folderBean) {
+				folderBean.archiveContext = properties.getString("context-archive-folder", "/WEB-INF/context.bk");
+				folderBean.archiveContext = replaceFolderVariable(folderBean.archiveContext);
+				if (isDataFolderRelative()) {
+					folderBean.archiveContext = ResourceHelper.getRealPath(application, folderBean.archiveContext);
+				}
+			}
+		}
+		return folderBean.archiveContext;
 	}
 
 	public String getCSVFolder() {

@@ -985,4 +985,5 @@ Security in case of vulnerabilities.
 ## [2.3] - 21/12/2023
 ### Added
 - direct upload from google drive and dropbox
+- archive folder and auto import for clean data and context folder
 

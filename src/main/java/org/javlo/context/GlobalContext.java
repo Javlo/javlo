@@ -549,6 +549,14 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			String fileName = contextKey + ".properties";
 			newInstance.contextFile = new File(ElementaryURLHelper.mergePath(staticConfig.getContextFolder(), fileName));
 			if (!newInstance.contextFile.exists()) {
+				File archiveFile = new File(ElementaryURLHelper.mergePath(staticConfig.getContextArchiveFolder(), fileName));
+				if( archiveFile.exists()) {
+					logger.info(("import archive context from : "+archiveFile));
+					newInstance.contextFile.getParentFile().mkdirs();
+					FileUtils.moveFile(archiveFile, newInstance.contextFile);
+				}
+			}
+			if (!newInstance.contextFile.exists()) {
 				if (!newInstance.contextFile.getParentFile().exists()) {
 					newInstance.contextFile.getParentFile().mkdirs();
 					newInstance.creation = true;
@@ -777,7 +785,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	 * @param request
 	 * @return
 	 */
-	public static boolean haveContext(HttpServletRequest request) {
+	/*public static boolean haveContext(HttpServletRequest request) {
 		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
 		File dir = new File(staticConfig.getContextFolder());
 		if (dir != null && dir.listFiles() != null) {
@@ -785,7 +793,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		} else {
 			return false;
 		}
-	}
+	}*/
 
 	public static boolean isExist(HttpServletRequest request, String contextKey) throws IOException {
 
@@ -799,8 +807,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
 
 		File contextFile = new File(ElementaryURLHelper.mergePath(staticConfig.getContextFolder(), fileName));
+		File archiveFile = new File(ElementaryURLHelper.mergePath(staticConfig.getContextArchiveFolder(), fileName));
 
-		return contextFile.exists();
+		return contextFile.exists() || archiveFile.exists();
 	}
 
 	protected final ConfigurationProperties properties = new ConfigurationProperties();
@@ -1436,7 +1445,16 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				File folderFile = new File(realGlobalContext.dataFolder);
 				realGlobalContext.dataFolder = folderFile.getCanonicalPath();
 				if (!folderFile.exists()) {
-					folderFile.mkdirs();
+					/** search in archive folder **/
+					File archiveFolder = new File(ElementaryURLHelper.mergePath(staticConfig.getAllDataArchiveFolder(), getFolder()));
+					if (archiveFolder.exists()) {
+						logger.info("import folder from archive : "+archiveFolder);
+						folderFile.getParentFile().mkdirs();
+						FileUtils.moveDirectory(archiveFolder, folderFile);
+					} else {
+						logger.info("archive not found : "+archiveFolder);
+						folderFile.mkdirs();
+					}
 				}
 			} catch (IOException e) {
 				logger.warning(e.getMessage());
