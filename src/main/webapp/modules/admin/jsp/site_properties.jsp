@@ -584,10 +584,16 @@
 				<input class="form-control" type="text" id="mailing-smtphost" name="mailing-smtphost" value="${currentContext.smtphost}" />
 			</div>
 		</div>
-		<div class="col-sm-6">
+		<div class="col-sm-2">
 			<div class="form-group">
 				<label for="mailing-smtpport">${i18n.edit['admin.mailing.smtpport']}</label>
-				<input class="form-control" type="number" min="-1" max="65535" step="1" id="mailing-smtphost" name="mailing-smtpport" value="${currentContext.smtpport}" />
+				<input class="form-control" type="number" min="-1" max="65535" step="1" id="mailing-smtpport" name="mailing-smtpport" value="${currentContext.smtpport}" />
+			</div>
+		</div>
+		<div class="col-sm-4">
+			<div class="form-group">
+				<label for="mailing-testemail">test email</label>
+				<input class="form-control" type="email" id="mailing-testemail" name="mailing-testemail" value="" />
 			</div>
 		</div>
 	</div>

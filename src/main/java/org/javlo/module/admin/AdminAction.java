@@ -20,6 +20,7 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IMacro;
 import org.javlo.macro.core.MacroFactory;
 import org.javlo.mailing.DKIMFactory;
+import org.javlo.mailing.EMail;
 import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
@@ -46,6 +47,7 @@ import org.javlo.ztatic.StaticInfo;
 
 import javax.mail.MessagingException;
 import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -602,6 +604,21 @@ public class AdminAction extends AbstractModuleAction {
 					currentGlobalContext.setSMTPHost(requestService.getParameter("mailing-smtphost", null));
 					currentGlobalContext.setSMTPPort(requestService.getParameter("mailing-smtpport", null));
 					currentGlobalContext.setSMTPUser(requestService.getParameter("mailing-smtpuser", null));
+
+					String testEmail = requestService.getParameter("mailing-testemail", null);
+					if (StringHelper.isMail(testEmail)) {
+						EMail email = new EMail();
+						email.setSender(new InternetAddress(currentGlobalContext.getAdministratorEmail()));
+						email.addRecipient(new InternetAddress(testEmail));
+						email.setSubject("Test email from : "+currentGlobalContext.getGlobalTitle());
+
+						String content = "";
+						StringBuilder sb = new StringBuilder();
+						sb.append("\nsmtp : "+ currentGlobalContext.getSMTPHost()+"\n");
+						sb.append("port : "+ currentGlobalContext.getSMTPPort()+"\n");
+						email.setContent(sb.toString());
+						MailService.getInstance(new MailConfig(currentGlobalContext, null,  null)).sendMail(email);
+					}
 
 					String pwd = requestService.getParameter("mailing-smtppassword", "");
 					if (pwd.length() > 0) {
