@@ -52,6 +52,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class AdminAction extends AbstractModuleAction {
@@ -610,12 +611,17 @@ public class AdminAction extends AbstractModuleAction {
 						EMail email = new EMail();
 						email.setSender(new InternetAddress(currentGlobalContext.getAdministratorEmail()));
 						email.addRecipient(new InternetAddress(testEmail));
-						email.setSubject("Test email from : "+currentGlobalContext.getGlobalTitle());
+						email.setSubject("Newsletter : "+currentGlobalContext.getGlobalTitle());
 
 						String content = "";
 						StringBuilder sb = new StringBuilder();
+						sb.append("\nsmtp : "+ currentGlobalContext.getGlobalTitle()+"\n");
 						sb.append("\nsmtp : "+ currentGlobalContext.getSMTPHost()+"\n");
 						sb.append("port : "+ currentGlobalContext.getSMTPPort()+"\n");
+						sb.append("user : "+ currentGlobalContext.getSMTPUser()+"\n");
+						sb.append("pwd? : "+ StringHelper.isEmpty(currentGlobalContext.getSMTPPassword())+"\n");
+						sb.append("---");
+						sb.append(StringHelper.renderDateAndTime(LocalDateTime.now()));
 						email.setContent(sb.toString());
 						MailService.getInstance(new MailConfig(currentGlobalContext, null,  null)).sendMail(email);
 					}
