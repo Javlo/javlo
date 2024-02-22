@@ -1,16 +1,15 @@
 package org.javlo.mailing;
 
+import org.javlo.helper.ResourceHelper;
+import org.javlo.mailing.MailService.Attachment;
+
+import javax.mail.internet.InternetAddress;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.mail.internet.InternetAddress;
-
-import org.javlo.helper.ResourceHelper;
-import org.javlo.mailing.MailService.Attachment;
 
 public class EMail extends Mail {
 
@@ -154,4 +153,8 @@ public class EMail extends Mail {
 		out.close();
 	}
 
+	@Override
+	public String toString() {
+		return "EMail [sender=" + sender + ", recipients=" + recipients + "]";
+	}
 }

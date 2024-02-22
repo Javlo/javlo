@@ -623,6 +623,9 @@ public class AdminAction extends AbstractModuleAction {
 						sb.append("---");
 						sb.append(StringHelper.renderDateAndTime(LocalDateTime.now()));
 						email.setContent(sb.toString());
+
+						logger.info("send test mail : "+email);
+
 						MailService.getInstance(new MailConfig(currentGlobalContext, null,  null)).sendMail(email);
 					}
 
