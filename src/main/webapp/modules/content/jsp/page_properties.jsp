@@ -356,42 +356,42 @@
 							</c:forEach>
 						</fieldset>
 
-						<fieldset>
-							<legend><a href="#" onclick="updateHistory()">Page History...</a></legend>
-							<div id="page-history"></div>
-						</fieldset>
-						<script>
-							function updateHistory() {
-								let url = '${pageHistoryUrl}';
-								document.getElementById("page-history").innerHTML = "...";
-								fetch(url)
-										.then(response => {
-											// Vérification si la réponse est ok
-											if (!response.ok) {
-												throw new Error('Réseau ou réponse non ok');
-											}
-											return response.json(); // Conversion de la réponse en JSON
-										})
-										.then(data => {
-											console.log("data = ",data);
-											// Traitement des données JSON
-											let historyList = "<ul>";
-											for (let timestamp in data) {
-												historyList += '<li><b>'+timestamp+'</b> : '+data[timestamp]+'</li>';
-											}
-											historyList += "</ul>";
-
-											// Mise à jour de l'élément avec l'ID 'page-history'
-											document.getElementById("page-history").innerHTML = historyList;
-										})
-										.catch(error => {
-											// Gestion des erreurs
-											console.error('Erreur lors de la requête fetch:', error);
-										});
-							}
-						</script>
-
 					</c:if>
+
+					<fieldset>
+						<legend><a href="#" onclick="updateHistory()">Page History...</a></legend>
+						<div id="page-history"></div>
+					</fieldset>
+					<script>
+						function updateHistory() {
+							let url = '${pageHistoryUrl}';
+							document.getElementById("page-history").innerHTML = "...";
+							fetch(url)
+									.then(response => {
+										// Vérification si la réponse est ok
+										if (!response.ok) {
+											throw new Error('Réseau ou réponse non ok');
+										}
+										return response.json(); // Conversion de la réponse en JSON
+									})
+									.then(data => {
+										console.log("data = ",data);
+										// Traitement des données JSON
+										let historyList = "<ul>";
+										for (let timestamp in data) {
+											historyList += '<li><b>'+timestamp+'</b> : '+data[timestamp]+'</li>';
+										}
+										historyList += "</ul>";
+
+										// Mise à jour de l'élément avec l'ID 'page-history'
+										document.getElementById("page-history").innerHTML = historyList;
+									})
+									.catch(error => {
+										// Gestion des erreurs
+										console.error('Erreur lors de la requête fetch:', error);
+									});
+						}
+					</script>
 				</div>
 
 			</div>
