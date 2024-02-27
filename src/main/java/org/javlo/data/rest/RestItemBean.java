@@ -1,15 +1,22 @@
 package org.javlo.data.rest;
 
+import org.javlo.context.ContentContext;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.javlo.context.ContentContext;
 
 public class RestItemBean implements IRestItem {
 
 	private String query = "";
 
 	private Map<String, Object> map = null;
+
+	public RestItemBean() {
+	}
+
+	public RestItemBean(Map<String, Object> map) {
+		this.map = map;
+	}
 
 	@Override
 	public Map<String, Object> getContentAsMap(ContentContext ctx) throws Exception {

@@ -29,6 +29,8 @@ public class RestContainerFactory {
 			factories.put(fact.getName(), fact);
 			fact = new FileRest();
 			factories.put(fact.getName(), fact);
+			fact = new RestPageHistory();
+			factories.put(fact.getName(), fact);
 		}
 		return factories;
 	}
