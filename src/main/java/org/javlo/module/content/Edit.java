@@ -397,6 +397,8 @@ public class Edit extends AbstractModuleAction {
 			ctx.getRequest().setAttribute("ipsecurity", "true");
 		}
 
+		ctx.getRequest().setAttribute("pageHistoryUrl", URLHelper.createStaticURL(ctx, "/rest/pagehistory/"+ctx.getCurrentPage().getId()));
+
 		if (ResourceStatus.isResource(ctx.getRequest().getSession())) {
 			ResourceStatus resourceStatus = ResourceStatus.getInstance(ctx.getRequest().getSession());
 			String previewSourceCode = "<a class=\"action-button\" href=\"" + URLHelper.createResourceURL(ctx, resourceStatus.getSource().getUri()) + "\">Download</a>";
