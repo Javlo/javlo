@@ -986,4 +986,6 @@ Security in case of vulnerabilities.
 ### Added
 - direct upload from google drive and dropbox
 - archive folder and auto import for clean data and context folder
+- REST page history
+- Import HTML service
 
