@@ -1538,7 +1538,7 @@ public class Edit extends AbstractModuleAction {
 				content.publishAttributeMap(ctx);
 
 				int modif = NavigationHelper.publishNavigation(ctx, previewNav, viewNav);
-				if (modif>0) {
+				//if (modif>0) {
 					persistenceService.store(viewCtx, ContentContext.VIEW_MODE, false);
 					persistenceService.store(ctx, ContentContext.PREVIEW_MODE, false);
 					globalContext.setPublishDate(new Date());
@@ -1549,10 +1549,10 @@ public class Edit extends AbstractModuleAction {
 					content.getNavigation(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE));
 					String msg = i18nAccess.getText("content.published-portail")+' '+modif;
 					MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), new GenericMessage(msg, GenericMessage.INFO), false);
-				} else {
+				/*} else {
 					String msg = i18nAccess.getText("content.no-published");
 					MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), new GenericMessage(msg, GenericMessage.INFO), false);
-				}
+				}*/
 			}
 
 			globalContext.setPublishDate(new Date());
