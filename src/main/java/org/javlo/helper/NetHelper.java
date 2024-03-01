@@ -1838,8 +1838,6 @@ public class NetHelper {
 			throw new RuntimeException(e);
 		}
 
-		System.out.println(">>> url = "+url);
-
 		try {
 			URLConnection conn = url.openConnection();
 			conn.setRequestProperty("User-Agent", JAVLO_USER_AGENT);
