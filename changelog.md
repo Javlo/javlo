@@ -988,4 +988,5 @@ Security in case of vulnerabilities.
 - archive folder and auto import for clean data and context folder
 - REST page history
 - Import HTML service
+- User notification
 
