@@ -282,7 +282,7 @@ public class StaticConfig extends Observable {
 							ui.setEmail(getSiteEmail());
 							user.setUserInfo(ui);
 
-							logger.info("add edit user : " + user.getName());
+							logger.info("add edit user : " + user.getName()+" email:"+ui.getEmail());
 
 							editUsers.put(user.getName(), user);
 						} catch (RuntimeException e) {

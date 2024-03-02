@@ -501,6 +501,9 @@ public class UserFactory implements IUserFactory, Serializable {
 			if (editCtx.getEditUser(login) != null && (logged || editCtx.hardLogin(login, password))) {
 				logger.info("log user with password : " + login + " obtain general admin mode and full control role.");
 				user = createUser(login, (new HashSet(Arrays.asList(AdminUserSecurity.GENERAL_ADMIN, AdminUserSecurity.FULL_CONTROL_ROLE))));
+				if (editCtx.getEditUser(login) != null) {
+					user.getUserInfo().setEmail(editCtx.getEditUser(login).getUserInfo().getEmail());
+				}
 				editCtx.setEditUser(user);
 				/** reload module **/
 				try {
