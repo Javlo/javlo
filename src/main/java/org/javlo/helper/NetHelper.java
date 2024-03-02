@@ -20,6 +20,7 @@ import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.mailing.MailingBuilder;
 import org.javlo.navigation.MenuElement;
+import org.javlo.service.notification.NotificationService;
 import org.javlo.service.resource.VisualResource;
 import org.javlo.servlet.FileServlet;
 import org.javlo.servlet.IVersion;
@@ -1811,7 +1812,39 @@ public class NetHelper {
 		return userIP;
 	}
 
-	public static void downloadFile(URL url, File file) {
+	private static class DownloadThread extends Thread{
+
+		private ContentContext ctx;
+		private URL url;
+		private File file;
+
+		public DownloadThread(ContentContext ctx, URL url, File file) {
+			this.ctx = ctx.getFreeContentContext();
+			this.url = url;
+			this.file = file;
+		}
+
+		@Override
+		public void run() {
+			super.run();
+			String msg;
+			boolean error = downloadFile(url, file);
+			if (error) {
+				msg = "download error please try agin : "+url+" x "+file.getName();
+				logger.warning(msg);
+			} else {
+				msg = "download is finish : "+url+" > "+file.getName();
+				logger.info(msg);
+			}
+			NotificationService.directUserNotification(ctx, error, "upload notification", msg);
+		}
+	}
+
+	public static void downloadFileAsynchrone(ContentContext ctx, URL url, File file) {
+		new DownloadThread(ctx, url, file).start();
+	}
+
+	public static boolean downloadFile(URL url, File file) {
 
 		String newURL = url.toString();
 		if (newURL.contains("dl=0")) {
@@ -1847,11 +1880,13 @@ public class NetHelper {
 			InputStream in = conn.getInputStream();
 			try {
 				ResourceHelper.writeStreamToFile(in, file);
+				return false;
 			} finally {
 				ResourceHelper.closeResource(in);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			return true;
 		}
 	}
 

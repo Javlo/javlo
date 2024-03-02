@@ -1,134 +1,24 @@
-package org.javlo.service;
-
-import java.lang.ref.WeakReference;
-import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+package org.javlo.service.notification;
 
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.LangHelper;
-import org.javlo.helper.NetHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.message.GenericMessage;
+import org.javlo.helper.*;
+import org.javlo.mailing.MailConfig;
+import org.javlo.mailing.MailService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserInfo;
 import org.javlo.user.IUserInfo;
 import org.javlo.utils.JSONMap;
 import org.javlo.utils.MapCollectionWrapper;
 
+import javax.mail.internet.InternetAddress;
+import java.lang.ref.WeakReference;
+import java.net.URL;
+import java.util.*;
+
 public class NotificationService {
 
 	private static final String USER_SYSTEM = "SYSTEM";
-
-	public static final class Notification {
-		private String message;
-		private String url;
-		private int type;
-		private Date creationDate;
-		private String userId;
-		private String receiver;
-		private boolean admin = false;
-
-		public String getMessage() {
-			return message;
-		}
-
-		public String getDisplayMessage() {
-			String out = getMessage();
-			if (isForAll() && getUserId() != null) {
-				out = out + " (" + getUserId() + ')';
-			}
-			return out;
-		}
-
-		public boolean isForAll() {
-			return getReceiver() == null;
-		}
-
-		public void setMessage(String message) {
-			this.message = message;
-		}
-
-		public String getUrl() {
-			return url;
-		}
-
-		public void setUrl(String url) {
-			this.url = url;
-		}
-
-		/**
-		 * get the type, same time than in GenericMessage
-		 * 
-		 * @return
-		 */
-		public int getType() {
-			return type;
-		}
-
-		public String getTypeLabel() {
-			return GenericMessage.getTypeLabel(getType());
-		}
-
-		public String getBootstrapIcon() {
-			return GenericMessage.getBootstrapIcon(getType());
-		}
-
-		public void setType(int type) {
-			this.type = type;
-		}
-
-		public Date getCreationDate() {
-			return creationDate;
-		}
-
-		public void setCreationDate(Date creationDate) {
-			this.creationDate = creationDate;
-		}
-
-		public String getDiplayCreationDate() {
-			return StringHelper.renderTime(getCreationDate());
-		}
-
-		public String getUserId() {
-			return userId;
-		}
-
-		public void setUserId(String userId) {
-			this.userId = userId;
-		}
-
-		public String getTimeLabel() {
-			return StringHelper.renderTime(getCreationDate());
-		}
-
-		public String getSortableTimeLabel() {
-			return StringHelper.renderSortableTime(getCreationDate());
-		}
-
-		public String getReceiver() {
-			return receiver;
-		}
-
-		public void setReceiver(String receiver) {
-			this.receiver = receiver;
-		}
-
-		public boolean isAdmin() {
-			return admin;
-		}
-
-		public void setAdmin(boolean admin) {
-			this.admin = admin;
-		}
-	}
 
 	public static final class NotificationContainer {
 
@@ -233,7 +123,7 @@ public class NotificationService {
 			for (Notification notif : notifications) {
 				if (notif.getReceiver() == null || notif.getReceiver().equals(userId) || notif.getUserId().equals(USER_SYSTEM)) {
 					System.out.println(">>>>>>>>> NotificationService.markAllAsRead : noctif = "+notif.getMessage()); //TODO: remove debug trace
-					markAsRead.add(new WeakReference<NotificationService.Notification>(notif));
+					markAsRead.add(new WeakReference<Notification>(notif));
 				}
 			}
 		}
@@ -254,7 +144,7 @@ public class NotificationService {
 						size++;
 						outNotif.add(new NotificationContainer(notif, isAllReadyReaded(notif, userId), userId));
 						if (markRead) {
-							markAsRead.add(new WeakReference<NotificationService.Notification>(notif));
+							markAsRead.add(new WeakReference<Notification>(notif));
 						}
 					}
 				}
@@ -350,7 +240,7 @@ public class NotificationService {
 
 	/**
 	 * add a notification.
-	 * 
+	 *
 	 * @param message
 	 *            the message of the notification
 	 * @param url
@@ -378,6 +268,23 @@ public class NotificationService {
 			notifications.add(0, notif);
 		}
 		cleanList();
+	}
+
+	public static void directUserNotification(ContentContext ctx, boolean error, String title, String msg) {
+		try {
+			String mailBody = XHTMLHelper.createNotificationMail(title, msg, ctx.getGlobalContext().getGlobalTitle());
+			String sbj = ctx.getGlobalContext().getGlobalTitle()+" "+title;
+			if (error) {
+				sbj = "\u26A0 "+sbj;
+			} else {
+				sbj = "\u2139 "+sbj;
+			}
+			InternetAddress from = new InternetAddress(ctx.getGlobalContext().getAdministratorEmail());
+			InternetAddress to = new InternetAddress(ctx.getCurrentUser().getUserInfo().getEmail());
+			MailService.getInstance(new MailConfig(ctx)).sendMail(ctx.getGlobalContext(), from, to, sbj, mailBody, true);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

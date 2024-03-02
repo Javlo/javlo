@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 import jakarta.servlet.ServletContext;
 
 import org.javlo.helper.URLHelper;
-import org.javlo.service.NotificationService;
+import org.javlo.service.notification.NotificationService;
 
 public class ThreadManager extends Thread {
 

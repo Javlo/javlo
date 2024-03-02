@@ -38,7 +38,7 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageBean;
 import org.javlo.service.ContentService;
-import org.javlo.service.NotificationService;
+import org.javlo.service.notification.NotificationService;
 import org.javlo.service.RequestService;
 import org.javlo.tracking.DayInfo;
 import org.javlo.tracking.Track;

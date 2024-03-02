@@ -18,6 +18,7 @@ import org.javlo.i18n.I18nResource;
 import org.javlo.message.GenericMessage;
 import org.javlo.module.core.IPrintInfo;
 import org.javlo.navigation.MenuElement;
+import org.javlo.service.notification.NotificationService;
 import org.javlo.template.TemplateFactory;
 
 import jakarta.servlet.http.HttpServletRequest;

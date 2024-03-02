@@ -11,7 +11,7 @@ import org.javlo.helper.ElementaryURLHelper.Code;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.ModulesContext;
-import org.javlo.service.NotificationService;
+import org.javlo.service.notification.NotificationService;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserSecurity;
 import org.owasp.encoder.Encode;

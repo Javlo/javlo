@@ -19,6 +19,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.message.GenericMessage;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.PersistenceService.LoadingBean;
+import org.javlo.service.notification.NotificationService;
 
 public class ConvertToCurrentVersion {
 

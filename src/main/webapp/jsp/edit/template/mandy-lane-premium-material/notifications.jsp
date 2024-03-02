@@ -1,6 +1,6 @@
 <%@page import="org.javlo.context.ContentContext"
 %><%@page import="org.javlo.context.GlobalContext"
-%><%@page import="org.javlo.service.NotificationService"
+%><%@page import="org.javlo.service.notification.NotificationService"
 %><%@ taglib uri="jakarta.tags.core" prefix="c"
 %><%@ taglib prefix="fn" uri="jakarta.tags.functions" %><%
 GlobalContext globalContext = GlobalContext.getInstance(request);

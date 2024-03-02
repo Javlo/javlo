@@ -482,7 +482,6 @@ public class UserFactory implements IUserFactory, Serializable {
 		boolean logged = request.getUserPrincipal() != null && request.getUserPrincipal().getName().equals(login);
 		User user = getUser(login);
 		boolean passwordEqual = false;
-		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
 		if (user == null && !globalContext.isMaster()) {
 			IUserFactory masterUserFactory;
 			try {
@@ -520,6 +519,7 @@ public class UserFactory implements IUserFactory, Serializable {
 			logger.warning("no login.");
 		}
 		if (user != null) {
+			StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
 			user.setContext(globalContext.getContextKey());
 			request.getSession().setAttribute(getSessionKey(), user);
 			if (staticConfig.getDefaultPassword().equals(password)) {

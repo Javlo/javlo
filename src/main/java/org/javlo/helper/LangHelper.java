@@ -13,6 +13,7 @@ import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.*;
+import org.javlo.service.notification.NotificationService;
 import org.javlo.service.shared.SharedContentService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;

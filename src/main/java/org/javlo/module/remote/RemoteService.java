@@ -20,7 +20,7 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.message.GenericMessage;
-import org.javlo.service.NotificationService;
+import org.javlo.service.notification.NotificationService;
 import org.javlo.utils.TimeMap;
 
 public class RemoteService {

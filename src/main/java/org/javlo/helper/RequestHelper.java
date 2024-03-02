@@ -8,7 +8,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.i18n.RequestI18nAccess;
 import org.javlo.service.ListService;
-import org.javlo.service.NotificationService;
+import org.javlo.service.notification.NotificationService;
 import org.javlo.service.exception.ServiceException;
 
 public class RequestHelper {

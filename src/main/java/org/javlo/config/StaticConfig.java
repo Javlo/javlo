@@ -44,7 +44,6 @@ import java.util.regex.Pattern;
 public class StaticConfig extends Observable {
 	
 	public static String ZONE_DATE_TIME = "Europe/Brussels";
-
 	public static String WEB_PLATFORM = "web";
 	public static String MAILING_PLATFORM = "mailing";
 	public static String OPEN_PLATFORM = "open";
@@ -53,7 +52,7 @@ public class StaticConfig extends Observable {
 	protected static Logger logger = Logger.getLogger(StaticConfig.class.getName());
 
 	ConfigurationProperties properties = new ConfigurationProperties();
-	Map<String, User> editUsers = new HashMap<String, User>();
+	private final Map<String, User> editUsers = new HashMap<String, User>();
 
 	public static final String WEBAPP_CONFIG_FILE = "/WEB-INF/config/webapp_config.properties";
 
@@ -280,6 +279,7 @@ public class StaticConfig extends Observable {
 							ui.setPassword(user.getPassword());
 							String token = StringHelper.getRandomIdBase64() + StringHelper.getRandomIdBase64();
 							ui.setToken(token);
+							ui.setEmail(getSiteEmail());
 							user.setUserInfo(ui);
 
 							logger.info("add edit user : " + user.getName());

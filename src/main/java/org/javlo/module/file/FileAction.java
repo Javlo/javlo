@@ -596,7 +596,7 @@ public class FileAction extends AbstractModuleAction {
 						}
 					}
 					File newFile = new File(URLHelper.mergePath(folder.getAbsolutePath(), StringHelper.createFileName(fileName)));
-					NetHelper.downloadFile(new URL(urlStr), newFile);
+					NetHelper.downloadFileAsynchrone(ctx, new URL(urlStr), newFile);
 					//newFile = ResourceHelper.getFreeFileName(newFile);
 					//ResourceHelper.writeStreamToFile(in, newFile);
 				} catch (IOException | InterruptedException e) {

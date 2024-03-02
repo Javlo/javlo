@@ -150,6 +150,8 @@ public class ContentContext {
 
 	private String errorMessage = null;
 
+	private User user = null;
+
 
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free, boolean pageManagement) {
 		ContentContext ctx = new ContentContext();
@@ -646,6 +648,13 @@ public class ContentContext {
 	public ContentContext getFreeContentContext() {
 		ContentContext newCtx = new ContentContext(this);
 		newCtx.setFree(true);
+		newCtx.setForceGlobalContext(getGlobalContext());
+		newCtx.getCurrentUser();
+		try {
+			newCtx.getCurrentTemplate();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 		return newCtx;
 	}
 
@@ -1044,11 +1053,6 @@ public class ContentContext {
 	}
 
 	public Template getCurrentTemplate() throws Exception {
-
-		if (isFree()) {
-			return null;
-		}
-
 		if (currentTemplate == null) {
 			Template template = null;
 
@@ -1672,12 +1676,16 @@ public class ContentContext {
 	}
 
 	public User getCurrentUser() {
-		User user = UserFactory.createUserFactory(getGlobalContext(), request.getSession()).getCurrentUser(getGlobalContext(), request.getSession());
-		if (user != null) {
-			return user;
-		} else {
-			return getCurrentEditUser();
+		if (this.user != null) {
+			return this.user;
 		}
+		this.user = UserFactory.createUserFactory(getGlobalContext(), request.getSession()).getCurrentUser(getGlobalContext(), request.getSession());
+		if (this.user != null) {
+			return this.user;
+		} else {
+			this.user = getCurrentEditUser();
+		}
+		return this.user;
 	}
 
 	public User getCurrentEditUser() {

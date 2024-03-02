@@ -3205,13 +3205,23 @@ public class XHTMLHelper {
 		return new String(outStream.toByteArray());
 	}
 
+	public static String createNotificationMail(String title, String content, String footer) throws IOException, Exception {
+		return createUserMail((TemplateData)null, title, content, null, null, null, footer);
+	}
+
 	public static String createUserMail(ContentContext ctx, String logo, String title, String content, String link, String linkLabel, String footer) throws IOException, Exception {
 		String xhtml = ctx.getCurrentTemplate().getUserMailHtml(ctx.getGlobalContext());
 		TemplateData templateData = ctx.getCurrentTemplate().getTemplateData();
 		if (xhtml == null) {
 			return createUserMail(templateData, title, content, null, link, linkLabel, footer);
 		} else {
-			xhtml = xhtml.replace("${site}", ctx.getCurrentPage().getGlobalTitle(ctx));
+			if (!ctx.isFree()) {
+				if (xhtml.contains("${site}")) {
+					xhtml = xhtml.replace("${site}", ctx.getCurrentPage().getGlobalTitle(ctx));
+				}
+			} else {
+				xhtml = xhtml.replace("${site}", "");
+			}
 			if (title != null) {
 				xhtml = xhtml.replace("${title}", title);
 			}
@@ -3224,8 +3234,15 @@ public class XHTMLHelper {
 			if (linkLabel != null) {
 				xhtml = xhtml.replace("${action.text}", linkLabel);
 			}
-			xhtml = xhtml.replace("${root}", URLHelper.createURL(ctx.getContextForAbsoluteURL(), "/"));
-			String logoUrl = URLHelper.getLogoUrl(ctx.getContextForAbsoluteURL(), "mail-logo");
+			if (!ctx.isFree()) {
+				xhtml = xhtml.replace("${root}", URLHelper.createURL(ctx.getContextForAbsoluteURL(), "/"));
+			} else {
+				xhtml = xhtml.replace("${root}", "#");
+			}
+			String logoUrl = "";
+			if (!ctx.isFree()) {
+				logoUrl = URLHelper.getLogoUrl(ctx.getContextForAbsoluteURL(), "mail-logo");
+			}
 			if (!StringHelper.isEmpty(logoUrl)) {
 				xhtml = xhtml.replace("${logo}", logoUrl);
 			} else {
@@ -3241,7 +3258,11 @@ public class XHTMLHelper {
 				}
 			} else {
 				if (!StringHelper.isURL(logo)) {
-					xhtml = xhtml.replace("${action.logo}", URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), logo));
+					if (!ctx.isFree()) {
+						xhtml = xhtml.replace("${action.logo}", URLHelper.createStaticURL(ctx.getContextForAbsoluteURL(), logo));
+					} else {
+						xhtml = xhtml.replace("${action.logo}", "");
+					}
 				} else {
 					xhtml = xhtml.replace("${action.logo}", logo);
 				}

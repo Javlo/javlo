@@ -30,6 +30,7 @@ import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.*;
 import org.javlo.service.log.LogService;
+import org.javlo.service.notification.NotificationService;
 import org.javlo.service.shared.SharedContentService;
 import org.javlo.service.visitors.CookiesService;
 import org.javlo.template.*;

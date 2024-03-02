@@ -15,7 +15,7 @@ import org.javlo.helper.ServletHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.ModulesContext;
-import org.javlo.service.NotificationService;
+import org.javlo.service.notification.NotificationService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserSecurity;

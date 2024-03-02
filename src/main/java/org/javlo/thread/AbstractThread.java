@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
-import org.javlo.service.NotificationService;
+import org.javlo.service.notification.NotificationService;
 
 public abstract class AbstractThread {
 

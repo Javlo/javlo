@@ -29,6 +29,7 @@ import org.javlo.service.*;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.service.log.Log;
 import org.javlo.service.log.LogContainer;
+import org.javlo.service.notification.NotificationService;
 import org.javlo.servlet.AccessServlet;
 import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.template.TemplateData;

@@ -15,7 +15,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nMessage;
-import org.javlo.service.NotificationService;
+import org.javlo.service.notification.NotificationService;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.service.exception.ServiceException;
