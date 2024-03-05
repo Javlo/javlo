@@ -723,7 +723,9 @@ public class CatchAllFilter implements Filter {
 				UserInterfaceContext.getInstance(((HttpServletRequest) request).getSession(), globalContext);
 			}
 
-			if (request.getParameter("edit-login") != null || request.getParameter("j_token") != null || (httpRequest.getUserPrincipal() != null && fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null && logoutUser == null)) {
+			if (request.getParameter("edit-login") != null
+					|| (request.getParameter("j_token") != null && (httpRequest.getUserPrincipal() != null && fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null))
+					|| (httpRequest.getUserPrincipal() != null && fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null && logoutUser == null)) {
 				String login = request.getParameter("j_username");
 				if (login == null && httpRequest.getUserPrincipal() != null) {
 					login = httpRequest.getUserPrincipal().getName();
