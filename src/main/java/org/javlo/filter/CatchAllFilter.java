@@ -609,11 +609,12 @@ public class CatchAllFilter implements Filter {
 				String realToken = globalContext.convertOneTimeToken(token);
 				if (realToken != null) {
 					token = realToken;
-					logger.info("try log with token #="+token.length());
 				} else {
 					logger.warning("bad one time token : " + token);
 				}
+				logger.info("try log with token #="+token.length());
 			}
+
 			if (fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null && adminFact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null) {
 				String loginType = requestService.getParameter("login-type", null);
 
