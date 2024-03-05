@@ -622,6 +622,7 @@ public class CatchAllFilter implements Filter {
 					if (globalContext.getStaticConfig().isLoginWithToken() && !StringHelper.isEmpty(token)) {
 						user = fact.login(httpRequest, token);
 						if (user == null) {
+							logger.info("fail to log with token on : "+fact.getClass().getName());
 							user = adminFact.login(httpRequest, token);
 						}
 					} else if (fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null) {
