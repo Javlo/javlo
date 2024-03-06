@@ -98,6 +98,9 @@ public class NavigationHelper {
 	 * @throws Exception
 	 */
 	public static void copyElement(ContentContext ctx, MenuElement src, MenuElement target) throws Exception {
+		if (src == null || target == null) {
+			return;
+		}
 		target.setId(src.getId());
 		target.setName(src.getName());
 		target.setVisible(src.isVisible(ctx));
@@ -280,6 +283,26 @@ public class NavigationHelper {
 		AdminAction.clearCache(ctx);
 	}
 
+	private static void linkParents(ContentContext ctx, MenuElement page) throws Exception {
+		MenuElement viewRoot = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE));
+		MenuElement parent = page.getParent();
+		if (parent != null) {
+			linkParents(ctx, parent);
+			MenuElement viewParent = viewRoot.searchChildFromId(parent.getId());
+			if (parent.isRoot()) {
+				viewParent = viewRoot;
+			}
+			if (viewParent != null) {
+				MenuElement viewPage = viewParent.searchChildFromId(page.getId());
+				if (viewPage == null) {
+					MenuElement newViewVersion = MenuElement.getInstance(ctx);
+					copyElement(ctx, page, newViewVersion);
+					viewParent.addChildMenuElement(newViewVersion);
+				}
+			}
+		}
+	}
+
 	/**
 	 * publish all valid pages
 	 * @param ctx
@@ -298,14 +321,17 @@ public class NavigationHelper {
 			srcRoot.setNeedValidation(false);
 			PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 			copyElement(ctx, srcRoot, targetRoot);
+			linkParents(ctx, srcRoot);
 		}
 		Collection<MenuElement> children = srcRoot.getChildMenuElements();
 		for (MenuElement element : children) {
 			MenuElement oldVersion = targetRoot.searchChildFromId(element.getId());
 			if (oldVersion == null) {
-				if (element.isValid()) {
+				if (element.isValid() || element.isChildNeedValidation()) {
 					oldVersion = MenuElement.getInstance(ctx);
 					targetRoot.addChildMenuElement(oldVersion);
+					element.setValid(true);
+					element.setValidater(ctx.getCurrentEditUser().getLogin());
 				}
 			}
 			if (oldVersion != null) {
@@ -313,7 +339,6 @@ public class NavigationHelper {
 			}
 			// TODO: remove page in view mode when she is removed is edit
 			// mode (preview).
-
 		}
 		Collection<MenuElement> targetChildren = targetRoot.getChildMenuElements();
 		Collection<MenuElement> needRemove = new LinkedList<MenuElement>();

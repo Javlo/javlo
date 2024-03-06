@@ -5855,6 +5855,15 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		return needValidation;
 	}
 
+	public boolean isChildNeedValidation() throws Exception {
+		for (MenuElement c : getAllChildrenList()) {
+			if (c.isNeedValidation()) {
+				return true;
+			}
+		};
+		return false;
+	}
+
 	public void setNeedValidation(boolean needValidation) {
 		this.needValidation = needValidation;
 	}

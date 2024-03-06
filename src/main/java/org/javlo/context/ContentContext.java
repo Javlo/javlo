@@ -1023,7 +1023,7 @@ public class ContentContext {
 		}
 
 		if (outPage == null) {
-			logger.warning("page not found : " + getPath());
+			logger.fine("page not found : " + getPath());
 		}
 
 		if (isAsViewMode() && outPage != null && !outPage.isActive(this)) {
