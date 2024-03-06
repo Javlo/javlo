@@ -292,6 +292,7 @@ public class NavigationHelper {
 		int out = 0;
 		if ((srcRoot.isValid() && srcRoot.isNeedValidation()) || srcRoot.isNoValidation()) {
 			if (srcRoot.isNeedValidation()) {
+				logger.info("publish page : " + srcRoot.getName());
 				out++;
 			}
 			srcRoot.setNeedValidation(false);

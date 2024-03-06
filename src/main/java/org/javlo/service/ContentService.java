@@ -459,7 +459,6 @@ public class ContentService implements IPrintInfo {
 
 	public void publishAttributeMap(ContentContext ctx) {
 		viewGlobalMap = new HashMap<>(previewGlobalMap);
-		System.out.println("viewGlobalMap = "+viewGlobalMap);
 	}
 
 	private Map<String, String> getAttributeMap(ContentContext ctx) {
