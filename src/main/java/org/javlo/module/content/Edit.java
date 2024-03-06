@@ -315,10 +315,12 @@ public class Edit extends AbstractModuleAction {
 	 * @throws Exception
 	 */
 	private static void modifPage(ContentContext ctx, MenuElement currentPage) throws Exception {
+		if (currentPage==null) {
+			return;
+		}
 		currentPage.setModificationDate(new Date());
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		ContentService.getInstance(globalContext);
-		EditContext editCtx = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
+		ContentService.getInstance(ctx.getGlobalContext());
+		EditContext editCtx = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
 		currentPage.setLatestEditor(editCtx.getUserPrincipal().getName());
 		currentPage.setValid(false);
 		currentPage.setNeedValidation(false);
@@ -2316,30 +2318,7 @@ public class Edit extends AbstractModuleAction {
 				}
 
 				ctx.getAjaxInsideZone().put(selecterPrefix + area, ComponentHelper.renderArea(ctx, areaKey));
-				//
-				// String specialRenderer = ctx.getCurrentTemplate().getSpecialAreaRenderer();
-				// System.out.println(">>>>>>>>> Edit.performInsertShared : 1.specialRenderer =
-				// "+specialRenderer); //TODO: remove debug trace
-				//
-				// URLHelper.mergePath();
-				//
-				// specialRenderer =
-				// URLHelper.mergePath(ctx.getCurrentTemplate().getLocalWorkTemplateFolder(),ctx.getCurrentTemplate().getFolder(ctx.getGlobalContext()),
-				// specialRenderer);
-				// System.out.println(">>>>>>>>> Edit.performInsertShared : 2.specialRenderer =
-				// "+specialRenderer); //TODO: remove debug trace
-				// if (specialRenderer == null) {
-				// ctx.getAjaxInsideZone().put(selecterPrefix + area,
-				// ServletHelper.executeJSP(ctx, "/jsp/view/content_view.jsp?area=" + areaKey));
-				// } else {
-				// specialRenderer =
-				// URLHelper.mergePath(ctx.getCurrentTemplate().getWorkTemplateFolder(),
-				// specialRenderer);
-				// System.out.println(">>>>>>>>> Edit.performInsertShared : 2.specialRenderer =
-				// "+specialRenderer); //TODO: remove debug trace
-				// ctx.getAjaxInsideZone().put(selecterPrefix + area,
-				// ServletHelper.executeJSP(ctx, specialRenderer+"?area=" + areaKey));
-				// }
+				modifPage(ctx, targetPage);
 				logger.info("update area : " + selecterPrefix + area);
 			}
 		}
