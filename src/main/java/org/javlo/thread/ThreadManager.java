@@ -1,12 +1,11 @@
 package org.javlo.thread;
 
-import java.io.File;
-import java.util.logging.Logger;
-
 import jakarta.servlet.ServletContext;
-
 import org.javlo.helper.URLHelper;
 import org.javlo.service.notification.NotificationService;
+
+import java.io.File;
+import java.util.logging.Logger;
 
 public class ThreadManager extends Thread {
 
@@ -71,7 +70,6 @@ public class ThreadManager extends Thread {
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
-		
 		logger.info("start thread manager on : " + threadDir);
 		while (!stop) {
 			File[] threadFiles = threadDir.listFiles(AbstractThread.threadFileFilter);
@@ -81,7 +79,6 @@ public class ThreadManager extends Thread {
 				}
 				for (File file : threadFiles) {
 					if (!stop) {
-
 						try {
 							currentThread = AbstractThread.getInstance(file);
 							if (currentThread != null && currentThread.needRunning()) {
