@@ -1450,6 +1450,9 @@ public class PersistenceService {
 					}
 					if (!xmlFile.exists() && SecureFile.isExist(xmlFile)) {
 						ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+						System.out.println(">>>>>>> ctx.getGlobalContext().getSpecialConfig().getSecureEncryptPassword() = "+ctx.getGlobalContext().getSpecialConfig().getSecureEncryptPassword())
+
 						SecureFile.decodeCyptedFile(xmlFile, ctx.getGlobalContext().getSpecialConfig().getSecureEncryptPassword(), out);
 						in = new ByteArrayInputStream(out.toByteArray());
 					} else {

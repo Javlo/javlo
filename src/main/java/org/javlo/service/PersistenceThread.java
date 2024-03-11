@@ -1,25 +1,5 @@
 package org.javlo.service;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Logger;
-import java.util.zip.ZipOutputStream;
-
-import javax.mail.internet.AddressException;
-
 import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.javlo.context.ContentContext;
 import org.javlo.data.taxonomy.TaxonomyBean;
@@ -30,6 +10,13 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.servlet.IVersion;
 import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.utils.TimeTracker;
+
+import javax.mail.internet.AddressException;
+import java.io.*;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
+import java.util.zip.ZipOutputStream;
 
 public class PersistenceThread implements Runnable {
 
@@ -279,7 +266,7 @@ public class PersistenceThread implements Runnable {
 		this.lockReference = lockReference;
 	}
 
-	public String getEncryptKey() {
+	private String getEncryptKey() {
 		return encryptKey;
 	}
 
@@ -287,7 +274,7 @@ public class PersistenceThread implements Runnable {
 		this.encryptKey = encryptKey;
 	}
 
-	public boolean isZipStorage() {
+	private boolean isZipStorage() {
 		return zipStorage;
 	}
 
