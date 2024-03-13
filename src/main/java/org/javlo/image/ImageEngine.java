@@ -1,44 +1,9 @@
 package org.javlo.image;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.Transparency;
-import java.awt.color.ColorSpace;
-import java.awt.font.TextAttribute;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImageOp;
-import java.awt.image.ColorConvertOp;
-import java.awt.image.ColorModel;
-import java.awt.image.ConvolveOp;
-import java.awt.image.IndexColorModel;
-import java.awt.image.Kernel;
-import java.awt.image.WritableRaster;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.logging.Logger;
-
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.ExifIFD0Directory;
+import com.jhlabs.image.RGBAdjustFilter;
 import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
@@ -55,7 +20,22 @@ import org.jcodec.codecs.vpx.VP8Decoder;
 import org.jcodec.common.model.Picture;
 import org.jcodec.scale.AWTUtil;
 
-import com.jhlabs.image.RGBAdjustFilter;
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import java.awt.*;
+import java.awt.color.ColorSpace;
+import java.awt.font.TextAttribute;
+import java.awt.geom.AffineTransform;
+import java.awt.image.*;
+import java.io.*;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.logging.Logger;
 
 public class ImageEngine {
 
@@ -76,13 +56,49 @@ public class ImageEngine {
 
 	public static BufferedImage loadImage(File file) throws IOException {
 		BufferedImage outImage = ImageIO.read(file);
+		try {
+			outImage = rotateImageBasedOnOrientation(outImage, getOrientation(file));
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
 		return outImage;
 	}
 
-	public static BufferedImage loadImage(InputStream in) throws IOException {
+	private static int getOrientation(File imageFile) throws Exception {
+		Metadata metadata = ImageMetadataReader.readMetadata(imageFile);
+		ExifIFD0Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+
+		if (directory != null && directory.containsTag(ExifIFD0Directory.TAG_ORIENTATION)) {
+			return directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+		} else {
+			return 1; // Assume no rotation if there's no orientation tag
+		}
+	}
+
+	private static BufferedImage rotateImageBasedOnOrientation(BufferedImage originalImage, int orientation) {
+		int width = originalImage.getWidth();
+		int height = originalImage.getHeight();
+
+		BufferedImage rotatedImage = null;
+		Graphics2D graphics = null;
+
+		// Handle rotation based on orientation
+		switch (orientation) {
+			case 6: // 90 CW
+				return rotate(originalImage, 90, null);
+			// Add cases for other orientations if necessary
+			default:
+				// No rotation needed
+				return originalImage;
+		}
+	}
+
+
+
+	/*public static BufferedImage loadImage(InputStream in) throws IOException {
 		BufferedImage outImage = ImageIO.read(in);
 		return outImage;
-	}
+	}*/
 
 	public static void drain(InputStream inputStream, OutputStream outputStream) {
 		try {
@@ -2181,27 +2197,9 @@ public class ImageEngine {
 	}
 
 	public static void main(String[] args) throws Exception {
-		// File imageFile = new File("c:/trans/short_hair_alpha.png");
-		// BufferedImage image = ImageIO.read(imageFile);
-		// // image = addBlurBorder(image, Color.WHITE, 80, null);
-		// ImageIO.write(image, "webp", new File("c:/trans/webp_test.webp"));
-
-		File png = new File("c:/trans/test_speed.png");
-		File webp = new File("c:/trans/test_speed.webp");
-		File jpg = new File("c:/trans/test_speed.jpg");
-
-		long start = System.currentTimeMillis();
-		ImageIO.read(png);
-		System.out.println("png : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - start));
-
-		start = System.currentTimeMillis();
-		ImageIO.read(jpg);
-		System.out.println("jpg : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - start));
-
-		start = System.currentTimeMillis();
-		ImageIO.read(webp);
-		System.out.println("webp : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - start));
-
+		File jpg = new File("c:/trans/vertical.jpg");
+		BufferedImage img = ImageEngine.loadImage(jpg);
+		ImageIO.write(img, "jpg", new File("c:/trans/vertical_out.jpg"));
 	}
 
 	public static BufferedImage convertRGBAToIndexed(BufferedImage src) {

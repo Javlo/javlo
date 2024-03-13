@@ -1,43 +1,11 @@
 package org.javlo.servlet;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.stream.ImageOutputStream;
+import com.jhlabs.image.*;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
 import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.imaging.common.ImageMetadata;
 import org.javlo.component.core.IContentVisualComponent;
@@ -46,13 +14,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.ContentContextBean;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.ExifHelper;
-import org.javlo.helper.NetHelper;
-import org.javlo.helper.PDFHelper;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.SVGHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
+import org.javlo.helper.*;
 import org.javlo.image.ImageConfig;
 import org.javlo.image.ImageEngine;
 import org.javlo.image.ImageHelper;
@@ -72,12 +34,21 @@ import org.javlo.utils.TimeTracker;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.StaticInfo;
 
-import com.jhlabs.image.ContrastFilter;
-import com.jhlabs.image.CrystallizeFilter;
-import com.jhlabs.image.EdgeFilter;
-import com.jhlabs.image.EmbossFilter;
-import com.jhlabs.image.GlowFilter;
-import com.jhlabs.image.GrayscaleFilter;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.stream.ImageOutputStream;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * transform a image. url :
@@ -300,12 +271,12 @@ public class ImageTransformServlet extends FileServlet {
 			String key = file.getName() + "-" + file.length();
 			BufferedImage out = layerCache.get(key);
 			if (out == null) {
-				out = ImageIO.read(file);
+				out = ImageEngine.loadImage(file);
 				layerCache.put(key, out);
 			}
 			return out;
 		} else {
-			return ImageIO.read(file);
+			return ImageEngine.loadImage(file);
 		}
 	}
 
@@ -320,7 +291,7 @@ public class ImageTransformServlet extends FileServlet {
 			}
 		}
 		if (out == null) {
-			out = ImageIO.read(file);
+			out = ImageEngine.loadImage(file);
 			synchronized (imageCacheLock) {
 				imageCacheKey = key;
 				imageCache = out;
@@ -419,7 +390,7 @@ public class ImageTransformServlet extends FileServlet {
 					Collections.shuffle(children);
 				}
 				StaticInfo info = children.get(i);
-				BufferedImage image = ImageIO.read(info.getFile());
+				BufferedImage image = ImageEngine.loadImage(info.getFile());
 
 				int mt = config.getMarginTop(ctx.getDevice(), filter, area);
 				int ml = config.getMarginLeft(ctx.getDevice(), filter, area);
@@ -645,7 +616,7 @@ public class ImageTransformServlet extends FileServlet {
 			for (String imgExt : IMAGES_EXT) {
 				File alternativeFile = new File(alternativeFileBase + imgExt);
 				if (alternativeFile.exists()) {
-					img = ImageIO.read(alternativeFile);
+					img = ImageEngine.loadImage(alternativeFile);
 					imageType = imgExt;
 					break;
 				}
@@ -688,7 +659,7 @@ public class ImageTransformServlet extends FileServlet {
 				mimeTypeImageFile = new File(defaultMimeTypeImage);
 			}
 			if (mimeTypeImageFile != null) {
-				img = ImageIO.read(mimeTypeImageFile);
+				img = ImageEngine.loadImage(mimeTypeImageFile);
 				imageType = DEFAULT_IMAGE_TYPE;
 			}
 		}
@@ -1396,7 +1367,7 @@ public class ImageTransformServlet extends FileServlet {
 						synchronized (LOCK_LARGE_TRANSFORM) {
 							if ((staticInfo != null && !staticInfo.isResized(ctx)) && !imageFile.isDirectory()) {
 								logger.info("source image to large resize to " + maxWidth + " : " + imageFile);
-								BufferedImage image = ImageIO.read(imageFile);
+								BufferedImage image = ImageEngine.loadImage(imageFile);
 								if (image != null) {
 									if (image.getWidth() > maxWidth) {
 										try {
