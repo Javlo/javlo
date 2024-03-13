@@ -64,6 +64,10 @@ public class ImageEngine {
 		return outImage;
 	}
 
+	public static BufferedImage loadImage(InputStream in) throws IOException {
+		return ImageIO.read(in);
+	}
+
 	private static int getOrientation(File imageFile) throws Exception {
 		Metadata metadata = ImageMetadataReader.readMetadata(imageFile);
 		ExifIFD0Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
