@@ -1752,9 +1752,11 @@ public class ImageEngine {
 	public static BufferedImage duplicateBuffuredImage(BufferedImage bi) {
 		ColorModel cm = bi.getColorModel();
 		boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
-		WritableRaster raster = bi.copyData(null);
+		WritableRaster raster = cm.createCompatibleWritableRaster(bi.getWidth(), bi.getHeight());
+		bi.copyData(raster);
 		return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
 	}
+
 
 	public static BufferedImage projectionImage(BufferedImage back, BufferedImage top, BufferedImage source, Polygon4 p4, float alpha, boolean crop, int interestX, int interestY) throws Exception {
 		int leftX = p4.getSquare().getX1();
@@ -2199,6 +2201,7 @@ public class ImageEngine {
 	public static void main(String[] args) throws Exception {
 		File jpg = new File("c:/trans/vertical.jpg");
 		BufferedImage img = ImageEngine.loadImage(jpg);
+		img = ImageEngine.duplicateBuffuredImage(img);
 		ImageIO.write(img, "jpg", new File("c:/trans/vertical_out.jpg"));
 	}
 
