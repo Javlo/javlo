@@ -30,7 +30,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 			<a class="btn btn-default" aria-label="Left Align" href="${url}" title="${i18n.edit[descriptionKey] != descriptionKey?i18n.edit[descriptionKey]:macro.name}">
 			<c:set var="descriptionKey" value="macro.description.${macro.name}" />
 			<span class="button-group-addon"><i class="${macro.icon}" aria-hidden="true"></i></span>
-			<span class="label">${i18n.edit[key] != key?i18n.edit[key]:macro.name}</span>
+			<span class="label">${not empty i18n.edit[key]?i18n.edit[key]:macro.label}</span>
 			</a>
 		</c:if>
 
@@ -59,7 +59,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 				<button type="button" class="btn btn-default" aria-label="Left Align" onclick="editPreview.openModal('${i18n.edit[key] != key?i18n.edit[key]:macro.name}', '${url}', 'jv-modal-${macro.modalSize}');" title="${i18n.edit[descriptionKey] != descriptionKey?i18n.edit[descriptionKey]:''}">
 					<c:set var="key" value="macro.${macro.name}" />
 					<span class="button-group-addon"><i class="${macro.icon}" aria-hidden="true"></i></span>
-					<span class="label">${i18n.edit[key] != key?i18n.edit[key]:macro.name}</span>
+					<span class="label">${not empty i18n.edit[key]?i18n.edit[key]:macro.label}</span>
 				</button>
 			</c:if>
 		</c:if>

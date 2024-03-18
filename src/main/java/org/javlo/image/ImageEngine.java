@@ -86,6 +86,8 @@ public class ImageEngine {
 		BufferedImage rotatedImage = null;
 		Graphics2D graphics = null;
 
+		System.out.println("orientation = "+orientation);
+
 		// Handle rotation based on orientation
 		switch (orientation) {
 			case 6: // 90 CW
@@ -2203,7 +2205,7 @@ public class ImageEngine {
 	}
 
 	public static void main(String[] args) throws Exception {
-		File jpg = new File("c:/trans/vertical.jpg");
+		File jpg = new File("c:/trans/vertical2.jpg");
 		BufferedImage img = ImageEngine.loadImage(jpg);
 		img = ImageEngine.duplicateBuffuredImage(img);
 		ImageIO.write(img, "jpg", new File("c:/trans/vertical_out.jpg"));

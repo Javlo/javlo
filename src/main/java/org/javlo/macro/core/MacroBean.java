@@ -157,6 +157,16 @@ public class MacroBean implements IMacro, IInteractiveMacro {
 		this.url = url;
 	}
 
+	public String getLabel() {
+		String name = getName();
+		if (name == null || name.length() < 3) {
+			return name;
+		}
+		String label = name.replace("macro.", "").replace("-", " ");
+		label = label.substring(0, 1).toUpperCase() + label.substring(1);
+		return label;
+	}
+
 	@Override
 	public int getPriority() {
 		return priority;

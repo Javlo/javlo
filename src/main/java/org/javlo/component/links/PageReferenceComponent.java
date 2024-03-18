@@ -1611,6 +1611,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
     public static String performPages(ContentContext ctx) throws Exception {
         PageReferenceComponent comp = (PageReferenceComponent)ComponentHelper.getComponentFromRequest(ctx);
         ContentContext viewFormat = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
+        if (ctx.getRequest().getParameter("mode") != null) {
+            viewFormat = ctx.getContextWithOtherRenderMode(Integer.parseInt(ctx.getRequest().getParameter("mode")));
+        }
         viewFormat.setFormat("html");
         comp.prepareView(viewFormat);
         Collection<SmartPageBean> pages = (Collection<SmartPageBean>)ctx.getRequest().getAttribute("pages");

@@ -1,19 +1,5 @@
 package org.javlo.macro.interactive;
 
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import javax.mail.internet.InternetAddress;
-
 import org.javlo.actions.IAction;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ContentElementList;
@@ -21,13 +7,7 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.ContentHelper;
-import org.javlo.helper.MacroHelper;
-import org.javlo.helper.MapHelper;
-import org.javlo.helper.NetHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
+import org.javlo.helper.*;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.macro.core.IInteractiveMacro;
 import org.javlo.mailing.Mail;
@@ -39,6 +19,10 @@ import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserInfo;
+
+import javax.mail.internet.InternetAddress;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class CreateArticle implements IInteractiveMacro, IAction {
 

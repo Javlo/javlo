@@ -3,40 +3,13 @@
  */
 package org.javlo.i18n;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.Stack;
-import java.util.logging.Logger;
-
-import javax.naming.ConfigurationException;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.ConfigHelper;
-import org.javlo.helper.MapHelper;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
+import org.javlo.helper.*;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.RequestService;
@@ -44,8 +17,13 @@ import org.javlo.service.exception.ServiceException;
 import org.javlo.template.Template;
 import org.javlo.utils.ConfigurationProperties;
 import org.javlo.utils.KeyMap;
-import org.javlo.utils.MapDisplayKeyIfNotFound;
 import org.javlo.utils.ReadOnlyMultiMap;
+
+import javax.naming.ConfigurationException;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * @author pvanderm
@@ -159,6 +137,8 @@ public class I18nAccess implements Serializable {
 	private final Object lockViewMap = new Object();
 
 	private Map<String, String> propEditMap = null;
+
+	private Map<String, String> propEditWidthEmptyMap = null;
 
 	private Boolean moduleImported = false;
 
@@ -358,7 +338,7 @@ public class I18nAccess implements Serializable {
 		if (propEditMap == null) {
 			synchronized (lock) {
 				if (propEditMap == null) {
-					propEditMap = new MapDisplayKeyIfNotFound(new Hashtable<String, String>());
+					propEditMap = new Hashtable<String, String>();
 					createPropEditMap = true;
 					Iterator<?> keys = propEdit.getKeys();
 					while (keys.hasNext()) {

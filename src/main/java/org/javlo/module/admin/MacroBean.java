@@ -1,10 +1,10 @@
 package org.javlo.module.admin;
 
+import org.javlo.macro.core.IMacro;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import org.javlo.macro.core.IMacro;
 
 public class MacroBean {
 	
@@ -19,6 +19,14 @@ public class MacroBean {
 		this.info = info;
 		this.modalSize = modalSize;
 		this.priority = priority;
+	}
+	public String getLabel() {
+		if (name == null || name.length() < 3) {
+			return name;
+		}
+		String label = name.replace("macro.", "").replace("-", " ");
+		label = label.substring(0, 1).toUpperCase() + label.substring(1);
+		return label;
 	}
 	public String getName() {
 		return name;
