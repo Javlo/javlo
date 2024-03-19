@@ -1522,7 +1522,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
             }
             ctx.getRequest().setAttribute("taxonomySelectedIdString", StringHelper.collectionToString(rs.getParameterValues("taxonomy")));
         }
-        if (ctx.isLikeViewRenderMode()) {
+        if (!ctx.isLikeViewRenderMode()) {
             jUrl = URLHelper.addParam(jUrl, "mode", ""+ctx.getRenderMode());
         }
         ctx.getRequest().setAttribute("jsonUrl", jUrl);
