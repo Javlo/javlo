@@ -4,39 +4,6 @@
  */
 package org.javlo.mailing;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.net.InetAddress;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
-import java.util.UUID;
-import java.util.logging.Logger;
-
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.mail.Header;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.util.ByteArrayDataSource;
-
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.external.agitos.dkim.Canonicalization;
@@ -47,6 +14,20 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
+
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import javax.mail.util.ByteArrayDataSource;
+import java.io.*;
+import java.net.InetAddress;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * This class, working in a singleton mode, is a utility for sending mail
@@ -253,9 +234,9 @@ public class MailService {
 
 	private static final class MailThread extends Thread {
 
-		private MailService mailService;
-		private Transport transport;
-		private EMail email;
+		private final MailService mailService;
+		private final Transport transport;
+		private final EMail email;
 
 		public MailThread(MailService mailService, Transport transport, EMail email) {
 			super();
@@ -266,10 +247,20 @@ public class MailService {
 
 		@Override
 		public void run() {
-			try {
-				mailService.sendMail(transport, email);
-			} catch (MessagingException e) {
-				e.printStackTrace();
+			if (transport != null) {
+				synchronized(transport) {
+					try {
+						mailService.sendMail(transport, email);
+					} catch (MessagingException e) {
+						e.printStackTrace();
+					}
+				}
+			} else {
+				try {
+					mailService.sendMail(email);
+				} catch (MessagingException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
