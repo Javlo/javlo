@@ -2327,6 +2327,21 @@ public class StaticConfig extends Observable {
 		}
 		return generalListner;
 	}
+
+	private Boolean accessLogFolderExist = null;
+	private String accessLogFolder = null;
+
+	public String getAccessLogFolder() {
+		if (accessLogFolderExist != null && !accessLogFolderExist) {
+			return null;
+		}
+		if (accessLogFolder != null) {
+			accessLogFolder = properties.getString("access.log.folder", null);
+			new File(accessLogFolder).mkdirs();
+			accessLogFolderExist = accessLogFolder != null;
+		}
+		return accessLogFolder;
+	}
 	
 	public String getWebpEncoder() {
 		return properties.getString("image.webp.encoder", null);

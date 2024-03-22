@@ -1,6 +1,8 @@
 package org.javlo.filter;
 
 import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.*;
 import org.javlo.helper.*;
@@ -25,13 +27,16 @@ import org.javlo.tracking.Tracker;
 import org.javlo.user.*;
 import org.javlo.utils.DebugListening;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.security.Principal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -59,6 +64,73 @@ public class CatchAllFilter implements Filter {
 	public void destroy() {
 	}
 
+	private static FileWriter logAccessFile = null;
+	private static String accessLogFile = "";
+
+	private static void deleteOldAccessLog(StaticConfig staticConfig) {
+		if (staticConfig.getAccessLogFolder() == null) {
+			return;
+		}
+		File directory = new File(staticConfig.getAccessLogFolder());
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+		LocalDate now = LocalDate.now();
+
+		File[] files = directory.listFiles((dir, name) -> name.matches("access_\\d{8}\\.log"));
+
+		if (files != null) {
+			for (File file : files) {
+				String dateString = file.getName().substring(7, 15); // Extraction de la date du nom de fichier
+				try {
+					LocalDate fileDate = LocalDate.parse(dateString, formatter);
+					long daysBetween = ChronoUnit.DAYS.between(fileDate, now);
+					if (daysBetween > 30) {
+						if (file.delete()) {
+							logger.info(file.getName() + "has been removed.");
+						} else {
+							logger.severe("Unable to delete " + file.getName());
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	private static String getFullURL(HttpServletRequest request) {
+		StringBuilder requestURL = new StringBuilder(request.getRequestURL().toString());
+		String queryString = request.getQueryString();
+		if (queryString == null) {
+			return requestURL.toString();
+		} else {
+			return requestURL.append('?').append(queryString).toString();
+		}
+	}
+
+	private static String formatRequestInfo(HttpServletRequest request) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Time: ").append(StringHelper.renderDateAndTime(LocalDateTime.now())).append("\n");
+		builder.append("Method: ").append(request.getMethod()).append("\n");
+		builder.append("Protocol: ").append(request.getProtocol()).append("\n");
+		builder.append("Request URL: ").append(getFullURL(request)).append("\n");
+		builder.append("Content Type: ").append(request.getContentType()).append("\n");
+		builder.append("Content Length: ").append(request.getContentLengthLong()).append("\n");
+
+		// Adding headers
+		builder.append("Headers:\n");
+		Enumeration<String> headerNames = request.getHeaderNames();
+		while (headerNames.hasMoreElements()) {
+			String headerName = headerNames.nextElement();
+			builder.append("  ").append(headerName).append(": ").append(request.getHeader(headerName)).append("\n");
+		}
+
+		// Add other information as needed
+		builder.append("Client IP Address: ").append(request.getRemoteAddr()).append("\n");
+		builder.append("Request Path: ").append(request.getRequestURI()).append("\n");
+
+		return builder.toString();
+	}
+
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain next) throws IOException, ServletException {
 
@@ -66,7 +138,8 @@ public class CatchAllFilter implements Filter {
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		ServletContext servletContext = httpRequest.getSession().getServletContext();
 		CountService.getInstance(servletContext).touch();
-		
+
+
 		if (ALL_COUNT%1000 == 0 && ALL_COUNT > 0) {
 			logger.info("IP Blocking status : VALID_IP:"+VALID_IP+"  BLOCK_IP="+BLOCK_IP+ "  [%BLK:"+StringHelper.renderDoubleAsPercentage((double)BLOCK_IP/(double)ALL_COUNT)+"]");
 		}
@@ -97,6 +170,25 @@ public class CatchAllFilter implements Filter {
 
 		String host = ServletHelper.getSiteKey(httpRequest);
 		StaticConfig staticConfig = StaticConfig.getInstance(servletContext);
+
+
+		/** access log file **/
+		if (staticConfig.getAccessLogFolder() != null) {
+			String accessLogFile = URLHelper.mergePath(staticConfig.getAccessLogFolder(), "access_"+StringHelper.renderSortableDate(new Date())+".log");
+			if (!accessLogFile.equals(accessLogFile)) {
+				if (logAccessFile != null) {
+					logAccessFile.close();
+					logAccessFile = null;
+					deleteOldAccessLog(staticConfig);
+				}
+			}
+			if (logAccessFile == null) {
+				logAccessFile = new FileWriter(accessLogFile, true);
+			}
+			String requestInfo = formatRequestInfo(httpRequest);
+			logAccessFile.write(requestInfo+"\n");
+		}
+
 
 		/*****************************/
 		/**** INIT GLOBAL CONTEXT ****/
