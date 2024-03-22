@@ -989,4 +989,7 @@ Security in case of vulnerabilities.
 - REST page history
 - Import HTML service
 - User notification
+- Access log
+## [2.3.1] - 23/03/2024
+
 
