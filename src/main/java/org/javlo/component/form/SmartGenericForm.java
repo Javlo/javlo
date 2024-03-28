@@ -1,5 +1,7 @@
 package org.javlo.component.form;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -40,8 +42,6 @@ import org.javlo.utils.*;
 import org.javlo.ztatic.StaticInfo;
 
 import javax.mail.internet.InternetAddress;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -551,7 +551,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
         return getFields(null);
     }
 
-    public synchronized List<Field> getFields(ContentContext ctx) {
+    public List<Field> getFields(ContentContext ctx) {
         List<Field> fields = new LinkedList<Field>();
         Properties p = getLocalConfig(false);
 
