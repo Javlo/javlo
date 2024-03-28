@@ -82,12 +82,13 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
     public Properties getLocalConfig(boolean reload) {
         if (bundle == null || reload) {
-            bundle = new StructuredProperties();
+            Properties newBundle = new StructuredProperties();
             try {
-                bundle.load(new StringReader(getValue()));
+                newBundle.load(new StringReader(getValue()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            this.bundle = newBundle;
         }
         return bundle;
     }
