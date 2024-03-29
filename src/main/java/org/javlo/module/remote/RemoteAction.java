@@ -115,6 +115,11 @@ public class RemoteAction extends AbstractModuleAction {
 					remoteServers.add(server);
 					serversByAddress.put(address, server);
 				}
+				/** if new json version with os, set it **/
+				if (!StringHelper.isEmpty(os)) {
+					server.setHostname(hostname);
+					server.setOs(os);
+				}
 				String addressPort = address + ":" + port;
 				RemoteInstance instance = instancesByAddressPort.get(addressPort);
 				if (instance == null) {
