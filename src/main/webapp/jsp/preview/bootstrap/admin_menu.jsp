@@ -23,10 +23,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 	<span class="button-group-addon"><i class="bi bi-clock-history"></i></span>
 	<span class="label">${i18n.edit['time.title']}</span>
 </a>
-<a id="pc_edit_mode_button_4" class="btn btn-default" title="${i18n.edit['global.exit']}" href="#" onclick="editPreview.openModal('${i18n.edit['module.file']}','${info.currentEditURL}?module=file&previewEdit=true', 'jv-modal-lg', true); return false;">
-	<span class="button-group-addon"><i class="bi bi-file-earmark"></i></span>
-	<span class="label">${i18n.edit['module.file']}</span>
-</a>
+
 <c:if test="${info.admin}">
 <a id="pc_edit_mode_button_5" class="btn btn-default" title="${i18n.edit['global.exit']}" href="#" onclick="editPreview.openModal('Site properties','${info.currentEditURL}?module=admin&previewEdit=true', 'jv-modal-lg', true); return false;">
 	<span class="button-group-addon"><i class="bi bi-gear"></i></span>

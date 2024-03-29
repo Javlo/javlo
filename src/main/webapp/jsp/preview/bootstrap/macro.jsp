@@ -6,9 +6,18 @@ ContentContext editCtx = new ContentContext(ctx);
 editCtx.setRenderMode(ContentContext.EDIT_MODE);
 %>
 <div class="macro-btn-list _jv_menu">
+
 <c:set var="topSeparator" value="false" />
 <c:set var="bottomSeparator" value="false" />
-<c:forEach var="macro" items="${info.addMacro}">
+
+	<c:if test="${param.type == 20}">
+		<a id="pc_edit_mode_button_4" class="btn btn-default" title="${i18n.edit['global.exit']}" href="#" onclick="editPreview.openModal('${i18n.edit['module.file']}','${info.currentEditURL}?module=file&previewEdit=true', 'jv-modal-lg', true); return false;">
+			<span class="button-group-addon"><i class="bi bi-file-earmark"></i></span>
+			<span class="label">${i18n.edit['module.file']}</span>
+		</a>
+	</c:if>
+	<c:forEach var="macro" items="${info.addMacro}">
+
 	<c:if test="${macro.type == param.type}">
 		<c:set var="key" value="macro.${macro.name}" />
 		<c:if test="${!macro.interative}">
