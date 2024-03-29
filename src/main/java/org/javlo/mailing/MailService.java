@@ -238,7 +238,7 @@ public class MailService {
 		private final Transport transport;
 		private final EMail email;
 
-		private static final Object CREATE_TRANSPORT = new Object();s
+		private static final Object CREATE_TRANSPORT = new Object();
 
 		public MailThread(MailService mailService, Transport transport, EMail email) {
 			super();
