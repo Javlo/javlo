@@ -629,6 +629,10 @@ public class URLHelper extends ElementaryURLHelper {
 		}
 	}
 
+	public static String createAbsoluteURL(ContentContext ctx) {
+		return createURL(ctx.getContextForAbsoluteURL());
+	}
+
 	public static String createStaticTemplateURL(ContentContext ctx, Template template, String url) throws Exception {
 		GlobalContext globalContext = ctx.getGlobalContext();
 		if (template == null) {

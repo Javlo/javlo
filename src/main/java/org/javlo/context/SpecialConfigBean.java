@@ -155,6 +155,9 @@ public class SpecialConfigBean {
 	public String getMailFrom() {
 		return StringHelper.neverNull(config.get("mail.from"));
 	}
+	public String getSeoCountry() {
+		return StringHelper.neverNull(config.get("seo.country"));
+	}
 	
 	public boolean isGoogleRecaptcha() {
 		return !StringHelper.isEmpty(getGoogleRecaptchaPrivateKey()) && !StringHelper.isEmpty(getGoogleRecaptchaPublicKey());

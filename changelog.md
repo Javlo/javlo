@@ -991,5 +991,6 @@ Security in case of vulnerabilities.
 - User notification
 - Access log
 ## [2.3.1] - 23/03/2024
-
+### Added
+- 
 

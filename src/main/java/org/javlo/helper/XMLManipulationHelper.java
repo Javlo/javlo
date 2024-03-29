@@ -1131,6 +1131,13 @@ public class XMLManipulationHelper {
         out.append("<%EditContext editCtx = EditContext.getInstance(globalContext, request.getSession());%>");
         out.append("<%}%>");
 
+        if (!StringHelper.isEmpty(globalContext.getSpecialConfig().getSeoCountry())) {
+            String ct = globalContext.getSpecialConfig().getSeoCountry();
+            out.newLine();
+            out.append("<link rel=\"alternate\" href=\"<%=URLHelper.createAbsoluteURL(ctx)%>\" hreflang=\"<%=ctx.getRequestContentLanguage()%>-"+ct+"\" />");
+            out.newLine();
+        }
+
         out.close();
 
         return outString.toString();
