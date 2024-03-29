@@ -33,7 +33,9 @@
 }
 
 .remote-server-tree .server-title {
-	display: block;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 	padding: 10px;
 	font-weight: bolder;
 	font-size: 1.1em;

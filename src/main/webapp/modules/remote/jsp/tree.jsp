@@ -7,8 +7,11 @@
 <ul>
 	<c:forEach var="server" items="${remoteServers}">
 		<li class="server">
-			<span class="server-title">${server.hostname} (${server.address})</span>
-			<small class="server-os">${server.os}</small>
+			<span class="server-title">
+					<div class="server-name">${server.hostname} (${server.address})</div>
+				    <small class="server-os">${server.os}</small>
+			</span>
+
 			<ul>
 				<c:forEach var="instance" items="${server.instances}">
 					<li class="instance">
