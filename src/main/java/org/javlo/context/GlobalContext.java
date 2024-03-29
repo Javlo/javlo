@@ -2061,6 +2061,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		if (StringHelper.isMail(mailFrom)) {
 			return mailFrom;
 		}
+		if (StringHelper.isMail(getStaticConfig().getDefaultSender())) {
+			return getStaticConfig().getDefaultSender();
+		}
 		return getAdministratorEmail();
 	}
 
@@ -4617,7 +4620,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			return prod;
 		}
 	}
-	
+
 	public String getHostName() {
 		return hostName;
 	}

@@ -1,8 +1,11 @@
 package org.javlo.mailing;
 
+import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.mailing.MailService.Attachment;
 
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -26,6 +29,12 @@ public class EMail extends Mail {
 		super(null, null);
 	}
 
+	public EMail(GlobalContext globalContext, String subject, String content) throws AddressException {
+		super(subject, content);
+		this.sender = new InternetAddress(globalContext.getMailFrom());
+		this.dkim = globalContext.getDKIMBean();
+	}
+
 	public EMail(String subject, String content) {
 		super(subject, content);
 	}
@@ -47,6 +56,24 @@ public class EMail extends Mail {
 			recipients = new LinkedList<InternetAddress>();
 		}
 		return recipients;
+	}
+
+	public void addRecipient(String recipient) throws AddressException {
+		if (StringHelper.isMail(recipient)) {
+			addRecipient(new InternetAddress(recipient));
+		}
+	}
+
+	public void addCcRecipient(String recipient) throws AddressException {
+		if (StringHelper.isMail(recipient)) {
+			addCcRecipient(new InternetAddress(recipient));
+		}
+	}
+
+	public void addBccRecipient(String recipient) throws AddressException {
+		if (StringHelper.isMail(recipient)) {
+			addBccRecipient(new InternetAddress(recipient));
+		}
 	}
 	
 	public void addRecipient(InternetAddress recipient) {
@@ -97,6 +124,16 @@ public class EMail extends Mail {
 			this.bccRecipients = new LinkedList<>();
 		}
 		this.bccRecipients.add(bccRecipient);
+	}
+
+	public void addCcRecipient(InternetAddress ccRecipient) {
+		if (ccRecipients == null) {
+			return;
+		}
+		if (this.ccRecipients == null) {
+			this.ccRecipients = new LinkedList<>();
+		}
+		this.ccRecipients.add(ccRecipient);
 	}
 
 	public String getTxtContent() {
