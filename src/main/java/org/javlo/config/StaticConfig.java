@@ -2335,7 +2335,7 @@ public class StaticConfig extends Observable {
 		if (accessLogFolderExist != null && !accessLogFolderExist) {
 			return null;
 		}
-		if (accessLogFolder != null) {
+		if (accessLogFolder == null) {
 			accessLogFolder = properties.getString("access.log.folder", null);
 			new File(accessLogFolder).mkdirs();
 			accessLogFolderExist = accessLogFolder != null;
