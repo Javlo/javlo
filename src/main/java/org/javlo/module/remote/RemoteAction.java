@@ -1,17 +1,6 @@
 package org.javlo.module.remote;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Logger;
-
 import jakarta.servlet.http.HttpSession;
-
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -26,6 +15,12 @@ import org.javlo.service.RequestService;
 import org.javlo.utils.TimeMap;
 import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
+
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
 
 public class RemoteAction extends AbstractModuleAction {
 	
@@ -102,18 +97,21 @@ public class RemoteAction extends AbstractModuleAction {
 				String hostname = UNKNOWN_SERVER;
 				String systemUser = UNKNOWN_SERVER;
 				String version = UNKNOWN_SERVER;
+				String os = UNKNOWN_SERVER;
 				if (remote.isServerInfoLoaded()) {
 					address = remote.getServerAddress();
 					port = remote.getServerPort();
 					systemUser = remote.getSystemUser();
 					version = remote.getVersion();
 					hostname = remote.getServerHostname();
+					os = remote.getOs();
 				}
 				RemoteServer server = serversByAddress.get(address);
 				if (server == null) {
 					server = new RemoteServer();
 					server.setAddress(address);
 					server.setHostname(hostname);
+					server.setOs(os);
 					remoteServers.add(server);
 					serversByAddress.put(address, server);
 				}

@@ -51,6 +51,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.security.Principal;
 import java.text.ParseException;
 import java.util.List;
@@ -174,9 +176,18 @@ public class DataAction implements IAction {
 			logger.warning("bad synchro code sent to webaction data.serverInfo");
 			serverInfo.put("message", "Synchro code not valid!");
 		} else {
-			BeanHelper.extractPropertiesAsString(serverInfo, request, "remotePort", "remoteHost", "remoteAddr", "localAddr", "localName", "localPort", "serverName", "serverPort", "characterEncoding"
+			BeanHelper.extractPropertiesAsString(serverInfo, request, "remotePort", "remoteHost", "localAddr", "localName", "localPort", "serverName", "serverPort", "characterEncoding"
 			// , "contextPath"
 			);
+
+			serverInfo.put("os",System.getProperty("os.name") + " version " + System.getProperty("os.version"));
+
+			try {
+				serverInfo.put("remoteAddr", InetAddress.getLocalHost().getHostName());
+			} catch (UnknownHostException e) {
+				throw new RuntimeException(e);
+			}
+
 			serverInfo.put("contextKey", ctx.getGlobalContext().getContextKey());
 			serverInfo.put("systemUser", System.getProperty("user.name"));
 

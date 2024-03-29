@@ -1,15 +1,7 @@
 package org.javlo.module.remote;
 
-import java.beans.Transient;
-import java.io.Serializable;
-import java.net.URL;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.javlo.actions.DataAction;
 import org.javlo.context.ContentContext;
@@ -19,8 +11,10 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.utils.JSONMap;
 
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
+import java.beans.Transient;
+import java.io.Serializable;
+import java.net.URL;
+import java.util.*;
 
 public class RemoteBean implements Serializable {
 
@@ -252,6 +246,14 @@ public class RemoteBean implements Serializable {
 	public String getServerAddress() {
 		if (getServerInfo() != null) {
 			return (String) getServerInfo().get("localAddr");
+		}
+		return null;
+	}
+
+	@Transient
+	public String getOs() {
+		if (getServerInfo() != null) {
+			return (String) getServerInfo().get("os");
 		}
 		return null;
 	}
