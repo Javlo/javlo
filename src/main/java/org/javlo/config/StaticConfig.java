@@ -1222,7 +1222,7 @@ public class StaticConfig extends Observable {
 			String[] macros = StringHelper.split(macroRaw, ",");
 			for (String macro2 : macros) {
 				try {
-					IMacro macro = (IMacro) Class.forName(macro2).newInstance();
+					IMacro macro = (IMacro) Class.forName(macro2.trim()).newInstance();
 					specialMacro.add(macro);
 				} catch (InstantiationException e) {
 					e.printStackTrace();
