@@ -1385,6 +1385,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		out.println("**** IMAGE TEMP DIR    :  " + staticConfig.getImageCacheFolder());
 		out.println("**** IMAGE AUTO FOCUS  :  " + staticConfig.isAutoFocus());
 		out.println("**** SEARCH ENGINE     :  " + staticConfig.getSearchEngineClassName());
+
+		out.println("**** #EXT MACRO        :  " + staticConfig.getSpecialMacros().size());
+
 		try {
 			out.println("**** GENERAL LISTNER   :  " + staticConfig.getGeneralLister().getClass());
 		} catch (Exception e) {
