@@ -1,19 +1,9 @@
 package org.javlo.servlet.status;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import org.javlo.context.ContentContext;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
@@ -22,6 +12,12 @@ import org.javlo.mailing.MailService;
 import org.javlo.service.ContentService;
 import org.javlo.servlet.IVersion;
 import org.javlo.utils.TimeMap;
+
+import javax.mail.Transport;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.*;
 
 public class StatusServlet extends HttpServlet {
 
@@ -48,10 +44,18 @@ public class StatusServlet extends HttpServlet {
 					boolean connected = NetHelper.isConnected();
 					status.add(new CheckBean("Internet access", "" + connected, !connected));
 					String smtpMsg = null;
+					Transport t = null;
 					try {
-						MailService.getMailTransport(new MailConfig(ctx.getGlobalContext(), ctx.getGlobalContext().getStaticConfig(), null));
+						t = MailService.getMailTransport(new MailConfig(ctx.getGlobalContext(), ctx.getGlobalContext().getStaticConfig(), null));
 					} catch (Exception e) {
 						smtpMsg = e.getMessage();
+					} finally {
+						if (t != null) {
+							try {
+								t.close();
+							} catch (Exception e) {
+							}
+						}
 					}
 					status.add(new CheckBean("SMTP", StringHelper.neverEmpty(smtpMsg, "OK"), smtpMsg != null));
 					ContentService content = ContentService.getInstance(ctx.getGlobalContext());
