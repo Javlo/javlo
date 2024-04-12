@@ -57,9 +57,11 @@ public class ImageEngine {
 	public static BufferedImage loadImage(File file) throws IOException {
 		BufferedImage outImage = ImageIO.read(file);
 		try {
-			outImage = rotateImageBasedOnOrientation(outImage, getOrientation(file));
+			if (!StringHelper.isPDF(file.getName())) {
+				outImage = rotateImageBasedOnOrientation(outImage, getOrientation(file));
+			}
 		} catch (Exception e) {
-			throw new IOException(e);
+			logger.severe(e.getMessage());
 		}
 		return outImage;
 	}

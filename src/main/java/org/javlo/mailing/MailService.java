@@ -240,7 +240,7 @@ public class MailService {
 
 		private static final Object CREATE_TRANSPORT = new Object();
 
-		public MailThread(MailService mailService, Transport transport, EMail email) {
+		private MailThread(MailService mailService, Transport transport, EMail email) {
 			super();
 			this.mailService = mailService;
 			this.transport = transport;
