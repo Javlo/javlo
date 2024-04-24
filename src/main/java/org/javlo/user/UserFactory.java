@@ -292,7 +292,7 @@ public class UserFactory implements IUserFactory, Serializable {
 			url = URLHelper.addParam(url, "login", login);
 			url = URLHelper.addParam(url, "password", pwd);
 			String json = NetHelper.readPage(new URL(url));
-			if (!json.isEmpty()) {
+			if (json != null && !json.isEmpty()) {
 				UserInfoBean userInfoBean = JsonHelper.fromJson(json, UserInfoBean.class);
 				User user = new User();
 				user.setLogin(userInfoBean.getLogin());
