@@ -291,7 +291,7 @@ public class UserFactory implements IUserFactory, Serializable {
 			logger.info("try remote login on : "+url);
 			url = URLHelper.addParam(url, "login", login);
 			url = URLHelper.addParam(url, "password", pwd);
-			String json = NetHelper.readPage(new URL(url));
+			String json = NetHelper.readPageNoError(new URL(url));
 			if (json != null && !json.isEmpty()) {
 				UserInfoBean userInfoBean = JsonHelper.fromJson(json, UserInfoBean.class);
 				User user = new User();
