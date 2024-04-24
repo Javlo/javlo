@@ -1098,6 +1098,7 @@ public class UserAction extends AbstractModuleAction {
 
 	private static synchronized String ajaxLogin(ContentContext ctx, HttpServletRequest request, RequestService rs, GlobalContext globalContext, I18nAccess i18nAccess, IUserFactory fact) throws Exception {
 		if (!ctx.getGlobalContext().getStaticConfig().isRemoteLogin()) {
+			logger.severe("try to unauthorized ajax login : "+NetHelper.getIp(ctx.getRequest()));
 			ctx.getResponse().setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
 		}
