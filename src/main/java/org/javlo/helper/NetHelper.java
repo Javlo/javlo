@@ -480,11 +480,10 @@ public class NetHelper {
 				}
 			}
 			int responseCode = connection.getResponseCode();
-			InputStream inputStream;
 			if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_MOVED_TEMP || responseCode == HttpURLConnection.HTTP_MOVED_PERM) {
-				inputStream = connection.getInputStream();
+				in = connection.getInputStream();
 			} else {
-				inputStream = connection.getErrorStream();  // Use of getErrorStream to read the body of the response even in the event of an error
+				in = connection.getErrorStream();  // Use of getErrorStream to read the body of the response even in the event of an error
 			}
 			ResourceHelper.writeStreamToStream(in, out);
 		} finally {
