@@ -1,19 +1,13 @@
 package org.javlo.data.taxonomy;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.AbstractMap;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
 import org.javlo.context.ContentContext;
 import org.javlo.helper.Comparator.MapEntryComparator;
 import org.javlo.service.IListItem;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class TaxonomyServiceAgregation {
 
@@ -66,20 +60,18 @@ public class TaxonomyServiceAgregation {
 	}
 
 	public String getSelectHtml() {
-		return getSelectHtml("taxonomy", "form-control chosen-select", null, true);
+		return getSelectHtml("taxonomy", "form-control chosen-select", null, true, true);
 	}
 
-	public String getSelectHtml(Collection<String> selection) {
-		return getSelectHtml("taxonomy", "form-control chosen-select", selection, true);
+	public String getSelectHtml(Collection<String> selection, boolean underscore) {
+		return getSelectHtml("taxonomy", "form-control chosen-select", selection, true, underscore);
 	}
 	
 	public String getSelectHtml(String name, Collection<String> selection) {
-		return getSelectHtml(name, "form-control chosen-select", selection, true);
+		return getSelectHtml(name, "form-control chosen-select", selection, true, true);
 	}
-	
-	
 
-	public String getSelectHtml(String name, String cssClass, Collection<String> selection, boolean multiple) {
+	public String getSelectHtml(String name, String cssClass, Collection<String> selection, boolean multiple, boolean underscore) {
 		Map<String, TaxonomyBean> beans = new HashMap<String, TaxonomyBean>();
 		for (TaxonomyService taxonomyService : services) {			
 			beans.putAll(taxonomyService.getTaxonomyBeanMap(true));
@@ -97,7 +89,9 @@ public class TaxonomyServiceAgregation {
 			if (selection != null && selection.contains(option.getKey())) {
 				select = " selected=\"selected\"";
 			}
-			out.println("<option value=\"" + option.getKey() + "\"" + select + ">" + option.getValue() + "</option>");
+			if (underscore || !select.isEmpty() ||  !option.getValue().startsWith("_")) {
+				out.println("<option value=\"" + option.getKey() + "\"" + select + ">" + option.getValue() + "</option>");
+			}
 		}
 		out.println("</select>");
 		out.close();

@@ -137,7 +137,7 @@ public class UserAction extends AbstractModuleAction {
 				if (user.getUserInfo().getTaxonomy() != null) {
 					taxo = Arrays.asList(user.getUserInfo().getTaxonomy());
 				}
-				ctx.getRequest().setAttribute("taxonomySelect", globalContext.getAllTaxonomy(ctx).getSelectHtml(taxo));
+				ctx.getRequest().setAttribute("taxonomySelect", globalContext.getAllTaxonomy(ctx).getSelectHtml(taxo, ctx.getGlobalContext().getSpecialConfig().isTaxonomyUnderlineActive()));
 			}
 
 			Map<String, String> userInfoMap = BeanHelper.bean2Map(user.getUserInfo());

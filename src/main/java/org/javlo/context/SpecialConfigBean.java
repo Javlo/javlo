@@ -179,5 +179,9 @@ public class SpecialConfigBean {
 			return value;
 		}
 	}
+
+	public boolean isTaxonomyUnderlineActive() {
+		return StringHelper.isTrue(config.get("taxonomy.underline-active"), false);
+	}
 	
 }

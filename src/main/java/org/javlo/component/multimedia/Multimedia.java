@@ -1,36 +1,9 @@
 package org.javlo.component.multimedia;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.text.ParseException;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
 import org.apache.commons.io.FilenameUtils;
 import org.javlo.actions.IAction;
 import org.javlo.bean.Link;
-import org.javlo.component.core.AbstractVisualComponent;
-import org.javlo.component.core.ComponentBean;
-import org.javlo.component.core.ContentElementList;
-import org.javlo.component.core.IContentVisualComponent;
-import org.javlo.component.core.IVideo;
+import org.javlo.component.core.*;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.config.StaticConfig;
@@ -39,13 +12,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.data.InfoBean;
 import org.javlo.data.taxonomy.ITaxonomyContainer;
 import org.javlo.data.taxonomy.TaxonomyService;
-import org.javlo.helper.ComponentHelper;
-import org.javlo.helper.ElementaryURLHelper;
-import org.javlo.helper.PaginationContext;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
+import org.javlo.helper.*;
 import org.javlo.helper.filefilter.HTMLFileFilter;
 import org.javlo.helper.filefilter.ImageFileFilter;
 import org.javlo.helper.filefilter.SoundFileFilter;
@@ -61,6 +28,10 @@ import org.javlo.user.AdminUserSecurity;
 import org.javlo.ztatic.IStaticContainer;
 import org.javlo.ztatic.StaticInfo;
 import org.javlo.ztatic.StaticInfoBean;
+
+import java.io.*;
+import java.text.ParseException;
+import java.util.*;
 
 /**
  * standard image component.
@@ -623,7 +594,7 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 			out.println("<div class=\"line reverse\">");
 			out.println(XHTMLHelper.getCheckbox(getInputName("taxosession"), isSessionTaxonomy(ctx)));
 			out.println("<label for=\"" + getInputName("taxosession") + "\">" + i18nAccess.getText("content.page-teaser.session-taxonomy", "session taxonomy") + "</label></div>");
-			out.println(globalContext.getAllTaxonomy(ctx).getSelectHtml(taxoName, "form-control chosen-select", getTaxonomy(), true));
+			out.println(globalContext.getAllTaxonomy(ctx).getSelectHtml(taxoName, "form-control chosen-select", getTaxonomy(), true, ctx.getGlobalContext().getSpecialConfig().isTaxonomyUnderlineActive()));
 			out.println("</fieldset>");
 		}
 

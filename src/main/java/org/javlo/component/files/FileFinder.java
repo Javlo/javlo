@@ -455,7 +455,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		if (ctx.getGlobalContext().getAllTaxonomy(ctx).isActive()) {
 			String taxoName = createKeyWithField("taxonomy");
 			out.println("<label for=\"" + getFieldValue("taxonomy") + "\">" + i18nAccess.getText("taxonomy") + "</label>");
-			out.println(ctx.getGlobalContext().getAllTaxonomy(ctx).getSelectHtml(taxoName, "form-control chosen-select", StringHelper.stringToSet(getFieldValue("taxonomy"), ","), true));
+			out.println(ctx.getGlobalContext().getAllTaxonomy(ctx).getSelectHtml(taxoName, "form-control chosen-select", StringHelper.stringToSet(getFieldValue("taxonomy"), ","), true, ctx.getGlobalContext().getSpecialConfig().isTaxonomyUnderlineActive()));
 			out.println("<hr />");
 		}
 

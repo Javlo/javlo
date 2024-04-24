@@ -718,7 +718,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
             out.println("<div class=\"line reverse\">");
             out.println(XHTMLHelper.getCheckbox(getInputName("taxosession"), isSessionTaxonomy(ctx)));
             out.println("<label for=\"" + getInputName("taxosession") + "\">" + i18nAccess.getText("content.page-teaser.session-taxonomy", "session taxonomy") + "</label></div>");
-            out.println(globalContext.getAllTaxonomy(ctx).getSelectHtml(taxoName, "form-control chosen-select", getTaxonomy(), true));
+            out.println(globalContext.getAllTaxonomy(ctx).getSelectHtml(taxoName, "form-control chosen-select", getTaxonomy(), true, ctx.getGlobalContext().getSpecialConfig().isTaxonomyUnderlineActive()));
             out.println("</fieldset>");
         }
 

@@ -1,16 +1,5 @@
 package org.javlo.component.web2;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.AbstractMap;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.javlo.actions.IAction;
 import org.javlo.component.properties.AbstractPropertiesComponent;
 import org.javlo.context.ContentContext;
@@ -23,6 +12,11 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLBootstrapFormBuilder;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.service.RequestService;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class TaxonomySessionComponent extends AbstractPropertiesComponent implements IAction {
 	
@@ -58,7 +52,7 @@ public class TaxonomySessionComponent extends AbstractPropertiesComponent implem
 		if (ctx.getGlobalContext().getAllTaxonomy(ctx).isActive()) {
 			String taxoName = getInputName(TAXONOMY);
 			out.println("<fieldset class=\"taxonomy\"><legend><label for=\"" + taxoName + "\">" + i18nAccess.getText(TAXONOMY) + "</label></legend>");
-			out.println(ctx.getGlobalContext().getAllTaxonomy(ctx).getSelectHtml(taxoName, "form-control chosen-select", StringHelper.stringToCollection(getFieldValue(TAXONOMY),","), false));
+			out.println(ctx.getGlobalContext().getAllTaxonomy(ctx).getSelectHtml(taxoName, "form-control chosen-select", StringHelper.stringToCollection(getFieldValue(TAXONOMY),","), false, ctx.getGlobalContext().getSpecialConfig().isTaxonomyUnderlineActive()));
 			out.println("</fieldset>");
 		} else {
 			out.println("<div class=\"alert alert-danger error\">no taxonomy found.</div>");

@@ -1,17 +1,6 @@
 package org.javlo.module.search;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.PrintStream;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
-
 import jakarta.servlet.http.HttpServletRequest;
-
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.title.Heading;
@@ -21,11 +10,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.context.GlobalContextFactory;
 import org.javlo.data.taxonomy.TaxonomyService;
 import org.javlo.data.taxonomy.TaxonomyServiceAgregation;
-import org.javlo.helper.ComponentHelper;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.SecurityHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
+import org.javlo.helper.*;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.ModulesContext;
@@ -34,6 +19,16 @@ import org.javlo.service.RequestService;
 import org.javlo.utils.Cell;
 import org.javlo.utils.XLSTools;
 import org.javlo.ztatic.StaticInfo;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.PrintStream;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 public class SearchModuleAction extends AbstractModuleAction {
 
@@ -224,7 +219,7 @@ public class SearchModuleAction extends AbstractModuleAction {
 		ctx.getRequest().setAttribute("items", items);
 		TaxonomyServiceAgregation taxoService = ctx.getGlobalContext().getAllTaxonomy(ctx);
 		if (taxoService.isActive()) {
-			ctx.getRequest().setAttribute("taxoSelect", taxoService.getSelectHtml("taxonomy", "form-control chosen-select", searchFilter.getTaxonomy(), true));
+			ctx.getRequest().setAttribute("taxoSelect", taxoService.getSelectHtml("taxonomy", "form-control chosen-select", searchFilter.getTaxonomy(), true, ctx.getGlobalContext().getSpecialConfig().isTaxonomyUnderlineActive()));
 		}
 		ctx.getRequest().setAttribute("components", ComponentHelper.getCurrentContextComponentsList(ctx));
 		return null;
