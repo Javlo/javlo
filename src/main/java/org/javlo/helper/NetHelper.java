@@ -485,6 +485,9 @@ public class NetHelper {
 			} else {
 				in = connection.getErrorStream();  // Use of getErrorStream to read the body of the response even in the event of an error
 			}
+			if (in == null) {
+				logger.severe("connection not open[responseCode="+responseCode+"]");
+			}
 			ResourceHelper.writeStreamToStream(in, out);
 		} finally {
 			ResourceHelper.closeResource(in);
