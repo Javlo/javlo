@@ -226,7 +226,11 @@ public class XMLManipulationHelper {
             } else {
                 out.append(">");
             }
-            return out.toString();
+            return cleanTag(out.toString());
+        }
+
+        private static String cleanTag(String html) {
+           return html;
         }
 
         public void addCssClass(String cssClass) {
@@ -1327,8 +1331,8 @@ public class XMLManipulationHelper {
                         }
                         if ((xml.charAt(i) == ' ') && (!inCharSequence)) {
                             if (inValue) {
-                                if ((key.length() > 0)) {
-                                    String attValue = value.toString();
+                                if (key.length() > 0) {
+                                    String attValue = StringHelper.removeCR(value.toString());
                                     if (attValue.startsWith("\"") || attValue.startsWith("'")) {
                                         attValue = attValue.substring(1, attValue.length() - 1);
                                         if (attValue.endsWith("\"") || attValue.endsWith("'")) {
@@ -1376,6 +1380,7 @@ public class XMLManipulationHelper {
                         if (inValue) {
                             if ((key.length() > 0)) {
                                 String attValue = value.toString();
+
                                 if (attValue.startsWith("\"") || attValue.startsWith("'")) {
                                     if (attValue.length() > 1) {
                                         attValue = attValue.substring(1, attValue.length() - 1);
@@ -1499,6 +1504,33 @@ public class XMLManipulationHelper {
             }
         }
         return bestTag;
+    }
+
+    public static void main(String[] args) throws Exception {
+
+        String html = ResourceHelper.loadStringFromFile(new File("C:\\work\\template\\eprs-article\\index.html"));
+
+        /*String html = "<div class=\"article__introduction\">\n" +
+                "                <div class=\"article__introduction__thumbnail image-info\">\n" +
+                "                    <img\n" +
+                "                            src=\"assets/images/4.png\"\n" +
+                "                            alt=\"Brief description of image\"\n" +
+                "                            class=\"image-color-mode\"\n" +
+                "                    />\n" +
+                "                   </div></div>";*/
+
+        TagDescription[] tags = searchAllTag(html, true);
+
+        StringRemplacementHelper remplacement = new StringRemplacementHelper();
+        for (TagDescription tag : tags) {
+            if (tag.getAttributes().get("src") != null) {
+                tag.getAttributes().put("src", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + tag.getAttributes().get("src") + "\")%>");
+            }
+            remplacement.addReplacement(tag.getOpenStart(), tag.getOpenEnd() + 1, tag.toString());
+        }
+        html = remplacement.start(html);
+        System.out.println("");
+        System.out.println(html);
     }
 
 }

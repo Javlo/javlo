@@ -2353,19 +2353,7 @@ public class StringHelper {
         if (text == null) {
             return null;
         }
-        StringReader reader = new StringReader(text);
-        BufferedReader bReader = new BufferedReader(reader);
-        StringBuffer res = new StringBuffer();
-        try {
-            String line = bReader.readLine();
-            while (line != null) {
-                res.append(line.trim());
-                line = bReader.readLine();
-            }
-        } catch (IOException e) {
-            // impossible
-        }
-        return res.toString();
+        return text.replace("\r", "").replace("\n", "");
     }
 
     public static final String removeFirstChar(String txt, char c) {
