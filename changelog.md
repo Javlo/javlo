@@ -993,4 +993,6 @@ Security in case of vulnerabilities.
 ## [2.3.1] - 23/03/2024
 ### fixed
 - html template parsing correction if parameter finish with \n
+### Added
+- dynamic component : field group
 
