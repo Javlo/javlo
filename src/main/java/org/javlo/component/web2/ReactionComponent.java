@@ -3,29 +3,9 @@
  */
 package org.javlo.component.web2;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.text.ParseException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.logging.Logger;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.AbstractVisualComponent;
@@ -39,11 +19,7 @@ import org.javlo.data.InfoBean;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.fields.Field;
 import org.javlo.fields.FieldFactory;
-import org.javlo.helper.NavigationHelper;
-import org.javlo.helper.PatternHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
+import org.javlo.helper.*;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
@@ -58,6 +34,17 @@ import org.javlo.user.IUserFactory;
 import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.utils.StructuredProperties;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.text.ParseException;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * @author pvandermaesen
@@ -651,12 +638,12 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 
 		java.util.List<Field> outFields = new LinkedList<Field>();
 
-		outFields.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("global.email"), "email", "text", getId()));
-		outFields.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("global.title"), "title", "text", getId()));
-		outFields.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("content.reaction.request-login-to-view"), "requestLoginToView", "boolean", getId()));
-		outFields.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("content.reaction.request-login-to-add"), "requestLoginToAdd", "boolean", getId()));
-		outFields.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("content.reaction.with-title"), "withTitle", "boolean", getId()));
-		outFields.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("content.reaction.reply-allowed"), "replyAllowed", "boolean", getId()));
+		outFields.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("global.email"), "email", null,"text", getId()));
+		outFields.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("global.title"), "title", null,"text", getId()));
+		outFields.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("content.reaction.request-login-to-view"), "requestLoginToView", null,"boolean", getId()));
+		outFields.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("content.reaction.request-login-to-add"), "requestLoginToAdd", null,"boolean", getId()));
+		outFields.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("content.reaction.with-title"), "withTitle", null,"boolean", getId()));
+		outFields.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("content.reaction.reply-allowed"), "replyAllowed", null,"boolean", getId()));
 
 		Collections.sort(outFields, new FieldOrderComparator());
 		return outFields;
@@ -837,11 +824,11 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			GlobalContext globalContext = ctx.getGlobalContext();
 
 			if (isWithTitle(ctx)) {
-				viewField.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, null, i18nAccess.getContentViewText("global.title"), "title", "text", fieldSetId));
+				viewField.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, null, i18nAccess.getContentViewText("global.title"), "title", null,"text", fieldSetId));
 			}
 
 			if (!isRequestLoginToAdd(ctx)) {
-				viewField.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, null, i18nAccess.getContentViewText("global.nickname"), "nickname", "text", fieldSetId));
+				viewField.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, null, i18nAccess.getContentViewText("global.nickname"), "nickname", null,"text", fieldSetId));
 			}
 
 			viewField.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, null, i18nAccess.getContentViewText("global.text"), i18nAccess.getViewText("reaction.add"), "text", "large-text", fieldSetId));

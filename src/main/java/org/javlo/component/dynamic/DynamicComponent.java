@@ -225,7 +225,11 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                     if (!jspFile.exists()) {
                         String html = JSP_HEADER + ResourceHelper.loadStringFromFile(htmlFile);
                         for (Field field : getFields(ctx)) {
-                            html = html.replace("field." + field.getType() + "." + field.getName() + '.', field.getName() + '.');
+                            if (!StringHelper.isEmpty(field.getGroup())) {
+                                html = html.replace("field." + field.getType() + "." + field.getName() + "." + field.getGroup() + '.', field.getName() + '.');
+                            } else {
+                                html = html.replace("field." + field.getType() + "." + field.getName() + '.', field.getName() + '.');
+                            }
                         }
                         if (!isWrapped()) {
                             html = html.replace(Template.PREVIEW_EDIT_CODE, "${"+AbstractVisualComponent.PREVIEW_ATTRIBUTES+"}");
@@ -338,7 +342,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                 String[] keySplit = key.split("\\.");
                 if (keySplit.length > 1) {
                     String name = keySplit[1];
-                    Field field = FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), null, name, getType(name), getId());
+                    Field field = FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), null, name, getGroup(name), getType(name), getId());
                     if (field != null) {
                         if (!fieldExecuted.contains(name)) {
                             outFields.add(field);
@@ -467,6 +471,15 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
         }
     }
 
+    protected String getGroup(String field) {
+        String type = properties.getProperty("field." + field + ".group");
+        if (type != null) {
+            return type.trim();
+        } else {
+            return null;
+        }
+    }
+
     public boolean isNotififyCreation(ContentContext ctx) throws ServiceException {
         boolean outNotif = StringHelper.isTrue(properties.getProperty(NOTIFY_CREATION), false);
         if (outNotif) {
@@ -479,6 +492,12 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
     public String getNotififyPageName(ContentContext ctx) throws ServiceException {
         return properties.getProperty("notify.edit-page");
+    }
+
+
+    @Override
+    public String getEditRenderer(ContentContext ctx) {
+        return "/jsp/edit/component/dynamicComponent/edit_dynamicComponent.jsp";
     }
 
     @Override

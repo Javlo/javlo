@@ -2985,6 +2985,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		ctx.getRequest().setAttribute("cssStyle", getCSSStyle(ctx));
 		ctx.getRequest().setAttribute("cssClass", contructViewStyle(ctx));
 		ctx.getRequest().setAttribute("manualCssClass", getManualCssClass());
+
+		ctx.getRequest().setAttribute("exportComponentUrlHtml", URLHelper.createStaticURL(ctx, URLHelper.EXPCOMP+'/'+ getId()+".html"));
+		ctx.getRequest().setAttribute("exportComponentUrlCsv", URLHelper.createStaticURL(ctx, URLHelper.EXPCOMP+'/'+ getId()+".csv"));
+
 		if (!AbstractVisualComponent.isMirrorWrapped(ctx, this)) {
 			ctx.getRequest().setAttribute(MIRROR_WRAPPED, false);
 			ctx.getRequest().setAttribute("nextSame", isNextSame(ctx));

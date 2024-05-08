@@ -1225,7 +1225,8 @@ public class Template implements Comparable<Template> {
 	}
 
 	public static Map<String, String> extractPropertiesFromHtml(String html) {
-		String regex = "\\bfield\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\b";
+		//String regex = "\\bfield\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\b";
+		String regex = "\\bfield\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)?\\.[a-zA-Z0-9_-]+\\b";
 		Pattern fieldPattern = Pattern.compile(regex);
 		Matcher matcher = fieldPattern.matcher(html);
 		Map<String, String> out = new LinkedHashMap<>();
@@ -1234,14 +1235,21 @@ public class Template implements Comparable<Template> {
 		while (matcher.find()) {
 			order++;
 			String field = matcher.group();
+			System.out.println("### field : " + field);
 			String[] data = field.substring(2, field.length() - 1).split("\\.");
-			if (data.length >= 3) {
+			if (data.length == 4) {
 				dataList.add(data);
 				out.put("field." + data[2] + ".order", "" + order);
 				out.put("field." + data[2] + ".type", data[1]);
+			} else if (data.length > 4) {
+				dataList.add(data);
+				out.put("field." + data[2] + ".order", "" + order);
+				out.put("field." + data[2] + ".type", data[1]);
+				out.put("field." + data[2] + ".group", data[3]);
 			}
 		}
-		for (int i=0; i<dataList.size(); i++){
+
+		for (int i=0; i<dataList.size(); i++) {
 			String[] data = dataList.get(i);
 			if (data[1].equalsIgnoreCase("boolean")) {
 				out.put("field." + data[2] + ".width-edit", "3");

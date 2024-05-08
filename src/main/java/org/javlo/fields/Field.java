@@ -246,6 +246,8 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 
 	public Properties properties;
 	private String name;
+
+	private String group;
 	private String id;
 	private String message;
 	private String label = null;
@@ -942,7 +944,15 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		this.name = name;
 	}
 
-	protected String getLabel(ContentContext ctx, Locale locale) {		
+	public String getGroup() {
+		return group;
+	}
+
+	public void setGroup(String group) {
+		this.group = group;
+	}
+
+	protected String getLabel(ContentContext ctx, Locale locale) {
 		if (getLabel().trim().length() != 0) {
 			return getLabel();
 		}

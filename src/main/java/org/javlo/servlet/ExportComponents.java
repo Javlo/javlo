@@ -7,10 +7,7 @@ import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.fields.Field;
-import org.javlo.helper.ComponentHelper;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
+import org.javlo.helper.*;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.template.TemplateFactory;
@@ -88,19 +85,37 @@ public class ExportComponents extends HttpServlet {
 					response.setContentType("text/html; charset=" + ContentContext.CHARACTER_ENCODING);
 					String compId = StringHelper.getFileNameWithoutExtension(StringHelper.getFileNameFromPath(request.getRequestURI()));
 					if (compId != null) {
+
+						if (!StringHelper.isEmpty(rs.getParameter("mode"))) {
+							ctx.setRenderMode(Integer.parseInt(rs.getParameter("mode")));
+							logger.info("change render mode : "+Integer.parseInt(rs.getParameter("mode")));
+						}
+
 						ContentService content = ContentService.getInstance(ctx.getRequest());
 						ctx.setAbsoluteURL(true);
 						IContentVisualComponent comp = content.getComponent(ctx, compId);
+
 						if (comp == null) { // if not found in view mode -> search in preview mode.
+							logger.warning("component not found : "+compId+" -> try in preview mode");
 							ctx.setRenderMode(ContentContext.PREVIEW_MODE);
 							comp = content.getComponent(ctx, compId);
 						}
 						if (comp == null) {
-							logger.warning("compenent not found : "+compId);
+							logger.warning("component not found : "+compId);
 							response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 							return;
 						} else {
+
+							if (!ctx.isAsViewMode()) {
+								if (!SecurityHelper.userAccessPage(ctx, ctx.getCurrentUser(), comp.getPage())) {
+									logger.severe("User not allowed to change mode access to this page : " + comp.getPage().getName());
+									response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+									return;
+								}
+							}
+
 							if (!comp.getPage().isReadAccess(ctx, ctx.getCurrentUser())) {
+								logger.severe("User not read access to this page : " + comp.getPage().getName());
 								response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 								return;
 							}
@@ -108,6 +123,7 @@ public class ExportComponents extends HttpServlet {
 							ctx.setCurrentTemplate(TemplateFactory.getTemplate(ctx, comp.getPage()));
 							// comp.initContent(ctx);
 
+							System.out.println("###### mode = "+ctx.getRenderMode());
 							String xhtml = comp.getXHTMLCode(ctx);
 							if (xhtml == null) {
 								logger.severe("content not found on component : " + compId);

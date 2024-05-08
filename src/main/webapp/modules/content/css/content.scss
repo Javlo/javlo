@@ -964,8 +964,26 @@ li.line {
 	}
 }
 
-.dynamic-component .row {
-	margin-bottom: 3px;
+.dynamic-component {
+	.row {
+		margin-bottom: 3px;
+	}
+
+	.group-bloc {
+		display: flex;
+		.group-name {
+			writing-mode: vertical-lr;
+			transform: rotate(180deg);
+			background-color: rgba(0,0,0,0.5);
+			border: 1px #fff solid;
+			padding: 10px;
+			text-align: center;
+			color: #fff;
+		}
+		.group-edit {
+			margin-left: 2rem;
+		}
+	}
 }
 
 .color-chooser {
@@ -985,8 +1003,8 @@ li.line {
 	margin-top: 60px;
 }
 
-.json-link {	
-	overflow: hidden;	
+.json-link {
+	overflow: hidden;
 	margin-bottom: 15px;
 }
 
@@ -998,14 +1016,14 @@ li.line {
 .font-preview {
 	font-size: 2.2em;
 	text-align: center;
-}	
+}
 
 .column-selection {
 	display: flex;
 	justify-content: space-between;
 	align-content: stretch;
 	margin-bottom: 15px;
-	
+
 	.column-align {
 		border: 1px solid var(--grey-3);
 		background-color: #ddd;
@@ -1015,7 +1033,7 @@ li.line {
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		._jv_btn-check {			
+		._jv_btn-check {
 			label {
 				border-radius: 0 !important;
 				font-size: 15px;
@@ -1040,22 +1058,22 @@ li.line {
 			}
 		}
 	}
-	
+
 	.select-col {
 		text-align: center;
 	}
-	
-	
-	
+
+
+
 	._jv_btn-check {
 		margin: 0 .2% !important;
 		width: 200% !important;
 		label {
-			width: 100% !important; 
+			width: 100% !important;
 			padding-bottom: 3px !important;
 		}
 	}
-	
+
 	.column {
 		table {
 			width: 100%;
@@ -1092,7 +1110,7 @@ li.line {
 	}
 }
 
-.multimedia, .multimedia-properties {	
+.multimedia, .multimedia-properties {
 	button:hover, a:hover {
 		text-decoration: none;
 	}
@@ -1152,7 +1170,7 @@ li.line {
 		flex-wrap: wrap;
 		min-height: 50px;
 		.order-item, .order-drop {
-			margin: 5px; 
+			margin: 5px;
 			border: 1px var(--grey-3) solid;
 			border-radius: 3px;
 		}
@@ -1304,12 +1322,12 @@ body .component-wrapper {
 }
 
 .component .header {
-	padding: 1px;	
+	padding: 1px;
 }
 
 .component .header div {
 	display: inline-block;
-	
+
 }
 
 .component h3 {
@@ -1339,16 +1357,16 @@ body .component-wrapper {
 	max-width: 600px;
 }
 
-.component .list-container .image-selected {	
-	padding: 2px;	
+.component .list-container .image-selected {
+	padding: 2px;
 	margin: 2px;
-	
+
 	text-align: center;
 	vertical-align: middle;
-		
-	
-	font-size: 1px;	
-	overflow: hidden;	
+
+
+	font-size: 1px;
+	overflow: hidden;
 }
 
 .page-list-container {
@@ -1373,11 +1391,11 @@ body .component-wrapper {
 }
 
 .xhtml .component textarea, .text-editor .component textarea {
-	width: 96%;	
+	width: 96%;
 }
 
 .component .line textarea {
-	width: auto;	
+	width: auto;
 }
 
 
@@ -1439,23 +1457,23 @@ body .component-wrapper {
 	margin-right: 15px;
 	margin-top: 15px;
 	border-top: 1px #cccccc solid;
-	padding-top: 15px;	
+	padding-top: 15px;
 }
 
 .preview-image-wrapper {
 	overflow: auto;
 	text-align: center;
-	height: 516px;	
+	height: 516px;
 }
 
 .preview-image-wrapper .action {
 	justify-content: center;
 }
 
-.image label {	
+.image label {
 	float: left;
 	width: 160px;
-	height: 16px;	
+	height: 16px;
 }
 
 .image .action {
@@ -1474,18 +1492,18 @@ body .component-wrapper {
 
 .component .list-container .image-selected img {
 	display: inline;
-	vertical-align: middle;	
+	vertical-align: middle;
 }
 
 .component .preview-image figure {
 	display: block;
 	text-align: center;
-	vertical-align: middle;		
-	overflow: hidden;	
+	vertical-align: middle;
+	overflow: hidden;
 }
 
 .component .preview-image a {
-	display: block;	
+	display: block;
 }
 
 .component .image-list {
@@ -1497,7 +1515,7 @@ body .component-wrapper {
 	padding: 2px;
 	box-sizing: border-box;
 	width: 33%;
-	
+
 }
 
 .preview-image figcaption {
@@ -1514,12 +1532,12 @@ body .component-wrapper {
 }
 
 .component .preview-image figcaption a {
-	display: inline-block;	
+	display: inline-block;
 	height: auto;
 	width: 100%;
 	overflow: hidden;
 	text-align: center;
-	
+
 }
 
 .component .preview-image.selected {
@@ -1536,13 +1554,13 @@ body .component-wrapper {
 }
 
 .smart-link-body .picture {
-	width: 260px;	
+	width: 260px;
 	padding: 0;
 	float: left;
 }
 
-.smart-link-body {	
-	overflow: hidden;	
+.smart-link-body {
+	overflow: hidden;
 	margin-top: 15px;
 }
 
@@ -1555,7 +1573,7 @@ body .component-wrapper {
 }
 
 .smart-link-body figure, .smart-link-body a {
-	margin: 0;	
+	margin: 0;
 	height: 140px;
 	display: block;
 	float: left;
@@ -1565,7 +1583,7 @@ body .component-wrapper {
 	width: 120px;
 	height: 140px;
 	overflow: hidden;
-	margin-left: 59px; 
+	margin-left: 59px;
 }
 
 .smart-link-body ul figure {
