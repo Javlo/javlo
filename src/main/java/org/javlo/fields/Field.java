@@ -1398,6 +1398,28 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 			return translated;
 		}
 	}
+
+	public int getGroupNumber() {
+		if (getGroup() == null) {
+			return -1;
+		} else if (getName().endsWith("]")) {
+			return Integer.parseInt(getName().substring(getName().lastIndexOf("[")+1, getName().length()-1));
+		} else {
+			return 0;
+		}
+	}
+
+	public String getGroupLabel() {
+		if (getGroup() == null) {
+			return null;
+		} else {
+			if (getGroupNumber() > 0) {
+				return getGroup() + " - " + getGroupNumber();
+			} else {
+				return getGroup();
+			}
+		}
+	}
 	
 	public static void main(String[] args) {
 		System.out.println(">>>>>>>>> Field.main : "+Pattern.matches("[A-Z]*", "COUCOU")); //TODO: remove debug trace

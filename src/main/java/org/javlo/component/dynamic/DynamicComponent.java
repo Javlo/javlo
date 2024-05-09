@@ -21,6 +21,7 @@ import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageBean;
 import org.javlo.service.PersistenceService;
+import org.javlo.service.RequestService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.service.google.translation.ITranslator;
 import org.javlo.service.resource.Resource;
@@ -32,7 +33,10 @@ import java.io.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author pvandermaesen
@@ -48,6 +52,8 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
     private static final String NOTIFY_CREATION = "notify.creation";
 
     private Date latestValidDate = null;
+
+    private Map<String, Group> groups = null;
 
     private static final List<Integer> DEFAULT_COLUMN_SIZE = new LinkedList<Integer>(Arrays.asList(new Integer[]{1, 2, 3, 4, 6, 12}));
 
@@ -65,6 +71,20 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
             setPreviousComponent(ComponentHelper.getPreviousComponent(this, ctx));
         }
         ctx.getRequest().setAttribute("colWidth", getColumnSize(ctx));
+
+        /** group **/
+        if (groups == null) {
+            groups = new HashMap<>();
+            getGroups().forEach(group -> {
+                try {
+                    groups.put(group, new Group(group, getGroupSize(ctx, group), getGroupNumber(ctx, group)));
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+        ctx.getRequest().setAttribute("groups", groups);
+
         super.prepareView(ctx);
     }
 
@@ -593,10 +613,130 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
         setValue(res);
     }
 
+    private List<String> getGroups() {
+        List<String> groups = new LinkedList<String>();
+        Collection keys = properties.keySet();
+        for (Object keyObj : keys) {
+            String key = (String) keyObj;
+            if (key.endsWith(".group")) {
+                String group = properties.getProperty(key);
+                if (!groups.contains(group)) {
+                    groups.add(group);
+                }
+            }
+        }
+        return groups;
+    }
+
+    private static int extractNumber(String str) {
+        Pattern pattern = Pattern.compile("\\[(\\d+)\\]");
+        Matcher matcher = pattern.matcher(str);
+        if (matcher.find()) {
+            return Integer.parseInt(matcher.group(1));
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * size of a group
+     * @param ctx
+     * @param group
+     * @return
+     * @throws Exception
+     */
+    private int getGroupSize(ContentContext ctx, String group) throws Exception {
+        AtomicInteger size = new AtomicInteger(0);
+        getFields(ctx).forEach(field -> {
+            if (!field.getName().endsWith("]") && field.getGroup() != null && field.getGroup().equals(group)) {
+                size.incrementAndGet();
+            }
+        });
+        return size.get();
+    }
+
+    /**
+     * number of group
+     * @param ctx
+     * @param group
+     * @return
+     * @throws Exception
+     */
+    private int getGroupNumber(ContentContext ctx, String group) throws Exception {
+        AtomicInteger size = new AtomicInteger(0);
+        getFields(ctx).forEach(field -> {
+            if (field.getGroup() != null && field.getGroup().equals(group)) {
+                size.incrementAndGet();
+            }
+        });
+        return size.get() / getGroupSize(ctx, group);
+    }
+
+    private int getGroupNumberMaxOrder(ContentContext ctx, String group) throws Exception {
+        return getFields(ctx).stream()
+                .filter(field -> field.getGroup() != null && field.getGroup().equals(group))
+                .mapToInt(Field::getOrder)
+                .max()
+                .orElse(0);
+    }
+
+    private void addGroup(ContentContext ctx, String group) throws Exception {
+
+        System.out.println("### ADD group: " + group);
+
+        int maxGroupNumber = 0;
+        for (String key : properties.stringPropertyNames()) {
+            if (key.startsWith("field.") && key.endsWith(".group")) {
+                if (properties.getProperty(key).equals(group)) {
+                    int number = extractNumber(key);
+                    if (number > maxGroupNumber) {
+                        maxGroupNumber = number;
+                    }
+                }
+            }
+        }
+
+        // get latest order
+        int countField = 1;
+        for (String key : properties.stringPropertyNames()) {
+            if (key.startsWith("field.")) {
+                String newKey = key;
+                String[] parts = newKey.split("\\.", 4);
+                String name = parts[1];
+                Field field = getField(ctx, name);
+                if (field.getGroup() != null) {
+                    if (field.getGroup().equals(group)) {
+                        if (extractNumber(key) > 0) {
+                            name.replaceFirst("\\[(\\d+)\\]", "[" + (maxGroupNumber + 1) + "]");
+                        } else {
+                            name = name + "[" + (maxGroupNumber + 1) + "]";
+                        }
+                        if (parts.length >= 3) {
+                            parts[1] = name;
+                            newKey = String.join(".", parts);  // Reconstruit la chaîne avec le segment modifié
+                        } else {
+                            System.out.println("Le format de la chaîne ne correspond pas à l'attendu.");
+                            return;  // Arrêt de la méthode si le format n'est pas respecté
+                        }
+                        System.out.println("### ADD newKey: " + newKey + " countField = " + countField);
+                        if (newKey.endsWith(".order")) {
+                            properties.setProperty(newKey, "" + (getGroupNumberMaxOrder(ctx, group) + (countField++)));
+                        } else {
+                            properties.setProperty(newKey, properties.getProperty(key));
+                        }
+                    }
+                }
+            }
+        }
+        storeProperties();
+    }
+
     @Override
     public String performEdit(ContentContext ctx) throws Exception {
 
         java.util.List<Field> fieldsName = getFields(ctx);
+
+        RequestService rs = RequestService.getInstance(ctx.getRequest());
 
         performColumnable(ctx);
 
@@ -628,6 +768,11 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                 valid = false;
                 errorField.add(field.getUserLabel(ctx, new Locale(ctx.getGlobalContext().getEditLanguage(ctx.getRequest().getSession()))));
             }
+        }
+
+        /** add group **/
+        if (rs.getParameter("addGroup") != null) {
+            addGroup(ctx, rs.getParameter("addGroup"));
         }
 
         if (isModify()) {

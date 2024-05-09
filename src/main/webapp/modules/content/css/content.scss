@@ -970,19 +970,60 @@ li.line {
 	}
 
 	.group-bloc {
+		--border-color: #ddd;
+
 		display: flex;
-		.group-name {
+		margin-top: 1px;
+		width: 100%;
+		.group-header {
 			writing-mode: vertical-lr;
-			transform: rotate(180deg);
-			background-color: rgba(0,0,0,0.5);
-			border: 1px #fff solid;
+			background-color: var(--border-color);
+
 			padding: 10px;
 			text-align: center;
-			color: #fff;
+			color: var(--grey-2);
+
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+
+			button {
+				color: var(--grey-2);
+				margin-top: 0.25rem;
+				margin-bottom: 0.25rem;
+				background-color:  transparent;
+				border: 0 none;
+				&:hover {
+					color: var(--action-color-lighten);
+				}
+			}
+
+			.group-name {
+				font-size: 1.1rem;
+				transform: rotate(180deg);
+			}
 		}
 		.group-edit {
-			margin-left: 2rem;
+			padding: 1rem 1rem 1rem 2rem;
+			/*border-top: 1px var(--border-color) solid;
+			border-bottom: 1px var(--border-color) solid;
+			border-right: 1px var(--border-color) solid;*/
+			background-color: #fafafa;
+			flex-grow: 1;
 		}
+	}
+
+	.group-command-footer {
+		display: flex;
+		justify-content: center;
+		padding: 0.5rem 1rem;
+		background-color: var(--border-color);
+	}
+
+	.group-separation {
+		border-top: 1px var(--border-color) solid;
+		margin: 1rem 0;
+		display: block;
 	}
 }
 
