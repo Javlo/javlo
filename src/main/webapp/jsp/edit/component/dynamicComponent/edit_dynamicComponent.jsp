@@ -58,7 +58,7 @@
             if (field != null) {
                 field.setFirst(first);
 
-                if (groupLabel != null && !field.getGroupLabel().equals(groupLabel)) {
+                if (groupLabel != null && !groupLabel.equals(field.getGroupLabel())) {
     %></div>
 </div><%
         groupLabel = null;
@@ -127,7 +127,7 @@
         <div class="group-bloc">
             <div class="group-header">
                 <div class="group-command">
-                    <button type="submit" name="deleteGroup" value="<%=groupLabel%>" title="delete bloc"><i
+                    <button type="submit" name="deleteGroup" value="<%=field.getGroupLabel()%>" title="delete bloc" onclick="refreshComponent()"><i
                             class="bi bi-trash"></i></button>
                 </div>
                 <div class="group-name"><%=field.getGroupLabel()%>

@@ -1,30 +1,35 @@
 package org.javlo.utils;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
-
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.helper.ResourceHelper;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
+
+import java.io.*;
+import java.nio.charset.Charset;
+import java.util.*;
 
 public class StructuredProperties extends Properties {
+
+	public static boolean isYAML(String content) {
+		String yamlPattern = "^\\s*(\\w+\\s*:\\s*|-(\\s*\\w+\\s*:\\s*|\\s+\\w+))";
+		return content.matches("(?s).*" + yamlPattern + ".*");
+	}
 
 	private static final String INTERNAL_ENCODING = "8859_1";
 	/** A table of hex digits */
 	private static final char[] hexDigit = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+
+	private boolean yaml = false;
+
+	public StructuredProperties() {
+		super();
+	}
+
+	public StructuredProperties(boolean yaml) {
+		super();
+		this.yaml = yaml;
+	}
 
 	/**
 	 * Convert a nibble to a hex character
@@ -40,10 +45,39 @@ public class StructuredProperties extends Properties {
 	public void store(Writer writer, String comments) throws IOException {
 		store0((writer instanceof BufferedWriter) ? (BufferedWriter) writer : new BufferedWriter(writer), comments, false);
 	}
+
+	private static void convertMapToProps(String prefix, Map<String, Object> map, Properties properties) {
+		for (Map.Entry<String, Object> entry : map.entrySet()) {
+			String key = entry.getKey();
+			Object value = entry.getValue();
+
+			// Build the new key by adding the prefix
+			String newKey = prefix.isEmpty() ? key : prefix + "." + key;
+
+			// If the value is a map, apply the recursion
+			if (value instanceof Map<?, ?>) {
+				convertMapToProps(newKey, (Map<String, Object>) value, properties);
+			} else {
+				properties.setProperty(newKey, value.toString());
+			}
+		}
+	}
 	
 	@Override
-	public synchronized void load(InputStream inStream) throws IOException {		 
-		super.load(new InputStreamReader(inStream, INTERNAL_ENCODING));
+	public synchronized void load(InputStream inStream) throws IOException {
+		if (yaml) {
+			// load string in string
+			String content = ResourceHelper.loadStringFromStream(inStream, Charset.forName(INTERNAL_ENCODING));
+			if (isYAML(content)) {
+				Yaml yaml = new Yaml();
+				Map<String, Object> map = yaml.load(content);
+				convertMapToProps("", map, this);
+			} else {
+				super.load(new InputStreamReader(new ByteArrayInputStream(content.getBytes()), INTERNAL_ENCODING));
+			}
+		} else {
+			super.load(new InputStreamReader(inStream, INTERNAL_ENCODING));
+		}
 	}
 
 	private static void writeComments(BufferedWriter bw, String comments) throws IOException {
@@ -157,46 +191,74 @@ public class StructuredProperties extends Properties {
 	}
 
 	private void store0(BufferedWriter bw, String comments, boolean escUnicode) throws IOException {
-		if (comments != null) {
-			writeComments(bw, comments);
-		}
-		bw.write("#" + new Date().toString());
-		bw.newLine();
-		bw.newLine();
-		synchronized (this) {
-
-			List keysList = new LinkedList();
-			for (Enumeration e = keys(); e.hasMoreElements();) {
-				keysList.add(e.nextElement());
+		if (yaml) {
+			storeYaml(bw, comments);
+		} else {
+			if (comments != null) {
+				writeComments(bw, comments);
 			}
-			Collections.sort(keysList);
+			bw.write("#" + new Date().toString());
+			bw.newLine();
+			bw.newLine();
+			synchronized (this) {
 
-			String latestKeyPrefix = null;
-			for (Object key : keysList) {
+				List keysList = new LinkedList();
+				for (Enumeration e = keys(); e.hasMoreElements(); ) {
+					keysList.add(e.nextElement());
+				}
+				Collections.sort(keysList);
 
-				String keyPrefix = StringUtils.split((String) key, ".")[0];
-				if (latestKeyPrefix != null) {
-					if (!latestKeyPrefix.equals(keyPrefix)) {
-						bw.newLine();
+				String latestKeyPrefix = null;
+				for (Object key : keysList) {
+
+					String keyPrefix = StringUtils.split((String) key, ".")[0];
+					if (latestKeyPrefix != null) {
+						if (!latestKeyPrefix.equals(keyPrefix)) {
+							bw.newLine();
+							latestKeyPrefix = keyPrefix;
+						}
+					} else {
 						latestKeyPrefix = keyPrefix;
 					}
-				} else {
-					latestKeyPrefix = keyPrefix;
+
+					String val = "" + get(key);
+					key = saveConvert((String) key, true, escUnicode);
+					/*
+					 * No need to escape embedded and trailing spaces for value, hence pass false to flag.
+					 */
+					val = saveConvert(val, false, escUnicode);
+					bw.write(key + "=" + val);
+					bw.newLine();
+
 				}
-
-				String val = ""+get(key);
-				key = saveConvert((String) key, true, escUnicode);
-				/*
-				 * No need to escape embedded and trailing spaces for value, hence pass false to flag.
-				 */
-				val = saveConvert(val, false, escUnicode);
-				bw.write(key + "=" + val);
-				bw.newLine();
-
 			}
 		}
 		bw.flush();
 	}
+
+	private void storeYaml(BufferedWriter bw, String comments) throws IOException {
+			// Converting Properties into a nested Map structure
+			Map<String, Object> yamlMap = new LinkedHashMap<>();
+			for (String key : this.stringPropertyNames()) {
+				insertIntoMap(yamlMap, key, this.getProperty(key));
+			}
+			DumperOptions options = new DumperOptions();
+			options.setIndent(6);
+			options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+			Yaml yaml = new Yaml(options);
+			yaml.dump(yamlMap, bw);
+	}
+	private static void insertIntoMap(Map<String, Object> map, String key, String value) {
+		String[] parts = key.split("\\.");
+		Map<String, Object> current = map;
+
+		for (int i = 0; i < parts.length - 1; i++) {
+			current = (Map<String, Object>) current.computeIfAbsent(parts[i], k -> new LinkedHashMap<>());
+		}
+
+		current.put(parts[parts.length - 1], value);
+	}
+
 	
 	public void save (File file) throws IOException {
 		FileOutputStream out = new FileOutputStream(file);

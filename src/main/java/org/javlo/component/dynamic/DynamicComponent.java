@@ -77,7 +77,21 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
             groups = new HashMap<>();
             getGroups().forEach(group -> {
                 try {
-                    groups.put(group, new Group(group, getGroupSize(ctx, group), getGroupNumber(ctx, group)));
+                    Group newGroup = new Group(group, getGroupSize(ctx, group), getGroupNumber(ctx, group));
+                    groups.put(group, newGroup);
+
+                    getFields(ctx).forEach(field -> {
+                        System.out.println("##### field.getGroupLabel() = "+field.getGroupLabel());
+                        System.out.println("##### field.getGroup() = "+field.getGroup());
+                        if (field.getGroup() != null && field.getGroup().equals(group)) {
+                            if (!newGroup.getGroupNumberList().contains(field.getGroupNumber())) {
+                                newGroup.getGroupNumberList().add(field.getGroupNumber());
+                            }
+                            System.out.println("##### #newGroup.getFields() = "+newGroup.getFields().size());
+                            newGroup.getFields().put(field.getGroupLabel(), field);
+                        }
+                    });
+
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -189,6 +203,65 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
         return getViewXHTMLCode(ctx, false);
     }
 
+    @Override
+    public void prepareEdit(ContentContext ctx) throws Exception {
+        super.prepareEdit(ctx);
+    }
+
+    public static void main(String[] args) {
+        String testappendReplacement = "début <!-- start-module -->  <h5>\n" +
+                "                    ${field.text.researchTitle.research.value}\n" +
+                "                </h5> <!-- end-module --> gin";
+        String out = replaceGroupTags(testappendReplacement);
+        System.out.println(out);
+    }
+
+    private static String replaceGroupTags(String inputText) {
+        // Pattern to match the special tags and capture the key inside
+        Pattern pattern = Pattern.compile("<!-- start-(\\w+) -->");
+        Matcher matcher = pattern.matcher(inputText);
+
+        StringBuffer sb = new StringBuffer();
+        List<String> groups = new LinkedList<>();
+        while (matcher.find()) {
+            String key = matcher.group(1);
+            groups.add(key);
+            String replacement = "<c:forEach var=\"num\" items=\"\\${groups['"+key+"'].groupNumberList}\"><c:set var=\"key\" value=\""+key+" - \\${num}\" />";
+            matcher.appendReplacement(sb, replacement);
+        }
+
+        matcher.appendTail(sb);
+
+        for (String group : groups) {
+            System.out.println("### GROUP : "+group);
+            Pattern fieldPattern = Pattern.compile("\\$\\{field\\.([a-zA-Z]+\\..([a-zA-Z]+\\.)"+group+"\\.(\\w+))}");
+            Matcher fieldMatcher = fieldPattern.matcher(sb.toString());
+            StringBuffer fieldSb = new StringBuffer();
+            while (fieldMatcher.find()) {
+                String key = fieldMatcher.group(1);
+                System.out.println("### key : "+key);
+                String replacement = String.format("\\${groups['"+group+"'].fields[key].$3}");
+                fieldMatcher.appendReplacement(fieldSb, replacement);
+            }
+            fieldMatcher.appendTail(fieldSb);
+            sb = fieldSb;
+        }
+
+        pattern = Pattern.compile("<!-- end-(\\w+) -->");
+        matcher = pattern.matcher(sb.toString());
+        sb = new StringBuffer();
+
+        while (matcher.find()) {
+            String key = matcher.group(1);
+            String replacement = String.format("</c:forEach> <!-- end module : %s -->", key);
+            matcher.appendReplacement(sb, replacement);
+        }
+
+        matcher.appendTail(sb);
+
+        return sb.toString();
+    }
+
     public String getViewXHTMLCode(ContentContext ctx, boolean asList) throws Exception {
         ctx.getRequest().setAttribute("page", new PageBean(ctx, getContainerPage(ctx)));
         ctx.getRequest().setAttribute("containerId", getId());
@@ -244,6 +317,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                     File jspFile = new File(StringHelper.getFileNameWithoutExtension(htmlFile.getAbsolutePath()) + ".jsp");
                     if (!jspFile.exists()) {
                         String html = JSP_HEADER + ResourceHelper.loadStringFromFile(htmlFile);
+                        html = replaceGroupTags(html);
                         for (Field field : getFields(ctx)) {
                             if (!StringHelper.isEmpty(field.getGroup())) {
                                 html = html.replace("field." + field.getType() + "." + field.getName() + "." + field.getGroup() + '.', field.getName() + '.');
@@ -613,6 +687,33 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
         setValue(res);
     }
 
+    private void updateOrder() {
+        try {
+            List<String> orderKeys = new LinkedList<>();
+            for (String key : properties.stringPropertyNames()) {
+                if (key.endsWith(".order")) {
+                    orderKeys.add(key);
+                }
+            }
+            Collections.sort(orderKeys, new Comparator<String>() {
+                @Override
+                public int compare(String o1, String o2) {
+                    return Integer.parseInt(properties.getProperty(o1)) - Integer.parseInt(properties.getProperty(o2));
+                }
+            });
+
+            int num = 100;
+            for (String key : orderKeys) {
+                properties.setProperty(key, "" + num);
+                num += 100;
+            }
+
+            storeProperties();
+        } catch (NumberFormatException e) {
+            System.out.println("Digital format error for a .order key");
+        }
+    }
+
     private List<String> getGroups() {
         List<String> groups = new LinkedList<String>();
         Collection keys = properties.keySet();
@@ -680,9 +781,42 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                 .orElse(0);
     }
 
+    private void deleteGroup(ContentContext ctx, String groupLabel) throws Exception {
+
+        if (groupLabel==null) {
+            return;
+        }
+
+        List<String> names = new LinkedList<>();
+
+        for (Field field : getFields(ctx)) {
+            if (groupLabel.equals(field.getGroupLabel())) {
+                names.add(field.getName());
+            }
+        }
+
+        if (names.size() == 0) {
+            throw new RuntimeException("Group not found: " + groupLabel);
+        }
+
+        System.out.println("#### DELETE : "+names);
+
+        Iterator<String> keys = properties.stringPropertyNames().iterator();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            for (String name : names) {
+                if (key.startsWith("field." + name + ".")) {
+                    System.out.println("### DELETE key: " + key);
+                    properties.remove(key);
+                }
+            }
+        }
+        updateOrder();
+    }
+
     private void addGroup(ContentContext ctx, String group) throws Exception {
 
-        System.out.println("### ADD group: " + group);
+        System.out.println("### 1.0 ADD group : "+group);
 
         int maxGroupNumber = 0;
         for (String key : properties.stringPropertyNames()) {
@@ -697,8 +831,10 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
         }
 
         // get latest order
-        int countField = 1;
-        for (String key : properties.stringPropertyNames()) {
+        int index = 1;
+        int max = getGroupNumberMaxOrder(ctx, group);
+        System.out.println("### getGroupNumberMaxOrder(ctx, group) = "+max);
+        for (String key : new LinkedList<>(properties.stringPropertyNames())) {
             if (key.startsWith("field.")) {
                 String newKey = key;
                 String[] parts = newKey.split("\\.", 4);
@@ -707,20 +843,23 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                 if (field.getGroup() != null) {
                     if (field.getGroup().equals(group)) {
                         if (extractNumber(key) > 0) {
-                            name.replaceFirst("\\[(\\d+)\\]", "[" + (maxGroupNumber + 1) + "]");
+                            name = name.replaceFirst("\\[(\\d+)\\]", "[" + (maxGroupNumber + 1) + "]");
                         } else {
                             name = name + "[" + (maxGroupNumber + 1) + "]";
                         }
                         if (parts.length >= 3) {
                             parts[1] = name;
-                            newKey = String.join(".", parts);  // Reconstruit la chaîne avec le segment modifié
+                            newKey = String.join(".", parts);  // build string with modified segments
                         } else {
-                            System.out.println("Le format de la chaîne ne correspond pas à l'attendu.");
-                            return;  // Arrêt de la méthode si le format n'est pas respecté
+                            System.out.println("The format of the channel does not correspond to what is expected.");
+                            return;  // stop if bad format
                         }
-                        System.out.println("### ADD newKey: " + newKey + " countField = " + countField);
+                        System.out.println("### newKey = "+newKey);
                         if (newKey.endsWith(".order")) {
-                            properties.setProperty(newKey, "" + (getGroupNumberMaxOrder(ctx, group) + (countField++)));
+                            System.out.println("### group = "+group);
+                            System.out.println("### index = "+index);
+
+                            properties.setProperty(newKey, "" + (max + index++));
                         } else {
                             properties.setProperty(newKey, properties.getProperty(key));
                         }
@@ -729,6 +868,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
             }
         }
         storeProperties();
+        //updateOrder();
     }
 
     @Override
@@ -773,6 +913,14 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
         /** add group **/
         if (rs.getParameter("addGroup") != null) {
             addGroup(ctx, rs.getParameter("addGroup"));
+            ctx.setNeedRefresh(true);
+        }
+
+
+        /** delete group **/
+        if (rs.getParameter("deleteGroup") != null) {
+            deleteGroup(ctx, rs.getParameter("deleteGroup"));
+            ctx.setNeedRefresh(true);
         }
 
         if (isModify()) {
@@ -787,6 +935,8 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
         return null;
     }
+
+
 
     @Override
     public void setValue(String inContent) {
@@ -818,7 +968,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
     @Override
     public IContentVisualComponent newInstance(ComponentBean bean, ContentContext newCtx, MenuElement page) throws Exception {
         DynamicComponent res = (DynamicComponent) this.clone();
-        StructuredProperties newProp = new StructuredProperties();
+        StructuredProperties newProp = new StructuredProperties(true);
         if (getConfigProperties() != null) {
             newProp.putAll(getConfigProperties());
         }

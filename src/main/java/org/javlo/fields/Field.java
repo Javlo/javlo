@@ -1413,11 +1413,11 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		if (getGroup() == null) {
 			return null;
 		} else {
-			if (getGroupNumber() > 0) {
+//			if (getGroupNumber() > 0) {
 				return getGroup() + " - " + getGroupNumber();
-			} else {
+			/*} else {
 				return getGroup();
-			}
+			}*/
 		}
 	}
 	

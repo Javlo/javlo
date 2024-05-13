@@ -3691,6 +3691,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		}
 	}
 
+
+
 	protected boolean isHiddenInModeValue(ContentContext ctx, int mode) {
 		if (componentBean.getHiddenModes() == null) {
 			return false;
