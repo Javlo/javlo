@@ -81,13 +81,10 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                     groups.put(group, newGroup);
 
                     getFields(ctx).forEach(field -> {
-                        System.out.println("##### field.getGroupLabel() = "+field.getGroupLabel());
-                        System.out.println("##### field.getGroup() = "+field.getGroup());
                         if (field.getGroup() != null && field.getGroup().equals(group)) {
                             if (!newGroup.getGroupNumberList().contains(field.getGroupNumber())) {
                                 newGroup.getGroupNumberList().add(field.getGroupNumber());
                             }
-                            System.out.println("##### #newGroup.getFields() = "+newGroup.getFields().size());
                             newGroup.getFields().put(field.getGroupLabel(), field);
                         }
                     });
@@ -233,13 +230,11 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
         matcher.appendTail(sb);
 
         for (String group : groups) {
-            System.out.println("### GROUP : "+group);
             Pattern fieldPattern = Pattern.compile("\\$\\{field\\.([a-zA-Z]+\\..([a-zA-Z]+\\.)"+group+"\\.(\\w+))}");
             Matcher fieldMatcher = fieldPattern.matcher(sb.toString());
             StringBuffer fieldSb = new StringBuffer();
             while (fieldMatcher.find()) {
                 String key = fieldMatcher.group(1);
-                System.out.println("### key : "+key);
                 String replacement = String.format("\\${groups['"+group+"'].fields[key].$3}");
                 fieldMatcher.appendReplacement(fieldSb, replacement);
             }
@@ -710,7 +705,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
             storeProperties();
         } catch (NumberFormatException e) {
-            System.out.println("Digital format error for a .order key");
+            logger.warning("Digital format error for a .order key : " + e.getMessage());
         }
     }
 
@@ -799,14 +794,11 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
             throw new RuntimeException("Group not found: " + groupLabel);
         }
 
-        System.out.println("#### DELETE : "+names);
-
         Iterator<String> keys = properties.stringPropertyNames().iterator();
         while (keys.hasNext()) {
             String key = keys.next();
             for (String name : names) {
                 if (key.startsWith("field." + name + ".")) {
-                    System.out.println("### DELETE key: " + key);
                     properties.remove(key);
                 }
             }
@@ -815,9 +807,6 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
     }
 
     private void addGroup(ContentContext ctx, String group) throws Exception {
-
-        System.out.println("### 1.0 ADD group : "+group);
-
         int maxGroupNumber = 0;
         for (String key : properties.stringPropertyNames()) {
             if (key.startsWith("field.") && key.endsWith(".group")) {
@@ -833,7 +822,6 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
         // get latest order
         int index = 1;
         int max = getGroupNumberMaxOrder(ctx, group);
-        System.out.println("### getGroupNumberMaxOrder(ctx, group) = "+max);
         for (String key : new LinkedList<>(properties.stringPropertyNames())) {
             if (key.startsWith("field.")) {
                 String newKey = key;
@@ -851,14 +839,10 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                             parts[1] = name;
                             newKey = String.join(".", parts);  // build string with modified segments
                         } else {
-                            System.out.println("The format of the channel does not correspond to what is expected.");
+                            logger.warning("The format of the channel does not correspond to what is expected.");
                             return;  // stop if bad format
                         }
-                        System.out.println("### newKey = "+newKey);
                         if (newKey.endsWith(".order")) {
-                            System.out.println("### group = "+group);
-                            System.out.println("### index = "+index);
-
                             properties.setProperty(newKey, "" + (max + index++));
                         } else {
                             properties.setProperty(newKey, properties.getProperty(key));

@@ -126,10 +126,12 @@
         <%}%>
         <div class="group-bloc">
             <div class="group-header">
+               <%if (field.getGroupNumber() > 0) {%>
                 <div class="group-command">
                     <button type="submit" name="deleteGroup" value="<%=field.getGroupLabel()%>" title="delete bloc" onclick="refreshComponent()"><i
                             class="bi bi-trash"></i></button>
                 </div>
+                <%}%>
                 <div class="group-name"><%=field.getGroupLabel()%>
                 </div>
             </div>
@@ -167,5 +169,9 @@
 %><%=field.getCloseRow(ctx)%><%
         }
     }
-    if (groupLabel != null) {%></div></div><%}
+    if (groupLabel != null) {%></div></div><div class="group-command-footer"><div class="group-command">
+    <button type="submit" name="addGroup" value="<%=group%>" title="add bloc"><i
+            class="bi bi-plus-circle"> <%=group%></i>
+    </button>
+</div></div><%}
 %></div>
