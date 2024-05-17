@@ -1,5 +1,23 @@
 package org.javlo.module.template;
 
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpSession;
+import org.apache.commons.fileupload2.core.FileItem;
+import org.javlo.actions.AbstractModuleAction;
+import org.javlo.component.core.ComponentBean;
+import org.javlo.config.StaticConfig;
+import org.javlo.context.ContentContext;
+import org.javlo.helper.*;
+import org.javlo.i18n.I18nAccess;
+import org.javlo.message.MessageRepository;
+import org.javlo.module.core.ModulesContext;
+import org.javlo.service.RequestService;
+import org.javlo.template.*;
+import org.javlo.user.AdminUserSecurity;
+import org.javlo.user.User;
+import org.javlo.ztatic.FileCache;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,34 +25,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.imageio.ImageIO;
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.http.HttpSession;
-
-import org.apache.commons.fileupload2.core.FileItem;
-import org.javlo.actions.AbstractModuleAction;
-import org.javlo.component.core.ComponentBean;
-import org.javlo.config.StaticConfig;
-import org.javlo.context.ContentContext;
-import org.javlo.helper.JavaScriptBlob;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.ServletHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
-import org.javlo.i18n.I18nAccess;
-import org.javlo.message.MessageRepository;
-import org.javlo.module.core.ModulesContext;
-import org.javlo.service.RequestService;
-import org.javlo.template.Area;
-import org.javlo.template.Row;
-import org.javlo.template.Template;
-import org.javlo.template.TemplateFactory;
-import org.javlo.template.TemplateStyle;
-import org.javlo.user.AdminUserSecurity;
-import org.javlo.user.User;
-import org.javlo.ztatic.FileCache;
 
 public class TemplateEditorAction extends AbstractModuleAction {
 
@@ -320,17 +310,12 @@ public class TemplateEditorAction extends AbstractModuleAction {
 	}
 	
 	public static String performSnapshot(RequestService rs, StaticConfig staticConfig, ContentContext ctx, ServletContext application, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
-		for (FileItem item : rs.getAllFileItem()) {
-			System.out.println("##### TemplateEditorAction.performSnapshot : file item = "+item.getFieldName()); //TODO: remove debug trace
-		}
-		String base64Data = ""+rs.getParameterMap().get("visual");		
+		String base64Data = ""+rs.getParameterMap().get("visual");
 		if (base64Data.length()>0) {
 			JavaScriptBlob blob = new JavaScriptBlob(base64Data);
 			if (blob.getContentType().equalsIgnoreCase("image/png")) {
 				TemplateEditorContext editorContext = TemplateEditorContext.getInstance(ctx.getRequest().getSession());
 				Template template = editorContext.getCurrentTemplate();	
-				System.out.println("##### TemplateEditorAction.performSnapshot : template.getVisualAbsoluteFile() = "+template.getVisualAbsoluteFile()); //TODO: remove debug trace
-				System.out.println("##### TemplateEditorAction.performSnapshot : #blob.getData() = "+blob.getData().length); //TODO: remove debug trace
 				ResourceHelper.writeBytesToFile(template.getVisualAbsoluteFile(), blob.getData());
 				FileCache fileCache = FileCache.getInstance(application);
 				fileCache.clear(ctx.getGlobalContext().getContextKey());

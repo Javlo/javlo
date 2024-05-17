@@ -1235,7 +1235,6 @@ public class Template implements Comparable<Template> {
 		while (matcher.find()) {
 			order+=100;
 			String field = matcher.group();
-			System.out.println("### field : " + field);
 			String[] data = field.substring(2, field.length() - 1).split("\\.");
 			if (data.length == 4) {
 				dataList.add(data);

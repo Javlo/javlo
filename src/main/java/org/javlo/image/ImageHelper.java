@@ -3,47 +3,31 @@
  */
 package org.javlo.image;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
+import jakarta.servlet.ServletContext;
+import org.apache.commons.lang3.StringUtils;
+import org.javlo.component.core.IImageFilter;
+import org.javlo.context.ContentContextBean;
+import org.javlo.helper.*;
+import org.javlo.template.Template;
+import org.jcodec.api.FrameGrab;
+import org.jcodec.api.JCodecException;
+import org.jcodec.common.*;
+import org.jcodec.common.model.Picture;
+import org.jcodec.scale.AWTUtil;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
-
-import javax.imageio.ImageIO;
-import jakarta.servlet.ServletContext;
-
-import org.apache.commons.lang3.StringUtils;
-import org.javlo.component.core.IImageFilter;
-import org.javlo.context.ContentContextBean;
-import org.javlo.helper.ExifHelper;
-import org.javlo.helper.LangHelper;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.template.Template;
-import org.jcodec.api.FrameGrab;
-import org.jcodec.api.JCodecException;
-import org.jcodec.common.Demuxer;
-import org.jcodec.common.DemuxerTrack;
-import org.jcodec.common.DemuxerTrackMeta;
-import org.jcodec.common.Format;
-import org.jcodec.common.JCodecUtil;
-import org.jcodec.common.model.Picture;
-import org.jcodec.scale.AWTUtil;
 
 /**
  * @author pvanderm
@@ -323,7 +307,6 @@ public class ImageHelper {
 	 */
 	public static ImageSize getExifSize(InputStream in) throws IOException {
 		Map<String, String> exifData = getExifData(in);
-		System.out.println("##### ImageHelper.getExifSize : #exifData = " + exifData.size()); // TODO: remove debug trace
 		ImageSize imageSize = null;
 		try {
 			imageSize = new ImageSize(Integer.parseInt(exifData.get("PixelXDimension")), Integer.parseInt(exifData.get("PixelYDimension")));

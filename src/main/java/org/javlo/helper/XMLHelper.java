@@ -651,7 +651,7 @@ public class XMLHelper {
 	}
 
 	public static void main(String[] args) {
-		System.out.println("##### XMLHelper.main : StringHelper.toXMLAttribute(name) = " + StringHelper.toHTMLAttribute("p&p global")); // TODO: remove debug trace
+		System.out.println("XMLHelper.main : StringHelper.toXMLAttribute(name) = " + StringHelper.toHTMLAttribute("p&p global")); // TODO: remove debug trace
 	}
 
 }
