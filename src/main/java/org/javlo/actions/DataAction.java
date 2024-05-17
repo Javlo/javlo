@@ -203,15 +203,6 @@ public class DataAction implements IAction {
 			serverInfo.put("serverCharge", CountService.getInstance(request.getSession().getServletContext()).getCount());
 			serverInfo.put("siteCharge", globalContext.getCount());
 
-			InetAddress inetAddress = null;
-			try {
-				inetAddress = InetAddress.getByName((String)serverInfo.get("remoteHost"));
-				String ipAddress = inetAddress.getHostAddress();
-				serverInfo.put("ipAddress", ipAddress);
-			} catch (Exception e) {
-				logger.severe("Error while getting remote host address: " + e.getMessage());
-			}
-
 			List<String> connectedUsers = new LinkedList<String>();
 			List<Principal> list = globalContext.getAllPrincipals();
 			for (Principal user : list) {

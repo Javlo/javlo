@@ -19,7 +19,7 @@
 						<ul>
 							<c:forEach var="remote" items="${instance.sites}">
 								<li class="site">
-									<a href="${remote.url}" target="_blank">${remote.url}</a>
+									<a href="${remote.url}" target="_blank">${remote.url}</a> [${remote.ipAddress}]
 									<c:if test="${remote.serverInfo.connectedUsers != null}">
 										<c:set var="userList"><c:forEach var="u" varStatus="status" items="${remote.serverInfo.connectedUsers}">${u}${not status.last ? ', ' : ''}</c:forEach></c:set>
 										<span title="Users: ${empty userList ? '-' : userList}">(${fn:length(remote.serverInfo.connectedUsers)} connected users)</span>
