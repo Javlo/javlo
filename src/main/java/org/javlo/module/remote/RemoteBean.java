@@ -330,7 +330,7 @@ public class RemoteBean implements Serializable {
     }
 
     @Transient
-    public String getAddressIp() {
+    public String getIpAddress() {
         if (ipAddress == null && this.url != null) {
             try {
                 URL url = new URL(this.url);
