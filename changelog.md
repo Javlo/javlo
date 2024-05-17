@@ -995,4 +995,5 @@ Security in case of vulnerabilities.
 - html template parsing correction if parameter finish with \n
 ### Added
 - dynamic component : field group
+- remote info : server ip (proxy)
 
