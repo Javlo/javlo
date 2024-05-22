@@ -2805,8 +2805,6 @@ public class XHTMLHelper {
 							if (ctx == null) {
 								item.attr("href", "[TEST]-file:" + fileUrl);
 							} else {
-								ContentContext pageContext = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
-								pageContext.setFormat("html");
 								item.attr("href", URLHelper.createMediaURL(ctx, fileUrl));
 							}
 						} else if (hrefValue.toLowerCase().startsWith("rss")) {
@@ -2841,7 +2839,15 @@ public class XHTMLHelper {
 			try {
 				String src = item.attr("src");
 				if (src != null) {
-					if (!StringHelper.isURL(src) && !src.startsWith("${")) { // relative path
+					if (src.startsWith("file:")) {
+						String fileUrl = src.substring("file:".length());
+						String params = "";
+						if (ctx == null) {
+							item.attr("src", "[TEST]-file:" + fileUrl);
+						} else {
+							item.attr("src", URLHelper.createMediaURL(ctx, fileUrl));
+						}
+					} else if (!StringHelper.isURL(src) && !src.startsWith("${")) { // relative path
 						if (ctx == null) {
 							item.attr("src", "[TEST]-src:" + src);
 						} else {
