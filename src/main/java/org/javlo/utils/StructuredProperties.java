@@ -1,6 +1,7 @@
 package org.javlo.utils;
 
 import org.apache.commons.lang3.StringUtils;
+import org.javlo.context.ContentContext;
 import org.javlo.helper.ResourceHelper;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -16,7 +17,7 @@ public class StructuredProperties extends Properties {
 		return content.matches("(?s).*" + yamlPattern + ".*");
 	}
 
-	private static final String INTERNAL_ENCODING = "8859_1";
+	//private static final String INTERNAL_ENCODING = "8859_1";
 	/** A table of hex digits */
 	private static final char[] hexDigit = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
@@ -67,16 +68,16 @@ public class StructuredProperties extends Properties {
 	public synchronized void load(InputStream inStream) throws IOException {
 		if (yaml) {
 			// load string in string
-			String content = ResourceHelper.loadStringFromStream(inStream, Charset.forName(INTERNAL_ENCODING));
+			String content = ResourceHelper.loadStringFromStream(inStream, Charset.forName(getInternalEncoding()));
 			if (isYAML(content)) {
 				Yaml yaml = new Yaml();
 				Map<String, Object> map = yaml.load(content);
 				convertMapToProps("", map, this);
 			} else {
-				super.load(new InputStreamReader(new ByteArrayInputStream(content.getBytes()), INTERNAL_ENCODING));
+				super.load(new InputStreamReader(new ByteArrayInputStream(content.getBytes()), getInternalEncoding()));
 			}
 		} else {
-			super.load(new InputStreamReader(inStream, INTERNAL_ENCODING));
+			super.load(new InputStreamReader(inStream, getInternalEncoding()));
 		}
 	}
 
@@ -185,9 +186,16 @@ public class StructuredProperties extends Properties {
 		return outBuffer.toString();
 	}
 
+	public String getInternalEncoding() {
+		if (yaml) {
+			return ContentContext.CHARACTER_ENCODING;
+		}
+		return "8859_1";
+	}
+
 	@Override
 	public void store(OutputStream out, String comments) throws IOException {
-		store0(new BufferedWriter(new OutputStreamWriter(out, INTERNAL_ENCODING)), comments, true);
+		store0(new BufferedWriter(new OutputStreamWriter(out, getInternalEncoding())), comments, true);
 	}
 
 	private void store0(BufferedWriter bw, String comments, boolean escUnicode) throws IOException {
@@ -248,12 +256,16 @@ public class StructuredProperties extends Properties {
 			Yaml yaml = new Yaml(options);
 			yaml.dump(yamlMap, bw);
 	}
+
 	private static void insertIntoMap(Map<String, Object> map, String key, String value) {
 		String[] parts = key.split("\\.");
 		Map<String, Object> current = map;
 
 		for (int i = 0; i < parts.length - 1; i++) {
-			current = (Map<String, Object>) current.computeIfAbsent(parts[i], k -> new LinkedHashMap<>());
+			if (!(current.get(parts[i]) instanceof Map)) {
+				current.put(parts[i], new LinkedHashMap<String, Object>());
+			}
+			current = (Map<String, Object>) current.get(parts[i]);
 		}
 
 		current.put(parts[parts.length - 1], value);
