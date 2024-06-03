@@ -198,6 +198,39 @@ public class StructuredProperties extends Properties {
 		store0(new BufferedWriter(new OutputStreamWriter(out, getInternalEncoding())), comments, true);
 	}
 
+	private static Map<String, Object> excludePrefixKeys(Properties prop) {
+		// TreeMap pour trier les clés
+		Map<String, Object> sortedMap = new TreeMap<>();
+		for (String key : prop.stringPropertyNames()) {
+			sortedMap.put(key, prop.get(key));
+		}
+
+		Set<String> keysToRemove = new HashSet<>();
+		List<String> keys = new ArrayList<>(sortedMap.keySet());
+
+		// Vérification des préfixes
+		for (int i = 0; i < keys.size(); i++) {
+			String currentKey = keys.get(i);
+			for (int j = i + 1; j < keys.size(); j++) {
+				if (keys.get(j).startsWith(currentKey + ".")) {
+					keysToRemove.add(currentKey);
+					break;
+				}
+			}
+		}
+
+		// Construction de la map filtrée
+		Map<String, Object> resultMap = new HashMap<>();
+		for (Map.Entry<String, Object> entry : sortedMap.entrySet()) {
+			if (!keysToRemove.contains(entry.getKey())) {
+				resultMap.put(entry.getKey(), entry.getValue());
+			}
+		}
+
+		return resultMap;
+	}
+
+
 	private void store0(BufferedWriter bw, String comments, boolean escUnicode) throws IOException {
 		if (yaml) {
 			storeYaml(bw, comments);
@@ -247,7 +280,8 @@ public class StructuredProperties extends Properties {
 	private void storeYaml(BufferedWriter bw, String comments) throws IOException {
 			// Converting Properties into a nested Map structure
 			Map<String, Object> yamlMap = new LinkedHashMap<>();
-			for (String key : this.stringPropertyNames()) {
+			Map<String,Object> cleanMap = excludePrefixKeys(this);
+			for (String key : cleanMap.keySet()) {
 				insertIntoMap(yamlMap, key, this.getProperty(key));
 			}
 			DumperOptions options = new DumperOptions();
@@ -258,6 +292,7 @@ public class StructuredProperties extends Properties {
 	}
 
 	private static void insertIntoMap(Map<String, Object> map, String key, String value) {
+
 		String[] parts = key.split("\\.");
 		Map<String, Object> current = map;
 
@@ -291,5 +326,16 @@ public class StructuredProperties extends Properties {
 		} finally {
 			ResourceHelper.closeResource(in);
 		}		
+	}
+
+	public static void main(String[] args) throws IOException {
+		Map<String, Object> data = new LinkedHashMap<>();
+		data.put("field.photo.image.value", "image");
+		data.put("field.photo.image.value.file", "photo.jpg");
+		data.put("field.photo.image.value.folder", "image");
+
+		StructuredProperties prop = new StructuredProperties(true);
+		prop.putAll(data);
+		prop.store(new FileOutputStream("c:/trans/out.yaml"), "test");
 	}
 }
