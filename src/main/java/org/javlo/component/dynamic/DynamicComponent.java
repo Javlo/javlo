@@ -900,7 +900,6 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
             ctx.setNeedRefresh(true);
         }
 
-
         /** delete group **/
         if (rs.getParameter("deleteGroup") != null) {
             deleteGroup(ctx, rs.getParameter("deleteGroup"));

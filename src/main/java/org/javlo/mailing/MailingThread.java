@@ -1,22 +1,6 @@
 package org.javlo.mailing;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
-import javax.mail.MessagingException;
-import javax.mail.Transport;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.naming.ConfigurationException;
 import jakarta.servlet.ServletContext;
-
 import org.javlo.config.MailingStaticConfig;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.ResourceHelper;
@@ -24,6 +8,17 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.module.mailing.MailingAction;
 import org.javlo.service.DataToIDService;
+
+import javax.mail.MessagingException;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.naming.ConfigurationException;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class MailingThread extends Thread {
 
@@ -247,6 +242,7 @@ public class MailingThread extends Thread {
 										logger.info("to time to send mailing : "+currentMailing+ "(send before:"+StringHelper.renderTime(currentMailing.getSendDate())+')');
 									}
 								} catch (Throwable t) {
+									logger.severe("error send mail on : "+currentMailing.getContextKey());
 									logger.severe(t.getMessage());
 									t.printStackTrace();
 									currentMailing.setErrorMessage(t.getMessage());

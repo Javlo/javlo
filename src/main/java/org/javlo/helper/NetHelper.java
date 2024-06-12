@@ -1805,13 +1805,6 @@ public class NetHelper {
 		return false;
 	}
 
-	public static void main(String[] args) throws Exception {
-		String dropbox = "https://www.dropbox.com/scl/fi/c5spscisjvbspcfwy1xvv/1783334614.jpg?rlkey=1p1zq9lbag422ff77ue230v5a&dl=0";
-		downloadFile(new URL(dropbox), new File("c:/trans/dropbox.jpg"));
-		String drive = "https://drive.google.com/open?id=12ro3x6wZtg56RFh-wEygLEvu1sTQklkz&usp=drive_fs";
-		downloadFile(new URL(drive), new File("c:/trans/drive.jpg"));
-	}
-	
 	public static String getIp(HttpServletRequest request) {
 		String userIP = request.getHeader("x-real-ip");
 		if (StringHelper.isEmpty(userIP)) {
