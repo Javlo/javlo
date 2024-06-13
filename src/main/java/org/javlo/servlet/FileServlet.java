@@ -347,6 +347,10 @@ public class FileServlet extends HttpServlet {
 					}
 					staticInfo.setChildren(children);
 				}
+				// Add CORS headers
+				response.setHeader("Access-Control-Allow-Origin", "*");
+				response.setHeader("Access-Control-Allow-Methods", "GET");
+				response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 				response.setContentType(contentType);
 				JsonHelper.toJson(staticInfo, response.getWriter());
 			} catch (Exception e) {
