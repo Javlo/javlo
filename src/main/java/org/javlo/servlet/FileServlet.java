@@ -1,8 +1,14 @@
 package org.javlo.servlet;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.helper.JsonHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.io.SessionFolder;
 import org.javlo.user.AdminUserSecurity;
@@ -10,17 +16,9 @@ import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.ztatic.StaticInfo;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.zip.GZIPOutputStream;
 
@@ -116,14 +114,24 @@ public class FileServlet extends HttpServlet {
 			file = new File(globalContext.getDataFolder(), URLDecoder.decode(requestedFile, "UTF-8"));
 		}
 
+		boolean jsonInfo = false;
+
 		if (!file.exists()) {
-			String finalFile = globalContext.getTransformShortURL(requestedFile);
-			file = new File(globalContext.getDataFolder(), finalFile);
+			if (StringHelper.getFileExtension(file.getName()).equalsIgnoreCase("json")) {
+				String path = file.getAbsolutePath();
+				file = new File(path.substring(0, path.length()-".json".length()));
+				jsonInfo = true;
+			}
+			if (!file.exists()) {
+				logger.info("file not found : " + file);
+				String finalFile = globalContext.getTransformShortURL(requestedFile);
+				file = new File(globalContext.getDataFolder(), finalFile);
+			}
 		}
 
 		// Check if file actually exists in filesystem.
 		if (!file.exists()) {
-			logger.warning("file not found : " + file);
+			logger.warning("final file not found : " + file);
 			// Do your thing if the file appears to be non-existing.
 			// Throw an exception, or send 404, or show default/warning page, or just ignore
 			// it.
@@ -277,6 +285,7 @@ public class FileServlet extends HttpServlet {
 		// Get content type by file name and set default GZIP support and content
 		// disposition.
 		String contentType = getServletContext().getMimeType(fileName);
+
 		boolean acceptsGzip = false;
 		String disposition = "inline";
 
@@ -288,11 +297,15 @@ public class FileServlet extends HttpServlet {
 			contentType = "application/octet-stream";
 		}
 
+		if (jsonInfo) {
+			contentType = "application/json";
+		}
+
 		// If content type is text, then determine whether GZIP content encoding is
 		// supported by
 		// the browser and expand content type with the one and right character
 		// encoding.
-		if (contentType.startsWith("text")) {
+		if (contentType.startsWith("text") || jsonInfo) {
 			String acceptEncoding = request.getHeader("Accept-Encoding");
 			acceptsGzip = acceptEncoding != null && accepts(acceptEncoding, "gzip");
 			contentType += ";charset=UTF-8";
@@ -322,6 +335,24 @@ public class FileServlet extends HttpServlet {
 		// Prepare streams.
 		RandomAccessFile input = null;
 		OutputStream output = null;
+
+		if (jsonInfo) {
+			try {
+				ContentContext ctx = ContentContext.getContentContext(request, response);
+				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
+				if (file.isDirectory()) {
+					List<StaticInfo> children = new LinkedList<>();
+					for (File child : file.listFiles()) {
+						children.add(StaticInfo.getInstance(ctx, child));
+					}
+					staticInfo.setChildren(children);
+				}
+				response.setContentType(contentType);
+				JsonHelper.toJson(staticInfo, response.getWriter());
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
 
 		try {
 			// Open streams.

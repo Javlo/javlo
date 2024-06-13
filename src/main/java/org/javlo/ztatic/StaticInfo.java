@@ -55,6 +55,8 @@ public class StaticInfo implements IRestItem {
 
 	private ReferenceBean refBean = null;
 
+	private List<StaticInfo> children = null;
+
 	public static class ReferenceBean {
 		private String reference;
 		private String language;
@@ -1806,4 +1808,11 @@ public class StaticInfo implements IRestItem {
 		return data;
 	}
 
+	public List<StaticInfo> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<StaticInfo> children) {
+		this.children = children;
+	}
 }
