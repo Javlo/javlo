@@ -1374,7 +1374,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
                 I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
                 GenericMessage msg = new GenericMessage(i18nAccess.getViewText("error.bad-from-version", "This form has experied, try again."), GenericMessage.ERROR);
                 request.setAttribute("msg", msg);
-                return "This form has experied, try again.";
+                return "This form has expired, try again.";
             }
 
             /** check captcha **/
