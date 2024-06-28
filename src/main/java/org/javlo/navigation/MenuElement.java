@@ -2600,11 +2600,21 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 	public IImageTitle getImageBackground(ContentContext ctx) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
-		if (desc.imageHeader != null) {
-			if (desc.imageHeader == ImageTitleBean.EMPTY_BEAN) {
-				return null;
-			} else {
-				return desc.imageHeader;
+		if (ctx.isMobile()) {
+			if (desc.imageBackgroundMobile != null) {
+				if (desc.imageBackgroundMobile == ImageTitleBean.EMPTY_BEAN) {
+					return null;
+				} else {
+					return desc.imageBackgroundMobile;
+				}
+			}
+		} else {
+			if (desc.imageBackground != null) {
+				if (desc.imageBackground == ImageTitleBean.EMPTY_BEAN) {
+					return null;
+				} else {
+					return desc.imageBackground;
+				}
 			}
 		}
 		ContentContext specialCtx = ctx.getContextWithArea(ComponentBean.DEFAULT_AREA);
@@ -2618,29 +2628,53 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 					if (imageComp.isImageValid(specialCtx)) {
 						int priority = imageComp.getPriority(specialCtx);
 						if (priority == 9) {
-							desc.imageHeader = new ImageTitleBean(specialCtx, imageComp);
+							if (ctx.isMobile()) {
+								desc.imageBackgroundMobile = new ImageTitleBean(specialCtx, imageComp);
+							} else {
+								desc.imageBackground = new ImageTitleBean(specialCtx, imageComp);
+							}
 							return imageComp;
 						} else if (priority > bestPriority) {
-							desc.imageHeader = new ImageTitleBean(specialCtx, imageComp);
+							if (ctx.isMobile()) {
+								desc.imageBackgroundMobile = new ImageTitleBean(specialCtx, imageComp);
+							} else {
+								desc.imageBackground = new ImageTitleBean(specialCtx, imageComp);
+							}
 							bestPriority = priority;
 						}
 					}
 				}
 			}
 		}
-		if (desc.imageHeader == null) {
-			desc.imageHeader = ImageTitleBean.EMPTY_BEAN;
-			return null;
+		if (ctx.isMobile()) {
+			if (desc.imageBackgroundMobile == null) {
+				desc.imageBackgroundMobile = ImageTitleBean.EMPTY_BEAN;
+				return null;
+			} else {
+				return desc.imageBackgroundMobile;
+			}
 		} else {
-			return desc.imageHeader;
+			if (desc.imageBackground == null) {
+				desc.imageBackground = ImageTitleBean.EMPTY_BEAN;
+				return null;
+			} else {
+				return desc.imageBackground;
+			}
 		}
+
 	}
 
 	public Map<String, ImageTitleBean> getImageBackgroundForArea(ContentContext ctx) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
-		if (desc.imageAreaBackground != null) {
+
+		if (ctx.isMobile()) {
+			if (desc.imageAreaBackgroundMobile != null) {
+				return desc.imageAreaBackgroundMobile;
+			}
+		} else if (desc.imageAreaBackground != null) {
 			return desc.imageAreaBackground;
 		}
+
 		Map<String, ImageTitleBean> outImageBackground = new HashMap<String, ImageTitleBean>();
 		ContentContext specialCtx = ctx.getContextWithArea(ComponentBean.DEFAULT_AREA);
 		IContentComponentsList contentList = getAllContent(specialCtx);
@@ -2658,9 +2692,18 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			}
 		}
 		if (outImageBackground.size() > 0) {
-			desc.imageAreaBackground = outImageBackground;
+			if (ctx.isMobile()) {
+				desc.imageAreaBackgroundMobile = outImageBackground;
+			} else {
+				desc.imageAreaBackground = outImageBackground;
+			}
 		} else {
-			desc.imageAreaBackground = Collections.EMPTY_MAP;
+			if (ctx.isMobile()) {
+				desc.imageAreaBackgroundMobile = Collections.EMPTY_MAP;
+			} else {
+				desc.imageAreaBackground = Collections.EMPTY_MAP;
+			}
+
 		}
 		return desc.imageAreaBackground;
 	}

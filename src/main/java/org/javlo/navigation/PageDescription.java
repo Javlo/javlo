@@ -88,9 +88,13 @@ public class PageDescription implements Serializable {
 
 	public ImageTitleBean imageLink;
 
-	public ImageTitleBean imageHeader;
+	public ImageTitleBean imageBackground;
+
+	public ImageTitleBean imageBackgroundMobile;
 
 	public Map<String, ImageTitleBean> imageAreaBackground;
+
+	public Map<String, ImageTitleBean> imageAreaBackgroundMobile;
 
 	public Collection<String> needdedResources = null;
 	

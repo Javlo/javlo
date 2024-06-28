@@ -74,7 +74,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
     private Integer countCache = null;
 
-    private static final Map<String, String> cacheForm = Collections.synchronizedMap(new TimeMap<String, String>(60 * 60)); // 1 hours validity
+    private static final Map<String, String> cacheForm = Collections.synchronizedMap(new TimeMap<String, String>(60 * 60 * 2)); // 2 hours validity
 
     private static Logger logger = Logger.getLogger(SmartGenericForm.class.getName());
 
@@ -1374,7 +1374,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
                 I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
                 GenericMessage msg = new GenericMessage(i18nAccess.getViewText("error.bad-from-version", "This form has experied, try again."), GenericMessage.ERROR);
                 request.setAttribute("msg", msg);
-                return "This form has expired, try again.";
+                return "This form has expired, try again. Please ensure to complete the form within 2 hours.";
             }
 
             /** check captcha **/
