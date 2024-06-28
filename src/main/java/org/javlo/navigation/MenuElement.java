@@ -2705,7 +2705,11 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			}
 
 		}
-		return desc.imageAreaBackground;
+		if (ctx.isMobile()) {
+			return desc.imageAreaBackgroundMobile;
+		} else {
+			return desc.imageAreaBackground;
+		}
 	}
 
 	public ImageBean getImageBean(ContentContext ctx) throws Exception {
