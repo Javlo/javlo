@@ -2613,7 +2613,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		while (contentList.hasNext(ctx)) {
 			IContentVisualComponent elem = contentList.next(specialCtx);
 			if ((elem instanceof ImageBackground) && elem.isRealContent(specialCtx)) {
-				if (((ImageBackground) elem).isForGlobal()) {
+				if (((ImageBackground) elem).isForGlobal() && !elem.isHiddenInMode(ctx, ctx.getRenderMode(), ctx.isMobile())) {
 					IImageTitle imageComp = (IImageTitle) elem;
 					if (imageComp.isImageValid(specialCtx)) {
 						int priority = imageComp.getPriority(specialCtx);
@@ -2646,7 +2646,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		IContentComponentsList contentList = getAllContent(specialCtx);
 		while (contentList.hasNext(ctx)) {
 			IContentVisualComponent elem = contentList.next(specialCtx);
-			if ((elem instanceof ImageBackground) && elem.isRealContent(specialCtx)) {
+			if ((elem instanceof ImageBackground) && elem.isRealContent(specialCtx) && !elem.isHiddenInMode(ctx, ctx.getRenderMode(), ctx.isMobile())) {
 				if (((ImageBackground) elem).isForArea()) {
 					IImageTitle imageComp = (IImageTitle) elem;
 					if (imageComp.isImageValid(specialCtx)) {
