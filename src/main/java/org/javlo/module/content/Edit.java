@@ -12,6 +12,7 @@ import org.javlo.component.title.Title;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.*;
 import org.javlo.data.InfoBean;
+import org.javlo.data.taxonomy.TaxonomyService;
 import org.javlo.helper.*;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
@@ -1541,6 +1542,9 @@ public class Edit extends AbstractModuleAction {
 
 				int modif = NavigationHelper.publishNavigation(ctx, previewNav, viewNav);
 				//if (modif>0) {
+
+					TaxonomyService.pushPreviewInView(ctx);
+
 					persistenceService.store(viewCtx, ContentContext.VIEW_MODE, false);
 					persistenceService.store(ctx, ContentContext.PREVIEW_MODE, false);
 					globalContext.setPublishDate(new Date());

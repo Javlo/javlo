@@ -461,6 +461,7 @@ public class ContentService implements IPrintInfo {
 		viewGlobalMap = new HashMap<>(previewGlobalMap);
 	}
 
+
 	private Map<String, String> getAttributeMap(ContentContext ctx) {
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE && ctx.getGlobalContext().isPreviewMode()) {
 			if (viewGlobalMap == null) {

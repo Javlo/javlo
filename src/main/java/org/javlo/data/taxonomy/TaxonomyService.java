@@ -20,7 +20,7 @@ public class TaxonomyService {
 	private static final String PREFIX_LINE = ">";
 	private static Logger logger = Logger.getLogger(TaxonomyService.class.getName());
 
-	public static final String KEY = "taxonomy";
+	private static final String KEY = "taxonomy";
 
 	public static final String SESSION_KEY = "session-" + TaxonomyService.class.getName();
 
@@ -60,6 +60,11 @@ public class TaxonomyService {
 		}
 
 		return outService;
+	}
+
+	public static void pushPreviewInView (ContentContext ctx) {
+		ctx.getGlobalContext().setAttribute(KEY + ContentContext.VIEW_MODE,
+				(TaxonomyService)ctx.getGlobalContext().getAttribute(KEY + ContentContext.EDIT_MODE));
 	}
 
 	public static final TaxonomyService getInstance(ContentContext ctx, int renderMode) {
