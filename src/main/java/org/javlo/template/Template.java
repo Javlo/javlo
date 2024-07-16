@@ -1231,20 +1231,25 @@ public class Template implements Comparable<Template> {
 		Matcher matcher = fieldPattern.matcher(html);
 		Map<String, String> out = new LinkedHashMap<>();
 		List<String[]> dataList = new LinkedList<>();
+		List<String> fieldFoundList = new LinkedList<>();
 		int order=0;
 		while (matcher.find()) {
 			order+=100;
 			String field = matcher.group();
 			String[] data = field.substring(2, field.length() - 1).split("\\.");
-			if (data.length == 4) {
-				dataList.add(data);
-				out.put("field." + data[2] + ".order", "" + order);
-				out.put("field." + data[2] + ".type", data[1]);
-			} else if (data.length > 4) {
-				dataList.add(data);
-				out.put("field." + data[2] + ".order", "" + order);
-				out.put("field." + data[2] + ".type", data[1]);
-				out.put("field." + data[2] + ".group", data[3]);
+			if (!fieldFoundList.contains(data[2])) {
+				if (data.length == 4) {
+					fieldFoundList.add(data[2]);
+					dataList.add(data);
+					out.put("field." + data[2] + ".order", "" + order);
+					out.put("field." + data[2] + ".type", data[1]);
+				} else if (data.length > 4) {
+					fieldFoundList.add(data[2]);
+					dataList.add(data);
+					out.put("field." + data[2] + ".order", "" + order);
+					out.put("field." + data[2] + ".type", data[1]);
+					out.put("field." + data[2] + ".group", data[3]);
+				}
 			}
 		}
 

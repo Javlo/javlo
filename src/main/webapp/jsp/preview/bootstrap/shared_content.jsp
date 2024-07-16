@@ -14,6 +14,7 @@
 <form id="drop-file-form" action="${fn:replace(info.uploadSharedURL, '/ajax/', '/preview/')}" method="post" enctype="multipart/form-data" class="hidden">
 	<input id="drop-file-form-input" type="file" name="file" multiple="multiple" onchange="this.form.submit();" />
 </form>
+
 <script>
 	function onDoneUpload() {
 		editPreview.ajaxPreviewRequest('${refreshUrl}', null, null, null);
@@ -24,15 +25,15 @@
 <%-- <h3>${i18n.edit['preview.paste-here']}</h3> --%>
 <!-- <div class="picto"><span class="glyphicon glyphicon-paste" aria-hidden="true"></span></div> -->
 <!-- </div> -->
-<!-- <script type="text/javascript"> 
+<!-- <script type="text/javascript">
 //   console.log(window.Clipboard);
-//   var items = window.clipboardData.items;	  
+//   var items = window.clipboardData.items;
 //   var blob = null;
 //   for (var i = 0; i < items.length; i++) {
 //     if (items[i].type.indexOf("image/png") === 0) {
 //       pjq('#paste').removeClass('hidden');
 //     }
-//   }	
+//   }
 </script> -->
 
 <!-- input class="filter" type="text" placeholder="${i18n.edit['global.filter']}" onkeyup="filter(this.value, '#preview_command .shared-content .content-wrapper');" / -->
@@ -47,7 +48,7 @@
 					<c:if test="${providerLabel == key}">
 						<c:set var="providerLabel" value="${provider.name}" />
 					</c:if>
-					<option value="${provider.name}" ${sharedContentContext.provider eq provider.name?'selected="selected"':''}>${providerLabel}</option>
+					<option value="${provider.name}" ${sharedContentContext.provider eq provider.name?'selected="selected"':''}>${not empty providerLabel?providerLabel:provider.name}</option>
 				</c:forEach>
 			</select>
 			<c:url var="url" value="${info.currentEditURL}" context="/">
