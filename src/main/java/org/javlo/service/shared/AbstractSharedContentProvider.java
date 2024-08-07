@@ -1,23 +1,16 @@
 package org.javlo.service.shared;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import org.javlo.component.core.ComponentBean;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.template.Template;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.*;
 
 public abstract class AbstractSharedContentProvider implements ISharedContentProvider {
 
@@ -113,8 +106,10 @@ public abstract class AbstractSharedContentProvider implements ISharedContentPro
 		Collection<SharedContent> contents = getContent(ctx);
 		if (contents != null) {
 			for (SharedContent content : contents) {
-				if (!Collections.disjoint(content.getCategories(), categories)) {
-					outList.add(content);
+				if (content != null) {
+					if (!Collections.disjoint(content.getCategories(), categories)) {
+						outList.add(content);
+					}
 				}
 			}
 			Collections.sort(outList, new SharedContent.SortOnComparator());
