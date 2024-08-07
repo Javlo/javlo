@@ -146,6 +146,7 @@ public class ComponentConfig {
 		String defaultRenderer = properties.getString("default-renderer");
 		if (defaultRenderer != null) {
 			if (getRenderes().get(defaultRenderer) == null) {
+				properties.setProperty("default-renderer", null);
 				logger.warning("default renderer not found in renderer list : " + defaultRenderer);
 				defaultRenderer = null;
 			}
