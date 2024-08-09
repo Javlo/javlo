@@ -1,28 +1,19 @@
 package org.javlo.mailing;
 
+import com.sun.mail.pop3.POP3SSLStore;
+import jakarta.mail.*;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
+import jakarta.mail.util.SharedByteArrayInputStream;
+import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.StringHelper;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.logging.Logger;
-
-import javax.mail.BodyPart;
-import javax.mail.Flags;
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Store;
-import javax.mail.URLName;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.util.SharedByteArrayInputStream;
-
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.StringHelper;
-
-import com.sun.mail.pop3.POP3SSLStore;
 
 public class MailClient {
 
@@ -80,7 +71,7 @@ public class MailClient {
 		out.println("[HEADER]");
 		Enumeration headers = message.getAllHeaders();
 		while (headers.hasMoreElements()) {
-			javax.mail.Header header = (javax.mail.Header) headers.nextElement();
+			jakarta.mail.Header header = (jakarta.mail.Header) headers.nextElement();
 			out.println(header.getName() + "=" + header.getValue());
 		}
 		out.println("[/HEADER]");
@@ -108,7 +99,7 @@ public class MailClient {
 			out.println("[HEADER]");			
 			Enumeration headers = bodyPart.getAllHeaders();
 			while (headers.hasMoreElements()) {
-				javax.mail.Header header = (javax.mail.Header) headers.nextElement();
+				jakarta.mail.Header header = (jakarta.mail.Header) headers.nextElement();
 				out.println(header.getName() + "=" + header.getValue());
 			}
 			out.println("[/HEADER]");			

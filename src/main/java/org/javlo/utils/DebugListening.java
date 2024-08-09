@@ -1,18 +1,9 @@
 package org.javlo.utils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.logging.Logger;
-
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.internet.InternetAddress;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -24,6 +15,13 @@ import org.javlo.mailing.MailService;
 import org.javlo.servlet.IVersion;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.logging.Logger;
 
 public class DebugListening {
 

@@ -1,19 +1,6 @@
 package org.javlo.component.ecom;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.StringReader;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.mail.internet.InternetAddress;
-
+import jakarta.mail.internet.InternetAddress;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.ecom.Basket;
@@ -27,6 +14,14 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.utils.ReadOnlyPropertiesMap;
+
+import java.io.*;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
 
 public abstract class AbstractOrderComponent extends AbstractVisualComponent {
 

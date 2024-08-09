@@ -1,17 +1,16 @@
 package org.javlo.module.remote;
 
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
+import org.javlo.context.GlobalContext;
+import org.javlo.helper.NetHelper;
+import org.javlo.helper.StringHelper;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
-
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-
-import org.javlo.context.GlobalContext;
-import org.javlo.helper.NetHelper;
-import org.javlo.helper.StringHelper;
 
 public class RemoteThread extends Thread {
 	

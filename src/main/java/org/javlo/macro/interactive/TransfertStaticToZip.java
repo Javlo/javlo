@@ -1,20 +1,8 @@
 package org.javlo.macro.interactive;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.logging.Logger;
-import java.util.zip.ZipException;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -27,6 +15,17 @@ import org.javlo.mailing.MailService;
 import org.javlo.utils.downloader.Html2Directory;
 import org.javlo.utils.downloader.Html2Directory.Status;
 import org.zeroturnaround.zip.ZipUtil;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.logging.Logger;
+import java.util.zip.ZipException;
 
 public class TransfertStaticToZip extends Thread {	
 	

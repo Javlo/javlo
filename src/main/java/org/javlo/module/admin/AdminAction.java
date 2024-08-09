@@ -46,9 +46,9 @@ import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.ResourceFactory;
 import org.javlo.ztatic.StaticInfo;
 
-import javax.mail.MessagingException;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;

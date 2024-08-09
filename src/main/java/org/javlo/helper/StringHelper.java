@@ -18,8 +18,8 @@ import org.javlo.i18n.I18nAccess;
 import org.jsoup.Jsoup;
 import org.owasp.encoder.Encode;
 
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;

@@ -1,6 +1,6 @@
 package org.javlo.user;
 
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.internet.InternetAddress;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.Set;

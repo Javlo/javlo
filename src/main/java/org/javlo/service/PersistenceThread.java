@@ -11,7 +11,7 @@ import org.javlo.servlet.IVersion;
 import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.utils.TimeTracker;
 
-import javax.mail.internet.AddressException;
+import jakarta.mail.internet.AddressException;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;

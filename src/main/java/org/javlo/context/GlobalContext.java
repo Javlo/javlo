@@ -47,8 +47,8 @@ import org.javlo.utils.backup.BackupBean;
 import org.javlo.utils.backup.BackupThread;
 import org.owasp.encoder.Encode;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
 import java.io.*;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;

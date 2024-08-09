@@ -1,14 +1,8 @@
 package org.javlo.context;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 import jakarta.servlet.http.HttpSession;
-
 import org.apache.commons.io.FileUtils;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.URLHelper;
@@ -19,6 +13,11 @@ import org.javlo.message.MessageRepository;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class GlobalContextCreationBean {
 	

@@ -13,7 +13,7 @@ import org.javlo.service.ContentService;
 import org.javlo.servlet.IVersion;
 import org.javlo.utils.TimeMap;
 
-import javax.mail.Transport;
+import jakarta.mail.Transport;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;

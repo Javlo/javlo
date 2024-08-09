@@ -35,9 +35,9 @@ import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.utils.StructuredProperties;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;

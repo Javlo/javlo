@@ -28,8 +28,8 @@ import org.javlo.ztatic.StaticInfo;
 import org.javlo.ztatic.StaticInfoBean;
 
 import javax.imageio.ImageIO;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;

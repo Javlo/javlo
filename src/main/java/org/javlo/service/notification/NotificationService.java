@@ -11,7 +11,7 @@ import org.javlo.user.IUserInfo;
 import org.javlo.utils.JSONMap;
 import org.javlo.utils.MapCollectionWrapper;
 
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.internet.InternetAddress;
 import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.util.*;

@@ -9,10 +9,10 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.module.mailing.MailingAction;
 import org.javlo.service.DataToIDService;
 
-import javax.mail.MessagingException;
-import javax.mail.Transport;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 import javax.naming.ConfigurationException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

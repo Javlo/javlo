@@ -1,34 +1,13 @@
 package org.javlo.module.ticket;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.imageio.ImageIO;
-import javax.mail.internet.InternetAddress;
-
+import jakarta.mail.internet.InternetAddress;
 import org.apache.commons.fileupload2.core.FileItem;
 import org.javlo.actions.AbstractModuleAction;
 import org.javlo.actions.ViewActions;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.JavaScriptBlob;
-import org.javlo.helper.NetHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
+import org.javlo.helper.*;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ImageEngine;
 import org.javlo.message.GenericMessage;
@@ -36,13 +15,19 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.core.IMainModuleName;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModulesContext;
-import org.javlo.service.notification.NotificationService;
 import org.javlo.service.RequestService;
-import org.javlo.user.AdminUserFactory;
-import org.javlo.user.AdminUserSecurity;
-import org.javlo.user.IUserInfo;
-import org.javlo.user.User;
-import org.javlo.user.UserFactory;
+import org.javlo.service.notification.NotificationService;
+import org.javlo.user.*;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.util.List;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class TicketAction extends AbstractModuleAction {
 

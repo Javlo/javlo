@@ -9,7 +9,7 @@ import org.javlo.helper.LocalLogger;
 import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
 
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.internet.InternetAddress;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;

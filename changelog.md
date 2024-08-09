@@ -996,4 +996,7 @@ Security in case of vulnerabilities.
 ### Added
 - dynamic component : field group
 - remote info : server ip (proxy)
+### Modified
+- update mail library to jakarta.mail
+- ## [2.3.2] - 09/08/2024
 

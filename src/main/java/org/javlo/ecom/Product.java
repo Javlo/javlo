@@ -1,13 +1,6 @@
 package org.javlo.ecom;
 
-import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.logging.Logger;
-
-import javax.mail.internet.InternetAddress;
-
-import org.apache.tools.ant.property.GetProperty;
+import jakarta.mail.internet.InternetAddress;
 import org.javlo.component.ecom.ProductComponent;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.component.image.ImageTitleBean;
@@ -18,6 +11,11 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.navigation.MenuElement;
 import org.owasp.encoder.Encode;
+
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.logging.Logger;
 
 public class Product {
 

@@ -4,9 +4,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Logger;
 
-import javax.mail.Flags;
-import javax.mail.Message;
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.Flags;
+import jakarta.mail.Message;
+import jakarta.mail.internet.InternetAddress;
 import jakarta.servlet.ServletContext;
 
 import org.javlo.context.GlobalContext;

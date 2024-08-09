@@ -22,7 +22,7 @@ import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserInfo;
 import org.owasp.encoder.Encode;
 
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.internet.InternetAddress;
 import java.io.File;
 import java.util.*;
 import java.util.logging.Logger;

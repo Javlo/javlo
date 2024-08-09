@@ -15,7 +15,7 @@ import org.javlo.template.Template;
 import org.javlo.template.TemplateData;
 import org.javlo.utils.ConfigurationProperties;
 
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.internet.InternetAddress;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;

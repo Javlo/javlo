@@ -31,8 +31,8 @@ import org.javlo.utilThymeleaf.TemplateEngineUtil;
 import org.javlo.utils.*;
 import org.thymeleaf.TemplateEngine;
 
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 import javax.naming.ConfigurationException;
 import java.awt.*;
 import java.io.*;

@@ -3,7 +3,6 @@ package org.javlo.helper.converter;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -88,7 +87,7 @@ public class BeanTools {
 							}
 						} catch (Exception e) {
 							logger.warning("error on field : " + name + " : " + e.getMessage());
-							e.printStackTrace();
+							//e.printStackTrace();
 						}
 					}
 				}

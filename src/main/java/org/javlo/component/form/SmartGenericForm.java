@@ -41,7 +41,7 @@ import org.javlo.user.UserFactory;
 import org.javlo.utils.*;
 import org.javlo.ztatic.StaticInfo;
 
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.internet.InternetAddress;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.net.URL;

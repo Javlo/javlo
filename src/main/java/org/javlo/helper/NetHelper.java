@@ -2,6 +2,8 @@ package org.javlo.helper;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -35,8 +37,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import javax.imageio.ImageIO;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 import javax.net.ssl.*;
 import javax.security.cert.X509Certificate;
 import java.awt.image.BufferedImage;

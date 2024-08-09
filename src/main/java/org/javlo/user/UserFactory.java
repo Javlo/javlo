@@ -3,6 +3,7 @@
  */
 package org.javlo.user;
 
+import jakarta.mail.internet.InternetAddress;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.javlo.config.StaticConfig;
@@ -22,7 +23,6 @@ import org.javlo.utils.CSVFactory;
 import org.javlo.utils.TimeMap;
 
 import javax.imageio.ImageIO;
-import javax.mail.internet.InternetAddress;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;

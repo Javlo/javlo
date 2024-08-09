@@ -3,17 +3,9 @@
  */
 package org.javlo.component.form;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import javax.mail.internet.InternetAddress;
+import jakarta.mail.internet.InternetAddress;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import org.javlo.actions.IAction;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
@@ -21,13 +13,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.BeanHelper;
-import org.javlo.helper.PatternHelper;
-import org.javlo.helper.RequestHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.StringSecurityUtil;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
+import org.javlo.helper.*;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
@@ -39,6 +25,13 @@ import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.UserFactory;
 import org.javlo.user.exception.UserAllreadyExistException;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * This class is use for register a user :</h4>

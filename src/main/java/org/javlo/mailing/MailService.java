@@ -4,6 +4,14 @@
  */
 package org.javlo.mailing;
 
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
+import jakarta.mail.*;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
+import jakarta.mail.util.ByteArrayDataSource;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.external.agitos.dkim.Canonicalization;
@@ -15,14 +23,6 @@ import org.javlo.helper.StringHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import javax.mail.util.ByteArrayDataSource;
 import java.io.*;
 import java.net.InetAddress;
 import java.time.LocalDateTime;
@@ -170,7 +170,7 @@ public class MailService {
 		if (mailConfig == null || !mailConfig.isAuthentification()) {
 			mailSession = Session.getDefaultInstance(getMailInfo(mailConfig));
 		} else {
-			mailSession = Session.getInstance(getMailInfo(mailConfig), new javax.mail.Authenticator() {
+			mailSession = Session.getInstance(getMailInfo(mailConfig), new jakarta.mail.Authenticator() {
 				protected PasswordAuthentication getPasswordAuthentication() {
 					return new PasswordAuthentication(mailConfig.getLogin(), mailConfig.getPassword());
 				}
