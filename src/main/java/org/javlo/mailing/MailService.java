@@ -335,10 +335,10 @@ public class MailService {
 					dkimSigner.setSigningAlgorithm(SigningAlgorithm.SHA1withRSA);
 					dkimSigner.setZParam(true);
 					msg = new SMTPDKIMMessage(mailSession, dkimSigner);
+					logger.info("create DKIM message");
 				} catch (Exception e) {
 					e.printStackTrace();
 					warningMessage = e.getMessage();
-
 				}
 			}
 			if (recipients != null) {
