@@ -613,6 +613,7 @@ public class AdminAction extends AbstractModuleAction {
 						email.setSender(new InternetAddress(currentGlobalContext.getAdministratorEmail()));
 						email.addRecipient(new InternetAddress(testEmail));
 						email.setSubject("Newsletter : "+currentGlobalContext.getGlobalTitle());
+						email.setDkim(currentGlobalContext.getDKIMBean());
 
 						String content = "";
 						StringBuilder sb = new StringBuilder();
