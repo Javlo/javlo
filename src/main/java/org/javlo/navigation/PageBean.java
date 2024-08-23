@@ -549,6 +549,7 @@ public class PageBean implements Serializable {
 		try {
 			return page.isVisible();
 		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
