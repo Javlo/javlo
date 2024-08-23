@@ -1542,9 +1542,7 @@ public class Edit extends AbstractModuleAction {
 
 				int modif = NavigationHelper.publishNavigation(ctx, previewNav, viewNav);
 				//if (modif>0) {
-
 					TaxonomyService.pushPreviewInView(ctx);
-
 					persistenceService.store(viewCtx, ContentContext.VIEW_MODE, false);
 					persistenceService.store(ctx, ContentContext.PREVIEW_MODE, false);
 					globalContext.setPublishDate(new Date());

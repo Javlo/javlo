@@ -103,7 +103,7 @@ public class NavigationHelper {
 		}
 		target.setId(src.getId());
 		target.setName(src.getName());
-		target.setVisible(src.isVisible(ctx));
+		target.setVisible(src.isVisible());
 		try {
 			target.setContent(extractContent(src));
 		} catch (Exception e) {
