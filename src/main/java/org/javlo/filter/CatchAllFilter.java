@@ -133,11 +133,28 @@ public class CatchAllFilter implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain next) throws IOException, ServletException {
-
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		ServletContext servletContext = httpRequest.getSession().getServletContext();
 		CountService.getInstance(servletContext).touch();
+
+		// Récupération du chemin de la requête
+		String path = httpRequest.getRequestURI();
+
+		// Découpage du chemin en segments
+		String[] pathSegments = path.split("/");
+
+		// Vérification de chaque segment
+		for (String segment : pathSegments) {
+			if (segment.startsWith(".")) {
+				// Log de l'erreur de sécurité
+				logger.severe("Security error: Attempt to access hidden file or directory.");
+
+				// Renvoi d'une réponse 404
+				httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
+				return; // Arrête le traitement de la requête
+			}
+		}
 
 
 		if (ALL_COUNT%1000 == 0 && ALL_COUNT > 0) {
