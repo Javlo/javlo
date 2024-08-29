@@ -147,15 +147,16 @@ public class CatchAllFilter implements Filter {
 		// Vérification de chaque segment
 		for (String segment : pathSegments) {
 			if (segment.startsWith(".")) {
-				// Log de l'erreur de sécurité
-				logger.severe("Security error: Attempt to access hidden file or directory.");
+				if (!segment.equals(".well-known")) {
+					// Log de l'erreur de sécurité
+					logger.severe("Security error: Attempt to access hidden file or directory.");
 
-				// Renvoi d'une réponse 404
-				httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
-				return; // Arrête le traitement de la requête
+					// Renvoi d'une réponse 404
+					httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
+					return; // Arrête le traitement de la requête
+				}
 			}
 		}
-
 
 		if (ALL_COUNT%1000 == 0 && ALL_COUNT > 0) {
 			logger.info("IP Blocking status : VALID_IP:"+VALID_IP+"  BLOCK_IP="+BLOCK_IP+ "  [%BLK:"+StringHelper.renderDoubleAsPercentage((double)BLOCK_IP/(double)ALL_COUNT)+"]");
