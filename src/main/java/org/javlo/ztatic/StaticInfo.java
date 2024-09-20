@@ -1738,7 +1738,7 @@ public class StaticInfo implements IRestItem {
 						return imageSize;
 					}
 				}
-				logger.info("load image size for : " + file);
+				logger.fine("load image size for : " + file);
 				imageSize = ImageHelper.getImageSize(file);
 				content.setAttribute(ctx, key, imageSize.storeToString());
 			} catch (Throwable e) {
