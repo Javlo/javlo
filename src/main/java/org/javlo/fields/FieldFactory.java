@@ -43,7 +43,7 @@ public class FieldFactory {
 				}
 			}
 		}
-		logger.warning("field not found : "+type);
+		logger.fine("field not found : "+type);
 		return null;
 	}
 
