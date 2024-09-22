@@ -868,7 +868,8 @@ public class ContentService implements IPrintInfo {
 		synchronized (globalContext.RELEASE_CACHE) {
 			setViewNav(null);
 			globalContext.releaseAllCache();
-			for (GlobalContext subContext : globalContext.getSubContexts()) {
+			Collection<GlobalContext> allSubContext = new LinkedList<>(globalContext.getSubContexts());
+			for (GlobalContext subContext : allSubContext) {
 				subContext.releaseAllCache();
 			}
 			clearComponentCache();
