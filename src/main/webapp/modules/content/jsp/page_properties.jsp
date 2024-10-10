@@ -1,4 +1,4 @@
-<<%@ taglib uri="jakarta.tags.core" prefix="c"%><%@ taglib prefix="fn" uri="jakarta.tags.functions"%><div class="widgetbox page-properties">
+<%@ taglib uri="jakarta.tags.core" prefix="c"%><%@ taglib prefix="fn" uri="jakarta.tags.functions"%><div class="widgetbox page-properties">
 	<h3>
 		<span>${i18n.edit['item.title']}</span>
 	</h3>
