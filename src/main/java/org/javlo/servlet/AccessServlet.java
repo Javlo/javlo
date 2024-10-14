@@ -171,6 +171,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		System.out.println("		\\____/\\_/ \\|\\__/  \\____/\\____/");
 		System.out.println("");
 		System.out.println("");
+		System.out.println("Init Javlo "+IVersion.VERSION);
+		System.out.println("");
 
 		/** JSTL Constant **/
 		getServletContext().setAttribute("BACK_PARAM_NAME", ElementaryURLHelper.BACK_PARAM_NAME);
