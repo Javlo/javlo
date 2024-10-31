@@ -66,6 +66,7 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * @author pvanderm
@@ -3964,9 +3965,21 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			if (user == null) {
 				return false;
 			}
-			Set<String> roles = new HashSet<String>(user.getRoles());
-			roles.retainAll(getUserRoles());
-			if (roles.size() == 0 && !(ctx.getCurrentUser().isEditor() && AdminUserSecurity.getInstance().haveRight(ctx.getCurrentUser(), AdminUserSecurity.CONTENT_ROLE))) {
+
+			// Conversion des rôles de l'utilisateur en minuscules
+			Set<String> userRolesLower = user.getRoles().stream()
+					.map(String::toLowerCase)
+					.collect(Collectors.toSet());
+
+			// Conversion des rôles de la page en minuscules
+			Set<String> pageRolesLower = getUserRoles().stream()
+					.map(String::toLowerCase)
+					.collect(Collectors.toSet());
+
+			// Intersection des deux ensembles
+			userRolesLower.retainAll(pageRolesLower);
+
+			if (userRolesLower.size() == 0 && !(ctx.getCurrentUser().isEditor() && AdminUserSecurity.getInstance().haveRight(ctx.getCurrentUser(), AdminUserSecurity.CONTENT_ROLE))) {
 				return false;
 			}
 		}
