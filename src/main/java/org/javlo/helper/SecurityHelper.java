@@ -1,11 +1,5 @@
 package org.javlo.helper;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Collections;
-import java.util.logging.Logger;
-
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.navigation.MenuElement;
@@ -16,6 +10,13 @@ import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.utils.JSONMap;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Collections;
+import java.util.List;
+import java.util.logging.Logger;
+
 public class SecurityHelper {
 	
 	public static final String USER_CODE_KEY = "__userCode";
@@ -25,13 +26,25 @@ public class SecurityHelper {
 	public static IPasswordEncryption passwordEncrypt = null;
 
 	public static boolean userAccessPage(ContentContext ctx, User user, MenuElement page) {
-		if (AdminUserSecurity.getInstance().isAdmin(user)) {
-			return true;
-		} else if (user != null && !Collections.disjoint(page.getUserRoles(), user.getRoles())) {
-			return true;
-		} else {
+
+		if (user == null && !page.getUserRoles().isEmpty()) {
 			return false;
 		}
+
+		if (AdminUserSecurity.getInstance().isAdmin(user)) {
+			return true;
+		}
+
+		List<String> pageUserRolesLower = page.getUserRoles().stream()
+				.map(String::toLowerCase)
+				.toList();
+
+		List<String> userRolesLower = user.getRoles().stream()
+				.map(String::toLowerCase)
+				.toList();
+
+
+        return !Collections.disjoint(pageUserRolesLower, userRolesLower);
 	}
 	
 	public static boolean checkGoogleRecaptcha(ContentContext ctx, String response) throws MalformedURLException, Exception {
