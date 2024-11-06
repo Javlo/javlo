@@ -999,4 +999,6 @@ Security in case of vulnerabilities.
 ### Modified
 - update mail library to jakarta.mail
 - ## [2.3.2] - 09/08/2024
+### Modified
+- update lib version
 

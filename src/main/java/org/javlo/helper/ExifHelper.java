@@ -1,19 +1,12 @@
 package org.javlo.helper;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.logging.Logger;
-
-import org.apache.commons.imaging.ImageReadException;
-import org.apache.commons.imaging.ImageWriteException;
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.Tag;
 import org.apache.commons.imaging.Imaging;
+import org.apache.commons.imaging.ImagingException;
 import org.apache.commons.imaging.common.ImageMetadata;
 import org.apache.commons.imaging.common.RationalNumber;
 import org.apache.commons.imaging.formats.jpeg.JpegImageMetadata;
@@ -28,11 +21,11 @@ import org.javlo.image.ImageSize;
 import org.javlo.io.TransactionFile;
 import org.javlo.ztatic.StaticInfo.Position;
 
-import com.drew.imaging.ImageMetadataReader;
-import com.drew.imaging.ImageProcessingException;
-import com.drew.metadata.Directory;
-import com.drew.metadata.Metadata;
-import com.drew.metadata.Tag;
+import java.io.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Logger;
 
 public class ExifHelper {
 
@@ -42,7 +35,7 @@ public class ExifHelper {
 		// TODO Auto-generated constructor stub
 	}
 
-	public static Position readPosition(File file) throws ImageReadException, IOException {
+	public static Position readPosition(File file) throws ImagingException, IOException {
 		if (!file.exists()) {
 			logger.warning("file not found : " + file);
 			return null;
@@ -53,7 +46,7 @@ public class ExifHelper {
 				final JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
 				final TiffImageMetadata exifMetadata = jpegMetadata.getExif();
 				if (null != exifMetadata) {
-					final TiffImageMetadata.GPSInfo gpsInfo = exifMetadata.getGPS();
+					final TiffImageMetadata.GpsInfo gpsInfo = exifMetadata.getGpsInfo();
 					if (null != gpsInfo) {
 						final double longitude = gpsInfo.getLongitudeAsDegreesEast();
 						final double latitude = gpsInfo.getLatitudeAsDegreesNorth();
@@ -65,7 +58,7 @@ public class ExifHelper {
 		return null;
 	}
 
-	public static Date readDate(File file) throws ImageReadException, IOException {
+	public static Date readDate(File file) throws ImagingException, IOException {
 		if (!file.exists()) {
 			logger.warning("file not found : " + file);
 			return null;
@@ -74,7 +67,7 @@ public class ExifHelper {
 			final ImageMetadata metadata = Imaging.getMetadata(file);
 			if (metadata instanceof JpegImageMetadata) {
 				final JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
-				final TiffField field = jpegMetadata.findEXIFValueWithExactMatch(ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL);
+				final TiffField field = jpegMetadata.findExifValueWithExactMatch(ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL);
 				if (field != null) {
 					try {
 						final String FORMAT = "yyyy:MM:dd HH:mm:ss";
@@ -92,11 +85,11 @@ public class ExifHelper {
 		return null;
 	}
 
-	public static ImageMetadata readMetadata(final File file) throws ImageReadException, IOException {
+	public static ImageMetadata readMetadata(final File file) throws ImagingException, IOException {
 		return Imaging.getMetadata(file);
 	}
 
-	public static void setExifGPSTag(final File jpegImageFile, final File dst) throws IOException, ImageReadException, ImageWriteException {
+	public static void setExifGPSTag(final File jpegImageFile, final File dst) throws IOException, ImagingException {
 		if (!jpegImageFile.exists()) {
 			logger.warning("file not found : " + jpegImageFile);
 			return;
@@ -127,7 +120,7 @@ public class ExifHelper {
 				final double latitude = 40 + 43 / 60.0; // 40 degrees N (in
 														// Degrees
 
-				outputSet.setGPSInDegrees(longitude, latitude);
+				outputSet.setGpsInDegrees(longitude, latitude);
 			}
 
 			os = new FileOutputStream(dst);
@@ -140,7 +133,7 @@ public class ExifHelper {
 		}
 	}
 
-	public static void changeExifMetadata(final File jpegImageFile, final File dst) throws IOException, ImageReadException, ImageWriteException {
+	public static void changeExifMetadata(final File jpegImageFile, final File dst) throws IOException, ImagingException {
 		if (!jpegImageFile.exists()) {
 			logger.warning("file not found : " + jpegImageFile);
 			return;
@@ -167,7 +160,7 @@ public class ExifHelper {
 			{
 				final double longitude = -74.0;
 				final double latitude = 40 + 43 / 60.0;
-				outputSet.setGPSInDegrees(longitude, latitude);
+				outputSet.setGpsInDegrees(longitude, latitude);
 			}
 			os = new FileOutputStream(dst);
 			os = new BufferedOutputStream(os);
@@ -244,7 +237,7 @@ public class ExifHelper {
 		return null;
 	}
 
-	public static void writeMetadata(ImageMetadata metadata, final File file) throws ImageWriteException, ImageReadException, IOException {
+	public static void writeMetadata(ImageMetadata metadata, final File file) throws ImagingException, IOException {
 		if (metadata == null) {
 			return;
 		}
@@ -285,7 +278,7 @@ public class ExifHelper {
 		}
 	}
 
-	public static void main(String[] args) throws ImageReadException, IOException {
+	public static void main(String[] args) throws ImagingException, IOException {
 		File test = new File("c:/trans/gps.jpg");
 		System.out.println("date : " + readDate(test));
 		System.out.println("date : " + readPosition(test));
