@@ -76,7 +76,7 @@
 <legend>${i18n.edit['user.roles']}</legend>
 <c:forEach var="role" items="${roles}">
 	<c:set var="contains" value="false" />
-	<c:forEach var="userRole" items="${user.roles}">
+	<c:if test="${fn:toLowerCase(userRole) eq fn:toLowerCase(role)}">
  		 <c:if test="${userRole eq role}">
    		 <c:set var="contains" value="true" />
  		 </c:if>

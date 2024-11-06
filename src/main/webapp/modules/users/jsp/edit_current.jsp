@@ -274,7 +274,6 @@
 	</div>
 </fieldset>
 
-
 <div class="form-group btn-group pull-right">
 	<input class="btn btn-default btn-primary btn-color btn-back" type="submit" name="back" value="${i18n.edit['global.back']}" />
 	<input class="btn btn-default" type="submit" name="ok" value="${i18n.edit['global.ok']}" />
