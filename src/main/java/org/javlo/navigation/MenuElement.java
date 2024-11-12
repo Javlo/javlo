@@ -4899,6 +4899,13 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	 * @param strings
 	 */
 	public void setUserRoles(Set<String> roles) {
+		if (roles != null) {
+			Set<String> lowerRoles = new HashSet<String>();
+			for (String role : roles) {
+				lowerRoles.add(role.toLowerCase());
+			}
+			roles = lowerRoles;
+		}
 		userRoles = roles;
 	}
 

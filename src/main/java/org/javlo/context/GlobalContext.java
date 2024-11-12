@@ -3401,7 +3401,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public void setUserRoles(Set<String> roles) {
 		synchronized (properties) {
 			List<String> rolesList = StringHelper.trimList(roles);
-			properties.setProperty("roles", StringHelper.collectionToString(rolesList));
+			properties.setProperty("roles", StringHelper.collectionToString(rolesList).toLowerCase());
 			save();
 		}
 	}
