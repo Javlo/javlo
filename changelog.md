@@ -1001,4 +1001,5 @@ Security in case of vulnerabilities.
 - ## [2.3.2] - 09/08/2024
 ### Modified
 - update lib version
+- all roles as lowercase
 
