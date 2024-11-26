@@ -88,8 +88,6 @@ public class ImageEngine {
 		BufferedImage rotatedImage = null;
 		Graphics2D graphics = null;
 
-		System.out.println("orientation = "+orientation);
-
 		// Handle rotation based on orientation
 		switch (orientation) {
 			case 6: // 90 CW
