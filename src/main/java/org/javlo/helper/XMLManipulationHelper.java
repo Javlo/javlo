@@ -285,6 +285,11 @@ public class XMLManipulationHelper {
      */
     private static int convertHTMLtoJSP(GlobalContext globalContext, Template template, I18nAccess i18nAccess, File htmlFile, File jspFile, Map<String, String> options, List<String> areas, List<String> resources, List<TemplatePlugin> templatePlugins, List<GenericMessage> messages, List<String> ids, boolean isMail, String fontIncluding) throws IOException {
 
+        if (template.isCleanHtml()) {
+            logger.info("clean HTML : "+htmlFile);
+            XHTMLHelper.cleanHTML(htmlFile);
+        }
+
         String templateVersion = StringHelper.getRandomId();
 
         if (fontIncluding.contains("##BASE_URI##")) {
@@ -381,6 +386,20 @@ public class XMLManipulationHelper {
                 ids.add(idValue);
             }
 
+            /* menu */
+            if (template.getMenuContainer() != null) {
+                if ((idValue != null) && (idValue.trim().equals(template.getMenuContainer()))) {
+
+                    String msg = "please define menu renderer in template config (tag: menu of menu.renderer)";
+                    String menuRenderer = template.getMenuRenderer(globalContext);
+                    if (menuRenderer == null) {
+                        remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getCloseStart(), msg);
+                    } else {
+                        remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getCloseStart(),"<jsp:include page=\""+menuRenderer+"\" />");
+                    }
+                }
+            }
+
             /* area */
             for (String area : areas) {
                 String areaValue = getValue(options, AREA_PREFIX + area, area);
@@ -451,7 +470,6 @@ public class XMLManipulationHelper {
                         remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenStart(), "<%if (globalContext.getContentLanguage().size() > 1) {%>");
                         remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getCloseStart(), "<%=XHTMLHelper.renderSelectLanguage(ctx, " + languageJS + ")%>");
                         remplacement.addReplacement(tags[i].getCloseEnd() + 1, tags[i].getCloseEnd() + 1, "<%}%>");
-
                     }
                 }
             }

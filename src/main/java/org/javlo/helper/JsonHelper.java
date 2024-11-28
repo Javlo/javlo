@@ -7,17 +7,18 @@ import org.javlo.helper.json.JavaTimeModule;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Date;
 
 public class JsonHelper {
 
-    public static final String toJson(Object obj) throws JsonProcessingException {
+    public static String toJson(Object obj) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         return mapper.writeValueAsString(obj);
     }
 
-    public static final void toJson(Object obj, Writer writer) throws JsonProcessingException, IOException {
+    public static void toJson(Object obj, Writer writer) throws JsonProcessingException, IOException {
         String text = toJson(obj);
         writer.write(text);
     }
@@ -27,6 +28,23 @@ public class JsonHelper {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule()); // Support for Java 8 Time API
         return mapper.readValue(json, valueType);
+    }
+
+    private static final class bean {
+        private Date now = new Date();
+
+        public Date getNow() {
+            return now;
+        }
+
+        public void setNow(Date now) {
+            this.now = now;
+        }
+    }
+
+
+    public static void main(String[] args) throws JsonProcessingException {
+        System.out.println(toJson(new bean()));
     }
 
 }

@@ -1002,4 +1002,7 @@ Security in case of vulnerabilities.
 ### Modified
 - update lib version
 - all roles as lowercase
+### Added
+- dynamic menu container
+- clean HTML on deploy template (option -> html.clean=true (config.properties))
 

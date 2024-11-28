@@ -1679,26 +1679,25 @@ public class Template implements Comparable<Template> {
 			logger.fine("device renderer found : " + deviceRenderer + " (template:" + getId() + " device:" + device + ")");
 			return deviceRenderer;
 		} else {
-			String defaultRenderer = properties.getString("html.params", getParent().getHTMLFileParams(device));
-			return defaultRenderer;
+			return properties.getString("html.params", getParent().getHTMLFileParams(device));
 		}
 	}
 
-	public String getMenuRenderer(Device device) {
-		String menuRenderer = null;
-		if (device != null) {
-			menuRenderer = properties.getString("menu." + device.getCode(), null);
+	public String getMenuContainer() {
+		String menuContainer = null;
+		menuContainer = properties.getString("menu.container", null);
+		if(menuContainer == null) {
+			menuContainer = getParent().getMenuContainer();
 		}
-		if (menuRenderer != null) {
-			logger.fine("device renderer found : " + menuRenderer + " (template:" + getId() + "");
-		} else {
-			String defaultRenderer = properties.getString("menu", getParent().getMenuRenderer(device));
-			menuRenderer = defaultRenderer;
-		}
+		return menuContainer;
+	}
+
+	public String getMenuRenderer(GlobalContext globalContext) {
+		String menuRenderer = properties.getString("menu.renderer", getParent().getMenuRenderer(globalContext));
 		if (menuRenderer == null) {
 			return null;
 		} else {
-			return menuRenderer;
+			return URLHelper.mergePath(getLocalTemplateTargetFolder(globalContext), menuRenderer);
 		}
 	}
 
@@ -3604,6 +3603,14 @@ public class Template implements Comparable<Template> {
 			return getParent().isBootstrap();
 		} else {
 			return StringHelper.isTrue(properties.getProperty("bootstrap"));
+		}
+	}
+
+	public boolean isCleanHtml() {
+		if (properties.getProperty("html.clean") == null) {
+			return getParent().isBootstrap();
+		} else {
+			return StringHelper.isTrue(properties.getProperty("html.clean"));
 		}
 	}
 

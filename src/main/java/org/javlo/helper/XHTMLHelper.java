@@ -55,6 +55,8 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URLDecoder;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.*;
 import java.util.logging.Level;
@@ -2364,10 +2366,7 @@ public class XHTMLHelper {
 	}
 
 	public static void main(String[] args) throws MalformedURLException, Exception {
-		String testHtml = " <c:if test=\"${param.promo > 9 && param.promo <= 99}\">";
-		Document doc = Jsoup.parse(testHtml, "", Parser.htmlParser());
-		doc.outputSettings().escapeMode(EscapeMode.base);
-		System.out.println("base = "+doc.html());
+		cleanHTML(new File("c:/trans/index.html"));
 	}
 
 	public static String textToXHTMLNewWin(String text) {
@@ -2950,6 +2949,22 @@ public class XHTMLHelper {
 		// Entities.EscapeMode.xhtml.getMap().put('\u00A0', "#160");
 		doc.outputSettings().escapeMode(EscapeMode.xhtml);
 		return doc.outerHtml();
+	}
+
+	public static void cleanHTML(File file) throws IOException {
+		// Vérifie si le fichier existe
+		if (!file.exists()) {
+			throw new IllegalArgumentException("File doesn't exist : " + file.getAbsolutePath());
+		}
+
+		// Lit le contenu du fichier
+		String content = Files.readString(file.toPath());
+
+		// Nettoie le contenu avec la fonction cleanHTML(String)
+		String cleanedContent = cleanHTML(content);
+
+		// Écrase le fichier avec le contenu nettoyé
+		Files.writeString(file.toPath(), cleanedContent, StandardOpenOption.TRUNCATE_EXISTING);
 	}
 
 	public static void compressJS(final File targetFile) throws IOException {

@@ -391,7 +391,7 @@ public class XHTMLNavigationHelper {
 		mainLgCtx.setRequestContentLanguage(mainLgCtx.getLanguage());
 		mainLgCtx.setContentLanguage(mainLgCtx.getLanguage());
 		
-		if (mainLgCtx.getCurrentTemplate() != null && mainLgCtx.getCurrentTemplate().getMenuRenderer(mainLgCtx.getDevice()) != null && !mainLgCtx.isAsEditMode()) {
+		if (mainLgCtx.getCurrentTemplate() != null && mainLgCtx.getCurrentTemplate().getMenuRenderer(ctx.getGlobalContext()) != null && !mainLgCtx.isAsEditMode()) {
 			mainLgCtx.getRequest().setAttribute("fromDepth", fromDepth);
 			mainLgCtx.getRequest().setAttribute("toDepth", toDepth);
 			mainLgCtx.getRequest().setAttribute("onlyVisible", onlyVisible);
@@ -399,7 +399,7 @@ public class XHTMLNavigationHelper {
 			mainLgCtx.getRequest().setAttribute("extended", extended);
 			mainLgCtx.getRequest().setAttribute("image", image);		
 			
-			String jspURL = URLHelper.createStaticTemplateURLWithoutContext(mainLgCtx, mainLgCtx.getCurrentTemplate(), mainLgCtx.getCurrentTemplate().getMenuRenderer(mainLgCtx.getDevice()));
+			String jspURL = URLHelper.createStaticTemplateURLWithoutContext(mainLgCtx, mainLgCtx.getCurrentTemplate(), mainLgCtx.getCurrentTemplate().getMenuRenderer(ctx.getGlobalContext()));
 			
 			return ServletHelper.executeJSP(mainLgCtx, jspURL);			
 		} else {

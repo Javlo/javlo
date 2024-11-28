@@ -68,7 +68,7 @@ public class DefaultTemplate extends Template {
 	}
 
 	@Override
-	public String getMenuRenderer(Device device) {
+	public String getMenuRenderer(GlobalContext globalContext) {
 		return null;
 	}
 
@@ -406,6 +406,11 @@ public class DefaultTemplate extends Template {
 	public boolean isBootstrap() {
 		return false;
 	}
+
+	@Override
+	public boolean isCleanHtml() {
+		return false;
+	}
 	
 	public List<ExtendedColor> getColorList() {
 		return Collections.emptyList();
@@ -539,6 +544,11 @@ public class DefaultTemplate extends Template {
 	
 	@Override
 	public List<String> getDynamicComponentList() {
+		return null;
+	}
+
+	@Override
+	public String getMenuContainer() {
 		return null;
 	}
 	
