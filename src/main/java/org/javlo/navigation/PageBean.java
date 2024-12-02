@@ -124,7 +124,10 @@ public class PageBean implements Serializable {
 			return inPage.getUrl();
 		} else {
 			for (PageBean child : inPage.getChildren()) {
-				return getRealContentUrl(child);
+				String url =  getRealContentUrl(child);
+				if (url != null) {
+					return url;
+				}
 			}
 		}
 		return null;
