@@ -56,7 +56,7 @@ public class Field {
 
 	public static final String TYPE_VAT = "vat";
 
-	protected static List<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "read-only", "large-text", "yes-no", "true-false", TYPE_EMAIL, TYPE_NUMBER, "radio", "list", "list-multi", "registered-list", "file", "validation", STATIC_TEXT, STATIC_TITLE, TYPE_VAT, "hidden" });
+	protected static List<? extends Object> FIELD_TYPES = Arrays.asList(new String[] { "text", "read-only", "large-text", "yes-no", "true-false", TYPE_EMAIL, TYPE_NUMBER, "radio", "list", "list-multi", "registered-list", "file", "validation", STATIC_TEXT, STATIC_TITLE, TYPE_VAT, "date", "hidden" });
 
 	public static String ROLE_COUNT_PART = "count-participants";
 

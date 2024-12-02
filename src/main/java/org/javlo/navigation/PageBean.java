@@ -110,7 +110,26 @@ public class PageBean implements Serializable {
 	public String getUrl() {
 		return URLHelper.createURL(ctx, page);
 	}
-	
+
+	private String getRealContentUrl() throws Exception {
+		return getRealContentUrl(this);
+	}
+
+	/**
+	 * search child with real content and create URL.
+	 * @return
+	 */
+	private String getRealContentUrl(PageBean inPage) throws Exception {
+		if (inPage.getPage().isRealContent(ctx)) {
+			return inPage.getUrl();
+		} else {
+			for (PageBean child : inPage.getChildren()) {
+				return getRealContentUrl(child);
+			}
+		}
+		return null;
+	}
+
 	public String getPreviewUrl() {		
 		return URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE), page);
 	}
@@ -705,6 +724,24 @@ public class PageBean implements Serializable {
 				return linkOn;
 			} else {
 				return getUrl();
+			}
+		}
+	}
+
+	/**
+	 * get the link on the page, if page do not contains real content, the link can be a external link or a link to a ressources.
+	 * @return
+	 * @throws Exception
+	 */
+	public String getRealContentLink() throws Exception {
+		if (page.isRealContent(ctx)) {
+			return getUrl();
+		} else {
+			String linkOn = page.getLinkOn(ctx);
+			if (linkOn != null && linkOn.trim().length() > 0) {
+				return linkOn;
+			} else {
+				return getRealContentUrl();
 			}
 		}
 	}
