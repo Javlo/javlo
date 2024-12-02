@@ -312,6 +312,10 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                     File jspFile = new File(StringHelper.getFileNameWithoutExtension(htmlFile.getAbsolutePath()) + ".jsp");
                     if (!jspFile.exists()) {
                         String html = JSP_HEADER + ResourceHelper.loadStringFromFile(htmlFile);
+                        if (html.contains(Template.PREVIEW_EDIT_CODE) || html.contains(PREVIEW_ATTRIBUTES)) {
+                            properties.setProperty("component.wrapped", "false");
+                            storeProperties();
+                        }
                         html = replaceGroupTags(html);
                         for (Field field : getFields(ctx)) {
                             if (!StringHelper.isEmpty(field.getGroup())) {
