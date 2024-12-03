@@ -1465,6 +1465,9 @@ public class NetHelper {
 	}
 
 	public static boolean isMobile(String userAgent) {
+		if (userAgent == null) {
+			return false;
+		}
 		String cacheKey = userAgent + "-mobile";
 		Boolean outVal = UserAgentCache.get(cacheKey);
 		if (outVal == null) {

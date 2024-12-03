@@ -624,7 +624,7 @@ public class XMLManipulationHelper {
             if (tags[i].getName().equalsIgnoreCase("link")) {
                 String hrefValue = attributes.get("href");
 
-                if ((hrefValue != null) && !hrefValue.contains("${") && (!StringHelper.isURL(hrefValue)) && !hrefValue.toLowerCase().startsWith("https")) {
+                if ((hrefValue != null) && !hrefValue.contains("${") && !hrefValue.toLowerCase().startsWith("javascript:") && (!StringHelper.isURL(hrefValue)) && !hrefValue.toLowerCase().startsWith("https")) {
                     String newLinkGeneratorIf = "<%if (!XHTMLHelper.alreadyInserted(ctx, \"" + hrefValue + "\")) {%>";
                     resources.add(hrefValue);
                     String templateVersionCode = "null";
@@ -639,7 +639,7 @@ public class XMLManipulationHelper {
             /* form action */
             if (tags[i].getName().equalsIgnoreCase("form")) {
                 String actionValue = attributes.get("action");
-                if ((actionValue != null) && (!StringHelper.isURL(actionValue)) && !actionValue.contains("${")) {
+                if ((actionValue != null) && (!StringHelper.isURL(actionValue)) && !actionValue.contains("${") && !actionValue.toLowerCase().startsWith("javascript:") ) {
                     attributes.put("action", "<%=URLHelper.createURL(ctx,\"" + actionValue + "\")%>");
                     remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].toString());
                 }
@@ -668,7 +668,7 @@ public class XMLManipulationHelper {
             if (tags[i].getName().equalsIgnoreCase("a")) {
                 String hrefValue = attributes.get("href");
                 if (hrefValue != null) {
-                    if (!hrefValue.startsWith("#") && !hrefValue.startsWith("?") && !hrefValue.startsWith("${")) {
+                    if (!hrefValue.startsWith("#") && !hrefValue.startsWith("?") && !hrefValue.startsWith("${") && !hrefValue.toLowerCase().startsWith("javascript:")) {
                         if (hrefValue.toLowerCase().startsWith("rss")) {
                             String channel = "";
                             if (hrefValue.contains(":")) {
@@ -829,7 +829,7 @@ public class XMLManipulationHelper {
                     // restore https because sometime template contains
                     // reference to https://ajax.googlecode.com...
                     String newLinkGeneratorIf = "<%if (!XHTMLHelper.alreadyInserted(ctx, \"" + srcValue + "\")) {%>";
-                    if (!StringHelper.isURL(srcValue) && !srcValue.trim().startsWith("${")) {
+                    if (!StringHelper.isURL(srcValue) && !srcValue.trim().startsWith("${") && !srcValue.toLowerCase().startsWith("javascript:")) {
                         attributes.put("src", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + srcValue + "\")%>");
                     }
                     remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, newLinkGeneratorIf + tags[i].toString() + "<%}%>");
@@ -839,7 +839,7 @@ public class XMLManipulationHelper {
                     }
                     // }
                 } else {
-                    if (!StringHelper.isURL(attributes.get("src")) && !attributes.get("src").contains("${")) {
+                    if (!StringHelper.isURL(attributes.get("src")) && !attributes.get("src").contains("${") && !attributes.get("src").toLowerCase().startsWith("javascript:")) {
                         attributes.put("src", "<%=URLHelper.createStaticTemplateURL(ctx,\"/" + srcValue + "\")%>");
                     }
                     remplacement.addReplacement(tags[i].getOpenStart(), tags[i].getOpenEnd() + 1, tags[i].toString());

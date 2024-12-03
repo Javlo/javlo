@@ -2700,7 +2700,7 @@ public class XHTMLHelper {
 					String hrefValue = tag.getAttributes().get("href");
 					if (hrefValue != null) {
 						hrefValue = hrefValue.trim();
-						if (!hrefValue.startsWith("#") && !hrefValue.startsWith("${")) {
+						if (!hrefValue.startsWith("#") && !hrefValue.startsWith("${") && !hrefValue.toLowerCase().startsWith("javascript:")) {
 							if (hrefValue.startsWith("page:")) {
 								String pageName = hrefValue.substring("page:".length());
 								String params = "";
@@ -2731,7 +2731,7 @@ public class XHTMLHelper {
 									hrefValue = URLHelper.createRSSURL(ctx, channel);
 									tag.getAttributes().put("href", hrefValue);
 								}
-							} else if (!StringHelper.isURL(hrefValue) && (!StringHelper.isMailURL(hrefValue)) && !hrefValue.contains("${") && !ResourceHelper.isResourceURL(ctx, hrefValue) && !ResourceHelper.isTransformURL(ctx, hrefValue)) {
+							} else if (!StringHelper.isURL(hrefValue) && (!StringHelper.isMailURL(hrefValue)) && !hrefValue.contains("${") && !hrefValue.toLowerCase().startsWith("javascript:") && !ResourceHelper.isResourceURL(ctx, hrefValue) && !ResourceHelper.isTransformURL(ctx, hrefValue)) {
 								String url = URLHelper.removeParam(hrefValue);
 								String params = URLHelper.getParamsAsString(hrefValue);
 								if (ctx == null) {
@@ -2747,7 +2747,7 @@ public class XHTMLHelper {
 				} else if (tag.getName().equalsIgnoreCase("img")) {
 					String src = tag.getAttribute("src", null);
 					if (src != null) {
-						if (!StringHelper.isURL(src) && !src.startsWith("${")) { // relative path
+						if (!StringHelper.isURL(src) && !src.startsWith("${") && !src.toLowerCase().startsWith("javascript:")) { // relative path
 							String urlPrefix = URLHelper.mergePath("/", ctx.getRequest().getContextPath(), ctx.getPathPrefix(), "/");
 							if (src.startsWith(urlPrefix)) {
 								InfoBean info = InfoBean.getCurrentInfoBean(ctx);
@@ -2782,7 +2782,7 @@ public class XHTMLHelper {
 				String hrefValue = item.attr("href");
 				if (hrefValue != null && !hrefValue.startsWith("\\")) {
 					hrefValue = hrefValue.trim();
-					if (!hrefValue.startsWith("#") && !hrefValue.startsWith("${")) {
+					if (!hrefValue.startsWith("#") && !hrefValue.startsWith("${") && !hrefValue.toLowerCase().startsWith("javascript:")) {
 						if (hrefValue.startsWith("page:")) {
 							String pageName = hrefValue.substring("page:".length());
 							String params = "";
@@ -2817,7 +2817,7 @@ public class XHTMLHelper {
 								hrefValue = URLHelper.createRSSURL(ctx, channel);
 								item.attr("href", hrefValue);
 							}
-						} else if (!StringHelper.isURL(hrefValue) && (!StringHelper.isMailURL(hrefValue)) && !hrefValue.contains("${") && !ResourceHelper.isResourceURL(ctx, hrefValue) && !ResourceHelper.isTransformURL(ctx, hrefValue)) {
+						} else if (!StringHelper.isURL(hrefValue) && (!StringHelper.isMailURL(hrefValue)) && !hrefValue.contains("${") && !hrefValue.toLowerCase().startsWith("javascript:") && !ResourceHelper.isResourceURL(ctx, hrefValue) && !ResourceHelper.isTransformURL(ctx, hrefValue)) {
 							String url = URLHelper.removeParam(hrefValue);
 							String params = URLHelper.getParamsAsString(hrefValue);
 							if (ctx == null) {
