@@ -11,7 +11,6 @@ import org.javlo.component.title.MenuTitle;
 import org.javlo.component.title.PageTitle;
 import org.javlo.component.title.SubTitle;
 import org.javlo.context.ContentContext;
-import org.javlo.helper.XHTMLHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 
@@ -439,7 +438,7 @@ public class ContentElementList implements IContentComponentsList {
 		return getTitle(ctx, false);
 	}
 
-	private String getTitle(ContentContext ctx, boolean repeat) {
+	private String  getTitle(ContentContext ctx, boolean repeat) {
 
 		String res = "";
 		Iterator<IContentVisualComponent> elems = contentElements.iterator();
@@ -525,13 +524,13 @@ public class ContentElementList implements IContentComponentsList {
 					}
 				}
 			}
-		} else {
+		}/* else {
 			try {
 				res = XHTMLHelper.replaceJSTLData(ctx, res);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
+		}*/
 
 		return res;
 	}
