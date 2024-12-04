@@ -1005,4 +1005,5 @@ Security in case of vulnerabilities.
 ### Added
 - dynamic menu container
 - clean HTML on deploy template (option -> html.clean=true (config.properties))
+- black and white image filter
 

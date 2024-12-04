@@ -1731,11 +1731,6 @@ public class ImageEngine {
 
 	/**
 	 * combine two color with transparency on first
-	 * 
-	 * @param c1
-	 *            front color
-	 * @param c2
-	 *            back color
 	 */
 	public static Color combineColor(Color color1, Color color2) {
 		return combineColor(color1, color2, ((float) color1.getAlpha()) / 255);
@@ -1907,7 +1902,7 @@ public class ImageEngine {
 	/**
 	 * add picture border (transform portrait (phone picture) to landscape).
 	 * 
-	 * @param image
+	 * @param source
 	 * @backgroundColors background color (under border)
 	 * @return
 	 */
@@ -2173,7 +2168,6 @@ public class ImageEngine {
 	 * 
 	 * @param image
 	 * @param bg
-	 * @param with
 	 * @param direction
 	 *            null=all 1=top 2=right 3=bottom 4=left
 	 * @return
@@ -2205,10 +2199,10 @@ public class ImageEngine {
 	}
 
 	public static void main(String[] args) throws Exception {
-		File jpg = new File("c:/trans/vertical2.jpg");
+		File jpg = new File("c:/trans/test.jpg");
 		BufferedImage img = ImageEngine.loadImage(jpg);
-		img = ImageEngine.duplicateBuffuredImage(img);
-		ImageIO.write(img, "jpg", new File("c:/trans/vertical_out.jpg"));
+		img = ImageEngine.convertToBlackAndWhite(img);
+		ImageIO.write(img, "jpg", new File("c:/trans/out.jpg"));
 	}
 
 	public static BufferedImage convertRGBAToIndexed(BufferedImage src) {
@@ -2239,6 +2233,40 @@ public class ImageEngine {
 			}
 			return outImage;
 		}
+	}
+
+	/**
+	 * Converts a BufferedImage to a binary black-and-white image.
+	 * @param inputImage the BufferedImage to be converted.
+	 * @return a new BufferedImage containing only black and white pixels.
+	 */
+	public static BufferedImage convertToBlackAndWhite(BufferedImage inputImage) {
+		// Create a new image with the same dimensions and type
+		BufferedImage blackAndWhiteImage = new BufferedImage(
+				inputImage.getWidth(),
+				inputImage.getHeight(),
+				BufferedImage.TYPE_BYTE_BINARY
+		);
+
+		// Iterate through each pixel of the image
+		for (int y = 0; y < inputImage.getHeight(); y++) {
+			for (int x = 0; x < inputImage.getWidth(); x++) {
+				// Get the color of the current pixel
+				Color color = new Color(inputImage.getRGB(x, y));
+
+				// Calculate the luminance (grayscale value)
+				int luminance = (int) (0.299 * color.getRed() +
+						0.587 * color.getGreen() +
+						0.114 * color.getBlue());
+
+				// Determine if the pixel should be black or white
+				int binaryColor = luminance < 128 ? Color.BLACK.getRGB() : Color.WHITE.getRGB();
+
+				// Set the pixel in the new image
+				blackAndWhiteImage.setRGB(x, y, binaryColor);
+			}
+		}
+		return blackAndWhiteImage;
 	}
 
 	private static BufferedImage makeTransparent(BufferedImage image, int x, int y) {

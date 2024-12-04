@@ -679,6 +679,13 @@ public class ImageTransformServlet extends FileServlet {
 			logger.warning(e.getMessage());
 		}
 
+		if (config.isBlackAndWhite(device, filter, area)) {
+			System.out.println("################# isBlackAndWhite #################");
+			img = ImageEngine.convertToBlackAndWhite(img);
+		} else {
+			System.out.println("################# !!!!!!!!!!!!!!! isBlackAndWhite !!!!!!!!!!!!!!! #################");
+		}
+
 		/** if add image border and vertical image >> add image border **/
 		if (config.isAddImageBorder(device, filter, area) && img.getWidth() < img.getHeight()) {
 			Color bgc = config.getBGColor(device, filter, area);
@@ -727,6 +734,7 @@ public class ImageTransformServlet extends FileServlet {
 		if (config.isRemoveBg(device, filter, area)) {
 			img = ImageEngine.removeBg(globalContext, img);
 		}
+
 		float contrast = config.getConstrast(device, filter, area);
 		float brightness = config.getBrightness(device, filter, area);
 		if (contrast != 1 || brightness != 1) {

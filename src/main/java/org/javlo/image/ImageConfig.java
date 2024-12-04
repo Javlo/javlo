@@ -1,24 +1,7 @@
 package org.javlo.image;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Logger;
-
-import javax.imageio.ImageIO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -27,6 +10,16 @@ import org.javlo.rendering.Device;
 import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.template.Template;
 import org.javlo.utils.ConfigurationProperties;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Logger;
 
 public class ImageConfig {
 
@@ -618,6 +611,11 @@ public class ImageConfig {
 	public boolean isAddBorder(Device device, String filter, String area) {
 		String key = getKey(device, filter, area, "add-border");
 		return properties.getBoolean(key, device != null ? isAddBorder(null, ALL, null) : false);
+	}
+
+	public boolean isBlackAndWhite(Device device, String filter, String area) {
+		String key = getKey(device, filter, area, "black-and-white");
+		return properties.getBoolean(key, device != null ? isBlackAndWhite(null, ALL, null) : false);
 	}
 
 	public boolean isAddImageBorder(Device device, String filter, String area) {
