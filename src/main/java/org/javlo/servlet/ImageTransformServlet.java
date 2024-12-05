@@ -679,13 +679,10 @@ public class ImageTransformServlet extends FileServlet {
 			logger.warning(e.getMessage());
 		}
 
-		if (config.isBlackAndWhite(device, filter, area)) {
-			System.out.println("################# isBlackAndWhite #################");
+		if (config.isBlackAndWhite(device, filter, area)) {			
 			img = ImageEngine.convertToBlackAndWhite(img);
-		} else {
-			System.out.println("################# !!!!!!!!!!!!!!! isBlackAndWhite !!!!!!!!!!!!!!! #################");
 		}
-
+		
 		/** if add image border and vertical image >> add image border **/
 		if (config.isAddImageBorder(device, filter, area) && img.getWidth() < img.getHeight()) {
 			Color bgc = config.getBGColor(device, filter, area);

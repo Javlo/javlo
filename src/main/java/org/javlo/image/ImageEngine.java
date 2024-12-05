@@ -2199,10 +2199,10 @@ public class ImageEngine {
 	}
 
 	public static void main(String[] args) throws Exception {
-		File jpg = new File("c:/trans/test.jpg");
+		File jpg = new File("c:/trans/test_nobg.png");
 		BufferedImage img = ImageEngine.loadImage(jpg);
 		img = ImageEngine.convertToBlackAndWhite(img);
-		ImageIO.write(img, "jpg", new File("c:/trans/out.jpg"));
+		ImageIO.write(img, "png", new File("c:/trans/out.png"));
 	}
 
 	public static BufferedImage convertRGBAToIndexed(BufferedImage src) {
@@ -2236,25 +2236,35 @@ public class ImageEngine {
 	}
 
 	/**
-	 * Converts a BufferedImage to a binary black-and-white image.
+	 * Converts a BufferedImage to a binary black-and-white image while preserving transparency.
 	 * @param inputImage the BufferedImage to be converted.
-	 * @return a new BufferedImage containing only black and white pixels.
+	 * @return a new BufferedImage containing only black and white pixels with transparency preserved.
 	 */
 	public static BufferedImage convertToBlackAndWhite(BufferedImage inputImage) {
 		// Create a new image with the same dimensions and type
 		BufferedImage blackAndWhiteImage = new BufferedImage(
 				inputImage.getWidth(),
 				inputImage.getHeight(),
-				BufferedImage.TYPE_BYTE_BINARY
+				BufferedImage.TYPE_INT_ARGB // ARGB type to support transparency
 		);
 
 		// Iterate through each pixel of the image
 		for (int y = 0; y < inputImage.getHeight(); y++) {
 			for (int x = 0; x < inputImage.getWidth(); x++) {
 				// Get the color of the current pixel
-				Color color = new Color(inputImage.getRGB(x, y));
+				int pixel = inputImage.getRGB(x, y);
 
-				// Calculate the luminance (grayscale value)
+				// Extract the alpha value (transparency)
+				int alpha = (pixel >> 24) & 0xff;
+
+				// If the pixel is fully transparent, keep it transparent
+				if (alpha == 0) {
+					blackAndWhiteImage.setRGB(x, y, pixel);
+					continue;
+				}
+
+				// Extract the RGB components
+				Color color = new Color(pixel, true);
 				int luminance = (int) (0.299 * color.getRed() +
 						0.587 * color.getGreen() +
 						0.114 * color.getBlue());
@@ -2262,12 +2272,16 @@ public class ImageEngine {
 				// Determine if the pixel should be black or white
 				int binaryColor = luminance < 128 ? Color.BLACK.getRGB() : Color.WHITE.getRGB();
 
+				// Combine the alpha value with the binary color
+				int finalColor = (alpha << 24) | (binaryColor & 0x00ffffff);
+
 				// Set the pixel in the new image
-				blackAndWhiteImage.setRGB(x, y, binaryColor);
+				blackAndWhiteImage.setRGB(x, y, finalColor);
 			}
 		}
 		return blackAndWhiteImage;
 	}
+
 
 	private static BufferedImage makeTransparent(BufferedImage image, int x, int y) {
 		ColorModel cm = image.getColorModel();
