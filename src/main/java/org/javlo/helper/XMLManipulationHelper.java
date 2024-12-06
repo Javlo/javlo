@@ -1095,6 +1095,8 @@ public class XMLManipulationHelper {
             out.newLine();
             out.append("var actionUrl = '<%=URLHelper.createActionURL(ctx, \"\")%>';");
             out.newLine();
+            out.append("var rootTemplateUrl = '${info.rootTemplateURL}';");
+            out.newLine();
             out.append("-->");
             out.newLine();
             out.append("</script>");
