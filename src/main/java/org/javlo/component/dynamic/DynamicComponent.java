@@ -257,6 +257,35 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
         return sb.toString();
     }
 
+    /**
+     * Parses an HTML file to extract configuration key-value pairs from a specific comment.
+     * @param htmlContent the content of the HTML file as a string.
+     * @return a Map containing key-value pairs, or null if the comment is not found.
+     */
+    public static Map<String, String> parseConfigComment(String htmlContent) {
+        // Define the regex pattern to find the config comment
+        Pattern commentPattern = Pattern.compile("<!--config (.*?) --!>", Pattern.DOTALL);
+        Matcher matcher = commentPattern.matcher(htmlContent);
+
+        if (matcher.find()) {
+            // Extract the content inside the comment
+            String configContent = matcher.group(1).trim();
+
+            // Split the content into key-value pairs and populate the map
+            Map<String, String> configMap = new HashMap<>();
+            String[] keyValuePairs = configContent.split("\\s+"); // Split by whitespace
+
+            for (String pair : keyValuePairs) {
+                String[] keyValue = pair.split("=", 2); // Split into key and value
+                if (keyValue.length == 2) {
+                    configMap.put(keyValue[0], keyValue[1]);
+                }
+            }
+            return configMap;
+        }
+        return null; // Return null if no config comment is found
+    }
+
     public String getViewXHTMLCode(ContentContext ctx, boolean asList) throws Exception {
         ctx.getRequest().setAttribute("page", new PageBean(ctx, getContainerPage(ctx)));
         ctx.getRequest().setAttribute("containerId", getId());
@@ -312,6 +341,13 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                     File jspFile = new File(StringHelper.getFileNameWithoutExtension(htmlFile.getAbsolutePath()) + ".jsp");
                     if (!jspFile.exists()) {
                         String html = JSP_HEADER + ResourceHelper.loadStringFromFile(htmlFile);
+                        Map<String, String> htmlConfig = parseConfigComment(html);
+                        if (htmlConfig != null) {
+                            for (Map.Entry<String, String> entry : htmlConfig.entrySet()) {
+                                properties.setProperty(entry.getKey(), entry.getValue());
+                            }
+                            storeProperties();
+                        }
                         if (html.contains(Template.PREVIEW_EDIT_CODE) || html.contains(PREVIEW_ATTRIBUTES)) {
                             properties.setProperty("component.wrapped", "false");
                             storeProperties();

@@ -83,11 +83,14 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 					</div>
 				</c:if> <c:if test="${page.url eq info.currentURL}">
 					<c:if test="${userInterface.navigation}">
-						<li class="page-item add-page page-depth-${page.depth}"><form id="form-add-page" action="${info.currentURL}" method="post">
+						<li class="page-item add-page page-depth-${page.depth}"><form class="button-form" id="form-add-page" action="${info.currentURL}" method="post">
 								<input type="hidden" name="webaction" value="edit.addPage" />
-								<button class="flex-line btn-full" name="auto-name" type="submit">
-									<span>${i18n.edit['navigation.add-page']}...</span> <i class="fa fa-plus-circle"></i>
-								</button>
+
+									<input name="name" placeholder="${i18n.edit['navigation.add-page']}" type="text" />
+									<button type="submit">
+									<i class="fa fa-plus-circle"></i>
+									</button>
+
 							</form></li>
 					</c:if>
 				</c:if></li>
@@ -110,12 +113,15 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 
 				<c:if test="${child.url eq info.currentURL}">
 					<c:if test="${userInterface.navigation}">
-						<li class="page-item add-page page-depth-${child.depth}"><form id="form-add-page" action="${info.currentURL}" method="post">
-								<input type="hidden" name="webaction" value="edit.addPage" />
-								<button class="flex-line btn-full" name="auto-name" type="submit">
-									<span>${i18n.edit['navigation.add-page']}...</span> <i class="fa fa-plus-circle"></i>
-								</button>
-							</form></li>
+						<li class="page-item add-page page-depth-${page.depth}"><form class="button-form" id="form-add-page" action="${info.currentURL}" method="post">
+							<input type="hidden" name="webaction" value="edit.addPage" />
+
+							<input name="name" placeholder="${i18n.edit['navigation.add-page']}" type="text" />
+							<button type="submit">
+								<i class="fa fa-plus-circle"></i>
+							</button>
+
+						</form></li>
 					</c:if>
 				</c:if>
 

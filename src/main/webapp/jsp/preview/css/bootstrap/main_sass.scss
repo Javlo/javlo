@@ -29,6 +29,22 @@ $header-height: 40px;
 	color: var(--javlo-ui-btn-text-inactive);
 }
 
+#preview_command .button-form {
+	display: flex;
+	border: 1px dashed var(--javlo-ui-special-action-color);
+	border-radius: 3px;
+	height: 30px;
+	line-height: 30px;
+	padding: 0 calc(var(--javlo-main-separator) / 2);
+	input {
+		flex-grow: 4;
+		color: var(--javlo-ui-special-action-color);
+	}
+	button {
+		color: var(--javlo-ui-special-action-color);
+	}
+}
+
 #preview_command ._jv_menu i {
 	font-size: 12px;
 	line-height: 26px;

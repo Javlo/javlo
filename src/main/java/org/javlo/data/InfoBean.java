@@ -1538,7 +1538,7 @@ public class InfoBean {
 	}
 
 	/**
-	 * timestamp initialised when java VM is staded.
+	 * timestamp initialised when java VM is started.
 	 * 
 	 * @return
 	 */
