@@ -3,6 +3,20 @@
  */
 package org.javlo.component.links;
 
+import org.javlo.component.core.AbstractVisualComponent;
+import org.javlo.component.image.IImageTitle;
+import org.javlo.component.image.ImageBean;
+import org.javlo.context.ContentContext;
+import org.javlo.exception.ResourceNotFoundException;
+import org.javlo.helper.*;
+import org.javlo.i18n.I18nAccess;
+import org.javlo.navigation.MenuElement;
+import org.javlo.navigation.PageBean;
+import org.javlo.service.RequestService;
+import org.javlo.user.AdminUserFactory;
+import org.javlo.user.User;
+import org.javlo.utils.HtmlPart;
+
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -11,25 +25,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.javlo.component.core.AbstractVisualComponent;
-import org.javlo.component.image.IImageTitle;
-import org.javlo.component.image.ImageBean;
-import org.javlo.context.ContentContext;
-import org.javlo.context.ContentContextBean;
-import org.javlo.exception.ResourceNotFoundException;
-import org.javlo.helper.MacroHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLBootstrapFormBuilder;
-import org.javlo.helper.XHTMLHelper;
-import org.javlo.i18n.I18nAccess;
-import org.javlo.navigation.MenuElement;
-import org.javlo.navigation.PageBean;
-import org.javlo.service.RequestService;
-import org.javlo.user.AdminUserFactory;
-import org.javlo.user.User;
-import org.javlo.utils.HtmlPart;
 
 /**
  * @author pvandermaesen
@@ -74,7 +69,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			return child.getId();
 		}
 
-		public boolean isLastSelected() {
+		public boolean isLastajSelected() {
 			return child.equals(currentPage);
 		}
 
