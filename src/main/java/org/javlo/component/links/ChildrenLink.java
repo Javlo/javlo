@@ -69,7 +69,7 @@ public class ChildrenLink extends AbstractVisualComponent implements IImageTitle
 			return child.getId();
 		}
 
-		public boolean isLastajSelected() {
+		public boolean isLastSelected() {
 			return child.equals(currentPage);
 		}
 
