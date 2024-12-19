@@ -158,14 +158,16 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 					ctx.setVirtualCurrentPage(getPage()); 
 					String area = ctx.getArea();
 					String path = ctx.getPath();
+					String lang = ctx.getRequestContentLanguage();
 					MenuElement currentPage = ctx.getCurrentPage();
 					Template pageTemplate = TemplateFactory.getTemplate(ctx, page);
 					if (!pageTemplate.getAreas().contains(area)) {
 						ctx.setVirtualArea(area);
 						ctx.setArea(ComponentBean.DEFAULT_AREA);
 						ctx.getRequest().setAttribute(ContentContext.CHANGE_AREA_ATTRIBUTE_NAME, ComponentBean.DEFAULT_AREA);
-					}					
+					}
 					ctx.setPath(page.getPath());
+					ctx.setRequestContentLanguage(ctx.getContextWithContent(page).getRequestContentLanguage());
 					RequestService rs = RequestService.getInstance(ctx.getRequest());					
 					rs.setParameter(NOT_EDIT_PREVIEW_PARAM_NAME, "true");
 					rs.setParameter(CACHE_KEY_SUFFIX_PARAM_NAME, getPage().getId());
@@ -176,6 +178,7 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 					ctx.setArea(area);
 					ctx.setVirtualArea(null);
 					ctx.setPath(path);
+					ctx.setRequestContentLanguage(lang);
 					ctx.setCurrentPageCached(currentPage);
 					ctx.getRequest().setAttribute("xhtml", xhtml);
 				}
