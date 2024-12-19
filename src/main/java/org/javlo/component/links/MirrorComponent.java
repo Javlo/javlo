@@ -3,28 +3,10 @@
  */
 package org.javlo.component.links;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.logging.Logger;
-
-import org.javlo.component.core.AbstractVisualComponent;
-import org.javlo.component.core.ComponentBean;
-import org.javlo.component.core.ComponentFactory;
-import org.javlo.component.core.IContentVisualComponent;
-import org.javlo.component.core.ISubTitle;
+import org.javlo.component.core.*;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.image.IImageTitle;
 import org.javlo.context.ContentContext;
-import org.javlo.context.ContentContextBean;
 import org.javlo.fields.Field;
 import org.javlo.fields.IFieldContainer;
 import org.javlo.helper.NetHelper;
@@ -36,6 +18,13 @@ import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.utils.JSONMap;
 import org.javlo.utils.StructuredProperties;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * @author pvandermaesen
@@ -275,9 +264,6 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 	}
 	
 
-	/**
-	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
-	 */
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		if (changeAndGetMirrorinDepth(ctx) > 20) {
@@ -680,10 +666,10 @@ public class MirrorComponent extends AbstractVisualComponent implements IFieldCo
 			e.printStackTrace();
 		}
 		
-		System.out.println(">>>>>>>>> MirrorComponent.isRealContent : context : "+ctx.getGlobalContext().getContextKey()); //TODO: remove debug trace
+		/*System.out.println(">>>>>>>>> MirrorComponent.isRealContent : context : "+ctx.getGlobalContext().getContextKey()); //TODO: remove debug trace
 		System.out.println(">>>>>>>>> MirrorComponent.isRealContent : FALSE"); //TODO: remove debug trace
 		System.out.println(">>>>>>>>> MirrorComponent.isRealContent : url : "+ctx.getRequest().getRequestURL()); //TODO: remove debug trace
-		System.out.println(">>>>>>>>> MirrorComponent.isRealContent : comp = "+comp); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> MirrorComponent.isRealContent : comp = "+comp); //TODO: remove debug trace*/
 		
 		return false;
 	}

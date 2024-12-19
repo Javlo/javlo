@@ -3,14 +3,6 @@
  */
 package org.javlo.component.links;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Logger;
-
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ContentElementList;
@@ -29,6 +21,14 @@ import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * display the list of component create in content area of a other page in place
@@ -147,9 +147,6 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 		return TYPE;
 	}
 
-	/**
-	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
-	 */
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {		
 		MenuElement page = getMirrorPage(ctx);
@@ -211,10 +208,11 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 
 	private List<ComponentBean> getCopiedPageContent(ContentContext ctx) throws Exception {
 		List<ComponentBean> outBeans = new LinkedList<ComponentBean>();
-		MenuElement copiedPage = getMirrorPage(ctx);		
-		ContentElementList content = copiedPage.getContent(ctx);
-		while (content.hasNext(ctx)) {
-			outBeans.add(new ComponentBean(content.next(ctx).getComponentBean()));
+		MenuElement copiedPage = getMirrorPage(ctx);
+		ContentContext ctxWithContent = ctx.getContextWithContent(copiedPage);
+		ContentElementList content = copiedPage.getContent(ctxWithContent);
+		while (content.hasNext(ctxWithContent)) {
+			outBeans.add(new ComponentBean(content.next(ctxWithContent).getComponentBean()));
 		}
 		return outBeans;
 	}
