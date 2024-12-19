@@ -34,12 +34,15 @@ public class StaticFileBean extends FieldBean {
 			super(ctx);
 		}
 		
-		public String getPreviewUrl() {
-			if ( FieldFile.this.getCurrentFile() == null || FieldFile.this.getCurrentFile().trim().length() == 0) {
+		public String getPreviewUrl() throws Exception {
+
+			FieldFile refField = (FieldFile)FieldFile.this.getReference(ctx);
+
+			if ( refField.getCurrentFile() == null || refField.getCurrentFile().trim().length() == 0) {
 				return null;
 			}
-			String relativePath = URLHelper.mergePath(FieldFile.this.getFileTypeFolder(), FieldFile.this.getCurrentFolder());
-			String fileURL = URLHelper.mergePath(relativePath, FieldFile.this.getCurrentFile());
+			String relativePath = URLHelper.mergePath(refField.getFileTypeFolder(), refField.getCurrentFolder());
+			String fileURL = URLHelper.mergePath(relativePath, refField.getCurrentFile());
 			try {
 				return URLHelper.createTransformURL(ctx, '/' + fileURL, getImageFilter());
 			} catch (Exception e) {			
@@ -49,16 +52,19 @@ public class StaticFileBean extends FieldBean {
 		}
 		
 		@Deprecated
-		public String getPreviewURL() {
+		public String getPreviewURL() throws Exception {
 			return getPreviewUrl();
 		}
 		
-		public String getResourceUrl() {
-			if ( FieldFile.this.getCurrentFile() == null || FieldFile.this.getCurrentFile().trim().length() == 0) {
+		public String getResourceUrl() throws Exception {
+
+			FieldFile refField = (FieldFile)FieldFile.this.getReference(ctx);
+
+			if ( refField.getCurrentFile() == null || refField.getCurrentFile().trim().length() == 0) {
 				return null;
 			}
-			String relativePath = URLHelper.mergePath(FieldFile.this.getFileTypeFolder(), FieldFile.this.getCurrentFolder());
-			String fileURL = URLHelper.mergePath(relativePath, FieldFile.this.getCurrentFile());
+			String relativePath = URLHelper.mergePath(refField.getFileTypeFolder(), refField.getCurrentFolder());
+			String fileURL = URLHelper.mergePath(relativePath, refField.getCurrentFile());
 			try {
 				return URLHelper.createResourceURL(ctx, '/' + fileURL);
 			} catch (Exception e) {			
@@ -68,7 +74,7 @@ public class StaticFileBean extends FieldBean {
 		}
 		
 		@Deprecated
-		public String getResourceURL() {
+		public String getResourceURL() throws Exception {
 			return getResourceUrl();
 		}
 		
@@ -89,12 +95,14 @@ public class StaticFileBean extends FieldBean {
 		}
 		
 		public String getViewXHTMLCode() throws Exception {
-			return FieldFile.this.getViewXHTMLCode(ctx);
+			FieldFile refField = (FieldFile)FieldFile.this.getReference(ctx);
+			return refField.getViewXHTMLCode(ctx);
 		}
 		
 		public StaticInfo getStaticInfo() throws Exception {
-			String relativePath = URLHelper.mergePath(FieldFile.this.getFileTypeFolder(), FieldFile.this.getCurrentFolder());
-			String fileURL = URLHelper.mergePath(relativePath, FieldFile.this.getCurrentFile());
+			FieldFile refField = (FieldFile)FieldFile.this.getReference(ctx);
+			String relativePath = URLHelper.mergePath(refField.getFileTypeFolder(), refField.getCurrentFolder());
+			String fileURL = URLHelper.mergePath(relativePath, refField.getCurrentFile());
 			File file = new File(URLHelper.mergePath(URLHelper.mergePath(ctx.getGlobalContext().getStaticFolder(), fileURL)));
 			return StaticInfo.getInstance(ctx, file);
 		}

@@ -1,11 +1,5 @@
 package org.javlo.fields;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
@@ -14,6 +8,8 @@ import org.javlo.helper.XHTMLHelper;
 import org.javlo.module.file.FileBean;
 import org.javlo.ztatic.StaticInfo;
 import org.javlo.ztatic.StaticInfoBean;
+
+import java.io.*;
 
 public class FieldImage extends FieldFile {
 	
@@ -25,12 +21,15 @@ public class FieldImage extends FieldFile {
 			super(ctx);
 		}
 		
-		public String getPreviewUrl() {
-			if ( FieldImage.this.getCurrentFile() == null || FieldImage.this.getCurrentFile().trim().length() == 0) {
+		public String getPreviewUrl() throws Exception {
+
+			FieldImage refField = (FieldImage)FieldImage.this.getReference(ctx);
+
+			if ( refField.getCurrentFile() == null || refField.getCurrentFile().trim().length() == 0) {
 				return null;
 			}
-			String relativePath = URLHelper.mergePath(FieldImage.this.getFileTypeFolder(), FieldImage.this.getCurrentFolder());
-			String fileURL = URLHelper.mergePath(relativePath, FieldImage.this.getCurrentFile());
+			String relativePath = URLHelper.mergePath(refField.getFileTypeFolder(), refField.getCurrentFolder());
+			String fileURL = URLHelper.mergePath(relativePath, refField.getCurrentFile());
 			try {
 				return URLHelper.createTransformURL(ctx, '/' + fileURL, getImageFilter());
 			} catch (Exception e) {			
@@ -40,21 +39,22 @@ public class FieldImage extends FieldFile {
 		}
 		
 		@Deprecated
-		public String getPreviewURL() {
+		public String getPreviewURL() throws Exception {
 			return getPreviewUrl();
 		}
 		
 		@Deprecated
-		public String getResourceURL() {
+		public String getResourceURL() throws Exception {
 			return getResourceUrl();
 		}
 		
-		public String getResourceUrl() {
-			if ( FieldImage.this.getCurrentFile() == null || FieldImage.this.getCurrentFile().trim().length() == 0) {
+		public String getResourceUrl() throws Exception {
+			FieldImage refField = (FieldImage)FieldImage.this.getReference(ctx);
+			if ( refField.getCurrentFile() == null || refField.getCurrentFile().trim().length() == 0) {
 				return null;
 			}
-			String relativePath = URLHelper.mergePath(FieldImage.this.getFileTypeFolder(), FieldImage.this.getCurrentFolder());
-			String fileURL = URLHelper.mergePath(relativePath, FieldImage.this.getCurrentFile());
+			String relativePath = URLHelper.mergePath(refField.getFileTypeFolder(), refField.getCurrentFolder());
+			String fileURL = URLHelper.mergePath(relativePath, refField.getCurrentFile());
 			try {
 				return URLHelper.createResourceURL(ctx, '/' + fileURL);
 			} catch (Exception e) {			
@@ -80,7 +80,8 @@ public class FieldImage extends FieldFile {
 		}
 		
 		public String getViewXHTMLCode() throws Exception {
-			return FieldImage.this.getViewXHTMLCode(ctx, getImageFilter());
+			FieldImage refField = (FieldImage)FieldImage.this.getReference(ctx);
+			return refField.getViewXHTMLCode(ctx, getImageFilter());
 		}
 		
 		public StaticInfo getStaticInfo() throws Exception {

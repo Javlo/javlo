@@ -179,7 +179,6 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 			return prefix+Field.this.getFieldPrefix(ctx)+Field.this.getViewXHTMLCode(ctx)+Field.this.getFieldSuffix(ctx)+suffix;
 		}
 
-		
 		public boolean isLabelDisplayed() {
 			return Field.this.isLabelDisplayed();
 		}
