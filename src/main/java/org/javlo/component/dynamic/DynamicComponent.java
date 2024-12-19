@@ -354,6 +354,10 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                         }
                         html = replaceGroupTags(html);
                         for (Field field : getFields(ctx)) {
+                            if (field.getType().toLowerCase().contains("image") || field.getType().toLowerCase().contains("file")) {
+                                properties.setProperty("field." + field.getName() + ".i18n", "false");
+                                storeProperties();
+                            }
                             if (!StringHelper.isEmpty(field.getGroup())) {
                                 html = html.replace("field." + field.getType() + "." + field.getName() + "." + field.getGroup() + '.', field.getName() + '.');
                             } else {

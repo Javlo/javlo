@@ -804,6 +804,38 @@ public class ContentContext {
 	}
 
 	/**
+	 * return a context with at least one element (if exist), it can be change the
+	 * language (and only this) of the current context. this method use only the
+	 * default language list.
+	 *
+	 * @return null if no content found.
+	 * @throws Exception
+	 */
+	public ContentContext getContextNotEmpty(MenuElement page, String area) throws Exception {
+		if (!page.isEmpty(this, area, false)) {
+			return getContextOnPage(page);
+		} else {
+			ContentContext lgCtx = new ContentContext(this);
+			lgCtx.setContentLanguage(getLanguage());
+			lgCtx.setRequestContentLanguage(null);
+			/* is content in current content language ? */
+			if (!page.isEmpty(lgCtx, area, false)) {
+				return lgCtx;
+			} else {
+				GlobalContext globalContext = GlobalContext.getInstance(getRequest());
+				Collection<String> lgs = globalContext.getDefaultLanguages();
+				for (String lg : lgs) {
+					lgCtx.setAllLanguage(lg);
+					if (!page.isEmpty(lgCtx, area, false)) {
+						return lgCtx.getContextOnPage(page);
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * return a context with at least one title (if exist), it can be change the
 	 * language (and only this) of the current context. this method use only the
 	 * default language list.

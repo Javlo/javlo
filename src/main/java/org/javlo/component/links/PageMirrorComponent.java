@@ -167,7 +167,16 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 						ctx.getRequest().setAttribute(ContentContext.CHANGE_AREA_ATTRIBUTE_NAME, ComponentBean.DEFAULT_AREA);
 					}
 					ctx.setPath(page.getPath());
-					ctx.setRequestContentLanguage(ctx.getContextWithContent(page).getRequestContentLanguage());
+
+					ContentContext contentCtx = ctx.getContextWithContent(page);
+					if (contentCtx == null) {
+						contentCtx = ctx.getContextNotEmpty(page, area);
+						if (contentCtx == null) {
+							contentCtx = ctx;
+						}
+					}
+
+					ctx.setRequestContentLanguage(contentCtx.getRequestContentLanguage());
 					RequestService rs = RequestService.getInstance(ctx.getRequest());					
 					rs.setParameter(NOT_EDIT_PREVIEW_PARAM_NAME, "true");
 					rs.setParameter(CACHE_KEY_SUFFIX_PARAM_NAME, getPage().getId());
@@ -212,10 +221,9 @@ public class PageMirrorComponent extends AbstractVisualComponent implements IIma
 	private List<ComponentBean> getCopiedPageContent(ContentContext ctx) throws Exception {
 		List<ComponentBean> outBeans = new LinkedList<ComponentBean>();
 		MenuElement copiedPage = getMirrorPage(ctx);
-		ContentContext ctxWithContent = ctx.getContextWithContent(copiedPage);
-		ContentElementList content = copiedPage.getContent(ctxWithContent);
-		while (content.hasNext(ctxWithContent)) {
-			outBeans.add(new ComponentBean(content.next(ctxWithContent).getComponentBean()));
+		ContentElementList content = copiedPage.getContent(ctx);
+		while (content.hasNext(ctx)) {
+			outBeans.add(new ComponentBean(content.next(ctx).getComponentBean()));
 		}
 		return outBeans;
 	}
