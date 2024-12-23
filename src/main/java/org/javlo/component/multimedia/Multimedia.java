@@ -81,6 +81,11 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 
 	private List<File> multimediaFiles = null;
 
+	@Override
+	public void prepareEdit(ContentContext ctx) throws Exception {
+		super.prepareEdit(ctx);
+	}
+
 	protected boolean acceptStaticInfo(ContentContext ctx, StaticInfo info) throws IOException {
 
 		Collection<String> tags = getTags();

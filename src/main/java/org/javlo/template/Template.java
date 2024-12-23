@@ -1,5 +1,7 @@
 package org.javlo.template;
 
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpSession;
 import org.apache.commons.io.FileUtils;
@@ -31,8 +33,6 @@ import org.javlo.utilThymeleaf.TemplateEngineUtil;
 import org.javlo.utils.*;
 import org.thymeleaf.TemplateEngine;
 
-import jakarta.mail.internet.AddressException;
-import jakarta.mail.internet.InternetAddress;
 import javax.naming.ConfigurationException;
 import java.awt.*;
 import java.io.*;
@@ -1238,6 +1238,11 @@ public class Template implements Comparable<Template> {
 			String field = matcher.group();
 			String[] data = field.substring(2, field.length() - 1).split("\\.");
 			if (!fieldFoundList.contains(data[2])) {
+				if (data.length >= 4 ) {
+					if (data[1].toLowerCase().contains("image") || data[1].toLowerCase().contains("file")) {
+						out.put("field." + data[2] + ".i18n", "false");
+					}
+				}
 				if (data.length == 4) {
 					fieldFoundList.add(data[2]);
 					dataList.add(data);
