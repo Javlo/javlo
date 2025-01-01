@@ -159,7 +159,6 @@ public class TemplateAction extends AbstractModuleAction {
 				if (template.visibleForRoles(ctx.getCurrentEditUser().getRoles()) && acceptTemplate) {
 					templates.add(new Template.TemplateBean(ctx, template));
 				}
-
 			}
 		}
 
@@ -648,6 +647,18 @@ public class TemplateAction extends AbstractModuleAction {
 				}
 				// load current value
 				File htmlFile = new File(URLHelper.mergePath(template.getSourceFolder().getAbsolutePath(), html));
+
+				String scssFolder = URLHelper.mergePath(template.getSourceFolder().getAbsolutePath(), "/scss/components");
+				File scssFile = new File(scssFolder + '/' + StringHelper.getFileNameWithoutExtension(htmlFile.getName())+".scss");
+				if (scssFile.exists()) {
+					String editCssUrl = URLHelper.createModuleURL(ctx, ctx.getPath(), "template");
+					editCssUrl = URLHelper.addParam(editCssUrl,"templateid", rs.getParameter("templateid", "") );
+					editCssUrl = URLHelper.addParam(editCssUrl,"previewEdit", "true" );
+					editCssUrl = URLHelper.addParam(editCssUrl,"webaction", "template.editCSS" );
+					editCssUrl = URLHelper.addParam(editCssUrl,"css", "/scss/components/"+StringHelper.getFileNameWithoutExtension(htmlFile.getName())+".scss");
+					ctx.getRequest().setAttribute("editCssUrl", editCssUrl);
+				}
+
 				if (!htmlFile.exists()) {
 					return "file not found : " + htmlFile;
 				} else {
@@ -687,6 +698,17 @@ public class TemplateAction extends AbstractModuleAction {
 				if (!cssFile.exists()) {
 					return "file not found : " + cssFile;
 				} else {
+					String htmlFolder = URLHelper.mergePath(template.getSourceFolder().getAbsolutePath(), "/components");
+					File htmlFile = new File(htmlFolder + '/' + StringHelper.getFileNameWithoutExtension(cssFile.getName())+".html");
+					if (htmlFile.exists()) {
+						String editHtmlUrl = URLHelper.createModuleURL(ctx, ctx.getPath(), "template");
+						editHtmlUrl = URLHelper.addParam(editHtmlUrl,"templateid", rs.getParameter("templateid", "") );
+						editHtmlUrl = URLHelper.addParam(editHtmlUrl,"previewEdit", "true" );
+						editHtmlUrl = URLHelper.addParam(editHtmlUrl,"webaction", "template.editHTML" );
+						editHtmlUrl = URLHelper.addParam(editHtmlUrl,"html", "/components/"+StringHelper.getFileNameWithoutExtension(cssFile.getName())+".html");
+						ctx.getRequest().setAttribute("editHtmlUrl", editHtmlUrl);
+					}
+
 					String text = ResourceHelper.loadStringFromFile(cssFile);
 					ctx.getRequest().setAttribute("text", text);
 				}

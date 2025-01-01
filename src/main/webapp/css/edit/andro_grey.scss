@@ -75,6 +75,7 @@ select {
 .btn, .action-button, #tools select, #tools input, .action input[type="submit"], #popup_panel input[type="button"], .form-control, #main-body .ui-button {
 	--btn-height: 28px;
 	--btn-vertical-padding: 3px;
+
 	padding: var(--btn-vertical-padding) 15px;
 	line-height: calc(var(--btn-height) - var(--btn-vertical-padding) * 2);
 
@@ -85,7 +86,7 @@ select {
 	border: 1px #ddd solid;
 	color: #555;
 	border-radius: 3px;
-	font-weight: bold;
+	font-weight: normal;
 
 	&:hover {
 		background-color: var(--javlo-ui-bg-secondary);

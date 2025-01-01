@@ -48,11 +48,6 @@
 					<input type="hidden" name="templateid" value="${templateid}" />
 				</div>
 
-				<div class="action top">
-					<input type="submit" name="back" value="${i18n.edit['global.back']}" />
-					<input type="submit" value="${i18n.edit['global.ok']}" />
-				</div>
-
 				<h3>${param.html}</h3>
 					<div class="body">
 
@@ -62,6 +57,9 @@
 							<textarea name="text" id="text-editor" rows="10" cols="10" data-ext="html" data-mode="text/html" class="text-editor">${fn:escapeXml(text)}</textarea>
 						</c:if>
 						<div class="action">
+							<c:if test="${not empty editCssUrl}">
+								<a class="btn btn-secondary" href="${editCssUrl}">Edit SCSS</a>
+							</c:if>
 							<input type="submit" name="back" value="${i18n.edit['global.back']}" />
 							<input type="submit" value="${i18n.edit['global.save']}" />
 						</div>

@@ -126,12 +126,14 @@
 		</c:if>
 		</div></div>
 		<div class="action">
+			<c:if test="${not empty editHtmlUrl}">
+				<a class="btn btn-secondary" href="${editHtmlUrl}">Edit HTML</a>
+			</c:if>
 			<input type="submit" name="back" value="${i18n.edit['global.back']}" />
 			<input type="submit" value="${i18n.edit['global.save']}" />
 			<input type="submit" name="indent" value="${i18n.edit['global.save']} & indent" />
 		</div>
 	</form>
-
 	</div>
 
 		<script>
