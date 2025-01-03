@@ -667,6 +667,7 @@ public class TemplateAction extends AbstractModuleAction {
 				}
 			}
 		}
+
 		return null;
 	}
 

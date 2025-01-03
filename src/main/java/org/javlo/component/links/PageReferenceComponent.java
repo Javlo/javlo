@@ -1492,7 +1492,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         if (parentNode != null && !parentNode.isRoot()) {
             ctx.getRequest().setAttribute("referenceLink", URLHelper.createURL(ctx, parentNode));
         }
-
         ctx.getRequest().setAttribute("pagination", pagination);
         ctx.getRequest().setAttribute("pagesStatus", pagesStatus);
         ctx.getRequest().setAttribute("pages", pageBeans);
