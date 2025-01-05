@@ -150,6 +150,11 @@ public class TestResponse implements HttpServletResponse {
 	}
 
 	@Override
+	public void sendRedirect(String s, int i, boolean b) throws IOException {
+
+	}
+
+	@Override
 	public void setDateHeader(String arg0, long arg1) {
 	}
 
