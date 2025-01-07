@@ -77,6 +77,8 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 		super.prepareView(ctx);
 		File file = getRendererFile(ctx);
 		if (!file.exists()) {
+			logger.info("create : "+file);
+			file.getParentFile().mkdirs();
 			file.createNewFile();
 			createRenderer(ctx);
 		}
