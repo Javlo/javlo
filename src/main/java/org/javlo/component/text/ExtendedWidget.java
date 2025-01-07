@@ -35,10 +35,10 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 	public void init(ComponentBean bean, ContentContext ctx) throws Exception {	
 		super.init(bean, ctx);
 		File renderer = getRendererFile(ctx);
-		if (!renderer.exists()) {
+		/*if (!renderer.exists()) {
 			renderer.getParentFile().mkdirs();
 			createRenderer(ctx);
-		}
+		}*/
 	}
 
 	@Override
