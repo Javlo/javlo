@@ -1898,7 +1898,7 @@ public class Template implements Comparable<Template> {
 		if (noImage == null) {
 			return null;
 		} else {
-			return URLHelper.createTransformLocalTemplateURL(ctx, getName(), filter, noImage);
+			return URLHelper.createTransformURL(ctx, filter, noImage);
 		}
 	}
 
