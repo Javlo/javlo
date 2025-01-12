@@ -1,8 +1,10 @@
 package org.javlo.macro;
 
 import org.javlo.component.core.ContentElementList;
+import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.service.PersistenceService;
 
 import java.util.Map;
 
@@ -20,8 +22,10 @@ public class DeletePageContent extends AbstractMacro {
 		ContentContext ctxNoArea = ctx.getContextWithArea(null);
 		ContentElementList content = ctx.getCurrentPage().getContent(ctxNoArea);
 		while (content.hasNext(ctxNoArea)) {
-			content.next(ctxNoArea).delete(ctxNoArea);
+			IContentVisualComponent comp = content.next(ctxNoArea);
+			ctx.getCurrentPage().removeContent(ctxNoArea, comp.getId());
 		}
+		PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 
 		return null;
 	}
