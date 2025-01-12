@@ -1889,7 +1889,7 @@ public class Template implements Comparable<Template> {
 		return properties.getString("images-filter", getParent().getImageFiltersRAW());
 	}
 
-	public String getNoImage() {
+	protected String getNoImage() {
 		return properties.getString("no-image.file", getParent().getNoImage());
 	}
 

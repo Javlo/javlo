@@ -145,6 +145,7 @@ public class MacroFactory {
 		macros.add(new ComponentsMacroModule());
 		macros.add(new MailingMacroModule());
 		macros.add(new ClearImageCache());
+		macros.add(new DeletePageContent());
 
 		macros.add(new UserMacroModule(true));
 		macros.add(new UserMacroModule(false));

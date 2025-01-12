@@ -110,7 +110,7 @@ public class DefaultTemplate extends Template {
 	}
 	
 	@Override
-	public String getNoImage() {
+	protected String getNoImage() {
 		return null;
 	}
 
