@@ -2080,6 +2080,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
             String newLabel = translator.translate(ctx, label,  lang, ctx.getRequestContentLanguage());
             System.out.println("###### SmartGenericForm translate : newLabel="+newLabel);
             field.setLabel(newLabel);
+            store(field);
         }
         return true;
     }
