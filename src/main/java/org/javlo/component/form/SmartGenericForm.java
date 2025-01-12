@@ -34,6 +34,7 @@ import org.javlo.service.database.DataBaseService;
 import org.javlo.service.document.DataDocument;
 import org.javlo.service.document.DataDocumentService;
 import org.javlo.service.event.Event;
+import org.javlo.service.google.translation.ITranslator;
 import org.javlo.service.visitors.UserDataService;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
@@ -2071,4 +2072,18 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
         return true;
     }
 
+    @Override
+    public boolean transflateFrom(ContentContext ctx, ITranslator translator, String lang) {
+        for (Field field : getFields(ctx)) {
+            String label = field.getLabel();
+            String newLabel = translator.translate(ctx, label,  lang, ctx.getRequestContentLanguage());
+            field.setLabel(newLabel);
+        }
+        return true;
+    }
+
+    @Override
+    protected boolean isValueTranslatable() {
+        return true;
+    }
 }
