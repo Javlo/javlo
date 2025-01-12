@@ -1,12 +1,5 @@
 package org.javlo.service.google.translation;
 
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.Collections;
-import java.util.Map;
-
 import org.javlo.context.ContentContext;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
@@ -17,13 +10,20 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.Collections;
+import java.util.Map;
+
 public class DeepLTranslateService implements ITranslator {
 
 	private static URL DEEPL_URL = null;
 	
 	private static final DeepLTranslateService INSTANCE = new DeepLTranslateService();
 
-	private static final Map<String, String> cache = Collections.synchronizedMap(new TimeMap<String, String>(60 * 60 * 24 * 355, 10000));
+	private static final Map<String, String> cache = Collections.synchronizedMap(new TimeMap<String, String>(60 * 60 * 24 * 355, 1000000));
 
 	private static final URL getGoogleUrl() throws MalformedURLException {
 		if (DEEPL_URL == null) {
@@ -48,12 +48,12 @@ public class DeepLTranslateService implements ITranslator {
 	 * @throws Exception 
 	 */
 	public static String translate(String sourceText, String sourceLang, String targetLang, String apiKey) throws Exception {
-		System.out.println(">>>>>>>>> DeepLTranslateService.translate : sourceLang = "+sourceLang); //TODO: remove debug trace
-		System.out.println(">>>>>>>>> DeepLTranslateService.translate : targetLang = "+targetLang); //TODO: remove debug trace
+		//System.out.println(">>>>>>>>> DeepLTranslateService.translate : sourceLang = "+sourceLang); //TODO: remove debug trace
+		//System.out.println(">>>>>>>>> DeepLTranslateService.translate : targetLang = "+targetLang); //TODO: remove debug trace
 		if (StringHelper.isEmpty(sourceText) || StringHelper.isDigit(sourceText)) {
 			return sourceText;
 		}
-		String cacheKey = sourceText + sourceLang + targetLang;
+		String cacheKey = sourceText + "__" + sourceLang + "__" + targetLang;
 		String translation = cache.get(cacheKey);
 		if (translation == null) {			
 			String query ="text="+encode(sourceText);
