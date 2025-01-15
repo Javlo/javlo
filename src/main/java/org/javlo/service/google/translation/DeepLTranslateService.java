@@ -19,6 +19,8 @@ import java.util.Map;
 
 public class DeepLTranslateService implements ITranslator {
 
+	private static java.util.logging.Logger logger = java.util.logging.Logger.getLogger(DeepLTranslateService.class.getName());
+
 	private static URL DEEPL_URL = null;
 	
 	private static final DeepLTranslateService INSTANCE = new DeepLTranslateService();
@@ -61,6 +63,7 @@ public class DeepLTranslateService implements ITranslator {
 			query+="&target_lang="+encode(targetLang);
 			query+="&auth_key="+encode(apiKey);
 			URL deeplURL = new URL (URLHelper.addParams(getGoogleUrl().toString(), query));
+			logger.info("call deepl for : "+targetLang);
 			String json = NetHelper.readPage(deeplURL);
 			if (json == null) {
 				Logger.error("error read page : "+ deeplURL);
@@ -70,6 +73,8 @@ public class DeepLTranslateService implements ITranslator {
 				translation = ""+((JSONObject)(((JSONArray)jsonObject.get("translations")).get(0))).get("text");
 				cache.put(cacheKey, translation);
 			}
+		} else {
+			logger.info("deepl found in cache for : "+targetLang);
 		}
 		return translation;
 	}

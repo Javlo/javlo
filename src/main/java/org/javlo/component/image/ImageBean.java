@@ -23,7 +23,12 @@ public class ImageBean {
 		this.url = image.getResourceURL(ctx);
 		this.description = image.getImageDescription(ctx);
 		this.link = image.getImageLinkURL(ctx);
-		this.setPreviewURL(URLHelper.createTransformURL(ctx, ctx.getCurrentPage(), image.getResourceURL(ctx), filter));
+        if (StringHelper.getFileExtension(image).toLowerCase().equals("svg")) {
+            this.setPreviewURL(image.getResourceURL());
+        } else {
+            this.setPreviewURL(URLHelper.createTransformURL(ctx, ctx.getCurrentPage(), image.getResourceURL(ctx), filter));
+        }
+
 	}
 	public String getName() {
 		return StringHelper.getFileNameFromPath(url);
