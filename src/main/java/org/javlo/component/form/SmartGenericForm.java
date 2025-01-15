@@ -722,7 +722,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
                 ctx.getRequest().setAttribute("inputLine", getInputEditLineName(ctx));
                 File csvFile = getFile(ctx);
                 List<Map<String, String>> data = CSVFactory.loadContentAsMap(csvFile);
-                if (data.size() >= editLine) {
+                if (data.size() > editLine) {
                     Map<String, String> line = data.get(editLine);
                     for (Map.Entry<String, String> entry : line.entrySet()) {
                         rs.setParameter(entry.getKey(), entry.getValue());
