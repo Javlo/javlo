@@ -1,12 +1,13 @@
 package org.javlo.navigation;
 
-import java.util.Collection;
-
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.navigation.PageURL;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+
+import java.util.Collection;
 
 /**
  * create url based on the title of the page.
@@ -84,6 +85,9 @@ public class TitleAndSectionURLCreator extends AbstractURLFactory {
 			title = StringHelper.removeSpecialChars(title);
 		}
 		title = cleanString(title);
+
+		title =  StringEscapeUtils.unescapeHtml4(title);
+
 		String path = StringHelper.createI18NURL(title);
 
 		String url = path;
