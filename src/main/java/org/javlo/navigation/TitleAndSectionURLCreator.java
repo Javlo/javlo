@@ -61,6 +61,7 @@ public class TitleAndSectionURLCreator extends AbstractURLFactory {
 				title = StringHelper.collectionToString(currentPage.getSubTitles(freeCtx,2), " / ");
 			}
 		}
+		title =  StringEscapeUtils.unescapeHtml4(title);
 		if (currentPage.getUrlNumber() > 0) {			
 			title = title + '-' +currentPage.getUrlNumber();
 		}
@@ -68,14 +69,6 @@ public class TitleAndSectionURLCreator extends AbstractURLFactory {
 			title = currentPage.getName();
 		}
 
-		String label;
-		String pageTitle = currentPage.getForcedPageTitle(freeCtx);		
-		if (!StringHelper.isEmpty(pageTitle)) {
-			label = pageTitle;
-		} else {
-			label = currentPage.getLabel(freeCtx);
-		}		
-		
 		int maxSize = ctx.getGlobalContext().getStaticConfig().getMaxURLSize()+2; // +2 = indice of the page (sp. _1)
 		if  (maxSize > 2 && title.length() >  maxSize ) {
 			title = title.substring(0, maxSize);			
@@ -86,15 +79,14 @@ public class TitleAndSectionURLCreator extends AbstractURLFactory {
 		}
 		title = cleanString(title);
 
-		title =  StringEscapeUtils.unescapeHtml4(title);
-
 		String path = StringHelper.createI18NURL(title);
 
 		String url = path;
 		MenuElement sectionPage = getSectionPage(currentPage);
 		if (sectionPage != null) {
-			String subtitle = StringHelper.createI18NURL(sectionPage.getTitle(freeCtx));
+			String subtitle = sectionPage.getTitle(freeCtx);
 			subtitle =  StringEscapeUtils.unescapeHtml4(subtitle);
+			subtitle = StringHelper.createI18NURL(sectionPage.getTitle(freeCtx));
 			url = URLHelper.mergePath(subtitle, url);
 		}
 		url = '/' + url;
@@ -112,7 +104,6 @@ public class TitleAndSectionURLCreator extends AbstractURLFactory {
 				}
 			}
 		}
-
 
 		return url;
 	}
