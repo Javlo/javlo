@@ -93,7 +93,9 @@ public class TitleAndSectionURLCreator extends AbstractURLFactory {
 		String url = path;
 		MenuElement sectionPage = getSectionPage(currentPage);
 		if (sectionPage != null) {
-			url = URLHelper.mergePath(StringHelper.createI18NURL(sectionPage.getTitle(freeCtx)), url);
+			String subtitle = StringHelper.createI18NURL(sectionPage.getTitle(freeCtx));
+			subtitle =  StringEscapeUtils.unescapeHtml4(subtitle);
+			url = URLHelper.mergePath(subtitle, url);
 		}
 		url = '/' + url;
 				
