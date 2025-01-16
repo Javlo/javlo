@@ -18,13 +18,14 @@ public class ImageBean {
 		this.link = link;
 		this.setPreviewURL(previewURL);
 	}
+
 	public ImageBean(ContentContext ctx, IImageTitle image, String filter) throws Exception {
 		super();
 		this.url = image.getResourceURL(ctx);
 		this.description = image.getImageDescription(ctx);
 		this.link = image.getImageLinkURL(ctx);
-        if (StringHelper.getFileExtension(image).toLowerCase().equals("svg")) {
-            this.setPreviewURL(image.getResourceURL());
+        if (StringHelper.getFileExtension(image.getResourceURL(ctx)).toLowerCase().equals("svg")) {
+            this.setPreviewURL(image.getResourceURL(ctx));
         } else {
             this.setPreviewURL(URLHelper.createTransformURL(ctx, ctx.getCurrentPage(), image.getResourceURL(ctx), filter));
         }
