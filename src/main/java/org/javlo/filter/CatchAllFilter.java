@@ -808,7 +808,7 @@ public class CatchAllFilter implements Filter {
 					autoLoginUser = service.getData(autoLoginId);
 				}
 				if (autoLoginUser != null) {
-					logger.info("try autologin for : " + autoLoginUser);
+					logger.info("try autologin for : " + autoLoginUser+ " IP:"+NetHelper.getIp((HttpServletRequest) request));
 					IUserFactory userFactory = UserFactory.createUserFactory(globalContext, httpRequest.getSession());
 					User principalUser = userFactory.autoLogin(httpRequest, autoLoginUser);
 					I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, httpRequest.getSession());
