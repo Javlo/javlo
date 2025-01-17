@@ -1129,7 +1129,7 @@ public class UserAction extends AbstractModuleAction {
 				logger.severe("too many login for ip : "+logIP);
 				throw new ServletException("too many login, wait before try again.");
 			}
-			logger.warning("bad ajax login : "+login+ " / IP:"+logIP);
+			logger.warning("bad ajax login : "+login+ " / IP:"+logIP + " #login="+tryLogin);
 			ctx.getResponse().setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		}
 		return null;
