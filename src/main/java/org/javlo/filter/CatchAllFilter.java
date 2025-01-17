@@ -43,8 +43,8 @@ import java.util.logging.Logger;
 
 public class CatchAllFilter implements Filter {
 
-	private static final TimeMap<String, Long> globalIpMap = new TimeMap<String, Long>(60*60*2);
-	private static final int MAX_LOGIN_BY_IP = 100;
+	public static final TimeMap<String, Long> globalIpMap = new TimeMap<String, Long>(60*60*2);
+	public static final int MAX_LOGIN_BY_IP = 100;
 	
 	private static long VALID_IP = 0;
 	private static long BLOCK_IP = 0;
