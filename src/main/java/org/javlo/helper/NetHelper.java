@@ -487,8 +487,9 @@ public class NetHelper {
 			}
 			if (in == null) {
 				logger.severe("connection not open[responseCode="+responseCode+"]");
+			} else {
+				ResourceHelper.writeStreamToStream(in, out);
 			}
-			ResourceHelper.writeStreamToStream(in, out);
 		} finally {
 			ResourceHelper.closeResource(in);
 		}
