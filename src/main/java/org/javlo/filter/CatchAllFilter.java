@@ -26,6 +26,7 @@ import org.javlo.template.Template;
 import org.javlo.tracking.Tracker;
 import org.javlo.user.*;
 import org.javlo.utils.DebugListening;
+import org.javlo.utils.TimeMap;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -41,6 +42,9 @@ import java.util.*;
 import java.util.logging.Logger;
 
 public class CatchAllFilter implements Filter {
+
+	private static final TimeMap<String, Long> globalIpMap = new TimeMap<String, Long>(60*60*2);
+	private static final int MAX_LOGIN_BY_IP = 100;
 	
 	private static long VALID_IP = 0;
 	private static long BLOCK_IP = 0;
@@ -808,7 +812,19 @@ public class CatchAllFilter implements Filter {
 					autoLoginUser = service.getData(autoLoginId);
 				}
 				if (autoLoginUser != null) {
-					logger.info("try autologin for : " + autoLoginUser+ " IP:"+NetHelper.getIp((HttpServletRequest) request));
+					String logIP = NetHelper.getIp((HttpServletRequest) request);
+
+					Long tryLogin = globalIpMap.get(logIP);
+					if (tryLogin == null) {
+						tryLogin = 0L;
+					}
+					globalIpMap.put(logIP, tryLogin+1);
+					if (tryLogin > MAX_LOGIN_BY_IP) {
+						logger.severe("too many login for ip : "+logIP);
+						throw new ServletException("too many login, wait before try again.");
+					}
+
+					logger.info("try autologin for : " + autoLoginUser+ " IP:"+logIP+ " #login:"+tryLogin);
 					IUserFactory userFactory = UserFactory.createUserFactory(globalContext, httpRequest.getSession());
 					User principalUser = userFactory.autoLogin(httpRequest, autoLoginUser);
 					I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, httpRequest.getSession());
