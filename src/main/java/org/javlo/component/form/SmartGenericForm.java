@@ -1513,11 +1513,14 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
                 String key = field.getName();
                 value = params.get(key);
 
+                System.out.print("## key = "+key+ "  =  "+ value);
+
                 if (dataMap != null) {
                     dataMap.put(key, "" + value);
                 }
 
                 if (value != null && value.toString().contains("//") && !comp.acceptLinks(ctx)) {
+                    logger.severe("no link in the content !");
                     return I18nAccess.getInstance(ctx).getViewText("global.error.content.no-link");
                 }
 
