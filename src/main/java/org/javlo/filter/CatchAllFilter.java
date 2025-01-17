@@ -673,6 +673,18 @@ public class CatchAllFilter implements Filter {
 
 		logger.fine("start login filter");
 
+		String logIP = NetHelper.getIp((HttpServletRequest) request);
+
+		Long tryLogin = globalIpMap.get(logIP);
+		if (tryLogin == null) {
+			tryLogin = 0L;
+		}
+
+		if (tryLogin > MAX_LOGIN_BY_IP) {
+			logger.severe("too many login for ip : "+logIP);
+			throw new ServletException("too many login, wait before try again.");
+		}
+
 		try {
 
 			HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -812,17 +824,9 @@ public class CatchAllFilter implements Filter {
 					autoLoginUser = service.getData(autoLoginId);
 				}
 				if (autoLoginUser != null) {
-					String logIP = NetHelper.getIp((HttpServletRequest) request);
 
-					Long tryLogin = globalIpMap.get(logIP);
-					if (tryLogin == null) {
-						tryLogin = 0L;
-					}
+
 					globalIpMap.put(logIP, tryLogin+1);
-					if (tryLogin > MAX_LOGIN_BY_IP) {
-						logger.severe("too many login for ip : "+logIP);
-						throw new ServletException("too many login, wait before try again.");
-					}
 
 					logger.info("try autologin for : " + autoLoginUser+ " IP:"+logIP+ " #login:"+tryLogin);
 					IUserFactory userFactory = UserFactory.createUserFactory(globalContext, httpRequest.getSession());
