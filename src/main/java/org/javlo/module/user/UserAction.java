@@ -1,5 +1,8 @@
 package org.javlo.module.user;
 
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -11,6 +14,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.filter.CatchAllFilter;
 import org.javlo.helper.*;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.image.ImageEngine;
@@ -34,8 +38,6 @@ import org.javlo.ztatic.StaticInfoBean;
 import org.owasp.encoder.Encode;
 
 import javax.imageio.ImageIO;
-import jakarta.mail.internet.AddressException;
-import jakarta.mail.internet.InternetAddress;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -1109,14 +1111,25 @@ public class UserAction extends AbstractModuleAction {
 		if (login != null) {
 			loggedUser = fact.login(request, login, request.getParameter("password"));
 		}
+		String logIP = NetHelper.getIp((HttpServletRequest) request);
 		if (loggedUser != null) {
+			CatchAllFilter.globalIpMap.put(logIP, 0L);
 			RequestHelper.setJSONType(ctx.getResponse());
 			String userjson = JsonHelper.toJson(loggedUser.getUserInfo());
 			System.out.println("userjson = "+userjson);
 			JsonHelper.toJson(new UserInfoBean(loggedUser.getUserInfo()), ctx.getResponse().getWriter());
-			logger.info("valid ajax login : "+login+ " / IP:"+NetHelper.getIp(ctx.getRequest()));
+			logger.info("valid ajax login : "+login+ " / IP:"+logIP);
 		} else {
-			logger.warning("bad ajax login : "+login+ " / IP:"+NetHelper.getIp(ctx.getRequest()));
+			Long tryLogin = CatchAllFilter.globalIpMap.get(logIP);
+			if (tryLogin == null) {
+				tryLogin = 0L;
+			}
+			CatchAllFilter.globalIpMap.put(logIP, tryLogin+1);
+			if (tryLogin > CatchAllFilter.MAX_LOGIN_BY_IP) {
+				logger.severe("too many login for ip : "+logIP);
+				throw new ServletException("too many login, wait before try again.");
+			}
+			logger.warning("bad ajax login : "+login+ " / IP:"+logIP);
 			ctx.getResponse().setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		}
 		return null;
