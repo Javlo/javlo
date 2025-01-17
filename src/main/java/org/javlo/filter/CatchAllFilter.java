@@ -682,7 +682,7 @@ public class CatchAllFilter implements Filter {
 
 		if (tryLogin > MAX_LOGIN_BY_IP) {
 			logger.severe("too many login for ip : "+logIP);
-			throw new ServletException("too many login, wait before try again.");
+			//throw new ServletException("too many login, wait before try again.");
 		}
 
 		try {
