@@ -1252,9 +1252,9 @@ public class Template implements Comparable<Template> {
 					out.put("field." + data[2] + ".type", data[1]);
 					if (!data[3].equals(Field.REFERENCE_I18N)) {
 						out.put("field." + data[2] + ".group", data[3]);
-						out.put("field." + data[2] + ".i18n", "false");
-					} else {
 						out.put("field." + data[2] + ".i18n", "true");
+					} else {
+						out.put("field." + data[2] + ".i18n", "false");
 					}
 				}
 			}
