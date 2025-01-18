@@ -1239,7 +1239,7 @@ public class Template implements Comparable<Template> {
 			String[] data = field.substring(2, field.length() - 1).split("\\.");
 			if (!fieldFoundList.contains(data[2])) {
 				if (data.length >= 4 ) {
-					if (data[1].toLowerCase().contains("image") || data[1].toLowerCase().contains("file")) {
+					if (data[1].toLowerCase().contains(".reference.")) {
 						out.put("field." + data[2] + ".i18n", "false");
 					}
 				}
