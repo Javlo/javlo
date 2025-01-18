@@ -1241,6 +1241,8 @@ public class Template implements Comparable<Template> {
 				if (data.length >= 4 ) {
 					if (data[1].toLowerCase().contains(".reference.")) {
 						out.put("field." + data[2] + ".i18n", "false");
+					} else {
+						out.put("field." + data[2] + ".i18n", "true");
 					}
 				}
 				if (data.length == 4) {
