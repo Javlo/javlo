@@ -354,7 +354,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                             if (!StringHelper.isEmpty(field.getGroup())) {
                                 html = html.replace("field." + field.getType() + "." + field.getName() + "." + field.getGroup() + '.', field.getName() + '.');
                             } else {
-                                html = html.replace("field." + field.getType() + "." + field.getName() + '.', field.getName() + '.');
+                                html = html.replace("field." + field.getType() + "." + field.getName() + '.', field.getName() + (field.isI18n()?".reference.":"."));
                             }
                         }
                         if (!isWrapped()) {

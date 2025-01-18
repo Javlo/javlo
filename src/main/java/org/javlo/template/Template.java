@@ -14,6 +14,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.css.CssColor;
+import org.javlo.fields.Field;
 import org.javlo.filter.PropertiesFilter;
 import org.javlo.helper.*;
 import org.javlo.helper.XMLManipulationHelper.BadXMLException;
@@ -1239,7 +1240,7 @@ public class Template implements Comparable<Template> {
 			String[] data = field.substring(2, field.length() - 1).split("\\.");
 			if (!fieldFoundList.contains(data[2])) {
 				if (data.length >= 4 ) {
-					if (data[1].toLowerCase().contains(".reference.")) {
+					if (data[1].toLowerCase().contains(Field.REFERENCE_I18N)) {
 						out.put("field." + data[2] + ".i18n", "false");
 					} else {
 						out.put("field." + data[2] + ".i18n", "true");
@@ -1255,7 +1256,9 @@ public class Template implements Comparable<Template> {
 					dataList.add(data);
 					out.put("field." + data[2] + ".order", "" + order);
 					out.put("field." + data[2] + ".type", data[1]);
-					out.put("field." + data[2] + ".group", data[3]);
+					if (!data[3].equals(Field.REFERENCE_I18N)) {
+						out.put("field." + data[2] + ".group", data[3]);
+					}
 				}
 			}
 		}

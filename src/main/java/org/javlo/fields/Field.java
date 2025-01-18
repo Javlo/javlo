@@ -31,6 +31,8 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	public static String VALUE_SIZE = "col-sm-8";
 	public static String SMALL_VALUE_SIZE = "col-sm-6";
 	public static String SMALL_PART_SIZE = "col-sm-2";
+
+	public static final String REFERENCE_I18N = "reference";
 	
 	private static final String OPEN_ROW_KEY = "_field_open_row";
 
