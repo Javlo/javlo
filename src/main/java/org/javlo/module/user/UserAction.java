@@ -1105,13 +1105,22 @@ public class UserAction extends AbstractModuleAction {
 			return null;
 		}
 		Thread.sleep(500);
+		String logIP = NetHelper.getIp((HttpServletRequest) request);
+		Long tryLogin = CatchAllFilter.globalIpMap.get(logIP);
+		if (tryLogin == null) {
+			tryLogin = 0L;
+		}
+		if (tryLogin > CatchAllFilter.MAX_LOGIN_BY_IP) {
+			logger.severe("too many login for ip : "+logIP);
+			throw new ServletException("too many login, wait before try again.");
+		}
 		User loggedUser = null;
 		String login = request.getParameter("login");
 		logger.info("try ajax login : "+login+" UserFactory = "+fact.getClass().getName());
 		if (login != null) {
 			loggedUser = fact.login(request, login, request.getParameter("password"));
 		}
-		String logIP = NetHelper.getIp((HttpServletRequest) request);
+
 		if (loggedUser != null) {
 			CatchAllFilter.globalIpMap.put(logIP, 0L);
 			RequestHelper.setJSONType(ctx.getResponse());
@@ -1120,15 +1129,9 @@ public class UserAction extends AbstractModuleAction {
 			JsonHelper.toJson(new UserInfoBean(loggedUser.getUserInfo()), ctx.getResponse().getWriter());
 			logger.info("valid ajax login : "+login+ " / IP:"+logIP);
 		} else {
-			Long tryLogin = CatchAllFilter.globalIpMap.get(logIP);
-			if (tryLogin == null) {
-				tryLogin = 0L;
-			}
+
 			CatchAllFilter.globalIpMap.put(logIP, tryLogin+1);
-			if (tryLogin > CatchAllFilter.MAX_LOGIN_BY_IP) {
-				logger.severe("too many login for ip : "+logIP);
-				throw new ServletException("too many login, wait before try again.");
-			}
+
 			logger.warning("bad ajax login : "+login+ " / IP:"+logIP + " #login="+tryLogin);
 			ctx.getResponse().setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		}

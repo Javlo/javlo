@@ -350,7 +350,8 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
         // ""))).withClass("form-group")).withClass("col-sm-8").render());
         String csvLink = URLHelper.createResourceURL(ctx, URLHelper.mergePath("/", staticConfig.getStaticFolder(), FOLDER, getLocalConfig(false).getProperty("filename", "")));
         String xlsxLink = FilenameUtils.removeExtension(csvLink) + ".xlsx";
-        out.println("</div><div class=\"col-sm-2\"><a href=\"" + xlsxLink + "\">[XSLX]</a> - <a href=\"" + csvLink + "\">[CSV]</a><label style=\"float: right\">&nbsp;" + XHTMLHelper.getCheckbox(getInputName("store-label"), isStoreLabel()) + " store label</label></div>");
+        String xlsLightLink = URLHelper.addParam(xlsxLink, "light", "true");
+        out.println("</div><div class=\"col-sm-2\"><a href=\"" + xlsxLink + "\">[XSLX-LG]</a> - <a href=\"" + xlsLightLink + "\">[XSLX-SM]</a> - <a href=\"" + csvLink + "\">[CSV]</a><label style=\"float: right\">&nbsp;" + XHTMLHelper.getCheckbox(getInputName("store-label"), isStoreLabel()) + " store label</label></div>");
         out.println("<div class=\"col-sm-2\"><button class=\"btn btn-default btn-xs\" type=\"submit\" name=\"reset-file\" value=\"" + getLocalConfig(false).getProperty("filename", "") + "\">reset</button></div>");
         // out.println(div(a("[XSLX]").attr("href", xlsxLink),span(" -
         // "),a("[CSV]").attr("href", csvLink)).withClass("col-sm-2").render());

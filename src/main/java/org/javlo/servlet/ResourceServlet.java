@@ -27,7 +27,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -65,6 +67,45 @@ public class ResourceServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
 		processRequest(httpServletRequest, httpServletResponse);
+	}
+
+	private static String[][] filterColumnsAndRows(String[][] data, String excludeValue) {
+		if (data == null || data.length == 0) {
+			return new String[0][0];
+		}
+
+		// Identifier les index des colonnes à conserver
+		String[] headers = data[0];
+		List<Integer> selectedIndexes = new ArrayList<>();
+		for (int i = 0; i < headers.length; i++) {
+			if (!headers[i].startsWith("_")) {
+				selectedIndexes.add(i);
+			}
+		}
+
+		// Construire la liste filtrée des lignes
+		List<String[]> filteredRows = new ArrayList<>();
+		for (String[] row : data) {
+			boolean containsExcludeValue = false;
+			for (String cell : row) {
+				if (cell.equals(excludeValue)) {
+					containsExcludeValue = true;
+					break;
+				}
+			}
+
+			// Si la ligne ne contient pas le mot exclu, on la conserve
+			if (!containsExcludeValue) {
+				List<String> filteredRow = new ArrayList<>();
+				for (int index : selectedIndexes) {
+					filteredRow.add(row[index]);
+				}
+				filteredRows.add(filteredRow.toArray(new String[0]));
+			}
+		}
+
+		// Convertir la liste filtrée en tableau
+		return filteredRows.toArray(new String[0][]);
 	}
 
 	/**
@@ -199,11 +240,15 @@ public class ResourceServlet extends HttpServlet {
 				response.setContentType(ResourceHelper.getFileExtensionToMineType(StringHelper.getFileExtension(pathInfo)));
 				response.setHeader("Cache-Control", "no-cache");
 				response.setHeader("Accept-Ranges", "bytes");
+				String[][] data = outCSV.getArray();
+				if (StringHelper.isTrue(request.getParameter("light"))) {
+					data = filterColumnsAndRows(data, "TEST TEST");
+				}
 				if (StringHelper.getFileExtension(pathInfo).equals("xls")) {
-					XLSTools.writeXLS(XLSTools.getCellArray(outCSV.getArray()), response.getOutputStream());
+					XLSTools.writeXLS(XLSTools.getCellArray(data), response.getOutputStream());
 				}
 				if (StringHelper.getFileExtension(pathInfo).equals("xlsx")) {
-					XLSTools.writeXLSX(XLSTools.getCellArray(outCSV.getArray()), response.getOutputStream());
+					XLSTools.writeXLSX(XLSTools.getCellArray(data), response.getOutputStream());
 				} else {
 					outCSV.exportCSV(response.getOutputStream());
 				}
@@ -250,10 +295,16 @@ public class ResourceServlet extends HttpServlet {
 								response.setHeader("Cache-Control", "no-cache");
 								response.setHeader("Accept-Ranges", "bytes");
 								CSVFactory csvFactory = new CSVFactory(csvFile);
+
+								String[][] data = csvFactory.getArray();
+								if (StringHelper.isTrue(request.getParameter("light"))) {
+									data = filterColumnsAndRows(data, "TEST TEST");
+								}
+
 								if (StringHelper.getFileExtension(file.getName()).equals("xls")) {
-									XLSTools.writeXLS(XLSTools.getCellArray(csvFactory.getArray()), response.getOutputStream());
+									XLSTools.writeXLS(XLSTools.getCellArray(data), response.getOutputStream());
 								} else {
-									XLSTools.writeXLSX(XLSTools.getCellArray(csvFactory.getArray()), response.getOutputStream());
+									XLSTools.writeXLSX(XLSTools.getCellArray(data), response.getOutputStream());
 								}
 								return;
 							}
