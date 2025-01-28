@@ -173,4 +173,14 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>       
     </tag>
+    <tag>
+        <name>cleanSvg</name>
+        <tag-class>org.javlo.tag.SvgCleanerTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>svgContent</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
 </taglib>
