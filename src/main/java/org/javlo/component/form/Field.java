@@ -252,7 +252,7 @@ public class Field {
 		this.condition = condition;
 	}
 
-	private static List<String> OPERATOR = Arrays.asList(new String[] { "=", "==", "===", ">", "<", " in " });
+	private static List<String> OPERATOR = Arrays.asList(new String[] { "===", "==","=",">", "<", " in " });
 
 	public String getConditionField() {
 		if (condition == null) {
