@@ -49,6 +49,8 @@ public class I18nAccess implements Serializable {
 
 	private static final Map<String, Map<String, String>> countries = Collections.synchronizedMap(new HashMap<String, Map<String, String>>());
 
+	private final Map<String, Map<String, String>> cachedCountries = new TreeMap<>();
+
 	public static I18nAccess getInstance(ContentContext ctx) throws ServiceException, Exception {
 		/** test **/
 		if (ctx == null) {
@@ -203,6 +205,7 @@ public class I18nAccess implements Serializable {
 		}
 		updateTemplate(ctx);
 		countries.clear();
+		cachedCountries.clear();
 	}
 
 	public void resetViewLanguage(ContentContext ctx) throws ServiceException, Exception {
@@ -213,6 +216,7 @@ public class I18nAccess implements Serializable {
 		initContentView(ctx, ctx.getRequestContentLanguage());
 		propViewMap = null;
 		updateTemplate(ctx);
+		cachedCountries.clear();
 	}
 
 	public String getComponentText(String componentPath, String key) {
@@ -271,7 +275,33 @@ public class I18nAccess implements Serializable {
 		return text;
 	}
 
-	public Map getCountries() throws Exception {
+	public Map<String, String> getCountries() {
+		String lg = viewLg; // Supposons que viewLg est défini ailleurs dans votre classe
+
+		// Vérification du cache
+		if (cachedCountries.containsKey(lg)) {
+			return cachedCountries.get(lg);
+		}
+
+		// Création de la carte des pays triés
+		Map<String, String> outCountries = new TreeMap<>();
+
+		for (String countryCode : Locale.getISOCountries()) {
+			Locale locale = new Locale("", countryCode);
+			String countryName = locale.getDisplayCountry(new Locale(lg));
+
+			if (!countryName.isEmpty()) { // On s'assure que le nom du pays est valide
+				outCountries.put(countryCode, countryName);
+			}
+		}
+
+		// Mise en cache des pays triés
+		cachedCountries.put(lg, outCountries);
+
+		return outCountries;
+	}
+
+	public Map _getCountries() throws Exception {
 		String lg = viewLg;
 		Map outCountries = countries.get(lg);
 		if (outCountries == null) {
