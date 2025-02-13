@@ -338,10 +338,6 @@ public class Heading extends AbstractPropertiesComponent implements ISubTitle {
 			return (String) ctx.getRequest().getAttribute(suffix + getId());
 		}
 		String htmlID = "H"+getComponentPosition(ctx);
-		if (htmlID.trim().length() == 0) {
-			htmlID = "empty";
-		}
-		htmlID = "H_" + htmlID;
 		while (ctx.getRequest().getAttribute(suffix + htmlID) != null) {
 			htmlID = htmlID + "_bis";
 		}
