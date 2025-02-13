@@ -2822,6 +2822,20 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		return 0;
 	}
 
+	public int getComponentPosition(ContentContext ctx) {
+		int pos = 1;
+		for (ComponentBean componentBean : getPage().getContent()) {
+			if (componentBean.getType().equals(getType())) {
+				if (componentBean.getId().equals(getId())) {
+					return pos;
+				} else {
+					pos++;
+				}
+			}
+		}
+		return -1;
+	}
+
 	public String getXHTMLTitle(ContentContext ctx) {
 		return getXHTMLCode(ctx);
 	}
