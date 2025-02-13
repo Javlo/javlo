@@ -2788,18 +2788,18 @@ public class XHTMLHelper {
 							String params = "";
 							if (pageName.contains("|")) {
 								params = pageName.substring(pageName.indexOf("|") + 1);
-								pageName = hrefValue.substring(0, pageName.indexOf("|"));
+								pageName = pageName.substring(0, pageName.indexOf("|"));
 							} else if (pageName.contains("#")) {
-								params = pageName.substring(pageName.indexOf("#") );
-								pageName = hrefValue.substring(0, pageName.indexOf("#"));
+								params = pageName.substring(pageName.indexOf("#"));
+								pageName = pageName.substring(0, pageName.indexOf("#"));
 							}
-
 							if (ctx == null) {
 								item.attr("href", "[TEST]-page:" + pageName);
 							} else {
 								ContentContext pageContext = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
 								pageContext.setFormat("html");
-								item.attr("href", URLHelper.createURLFromPageName(pageContext, pageName) + params);
+								String url = URLHelper.createURLFromPageName(pageContext, pageName) + params;
+								item.attr("href", url);
 							}
 						} else if (hrefValue.startsWith("file:")) {
 							String fileUrl = hrefValue.substring("file:".length());
