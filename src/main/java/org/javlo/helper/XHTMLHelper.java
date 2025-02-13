@@ -2789,6 +2789,9 @@ public class XHTMLHelper {
 							if (pageName.contains("|")) {
 								params = pageName.substring(pageName.indexOf("|") + 1);
 								pageName = hrefValue.substring(0, pageName.indexOf("|"));
+							} else if (pageName.contains("#")) {
+								params = pageName.substring(pageName.indexOf("#") );
+								pageName = hrefValue.substring(0, pageName.indexOf("#"));
 							}
 
 							if (ctx == null) {
