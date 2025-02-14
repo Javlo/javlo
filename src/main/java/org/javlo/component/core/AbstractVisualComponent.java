@@ -2825,7 +2825,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public int getComponentPosition(ContentContext ctx) {
 		int pos = 1;
 		for (ComponentBean componentBean : getPage().getContent()) {
-			if (componentBean.getType().equals(getType())) {
+			if (componentBean.getType().equals(getType()) && componentBean.getLanguage().equals(getComponentBean().getLanguage())) {
 				if (componentBean.getId().equals(getId())) {
 					return pos;
 				} else {
