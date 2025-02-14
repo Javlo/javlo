@@ -886,7 +886,9 @@ public class ContentHelper {
                             }*/
 
                             if (link != null) {
-                                redirect.println(link+"=page:"+ newPage.getFullName());
+                                String redirectLine = link+"=page:"+ newPage.getFullName();
+                                redirect.println(redirectLine);
+                                logger.info("new redirection : "+redirectLine);
                             }
 
                             if (pageTitle != null && !pageTitle.equals(title)) {
