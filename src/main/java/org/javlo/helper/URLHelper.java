@@ -31,6 +31,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,6 +39,8 @@ import java.util.regex.Pattern;
  * @author pvanderm
  */
 public class URLHelper extends ElementaryURLHelper {
+
+	public static Logger logger = Logger.getLogger(URLHelper.class.getName());
 
 	public static final String MINETYPE_FOLDER = "/images/mimetypes/";
 
@@ -1061,6 +1064,7 @@ public class URLHelper extends ElementaryURLHelper {
 		if (page != null) {
 			return createURL(ctx, page.getPath());
 		} else {
+			logger.warning("page not found : "+pageName);
 			return createURL(ctx, "/");
 		}
 	}
