@@ -1055,7 +1055,7 @@ public class URLHelper extends ElementaryURLHelper {
 		if (pageName.contains("/")) {
 			String[] pageSplit = pageName.split("/");
 			String lg = pageSplit[0];
-			pageName = pageSplit[0];
+			pageName = pageSplit[1];
 			ctx = new ContentContext(ctx);
 			ctx.setAllLanguage(lg);
 		}
