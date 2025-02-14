@@ -15,7 +15,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DeepLTranslateService implements ITranslator {
 
@@ -50,32 +53,58 @@ public class DeepLTranslateService implements ITranslator {
 	 * @throws Exception 
 	 */
 	public static String translate(String sourceText, String sourceLang, String targetLang, String apiKey) throws Exception {
-		//System.out.println(">>>>>>>>> DeepLTranslateService.translate : sourceLang = "+sourceLang); //TODO: remove debug trace
-		//System.out.println(">>>>>>>>> DeepLTranslateService.translate : targetLang = "+targetLang); //TODO: remove debug trace
 		if (StringHelper.isEmpty(sourceText) || StringHelper.isDigit(sourceText)) {
 			return sourceText;
 		}
-		String cacheKey = sourceText + "__" + sourceLang + "__" + targetLang;
+
+		// Extraction des SVG
+		Map<String, String> svgMap = new LinkedHashMap<>();
+		Pattern svgPattern = Pattern.compile("<svg[^>]*>.*?</svg>", Pattern.DOTALL);
+		Matcher matcher = svgPattern.matcher(sourceText);
+		int counter = 0;
+		StringBuffer textWithoutSVG = new StringBuffer();
+
+		while (matcher.find()) {
+			String svg = matcher.group();
+			String token = "#SVG-" + counter + "#";
+			svgMap.put(token, svg);
+			matcher.appendReplacement(textWithoutSVG, token);
+			counter++;
+		}
+		matcher.appendTail(textWithoutSVG);
+
+		String processedText = textWithoutSVG.toString();
+
+		String cacheKey = processedText + "__" + sourceLang + "__" + targetLang;
 		String translation = cache.get(cacheKey);
-		if (translation == null) {			
-			String query ="text="+encode(sourceText);
-			query+="&source_lang="+encode(sourceLang);
-			query+="&target_lang="+encode(targetLang);
-			query+="&auth_key="+encode(apiKey);
-			URL deeplURL = new URL (URLHelper.addParams(getGoogleUrl().toString(), query));
-			logger.info("call deepl for : "+targetLang);
+
+		if (translation == null) {
+			String query = "text=" + encode(processedText);
+			query += "&source_lang=" + encode(sourceLang);
+			query += "&target_lang=" + encode(targetLang);
+			query += "&auth_key=" + encode(apiKey);
+
+			URL deeplURL = new URL(URLHelper.addParams(getGoogleUrl().toString(), query));
+			logger.info("call deepl for : " + targetLang);
 			String json = NetHelper.readPage(deeplURL);
+
 			if (json == null) {
-				Logger.error("error read page : "+ deeplURL);
+				Logger.error("error read page : " + deeplURL);
 			} else {
 				JSONParser jsonParser = new JSONParser();
 				JSONObject jsonObject = (JSONObject) jsonParser.parse(json);
-				translation = ""+((JSONObject)(((JSONArray)jsonObject.get("translations")).get(0))).get("text");
+				translation = "" + ((JSONObject) (((JSONArray) jsonObject.get("translations")).get(0))).get("text");
 				cache.put(cacheKey, translation);
 			}
 		} else {
-			logger.info("deepl found in cache for : "+targetLang);
+			logger.info("deepl found in cache for : " + targetLang);
 		}
+
+		// Remplacement des tokens par les SVG
+		for (Map.Entry<String, String> entry : svgMap.entrySet()) {
+			translation = translation.replace(entry.getKey(), entry.getValue());
+		}
+
 		return translation;
 	}
 	
