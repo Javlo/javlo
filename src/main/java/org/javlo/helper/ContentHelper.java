@@ -8,7 +8,6 @@ import org.javlo.component.links.ExternalLink;
 import org.javlo.component.list.DataList;
 import org.javlo.component.meta.DateComponent;
 import org.javlo.component.multimedia.Video;
-import org.javlo.component.navigation.PageURL;
 import org.javlo.component.text.Description;
 import org.javlo.component.text.Paragraph;
 import org.javlo.component.text.WysiwygParagraph;
@@ -629,9 +628,12 @@ public class ContentHelper {
             mainPage = ctx.getCurrentPage();
         }
 
+        StringWriter redirectWriter = new StringWriter();
+        PrintWriter redirect = new PrintWriter(redirectWriter);
+
         for (int i = 0; i < nodeList.getLength(); i++) {
 
-            String debugNote = "";
+            //String debugNote = "";
 
             Node node = nodeList.item(i);
             String title = extractSubNodeValue(node, "title");
@@ -690,7 +692,7 @@ public class ContentHelper {
             if (!StringHelper.isEmpty(html)) {
                 org.jsoup.nodes.Document docJsoup = Jsoup.parse(html);
 
-                if (docJsoup.select("form").size() > 0) {
+               /* if (docJsoup.select("form").size() > 0) {
                     debugNote += " / warning: FORM found in page.";
                 }
 
@@ -708,7 +710,7 @@ public class ContentHelper {
 
                 if (docJsoup.select("svg").size() > 1) {
                     debugNote += " / warning: SVG found in page.";
-                }
+                }*/
 
                 for (org.jsoup.nodes.Element element : docJsoup.select("[style]")) {
                     element.removeAttr("style");
@@ -873,7 +875,7 @@ public class ContentHelper {
 
                             Map<String, String> parents = new HashMap<String, String>();
 
-                            if (link != null) {
+                            /*if (link != null) {
                                 bean = new ComponentBean();
                                 bean.setType(PageURL.TYPE);
                                 bean.setValue(link);
@@ -881,6 +883,10 @@ public class ContentHelper {
                                 bean.setModify(true);
                                 bean.setLanguage(lg);
                                 parentId = content.createContent(ctx, newPage, bean, parentId, false);
+                            }*/
+
+                            if (link != null) {
+                                redirect.println(link+"=page:"+ newPage.getName());
                             }
 
                             if (pageTitle != null && !pageTitle.equals(title)) {
@@ -989,7 +995,7 @@ public class ContentHelper {
                                 }
                             }
 
-                            if (!StringHelper.isEmpty(debugNote)) {
+                            /*if (!StringHelper.isEmpty(debugNote)) {
                                 bean = new ComponentBean();
                                 bean.setType(DebugNote.TYPE);
                                 bean.setValue(debugNote);
@@ -997,7 +1003,7 @@ public class ContentHelper {
                                 bean.setModify(true);
                                 bean.setLanguage(lg);
                                 parentId = content.createContent(ctx, newPage, bean, parentId, true);
-                            }
+                            }*/
 
                             if (link != null) {
                                 ctx.getGlobalContext().addAliasUri(link, "page:"+lg+'/'+newPage.getName());
@@ -1030,6 +1036,13 @@ public class ContentHelper {
                 }
             }
         }
+
+        Properties newRedirect = new Properties();
+        newRedirect.load(new StringReader(redirectWriter.toString()));
+
+        ctx.getGlobalContext().getRedirectUrlMap().putAll(newRedirect);
+        ctx.getGlobalContext().storeRedirectUrlList();
+
         PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
         logger.info("#countArticle = "+countArticle);
         logger.info("#countArticlePublished = "+countArticlePublished);
