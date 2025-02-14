@@ -1042,8 +1042,11 @@ public class ContentHelper {
         Properties newRedirect = new Properties();
         newRedirect.load(new StringReader(redirectWriter.toString()));
 
-        ctx.getGlobalContext().getRedirectUrlMap().putAll(newRedirect);
-        ctx.getGlobalContext().storeRedirectUrlList();
+        /*ctx.getGlobalContext().getRedirectUrlMap().putAll(newRedirect);
+        ctx.getGlobalContext().storeRedirectUrlList();*/
+        Map<String,String> latestProp = ctx.getGlobalContext().getURIAlias();
+        newRedirect.putAll(latestProp);
+        ctx.getGlobalContext().setAliasURI(newRedirect);
 
         PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
         logger.info("#countArticle = "+countArticle);
