@@ -1415,7 +1415,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 						prefix = getForcedPrefixViewXHTMLCode(ctx);
 						suffix = getForcedSuffixViewXHTMLCode(ctx);
 					}
-
 					return (prefix + "<div " + getPrefixCssClass(ctx, "pc_empty-component") + getSpecialPreviewCssId(ctx) + getDataAttributes(ctx) + ">" + getEmptyXHTMLCode(ctx) + "</div>" + suffix);
 				}
 			}
@@ -1595,8 +1594,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		String baseURL = getBaseHelpURL(ctx);
 		ContentContext lgCtx = new ContentContext(ctx);
 		lgCtx.setAllLanguage(lang);
-		String url = URLHelper.mergePath(baseURL, getHelpURI(ctx));
-		return url;
+		return URLHelper.mergePath(baseURL, getHelpURI(ctx));
 	}
 
 	protected String getHelpType() {
