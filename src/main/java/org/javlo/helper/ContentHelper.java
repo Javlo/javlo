@@ -716,6 +716,8 @@ public class ContentHelper {
                     element.removeAttr("style");
                 }
 
+                docJsoup.select("form").remove();
+
                 for (org.jsoup.nodes.Element img : docJsoup.select("img")) {
                     String src = img.attr("src");
                     if (src.toLowerCase().contains("//" + host.toLowerCase())) {
