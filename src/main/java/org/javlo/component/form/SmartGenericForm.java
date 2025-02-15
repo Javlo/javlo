@@ -2089,6 +2089,22 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
     @Override
     public boolean transflateFrom(ContentContext ctx, ITranslator translator, String lang) {
+
+        Properties prop = getLocalConfig(false);
+        for (String key : prop.stringPropertyNames()) {
+            if (!key.startsWith("field.")) {
+                String val = prop.getProperty(key);
+                if (!StringHelper.isDigit(val) && !StringHelper.isMail(val)) {
+                    prop.setProperty(key, translator.translate(ctx, val, lang, ctx.getRequestContentLanguage()));
+                }
+            }
+        }
+        try {
+            store(ctx);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         for (Field field : getFields(ctx)) {
             String label = field.getLabel();
             String newLabel = translator.translate(ctx, label,  lang, ctx.getRequestContentLanguage());
