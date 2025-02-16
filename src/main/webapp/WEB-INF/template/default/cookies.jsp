@@ -157,8 +157,8 @@ function getAreaForCookie(url, area) {
 }
 
 function actionCookie(action) {
-	 cc = document.body.querySelectorAll('._cookie-cache');
-	 i = 0;
+	 let cc = document.body.querySelectorAll('._cookie-cache');
+	 let i = 0;
 	 for( i=0; i < cc.length; i++ ) {
 	       if (cc[i].dataset.status==action) {
 			   if (cc[i].dataset.html != null) {
@@ -169,7 +169,7 @@ function actionCookie(action) {
 			   }
 	       }
 	 }
-	 cn = document.body.querySelectorAll('._cookie-nochoice');
+	 let cn = document.body.querySelectorAll('._cookie-nochoice');
 	 i = 0;
 	 for( i=0; i < cn.length; i++ ) {
        cn[i].remove(cn[i].parentElement);
