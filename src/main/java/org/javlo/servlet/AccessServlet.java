@@ -480,6 +480,20 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			/** CACHE **/
 			ContentService content = ContentService.getInstance(ctx.getRequest());
 			MenuElement currentPage = content.getNavigation(ctx).getNoErrorFreeCurrentPage(ctx);
+
+			/** redirect **/
+			if (ctx.getGlobalContext().getStaticConfig().isAllUrlRedirect()) {
+				if (ctx.isAsViewMode() && currentPage != null) {
+					String url = URLHelper.createURL(ctx, currentPage);
+					String mainUri = ctx.getMainUri();
+					if (mainUri != null && !mainUri.equals(url)) {
+						logger.info("redirect to main url : "+request.getRequestURI()+" -> "+url);
+						ctx.getResponse().sendRedirect(url);
+						return;
+					}
+				}
+			}
+
 			if (ctx.isAsViewMode() && currentPage != null && currentPage.isCacheable(ctx) && globalContext.isPreviewMode() && globalContext.getPublishDate() != null && request.getMethod().equalsIgnoreCase("get") && request.getParameter("webaction") == null) {
 				long lastModified = globalContext.getPublishDate().getTime();
 				response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);

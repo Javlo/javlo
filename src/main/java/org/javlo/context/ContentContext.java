@@ -224,6 +224,10 @@ public class ContentContext {
 		return (String)session.getAttribute(INPUT_TRACKING_KEY);
 	}
 
+	public String getMainUri() {
+		return (String)request.getAttribute("mainUri");
+	}
+
 	/**
 	 * 
 	 * @param request

@@ -138,6 +138,9 @@ public class CatchAllFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain next) throws IOException, ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
+
+		httpRequest.setAttribute("mainUri", httpRequest.getRequestURI());
+		
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		ServletContext servletContext = httpRequest.getSession().getServletContext();
 		CountService.getInstance(servletContext).touch();

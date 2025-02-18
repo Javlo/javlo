@@ -1437,6 +1437,10 @@ public class StaticConfig extends Observable {
 		return properties.getBoolean("account.size", false);
 	}
 
+	public boolean isAllUrlRedirect() {
+		return properties.getBoolean("url.all-redirect", false);
+	}
+
 	public boolean isDataFolderRelative() {
 		return properties.getBoolean("data-folder-relative", true);
 	}
