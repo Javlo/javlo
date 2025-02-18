@@ -1,14 +1,7 @@
 package org.javlo.helper;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IImageFilter;
@@ -29,6 +22,12 @@ import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.template.Template;
 import org.javlo.ztatic.StaticInfo;
 import org.owasp.encoder.Encode;
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * countain the method with efficient body for URLHelper.
@@ -218,7 +217,11 @@ public abstract class ElementaryURLHelper {
 					if (page == null) {
 						uri = "/404";
 					} else {
-						uri = urlCreator.createURL(ctx, page);
+						if (uri.equals("/") || page.isLikeRoot(ctx)) {
+							uri = "/";
+						} else {
+							uri = urlCreator.createURL(ctx, page);
+						}
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

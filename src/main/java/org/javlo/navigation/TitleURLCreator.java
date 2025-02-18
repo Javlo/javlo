@@ -1,14 +1,14 @@
 package org.javlo.navigation;
 
-import java.net.URLEncoder;
-import java.util.Collection;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.navigation.PageURL;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.ElementaryURLHelper;
 import org.javlo.helper.StringHelper;
+
+import java.net.URLEncoder;
+import java.util.Collection;
 
 /**
  * create url based on the title of the page.

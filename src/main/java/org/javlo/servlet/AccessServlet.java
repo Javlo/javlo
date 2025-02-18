@@ -484,7 +484,12 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			/** redirect **/
 			if (ctx.getGlobalContext().getStaticConfig().isAllUrlRedirect()) {
 				if (ctx.isAsViewMode() && currentPage != null) {
-					String url = URLHelper.createURL(ctx, currentPage);
+					String url;
+					/*if (currentPage.isLikeRoot(ctx)) {
+						url = URLHelper.createURL(ctx, "/");
+					} else {*/
+						url = URLHelper.createURL(ctx, currentPage);
+					//}
 					String mainUri = ctx.getMainUri();
 					if (mainUri != null && !mainUri.equals(url)) {
 						logger.info("redirect to main url : "+request.getRequestURI()+" -> "+url);
