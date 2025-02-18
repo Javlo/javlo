@@ -1326,8 +1326,6 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
     public static String performSubmit(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-        System.out.println("#################### performSubmit 1");
-
         String userIP = request.getHeader("x-real-ip");
         if (StringHelper.isEmpty(userIP)) {
             userIP = request.getRemoteAddr();
@@ -1374,16 +1372,12 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
         synchronized (LOCK_SUBMIT) {
 
-            System.out.println("#################### performSubmit 2");
-
             if (comp.isFormExpire() && !comp.cacheForm.containsKey(code) && !comp.isCaptcha(ctx)) {
                 I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
                 GenericMessage msg = new GenericMessage(i18nAccess.getViewText("error.bad-from-version", "This form has experied, try again."), GenericMessage.ERROR);
                 request.setAttribute("msg", msg);
                 return "This form has expired, try again. Please ensure to complete the form within 2 hours.";
             }
-
-            System.out.println("#################### performSubmit 3");
 
             /** check captcha **/
             String captcha = rs.getParameter("captcha", null);
@@ -1415,8 +1409,6 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
                     }
                 }
             }
-
-            System.out.println("#################### performSubmit 4");
 
             if (subjectField != null && rs.getParameter(subjectField, null) != null) {
                 subject = comp.getLocalConfig(false).getProperty("mail.subject", "") + rs.getParameter(subjectField, null);
@@ -1479,8 +1471,6 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
                     }
                 }
             }
-
-            System.out.println("#################### performSubmit 5");
 
             if (!StringHelper.isEmpty(loc)) {
                 adminMailData.put("location", loc);
@@ -1643,8 +1633,6 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
                 }
 
             }
-
-            System.out.println("#################### performSubmit 6");
 
             if (ps != null) {
                 ps.execute();
