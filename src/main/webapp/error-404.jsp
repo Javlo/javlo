@@ -10,12 +10,63 @@ GlobalContext globalContext = GlobalContext.getInstance(request);
 ContentContext ctx = ContentContext.getContentContext(request, response);
 ctx = new ContentContext(ctx);
 ctx.setFormat("html");
-ctx.setViewPrefix(true);
 ctx.setAbsoluteURL(true);
-String url = URLHelper.createURL(ctx, "404");
-String content404Page = "<p style=\"padding: 15px; text-align: center; font-size: 4em; font-family: Arial;\">404</p>";
-try {
-	content404Page = NetHelper.readPageGet(new URL(url), false);
-} catch (Exception e) {	
-}
-%><%=content404Page%>
+String url = URLHelper.createURL(ctx, "/");
+%>
+
+<html>
+<head>
+	<style>
+		*{
+			transition: all 0.6s;
+		}
+
+		html {
+			height: 100%;
+		}
+
+		body{
+			font-family: 'Lato', sans-serif;
+			color: #888;
+			margin: 0;
+		}
+
+		#main{
+			display: table;
+			width: 100%;
+			height: 100vh;
+			text-align: center;
+		}
+
+		.fof{
+			display: table-cell;
+			vertical-align: middle;
+		}
+
+		a {
+			display: block;
+			margin-top: 1rem;
+		}
+
+		.fof h1{
+			font-size: 50px;
+			display: inline-block;
+			padding-right: 12px;
+			animation: type .5s alternate infinite;
+		}
+
+		@keyframes type{
+			from{box-shadow: inset -3px 0px 0px #888;}
+			to{box-shadow: inset -3px 0px 0px transparent;}
+		}
+	</style>
+</head>
+<body>
+<div id="main">
+	<div class="fof">
+		<h1>404 : page not found</h1>
+		<a href="<%=url%>">back to home</a>
+	</div>
+</div>
+</body>
+</html>
