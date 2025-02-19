@@ -98,9 +98,10 @@ public class NetHelper {
 		// nocheckCertificatHttps();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		InputStream in = null;
+		HttpURLConnection httpConn = null;
 		try {
 			if (conn instanceof HttpURLConnection) {
-				HttpURLConnection httpConn = (HttpURLConnection) conn;
+				httpConn = (HttpURLConnection) conn;
 				httpConn.setRequestProperty("User-Agent", MOZILLA_USER_AGENT);
 				if (checkReturnCode && httpConn.getResponseCode() != HttpURLConnection.HTTP_OK) {
 					throw new NetException("Response code: " + httpConn.getResponseCode());
@@ -110,6 +111,9 @@ public class NetHelper {
 			ResourceHelper.writeStreamToStream(in, out);
 		} finally {
 			ResourceHelper.closeResource(in);
+			if (httpConn != null) {
+				httpConn.disconnect();
+			}
 		}
 		return new String(out.toByteArray(), ContentContext.CHARACTER_ENCODING);
 	}
