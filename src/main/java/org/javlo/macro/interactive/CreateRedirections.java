@@ -119,7 +119,7 @@ public class CreateRedirections implements IInteractiveMacro, IAction  {
                     }
                 }
 
-                outText += lastValidWord + "=" + redirectTo + "\n";
+                outText += line + "=" + redirectTo + "\n";
             }
         }
 
