@@ -150,7 +150,7 @@ public class MacroFactory {
 		macros.add(new UserMacroModule(true));
 		macros.add(new UserMacroModule(false));
 
-		macros.add(new RegistrationMacroModule());
+		//macros.add(new RegistrationMacroModule());
 		macros.add(new CreateRedirections());
 		
 		/** macro bean **/
