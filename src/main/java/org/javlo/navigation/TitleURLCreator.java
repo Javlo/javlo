@@ -45,6 +45,7 @@ public class TitleURLCreator extends AbstractURLFactory {
 			title = newTitle;
 		}
 
+		title = title.trim();
 		title =  StringEscapeUtils.unescapeHtml4(title);
 		
 		if (currentPage.getUrlNumber() > 0) {
