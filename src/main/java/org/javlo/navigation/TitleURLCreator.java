@@ -40,12 +40,11 @@ public class TitleURLCreator extends AbstractURLFactory {
 		}
 
 		String title = StringHelper.removeCR(currentPage.getForcedPageTitle(ctx));
-		if (StringHelper.isEmpty(title)) {
-			String newTitle = StringHelper.removeCR(currentPage.getFullLabel(freeCtx));
-			if (newTitle.length() < title.length()) {
-				title = newTitle;
-			}
+		String newTitle = StringHelper.removeCR(currentPage.getFullLabel(freeCtx));
+		if (newTitle.length() < title.length()) {
+			title = newTitle;
 		}
+
 		
 		title =  StringEscapeUtils.unescapeHtml4(title);
 		
