@@ -43,6 +43,11 @@ String url = URLHelper.createURL(ctx, "/");
 			vertical-align: middle;
 		}
 
+		p {
+			margin-top: 0;
+			margin-bottom: 1rem;
+		}
+
 		a {
 			display: block;
 			margin-top: 1rem;
@@ -64,6 +69,7 @@ String url = URLHelper.createURL(ctx, "/");
 <body>
 <div id="main">
 	<div class="fof">
+		<p><%=globalContext.getGlobalTitle()%></p>
 		<h1>404 : page not found</h1>
 		<a href="<%=url%>">back to home</a>
 	</div>
