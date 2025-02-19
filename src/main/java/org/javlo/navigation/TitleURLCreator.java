@@ -38,7 +38,7 @@ public class TitleURLCreator extends AbstractURLFactory {
 		if (comps.size() > 0) {
 			return ((PageURL) comps.iterator().next()).getValue();
 		}
-		String title = StringHelper.removeCR(currentPage.getLocalTitle(freeCtx));
+		String title = StringHelper.removeCR(currentPage.getPageTitle(freeCtx));
 		
 		title =  StringEscapeUtils.unescapeHtml4(title);
 		
