@@ -44,8 +44,8 @@ public class SearchResult {
 
 	private String sort = "relevance";
 
-	private final String SORT_RELEVANCE = "relevance";
-	private final String SORT_DATE = "date";
+	public final static String SORT_RELEVANCE = "relevance";
+	public final static String SORT_DATE = "date";
 
 	private WeakReference<ContentContext> refCtx = null;
 
