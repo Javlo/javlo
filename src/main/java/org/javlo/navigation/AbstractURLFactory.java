@@ -1,14 +1,14 @@
 package org.javlo.navigation;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.javlo.context.ContentContext;
-import org.javlo.helper.StringHelper;
 
 public abstract class AbstractURLFactory implements IURLFactory {
 	
@@ -59,15 +59,19 @@ public abstract class AbstractURLFactory implements IURLFactory {
 		if (urls == null) {
 			urls = Collections.synchronizedMap(new HashMap<String, String>());
 		}
-		if (urls.keySet().contains(url)) {
-			if (urls.get(url).equals(page.getId())) {
-				return false;
-			} else {
-				return true;
-			}
+		if (urls.containsKey(url)) {
+            return !urls.get(url).equals(page.getId());
 		} else {
 			urls.put(url, page.getId());
 			return false;
+		}
+	}
+
+	public String getExistingURLId(String url) {
+		if (urls != null) {
+			return urls.get(url);
+		} else {
+			return null;
 		}
 	}
 
