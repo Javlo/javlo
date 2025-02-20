@@ -2203,7 +2203,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 		return renderer;
 	}
 
@@ -2747,7 +2746,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			if (url.endsWith(".html")) {
 				return ServletHelper.executeThymeleaf(request, response, url);
 			} else {
-
 				return ServletHelper.executeJSP(ctx, url);
 			}
 

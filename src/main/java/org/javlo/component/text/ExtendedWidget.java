@@ -20,25 +20,26 @@ import java.util.List;
  * @author pvandermaesen
  */
 public class ExtendedWidget extends AbstractPropertiesComponent {
-	
-	private List<String> FIELDS = Arrays.asList(new String[] {"xhtml", "css", "file"});
 
-	private static String[] STYLE = new String[] {"no-filtered", "filtered"};
+	private List<String> FIELDS = Arrays.asList(new String[]{"xhtml", "css", "file"});
+
+	private static String[] STYLE = new String[]{"no-filtered", "filtered"};
 
 	public static final String TYPE = "extendedWidget";
 
 	public static final String XHTML_RESOURCE_FOLDER = "_xhtml_resources";
 
 	private Boolean cachable = null;
-	
+
+	private File rendererFile = null;
+
 	@Override
-	public void init(ComponentBean bean, ContentContext ctx) throws Exception {	
+	public void init(ComponentBean bean, ContentContext ctx) throws Exception {
 		super.init(bean, ctx);
 		File renderer = getRendererFile(ctx);
-		/*if (!renderer.exists()) {
+		if (!renderer.exists()) {
 			renderer.getParentFile().mkdirs();
-			createRenderer(ctx);
-		}*/
+		}
 	}
 
 	@Override
@@ -47,7 +48,10 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 	}
 
 	public void createRenderer(ContentContext ctx) throws Exception {
-		File renderer = getRendererFile(ctx);
+		createRenderer(ctx, getRendererFile(ctx));
+	}
+
+	private void createRenderer(ContentContext ctx, File renderer) throws Exception {
 		final String filePrefix = "<%@ taglib uri=\"jakarta.tags.core\" prefix=\"c\"%><%@ taglib prefix=\"fn\" uri=\"jakarta.tags.functions\"%><%@ taglib prefix=\"fmt\" uri=\"jakarta.tags.fmt\"%><%@ taglib uri=\"/WEB-INF/javlo.tld\" prefix=\"jv\"%>";
 		String css = getFieldValue("css");
 		String style = "";
@@ -75,13 +79,6 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		File file = getRendererFile(ctx);
-		if (!file.exists()) {
-			logger.info("create : "+file);
-			file.getParentFile().mkdirs();
-			file.createNewFile();
-			createRenderer(ctx);
-		}
 	}
 	
 	@Override
@@ -91,7 +88,17 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 	}
 	
 	private File getRendererFile(ContentContext ctx) {
-		return new File(ctx.getRequest().getSession().getServletContext().getRealPath(getRenderer(ctx)));
+		if (rendererFile == null) {
+			rendererFile = new File(ctx.getRequest().getSession().getServletContext().getRealPath(getRenderer(ctx)));
+			if (!rendererFile.exists()) {
+				try {
+					createRenderer(ctx, rendererFile);
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
+		}
+		return rendererFile;
 	}
 	
 	@Override
@@ -106,7 +113,18 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 	
 	@Override
 	public String getRenderer(ContentContext ctx) {
-		return "/jsp/view/component/"+TYPE+"/view_"+getId()+".jsp";
+		String renderer = "/jsp/view/component/"+TYPE+"/view_"+getId()+".jsp";
+		if (rendererFile == null) {
+			rendererFile = new File(ctx.getRequest().getSession().getServletContext().getRealPath(renderer));
+		}
+		if (!rendererFile.exists()) {
+			try {
+				createRenderer(ctx, rendererFile);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+		return renderer;
 	}
 
 	@Override
