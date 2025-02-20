@@ -9,6 +9,7 @@ import org.javlo.helper.StringHelper;
 
 import java.net.URLEncoder;
 import java.util.Collection;
+import java.util.logging.Logger;
 
 /**
  * create url based on the title of the page.
@@ -17,6 +18,8 @@ import java.util.Collection;
  * 
  */
 public class TitleURLCreator extends AbstractURLFactory {
+
+	private static Logger logger = Logger.getLogger(TitleURLCreator.class.getName());
 
 	protected boolean isWithParent() {
 		return false;
@@ -69,8 +72,9 @@ public class TitleURLCreator extends AbstractURLFactory {
 		}
 		
 		String baseURL = url;
-		
+
 		if (this.addAndCheckExistURL(currentPage, url)) {
+			logger.warning("url : '"+url+"' found on page : "+this.getExistingURLId(url));
 			url = baseURL+'_'+currentPage.getName();
 			if (this.addAndCheckExistURL(currentPage, url)) {
 				url = baseURL+'_'+currentPage.getId();
@@ -81,7 +85,6 @@ public class TitleURLCreator extends AbstractURLFactory {
 				}
 			}
 		}
-
 		return url;
 	}
 
