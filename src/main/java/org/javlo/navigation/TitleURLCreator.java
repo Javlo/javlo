@@ -74,7 +74,6 @@ public class TitleURLCreator extends AbstractURLFactory {
 		String baseURL = url;
 
 		if (this.addAndCheckExistURL(currentPage, url)) {
-			logger.warning("url : '"+url+"' found on page : "+this.getExistingURLId(url));
 			url = baseURL+'_'+currentPage.getName();
 			if (this.addAndCheckExistURL(currentPage, url)) {
 				url = baseURL+'_'+currentPage.getId();
@@ -84,6 +83,7 @@ public class TitleURLCreator extends AbstractURLFactory {
 					i++;
 				}
 			}
+			logger.warning("url : '"+baseURL+"' found on page : "+this.getExistingURLId(url)+" | final URL="+url);
 		}
 		return url;
 	}
