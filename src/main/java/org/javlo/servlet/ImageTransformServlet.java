@@ -297,6 +297,9 @@ public class ImageTransformServlet extends FileServlet {
 				imageCache = out;
 			}
 		}
+		if (out == null) {
+			return null;
+		}
 		return ImageEngine.duplicateBuffuredImage(out);
 	}
 
