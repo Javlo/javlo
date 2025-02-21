@@ -57,6 +57,7 @@ import org.javlo.utils.TimeTracker;
 import org.javlo.utils.backup.BackupThread;
 import org.javlo.utils.request.IFirstRequestListner;
 import org.javlo.ztatic.FileCache;
+import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.swing.Java2DRenderer;
@@ -85,6 +86,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	public static long COUNT_ACCESS = 0;
 
 	public static long COUNT_304 = 0;
+
+	public static String VIEW_MSG_PARAM = "__msg";
 
 	private static boolean DEBUG = false;
 
@@ -314,6 +317,16 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						}
 					}
 				}
+			}
+
+			if (request.getParameter(VIEW_MSG_PARAM) != null) {
+				MessageRepository messageRepository = MessageRepository.getInstance(ctx);
+				String msg = request.getParameter(VIEW_MSG_PARAM);
+				msg = Encode.forHtml(msg);
+				if (msg.length() > 500) {
+					msg = msg.substring(0,500);
+				}
+				messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.INFO));
 			}
 
 			if (!staticConfig.isFoundFile()) {
@@ -716,20 +729,22 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							Iterator<String> defaultLgs = globalContext.getDefaultLanguages().iterator();
 							while (!content.contentExistForContext(newCtx) && defaultLgs.hasNext()) {
 								String lg = defaultLgs.next();
-								newCtx.setRequestContentLanguage(lg);
+								newCtx.setAllLanguage(lg);
 							}
 						}
-						if (!content.contentExistForContext(newCtx)) {
-							// logger.debug("content not found in " + ctx.getPath() + " lg:" +
-							// ctx.getRequestContentLanguage());
-							// ctx.setSpecialContentRenderer("/jsp/view/content_not_found.jsp");
-						} else {
+						if (content.contentExistForContext(newCtx)) {
 							I18nAccess.getInstance(ctx.getRequest());
 							String msg = i18nAccess.getViewText("global.language-not-found", "Sorry this page does not exist in " + new Locale(currentLg).getDisplayLanguage(Locale.ENGLISH));
-							InfoBean.getCurrentInfoBean(ctx).setPageNotFoundMessage(msg);
+							/*InfoBean.getCurrentInfoBean(ctx).setPageNotFoundMessage(msg);
 							ctx = newCtx;
 							ctx.setMainLanguage(currentLg);
-							ctx.storeInRequest(request);
+							ctx.storeInRequest(request);*/
+							String newURL = URLHelper.createURL(newCtx, newCtx.getCurrentPage());
+							newURL = URLHelper.addParam(newURL, VIEW_MSG_PARAM, msg);
+							if (!newCtx.getRequestContentLanguage().equals(ctx.getRequestContentLanguage())) {
+								NetHelper.sendRedirectPermanently(response, newURL);
+							}
+							return;
 						}
 					}
 				}
