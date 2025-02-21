@@ -63,6 +63,10 @@ public class TitleURLCreator extends AbstractURLFactory {
 		if (isRemoveAccent()) {
 			title = StringHelper.createASCIIString(title);
 		}
+
+		if (title.length() > 250) {
+			title = title.substring(0,250);
+		}
 		
 		String path = URLEncoder.encode(StringHelper.createI18NURL(StringHelper.removeSpecialChars(title)), ContentContext.CHARACTER_ENCODING);
 
