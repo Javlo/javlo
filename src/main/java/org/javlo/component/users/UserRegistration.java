@@ -1,5 +1,7 @@
 package org.javlo.component.users;
 
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 import jakarta.servlet.http.HttpSession;
 import org.apache.commons.fileupload2.core.FileItem;
 import org.javlo.actions.IAction;
@@ -28,8 +30,6 @@ import org.javlo.ztatic.StaticInfo;
 import org.javlo.ztatic.StaticInfoBean;
 
 import javax.imageio.ImageIO;
-import jakarta.mail.internet.AddressException;
-import jakarta.mail.internet.InternetAddress;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
@@ -172,9 +172,9 @@ public class UserRegistration extends MapComponent implements IAction {
 			}
 		}
 		String avatarFileName = ctx.getCurrentUser().getUserInfo().getUserFolder() + ".webp";
-		System.out.println(">>>>>>>>> UserRegistration.uploadFile : userInfo.hashCode() = "+ctx.getCurrentUser().getUserInfo().hashCode()); //TODO: remove debug trace
+		/*System.out.println(">>>>>>>>> UserRegistration.uploadFile : userInfo.hashCode() = "+ctx.getCurrentUser().getUserInfo().hashCode()); //TODO: remove debug trace
 		System.out.println(">>>>>>>>> UserRegistration.uploadFile : ctx.getCurrentUser().getUserInfo().getLogin() = "+ctx.getCurrentUser().getUserInfo().getLogin()); //TODO: remove debug trace
-		System.out.println(">>>>>>>>> UserRegistration.uploadFile : ctx.getCurrentUser().getUserInfo().getUserFolder() = "+ctx.getCurrentUser().getUserInfo().getUserFolder()); //TODO: remove debug trace
+		System.out.println(">>>>>>>>> UserRegistration.uploadFile : ctx.getCurrentUser().getUserInfo().getUserFolder() = "+ctx.getCurrentUser().getUserInfo().getUserFolder()); //TODO: remove debug trace*/
 		File avatarFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), ctx.getGlobalContext().getStaticConfig().getAvatarFolder(), avatarFileName));
 		if (StringHelper.isTrue(rs.getParameter("deleteAvatar", null))) {
 			avatarFile.delete();
