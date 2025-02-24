@@ -397,6 +397,10 @@ public class StringHelper {
         return createCleanName(text, "azertyuiopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLMWXCVBN0123456789,._- ", '_');
     }
 
+    public static String createASCIIString(String text, char replace) {
+        return createCleanName(text, "azertyuiopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLMWXCVBN0123456789,._- ", replace);
+    }
+
     private static Map<String, String> getTransliteration() {
         if (transliteration == null) {
             Properties prop = new Properties();
@@ -458,6 +462,25 @@ public class StringHelper {
             text = text.replace("'", "''");
             return text;
         }
+    }
+
+    public static String removeSpecialChars(String text, String replace) {
+        Set<Character> okChar = getISOAcceptableChars();
+        Map<Character, String> replacement = new HashMap<Character, String>();
+        for (char c : text.toCharArray()) {
+            if (!okChar.contains(c) && replacement.get(c) == null) {
+                String newStr = removeSpecialChars(c);
+                if (newStr != null) {
+                    replacement.put(c, newStr);
+                } else {
+                    replacement.put(c, replace);
+                }
+            }
+        }
+        for (Character c : replacement.keySet()) {
+            text = StringUtils.replace(text, "" + c, replacement.get(c));
+        }
+        return removeDuplicateToken(text, replace);
     }
 
     public static String removeSpecialChars(String text) {
