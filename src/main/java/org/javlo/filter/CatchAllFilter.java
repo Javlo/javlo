@@ -448,10 +448,10 @@ public class CatchAllFilter implements Filter {
 					if (page != null) {
 						String newURL = URLHelper.createURLWithtoutEncodeURL(ctx, page.getPath());
 						if (DEBUG) {
-							LocalLogger.log("1.sendRedirectTemporarily");
+							LocalLogger.log("1.sendRedirectPermanently");
 							LocalLogger.log("newURL : " + newURL);
 						}
-						NetHelper.sendRedirectTemporarily((HttpServletResponse) response, newURL);
+						NetHelper.sendRedirectPermanently((HttpServletResponse) response, newURL);
 						return;
 					} else {
 						logger.warning("bad short url code : " + shortURI);
@@ -473,10 +473,10 @@ public class CatchAllFilter implements Filter {
 					if (page != null) {
 						String newURL = URLHelper.createURLWithtoutEncodeURL(ctx, page.getPath());
 						if (DEBUG) {
-							LocalLogger.log("2.sendRedirectTemporarily");
+							LocalLogger.log("2.sendRedirectPermanently");
 							LocalLogger.log("newURL : " + newURL);
 						}
-						NetHelper.sendRedirectTemporarily((HttpServletResponse) response, newURL);
+						NetHelper.sendRedirectPermanently((HttpServletResponse) response, newURL);
 						return;
 					}
 				}
@@ -496,7 +496,7 @@ public class CatchAllFilter implements Filter {
 				if ((cmsURI.length() < 5 || cmsURI.equals("/")) && globalContext.getHomePage().length() > 1) {
 					String homeUrl = globalContext.getHomePageLink(ContentContext.getContentContext(httpRequest, httpResponse));
 					logger.info("forward to home >>> " + homeUrl);
-					NetHelper.sendRedirectTemporarily((HttpServletResponse) response, homeUrl);
+					NetHelper.sendRedirectPermanently((HttpServletResponse) response, homeUrl);
 					return;
 				}
 			} catch (Exception e) {
