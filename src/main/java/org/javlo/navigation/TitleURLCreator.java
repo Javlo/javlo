@@ -61,14 +61,14 @@ public class TitleURLCreator extends AbstractURLFactory {
 		}
 		
 		if (isRemoveAccent()) {
-			title = StringHelper.createASCIIString(title);
+			title = StringHelper.createASCIIString(title, '-');
 		}
 		if (title.length() > 90) {
 			title = title.substring(0,90);
 		}
 		title = title.trim().replace(' ', '-');
 		
-		String path = URLEncoder.encode(StringHelper.createI18NURL(StringHelper.removeSpecialChars(title)), ContentContext.CHARACTER_ENCODING);
+		String path = URLEncoder.encode(StringHelper.createI18NURL(StringHelper.removeSpecialChars(title, "-")), ContentContext.CHARACTER_ENCODING);
 		String url = path;
 		if (isWithParent()) {
 			url = ElementaryURLHelper.mergePath(createURLWithoutExt(ctx, currentPage.getParent()), path);
