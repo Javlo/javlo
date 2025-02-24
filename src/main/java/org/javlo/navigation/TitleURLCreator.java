@@ -66,7 +66,7 @@ public class TitleURLCreator extends AbstractURLFactory {
 		if (title.length() > 90) {
 			title = title.substring(0,90);
 		}
-		title = title.trim().replace(' ', '_');
+		title = title.trim().replace(' ', '-');
 		
 		String path = URLEncoder.encode(StringHelper.createI18NURL(StringHelper.removeSpecialChars(title)), ContentContext.CHARACTER_ENCODING);
 		String url = path;
@@ -79,12 +79,12 @@ public class TitleURLCreator extends AbstractURLFactory {
 		String baseURL = url;
 
 		if (this.addAndCheckExistURL(currentPage, url)) {
-			url = baseURL+'_'+currentPage.getName();
+			url = baseURL+'-'+currentPage.getName();
 			if (this.addAndCheckExistURL(currentPage, url)) {
-				url = baseURL+'_'+currentPage.getId();
+				url = baseURL+'-'+currentPage.getId();
 				int i=1;
 				while (this.addAndCheckExistURL(currentPage, url)) {
-					url = baseURL+'_'+i;
+					url = baseURL+'-'+i;
 					i++;
 				}
 			}
