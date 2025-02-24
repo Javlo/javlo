@@ -246,6 +246,20 @@ public class InfoBean {
 		return lgURLs;
 	}
 
+	public Map<String, String> getLanguageRealContentURLs() throws Exception {
+		if (lgURLs == null) {
+			lgURLs = new HashMap<String, String>();
+			ContentContext lgCtx = new ContentContext(ctx);
+			for (String lg : ctx.getGlobalContext().getContentLanguages()) {
+				lgCtx.setAllLanguage(lg);
+				if (getCurrentPage().isRealContent(lgCtx)) {
+					lgURLs.put(lg, URLHelper.createURL(lgCtx));
+				}
+			}
+		}
+		return lgURLs;
+	}
+
 	public String getCurrentAbsoluteURLQRCode() {
 		return URLHelper.createQRCodeLink(ctx, getShortLanguageURL());
 	}
