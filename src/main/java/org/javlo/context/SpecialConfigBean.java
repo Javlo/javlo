@@ -183,5 +183,9 @@ public class SpecialConfigBean {
 	public boolean isTaxonomyUnderlineActive() {
 		return StringHelper.isTrue(config.get("taxonomy.underline-active"), false);
 	}
+
+	public boolean isMsgOnForward() {
+		return StringHelper.isTrue(config.get("no-content.msg-on-forward"), true);
+	}
 	
 }

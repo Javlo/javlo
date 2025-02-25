@@ -741,7 +741,9 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							ctx.setMainLanguage(currentLg);
 							ctx.storeInRequest(request);*/
 							String newURL = URLHelper.createURL(newCtx, newCtx.getCurrentPage());
-							newURL = URLHelper.addParam(newURL, VIEW_MSG_PARAM, msg);
+							if (ctx.getGlobalContext().getSpecialConfig().isMsgOnForward()) {
+								newURL = URLHelper.addParam(newURL, VIEW_MSG_PARAM, msg);
+							}
 							if (!newCtx.getRequestContentLanguage().equals(ctx.getRequestContentLanguage())) {
 								NetHelper.sendRedirectPermanently(response, newURL);
 							}
