@@ -5,94 +5,119 @@ import io.bit3.jsass.Compiler;
 import io.bit3.jsass.Options;
 import io.bit3.jsass.Output;
 import io.bit3.jsass.context.FileContext;
-import org.apache.commons.lang3.StringUtils;
-import org.javlo.config.StaticConfig;
-import org.javlo.context.ContentContext;
+import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServletRequest;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.lesscss.LessCompiler;
+import org.lesscss.LessException;
 
-import jakarta.servlet.*;
-import jakarta.servlet.http.HttpServletRequest;
-import java.io.*;
+
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class CssCompilationFilter implements Filter {
 
-	private static Logger logger = Logger.getLogger(CssCompilationFilter.class.getName());
+	private static final Logger logger = Logger.getLogger(CssCompilationFilter.class.getName());
+
+	private final LessCompiler lessCompiler = new LessCompiler();
+
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain next) throws IOException, ServletException {
+	public void init(FilterConfig filterConfig) {}
+
+	@Override
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
+
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
+
 		String path = httpRequest.getServletPath();
+		String requestURI = ((HttpServletRequest) request).getRequestURI();
 		GlobalContext globalContext = GlobalContext.getInstance(httpRequest);
 		if (path.startsWith('/' + globalContext.getContextKey())) {
 			path = path.replaceFirst('/' + globalContext.getContextKey(), "");
 		}
-		// File cssFile = new
-		// File(httpRequest.getSession().getServletContext().getRealPath(path));
-		File cssFile = new File(ResourceHelper.getRealPath(httpRequest.getSession().getServletContext(), path));
-		boolean compileFile = !cssFile.exists();
-		if (!compileFile) {
-			if (!globalContext.isProd()) {
+		String realPath = ResourceHelper.getRealPath(httpRequest.getSession().getServletContext(), path);
 
-				ScssCssCleaner.cleanOldCssFiles(cssFile.getParentFile().getAbsolutePath());
+		File requestedFile = new File(realPath);
+		logger.info("🔍 Requête pour : " + request);
 
-				//File lessFile = new File(cssFile.getAbsolutePath().substring(0, cssFile.getAbsolutePath().length() - 4) + ".less");
-				//File sassFile = new File(cssFile.getAbsolutePath().substring(0, cssFile.getAbsolutePath().length() - 4) + ".scss");
-				
-//				if (lessFile.exists() || sassFile.exists()) {
-//
-//					long latest = ResourceHelper.getLatestModificationFileOnFolder(cssFile.getParentFile(), "scss", "less");
-//
-//					if (latest > cssFile.lastModified()) {
-//						compileFile = true;
-//						cssFile.delete();
-//					}
-//
-//				}
-//				if (latest > cssFile.lastModified()) {
-//					compileFile = true;
-//					cssFile.delete();
-//				}
+		// Vérifier si le fichier existe déjà
+		if (!requestedFile.exists()) {
+			boolean isMinified = requestURI.contains(".min.");
+			String baseFilePath = isMinified ? realPath.replace(".min", "") : realPath;
+
+			// Recherche des fichiers source : .scss ou .less
+			File scssFile = new File(baseFilePath.replace(".css", ".scss"));
+			File lessFile = new File(baseFilePath.replace(".css", ".less"));
+			File sourceFile = null;
+
+			if (scssFile.exists()) {
+				sourceFile = scssFile;
+				logger.info("✅ Fichier SCSS trouvé : " + scssFile);
+			} else if (lessFile.exists()) {
+				sourceFile = lessFile;
+				logger.info("✅ Fichier LESS trouvé : " + lessFile);
 			}
-		}
-		if (compileFile) {
-			synchronized (globalContext) {
-				if (!cssFile.exists()) {
-					File lessFile = new File(cssFile.getAbsolutePath().substring(0, cssFile.getAbsolutePath().length() - 4) + ".less");
-					File sassFile = new File(cssFile.getAbsolutePath().substring(0, cssFile.getAbsolutePath().length() - 4) + ".scss");
-					long startTime = System.currentTimeMillis();
-					if (!globalContext.getContextKey().equals(globalContext.getSourceContextKey())) {
-						lessFile = new File(StringUtils.replaceOnce(lessFile.getAbsolutePath(), File.separator + globalContext.getSourceContextKey() + File.separator, File.separator + globalContext.getContextKey() + File.separator));
-						cssFile.getParentFile().mkdirs();
-					}
-					File tempCssFile = new File(cssFile.getAbsolutePath() + ".__TEMP.css");
-					boolean sass = false;
-					if (sassFile.exists()) {
-						sass = true;
-						StaticConfig staticConfig = StaticConfig.getInstance(httpRequest.getSession().getServletContext());
-						compileSass(globalContext.isProd(), sassFile, tempCssFile);
-					} else if (lessFile.exists()) {
-						compile(lessFile, tempCssFile, globalContext.isProd());
-					}
-					if (!tempCssFile.renameTo(cssFile)) {
-						logger.severe("error : rename file:" + tempCssFile + " to " + cssFile);
-					} else {
-						logger.info("compile "+(sass?"sass":"less")+" ("+(System.currentTimeMillis()-startTime)/1000+" sec.) : "+cssFile);
-					}
+
+			if (sourceFile != null) {
+				// Lire et compiler le fichier source
+
+				String processedCode = null;
+				if (sourceFile.getName().endsWith(".scss")) {
+					processedCode = compileScssToCss(globalContext.isProd(), sourceFile);
+				} else if (sourceFile.getName().endsWith(".less")) {
+					processedCode = compileLessToCss(sourceFile);
 				}
+
+				if (processedCode != null) {
+					if (isMinified) {
+						processedCode = minifyCSS(processedCode);
+					}
+					// Enregistrer le fichier CSS compilé
+					Files.write(Paths.get(requestedFile.getAbsolutePath()), processedCode.getBytes(StandardCharsets.UTF_8));
+					logger.info("✅ Fichier CSS généré : " + requestedFile.getAbsolutePath());
+				}
+			} else {
+				logger.warning("⚠️ Aucun fichier source trouvé pour : " + requestURI);
 			}
+		} else {
+			logger.info("✅ Fichier CSS existant trouvé, pas de compilation nécessaire.");
 		}
-		next.doFilter(request, response);
+
+		// Continue le traitement normalement
+		chain.doFilter(request, response);
 	}
 
-	private static boolean compileSass(boolean prod, File in, File out) throws IOException {
-		URI inputFile = in.toURI();
-		if (!out.exists()) {
-			out.createNewFile();
+	@Override
+	public void destroy() {
+		logger.info("🛑 CssCompilationFilter détruit.");
+	}
+
+	/**
+	 * Compile du SCSS en CSS avec JSass
+	 */
+	/*private String compileScssToCss(String scssCode) {
+		Compiler sassCompiler = new Compiler();
+		Options options = new Options();
+		try {
+			Output output = sassCompiler.compileString(scssCode, options);
+			return output.getCss();
+		} catch (CompilationException e) {
+			logger.log(Level.SEVERE, "❌ Erreur de compilation SCSS", e);
+			return "/* Erreur SCSS : " + e.getMessage() + " /";
 		}
+	}*/
+
+	private static String compileScssToCss(boolean prod, File in) throws IOException {
+		URI inputFile = in.toURI();
 
 		Compiler compiler = new Compiler();
 		Options options = new Options();
@@ -104,61 +129,82 @@ public class CssCompilationFilter implements Filter {
 		try {
 			FileContext context = new FileContext(inputFile, null, options);
 			Output output = compiler.compile(context);
-			ResourceHelper.writeStringToFile(out, output.getCss());
+			return output.getCss();
 
 		} catch (CompilationException e) {
 			throw new IOException(e);
 		}
-
-		return true;
 	}
 
-	private static Writer createOutputWriter(String filename) throws IOException {
-		if (filename == null) {
-			return new OutputStreamWriter(System.out, ContentContext.CHARACTER_ENCODING);
-		} else {
-			File file = new File(filename);
-			return new FileWriter(file);
+	/*private static String compileScssToCss(boolean prod, File scssFile) throws IOException {
+		Compiler compiler = new Compiler();
+		Options options = new Options();
+
+		File scssDirectory = scssFile.getParentFile();
+
+		if (scssDirectory != null) {
+			options.getIncludePaths().add(new File(scssDirectory.getAbsolutePath()));
 		}
-	}
 
-	private static boolean compile(File lessFile, File cssFile, boolean compress) {
-		LessCompiler lessCompiler = new LessCompiler();
-		FileOutputStream out = null;
+		if (!prod) {
+			options.setSourceComments(true);
+			options.setSourceMapContents(true);
+			options.setSourceMapEmbed(true);
+		}
+
 		try {
-			lessCompiler.setEncoding(ContentContext.CHARACTER_ENCODING);
-			// lessCompiler.setCompress(compress);
-			String cssContent = lessCompiler.compile(lessFile);
-			out = new FileOutputStream(cssFile);
-			ResourceHelper.writeStringToStream(cssContent, out, ContentContext.CHARACTER_ENCODING);
-			out.flush();
-			out.getFD().sync();
-			return true;
-		} catch (Exception e) {
-			logger.severe("error on less file '" + lessFile + "' : " + e.getMessage());
-			e.printStackTrace();
-			return false;
-		} finally {
-			ResourceHelper.closeResource(out);
+			String scssCode = new String(Files.readAllBytes(scssFile.toPath()), StandardCharsets.UTF_8);
+			Output output = compiler.compileString(scssCode, options);
+			return output.getCss();
+
+		} catch (CompilationException e) {
+			throw new IOException("Erreur SCSS : " + e.getMessage(), e);
+		}
+	}*/
+
+	/*private static String compileScssToCss(boolean prod, File scssFile) throws IOException {
+		Compiler compiler = new Compiler();
+		Options options = new Options();
+
+		File scssDirectory = scssFile.getParentFile();
+
+		if (scssDirectory != null) {
+			options.getIncludePaths().add(new File(scssDirectory.getAbsolutePath()));
+		}
+
+		if (!prod) {
+			options.setSourceComments(true);
+			options.setSourceMapContents(true);
+			options.setSourceMapEmbed(true);
+		}
+
+		try {
+			String scssCode = new String(Files.readAllBytes(scssFile.toPath()), StandardCharsets.UTF_8);
+			Output output = compiler.compileString(scssCode, options);
+			return output.getCss();
+
+		} catch (CompilationException e) {
+			throw new IOException("Erreur SCSS : " + e.getMessage(), e);
+		}
+	}*/
+
+	public String compileLessToCss(File lessFile) {
+		try {
+			logger.info("🔄 Compilation du fichier LESS : " + lessFile.getAbsolutePath());
+			return lessCompiler.compile(lessFile);
+		} catch (LessException | IOException e) {
+			logger.log(Level.SEVERE, "❌ Erreur de compilation LESS", e);
+			return "/* Erreur LESS : " + e.getMessage() + " */";
 		}
 	}
 
-	@Override
-	public void init(FilterConfig arg0) throws ServletException {
-	}
-
-	@Override
-	public void destroy() {
-	}
-
-	public static void main(String[] args) throws IOException {
-		File sassFile = new File("C:/opt/tomcat8/webapps/javlo/wktp/bootstrap-4.0.0/sexy/scss/bootstrap.scss");
-		File lessFile = new File("c:/trans/test.less");
-		File cssFile = new File("c:/trans/test_sass.css");
-		// compileSass(sassFile, cssFile);
-		cssFile = new File("c:/trans/test_less.css");
-		System.out.println("sassFile file exist : " + sassFile.exists());
-		compileSass(false, sassFile, cssFile);
+	/**
+	 * Minifie du CSS en supprimant les espaces inutiles
+	 */
+	private String minifyCSS(String cssCode) {
+		return cssCode.replaceAll("\\s+", " ") // Supprime les espaces inutiles
+				.replaceAll("\\s*([:;,{}])\\s*", "$1") // Réduit espaces autour des caractères CSS
+				.trim();
 	}
 
 }

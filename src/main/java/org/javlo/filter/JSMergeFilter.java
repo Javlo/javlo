@@ -9,7 +9,6 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
-import org.lesscss.LessCompiler;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -127,27 +126,6 @@ public class JSMergeFilter implements Filter {
 		} else {
 			File file = new File(filename);
 			return new FileWriter(file);
-		}
-	}
-
-	private static boolean compile(File lessFile, File cssFile, boolean compress) {
-		LessCompiler lessCompiler = new LessCompiler();
-		FileOutputStream out = null;
-		try {
-			lessCompiler.setEncoding(ContentContext.CHARACTER_ENCODING);
-			// lessCompiler.setCompress(compress);
-			String cssContent = lessCompiler.compile(lessFile);
-			out = new FileOutputStream(cssFile);
-			ResourceHelper.writeStringToStream(cssContent, out, ContentContext.CHARACTER_ENCODING);
-			out.flush();
-			out.getFD().sync();
-			return true;
-		} catch (Exception e) {
-			logger.severe("error on less file '" + lessFile + "' : " + e.getMessage());
-			e.printStackTrace();
-			return false;
-		} finally {
-			ResourceHelper.closeResource(out);
 		}
 	}
 
