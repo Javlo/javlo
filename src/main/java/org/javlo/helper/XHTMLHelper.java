@@ -2767,6 +2767,14 @@ public class XHTMLHelper {
 		return outContent;
 	}
 
+	public static String replaceLinks(ContentContext ctx, String html) throws Exception {
+		return replaceLinks(ctx, html, false);
+	}
+
+	public static String replaceLinksForJsp(ContentContext ctx, String html) throws Exception {
+		return replaceLinks(ctx, html, true);
+	}
+
 	/**
 	 * replace link in xhtml with createURL call.
 	 *
@@ -2775,7 +2783,7 @@ public class XHTMLHelper {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String replaceLinks(ContentContext ctx, String html) throws Exception {
+	private static String replaceLinks(ContentContext ctx, String html, boolean forJsp) throws Exception {
 		Document doc = Jsoup.parse(html, "", Parser.xmlParser());
 		doc.getElementsByAttribute("href").forEach(item -> {
 			try {
@@ -2796,10 +2804,14 @@ public class XHTMLHelper {
 							if (ctx == null) {
 								item.attr("href", "[TEST]-page:" + pageName);
 							} else {
-								ContentContext pageContext = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
-								pageContext.setFormat("html");
-								String url = URLHelper.createURLFromPageName(pageContext, pageName) + params;
-								item.attr("href", url);
+								if (!forJsp) {
+									ContentContext pageContext = ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
+									pageContext.setFormat("html");
+									String url = URLHelper.createURLFromPageName(pageContext, pageName) + params;
+									item.attr("href", url);
+								} else {
+									item.attr("href", "${info.pageByName['"+pageName+"'].url}"+params);
+								}
 							}
 						} else if (hrefValue.startsWith("file:")) {
 							String fileUrl = hrefValue.substring("file:".length());

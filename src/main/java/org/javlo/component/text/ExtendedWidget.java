@@ -21,9 +21,9 @@ import java.util.List;
  */
 public class ExtendedWidget extends AbstractPropertiesComponent {
 
-	private List<String> FIELDS = Arrays.asList(new String[]{"xhtml", "css", "file"});
+	private final List<String> FIELDS = Arrays.asList(new String[]{"xhtml", "css", "file"});
 
-	private static String[] STYLE = new String[]{"no-filtered", "filtered"};
+	private static final String[] STYLE = new String[]{"no-filtered", "filtered"};
 
 	public static final String TYPE = "extendedWidget";
 
@@ -70,7 +70,7 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 		xhtml = xhtml.replace("<%", errorMsg);
 		xhtml = xhtml.replace(errorMsg + '@', "<%@");
 		if (getStyle() != null && !getStyle().contains("no-")) {
-			xhtml = XHTMLHelper.replaceLinks(ctx, xhtml);
+			xhtml = XHTMLHelper.replaceLinksForJsp(ctx, xhtml);
 		}
 		xhtml = XHTMLHelper.minimizeHtml(xhtml);
 		ResourceHelper.writeStringToFile(renderer, filePrefix+style+xhtml);
