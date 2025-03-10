@@ -2082,7 +2082,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
         for (String key : prop.stringPropertyNames()) {
             if (!key.startsWith("field.")) {
                 String val = prop.getProperty(key);
-                if (!StringHelper.isDigit(val) && !StringHelper.isMail(val)) {
+                if (!StringHelper.isDigit(val) && !StringHelper.isMail(val) && !key.equals(RECAPTCHASECRETKEY) && !key.equals(RECAPTCHAKEY)) {
                     prop.setProperty(key, translator.translate(ctx, val, lang, ctx.getRequestContentLanguage()));
                 }
             }
