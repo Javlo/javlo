@@ -1,15 +1,15 @@
 package org.javlo.navigation;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.Collection;
-
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.navigation.PageURL;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.Collection;
 
 /**
  * create url based on the title of the page.
@@ -26,7 +26,7 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 	 * @return
 	 * @throws Exception
 	 */
-	protected MenuElement getSectionPage(MenuElement page) {		
+	protected MenuElement getSectionPage(MenuElement page) {
 		if (page == null) {
 			return null;
 		}
@@ -82,6 +82,7 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 			label = label + '-' +currentPage.getUrlNumber();
 		}
 		String path = StringHelper.createI18NURL(label);
+		path = StringHelper.removeSpecialChars(path);
 		
 		String url = path;
 		MenuElement sectionPage = getSectionPage(currentPage);		
