@@ -92,7 +92,7 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 			if (contextWidthTitle != null) {
 				freeCtx = contextWidthTitle;			
 			}		
-			url = URLHelper.mergePath(StringHelper.createI18NURL(sectionPage.getLabel(freeCtx)), url);			
+			url = URLHelper.mergePath(StringHelper.removeSpecialChars(StringHelper.createI18NURL(sectionPage.getLabel(freeCtx))), url);
 		}
 		url = '/' + url;
 		
