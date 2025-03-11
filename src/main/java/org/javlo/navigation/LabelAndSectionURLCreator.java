@@ -81,8 +81,8 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 		if (currentPage.getUrlNumber() > 0) {
 			label = label + '-' +currentPage.getUrlNumber();
 		}
-		String path = StringHelper.createI18NURL(label);
-		path = StringHelper.removeSpecialChars(path);
+		String path = StringHelper.removeSpecialChars(label);
+		path = StringHelper.createI18NURL(path);
 		
 		String url = path;
 		MenuElement sectionPage = getSectionPage(currentPage);		
@@ -92,7 +92,7 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 			if (contextWidthTitle != null) {
 				freeCtx = contextWidthTitle;			
 			}		
-			url = URLHelper.mergePath(StringHelper.removeSpecialChars(StringHelper.createI18NURL(sectionPage.getLabel(freeCtx))), url);
+			url = URLHelper.mergePath(StringHelper.createI18NURL(StringHelper.removeSpecialChars(sectionPage.getLabel(freeCtx))), url);
 		}
 		url = '/' + url;
 		
