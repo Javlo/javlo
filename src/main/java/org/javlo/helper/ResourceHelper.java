@@ -8,8 +8,9 @@ import com.google.gson.JsonElement;
 import fr.opensagres.poi.xwpf.converter.core.FileURIResolver;
 import fr.opensagres.poi.xwpf.converter.xhtml.XHTMLConverter;
 import fr.opensagres.poi.xwpf.converter.xhtml.XHTMLOptions;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
@@ -52,8 +53,6 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.FileImageInputStream;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.net.ssl.HttpsURLConnection;
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.http.HttpServletRequest;
 import java.awt.image.BufferedImage;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
@@ -72,7 +71,7 @@ import java.util.zip.CheckedInputStream;
 
 public class ResourceHelper {
 
-	public static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
+	public static final int DEFAULT_BUFFER_SIZE = 1024 * 8;
 
 	/**
 	 * create a static logger.
@@ -1417,7 +1416,7 @@ public class ResourceHelper {
 	 *
 	 * @return the size of transfered data in byte.
 	 */
-	public static final int writeStreamToStream(InputStream in, OutputStream out, long maxSize) throws IOException {
+	/*public static final int writeStreamToStream(InputStream in, OutputStream out, long maxSize) throws IOException {
 		final byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
 		int size = 0;
 		int byteReaded = in.read(buffer);
@@ -1430,7 +1429,24 @@ public class ResourceHelper {
 			byteReaded = in.read(buffer);
 		}
 		return size;
+	}*/
+
+	public static final int writeStreamToStream(InputStream in, OutputStream out, long maxSize) throws IOException {
+		byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+		int totalSize = 0;
+		int bytesRead;
+
+		while ((bytesRead = in.read(buffer)) != -1) {
+			totalSize += bytesRead;
+			if (maxSize > 0 && totalSize >= maxSize) {
+				return -1;
+			}
+			out.write(buffer, 0, bytesRead);
+		}
+
+		return totalSize;
 	}
+
 
 	/**
 	 * Copy the given byte range of the given input to the given output.

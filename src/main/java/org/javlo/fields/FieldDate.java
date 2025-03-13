@@ -1,5 +1,12 @@
 package org.javlo.fields;
 
+import org.javlo.bean.DateBean;
+import org.javlo.component.core.IDate;
+import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
+import org.javlo.helper.TimeHelper;
+import org.javlo.helper.XHTMLHelper;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -9,14 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
-import java.util.Locale;
 import java.util.Map;
-
-import org.javlo.component.core.IDate;
-import org.javlo.context.ContentContext;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.TimeHelper;
-import org.javlo.helper.XHTMLHelper;
 
 public class FieldDate extends Field implements IDate {
 	
@@ -30,6 +30,10 @@ public class FieldDate extends Field implements IDate {
 		
 		public String getSortableDate() throws FileNotFoundException, IOException {
 			return StringHelper.renderSortableDate(FieldDate.this.getDate(ctx));
+		}
+
+		public DateBean getDateBean() {
+			return new DateBean(ctx, FieldDate.this.getDate(ctx));
 		}
 		
 		public String getShortDate() throws FileNotFoundException, IOException {
