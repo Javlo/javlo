@@ -61,10 +61,8 @@ public class CssCompilationFilter implements Filter {
 
 			if (scssFile.exists()) {
 				sourceFile = scssFile;
-				logger.info("✅ Fichier SCSS trouvé : " + scssFile);
 			} else if (lessFile.exists()) {
 				sourceFile = lessFile;
-				logger.info("✅ Fichier LESS trouvé : " + lessFile);
 			}
 
 			if (sourceFile != null) {
@@ -88,10 +86,7 @@ public class CssCompilationFilter implements Filter {
 			} else {
 				logger.warning("⚠️ Aucun fichier source trouvé pour : " + requestURI);
 			}
-		} else {
-			logger.info("✅ Fichier CSS existant trouvé, pas de compilation nécessaire.");
 		}
-
 		// Continue le traitement normalement
 		chain.doFilter(request, response);
 	}
