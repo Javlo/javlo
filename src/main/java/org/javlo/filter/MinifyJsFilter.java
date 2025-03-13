@@ -21,8 +21,6 @@ public class MinifyJsFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
-        System.out.println("### MinifyJsFilter ###");
-
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String path = httpRequest.getServletPath();
         String requestURI = ((HttpServletRequest) request).getRequestURI();
@@ -38,27 +36,17 @@ public class MinifyJsFilter implements Filter {
         }
 
         File requestedFile = new File(realPath);
-
-        System.out.println("### requestedFile = "+requestedFile+" ###");
-
         if (!requestedFile.exists()) {
             boolean isMinified = requestURI.contains(".min.");
-
-            System.out.println("### isMinified = "+isMinified+" ###");
 
             // Déterminer le fichier source (sans ".min")
             String sourceFilePath = isMinified ? realPath.replace(".min", "") : realPath;
             File sourceFile = new File(sourceFilePath);
 
-            System.out.println("### sourceFile = "+sourceFile+" ###");
-            System.out.println("### sourceFile.exists() = "+sourceFile.exists()+" ###");
-
             if (sourceFile.exists()) {
                 // Lire le fichier source
                 String sourceCode = new String(Files.readAllBytes(sourceFile.toPath()), StandardCharsets.UTF_8);
                 String processedCode = isMinified ? minifyJavaScript(sourceCode) : sourceCode;
-
-                System.out.println("#### processedCode = "+processedCode);
 
                 if (processedCode != null) {
                     // Sauvegarde le fichier généré
@@ -80,6 +68,7 @@ public class MinifyJsFilter implements Filter {
     private String minifyJavaScript(String jsCode) {
         Compiler compiler = new Compiler();
         CompilerOptions options = new CompilerOptions();
+        options.setLanguageOut(CompilerOptions.LanguageMode.ECMASCRIPT5);
         CompilationLevel.SIMPLE_OPTIMIZATIONS.setOptionsForCompilationLevel(options);
 
         SourceFile input = SourceFile.fromCode("input.js", jsCode);
