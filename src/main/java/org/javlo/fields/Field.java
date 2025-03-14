@@ -535,13 +535,17 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 			readOnlyHTML = " readonly=\"readonly\"";
 		}
 		String value = Encode.forHtmlAttribute(StringHelper.neverNull(getValue()));
-		out.println("</div><div class=\""+VALUE_SIZE+"\"><input" + readOnlyHTML + " id=\"" + getInputName() + "\" class=\"form-control"+getSpecialClass()+"\" name=\"" + getInputName() + "\" value=\"" + value + "\"/>");
+		out.println("</div><div class=\""+VALUE_SIZE+"\"><input" + readOnlyHTML + " type=\""+getHtmlInputType()+"\" id=\"" + getInputName() + "\" class=\"form-control"+getSpecialClass()+"\" name=\"" + getInputName() + "\" value=\"" + value + "\"/>");
 		if (getMessage() != null && getMessage().trim().length() > 0) {
 			out.println("	<div class=\"message " + getMessageTypeCSSClass() + "\">" + getMessage() + "</div>");
 		}
 		out.println("</div></div>");		
 		out.close();
 		return writer.toString();
+	}
+
+	public String getHtmlInputType() {
+		return "text";
 	}
 	
 	public String getSearchEditXHTMLCode(ContentContext ctx) throws Exception {
