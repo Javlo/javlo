@@ -704,9 +704,9 @@ public class XMLManipulationHelper {
                 String staticHeader = StringHelper.neverEmpty(globalContext.getStaticConfig().getHtmlHead(), "");
 
                 if (content.indexOf(HEADER_ZONE) > 0) {
-                    remplacement.addReplacement(content.indexOf(HEADER_ZONE), content.indexOf(HEADER_ZONE) + HEADER_ZONE.length(), getHTMLPrefixHead(globalContext, headContext, isMail) + staticHeader);
+                    remplacement.addReplacement(content.indexOf(HEADER_ZONE), content.indexOf(HEADER_ZONE) + HEADER_ZONE.length(), getHTMLPrefixHead(globalContext, headContext, isMail, content) + staticHeader);
                 } else {
-                    remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getHTMLPrefixHead(globalContext, headContext, isMail) + staticHeader + shortKey);
+                    remplacement.addReplacement(tags[i].getOpenEnd() + 1, tags[i].getOpenEnd() + 1, getHTMLPrefixHead(globalContext, headContext, isMail, content) + staticHeader + shortKey);
                 }
 
                 /** template plugin **/
@@ -1069,7 +1069,7 @@ public class XMLManipulationHelper {
         return "";
     }
 
-    private static String getHTMLPrefixHead(GlobalContext globalContext, PrefixHeadContext context, boolean isMail) throws IOException {
+    private static String getHTMLPrefixHead(GlobalContext globalContext, PrefixHeadContext context, boolean isMail, String content) throws IOException {
 
         StringWriter outString = new StringWriter();
         BufferedWriter out = new BufferedWriter(outString);
@@ -1123,8 +1123,10 @@ public class XMLManipulationHelper {
             out.newLine();
             out.append("<%=XHTMLNavigationHelper.getRSSHeader(ctx, currentPage)%>");
             out.newLine();
-            //out.append("<link rel=\"shortcut icon\" type=\"image/ico\" href=\"<%=URLHelper.createStaticURL(ctx,\"/favicon.ico\")%>\" />");
-            //out.newLine();
+            if (!content.toLowerCase().contains("rel=\"icon\"")) {
+                out.append("<link rel=\"shortcut icon\" type=\"image/ico\" href=\"<%=URLHelper.createStaticURL(ctx,\"/favicon.ico\")%>\" />");
+                out.newLine();
+            }
             out.append("<%if (ctx.getRenderMode() != ContentContext.VIEW_MODE) {%>");
             out.append("<meta name=\"ROBOTS\" content=\"NONE\" />");
             out.append("<%}%>");
