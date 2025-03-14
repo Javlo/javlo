@@ -1123,8 +1123,8 @@ public class XMLManipulationHelper {
             out.newLine();
             out.append("<%=XHTMLNavigationHelper.getRSSHeader(ctx, currentPage)%>");
             out.newLine();
-            out.append("<link rel=\"shortcut icon\" type=\"image/ico\" href=\"<%=URLHelper.createStaticURL(ctx,\"/favicon.ico\")%>\" />");
-            out.newLine();
+            //out.append("<link rel=\"shortcut icon\" type=\"image/ico\" href=\"<%=URLHelper.createStaticURL(ctx,\"/favicon.ico\")%>\" />");
+            //out.newLine();
             out.append("<%if (ctx.getRenderMode() != ContentContext.VIEW_MODE) {%>");
             out.append("<meta name=\"ROBOTS\" content=\"NONE\" />");
             out.append("<%}%>");
