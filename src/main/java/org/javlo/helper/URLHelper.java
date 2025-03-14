@@ -1789,4 +1789,20 @@ public class URLHelper extends ElementaryURLHelper {
 		return URLHelper.createTransformURL(ctx, "/noimage.png", filter);
 	}
 
+	public static String resolvePageName(ContentContext ctx, String link) {
+		if (link == null) {
+			return null;
+		}
+		link = link.trim();
+		if (link.startsWith("page:")) {
+			link = link.replace("page:", "");
+			try {
+				link = URLHelper.createURLFromPageName(ctx, link);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return link;
+	}
+
 }

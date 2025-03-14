@@ -7,10 +7,7 @@ import org.javlo.component.core.*;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.NetHelper;
-import org.javlo.helper.PatternHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.XHTMLHelper;
+import org.javlo.helper.*;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.service.RequestService;
@@ -78,7 +75,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
-		ctx.getRequest().setAttribute("link", getLink());
+		ctx.getRequest().setAttribute("link", URLHelper.resolvePageName(ctx, getLink()));
 		ctx.getRequest().setAttribute("label", getLabel());
 		if (StringHelper.isAllEmpty(getLink(), getLabel())) {
 			ctx.getRequest().setAttribute("label", "no link");
@@ -149,7 +146,7 @@ public class ExternalLink extends ComplexPropertiesLink implements IReverseLinkC
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		if (!isHidden(ctx)) {
-			String link = getLink();
+			String link = URLHelper.resolvePageName(ctx, getLink());
 
 			StringBuffer res = new StringBuffer();
 			String cssClass = getComponentCssClass(ctx);
