@@ -1126,6 +1126,7 @@ public class PersistenceService {
 				String name = page.getAttributeValue("name");
 				name = name.trim();
 				name = name.replace(".", "_");
+				name = name.replace(" ", "_");
 				root.setName(name);
 				root.setPriority(Integer.parseInt(page.getAttributeValue("priority")));
 				root.setVisible(StringHelper.isTrue(page.getAttributeValue("visible", "false")));
