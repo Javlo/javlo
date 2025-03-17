@@ -1418,6 +1418,17 @@ public class InfoBean {
 		return ctx.getRenderMode() == ContentContext.VIEW_MODE;
 	}
 
+	/**
+	 * return true if the mode is a visual mode (view or preview without editition)
+	 * @return
+	 */
+	public boolean isVisual() {
+		if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
+			return true;
+		}
+		return !(ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly());
+	}
+
 	public boolean isPageMode() {
 		return ctx.getRenderMode() == ContentContext.PAGE_MODE;
 	}
