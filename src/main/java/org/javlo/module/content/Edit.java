@@ -1109,6 +1109,9 @@ public class Edit extends AbstractModuleAction {
 			if (pageName == null || newName == null) {
 				return "bad parameter for change page properties.";
 			}
+			if (newName.contains(".") || newName.contains(" ")) {
+				return "new page name could not contains space and '.'";
+			}
 			MenuElement page = content.getNavigation(ctx).searchChildFromName(pageName);
 			if (page == null) {
 				return "page not found : " + pageName;
