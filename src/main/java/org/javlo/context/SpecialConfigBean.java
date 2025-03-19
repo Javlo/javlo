@@ -39,6 +39,14 @@ public class SpecialConfigBean {
 		}
 	}
 
+	public boolean isMinify() {
+		if (config.get("jsp.minify") == null) {
+			return true;
+		} else {
+			return StringHelper.isTrue(config.get("jsp.minify"));
+		}
+	}
+
 	/**
 	 * track access to resource and page. Use for display the most readed picture or
 	 * page. false by default
@@ -83,7 +91,6 @@ public class SpecialConfigBean {
 		}
 		return out;
 	}
-
 
 	public Collection<String> getSecureHeaderLoginKey() {
 		String keyRaw = (String)config.get("security.auto-login.header.keys");
