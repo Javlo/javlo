@@ -3921,6 +3921,9 @@ public class Template implements Comparable<Template> {
 		content = content.replaceAll("(\\s*)(<%(?!@)(.*?)%>)(\\s*)", " $2 "); // Ensures space around JSP scriptlets
 		content = content.replaceAll("(\\s*)(<%=.*?%>)(\\s*)", " $2 "); // Ensures space around JSP expressions
 
+		// Ensure proper spacing in JSP expressions inside attributes
+		content = content.replaceAll("(=\"\\s*)(<%=.*?%>)(\\s*\")", "=\"$2\"");
+
 		// Minify HTML by removing unnecessary spaces between non-JSP tags
 		content = content.replaceAll(">\\s+<", "><");
 
