@@ -362,7 +362,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                         }
                         ResourceHelper.writeStringToFile(jspFile, html);
                         if (ctx.getGlobalContext().isProd()) {
-                            Template.minifyJSP(jspFile);
+                            Template.minifyJSP(ctx.getGlobalContext(), jspFile);
                         }
                     }
                     linkToJSP = StringHelper.getFileNameWithoutExtension(linkToJSP) + ".jsp";

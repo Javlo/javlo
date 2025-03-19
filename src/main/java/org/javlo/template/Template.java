@@ -2168,9 +2168,7 @@ public class Template implements Comparable<Template> {
 				}
 				int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, this, HTMLFile, jspFile, getMap(), getAreas(), resources, getTemplatePugin(globalContext), ids, isMailing(), getFontIncluding(globalContext));
 
-				if (globalContext.isProd()) {
-					minifyJSP(jspFile);
-				}
+				minifyJSP(globalContext, jspFile);
 
 				setHTMLIDS(ids);
 				setDepth(depth);
@@ -2898,8 +2896,8 @@ public class Template implements Comparable<Template> {
 										// }
 										if (fileExt.equalsIgnoreCase("jsp") || fileExt.equalsIgnoreCase("html")) {
 											ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map, ctx.getGlobalContext().getStaticConfig().isCompressJsp(), ctx.getGlobalContext().getStaticConfig().isHighSecure(), soft);
-											if (globalContext != null && globalContext.isProd() && fileExt.equalsIgnoreCase("jsp")) {
-												minifyJSP(targetFile);
+											if (fileExt.equalsIgnoreCase("jsp")) {
+												minifyJSP(globalContext, targetFile);
 											}
 										} else {
 											ResourceHelper.filteredFileCopy(file, targetFile, map, soft);
@@ -3896,7 +3894,16 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
-	public static void minifyJSP(File file) throws IOException {
+	public static void minifyJSP(GlobalContext globalContext, File file) throws IOException {
+		if (globalContext == null) {
+			return;
+		}
+		if (!globalContext.isProd()) {
+			return;
+		}
+		if (!globalContext.getSpecialConfig().isMinify()) {
+			return;
+		}
 		if (!file.exists() || !file.isFile()) {
 			throw new IllegalArgumentException("The provided file does not exist or is not a valid file.");
 		}
@@ -3915,6 +3922,9 @@ public class Template implements Comparable<Template> {
 
 	private static String minifyContent(String content) {
 
+		// Remove HTML comments
+		content = content.replaceAll("(?s)<!--.*?-->", "");
+
 		// Remove JavaScript single-line comments ONLY inside <script> tags
 		Pattern scriptPattern = Pattern.compile("(?s)(<script.*?>)(.*?)(</script>)");
 		Matcher scriptMatcher = scriptPattern.matcher(content);
@@ -3926,9 +3936,6 @@ public class Template implements Comparable<Template> {
 		}
 		scriptMatcher.appendTail(sb);
 		content = sb.toString();
-
-		// Remove HTML comments
-		content = content.replaceAll("(?s)<!--.*?-->", "");
 
 		// Preserve spaces around JSP scriptlets (<% %>), expressions (<%= %>), and directives (<%@ %>)
 		content = content.replaceAll("(\\s*)(<%(?!@)(.*?)%>)(\\s*)", " $2 "); // Ensures space around JSP scriptlets
