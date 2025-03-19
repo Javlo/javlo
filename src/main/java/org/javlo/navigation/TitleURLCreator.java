@@ -99,7 +99,8 @@ public class TitleURLCreator extends AbstractURLFactory {
 
 	@Override
 	public String createURL(ContentContext ctx, MenuElement currentPage) throws Exception {
-		if (isWithExtension()) {
+		String format = ctx.getFormat();
+		if (isWithExtension() || !format.equals("html")) {
 			return createURLWithoutExt(ctx, currentPage) + '.' + ctx.getFormat();
 		} else {
 			return createURLWithoutExt(ctx, currentPage);
