@@ -3914,6 +3914,19 @@ public class Template implements Comparable<Template> {
 	}
 
 	private static String minifyContent(String content) {
+
+		// Remove JavaScript single-line comments ONLY inside <script> tags
+		Pattern scriptPattern = Pattern.compile("(?s)(<script.*?>)(.*?)(</script>)");
+		Matcher scriptMatcher = scriptPattern.matcher(content);
+		StringBuilder sb = new StringBuilder();
+
+		while (scriptMatcher.find()) {
+			String scriptContent = scriptMatcher.group(2).replaceAll("(?m)//.*", ""); // Remove JS single-line comments
+			scriptMatcher.appendReplacement(sb, Matcher.quoteReplacement(scriptMatcher.group(1) + scriptContent + scriptMatcher.group(3)));
+		}
+		scriptMatcher.appendTail(sb);
+		content = sb.toString();
+
 		// Remove HTML comments
 		content = content.replaceAll("(?s)<!--.*?-->", "");
 
