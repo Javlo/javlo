@@ -3914,9 +3914,6 @@ public class Template implements Comparable<Template> {
 	}
 
 	private static String minifyContent(String content) {
-		// Remove JavaScript single-line comments (//) before anything else
-		content = content.replaceAll("(?m)//.*", "");
-
 		// Remove HTML comments
 		content = content.replaceAll("(?s)<!--.*?-->", "");
 
@@ -3924,17 +3921,13 @@ public class Template implements Comparable<Template> {
 		content = content.replaceAll("(\\s*)(<%(?!@)(.*?)%>)(\\s*)", " $2 "); // Ensures space around JSP scriptlets
 		content = content.replaceAll("(\\s*)(<%=.*?%>)(\\s*)", " $2 "); // Ensures space around JSP expressions
 
-		// Preserve spaces around JSTL tags (<c:if>, <c:forEach>, etc.)
-		content = content.replaceAll("(\\s*)(<c:[a-zA-Z]+.*?>)(\\s*)", " $2 "); // Ensure JSTL opening tags are intact
-		content = content.replaceAll("(\\s*)(</c:[a-zA-Z]+>)(\\s*)", " $2 ");  // Ensure JSTL closing tags are intact
-
 		// Ensure proper spacing in JSP expressions inside attributes
 		content = content.replaceAll("(=\"\\s*)(<%=.*?%>)(\\s*\")", "=\"$2\"");
 
 		// Minify HTML by removing unnecessary spaces between non-JSP tags
 		content = content.replaceAll(">\\s+<", "><");
 
-		// Remove multiple spaces (except around JSP and JSTL)
+		// Remove multiple spaces (except around JSP expressions)
 		content = content.replaceAll("\\s{2,}", " ");
 
 		// Remove new lines
