@@ -102,7 +102,7 @@ public class TitleURLCreator extends AbstractURLFactory {
 		if (isWithExtension()) {
 			return createURLWithoutExt(ctx, currentPage) + '.' + ctx.getFormat();
 		} else {
-			return createURLWithoutExt(ctx, currentPage)+'/';
+			return createURLWithoutExt(ctx, currentPage);
 		}
 	}
 
