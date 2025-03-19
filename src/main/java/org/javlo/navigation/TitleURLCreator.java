@@ -29,6 +29,10 @@ public class TitleURLCreator extends AbstractURLFactory {
 		return false;
 	}
 
+	protected boolean isWithExtension() {
+		return true;
+	}
+
 	protected String createURLWithoutExt(ContentContext ctx, MenuElement currentPage) throws Exception {
 
 		if (currentPage == null) {
@@ -95,7 +99,11 @@ public class TitleURLCreator extends AbstractURLFactory {
 
 	@Override
 	public String createURL(ContentContext ctx, MenuElement currentPage) throws Exception {
-		return createURLWithoutExt(ctx, currentPage) + '.' + ctx.getFormat();
+		if (isWithExtension()) {
+			return createURLWithoutExt(ctx, currentPage) + '.' + ctx.getFormat();
+		} else {
+			return createURLWithoutExt(ctx, currentPage)+'/';
+		}
 	}
 
 }
