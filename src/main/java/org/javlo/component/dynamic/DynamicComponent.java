@@ -361,6 +361,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                             html = html.replace(Template.PREVIEW_EDIT_CODE, "${"+AbstractVisualComponent.PREVIEW_ATTRIBUTES+"}");
                         }
                         ResourceHelper.writeStringToFile(jspFile, html);
+                        if (ctx.getGlobalContext().isProd()) {
+                            Template.minifyJSP(jspFile);
+                        }
                     }
                     linkToJSP = StringHelper.getFileNameWithoutExtension(linkToJSP) + ".jsp";
                 }

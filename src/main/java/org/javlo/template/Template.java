@@ -2167,6 +2167,11 @@ public class Template implements Comparable<Template> {
 					importTemplateInWebapp(config, ctx);
 				}
 				int depth = XMLManipulationHelper.convertHTMLtoTemplate(globalContext, this, HTMLFile, jspFile, getMap(), getAreas(), resources, getTemplatePugin(globalContext), ids, isMailing(), getFontIncluding(globalContext));
+
+				if (globalContext.isProd()) {
+					minifyJSP(jspFile);
+				}
+
 				setHTMLIDS(ids);
 				setDepth(depth);
 			}
@@ -2803,7 +2808,7 @@ public class Template implements Comparable<Template> {
 
 		String templateFolder = config.getTemplateFolder();
 
-		final String LOG_KEY = "import templte";
+		final String LOG_KEY = "import template";
 
 		LocalLogger.startCount(LOG_KEY);
 
@@ -2893,6 +2898,9 @@ public class Template implements Comparable<Template> {
 										// }
 										if (fileExt.equalsIgnoreCase("jsp") || fileExt.equalsIgnoreCase("html")) {
 											ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map, ctx.getGlobalContext().getStaticConfig().isCompressJsp(), ctx.getGlobalContext().getStaticConfig().isHighSecure(), soft);
+											if (globalContext != null && globalContext.isProd() && fileExt.equalsIgnoreCase("jsp")) {
+												minifyJSP(targetFile);
+											}
 										} else {
 											ResourceHelper.filteredFileCopy(file, targetFile, map, soft);
 										}
@@ -3886,6 +3894,44 @@ public class Template implements Comparable<Template> {
 				componentClass.get(key).add(value);
 			}
 		}
+	}
+
+	public static void minifyJSP(File file) throws IOException {
+		if (!file.exists() || !file.isFile()) {
+			throw new IllegalArgumentException("The provided file does not exist or is not a valid file.");
+		}
+
+		// Read the file content
+		String content = new String(Files.readAllBytes(file.toPath()));
+
+		// Minify the JSP content
+		String minifiedContent = minifyContent(content);
+
+		// Write the minified content back to the same file (overwrite)
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+			writer.write(minifiedContent);
+		}
+	}
+
+	private static String minifyContent(String content) {
+		// Remove HTML comments
+		content = content.replaceAll("(?s)<!--.*?-->", "");
+
+		// Preserve spaces around JSP scriptlets (<% %>), expressions (<%= %>), and directives (<%@ %>)
+		content = content.replaceAll("(\\s*)(<%(?!@)(.*?)%>)(\\s*)", " $2 "); // Ensures space around JSP scriptlets
+		content = content.replaceAll("(\\s*)(<%=.*?%>)(\\s*)", " $2 "); // Ensures space around JSP expressions
+
+		// Minify HTML by removing unnecessary spaces between non-JSP tags
+		content = content.replaceAll(">\\s+<", "><");
+
+		// Remove multiple spaces (except around JSP expressions)
+		content = content.replaceAll("\\s{2,}", " ");
+
+		// Remove new lines
+		content = content.replaceAll("\\n", "");
+
+		// Trim leading and trailing spaces
+		return content.trim();
 	}
 
 	public static String createCssClass (String component, String mode) {
