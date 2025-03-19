@@ -3914,6 +3914,10 @@ public class Template implements Comparable<Template> {
 	}
 
 	private static String minifyContent(String content) {
+
+		// Remove JavaScript single-line comments (//) before anything else
+		content = content.replaceAll("(?m)//.*", "");
+
 		// Remove HTML comments
 		content = content.replaceAll("(?s)<!--.*?-->", "");
 
