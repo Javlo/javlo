@@ -1,17 +1,13 @@
 package org.javlo.component.multimedia;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.image.ImageSize;
 import org.javlo.servlet.ImageTransformServlet;
 import org.javlo.ztatic.StaticInfoBean;
+
+import java.util.*;
 
 public class MultimediaResource {
 
@@ -188,6 +184,10 @@ public class MultimediaResource {
 		return URL;
 	}
 
+	public String getUrl() {
+		return URL;
+	}
+
 	public void setAccessURL(String accessURL) {
 		this.accessURL = accessURL;
 	}
@@ -360,6 +360,10 @@ public class MultimediaResource {
 
 	public boolean isImage() {
 		return getType().equals("image");
+	}
+
+	public boolean isVector() {
+		return StringHelper.getFileExtension(getURL()).equalsIgnoreCase("svg");
 	}
 
 	public boolean isVideo() {
