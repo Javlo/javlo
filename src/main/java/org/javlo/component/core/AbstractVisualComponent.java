@@ -84,6 +84,7 @@ import java.util.regex.Pattern;
 public abstract class AbstractVisualComponent implements IContentVisualComponent {
 
 	public static final String PREVIEW_ATTRIBUTES = "previewAttributes";
+
 	private static boolean LOCAL_HELP = true;
 
 	private static final Map<String, String> helpText = Collections.synchronizedMap(new HashMap<>());
@@ -2992,6 +2993,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		ctx.getRequest().setAttribute("previewClass", getPreviewCssClass(ctx, null));
 		ctx.getRequest().setAttribute("previewData", getDataAttributes(ctx));
 		ctx.getRequest().setAttribute("previewID", getPreviewCssId(ctx));
+		ctx.getRequest().setAttribute("previewId", getPreviewCssId(ctx));
 		ctx.getRequest().setAttribute("cssStyle", getCSSStyle(ctx));
 		ctx.getRequest().setAttribute("cssClass", contructViewStyle(ctx));
 		ctx.getRequest().setAttribute("manualCssClass", getManualCssClass());
