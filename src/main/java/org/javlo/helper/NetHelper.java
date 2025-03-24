@@ -131,9 +131,6 @@ public class NetHelper {
 		}
         try {
             URL finalURL = followURL(new URL(url));
-			System.out.println("### finalURL = "+finalURL);
-			System.out.println("### finalURL.getHost() = "+finalURL.getHost());
-			System.out.println("### ctx.getRequest().getServerName() = "+ctx.getRequest().getServerName());
 			if (finalURL != null && finalURL.getHost().equalsIgnoreCase(ctx.getRequest().getServerName())) {
 				MenuElement page = NavigationHelper.getPageFromAbsoluteUrl(ctx, finalURL.toString());
 				if (page != null) {

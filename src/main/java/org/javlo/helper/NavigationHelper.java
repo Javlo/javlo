@@ -633,10 +633,6 @@ public class NavigationHelper {
 		String uri = RequestService.getURI(ctx.getRequest(), url);
 		String path = ContentManager.getPath(uri);
 
-		System.out.println("#### url = "+url);
-		System.out.println("#### uri = "+uri);
-		System.out.println("#### path = "+path);
-
 		urlCtx.setPath(path);
 		MenuElement outPage = urlCtx.getCurrentPage(true);
 
