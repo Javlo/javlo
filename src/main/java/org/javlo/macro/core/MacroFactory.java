@@ -126,7 +126,7 @@ public class MacroFactory {
 		macros.add(new MergeGalleryAndGalleries());
 		macros.add(new DeleteContentFiles());
 		macros.add(new PushStaticOnFtp());
-		macros.add(new ConvertUserForComansys());
+		//macros.add(new ConvertUserForComansys());
 		macros.add(new InitContentMacro());
 		macros.add(new CommitTemplate());
 		macros.add(new UpdateTemplate());		
@@ -150,8 +150,11 @@ public class MacroFactory {
 		macros.add(new UserMacroModule(true));
 		macros.add(new UserMacroModule(false));
 
-		//macros.add(new RegistrationMacroModule());
+		macros.add(new RegistrationMacroModule());
 		macros.add(new CreateRedirections());
+
+		macros.add(new ResolveLinkToPageName(true));
+		macros.add(new ResolveLinkToPageName(false));
 		
 		/** macro bean **/
 		initMacroBean(macros);

@@ -1,17 +1,17 @@
 package org.javlo.context;
 
+import jakarta.servlet.http.HttpServletRequest;
+import org.javlo.config.StaticConfig;
+import org.javlo.helper.StringHelper;
+import org.javlo.i18n.I18nAccess;
+import org.javlo.service.RequestService;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import jakarta.servlet.http.HttpServletRequest;
-
-import org.javlo.config.StaticConfig;
-import org.javlo.helper.DebugHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.i18n.I18nAccess;
-import org.javlo.service.RequestService;
 
 /**
  * @author pvandermaesen
@@ -149,6 +149,36 @@ public class ContentManager {
 		RequestService service = RequestService.getInstance(request);
 		return service.getParameter(paramName, defaultValue);
 
+	}
+
+	public static String getPathFromUri(ContentContext ctx, String uri) {
+		String contextPath = ctx.getRequest().getContextPath();
+		try {
+			uri = URLDecoder.decode(uri, ContentContext.CHARACTER_ENCODING);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			uri = URLDecoder.decode(uri);
+		}
+		if (contextPath.length() > 0) {
+			uri = uri.substring(contextPath.length());
+		}
+		String path = null;
+		if (uri != null) {
+			String[] splitedPath = StringHelper.split(uri, "/");
+			int splitedPathMinSize = 3;
+			path = "";
+			for (int i = splitedPathMinSize; i < splitedPath.length; i++) {
+				path = path + '/' + splitedPath[i];
+			}
+		}
+		if (path == null || path.trim().length() == 0) {
+			path = "/";
+		}
+		// remove extension if exist (.html)
+		if (path.indexOf('.') >= 0) {
+			path = path.substring(0, path.lastIndexOf('.'));
+		}
+		return path;
 	}
 
 	public static String getPath(HttpServletRequest request) {

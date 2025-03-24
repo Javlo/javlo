@@ -119,6 +119,34 @@ public class NetHelper {
 	}
 
 	/**
+	 * resolve url and search page name.
+	 * @param url
+	 * @return
+	 */
+	public static String getPageName(ContentContext ctx, String url) {
+		if (!StringHelper.isURL(url)) {
+			String host = ctx.getRequest().getScheme() + "://" + ctx.getRequest().getServerName() +
+					(ctx.getRequest().getServerPort() == 80 || ctx.getRequest().getServerPort() == 443 ? "" : ":" + ctx.getRequest().getServerPort());
+			url = host+url;
+		}
+        try {
+            URL finalURL = followURL(new URL(url));
+			System.out.println("### finalURL = "+finalURL);
+			if (finalURL != null && finalURL.getHost().equalsIgnoreCase(ctx.getRequest().getServerName())) {
+				MenuElement page = NavigationHelper.getPageFromAbsoluteUrl(ctx, finalURL.toString());
+				if (page != null) {
+					return page.getName();
+				} else {
+					return null;
+				}
+			}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+		return null;
+    }
+
+	/**
 	 * follow redirection and return final url
 	 * 
 	 * @param url
@@ -856,6 +884,18 @@ public class NetHelper {
 		}
 
 		return urlList;
+	}
+
+	public static List<String> extractHrefs(String html) {
+		List<String> hrefs = new ArrayList<>();
+		Document doc = Jsoup.parse(html);
+		Elements links = doc.select("a[href]");
+
+		for (Element link : links) {
+			hrefs.add(link.attr("href"));
+		}
+
+		return hrefs;
 	}
 
 	public static List<String> extractURL(URL inURL, String content) {
