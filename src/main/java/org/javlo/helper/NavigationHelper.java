@@ -622,6 +622,7 @@ public class NavigationHelper {
 	public static MenuElement getPageFromAbsoluteUrl(ContentContext ctx, String url) throws Exception {
 
 		if (!new URL(url).getHost().equalsIgnoreCase(ctx.getRequest().getServerName())) {
+			logger.warning("host:"+new URL(url).getHost()+" not same than : "+ctx.getRequest().getServerName());
 			return null;
 		}
 
@@ -636,6 +637,7 @@ public class NavigationHelper {
 		MenuElement outPage = urlCtx.getCurrentPage(true);
 
 		if (outPage.isRoot()) {
+			logger.warning("page not found : "+path);
 			return null;
 		} else {
 			return outPage;
