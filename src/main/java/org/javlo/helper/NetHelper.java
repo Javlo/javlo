@@ -138,13 +138,18 @@ public class NetHelper {
             URL finalURL = followURL(new URL(url));
 			logger.info("##SEARCH_NAME## - final url "+finalURL);
 			if (finalURL != null && finalURL.getHost().equalsIgnoreCase(ctx.getRequest().getServerName())) {
+
 				ContentContext urlCtx = new ContentContext(ctx);
 				urlCtx.setFree(true);
 				urlCtx.setRenderMode(ContentContext.VIEW_MODE);
 
 				String uri = RequestService.getURI(ctx.getRequest(), url);
-				// host is path is considered like "/view" and must be removed (but it is not)
-				String path = ContentManager.getPath(uri, !ctx.getGlobalContext().isHost());
+
+				if (!StringHelper.isEmpty(ctx.getGlobalContext().getContextKey())) {
+					uri = uri.replaceFirst("/"+ctx.getGlobalContext().getContextKey(), "");
+				}
+
+				String path = ContentManager.getPath(uri, false);
 
 				logger.info("##SEARCH_NAME## - path="+path);
 

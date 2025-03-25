@@ -190,12 +190,19 @@ public class ContentManager {
 		}
 		return path;
 	}
-	
+
 	public static String getPath(String realPath) {
+		return getPath(realPath, true);
+	}
+	
+	public static String getPath(String realPath, boolean renderMode) {
 		String path = null;
 		if (realPath != null) {
 			String[] splitedPath = StringHelper.split(realPath, "/");
-			int splitedPathMinSize = 3;	
+			int splitedPathMinSize = 3;
+			if (!renderMode) {
+				splitedPathMinSize = 2;
+			}
 			path = "";
 			for (int i = splitedPathMinSize; i < splitedPath.length; i++) {
 				path = path + '/' + splitedPath[i];
@@ -447,7 +454,7 @@ public class ContentManager {
 	// }
 
 	public static void main(String[] args) {
-		System.out.println("** url = " + getPath("/nl/augustus/tsjechi%C3%AB-karst"));
+		System.out.println("** path = " + getPath("/fr/primes-chaudieres-2024"));
 	}
 
 	public static String[] splitPath(String path) {

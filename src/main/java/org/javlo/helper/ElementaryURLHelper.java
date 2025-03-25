@@ -672,7 +672,7 @@ public abstract class ElementaryURLHelper {
 	}
 
 	/**
-	 * return the path path prefix defined in ServletContext
+	 * return the path prefix defined in ServletContext
 	 * 
 	 * @param request
 	 * @return
