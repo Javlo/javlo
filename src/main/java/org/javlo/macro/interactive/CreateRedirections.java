@@ -104,18 +104,20 @@ public class CreateRedirections implements IInteractiveMacro, IAction  {
             }
 
             if (lastValidWord != null) {
-                System.out.println(lastValidWord);
-
                 ISearchEngine search = new DefaultSearchEngine();
-                List<SearchResult.SearchElement> elem =  search.search(ctx, null, lastValidWord, SearchResult.SORT_RELEVANCE, null);
 
-                String redirectTo = "## > NOT FOUND : "+lastValidWord;
-                if (elem.size() > 0) {
-                    SearchResult.SearchElement item = elem.get(0);
-                    if (item.getPriority()>0.9) {
-                        redirectTo = "page:"+item.getName();
-                    } else {
-                        redirectTo = "## > LOW PRIORITY : "+item.getPriority();
+                int bestPriority = Integer.MIN_VALUE;
+                String redirectTo = "## > NOT FOUND : " + lastValidWord;
+                ContentContext lgCtx = new ContentContext(ctx);
+                for (String lg : ctx.getGlobalContext().getContentLanguages()) {
+                    lgCtx.setAllLanguage(lg);
+                    List<SearchResult.SearchElement> elem = search.search(lgCtx, null, lastValidWord, SearchResult.SORT_RELEVANCE, null);
+                    if (!elem.isEmpty()) {
+                        SearchResult.SearchElement item = elem.get(0);
+                        if (item.getPriority() > bestPriority) {
+                            redirectTo = "page:" + item.getName();
+                            bestPriority = item.getPriority();
+                        }
                     }
                 }
 
