@@ -143,7 +143,7 @@ public class NetHelper {
 				urlCtx.setFree(true);
 				urlCtx.setRenderMode(ContentContext.VIEW_MODE);
 
-				String uri = RequestService.getURI(ctx.getRequest(), url);
+				String uri = RequestService.getURI(ctx.getRequest(), finalURL.toString());
 
 				logger.info("##SEARCH_NAME## - 1.uri = "+uri);
 
