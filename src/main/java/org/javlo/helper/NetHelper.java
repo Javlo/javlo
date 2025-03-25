@@ -131,7 +131,7 @@ public class NetHelper {
 					(ctx.getRequest().getServerPort() == 80 || ctx.getRequest().getServerPort() == 443 ? "" : ":" + ctx.getRequest().getServerPort());
 			url = host+url;
 		}
-		if (url.toLowerCase().startsWith("tel:")) {
+		if (url.toLowerCase().startsWith("tel:") || url.toLowerCase().startsWith("page:")) {
 			return null;
 		}
         try {
