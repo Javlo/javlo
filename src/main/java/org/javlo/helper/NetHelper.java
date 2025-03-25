@@ -134,6 +134,7 @@ public class NetHelper {
 		}
         try {
             URL finalURL = followURL(new URL(url));
+			logger.info("##SEARCH_NAME## - final url "+finalURL);
 			if (finalURL != null && finalURL.getHost().equalsIgnoreCase(ctx.getRequest().getServerName())) {
 				MenuElement page = NavigationHelper.getPageFromAbsoluteUrl(ctx, finalURL.toString());
 				if (page != null) {
@@ -141,6 +142,8 @@ public class NetHelper {
 				} else {
 					return null;
 				}
+			} else {
+				logger.info("##SEARCH_NAME## - not same host : "+finalURL.getHost()+" != "+ctx.getRequest().getServerName());
 			}
         } catch (Exception e) {
             e.printStackTrace();
