@@ -15,6 +15,7 @@ import org.javlo.bean.Company;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
+import org.javlo.context.ContentManager;
 import org.javlo.context.GlobalContext;
 import org.javlo.image.ImageHelper;
 import org.javlo.image.ImageSize;
@@ -22,6 +23,7 @@ import org.javlo.mailing.MailConfig;
 import org.javlo.mailing.MailService;
 import org.javlo.mailing.MailingBuilder;
 import org.javlo.navigation.MenuElement;
+import org.javlo.service.RequestService;
 import org.javlo.service.notification.NotificationService;
 import org.javlo.service.resource.VisualResource;
 import org.javlo.servlet.FileServlet;
@@ -136,11 +138,24 @@ public class NetHelper {
             URL finalURL = followURL(new URL(url));
 			logger.info("##SEARCH_NAME## - final url "+finalURL);
 			if (finalURL != null && finalURL.getHost().equalsIgnoreCase(ctx.getRequest().getServerName())) {
-				MenuElement page = NavigationHelper.getPageFromAbsoluteUrl(ctx, finalURL.toString());
-				if (page != null) {
-					return page.getName();
-				} else {
+				ContentContext urlCtx = new ContentContext(ctx);
+				urlCtx.setFree(true);
+				urlCtx.setRenderMode(ContentContext.VIEW_MODE);
+
+				String uri = RequestService.getURI(ctx.getRequest(), url);
+				// host is path is considered like "/view" and must be removed (but it is not)
+				String path = ContentManager.getPath(uri, !ctx.getGlobalContext().isHost());
+
+				logger.info("##SEARCH_NAME## - path="+path);
+
+				urlCtx.setPath(path);
+				MenuElement outPage = urlCtx.getCurrentPage(true);
+
+				if (outPage.isRoot()) {
+					logger.warning("page not found : "+path);
 					return null;
+				} else {
+					return outPage.getName();
 				}
 			} else {
 				logger.info("##SEARCH_NAME## - not same host : "+finalURL.getHost()+" != "+ctx.getRequest().getServerName());

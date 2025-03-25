@@ -633,13 +633,11 @@ public class NavigationHelper {
 		String uri = RequestService.getURI(ctx.getRequest(), url);
 		String path = ContentManager.getPath(uri);
 
-		logger.info("##SEARCH_NAME## - path="+path);
-
 		urlCtx.setPath(path);
 		MenuElement outPage = urlCtx.getCurrentPage(true);
 
 		if (outPage.isRoot()) {
-			logger.warning("page not found : "+path);
+			//logger.warning("page not found : "+path);
 			return null;
 		} else {
 			return outPage;
