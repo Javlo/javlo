@@ -129,6 +129,9 @@ public class NetHelper {
 					(ctx.getRequest().getServerPort() == 80 || ctx.getRequest().getServerPort() == 443 ? "" : ":" + ctx.getRequest().getServerPort());
 			url = host+url;
 		}
+		if (url.toLowerCase().startsWith("tel:")) {
+			return null;
+		}
         try {
             URL finalURL = followURL(new URL(url));
 			if (finalURL != null && finalURL.getHost().equalsIgnoreCase(ctx.getRequest().getServerName())) {

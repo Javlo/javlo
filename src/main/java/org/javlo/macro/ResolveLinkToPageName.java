@@ -80,6 +80,7 @@ public class ResolveLinkToPageName extends AbstractMacro {
 						List<String> urls = NetHelper.extractHrefs(value);
 						for (String url : urls) {
 							String pageName = NetHelper.getPageName(ctx, url);
+							logger.info("page:"+pageName+" // url:"+url);
 							if (pageName != null) {
 								value = value.replace(url, "page:"+pageName);
 							}
