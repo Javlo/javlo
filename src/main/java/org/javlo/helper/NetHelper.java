@@ -145,13 +145,17 @@ public class NetHelper {
 
 				String uri = RequestService.getURI(ctx.getRequest(), url);
 
+				logger.info("##SEARCH_NAME## - 1.uri = "+uri);
+
 				if (!StringHelper.isEmpty(ctx.getGlobalContext().getContextKey())) {
 					uri = uri.replaceFirst("/"+ctx.getGlobalContext().getContextKey(), "");
 				}
 
 				String path = ContentManager.getPath(uri, false);
 
-				logger.info("##SEARCH_NAME## - path="+path);
+				logger.info("##SEARCH_NAME## - ctx.getGlobalContext().getContextKey() = "+ctx.getGlobalContext().getContextKey());
+				logger.info("##SEARCH_NAME## - 2.uri = "+uri);
+				logger.info("##SEARCH_NAME## - path = "+path);
 
 				urlCtx.setPath(path);
 				MenuElement outPage = urlCtx.getCurrentPage(true);
