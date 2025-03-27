@@ -264,7 +264,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
      */
     public static Map<String, String> parseConfigComment(String htmlContent) {
         // Define the regex pattern to find the config comment
-        Pattern commentPattern = Pattern.compile("<!--config (.*?) -->", Pattern.DOTALL);
+        Pattern commentPattern = Pattern.compile("<!--config(.*?)-->", Pattern.DOTALL);
         Matcher matcher = commentPattern.matcher(htmlContent);
 
         if (matcher.find()) {
