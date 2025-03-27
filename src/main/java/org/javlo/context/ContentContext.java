@@ -1000,7 +1000,7 @@ public class ContentContext {
 		return pageManagement;
 	}
 
-	public MenuElement getCurrentPage(boolean urlFacotry) throws Exception {
+	public MenuElement getCurrentPage(boolean urlFactory) throws Exception {
 
 		if (!isPageManagement()) {
 			return ContentService.getInstance(getGlobalContext()).getNavigation(this);
@@ -1015,7 +1015,7 @@ public class ContentContext {
 				outPage = root;
 			} else {
 				if (getPath().trim().length() > 0) {
-					MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFacotry);
+					MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFactory);
 					if (elem != null) {
 						if (getRenderMode() != EDIT_MODE && !NetHelper.isIPAccepted(this)) {
 							if (!StringHelper.isEmpty(elem.getIpSecurityErrorPageName())) {
@@ -1033,7 +1033,7 @@ public class ContentContext {
 					if (elem != null) {
 						setCurrentPageCached(elem);
 						globalContext.storeUrl(this, getPath(), elem.getId());
-					} else if (urlFacotry) {
+					} else if (urlFactory) {
 						globalContext.log(Log.SEVERE, "url", "url not found : " + getPath());
 						elem = globalContext.convertOldURL(this, getPath());
 						if (elem != null) {
@@ -1076,8 +1076,7 @@ public class ContentContext {
 	}
 
 	public MenuElement getCurrentPage() throws Exception {
-		MenuElement outPage = getCurrentPage(false);
-		return outPage;
+		return getCurrentPage(false);
 	};
 
 	public MenuElement getCurrentPageCached() {
