@@ -343,7 +343,6 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                         String html = JSP_HEADER + ResourceHelper.loadStringFromFile(htmlFile);
                         html = replaceGroupTags(html);
                         for (Field field : getFields(ctx)) {
-
                             if (!StringHelper.isEmpty(field.getGroup())) {
                                 html = html.replace("field." + field.getType() + "." + field.getName() + "." + field.getGroup() + '.', field.getName() + '.');
                             } else {
@@ -361,14 +360,12 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                     linkToJSP = StringHelper.getFileNameWithoutExtension(linkToJSP) + ".jsp";
                     Map<String, String> htmlConfig = parseConfigComment(ResourceHelper.loadStringFromFile(jspFile));
 
-                    if (htmlConfig != null && htmlConfig.size()>0) {
+                    if (htmlConfig != null && !htmlConfig.isEmpty()) {
                         for (Map.Entry<String, String> entry : htmlConfig.entrySet()) {
-                            System.out.println("add property : "+entry.getKey());
                             properties.setProperty(entry.getKey(), entry.getValue());
                         }
                         storeProperties();
                     }
-
                 }
                 String prefix = "";
                 String suffix = "";
