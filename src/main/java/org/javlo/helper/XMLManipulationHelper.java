@@ -1075,7 +1075,7 @@ public class XMLManipulationHelper {
         BufferedWriter out = new BufferedWriter(outString);
 
         /** forward **/
-        out.append("<%if (!StringHelper.isEmpty(currentPage.getForward(ctx))) {%><!--FRW--><meta http-equiv=\"refresh\" content=\"0; url=<%=currentPage.getForward(ctx)%>\" /><%}%>");
+        //out.append("<%if (!StringHelper.isEmpty(currentPage.getForward(ctx))) {%><!--FRW--><meta http-equiv=\"refresh\" content=\"0; url=<%=currentPage.getForward(ctx)%>\" /><%}%>");
 
         if (!isMail) {
             out.append("<%if (ctx.isInteractiveMode() && !ctx.isPreviewOnly()) {%>");
