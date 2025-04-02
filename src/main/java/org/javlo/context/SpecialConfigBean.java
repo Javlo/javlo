@@ -41,7 +41,7 @@ public class SpecialConfigBean {
 
 	public boolean isMinify() {
 		if (config.get("jsp.minify") == null) {
-			return true;
+			return false;
 		} else {
 			return StringHelper.isTrue(config.get("jsp.minify"));
 		}
