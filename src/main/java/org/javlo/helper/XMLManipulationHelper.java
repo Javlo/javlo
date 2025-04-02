@@ -1075,7 +1075,7 @@ public class XMLManipulationHelper {
         BufferedWriter out = new BufferedWriter(outString);
 
         /** forward **/
-        out.append("<%if (!StringHelper.isEmpty(currentPage.getForward(ctx))) {%><!--FRW--><meta http-equiv=\"refresh\" content=\"0; url=\"<%=currentPage.getForward(ctx)%>\" /><%}%>");
+        out.append("<%if (!StringHelper.isEmpty(currentPage.getForward(ctx))) {%><!--FRW--><meta http-equiv=\"refresh\" content=\"0; url=<%=currentPage.getForward(ctx)%>\" /><%}%>");
 
         if (!isMail) {
             out.append("<%if (ctx.isInteractiveMode() && !ctx.isPreviewOnly()) {%>");
@@ -1528,7 +1528,11 @@ public class XMLManipulationHelper {
         return bestTag;
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
+        System.out.println("<%if (!StringHelper.isEmpty(currentPage.getForward(ctx))) {%><!--FRW--><meta http-equiv=\"refresh\" content=\"0; url=<%=currentPage.getForward(ctx)%>\" /><%}%>");
+    }
+
+    public static void _main(String[] args) throws Exception {
 
         String html = ResourceHelper.loadStringFromFile(new File("C:\\work\\template\\eprs-article\\index.html"));
 
