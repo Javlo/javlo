@@ -1301,7 +1301,10 @@ public class Template implements Comparable<Template> {
 								logger.info("load dynamic component html : " + file);
 								String html = ResourceHelper.loadStringFromFile(file);
 								Properties properties = new Properties();
-								if (html.contains(PREVIEW_EDIT_CODE)) {
+								String htmlLower = html.toLowerCase();
+								if (html.contains(PREVIEW_EDIT_CODE)
+										|| html.contains("${previewAttributes}")
+										|| (htmlLower.contains("${previewid}") && html.contains("${previewClass}"))) {
 									properties.setProperty("component.wrapped", "false");
 								}
 								properties.setProperty("component.type", StringHelper.getFileNameWithoutExtension(file.getName()));
@@ -3923,7 +3926,7 @@ public class Template implements Comparable<Template> {
 	private static String minifyContent(String content) {
 
 		// Remove HTML comments
-		content = content.replaceAll("(?s)<!--.*?-->", "");
+		content = content.replaceAll("(?s)<!--(?!config).*?-->", "");
 
 		// Remove JavaScript single-line comments ONLY inside <script> tags
 		Pattern scriptPattern = Pattern.compile("(?s)(<script.*?>)(.*?)(</script>)");
