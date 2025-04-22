@@ -125,6 +125,12 @@ public class FileServlet extends HttpServlet {
 			if (!file.exists()) {
 				logger.info("file not found : " + file);
 				String finalFile = globalContext.getTransformShortURL(requestedFile);
+				if (globalContext.getDataFolder() == null) {
+					logger.severe("data folder null");
+				}
+				if (finalFile == null) {
+					logger.severe("finalFile null");
+				}
 				file = new File(globalContext.getDataFolder(), finalFile);
 			}
 		}
