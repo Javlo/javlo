@@ -26,7 +26,7 @@ public class TitleURLCreator extends AbstractURLFactory {
 	}
 	
 	protected boolean isRemoveAccent() {
-		return false;
+		return true;
 	}
 
 	protected boolean isWithExtension() {
@@ -105,6 +105,15 @@ public class TitleURLCreator extends AbstractURLFactory {
 		} else {
 			return createURLWithoutExt(ctx, currentPage);
 		}
+	}
+
+	public static void main(String[] args) {
+		String title = "Faire des économies grâce à un adoucisseur d’eau";
+		title = StringHelper.removeCR(title);
+		title = StringEscapeUtils.unescapeHtml4(title);
+		title = StringHelper.createASCIIString(title, '-');
+		title = StringHelper.createI18NURL(StringHelper.removeSpecialChars(title, "-"));
+		System.out.println("*** title = "+title);
 	}
 
 }
