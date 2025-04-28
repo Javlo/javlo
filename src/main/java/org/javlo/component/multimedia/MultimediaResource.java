@@ -469,6 +469,10 @@ public class MultimediaResource {
 		}
 	}
 
+	public Set<String> getTaxonomy() {
+		return staticInfo.getTaxonomy();
+	}
+
 	public String getMonthDate() {
 		return monthDate;
 	}

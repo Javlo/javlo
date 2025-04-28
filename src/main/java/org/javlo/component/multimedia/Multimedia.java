@@ -11,6 +11,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.InfoBean;
 import org.javlo.data.taxonomy.ITaxonomyContainer;
+import org.javlo.data.taxonomy.TaxonomyBean;
 import org.javlo.data.taxonomy.TaxonomyService;
 import org.javlo.helper.*;
 import org.javlo.helper.filefilter.HTMLFileFilter;
@@ -1110,16 +1111,32 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
-		// LocalLogger.cronoStart();
 		List<MultimediaResource> allResource = getMultimediaResources(ctx);
-		// LocalLogger.cronoStep(getType());
 		int max = Math.min(getMaxListSize(), allResource.size());
-		// LocalLogger.cronoStep(getType());
+		allResource = allResource.subList(0, max);
+
 		PaginationContext pagination = PaginationContext.getInstance(ctx.getRequest(), getId(), max, getPageSize());
 		// LocalLogger.cronoStep(getType());
 		ctx.getRequest().setAttribute("title", getTitle());
 		ctx.getRequest().setAttribute("pagination", pagination);
-		ctx.getRequest().setAttribute("resources", allResource.subList(0, max));
+		ctx.getRequest().setAttribute("resources", allResource);
+
+		TaxonomyService taxonomyService = TaxonomyService.getInstance(ctx);
+		List<TaxonomyBean> allTaxo = new LinkedList<>();
+		Set<String> taxoDone = new HashSet<>();
+		for (MultimediaResource res : allResource) {
+			for (String taxo : res.getTaxonomy()) {
+				if (!taxoDone.contains(taxo)) {
+					taxoDone.add(taxo);
+					TaxonomyBean tb = taxonomyService.getTaxonomyBean(taxo, false);
+					if (tb != null) {
+						allTaxo.add(tb);
+					}
+				}
+			}
+		}
+		ctx.getRequest().setAttribute("allTaxonomy", allTaxo);
+
 		// LocalLogger.cronoStep(getType());
 	}
 
