@@ -608,9 +608,12 @@ public class CatchAllFilter implements Filter {
 				if (viewURI.length() > 3) {
 					sep = viewURI.charAt(3);
 				}
-				if (sep == '/' || sep == ContentContext.CONTENT_LG_SEP || sep == ContentContext.COUNTRY_LG_SEP || sep == '?' || viewURI.length() == 3) {
+				if (sep == '/' || sep == ContentContext.CONTENT_LG_SEP || sep == ContentContext.COUNTRY_LG_SEP || sep == '?') {
 					String lg = viewURI.substring(1, 3).toLowerCase();
-					String lgCountry = viewURI.substring(1, 6).toLowerCase();
+					String lgCountry = "_NOLG_";
+					if (viewURI.length() > 5) {
+						lgCountry = viewURI.substring(1, 6).toLowerCase();
+					}
 					if (globalContext.getContentLanguages().contains(lg) || globalContext.getContentLanguages().contains(lgCountry)) {
 						String newPath = "/view" + viewURI;
 						// if (httpRequest.getSession().isNew()) {
