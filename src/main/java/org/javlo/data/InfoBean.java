@@ -236,6 +236,11 @@ public class InfoBean {
 
 	private Map<String, String> lgAbsURLs = null;
 
+	private Map<String, String> lgRealContentURLs = null;
+
+	private Map<String, String> lgRealContentAbsoluteURLs = null;
+
+
 	public Map<String, String> getLanguageURLs() throws Exception {
 		if (lgURLs == null) {
 			lgURLs = new HashMap<String, String>();
@@ -262,17 +267,32 @@ public class InfoBean {
 	}
 
 	public Map<String, String> getLanguageRealContentURLs() throws Exception {
-		if (lgURLs == null) {
-			lgURLs = new HashMap<String, String>();
+		if (lgRealContentURLs == null) {
+			lgRealContentURLs = new HashMap<String, String>();
 			ContentContext lgCtx = new ContentContext(ctx);
 			for (String lg : ctx.getGlobalContext().getContentLanguages()) {
 				lgCtx.setAllLanguage(lg);
 				if (getCurrentPage().isRealContent(lgCtx)) {
-					lgURLs.put(lg, URLHelper.createURL(lgCtx));
+					lgRealContentURLs.put(lg, URLHelper.createURL(lgCtx));
 				}
 			}
 		}
-		return lgURLs;
+		return lgRealContentURLs;
+	}
+
+	public Map<String, String> getLanguageRealContentAbsoluteURLs() throws Exception {
+		if (lgRealContentAbsoluteURLs == null) {
+			lgRealContentAbsoluteURLs = new HashMap<String, String>();
+			ContentContext lgCtx = new ContentContext(ctx);
+			lgCtx.setAbsoluteURL(true);
+			for (String lg : ctx.getGlobalContext().getContentLanguages()) {
+				lgCtx.setAllLanguage(lg);
+				if (getCurrentPage().isRealContent(lgCtx)) {
+					lgRealContentAbsoluteURLs.put(lg, URLHelper.createURL(lgCtx));
+				}
+			}
+		}
+		return lgRealContentAbsoluteURLs;
 	}
 
 	public String getCurrentAbsoluteURLQRCode() {
