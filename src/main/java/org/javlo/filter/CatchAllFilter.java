@@ -57,7 +57,7 @@ public class CatchAllFilter implements Filter {
 	public static final String POLICY = "default-src 'self'";
 	public static final String MAIN_URI_KEY = "_mainURI";
 
-	private static boolean DEBUG = false;
+	private static boolean DEBUG = true;
 
 	/**
 	 * create a static logger.
@@ -173,6 +173,7 @@ public class CatchAllFilter implements Filter {
 		/** security : block ip attack **/
 		if (AccessSecurity.getInstance(httpRequest).isIpBlock(httpRequest)) {
 			httpResponse.reset();
+			logger.severe("BLOCK IP # = "+BLOCK_IP);
 			httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			BLOCK_IP++;
 			return;
@@ -607,9 +608,10 @@ public class CatchAllFilter implements Filter {
 				if (viewURI.length() > 3) {
 					sep = viewURI.charAt(3);
 				}
-				if (sep == '/' || sep == '-' || sep == '?' || viewURI.length() == 3) {
+				if (sep == '/' || sep == ContentContext.CONTENT_LG_SEP || sep == ContentContext.COUNTRY_LG_SEP || sep == '?' || viewURI.length() == 3) {
 					String lg = viewURI.substring(1, 3).toLowerCase();
-					if (globalContext.getContentLanguages().contains(lg)) {
+					String lgCountry = viewURI.substring(1, 6).toLowerCase();
+					if (globalContext.getContentLanguages().contains(lg) || globalContext.getContentLanguages().contains(lgCountry)) {
 						String newPath = "/view" + viewURI;
 						// if (httpRequest.getSession().isNew()) {
 						// httpRequest.getSession().setAttribute(InfoBean.NEW_SESSION_PARAM, true);

@@ -2899,7 +2899,7 @@ public class Template implements Comparable<Template> {
 										// }
 										if (fileExt.equalsIgnoreCase("jsp") || fileExt.equalsIgnoreCase("html")) {
 											ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map, ctx.getGlobalContext().getStaticConfig().isCompressJsp(), ctx.getGlobalContext().getStaticConfig().isHighSecure(), soft);
-											if (fileExt.equalsIgnoreCase("jsp") && ctx.getGlobalContext().getStaticConfig().isCompressJsp()) {
+											if (fileExt.equalsIgnoreCase("jsp")) {
 												minifyJSP(globalContext, targetFile);
 											}
 										} else {

@@ -1967,6 +1967,25 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public Set<String> getLanguages() {
 		return getLocalLanguages();
 	}
+
+	public List<Locale> getLanguagesLocal() {
+		List<Locale> out = new LinkedList<>();
+		for (String lg : getLanguages()) {
+			Locale locale = null;
+			if (lg.length()==2) {
+				locale = new Locale(lg);
+			} else {
+				if (lg.contains(""+ContentContext.COUNTRY_LG_SEP)) {
+					String[] lgTab = lg.split(""+ContentContext.COUNTRY_LG_SEP);
+					locale =new Locale(lgTab[0], lgTab[1]);
+				}  else if (lg.contains(""+ContentContext.CONTENT_LG_SEP)) {
+					locale =new Locale(lg.substring(1,3));
+				}
+				out.add(locale);
+			}
+		}
+		return out;
+	}
 	
 	public String getDefaultCurrency() {
 		return getSpecialConfig().get("ecom.currency.default", "EUR");

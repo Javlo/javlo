@@ -284,9 +284,9 @@ public abstract class ElementaryURLHelper {
 			}
 		} else {
 			if (withPathPrefix) {
-				newUri = URLHelper.mergePath(getPathPrefix(ctx), mode, servletPath, noNavigationAreaCheckCtx.getLanguage() + '-' + noNavigationAreaCheckCtx.getContentLanguage(), uri);
+				newUri = URLHelper.mergePath(getPathPrefix(ctx), mode, servletPath, noNavigationAreaCheckCtx.getLanguage() + ContentContext.CONTENT_LG_SEP + noNavigationAreaCheckCtx.getContentLanguage(), uri);
 			} else {
-				newUri = URLHelper.mergePath(mode, servletPath, noNavigationAreaCheckCtx.getLanguage() + '-' + noNavigationAreaCheckCtx.getContentLanguage(), uri);
+				newUri = URLHelper.mergePath(mode, servletPath, noNavigationAreaCheckCtx.getLanguage() + ContentContext.CONTENT_LG_SEP + noNavigationAreaCheckCtx.getContentLanguage(), uri);
 			}
 		}
 		

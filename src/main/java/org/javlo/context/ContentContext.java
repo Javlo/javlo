@@ -109,6 +109,10 @@ public class ContentContext {
 
 	public static final String CLEAR_SESSION_PARAM = "_clear_session";
 
+	public static final char CONTENT_LG_SEP = '_';
+
+	public static final char COUNTRY_LG_SEP = '-';
+
 	/**
 	 * create a static logger.
 	 */
@@ -387,6 +391,7 @@ public class ContentContext {
 			String lg = ContentManager.getLanguage(ctx);
 			ctx.setLanguage(lg);
 			String contentLg = ContentManager.getContentLanguage(ctx);
+			ctx.setCountry(ContentManager.getContentCountry(ctx));
 
 			// TODO : optimise this with option in global context
 
@@ -469,6 +474,8 @@ public class ContentContext {
 	private String language = null;
 
 	private String contentLanguage = null;
+
+	private String country;
 	
 	private String mainLanguage = null;
 
@@ -1010,7 +1017,7 @@ public class ContentContext {
 		if (outPage == null) {
 			GlobalContext globalContext = getGlobalContext();
 			MenuElement root = ContentService.getInstance(globalContext).getNavigation(this);
-			
+
 			if (getPath().equals("/")) {
 				outPage = root;
 			} else {
@@ -1067,6 +1074,7 @@ public class ContentContext {
 				logger.info("page not found (" + getGlobalContext().getContextKey() + ") : " + getPath()+" page:"+outPage.getName());
 			}
 			if (!isFree()) {
+				logger.warning("page not free : "+getPath());
 				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			}
 			return null;
@@ -1195,9 +1203,16 @@ public class ContentContext {
 		return language;
 	}
 
+	public String getCountry() {
+		if (country == null) {
+			return getGlobalContext().getStaticConfig().getLocaleCountry();
+		}
+		return country;
+	}
+
 	public Locale getLocale() {
 		if (locale == null) {
-			locale = new Locale(getRequestContentLanguage(), getLocalCountry());
+			locale = new Locale(getRequestContentLanguage(), getCountry());
 		}
 		return locale;
 	}
@@ -1566,6 +1581,10 @@ public class ContentContext {
 			language = GlobalContext.getInstance(request).getDefaultLanguage();
 		}
 		resetCache();
+	}
+
+	private void setCountry(String ct) {
+		country = ct;
 	}
 
 	public void setNeedRefresh(boolean needRefresh) {

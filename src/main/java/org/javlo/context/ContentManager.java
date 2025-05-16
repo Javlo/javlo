@@ -43,6 +43,26 @@ public class ContentManager {
 		}*/
 		return lg;
 	}
+
+	public static String getContentCountry(ContentContext ctx) {
+		String ct = "";
+		String realPath = RequestService.getURI(ctx.getRequest());
+		GlobalContext.getInstance(ctx.getRequest());
+		if (realPath != null) {
+			String[] splitedPath = StringHelper.split(realPath, "/");
+			int splitedPathMinSize = 3;
+			if (splitedPath.length >= splitedPathMinSize) {
+				ct = splitedPath[2].toLowerCase();
+			}
+		}
+		String[] lgs = StringHelper.split(ct, ""+ContentContext.COUNTRY_LG_SEP);
+		if (lgs.length > 1) {
+			ct = lgs[1];
+		} else {
+			ct = ctx.getLocalCountry();
+		}
+		return ct;
+	}
 	
 	public static String getContextName(HttpServletRequest request) {
 
@@ -110,11 +130,20 @@ public class ContentManager {
 			}
 		}
 
-		String[] lgs = StringHelper.split(lg, "-");
+		String[] lgs = StringHelper.split(lg, ""+ContentContext.CONTENT_LG_SEP);
 		if (index < lgs.length) {
 			return lgs[index];
 		} else {
-			return null;
+			if (index == 1) {
+				return null;
+			} else {
+				lgs = StringHelper.split(lg, ""+ContentContext.COUNTRY_LG_SEP);
+				if (index < lgs.length) {
+					return lgs[index];
+				} else {
+					return null;
+				}
+			}
 		}
 	}
 

@@ -234,6 +234,8 @@ public class InfoBean {
 
 	private Map<String, String> lgURLs = null;
 
+	private Map<String, String> lgAbsURLs = null;
+
 	public Map<String, String> getLanguageURLs() throws Exception {
 		if (lgURLs == null) {
 			lgURLs = new HashMap<String, String>();
@@ -244,6 +246,19 @@ public class InfoBean {
 			}
 		}
 		return lgURLs;
+	}
+
+	public Map<String, String> getLanguageAbsoluteURLs() throws Exception {
+		if (lgAbsURLs == null) {
+			lgAbsURLs = new HashMap<String, String>();
+			ContentContext lgCtx = new ContentContext(ctx);
+			lgCtx.setAbsoluteURL(true);
+			for (String lg : ctx.getGlobalContext().getContentLanguages()) {
+				lgCtx.setAllLanguage(lg);
+				lgAbsURLs.put(lg, URLHelper.createURL(lgCtx));
+			}
+		}
+		return lgAbsURLs;
 	}
 
 	public Map<String, String> getLanguageRealContentURLs() throws Exception {
@@ -526,8 +541,38 @@ public class InfoBean {
 		return lg.getDisplayName(locale);
 	}
 
+	public Locale getLocale() {
+		return ctx.getLocale();
+	}
+
 	public String getLanguage() {
 		return ctx.getLanguage();
+	}
+
+	public List<Locale> getLanguagesLocale() {
+		return ctx.getGlobalContext().getLanguagesLocal();
+	}
+
+	public String getLanguageOnly() {
+		String lang = ctx.getLanguage();
+		if (lang.length()==5) {
+			return lang.substring(0,2);
+		} else {
+			return lang;
+		}
+	}
+
+	public String getCountry() {
+		return ctx.getCountry();
+	}
+
+	public String getLanguageAndCountry() {
+		String lang = ctx.getLanguage();
+		if (lang.length() == 2) {
+			return lang;
+		} else {
+			return lang.substring(0,2)+'-'+lang.substring(2,4).toUpperCase();
+		}
 	}
 
 	public HtmlPart getPageDescription() {
