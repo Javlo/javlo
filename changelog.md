@@ -1007,4 +1007,6 @@ Security in case of vulnerabilities.
 - clean HTML on deploy template (option -> html.clean=true (config.properties))
 - black and white image filter
 - macro to transform all links in : page:##name##
+- choose lang page
+- export date and user in light excel export
 
