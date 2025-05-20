@@ -55,7 +55,7 @@ import java.util.logging.Logger;
 
 public class SmartGenericForm extends AbstractVisualComponent implements IAction, IEventRegistration, IDataContainer {
 
-    private static final String USER_FIELD = "_user";
+    private static final String USER_FIELD = "-user";
 
     public static final String RECAPTCHASECRETKEY = "recaptchasecretkey";
 
@@ -1417,7 +1417,6 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
             }
             InfoBean.getCurrentInfoBean(ctx); // create info bean if not exist
             subject = XHTMLHelper.replaceJSTLData(ctx, subject);
-            result.put("__registration time", StringHelper.renderSortableTime(new Date()));
             result.put("__local addr", request.getLocalAddr());
             result.put("__remote addr", request.getRemoteAddr());
             result.put("__X-Forwarded-For", request.getHeader("x-forwarded-for"));
@@ -1428,6 +1427,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
             result.put("_event-close", "" + comp.isClose(ctx));
             result.put("_compid", "" + comp.getId());
 
+            result.put("-time", StringHelper.renderSortableTime(new Date()));
             result.put(USER_FIELD, StringHelper.neverNull(ctx.getCurrentUserId(), ""));
             result.put(VALIDED, "false");
 
