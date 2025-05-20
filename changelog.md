@@ -1009,4 +1009,5 @@ Security in case of vulnerabilities.
 - macro to transform all links in : page:##name##
 - choose lang page
 - export date and user in light excel export
+- ## [2.3.3] - 20/05/2024
 
