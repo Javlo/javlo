@@ -14,6 +14,7 @@ GlobalContext globalContext = GlobalContext.getInstance(request);
 I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, request.getSession());
 
 ContentContext ctx = ContentContext.getContentContext(request, response);
+InfoBean.getCurrentInfoBean(ctx);
 
 String lg=ctx.getCookieLanguage();
 if (lg == null) {
@@ -24,7 +25,15 @@ if (lg.trim().length() == 0) {
 	lg = request.getLocale().getLanguage();
 }
 
-if (lg.trim().length() == 0 || !globalContext.getLanguages().contains(lg)) {
+String lgOnly = "##";
+if (lg.trim().length() > 3) {
+	lgOnly = lg.substring(0,2);
+}
+if (lg.trim().length() == 0 || !(globalContext.getLanguages().contains(lg) || globalContext.getLanguages().contains(lgOnly))) {
+	if (ctx.getCurrentTemplate().getLanguagesChoiceFile(ctx) != null) {
+		%><jsp:include page="<%= ctx.getCurrentTemplate().getLanguagesChoiceFile(ctx) %>" flush="true" /><%
+		return;
+	}
 	if (globalContext != null) {
 		lg = globalContext.getDefaultLanguage();
 	}
@@ -41,19 +50,19 @@ ContentService content = ContentService.getInstance(globalContext);
 Template template = ctx.getCurrentTemplate();
 InfoBean.updateInfoBean(ctx);
 if ((template != null)&&(template.getHomeRenderer(globalContext) != null)) {
-%><jsp:include page="<%=template.getHomeRendererFullName(globalContext)%>"></jsp:include><%	
+%><jsp:include page="<%=template.getHomeRendererFullName(globalContext)%>"></jsp:include><%
 } else {
 	ctx.setFormat("html");
 	ctx = new ContentContext(ctx);
 	ctx.setViewPrefix(true);
 	String forcePathPreview = ctx.getPathPrefix(request);
 	ctx.setForcePathPrefix("");
-	ctx.setInternalURL(true);	
+	ctx.setInternalURL(true);
 	String url = URLHelper.createURLWithtoutContext(ctx, ctx.getPath());
 	/*if (!ctx.getGlobalContext().getStaticConfig().isURIWithContext()) {
 		url = URLHelper.mergePath(request.getContextPath(),url);
 	}*/
-	ctx.setForcePathPrefix(request,forcePathPreview);	
+	ctx.setForcePathPrefix(request,forcePathPreview);
 	//request.getRequestDispatcher(url).forward(request, response);
 	//response.sendRedirect(url);
 	//NetHelper.sendRedirectTemporarily(response, url);

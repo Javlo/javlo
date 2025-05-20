@@ -1977,12 +1977,12 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			} else {
 				if (lg.contains(""+ContentContext.COUNTRY_LG_SEP)) {
 					String[] lgTab = lg.split(""+ContentContext.COUNTRY_LG_SEP);
-					locale =new Locale(lgTab[0], lgTab[1]);
+					locale = new Locale(lgTab[0], lgTab[1]);
 				}  else if (lg.contains(""+ContentContext.CONTENT_LG_SEP)) {
-					locale =new Locale(lg.substring(1,3));
+					locale = new Locale(lg.substring(1,3));
 				}
-				out.add(locale);
 			}
+			out.add(locale);
 		}
 		return out;
 	}

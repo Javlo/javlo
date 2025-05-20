@@ -1748,6 +1748,14 @@ public class Template implements Comparable<Template> {
 		return properties.getString("404", getParent().get404File());
 	}
 
+	public String getLanguagesChoiceFile(ContentContext ctx) throws Exception {
+		String langFile = properties.getString("languages-choice", null);
+		if (langFile == null) {
+			return null;
+		}
+		return URLHelper.mergePath(getWorkTemplateRealPath(ctx.getGlobalContext()), langFile);
+	}
+
 	public synchronized Map getI18nProperties(GlobalContext globalContext, Locale locale, int mode) throws IOException {
 		String filePrefix = I18N_VIEW_FILE;
 		if (mode == ContentContext.EDIT_MODE) {
@@ -2684,7 +2692,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	public String getWorkTemplateRealPath(GlobalContext globalContext) {
-		return URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext));
+		return URLHelper.mergePath(getLocalWorkTemplateFolder(), getFolder(globalContext));
 	}
 
 	public boolean isDeleted() {
