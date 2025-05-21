@@ -155,6 +155,9 @@ public class MacroFactory {
 
 		macros.add(new ResolveLinkToPageName(true));
 		macros.add(new ResolveLinkToPageName(false));
+
+		macros.add(new SplitOnTitle("h2"));
+		macros.add(new SplitOnTitle("h3"));
 		
 		/** macro bean **/
 		initMacroBean(macros);

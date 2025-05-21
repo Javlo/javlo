@@ -122,6 +122,10 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 		return id;
 	}
 
+	public void resetId() {
+		this.id = StringHelper.getRandomId();
+	}
+
 	/**
 	 * @return
 	 */
