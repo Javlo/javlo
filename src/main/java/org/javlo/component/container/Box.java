@@ -16,7 +16,8 @@ import java.util.*;
 
 public class Box extends AbstractVisualComponent implements ISection {
 	
-	
+	protected String[] DEPTH_COLOR = new String[] {"#FF4545", "#FF9C73", "#FBD288", "#FCF596"};
+
 	private static final String TYPE = "box";
 	
 	protected String getCloseBoxInputName() {
@@ -58,6 +59,10 @@ public class Box extends AbstractVisualComponent implements ISection {
 		} else {
 			return new String[0];
 		}
+	}
+
+	public String getDepthColor(int depth) {
+		return DEPTH_COLOR[depth % DEPTH_COLOR.length-1];
 	}
 
 	@Override
