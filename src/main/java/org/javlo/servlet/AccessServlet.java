@@ -1,5 +1,8 @@
 package org.javlo.servlet;
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -62,9 +65,6 @@ import org.slf4j.LoggerFactory;
 import org.xhtmlrenderer.swing.Java2DRenderer;
 import org.xhtmlrenderer.util.FSImageWriter;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.Session;
-import jakarta.mail.Transport;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.management.ManagementFactory;
@@ -1326,10 +1326,14 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		if (!StringHelper.isEmpty(staticConfig.getSMTPHost())) {
 			Transport transport = null;
 			try {
-				Session mailSession = MailService.getMailSession(null);
-				transport = mailSession.getTransport("smtp");
-				transport.connect(staticConfig.getSMTPHost(), Integer.parseInt(staticConfig.getSMTPPort()), staticConfig.getSMTPUser(), staticConfig.getSMTPPasswordParam());
-				smtpConnect = transport.isConnected();
+				if (StringHelper.isDigit(staticConfig.getSMTPPort())) {
+					Session mailSession = MailService.getMailSession(null);
+					transport = mailSession.getTransport("smtp");
+					transport.connect(staticConfig.getSMTPHost(), Integer.parseInt(staticConfig.getSMTPPort()), staticConfig.getSMTPUser(), staticConfig.getSMTPPasswordParam());
+					smtpConnect = transport.isConnected();
+				} else {
+					logger.severe("staticConfig.getSMTPPort() is not DIGIT : "+staticConfig.getSMTPPort());
+				}
 			} catch (Throwable t) {
 				t.printStackTrace();
 			} finally {
