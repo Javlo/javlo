@@ -3,12 +3,6 @@
  */
 package org.javlo.component.ecom;
 
-import java.lang.reflect.InvocationTargetException;
-import java.text.ParseException;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
 import org.javlo.actions.EcomStatus;
 import org.javlo.actions.IAction;
 import org.javlo.actions.ListerException;
@@ -27,6 +21,12 @@ import org.javlo.service.RequestService;
 import org.javlo.service.exception.ServiceException;
 import org.javlo.user.IUserInfo;
 import org.javlo.user.UserInfo;
+
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author pvandermaesen
@@ -210,7 +210,6 @@ public class EditBasketComponent extends AbstractPropertiesComponent implements 
 
 		if (!StringHelper.isEmpty(rs.getParameter("deliveryDate"))) {
 			try {
-
 				Date deliveryDate = StringHelper.parseInputDate(rs.getParameter("deliveryDate"));
 				boolean found = false;
 				for (Date possibleDate : ctx.getGlobalContext().getStaticConfig().getEcomLister().getDeliveryDate(ctx, basket)) {
