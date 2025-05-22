@@ -423,7 +423,6 @@ public class I18nAccess implements Serializable {
 			
 		}
 		System.out.println(text);
-
 	}
 
 	/* EDIT */
