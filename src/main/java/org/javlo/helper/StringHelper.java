@@ -4591,13 +4591,16 @@ public class StringHelper {
     }
 
     public static String propertiesToString(Properties p) {
-        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        PrintStream out = new PrintStream(outStream);
-        for (Object key : p.keySet()) {
-            out.println(key + "=" + p.getProperty(key.toString()));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        String res = "";
+        try {
+            out.flush();
+            res = new String(out.toByteArray());
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        out.close();
-        return new String(outStream.toByteArray());
+       return res;
     }
 
     public static String extractHost(String inUrl) {
