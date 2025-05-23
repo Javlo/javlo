@@ -328,6 +328,17 @@ public class StructuredProperties extends Properties {
 		}		
 	}
 
+	@Override
+	public synchronized String toString() {
+		StringWriter writer = new StringWriter();
+        try {
+            store(writer, null); // null pour ne pas ajouter de commentaire
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return writer.toString();
+	}
+
 	public static void main(String[] args) throws IOException {
 		Map<String, Object> data = new LinkedHashMap<>();
 		data.put("field.photo.image.value", "image");

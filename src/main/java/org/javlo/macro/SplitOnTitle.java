@@ -12,6 +12,7 @@ import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
+import org.javlo.utils.StructuredProperties;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -110,7 +111,12 @@ public class SplitOnTitle extends AbstractMacro {
 					if (isTitle) {
 						newComp.setType(Heading.TYPE);
 						String text = Jsoup.parse(splitTags.get(i)).body().child(0).text();
-						newComp.setValue("depth="+titleDepth+"\ntext="+text);
+
+						StructuredProperties p = new StructuredProperties();
+						p.setProperty("depth", ""+titleDepth);
+						p.setProperty("text", text);
+						newComp.setValue(p.toString());
+
 					} else {
 						newComp.setType(WysiwygParagraph.TYPE);
 						newComp.setValue(splitTags.get(i));
@@ -121,9 +127,6 @@ public class SplitOnTitle extends AbstractMacro {
 					newComp.setType(WysiwygParagraph.TYPE);
 					newComp.setValue(splitContents.get(i));
 					latestId = contentService.createContent(mainAreaCtx, newComp, latestId, false);
-
-					System.out.println("Balise : " + splitTags.get(i));
-					System.out.println("Contenu : " + splitContents.get(i));
 				}
 			}
 			currentPage.removeContent(ctx, comp.getId(), true);
