@@ -12,7 +12,6 @@ import org.javlo.message.MessageRepository;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
-import org.javlo.utils.StructuredProperties;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -21,6 +20,7 @@ import org.jsoup.select.Elements;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 public class SplitOnTitle extends AbstractMacro {
 
@@ -111,12 +111,10 @@ public class SplitOnTitle extends AbstractMacro {
 					if (isTitle) {
 						newComp.setType(Heading.TYPE);
 						String text = Jsoup.parse(splitTags.get(i)).body().child(0).text();
-
-						StructuredProperties p = new StructuredProperties();
+						Properties p = new Properties();
 						p.setProperty("depth", ""+titleDepth);
 						p.setProperty("text", text);
-						newComp.setValue(p.toString());
-
+						newComp.setValue(StringHelper.propertiesToString(p));
 					} else {
 						newComp.setType(WysiwygParagraph.TYPE);
 						newComp.setValue(splitTags.get(i));
