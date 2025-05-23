@@ -4594,6 +4594,7 @@ public class StringHelper {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         String res = "";
         try {
+            p.store(out, "");
             out.flush();
             res = new String(out.toByteArray());
             out.close();
