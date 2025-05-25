@@ -193,7 +193,11 @@ public class MailService {
 				if (StringHelper.isEmpty(password)) {
 					password = null;
 				}
-				transport.connect(mailConfig.getSMTPHost(), mailConfig.getSMTPPortInt(), mailConfig.getLogin(), password);
+				if (StringHelper.isEmpty(mailConfig.getLogin())) {
+					transport.connect(mailConfig.getSMTPHost(), mailConfig.getSMTPPortInt(), null, null);
+				} else {
+					transport.connect(mailConfig.getSMTPHost(), mailConfig.getSMTPPortInt(), mailConfig.getLogin(), password);
+				}
 				logger.info("transport connected.");
 			} catch (MessagingException e) {
 				logger.severe("error connection smtp : " + e.getMessage());
