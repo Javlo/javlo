@@ -149,9 +149,11 @@ public class MailService {
 					// finalProps.put("mail.smtp.socketFactory.fallback", "false");
 				}
 			}
-			if (mailing.getLogin() != null) {
+			if (!StringHelper.isEmpty(mailing.getLogin())) {
 				finalProps.put(MailService.SMTP_USER_PARAM, mailing.getLogin());
 				finalProps.put("mail.smtp.auth", "true");
+			} else {
+				finalProps.put("mail.smtp.auth", "false");
 			}
 			if (mailing.getPassword() != null) {
 				finalProps.put(MailService.SMTP_PASSWORD_PARAM, mailing.getPassword());
