@@ -40,7 +40,11 @@ if (lg.trim().length() == 0 || !(globalContext.getLanguages().contains(lg) || gl
 }
 
 if (!globalContext.getLanguages().contains(lg)) {
-	lg = globalContext.getLanguages().iterator().next();
+	if (globalContext.getLanguages().contains(lgOnly)) {
+		lg = lgOnly;
+	} else {
+		lg = globalContext.getLanguages().iterator().next();
+	}
 }
 
 ctx.setAllLanguage(lg);
