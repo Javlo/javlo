@@ -309,6 +309,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		try {
 			ctx = ContentContext.getContentContext(request, response);
 
+			response.setHeader("Content-Language", ctx.getRequestContentLanguage());
+
 			if (!FIRST_REQUEST_SET.contains(globalContext.getContextKey())) {
 				synchronized (FIRST_REQUEST_SET) {
 					if (!FIRST_REQUEST_SET.contains(globalContext.getContextKey())) {
