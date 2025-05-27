@@ -88,7 +88,10 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 	static {
 		try {
-			FileHandler handler = new FileHandler("/chemin/vers/bot.log", true);
+			String catalinaBase = System.getProperty("catalina.base");
+			File logsDir = new File(catalinaBase, "logs");
+			File botLogFile = new File(logsDir, "bot.log");
+			FileHandler handler = new FileHandler(botLogFile.getAbsolutePath(), true);
 			handler.setFormatter(new SimpleFormatter());
 			botLogger.addHandler(handler);
 			botLogger.setUseParentHandlers(false); // Avoids logging to console
