@@ -123,6 +123,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private Boolean host = null;
 	private String hostName = null;
 
+	private Set<String> languages = null;
+	private Set<String> contentLanguages = null;
+	private Set<String> defaultLanguages = null;
+
 	private static class StorePropertyThread extends Thread {
 
 		private boolean stopStoreThread = false;
@@ -1193,6 +1197,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	private Set<String> getLocalsContentLanguages() {
+		if (contentLanguages != null) {
+			return contentLanguages;
+		}
 		String lgRAW = properties.getString("content-languages", getRAWLanguages());
 		if (lgRAW == null || lgRAW.trim().length() == 0) {
 			return getLanguages();
@@ -1206,6 +1213,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		if (outLg.size() == 0) {
 			return getLanguages();
 		}
+		contentLanguages = outLg;
 		return outLg;
 	}
 
@@ -1558,6 +1566,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public Set<String> getDefaultLanguages() {
+		if (defaultLanguages != null) {
+			return defaultLanguages;
+		}
 		String lgRAW = getDefaultLanguagesRAW();
 		if (lgRAW == null) {
 			return Collections.emptySet();
@@ -1566,6 +1577,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		for (String lg : StringHelper.stringToArray(lgRAW, ";")) {
 			outLg.add(lg);
 		}
+		defaultLanguages = outLg;
 		return outLg;
 	}
 
@@ -1952,6 +1964,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	private Set<String> getLocalLanguages() {
+		if (languages != null)  {
+			return languages;
+		}
 		String lgRAW = properties.getString("languages", null);
 		if (lgRAW == null) {
 			return Collections.emptySet();
@@ -1961,6 +1976,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			lg = lg.replace(".", "");
 			outLg.add(lg);
 		}
+		languages = outLg;
 		return outLg;
 	}
 
@@ -2989,6 +3005,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			properties.setProperty("default.language", lg);
 			save();
 		}
+		resetCache();
 	}
 
 	public void setDefaultTemplate(String template) {
@@ -3330,8 +3347,15 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 	}
 
+	public final void resetCache() {
+		languages = null;
+		defaultLanguages = null;
+		contentLanguages = null;
+	}
+
 	public void setRAWContentLanguages(String languages) {
 		properties.setProperty("content-languages", languages);
+		resetCache();
 	}
 
 	public void setRAWEncodings(String encodings) {
@@ -3340,6 +3364,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public void setRAWLanguages(String languages) {
 		properties.setProperty("languages", languages);
+		resetCache();
 	}
 
 	public void setRightOnPage(boolean rightOnPage) {

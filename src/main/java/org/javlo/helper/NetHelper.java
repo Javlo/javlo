@@ -1969,4 +1969,13 @@ public class NetHelper {
 		}
 	}
 
+	// Detect known bots from User-Agent
+	public static boolean isBot(String userAgent) {
+		if (userAgent == null) return false;
+		String ua = userAgent.toLowerCase(Locale.ENGLISH);
+		return ua.contains("bot") || ua.contains("spider") || ua.contains("crawler") ||
+				ua.contains("slurp") || ua.contains("duckduckbot") ||
+				ua.contains("bing") || ua.contains("google");
+	}
+
 }

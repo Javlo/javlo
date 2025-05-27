@@ -74,10 +74,29 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import java.util.zip.ZipOutputStream;
 
 public class AccessServlet extends HttpServlet implements IVersion {
+
+	private static final Logger botLogger = Logger.getLogger("BotLogger");
+
+	private static final boolean DEBUG_BOT_AGENT = true;
+
+	static {
+		try {
+			FileHandler handler = new FileHandler("/chemin/vers/bot.log", true);
+			handler.setFormatter(new SimpleFormatter());
+			botLogger.addHandler(handler);
+			botLogger.setUseParentHandlers(false); // Avoids logging to console
+			botLogger.setLevel(Level.INFO);
+		} catch (IOException e) {
+			throw new RuntimeException("Cannot initialize bot logger", e);
+		}
+	}
 
 	public static final String PERSISTENCE_PARAM = "persistence";
 
@@ -272,6 +291,22 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	public void process(HttpServletRequest request, HttpServletResponse response, boolean post) throws ServletException {
 
 		request.getSession(); // create session
+
+		if (DEBUG_BOT_AGENT) {
+			String userAgent = request.getHeader("User-Agent");
+			String acceptLanguage = request.getHeader("Accept-Language");
+			Locale lg = request.getLocale();
+			String ip = request.getRemoteAddr();
+			String url = request.getRequestURL().toString();
+
+			if (NetHelper.isBot(userAgent)) {
+				// Log bot access
+				botLogger.info(String.format(
+						"Bot access detected: IP=%s | URL=%s | User-Agent=%s | Accept-Language=%s | Locale=%s",
+						ip, url, userAgent, acceptLanguage, lg
+				));
+			}
+		}
 
 		COUNT_ACCESS++;
 
