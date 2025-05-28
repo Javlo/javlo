@@ -158,6 +158,8 @@ public class MacroFactory {
 
 		macros.add(new SplitOnTitle("h2"));
 		macros.add(new SplitOnTitle("h3"));
+
+		macros.add(new ChildrenRolesInherited());
 		
 		/** macro bean **/
 		initMacroBean(macros);
