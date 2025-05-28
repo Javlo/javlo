@@ -1012,7 +1012,13 @@ public class PersistenceService {
 		page.setAdmin(StringHelper.isTrue(pageXML.getAttributeValue("admin", null), false));
 		page.setSavedParent(freeData);
 
-		page.setUserRoles(new HashSet<String>(StringHelper.stringToCollection(roles, ";")));
+		Set<String> rolesSet = new HashSet<String>(StringHelper.stringToCollection(roles, ";"));
+		page.setUserRoles(rolesSet);
+		boolean defaultInheritedRole = false;
+		if (rolesSet.isEmpty()) {
+			defaultInheritedRole = true;
+		}
+		page.setUserRolesInherited(StringHelper.isTrue(pageXML.getAttributeValue("userRolesInherited", null), defaultInheritedRole));
 
 		page.setValid(StringHelper.isTrue(pageXML.getAttributeValue("valid", "true")));
 		page.setNoValidation(StringHelper.isTrue(pageXML.getAttributeValue("noval", "false")));

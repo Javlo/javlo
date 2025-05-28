@@ -592,9 +592,12 @@ public class XMLHelper {
 				out.print(StringHelper.toXMLAttribute(page.getShortURL()));
 			}
 
-			if (rolesRaw.toString().trim().length() > 0) {
-				out.print("\" userRoles=\"");
-				out.print(StringHelper.toXMLAttribute(rolesRaw.toString()));
+			if (!page.isUserRolesInherited()) {
+				if (rolesRaw.toString().trim().length() > 0) {
+					out.print("\" userRoles=\"");
+					out.print(StringHelper.toXMLAttribute(rolesRaw.toString()));
+				}
+				out.print("\" userRolesInherited=\"false");
 			}
 			out.println("\">");
 

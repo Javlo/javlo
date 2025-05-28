@@ -402,6 +402,10 @@ public class PageBean implements Serializable {
 		return new CollectionAsMap<String>(page.getUserRoles());
 	}
 
+	public boolean isUserRolesInherited() {
+		return page.isUserRolesInherited();
+	}
+
 	public Map<String, String> getAdminRoles() {
 		return new CollectionAsMap<String>(page.getEditorRoles());
 	}

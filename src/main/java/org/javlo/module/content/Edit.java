@@ -1196,6 +1196,9 @@ public class Edit extends AbstractModuleAction {
 				}
 				page.setUserRoles(userRoles);
 				page.clearEditorGroups();
+
+				page.setUserRolesInherited(StringHelper.isTrue(requestService.getParameter("userRolesInherited", null), false));
+
 				for (String role : infoBean.getAdminRoles()) {
 					if (requestService.getParameter("admin-" + role, null) != null) {
 						page.addEditorRole(role);

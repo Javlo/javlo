@@ -349,7 +349,7 @@
 							</fieldset>
 						</c:if>
 						<fieldset class="flex-grid">
-							<legend>${i18n.edit['item.title.view-roles']}</legend>
+							<legend>${i18n.edit['item.title.view-roles']} <label> [ <input type="checkbox" name="userRolesInherited" ${page.userRolesInherited?'checked="checked"':''}  /> inherited ]</label></legend>
 							<c:forEach var="role" items="${info.roles}">
 								<label class="checkbox-inline"> <input type="checkbox" name="user-${role}" id="user-${role}" ${not empty page.roles[role]?'checked="checked"':''} /> ${role}
 								</label>

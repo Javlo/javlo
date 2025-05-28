@@ -706,6 +706,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 	Set<String> userRoles = new HashSet<String>();
 
+	private boolean userRolesInherited = true;
+
 	private String templateId;
 
 	private boolean model;
@@ -3948,6 +3950,11 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	 * @return
 	 */
 	public Set<String> getUserRoles() {
+		if (isUserRolesInherited()) {
+			if (getParent() != null) {
+				return getParent().getUserRoles();
+			}
+		}
 		return userRoles;
 	}
 
@@ -6094,6 +6101,14 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			}
 		}
 		return sections;
+	}
+
+	public boolean isUserRolesInherited() {
+		return userRolesInherited;
+	}
+
+	public void setUserRolesInherited(boolean userRolesInherited) {
+		this.userRolesInherited = userRolesInherited;
 	}
 
 }

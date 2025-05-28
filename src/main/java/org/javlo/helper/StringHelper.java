@@ -1735,7 +1735,7 @@ public class StringHelper {
         return isTrue(inBool, false);
     }
 
-    public static boolean isTrue(Object inBool, boolean defaultValue) {
+    public static Boolean isTrue(Object inBool, Boolean defaultValue) {
         if (inBool == null) {
             return defaultValue;
         }
