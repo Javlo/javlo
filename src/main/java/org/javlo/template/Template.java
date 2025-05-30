@@ -516,6 +516,8 @@ public class Template implements Comparable<Template> {
 
 	public Map<String, List<String>> componentClass;
 
+	private String languagesChoiceFile = null;
+
 	public static Template getApplicationInstance(ServletContext application, ContentContext ctx, String templateDir) throws Exception {
 
 		Template outTemplate = null;
@@ -671,6 +673,7 @@ public class Template implements Comparable<Template> {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			languagesChoiceFile = null;
 			dynamicsComponents = null;
 			contextWithTemplateImported.clear();
 			i18n.clear();
@@ -1749,11 +1752,22 @@ public class Template implements Comparable<Template> {
 	}
 
 	public String getLanguagesChoiceFile(ContentContext ctx) throws Exception {
-		String langFile = properties.getString("languages-choice", null);
-		if (langFile == null) {
-			return null;
+		if (languagesChoiceFile == null) {
+			String langFile = properties.getString("languages-choice", null);
+			if (langFile == null || langFile.isEmpty()) {
+				languagesChoiceFile = "";
+				return null;
+			} else {
+				languagesChoiceFile = URLHelper.mergePath(getWorkTemplateRealPath(ctx.getGlobalContext()), langFile);
+				return languagesChoiceFile;
+			}
+		} else {
+			if (languagesChoiceFile.length() == 0) {
+				return null;
+			} else {
+				return languagesChoiceFile;
+			}
 		}
-		return URLHelper.mergePath(getWorkTemplateRealPath(ctx.getGlobalContext()), langFile);
 	}
 
 	public synchronized Map getI18nProperties(GlobalContext globalContext, Locale locale, int mode) throws IOException {

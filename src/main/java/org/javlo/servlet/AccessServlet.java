@@ -84,7 +84,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 	private static final Logger botLogger = Logger.getLogger("BotLogger");
 
-	private static final boolean DEBUG_BOT_AGENT = true;
+	private static final boolean DEBUG_BOT_AGENT = false;
 
 	static {
 		try {

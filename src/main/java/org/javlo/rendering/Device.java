@@ -1,18 +1,17 @@
 package org.javlo.rendering;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Map;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
-
 import jakarta.servlet.http.HttpServletRequest;
-
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.template.Template;
+
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Map;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 public class Device implements Serializable {
 
@@ -178,7 +177,11 @@ public class Device implements Serializable {
 	}
 
 	public boolean isHuman() {
-		return !NetHelper.isUserAgentRobot(getUserAgent());
+		return !NetHelper.isBot(getUserAgent());
+	}
+
+	public boolean isBot() {
+		return NetHelper.isBot(getUserAgent());
 	}
 	
 	public boolean isOld() {

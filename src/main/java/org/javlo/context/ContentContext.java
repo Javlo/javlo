@@ -1507,23 +1507,23 @@ public class ContentContext {
 	public void setCookieLanguage(String lang) {
 		Cookie[] cookies = request.getCookies();
 
-		String name = "";
-
 		if (cookies != null) {
 			for (Cookie cookie : cookies) {
-				name = cookie.getName();
-				if (name.equals("user-language")) {
-					cookie.setValue(lang);
-					cookie.setMaxAge(60 * 60 * 24 * 365); // 1 year
-					cookie.setPath("/");
+				if ("user-language".equals(cookie.getName())) {
+					// Suppression du cookie existant
+					cookie.setValue("");
+					cookie.setMaxAge(0);
+					cookie.setPath("/"); // Assurez-vous que le path corresponde à celui du cookie initial
 					response.addCookie(cookie);
-					return;
 				}
 			}
 		}
-		Cookie cookie = new Cookie("user-language", lang);
-		// cookie.setMaxAge(60 * 60 * 24 * 365); // 1 year
-		response.addCookie(cookie);
+
+		// Ajout du nouveau cookie
+		Cookie newCookie = new Cookie("user-language", lang);
+		newCookie.setMaxAge(60 * 60 * 24 * 365); // 1 an
+		newCookie.setPath("/");
+		response.addCookie(newCookie);
 	}
 
 	public void setCurrentPageCached(MenuElement currentPageCached) throws Exception {
