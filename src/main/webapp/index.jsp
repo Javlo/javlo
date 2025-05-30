@@ -50,6 +50,9 @@ InfoBean.getCurrentInfoBean(ctx);
 //	System.out.println("=== End Language Debug ===");
 
 boolean chooseLang = ctx.getCurrentTemplate().getLanguagesChoiceFile(ctx) != null && ctx.getDevice().isBot();
+if (chooseLang && ctx.getGlobalContext().getContentLanguages().size() == 1) {
+	chooseLang = false;
+}
 
 String lg=ctx.getCookieLanguage();
 if (lg == null) {
@@ -72,7 +75,7 @@ if (chooseLang) {
 } else {
 
 	if (lg.trim().length() == 0 || !(globalContext.getLanguages().contains(lg) || globalContext.getLanguages().contains(lgOnly))) {
-		if (ctx.getCurrentTemplate().getLanguagesChoiceFile(ctx) != null) {
+		if (ctx.getCurrentTemplate().getLanguagesChoiceFile(ctx) != null && ctx.getGlobalContext().getContentLanguages().size() > 1) {
 			%><jsp:include page="<%= ctx.getCurrentTemplate().getLanguagesChoiceFile(ctx) %>" flush="true" /><%
 			return;
 		}

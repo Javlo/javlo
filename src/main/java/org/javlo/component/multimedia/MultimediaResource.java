@@ -470,6 +470,9 @@ public class MultimediaResource {
 	}
 
 	public Set<String> getTaxonomy() {
+		if (staticInfo == null) {
+			return Collections.EMPTY_SET;
+		}
 		return staticInfo.getTaxonomy();
 	}
 
