@@ -49,10 +49,13 @@ InfoBean.getCurrentInfoBean(ctx);
 //
 //	System.out.println("=== End Language Debug ===");
 
+boolean chooseLang = ctx.getCurrentTemplate().getLanguagesChoiceFile(ctx) != null && ctx.getDevice().isBot();
 
 String lg=ctx.getCookieLanguage();
 if (lg == null) {
 	lg = "";
+} else {
+	chooseLang = false;
 }
 
 if (lg.trim().length() == 0) {
@@ -63,48 +66,54 @@ String lgOnly = "##";
 if (lg.trim().length() > 3) {
 	lgOnly = lg.substring(0,2);
 }
-if (lg.trim().length() == 0 || !(globalContext.getLanguages().contains(lg) || globalContext.getLanguages().contains(lgOnly))) {
-	if (ctx.getCurrentTemplate().getLanguagesChoiceFile(ctx) != null) {
-		%><jsp:include page="<%= ctx.getCurrentTemplate().getLanguagesChoiceFile(ctx) %>" flush="true" /><%
-		return;
-	}
-	if (globalContext != null) {
-		lg = globalContext.getDefaultLanguage();
-	}
-}
 
-if (!globalContext.getLanguages().contains(lg)) {
-	if (globalContext.getLanguages().contains(lgOnly)) {
-		lg = lgOnly;
-	} else {
-		lg = globalContext.getDefaultLanguage();
-	}
-}
-
-ctx.setAllLanguage(lg);
-i18nAccess.changeViewLanguage(ctx);
-
-ContentService content = ContentService.getInstance(globalContext);
-Template template = ctx.getCurrentTemplate();
-InfoBean.updateInfoBean(ctx);
-if ((template != null)&&(template.getHomeRenderer(globalContext) != null)) {
-%><jsp:include page="<%=template.getHomeRendererFullName(globalContext)%>"></jsp:include><%
+if (chooseLang) {
+	%><jsp:include page="<%= ctx.getCurrentTemplate().getLanguagesChoiceFile(ctx) %>" flush="true" /><%
 } else {
-	ctx.setFormat("html");
-	ctx = new ContentContext(ctx);
-	ctx.setViewPrefix(true);
-	String forcePathPreview = ctx.getPathPrefix(request);
-	ctx.setForcePathPrefix("");
-	ctx.setInternalURL(true);
-	String url = URLHelper.createURLWithtoutContext(ctx, ctx.getPath());
-	/*if (!ctx.getGlobalContext().getStaticConfig().isURIWithContext()) {
-		url = URLHelper.mergePath(request.getContextPath(),url);
-	}*/
-	ctx.setForcePathPrefix(request,forcePathPreview);
-	//request.getRequestDispatcher(url).forward(request, response);
-	//response.sendRedirect(url);
-	//NetHelper.sendRedirectTemporarily(response, url);
-	//url = URLHelper.createForwardURL(ctx, url);
-	request.getRequestDispatcher(url).forward(request, response);
-	%>cp=<%=ctx.getRequest().getContextPath()%> <a href="<%=url%>"><%=url%></a><%
-}%>
+
+	if (lg.trim().length() == 0 || !(globalContext.getLanguages().contains(lg) || globalContext.getLanguages().contains(lgOnly))) {
+		if (ctx.getCurrentTemplate().getLanguagesChoiceFile(ctx) != null) {
+			%><jsp:include page="<%= ctx.getCurrentTemplate().getLanguagesChoiceFile(ctx) %>" flush="true" /><%
+			return;
+		}
+		if (globalContext != null) {
+			lg = globalContext.getDefaultLanguage();
+		}
+	}
+
+	if (!globalContext.getLanguages().contains(lg)) {
+		if (globalContext.getLanguages().contains(lgOnly)) {
+			lg = lgOnly;
+		} else {
+			lg = globalContext.getDefaultLanguage();
+		}
+	}
+
+	ctx.setAllLanguage(lg);
+	i18nAccess.changeViewLanguage(ctx);
+
+	ContentService content = ContentService.getInstance(globalContext);
+	Template template = ctx.getCurrentTemplate();
+	InfoBean.updateInfoBean(ctx);
+	if ((template != null)&&(template.getHomeRenderer(globalContext) != null)) {
+	%><jsp:include page="<%=template.getHomeRendererFullName(globalContext)%>"></jsp:include><%
+	} else {
+		ctx.setFormat("html");
+		ctx = new ContentContext(ctx);
+		ctx.setViewPrefix(true);
+		String forcePathPreview = ctx.getPathPrefix(request);
+		ctx.setForcePathPrefix("");
+		ctx.setInternalURL(true);
+		String url = URLHelper.createURLWithtoutContext(ctx, ctx.getPath());
+		/*if (!ctx.getGlobalContext().getStaticConfig().isURIWithContext()) {
+			url = URLHelper.mergePath(request.getContextPath(),url);
+		}*/
+		ctx.setForcePathPrefix(request,forcePathPreview);
+		//request.getRequestDispatcher(url).forward(request, response);
+		//response.sendRedirect(url);
+		//NetHelper.sendRedirectTemporarily(response, url);
+		//url = URLHelper.createForwardURL(ctx, url);
+		request.getRequestDispatcher(url).forward(request, response);
+		%>cp=<%=ctx.getRequest().getContextPath()%> <a href="<%=url%>"><%=url%></a><%
+	}
+	}%>
