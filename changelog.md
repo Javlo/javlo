@@ -1010,4 +1010,6 @@ Security in case of vulnerabilities.
 - choose lang page
 - export date and user in light excel export
 - ## [2.3.3] - 20/05/2024
+### Added
+- import image from url macro
 
