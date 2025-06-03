@@ -346,10 +346,15 @@ public class FileServlet extends HttpServlet {
 			try {
 				ContentContext ctx = ContentContext.getContentContext(request, response);
 				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
+
+				boolean imgOnly = StringHelper.isTrue(request.getParameter("img"));
+
 				if (file.isDirectory()) {
 					List<StaticInfo> children = new LinkedList<>();
 					for (File child : file.listFiles()) {
-						children.add(StaticInfo.getInstance(ctx, child));
+						if (!imgOnly || StringHelper.isImage(child.getName())) {
+							children.add(StaticInfo.getInstance(ctx, child));
+						}
 					}
 					staticInfo.setChildren(children);
 				}
