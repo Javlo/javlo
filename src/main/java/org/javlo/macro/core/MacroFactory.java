@@ -57,6 +57,7 @@ public class MacroFactory {
 		// macros.add(new ImportJCRPageMacro());
 		macros.add(new ImportWordpressMacro());
 		macros.add(new ImportGalleryMacro());
+		macros.add(new ImportImageFromUrl());
 		macros.add(new CreateDefaultPageStructure());
 		// macros.add(new CreatePressReleaseTodayMacro());
 		// macros.add(new CreatePressReleaseHereMacro());

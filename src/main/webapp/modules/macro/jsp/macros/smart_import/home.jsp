@@ -10,14 +10,14 @@
 <div class="one_half">
 
 <div class="line">
-	<label for="file">files</label>
+	<label for="files">files</label>
 	<input id="files" name="files" type="file" multiple="multiple" />
 </div>
 
 </div><div class="one_half last">
 
 <div class="line">
-	<label for="url">file url</label>
+	<label for="text">file url</label>
 	<input id="text" name="url" type="text"  />
 </div>
 
