@@ -57,6 +57,8 @@ public class StaticInfo implements IRestItem {
 
 	private List<StaticInfo> children = null;
 
+	private List<Map<String, Object>> childrenInfo = null;
+
 	public static class ReferenceBean {
 		private String reference;
 		private String language;
@@ -512,6 +514,18 @@ public class StaticInfo implements IRestItem {
 		StaticInfo staticInfo = getInstance(ctx, relURL);
 		staticInfo.setStaticFolder(true);
 		return staticInfo;
+	}
+
+	public Map<String, Object> getMapInfo(ContentContext ctx, String imageFilter) throws Exception {
+		Map<String, Object> out = new HashMap();
+		out.put("staticURL", getStaticURL());
+		out.put("size", getSize());
+		out.put("crc32", getCRC32());
+		out.put("exifDate", getExifDate());
+		if (imageFilter != null) {
+			out.put("img", URLHelper.createTransformURL(ctx, this, imageFilter));
+		}
+		return out;
 	}
 
 	private static StaticInfo getFakeInstance() {
@@ -1814,5 +1828,13 @@ public class StaticInfo implements IRestItem {
 
 	public void setChildren(List<StaticInfo> children) {
 		this.children = children;
+	}
+
+	public List<Map<String, Object>> getChildrenInfo() {
+		return childrenInfo;
+	}
+
+	public void setChildrenInfo(List<Map<String, Object>> childrenInfo) {
+		this.childrenInfo = childrenInfo;
 	}
 }
