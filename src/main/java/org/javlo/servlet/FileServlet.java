@@ -356,6 +356,7 @@ public class FileServlet extends HttpServlet {
 				response.setContentType(contentType);
 				response.setStatus(HttpServletResponse.SC_OK);
 				JsonHelper.toJson(staticInfo.getMapInfo(ctx, request.getParameter("filter"), file.isDirectory(),imgOnly), response.getWriter());
+				return;
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
