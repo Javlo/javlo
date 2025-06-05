@@ -6,6 +6,7 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.text.WysiwygParagraph;
 import org.javlo.component.title.Heading;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
@@ -62,6 +63,7 @@ public class SplitOnTitle extends AbstractMacro {
 
 			IContentVisualComponent comp = comps.next(mainAreaCtx);
 
+			boolean splited = false;
 			if (comp.getType().equals(WysiwygParagraph.TYPE)) {
 
 				WysiwygParagraph paragraph = (WysiwygParagraph) comp;
@@ -105,6 +107,7 @@ public class SplitOnTitle extends AbstractMacro {
 				String latestId = comp.getId();
 
 				for (int i = 0; i < splitTags.size(); i++) {
+					splited=true;
 					countChange++;
 					msg = "";
 					ComponentBean newComp = new ComponentBean();
@@ -127,8 +130,11 @@ public class SplitOnTitle extends AbstractMacro {
 					latestId = contentService.createContent(mainAreaCtx, newComp, latestId, false);
 				}
 			}
-			currentPage.removeContent(ctx, comp.getId(), true);
-			PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
+			if (splited) {
+				currentPage.removeContent(ctx, comp.getId());
+				ComponentHelper.updateNextAndPrevious(ctx, comp.getPage(), comp.getArea());
+				PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
+			}
 		}
 
 		if (msg.length() == 0) {

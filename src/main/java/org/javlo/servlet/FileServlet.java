@@ -349,21 +349,13 @@ public class FileServlet extends HttpServlet {
 
 				boolean imgOnly = StringHelper.isTrue(request.getParameter("img"));
 
-				if (file.isDirectory()) {
-					List<Map<String, Object>> children = new LinkedList<>();
-					for (File child : file.listFiles()) {
-						if (!imgOnly || StringHelper.isImage(child.getName())) {
-							children.add(StaticInfo.getInstance(ctx, child).getMapInfo(ctx, request.getParameter("filter")));
-						}
-					}
-					staticInfo.setChildrenInfo(children);
-				}
 				// Add CORS headers
 				response.setHeader("Access-Control-Allow-Origin", "*");
 				response.setHeader("Access-Control-Allow-Methods", "GET");
 				response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 				response.setContentType(contentType);
-				JsonHelper.toJson(staticInfo, response.getWriter());
+				response.setStatus(HttpServletResponse.SC_OK);
+				JsonHelper.toJson(staticInfo.getMapInfo(ctx, request.getParameter("filter"), file.isDirectory(),imgOnly), response.getWriter());
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}

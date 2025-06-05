@@ -516,14 +516,25 @@ public class StaticInfo implements IRestItem {
 		return staticInfo;
 	}
 
-	public Map<String, Object> getMapInfo(ContentContext ctx, String imageFilter) throws Exception {
+	public Map<String, Object> getMapInfo(ContentContext ctx, String imageFilter, boolean widthChildren, boolean imageOnly) throws Exception {
 		Map<String, Object> out = new HashMap();
 		out.put("staticURL", getStaticURL());
 		out.put("size", getSize());
 		out.put("crc32", getCRC32());
 		out.put("exifDate", getExifDate());
-		if (imageFilter != null) {
+		if (imageFilter != null && StringHelper.isImage(getFile().getName())) {
 			out.put("img", URLHelper.createTransformURL(ctx, this, imageFilter));
+		}
+		if (widthChildren) {
+			List<Map<String, Object>> children = new LinkedList<>();
+			for (File child : file.listFiles()) {
+				if (!imageOnly || StringHelper.isImage(child.getName())) {
+					if (!child.isDirectory()) {
+						children.add(StaticInfo.getInstance(ctx, child).getMapInfo(ctx, imageFilter, false, imageOnly));
+					}
+				}
+			}
+			out.put("children", children);
 		}
 		return out;
 	}
