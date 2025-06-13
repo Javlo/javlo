@@ -1681,13 +1681,14 @@ public class StringHelper {
     }
 
     public static boolean isMail(String email) {
-        if (email == null || email.length() == 0) {
+        /*if (email == null || email.length() == 0) {
             return false;
         }
         if (!email.contains("@")) {
             return false;
         }
-        return PatternHelper.MAIL_PATTERN.matcher(email).matches();
+        return PatternHelper.MAIL_PATTERN.matcher(email).matches();*/
+        return EmailValidator.isValidEmail(email);
     }
 
     // TODO: create a better method
@@ -4917,7 +4918,9 @@ public class StringHelper {
     }
 
     public static void main(String[] args) throws IOException {
-        System.out.println(minimizeStackTrace("org.javlo.test = coucou"));
+        System.out.println("Patrick <p@noctis.be> : "+StringHelper.isMail("Patrick <p@noctis.be>"));
+        System.out.println("p@noctis.be : "+StringHelper.isMail("p@noctis.be"));
+        System.out.println("p@noctis.be_obsolete : "+StringHelper.isMail("p@noctis.be_obsolete"));
     }
 
     public static String cleanEmail(String input) {

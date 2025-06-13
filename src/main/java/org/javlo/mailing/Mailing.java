@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.javlo.config.MailingStaticConfig;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.EmailValidator;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
@@ -247,7 +248,9 @@ public class Mailing {
 			for (String line : FileUtils.readLines(errorReceiversFile, ContentContext.CHARACTER_ENCODING)) {
 				line = StringHelper.cleanEmail(line);
 				try {
-					errorReceivers.add(new InternetAddress(line));
+					if (EmailValidator.isValidEmail(line)) {
+						errorReceivers.add(new InternetAddress(line));
+					}
 				} catch (Exception ex) {
 					logger.warning(ex.getMessage()+" '"+line+"' in errorReceiversFile:"+errorReceiversFile);
 				}
@@ -258,7 +261,9 @@ public class Mailing {
 		if (receiversFile.exists()) {
 			for (String line : FileUtils.readLines(receiversFile, ContentContext.CHARACTER_ENCODING)) {
 				try {
-					line = StringHelper.cleanEmail(line);
+					if (EmailValidator.isValidEmail(line)) {
+						receivers.add(new InternetAddress(line));
+					}
 					receivers.add(new InternetAddress(line));
 				} catch (Exception ex) {
 					logger.warning(ex.getMessage()+" '"+line+"' in receiversFile:"+receiversFile);
