@@ -250,6 +250,8 @@ public class Mailing {
 				try {
 					if (EmailValidator.isValidEmail(line)) {
 						errorReceivers.add(new InternetAddress(line));
+					} else {
+						logger.warning("bad email : '"+line+"' in receiversFile:"+errorReceivers);
 					}
 				} catch (Exception ex) {
 					logger.warning(ex.getMessage()+" '"+line+"' in errorReceiversFile:"+errorReceiversFile);
@@ -263,6 +265,8 @@ public class Mailing {
 				try {
 					if (EmailValidator.isValidEmail(line)) {
 						receivers.add(new InternetAddress(line));
+					} else {
+						logger.warning("bad email : '"+line+"' in receiversFile:"+receiversFile);
 					}
 					receivers.add(new InternetAddress(line));
 				} catch (Exception ex) {
