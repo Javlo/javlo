@@ -245,10 +245,11 @@ public class Mailing {
 		errorReceivers = new LinkedHashSet<InternetAddress>();
 		if (errorReceiversFile.exists()) {
 			for (String line : FileUtils.readLines(errorReceiversFile, ContentContext.CHARACTER_ENCODING)) {
+				line = StringHelper.cleanEmail(line);
 				try {
 					errorReceivers.add(new InternetAddress(line));
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					logger.warning(ex.getMessage()+" '"+line+"' in errorReceiversFile:"+errorReceiversFile);
 				}
 			}
 		}
@@ -257,9 +258,10 @@ public class Mailing {
 		if (receiversFile.exists()) {
 			for (String line : FileUtils.readLines(receiversFile, ContentContext.CHARACTER_ENCODING)) {
 				try {
+					line = StringHelper.cleanEmail(line);
 					receivers.add(new InternetAddress(line));
 				} catch (Exception ex) {
-					logger.warning(ex.getMessage()+" in receiversFile:"+receiversFile);
+					logger.warning(ex.getMessage()+" '"+line+"' in receiversFile:"+receiversFile);
 				}
 			}
 		}
