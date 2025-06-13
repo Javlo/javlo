@@ -4920,4 +4920,31 @@ public class StringHelper {
         System.out.println(minimizeStackTrace("org.javlo.test = coucou"));
     }
 
+    public static String cleanEmail(String input) {
+        if (input == null) return null;
+
+        // Remove non-breaking spaces and trim
+        input = input.replace('\u00A0', ' ').trim();
+
+        // Match pattern like: Name <email>
+        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("^(.*<)([^>\\s]+)(\\s*>)$");
+        java.util.regex.Matcher matcher = pattern.matcher(input);
+
+        if (matcher.matches()) {
+            String prefix = matcher.group(1); // e.g., "FREDERIC FELLER <"
+            String email = matcher.group(2);  // e.g., "accueil@tvlux.be."
+            String suffix = matcher.group(3); // e.g., ">"
+
+            // Remove trailing punctuation from email
+            email = email.replaceAll("[\\p{Punct}]+$", "");
+
+            return prefix + email + suffix;
+        }
+
+        // Fallback if input doesn't match the expected pattern
+        // Try to clean directly the email
+        input = input.replaceAll("[\\p{Punct}]+>$", ">"); // e.g., fix ending like ".>"
+        return input.trim();
+    }
+
 }
