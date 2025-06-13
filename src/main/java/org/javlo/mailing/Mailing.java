@@ -259,7 +259,7 @@ public class Mailing {
 				try {
 					receivers.add(new InternetAddress(line));
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					logger.warning(ex.getMessage()+" in receiversFile:"+receiversFile);
 				}
 			}
 		}
