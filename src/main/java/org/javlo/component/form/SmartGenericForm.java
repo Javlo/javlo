@@ -1084,9 +1084,9 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
                     store(field);
                     order += 10;
                 }
-                store(new Field(ctx, fieldName, "", "text", "", "", "text", "", "", 10, 6, ""));
+                store(new Field(ctx, fieldName, "", "text", "", "", "text", "", "", 10, 12, ""));
             } else {
-                store(new Field(ctx, fieldName, "", "text", "", "", "text", "", "", pos + 10, 6, ""));
+                store(new Field(ctx, fieldName, "", "text", "", "", "text", "", "", pos + 10, 12, ""));
             }
             ctx.getRequest().setAttribute(getNewFieldKey(), fieldName);
         }
