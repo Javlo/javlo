@@ -245,33 +245,41 @@ public class Mailing {
 		File errorReceiversFile = new File(dir.getAbsolutePath() + '/' + ERROR_RECEIVERS_FILE);
 		errorReceivers = new LinkedHashSet<InternetAddress>();
 		if (errorReceiversFile.exists()) {
+			int bademail = 0;
 			for (String line : FileUtils.readLines(errorReceiversFile, ContentContext.CHARACTER_ENCODING)) {
 				line = StringHelper.cleanEmail(line);
 				try {
 					if (EmailValidator.isValidEmail(line)) {
 						errorReceivers.add(new InternetAddress(line));
 					} else {
-						logger.warning("bad email : '"+line+"' in receiversFile:"+errorReceivers);
+						bademail++;
 					}
 				} catch (Exception ex) {
 					logger.warning(ex.getMessage()+" '"+line+"' in errorReceiversFile:"+errorReceiversFile);
 				}
 			}
+			if (bademail > 0) {
+				logger.warning(bademail+" bad email in errorReceiversFile = "+errorReceiversFile);
+			}
 		}
 		File receiversFile = new File(dir.getAbsolutePath() + '/' + RECEIVERS_FILE);
 		receivers = new LinkedHashSet<InternetAddress>();
 		if (receiversFile.exists()) {
+			int bademail = 0;
 			for (String line : FileUtils.readLines(receiversFile, ContentContext.CHARACTER_ENCODING)) {
 				try {
 					if (EmailValidator.isValidEmail(line)) {
 						receivers.add(new InternetAddress(line));
 					} else {
-						logger.warning("bad email : '"+line+"' in receiversFile:"+receiversFile);
+						bademail++;
 					}
 					receivers.add(new InternetAddress(line));
 				} catch (Exception ex) {
 					logger.warning(ex.getMessage()+" '"+line+"' in receiversFile:"+receiversFile);
 				}
+			}
+			if (bademail > 0) {
+				logger.warning(bademail+" bad email in receiversFile = "+receiversFile);
 			}
 		}
 		ConfigurationProperties config = new ConfigurationProperties();
