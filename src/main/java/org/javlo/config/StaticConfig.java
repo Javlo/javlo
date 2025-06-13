@@ -764,11 +764,11 @@ public class StaticConfig extends Observable {
 	}
 	
 	public long getMailingTimebetweenTwoMailing() {
-		return properties.getLong("mailing.time-between-two-mailing.second", 60);
+		return properties.getLong("mailing.time-between-two-mailing.second", 360);
 	}
 
 	public long getMailingTimebetweenTwoSend() {
-		return properties.getLong("mailing.time-between-two-send.second", 20);
+		return properties.getLong("mailing.time-between-two-send.second", 70);
 	}
 
 	public String getImageCacheFolder() {
