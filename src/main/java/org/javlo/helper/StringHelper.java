@@ -3032,8 +3032,8 @@ public class StringHelper {
      * @param text a free text
      * @return a collection of email address
      */
-    public static Collection<InternetAddress> searchStructuredEmail(String text) {
-        Collection<InternetAddress> outEmails = new LinkedList<InternetAddress>();
+    public static List<InternetAddress> searchStructuredEmail(String text) {
+        List<InternetAddress> outEmails = new LinkedList<InternetAddress>();
         BufferedReader reader = new BufferedReader(new StringReader(text));
         try {
             String line = reader.readLine();

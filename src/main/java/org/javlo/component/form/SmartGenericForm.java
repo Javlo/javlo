@@ -1670,9 +1670,10 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
                         logger.warning(e.getMessage());
                     }
                 }
-                String emailTo = comp.getLocalConfig(false).getProperty("mail.to", null);
-                if (!StringHelper.isMail(emailTo)) {
-                    emailTo = MailService.getDefaultReceiverEmail(ctx, MailService.getDefaultSenderEmail(ctx, emailFrom));
+                List<InternetAddress> toEmailList = StringHelper.searchStructuredEmail(comp.getLocalConfig(false).getProperty("mail.to", null));
+
+                if (toEmailList.size() == 0) {
+                    toEmailList.add(new InternetAddress(MailService.getDefaultReceiverEmail(ctx, MailService.getDefaultSenderEmail(ctx, emailFrom))));
                 }
                 String emailCC = comp.getLocalConfig(false).getProperty("mail.cc", null);
                 String emailBCC = comp.getLocalConfig(false).getProperty("mail.bcc", null);
@@ -1687,7 +1688,6 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
                 try {
                     mailService = MailService.getInstance(new MailConfig(globalContext, globalContext.getStaticConfig(), null));
                     InternetAddress fromEmail = new InternetAddress(emailFrom);
-                    InternetAddress toEmail = new InternetAddress(emailTo);
                     InternetAddress ccEmail = null;
                     if (emailCC != null && emailCC.trim().length() > 0) {
                         ccEmail = new InternetAddress(emailCC);
@@ -1721,7 +1721,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
                     } else {
                         mailAdminContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), "Form submit - " + comp.getCountSubscription(ctx), adminMailData, editURL, "edit >>", null);
                     }
-                    mailService.sendMail(null, fromEmail, toEmail, ccList, bccList, subject, mailAdminContent, true, null, globalContext.getDKIMBean());
+                    mailService.sendMail(null, fromEmail, toEmailList, ccList, bccList, subject, mailAdminContent, true, null, globalContext.getDKIMBean());
 
                     if (comp.isWarningEventSite(ctx)) {
                         subject = globalContext.getContextKey() + " - WARNING Event almost full : " + ctx.getCurrentPage().getTitle(ctx) + " [" + StringHelper.renderDate(comp.getPage().getContentDateNeverNull(absCtx)) + ']';
@@ -1740,7 +1740,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
                         EMail email = new EMail();
                         email.setSender(new InternetAddress(globalContext.getAdministratorEmail()));
-                        email.addRecipients(toEmail);
+                        email.setRecipients(toEmailList);
                         email.setCcRecipients(ccList);
                         email.setBccRecipients(bccList);
                         email.setSubject(subject);
@@ -1769,7 +1769,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
                         }
                         absCtx.setRenderMode(ContentContext.PREVIEW_MODE);
                         String adminMailContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), "Please check you event, it has been closed.", data, editURL, "edit >>", null);
-                        mailService.sendMail(null, new InternetAddress(globalContext.getAdministratorEmail()), toEmail, ccList, bccList, subject, adminMailContent, true, null, globalContext.getDKIMBean());
+                        mailService.sendMail(null, new InternetAddress(globalContext.getAdministratorEmail()), toEmailList, ccList, bccList, subject, adminMailContent, true, null, globalContext.getDKIMBean());
                     }
 
                     if (eventClose) {
@@ -1786,7 +1786,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
                         }
                         absCtx.setRenderMode(ContentContext.PREVIEW_MODE);
                         String adminMailContent = XHTMLHelper.createAdminMail(ctx.getCurrentPage().getTitle(ctx), "Please check you event, it is full.", data, editURL, "edit >>", null);
-                        mailService.sendMail(null, new InternetAddress(globalContext.getAdministratorEmail()), toEmail, ccList, bccList, subject, adminMailContent, true, null, globalContext.getDKIMBean());
+                        mailService.sendMail(null, new InternetAddress(globalContext.getAdministratorEmail()), toEmailList, ccList, bccList, subject, adminMailContent, true, null, globalContext.getDKIMBean());
                     }
 
                     String mailPath = comp.getLocalConfig(false).getProperty("mail.confirm.link", null);

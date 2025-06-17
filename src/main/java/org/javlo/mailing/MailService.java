@@ -539,6 +539,10 @@ public class MailService {
 		return sendMail(transport, sender, recipients, ccRecipients, bccRecipients, subject, content, null, isHTML, null, unsubribeLink, dkinBean, null);
 	}
 
+	public String sendMail(Transport transport, InternetAddress sender, List<InternetAddress> recipients , List<InternetAddress> ccRecipients, List<InternetAddress> bccRecipients, String subject, String content, boolean isHTML, String unsubribeLink, DKIMBean dkinBean) throws MessagingException {
+		return sendMail(transport, sender, recipients, ccRecipients, bccRecipients, subject, content, null, isHTML, null, unsubribeLink, dkinBean, null);
+	}
+
 	public void sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, InternetAddress ccRecipient, InternetAddress bccRecipient, String subject, String content, boolean isHTML) throws MessagingException {
 		List<InternetAddress> ccRecipientsList = new LinkedList<InternetAddress>();
 		if (ccRecipient != null) {
