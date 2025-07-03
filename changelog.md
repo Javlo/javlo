@@ -1012,4 +1012,6 @@ Security in case of vulnerabilities.
 - ## [2.3.3] - 20/05/2024
 ### Added
 - import image from url macro
+### Modified
+- minify jsp optimisation [2.3.3.1]
 
