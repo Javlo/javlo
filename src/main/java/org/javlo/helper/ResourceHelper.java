@@ -477,9 +477,9 @@ public class ResourceHelper {
 				content = content.replace(key.toUpperCase(), filter.get(key));
 			}
 		}
-		if (compress && StringHelper.getFileExtension(file1.getName()).equalsIgnoreCase("jsp")) {
+		/*if (compress && StringHelper.getFileExtension(file1.getName()).equalsIgnoreCase("jsp")) {
 			content = XHTMLHelper.compress(content);
-		}
+		}*/
 		FileUtils.writeStringToFile(file2, content, ContentContext.CHARACTER_ENCODING);
 	}
 

@@ -921,8 +921,9 @@ public class XMLManipulationHelper {
         newContent = newContent + "</c:if>"; // close pageAssociation test
         // just after body close
         if (jspFile != null) {
-            if (globalContext.getStaticConfig().isCompressJsp()) {
-                newContent = XHTMLHelper.compress(newContent);
+            if (globalContext.isProd()) {
+                //newContent = XHTMLHelper.compress(newContent);
+                newContent = Template.minifyContent(newContent, jspFile.getName());
             }
             ResourceHelper.writeStringToFile(jspFile, newContent, ContentContext.CHARACTER_ENCODING);
         }

@@ -3937,7 +3937,7 @@ public class Template implements Comparable<Template> {
 		String content = new String(Files.readAllBytes(file.toPath()));
 
 		// Minify the JSP content
-		String minifiedContent = minifyContent(content);
+		String minifiedContent = minifyContent(content, "index.jsp");
 
 		// Write the minified content back to the same file (overwrite)
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
@@ -3945,42 +3945,63 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
-	private static String minifyContent(String content) {
+	private static String MIMIFY_VERSION = "1.2";
 
-		// Remove HTML comments
+	public static String minifyContent(String content, String file) {
+
+		// Étape 0 : protéger les attributs contenant du JSP pour éviter de les casser
+		Pattern jspAttrPattern = Pattern.compile("(\\w+)\\s*=\\s*\"\\s*<%=(.*?)%>\\s*\"", Pattern.DOTALL);
+		Map<String, String> protectedAttributes = new HashMap<>();
+		int counter = 0;
+
+		Matcher jspAttrMatcher = jspAttrPattern.matcher(content);
+		while (jspAttrMatcher.find()) {
+			String fullMatch = jspAttrMatcher.group(0);
+			String token = "__JSP_ATTR_" + (counter++) + "__";
+			protectedAttributes.put(token, fullMatch);
+			content = content.replace(fullMatch, token);
+		}
+
+		// Étape 1 : retirer les commentaires HTML (sauf <!--config ... -->)
 		content = content.replaceAll("(?s)<!--(?!config).*?-->", "");
 
-		// Remove JavaScript single-line comments ONLY inside <script> tags
+		// Étape 2 : nettoyer les commentaires JS uniquement dans les balises <script>
 		Pattern scriptPattern = Pattern.compile("(?s)(<script.*?>)(.*?)(</script>)");
 		Matcher scriptMatcher = scriptPattern.matcher(content);
 		StringBuilder sb = new StringBuilder();
 
 		while (scriptMatcher.find()) {
-			String scriptContent = scriptMatcher.group(2).replaceAll("(?m)//.*", ""); // Remove JS single-line comments
-			scriptMatcher.appendReplacement(sb, Matcher.quoteReplacement(scriptMatcher.group(1) + scriptContent + scriptMatcher.group(3)));
+			String scriptContent = scriptMatcher.group(2).replaceAll("(?m)^\\s*//.*", "");
+			scriptMatcher.appendReplacement(sb, Matcher.quoteReplacement(
+					scriptMatcher.group(1) + scriptContent + scriptMatcher.group(3)
+			));
 		}
 		scriptMatcher.appendTail(sb);
 		content = sb.toString();
 
-		// Preserve spaces around JSP scriptlets (<% %>), expressions (<%= %>), and directives (<%@ %>)
-		content = content.replaceAll("(\\s*)(<%(?!@)(.*?)%>)(\\s*)", " $2 "); // Ensures space around JSP scriptlets
-		content = content.replaceAll("(\\s*)(<%=.*?%>)(\\s*)", " $2 "); // Ensures space around JSP expressions
+		// Étape 3 : préserver les espaces autour des blocs JSP
+		content = content.replaceAll("(\\s*)(<%(?!@)(.*?)%>)(\\s*)", " $2 ");  // scriptlets
+		content = content.replaceAll("(\\s*)(<%=.*?%>)(\\s*)", " $2 ");        // expressions
 
-		// Ensure proper spacing in JSP expressions inside attributes
-		content = content.replaceAll("(=\"\\s*)(<%=.*?%>)(\\s*\")", "=\"$2\"");
-
-		// Minify HTML by removing unnecessary spaces between non-JSP tags
+		// Étape 4 : compacter le HTML en supprimant les espaces inutiles entre balises
 		content = content.replaceAll(">\\s+<", "><");
 
-		// Remove multiple spaces (except around JSP expressions)
+		// Étape 5 : supprimer les espaces multiples
 		content = content.replaceAll("\\s{2,}", " ");
 
-		// Remove new lines
+		// Étape 6 : supprimer les retours à la ligne
 		content = content.replaceAll("\\n", "");
 
-		// Trim leading and trailing spaces
+		// Étape 7 : restaurer les attributs JSP protégés
+		for (Map.Entry<String, String> entry : protectedAttributes.entrySet()) {
+			content = content.replace(entry.getKey(), entry.getValue());
+		}
+
+		// Étape 8 : trim final et retour
+		//return "\n<!-- MimiFy Ver. " + MIMIFY_VERSION + " [" + file + "] -->\n" + content.trim();
 		return content.trim();
 	}
+
 
 	public static String createCssClass (String component, String mode) {
 		return "__"+component+"__"+mode;

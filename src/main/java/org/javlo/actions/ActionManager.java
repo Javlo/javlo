@@ -3,16 +3,8 @@
  */
 package org.javlo.actions;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Date;
-import java.util.StringTokenizer;
-import java.util.logging.Logger;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -33,6 +25,13 @@ import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 import org.javlo.user.exception.JavloSecurityException;
+
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Date;
+import java.util.StringTokenizer;
+import java.util.logging.Logger;
 
 /**
  * @author pvandermaesen manage the actions for wcms.
@@ -170,12 +169,13 @@ public class ActionManager {
 	 */
 	private static IAction[] getSpecialActionGroup() {
 		if (actionGroup == null) {
-			IAction[] outActionGroup = new IAction[5];
+			IAction[] outActionGroup = new IAction[6];
 			outActionGroup[0] = new SearchActions();
 			outActionGroup[1] = new ViewActions();
 			outActionGroup[2] = new TimeTravelerActions();
 			outActionGroup[3] = new DataAction();
 			outActionGroup[4] = new MobileAction();
+			outActionGroup[5] = new GoogleSheetAction();
 			actionGroup = outActionGroup;
 		}
 		return actionGroup;

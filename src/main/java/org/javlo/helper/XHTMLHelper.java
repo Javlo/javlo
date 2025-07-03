@@ -3419,14 +3419,14 @@ public class XHTMLHelper {
 	// ResourceHelper.writeStringToFile(file, html);
 	// }
 
-	public static String compress(String newContent) {
+	/*public static String compress(String newContent) {
 		newContent = newContent.replaceAll("[\n\r]", " ");
 		newContent = newContent.replaceAll("\t", " ");
 		while (newContent.contains("  ")) {
 			newContent = newContent.replace("  ", " ");
 		}
 		return newContent;
-	}
+	}*/
 
 
 

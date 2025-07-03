@@ -339,17 +339,26 @@ public class CSSParser {
 	}
 
 	public static Map<String, String> extractVariables(File file) {
-		Map<String, String> variables = new TreeMap<>();
-		String fileContent = readCSSFile(file);
-		if (fileContent != null) {
-			Pattern pattern = Pattern.compile("((--|[\\$])[a-zA-Z0-9_-]+)\\s*:\\s*([^;]+)");
-			Matcher matcher = pattern.matcher(fileContent);
-			while (matcher.find()) {
-				String variableName = matcher.group(1).trim();
-				String variableValue = matcher.group(3).trim();
-				variables.put(variableName, variableValue + " > "+file.getName());
-			}
+		if (!file.exists()) {
+			return Collections.emptyMap();
 		}
+		Map<String, String> variables = new TreeMap<>();
+		try {
+			String fileContent = readCSSFile(file);
+			if (fileContent != null) {
+				Pattern pattern = Pattern.compile("((--|[\\$])[a-zA-Z0-9_-]+)\\s*:\\s*([^;]+)");
+				Matcher matcher = pattern.matcher(fileContent);
+				while (matcher.find()) {
+					String variableName = matcher.group(1).trim();
+					String variableValue = matcher.group(3).trim();
+					variables.put(variableName, variableValue + " > "+file.getName());
+				}
+			}
+		} catch (Throwable t) {
+			logger.severe(t.getMessage());
+			return Collections.emptyMap();
+		}
+
 		return variables;
 	}
 

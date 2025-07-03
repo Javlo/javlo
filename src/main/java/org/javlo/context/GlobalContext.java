@@ -1437,6 +1437,19 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return file;
 	}
 
+	public String getCredentialMainFolder() {
+		return URLHelper.mergePath(getDataFolder(), ResourceHelper.PRIVATE_DIR, "credentials");
+	}
+	
+	public String getCredentialPath(String project) {
+		File out = new File(getCredentialMainFolder(), project+".json");
+		if (out.exists()) {
+			return out.getAbsolutePath();
+		} else {
+			return null;
+		}
+	}
+
 	public String getDataFolder() {
 		GlobalContext realGlobalContext = this;
 		if (getMainContext() != null) {
@@ -2484,6 +2497,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			startThread();
 		}
 		storePropertyThread.setDataProperties(dataProperties);
+
+		new File(getCredentialMainFolder()).mkdirs();
+
 		return outProp;
 	}
 
