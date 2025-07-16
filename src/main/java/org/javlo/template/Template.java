@@ -1307,7 +1307,7 @@ public class Template implements Comparable<Template> {
 								String htmlLower = html.toLowerCase();
 								if (html.contains(PREVIEW_EDIT_CODE)
 										|| html.contains("${previewAttributes}")
-										|| (htmlLower.contains("${previewid}") && htmlLower.contains("${previewclass}"))) {
+										|| (htmlLower.contains("${previewid}") && (htmlLower.contains("${previewclass}") || htmlLower.contains("${previewcss}")))) {
 									properties.setProperty("component.wrapped", "false");
 								} else {
 									properties.setProperty("component.wrapped", "true");
