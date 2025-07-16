@@ -1309,6 +1309,8 @@ public class Template implements Comparable<Template> {
 										|| html.contains("${previewAttributes}")
 										|| (htmlLower.contains("${previewid}") && htmlLower.contains("${previewclass}"))) {
 									properties.setProperty("component.wrapped", "false");
+								} else {
+									properties.setProperty("component.wrapped", "true");
 								}
 								properties.setProperty("component.type", StringHelper.getFileNameWithoutExtension(file.getName()));
 								properties.setProperty("component.renderer", ResourceHelper.removePath(file.getAbsolutePath(), getFolder(globalContext)));
