@@ -127,6 +127,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	private Set<String> contentLanguages = null;
 	private Set<String> defaultLanguages = null;
 
+	private Properties proxyMappings = null;
+
 	private static class StorePropertyThread extends Thread {
 
 		private boolean stopStoreThread = false;
@@ -3367,6 +3369,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		languages = null;
 		defaultLanguages = null;
 		contentLanguages = null;
+		proxyMappings = null;
 	}
 
 	public void setRAWContentLanguages(String languages) {
@@ -4679,6 +4682,20 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		} else {
 			return prod;
 		}
+	}
+
+	public Properties getProxyMappings() {
+		if (proxyMappings == null) {
+			proxyMappings = new Properties();
+			File propFile = new File(URLHelper.mergePath(getStaticFolder(), "ProxyMappings.properties"));
+			try (InputStream in = new FileInputStream(propFile)) {
+				proxyMappings.load(in);
+			} catch (FileNotFoundException e) {
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+		return proxyMappings;
 	}
 
 	public String getHostName() {
