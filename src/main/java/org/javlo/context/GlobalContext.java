@@ -4687,7 +4687,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	public Properties getProxyMappings() {
 		if (proxyMappings == null) {
 			proxyMappings = new Properties();
-			File propFile = new File(URLHelper.mergePath(getStaticFolder(), "ProxyMappings.properties"));
+
+			File propFile = new File(URLHelper.mergePath(getDataFolder(), ResourceHelper.PRIVATE_DIR, "proxy-mappings.properties"));
+			logger.info("load : "+propFile);
 			try (InputStream in = new FileInputStream(propFile)) {
 				proxyMappings.load(in);
 			} catch (FileNotFoundException e) {
