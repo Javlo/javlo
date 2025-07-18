@@ -1064,7 +1064,7 @@ public class URLHelper extends ElementaryURLHelper {
 		if (page != null) {
 			return createURL(ctx, page.getPath());
 		} else {
-			logger.warning("page not found : "+pageName);
+			logger.fine("page not found : "+pageName);
 			return createURL(ctx, "/");
 		}
 	}
