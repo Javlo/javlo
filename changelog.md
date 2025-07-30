@@ -1013,6 +1013,7 @@ Security in case of vulnerabilities.
 ### Added
 - import image from url macro
 - proxy for cross origin request
+- create scss for HTML component
 ### Modified
 - minify jsp optimisation [2.3.3.1]
 
