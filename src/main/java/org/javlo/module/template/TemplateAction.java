@@ -652,12 +652,19 @@ public class TemplateAction extends AbstractModuleAction {
 				File scssFile = new File(scssFolder + '/' + StringHelper.getFileNameWithoutExtension(htmlFile.getName())+".scss");
 				if (scssFile.exists()) {
 					String editCssUrl = URLHelper.createModuleURL(ctx, ctx.getPath(), "template");
-					editCssUrl = URLHelper.addParam(editCssUrl,"templateid", rs.getParameter("templateid", "") );
-					editCssUrl = URLHelper.addParam(editCssUrl,"previewEdit", "true" );
-					editCssUrl = URLHelper.addParam(editCssUrl,"webaction", "template.editCSS" );
-					editCssUrl = URLHelper.addParam(editCssUrl,"css", "/scss/components/"+StringHelper.getFileNameWithoutExtension(htmlFile.getName())+".scss");
+					editCssUrl = URLHelper.addParam(editCssUrl, "templateid", rs.getParameter("templateid", ""));
+					editCssUrl = URLHelper.addParam(editCssUrl, "previewEdit", "true");
+					editCssUrl = URLHelper.addParam(editCssUrl, "webaction", "template.editCSS");
+					editCssUrl = URLHelper.addParam(editCssUrl, "css", "/scss/components/" + StringHelper.getFileNameWithoutExtension(htmlFile.getName()) + ".scss");
 					ctx.getRequest().setAttribute("editCssUrl", editCssUrl);
 				}
+					String createCssUrl = URLHelper.createModuleURL(ctx, ctx.getPath(), "template");
+					createCssUrl = URLHelper.addParam(createCssUrl,"templateid", rs.getParameter("templateid", "") );
+					createCssUrl = URLHelper.addParam(createCssUrl,"previewEdit", "true" );
+					createCssUrl = URLHelper.addParam(createCssUrl,"create", "true" );
+					createCssUrl = URLHelper.addParam(createCssUrl,"webaction", "template.editCSS" );
+					createCssUrl = URLHelper.addParam(createCssUrl,"css", "/scss/components/"+StringHelper.getFileNameWithoutExtension(htmlFile.getName())+".scss");
+					ctx.getRequest().setAttribute("createCssUrl", createCssUrl);
 
 				if (!htmlFile.exists()) {
 					return "file not found : " + htmlFile;
@@ -673,6 +680,7 @@ public class TemplateAction extends AbstractModuleAction {
 
 	public static String performEditCSS(RequestService rs, ServletContext application, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String css = rs.getParameter("css", null);
+		boolean create = StringHelper.isTrue(rs.getParameter("create", null), false);
 		Template template = TemplateFactory.getTemplates(application).get(rs.getParameter("templateid", ""));
 		if (template == null) {
 			logger.severe("template not found : "+rs.getParameter("templateid", ""));
@@ -680,7 +688,7 @@ public class TemplateAction extends AbstractModuleAction {
 		} else {
 			// store new value
 			if (rs.getParameter("text", null) != null) {
-				File cssFile = new File(URLHelper.mergePath(template.getSourceFolder().getAbsolutePath(), rs.getParameter("file", "")));
+				 File cssFile = new File(URLHelper.mergePath(template.getSourceFolder().getAbsolutePath(), rs.getParameter("file", "")));
 				if (cssFile.exists() && cssFile.isFile()) {
 					String text = rs.getParameter("text", null);
 					if (rs.getParameter("indent") != null) {
@@ -696,6 +704,25 @@ public class TemplateAction extends AbstractModuleAction {
 			// load current value
 			if (css != null) {
 				File cssFile = new File(URLHelper.mergePath(template.getSourceFolder().getAbsolutePath(), css));
+				if (create && !cssFile.exists()) {
+					cssFile.getParentFile().mkdirs();
+					cssFile.createNewFile();
+					// Vérifie la présence de components.scss dans le même dossier
+					File scssFile = new File(cssFile.getParentFile(), "components.scss");
+					if (scssFile.exists()) {
+						try (FileWriter fw = new FileWriter(scssFile, true);
+							 BufferedWriter bw = new BufferedWriter(fw);
+							 PrintWriter out = new PrintWriter(bw)) {
+
+							// Calcule un chemin relatif (sans extension)
+							String importPath = cssFile.getName().replaceAll("\\.scss$", "");
+							out.println("@import '" + importPath + "';");
+
+						} catch (IOException e) {
+							e.printStackTrace(); // Gère l'erreur de manière appropriée selon ton appli
+						}
+					}
+				}
 				if (!cssFile.exists()) {
 					return "file not found : " + cssFile;
 				} else {

@@ -60,6 +60,9 @@
 							<c:if test="${not empty editCssUrl}">
 								<a class="btn btn-secondary" href="${editCssUrl}">Edit SCSS</a>
 							</c:if>
+							<c:if test="${empty editCssUrl && not empty createCssUrl}">
+								<a class="btn btn-secondary" href="${createCssUrl}">Create SCSS</a>
+							</c:if>
 							<input type="submit" name="back" value="${i18n.edit['global.back']}" />
 							<input type="submit" value="${i18n.edit['global.save']}" />
 						</div>
