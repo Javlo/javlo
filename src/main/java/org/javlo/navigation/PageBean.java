@@ -604,6 +604,14 @@ public class PageBean implements Serializable {
 		}
 	}
 
+	public boolean isExternalLink() throws Exception {
+		if (page.isRealContent(ctx)) {
+			return false;
+		} else {
+			return page.getLinkOn(ctx) != null;
+		}
+	}
+
 	public boolean isVisibleForContext() {
 		try {
 			return page.isVisible(ctx);
