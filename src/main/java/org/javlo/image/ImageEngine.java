@@ -54,6 +54,41 @@ public class ImageEngine {
 	 */
 	public final static Color DETECT_COLOR = new Color(235, 124, 32, 15);
 
+	/**
+	 * Get a safe image type for BufferedImage creation.
+	 * This method ensures we never use TYPE_CUSTOM (0) or other unsupported types
+	 * that could cause IllegalArgumentException.
+	 * 
+	 * @param originalType the original image type
+	 * @param hasAlpha whether the image has alpha channel
+	 * @return a safe BufferedImage type constant
+	 */
+	public static int getSafeImageType(int originalType, boolean hasAlpha) {
+		// If the original type is valid and not TYPE_CUSTOM, use it
+		if (originalType != BufferedImage.TYPE_CUSTOM && originalType > 0 && originalType <= 13) {
+			return originalType;
+		}
+		
+		// Otherwise, return a safe default type based on alpha presence
+		return hasAlpha ? BufferedImage.TYPE_4BYTE_ABGR : BufferedImage.TYPE_3BYTE_BGR;
+	}
+
+	/**
+	 * Get a safe image type for BufferedImage creation.
+	 * This method ensures we never use TYPE_CUSTOM (0) or other unsupported types.
+	 * 
+	 * @param sourceImage the source BufferedImage to get type from
+	 * @return a safe BufferedImage type constant
+	 */
+	public static int getSafeImageType(BufferedImage sourceImage) {
+		if (sourceImage == null) {
+			return BufferedImage.TYPE_4BYTE_ABGR;
+		}
+		
+		boolean hasAlpha = sourceImage.getColorModel().hasAlpha();
+		return getSafeImageType(sourceImage.getType(), hasAlpha);
+	}
+
 	public static BufferedImage loadImage(File file) throws IOException {
 		BufferedImage outImage = ImageIO.read(file);
 		try {
@@ -206,7 +241,7 @@ public class ImageEngine {
 			matrix[i] = (1f / matrix.length);
 		}
 
-		BufferedImage target = new BufferedImage(img.getWidth(), img.getHeight(), img.getType());
+		BufferedImage target = new BufferedImage(img.getWidth(), img.getHeight(), getSafeImageType(img));
 
 		BufferedImageOp op = new ConvolveOp(new Kernel(20, 20, matrix));
 		return op.filter(img, target);
@@ -279,7 +314,7 @@ public class ImageEngine {
 		int alpha, red, green, blue;
 		int newPixel;
 
-		BufferedImage lum = new BufferedImage(original.getWidth(), original.getHeight(), original.getType());
+		BufferedImage lum = new BufferedImage(original.getWidth(), original.getHeight(), getSafeImageType(original));
 
 		for (int i = 0; i < original.getWidth(); i++) {
 			for (int j = 0; j < original.getHeight(); j++) {
@@ -310,7 +345,7 @@ public class ImageEngine {
 		int alpha, red, green, blue;
 		int newPixel;
 
-		BufferedImage avg_gray = new BufferedImage(original.getWidth(), original.getHeight(), original.getType());
+		BufferedImage avg_gray = new BufferedImage(original.getWidth(), original.getHeight(), getSafeImageType(original));
 		int[] avgLUT = new int[766];
 		for (int i = 0; i < avgLUT.length; i++)
 			avgLUT[i] = (int) (i / 3);
@@ -347,7 +382,7 @@ public class ImageEngine {
 
 		int[] pixel = new int[3];
 
-		BufferedImage des = new BufferedImage(original.getWidth(), original.getHeight(), original.getType());
+		BufferedImage des = new BufferedImage(original.getWidth(), original.getHeight(), getSafeImageType(original));
 		int[] desLUT = new int[511];
 		for (int i = 0; i < desLUT.length; i++)
 			desLUT[i] = (int) (i / 2);
@@ -414,7 +449,7 @@ public class ImageEngine {
 			matrix[i] = (1f / matrix.length);
 		}
 
-		BufferedImage target = new BufferedImage(img.getWidth(), img.getHeight(), img.getType());
+		BufferedImage target = new BufferedImage(img.getWidth(), img.getHeight(), getSafeImageType(img));
 
 		BufferedImageOp op = new ConvolveOp(new Kernel(3, 3, matrix));
 		return op.filter(img, target);
@@ -930,7 +965,7 @@ public class ImageEngine {
 			 * WARNING : test si on fait pas 2x la marge avec cette méthode the resize }
 			 */
 		}
-		BufferedImage outImage = new BufferedImage(filter.getWidth(), filter.getHeight(), source.getType());
+		BufferedImage outImage = new BufferedImage(filter.getWidth(), filter.getHeight(), getSafeImageType(source));
 		for (int x = 0; x < filter.getWidth(); x++) {
 			for (int y = 0; y < filter.getHeight(); y++) {
 				Color filterColor = new Color(filter.getRGB(x, y), true);
@@ -1041,7 +1076,7 @@ public class ImageEngine {
 			height = source.getHeight();
 		}
 
-		BufferedImage workImage = new BufferedImage(width, height, source.getType());
+		BufferedImage workImage = new BufferedImage(width, height, getSafeImageType(source));
 
 		for (int x = 0; x < workImage.getWidth(); x++) {
 			for (int y = 0; y < workImage.getHeight(); y++) {
@@ -1289,7 +1324,7 @@ public class ImageEngine {
 	}
 
 	public static BufferedImage cropImage(BufferedImage image, int width, int height, int inX, int inY) {
-		BufferedImage outImage = new BufferedImage(width, height, image.getType());
+		BufferedImage outImage = new BufferedImage(width, height, getSafeImageType(image));
 		for (int x = 0; x < image.getWidth(); x++) {
 			for (int y = 0; y < image.getHeight(); y++) {
 				if (x >= inX && x < inX + width) {
@@ -1537,7 +1572,7 @@ public class ImageEngine {
 	}
 
 	public static BufferedImage flip(BufferedImage image, boolean verticaly) {
-		BufferedImage outImage = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
+		BufferedImage outImage = new BufferedImage(image.getWidth(), image.getHeight(), getSafeImageType(image));
 		for (int x = 0; x < image.getWidth(); x += 1) {
 			for (int y = 0; y < image.getHeight(); y += 1) {
 				if (verticaly) {
@@ -1580,9 +1615,9 @@ public class ImageEngine {
 			}
 		}
 		if (trim) {
-			return new BufferedImage(1, 1, image.getType());
+			return new BufferedImage(1, 1, getSafeImageType(image));
 		}
-		BufferedImage outImage = new BufferedImage(image.getWidth(), image.getHeight() - decaly, image.getType());
+		BufferedImage outImage = new BufferedImage(image.getWidth(), image.getHeight() - decaly, getSafeImageType(image));
 		for (int y = decaly; y < image.getHeight(); y += 1) {
 			for (int x = 0; x < image.getWidth(); x += 1) {
 				outImage.setRGB(x, y - decaly, image.getRGB(x, y));
@@ -1605,9 +1640,9 @@ public class ImageEngine {
 			}
 		}
 		if (trim) {
-			return new BufferedImage(1, 1, image.getType());
+			return new BufferedImage(1, 1, getSafeImageType(image));
 		}
-		BufferedImage outImage = new BufferedImage(image.getWidth() - decalx, image.getHeight(), image.getType());
+		BufferedImage outImage = new BufferedImage(image.getWidth() - decalx, image.getHeight(), getSafeImageType(image));
 		for (int x = decalx; x < image.getWidth(); x += 1) {
 			for (int y = 0; y < image.getHeight(); y += 1) {
 				outImage.setRGB(x - decalx, y, image.getRGB(x, y));
@@ -1633,9 +1668,9 @@ public class ImageEngine {
 			}
 		}
 		if (trim) {
-			return new BufferedImage(1, 1, image.getType());
+			return new BufferedImage(1, 1, getSafeImageType(image));
 		}
-		BufferedImage outImage = new BufferedImage(image.getWidth(), image.getHeight() - decaly, image.getType());
+		BufferedImage outImage = new BufferedImage(image.getWidth(), image.getHeight() - decaly, getSafeImageType(image));
 		for (int y = 0; y < image.getHeight() - decaly; y += 1) {
 			for (int x = 0; x < image.getWidth(); x += 1) {
 				outImage.setRGB(x, y, image.getRGB(x, y));
@@ -1661,9 +1696,9 @@ public class ImageEngine {
 			}
 		}
 		if (trim) {
-			return new BufferedImage(1, 1, image.getType());
+			return new BufferedImage(1, 1, getSafeImageType(image));
 		}
-		BufferedImage outImage = new BufferedImage(image.getWidth() - decalx, image.getHeight(), image.getType());
+		BufferedImage outImage = new BufferedImage(image.getWidth() - decalx, image.getHeight(), getSafeImageType(image));
 		for (int y = 0; y < image.getHeight(); y += 1) {
 			for (int x = 0; x < image.getWidth() - decalx; x += 1) {
 				outImage.setRGB(x, y, image.getRGB(x, y));
