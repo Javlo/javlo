@@ -1,18 +1,19 @@
 package org.javlo.fields;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Locale;
-
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.service.RequestService;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 public class FieldBoolean extends Field {
+
+	public static String TYPE = "boolean";
 
 	@Override
 	public String getType() {
-		return "boolean";
+		return TYPE;
 	}
 
 	@Override

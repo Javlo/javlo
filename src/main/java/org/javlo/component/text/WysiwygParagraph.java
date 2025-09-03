@@ -39,6 +39,8 @@ public class WysiwygParagraph extends AbstractVisualComponent implements IImageT
 
 	private String imageUrl;
 
+
+
 	@Override
 	protected String getEditorComplexity(ContentContext ctx) {
 		return getConfig(ctx).getProperty("editor-complexity", "light");

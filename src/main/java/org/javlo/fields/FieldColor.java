@@ -10,7 +10,7 @@ import java.io.StringWriter;
 
 public class FieldColor extends Field {
 
-	private static final String TYPE = "color";
+	public static final String TYPE = "color";
 
 	public String getType() {
 		return TYPE;

@@ -610,8 +610,7 @@ public class Template implements Comparable<Template> {
 
 		if (alternativeTemplate && ctx != null) {
 			if (template.isAlternativeTemplate(ctx)) {
-				Template altTemplate = template.getAlternativeTemplate(config, ctx);
-				return altTemplate;
+				return template.getAlternativeTemplate(config, ctx);
 			}
 		}
 
@@ -1773,6 +1772,10 @@ public class Template implements Comparable<Template> {
 	}
 
 	public synchronized Map getI18nProperties(GlobalContext globalContext, Locale locale, int mode) throws IOException {
+
+		System.out.println("######## >> getI18nProperties");
+
+
 		String filePrefix = I18N_VIEW_FILE;
 		if (mode == ContentContext.EDIT_MODE) {
 			filePrefix = I18N_EDIT_FILE;
@@ -1785,21 +1788,26 @@ public class Template implements Comparable<Template> {
 		if (propI18n == null) {
 			synchronized (globalContext.getLockImportTemplate()) {
 				if (config != null) {
-					File i18nFile = new File(URLHelper.mergePath(URLHelper.mergePath(getWorkTemplateRealPath(globalContext), filePrefix + locale.getLanguage() + ".properties")));
+					File i18nFile = new File(URLHelper.mergePath(getWorkTemplateRealPath(globalContext), filePrefix + locale.getLanguage() + ".properties"));
+					System.out.println(">>>>>>>>>> 1/ file : "+i18nFile);
 					if (i18nFile.exists()) {
+						System.out.println(">>>>>>>>>> load : "+i18nFile);
 						propI18n = new Properties();
 						Reader reader = new FileReader(i18nFile);
 						((Properties) propI18n).load(reader);
 						reader.close();
 					} else {
 						i18nFile = new File(URLHelper.mergePath(URLHelper.mergePath(getWorkTemplateRealPath(globalContext), "i18n", filePrefix + locale.getLanguage() + ".properties")));
+						System.out.println(">>>>>>>>>> 2/ file : "+i18nFile);
 						if (i18nFile.exists()) {
+							System.out.println(">>>>>>>>>> load : "+i18nFile);
 							propI18n = new Properties();
 							Reader reader = new FileReader(i18nFile);
 							((Properties) propI18n).load(reader);
 							reader.close();
 						} else {
 							propI18n = Collections.EMPTY_MAP;
+							System.out.println(">>>>>>>>>> not found : "+i18nFile);
 						}
 					}
 					/*
@@ -2708,7 +2716,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	public String getWorkTemplateRealPath(GlobalContext globalContext) {
-		return URLHelper.mergePath(getLocalWorkTemplateFolder(), getFolder(globalContext));
+		return globalContext.getServletContext().getRealPath(URLHelper.mergePath(getLocalWorkTemplateFolder(), getFolder(globalContext)));
 	}
 
 	public boolean isDeleted() {
@@ -2720,8 +2728,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	private String getTemplateTargetFolder(GlobalContext globalContext) {
-		String templateTgt = URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext));
-		return templateTgt;
+		return URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext));
 	}
 
 	public String getUnSelectedClass() {

@@ -19,6 +19,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class FieldDate extends Field implements IDate {
+
+	public static final String TYPE = "date";
 	
 	protected static final String MONTH_SEARCH_TYPE = "month";
 	
@@ -174,7 +176,7 @@ public class FieldDate extends Field implements IDate {
 
 	@Override
 	public String getType() {
-		return "date";
+		return TYPE;
 	}
 	
 	@Override

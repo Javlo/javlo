@@ -18,6 +18,21 @@ import java.util.Map;
 
 public class FieldWysiwyg extends Field {
 
+	public class FieldBeanWysiwyg extends FieldBean {
+
+		public FieldBeanWysiwyg(ContentContext ctx) {
+			super(ctx);
+		}
+
+		public String getInnerHtml() {
+			return FieldWysiwyg.this.getInnerHtml();
+		}
+	}
+
+	protected FieldBean newFieldBean(ContentContext ctx) {
+		return new FieldBeanWysiwyg(ctx);
+	}
+
 	protected String getEditorComplexity(ContentContext ctx) throws Exception {
 		return getMetaData("editor-complexity", "high");
 	}
@@ -29,6 +44,15 @@ public class FieldWysiwyg extends Field {
 		} else {
 			return Integer.MAX_VALUE;
 		}
+	}
+
+	protected String getInnerHtml() {
+		String outValue = getValue().trim();
+		if (outValue.startsWith("<p>") && outValue.endsWith("</p>")) {
+			// Remove <p> (3 chars) and </p> (4 chars)
+			outValue = outValue.substring(3, outValue.length() - 4);
+		}
+		return outValue;
 	}
 
 	@Override

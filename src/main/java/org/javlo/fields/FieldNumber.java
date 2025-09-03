@@ -1,26 +1,27 @@
 package org.javlo.fields;
 
+import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
+import org.javlo.i18n.I18nAccess;
+import org.javlo.service.RequestService;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Locale;
 import java.util.logging.Logger;
 
-import org.javlo.context.ContentContext;
-import org.javlo.helper.StringHelper;
-import org.javlo.i18n.I18nAccess;
-import org.javlo.service.RequestService;
-
 public class FieldNumber extends Field {
+
+	public static final String TYPE = "number";
 
 	private static Logger logger = Logger.getLogger(FieldNumber.class.getName());
 
 	@Override
 	public String getType() {
-		return "number";
+		return TYPE;
 	}
 
 	public int getMin(ContentContext ctx) {
@@ -108,9 +109,8 @@ public class FieldNumber extends Field {
 	}
 	
 	public String getStep(ContentContext ctx) {
-		return properties.getProperty("field." + getUnicName() + ".step", "1");
+		return properties.getProperty("field." + getUnicName() + ".step", "0.01");
 	}
-
 
 	public String getEditXHTMLCode(ContentContext ctx, boolean search) throws Exception {
 		String refCode = referenceEditCode(ctx);
