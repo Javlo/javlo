@@ -970,4 +970,7 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	 * @return
 	 */
 	public String getXHTMLTitle(ContentContext ctx);
+
+	public boolean isContainer();
+
 }

@@ -3852,7 +3852,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	public Map<String, Object> getContentAsMap(ContentContext ctx) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.putAll(BeanHelper.bean2Map(getComponentBean()));
-		map.put("path", getPage().getPath());
+		if (getPage() != null) {
+			map.put("path", getPage().getPath());
+		}
 		return map;
 	}
 
@@ -4046,6 +4048,10 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 		} else {
 			return "id:" + getId() + " type:" + getType() + " class:" + getClassName() + " hash:" + hashCode();
 		}
+	}
+
+	public boolean isContainer() {
+		return this instanceof IContainer;
 	}
 
 }

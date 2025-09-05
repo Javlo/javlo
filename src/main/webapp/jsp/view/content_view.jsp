@@ -5,7 +5,7 @@
 %><%@ taglib uri="jakarta.tags.core" prefix="c"
 %><%@ taglib prefix="fn" uri="jakarta.tags.functions"
 %><%@page contentType="text/html"
-        import="
+		  import="
         java.util.Map,
         java.util.Stack,
         org.javlo.i18n.I18nAccess,
@@ -34,38 +34,38 @@
 		org.javlo.helper.URLHelper,
 		org.javlo.helper.LocalLogger"
 %><%
-ContentContext ctx = ContentContext.getContentContext ( request, response );
-GlobalContext globalContext = GlobalContext.getInstance(request);
+	ContentContext ctx = ContentContext.getContentContext ( request, response );
+	GlobalContext globalContext = GlobalContext.getInstance(request);
 
-boolean areaWrapper = StringHelper.isTrue(request.getParameter("only-area-wrapper"), false);
-String area = (String)request.getAttribute(ContentContext.CHANGE_AREA_ATTRIBUTE_NAME);
-if (area==null) {
-	area = request.getParameter("area");
-} else {
-	request.removeAttribute(ContentContext.CHANGE_AREA_ATTRIBUTE_NAME);
-}
-MenuElement currentPage = ctx.getCurrentPage();
-if (areaWrapper && area != null) {
-	List<String> layouts = currentPage.getLayouts(ctx);
-	String layoutClass = "pos-"+currentPage.getPosition();
-	if (layouts.size() > 0) {
-		for (String layout : layouts) {
-			layoutClass+=" layout-"+layout;
-		}		
+	boolean areaWrapper = StringHelper.isTrue(request.getParameter("only-area-wrapper"), false);
+	String area = (String)request.getAttribute(ContentContext.CHANGE_AREA_ATTRIBUTE_NAME);
+	if (area==null) {
+		area = request.getParameter("area");
+	} else {
+		request.removeAttribute(ContentContext.CHANGE_AREA_ATTRIBUTE_NAME);
 	}
-	%><div id="<%=area%>" class="<%=layoutClass%>"><%
-}
+	MenuElement currentPage = ctx.getCurrentPage();
+	if (areaWrapper && area != null) {
+		List<String> layouts = currentPage.getLayouts(ctx);
+		String layoutClass = "pos-"+currentPage.getPosition();
+		if (layouts.size() > 0) {
+			for (String layout : layouts) {
+				layoutClass+=" layout-"+layout;
+			}
+		}
+%><div id="<%=area%>" class="<%=layoutClass%>"><%
+	}
 
-boolean pageEmpty = true;
-boolean editPage = !StringHelper.isTrue(request.getParameter(PageMirrorComponent.NOT_EDIT_PREVIEW_PARAM_NAME));
-IContentVisualComponent specificComp = (IContentVisualComponent)request.getAttribute("specific-comp");
-if (specificComp == null && request.getParameter("_only_component") != null) {
-	ContentService contentService = ContentService.getInstance(ctx.getRequest()); 
-	specificComp = contentService.getComponent(ctx, request.getParameter("_only_component"));
-}
+	boolean pageEmpty = true;
+	boolean editPage = !StringHelper.isTrue(request.getParameter(PageMirrorComponent.NOT_EDIT_PREVIEW_PARAM_NAME));
+	IContentVisualComponent specificComp = (IContentVisualComponent)request.getAttribute("specific-comp");
+	if (specificComp == null && request.getParameter("_only_component") != null) {
+		ContentService contentService = ContentService.getInstance(ctx.getRequest());
+		specificComp = contentService.getComponent(ctx, request.getParameter("_only_component"));
+	}
 
-if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly() && specificComp == null && editPage) {
-	%><div id="one-component-edit"></div><%
+	if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly() && specificComp == null && editPage) {
+%><div id="one-component-edit"></div><%
 }
 
 if (area != null) {
@@ -106,16 +106,16 @@ if ( ctx.getSpecialContentRenderer() != null && area.equals(ComponentBean.DEFAUL
 	%><!-- this area is empty because special renderer is defined. --><%
 } else {
 
-String forcePageName = request.getParameter("_force-page");
-if (forcePageName != null) {
-	ContentService contentService = ContentService.getInstance(ctx.getRequest()); 
-	MenuElement forcedPage = contentService.getNavigation(ctx).searchChildFromName(forcePageName);
-	if (forcedPage != null) {
-		currentPage = forcedPage;
+	String forcePageName = request.getParameter("_force-page");
+	if (forcePageName != null) {
+		ContentService contentService = ContentService.getInstance(ctx.getRequest());
+		MenuElement forcedPage = contentService.getNavigation(ctx).searchChildFromName(forcePageName);
+		if (forcedPage != null) {
+			currentPage = forcedPage;
+		}
 	}
-}
-Template template = ctx.getCurrentTemplate();
-Stack<IContainer> containers = new Stack<IContainer>();
+	Template template = ctx.getCurrentTemplate();
+	Stack<IContainer> containers = new Stack<IContainer>();
 
 %><%-- <!-- DEBUG INFO -->
 <ul style="padding: 10px; margin: 10px; border: 2px dashed red; list-style: none;">
@@ -140,115 +140,119 @@ InfoBean info = InfoBean.getCurrentInfoBean(ctx);
 		%><div lang="${contentContext.mainLanguage}" class="alert alert-info alert-bad-lang">${info.pageNotFoundMessage}</div><%
 	}
 	if (languageChange) {
-		%><div lang="<%=ctx.getContentLanguage()%>"><%
-	}	
+%><div lang="<%=ctx.getContentLanguage()%>"><%
+	}
 	if (elems != null && !elems.hasNext(ctx) && EditContext.getInstance(globalContext, session).isPreviewEditionMode() && ctx.isAsPreviewMode() && editPage || displayZone) {
-		%><span><%=ctx.getArea()%></span><%
-	} else {
-		if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly() && specificComp == null && editPage) {
-			%><div id="comp_0" class="free-edit-zone editable-component"><span>${i18n.edit['component.insert.first']}</span></div><%
+%><span><%=ctx.getArea()%></span><%
+} else {
+	if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly() && specificComp == null && editPage) {
+%><div id="comp_0" class="free-edit-zone editable-component"><span>${i18n.edit['component.insert.first']}</span></div><%
 		}
 	}
-	
+
 	if (!displayZone) {
-	while (specificComp != null || elems.hasNext(ctx)) {
-		pageEmpty = false;
-		if (specificComp == null) {
-			elem = elems.next(ctx);
-		} else {
-			elem = specificComp;
-			specificComp = null;
-		}
-		
-		if (!(removeRepeat && elem.isRepeat() && !elem.getPage().equals(currentPage))) {
-			elem.clearReplacement();			
-			elem.replaceAllInContent(currentPage.getReplacement());
-		
-			out.flush(); /* needed for jsp include */
-			
-			String savedValue = elem.getValue(ctx);
-			String value = elem.getValue(ctx);
-			
-			savedValue = elem.getValue(ctx);
-			value = elem.getValue(ctx);
-			
-			if (elem instanceof IContainer) {
-				IContainer container = (IContainer)elem;
-				if (container.isOpen(ctx)) {
-					containers.push(container);
-				} else {
-					if (!containers.empty()) {
-						containers.pop();
+		boolean visibleContained = true;
+		while (specificComp != null || elems.hasNext(ctx)) {
+			pageEmpty = false;
+			if (specificComp == null) {
+				elem = elems.next(ctx);
+			} else {
+				elem = specificComp;
+				specificComp = null;
+			}
+
+			if (!(removeRepeat && elem.isRepeat() && !elem.getPage().equals(currentPage))) {
+				elem.clearReplacement();
+				elem.replaceAllInContent(currentPage.getReplacement());
+
+				out.flush(); /* needed for jsp include */
+
+				String savedValue = elem.getValue(ctx);
+				String value = elem.getValue(ctx);
+
+				savedValue = elem.getValue(ctx);
+				value = elem.getValue(ctx);
+
+				if (elem instanceof IContainer) {
+					IContainer container = (IContainer)elem;
+					if (container.isOpen(ctx)) {
+						containers.push(container);
+					} else {
+						if (!containers.empty()) {
+							containers.pop();
+						}
 					}
 				}
-			}			
-			if (elems != null) {%><%=elems.getPrefixXHTMLCode(ctx)%><%}
-if (globalContext.isCollaborativeMode() && ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly()) {
-	request.setAttribute("elem", elem);	
-	if (previousElem != null && previousElem.getAuthors().equals(elem.getAuthors())) {
-		request.setAttribute("samePrevious", new Boolean(true));		
-	} else {
-		request.setAttribute("samePrevious", new Boolean(false));		
-	}	
-	request.setAttribute("creator", elem.getAuthors());	
-	request.setAttribute("date", StringHelper.renderTime(elem.getModificationDate()));%><jsp:include page="display_user.jsp"></jsp:include><%
-}
-String xhtmlCode = elem.getXHTMLCode(ctx);
-%><c:if test="${editPreview}"><%
-if (!elem.isDisplayable(ctx)) {
-	I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
-	xhtmlCode = elem.getEmptyXHTMLCode(ctx);
-}%></c:if><%if (!elem.isHiddenInMode(ctx, ctx.getRenderMode(), ctx.isMobile())) {%><%=elem.isVisibleFromCookies(ctx)?elem.getPrefixViewXHTMLCode(ctx):""%><%=xhtmlCode%><%=elem.isVisibleFromCookies(ctx)?elem.getSuffixViewXHTMLCode(ctx):""%><%}
-previousElem = elem;
-if (elems != null) {%><%=elems.getSufixXHTMLCode(ctx)
-%><%}%><%
-		}	
+				if (elems != null) {%><%=elems.getPrefixXHTMLCode(ctx)%><%}
+	if (globalContext.isCollaborativeMode() && ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly()) {
+		request.setAttribute("elem", elem);
+		if (previousElem != null && previousElem.getAuthors().equals(elem.getAuthors())) {
+			request.setAttribute("samePrevious", new Boolean(true));
+		} else {
+			request.setAttribute("samePrevious", new Boolean(false));
+		}
+		request.setAttribute("creator", elem.getAuthors());
+		request.setAttribute("date", StringHelper.renderTime(elem.getModificationDate()));%><jsp:include page="display_user.jsp"></jsp:include><%
 	}
-}
+	String xhtmlCode = elem.getXHTMLCode(ctx);
+	if (elem.isContainer()) {
+		visibleContained = !elem.isHiddenInMode(ctx, ctx.getRenderMode(), ctx.isMobile());
+	}
+%><c:if test="${editPreview}"><%
+	if (!elem.isDisplayable(ctx)) {
+		I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
+		xhtmlCode = elem.getEmptyXHTMLCode(ctx);
+	}%></c:if><%if (visibleContained && !elem.isHiddenInMode(ctx, ctx.getRenderMode(), ctx.isMobile())) {%><%=elem.isVisibleFromCookies(ctx)?elem.getPrefixViewXHTMLCode(ctx):""%><%=xhtmlCode%><%=elem.isVisibleFromCookies(ctx)?elem.getSuffixViewXHTMLCode(ctx):""%><%}
+	previousElem = elem;
+	if (elems != null) {%><%=elems.getSufixXHTMLCode(ctx)
+%><%}%><%
+			}
+		}
+	}
 	while (!containers.empty()) {
 		IContainer container = (IContainer)containers.pop();
 		ctx.setNoCache(true);
 		container.prepareView(ctx);
 		container.setOpen(ctx, false);
-		%><%=container.getXHTMLCode(ctx)%><%
+%><%=container.getXHTMLCode(ctx)%><%
 		ctx.setNoCache(false);
 		container.setOpen(ctx, true);
 	}
 	if (languageChange) {
-		%></div><%
+%></div><%
+		}
 	}
-}
 
-if (TableContext.isInstance(ctx)) {
-	TableContext tableContext = TableContext.getInstance(ctx, null);
-	if (tableContext.isTableOpen()) {	
-		%><%=TableBreak.closeTable(ctx, tableContext)%><%
+	if (TableContext.isInstance(ctx)) {
+		TableContext tableContext = TableContext.getInstance(ctx, null);
+		if (tableContext.isTableOpen()) {
+%><%=TableBreak.closeTable(ctx, tableContext)%><%
+		}
 	}
-}
 
-if (ColContext.isInstance(ctx)) {
-	ColContext colContext = ColContext.getInstance(ctx, null);
-	if (colContext.isOpen()) {
-		%><%=OpenCol.closeRow(ctx, colContext)%><%
+	if (ColContext.isInstance(ctx)) {
+		ColContext colContext = ColContext.getInstance(ctx, null);
+		if (colContext.isOpen()) {
+%><%=OpenCol.closeRow(ctx, colContext)%><%
+		}
 	}
-}
-if (displayZone) {
-	%><script>pjq("#<%=area%>").addClass("_empty_area");</script><%
-}%><%
-String pageClass = "";
-if (request.getAttribute("pageNumber") != null) {
-	pageClass = ".page-"+request.getAttribute("pageNumber");
-}
-if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly()) {
-	if (pageEmpty) {
-		%><script>pjq("<%=pageClass%> #<%=area%>").addClass("_empty_area");  pjq("<%=pageClass%> #<%=area%>").removeClass("_not_empty_area");</script><%
-	} else {
-		%><script>pjq("<%=pageClass%> #<%=area%>").removeClass("_empty_area"); pjq("#<%=area%>").removeClass("drop-selected");</script><%
+	if (displayZone) {
+%><script>pjq("#<%=area%>").addClass("_empty_area");</script><%
+	}%><%
+	String pageClass = "";
+	if (request.getAttribute("pageNumber") != null) {
+		pageClass = ".page-"+request.getAttribute("pageNumber");
 	}
-}
+	if (ctx.getRenderMode() == ContentContext.PREVIEW_MODE && !ctx.isPreviewOnly()) {
+		if (pageEmpty) {
+%><script>pjq("<%=pageClass%> #<%=area%>").addClass("_empty_area");  pjq("<%=pageClass%> #<%=area%>").removeClass("_not_empty_area");</script><%
+} else {
+%><script>pjq("<%=pageClass%> #<%=area%>").removeClass("_empty_area"); pjq("#<%=area%>").removeClass("drop-selected");</script><%
+			}
+		}
 
-currentPage.endRendering(ctx);
-} /* end else getSpecialContentRenderer() */
+		currentPage.endRendering(ctx);
+	} /* end else getSpecialContentRenderer() */
 
 %><%if (ctx.getCurrentTemplate().isEndAreaTag()) {%><div class="end-area end-area-<%=area%>">&nbsp;</div><%}%><%
-if (areaWrapper && area != null) {%></div><%}%>
+	if (areaWrapper && area != null) {%></div><%}%>

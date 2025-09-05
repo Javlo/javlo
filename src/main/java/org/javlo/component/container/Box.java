@@ -15,553 +15,587 @@ import java.io.PrintStream;
 import java.util.*;
 
 public class Box extends AbstractVisualComponent implements ISection {
-	
-	protected String[] DEPTH_COLOR = new String[] {"#FF4545", "#FF9C73", "#FBD288", "#FCF596"};
 
-	private static final String TYPE = "box";
-	
-	protected String getCloseBoxInputName() {
-		return "close_box_" + getId();
-	}
+    protected String[] DEPTH_COLOR = new String[]{"#FF4545", "#FF9C73", "#FBD288", "#FCF596"};
 
-	protected String getTitleBoxInputName() {
-		return "title_" + getId();
-	}
+    private static final String TYPE = "box";
 
-	protected String getIdBoxInputName() {
-		return "id_" + getId();
-	}
+    protected String getCloseBoxInputName() {
+        return "close_box_" + getId();
+    }
 
-	protected String getLayoutBoxInputName() {
-		return "layout_" + getId();
-	}
+    protected String getTitleBoxInputName() {
+        return "title_" + getId();
+    }
 
-	protected String getColorsBoxInputName() {
-		return "colors_" + getId();
-	}
+    protected String getIdBoxInputName() {
+        return "id_" + getId();
+    }
 
-	protected String getFooterBoxInputName() {
-		return "footer_" + getId();
-	}
+    protected String getLayoutBoxInputName() {
+        return "layout_" + getId();
+    }
 
-	protected String getCSSClass(ContentContext ctx) {
-		if (getComponentCssClass(ctx) == null || getComponentCssClass(ctx).trim().length() == 0) {
-			return getType().toLowerCase() + " " + getComponentCssClass(ctx) + " content-box";
-		} else {
-			return getType().toLowerCase() + " " + getComponentCssClass(ctx) + " content-box";
-		}
-	}
+    public static class LayoutBean {
+        public String id;
+        public String label;
 
-	@Override
-	public String[] getStyleList(ContentContext ctx) {
-		if (isOpen(ctx)) {
-			return super.getStyleList(ctx);
-		} else {
-			return new String[0];
-		}
-	}
+        public LayoutBean(String id, String label) {
+            this.id = id;
+            this.label = label;
+        }
 
-	public String getDepthColor(int depth) {
-		return DEPTH_COLOR[depth % DEPTH_COLOR.length-1];
-	}
+        public LayoutBean(String both) {
+            this.id = both;
+            this.label = both;
+        }
+    }
 
-	@Override
-	public void prepareView(ContentContext ctx) throws Exception {
-		super.prepareView(ctx);
-		ctx.getRequest().setAttribute(CLOSE_BOX_ATTRIBUTE, isCloseBox());
-		ctx.getRequest().setAttribute("titleBox", getTitle());
-		ctx.getRequest().setAttribute("footerBox", getFooter());
-		ctx.getRequest().setAttribute("cssStyle", getCSSStyle(ctx));
+    protected String getColorsBoxInputName() {
+        return "colors_" + getId();
+    }
 
-		//ctx.getRequest().setAttribute("closeRow", isCloseRow(ctx));
-		ImageBackground bg = getBackgroundImage(ctx);
-		if (bg != null) {
-			ctx.getRequest().setAttribute("backgroundImage", new ImageBean(ctx, bg, "background"));
-		} else {
-			ctx.getRequest().setAttribute("backgroundImage", null);
-		}
-	}
+    protected String getFooterBoxInputName() {
+        return "footer_" + getId();
+    }
 
-	private ImageBackground getBackgroundImage(ContentContext ctx) {
-		if (isOpen(ctx)) {
-			IContentVisualComponent comp = getNextComponent();
-			while (comp != null && !comp.getType().equals(getType())) {
-				if (comp.getType().equals(ImageBackground.TYPE)) {
-					ImageBackground bg = (ImageBackground) comp;
-					if (bg.isForContainer()) {
-						return bg;
-					}
-				}
-				comp = comp.getNextComponent();
-			}
-		}
-		return null;
-	}
+    protected String getCSSClass(ContentContext ctx) {
+        if (getComponentCssClass(ctx) == null || getComponentCssClass(ctx).trim().length() == 0) {
+            return getType().toLowerCase() + " " + getComponentCssClass(ctx) + " content-box";
+        } else {
+            return getType().toLowerCase() + " " + getComponentCssClass(ctx) + " content-box";
+        }
+    }
 
-	@Override
-	public Box getOpenComponent(ContentContext ctx) {
-		int depth = 0;
-		if (!isCloseBox()) {
-			return this;
-		} else {
-			IContentVisualComponent comp = getPreviousComponent();
-			IContentVisualComponent previousComp = null;
-			while (comp != null && !(previousComp != null)) {
-				if (comp.getType().equals(getType())) {
-					if (!((IContainer) comp).isOpen(ctx)) {
-						depth++;
-					} else {
-						if (depth == 0) {
-							return (Box) comp;
-						} else {
-							depth--;
-						}
-					}
-				}
-				comp = comp.getPreviousComponent();
-			}
-		}
-		return null;
-	}
+    @Override
+    public String[] getStyleList(ContentContext ctx) {
+        if (isOpen(ctx)) {
+            return super.getStyleList(ctx);
+        } else {
+            return new String[0];
+        }
+    }
 
-	@Override
-	public Box getCloseComponent(ContentContext ctx) {
-		int depth = 0;
-		if (isCloseBox()) {
-			return this;
-		} else {
-			IContentVisualComponent comp = getNextComponent();
-			IContentVisualComponent nextComp = null;
-			while (comp != null && !(nextComp != null)) {
-				if (comp.getType().equals(getType())) {
-					if (((IContainer) comp).isOpen(ctx)) {
-						depth++;
-					} else {
-						if (depth == 0) {
-							return (Box) comp;
-						} else {
-							depth--;
-						}
-					}
-				}
-				comp = comp.getNextComponent();
-			}
-		}
-		return null;
-	}
+    public String getDepthColor(int depth) {
+        return DEPTH_COLOR[depth % DEPTH_COLOR.length - 1];
+    }
 
-	public String getHtmlId() {
-		if (!StringHelper.isEmpty(getManualId())) {
-			return getManualId();
-		} else {
-			return getType() + getId();
-		}
-	}
+    @Override
+    public void prepareView(ContentContext ctx) throws Exception {
+        super.prepareView(ctx);
+        ctx.getRequest().setAttribute(CLOSE_BOX_ATTRIBUTE, isCloseBox());
+        ctx.getRequest().setAttribute("titleBox", getTitle());
+        ctx.getRequest().setAttribute("footerBox", getFooter());
+        ctx.getRequest().setAttribute("cssStyle", getCSSStyle(ctx));
 
-	protected Collection<String> getLayouts() {
-		return Collections.EMPTY_LIST;
-	}
+        //ctx.getRequest().setAttribute("closeRow", isCloseRow(ctx));
+        ImageBackground bg = getBackgroundImage(ctx);
+        if (bg != null) {
+            ctx.getRequest().setAttribute("backgroundImage", new ImageBean(ctx, bg, "background"));
+        } else {
+            ctx.getRequest().setAttribute("backgroundImage", null);
+        }
+    }
 
-	protected Collection<String> getColors() {
-		return Collections.EMPTY_LIST;
-	}
+    private ImageBackground getBackgroundImage(ContentContext ctx) {
+        if (isOpen(ctx)) {
+            IContentVisualComponent comp = getNextComponent();
+            while (comp != null && !comp.getType().equals(getType())) {
+                if (comp.getType().equals(ImageBackground.TYPE)) {
+                    ImageBackground bg = (ImageBackground) comp;
+                    if (bg.isForContainer()) {
+                        return bg;
+                    }
+                }
+                comp = comp.getNextComponent();
+            }
+        }
+        return null;
+    }
 
-	@Override
-	protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
-		IContentVisualComponent prevComp = getOpenComponent(ctx);
-		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-		PrintStream out = new PrintStream(outStream);
+    @Override
+    public Box getOpenComponent(ContentContext ctx) {
+        int depth = 0;
+        if (!isCloseBox()) {
+            return this;
+        } else {
+            IContentVisualComponent comp = getPreviousComponent();
+            IContentVisualComponent previousComp = null;
+            while (comp != null && !(previousComp != null)) {
+                if (comp.getType().equals(getType())) {
+                    if (!((IContainer) comp).isOpen(ctx)) {
+                        depth++;
+                    } else {
+                        if (depth == 0) {
+                            return (Box) comp;
+                        } else {
+                            depth--;
+                        }
+                    }
+                }
+                comp = comp.getPreviousComponent();
+            }
+        }
+        return null;
+    }
 
-		out.println("<div class=\"checkbox\">");
+    @Override
+    public Box getCloseComponent(ContentContext ctx) {
+        int depth = 0;
+        if (isCloseBox()) {
+            return this;
+        } else {
+            IContentVisualComponent comp = getNextComponent();
+            IContentVisualComponent nextComp = null;
+            while (comp != null && !(nextComp != null)) {
+                if (comp.getType().equals(getType())) {
+                    if (((IContainer) comp).isOpen(ctx)) {
+                        depth++;
+                    } else {
+                        if (depth == 0) {
+                            return (Box) comp;
+                        } else {
+                            depth--;
+                        }
+                    }
+                }
+                comp = comp.getNextComponent();
+            }
+        }
+        return null;
+    }
 
-		if (getValue().trim().length() == 0) {
-			setValue("true");
-			if (prevComp != null) {
-				setStyle(ctx, prevComp.getComponentCssClass(ctx));
-			}
-			setModify();
-		}
-		out.println("<label>");
-		if (isCloseBox()) {
-			if (prevComp != null) {
-				setStyle(ctx, prevComp.getComponentCssClass(ctx));
-			}
-			out.println("<input type=\"checkbox\" name=\"" + getCloseBoxInputName() + "\" checked=\"checked\" />");
-		} else {
-			out.println("<input type=\"checkbox\" name=\"" + getCloseBoxInputName() + "\" />");
-		}
-		out.println(" close " + getType() + " ?</label></div>");
+    public String getHtmlId() {
+        if (!StringHelper.isEmpty(getManualId())) {
+            return getManualId();
+        } else {
+            return getType() + getId();
+        }
+    }
 
-		if (!isCloseBox()) {
-			if (getValue().trim().length() == 0) {
-				setValue("true");
-				if (prevComp != null) {
-					setStyle(ctx, prevComp.getComponentCssClass(ctx));
-				}
-				setModify();
-			}
-			
-			out.println("<div class=\"row\"><div class=\"col-md-6\">");
-			
-			out.println("<div class=\"form-group\">");
-			out.println("<label for=\"" + getTitleBoxInputName() + "\">Title</label>");
-			out.println("<input class=\"form-control\" type=\"text\" name=\"" + getTitleBoxInputName() + "\" value=\"" + XHTMLHelper.stringToAttribute(getTitle()) + "\" />");
-			out.println("</div>");
+    protected String[][] getLayouts(ContentContext ctx) {
+        String layoutConfig = getConfig(ctx).getProperty("layout", null);
+        if (!StringHelper.isEmpty(layoutConfig)) {
+            List<String[]> parsedLayouts = new ArrayList<>();
+            String[] items = layoutConfig.split(";");
+            for (String item : items) {
+                item = item.trim();
+                if (item.isEmpty()) {
+                    continue;
+                }
+                String[] parts = item.split(",", 2);
+                if (parts.length == 2) {
+                    parsedLayouts.add(new String[]{parts[0].trim(), parts[1].trim()});
+                } else {
+                    // If only one part, use it as both id and label
+                    parsedLayouts.add(new String[]{parts[0].trim(), parts[0].trim()});
+                }
+            }
+            return parsedLayouts.toArray(new String[parsedLayouts.size()][]);
+        }
+        return new String[0][0];
+    }
 
-			out.println("<div class=\"form-group\">");
-			out.println("<label for=\"" + getIdBoxInputName() + "\">id</label>");
-			out.println("<input class=\"form-control\" type=\"text\" name=\"" + getIdBoxInputName() + "\" value=\"" + XHTMLHelper.stringToAttribute(getManualId()) + "\" />");
-			out.println("</div>");
+    protected Collection<String> getColors() {
+        return Collections.EMPTY_LIST;
+    }
 
-			out.println("</div><div class=\"col-md-6\">");
+    @Override
+    protected String getEditXHTMLCode(ContentContext ctx) throws Exception {
+        IContentVisualComponent prevComp = getOpenComponent(ctx);
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        PrintStream out = new PrintStream(outStream);
 
-			if (getLayouts().size() > 0) {
-				out.println("<div class=\"form-group\">");
-				out.println("<label for=\"" + getLayoutBoxInputName() + "\">parallax</label>");
-				// out.println("<input class=\"form-control\" type=\"checkbox\" name=\"" +
-				// getParallaxBoxInputName() + "\" "+(isParallax()?"checked=\"checked\"')":"")+"
-				// />");
-				out.println(XHTMLHelper.getInputOneSelect(getLayoutBoxInputName(), getLayouts(), getContainerLayout(), "form-control"));
-				out.println("</div>");
-			}
+        out.println("<div class=\"checkbox\">");
 
-			if (getColors().size() > 0) {
-				out.println("<div class=\"form-group\">");
-				out.println("<label for=\"" + getColorsBoxInputName() + "\">color</label>");
-				out.println(XHTMLHelper.getInputOneSelect(getColorsBoxInputName(), getColors(), getContainerColor(), "form-control"));
-				out.println("</div>");
-			}
-			
-			out.println("</div></div>");
-		} else {
-			out.println("<div class=\"form-group\">");
-			out.println("<label for=\"" + getFooterBoxInputName() + "\">Footer</label>");
-			out.println("<input class=\"form-control\" type=\"text\" name=\"" + getFooterBoxInputName() + "\" value=\"" + XHTMLHelper.stringToAttribute(getFooter()) + "\" />");
-			out.println("</div>");
-		}
+        if (getValue().trim().length() == 0) {
+            setValue("true");
+            if (prevComp != null) {
+                setStyle(ctx, prevComp.getComponentCssClass(ctx));
+            }
+            setModify();
+        }
+        out.println("<label>");
+        if (isCloseBox()) {
+            if (prevComp != null) {
+                setStyle(ctx, prevComp.getComponentCssClass(ctx));
+            }
+            out.println("<input type=\"checkbox\" name=\"" + getCloseBoxInputName() + "\" checked=\"checked\" />");
+        } else {
+            out.println("<input type=\"checkbox\" name=\"" + getCloseBoxInputName() + "\" />");
+        }
+        out.println(" close " + getType() + " ?</label></div>");
 
-		out.close();
-		return new String(outStream.toByteArray());
-	}
+        if (!isCloseBox()) {
+            if (getValue().trim().length() == 0) {
+                setValue("true");
+                if (prevComp != null) {
+                    setStyle(ctx, prevComp.getComponentCssClass(ctx));
+                }
+                setModify();
+            }
 
-	protected String getTag() {
-		return "div";
-	}
+            out.println("<div class=\"row\"><div class=\"col-md-6\">");
 
-	@Override
-	public String getType() {
-		return TYPE;
-	}
-	//
-	// @Override
-	// protected String getColomnablePrefix(ContentContext ctx) {
-	// if (!isCloseBox()) {
-	// return super.getColomnablePrefix(ctx);
-	// } else {
-	// Box box = getOpenComponent(ctx);
-	// if (box != null) {
-	// return box.getColomnablePrefix(ctx);
-	// }
-	// }
-	// return "";
-	// }
+            out.println("<div class=\"form-group\">");
+            out.println("<label for=\"" + getTitleBoxInputName() + "\">Title</label>");
+            out.println("<input class=\"form-control\" type=\"text\" name=\"" + getTitleBoxInputName() + "\" value=\"" + XHTMLHelper.stringToAttribute(getTitle()) + "\" />");
+            out.println("</div>");
 
-	@Override
-	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		if (!isCloseBox()) {
-			return getColomnablePrefix(ctx);
-		} else {
-			return "";
-		}
-	}
+            out.println("<div class=\"form-group\">");
+            out.println("<label for=\"" + getIdBoxInputName() + "\">id</label>");
+            out.println("<input class=\"form-control\" type=\"text\" name=\"" + getIdBoxInputName() + "\" value=\"" + XHTMLHelper.stringToAttribute(getManualId()) + "\" />");
+            out.println("</div>");
 
-	// @Override
-	// public String getSuffixViewXHTMLCode(ContentContext ctx) {
-	// if (isCloseBox()) {
-	// Box parentBox = getOpenComponent(ctx);
-	// if (parentBox != null) {
-	// return parentBox.getColomnableSuffix(ctx);
-	// }
-	// }
-	// return "";
-	// }
+            out.println("</div><div class=\"col-md-6\">");
 
-	@Override
-	protected String getColumn(ContentContext ctx) {
-		if (isOpen(ctx)) {
-			return super.getColumn(ctx);
-		} else {
-			return "";
-		}
-	}
+            if (getLayouts(ctx).length > 0) {
+                out.println("<div class=\"form-group\">");
+                out.println("<label for=\"" + getLayoutBoxInputName() + "\">Layout</label>");
+                // out.println("<input class=\"form-control\" type=\"checkbox\" name=\"" +
+                // getParallaxBoxInputName() + "\" "+(isParallax()?"checked=\"checked\"')":"")+"
+                // />");
+                out.println(XHTMLHelper.getInputOneSelect(getLayoutBoxInputName(), getLayouts(ctx), getContainerLayout(), "form-control", null));
+                out.println("</div>");
+            }
 
-	@Override
-	protected String getForcedPrefixViewXHTMLCode(ContentContext ctx) {
-		return "";
-	}
+            if (getColors().size() > 0) {
+                out.println("<div class=\"form-group\">");
+                out.println("<label for=\"" + getColorsBoxInputName() + "\">color</label>");
+                out.println(XHTMLHelper.getInputOneSelect(getColorsBoxInputName(), getColors(), getContainerColor(), "form-control"));
+                out.println("</div>");
+            }
 
-	@Override
-	protected String getForcedSuffixViewXHTMLCode(ContentContext ctx) {
-		return "";
-	}
+            out.println("</div></div>");
+        } else {
+            out.println("<div class=\"form-group\">");
+            out.println("<label for=\"" + getFooterBoxInputName() + "\">Footer</label>");
+            out.println("<input class=\"form-control\" type=\"text\" name=\"" + getFooterBoxInputName() + "\" value=\"" + XHTMLHelper.stringToAttribute(getFooter()) + "\" />");
+            out.println("</div>");
+        }
 
-	protected boolean isBoxCloseRow(ContentContext ctx) {
-		int max = getColumnMaxSize(ctx);
-		IContentVisualComponent next = getNextComponent();
-		while (next != null && !next.getType().equals(getType())) {
-			next = next.getNextComponent();
-		}
-		boolean close = false;
-		/* auto */
-		if (getColumnSize(ctx) == 0) {
-			ctx.setColumnableSize(0, ctx.getColumnableDepth());
-			return true;
-		}
-		ctx.setColumnableSize(ctx.getColumnableSize(ctx.getColumnableDepth()) + getColumnSize(ctx), ctx.getColumnableDepth());
-		if (next != null) {
-			if (ctx.getColumnableSize(ctx.getColumnableDepth()) + next.getColumnSize(ctx) > max || next.getColumnSize(ctx) < 0 || !next.isColumnable(ctx)) {
-				close = true;
-				ctx.setColumnableSize(0, ctx.getColumnableDepth());
-			}
-		} else {
-			close = true;
-			ctx.setColumnableSize(0, ctx.getColumnableDepth());
-		}
-		return close;
-	}
+        out.close();
+        return new String(outStream.toByteArray());
+    }
 
-	// @Override
-	// protected boolean isCloseRow(ContentContext ctx) {
-	// if (!isCloseBox()) {
-	// Box closeBox = getCloseComponent(ctx);
-	// if (closeBox != null) {
-	// return closeBox.isCloseRow(ctx);
-	// }
-	// }
-	// return isBoxCloseRow(ctx);
-	// }
-	//
-	// @Override
-	// protected boolean isOpenRow(ContentContext ctx) {
-	// if (isCloseBox()) {
-	// Box openBox = getOpenComponent(ctx);
-	// if (openBox != null) {
-	// return openBox.isOpenRow(ctx);
-	// }
-	// }
-	// return isBoxCloseRow(ctx);
-	// }
+    protected String getTag() {
+        return "div";
+    }
 
-	protected String getInternalPrefix(ContentContext ctx) {
-		String parent = "";
-		if (!StringHelper.isEmpty(getTitle())) {
-			parent = "<h" + (ctx.getTitleDepth() + 1) + " class=\"title\">" + getTitle() + "</h" + (ctx.getTitleDepth() + 1) + ">";
-		}
-		return getConfig(ctx).getProperty("html.internal-prefix", "") + parent;
-	}
+    @Override
+    public String getType() {
+        return TYPE;
+    }
+    //
+    // @Override
+    // protected String getColomnablePrefix(ContentContext ctx) {
+    // if (!isCloseBox()) {
+    // return super.getColomnablePrefix(ctx);
+    // } else {
+    // Box box = getOpenComponent(ctx);
+    // if (box != null) {
+    // return box.getColomnablePrefix(ctx);
+    // }
+    // }
+    // return "";
+    // }
 
-	protected String getInternalSuffix(ContentContext ctx) {
-		String parent = "";
-		if (!StringHelper.isEmpty(getFooter())) {
-			parent = "<div class=\"footer\">" + getFooter() + "</div>";
-		}
-		return parent + getConfig(ctx).getProperty("html.internal-suffix", "");
-	}
+    @Override
+    public String getPrefixViewXHTMLCode(ContentContext ctx) {
+        if (!isCloseBox()) {
+            return getColomnablePrefix(ctx);
+        } else {
+            return "";
+        }
+    }
 
-	protected Stack<Character> getBoxStack(ContentContext ctx) {
-		final String BOX_KEY = getType() + "_stack_char";
-		Stack<Character> boxStack = (Stack<Character>) ctx.getRequest().getAttribute(BOX_KEY);
-		if (boxStack == null) {
-			boxStack = new Stack<Character>();
-			ctx.getRequest().setAttribute(BOX_KEY, boxStack);
-		}
-		return boxStack;
-	}
+    // @Override
+    // public String getSuffixViewXHTMLCode(ContentContext ctx) {
+    // if (isCloseBox()) {
+    // Box parentBox = getOpenComponent(ctx);
+    // if (parentBox != null) {
+    // return parentBox.getColomnableSuffix(ctx);
+    // }
+    // }
+    // return "";
+    // }
 
-	@Override
-	public String getCurrentRenderer(ContentContext ctx) {
-		if (!isCloseBox()) {
-			return super.getCurrentRenderer(ctx);
-		} else {
-			IContentVisualComponent open = getOpenComponent(ctx);
-			if (open != null && open != this) {
-				return open.getCurrentRenderer(ctx);
-			} else {
-				return super.getCurrentRenderer(ctx);
-			}
-		}
-	}
+    @Override
+    protected String getColumn(ContentContext ctx) {
+        if (isOpen(ctx)) {
+            return super.getColumn(ctx);
+        } else {
+            return "";
+        }
+    }
 
-	@Override
-	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		final String BOX_KEY = getType() + "_stack_int";
-		if (!isCloseBox()) {
-			String suffix = "";
-			if (ctx.isEditPreview()) {
-				Integer boxCounter = (Integer) ctx.getRequest().getAttribute(BOX_KEY);
-				if (boxCounter == null) {
-					boxCounter = 0;
-					ctx.getRequest().setAttribute(BOX_KEY, boxCounter);
-				} else {
-					boxCounter++;
-					ctx.getRequest().setAttribute(BOX_KEY, boxCounter);
-				}
-				getBoxStack(ctx).push(StringHelper.ALPHABET_UPPER_CASE.charAt(boxCounter % 26));
-				suffix = "<div " + getPreviewAttributes(ctx) + ">[Open " + getType() + " - " + StringHelper.ALPHABET_UPPER_CASE.charAt(boxCounter % 26) + " - " + getStyle() + "]</div>";
-			}
-			return getOpenCode(ctx) + suffix + getInternalPrefix(ctx);
-		} else {
-			String prefix = "";
-			if (ctx.isAsPreviewMode() && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isPreviewEditionMode()) {
-				if (!getBoxStack(ctx).isEmpty()) {
-					prefix = "<div " + getPreviewAttributes(ctx) + ">[Close " + getType() + " - " + getBoxStack(ctx).pop() + "]</div>";
-				}
-			}
-			return prefix + getInternalSuffix(ctx) + getCloseCode(ctx);
-		}
-	}
+    @Override
+    protected String getForcedPrefixViewXHTMLCode(ContentContext ctx) {
+        return "";
+    }
 
-	public boolean isCloseBox() {
-		if (getValue().contains(";")) {
-			return StringHelper.isTrue(StringHelper.stringToCollection(getValue(), ";").get(0));
-		} else {
-			return StringHelper.isTrue(getValue());
-		}
-	}
+    @Override
+    protected String getForcedSuffixViewXHTMLCode(ContentContext ctx) {
+        return "";
+    }
 
-	public String getTitle() {
-		if (getValue().contains(";")) {
-			return StringHelper.stringToCollection(getValue(), ";").get(1);
-		} else {
-			return "";
-		}
-	}
+    protected boolean isBoxCloseRow(ContentContext ctx) {
+        int max = getColumnMaxSize(ctx);
+        IContentVisualComponent next = getNextComponent();
+        while (next != null && !next.getType().equals(getType())) {
+            next = next.getNextComponent();
+        }
+        boolean close = false;
+        /* auto */
+        if (getColumnSize(ctx) == 0) {
+            ctx.setColumnableSize(0, ctx.getColumnableDepth());
+            return true;
+        }
+        ctx.setColumnableSize(ctx.getColumnableSize(ctx.getColumnableDepth()) + getColumnSize(ctx), ctx.getColumnableDepth());
+        if (next != null) {
+            if (ctx.getColumnableSize(ctx.getColumnableDepth()) + next.getColumnSize(ctx) > max || next.getColumnSize(ctx) < 0 || !next.isColumnable(ctx)) {
+                close = true;
+                ctx.setColumnableSize(0, ctx.getColumnableDepth());
+            }
+        } else {
+            close = true;
+            ctx.setColumnableSize(0, ctx.getColumnableDepth());
+        }
+        return close;
+    }
 
-	public String getContainerLayout() {
-		List<String> values = StringHelper.stringToCollection(getValue(), ";");
-		if (values.size() > 4) {
-			return StringHelper.stringToCollection(getValue(), ";").get(4);
-		} else {
-			return "";
-		}
-	}
-	
-	public String getContainerColor() {
-		List<String> values = StringHelper.stringToCollection(getValue(), ";");
-		if (values.size() > 5) {
-			return StringHelper.stringToCollection(getValue(), ";").get(5);
-		} else {
-			return "";
-		}
-	}
+    // @Override
+    // protected boolean isCloseRow(ContentContext ctx) {
+    // if (!isCloseBox()) {
+    // Box closeBox = getCloseComponent(ctx);
+    // if (closeBox != null) {
+    // return closeBox.isCloseRow(ctx);
+    // }
+    // }
+    // return isBoxCloseRow(ctx);
+    // }
+    //
+    // @Override
+    // protected boolean isOpenRow(ContentContext ctx) {
+    // if (isCloseBox()) {
+    // Box openBox = getOpenComponent(ctx);
+    // if (openBox != null) {
+    // return openBox.isOpenRow(ctx);
+    // }
+    // }
+    // return isBoxCloseRow(ctx);
+    // }
 
-	protected String getManualId() {
-		List<String> values = StringHelper.stringToCollection(getValue(), ";");
-		if (values.size() > 3) {
-			return StringHelper.stringToCollection(getValue(), ";").get(3);
-		} else {
-			return "";
-		}
-	}
+    protected String getInternalPrefix(ContentContext ctx) {
+        String parent = "";
+        if (!StringHelper.isEmpty(getTitle())) {
+            parent = "<h" + (ctx.getTitleDepth() + 1) + " class=\"title\">" + getTitle() + "</h" + (ctx.getTitleDepth() + 1) + ">";
+        }
+        return getConfig(ctx).getProperty("html.internal-prefix", "") + parent;
+    }
 
-	protected String getFooter() {
-		if (getValue().contains(";")) {
-			return StringHelper.stringToCollection(getValue(), ";").get(2);
-		} else {
-			return "";
-		}
-	}
+    protected String getInternalSuffix(ContentContext ctx) {
+        String parent = "";
+        if (!StringHelper.isEmpty(getFooter())) {
+            parent = "<div class=\"footer\">" + getFooter() + "</div>";
+        }
+        return parent + getConfig(ctx).getProperty("html.internal-suffix", "");
+    }
 
-	@Override
-	public String performConfig(ContentContext ctx) throws Exception {
-		String msg = super.performConfig(ctx);
-		Box refcomp = getCloseComponent(ctx);
-		if (refcomp == null) {
-			refcomp = getOpenComponent(ctx);
-		}
-		if (refcomp != null) {
-			refcomp.setRenderer(ctx, getRenderer(ctx));
-		}
-		return msg;
-	}
+    protected Stack<Character> getBoxStack(ContentContext ctx) {
+        final String BOX_KEY = getType() + "_stack_char";
+        Stack<Character> boxStack = (Stack<Character>) ctx.getRequest().getAttribute(BOX_KEY);
+        if (boxStack == null) {
+            boxStack = new Stack<Character>();
+            ctx.getRequest().setAttribute(BOX_KEY, boxStack);
+        }
+        return boxStack;
+    }
 
-	@Override
-	public String performEdit(ContentContext ctx) throws Exception {
-		performColumnable(ctx);
-		RequestService requestService = RequestService.getInstance(ctx.getRequest());
-		boolean closeBox = requestService.getParameter(getCloseBoxInputName(), null) != null;
-		String title = requestService.getParameter(getTitleBoxInputName(), "");
-		String manualId = requestService.getParameter(getIdBoxInputName(), "");
-		String footer = requestService.getParameter(getFooterBoxInputName(), "");
-		String layout = requestService.getParameter(getLayoutBoxInputName(), "");
-		String color = requestService.getParameter(getColorsBoxInputName(), "");
-		if (closeBox) {
-			title = getTitle();
-		} else {
-			footer = getFooter();
-		}
-		String newValue = StringHelper.collectionToString(Arrays.asList(new String[] { "" + closeBox, title, footer, manualId, layout, color }), ";");
-		if (!newValue.equals(getValue())) {
-			setValue(newValue);
-			setModify();
-			setNeedRefresh(true);
-		}
-		return null;
-	}
+    @Override
+    public String getCurrentRenderer(ContentContext ctx) {
+        if (!isCloseBox()) {
+            return super.getCurrentRenderer(ctx);
+        } else {
+            IContentVisualComponent open = getOpenComponent(ctx);
+            if (open != null && open != this) {
+                return open.getCurrentRenderer(ctx);
+            } else {
+                return super.getCurrentRenderer(ctx);
+            }
+        }
+    }
 
-	@Override
-	public void setOpen(ContentContext ctx, boolean open) {
-		String newValue = StringHelper.collectionToString(Arrays.asList(new String[] { "" + !open, getTitle(), getFooter() }), ";");
-		setValue(newValue);
-	}
+    @Override
+    public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+        final String BOX_KEY = getType() + "_stack_int";
+        if (!isCloseBox()) {
+            String suffix = "";
+            if (ctx.isEditPreview()) {
+                Integer boxCounter = (Integer) ctx.getRequest().getAttribute(BOX_KEY);
+                if (boxCounter == null) {
+                    boxCounter = 0;
+                    ctx.getRequest().setAttribute(BOX_KEY, boxCounter);
+                } else {
+                    boxCounter++;
+                    ctx.getRequest().setAttribute(BOX_KEY, boxCounter);
+                }
+                getBoxStack(ctx).push(StringHelper.ALPHABET_UPPER_CASE.charAt(boxCounter % 26));
+                suffix = "<div " + getPreviewAttributes(ctx) + ">[Open " + getType() + " - " + StringHelper.ALPHABET_UPPER_CASE.charAt(boxCounter % 26) + " - " + getStyle() + "]</div>";
+            }
+            return getOpenCode(ctx) + suffix + getInternalPrefix(ctx);
+        } else {
+            String prefix = "";
+            if (ctx.isAsPreviewMode() && EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession()).isPreviewEditionMode()) {
+                if (!getBoxStack(ctx).isEmpty()) {
+                    prefix = "<div " + getPreviewAttributes(ctx) + ">[Close " + getType() + " - " + getBoxStack(ctx).pop() + "]</div>";
+                }
+            }
+            return prefix + getInternalSuffix(ctx) + getCloseCode(ctx);
+        }
+    }
 
-	@Override
-	public String getOpenCode(ContentContext ctx) {
-		return '<' + getTag() + " class=\"" + getCSSClass(ctx) + "\" style=\"" + getCSSStyle(ctx) + "\">";
-	}
+    public boolean isCloseBox() {
+        if (getValue().contains(";")) {
+            return StringHelper.isTrue(StringHelper.stringToCollection(getValue(), ";").get(0));
+        } else {
+            return StringHelper.isTrue(getValue());
+        }
+    }
 
-	@Override
-	public String getCloseCode(ContentContext ctx) {
-		return "</" + getTag() + '>';
-	}
+    public String getTitle() {
+        if (getValue().contains(";")) {
+            return StringHelper.stringToCollection(getValue(), ";").get(1);
+        } else {
+            return "";
+        }
+    }
 
-	@Override
-	public boolean isOpen(ContentContext ctx) {
-		return !isCloseBox();
-	}
+    public String getContainerLayout() {
+        List<String> values = StringHelper.stringToCollection(getValue(), ";");
+        if (values.size() > 4) {
+            return StringHelper.stringToCollection(getValue(), ";").get(4);
+        } else {
+            return "";
+        }
+    }
 
-	@Override
-	public int getComplexityLevel(ContentContext ctx) {
-		return getConfig(ctx).getComplexity(AbstractVisualComponent.COMPLEXITY_STANDARD);
-	}
+    public String getContainerColor() {
+        List<String> values = StringHelper.stringToCollection(getValue(), ";");
+        if (values.size() > 5) {
+            return StringHelper.stringToCollection(getValue(), ";").get(5);
+        } else {
+            return "";
+        }
+    }
 
-	@Override
-	public String getHexColor() {
-		return IContentVisualComponent.CONTAINER_COLOR;
-	}
+    protected String getManualId() {
+        List<String> values = StringHelper.stringToCollection(getValue(), ";");
+        if (values.size() > 3) {
+            return StringHelper.stringToCollection(getValue(), ";").get(3);
+        } else {
+            return "";
+        }
+    }
 
-	@Override
-	public boolean isContentCachable(ContentContext ctx) {
-		return true;
-	}
+    protected String getFooter() {
+        if (getValue().contains(";")) {
+            return StringHelper.stringToCollection(getValue(), ";").get(2);
+        } else {
+            return "";
+        }
+    }
 
-	@Override
-	public boolean isDispayEmptyXHTMLCode(ContentContext ctx) throws Exception {
-		return false;
-	}
+    @Override
+    public String performConfig(ContentContext ctx) throws Exception {
+        String msg = super.performConfig(ctx);
+        Box refcomp = getCloseComponent(ctx);
+        if (refcomp == null) {
+            refcomp = getOpenComponent(ctx);
+        }
+        if (refcomp != null) {
+            refcomp.setRenderer(ctx, getRenderer(ctx));
+        }
+        return msg;
+    }
 
-	@Override
-	public String getFontAwesome() {
-		return "square-o";
-	}
+    @Override
+    public String performEdit(ContentContext ctx) throws Exception {
+        performColumnable(ctx);
+        RequestService requestService = RequestService.getInstance(ctx.getRequest());
+        boolean closeBox = requestService.getParameter(getCloseBoxInputName(), null) != null;
+        String title = requestService.getParameter(getTitleBoxInputName(), "");
+        String manualId = requestService.getParameter(getIdBoxInputName(), "");
+        String footer = requestService.getParameter(getFooterBoxInputName(), "");
+        String layout = requestService.getParameter(getLayoutBoxInputName(), "");
+        String color = requestService.getParameter(getColorsBoxInputName(), "");
+        if (closeBox) {
+            title = getTitle();
+        } else {
+            footer = getFooter();
+        }
+        String newValue = StringHelper.collectionToString(Arrays.asList(new String[]{"" + closeBox, title, footer, manualId, layout, color}), ";");
+        if (!newValue.equals(getValue())) {
+            setValue(newValue);
+            setModify();
+            setNeedRefresh(true);
+        }
+        return null;
+    }
 
-	@Override
-	protected boolean getColumnableDefaultValue() {
-		return true;
-	}
+    @Override
+    public void setOpen(ContentContext ctx, boolean open) {
+        String newValue = StringHelper.collectionToString(Arrays.asList(new String[]{"" + !open, getTitle(), getFooter()}), ";");
+        setValue(newValue);
+    }
 
-	@Override
-	public String getSectionId() {
-		return "B"+getId();
-	}
+    @Override
+    public String getOpenCode(ContentContext ctx) {
+        return '<' + getTag() + " class=\"" + getCSSClass(ctx) + "\" style=\"" + getCSSStyle(ctx) + "\">";
+    }
+
+    @Override
+    public String getCloseCode(ContentContext ctx) {
+        return "</" + getTag() + '>';
+    }
+
+    @Override
+    public boolean isOpen(ContentContext ctx) {
+        return !isCloseBox();
+    }
+
+    @Override
+    public int getComplexityLevel(ContentContext ctx) {
+        return getConfig(ctx).getComplexity(AbstractVisualComponent.COMPLEXITY_STANDARD);
+    }
+
+    @Override
+    public String getHexColor() {
+        return IContentVisualComponent.CONTAINER_COLOR;
+    }
+
+    @Override
+    public boolean isContentCachable(ContentContext ctx) {
+        return true;
+    }
+
+    @Override
+    public boolean isDispayEmptyXHTMLCode(ContentContext ctx) throws Exception {
+        return false;
+    }
+
+    @Override
+    public String getFontAwesome() {
+        return "square-o";
+    }
+
+    @Override
+    protected boolean getColumnableDefaultValue() {
+        return true;
+    }
+
+    @Override
+    public String getSectionId() {
+        return "B" + getId();
+    }
 }

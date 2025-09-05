@@ -1438,7 +1438,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		id = id + StringHelper.getShortRandomId();
 		String[][] paramsLabelText = new String[][] { { "rows", rows }, { "cols", "100" }, { "class", "tinymce-light" }, { "id", id } };
 		out.println(XHTMLHelper.getTextArea(getLabelTextInputName(), getLabel(), paramsLabelText));
-		out.println("<script type=\"text/javascript\">" + jsFormat + jsFontsize + jsWysiwygCss + " function updateWysiwyg" + getId() + "() {console.log('loadwysiwig:" + id + "'); loadWysiwyg('#" + id + "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "', format, fontsize, wysiwygCss)};jQuery(document).ready(updateWysiwyg" + getId() + ");</script>");
+		out.println("<script type=\"text/javascript\">" + jsFormat + jsFontsize + jsWysiwygCss + " function updateWysiwyg" + getId() + "() {loadWysiwyg('#" + id + "','" + getEditorComplexity(ctx) + "','" + chooseImageURL + "', format, fontsize, wysiwygCss)};jQuery(document).ready(updateWysiwyg" + getId() + ");</script>");
 		out.println("</div>");
 
 		if (isFloatText(ctx)) {

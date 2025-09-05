@@ -22,8 +22,14 @@ public class Section extends Box {
 	private static final String COLOR_SECONDARY = "secondary";
 	
 	private static final String NEUTRAL = "neutral";
-	
-	private static final Collection<String> layouts = Arrays.asList(new String[] {PARALLAX_NEUTRAL, PARALLAX_LIGHT, PARALLAX_DARK, FIX_BACKGROUND});
+
+	private static final String[][] LAYOUTS = {
+			{ PARALLAX_NEUTRAL, PARALLAX_NEUTRAL },
+			{ PARALLAX_LIGHT, PARALLAX_LIGHT },
+			{ PARALLAX_DARK, PARALLAX_DARK },
+			{ FIX_BACKGROUND, FIX_BACKGROUND }
+	};
+
 	private static final Collection<String> colors = Arrays.asList(new String[] {COLOR_PRIMARY, COLOR_SECONDARY, NEUTRAL});
 	
 	private static final String TYPE = "section";
@@ -34,8 +40,13 @@ public class Section extends Box {
 	}
 	
 	@Override
-	protected Collection<String> getLayouts() {
-		return layouts;
+	protected String[][] getLayouts(ContentContext ctx) {
+		String layoutConfig = getConfig(ctx).getProperty("layout", null);
+		String[][] out = super.getLayouts(ctx);
+		if (out.length==0) {
+			out = LAYOUTS;
+		}
+		return out;
 	}
 	
 	@Override
