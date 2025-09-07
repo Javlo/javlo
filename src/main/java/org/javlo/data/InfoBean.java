@@ -1628,6 +1628,14 @@ public class InfoBean {
 	}
 
 	/**
+	 * return true if content is editable in preview mode
+	 * @return
+	 */
+	public boolean isPreviewEditionMode() {
+		return ctx.isAsPreviewMode();
+	}
+
+	/**
 	 * timestamp initialised when java VM is started.
 	 * 
 	 * @return
