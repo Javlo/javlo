@@ -1,26 +1,20 @@
 package org.javlo.servlet;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.utils.TimeMap;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.*;
 
 public class ProxyServlet extends HttpServlet {
 	
@@ -28,8 +22,8 @@ public class ProxyServlet extends HttpServlet {
 	
 	private static String TEST_URL = "http://upload.wikimedia.org/wikipedia/commons/5/5a/Wikipedia-logo-v2-fr.png";
 	
-	private static Map<String,URL> urls = Collections.synchronizedMap(new TimeMap<String, URL>(60*60));  
-	private static Map<URL,String> keys = Collections.synchronizedMap(new TimeMap<URL,String>(70*60));
+	private static final Map<String,URL> urls = Collections.synchronizedMap(new TimeMap<String, URL>(60*60));
+	private static final Map<URL,String> keys = Collections.synchronizedMap(new TimeMap<URL,String>(70*60));
 
 	private static final long serialVersionUID = 1L;
 	

@@ -140,7 +140,7 @@ public class ProxyService implements IAction {
             gzipOut.finish();
         }
 
-        byte[] gzippedData = contentBuffer.toByteArray();
+
 
         // Headers
         Map<String, List<String>> headers = new HashMap<>();
@@ -159,8 +159,11 @@ public class ProxyService implements IAction {
         }
 
         // Enregistrement dans le cache
-        if (cache != null) {
-            cache.put(cacheKey, new HttpBean(gzippedData, contentType, headers));
+        byte[] gzippedData = contentBuffer.toByteArray();
+        if (contentBuffer.size() > 0) {
+            if (cache != null) {
+                cache.put(cacheKey, new HttpBean(gzippedData, contentType, headers));
+            }
         }
 
         // Envoi au client
