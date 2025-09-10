@@ -56,6 +56,7 @@ public class ProxyService implements IAction {
 
         String key = extraceKey(ctx);
         if (key == null || key.length() <= 1) {
+            logger.warning("No key specified in path");
             ctx.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST, "No key specified in path");
             return "No key specified in path";
         }
@@ -67,6 +68,7 @@ public class ProxyService implements IAction {
         if (cache != null) {
             HttpBean cached = cache.get(cacheKey);
             if (cached != null) {
+                logger.info("found in cache : "+cacheKey);
                 ctx.getResponse().setContentType(cached.getContentType());
                 ctx.getResponse().setHeader("Content-Encoding", "gzip");
                 ctx.getResponse().setHeader("Vary", "Accept-Encoding");
@@ -97,6 +99,7 @@ public class ProxyService implements IAction {
         Properties proxyMappings = ctx.getGlobalContext().getProxyMappings();
         String targetUrl = proxyMappings.getProperty(key);
         if (targetUrl == null) {
+            logger.severe("No URL mapped for key: " + key);
             ctx.getResponse().sendError(HttpServletResponse.SC_NOT_FOUND, "No URL mapped for key: " + key);
             return "No URL mapped for key: " + key;
         }
@@ -139,8 +142,6 @@ public class ProxyService implements IAction {
             actualIn.transferTo(gzipOut);
             gzipOut.finish();
         }
-
-
 
         // Headers
         Map<String, List<String>> headers = new HashMap<>();
