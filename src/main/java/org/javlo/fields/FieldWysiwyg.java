@@ -47,6 +47,9 @@ public class FieldWysiwyg extends Field {
 	}
 
 	protected String getInnerHtml() {
+		if (getValue() == null) {
+			return null;
+		}
 		String outValue = getValue().trim();
 		if (outValue.startsWith("<p>") && outValue.endsWith("</p>")) {
 			// Remove <p> (3 chars) and </p> (4 chars)
