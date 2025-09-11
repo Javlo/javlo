@@ -1773,9 +1773,6 @@ public class Template implements Comparable<Template> {
 
 	public synchronized Map getI18nProperties(GlobalContext globalContext, Locale locale, int mode) throws IOException {
 
-		System.out.println("######## >> getI18nProperties");
-
-
 		String filePrefix = I18N_VIEW_FILE;
 		if (mode == ContentContext.EDIT_MODE) {
 			filePrefix = I18N_EDIT_FILE;
@@ -1783,12 +1780,21 @@ public class Template implements Comparable<Template> {
 		if (locale == null) {
 			return null;
 		}
-		final String KEY = locale.getLanguage() + mode;
+		String KEY = locale.getLanguage() + mode;
 		Map propI18n = i18n.get(KEY);
+		if (propI18n == null && KEY.length() > 2) {
+			KEY = KEY.substring(0, 2) + mode;
+			propI18n = i18n.get(KEY);		}
+
 		if (propI18n == null) {
 			synchronized (globalContext.getLockImportTemplate()) {
 				if (config != null) {
-					File i18nFile = new File(URLHelper.mergePath(getWorkTemplateRealPath(globalContext), filePrefix + locale.getLanguage() + ".properties"));
+					String lang = locale.getLanguage();
+					File i18nFile = new File(URLHelper.mergePath(getWorkTemplateRealPath(globalContext), filePrefix + lang + ".properties"));
+					if (lang.length() > 2 && !i18nFile.exists()) {
+						lang = lang.substring(0,2);
+						i18nFile = new File(URLHelper.mergePath(getWorkTemplateRealPath(globalContext), filePrefix + lang + ".properties"));
+					}
 					System.out.println(">>>>>>>>>> 1/ file : "+i18nFile);
 					if (i18nFile.exists()) {
 						System.out.println(">>>>>>>>>> load : "+i18nFile);
