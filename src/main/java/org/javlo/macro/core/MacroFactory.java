@@ -51,6 +51,7 @@ public class MacroFactory {
 		macros.add(new CreateAllContentSample());
 		macros.add(new CreateArticle());
 		macros.add(new CreateArticleWidthTemplates());
+		macros.add(new CreateArticleWidthTemplatesYear());
 		macros.add(new CreateAlphabeticChildrenHereMacro());
 		macros.add(new CreateArticleComposition());
 		macros.add(new ImportHTMLPageMacro());

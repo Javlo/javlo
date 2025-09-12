@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 
 public class CreateArticleWidthTemplates implements IInteractiveMacro, IAction {
 
-    private static Logger logger = Logger.getLogger(CreateArticle.class.getName());
+    private static Logger logger = Logger.getLogger(CreateArticleWidthTemplates.class.getName());
 
     @Override
     public String getName() {
@@ -39,6 +39,10 @@ public class CreateArticleWidthTemplates implements IInteractiveMacro, IAction {
     @Override
     public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
         return null;
+    }
+
+    public boolean isMonth() {
+        return true;
     }
 
     @Override
@@ -63,6 +67,8 @@ public class CreateArticleWidthTemplates implements IInteractiveMacro, IAction {
 
     @Override
     public String prepare(ContentContext ctx) {
+
+        ctx.getRequest().setAttribute("month", isMonth());
 
         Map<String, String> rootPages = new HashMap<String, String>();
         boolean found = false;
@@ -129,6 +135,7 @@ public class CreateArticleWidthTemplates implements IInteractiveMacro, IAction {
     public static String performCreate(RequestService rs, EditContext editCtx, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) {
         String pageName = rs.getParameter("root", null);
         String date = rs.getParameter("date", null);
+        boolean month = StringHelper.isTrue(rs.getParameter("month", null), true);
 
         boolean duplicate = rs.getParameter("duplicate", null) != null;
         String message = null;
@@ -174,11 +181,14 @@ public class CreateArticleWidthTemplates implements IInteractiveMacro, IAction {
                 }
                 String yearPageName = rootPage.getName() + "-" + cal.get(Calendar.YEAR);
                 MenuElement yearPage = MacroHelper.addPageIfNotExist(ctxLg, rootPage.getName(), yearPageName, true);
-                MacroHelper.createMonthStructure(ctxLg, yearPage);
-                String mountPageName = MacroHelper.getMonthPageName(ctxLg, yearPage.getName(), articleDate);
-                MenuElement mountPage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctxLg).searchChildFromName(mountPageName);
-                if (mountPage != null) {
-                    newPage = MacroHelper.createArticlePageName(ctx, mountPage);
+                MenuElement parentPage = yearPage;
+                if (month) {
+                    MacroHelper.createMonthStructure(ctxLg, yearPage);
+                    String mountPageName = MacroHelper.getMonthPageName(ctxLg, yearPage.getName(), articleDate);
+                    parentPage = ContentService.getInstance(ctx.getRequest()).getNavigation(ctxLg).searchChildFromName(mountPageName);
+                }
+                if (parentPage != null) {
+                    newPage = MacroHelper.createArticlePageName(ctx, parentPage);
                     if (newPage != null) {
                         MenuElement page;
                         ContentService content = ContentService.getInstance(ctx.getRequest());
@@ -262,8 +272,6 @@ public class CreateArticleWidthTemplates implements IInteractiveMacro, IAction {
                             m.store(ctx.getRequest().getSession().getServletContext());
                         }
                     }
-                } else {
-                    message = "mount page not found : " + mountPageName;
                 }
             } else {
                 message = pageName + " not found.";

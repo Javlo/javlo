@@ -3,6 +3,7 @@ ${js}
 <form method="post" action="${info.currentURL}" class="create-article-macro">
 	<input type="hidden" name="webaction" value="macro-create-article-width-templates.create" />
 	<input type="hidden" name="module" value="content" />
+	<input type="hidden" name="month" value="${month}" />
 	<input type="hidden" name="page" value="${info.pageName}" />
 
 	<c:if test="${!foundModel}">
