@@ -1,20 +1,16 @@
 package org.javlo.macro;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.fields.Field;
 import org.javlo.helper.MacroHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
+
+import java.sql.*;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 public class ImportDataBase extends AbstractMacro {
 
@@ -59,17 +55,17 @@ public class ImportDataBase extends AbstractMacro {
 				System.out.println("**** WARNING : type not found : " + dbType);
 			} else {
 				if (!type.contains(types.get(dbType))) {
-					compCache.get(name).getField(ctx, "type").setValue(type + ';' + types.get(dbType));
+					compCache.get(name).getField(ctx, "type").setValue(ctx,type + ';' + types.get(dbType));
 				}
 			}
 
 			Field descField = compCache.get(name).getField(ctx, "description");
 			descField.setCurrentLocale(new Locale(lg));
-			descField.setValue(rs.getString("description"));
+			descField.setValue(ctx, rs.getString("description"));
 
 			Field titleField = compCache.get(name).getField(ctx, "title");
 			titleField.setCurrentLocale(new Locale(lg));
-			titleField.setValue(rs.getString("title"));
+			titleField.setValue(ctx, rs.getString("title"));
 
 			compCache.get(name).storeProperties();
 			compCache.get(name).setModify();
@@ -77,12 +73,12 @@ public class ImportDataBase extends AbstractMacro {
 			String parentId = MacroHelper.addContent(ctx.getRequestContentLanguage(), currentPage, "0", componentType, "", ctx.getCurrentEditUser());
 			DynamicComponent comp = (DynamicComponent) content.getComponent(ctx, parentId);
 
-			comp.getField(ctx, "title").setValue(name);
-			comp.getField(ctx, "web").setValue(rs.getString("website"));
-			comp.getField(ctx, "phone").setValue(rs.getString("phone"));
-			comp.getField(ctx, "email").setValue(rs.getString("email"));
-			comp.getField(ctx, "access").setValue(rs.getString("access"));
-			comp.getField(ctx, "address").setValue(rs.getString("address").replace("<p>&nbsp;</p>", ""));
+			comp.getField(ctx, "title").setValue(ctx, name);
+			comp.getField(ctx, "web").setValue(ctx, rs.getString("website"));
+			comp.getField(ctx, "phone").setValue(ctx, rs.getString("phone"));
+			comp.getField(ctx, "email").setValue(ctx, rs.getString("email"));
+			comp.getField(ctx, "access").setValue(ctx, rs.getString("access"));
+			comp.getField(ctx, "address").setValue(ctx, rs.getString("address").replace("<p>&nbsp;</p>", ""));
 
 			String ctr = rs.getString("country");
 			String javloCtr = countries.get(ctr);
@@ -90,7 +86,7 @@ public class ImportDataBase extends AbstractMacro {
 			if (javloCtr == null) {
 				System.out.println("*** WARNING : bad country : " + ctr);
 			} else {
-				comp.getField(ctx, "countries").setValue(javloCtr);
+				comp.getField(ctx, "countries").setValue(ctx, javloCtr);
 			}
 
 			String type = rs.getString("type");
@@ -98,12 +94,12 @@ public class ImportDataBase extends AbstractMacro {
 			if (javloType == null) {
 				System.out.println("*** WARNING : bad type : " + type);
 			} else {
-				comp.getField(ctx, "type").setValue(javloType);
+				comp.getField(ctx, "type").setValue(ctx, javloType);
 			}
 
 			Field descField = comp.getField(ctx, "description");
 			descField.setCurrentLocale(new Locale(lg));
-			descField.setValue(rs.getString("description"));
+			descField.setValue(ctx, rs.getString("description"));
 
 			comp.storeProperties();
 			comp.setModify();
@@ -185,18 +181,18 @@ public class ImportDataBase extends AbstractMacro {
 
 			System.out.println("*** INSERT GENERAL : " + name);
 
-			comp.getField(ctx, "title").setValue(name);
-			comp.getField(ctx, "web").setValue(rs.getString("website"));
-			comp.getField(ctx, "phone").setValue(rs.getString("phone"));
-			comp.getField(ctx, "email").setValue(rs.getString("email"));
-			comp.getField(ctx, "countries").setValue(countries.get(rs.getString("country")));
-			comp.getField(ctx, "access").setValue(rs.getString("access"));
+			comp.getField(ctx, "title").setValue(ctx, name);
+			comp.getField(ctx, "web").setValue(ctx, rs.getString("website"));
+			comp.getField(ctx, "phone").setValue(ctx, rs.getString("phone"));
+			comp.getField(ctx, "email").setValue(ctx, rs.getString("email"));
+			comp.getField(ctx, "countries").setValue(ctx, countries.get(rs.getString("country")));
+			comp.getField(ctx, "access").setValue(ctx, rs.getString("access"));
 
 			Field descField = comp.getField(ctx, "description");
 			descField.setCurrentLocale(Locale.FRENCH);
-			descField.setValue(rs.getString("desc_fr"));
+			descField.setValue(ctx, rs.getString("desc_fr"));
 			descField.setCurrentLocale(Locale.ENGLISH);
-			descField.setValue(rs.getString("desc_en"));
+			descField.setValue(ctx, rs.getString("desc_en"));
 
 			comp.storeProperties();
 			comp.setModify();

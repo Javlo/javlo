@@ -181,7 +181,7 @@ public class FieldDate extends Field implements IDate {
 	
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {
-		setValue(StringHelper.renderDate(new Date()));
+		setValue(ctx, StringHelper.renderDate(new Date()));
 		return true;
 	}
 	

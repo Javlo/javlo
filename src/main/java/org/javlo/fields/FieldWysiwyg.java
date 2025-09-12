@@ -68,7 +68,7 @@ public class FieldWysiwyg extends Field {
 				value = value.replace("\\,", ",");
 			}
 		}
-		setValue(value);
+		//setValue(ctx, value);
 		return value;
 	}
 	
@@ -177,7 +177,7 @@ public class FieldWysiwyg extends Field {
 				translated=false;
 				newValue = ITranslator.ERROR_PREFIX+getValue();
 			}
-			setValue(XHTMLHelper.removeEscapeTag(newValue));
+			setValue(ctx, XHTMLHelper.removeEscapeTag(newValue));
 			return translated;
 		}
 	}

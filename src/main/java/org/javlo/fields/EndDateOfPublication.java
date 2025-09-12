@@ -1,12 +1,12 @@
 package org.javlo.fields;
 
+import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
+
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Logger;
-
-import org.javlo.context.ContentContext;
-import org.javlo.helper.StringHelper;
 
 public class EndDateOfPublication extends MetaField {
 
@@ -30,7 +30,7 @@ public class EndDateOfPublication extends MetaField {
 		}
 		if (date == null) {
 			logger.warning("bad date format : " + getValue());
-			setValue("");
+			setValue(ctx, "");
 			return true;
 		}
 		Calendar currentTime = Calendar.getInstance();

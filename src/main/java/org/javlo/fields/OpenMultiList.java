@@ -168,9 +168,9 @@ public class OpenMultiList extends Field {
 		if (value.trim().length() > 0) {
 			modify = true;
 			if (getValue().trim().length() == 0) {
-				setValue(value);			
+				setValue(ctx, value);
 			} else {
-				setValue(getValue()+", "+value);
+				setValue(ctx, getValue()+", "+value);
 			}
 			setNeedRefresh(true);
 		}

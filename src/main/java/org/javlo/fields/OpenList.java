@@ -139,7 +139,7 @@ public class OpenList extends Field {
 		String value = requestService.getParameter(getInputNewName(), "");
 		if (value.trim().length() > 0) {
 			modify = true;
-			setValue(value);
+			setValue(ctx, value);
 			setNeedRefresh(true);
 		}
 

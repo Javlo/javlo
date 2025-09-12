@@ -202,11 +202,27 @@ public class StaticFileBean extends FieldBean {
 	
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {
-		
-		String currentImportFolder = getImportFolderPath(ctx);
-		setCurrentFolder(currentImportFolder);
-		
+		setCurrentFolder(ctx, getImportFolderPath(ctx));
 		return super.initContent(ctx);
+	}
+
+	protected void clearImportFolder(ContentContext ctx) {
+		if (ctx.isAsModifyMode()) {
+			String curFolder = getCurrentFolder();
+			String importFolder = ctx.getGlobalContext().getStaticConfig().getImportFolder();
+			if (importFolder.startsWith("/")) {
+				importFolder = importFolder.substring(1);
+			}
+			if (curFolder.contains(importFolder)) {
+				properties.setProperty("field." + getUnicName() + ".value.folder", getImportFolderPath(ctx));
+			}
+		}
+	}
+
+	@Override
+	public void setProperties(ContentContext ctx, Properties p) {
+		super.setProperties(ctx, p);
+		clearImportFolder(ctx);
 	}
 
 	protected List<String> getFolderListForSelection(ContentContext ctx) {
@@ -324,7 +340,7 @@ public class StaticFileBean extends FieldBean {
 			if (path.endsWith("/")) {
 				path = path.substring(0,path.length()-1);
 			}
-			setCurrentFolder(path);
+			setCurrentFolder(ctx, path);
 			setCurrentFile(fileName);
 		} else if (!StringHelper.isEmpty(rs.getParameter(getInputFileNameSelect())) && rs.getParameter("backreturn") == null) {
 
@@ -338,7 +354,7 @@ public class StaticFileBean extends FieldBean {
 			while (folder.length() > 0 && folder.startsWith("/")) {
 				folder = folder.substring(1);
 			}
-			setCurrentFolder(folder);
+			setCurrentFolder(ctx, folder);
 			out.println("<input type=\"hidden\" name=\"" + getForceModifFieldName() + "\" value=\"true\" />");
 		}
 
@@ -563,7 +579,7 @@ public class StaticFileBean extends FieldBean {
 
 		if (isLight()) {
 			try {
-				setCurrentFolder(AbstractVisualComponent.getImportFolderPath(ctx, comp.getPage()));
+				setCurrentFolder(ctx, AbstractVisualComponent.getImportFolderPath(ctx, comp.getPage()));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -573,7 +589,7 @@ public class StaticFileBean extends FieldBean {
 				File newFolder = new File(URLHelper.mergePath(getFileDirectory(), newFolderName));
 				newFolder.mkdirs();
 				if (!getCurrentFolder().equals(newFolderName)) {
-					setCurrentFolder(newFolderName);
+					setCurrentFolder(ctx, newFolderName);
 					setCurrentFile("");
 					setCurrentLabel("");
 					newFileName = "";
@@ -582,7 +598,7 @@ public class StaticFileBean extends FieldBean {
 					setNeedRefresh(true);
 				}
 			} else if (!currentFolder.equals(folder)) {
-				setCurrentFolder(folder);
+				setCurrentFolder(ctx, folder);
 				setCurrentFile("");
 				setCurrentLabel("");
 				newFileName = "";
@@ -652,11 +668,15 @@ public class StaticFileBean extends FieldBean {
 		return properties.getProperty("field." + getUnicName() + ".value.folder", "");
 	}
 
-	public void setCurrentFolder(String folder) {
+	public void  setCurrentFolder(ContentContext ctx, String folder) {
+		if (folder == null) {
+			return;
+		}
 		if (folder.startsWith("/")) {
 			folder = folder.substring(1);
 		}
 		properties.setProperty("field." + getUnicName() + ".value.folder", folder);
+		clearImportFolder(ctx);
 	}
 
 	public String getCurrentFile() {
@@ -738,7 +758,7 @@ public class StaticFileBean extends FieldBean {
 		if (file.equals(oldName)) {
 			String relativeNewFileDir = ResourceHelper.removePath(newName.getParentFile().getAbsolutePath(), getFileDirectory());
 			setCurrentFile(newName.getName());
-			setCurrentFolder(relativeNewFileDir);
+			setCurrentFolder(ctx, relativeNewFileDir);
 			return true;
 		} else {
 			return false;

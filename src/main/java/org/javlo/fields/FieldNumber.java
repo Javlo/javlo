@@ -169,13 +169,13 @@ public class FieldNumber extends Field {
 	@Override
 	public boolean initContent(ContentContext ctx) throws Exception {
 		if (StringHelper.isDigit(getInitValue())) {
-			setValue(getInitValue());
+			setValue(ctx, getInitValue());
 		} else {
 			int min = getMin(ctx);
 			if (min < 0) {
 				min = 0;
 			}
-			setValue("" + min);
+			setValue(ctx, "" + min);
 		}
 		return true;
 	}

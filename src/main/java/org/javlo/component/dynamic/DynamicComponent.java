@@ -57,6 +57,8 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
     private static final List<Integer> DEFAULT_COLUMN_SIZE = new LinkedList<Integer>(Arrays.asList(new Integer[]{1, 2, 3, 4, 6, 12}));
 
+    private java.util.List<Field> fields = null;
+
     /**
      * create a static logger.
      */
@@ -189,9 +191,6 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
         return getViewXHTMLCode(ctx, true);
     }
 
-    /**
-     * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
-     */
     @Override
     public String getViewXHTMLCode(ContentContext ctx) throws Exception {
         if (getRenderer(ctx) == null) {
@@ -457,8 +456,17 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
         return outFields;
     }
 
+    public void reset() {
+        this.fields = null;
+    }
+
     @Override
     public java.util.List<Field> getFields(ContentContext ctx) throws Exception {
+
+        if (this.fields != null) {
+            return this.fields;
+        }
+
         StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
         GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
         I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
@@ -471,9 +479,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                 String[] keySplit = key.split("\\.");
                 if (keySplit.length > 1) {
                     String name = keySplit[1];
-                    Field field = FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), null, name, getGroup(name), getType(name), getId());
-                    if (field != null) {
-                        if (!fieldExecuted.contains(name)) {
+                    if (!fieldExecuted.contains(name)) {
+                        Field field = FieldFactory.getField(ctx, this, staticConfig, globalContext, i18nAccess, getProperties(), null, name, getGroup(name), getType(name), getId());
+                        if (field != null) {
                             outFields.add(field);
                         }
                         fieldExecuted.add(name);
@@ -484,6 +492,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
             }
         }
         Collections.sort(outFields, new FieldOrderComparator());
+        this.fields = outFields;
         return outFields;
     }
 
@@ -948,6 +957,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
         if (isModify()) {
             storeProperties();
+            reset();
         }
 
         if (!valid) {

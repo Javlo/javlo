@@ -1,17 +1,5 @@
 package org.javlo.fields;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import jakarta.servlet.http.HttpServletRequest;
-
 import org.javlo.context.ContentContext;
 import org.javlo.data.InfoBean;
 import org.javlo.helper.StringHelper;
@@ -19,6 +7,12 @@ import org.javlo.helper.URLHelper;
 import org.javlo.module.file.FileAction;
 import org.javlo.service.RequestService;
 import org.owasp.encoder.Encode;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.*;
 
 public class FieldWysiwygWithTitle extends FieldWysiwyg {
 	
@@ -36,7 +30,7 @@ public class FieldWysiwygWithTitle extends FieldWysiwyg {
 				value = value.replace("\\,", ",");
 			}
 		}
-		setValue(value);
+		//setValue(value);
 		return value;
 	}
 	
@@ -152,22 +146,22 @@ public class FieldWysiwygWithTitle extends FieldWysiwyg {
 		return "wysiwyg-text-title";
 	}
 	
-	public boolean process(HttpServletRequest request) {
-		RequestService requestService = RequestService.getInstance(request);		
+	public boolean process(ContentContext ctx) {
+		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		String title = requestService.getParameter(getInputNameTitle(), null);
 		String text = requestService.getParameter(getInputNameText(), null);
 		String value = StringHelper.collectionToString(title,text);
 		boolean modify = false;		
 		if (value != null) {			
 			if (!value.equals(getValue())) {
-				setValue(value);
+				setValue(ctx, value);
 				if (!validate()) {
 					setNeedRefresh(true);
 				}
 				modify = true;
 			}
 		} else {
-			setValue("");
+			setValue(ctx, "");
 		}
 		return modify;
 	}

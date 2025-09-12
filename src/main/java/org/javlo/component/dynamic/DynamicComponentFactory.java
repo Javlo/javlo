@@ -1,14 +1,5 @@
 package org.javlo.component.dynamic;
 
-import java.io.File;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
@@ -25,6 +16,11 @@ import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.service.ContentService;
+
+import java.io.File;
+import java.net.URL;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class DynamicComponentFactory extends AbstractVisualComponent {
 
@@ -131,7 +127,7 @@ public class DynamicComponentFactory extends AbstractVisualComponent {
 							File imageFile = new File(imageFolder, imageFileName);
 							ResourceHelper.writeUrlToFile(new URL(value), imageFile);
 							FieldImage img = (FieldImage) field;
-							img.setCurrentFolder(imageFolderSubPath);
+							img.setCurrentFolder(ctx, imageFolderSubPath);
 							img.setCurrentFile(imageFileName);
 						} catch (Exception ex) {
 							ex.printStackTrace();
@@ -139,7 +135,7 @@ public class DynamicComponentFactory extends AbstractVisualComponent {
 					} else if (field instanceof FieldExternalLink) {
 						((FieldExternalLink) field).setCurrentLink(value);
 					} else {
-						field.setValue(value);
+						field.setValue(ctx, value);
 					}
 				}
 			}

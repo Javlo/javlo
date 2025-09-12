@@ -63,7 +63,7 @@ public class FieldBoolean extends Field {
 			RequestService requestService = RequestService.getInstance(ctx.getRequest());
 			String value = requestService.getParameter(getInputName(), null);
 			if (value == null) {
-				setValue("" + false);
+				setValue(ctx, "" + false);
 				if (!validate()) {
 					setNeedRefresh(true);
 				}

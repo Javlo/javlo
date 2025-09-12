@@ -87,7 +87,7 @@ public class FieldMultiList extends Field {
 				sep = ";";
 			}
 			if (!finalValue.equals(getValue())) {
-				setValue(finalValue);
+				setValue(ctx, finalValue);
 				if (!validate()) {
 					setNeedRefresh(true);
 				}

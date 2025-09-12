@@ -313,7 +313,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 					messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("reaction.added-novalidation"), GenericMessage.INFO));
 				}
 				for (Field field : fields) {
-					field.setValue(null);
+					field.setValue(ctx, null);
 				}
 			} else {
 				logger.warning("unvalid reaction.");
@@ -638,12 +638,12 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 
 		java.util.List<Field> outFields = new LinkedList<Field>();
 
-		outFields.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("global.email"), "email", null,"text", getId()));
-		outFields.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("global.title"), "title", null,"text", getId()));
-		outFields.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("content.reaction.request-login-to-view"), "requestLoginToView", null,"boolean", getId()));
-		outFields.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("content.reaction.request-login-to-add"), "requestLoginToAdd", null,"boolean", getId()));
-		outFields.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("content.reaction.with-title"), "withTitle", null,"boolean", getId()));
-		outFields.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("content.reaction.reply-allowed"), "replyAllowed", null,"boolean", getId()));
+		outFields.add(FieldFactory.getField(ctx, this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("global.email"), "email", null,"text", getId()));
+		outFields.add(FieldFactory.getField(ctx,this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("global.title"), "title", null,"text", getId()));
+		outFields.add(FieldFactory.getField(ctx,this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("content.reaction.request-login-to-view"), "requestLoginToView", null,"boolean", getId()));
+		outFields.add(FieldFactory.getField(ctx,this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("content.reaction.request-login-to-add"), "requestLoginToAdd", null,"boolean", getId()));
+		outFields.add(FieldFactory.getField(ctx,this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("content.reaction.with-title"), "withTitle", null,"boolean", getId()));
+		outFields.add(FieldFactory.getField(ctx,this, staticConfig, globalContext, i18nAccess, getProperties(), i18nAccess.getText("content.reaction.reply-allowed"), "replyAllowed", null,"boolean", getId()));
 
 		Collections.sort(outFields, new FieldOrderComparator());
 		return outFields;
@@ -824,14 +824,14 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 			GlobalContext globalContext = ctx.getGlobalContext();
 
 			if (isWithTitle(ctx)) {
-				viewField.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, null, i18nAccess.getContentViewText("global.title"), "title", null,"text", fieldSetId));
+				viewField.add(FieldFactory.getField(ctx,this, staticConfig, globalContext, i18nAccess, null, i18nAccess.getContentViewText("global.title"), "title", null,"text", fieldSetId));
 			}
 
 			if (!isRequestLoginToAdd(ctx)) {
-				viewField.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, null, i18nAccess.getContentViewText("global.nickname"), "nickname", null,"text", fieldSetId));
+				viewField.add(FieldFactory.getField(ctx,this, staticConfig, globalContext, i18nAccess, null, i18nAccess.getContentViewText("global.nickname"), "nickname", null,"text", fieldSetId));
 			}
 
-			viewField.add(FieldFactory.getField(this, staticConfig, globalContext, i18nAccess, null, i18nAccess.getContentViewText("global.text"), i18nAccess.getViewText("reaction.add"), "text", "large-text", fieldSetId));
+			viewField.add(FieldFactory.getField(ctx,this, staticConfig, globalContext, i18nAccess, null, i18nAccess.getContentViewText("global.text"), i18nAccess.getViewText("reaction.add"), "text", "large-text", fieldSetId));
 
 			Collections.sort(viewField, new FieldOrderComparator());
 		}
@@ -840,7 +840,7 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 				User currentUser = getCurrentUser(ctx);
 				if (currentUser != null) {
 					field.setReadOnly(true);
-					field.setValue(currentUser.getLogin());
+					field.setValue(ctx, currentUser.getLogin());
 				} else {
 					field.setReadOnly(false);
 				}
@@ -854,9 +854,6 @@ public class ReactionComponent extends DynamicComponent implements IAction {
 		return userFactory.getCurrentUser(ctx.getGlobalContext(), ctx.getRequest().getSession());
 	}
 
-	/**
-	 * @see org.javlo.itf.IContentVisualComponent#getXHTMLCode()
-	 */
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
 		StringWriter writer = new StringWriter();

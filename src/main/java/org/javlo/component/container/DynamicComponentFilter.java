@@ -62,7 +62,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
         if (!"POST".equals(ctx.getRequest().getMethod())) {
             for (Field field : getSearchField(ctx)) {
                 if (!StringHelper.isEmpty(getDefaultValue(field))) {
-                    field.setValue(getDefaultValue(field));
+                    field.setValue(ctx, getDefaultValue(field));
                 }
             }
         }
@@ -106,7 +106,7 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
             out.println("<input type=\"text\" class=\"form-control\" name=\"" + createKeyWithField("field") + "\" value=\"" + StringHelper.neverNull(getSelectedField()) + "\" /></div>");
             out.println("<fieldset><legend>default value</legend>");
             for (Field field : (List<Field>) getSearchField(ctx)) {
-                field.setValue(getDefaultValue(field));
+                field.setValue(ctx, getDefaultValue(field));
                 out.println(field.getSearchEditXHTMLCode(ctx));
             }
             out.println("</fieldset>");
@@ -331,9 +331,9 @@ public class DynamicComponentFilter extends AbstractPropertiesComponent implemen
         for (Field field : comp.getSearchField(ctx)) {
             List<String> values = rs.getParameterListValues(field.getInputName(), null);
             if (values != null && values.size() > 0) {
-                field.setValues(values);
+                field.setValues(ctx, values);
             } else {
-                field.setValue(rs.getParameter(field.getInputName(), ""));
+                field.setValue(ctx, rs.getParameter(field.getInputName(), ""));
             }
         }
 

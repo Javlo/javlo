@@ -96,7 +96,7 @@ public class CreateBusinessComponent implements IInteractiveMacro, IAction {
 			MenuElement childPage = getChildPage(ctx, parentPage, name);
 			String compId = contentService.createContent(ctx, childPage, ComponentBean.DEFAULT_AREA, "0", componentType, "", true);
 			DynamicComponent dynComp = (DynamicComponent) contentService.getComponent(ctx, compId);
-			dynComp.getField(ctx, "name").setValue(name);
+			dynComp.getField(ctx, "name").setValue(ctx, name);
 			dynComp.storeProperties();
 			PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 			MacroModuleContext.getInstance(ctx.getRequest()).setActiveMacro(null);

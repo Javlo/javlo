@@ -740,8 +740,8 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		return StringHelper.stringToCollection(getValue(), ",", true);
 	}
 	
-	protected void setValue(Collection<String> values) {
-		setValue(StringHelper.collectionToString(values));
+	protected void setValue(ContentContext ctx, Collection<String> values) {
+		setValue(ctx, StringHelper.collectionToString(values));
 	}
 
 	public boolean isSearch() {
@@ -861,7 +861,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		return order;
 	}
 
-	public void setValue(String value) {
+	public void setValue(ContentContext ctx, String value) {
 		String key = createKey("value");
 		if (getCurrentLocale() != null) {
 			key = createKey("value-" + getCurrentLocale());
@@ -869,14 +869,14 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		properties.setProperty(key, StringHelper.neverNull(value));
 	}
 	
-	public void setValues(List<String> values) {
+	public void setValues(ContentContext ctx, List<String> values) {
 		String sep = "";
 		String value = "";
 		for (String val : values) {
 			value = value + sep + val;
 			sep=";";
 		}
-		setValue(value);
+		setValue(ctx, value);
 	}
 
 	public void setLabelValue(String value) {
@@ -1021,7 +1021,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		return label;
 	}
 
-	public void setProperties(Properties properties) {
+	public void setProperties(ContentContext ctx, Properties properties) {
 		this.properties = properties;
 	}
 
@@ -1063,14 +1063,14 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 				}
 			}
 			if (!value.equals(getValue())) {
-				setValue(value);
+				setValue(ctx, value);
 				if (!validate()) {
 					setNeedRefresh(true);
 				}
 				modify = true;
 			}
 		} else {
-			setValue("");
+			setValue(ctx, "");
 		}
 		return modify;
 	}
@@ -1215,7 +1215,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 			initVal = getLabel(ctx, ctx.getLocale());
 		}
 		if (getValue() == null || getValue().trim().length() == 0) {
-			setValue(initVal);
+			setValue(ctx, initVal);
 		}
 		return true;
 	}
@@ -1399,7 +1399,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 					newValue = ITranslator.ERROR_PREFIX+getValue();
 				}
 			}
-			setValue(newValue);
+			setValue(ctx, newValue);
 			return translated;
 		}
 	}
