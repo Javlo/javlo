@@ -1212,7 +1212,12 @@ public class ContentContext {
 
 	public Locale getLocale() {
 		if (locale == null) {
-			locale = new Locale(getRequestContentLanguage(), getCountry());
+			String localeStr = getRequestContentLanguage();
+			if (localeStr.length() > 2) {
+				locale = Locale.forLanguageTag(localeStr);
+			} else {
+				locale = new Locale(getRequestContentLanguage(), getCountry());
+			}
 		}
 		return locale;
 	}

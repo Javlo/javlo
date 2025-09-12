@@ -2759,7 +2759,7 @@ public class StringHelper {
         DateFormat dateFormat;
         String manualDateFormat = globalContext.getMediumDateFormat();
         if (manualDateFormat != null && manualDateFormat.trim().length() > 0) {
-            dateFormat = new SimpleDateFormat(manualDateFormat);
+            dateFormat = new SimpleDateFormat(manualDateFormat, ctx.getLocale());
         } else {
             dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, ctx.getLocale());
         }
@@ -2961,13 +2961,7 @@ public class StringHelper {
 
         String manualDateFormat = globalContext.getFullDateFormat();
         if (manualDateFormat == null || manualDateFormat.trim().length() == 0) {
-            if (locale.getLanguage().equals("el")) { // in Greek the full
-                // rendering of date is
-                // not correct.
-                dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
-            } else {
-                dateFormat = DateFormat.getDateInstance(DateFormat.FULL, locale);
-            }
+            dateFormat = DateFormat.getDateInstance(DateFormat.FULL, locale);
         } else {
             dateFormat = new SimpleDateFormat(manualDateFormat, locale);
         }
@@ -4950,4 +4944,4 @@ public class StringHelper {
         return input.trim();
     }
 
-}
+};
