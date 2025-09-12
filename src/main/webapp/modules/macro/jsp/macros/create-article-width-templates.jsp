@@ -67,7 +67,6 @@ ${js}
 
 	<input type="hidden" id="layout" name="layout" />
 
-
 	<div class="action">
 		<button class="btn btn-primary pull-right" type="submit" disabled>create</button>
 	</div>
@@ -104,8 +103,7 @@ ${js}
 		layout.innerHTML = '';
 		for (var i = 0; i < layouts[root.selectedIndex].length; i++) {
 			var option = document.createElement("option");
-			option.appendChild(document
-					.createTextNode(layouts[root.selectedIndex][i][1]));
+			option.appendChild(document.createTextNode(layouts[root.selectedIndex][i][1]));
 			option.setAttribute("value", layouts[root.selectedIndex][i][0]);
 			layout.appendChild(option);
 		}

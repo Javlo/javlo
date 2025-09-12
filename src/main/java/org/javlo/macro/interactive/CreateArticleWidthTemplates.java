@@ -99,7 +99,7 @@ public class CreateArticleWidthTemplates implements IInteractiveMacro, IAction {
                 if (scFile.exists()) {
                     screenshotUrl = URLHelper.createFileURL(ctx, scFile);
                 }
-                js.append(subSep + "['" + page.getName() + "','" + Encode.forJavaScriptAttribute(page.getTitle(ctx)) + "', '" + screenshotUrl + "']");
+                js.append(subSep + "['" + Encode.forJavaScriptAttribute(page.getName() )+ "','" + Encode.forJavaScriptAttribute(page.getName()) + "', '" + screenshotUrl + "']");
                 subSep = ",";
                 found = true;
             }
