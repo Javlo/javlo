@@ -1314,14 +1314,8 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
     @Override
     public int getLabelLevel(ContentContext ctx) {
-        try {
-            for (Field field : getFields(ctx)) {
-                if (field.isTitle()) {
-                    return HIGH_LABEL_LEVEL;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (!StringHelper.isEmpty(getTextTitle(ctx))) {
+            return HIGH_LABEL_LEVEL;
         }
         return 0;
     }
@@ -1338,7 +1332,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                     title = StringHelper.neverNull(title).trim()+ ' ' + StringHelper.neverNull(field.getValue()).trim();
                 }
             }
-            if (title == null) {
+            if (StringHelper.isEmpty(title)) {
                 for (Field field : getFields(ctx)) {
                     if (field instanceof FieldWysiwyg) {
                         String html = field.getValue();
@@ -1353,6 +1347,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         textTitle = title;
         return textTitle;
     }
