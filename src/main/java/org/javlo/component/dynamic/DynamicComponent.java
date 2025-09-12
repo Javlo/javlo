@@ -28,6 +28,9 @@ import org.javlo.service.resource.Resource;
 import org.javlo.template.Template;
 import org.javlo.utils.StructuredProperties;
 import org.javlo.ztatic.IStaticContainer;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 import java.io.*;
 import java.time.LocalDateTime;
@@ -58,6 +61,8 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
     private static final List<Integer> DEFAULT_COLUMN_SIZE = new LinkedList<Integer>(Arrays.asList(new Integer[]{1, 2, 3, 4, 6, 12}));
 
     private java.util.List<Field> fields = null;
+
+    private String textTitle = null;
 
     /**
      * create a static logger.
@@ -1323,6 +1328,9 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
     @Override
     public String getTextTitle(ContentContext ctx) {
+        if (textTitle != null) {
+            return textTitle;
+        }
         String title = null;
         try {
             for (Field field : getFields(ctx)) {
@@ -1330,10 +1338,23 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                     title = StringHelper.neverNull(title).trim()+ ' ' + StringHelper.neverNull(field.getValue()).trim();
                 }
             }
+            if (title == null) {
+                for (Field field : getFields(ctx)) {
+                    if (field instanceof FieldWysiwyg) {
+                        String html = field.getValue();
+                        Document doc = Jsoup.parse(html);
+                        Element h1 = doc.selectFirst("h1");
+                        if (h1 != null) {
+                            title = h1.text();
+                        }
+                    }
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return title;
+        textTitle = title;
+        return textTitle;
     }
 
     @Override
