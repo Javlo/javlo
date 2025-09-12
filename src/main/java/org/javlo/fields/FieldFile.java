@@ -201,7 +201,7 @@ public class StaticFileBean extends FieldBean {
 	}
 	
 	@Override
-	public boolean initContent(ContentContext ctx) throws Exception {
+	public boolean  initContent(ContentContext ctx) throws Exception {
 		setCurrentFolder(ctx, getImportFolderPath(ctx));
 		return super.initContent(ctx);
 	}
@@ -214,6 +214,7 @@ public class StaticFileBean extends FieldBean {
 				importFolder = importFolder.substring(1);
 			}
 			if (curFolder.contains(importFolder)) {
+				System.out.println("######## > reset import folder : "+getImportFolderPath(ctx));
 				properties.setProperty("field." + getUnicName() + ".value.folder", getImportFolderPath(ctx));
 			}
 		}
@@ -222,7 +223,6 @@ public class StaticFileBean extends FieldBean {
 	@Override
 	public void setProperties(ContentContext ctx, Properties p) {
 		super.setProperties(ctx, p);
-		clearImportFolder(ctx);
 	}
 
 	protected List<String> getFolderListForSelection(ContentContext ctx) {
@@ -382,7 +382,7 @@ public class StaticFileBean extends FieldBean {
 			String linkToResources = "";
 
 			out.println("<div class=\"row form-group folder\"><div class=\"" + LABEL_CSS + "\">");
-			out.println("<label for=\"" + getInputFolderName() + "\">" + getFolderLabel() + " : </label></div><div class=\"" + SMALL_VALUE_SIZE + "\">");
+			out.println("<label for=\"" + getInputFolderName() + "\">" + getFolderLabel() +" ["+getCurrentFolder()+"] : </label></div><div class=\"" + SMALL_VALUE_SIZE + "\">");
 			out.println(XHTMLHelper.getInputOneSelect(getInputFolderName(), getFolderListForSelection(ctx), getCurrentFolder(), "form-control", "jQuery(this.form).trigger('submit');", true));
 			out.println("</div></div>");
 
@@ -552,6 +552,9 @@ public class StaticFileBean extends FieldBean {
 
 	@Override
 	public boolean process(ContentContext ctx) {
+
+		clearImportFolder(ctx);
+
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		boolean modify = StringHelper.isTrue(requestService.getParameter(getForceModifFieldName()));
 
@@ -676,7 +679,6 @@ public class StaticFileBean extends FieldBean {
 			folder = folder.substring(1);
 		}
 		properties.setProperty("field." + getUnicName() + ".value.folder", folder);
-		clearImportFolder(ctx);
 	}
 
 	public String getCurrentFile() {
