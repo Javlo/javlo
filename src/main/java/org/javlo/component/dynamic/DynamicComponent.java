@@ -1336,10 +1336,12 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                 for (Field field : getFields(ctx)) {
                     if (field instanceof FieldWysiwyg) {
                         String html = field.getValue();
-                        Document doc = Jsoup.parse(html);
-                        Element h1 = doc.selectFirst("h1");
-                        if (h1 != null) {
-                            title = h1.text();
+                        if (html != null && html.length()>4) {
+                            Document doc = Jsoup.parse(html);
+                            Element h1 = doc.selectFirst("h1");
+                            if (h1 != null) {
+                                title = h1.text();
+                            }
                         }
                     }
                 }

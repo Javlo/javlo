@@ -2778,7 +2778,7 @@ public class StringHelper {
         if (ctx != null) {
             GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
             manualDateFormat = globalContext.getFullDateFormat();
-            locale = new Locale(ctx.getContextRequestLanguage());
+            locale = ctx.getLocale();
         }
         DateFormat dateFormat;
         if (manualDateFormat != null && manualDateFormat.trim().length() > 0) {
