@@ -1013,6 +1013,7 @@ Security in case of vulnerabilities.
 ### fixed
 - hidden section in mode
 - clear import folder in dynamicComponent
+- paste section
 ### Added
 - import image from url macro
 - proxy for cross origin request

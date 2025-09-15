@@ -703,12 +703,13 @@ public class Edit extends AbstractModuleAction {
 			ClipBoard cb = ClipBoard.getInstance(ctx.getRequest());
 			Object copied = cb.getCopied();
 			if (copied == null || !(copied instanceof ComponentBean)) {
+				logger.warning("error no item in clipBoard");
 				return "error no item in clipBoard";
 			} else {
 				ComponentBean bean = (ComponentBean) copied;
 				IContentVisualComponent sourceComp = contentService.getComponent(ctx, bean.getId());
 				if (!bean.getType().equals(TableBreak.TYPE)) {
-					if (!globalContext.getSpecialConfig().isPasteAsMirror() || globalContext.isMailingPlatform() || !sourceComp.isMirroredByDefault(ctx) && !(sourceComp instanceof IContainer)) {
+					if ((!globalContext.getSpecialConfig().isPasteAsMirror() || globalContext.isMailingPlatform() || !sourceComp.isMirroredByDefault(ctx)) && !(sourceComp instanceof IContainer)) {
 						newId = content.createContent(ctx, targetPage, areaKey, previousId, bean, true);
 					} else {
 						if (!(sourceComp instanceof IContainer)) {
