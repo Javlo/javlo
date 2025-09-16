@@ -1,14 +1,5 @@
 package org.javlo.service.shared;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
@@ -16,6 +7,9 @@ import org.javlo.module.core.IMainModuleName;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.user.AdminUserSecurity;
+
+import java.util.*;
+import java.util.logging.Logger;
 
 public class SharedContentService {
 
@@ -89,7 +83,7 @@ public class SharedContentService {
 
 	public ISharedContentProvider getProvider(ContentContext ctx, String name) {
 		for (ISharedContentProvider provider : getAllProvider(ctx)) {
-			if (provider.getName().equals(name)) {
+			if (provider != null && provider.getName().equals(name)) {
 				return provider;
 			}
 		}
