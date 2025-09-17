@@ -129,6 +129,13 @@ public class DateBean {
 		return new DateBean(ctx.get(), cal.getTime());
 	}
 
+	public DateBean getDays30Next() {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.DAY_OF_YEAR, 30); // Subtract 30 days
+		return new DateBean(ctx.get(), cal.getTime());
+	}
+
 	public DateBean getMonthPrevious() throws FileNotFoundException, IOException {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
