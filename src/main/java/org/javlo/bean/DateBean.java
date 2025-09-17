@@ -111,56 +111,49 @@ public class DateBean {
 	public DateBean getDayPrevious() throws FileNotFoundException, IOException {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
-		cal.add(-1, Calendar.DAY_OF_MONTH);
+		cal.add(Calendar.DAY_OF_MONTH, -1);
 		return new DateBean(ctx.get(), cal.getTime());
 	}
 
-	public DateBean getDayNext() throws FileNotFoundException, IOException {
+	public DateBean getDayNext() {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
-		cal.add(1, Calendar.DAY_OF_MONTH);
+		cal.add(Calendar.DAY_OF_YEAR, 1); // Add 1 day
 		return new DateBean(ctx.get(), cal.getTime());
 	}
 
-	public DateBean getDays30Previous() throws FileNotFoundException, IOException {
+	public DateBean getDays30Previous() {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
-		cal.add(-30, Calendar.DAY_OF_MONTH);
-		return new DateBean(ctx.get(), cal.getTime());
-	}
-
-	public DateBean getDays330Next() throws FileNotFoundException, IOException {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(date);
-		cal.add(30, Calendar.DAY_OF_MONTH);
+		cal.add(Calendar.DAY_OF_YEAR, -30); // Subtract 30 days
 		return new DateBean(ctx.get(), cal.getTime());
 	}
 
 	public DateBean getMonthPrevious() throws FileNotFoundException, IOException {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
-		cal.add(-1, Calendar.MONTH);
+		cal.add( Calendar.MONTH, -1);
 		return new DateBean(ctx.get(), cal.getTime());
 	}
 
 	public DateBean getMonthNext() throws FileNotFoundException, IOException {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
-		cal.add(1, Calendar.MONTH);
+		cal.add( Calendar.MONTH, 1);
 		return new DateBean(ctx.get(), cal.getTime());
 	}
 
 	public DateBean getYearPrevious() throws FileNotFoundException, IOException {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
-		cal.add(-1, Calendar.YEAR);
+		cal.add(Calendar.YEAR, -1);
 		return new DateBean(ctx.get(), cal.getTime());
 	}
 
 	public DateBean getYearNext() throws FileNotFoundException, IOException {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
-		cal.add(1, Calendar.YEAR);
+		cal.add( Calendar.YEAR, 1);
 		return new DateBean(ctx.get(), cal.getTime());
 	}
 
