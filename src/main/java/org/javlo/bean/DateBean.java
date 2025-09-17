@@ -72,7 +72,7 @@ public class DateBean {
 		return StringHelper.renderSortableDate(date);
 	}
 
-	public String getRFC3339() {
+	public String getFormatRFC3339() {
 		try {
 			return StringHelper.renderDate(date, "yyyy-MM-dd");
 		} catch (Exception e) {
@@ -122,14 +122,14 @@ public class DateBean {
 		return new DateBean(ctx.get(), cal.getTime());
 	}
 
-	public DateBean get30DayPrevious() throws FileNotFoundException, IOException {
+	public DateBean getDays30Previous() throws FileNotFoundException, IOException {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 		cal.add(-30, Calendar.DAY_OF_MONTH);
 		return new DateBean(ctx.get(), cal.getTime());
 	}
 
-	public DateBean get30DayNext() throws FileNotFoundException, IOException {
+	public DateBean getDays330Next() throws FileNotFoundException, IOException {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 		cal.add(30, Calendar.DAY_OF_MONTH);
