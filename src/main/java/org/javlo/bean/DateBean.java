@@ -1,15 +1,14 @@
 package org.javlo.bean;
 
+import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
-
-import org.javlo.context.ContentContext;
-import org.javlo.helper.StringHelper;
 
 public class DateBean {
 
@@ -73,6 +72,15 @@ public class DateBean {
 		return StringHelper.renderSortableDate(date);
 	}
 
+	public String getRFC3339() {
+		try {
+			return StringHelper.renderDate(date, "yyyy-MM-dd");
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public String getShortDate() throws FileNotFoundException, IOException {
 		return StringHelper.renderShortDate(ctx.get(), date);
 	}
@@ -111,6 +119,34 @@ public class DateBean {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 		cal.add(1, Calendar.DAY_OF_MONTH);
+		return new DateBean(ctx.get(), cal.getTime());
+	}
+
+	public DateBean getMonthPrevious() throws FileNotFoundException, IOException {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(-1, Calendar.MONTH);
+		return new DateBean(ctx.get(), cal.getTime());
+	}
+
+	public DateBean getMonthNext() throws FileNotFoundException, IOException {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(1, Calendar.MONTH);
+		return new DateBean(ctx.get(), cal.getTime());
+	}
+
+	public DateBean getYearPrevious() throws FileNotFoundException, IOException {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(-1, Calendar.YEAR);
+		return new DateBean(ctx.get(), cal.getTime());
+	}
+
+	public DateBean getYearNext() throws FileNotFoundException, IOException {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(1, Calendar.YEAR);
 		return new DateBean(ctx.get(), cal.getTime());
 	}
 

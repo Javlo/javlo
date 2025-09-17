@@ -4542,11 +4542,13 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	 */
 	public void moveToParent(MenuElement parent) {
 		if (parent != null) {
-			if (getParent() != null) {
-				getParent().removeChild(this);
+			if (!parent.getId().equals(getId())) {
+				if (getParent() != null) {
+					getParent().removeChild(this);
+				}
+				parent.addChildMenuElement(this);
+				setParent(parent);
 			}
-			parent.addChildMenuElement(this);
-			setParent(parent);
 		}
 	}
 

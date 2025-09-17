@@ -1,5 +1,6 @@
 package org.javlo.data;
 
+import org.javlo.bean.DateBean;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.core.ISubTitle;
@@ -480,6 +481,10 @@ public class InfoBean {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public DateBean getCurrentDateBean() {
+		return new DateBean(ctx, new Date());
 	}
 
 	public String getCurrentDateRFC3339() {
@@ -1670,6 +1675,10 @@ public class InfoBean {
 	}
 
 	public String getRootURL() {
+		return URLHelper.createURL(ctx, "/");
+	}
+
+	public String getRootUrl() {
 		return URLHelper.createURL(ctx, "/");
 	}
 	
