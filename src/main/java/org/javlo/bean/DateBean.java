@@ -122,6 +122,20 @@ public class DateBean {
 		return new DateBean(ctx.get(), cal.getTime());
 	}
 
+	public DateBean get30DayPrevious() throws FileNotFoundException, IOException {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(-30, Calendar.DAY_OF_MONTH);
+		return new DateBean(ctx.get(), cal.getTime());
+	}
+
+	public DateBean get30DayNext() throws FileNotFoundException, IOException {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(30, Calendar.DAY_OF_MONTH);
+		return new DateBean(ctx.get(), cal.getTime());
+	}
+
 	public DateBean getMonthPrevious() throws FileNotFoundException, IOException {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
