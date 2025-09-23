@@ -16,6 +16,7 @@ public class Group {
     private List<Integer> groupNumberList = new ArrayList<>();
 
     private Map<String, Field> fields = new HashMap<>();
+    private Map<String, Field> fieldsForDisplay = new HashMap<>();
 
     public Group(String name, int groupSize, int groupNumber) {
         this.name = name;
@@ -40,7 +41,13 @@ public class Group {
         return fields;
     }
 
+    public Map<String, Field> getFieldsForDisplay() {
+        return fieldsForDisplay;
+    }
+
     public List<Integer> getGroupNumberList() {
         return groupNumberList;
     }
 }
+
+

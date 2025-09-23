@@ -93,6 +93,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                                 newGroup.getGroupNumberList().add(field.getGroupNumber());
                             }
                             newGroup.getFields().put(field.getGroupLabel(), field);
+                            newGroup.getFieldsForDisplay().put(field.getGroupLabel()+"-"+field.getReferenceName(), field);
                         }
                     });
 
@@ -239,7 +240,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
             StringBuffer fieldSb = new StringBuffer();
             while (fieldMatcher.find()) {
                 String key = fieldMatcher.group(1);
-                String replacement = String.format("\\${groups['"+group+"'].fields[key].$3}");
+                String replacement = String.format("<c:set var=\"fieldKey\" value=\"\\${key}-"+key.split("\\.")[1]+"\" />\\${groups['"+group+"'].fieldsForDisplay[fieldKey].$3}");
                 fieldMatcher.appendReplacement(fieldSb, replacement);
             }
             fieldMatcher.appendTail(fieldSb);
@@ -348,7 +349,10 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                         html = replaceGroupTags(html);
                         for (Field field : getFields(ctx)) {
                             if (!StringHelper.isEmpty(field.getGroup())) {
-                                html = html.replace("field." + field.getType() + "." + field.getName() + "." + field.getGroup() + '.', field.getName() + '.');
+                                String prefix = "${field." + field.getType() + "." + field.getName() + "." + field.getGroup() + '.' + field.getName();
+                                String fieldRef = "<c:set var=\"fieldKey\" value=\"${key}-"+field.getName()+"\" />";
+                                fieldRef += "${groups['"+field.getGroup()+"'].fieldsForDisplay[fieldKey].";
+                                html = html.replace(prefix, fieldRef);
                             } else {
                                 html = html.replace("field." + field.getType() + "." + field.getName() + '.', field.getName() + (field.isI18n()?".reference.":"."));
                             }
@@ -356,6 +360,13 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                         if (!isWrapped()) {
                             html = html.replace(Template.PREVIEW_EDIT_CODE, "${"+AbstractVisualComponent.PREVIEW_ATTRIBUTES+"}");
                         }
+
+                        /* group boucle */
+                        for (String group : getGroups()) {
+                            html = html.replace("<!-- start-"+group+" -->", "<!-- start-"+group+" --> "+"<for:each var='field' values='${groups['"+group+"]}'].fields>");
+                            html = html.replace("<!-- end-"+group+" -->", "</for:each> "+"<!-- end-"+group+" -->");
+                        }
+
                         ResourceHelper.writeStringToFile(jspFile, html);
                         if (ctx.getGlobalContext().isProd()) {
                             Template.minifyJSP(ctx.getGlobalContext(), jspFile);
@@ -970,6 +981,8 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
             I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
             return i18nAccess.getText("content.dynamic-component.error.global") + " (" + StringHelper.collectionToString(errorField, ",") + ')';
         }
+
+        groups = null;
 
         return null;
     }

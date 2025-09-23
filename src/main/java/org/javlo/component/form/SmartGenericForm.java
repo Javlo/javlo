@@ -1324,6 +1324,11 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
         return out;
     }
 
+    @Override
+    public String getViewXHTMLCode(ContentContext ctx) throws Exception {
+        return super.getViewXHTMLCode(ctx);
+    }
+
     public static String performSubmit(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         String userIP = request.getHeader("x-real-ip");
@@ -1423,6 +1428,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
             result.put("__X-Real-IP", request.getHeader("x-real-ip"));
             result.put("__referer", StringHelper.removeTag(request.getHeader("referer")));
             result.put("__agent", request.getHeader("User-Agent"));
+            result.put("__sessionId", request.getSession().getId());
             result.put("_registrationID", registrationID);
             result.put("_event-close", "" + comp.isClose(ctx));
             result.put("_compid", "" + comp.getId());

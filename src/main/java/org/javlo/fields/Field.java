@@ -949,6 +949,16 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		this.name = name;
 	}
 
+	/**
+	 * name without group index
+	 */
+	public String getReferenceName() {
+		if (name != null) {
+			return name.replaceAll("\\[\\d+\\]$", "");
+		}
+		return null;
+	}
+
 	public String getGroup() {
 		return group;
 	}
