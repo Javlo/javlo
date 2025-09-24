@@ -1,23 +1,17 @@
 package org.javlo.macro;
 
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.logging.Logger;
-
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.StringHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
+
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * merge component meta data defined in the template and meta data define in
@@ -64,7 +58,13 @@ public class MergeDynamicComponent extends AbstractMacro {
 						if (newComp != null) {
 							Properties compProp = dynComp.getProperties();
 							Properties newProp = newComp.getProperties();
-							String oldValue = null;							
+
+							boolean multiLine = false;
+							for (Object key : compProp.keySet()) {
+								if (key.toString().endsWith("]")) {
+									multiLine = false;
+								}
+							}
 							if (compProp != null && newProp != null) {
 								Enumeration<Object> keys = newProp.keys();
 								while (keys.hasMoreElements()) {
@@ -82,15 +82,11 @@ public class MergeDynamicComponent extends AbstractMacro {
 										compProp.put(key, newProp.get(key));
 										dynComp.setModify();
 									} else if (!key.endsWith(".value")) {
-										if (!StringHelper.isEmpty(oldValue)) {
-											compProp.put(key, newProp.get(key));
-										} else {
-											compProp.put(key, newProp.get(key));
-										}
+										compProp.put(key, newProp.get(key));
 									}
 								}
 							}
-							if (DELETE_FIELD) {
+							if (DELETE_FIELD && !multiLine) {
 								List<String> fields = dynComp.getFieldsNames(ctxLg);
 								fields.removeAll(newComp.getFieldsNames(ctxLg));
 								Iterator<Object> keys = compProp.keySet().iterator();
