@@ -361,11 +361,14 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 	}
 
 	public String getInputName() {
+		String id;
 		if (getCurrentLocale() != null) {
-			return getName() + '-' + getId() + '-' + getCurrentLocale().getLanguage();
+			id = getName() + '-' + getId() + '-' + getCurrentLocale().getLanguage();
 		} else {
-			return getName() + '-' + getId();
+			id = getName() + '-' + getId();
 		}
+		id = id.replace('[','_').replace(']','_');
+		return id;
 	}	
 
 	public String getInputLabelName() {
