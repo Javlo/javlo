@@ -62,7 +62,7 @@ public class MergeDynamicComponent extends AbstractMacro {
 							boolean multiLine = false;
 							for (Object key : compProp.keySet()) {
 								if (key.toString().endsWith("]")) {
-									multiLine = false;
+									multiLine = true;
 								}
 							}
 							if (compProp != null && newProp != null) {
