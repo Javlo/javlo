@@ -59,6 +59,10 @@ InfoBean.getCurrentInfoBean(ctx);
     }
     if (chooseLang && ctx.getGlobalContext().getContentLanguages().size() == 1) {
 	chooseLang = false;
+
+	if (StringHelper.isTrue(request.getParameter("_chooseLang"))) {
+		chooseLang = true;
+	}
 }
 
 String lg=ctx.getCookieLanguage();
