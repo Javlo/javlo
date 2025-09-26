@@ -1759,7 +1759,7 @@ public class Template implements Comparable<Template> {
 				languagesChoiceFile = "";
 				return null;
 			} else {
-				languagesChoiceFile = URLHelper.mergePath(getWorkTemplateRealPath(ctx.getGlobalContext()), langFile);
+				languagesChoiceFile = URLHelper.mergePath(getLocalWorkTemplateFolder(), getFolder(ctx.getGlobalContext()), langFile);
 				return languagesChoiceFile;
 			}
 		} else {

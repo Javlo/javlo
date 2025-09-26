@@ -16,39 +16,6 @@ I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, request.getSession
 ContentContext ctx = ContentContext.getContentContext(request, response);
 InfoBean.getCurrentInfoBean(ctx);
 
-
-//	System.out.println("=== Language Debug Info ===");
-//
-//// Locale from request
-//	java.util.Locale locale = request.getLocale();
-//	System.out.println("request.getLocale(): " + locale);
-//	System.out.println("Language: " + locale.getLanguage());
-//	System.out.println("Country: " + locale.getCountry());
-//	System.out.println("Display Language: " + locale.getDisplayLanguage());
-//	System.out.println("Display Country: " + locale.getDisplayCountry());
-//
-//// All accepted locales
-//	System.out.println("Accepted Locales:");
-//	java.util.Enumeration<java.util.Locale> locales = request.getLocales();
-//	while (locales.hasMoreElements()) {
-//		java.util.Locale loc = locales.nextElement();
-//		System.out.println("  -> " + loc.toString());
-//	}
-//
-//// Accept-Language header
-//	String acceptLang = request.getHeader("Accept-Language");
-//	System.out.println("Accept-Language header: " + acceptLang);
-//
-//// Context language from Javlo (if available)
-//	try {
-//		String ctxLang = ctx.getRequestContentLanguage();
-//		System.out.println("ContentContext language: " + ctxLang);
-//	} catch (Exception e) {
-//		System.out.println("Unable to retrieve ContentContext language: " + e.getMessage());
-//	}
-//
-//	System.out.println("=== End Language Debug ===");
-
     boolean chooseLang = false;
     try {
 		if (ctx.getCurrentTemplate() != null && ctx.getDevice() != null) {
