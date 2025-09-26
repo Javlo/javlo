@@ -49,8 +49,15 @@ InfoBean.getCurrentInfoBean(ctx);
 //
 //	System.out.println("=== End Language Debug ===");
 
-boolean chooseLang = ctx.getCurrentTemplate().getLanguagesChoiceFile(ctx) != null && ctx.getDevice().isBot();
-if (chooseLang && ctx.getGlobalContext().getContentLanguages().size() == 1) {
+    boolean chooseLang = false;
+    try {
+		if (ctx.getCurrentTemplate() != null && ctx.getDevice() != null) {
+			chooseLang = ctx.getCurrentTemplate().getLanguagesChoiceFile(ctx) != null && ctx.getDevice().isBot();
+		}
+    } catch (Exception e) {
+        System.out.println("#### ERROR index.jsp : "+e.getMessage());
+    }
+    if (chooseLang && ctx.getGlobalContext().getContentLanguages().size() == 1) {
 	chooseLang = false;
 }
 
