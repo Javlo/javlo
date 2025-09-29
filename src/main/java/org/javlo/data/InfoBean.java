@@ -686,6 +686,26 @@ public class InfoBean {
 		}
 	}
 
+	public String getPageLabel() {
+
+		try {
+			MenuElement popupPage = NavigationHelper.getPopupPage(ctx);
+			if (popupPage != null) {
+				return popupPage.getLabel(ctx);
+			} else {
+				MenuElement cp = getCurrentPage();
+				if (cp != null) {
+					return cp.getLabel(ctx);
+				} else {
+					return "";
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
 	public String getPageTitleForAttribute() {
 		return Encode.forHtmlAttribute(getPageTitle());
 	}
