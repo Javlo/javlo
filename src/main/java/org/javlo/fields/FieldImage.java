@@ -64,7 +64,13 @@ public class FieldImage extends FieldFile {
 		}
 		
 		public String getLink() {
-			return FieldImage.this.getCurrentLink();
+			String link = FieldImage.this.getCurrentLink();
+            try {
+                link = URLHelper.convertLink(ctx, link);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return link;
 		}
 		
 		public String getAlt() {
