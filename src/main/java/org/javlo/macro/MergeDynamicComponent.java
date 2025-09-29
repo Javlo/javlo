@@ -51,6 +51,11 @@ public class MergeDynamicComponent extends AbstractMacro {
 				while (comps.hasNext(ctxLg)) {
 					IContentVisualComponent comp = comps.next(ctxLg);
 					if (comp instanceof DynamicComponent) {
+
+						System.out.println("");
+						System.out.println("** >> MERGE DYNAMIV COMPONENT << **");
+						System.out.println("** >> comp = "+comp.getType());
+
 						DynamicComponent dynComp = (DynamicComponent) comp;
 						DynamicComponent newComp = (DynamicComponent) ComponentFactory.getComponentWithType(ctxLg, comp.getPage(), dynComp.getType());
 						// newComp.init(new
@@ -65,6 +70,9 @@ public class MergeDynamicComponent extends AbstractMacro {
 									multiLine = true;
 								}
 							}
+
+							System.out.println("** >> multiLine = "+multiLine);
+
 							if (compProp != null && newProp != null) {
 								Enumeration<Object> keys = newProp.keys();
 								while (keys.hasMoreElements()) {
@@ -82,6 +90,7 @@ public class MergeDynamicComponent extends AbstractMacro {
 										compProp.put(key, newProp.get(key));
 										dynComp.setModify();
 									} else if (!key.endsWith(".value")) {
+										System.out.println("** >> new prop = "+key);
 										compProp.put(key, newProp.get(key));
 									}
 								}
@@ -107,6 +116,8 @@ public class MergeDynamicComponent extends AbstractMacro {
 						} else {
 							logger.warning("bad dynamic component : " + dynComp.getType() + " (" + dynComp.getPage().getPath() + ')');
 						}
+
+						System.out.println("");
 					}
 				}
 			}
