@@ -149,7 +149,9 @@ public class FieldImage extends FieldFile {
 				if (ctx.getGlobalContext().isOpenExternalLinkAsPopup(getCurrentLink())) {
 					target = " target=\"_blank\"";
 				}
-				out.println("<a href=\"" + getCurrentLink() + "\"" + target+'>');
+				String link = getCurrentLink();
+				link = URLHelper.convertLink(ctx, link);
+				out.println("<a href=\"" + link + "\"" + target+'>');
 			}
 			
 			out.println("<img src=\"" + getPreviewURL(ctx, filter) + "\" alt=\"" + getCurrentLabel() + "\"/>");
