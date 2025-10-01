@@ -400,7 +400,9 @@ public class Edit extends AbstractModuleAction {
 			ctx.getRequest().setAttribute("ipsecurity", "true");
 		}
 
-		ctx.getRequest().setAttribute("pageHistoryUrl", URLHelper.createStaticURL(ctx, "/rest/pagehistory/"+ctx.getCurrentPage().getId()));
+		if (ctx.getCurrentPage() != null) {
+			ctx.getRequest().setAttribute("pageHistoryUrl", URLHelper.createStaticURL(ctx, "/rest/pagehistory/" + ctx.getCurrentPage().getId()));
+		}
 
 		if (ResourceStatus.isResource(ctx.getRequest().getSession())) {
 			ResourceStatus resourceStatus = ResourceStatus.getInstance(ctx.getRequest().getSession());
@@ -455,10 +457,11 @@ public class Edit extends AbstractModuleAction {
 					currentModule.setToolsRenderer("/jsp/actions.jsp?button_edit=true&button_preview=true&button_delete_page=true" + publish);
 					if (ctx.getCurrentPage() != null) {
 						request.setAttribute("page", ctx.getCurrentPage().getPageBean(ctx));
+						if (globalContext.getAllTaxonomy(ctx) != null) {
+							request.setAttribute("taxonomySelect", globalContext.getAllTaxonomy(ctx).getSelectHtml(ctx.getCurrentPage().getTaxonomy(), ctx.getGlobalContext().getSpecialConfig().isTaxonomyUnderlineActive()));
+						}
 					}
-					if (globalContext.getAllTaxonomy(ctx) != null) {
-						request.setAttribute("taxonomySelect", globalContext.getAllTaxonomy(ctx).getSelectHtml(ctx.getCurrentPage().getTaxonomy(), ctx.getGlobalContext().getSpecialConfig().isTaxonomyUnderlineActive()));
-					}
+
 					currentModule.setRenderer("/jsp/page_properties.jsp");
 					currentModule.setBreadcrumbTitle(I18nAccess.getInstance(ctx.getRequest()).getText("item.title"));
 					break;
