@@ -1349,6 +1349,14 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performAddPage(RequestService requestService, ContentContext ctx, I18nAccess i18nAccess, ContentService content) throws Exception {
+		return addPage(requestService, ctx, i18nAccess, content, false);
+	}
+
+	public static String performAddChild(RequestService requestService, ContentContext ctx, I18nAccess i18nAccess, ContentService content) throws Exception {
+		return addPage(requestService, ctx, i18nAccess, content, true);
+	}
+
+	private static String addPage(RequestService requestService, ContentContext ctx, I18nAccess i18nAccess, ContentService content, boolean child) throws Exception {
 
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			MessageRepository messageRepository = MessageRepository.getInstance(ctx);
@@ -1385,6 +1393,7 @@ public class Edit extends AbstractModuleAction {
 				message = i18nAccess.getText("action.validation.name-allready-exist", new String[][] { { "name", nodeName } });
 			}
 			if (message == null) {
+				int priority = 0;
 				MenuElement elem = MenuElement.getInstance(ctx);
 				elem.setCreator(editCtx.getUserPrincipal().getName());
 				elem.setVisible(globalContext.isNewPageVisible());
@@ -1393,6 +1402,11 @@ public class Edit extends AbstractModuleAction {
 					parent = content.getNavigation(ctx).searchChildFromName(parentName);
 					if (parent == null) {
 						return "page not found : " + parentName;
+					}
+				} else if (!child) {
+					if (!parent.isRoot()) {
+						priority = parent.getPriority()+1;
+						parent = parent.getParent();
 					}
 				}
 				boolean needInitContent = true;
@@ -1407,9 +1421,13 @@ public class Edit extends AbstractModuleAction {
 				}
 				elem.setName(nodeName);
 				if (requestService.getParameter("add-first", null) == null) {
-					parent.addChildMenuElementAutoPriority(elem);
+					if (priority > 0) {
+						elem.setPriority(priority);
+						parent.addChildMenuElement(elem);
+					} else {
+						parent.addChildMenuElementAutoPriority(elem);
+					}
 				} else {
-					elem.setPriority(0);
 					parent.addChildMenuElement(elem);
 				}
 

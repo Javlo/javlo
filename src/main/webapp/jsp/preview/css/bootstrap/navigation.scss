@@ -163,6 +163,10 @@ body._jv_dragnav>#preview_command {
 				position: relative;
 			}
 
+			li.add-child {
+				padding-left: 1rem !important;
+			}
+
 			padding: 0;
 		}
 
@@ -330,7 +334,6 @@ body._jv_dragnav>#preview_command {
 	}
 
 	ul.navigation li.page-item.add-page {
-		margin-left: 60px !important;
 		font-style: italic;
 
 		.btn-full {

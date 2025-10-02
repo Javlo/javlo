@@ -998,5 +998,9 @@ public class PageBean implements Serializable {
 	public List<ISection> getSection() throws Exception {
 		return page.getSection(ctx);
 	}
+
+	public int getPriority() {
+		return page.getPriority();
+	}
 	
 }

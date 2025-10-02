@@ -47,7 +47,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 							</div>
 						</c:if>
 						<a class="draggable flow-${info.parent.flowIndex}" children-flow-${info.parent.childrenFlowIndex}" id="page-${info.parent.name}" data-pageid="${info.parent.id}" href="${info.parent.url}" title="${info.parent.path}">
-							${info.parent.info.label}${info.parent.haveChildren?'...':''}
+						<span>${child.info.label}${child.haveChildren?'...':''}</span>
 						</a>
 					</li>
 				</c:if>
@@ -67,7 +67,7 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 				<li class="page-item" ${brother.trash?'class="trash"':''}>
 					<div class="nav-item ">
 						<a id="page-${brother.name}" class="draggable ${!brother.trash?'editor':'trash'} children-flow-${brother.childrenFlowIndex} ${brother.active?'active':'unactive'} flow-${brother.flowIndex}" data-pageid="${info.parent.id}" title="${brother.path}" href="${brother.url}">
-						${brother.info.label}${info.parent.parent.haveChildren?'...':''}
+						${brother.info.label}${brother.haveChildren?'...':''}
 						</a>
 					</div>
 				</li>
@@ -76,67 +76,90 @@ editCtx.setRenderMode(ContentContext.EDIT_MODE);
 			<li class="page-item ${page.trash?'trash ':''}${page.url eq info.currentURL?'selected ':''}${!asTitle?' title':''}${page.selected?' selected':''}" id="page-${page.name}">
 				<c:if test="${!page.root}">
 					<div class="nav-item editor draggable ${page.active?'active':'unactive'} flow-${page.flowIndex}" data-pageid="${child.id}" title="${page.path}">
-						<a href="${page.url}" class="flow-${page.flowIndex} children-flow-${page.childrenFlowIndex}"><span>${page.info.label}${page.haveChildren?'...':''}</span></a>
+						<a href="${page.url}" class="flow-${page.flowIndex} children-flow-${page.childrenFlowIndex}">
+							<span>${page.info.label}${page.haveChildren?'...':''}</span></a>
 						<c:if test="${not empty info.contextForCopy && (page.url eq info.currentURL)}">
 							<a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}"> <i class="bi bi-arrow-down-square"></i></a>
-						</c:if> 
+						</c:if>
 					</div>
-				</c:if> <c:if test="${page.url eq info.currentURL}">
-					<c:if test="${userInterface.navigation}">
-						<li class="page-item add-page page-depth-${page.depth}"><form class="button-form" id="form-add-page" action="${info.currentURL}" method="post">
-								<input type="hidden" name="webaction" value="edit.addPage" />
-
-									<input name="name" placeholder="${i18n.edit['navigation.add-page']}" type="text" />
-									<button type="submit">
-									<i class="fa fa-plus-circle"></i>
-									</button>
-
-							</form></li>
-					</c:if>
-				</c:if></li>
+				</c:if> </li>
 			<c:if test="${asTitle}">
 				<li class="page-item"><ul class="children sortable">
 			</c:if>
 			<c:forEach var="child" items="${page.children}">
-				
-				
 				<li class="page-item ${child.trash?'trash ':''}${child.url eq info.currentURL?'selected ':''}${child.info.realContent?'real-content':''} ${fn:length(child.children) > 0?'have-children ':''}">
 					<div class="nav-item editor draggable">
 						<a id="page-${child.name}" class="draggable ${!child.trash?'editor':'trash'} ${child.active?'active':'unactive'} flow-${child.flowIndex} children-flow-${child.childrenFlowIndex}" data-pageid="${info.parent.id}" title="${child.path}" href="${child.url}">
 						<span>${child.info.label}${child.haveChildren?'...':''}</span>
-						<c:if test="${not empty info.contextForCopy && (child.url eq info.currentURL)}"> 
+						<c:if test="${not empty info.contextForCopy && (child.url eq info.currentURL)}">
 							<a title="${i18n.edit['navigation.insert-page']}" class="paste-page" href="${pasteURL}"> <i class="bi bi-arrow-down-square"></i></a>
 						</c:if>
 						</a>
 					</div>
 				</li>
+			</c:forEach>
 
-				<c:if test="${child.url eq info.currentURL}">
+
 					<c:if test="${userInterface.navigation}">
-						<li class="page-item add-page page-depth-${page.depth}"><form class="button-form" id="form-add-page" action="${info.currentURL}" method="post">
-							<input type="hidden" name="webaction" value="edit.addPage" />
-
-							<input name="name" placeholder="${i18n.edit['navigation.add-page']}" type="text" />
+						<li class="page-item add-child page-depth-${page.depth}"><form class="button-form" id="form-add-child" action="${info.currentURL}" method="post">
+							<input type="hidden" name="webaction" value="edit.addChild" />
+							<i class="bi bi-arrow-return-right"></i>
+							<input name="name" placeholder="${i18n.edit['navigation.add-child']}" type="text" />
 							<button type="submit">
 								<i class="fa fa-plus-circle"></i>
 							</button>
 
 						</form></li>
-					</c:if>
-				</c:if>
+						<c:if test="${!info.currentPage.root}">
+							<li class="page-item add-page page-depth-${page.depth}"><form class="button-form" id="form-add-page" action="${info.currentURL}" method="post">
+								<input type="hidden" name="webaction" value="edit.addPage" />
+								<i class="bi bi-arrow-down"></i>
+								<input name="name" placeholder="${i18n.edit['navigation.add-page']}" type="text" />
+								<button type="submit">
+									<i class="fa fa-plus-circle"></i>
+								</button>
 
-			</c:forEach>
+							</form></li>
+						</c:if>
+					</c:if>
+
+
 			<c:if test="${asTitle}">
 		</ul>
 		</li>
-		</c:if>
-		<c:forEach var="brother" items="${page.info.nextBrothers}">
+
+			<c:forEach var="brother" items="${page.info.nextBrothers}">
 			<li class="page-item" ${brother.trash?'class="trash"':''}>
 				<div class="nav-item ">
-					<a class="draggable editor flow-${brother.flowIndex} children-flow-${brother.childrenFlowIndex}" id="page-${brother.name}" title="${brother.path}" href="${brother.url}">${brother.info.label}${info.parent.parent.haveChildren?'...':''}</a>
+					<a class="draggable editor flow-${brother.flowIndex} children-flow-${brother.childrenFlowIndex}" id="page-${brother.name}" title="${brother.path}" href="${brother.url}">
+							${brother.info.label}${brother.haveChildren?'...':''}
+					</a>
 				</div>
 			</li>
 		</c:forEach>
+			<c:if test="${page.url eq info.currentURL}">
+				<c:if test="${userInterface.navigation}">
+					<li class="page-item add-child page-depth-${page.depth}"><form class="button-form" id="form-add-child" action="${info.currentURL}" method="post">
+						<input type="hidden" name="webaction" value="edit.addChild" />
+						<i class="bi bi-arrow-return-right"></i>
+						<input name="name" placeholder="${i18n.edit['navigation.add-child']}" type="text" />
+						<button type="submit">
+							<i class="fa fa-plus-circle"></i>
+						</button>
+					</form></li>
+				</c:if>
+			</c:if>
+			<c:if test="${!info.currentPage.root}">
+				<li class="page-item add-page page-depth-${page.depth}"><form class="button-form" id="form-add-page" action="${info.currentURL}" method="post">
+					<input type="hidden" name="webaction" value="edit.addPage" />
+					<i class="bi bi-arrow-down"></i>
+					<input name="name" placeholder="${i18n.edit['navigation.add-page']}" type="text" />
+					<button type="submit">
+						<i class="fa fa-plus-circle"></i>
+					</button>
+				</form></li></c:if>
+			</c:if>
+
 		</ul>
 	</div>
 </div>

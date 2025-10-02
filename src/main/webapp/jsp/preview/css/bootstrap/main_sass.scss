@@ -43,6 +43,10 @@ $header-height: 40px;
 	button {
 		color: var(--javlo-ui-special-action-color);
 	}
+	i {
+		color: var(--javlo-ui-special-action-color);
+		margin-right: 2px;
+	}
 }
 
 #preview_command ._jv_menu i {
