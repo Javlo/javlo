@@ -8,6 +8,7 @@ import org.javlo.component.image.IImageTitle;
 import org.javlo.component.image.ImageBean;
 import org.javlo.component.meta.ContactBean;
 import org.javlo.context.ContentContext;
+import org.javlo.data.taxonomy.TaxonomyBean;
 import org.javlo.data.taxonomy.TaxonomyDisplayBean;
 import org.javlo.data.taxonomy.TaxonomyService;
 import org.javlo.helper.StringHelper;
@@ -224,6 +225,21 @@ public class PageBean implements Serializable {
 	public List<PageBean> getChildren() {
 		List<PageBean> childrenBean = new LinkedList<PageBean>();
 		List<MenuElement> children = page.getChildMenuElementsList();
+		for (MenuElement child : children) {
+			try {
+				if (child.isActive() || ctx.isEdition()) {
+					childrenBean.add(child.getPageBean(ctx));
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return childrenBean;
+	}
+
+	public List<PageBean> getAllChildren() throws Exception {
+		List<PageBean> childrenBean = new LinkedList<PageBean>();
+		List<MenuElement> children = page.getAllChildrenList();
 		for (MenuElement child : children) {
 			try {
 				if (child.isActive() || ctx.isEdition()) {
@@ -988,6 +1004,18 @@ public class PageBean implements Serializable {
 	
 	public Set<String> getTaxonomy() {
 		return page.getTaxonomy();
+	}
+
+	public String getTaxonomyString() throws IOException {
+		String sep="";
+		String out = "";
+		if (page.getTaxonomy() != null) {
+			for (TaxonomyBean bean : ctx.getGlobalContext().getAllTaxonomy(ctx).convert(page.getTaxonomy())) {
+				out = out + sep + bean.getName();
+				sep = ",";
+			}
+		}
+		return out;
 	}
 
 	public List<TaxonomyDisplayBean> getTaxonomyBean() throws IOException {
