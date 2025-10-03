@@ -168,7 +168,7 @@
 			</li>
 
 			<!-- Children of resolved page -->
-			<li class="root-children">
+			<li class="${info.currentPage.root?'root-children':'page-item'}">
 				<ul class="children sortable">
 
 					<c:if test="${info.currentPage.root}">
