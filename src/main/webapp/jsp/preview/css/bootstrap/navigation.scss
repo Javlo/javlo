@@ -82,6 +82,11 @@ body._jv_dragnav>#preview_command {
 		display: none;
 	}
 
+	.navigation li.root-children {
+		margin: 0;
+		padding: 0;
+	}
+
 	.sidebar {
 		.tab-content {
 			display: flex;
@@ -188,7 +193,6 @@ body._jv_dragnav>#preview_command {
 			position: relative;
 			margin: 0;
 			padding: 0;
-			padding-bottom: 20px;
 			list-style: none;
 		}
 
@@ -300,7 +304,11 @@ body._jv_dragnav>#preview_command {
 
 		&.web ul.navigation li.page-item {
 			position: relative;
-			margin: 5px 0 5px 30px;
+			margin: 5px 0 5px 20px;
+
+			&.add-page {
+				margin: 5px 0 5px 0;
+			}
 
 			&.title {
 				margin: 5px 0 5px 0;
