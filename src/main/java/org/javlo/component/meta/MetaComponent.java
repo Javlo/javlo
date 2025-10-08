@@ -113,4 +113,9 @@ public class MetaComponent extends DynamicComponent implements IAction {
 	public boolean isRealContent(ContentContext ctx) {
 		return true;
 	}
+
+	@Override
+	public int getComplexityLevel(ContentContext ctx) {
+		return IContentVisualComponent.COMPLEXITY_STANDARD;
+	}
 }
