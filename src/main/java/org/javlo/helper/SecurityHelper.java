@@ -16,6 +16,7 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class SecurityHelper {
 	
@@ -35,18 +36,20 @@ public class SecurityHelper {
 			return true;
 		}
 
+		// Convert all roles to lowercase
 		List<String> pageUserRolesLower = page.getUserRoles().stream()
 				.map(String::toLowerCase)
-				.toList();
+				.collect(Collectors.toList());
 
 		List<String> userRolesLower = user.getRoles().stream()
 				.map(String::toLowerCase)
-				.toList();
+				.collect(Collectors.toList());
 
-
-        return !Collections.disjoint(pageUserRolesLower, userRolesLower);
+		// Check if there is any intersection between the two lists
+		return !Collections.disjoint(pageUserRolesLower, userRolesLower);
 	}
-	
+
+
 	public static boolean checkGoogleRecaptcha(ContentContext ctx, String response) throws MalformedURLException, Exception {
 		if (response == null) {
 			return false;

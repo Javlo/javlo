@@ -81,27 +81,39 @@ public class GoogleSheetAction implements IAction {
 		String sheet = rs.getParameter("sheet");
 		String googleId = rs.getParameter("spreadsheetId");
 
-		logger.info("project : "+project);
-		logger.info("sheet : "+sheet);
-		logger.info("googleId : "+googleId);
+		logger.info("project : " + project);
+		logger.info("sheet : " + sheet);
+		logger.info("googleId : " + googleId);
 
 		String credentialPath = ctx.getGlobalContext().getCredentialPath(project);
 		if (credentialPath == null) {
-			logger.warning("project not found : "+project);
-			return "project not found : "+project;
+			logger.warning("project not found : " + project);
+			return "project not found : " + project;
 		} else {
-			logger.info("project found : "+credentialPath);
+			logger.info("project found : " + credentialPath);
 		}
 
-		GoogleSheetService service = new GoogleSheetService(credentialPath, googleId);
+		GoogleSheetService service;
+		try {
+			service = new GoogleSheetService(credentialPath, googleId);
+		} catch (Exception e) {
+			logger.severe("Failed to initialize GoogleSheetService: " + e.getMessage());
+			return "Error initializing GoogleSheetService";
+		}
 
 		HttpServletResponse response = ctx.getResponse();
-		response.setContentType("text/csv");
-		response.setHeader("Content-Disposition", "attachment; filename=\"data.csv\"");
-		response.setCharacterEncoding("UTF-8");
-		response.getWriter().write(service.readAllAsCSV(sheet));
-		response.getWriter().flush();
-		response.getWriter().close();
+		try {
+			response.setContentType("text/csv");
+			response.setHeader("Content-Disposition", "attachment; filename=\"data.csv\"");
+			response.setCharacterEncoding("UTF-8");
+			response.getWriter().write(service.readAllAsCSV(sheet));
+			response.getWriter().flush();
+			response.getWriter().close();
+		} catch (IOException e) {
+			logger.severe("Error writing CSV to response: " + e.getMessage());
+			return "Error writing CSV to response";
+		}
+
 		ctx.setStopRendering(true);
 
 		return null;
