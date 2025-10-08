@@ -37,6 +37,7 @@ import org.thymeleaf.TemplateEngine;
 import javax.naming.ConfigurationException;
 import java.awt.*;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -3944,16 +3945,40 @@ public class Template implements Comparable<Template> {
 		}
 
 		// Read the file content
-		String content = new String(Files.readAllBytes(file.toPath()));
+		String content = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
 
-		// Minify the JSP content
-		String minifiedContent = minifyContent(content, "index.jsp");
+		// Remove all illegal XML 1.0 control characters (except TAB, LF, CR)
+		// This prevents errors like "Invalid XML character (Unicode: 0x19)"
+		StringBuilder cleaned = new StringBuilder();
+		for (int i = 0; i < content.length(); i++) {
+			char ch = content.charAt(i);
+			if (isXml10Legal(ch)) {
+				cleaned.append(ch);
+			}
+		}
 
-		// Write the minified content back to the same file (overwrite)
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+		// Minify the cleaned JSP content
+		String minifiedContent = minifyContent(cleaned.toString(), file.getName());
+
+		// Overwrite the original file with the cleaned and minified content
+		try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
 			writer.write(minifiedContent);
 		}
 	}
+
+	/**
+	 * Check if a character is allowed in XML 1.0 documents.
+	 * Allows TAB (0x9), LF (0xA), CR (0xD), and valid Unicode ranges.
+	 */
+	private static boolean isXml10Legal(char ch) {
+		// Allow TAB, LF, CR
+		if (ch == 0x9 || ch == 0xA || ch == 0xD) return true;
+		// Valid Unicode ranges per XML 1.0 specification
+		return (ch >= 0x20 && ch <= 0xD7FF)
+				|| (ch >= 0xE000 && ch <= 0xFFFD)
+				|| (ch >= 0x10000 && ch <= 0x10FFFF);
+	}
+
 
 	private static String MIMIFY_VERSION = "1.2";
 
