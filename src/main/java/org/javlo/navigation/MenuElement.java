@@ -2073,6 +2073,33 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		return creator;
 	}
 
+	public MetaComponent getMetaComponent(ContentContext ctx) {
+		try {
+			String requestKeyNotFound = requestKeyNotFound = "_meta_not_found_"+ctx.getCurrentPage().getId();
+			if (ctx.getRequest().getAttribute(requestKeyNotFound) != null) {
+				return null;
+			}
+			String requestKey = "_meta_"+ctx.getCurrentPage().getId();
+			if (ctx.getRequest().getAttribute(requestKey) != null) {
+				return (MetaComponent) ctx.getRequest().getAttribute(requestKey);
+			}
+			ContentContext noAreaCtx = ctx.getContextWithoutArea();
+			Iterator<IContentVisualComponent> elems = getContent(noAreaCtx).getIterable(noAreaCtx).iterator();
+			while (elems.hasNext()) {
+				IContentVisualComponent comp = (IContentVisualComponent) elems.next();
+				if (comp instanceof MetaComponent) {
+					ctx.getRequest().setAttribute(requestKey, comp);
+					return (MetaComponent) comp;
+				}
+			}
+			ctx.getRequest().setAttribute(requestKeyNotFound, true);
+			return null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	/**
 	 * return the depth of the current element
 	 * 
@@ -2094,6 +2121,15 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 		if (desc.description != null) {
 			return desc.description;
+		}
+
+		MetaComponent meta = getMetaComponent(ctx);
+		if (meta != null) {
+			String description = meta.getFieldValue(ctx, "description");
+			if (!StringHelper.isEmpty(description)) {
+				desc.description = new HtmlPart(StringHelper.removeTag(StringUtils.replace(description, "\"", "&quot;")));
+				return desc.description;
+			}
 		}
 
 		String res = "";

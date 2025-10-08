@@ -6,20 +6,26 @@ package org.javlo.component.core;
 import org.apache.commons.lang3.NotImplementedException;
 import org.javlo.component.container.RepeatContainer;
 import org.javlo.component.links.MirrorComponent;
+import org.javlo.component.meta.MetaComponent;
 import org.javlo.component.title.LinkLabel;
 import org.javlo.component.title.MenuTitle;
 import org.javlo.component.title.PageTitle;
 import org.javlo.component.title.SubTitle;
 import org.javlo.context.ContentContext;
+import org.javlo.fields.Field;
+import org.javlo.helper.StringHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * @author pvanderm
  */
 public class ContentElementList implements IContentComponentsList {
+
+	protected static Logger logger = Logger.getLogger(ContentElementList.class.getName());
 
 	private class ContentElementListIterator implements Iterator<IContentVisualComponent> {
 
@@ -380,6 +386,21 @@ public class ContentElementList implements IContentComponentsList {
 	}
 
 	public String getLinkLabel(ContentContext ctx) {
+
+		if (page != null) {
+			MetaComponent meta = page.getMetaComponent(ctx);
+			if (meta != null) {
+                try {
+                    String linkLabel = meta.getFieldValue(ctx, "linkLabel");
+					if (!StringHelper.isEmpty(linkLabel)) {
+						return linkLabel;
+					}
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+		}
+
 		Iterator elems = contentElements.iterator();
 		while (elems.hasNext()) {
 			IContentVisualComponent comp = (IContentVisualComponent) elems.next();
@@ -439,6 +460,23 @@ public class ContentElementList implements IContentComponentsList {
 	}
 
 	private String  getTitle(ContentContext ctx, boolean repeat) {
+
+		if (page != null) {
+			MetaComponent metaComp = page.getMetaComponent(ctx);
+			if (metaComp != null) {
+				try {
+					Field field = metaComp.getField(ctx, "title");
+					if (field == null) {
+						logger.severe("field h1 not found in meta component");
+					} else {
+						System.out.println("####### field.getValue() = " + field.getValue());
+						return field.getValue();
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 
 		String res = "";
 		Iterator<IContentVisualComponent> elems = contentElements.iterator();

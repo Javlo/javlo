@@ -516,7 +516,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
     public Field getField(ContentContext ctx, String name) throws Exception {
         java.util.List<Field> fields = getFields(ctx);
         for (Field field : fields) {
-            if (field.getName().equals(name)) {
+            if (field.getName() != null && field.getName().equals(name)) {
                 return field;
             }
         }

@@ -36,6 +36,7 @@ org.javlo.component.meta.HeadMeta
 org.javlo.component.meta.GraphicCharter
 org.javlo.component.meta.PageCss
 org.javlo.component.navigation.PageURL
+org.javlo.component.meta.MetaComponent
 
 --content.title.text
 

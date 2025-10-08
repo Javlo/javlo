@@ -759,6 +759,10 @@ public class PageBean implements Serializable {
 		}
 	}
 
+	public String getLinkLabel() throws Exception {
+		return page.getLinkLabel(ctx);
+	}
+
 	/**
 	 * get the link on the page, if page do not contains real content, the link can be a external link or a link to a ressources.
 	 * @return
