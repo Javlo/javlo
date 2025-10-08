@@ -62,7 +62,7 @@ public class MetaComponent extends DynamicComponent implements IAction {
 			String out = "";
 			out += "<style>._meta_info-box{border:1px solid #ccc;border-radius:8px;padding:10px 15px;width:fit-content;background-color:#f9f9f9;font-family:sans-serif;}.info-box h3{margin-top:0;margin-bottom:8px;font-size:1.1em;border-bottom:1px solid #ddd;padding-bottom:4px;}.info-box table{border-collapse:collapse;width:100%;}.info-box td{padding:4px 8px;}.info-box td:first-child{font-weight:bold;color:#555;}\n" +
 					"</style></style>";
-			out += "<div class='_meta_info-box'><h3>"+getType()+"</h3>";
+			out += "<div class='_meta_info-box'><h3>"+getType()+"&nbsp;&nbsp;</h3>";
 			out += "<table>";
 			for (Field f : getFields(ctx)) {
 				out += "<tr><th>"+f.getName()+"</th><td>"+f.getValue()+"</td></tr>";
