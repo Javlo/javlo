@@ -60,7 +60,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<maven.compiler.release>17</maven.compiler.release>
+		<maven.compiler.release>11</maven.compiler.release>
 
 		<jackson.version>2.18.4</jackson.version>
 		<lucene.version>9.12.2</lucene.version>
@@ -916,7 +916,7 @@
 				<artifactId>maven-pmd-plugin</artifactId>
 				<version>${maven.plugin.version}</version>
 				<configuration>
-					<targetJdk>1.17</targetJdk>
+					<targetJdk>1.11</targetJdk>
 				</configuration>
 			</plugin>
 			<plugin>
