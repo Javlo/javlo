@@ -1021,4 +1021,5 @@ Security in case of vulnerabilities.
 - section layout configurable
 ### Modified
 - minify jsp optimisation [2.3.3.1]
+- linkLabel
 
