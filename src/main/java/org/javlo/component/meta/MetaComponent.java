@@ -9,6 +9,7 @@ import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.fields.Field;
+import org.javlo.helper.StringHelper;
 import org.javlo.utils.StructuredProperties;
 
 import java.util.logging.Logger;
@@ -36,17 +37,26 @@ public class MetaComponent extends DynamicComponent implements IAction {
 		
 		int order=1;
 
-		properties.put("field.title.type", "h1");
-		properties.put("field.title.order", order++);
-		
-		properties.put("field.description.type", "large-text");
-		properties.put("field.description.order", order++);
-		
-		properties.put("field.menuLabel.type", "text");
-		properties.put("field.menuLabel.order", order++);
+		if (StringHelper.isEmpty(getValue())) {
 
-		properties.put("field.linkLabel.type", "text");
-		properties.put("field.linkLabel.order", order++);
+			properties.put("field.title.type", "h1");
+			properties.put("field.title.order", "" + order++);
+			properties.put("field.title.value", "");
+
+			properties.put("field.description.type", "large-text");
+			properties.put("field.description.order", "" + order++);
+			properties.put("field.description.value", "");
+
+			properties.put("field.menuLabel.type", "text");
+			properties.put("field.menuLabel.order", "" + order++);
+			properties.put("field.menuLabel.value", "");
+
+			properties.put("field.linkLabel.type", "text");
+			properties.put("field.linkLabel.order", "" + order++);
+			properties.put("field.linkLabel.value", "");
+
+			storeProperties();
+		}
 
 		/*properties.put("field.pageImage.type", "image");
 		properties.put("field.pageImage.order", order++);*/
@@ -63,9 +73,9 @@ public class MetaComponent extends DynamicComponent implements IAction {
 			return "";
 		} else {
 			String out = "";
-			out += "<style>._meta_info-box{border:4px solid var(--javlo-flash-color);border-radius:8px;padding:10px 15px;width:fit-content;background-color:#f9f9f9;font-family:sans-serif;margin: 1rem auto;}.info-box h3{margin-top:0;margin-bottom:8px;font-size:1.1em;border-bottom:1px solid #ddd;padding-bottom:4px;}.info-box table{border-collapse:collapse;width:100%;}.info-box td{padding:4px 8px;}.info-box td:first-child{font-weight:bold;color:#555;}\n" +
+			out += "<style>._meta_info-box{border:4px solid var(--javlo-flash-color);border-radius:8px;padding:10px 15px;width:fit-content; max-width: 80%; background-color:#f9f9f9;font-family:sans-serif;margin: 1rem auto;}.info-box h3{margin-top:0;margin-bottom:8px;font-size:1.1em;border-bottom:1px solid #ddd;padding-bottom:4px;}.info-box table{border-collapse:collapse;width:100%;}.info-box td{padding:4px 8px;}.info-box td:first-child{font-weight:bold;color:#555;}\n" +
 					"</style></style>";
-			out += "<div class='_meta_info-box'><h3>"+getType()+"&nbsp;&nbsp;</h3>";
+			out += "<div class='_meta_info-box'><h3>"+getType()+"&nbsp;:&nbsp;</h3>";
 			out += "<table>";
 			for (Field f : getFields(ctx)) {
 				out += "<tr><th>"+f.getName()+"</th><td>"+f.getValue()+"</td></tr>";
@@ -114,7 +124,7 @@ public class MetaComponent extends DynamicComponent implements IAction {
 	
 	@Override
 	public boolean isRealContent(ContentContext ctx) {
-		return true;
+		return false;
 	}
 
 	@Override
