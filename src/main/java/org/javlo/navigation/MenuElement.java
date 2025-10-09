@@ -2079,7 +2079,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			if (ctx.getRequest().getAttribute(requestKeyNotFound) != null) {
 				return null;
 			}
-			String requestKey = "_meta_"+ctx.getCurrentPage().getId();
+			String requestKey = "_meta_"+getId();
 			if (ctx.getRequest().getAttribute(requestKey) != null) {
 				return (MetaComponent) ctx.getRequest().getAttribute(requestKey);
 			}
