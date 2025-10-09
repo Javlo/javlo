@@ -75,6 +75,20 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 			}
 			return value;
 		}
+
+		public Integer getDecimalValue() {
+			if (StringHelper.isDigit(getValue())) {
+				return Integer.parseInt(getValue());
+			}
+			return null;
+		}
+
+		public Double getDoubleValue() {
+			if (StringHelper.isLikeNumber(getValue())) {
+				return Double.parseDouble(getValue());
+			}
+			return null;
+		}
 		
 		public String getFormatedValue() throws Exception {
 			String value = Field.this.getReferenceFormatedValue(ctx);
