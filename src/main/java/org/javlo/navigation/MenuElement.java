@@ -2075,7 +2075,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 	public MetaComponent getMetaComponent(ContentContext ctx) {
 		try {
-			String requestKeyNotFound = requestKeyNotFound = "_meta_not_found_"+ctx.getCurrentPage().getId();
+			String requestKeyNotFound = requestKeyNotFound = "_meta_not_found_"+getId();
 			if (ctx.getRequest().getAttribute(requestKeyNotFound) != null) {
 				return null;
 			}
@@ -3675,6 +3675,19 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 		if (desc.linkLabel != null) {
 			return desc.linkLabel;
+		}
+
+		MetaComponent meta = getMetaComponent(ctx);
+		if (meta != null) {
+			try {
+				String linkLabel = meta.getFieldValue(ctx, "linkLabel");
+				if (!StringHelper.isEmpty(linkLabel)) {
+					desc.linkLabel = linkLabel;
+					return linkLabel;
+				}
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
 		}
 
 		newCtx.setArea(null);

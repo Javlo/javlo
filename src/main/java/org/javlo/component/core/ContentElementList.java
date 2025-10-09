@@ -13,7 +13,6 @@ import org.javlo.component.title.PageTitle;
 import org.javlo.component.title.SubTitle;
 import org.javlo.context.ContentContext;
 import org.javlo.fields.Field;
-import org.javlo.helper.StringHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 
@@ -386,20 +385,6 @@ public class ContentElementList implements IContentComponentsList {
 	}
 
 	public String getLinkLabel(ContentContext ctx) {
-
-		if (page != null) {
-			MetaComponent meta = page.getMetaComponent(ctx);
-			if (meta != null) {
-                try {
-                    String linkLabel = meta.getFieldValue(ctx, "linkLabel");
-					if (!StringHelper.isEmpty(linkLabel)) {
-						return linkLabel;
-					}
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-		}
 
 		Iterator elems = contentElements.iterator();
 		while (elems.hasNext()) {
