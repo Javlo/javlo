@@ -2453,6 +2453,15 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			return desc.label;
 		}
 
+		MetaComponent meta = getMetaComponent(ctx);
+		if (meta != null) {
+			String label = meta.getFieldValue(ctx, "menuLabel");
+			if (!StringHelper.isEmpty(label)) {
+				desc.label = label;
+				return desc.label;
+			}
+		}
+
 		newCtx.setRequestContentLanguage(ctx.getRequestContentLanguage()); // label
 																			// is
 																			// from

@@ -42,6 +42,9 @@ public class MetaComponent extends DynamicComponent implements IAction {
 		properties.put("field.description.type", "large-text");
 		properties.put("field.description.order", order++);
 		
+		properties.put("field.menuLabel.type", "text");
+		properties.put("field.menuLabel.order", order++);
+
 		properties.put("field.linkLabel.type", "text");
 		properties.put("field.linkLabel.order", order++);
 
