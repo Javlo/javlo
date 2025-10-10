@@ -335,14 +335,6 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 		this.columnSize = columnSize;
 	}
 
-//	public boolean isForceCachable() {
-//		return forceCachable;
-//	}
-//
-//	public void setForceCachable(boolean forceCachable) {
-//		this.forceCachable = forceCachable;
-//	}
-
 	public String getColumnStyle() {
 		return columnStyle;
 	}
@@ -354,6 +346,7 @@ public class ComponentBean implements Serializable, Comparable<ComponentBean> {
 	public String getTextPosition() {
 		return textPosition;
 	}
+
 	public void setTextPosition(String textPosition) {
 		this.textPosition = textPosition;
 	}
