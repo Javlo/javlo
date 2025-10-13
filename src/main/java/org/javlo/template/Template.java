@@ -3958,7 +3958,7 @@ public class Template implements Comparable<Template> {
 		}
 
 		// Minify the cleaned JSP content
-		String minifiedContent = minifyContent(cleaned.toString(), file.getName());
+		String minifiedContent = minifyContent(cleaned.toString());
 
 		// Overwrite the original file with the cleaned and minified content
 		try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
@@ -3982,7 +3982,7 @@ public class Template implements Comparable<Template> {
 
 	private static String MIMIFY_VERSION = "1.2";
 
-	public static String minifyContent(String content, String file) {
+	public static String minifyContent(String content) {
 
 		// Étape 0 : protéger les attributs contenant du JSP pour éviter de les casser
 		Pattern jspAttrPattern = Pattern.compile("(\\w+)\\s*=\\s*\"\\s*<%=(.*?)%>\\s*\"", Pattern.DOTALL);

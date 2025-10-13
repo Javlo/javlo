@@ -367,6 +367,8 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                             html = html.replace("<!-- end-"+group+" -->", "</for:each> "+"<!-- end-"+group+" -->");
                         }
 
+                        html = Template.minifyContent(html);
+
                         ResourceHelper.writeStringToFile(jspFile, html);
                         if (ctx.getGlobalContext().isProd()) {
                             Template.minifyJSP(ctx.getGlobalContext(), jspFile);

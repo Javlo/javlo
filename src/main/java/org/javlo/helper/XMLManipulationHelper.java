@@ -923,7 +923,7 @@ public class XMLManipulationHelper {
         if (jspFile != null) {
             if (globalContext.isProd()) {
                 //newContent = XHTMLHelper.compress(newContent);
-                newContent = Template.minifyContent(newContent, jspFile.getName());
+                newContent = Template.minifyContent(newContent);
             }
             ResourceHelper.writeStringToFile(jspFile, newContent, ContentContext.CHARACTER_ENCODING);
         }
