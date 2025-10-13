@@ -7,7 +7,6 @@ import org.javlo.actions.IAction;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.context.ContentContext;
-import org.javlo.context.EditContext;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.fields.Field;
 import org.javlo.helper.StringHelper;
@@ -70,8 +69,7 @@ public class MetaComponent extends DynamicComponent implements IAction {
 
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
-		EditContext exitCtx = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
-		if (!exitCtx.isPreviewEditionMode()) {
+		if (!ctx.isEdition()) {
 			return "";
 		} else {
 			return super.getPrefixViewXHTMLCode(ctx);
@@ -80,8 +78,7 @@ public class MetaComponent extends DynamicComponent implements IAction {
 
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
-		EditContext exitCtx = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
-		if (!exitCtx.isPreviewEditionMode()) {
+		if (!ctx.isEdition()) {
 			return "";
 		} else {
 			return super.getSuffixViewXHTMLCode(ctx);
@@ -90,8 +87,7 @@ public class MetaComponent extends DynamicComponent implements IAction {
 
 	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		EditContext exitCtx = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
-		if (!exitCtx.isPreviewEditionMode()) {
+		if (!ctx.isEdition()) {
 			return "";
 		} else {
 			String out = "";

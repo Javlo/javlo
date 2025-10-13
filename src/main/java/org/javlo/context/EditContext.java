@@ -113,7 +113,7 @@ public class EditContext implements Serializable {
 
 	UserEditFilter adminUserEditFilter = new UserEditFilter();
 
-	boolean previewEditionMode = false;
+	boolean previewEditionMode = true;
 
 	// int menuCut = 18;
 
