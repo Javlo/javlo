@@ -7,6 +7,7 @@ import org.javlo.actions.IAction;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.context.ContentContext;
+import org.javlo.context.EditContext;
 import org.javlo.exception.ResourceNotFoundException;
 import org.javlo.fields.Field;
 import org.javlo.helper.StringHelper;
@@ -68,13 +69,34 @@ public class MetaComponent extends DynamicComponent implements IAction {
 	}
 
 	@Override
+	public String getPrefixViewXHTMLCode(ContentContext ctx) {
+		EditContext exitCtx = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		if (!exitCtx.isPreviewEditionMode()) {
+			return "";
+		} else {
+			return super.getPrefixViewXHTMLCode(ctx);
+		}
+	}
+
+	@Override
+	public String getSuffixViewXHTMLCode(ContentContext ctx) {
+		EditContext exitCtx = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		if (!exitCtx.isPreviewEditionMode()) {
+			return "";
+		} else {
+			return super.getSuffixViewXHTMLCode(ctx);
+		}
+	}
+
+	@Override
 	public String getViewXHTMLCode(ContentContext ctx) throws Exception {
-		if (ctx.isAsViewMode()) {
+		EditContext exitCtx = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		if (!exitCtx.isPreviewEditionMode()) {
 			return "";
 		} else {
 			String out = "";
 			out += "<style>._meta_info-box{border:4px solid var(--javlo-flash-color);border-radius:8px;padding:10px 15px;width:fit-content; max-width: 80%; background-color:#f9f9f9;font-family:sans-serif;margin: 1rem auto;}.info-box h3{margin-top:0;margin-bottom:8px;font-size:1.1em;border-bottom:1px solid #ddd;padding-bottom:4px;}.info-box table{border-collapse:collapse;width:100%;}.info-box td{padding:4px 8px;}.info-box td:first-child{font-weight:bold;color:#555;}\n" +
-					"</style></style>";
+					"</style>";
 			out += "<div class='_meta_info-box'><h3>"+getType()+"&nbsp;:&nbsp;</h3>";
 			out += "<table>";
 			for (Field f : getFields(ctx)) {

@@ -1011,7 +1011,7 @@ public class PageBean implements Serializable {
 	}
 
 	public String getTaxonomyString() throws IOException {
-		String sep="";
+		String sep = "";
 		String out = "";
 		if (page.getTaxonomy() != null) {
 			for (TaxonomyBean bean : ctx.getGlobalContext().getAllTaxonomy(ctx).convert(page.getTaxonomy())) {
