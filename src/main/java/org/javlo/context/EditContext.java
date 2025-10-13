@@ -2,32 +2,21 @@
  * Created on 20 aout 2003
  */
 package org.javlo.context;
-  
-import java.io.Serializable;
-import java.security.Principal;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.logging.Logger;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpSession;
-
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.title.Heading;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.service.ClipBoard;
-import org.javlo.user.AdminUserSecurity;
-import org.javlo.user.IUserInfo;
-import org.javlo.user.User;
-import org.javlo.user.UserEditFilter;
-import org.javlo.user.UserInfo;
+import org.javlo.user.*;
+
+import java.io.Serializable;
+import java.security.Principal;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * @author pvanderm
@@ -124,7 +113,7 @@ public class EditContext implements Serializable {
 
 	UserEditFilter adminUserEditFilter = new UserEditFilter();
 
-	boolean previewEditionMode = true;
+	boolean previewEditionMode = false;
 
 	// int menuCut = 18;
 
