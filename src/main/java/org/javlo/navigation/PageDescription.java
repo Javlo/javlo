@@ -86,6 +86,8 @@ public class PageDescription implements Serializable {
 
 	Double weight = null;
 
+	public String forcedUrl = null;
+
 	public ImageTitleBean imageLink;
 
 	public ImageTitleBean imageBackground;

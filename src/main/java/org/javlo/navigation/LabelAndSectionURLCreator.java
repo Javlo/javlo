@@ -1,7 +1,5 @@
 package org.javlo.navigation;
 
-import org.javlo.component.core.IContentVisualComponent;
-import org.javlo.component.navigation.PageURL;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.StringHelper;
@@ -9,7 +7,6 @@ import org.javlo.helper.URLHelper;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.Collection;
 
 /**
  * create url based on the title of the page.
@@ -57,16 +54,15 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 			}
 		}
 
-		ContentContext freeCtx = ctx.getFreeContentContext();		
-		ContentContext contextWidthTitle = freeCtx.getContextWidthTitle(currentPage);		
-		
+		ContentContext freeCtx = ctx.getFreeContentContext();
+		ContentContext contextWidthTitle = freeCtx.getContextWidthTitle(currentPage);
+
 		if (contextWidthTitle != null) {
-			freeCtx = contextWidthTitle;			
+			freeCtx = contextWidthTitle;
 		}
-		
-		Collection<IContentVisualComponent> comps = currentPage.getContentByType(freeCtx, PageURL.TYPE);
-		if (comps.size() > 0) {
-			return '/'+((PageURL) comps.iterator().next()).getValue();
+
+		if (currentPage.getForcedUrl(ctx) != null) {
+			return currentPage.getForcedUrl(ctx);
 		}
 		
 		String label;

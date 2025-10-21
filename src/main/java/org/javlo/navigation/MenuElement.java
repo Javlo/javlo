@@ -20,6 +20,7 @@ import org.javlo.component.links.PageMirrorComponent;
 import org.javlo.component.links.PageReferenceComponent;
 import org.javlo.component.meta.Font;
 import org.javlo.component.meta.*;
+import org.javlo.component.navigation.PageURL;
 import org.javlo.component.title.GroupTitle;
 import org.javlo.component.title.WebSiteTitle;
 import org.javlo.component.web2.ReactionComponent;
@@ -1865,6 +1866,29 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		}
 
 		return outContentByDate;
+	}
+
+	public String getForcedUrl(ContentContext ctx) throws Exception {
+
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+
+		if (desc.forcedUrl != null) {
+			if (desc.forcedUrl.equals("")) {
+				return null;
+			}
+			return desc.forcedUrl;
+		}
+
+		Collection<IContentVisualComponent> comps = getContentByType(ctx, PageURL.TYPE);
+		if (comps.size() > 0) {
+			desc.forcedUrl = '/'+((PageURL) comps.iterator().next()).getValue();
+		}
+
+		if (desc.forcedUrl == null) {
+			desc.forcedUrl = "";
+		}
+
+		return desc.forcedUrl;
 	}
 
 	public List<IContentVisualComponent> getContentByType(ContentContext ctx, String type) throws Exception {

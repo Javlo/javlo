@@ -4,6 +4,7 @@ import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.dynamic.DynamicComponent;
+import org.javlo.component.meta.MetaComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.navigation.MenuElement;
@@ -50,7 +51,7 @@ public class MergeDynamicComponent extends AbstractMacro {
 				ContentElementList comps = page.getContent(ctxLg);
 				while (comps.hasNext(ctxLg)) {
 					IContentVisualComponent comp = comps.next(ctxLg);
-					if (comp instanceof DynamicComponent) {
+					if (comp instanceof DynamicComponent && !(comp instanceof MetaComponent)) {
 
 						System.out.println("");
 						System.out.println("** >> MERGE DYNAMIV COMPONENT << **");

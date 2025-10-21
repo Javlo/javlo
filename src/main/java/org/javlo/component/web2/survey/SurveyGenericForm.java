@@ -1,11 +1,5 @@
 package org.javlo.component.web2.survey;
 
-import java.io.File;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
 import org.javlo.component.form.Field;
 import org.javlo.component.form.SmartGenericForm;
 import org.javlo.context.ContentContext;
@@ -16,6 +10,12 @@ import org.javlo.service.RequestService;
 import org.javlo.service.visitors.UserDataService;
 import org.javlo.utils.Cell;
 import org.javlo.utils.XLSTools;
+
+import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 public class SurveyGenericForm extends SmartGenericForm {
 
@@ -126,7 +126,6 @@ public class SurveyGenericForm extends SmartGenericForm {
 			int excelLine = AbstractSurvey.storeExcel(ctx, excelFile, questions, getPage().getTitle(ctx), getExcelLine(ctx));
 			setExcelLine(ctx, excelLine);
 		}
-
 		return 1;
 	}
 

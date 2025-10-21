@@ -63,6 +63,74 @@ public class StructuredProperties extends Properties {
 			}
 		}
 	}
+
+	/**
+	 * Sanitize YAML content by quoting values that contain special YAML characters
+	 * This helps to read legacy YAML files that were not properly quoted
+	 */
+	private static String sanitizeYamlContent(String content) {
+		StringBuilder result = new StringBuilder();
+		String[] lines = content.split("\n");
+		
+		for (String line : lines) {
+			// Check if line contains a key-value pair
+			int colonIndex = line.indexOf(':');
+			if (colonIndex > 0 && colonIndex < line.length() - 1) {
+				String beforeColon = line.substring(0, colonIndex);
+				String afterColon = line.substring(colonIndex + 1);
+				
+				// Check if the value part is not already quoted and contains special chars
+				String trimmedValue = afterColon.trim();
+				if (!trimmedValue.isEmpty() 
+					&& !trimmedValue.startsWith("\"") 
+					&& !trimmedValue.startsWith("'")
+					&& !trimmedValue.startsWith("{")
+					&& !trimmedValue.startsWith("[")
+					&& needsQuoting(trimmedValue)) {
+					
+					// Extract leading whitespace from afterColon
+					int firstNonSpace = 0;
+					while (firstNonSpace < afterColon.length() && afterColon.charAt(firstNonSpace) == ' ') {
+						firstNonSpace++;
+					}
+					String leadingSpaces = afterColon.substring(0, firstNonSpace);
+					
+					// Quote the value, escaping existing quotes
+					String quotedValue = trimmedValue.replace("\"", "\\\"");
+					result.append(beforeColon).append(":").append(leadingSpaces).append("\"").append(quotedValue).append("\"").append("\n");
+				} else {
+					result.append(line).append("\n");
+				}
+			} else {
+				result.append(line).append("\n");
+			}
+		}
+		
+		return result.toString();
+	}
+
+	/**
+	 * Check if a YAML value needs to be quoted
+	 */
+	private static boolean needsQuoting(String value) {
+		// Check for YAML special characters that could cause parsing issues
+		return value.contains("?") 
+			|| value.contains(":") 
+			|| value.contains("#")
+			|| value.contains("[")
+			|| value.contains("]")
+			|| value.contains("{")
+			|| value.contains("}")
+			|| value.contains("&")
+			|| value.contains("*")
+			|| value.contains("|")
+			|| value.contains(">")
+			|| value.startsWith("-")
+			|| value.startsWith("!")
+			|| value.startsWith("%")
+			|| value.startsWith("@")
+			|| value.startsWith("`");
+	}
 	
 	@Override
 	public synchronized void load(InputStream inStream) throws IOException {
@@ -71,8 +139,20 @@ public class StructuredProperties extends Properties {
 			String content = ResourceHelper.loadStringFromStream(inStream, Charset.forName(getInternalEncoding()));
 			if (isYAML(content)) {
 				Yaml yaml = new Yaml();
-				Map<String, Object> map = yaml.load(content);
-				convertMapToProps("", map, this);
+				try {
+					Map<String, Object> map = yaml.load(content);
+					convertMapToProps("", map, this);
+				} catch (Exception e) {
+					// If YAML parsing fails, try to sanitize the content and retry
+					String sanitizedContent = sanitizeYamlContent(content);
+					try {
+						Map<String, Object> map = yaml.load(sanitizedContent);
+						convertMapToProps("", map, this);
+					} catch (Exception e2) {
+						// If sanitization doesn't help, fall back to properties format
+						super.load(new InputStreamReader(new ByteArrayInputStream(content.getBytes()), getInternalEncoding()));
+					}
+				}
 			} else {
 				super.load(new InputStreamReader(new ByteArrayInputStream(content.getBytes()), getInternalEncoding()));
 			}
@@ -287,6 +367,7 @@ public class StructuredProperties extends Properties {
 			DumperOptions options = new DumperOptions();
 			options.setIndent(6);
 			options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+			//options.setDefaultScalarStyle(DumperOptions.ScalarStyle.DOUBLE_QUOTED);
 			Yaml yaml = new Yaml(options);
 			yaml.dump(yamlMap, bw);
 	}
