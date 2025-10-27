@@ -3,22 +3,10 @@
  */
 package org.javlo.actions;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.logging.Logger;
-
 import jakarta.mail.internet.InternetAddress;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import org.apache.commons.io.filefilter.FileFileFilter;
 import org.javlo.component.core.ComponentFactory;
 import org.javlo.component.core.IContentVisualComponent;
@@ -26,11 +14,7 @@ import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.NetHelper;
-import org.javlo.helper.PaginationContext;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
+import org.javlo.helper.*;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.io.SessionFolder;
 import org.javlo.mailing.MailingBuilder;
@@ -50,6 +34,11 @@ import org.javlo.template.Template;
 import org.javlo.user.UserFactory;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.StaticInfo;
+
+import java.io.File;
+import java.io.FileFilter;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * @author pvandermaesen list of actions for search in cms.
@@ -81,14 +70,14 @@ public class ViewActions implements IAction {
 					I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, request.getSession());
 					i18nAccess.changeViewLanguage(ctx);
 					String url = URLHelper.createURL(ctx);
-					NetHelper.sendRedirectTemporarily(response, url);
+					NetHelper.sendRedirectPermanently(response, url);
 				} else if (globalContext.getContentLanguages().contains(lang)) {
 					ctx.setContentLanguage(lang);
 					ctx.setCookieLanguage(lang);
 					I18nAccess i18nAccess = I18nAccess.getInstance(globalContext, request.getSession());
 					i18nAccess.changeViewLanguage(ctx);
 					String url = URLHelper.createURL(ctx);
-					NetHelper.sendRedirectTemporarily(response, url);
+					NetHelper.sendRedirectPermanently(response, url);
 				}
 			}
 		} catch (Exception e) {

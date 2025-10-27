@@ -1,12 +1,11 @@
 package org.javlo.i18n;
 
+import org.javlo.context.ContentContext;
+import org.javlo.service.ReverseLinkService;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-
-import org.javlo.context.ContentContext;
-import org.javlo.helper.StringHelper;
-import org.javlo.service.ReverseLinkService;
 
 /**
  * TODO: create class with reverse link on messages
@@ -55,13 +54,14 @@ public class RequestI18nAccess implements Map<String, String> {
 				e.printStackTrace();
 			}
 		}
-		if (ctx.isPreview() && !attribute) {
+		return value;
+		/*if (ctx.isPreview() && !attribute) {
 			String id="vi18n-"+StringHelper.getRandomId();
 			String jsCopy = "navigator.clipboard.writeText(document.getElementById('"+id+"').getAttribute('title'));";
 			return "<span id=\""+id+"\" onclick=\""+jsCopy+"\" class=\"preview-vi18n\" title=\""+key+"\">"+value+"</span>";
 		} else {
 			return value;
-		}
+		}*/
 	}
 
 	@Override
