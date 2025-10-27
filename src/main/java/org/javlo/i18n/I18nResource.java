@@ -1,22 +1,17 @@
 package org.javlo.i18n;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.logging.Logger;
-
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.utils.ConfigurationProperties;
+
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.logging.Logger;
 
 public class I18nResource {
 
@@ -80,7 +75,20 @@ public class I18nResource {
 				if (viewFile.exists()) {
 					i18nProp.load(viewFile);
 				} else {
-					logger.fine("i18n file not found : " + viewFile);
+					if (lg.length()>2) {
+						lg = lg.substring(0,2);
+						if (mode == ContentContext.EDIT_MODE) {
+							viewFile = new File(staticConfig.getI18nEditFile() + lg + ".properties");
+						} else {
+							viewFile = new File(staticConfig.getI18nViewFile() + lg + ".properties");
+						}
+
+						if (viewFile.exists()) {
+							i18nProp.load(viewFile);
+						} else {
+							logger.warning("##### i18n file not found : " + viewFile);
+						}
+					}
 				}
 
 				File specificViewFile;
