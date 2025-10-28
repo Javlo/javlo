@@ -1074,6 +1074,39 @@ public class SmartPageBean {
 		return out;
 	}
 
+	public Map<String,List<TaxonomyDisplayBean>> getTaxonomyMap() {
+		Map<String,List<TaxonomyDisplayBean>> out = new HashMap<>();
+		try {
+			for (TaxonomyDisplayBean bean : getTaxonomy()) {
+				String first = bean.getFirstParent().getName();
+				out.computeIfAbsent(first, k -> new LinkedList<>());
+				out.get(first).add(bean);
+			}
+			return out;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public Map<String,String> getTaxonomyMapDisplay() {
+		Map<String,String> out = new HashMap<>();
+		try {
+			for (TaxonomyDisplayBean bean : getTaxonomy()) {
+				String first = bean.getFirstParent().getName();
+				if (out.get(first) == null) {
+					out.put(first, bean.getLabel());
+				} else {
+					out.put(first, ","+bean.getLabel());
+				}
+			}
+			return out;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	private List<Map<String, String>> outData = null;
 
 	public List<Map<String, String>> getUserData() throws Exception {

@@ -125,6 +125,21 @@ public class TaxonomyDisplayBean {
 			return label;
 		}
 	}
+
+	/**
+	 * get the first signifiant parent (not root)
+	 * @return
+	 */
+	public TaxonomyDisplayBean getFirstParent() {
+		TaxonomyBean parent = this.bean;
+		if (parent.getParent() == null) {
+			return this;
+		}
+		while (parent.getParent().getParent() != null) {
+			parent = parent.getParent();
+		}
+		return new TaxonomyDisplayBean(ctx, parent);
+	}
 	
 	public IListItem getListItem() {
 		return new ListService.ListItem(bean.getName(), getLocalLabel());
