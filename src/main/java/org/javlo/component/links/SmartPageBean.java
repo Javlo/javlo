@@ -1064,6 +1064,16 @@ public class SmartPageBean {
 		}
 	}
 
+	public String getTaxonomyDisplay() {
+		String out="";
+		String sep="";
+		for (TaxonomyDisplayBean bean : getTaxonomy()) {
+			out += sep+bean.getLabel();
+			sep=",";
+		}
+		return out;
+	}
+
 	private List<Map<String, String>> outData = null;
 
 	public List<Map<String, String>> getUserData() throws Exception {
