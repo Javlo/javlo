@@ -2167,7 +2167,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 									if (pageKeyURL.contains(".")) {
 										pageKeyURL = pageKeyURL.substring(0, pageKeyURL.lastIndexOf("."));
 									}
-
 									localViewPages.put(pageKeyURL, menuElement);
 								}
 							}
@@ -2201,6 +2200,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			MenuElement page = localViewPages.get(keyURL);
 			if (page != null) {
 				if (page == MenuElement.NOT_FOUND_PAGE) {
+					logger.warning("page not found : "+keyURL +"  (uri:"+ctx.getRequest().getRequestURI()+")");
 					log(Log.SEVERE, "url", "page not found keyURL='" + keyURL + "' url='" + url + "' #localViewPages=" + localViewPages.size());
 					return null;
 				} else {
