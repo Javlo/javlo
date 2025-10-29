@@ -109,7 +109,7 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 			url = URLHelper.mergePath(url, currentPage.getId());
 		}
 		
-		return currentPage.getName()+"__"+url;
+		return url;
 	}
 	
 	protected String getExtension(ContentContext ctx) {
