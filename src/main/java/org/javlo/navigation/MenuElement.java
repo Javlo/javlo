@@ -1873,14 +1873,14 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
 		if (desc.forcedUrl != null) {
-			if (desc.forcedUrl.equals("")) {
+			if (desc.forcedUrl.isEmpty()) {
 				return null;
 			}
 			return desc.forcedUrl;
 		}
 
 		Collection<IContentVisualComponent> comps = getContentByType(ctx, PageURL.TYPE);
-		if (comps.size() > 0) {
+		if (!comps.isEmpty()) {
 			desc.forcedUrl = '/'+((PageURL) comps.iterator().next()).getValue();
 		}
 
