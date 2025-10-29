@@ -59,6 +59,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -2158,6 +2159,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 						Collection<String> contentLanguages = getContentLanguages();
 
 						Set<String> lines = new LinkedHashSet<>();
+						lines.add("");
+						lines.add(StringHelper.renderDateAndTime(LocalDateTime.now()));
+						lines.add("");
+						lines.add("### url creator : "+urlCreator.getClass());
+						lines.add("");
 
 						for (String mainLg : mainLgs) {
 							for (String contentLg : contentLanguages) {
