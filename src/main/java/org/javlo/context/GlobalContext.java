@@ -2171,7 +2171,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 								}
 							}
 						}
-						logger.info("url cache initialized with '" + urlCreator.getClass().getName() + "' url created : " + localViewPages.size() + " [lgs=" + contentLanguages + "]");
+						logger.info("[site:"+ctx.getGlobalContext().getContextKey()+"] - url cache initialized with '" + urlCreator.getClass().getName() + "' url created : " + localViewPages.size() + " [lgs=" + contentLanguages + "]");
 						log(Log.INFO, "url", "url cache initialized with '" + urlCreator.getClass().getName() + "' url created : " + localViewPages.size() + " [lgs=" + contentLanguages + "]");
 						viewPages = localViewPages;
 						urlFromFactoryImported = urlCreator;
