@@ -547,7 +547,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 					//}
 					String mainUri = ctx.getMainUri();
 					if (mainUri != null && !mainUri.equals(url)) {
-						logger.info("redirect to main url [page:"+currentPage.getName()+" / mainUri="+mainUri+"] : "+request.getRequestURI()+" -> "+url);
+						logger.info("redirect to main url [path:"+ctx.getPath()+" | page:"+currentPage.getName()+" | mainUri:"+mainUri+"] : "+request.getRequestURI()+" -> "+url);
 						//ctx.getResponse().sendRedirect(url);
 						NetHelper.sendRedirectPermanently(response, url);
 						return;
