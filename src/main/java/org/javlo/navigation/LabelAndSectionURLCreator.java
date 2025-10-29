@@ -62,7 +62,7 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 		}
 
 		if (currentPage.getForcedUrl(ctx) != null) {
-			return currentPage.getForcedUrl(ctx);
+			return "FORCEURL_"+currentPage.getForcedUrl(ctx);
 		}
 		
 		String label;
