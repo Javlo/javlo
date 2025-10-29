@@ -1888,6 +1888,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			desc.forcedUrl = "";
 		}
 
+		if (desc.forcedUrl.isEmpty()) {
+			return null;
+		}
+
 		return desc.forcedUrl;
 	}
 
