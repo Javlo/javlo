@@ -55,6 +55,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -2155,6 +2156,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 						ContentContext lgCtx = new ContentContext(ctx);
 						Collection<String> mainLgs = getLanguages();
 						Collection<String> contentLanguages = getContentLanguages();
+
+						Set<String> lines = new LinkedHashSet<>();
+
 						for (String mainLg : mainLgs) {
 							for (String contentLg : contentLanguages) {
 								lgCtx.setLanguage(mainLg);
@@ -2168,9 +2172,21 @@ public class GlobalContext implements Serializable, IPrintInfo {
 										pageKeyURL = pageKeyURL.substring(0, pageKeyURL.lastIndexOf("."));
 									}
 									localViewPages.put(pageKeyURL, menuElement);
+									String line = menuElement.getName() + " > " + pageURL + " > " + pageKeyURL;
+									lines.add(line);
 								}
 							}
 						}
+
+						File navigationFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), "navigation.txt"));
+						try (BufferedWriter writer = new BufferedWriter(
+								new OutputStreamWriter(new FileOutputStream(navigationFile, false), StandardCharsets.UTF_8))) {
+							for (String line : lines) {
+								writer.write(line);
+								writer.newLine();
+							}
+						}
+
 						logger.info("[site:"+ctx.getGlobalContext().getContextKey()+"] - url cache initialized with '" + urlCreator.getClass().getName() + "' url created : " + localViewPages.size() + " [lgs=" + contentLanguages + "]");
 						log(Log.INFO, "url", "url cache initialized with '" + urlCreator.getClass().getName() + "' url created : " + localViewPages.size() + " [lgs=" + contentLanguages + "]");
 						viewPages = localViewPages;
