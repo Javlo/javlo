@@ -3270,6 +3270,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			Collection<MenuElement> pastNode = new LinkedList<MenuElement>();
 			MenuElement elem = searchChild(this, ctx, ctx.getPath(), pastNode);
 			if (elem == null) {
+				logger.warning("page not found on path : "+ctx.getPath());
 				elem = this;
 			}
 			return elem;
