@@ -55,22 +55,33 @@ public class FieldInternalLink extends Field {
 
 	}
 
+	@Override
+	protected boolean isValueTranslatable() {
+		return true;
+	}
+
 	public boolean transflateFrom(ContentContext ctx, ITranslator translator, String lang) {
 		if (!isValueTranslatable()) {
 			return false;
 		} else {
 			boolean translated = false;
 			String newValue="";
-			if (!StringHelper.isEmpty(getLinkLabel())) {
+			if (!StringHelper.isEmpty(getCurrentLabel())) {
 				translated = true;
-				newValue = translator.translate(ctx, getLinkLabel(), lang, ctx.getRequestContentLanguage());
+				newValue = translator.translate(ctx, getCurrentLabel(), lang, ctx.getRequestContentLanguage());
 				if (newValue == null) {
 					translated=false;
-					newValue = ITranslator.ERROR_PREFIX+getValue();
+					newValue = ITranslator.ERROR_PREFIX+getCurrentLabel();
+				}
+				setCurrentLabel(newValue);
+				try {
+					getReferenceComponent(ctx).storeProperties();
+					getReferenceComponent(ctx).setModify();
+				} catch (Exception e) {
+					throw new RuntimeException(e);
 				}
 			}
-			setCurrentLabel(newValue);
-			return translated;
+            return translated;
 		}
 	}
 
