@@ -26,6 +26,7 @@ import org.javlo.navigation.PageBean;
 import org.javlo.navigation.ReactionMenuElementComparator;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+import org.javlo.service.google.translation.ITranslator;
 import org.javlo.utils.TimeRange;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -2069,4 +2070,24 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         return getSelectedPages(ctx, allChildren).size() > 1;
     }
 
+    @Override
+    public boolean transflateFrom(ContentContext ctx, ITranslator translator, String lang) {
+        if (lang.length() > 2) {
+            lang = lang.substring(0,2);
+        }
+        if (!isValueTranslatable()) {
+            return false;
+        } else {
+            boolean translated = true;
+            String title = getContentTitle();
+            String targetLang = ctx.getRequestContentLanguage();
+            if (targetLang.length() > 2) {
+                targetLang = targetLang.substring(0,2);
+            }
+            title = translator.translate(ctx, title, lang, targetLang);
+            setContentTitle(title);
+            storeProperties();
+            return translated;
+        }
+    }
 }

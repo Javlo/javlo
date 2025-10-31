@@ -147,9 +147,7 @@ public abstract class ComplexPropertiesLink extends AbstractVisualComponent {
 					String newValue = translator.translate(ctx, value, lang, targetLang);
 					properties.setProperty((String) key, newValue);
 					if (newValue == null) {
-
 						logger.warning("error translate : value="+value+" | lang="+lang+" > targetLang="+targetLang);
-
 						translated = false;
 						newValue = ITranslator.ERROR_PREFIX + getValue();
 					}
@@ -159,5 +157,4 @@ public abstract class ComplexPropertiesLink extends AbstractVisualComponent {
 			return translated;
 		}
 	}
-
 }
