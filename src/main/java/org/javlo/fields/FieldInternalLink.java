@@ -8,6 +8,7 @@ import org.javlo.helper.XHTMLNavigationHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
+import org.javlo.service.google.translation.ITranslator;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -52,6 +53,25 @@ public class FieldInternalLink extends Field {
 			this.param = param;
 		}
 
+	}
+
+	public boolean transflateFrom(ContentContext ctx, ITranslator translator, String lang) {
+		if (!isValueTranslatable()) {
+			return false;
+		} else {
+			boolean translated = false;
+			String newValue="";
+			if (!StringHelper.isEmpty(getLinkLabel())) {
+				translated = true;
+				newValue = translator.translate(ctx, getLinkLabel(), lang, ctx.getRequestContentLanguage());
+				if (newValue == null) {
+					translated=false;
+					newValue = ITranslator.ERROR_PREFIX+getValue();
+				}
+			}
+			setCurrentLabel(newValue);
+			return translated;
+		}
 	}
 
 	protected FieldBean newFieldBean(ContentContext ctx) {
@@ -179,6 +199,10 @@ public class FieldInternalLink extends Field {
 
 	protected String getLinkLabel() {
 		return getI18nAccess().getText("global.link");
+	}
+
+	protected void setLinkLabel(String label) {
+		getI18nAccess().set("global.link", label);
 	}
 	
 	protected String getParamLabel() {
