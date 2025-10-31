@@ -3,12 +3,12 @@
  */
 package org.javlo.component.core;
 
+import org.javlo.context.ContentContext;
+import org.javlo.service.google.translation.ITranslator;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Properties;
-
-import org.javlo.context.ContentContext;
-import org.javlo.service.google.translation.ITranslator;
 
 /**
  * @author pvandermaesen
@@ -130,6 +130,9 @@ public abstract class ComplexPropertiesLink extends AbstractVisualComponent {
 
 	@Override
 	public boolean transflateFrom(ContentContext ctx, ITranslator translator, String lang) {
+		if (lang.length() > 2) {
+			lang = lang.substring(0,2);
+		}
 		if (!isValueTranslatable()) {
 			return false;
 		} else {
