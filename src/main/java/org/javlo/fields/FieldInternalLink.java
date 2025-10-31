@@ -201,10 +201,6 @@ public class FieldInternalLink extends Field {
 		return getI18nAccess().getText("global.link");
 	}
 
-	protected void setLinkLabel(String label) {
-		getI18nAccess().set("global.link", label);
-	}
-	
 	protected String getParamLabel() {
 		return getI18nAccess().getText("global.param", "params");
 	}
