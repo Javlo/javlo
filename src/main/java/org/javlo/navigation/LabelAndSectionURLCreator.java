@@ -1,7 +1,6 @@
 package org.javlo.navigation;
 
 import org.javlo.context.ContentContext;
-import org.javlo.helper.NavigationHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 
@@ -46,13 +45,13 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 		if (currentPage == null) {
 			return "/";
 		}
-		
-		if (!currentPage.isRealContent(ctx)) {
+
+		/*if (!currentPage.isRealContent(ctx)) {
 			MenuElement contentPage = NavigationHelper.getChildWithContent(ctx, currentPage);
 			if (contentPage != null) {
 				currentPage = contentPage; 
 			}
-		}
+		}*/
 
 		ContentContext freeCtx = ctx.getFreeContentContext();
 		ContentContext contextWidthTitle = freeCtx.getContextWidthTitle(currentPage);
@@ -64,22 +63,22 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 		if (currentPage.getForcedUrl(ctx) != null) {
 			return currentPage.getForcedUrl(ctx);
 		}
-		
+
 		String label;
 		String pageTitle = currentPage.getForcedPageTitle(freeCtx);
-		
+
 		if (!StringHelper.isEmpty(pageTitle)) {
 			label = pageTitle;
 		} else {
 			label = currentPage.getLabel(freeCtx);
-		}		
-		
+		}
+
 		if (currentPage.getUrlNumber() > 0) {
 			label = label + '-' +currentPage.getUrlNumber();
 		}
 		String path = StringHelper.removeSpecialChars(label.trim());
 		path = StringHelper.createI18NURL(path);
-		
+
 		String url = path;
 		MenuElement sectionPage = getSectionPage(currentPage);		
 		
@@ -91,7 +90,7 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 			url = URLHelper.mergePath(StringHelper.createI18NURL(StringHelper.removeSpecialChars(sectionPage.getLabel(freeCtx).trim())), url);
 		}
 		url = '/' + url;
-		
+
 		String baseURL = url;
 		if (this.addAndCheckExistURL(currentPage, url)) {
 			url = baseURL+'_'+currentPage.getName();

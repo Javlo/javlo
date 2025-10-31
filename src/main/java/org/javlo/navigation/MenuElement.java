@@ -2103,11 +2103,11 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 	public MetaComponent getMetaComponent(ContentContext ctx) {
 		try {
-			String requestKeyNotFound = requestKeyNotFound = "_meta_not_found_"+getId();
+			String requestKeyNotFound = requestKeyNotFound = "_meta_not_found_"+getId()+"_"+ctx.getRequestContentLanguage();
 			if (ctx.getRequest().getAttribute(requestKeyNotFound) != null) {
 				return null;
 			}
-			String requestKey = "_meta_"+getId();
+			String requestKey = "_meta_"+getId()+"_"+ctx.getRequestContentLanguage();
 			if (ctx.getRequest().getAttribute(requestKey) != null) {
 				return (MetaComponent) ctx.getRequest().getAttribute(requestKey);
 			}
@@ -2115,7 +2115,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			Iterator<IContentVisualComponent> elems = getContent(noAreaCtx).getIterable(noAreaCtx).iterator();
 			while (elems.hasNext()) {
 				IContentVisualComponent comp = (IContentVisualComponent) elems.next();
-				if (comp instanceof MetaComponent) {
+				if (comp instanceof MetaComponent && comp.getComponentBean().getLanguage().equals(ctx.getRequestContentLanguage())) {
 					ctx.getRequest().setAttribute(requestKey, comp);
 					return (MetaComponent) comp;
 				}

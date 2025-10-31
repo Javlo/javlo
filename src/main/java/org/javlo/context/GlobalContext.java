@@ -2162,6 +2162,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 						Set<String> lines = new LinkedHashSet<>();
 						lines.add("V"+exportVersion+" - "+StringHelper.renderDateAndTime(LocalDateTime.now()));
 						lines.add("### url creator : "+urlCreator.getClass());
+						lines.add("### mainLgs : "+StringHelper.collectionToString(mainLgs,","));
+						lines.add("### contentLanguages : "+StringHelper.collectionToString(contentLanguages,","));
 						lines.add("");
 
 						for (String mainLg : mainLgs) {
@@ -2170,14 +2172,14 @@ public class GlobalContext implements Serializable, IPrintInfo {
 								lgCtx.setContentLanguage(contentLg);
 								lgCtx.setRequestContentLanguage(contentLg);
 								lgCtx.setFormat(null);
-								for (MenuElement menuElement : ContentService.getInstance(ctx.getRequest()).getNavigation(lgCtx).getAllChildrenList()) {
-									String pageURL = urlCreator.createURL(lgCtx, menuElement);
+								for (MenuElement me : ContentService.getInstance(ctx.getRequest()).getNavigation(lgCtx).getAllChildrenList()) {
+									String pageURL = urlCreator.createURL(lgCtx, me);
 									String pageKeyURL = urlCreator.createURLKey(pageURL);
 									if (pageKeyURL.contains(".")) {
 										pageKeyURL = pageKeyURL.substring(0, pageKeyURL.lastIndexOf("."));
 									}
-									localViewPages.put(pageKeyURL, menuElement);
-									String line = menuElement.getName() + " > " + pageURL + " > " + pageKeyURL;
+									localViewPages.put(pageKeyURL, me);
+									String line = me.getName() + " ["+contentLg+"] ["+me.getTitle(lgCtx)+"] > " + pageURL + " > " + pageKeyURL;
 									lines.add(line);
 								}
 							}
@@ -2221,7 +2223,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			MenuElement page = localViewPages.get(keyURL);
 			if (page != null) {
 				if (page == MenuElement.NOT_FOUND_PAGE) {
-					logger.warning("page not found : "+keyURL +"  (uri:"+ctx.getRequest().getRequestURI()+")");
+					logger.fine("page not found : "+keyURL +"  (uri:"+ctx.getRequest().getRequestURI()+")");
 					log(Log.SEVERE, "url", "page not found keyURL='" + keyURL + "' url='" + url + "' #localViewPages=" + localViewPages.size());
 					return null;
 				} else {
