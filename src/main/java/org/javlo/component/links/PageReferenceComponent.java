@@ -1905,7 +1905,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         properties.setProperty(ONLY_EVENT, "" + onlyEvent);
     }
 
-    protected void setRefDefaultLanguage(boolean onlyEvent) {
+    public void setRefDefaultLanguage(boolean onlyEvent) {
         properties.setProperty("refdeflang", "" + onlyEvent);
     }
 

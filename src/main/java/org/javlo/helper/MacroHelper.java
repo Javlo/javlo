@@ -9,6 +9,7 @@ import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.files.AbstractFileComponent;
 import org.javlo.component.image.GlobalImage;
 import org.javlo.component.links.MirrorComponent;
+import org.javlo.component.links.PageReferenceComponent;
 import org.javlo.component.meta.DateComponent;
 import org.javlo.component.meta.EventDefinitionComponent;
 import org.javlo.component.meta.Tags;
@@ -497,6 +498,9 @@ public class MacroHelper {
 							newComp.getComponentBean().setColumnStyle(comp.getComponentBean().getColumnStyle());
 							if (translate) {
 								newComp.transflateFrom(lgCtx, TranslatorFactory.getTranslator(ctx.getGlobalContext()), ctxNoArea.getRequestContentLanguage());
+							}
+							if (newComp instanceof PageReferenceComponent) {
+								((PageReferenceComponent)newComp).setRefDefaultLanguage(true);
 							}
 						}
 					}
