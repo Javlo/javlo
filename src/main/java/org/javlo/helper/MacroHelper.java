@@ -501,6 +501,7 @@ public class MacroHelper {
 							}
 							if (newComp instanceof PageReferenceComponent) {
 								((PageReferenceComponent)newComp).setRefDefaultLanguage(true);
+								((PageReferenceComponent) newComp).storeProperties();
 							}
 						}
 					}
