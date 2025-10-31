@@ -140,9 +140,16 @@ public abstract class ComplexPropertiesLink extends AbstractVisualComponent {
 			for (Object key : properties.keySet()) {
 				if (!key.equals(REVERSE_LINK_KEY) && !key.equals(LINK_KEY)) {
 					String value = (String) properties.getProperty((String) key);
-					String newValue = translator.translate(ctx, value, lang, ctx.getRequestContentLanguage());
+					String targetLang = ctx.getRequestContentLanguage();
+					if (targetLang.length() > 2) {
+						targetLang = targetLang.substring(0,2);
+					}
+					String newValue = translator.translate(ctx, value, lang, targetLang);
 					properties.setProperty((String) key, newValue);
 					if (newValue == null) {
+
+						logger.warning("error translate : value="+value+" | lang="+lang+" > targetLang="+targetLang);
+
 						translated = false;
 						newValue = ITranslator.ERROR_PREFIX + getValue();
 					}
