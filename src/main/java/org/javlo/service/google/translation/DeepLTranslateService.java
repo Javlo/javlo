@@ -53,8 +53,17 @@ public class DeepLTranslateService implements ITranslator {
 	 * @throws Exception 
 	 */
 	public static String translate(String sourceText, String sourceLang, String targetLang, String apiKey) throws Exception {
+
 		if (StringHelper.isEmpty(sourceText) || StringHelper.isDigit(sourceText)) {
 			return sourceText;
+		}
+
+		if (sourceLang.length() > 2) {
+			sourceLang = sourceLang.substring(0,2);
+		}
+
+		if (targetLang.length() > 2) {
+			targetLang = targetLang.substring(0,2);
 		}
 
 		// Extraction des SVG
