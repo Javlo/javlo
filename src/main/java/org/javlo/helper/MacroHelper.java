@@ -493,6 +493,8 @@ public class MacroHelper {
 							newComp.setDisplayHidden(comp.isDisplayHidden());
 							newComp.setRepeat(comp.isRepeat());
 							newComp.getComponentBean().setLayout(ComponentLayout.getNewInstance(comp.getComponentBean().getLayout()));
+							newComp.getComponentBean().setManualCssClass(comp.getComponentBean().getManualCssClass());
+							newComp.getComponentBean().setColumnStyle(comp.getComponentBean().getColumnStyle());
 							if (translate) {
 								newComp.transflateFrom(lgCtx, TranslatorFactory.getTranslator(ctx.getGlobalContext()), ctxNoArea.getRequestContentLanguage());
 							}
