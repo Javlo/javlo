@@ -76,7 +76,7 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 		if (currentPage.getUrlNumber() > 0) {
 			label = label + '-' +currentPage.getUrlNumber();
 		}
-		String path = StringHelper.removeSpecialChars(label.trim());
+		String path = StringHelper.removeSpecialChars(label.trim(), "-");
 		path = StringHelper.createI18NURL(path);
 
 		String url = path;
@@ -93,12 +93,12 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 
 		String baseURL = url;
 		if (this.addAndCheckExistURL(currentPage, url)) {
-			url = baseURL+'_'+currentPage.getName();
+			url = baseURL+'-'+currentPage.getName();
 			if (this.addAndCheckExistURL(currentPage, url)) {
-				url = baseURL+'_'+currentPage.getId();
+				url = baseURL+'-'+currentPage.getId();
 				int i=1;
 				while (this.addAndCheckExistURL(currentPage, url)) {
-					url = baseURL+'_'+i;
+					url = baseURL+'-'+i;
 					i++;
 				}
 			}
