@@ -35,27 +35,46 @@ public class MetaComponent extends DynamicComponent implements IAction {
 		
 		super.init();
 		
-		int order=1;
+		int order=10;
 
 		if (StringHelper.isEmpty(getValue())) {
 
 			properties.put("field.title.type", "h1");
-			properties.put("field.title.order", "" + order++);
+			properties.put("field.title.order", "" + order);
 			properties.put("field.title.value", "");
+			order+=10;
 
 			properties.put("field.description.type", "large-text");
-			properties.put("field.description.order", "" + order++);
+			properties.put("field.description.order", "" + order);
 			properties.put("field.description.value", "");
+			order+=10;
 
 			properties.put("field.menuLabel.type", "text");
-			properties.put("field.menuLabel.order", "" + order++);
+			properties.put("field.menuLabel.order", "" + order);
 			properties.put("field.menuLabel.value", "");
+			order+=10;
+
+			properties.put("field.pageTitle.type", "text");
+			properties.put("field.pageTitle.order", "" + order);
+			properties.put("field.pageTitle.value", "");
+			order+=10;
 
 			properties.put("field.linkLabel.type", "text");
-			properties.put("field.linkLabel.order", "" + order++);
+			properties.put("field.linkLabel.order", "" + order);
 			properties.put("field.linkLabel.value", "");
+			order+=10;
 
 			storeProperties();
+		} else {
+
+			reloadProperties();
+
+			if (!getValue().contains("field.pageTitle")) {
+				properties.put("field.pageTitle.type", "text");
+				properties.put("field.pageTitle.order", "" + 35);
+				properties.put("field.pageTitle.value", "");
+				updateOrder();
+			}
 		}
 
 		/*properties.put("field.pageImage.type", "image");

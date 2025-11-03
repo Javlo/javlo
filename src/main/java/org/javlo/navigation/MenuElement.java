@@ -3439,6 +3439,15 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			return desc.pageTitle;
 		}
 
+		MetaComponent meta = getMetaComponent(ctx);
+		if (meta != null) {
+			String pageTitle = meta.getFieldValue(ctx, "pageTitle");
+			if (!StringHelper.isEmpty(pageTitle)) {
+				desc.pageTitle = pageTitle;
+				return desc.pageTitle;
+			}
+		}
+
 		desc.pageTitle = getForcedPageTitle(newCtx);
 
 		if (desc.pageTitle == null || desc.pageTitle.length() == 0) {

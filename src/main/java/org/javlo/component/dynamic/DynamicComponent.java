@@ -749,7 +749,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
         setValue(res);
     }
 
-    private void updateOrder() {
+    protected void updateOrder() {
         try {
             List<String> orderKeys = new LinkedList<>();
             for (String key : properties.stringPropertyNames()) {
