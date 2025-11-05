@@ -20,6 +20,7 @@ import org.javlo.ztatic.StaticInfoBean;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class FileFinder extends AbstractPropertiesComponent implements IUploadResource {
 
@@ -328,7 +329,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		filter.setTags(getTags());
 		filter.setExt(StringHelper.stringToCollection(getFieldValue("ext"), ","));
 		filter.setNoext(StringHelper.stringToCollection(getFieldValue("noext"), ","));
-		filter.setRoot(new File(URLHelper.mergePath(filter.getRoot().getCanonicalPath(), getFieldValue("root"))));
+		filter.setRoot(new File(URLHelper.mergePath(filter.getRoot().getCanonicalPath(), getFolder(ctx))));
 		if (!getCurrentRenderer(ctx).contains("interactive")) {
 			filter.setTaxonomy(taxonomyIds);
 		}
@@ -414,6 +415,39 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		return TYPE;
 	}
 
+	protected String getFolder(ContentContext ctx) throws Exception {
+		String out = getFieldValue("root");
+		String importFolderPrefix = ctx.getGlobalContext().getStaticConfig().getImportFolder();
+		String myImportFolder = getImportFolderPath(ctx);
+		if (!myImportFolder.startsWith("/")) {
+			myImportFolder = "/" + myImportFolder;
+		}
+		if (out.startsWith(importFolderPrefix) && !out.equals(myImportFolder)) {
+			out = myImportFolder;
+			setFieldValue("root", out);
+		}
+		return out;
+	}
+
+	protected List<String> getFolders(ContentContext ctx, FileFilter filter) throws Exception {
+		List<File> files = ResourceHelper.getAllDirList(filter.getRoot());
+		files.add(0, filter.getRoot());
+		List<String> out = ResourceHelper.removePrefixFromPathList(files, filter.getRoot().getCanonicalPath());
+		String importFolderPrefix = ctx.getGlobalContext().getStaticConfig().getImportFolder();
+		String myImportFolder = getImportFolderPath(ctx);
+		if (!myImportFolder.startsWith("/")) {
+			myImportFolder = "/" + myImportFolder;
+		}
+		String importFolder = myImportFolder;
+		out = out.stream()
+				.filter(path -> !path.startsWith(importFolderPrefix) || path.equals(importFolder))
+				.collect(Collectors.toList());
+		if (!out.contains(myImportFolder)) {
+			out.add(myImportFolder);
+		}
+		return out;
+	}
+
 	private List<String> getTags() {
 		return StringHelper.stringToCollection(getFieldValue("tags"), getListSeparator());
 	}
@@ -431,13 +465,13 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		if (ctx.getRequest().getParameter("path") != null) {
 			String newFolder = URLHelper.removeStaticFolderPrefix(ctx, ctx.getRequest().getParameter("path"));
 			newFolder = '/' + newFolder.replaceFirst("/" + ctx.getGlobalContext().getStaticConfig().getFileFolderName() + '/', "");
-			if (newFolder.trim().length() > 1 && !getFieldValue("root").equals(newFolder)) {
+			if (newFolder.trim().length() > 1 && !getFolder(ctx).equals(newFolder)) {
 				setFieldValue("root", newFolder);
 			}
 		}
 
 		Map<String, String> filesParams = new HashMap<String, String>();
-		String path = URLHelper.mergePath(FileAction.getPathPrefix(ctx), StaticConfig.getInstance(ctx.getRequest().getSession()).getFileFolderName(), getFieldValue("root"));
+		String path = URLHelper.mergePath(FileAction.getPathPrefix(ctx), StaticConfig.getInstance(ctx.getRequest().getSession()).getFileFolderName(), getFolder(ctx));
 		filesParams.put("path", path);
 		filesParams.put("webaction", "changeRenderer");
 		filesParams.put("page", "meta");
@@ -461,10 +495,8 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 
 		out.println("<div class=\"line\">");
 		out.println("<label for=\"" + getInputName("root") + "\">root</label>");
-		FileFilter filter = getFileFilterInstance(ctx);
-		List<File> dirList = ResourceHelper.getAllDirList(filter.getRoot());
-		dirList.add(0, filter.getRoot());
-		out.println(XHTMLHelper.getInputOneSelect(createKeyWithField("root"), ResourceHelper.removePrefixFromPathList(dirList, filter.getRoot().getCanonicalPath()), getFieldValue("root"), true));
+
+		out.println(XHTMLHelper.getInputOneSelect(createKeyWithField("root"), getFolders(ctx, getFileFilterInstance(ctx)), getFolder(ctx), true));
 		out.println(linkToResources + "</div>");
 
 		out.println("<div class=\"line\">");
@@ -513,7 +545,7 @@ public class FileFinder extends AbstractPropertiesComponent implements IUploadRe
 		for (FileItem item : items) {
 			File file = new File(item.getName());
 			FileFilter filter = getFileFilterInstance(ctx);
-			filter.setRoot(new File(URLHelper.mergePath(filter.getRoot().getCanonicalPath(), getFieldValue("root"))));
+			filter.setRoot(new File(URLHelper.mergePath(filter.getRoot().getCanonicalPath(), getFolder(ctx))));
 			File targetFile = new File(URLHelper.mergePath(filter.getRoot().getAbsolutePath(), StringHelper.createFileName(file.getName())));
 			targetFile = ResourceHelper.getFreeFileName(targetFile);
 			InputStream in = item.getInputStream();
