@@ -1014,11 +1014,13 @@ Security in case of vulnerabilities.
 - hidden section in mode
 - clear import folder in dynamicComponent
 - paste section
+- template mimifyJsp optimisation for js comment
 ### Added
 - import image from url macro
 - proxy for cross origin request
 - create scss for HTML component
 - section layout configurable
+- GoogleSheet security
 ### Modified
 - minify jsp optimisation [2.3.3.1]
 - linkLabel
