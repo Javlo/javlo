@@ -67,7 +67,7 @@ public class GoogleSheetAction implements IAction {
 		HttpServletResponse response = ctx.getResponse();
 		response.setContentType("text/html");
 		response.setCharacterEncoding("UTF-8");
-		String htmlContent = service.readAllAsHTML(sheet, cssClass);
+		String htmlContent = service.readAllAsHTML(sheet, cssClass, ctx.getGlobalContext().getSpecialConfig().isGsheetSecured());
 		response.getWriter().write(htmlContent);
 		response.getWriter().flush();
 		response.getWriter().close();
@@ -106,7 +106,7 @@ public class GoogleSheetAction implements IAction {
 			response.setContentType("text/csv");
 			response.setHeader("Content-Disposition", "attachment; filename=\"data.csv\"");
 			response.setCharacterEncoding("UTF-8");
-			response.getWriter().write(service.readAllAsCSV(sheet));
+			response.getWriter().write(service.readAllAsCSV(sheet, ctx.getGlobalContext().getSpecialConfig().isGsheetSecured()));
 			response.getWriter().flush();
 			response.getWriter().close();
 		} catch (IOException e) {

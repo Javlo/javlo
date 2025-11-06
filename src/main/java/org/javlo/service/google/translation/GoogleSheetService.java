@@ -12,10 +12,7 @@ import com.google.api.services.sheets.v4.model.ValueRange;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class GoogleSheetService {
 
@@ -65,8 +62,8 @@ public class GoogleSheetService {
         return response.getValues();
     }
 
-    public String readAllAsHTML(String sheetName, String cssClass) throws IOException {
-        // Lit toute la plage remplie de cette feuille
+    public String readAllAsHTML(String sheetName, String cssClass, boolean underscoreFiltered) throws IOException {
+        // Read the full data range of the sheet
         ValueRange response = sheetsService.spreadsheets().values()
                 .get(spreadsheetId, sheetName)
                 .execute();
@@ -74,18 +71,33 @@ public class GoogleSheetService {
         List<List<Object>> values = response.getValues();
 
         if (values == null || values.isEmpty()) {
-            return "<div class=\"" + cssClass + "\"><table></table></div>"; // retourne un tableau vide
+            return "<div class=\"" + cssClass + "\"><table></table></div>"; // return empty table
         }
 
         StringBuilder htmlBuilder = new StringBuilder();
         htmlBuilder.append("<div class=\"").append(cssClass).append("\"><table>");
 
+        // Identify columns to remove if underscoreFiltered is true
+        Set<Integer> removedColumns = new HashSet<>();
+        if (underscoreFiltered && !values.isEmpty()) {
+            List<Object> headerRow = values.get(0);
+            for (int i = 0; i < headerRow.size(); i++) {
+                Object header = headerRow.get(i);
+                if (header != null && header.toString().startsWith("_")) {
+                    removedColumns.add(i);
+                }
+            }
+        }
+
+        // Build HTML table
         for (List<Object> row : values) {
             htmlBuilder.append("<tr>");
-            for (Object cell : row) {
-                htmlBuilder.append("<td>");
-                htmlBuilder.append(cell.toString());
-                htmlBuilder.append("</td>");
+            for (int i = 0; i < row.size(); i++) {
+                if (removedColumns.contains(i)) continue; // skip filtered column
+                Object cell = row.get(i);
+                htmlBuilder.append("<td>")
+                        .append(cell != null ? cell.toString() : "")
+                        .append("</td>");
             }
             htmlBuilder.append("</tr>");
         }
@@ -95,8 +107,9 @@ public class GoogleSheetService {
         return htmlBuilder.toString();
     }
 
-    public String readAllAsCSV(String sheetName) throws IOException {
-        // Lit toute la plage remplie de cette feuille
+
+    public String readAllAsCSV(String sheetName, boolean secured) throws IOException {
+        // Read the full data range of the sheet
         ValueRange response = sheetsService.spreadsheets().values()
                 .get(spreadsheetId, sheetName)
                 .execute();
@@ -104,32 +117,51 @@ public class GoogleSheetService {
         List<List<Object>> values = response.getValues();
 
         if (values == null || values.isEmpty()) {
-            return ""; // ou throw exception
+            return ""; // return empty string if no data
         }
 
         StringBuilder csvBuilder = new StringBuilder();
 
-        for (List<Object> row : values) {
-            for (int i = 0; i < row.size(); i++) {
-                String cell = row.get(i).toString();
+        // Identify columns to remove if secured is true
+        Set<Integer> removedColumns = new HashSet<>();
+        if (secured && !values.isEmpty()) {
+            List<Object> headerRow = values.get(0);
+            for (int i = 0; i < headerRow.size(); i++) {
+                Object header = headerRow.get(i);
+                if (header != null && header.toString().startsWith("_")) {
+                    removedColumns.add(i);
+                }
+            }
+        }
 
-                // Protège les cellules contenant des virgules, guillemets ou retours à la ligne
+        // Build CSV content
+        for (List<Object> row : values) {
+            boolean firstCell = true;
+            for (int i = 0; i < row.size(); i++) {
+                if (removedColumns.contains(i)) continue; // skip filtered column
+
+                if (!firstCell) {
+                    csvBuilder.append(",");
+                } else {
+                    firstCell = false;
+                }
+
+                String cell = row.get(i) != null ? row.get(i).toString() : "";
+
+                // Escape commas, quotes, and newlines
                 if (cell.contains(",") || cell.contains("\"") || cell.contains("\n")) {
-                    cell = cell.replace("\"", "\"\""); // échappe les "
+                    cell = cell.replace("\"", "\"\""); // escape double quotes
                     cell = "\"" + cell + "\"";
                 }
 
                 csvBuilder.append(cell);
-
-                if (i < row.size() - 1) {
-                    csvBuilder.append(",");
-                }
             }
             csvBuilder.append("\n");
         }
 
         return csvBuilder.toString();
     }
+
 
     public void writeRange(String range, List<List<Object>> values) throws IOException {
         ValueRange body = new ValueRange().setValues(values);
@@ -164,7 +196,7 @@ public class GoogleSheetService {
         String sheetName = sheetNames.contains("test") ? "test" : sheetNames.get(0);
         System.out.println("Utilisation de la feuille : " + sheetName);
         
-        String csvData = googleSheetService.readAllAsCSV(sheetName);
+        String csvData = googleSheetService.readAllAsCSV(sheetName, true);
         System.out.println("CSV Data: \n" + csvData);
 
         // Appel de la méthode writeRange avec la bonne feuille

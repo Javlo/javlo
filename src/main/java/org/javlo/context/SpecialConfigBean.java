@@ -191,6 +191,10 @@ public class SpecialConfigBean {
 		return StringHelper.isTrue(config.get("taxonomy.underline-active"), false);
 	}
 
+	public boolean isGsheetSecured() {
+		return StringHelper.isTrue(config.get("gsheet.secured"), true);
+	}
+
 	public boolean isMsgOnForward() {
 		return StringHelper.isTrue(config.get("no-content.msg-on-forward"), true);
 	}

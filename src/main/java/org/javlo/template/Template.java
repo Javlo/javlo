@@ -3984,7 +3984,7 @@ public class Template implements Comparable<Template> {
 
 	public static String minifyContent(String content) {
 
-		// Étape 0 : protéger les attributs contenant du JSP pour éviter de les casser
+		// Step 0: Protect JSP expressions in HTML attributes
 		Pattern jspAttrPattern = Pattern.compile("(\\w+)\\s*=\\s*\"\\s*<%=(.*?)%>\\s*\"", Pattern.DOTALL);
 		Map<String, String> protectedAttributes = new HashMap<>();
 		int counter = 0;
@@ -3997,45 +3997,50 @@ public class Template implements Comparable<Template> {
 			content = content.replace(fullMatch, token);
 		}
 
-		// Étape 1 : retirer les commentaires HTML (sauf <!--config ... -->)
-		content = content.replaceAll("(?s)<!--(?!config).*?-->", "");
+		// Step 1: Remove JavaScript comments first (both // and /* */)
+		// Only inside <script> blocks to avoid affecting HTML or JSP
+		Pattern jsPattern = Pattern.compile("(?s)(<script.*?>)(.*?)(</script>)");
+		Matcher jsMatcher = jsPattern.matcher(content);
+		StringBuilder cleanedScripts = new StringBuilder();
 
-		// Étape 2 : nettoyer les commentaires JS uniquement dans les balises <script>
-		Pattern scriptPattern = Pattern.compile("(?s)(<script.*?>)(.*?)(</script>)");
-		Matcher scriptMatcher = scriptPattern.matcher(content);
-		StringBuilder sb = new StringBuilder();
-
-		while (scriptMatcher.find()) {
-			String scriptContent = scriptMatcher.group(2).replaceAll("(?m)^\\s*//.*", "");
-			scriptMatcher.appendReplacement(sb, Matcher.quoteReplacement(
-					scriptMatcher.group(1) + scriptContent + scriptMatcher.group(3)
+		while (jsMatcher.find()) {
+			String jsContent = jsMatcher.group(2);
+			// Remove line comments
+			jsContent = jsContent.replaceAll("(?m)^\\s*//.*", "");
+			// Remove block comments
+			jsContent = jsContent.replaceAll("/\\*.*?\\*/", "");
+			jsMatcher.appendReplacement(cleanedScripts, Matcher.quoteReplacement(
+					jsMatcher.group(1) + jsContent + jsMatcher.group(3)
 			));
 		}
-		scriptMatcher.appendTail(sb);
-		content = sb.toString();
+		jsMatcher.appendTail(cleanedScripts);
+		content = cleanedScripts.toString();
 
-		// Étape 3 : préserver les espaces autour des blocs JSP
+		// Step 2: Remove HTML comments (except <!--config ... -->)
+		content = content.replaceAll("(?s)<!--(?!config).*?-->", "");
+
+		// Step 3: Preserve spaces around JSP tags
 		content = content.replaceAll("(\\s*)(<%(?!@)(.*?)%>)(\\s*)", " $2 ");  // scriptlets
 		content = content.replaceAll("(\\s*)(<%=.*?%>)(\\s*)", " $2 ");        // expressions
 
-		// Étape 4 : compacter le HTML en supprimant les espaces inutiles entre balises
+		// Step 4: Compress HTML by removing unnecessary spaces between tags
 		content = content.replaceAll(">\\s+<", "><");
 
-		// Étape 5 : supprimer les espaces multiples
+		// Step 5: Remove multiple spaces
 		content = content.replaceAll("\\s{2,}", " ");
 
-		// Étape 6 : supprimer les retours à la ligne
+		// Step 6: Remove line breaks
 		content = content.replaceAll("\\n", "");
 
-		// Étape 7 : restaurer les attributs JSP protégés
+		// Step 7: Restore protected JSP attributes
 		for (Map.Entry<String, String> entry : protectedAttributes.entrySet()) {
 			content = content.replace(entry.getKey(), entry.getValue());
 		}
 
-		// Étape 8 : trim final et retour
-		//return "\n<!-- MimiFy Ver. " + MIMIFY_VERSION + " [" + file + "] -->\n" + content.trim();
+		// Step 8: Trim and return
 		return content.trim();
 	}
+
 
 
 	public static String createCssClass (String component, String mode) {
