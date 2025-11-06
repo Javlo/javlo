@@ -66,10 +66,9 @@ public class MetaComponent extends DynamicComponent implements IAction {
 
 			storeProperties();
 		} else {
-
 			reloadProperties();
 
-			if (!getValue().contains("field.pageTitle")) {
+			if (!getValue().contains("pageTitle")) {
 				properties.put("field.pageTitle.type", "text");
 				properties.put("field.pageTitle.order", "" + 35);
 				properties.put("field.pageTitle.value", "");
