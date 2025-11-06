@@ -3416,6 +3416,15 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 		PageDescription desc = getPageDescriptionCached(ctx, newCtx.getRequestContentLanguage());
 
+		MetaComponent meta = getMetaComponent(ctx);
+		if (meta != null) {
+			String pageTitle = meta.getFieldValue(ctx, "pageTitle");
+			if (!StringHelper.isEmpty(pageTitle)) {
+				desc.forcedPageTitle = pageTitle;
+				return desc.forcedPageTitle;
+			}
+		}
+
 		if (desc.forcedPageTitle != null) {
 			return desc.forcedPageTitle;
 		}
@@ -3437,15 +3446,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 		if (desc.pageTitle != null) {
 			return desc.pageTitle;
-		}
-
-		MetaComponent meta = getMetaComponent(ctx);
-		if (meta != null) {
-			String pageTitle = meta.getFieldValue(ctx, "pageTitle");
-			if (!StringHelper.isEmpty(pageTitle)) {
-				desc.pageTitle = pageTitle;
-				return desc.pageTitle;
-			}
 		}
 
 		desc.pageTitle = getForcedPageTitle(newCtx);
