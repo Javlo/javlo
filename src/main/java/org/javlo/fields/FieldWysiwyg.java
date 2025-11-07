@@ -25,7 +25,7 @@ public class FieldWysiwyg extends Field {
 		}
 
 		public String getInnerHtml() {
-			return FieldWysiwyg.this.getInnerHtml();
+			return FieldWysiwyg.this.getInnerHtml(ctx);
 		}
 	}
 
@@ -46,12 +46,18 @@ public class FieldWysiwyg extends Field {
 		}
 	}
 
-	protected String getInnerHtml() {
+	protected String getInnerHtml(ContentContext ctx) {
 		if (getValue() == null) {
 			return null;
 		}
-		String outValue = getValue().trim();
-		if (outValue.startsWith("<p>") && outValue.endsWith("</p>")) {
+        String outValue = null;
+        try {
+            outValue = getDisplayValue(ctx, ctx.getLocale()).trim();
+        } catch (Exception e) {
+            e.printStackTrace();
+			return e.getMessage();
+        }
+        if (outValue.startsWith("<p>") && outValue.endsWith("</p>")) {
 			// Remove <p> (3 chars) and </p> (4 chars)
 			outValue = outValue.substring(3, outValue.length() - 4);
 		}
