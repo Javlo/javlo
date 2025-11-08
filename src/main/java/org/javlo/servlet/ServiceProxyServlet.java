@@ -5,17 +5,20 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
+import org.javlo.utils.TimeMap;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Collections;
-import java.util.Properties;
+import java.util.*;
 
 public class ServiceProxyServlet extends HttpServlet {
 
+	private static final TimeMap<String, String> largeCache = new TimeMap<>(60*60*24*30);
+	private static final TimeMap<String, String> smallCache = new TimeMap<>(60);
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -44,31 +47,80 @@ public class ServiceProxyServlet extends HttpServlet {
         Properties proxyMappings = ctx.getGlobalContext().getProxyMappings();
 
 		key = key.substring(1); // remove leading "/"
-		String targetUrl = proxyMappings.getProperty(key);
 
+		if (key.contains(".")) {
+			throw new SecurityException("Invalid proxy key: " + key);
+		}
+
+		// Build a stable, deterministic cache key and forward the request
+		String targetUrl = proxyMappings.getProperty(key);
 		if (targetUrl == null) {
 			resp.sendError(HttpServletResponse.SC_NOT_FOUND, "No URL mapped for key: " + key);
 			return;
 		}
 
-		// Append query string if present
+// Append query string if present
 		String queryString = req.getQueryString();
-		if (queryString != null) {
+		if (queryString != null && !queryString.isEmpty()) {
 			targetUrl += "?" + queryString;
 		}
 
-		// Open connection to target URL
+// Use StringBuilder to mutate inside lambdas
+		StringBuilder mapKey = new StringBuilder();
+
+// Include method and URL in the key
+		mapKey.append(req.getMethod()).append('|').append(targetUrl).append('|');
+
+// Open connection to target URL
 		HttpURLConnection connection = (HttpURLConnection) new URL(targetUrl).openConnection();
 		connection.setRequestMethod(req.getMethod());
 		connection.setDoInput(true);
 		connection.setDoOutput("POST".equalsIgnoreCase(req.getMethod()));
 
-		// Copy headers from the original request
-		Collections.list(req.getHeaderNames()).forEach(header -> {
-			Collections.list(req.getHeaders(header)).forEach(value -> {
-				connection.setRequestProperty(header, value);
+// Collect headers into a list, then sort for deterministic key generation
+		List<Map.Entry<String, String>> headerEntries = new ArrayList<>();
+
+		Collections.list(req.getHeaderNames()).forEach(headerName -> {
+			// Optional: skip hop-by-hop headers that shouldn't be forwarded
+			// (comment in English as requested)
+			// e.g., "connection", "keep-alive", "transfer-encoding", "te", "trailer", "upgrade", "host", "content-length"
+			String lower = headerName.toLowerCase(Locale.ROOT);
+			if (lower.equals("connection") ||
+					lower.equals("keep-alive") ||
+					lower.equals("te") ||
+					lower.equals("trailer") ||
+					lower.equals("upgrade") ||
+					lower.equals("content-length")) {
+				return;
+			}
+
+			Collections.list(req.getHeaders(headerName)).forEach(value -> {
+				headerEntries.add(new AbstractMap.SimpleEntry<>(headerName, value));
 			});
 		});
+
+// Sort by header name (case-insensitive), then by value for stability
+		headerEntries.sort(
+				Comparator.comparing((Map.Entry<String, String> e) -> e.getKey().toLowerCase(Locale.ROOT))
+						.thenComparing(Map.Entry::getValue, Comparator.nullsFirst(String::compareTo))
+		);
+
+// Apply headers to the outbound connection and extend the key
+		for (Map.Entry<String, String> e : headerEntries) {
+			connection.setRequestProperty(e.getKey(), e.getValue());
+			mapKey.append(e.getKey()).append('=').append(e.getValue()).append('|');
+		}
+
+// À ce stade, mapKey.toString() est stable et correctement construit.
+// ... suite du proxy (copie du corps, gestion de la réponse, etc.)
+
+
+		String bearerToken = proxyMappings.getProperty(key+".bearer-token");
+		if (bearerToken != null) {
+			connection.setRequestProperty("Authorization: Bearer", bearerToken);
+		}
+
+		mapKey.append("Method:"+req.getMethod());
 
 		// Forward body if POST
 		if ("POST".equalsIgnoreCase(req.getMethod())) {
@@ -89,6 +141,13 @@ public class ServiceProxyServlet extends HttpServlet {
 				}
 			}
 		});
+
+		if (StringHelper.isTrue(proxyMappings.getProperty(key+".large-cache"))) {
+			String cache = largeCache.get(mapKey.toString());
+			if (cache != null) {
+
+			}
+		}
 
 		try (InputStream in = connection.getInputStream();
 			 OutputStream out = resp.getOutputStream()) {
