@@ -619,9 +619,8 @@ public class ContentElementList implements IContentComponentsList {
 		pos = 0;
 	}
 
-	boolean isNext(ContentContext ctx) {
-		boolean isNext = nextElem(ctx) != null;
-		return isNext;
+	public boolean isNext(ContentContext ctx) {
+		return nextElem(ctx) != null;
 	}
 
 	boolean isPrevious(ContentContext ctx) {

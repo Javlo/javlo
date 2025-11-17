@@ -1827,6 +1827,11 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		return elemList;
 	}
 
+	public boolean isContent(ContentContext ctx) throws Exception {
+		return getLocalContent(ctx).isNext(ctx);
+	}
+
+
 	/**
 	 * return the content separed on the date component.
 	 * 
@@ -2111,11 +2116,11 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			if (ctx.getRequest().getAttribute(requestKey) != null) {
 				return (MetaComponent) ctx.getRequest().getAttribute(requestKey);
 			}
-			ContentContext noAreaCtx = ctx.getContextWithoutArea();
+			ContentContext noAreaCtx = ctx.getContextWithoutArea().getContextWithContentSameLanguage();
 			Iterator<IContentVisualComponent> elems = getContent(noAreaCtx).getIterable(noAreaCtx).iterator();
 			while (elems.hasNext()) {
 				IContentVisualComponent comp = (IContentVisualComponent) elems.next();
-				if (comp instanceof MetaComponent && comp.getComponentBean().getLanguage().equals(ctx.getRequestContentLanguage())) {
+				if (comp instanceof MetaComponent && comp.getComponentBean().getLanguage().equals(noAreaCtx.getRequestContentLanguage())) {
 					ctx.getRequest().setAttribute(requestKey, comp);
 					return (MetaComponent) comp;
 				}
@@ -3088,7 +3093,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			if (!ctx.isFree()) { // no reference to template >>> some component can be absent
 				getContentElementListMap().put(ctx.getRequestContentLanguage(), localContentElementList);
 			}
-
 			logger.fine("update local content  - # component : " + localContentElementList.size(ctx) + " (ctx:" + ctx + ")");
 		}
 		localContentElementList = new ContentElementList(localContentElementList);
@@ -3984,7 +3988,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			return desc.title;
 		}
 
-		ContentContext newCtx = new ContentContext(ctx);
+		ContentContext newCtx = new ContentContext(ctx).getContextWithContentSameLanguage();
 
 		newCtx.setArea(null);
 		desc.title = getContent(newCtx).getTitle(newCtx);
@@ -4304,7 +4308,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	}
 
 	public boolean isNoComponent(ContentContext ctx) throws Exception {
-		return getContent(ctx).size(ctx) == 0;
+		return !isContent(ctx);
 	}
 
 	public boolean isNoComponent(ContentContext ctx, String area) throws Exception {
@@ -4418,12 +4422,13 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 				return desc.isRealContent();
 			}
 
-			if (isEmpty(ctx)) {
+			ContentContext contentAreaCtx = new ContentContext(ctx);
+			contentAreaCtx = contentAreaCtx.getContextWithContentSameLanguage();
+
+			if (isEmpty(contentAreaCtx)) {
 				desc.realContent = false;
 				return false;
 			}
-
-			ContentContext contentAreaCtx = new ContentContext(ctx);
 
 			if (template == null || !template.isRealContentFromAnyArea()) {
 				contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);

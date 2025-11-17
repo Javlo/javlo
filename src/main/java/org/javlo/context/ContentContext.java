@@ -782,6 +782,32 @@ public class ContentContext {
 		return null;
 	}
 
+	public ContentContext getContextWithContentSameLanguage() throws Exception {
+		MenuElement page = getCurrentPage();
+		if (page == null || !isAsViewMode() || !getGlobalContext().getSpecialConfig().isAutoImportSameLanguage()) {
+			return this;
+		}
+		if (page.isContent(this)) {
+			return this;
+		} else {
+			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
+			Collection<String> lgs = globalContext.getDefaultLanguages();
+
+				for (String lg : lgs) {
+					if (!getLanguage().equals(lg)) {
+						ContentContext lgCtx = new ContentContext(this);
+						lgCtx.setAllLanguage(lg);
+						if (lgCtx.getLocale().getLanguage().equals(getLocale().getLanguage())) {
+							if (page.isContent(lgCtx)) {
+								return lgCtx;
+							}
+						}
+					}
+				}
+			}
+			return this;
+	}
+
 	/**
 	 * return a context with at least one element (if exist), it can be change the
 	 * language (and only this) of the current context. this method use only the

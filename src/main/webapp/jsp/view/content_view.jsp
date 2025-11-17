@@ -18,13 +18,13 @@
 		org.javlo.component.core.ContentElementList,
 		org.javlo.component.core.IContentComponentsList,
 		org.javlo.component.core.IContentVisualComponent,
-		org.javlo.component.links.PageMirrorComponent,		
+		org.javlo.component.links.PageMirrorComponent,
 		org.javlo.component.container.IContainer,
 		org.javlo.component.column.TableContext,
 		org.javlo.component.column.TableBreak,
 		org.javlo.component.column.ColContext,
 		org.javlo.component.column.OpenCol,
-		org.javlo.context.GlobalContext,		
+		org.javlo.context.GlobalContext,
 		org.javlo.service.ContentService,
 		org.javlo.user.User,
 		org.javlo.user.UserFactory,
@@ -34,7 +34,7 @@
 		org.javlo.helper.URLHelper,
 		org.javlo.helper.LocalLogger"
 %><%
-	ContentContext ctx = ContentContext.getContentContext ( request, response );
+	ContentContext ctx = ContentContext.getContentContext ( request, response ).getContextWithContentSameLanguage();
 	GlobalContext globalContext = GlobalContext.getInstance(request);
 
 	boolean areaWrapper = StringHelper.isTrue(request.getParameter("only-area-wrapper"), false);

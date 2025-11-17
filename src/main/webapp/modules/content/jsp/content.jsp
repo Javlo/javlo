@@ -8,7 +8,7 @@
         org.javlo.service.ClipBoard,
         org.javlo.context.ContentContext,
         org.javlo.context.EditContext,
-        org.javlo.service.ContentService,	    
+        org.javlo.service.ContentService,
 	    org.javlo.i18n.I18nAccess,
    	    org.javlo.helper.URLHelper,
    	    org.javlo.helper.XHTMLHelper,
@@ -26,7 +26,7 @@
 %><%
 ContentContext ctx = ContentContext.getContentContext ( request, response );
 
-if (ctx.getCurrentPage() == null) {	
+if (ctx.getCurrentPage() == null) {
 	return;
 }
 
@@ -81,7 +81,7 @@ if (request.getParameter("ajaxCompId") != null) {
 
 if (components == null) {
 	ComponentContext componentContext = ComponentContext.getInstance(request);
-	components = componentContext.getNewComponents();	
+	components = componentContext.getNewComponents();
 }
 
 if (components.size() == 0 || request.getParameter("firstLine") != null) { /* if no specific components asked than render all components for the current context or force first line */
@@ -126,15 +126,14 @@ if (components.size() > 60 && request.getParameter("display-all") == null) {
 	  %><div class="insert-line">
 	  	<c:set var="pushParam" value="&pushcomp=${param.pushcomp}" />
 		<a class="btn btn-default btn-xs warning" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}display-all=true${!empty param.pushcomp?pushParam:''}">${i18n.edit["edit.message.display-all-components"]}</a>
-	  </div><%	
+	  </div><%
 } else {
 
-for (IContentVisualComponent comp : components) {	 
-	String inputSuffix = "-"+comp.getId();	
+for (IContentVisualComponent comp : components) {
+	String inputSuffix = "-"+comp.getId();
 	if (comp instanceof IContainer && ((IContainer)comp).isOpen(ctx)) {
 		closeContainerStack.push(((IContainer)comp).getCloseCode(ctx));
 	     %><%=((IContainer)comp).getOpenCode(ctx)%><%
-	
 	}
 	String readOnlyClass= "";
 	String authors = "";
@@ -146,15 +145,15 @@ for (IContentVisualComponent comp : components) {
  <div id="comp-<%=comp.getId()%>" class="<%=readOnlyClass%><%=comp.getType()%><%if (components.size()==1) {%> new<%}%><%if (comp.getId().equals(request.getParameter("pushcomp"))) {%> push<%}%> component-wrapper">
  <input type="hidden" name="components" value="<%=comp.getId()%>" />
  <div class="component-title"><a style="color: #<%=comp.getHexColor()%>" href="#" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this); return false;"><%=comp.getComponentLabel(ctx, globalContext.getEditLanguage(request.getSession()))+authors%></a></div>
- <div class="tabs component">	 
+ <div class="tabs component">
 
-    <div class="header-tabs"> 
+    <div class="header-tabs">
      <%
  String errorMessage = comp.getErrorMessage(ctx);
  if (!StringHelper.isEmpty(errorMessage)) {%>
  <div class="component-error-message"><span class="body"><i class="bi bi-exclamation-triangle"></i> <%=errorMessage%></div>
  <%}%>
-      <ul>      	  	
+      <ul>
           <li><a href="#tab1<%=inputSuffix%>">${i18n.edit["global.content"]}</a></li>
           <%
           String linkTag = " href=\"#tab2"+inputSuffix+"\"";
@@ -163,7 +162,7 @@ for (IContentVisualComponent comp : components) {
           }
           String tabTitle = comp.getSpecialTagTitle(ctx);
           if (tabTitle != null) {
-        	%><li><a href="#tab11<%=inputSuffix%>"><%=tabTitle%></a></li><% 
+        	%><li><a href="#tab11<%=inputSuffix%>"><%=tabTitle%></a></li><%
           }
           %>
           <li class="<%if (!comp.isConfig(ctx)) {%>disabled<%} else {%>enabled<%}%>"><a class="link"<%=linkTag%>>${i18n.edit["global.settings"]}</a></li>
@@ -185,7 +184,7 @@ for (IContentVisualComponent comp : components) {
       			<span id="tooltip_comp_<%=comp.getId()%>"><%=comp.getHelpText(ctx)%></span>
       			</div>
       		</div>
-      		<script type="text/javascript"> 
+      		<script type="text/javascript">
       		jQuery('.tooltip').tooltipster();
       		</script>
       		<%} else {%>
@@ -198,13 +197,13 @@ for (IContentVisualComponent comp : components) {
       	boolean sep=false;
       	if (comp.isRepeat()) {%><span class="repeat" title="${i18n.edit['content.repeat']}"></span><%}
       	if (comp.isList(ctx)) {%><span class="inlist" title="${i18n.edit['component.inlist']}"></span><%}
-      	if (comp.getComponentCssClass(ctx) != null && comp.getComponentCssClass(ctx).trim().length() > 0) { sep=true;%><span class="style" title="<%=comp.getStyleTitle(ctx)%>"><%=comp.getStyleLabel(ctx)%></span><%}      	
+      	if (comp.getComponentCssClass(ctx) != null && comp.getComponentCssClass(ctx).trim().length() > 0) { sep=true;%><span class="style" title="<%=comp.getStyleTitle(ctx)%>"><%=comp.getStyleLabel(ctx)%></span><%}
       	if (comp.getCurrentRenderer(ctx) != null && comp.getCurrentRenderer(ctx).trim().length() > 0) {
       	%><%if (comp.getComponentCssClass(ctx) != null && comp.getComponentCssClass(ctx).trim().length() > 0) {sep=true;%><span class="sep">-</span><%}%><span class="renderer" title="<%=comp.getCurrentRenderer(ctx)%>"><%=comp.getCurrentRenderer(ctx)%></span><%}
       	if (comp.isRealContent(ctx)) {if(sep) {%><span class="sep">-</span><%}%><span class="realcontent" title="${i18n.edit['component.realcontent']}">${i18n.edit['component.realcontent']}</span><%}
       	if (comp.isContentCachable(ctx)) {if(sep) {%><span class="sep">-</span><%}%><span class="contentcache" title="cache">cache</span><%}
       	if (comp.getRenderer(ctx)!=null) {if(sep) {%><span class="sep">-</span><%}%><span class="renderer" title="<%=comp.getRenderer(ctx)%>">renderer</span><%}
-      	
+
       	%>
       </div>
       <div id="tab1<%=inputSuffix%>">
@@ -229,11 +228,11 @@ for (IContentVisualComponent comp : components) {
       	</div>
       	<textarea rows="5" cols="10" id="raw_value_<%=comp.getId()%>" name="" onchange="var item=jQuery('#raw_value_<%=comp.getId()%>'); item.attr('name', item.attr('id'));"><%=comp.getValue(ctx)%></textarea>
       </div><%}%>
-      <input type="hidden" name="id-<%=comp.getId()%>" value="true" /> 
+      <input type="hidden" name="id-<%=comp.getId()%>" value="true" />
   </div><%
-  if (!StringHelper.isTrue(request.getParameter("noinsert")) && !StringHelper.isTrue(request.getAttribute("noinsert")) && !StringHelper.isTrue(request.getAttribute("lightInterface"))) {%>  
+  if (!StringHelper.isTrue(request.getParameter("noinsert")) && !StringHelper.isTrue(request.getAttribute("noinsert")) && !StringHelper.isTrue(request.getAttribute("lightInterface"))) {%>
   <div class="insert-line" id="insert-line-<%=comp.getId()%>">
-  
+
 	<a class="btn btn-default btn-xs ajax" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}webaction=insert&previous=<%=comp.getId()%>&type=<%=currentTypeComponent.getType()%>"><%=insertHere%></a><%
 	if (pastePageHere != null) {
 	%><a class="btn btn-default btn-xs" onclick="scrollToFirstQuarter(jQuery('#content-edit'),this);" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}webaction=pastePage&previous=<%=comp.getId()%>"><%=pastePageHere%></a><%

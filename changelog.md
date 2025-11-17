@@ -1024,4 +1024,5 @@ Security in case of vulnerabilities.
 ### Modified
 - minify jsp optimisation [2.3.3.1]
 - linkLabel
+- auto import other same lang from other country
 

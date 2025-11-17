@@ -3,27 +3,9 @@
  */
 package org.javlo.helper;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.logging.Logger;
-
 import org.javlo.component.column.TableBreak;
 import org.javlo.component.container.IContainer;
-import org.javlo.component.core.AbstractVisualComponent;
-import org.javlo.component.core.ComponentBean;
-import org.javlo.component.core.ComponentFactory;
-import org.javlo.component.core.ContentElementList;
-import org.javlo.component.core.IContentVisualComponent;
-import org.javlo.component.core.Unknown;
+import org.javlo.component.core.*;
 import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.component.links.MirrorComponent;
 import org.javlo.component.text.DynamicParagraph;
@@ -37,6 +19,11 @@ import org.javlo.service.RequestService;
 import org.javlo.template.Area;
 import org.javlo.template.Template;
 import org.javlo.utils.Cell;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * @author pvandermaesen some method for help create component.

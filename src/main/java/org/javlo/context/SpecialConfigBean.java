@@ -169,6 +169,10 @@ public class SpecialConfigBean {
 	public boolean isGoogleRecaptcha() {
 		return !StringHelper.isEmpty(getGoogleRecaptchaPrivateKey()) && !StringHelper.isEmpty(getGoogleRecaptchaPublicKey());
 	}
+
+	public boolean isAutoImportSameLanguage() {
+		return StringHelper.isTrue(config.get("i18n.import.same.lang"), true);
+	}
 	
 	public String getGoogleRecaptchaPrivateKey() {
 		return (String)config.get("google-recaptcha.private-key");
