@@ -1,6 +1,6 @@
-<%@page import="org.javlo.component.container.Box"%>
-<%@page import="org.javlo.data.InfoBean"%>
-<%@page import="java.util.List"
+<%@page import="org.javlo.component.container.Box"
+%><%@page import="org.javlo.data.InfoBean"
+%><%@page import="java.util.List"
 %><%@page import="org.javlo.component.core.ComponentFactory"
 %><%@ taglib uri="jakarta.tags.core" prefix="c"
 %><%@ taglib prefix="fn" uri="jakarta.tags.functions"
@@ -34,8 +34,15 @@
 		org.javlo.helper.URLHelper,
 		org.javlo.helper.LocalLogger"
 %><%
-	ContentContext ctx = ContentContext.getContentContext ( request, response ).getContextWithContentSameLanguage();
+	ContentContext baseCtx = ContentContext.getContentContext ( request, response );
+	ContentContext ctx = baseCtx.getContextWithContentSameLanguage();
 	GlobalContext globalContext = GlobalContext.getInstance(request);
+
+	if (ctx.isAsPreviewMode()) {
+		if (!ctx.getContextWithContentSameLanguage(true).getLocale().equals(baseCtx.getLocale())) {
+%><div class="alert alert-info">content import from : <%=ctx.getContextWithContentSameLanguage(true).getLocale()%></div><%
+		}
+	}
 
 	boolean areaWrapper = StringHelper.isTrue(request.getParameter("only-area-wrapper"), false);
 	String area = (String)request.getAttribute(ContentContext.CHANGE_AREA_ATTRIBUTE_NAME);

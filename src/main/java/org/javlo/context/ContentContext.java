@@ -783,8 +783,12 @@ public class ContentContext {
 	}
 
 	public ContentContext getContextWithContentSameLanguage() throws Exception {
+		return getContextWithContentSameLanguage(isAsViewMode());
+	}
+
+	public ContentContext getContextWithContentSameLanguage(boolean check) throws Exception {
 		MenuElement page = getCurrentPage();
-		if (page == null || !isAsViewMode() || !getGlobalContext().getSpecialConfig().isAutoImportSameLanguage()) {
+		if (page == null || !check || !getGlobalContext().getSpecialConfig().isAutoImportSameLanguage()) {
 			return this;
 		}
 		if (page.isContent(this)) {
