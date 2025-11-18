@@ -787,22 +787,24 @@ public class ContentContext {
 	}
 
 	public ContentContext getContextWithContentSameLanguage(boolean check) throws Exception {
-		MenuElement page = getCurrentPage();
-		if (page == null || !check || !getGlobalContext().getSpecialConfig().isAutoImportSameLanguage()) {
+		if (!check || !getGlobalContext().getSpecialConfig().isAutoImportSameLanguage()) {
 			return this;
 		}
-		if (page.isContent(this)) {
+		MenuElement page = getCurrentPage();
+		if (page == null) {
+			return this;
+		}
+		if (!page.isEmpty(this)) {
 			return this;
 		} else {
 			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
 			Collection<String> lgs = globalContext.getDefaultLanguages();
-
 				for (String lg : lgs) {
 					if (!getLanguage().equals(lg)) {
 						ContentContext lgCtx = new ContentContext(this);
 						lgCtx.setAllLanguage(lg);
 						if (lgCtx.getLocale().getLanguage().equals(getLocale().getLanguage())) {
-							if (page.isContent(lgCtx)) {
+							if (!page.isEmpty(lgCtx)) {
 								return lgCtx;
 							}
 						}

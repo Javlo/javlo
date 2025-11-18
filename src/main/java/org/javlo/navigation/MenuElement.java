@@ -1827,9 +1827,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		return elemList;
 	}
 
-	public boolean isContent(ContentContext ctx) throws Exception {
+	/*public boolean isContent(ContentContext ctx) throws Exception {
 		return getLocalContent(ctx).isNext(ctx);
-	}
+	}*/
 
 
 	/**
@@ -4308,7 +4308,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	}
 
 	public boolean isNoComponent(ContentContext ctx) throws Exception {
-		return !isContent(ctx);
+		return isEmpty(ctx);
 	}
 
 	public boolean isNoComponent(ContentContext ctx, String area) throws Exception {
