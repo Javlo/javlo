@@ -1,12 +1,12 @@
 package org.javlo.fields;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Locale;
-
 import org.javlo.context.ContentContext;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.XHTMLHelper;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Locale;
 
 public class FieldLargeText extends Field {
 
@@ -56,7 +56,7 @@ public class FieldLargeText extends Field {
 		if (refCode != null) {
 			return refCode;
 		}
-		return XHTMLHelper.textToXHTML( super.getDisplayValue(ctx, locale));
+		return XHTMLHelper.textToXHTML(XHTMLHelper.replaceJSTLDataNoPage(ctx, super.getDisplayValue(ctx, locale)));
 	}
 
 	@Override
