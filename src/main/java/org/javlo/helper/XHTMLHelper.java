@@ -2187,6 +2187,14 @@ public class XHTMLHelper {
 	}
 
 	public static String replaceJSTLData(ContentContext ctx, String xhtml) throws Exception {
+		return replaceJSTLData(ctx, xhtml, true);
+	}
+
+	public static String replaceJSTLDataNoPage(ContentContext ctx, String xhtml) throws Exception {
+		return replaceJSTLData(ctx, xhtml, false);
+	}
+
+	private static String replaceJSTLData(ContentContext ctx, String xhtml, boolean page) throws Exception {
 
 		if (xhtml == null || !xhtml.contains("${")) {
 			return xhtml;
@@ -2221,6 +2229,21 @@ public class XHTMLHelper {
 			}
 		}
 
+		params = StringHelper.extractItem(xhtml, "${generic-data.", "}");
+		if (params.size() > 0) {
+			if (ctx.getCurrentPage() != null) {
+				Map<String, String> genericData = ctx.getCurrentPage().getGenericData(ctx);
+				for (String param : params) {
+					String val = genericData.get(param);
+					if (val != null) {
+						xhtml = xhtml.replace("${generic-data." + param + "}", val);
+					} else {
+						xhtml = xhtml.replace("${generic-data." + param + "}", "## KEY NOT FOUND : " + param + " ##");
+					}
+				}
+			}
+		}
+
 		/** i18n **/
 		Collection<String> i18nKeys = StringHelper.extractItem(xhtml, "${vi18n['", "']}");
 		if (i18nKeys.size() > 0) {
@@ -2249,11 +2272,14 @@ public class XHTMLHelper {
 			return xhtml;
 		}
 		// properties = BeanHelper.cachedDescribe(infoBean.getPage());
-		Map<String, String> properties = BeanUtils.describe(infoBean.getPage());
-		for (String key : properties.keySet()) {
-			String jstlStr = "${" + InfoBean.REQUEST_KEY + ".page." + key + '}';
-			if (properties.get(key) != null && xhtml.contains(jstlStr)) {
-				xhtml = xhtml.replace(jstlStr, properties.get(key).toString());
+
+		if (page) {
+			Map<String, String> properties = BeanUtils.describe(infoBean.getPage());
+			for (String key : properties.keySet()) {
+				String jstlStr = "${" + InfoBean.REQUEST_KEY + ".page." + key + '}';
+				if (properties.get(key) != null && xhtml.contains(jstlStr)) {
+					xhtml = xhtml.replace(jstlStr, properties.get(key).toString());
+				}
 			}
 		}
 		if (!xhtml.contains("${")) {
@@ -2261,7 +2287,7 @@ public class XHTMLHelper {
 		}
 		if (Basket.isInstance(ctx)) {
 			// properties = BeanHelper.cachedDescribe(Basket.getInstance(ctx));
-			properties = BeanUtils.describe(Basket.getInstance(ctx));
+			Map<String, String> properties = BeanUtils.describe(Basket.getInstance(ctx));
 			for (String key : properties.keySet()) {
 				String jstlStr = "${" + Basket.KEY + '.' + key + '}';
 				if (properties.get(key) != null && xhtml.contains(jstlStr)) {

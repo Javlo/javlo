@@ -660,13 +660,13 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		if (getRemplacementCode().size() > 0) {
 			for (Map.Entry<String, String> entry : getRemplacementCode().entrySet()) {
 				String value = XHTMLHelper.textToXHTML(entry.getValue());
-				value = XHTMLHelper.replaceJSTLData(ctx, value);
+				value = XHTMLHelper.replaceJSTLDataNoPage(ctx, value);
 				value = StringUtils.replace(value, "${source}", "" + entry.getKey());
 				outValue = StringUtils.replace(outValue, entry.getKey(), value);
 			}
 		}
 		outValue = XHTMLHelper.autoLink(outValue, globalContext);
-		outValue = XHTMLHelper.replaceJSTLData(ctx, outValue);
+		outValue = XHTMLHelper.replaceJSTLDataNoPage(ctx, outValue);
 		outValue = ReverseLinkService.getInstance(globalContext).replaceLink(ctx, comp, outValue);
 		outValue = XHTMLHelper.replaceLinks(ctx, outValue);
 

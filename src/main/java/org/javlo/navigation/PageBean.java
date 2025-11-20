@@ -1001,7 +1001,8 @@ public class PageBean implements Serializable {
 		String path = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), ctx.getPath());
 		return tracker.getLastYearPathReading(path);
 	}
-	
+
+
 	public Map<String, Object> getContentAsMap() throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, Exception {
 		return page.getContentAsMap(ctx);
 	}
@@ -1033,6 +1034,10 @@ public class PageBean implements Serializable {
 
 	public int getPriority() {
 		return page.getPriority();
+	}
+
+	public Map<String, String> getGenericFormData() throws Exception {
+		return page.getGenericData(ctx);
 	}
 	
 }

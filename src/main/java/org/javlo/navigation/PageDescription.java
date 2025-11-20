@@ -73,6 +73,7 @@ public class PageDescription implements Serializable {
 	ExtendedColor backgroundColor;
 	String linkLabel = null;
 	Map<String, String> i18n = null;
+	Map<String, String> genericData = null;
 	ContactBean contactBean = null;
 	String font = null;
 	String metaHead = null;

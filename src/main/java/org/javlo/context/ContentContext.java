@@ -156,6 +156,7 @@ public class ContentContext {
 
 	private User user = null;
 
+	public String mainCountryLg = null;
 
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free, boolean pageManagement) {
 		ContentContext ctx = new ContentContext();
@@ -782,6 +783,16 @@ public class ContentContext {
 		return null;
 	}
 
+	public ContentContext getMainCountryContext() {
+		if (mainCountryLg == null) {
+			return this;
+		} else {
+			ContentContext mainCtx = new ContentContext(this);
+			mainCtx.setAllLanguage(mainCountryLg);
+			return mainCtx;
+		}
+	}
+
 	public ContentContext getContextWithContentSameLanguage() throws Exception {
 		return getContextWithContentSameLanguage(isAsViewMode());
 	}
@@ -794,24 +805,25 @@ public class ContentContext {
 		if (page == null) {
 			return this;
 		}
-		if (!page.isEmpty(this)) {
+		if (!page.isEmpty(this, null, false)) {
 			return this;
 		} else {
 			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
 			Collection<String> lgs = globalContext.getDefaultLanguages();
-				for (String lg : lgs) {
-					if (!getLanguage().equals(lg)) {
-						ContentContext lgCtx = new ContentContext(this);
-						lgCtx.setAllLanguage(lg);
-						if (lgCtx.getLocale().getLanguage().equals(getLocale().getLanguage())) {
-							if (!page.isEmpty(lgCtx)) {
-								return lgCtx;
-							}
+			for (String lg : lgs) {
+				if (!getLanguage().equals(lg)) {
+					ContentContext lgCtx = new ContentContext(this);
+					lgCtx.setAllLanguage(lg);
+					if (lgCtx.getLocale().getLanguage().equals(getLocale().getLanguage())) {
+						if (!page.isEmpty(lgCtx, null, false)) {
+							lgCtx.mainCountryLg = this.getRequestContentLanguage();
+							return lgCtx;
 						}
 					}
 				}
 			}
-			return this;
+		}
+		return this;
 	}
 
 	/**

@@ -5172,6 +5172,25 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		return desc.i18n;
 	}
 
+	public Map<String, String> getGenericData(ContentContext ctx) throws Exception {
+		ctx = ctx.getMainCountryContext();
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+		if (desc.genericData == null) {
+			ContentContext noAreaCtx = new ContentContext(ctx);
+			noAreaCtx.setArea(null);
+			List<IContentVisualComponent> content = getContentByType(noAreaCtx, GenericDataComponent.TYPE);
+			Properties prop = new Properties();
+			for (IContentVisualComponent comp : content) {
+				prop.load(new StringReader(comp.getValue(noAreaCtx)));
+			}
+			desc.genericData = new HashedMap(prop);
+			if (desc.genericData.isEmpty()) {
+				desc.genericData = Collections.EMPTY_MAP;
+			}
+		}
+		return desc.genericData;
+	}
+
 	/**
 	 * get local i18n data
 	 * 
