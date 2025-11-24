@@ -37,6 +37,27 @@ public class FieldImage extends FieldFile {
 				return null;
 			}
 		}
+
+		public String getPreviewOrSvgUrl() throws Exception {
+
+			FieldImage refField = (FieldImage)FieldImage.this.getReference(ctx);
+
+			if ( refField.getCurrentFile() == null || refField.getCurrentFile().trim().length() == 0) {
+				return null;
+			}
+			String relativePath = URLHelper.mergePath(refField.getFileTypeFolder(), refField.getCurrentFolder());
+			String fileURL = URLHelper.mergePath(relativePath, refField.getCurrentFile());
+			try {
+				if (fileURL.contains(".svg")) {
+					return fileURL;
+				} else {
+					return URLHelper.createTransformURL(ctx, '/' + fileURL, getImageFilter());
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
 		
 		@Deprecated
 		public String getPreviewURL() throws Exception {
