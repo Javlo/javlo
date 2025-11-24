@@ -49,7 +49,7 @@ public class FieldImage extends FieldFile {
 			String fileURL = URLHelper.mergePath(relativePath, refField.getCurrentFile());
 			try {
 				if (fileURL.contains(".svg")) {
-					return fileURL;
+					return URLHelper.createMediaURL(ctx ,fileURL);
 				} else {
 					return URLHelper.createTransformURL(ctx, '/' + fileURL, getImageFilter());
 				}
