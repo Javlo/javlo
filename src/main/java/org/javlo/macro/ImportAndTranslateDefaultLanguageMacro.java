@@ -37,8 +37,6 @@ public class ImportAndTranslateDefaultLanguageMacro extends AbstractMacro {
 			logger.info(currentPage.getPath() + " have already content.");
 		} else {
 			MacroHelper.copyLanguageStructure(currentPage, deftLanguageCtx, Arrays.asList(new ContentContext[]{ctx}), true, true);
-			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
-			persistenceService.setAskStore(true);
 		}
 
 		ITranslator translator = TranslatorFactory.getTranslator(ctx.getGlobalContext());
@@ -55,6 +53,8 @@ public class ImportAndTranslateDefaultLanguageMacro extends AbstractMacro {
 				}
 			}
 		}
+
+		PersistenceService.getInstance(globalContext).setAskStore(true);
 
 		return null;
 	}
