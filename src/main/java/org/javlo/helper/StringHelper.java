@@ -3777,6 +3777,19 @@ public class StringHelper {
         return new String(outStream.toByteArray());
     }
 
+    public static final String getLang(String langCountryCode) {
+        if (langCountryCode==null) {
+            return null;
+        }
+        if (langCountryCode.length()==2) {
+            return langCountryCode;
+        }
+        if (langCountryCode.contains("-")) {
+            return langCountryCode.substring(0, langCountryCode.indexOf("-"));
+        }
+        return langCountryCode;
+    }
+
     private static boolean incrementArray(int[] array, int i, int max) {
         if (array[i] + 1 > max) {
             if (i == array.length - 1) {
@@ -4912,9 +4925,9 @@ public class StringHelper {
     }
 
     public static void main(String[] args) throws IOException {
-        System.out.println("Patrick <p@noctis.be> : "+StringHelper.isMail("Patrick <p@noctis.be>"));
-        System.out.println("p@noctis.be : "+StringHelper.isMail("p@noctis.be"));
-        System.out.println("p@noctis.be_obsolete : "+StringHelper.isMail("p@noctis.be_obsolete"));
+        System.out.println(getLang("de"));
+        System.out.println(getLang("fr-be"));
+        System.out.println(getLang("lfdkqflkj"));
     }
 
     public static String cleanEmail(String input) {
