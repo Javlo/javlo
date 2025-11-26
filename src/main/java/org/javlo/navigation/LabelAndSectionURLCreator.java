@@ -83,7 +83,7 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 		String url = path;
 		MenuElement sectionPage = getSectionPage(currentPage);		
 		
-		if (sectionPage != null && !sectionPage.isLikeRoot(freeCtx)) {
+		if (sectionPage != null && !sectionPage.isLikeRoot(freeCtx) && sectionPage.isRealContent(ctx)) {
 			contextWidthTitle = freeCtx.getContextWidthTitle(sectionPage);
 			if (contextWidthTitle != null) {
 				freeCtx = contextWidthTitle;			
