@@ -37,6 +37,15 @@
 	                   <label>${i18n.edit['template.count-renderers']}:</label>
 	                   <span>${fn:length(template.renderers)}</span>
 	               </p>
+                    <p>
+                    <label>git:</label>
+                    <span><c:if test="${empty template.gitUrl}">
+                        <i class="bi bi-x"></i>
+                    </c:if><c:if test="${not empty template.gitUrl}">
+                        <i class="bi bi-github" title="${template.gitUrl}"></i>
+                    </c:if>
+                    </span>
+                </p>
 	            </div>
 	            </a>
             </c:if>

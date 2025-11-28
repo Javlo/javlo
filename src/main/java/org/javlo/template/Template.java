@@ -108,6 +108,7 @@ public class Template implements Comparable<Template> {
 		private Template template;
 		private TemplateBean parentBean;
 		private boolean importParentComponents = true;
+		private String gitUrl;
 
 		public TemplateBean() {
 		};
@@ -163,6 +164,7 @@ public class Template implements Comparable<Template> {
 			renderers = template.getRenderers();
 			mailing = template.isMailing();
 			importParentComponents = template.isImportParentComponents();
+			gitUrl = template.getGitUrl();
 
 		}
 
@@ -388,6 +390,10 @@ public class Template implements Comparable<Template> {
 
 		public void setImportParentComponent(boolean importParentComponents) {
 			this.importParentComponents = importParentComponents;
+		}
+
+		public String getGitUrl() {
+			return gitUrl;
 		}
 
 	}
@@ -670,6 +676,35 @@ public class Template implements Comparable<Template> {
 			}
 			try {
 				importTemplateInWebapp(config.getInstance(ctx.getRequest().getSession().getServletContext()), ctx);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			languagesChoiceFile = null;
+			dynamicsComponents = null;
+			contextWithTemplateImported.clear();
+			i18n.clear();
+		}
+		for (GlobalContext subContext : ctx.getGlobalContext().getSubContexts()) {
+			ContentContext subCtx = new ContentContext(ctx);
+			subCtx.setForceGlobalContext(subContext);
+			clearRenderer(subCtx);
+		}
+	}
+
+	public void clearRendererAndGit(ContentContext ctx) {
+		logger.info("clear template renderer : " + ctx.getGlobalContext().getContextKey());
+		synchronized (ctx.getGlobalContext().getLockImportTemplate()) {
+			String templateFolder = config.getTemplateFolder();
+			File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolderName()));
+			if (templateSrc.exists()) {
+				try {
+					FileUtils.deleteDirectory(new File(URLHelper.mergePath(getWorkTemplateFolder(), getSourceFolderName())));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			try {
+				importTemplateInWebapp(config, ctx, true, false, true);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -2799,10 +2834,10 @@ public class Template implements Comparable<Template> {
 	}
 
 	public void importTemplateInWebapp(StaticConfig config, ContentContext ctx) throws IOException {
-		importTemplateInWebapp(config, ctx, true, false);
+		importTemplateInWebapp(config, ctx, true, false, false);
 	}
 
-	public void importTemplateInWebapp(StaticConfig config, ContentContext ctx, boolean clear, boolean soft) throws IOException {
+	public void importTemplateInWebapp(StaticConfig config, ContentContext ctx, boolean clear, boolean soft, boolean git) throws IOException {
 		if (templateErrorMap.containsKey(getName())) {
 			return;
 		}
@@ -2828,7 +2863,7 @@ public class Template implements Comparable<Template> {
 					}
 					// importTemplateInWebapp(config, ctx, globalContext, templateTgt, null, true,
 					// false, getRawCssFile(globalContext), null, clear);
-					importTemplateInWebapp(config, ctx, globalContext, templateTgt, null, true, false, null, clear, soft);
+					importTemplateInWebapp(config, ctx, globalContext, templateTgt, null, true, false, null, clear, soft, git);
 					logger.info("import template : " + getName() + " in " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - startTime));
 				} else {
 					logger.severe("folder not found : " + templateSrc + "   templateImportationError=" + templateErrorMap.containsKey(getName()));
@@ -2838,9 +2873,11 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
-	protected void importTemplateInWebapp(StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget, Map<String, String> childrenData, boolean compressResource, boolean parent, Boolean importComponents, boolean clear, boolean soft) throws IOException {
+	protected void importTemplateInWebapp(StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget, Map<String, String> childrenData, boolean compressResource, boolean parent, Boolean importComponents, boolean clear, boolean soft, boolean git) throws IOException {
 
-		extractGitUrl(ctx);
+		if (git) {
+			extractGitUrl(ctx);
+		}
 
 		String templateFolder = config.getTemplateFolder();
 
@@ -3061,7 +3098,7 @@ public class Template implements Comparable<Template> {
 				// getParent().importTemplateInWebapp(config, ctx, globalContext,
 				// templateTarget, childrenData, false, true, inRawCssFile, importComponents,
 				// clear);
-				getParent().importTemplateInWebapp(config, ctx, globalContext, templateTarget, childrenData, false, true, importComponents, clear, false);
+				getParent().importTemplateInWebapp(config, ctx, globalContext, templateTarget, childrenData, false, true, importComponents, clear, false, git);
 			} else {
 				logger.warning("parent template not found : " + getParent().getName());
 				File indexFile = new File(URLHelper.mergePath(templateTarget.getAbsolutePath(), "index.jsp"));
@@ -4124,6 +4161,9 @@ public class Template implements Comparable<Template> {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			String line;
 			File gitOutputFile = new File(templateDir, "git_output.txt");
+			if (gitOutputFile.exists()) {
+				gitOutputFile.delete();
+			}
 			try (FileWriter fw = new FileWriter(gitOutputFile, true);
 					BufferedWriter bw = new BufferedWriter(fw)) {
 					bw.write("build : "+StringHelper.renderTime(new Date()));

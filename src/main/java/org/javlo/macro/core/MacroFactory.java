@@ -131,6 +131,7 @@ public class MacroFactory {
 		//macros.add(new ConvertUserForComansys());
 		macros.add(new InitContentMacro());
 		macros.add(new CommitTemplate());
+		macros.add(new CommitAndGitTemplate());
 		macros.add(new UpdateTemplate());		
 		macros.add(new RebuitTemplate());
 		macros.add(new RebuitTemplateHtml());
