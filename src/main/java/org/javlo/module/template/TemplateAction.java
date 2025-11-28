@@ -464,7 +464,7 @@ public class TemplateAction extends AbstractModuleAction {
 		Template template = TemplateFactory.getDiskTemplate(application, requestService.getParameter("templateid", null));
 		boolean soft = StringHelper.isTrue(requestService.getParameter("soft"));
 		if (soft) {
-			template.importTemplateInWebapp(ctx.getGlobalContext().getStaticConfig(), ctx, false, true);
+			template.importTemplateInWebapp(ctx.getGlobalContext().getStaticConfig(), ctx, false, true, false);
 		} else {
 			template.clearRenderer(ctx);
 		}

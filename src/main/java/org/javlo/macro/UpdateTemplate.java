@@ -19,7 +19,7 @@ public class UpdateTemplate extends AbstractMacro {
 	public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
 		Template template = ctx.getCurrentTemplate();
 		logger.info("template : "+template.getName());
-		template.importTemplateInWebapp(ctx.getGlobalContext().getStaticConfig(), ctx, false, true);
+		template.importTemplateInWebapp(ctx.getGlobalContext().getStaticConfig(), ctx, false, true, false);
 		template.reload();		
 //		Collection<File> allFiles = ResourceHelper.getAllFilesList(new File(template.getWorkTemplateRealPath(ctx.getGlobalContext())));
 //		long olderModifDate = 0;
