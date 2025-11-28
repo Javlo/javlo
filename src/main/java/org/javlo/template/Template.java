@@ -4126,6 +4126,8 @@ public class Template implements Comparable<Template> {
 			File gitOutputFile = new File(templateDir, "git_output.txt");
 			try (FileWriter fw = new FileWriter(gitOutputFile, true);
 					BufferedWriter bw = new BufferedWriter(fw)) {
+					bw.write("build : "+StringHelper.renderTime(new Date()));
+					bw.newLine();
 					while ((line = reader.readLine()) != null) {
 						bw.write(line);
 						bw.newLine();
