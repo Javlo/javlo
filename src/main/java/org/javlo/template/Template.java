@@ -2840,6 +2840,8 @@ public class Template implements Comparable<Template> {
 
 	protected void importTemplateInWebapp(StaticConfig config, ContentContext ctx, GlobalContext globalContext, File templateTarget, Map<String, String> childrenData, boolean compressResource, boolean parent, Boolean importComponents, boolean clear, boolean soft) throws IOException {
 
+		extractGitUrl(ctx);
+
 		String templateFolder = config.getTemplateFolder();
 
 		final String LOG_KEY = "import template";
@@ -4084,6 +4086,80 @@ public class Template implements Comparable<Template> {
 		try (BufferedWriter writer = new BufferedWriter(
 				new OutputStreamWriter(new FileOutputStream(jspFile), StandardCharsets.UTF_8))) {
 			writer.write(cleaned.toString());
+		}
+	}
+
+	public String getGitUrl() {
+		return getConfig().get("git.url");
+	}
+
+	protected void extractGitUrl(ContentContext ctx) {
+
+		if (!ctx.getGlobalContext().getStaticConfig().isTemplateGitImport()) {
+			return;
+		}
+
+		String gitUrl = getGitUrl();
+
+		if (gitUrl != null) {
+
+			logger.info("import template from : "+gitUrl);
+
+		// getAll Files from url and expand in the template folder
+		// We'll treat the gitUrl as a remote repository, download all files (simple implementation: clone or pull), and copy them into the template folder.
+
+		try {
+			// Destination directory: the template folder (assuming getPath() is the template folder location)
+			String templateDir = dir.getAbsolutePath();
+
+			// Temporary directory to clone into
+			File tempDir = Files.createTempDirectory("template_git_clone").toFile();
+
+			// Use 'git' command (requires git in PATH)
+			ProcessBuilder pb = new ProcessBuilder(
+					"git", "clone", "--depth", "1", gitUrl, tempDir.getAbsolutePath());
+			pb.redirectErrorStream(true);
+			Process process = pb.start();
+
+			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			String line;
+			File gitOutputFile = new File(templateDir, "git_output.txt");
+			try (FileWriter fw = new FileWriter(gitOutputFile, true);
+					BufferedWriter bw = new BufferedWriter(fw)) {
+					while ((line = reader.readLine()) != null) {
+						bw.write(line);
+						bw.newLine();
+					}
+			} catch (IOException e) {					
+				e.printStackTrace();				
+			}
+			process.waitFor();
+
+			// Copy contents of tempDir to templateDir (excluding .git)
+			File[] files = tempDir.listFiles();
+			if (files != null) {
+				for (File file : files) {
+					if (!file.getName().equals(".git")) {
+						if (file.isDirectory()) {
+							FileUtils.copyDirectoryToDirectory(file, new File(templateDir));
+						} else {
+							FileUtils.copyFileToDirectory(file, new File(templateDir));
+						}
+					}
+				}
+			}
+
+			// Cleanup temporary directory
+			FileUtils.deleteDirectory(tempDir);
+
+			logger.info("git import done.");
+
+		} catch (Exception ex) {
+			// Handle/log exception as required
+			ex.printStackTrace();
+		}
+		} else {
+			logger.info("git url not defined in : "+getName());
 		}
 	}
 

@@ -1960,6 +1960,10 @@ public class StaticConfig extends Observable {
 		return StringHelper.isTrue(properties.getProperty("image.auto-focus"), true);
 	}
 
+	public boolean isTemplateGitImport() {
+		return StringHelper.isTrue(properties.getProperty("template.git.import"), true);
+	}
+
 	public long getSiteMapNewsLimit() {
 		return properties.getLong("sitemap.news-days", 2);
 	}
