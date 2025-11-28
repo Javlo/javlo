@@ -8,6 +8,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jgit.api.CloneCommand;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.javlo.bean.SortBean;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
@@ -692,7 +696,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	public void clearRendererAndGit(ContentContext ctx) {
-		logger.info("clear template renderer : " + ctx.getGlobalContext().getContextKey());
+		logger.info("clear template renderer and git : " + ctx.getGlobalContext().getContextKey());
 		synchronized (ctx.getGlobalContext().getLockImportTemplate()) {
 			String templateFolder = config.getTemplateFolder();
 			File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolderName()));
@@ -704,7 +708,7 @@ public class Template implements Comparable<Template> {
 				}
 			}
 			try {
-				importTemplateInWebapp(config, ctx, true, false, true);
+				importTemplateInWebapp(config, ctx, false, false, true);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -716,7 +720,7 @@ public class Template implements Comparable<Template> {
 		for (GlobalContext subContext : ctx.getGlobalContext().getSubContexts()) {
 			ContentContext subCtx = new ContentContext(ctx);
 			subCtx.setForceGlobalContext(subContext);
-			clearRenderer(subCtx);
+			clearRendererAndGit(subCtx);
 		}
 	}
 
@@ -2839,6 +2843,7 @@ public class Template implements Comparable<Template> {
 
 	public void importTemplateInWebapp(StaticConfig config, ContentContext ctx, boolean clear, boolean soft, boolean git) throws IOException {
 		if (templateErrorMap.containsKey(getName())) {
+			logger.warning("template error : "+getName());
 			return;
 		}
 		GlobalContext globalContext = null;
@@ -4130,11 +4135,142 @@ public class Template implements Comparable<Template> {
 		return getConfig().get("git.url");
 	}
 
+	public String getGitToken() {
+		return getConfig().get("git.token");
+	}
+
+	public String getGitUserName() {
+		return StringHelper.neverNull(getConfig().get("git.user"), "git-access");
+	}
+
+	public  String getGitBranch() {
+		return StringHelper.neverNull(getConfig().get("git.branch"), "main");
+	}
+
 	protected void extractGitUrl(ContentContext ctx) {
 
-		if (!ctx.getGlobalContext().getStaticConfig().isTemplateGitImport()) {
-			return;
+		String gitUrl = getGitUrl();
+
+		if (gitUrl != null && !gitUrl.isBlank()) {
+
+			logger.info("import template from git url : " + gitUrl);
+
+			// comment: We treat the gitUrl as a remote repository, clone it with JGit,
+			// comment: then copy all files into the template folder.
+
+			File tempDir = null;
+			try {
+				// Destination directory: the template folder (assuming dir is the template folder)
+				String templateDir = dir.getAbsolutePath();
+
+				// Temporary directory to clone into
+				tempDir = Files.createTempDirectory("template_git_clone").toFile();
+
+				// --- BRANCH & TOKEN SETUP ---
+				// comment: Resolve branch (fallback to "main" if not configured)
+				String branch = getGitBranch();
+				if (branch == null || branch.isBlank()) {
+					branch = "main"; // comment: default branch name
+				}
+
+				// comment: Retrieve Git token (GitHub PAT or similar)
+				String gitToken = getGitToken(); // comment: must return the token from config/env
+
+				// --- JGIT CLONE PART ---
+				CloneCommand cloneCommand = Git.cloneRepository()
+						.setURI(gitUrl)
+						.setDirectory(tempDir)
+						.setBranch(branch)
+						.setDepth(1); // comment: shallow clone
+
+				// comment: If a token is available, configure credentials provider
+				if (gitToken != null && !gitToken.isBlank()) {
+					// comment: Username can be any non-empty value for GitHub PAT
+					String gitUsername = "git-access"; // comment: dummy username
+					cloneCommand.setCredentialsProvider(
+							new UsernamePasswordCredentialsProvider(gitUsername, gitToken)
+					);
+				}
+
+				try (Git git = cloneCommand.call()) {
+					// Clone done, you can log some info if needed
+					logger.info("git clone finished into: " + tempDir.getAbsolutePath());
+				}
+
+				// --- WRITE SIMPLE LOG FILE IN TEMPLATE DIR ---
+				File templateDirFile = new File(templateDir);
+				if (!templateDirFile.exists()) {
+					templateDirFile.mkdirs();
+				}
+
+				File gitOutputFile = new File(templateDirFile, "git_output.txt");
+				if (gitOutputFile.exists()) {
+					gitOutputFile.delete();
+				}
+
+				try (FileWriter fw = new FileWriter(gitOutputFile, true);
+					 BufferedWriter bw = new BufferedWriter(fw)) {
+					// log build time
+					bw.write("build : " + StringHelper.renderTime(new Date()));
+					bw.newLine();
+					bw.write("source : " + gitUrl);
+					bw.newLine();
+					bw.write("branch : " + branch);
+					bw.newLine();
+					bw.write("temp dir : " + tempDir.getAbsolutePath());
+					bw.newLine();
+				} catch (IOException e) {
+					// log write error
+					logger.severe("unable to write git_output.txt");
+				}
+
+				// --- COPY CONTENTS OF tempDir TO templateDir (excluding .git) ---
+				File[] files = tempDir.listFiles();
+				if (files != null) {
+					for (File file : files) {
+						if (".git".equals(file.getName())) {
+							continue;
+						}
+						if (file.isDirectory()) {
+							FileUtils.copyDirectoryToDirectory(file, templateDirFile);
+						} else {
+							FileUtils.copyFileToDirectory(file, templateDirFile);
+						}
+					}
+				}
+
+				logger.info("git import done.");
+
+			} catch (GitAPIException e) {
+				e.printStackTrace();
+				// Git-related error
+				logger.severe("Error while cloning git repository: " + gitUrl);
+			} catch (IOException e) {
+				e.printStackTrace();
+				// File system / IO errors
+				logger.severe("IO error during git import from: " + gitUrl);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				// Fallback for any other unexpected error
+				logger.severe("Unexpected error during git import from: " + gitUrl);
+			} finally {
+				// Cleanup temporary directory
+				if (tempDir != null && tempDir.exists()) {
+					try {
+						FileUtils.deleteDirectory(tempDir);
+					} catch (IOException e) {
+						logger.severe("unable to delete temp git directory: " + tempDir.getAbsolutePath());
+					}
+				}
+			}
+
+		} else {
+			logger.info("git url not defined in : " + getName());
 		}
+	}
+
+
+	protected void _extractGitUrlApp(ContentContext ctx) {
 
 		String gitUrl = getGitUrl();
 
@@ -4172,8 +4308,8 @@ public class Template implements Comparable<Template> {
 						bw.write(line);
 						bw.newLine();
 					}
-			} catch (IOException e) {					
-				e.printStackTrace();				
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 			process.waitFor();
 
