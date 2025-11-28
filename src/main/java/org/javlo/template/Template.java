@@ -4140,7 +4140,7 @@ public class Template implements Comparable<Template> {
 
 		if (gitUrl != null) {
 
-			logger.info("import template from : "+gitUrl);
+			logger.info("import template from git url : "+gitUrl);
 
 		// getAll Files from url and expand in the template folder
 		// We'll treat the gitUrl as a remote repository, download all files (simple implementation: clone or pull), and copy them into the template folder.
