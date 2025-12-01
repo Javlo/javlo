@@ -887,16 +887,18 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			properties.load(stringToStream(getValue()));
 		}
 
-		if (isImported(ctx) && getPage() != null) {
+		if (isImported(ctx) && getPage() != null && ctx.isAsPreviewMode()) {
 
 			File oldFile = getFile(ctx);
-			if (oldFile.getAbsolutePath().contains(ctx.getGlobalContext().getStaticConfig().getImportFolder())) {
+			String oldPath = StringHelper.cleanPath(oldFile.getAbsolutePath());
+
+
+			if (oldPath.contains(ctx.getGlobalContext().getStaticConfig().getImportFolder())) {
 				String importFolder = getImportFolderPath(ctx);
 				setDirSelected(importFolder);
 				File newFile = getFile(ctx);
 				try {
-					if (!oldFile.equals(newFile) && oldFile.exists()) {
-						logger.info("bad import folder found copy file : "+oldFile+" -> "+newFile);
+					if (!oldFile.getAbsolutePath().equals(newFile.getAbsolutePath()) && oldFile.exists()) {
 						ResourceHelper.writeFileToFile(oldFile, newFile);
 						ResourceHelper.copyResourceData(ctx, oldFile, newFile);
 						setDirSelected(getImportFolderPath(ctx));
@@ -906,6 +908,8 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 				}
 				ResourceHelper.cleanImportResource(ctx, oldFile);
 			}
+		} else {
+
 		}
 	}
 
