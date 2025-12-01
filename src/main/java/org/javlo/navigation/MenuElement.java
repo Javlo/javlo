@@ -4068,7 +4068,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 				logger.warning("unvalid token : " + token);
 			}
 		}
-		if (userRoles.size() > 0) {
+		if (!getUserRoles().isEmpty()) {
 			if (user == null) {
 				return false;
 			}

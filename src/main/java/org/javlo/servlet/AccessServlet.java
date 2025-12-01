@@ -1195,7 +1195,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							}
 						}
 
-						if (ctx.getCurrentPage() != null && ctx.getCurrentPage().getUserRoles().size() > 0) {
+						if (ctx.getCurrentPage() != null && !ctx.getCurrentPage().getUserRoles().isEmpty()) {
 							if (!ctx.getCurrentPage().isReadAccess(ctx, ctx.getCurrentUser())) {
 								if (ctx.getCurrentUser() == null) {
 									if (ctx.getCurrentTemplate().getLoginFile(ctx) != null) {
