@@ -535,6 +535,9 @@ public class DataAction implements IAction {
 	}
 
 	public static final String createImportFolder(MenuElement inPage) throws Exception {
+		if (inPage==null) {
+			return null;
+		}
 		MenuElement page = inPage;
 		if (inPage.isChildrenAssociation()) {
 			page = inPage.getRootOfChildrenAssociation();
