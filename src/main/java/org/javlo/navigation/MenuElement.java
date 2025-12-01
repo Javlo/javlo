@@ -4086,7 +4086,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			// Intersection des deux ensembles
 			userRolesLower.retainAll(pageRolesLower);
 
-			if (userRolesLower.size() == 0 && !(ctx.getCurrentUser().isEditor() && AdminUserSecurity.getInstance().haveRight(ctx.getCurrentUser(), AdminUserSecurity.CONTENT_ROLE))) {
+			if (userRolesLower.isEmpty() && !(ctx.getCurrentUser().isEditor() && AdminUserSecurity.getInstance().haveRight(ctx.getCurrentUser(), AdminUserSecurity.CONTENT_ROLE))) {
 				return false;
 			}
 		}
