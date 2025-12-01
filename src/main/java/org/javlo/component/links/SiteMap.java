@@ -3,16 +3,6 @@
  */
 package org.javlo.component.links;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.URLHelper;
@@ -20,6 +10,11 @@ import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.RootMenuElement;
 import org.javlo.service.ContentService;
+
+import java.io.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author pvandermaesen
@@ -68,7 +63,7 @@ public class SiteMap extends AbstractVisualComponent {
 		out.print("<li class=\"webmap-");
 		out.print(depth);
 		out.println("\">");
-		if (menu.isRealContent(ctx)) {
+		if (menu.isRealContent(ctx) && menu.isReadAccess(ctx, ctx.getCurrentUser())) {
 			out.print("<a href=\"");
 			out.print(URLHelper.createURL(ctx, menu.getPath()));
 			out.print("\"> ");
