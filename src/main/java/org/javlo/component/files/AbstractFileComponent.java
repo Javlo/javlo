@@ -888,9 +888,10 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 		}
 
 		if (isImported(ctx) && getPage() != null) {
-			String importFolder = getImportFolderPath(ctx);
+
 			File oldFile = getFile(ctx);
 			if (oldFile.getAbsolutePath().contains(ctx.getGlobalContext().getStaticConfig().getImportFolder())) {
+				String importFolder = getImportFolderPath(ctx);
 				setDirSelected(importFolder);
 				File newFile = getFile(ctx);
 				try {
@@ -898,6 +899,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 						logger.info("bad import folder found copy file : "+oldFile+" -> "+newFile);
 						ResourceHelper.writeFileToFile(oldFile, newFile);
 						ResourceHelper.copyResourceData(ctx, oldFile, newFile);
+						setDirSelected(getImportFolderPath(ctx));
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -905,23 +907,6 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 				ResourceHelper.cleanImportResource(ctx, oldFile);
 			}
 		}
-
-		copyFileInImportFolder(ctx);
-
-	}
-
-	public boolean copyFileInImportFolder(ContentContext ctx) throws Exception {
-		String importFolder = getImportFolderPath(ctx);
-		File oldFile = getFile(ctx);
-		if (oldFile.getAbsolutePath().contains(ctx.getGlobalContext().getStaticConfig().getImportFolder())) {
-			if (oldFile.exists()) {
-				File newFile = getFile(ctx);
-				ResourceHelper.writeFileToFile(oldFile, newFile);
-				ResourceHelper.copyResourceData(ctx, oldFile, newFile);
-				return true;
-			}
-		}
-		return false;
 	}
 
 	protected boolean isImported(ContentContext ctx) {
