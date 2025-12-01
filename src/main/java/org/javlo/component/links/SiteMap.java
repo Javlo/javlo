@@ -60,54 +60,56 @@ public class SiteMap extends AbstractVisualComponent {
 		} else {
 			childs = menu.getChildMenuElements();
 		}
-		out.print("<li class=\"webmap-");
-		out.print(depth);
-		out.println("\">");
-		if (menu.isRealContent(ctx) && menu.isReadAccess(ctx, ctx.getCurrentUser())) {
-			out.print("<a href=\"");
-			out.print(URLHelper.createURL(ctx, menu.getPath()));
-			out.print("\"> ");
-		} else {
-			out.print("<span class=\"no-link\">");
-		}
-		if (menu instanceof RootMenuElement) {
-			I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
-			String home = i18nAccess.getContentViewText("global.home");
-			out.println(home);
-		} else {
-			out.print(menu.getFullLabel(ctx));
-		}
-		if (menu.isRealContent(ctx)) {
-			out.print("</a>");
-		} else {
-			out.print("</span>");
-		}
-		String description = menu.getDescriptionAsText(ctx);
-		if ((description != null) && (description.trim().length() > 0)) {
-			out.print("<span> : ");
-			out.print(description);
-			out.print("</span>");
-		}
-
-		boolean showAll = getComponentCssClass(ctx).equalsIgnoreCase("all");
-		pastNode.add(menu);
-		if (childs.size() > 0) {
-			out.println("<ul>");
-		}
-		for (MenuElement page : childs) {
-			if ((showAll || (page.isVisible(ctx) || showVisible) && !pastNode.contains(page))) {
-				depth++;
-				if (depth < 50) {
-					recNav(ctx, page, out, showVisible, virtual, pastNode, calldepth + 1);
-				}
-				depth--;
+		if (menu.isReadAccess(ctx, ctx.getCurrentUser())) {
+			out.print("<li class=\"webmap-");
+			out.print(depth);
+			out.println("\">");
+			if (menu.isRealContent(ctx)) {
+				out.print("<a href=\"");
+				out.print(URLHelper.createURL(ctx, menu.getPath()));
+				out.print("\"> ");
+			} else {
+				out.print("<span class=\"no-link\">");
 			}
+			if (menu instanceof RootMenuElement) {
+				I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
+				String home = i18nAccess.getContentViewText("global.home");
+				out.println(home);
+			} else {
+				out.print(menu.getFullLabel(ctx));
+			}
+			if (menu.isRealContent(ctx)) {
+				out.print("</a>");
+			} else {
+				out.print("</span>");
+			}
+			String description = menu.getDescriptionAsText(ctx);
+			if ((description != null) && (description.trim().length() > 0)) {
+				out.print("<span> : ");
+				out.print(description);
+				out.print("</span>");
+			}
+
+			boolean showAll = getComponentCssClass(ctx).equalsIgnoreCase("all");
+			pastNode.add(menu);
+			if (childs.size() > 0) {
+				out.println("<ul>");
+			}
+			for (MenuElement page : childs) {
+				if ((showAll || (page.isVisible(ctx) || showVisible) && !pastNode.contains(page))) {
+					depth++;
+					if (depth < 50) {
+						recNav(ctx, page, out, showVisible, virtual, pastNode, calldepth + 1);
+					}
+					depth--;
+				}
+			}
+			if (childs.size() > 0) {
+				out.println("</ul>");
+			}
+			pastNode.remove(menu);
+			out.println("</li>");
 		}
-		if (childs.size() > 0) {
-			out.println("</ul>");
-		}
-		pastNode.remove(menu);
-		out.println("</li>");
 	}
 
 	/**
