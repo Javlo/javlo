@@ -574,7 +574,7 @@ public class InfoBean {
 		String locale = ctx.getLocale().toString();
 		if (locale.length() == 2) {
 			if (locale.equalsIgnoreCase("en")) {
-				return "en-GB";
+				return Locale.UK.toString();
 			} else {
 				return locale + "-" + locale.toUpperCase();
 			}
