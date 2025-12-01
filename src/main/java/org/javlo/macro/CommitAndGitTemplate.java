@@ -8,7 +8,7 @@ public class CommitAndGitTemplate extends AbstractMacro {
 
     @Override
     public String getName() {
-        return "commit-git-template";
+        return "git-co-and-commit-template";
     }
 
     @Override
