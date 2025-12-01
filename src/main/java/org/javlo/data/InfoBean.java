@@ -570,6 +570,18 @@ public class InfoBean {
 		return ctx.getLocale();
 	}
 
+	public String getLocaleString() {
+		String locale = ctx.getLocale().toString();
+		if (locale.length() == 2) {
+			if (locale.equalsIgnoreCase("en")) {
+				return "en-UK";
+			} else {
+				return locale + "-" + locale.toUpperCase();
+			}
+		}
+		return locale;
+	}
+
 	public String getLanguage() {
 		return ctx.getLanguage();
 	}
@@ -2217,13 +2229,10 @@ public class InfoBean {
 	}
 
 	public static void main(String[] args) {
-		Locale locale = new Locale("FR", "BE");
+		Locale locale = new Locale("en");
+		System.out.println("lcoale="+locale);
 
-		Calendar cal = Calendar.getInstance(locale);
-		for (int i = 0; i < 7; i++) {
-			cal.set(Calendar.DAY_OF_WEEK, i + 1);
-			System.out.println(cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT_FORMAT, locale));
-		}
+
 	}
 
 	public String getForwardUrl() throws Exception {
