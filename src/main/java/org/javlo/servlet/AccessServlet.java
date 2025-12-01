@@ -1331,7 +1331,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			if (!(t instanceof SocketException)) {
 				t.printStackTrace();
 				try {
-					DebugListening.getInstance().sendError(ctx, t, "path=" + request.getRequestURI());
+					//DebugListening.getInstance().sendError(ctx, t, "path=" + request.getRequestURI());
 				} catch (Throwable tmail) {
 				}
 			} else {

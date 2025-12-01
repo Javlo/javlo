@@ -31,3 +31,4 @@ UserInterfaceContext userInterfaceContext = UserInterfaceContext.getInstance(ses
 String globalTitle = currentPage.getGlobalTitle(ctx);if (globalTitle == null) { globalTitle = globalContext.getGlobalTitle();}
 I18nAccess i18nAccess = I18nAccess.getInstance(request);
 AdminUserSecurity security = AdminUserSecurity.getInstance();%>
+<fmt:setLocale value="${info.locale}" scope="session" />
