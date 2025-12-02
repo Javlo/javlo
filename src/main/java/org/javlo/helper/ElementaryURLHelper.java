@@ -504,6 +504,7 @@ public abstract class ElementaryURLHelper {
 				if (staticInfo != null && !StringHelper.isEmpty(staticInfo.getTitle(ctx))) {
 					fileName = staticInfo.getTitle(ctx);
 				}
+				fileName = file.getParentFile().getName()+"_"+fileName;
 				url = URLHelper.mergePath(IMG_SERVLET_PATH, ctx.getGlobalContext().setTransformShortURL(url.replace(TRANSFORM + '/', ""), filter, fileName));
 			}
 		}
