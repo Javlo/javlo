@@ -21,6 +21,7 @@ import org.javlo.message.MessageRepository;
 import org.javlo.module.file.FileAction;
 import org.javlo.module.file.FileBean;
 import org.javlo.service.ContentService;
+import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.ReverseLinkService;
 import org.javlo.service.google.translation.ITranslator;
@@ -892,24 +893,26 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			File oldFile = getFile(ctx);
 			String oldPath = StringHelper.cleanPath(oldFile.getAbsolutePath());
 
-
 			if (oldPath.contains(ctx.getGlobalContext().getStaticConfig().getImportFolder())) {
 				String importFolder = getImportFolderPath(ctx);
 				setDirSelected(importFolder);
 				File newFile = getFile(ctx);
 				try {
 					if (!oldFile.getAbsolutePath().equals(newFile.getAbsolutePath()) && oldFile.exists()) {
+						if (!newFile.getParentFile().exists()) {
+							newFile.getParentFile().mkdirs();
+						}
 						ResourceHelper.writeFileToFile(oldFile, newFile);
 						ResourceHelper.copyResourceData(ctx, oldFile, newFile);
 						setDirSelected(getImportFolderPath(ctx));
+						PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
+						logger.info("copy imported file : "+oldFile+" -> "+newFile);
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 				ResourceHelper.cleanImportResource(ctx, oldFile);
 			}
-		} else {
-
 		}
 	}
 

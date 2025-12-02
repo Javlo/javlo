@@ -14,6 +14,7 @@ import org.javlo.helper.Comparator.FileComparator;
 import org.javlo.helper.*;
 import org.javlo.module.file.FileAction;
 import org.javlo.navigation.MenuElement;
+import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.google.translation.ITranslator;
 import org.javlo.service.resource.Resource;
@@ -199,6 +200,37 @@ public class StaticFileBean extends FieldBean {
 			return null;
 		}
 	}
+
+	protected void copyFilesInImportFolder(ContentContext ctx) throws Exception {
+
+		if (!ctx.isAsViewMode()) {
+			File oldFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), getRelativeFileDirectory(ctx), getCurrentFolder(), getCurrentFile()));
+			String oldPath = StringHelper.cleanPath(oldFile.getAbsolutePath());
+
+			if (oldPath.contains(ctx.getGlobalContext().getStaticConfig().getImportFolder())) {
+				String importFolder = getImportFolderPath(ctx);
+				File newFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(),
+						getRelativeFileDirectory(ctx),
+						importFolder,
+						getCurrentFile()));
+				try {
+					if (!oldFile.getAbsolutePath().equals(newFile.getAbsolutePath()) && oldFile.exists()) {
+						if (!newFile.getParentFile().exists()) {
+							newFile.getParentFile().mkdirs();
+						}
+						ResourceHelper.writeFileToFile(oldFile, newFile);
+						ResourceHelper.copyResourceData(ctx, oldFile, newFile);
+						setCurrentFolder(ctx, importFolder);
+						PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
+						logger.info("copy imported file : "+oldFile+" -> "+newFile);
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				ResourceHelper.cleanImportResource(ctx, oldFile);
+			}
+		}
+	}
 	
 	@Override
 	public boolean  initContent(ContentContext ctx) throws Exception {
@@ -312,6 +344,8 @@ public class StaticFileBean extends FieldBean {
 
 	@Override
 	public String getEditXHTMLCode(ContentContext ctx, boolean search) throws Exception {
+
+		copyFilesInImportFolder(ctx);
 
 		String refCode = referenceEditCode(ctx);
 		if (refCode != null) {
