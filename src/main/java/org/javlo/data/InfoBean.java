@@ -600,7 +600,11 @@ public class InfoBean {
 	}
 
 	public String getCountry() {
-		return ctx.getCountry();
+		if (ctx.getRequestContentLanguage().length() > 2) {
+			return getLocale().getCountry();
+		} else {
+			return ctx.getCountry(ctx.getRequestContentLanguage());
+		}
 	}
 
 	public String getLanguageAndCountry() {

@@ -2358,7 +2358,7 @@ public class StaticConfig extends Observable {
 	}
 	
 	public String getLocaleCountry() {
-		return properties.getString("locale.country", "be");
+		return properties.getString("locale.country", null);
 	}
 	
 	public int getLayerCacheMaxSize() {

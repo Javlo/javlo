@@ -1247,9 +1247,18 @@ public class ContentContext {
 		return language;
 	}
 
-	public String getCountry() {
+	public String getCountry(String lg) {
 		if (country == null) {
-			return getGlobalContext().getStaticConfig().getLocaleCountry();
+			String defaultLg = getGlobalContext().getStaticConfig().getLocaleCountry();
+			if (defaultLg != null && defaultLg.length() == 2) {
+				return defaultLg;
+			} else {
+				if (lg.equalsIgnoreCase("en")) {
+					country = Locale.UK.getCountry();
+				} else {
+					country = lg.toLowerCase();
+				}
+			}
 		}
 		return country;
 	}
@@ -1260,7 +1269,7 @@ public class ContentContext {
 			if (localeStr.length() > 2) {
 				locale = Locale.forLanguageTag(localeStr);
 			} else {
-				locale = new Locale(getRequestContentLanguage(), getCountry());
+				locale = new Locale(getRequestContentLanguage(), getCountry(localeStr));
 			}
 		}
 		return locale;
