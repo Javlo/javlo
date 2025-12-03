@@ -500,12 +500,15 @@ public abstract class ElementaryURLHelper {
 			if (!url.contains(SessionFolder.SESSION_PATH_KEY)) {
 				File file = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), fileURL));
 				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
-				String fileName = null;
+				String fileName = file.getName();
 				if (staticInfo != null && !StringHelper.isEmpty(staticInfo.getTitle(ctx))) {
 					fileName = staticInfo.getTitle(ctx);
 				}
+				System.out.println("#### 1.fileName = "+fileName);
 				fileName = StringHelper.toMaxSize(file.getParentFile().getName(), 9,"") + '_' + fileName;
+				System.out.println("#### 2.fileName = "+fileName);
 				url = URLHelper.mergePath(IMG_SERVLET_PATH, ctx.getGlobalContext().setTransformShortURL(url.replace(TRANSFORM + '/', ""), filter, fileName));
+				System.out.println("#### url = "+url);
 			}
 		}
 		if (ctx.getRenderMode() != ContentContext.VIEW_MODE) {
