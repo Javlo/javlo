@@ -4219,6 +4219,12 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				}
 				fileName = newName;
 			}
+
+			String folder = StringHelper.getLatestFolderFromPath(longURL);
+			if (!folder.isEmpty()) {
+				fileName = StringHelper.toMaxSize(folder, 9, "") + '_' + fileName;
+			}
+
 			shortURL = URLHelper.mergePath(filter, fileName);
 			int i = 1;
 			String fileOnly = StringHelper.getFileNameWithoutExtension(fileName);

@@ -1143,6 +1143,26 @@ public class StringHelper {
         return outExt;
     }
 
+       public static String getLatestFolderFromPath(String path) {
+        if (path == null) {
+            return null;
+        }
+        if (path.contains("?")) {
+            path = path.substring(0, path.indexOf('?'));
+        }
+        String outExt = "";
+        path = StringUtils.replace(path, "\\", "/");
+        int slashIndex = path.lastIndexOf('/');
+        if (slashIndex >= 0) {
+            path = path.substring(0, slashIndex);
+            slashIndex = path.lastIndexOf('/');
+            if (slashIndex >= 0) {
+                outExt = path.substring(slashIndex+1, path.length());
+            }
+        }
+        return outExt;
+    }
+
     public static String removeDuplicateToken(String text, String token) {
         if (text == null || StringHelper.isEmpty(token)) {
             return text;
@@ -4925,9 +4945,8 @@ public class StringHelper {
     }
 
     public static void main(String[] args) throws IOException {
-        System.out.println(getLang("de"));
-        System.out.println(getLang("fr-be"));
-        System.out.println(getLang("lfdkqflkj"));
+        System.out.println("-> "+getLatestFolderFromPath("/test/folder/main.jpg"));
+        System.out.println("-> "+getLatestFolderFromPath("main.jpg"));
     }
 
     public static String cleanEmail(String input) {
