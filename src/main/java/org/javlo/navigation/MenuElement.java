@@ -4409,11 +4409,13 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 				return true;
 			}
 
-			Template template = TemplateFactory.getTemplate(ctx, this);
-
 			String lang = ctx.getRequestContentLanguage();
-			if (template != null && template.isNavigationArea(ctx.getArea())) {
-				lang = ctx.getLanguage();
+			Template template = null;
+			if (ctx.getRequest() != null) {
+				template = TemplateFactory.getTemplate(ctx, this);
+				if (template != null && template.isNavigationArea(ctx.getArea())) {
+					lang = ctx.getLanguage();
+				}
 			}
 
 			PageDescription desc = getPageDescriptionCached(ctx, lang);
@@ -4456,7 +4458,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			}
 
 			// search force real content
-			if (!template.isRealContentFromAnyArea()) {
+			if (template != null && !template.isRealContentFromAnyArea()) {
 				contentAreaCtx.setArea(null);
 				comps = getContent(contentAreaCtx);
 				while (comps.hasNext(contentAreaCtx)) {

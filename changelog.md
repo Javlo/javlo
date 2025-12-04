@@ -998,7 +998,7 @@ Security in case of vulnerabilities.
 - remote info : server ip (proxy)
 ### Modified
 - update mail library to jakarta.mail
-- ## [2.3.2] - 09/08/2024
+## [2.3.2] - 09/08/2024
 ### Modified
 - update lib version
 - all roles as lowercase
@@ -1009,12 +1009,13 @@ Security in case of vulnerabilities.
 - macro to transform all links in : page:##name##
 - choose lang page
 - export date and user in light excel export
-- ## [2.3.3] - 20/05/2024
+## [2.3.3] - 20/05/2024
 ### fixed
 - hidden section in mode
 - clear import folder in dynamicComponent
 - paste section
 - template mimifyJsp optimisation for js comment
+- preload urls list on load content
 ### Added
 - import image from url macro
 - proxy for cross origin request
@@ -1025,4 +1026,4 @@ Security in case of vulnerabilities.
 - minify jsp optimisation [2.3.3.1]
 - linkLabel
 - auto import other same lang from other country
-
+## [2.3.4] - 04/12/2025

@@ -669,6 +669,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		outValue = XHTMLHelper.replaceJSTLDataNoPage(ctx, outValue);
 		outValue = ReverseLinkService.getInstance(globalContext).replaceLink(ctx, comp, outValue);
 		outValue = XHTMLHelper.replaceLinks(ctx, outValue);
+		outValue = XHTMLHelper.prepareTextToXhtmlDisplay(outValue);
 
 		String unity = getUnity(ctx);
 		if (!StringHelper.isEmpty(unity)) {

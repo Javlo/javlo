@@ -3874,7 +3874,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	public static MirrorComponent getMirrorWrapper(ContentContext ctx, IContentVisualComponent comp) {
-		if (comp != null) {
+		if (comp != null && ctx.getRequest() != null) {
 			return (MirrorComponent) ctx.getRequest().getAttribute("_mirror_comp_" + comp.getId());
 		} else {
 			return null;

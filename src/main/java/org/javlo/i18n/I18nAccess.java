@@ -56,8 +56,8 @@ public class I18nAccess implements Serializable {
 		if (ctx == null) {
 			return new I18nAccess(null);
 		}
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-		I18nAccess i18n = getInstance(ctx.getRequest());
+		GlobalContext globalContext = ctx.getGlobalContext();
+		I18nAccess i18n = getInstance(globalContext, ctx.getSession());
 		i18n.initEdit(globalContext, ctx.getRequest().getSession());
 		if (ctx.getRenderMode() == ContentContext.EDIT_MODE || ctx.getRenderMode() == ContentContext.PREVIEW_MODE) {
 			ModulesContext moduleContext = ModulesContext.getInstance(ctx.getRequest().getSession(), globalContext);

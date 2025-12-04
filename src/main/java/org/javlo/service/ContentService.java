@@ -712,6 +712,7 @@ public class ContentService implements IPrintInfo {
 							// setViewNav otherwise --> recursive
 							res = page;
 							viewGlobalMap = contentAttributeMap;
+							globalContext.loadNavigationUrls(res);
 							logger.info("load view of '" + globalContext.getContextKey() + "' nav in " + StringHelper.renderTimeInSecond((System.currentTimeMillis() - startTime) / 1000) + " sec.");
 						}
 					}

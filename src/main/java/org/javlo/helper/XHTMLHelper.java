@@ -2423,6 +2423,12 @@ public class XHTMLHelper {
 		return textToXHTML(text, notFollow, false, cssClass, globalContext, false);
 	}
 
+	public static String prepareTextToXhtmlDisplay(String text) {
+		text = text.replace(" ?", "&nbsp;?");
+		text = text.replace(" !", "&nbsp;!");
+		return text;
+	}
+
 	// cssClass and popup not used
 	private static String textToXHTML(String text, boolean notFollow, boolean newWin, String cssClass, GlobalContext globalContext, boolean paragraph) {
 

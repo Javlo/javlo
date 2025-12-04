@@ -4,7 +4,6 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.URLHelper;
-import org.javlo.test.javlo.TestGlobalContext;
 import org.javlo.utils.IteratorAsEnumeration;
 
 import java.io.BufferedReader;
@@ -24,21 +23,21 @@ public class TestRequest implements HttpServletRequest {
 	private String contextPath = "";
 
 	public TestRequest(HttpSession inSession, String inURL) throws MalformedURLException {
-		url = new URL(inURL);
-		String q = url.getQuery();
-		
-		parameters.putAll(URLHelper.getParams(url));
-		
+		if (inURL != null) {
+			url = new URL(inURL);
+			String q = url.getQuery();
+			parameters.putAll(URLHelper.getParams(url));
+		}
 		session = inSession;
 	}
 
 	@Override
 	public Object getAttribute(String key) {
-		if (key.equals("globalContext")) {
+		/*if (key.equals("globalContext")) {
 			return TestGlobalContext.getInstance(this);
-		} else {
+		} else {*/
 			return attributes.get(key);
-		}
+		/*}*/
 	}
 
 	@Override

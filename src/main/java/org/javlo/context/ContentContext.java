@@ -3,6 +3,12 @@
  */
 package org.javlo.context;
 
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
@@ -20,20 +26,17 @@ import org.javlo.service.RequestService;
 import org.javlo.service.log.Log;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
+import org.javlo.test.servlet.TestRequest;
+import org.javlo.test.servlet.TestSession;
 import org.javlo.user.*;
 import org.javlo.utils.NeverEmptyMap;
 import org.javlo.utils.downloader.Html2Directory;
 
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.ref.WeakReference;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -157,6 +160,8 @@ public class ContentContext {
 	private User user = null;
 
 	public String mainCountryLg = null;
+
+	private ServletContext servletContext = null;
 
 	private static ContentContext createContentContext(HttpServletRequest request, HttpServletResponse response, boolean free, boolean pageManagement) {
 		ContentContext ctx = new ContentContext();
@@ -448,7 +453,7 @@ public class ContentContext {
 			StaticConfig config = StaticConfig.getInstance(request.getSession());
 			ctx.viewPrefix = config.isViewPrefix();
 
-			ctx.urlFactory = globalContext.getURLFactory(ctx);
+			ctx.urlFactory = globalContext.getURLFactory();
 			ctx.dmzServerInter = globalContext.getDMZServerInter();
 			if (requestService.getParameter(FORCE_ABSOLUTE_URL) != null) {
 				ctx.setAbsoluteURL(StringHelper.isTrue(requestService.getParameter(FORCE_ABSOLUTE_URL)));
@@ -648,6 +653,9 @@ public class ContentContext {
 	@Deprecated
 	public String getContentLanguage() {
 		try {
+			if (request == null || request instanceof TestRequest) {
+				return contentLanguage;
+			}
 			if (isCheckContentArea() && getCurrentTemplate() != null && getCurrentTemplate().isNavigationArea(getArea())) {
 				return getLanguage();
 			}
@@ -668,6 +676,21 @@ public class ContentContext {
 			throw new RuntimeException(e);
 		}
 		return newCtx;
+	}
+
+	public static ContentContext getFakeContentContext(GlobalContext globalContext) {
+		ContentContext newCtx = new ContentContext();
+		newCtx.setFree(true);
+		newCtx.setForceGlobalContext(globalContext);
+		newCtx.servletContext = globalContext.getServletContext();
+        try {
+			TestSession session = new TestSession();
+			session.setServletContext(globalContext.getServletContext());
+            newCtx.setRequest(new TestRequest(session, "https://www.javlo.org/"));
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        return newCtx;
 	}
 
 	public List<ContentContext> getContextForAllLanguage() {
@@ -798,6 +821,7 @@ public class ContentContext {
 	}
 
 	public ContentContext getContextWithContentSameLanguage(boolean check) throws Exception {
+
 		if (!check || !getGlobalContext().getSpecialConfig().isAutoImportSameLanguage()) {
 			return this;
 		}
@@ -805,6 +829,7 @@ public class ContentContext {
 		if (page == null) {
 			return this;
 		}
+
 		if (!page.isEmpty(this, null, false)) {
 			return this;
 		} else {
@@ -1146,22 +1171,22 @@ public class ContentContext {
 			RequestService rs = RequestService.getInstance(request);
 
 			String forceTemplate = rs.getParameter(Template.FORCE_TEMPLATE_PARAM_NAME, null);
-			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
+			GlobalContext globalContext = getGlobalContext();
 			if (forceTemplate != null) {
 				logger.fine("force template : " + forceTemplate);
-				template = Template.getApplicationInstance(getRequest().getSession().getServletContext(), this, forceTemplate);
+				template = Template.getApplicationInstance(getServletContext(), this, forceTemplate);
 			}
 			if (template == null) {
 				template = TemplateFactory.getTemplate(this, getCurrentPage());
 			}
 			if ((template == null) || !template.exist()) {
 				if (globalContext.getDefaultTemplate() != null) {
-					template = Template.getApplicationInstance(getRequest().getSession().getServletContext(), this, globalContext.getDefaultTemplate());
+					template = Template.getApplicationInstance(getServletContext(), this, globalContext.getDefaultTemplate());
 				}
 			}
 			if (template != null && getSpecialContentRenderer() != null) {
 				if (template.getSpecialRendererTemplate() != null) {
-					Template newTemplate = TemplateFactory.getTemplates(getRequest().getSession().getServletContext()).get(template.getSpecialRendererTemplate());
+					Template newTemplate = TemplateFactory.getTemplates(getServletContext()).get(template.getSpecialRendererTemplate());
 					if (newTemplate != null) {
 						template = newTemplate;
 					}
@@ -1298,7 +1323,10 @@ public class ContentContext {
 	}
 	
 	public ServletContext getServletContext()  {
-		return request.getSession().getServletContext();
+		if (servletContext == null) {
+			this.servletContext = request.getSession().getServletContext();
+		}
+		return this.servletContext;
 	}
 
 	public RequestService getRequestService() {
@@ -1309,6 +1337,9 @@ public class ContentContext {
 		if (requestContentLanguage == null) {
 			return getContentLanguage();
 		} else {
+			if (request == null || request instanceof TestRequest) {
+				return requestContentLanguage;
+			}
 			try {
 				if (isCheckContentArea() && getCurrentTemplate() != null && getCurrentTemplate().isNavigationArea(getArea())) {
 					requestContentLanguage = getLanguage();
@@ -1550,8 +1581,12 @@ public class ContentContext {
 		if (contentLanguage != null && contentLanguage.equals(lg)) {
 			return;
 		}
+		if (request == null) {
+			this.contentLanguage = lg;
+			return;
+		}
 		if (availableContentLanguages == null) {
-			availableContentLanguages = GlobalContext.getInstance(request).getContentLanguages();
+			availableContentLanguages = getGlobalContext().getContentLanguages();
 		}
 		if (availableContentLanguages.contains(lg)) {
 			contentLanguage = lg;
@@ -1629,14 +1664,18 @@ public class ContentContext {
 		if (language != null && language.equals(lg)) {
 			return;
 		}
+		if (request == null) {
+			this.language = lg;
+			return;
+		}
 		if (availableLanguages == null) {
-			availableLanguages = GlobalContext.getInstance(request).getLanguages();
+			availableLanguages = getGlobalContext().getLanguages();
 		}
 		if (availableLanguages.contains(lg)) {
 			language = lg;
 		} else {
 			logger.fine("language not available : " + lg);
-			language = GlobalContext.getInstance(request).getDefaultLanguage();
+			language = getGlobalContext().getDefaultLanguage();
 		}
 		resetCache();
 	}
@@ -1694,8 +1733,12 @@ public class ContentContext {
 		if (requestContentLanguage != null && requestContentLanguage.equals(lg)) {
 			return;
 		}
+		if (request == null) {
+			this.requestContentLanguage = lg;
+			return;
+		}
 		if (availableContentLanguages == null) {
-			availableContentLanguages = GlobalContext.getInstance(request).getContentLanguages();
+			availableContentLanguages = getGlobalContext().getContentLanguages();
 		}
 		if (availableContentLanguages.contains(lg)) {
 			requestContentLanguage = lg;
@@ -1992,8 +2035,8 @@ public class ContentContext {
 	public String getFormat() {
 		if (format == null) {
 			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
-			if (isLikeViewRenderMode() && globalContext.getURLFactory(this) != null) {
-				format = globalContext.getURLFactory(this).getFormat(this, request.getRequestURI());
+			if (isLikeViewRenderMode() && globalContext.getURLFactory() != null) {
+				format = globalContext.getURLFactory().getFormat(this, request.getRequestURI());
 			} else {
 				format = StringHelper.getFileExtension(request.getRequestURI());
 			}
@@ -2221,6 +2264,9 @@ public class ContentContext {
 	}
 
 	public static boolean isEditPreview(HttpServletRequest request) {
+		if (request == null) {
+			return false;
+		}
 		RequestService rs = RequestService.getInstance(request);
 		return StringHelper.isTrue(rs.getParameter(PREVIEW_EDIT_PARAM, null));
 	}

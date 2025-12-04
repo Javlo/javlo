@@ -1,17 +1,7 @@
 package org.javlo.service;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
-
 import org.javlo.cache.ICache;
 import org.javlo.component.core.ComponentFactory;
-import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.component.links.PageMirrorComponent;
 import org.javlo.context.ContentContext;
@@ -19,6 +9,9 @@ import org.javlo.context.GlobalContext;
 import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.exception.ServiceException;
+
+import java.util.*;
+import java.util.logging.Logger;
 
 public class NavigationService {
 
@@ -175,7 +168,7 @@ public class NavigationService {
 
 	public static void checkSameUrl(ContentContext ctx, Collection<MenuElement> allPages) throws Exception {
 		ContentContext lgCtx = new ContentContext(ctx);
-		IURLFactory urlFactory = ctx.getGlobalContext().getURLFactory(lgCtx);
+		IURLFactory urlFactory = ctx.getGlobalContext().getURLFactory();
 		if (urlFactory != null) {
 			Collection<String> lgs = ctx.getGlobalContext().getContentLanguages();
 			Map<String, String> pages = new HashMap<String, String>();

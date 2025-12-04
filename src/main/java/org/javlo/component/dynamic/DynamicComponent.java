@@ -485,8 +485,8 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
             return this.fields;
         }
 
-        StaticConfig staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession());
-        GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+        GlobalContext globalContext = ctx.getGlobalContext();
+        StaticConfig staticConfig = globalContext.getStaticConfig();
         I18nAccess i18nAccess = I18nAccess.getInstance(ctx);
         java.util.List<Field> outFields = new LinkedList<Field>();
         java.util.List<String> fieldExecuted = new LinkedList<String>();

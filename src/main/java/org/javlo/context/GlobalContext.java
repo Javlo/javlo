@@ -2146,11 +2146,77 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	static int DEBC = 0;
 
+	public void loadNavigationUrls(MenuElement root) throws Exception {
+
+		IURLFactory urlCreator = getURLFactory();
+		Map<String, MenuElement> localViewPages = viewPages;
+		if (urlFromFactoryImported != urlCreator) {
+			synchronized (this.getLockLoadContent()) {
+				if (urlFromFactoryImported != urlCreator) {
+
+					localViewPages = new Hashtable<String, MenuElement>();
+					ContentContext lgCtx = ContentContext.getFakeContentContext(this);
+					Collection<String> mainLgs = getLanguages();
+					Collection<String> contentLanguages = getContentLanguages();
+
+					String exportVersion = "1.3";
+					Set<String> lines = new LinkedHashSet<>();
+					lines.add("V"+exportVersion+" - "+StringHelper.renderDateAndTime(LocalDateTime.now()));
+					lines.add("### url creator : "+urlCreator.getClass());
+					lines.add("### mainLgs : "+StringHelper.collectionToString(mainLgs,","));
+					lines.add("### contentLanguages : "+StringHelper.collectionToString(contentLanguages,","));
+					lines.add("");
+
+					for (String mainLg : mainLgs) {
+						for (String contentLg : contentLanguages) {
+							lgCtx.setLanguage(mainLg);
+							lgCtx.setContentLanguage(contentLg);
+							lgCtx.setRequestContentLanguage(contentLg);
+							lgCtx.setFormat(null);
+							for (MenuElement me : root.getAllChildrenList()) {
+								lgCtx.setCurrentPageCached(me);
+								lgCtx.setPath(me.getPath());
+								String pageURL = urlCreator.createURL(lgCtx, me);
+								String pageKeyURL = urlCreator.createURLKey(pageURL);
+								if (pageKeyURL.contains(".")) {
+									pageKeyURL = pageKeyURL.substring(0, pageKeyURL.lastIndexOf("."));
+								}
+								localViewPages.put(pageKeyURL, me);
+								String line = me.getName() + " ["+contentLg+"] [empty:"+me.isEmpty(lgCtx, null, false)+"] ["+me.getTitle(lgCtx)+"] > " + pageURL + " > " + pageKeyURL;
+								lines.add(line);
+							}
+						}
+					}
+
+					File navigationFile = new File(URLHelper.mergePath(getDataFolder(), "navigation.txt"));
+					try (BufferedWriter writer = new BufferedWriter(
+							new OutputStreamWriter(new FileOutputStream(navigationFile, false), StandardCharsets.UTF_8))) {
+						for (String line : lines) {
+							writer.write(line);
+							writer.newLine();
+						}
+					} catch (FileNotFoundException e) {
+                        throw new RuntimeException(e);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    logger.info("[site:"+getContextKey()+"] - url cache initialized with '" + urlCreator.getClass().getName() + "' url created : " + localViewPages.size() + " [lgs=" + contentLanguages + "]");
+					log(Log.INFO, "url", "url cache initialized with '" + urlCreator.getClass().getName() + "' url created : " + localViewPages.size() + " [lgs=" + contentLanguages + "]");
+					viewPages = localViewPages;
+					urlFromFactoryImported = urlCreator;
+				} else {
+					localViewPages = viewPages;
+				}
+			}
+		}
+	}
+
 	public MenuElement getPageIfExist(ContentContext ctx, String url, boolean useURLCreator) throws Exception {
-		IURLFactory urlCreator = getURLFactory(ctx);
+		IURLFactory urlCreator = getURLFactory();
 		Map<String, MenuElement> localViewPages = viewPages;
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE && urlCreator != null && useURLCreator) {
-			if (urlFromFactoryImported != urlCreator) {
+			/*if (urlFromFactoryImported != urlCreator) {
 				synchronized (this.getLockLoadContent()) {
 					if (urlFromFactoryImported != urlCreator) {
 						localViewPages = new Hashtable<String, MenuElement>();
@@ -2179,7 +2245,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 										pageKeyURL = pageKeyURL.substring(0, pageKeyURL.lastIndexOf("."));
 									}
 									localViewPages.put(pageKeyURL, me);
-									String line = me.getName() + " ["+contentLg+"] ["+me.getTitle(lgCtx)+"] > " + pageURL + " > " + pageKeyURL;
+									String line = me.getName() + " ["+contentLg+"] [empty:"+me.isEmpty(lgCtx, null, false)+"] ["+me.getTitle(lgCtx)+"] > " + pageURL + " > " + pageKeyURL;
 									lines.add(line);
 								}
 							}
@@ -2202,7 +2268,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 						localViewPages = viewPages;
 					}
 				}
-			}
+			}*/
 		} else {
 			if (localViewPages == null) {
 				logger.warning("create empty url cache.");
@@ -2410,7 +2476,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		urlFactory = null;
 	}
 
-	public IURLFactory getURLFactory(ContentContext ctx) {
+	public IURLFactory getURLFactory() {
 		if (urlFactory != null) {
 			if (urlFactory == NO_URL_FACTORY) {
 				return null;
@@ -4222,7 +4288,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 			String folder = StringHelper.getLatestFolderFromPath(longURL);
 			if (!folder.isEmpty()) {
-				fileName = StringHelper.toMaxSize(folder, 9, "") + '_' + fileName;
+				fileName = StringHelper.toMaxSize(folder, 50, "") + '_' + fileName;
 			}
 
 			shortURL = URLHelper.mergePath(filter, fileName);

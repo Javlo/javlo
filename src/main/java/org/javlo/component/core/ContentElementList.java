@@ -100,7 +100,7 @@ public class ContentElementList implements IContentComponentsList {
 		this.allArea = allArea;
 		page = inPage;
 
-		ContentService content = ContentService.getInstance(ctx.getRequest());
+		ContentService content = ContentService.getInstance(ctx.getGlobalContext());
 
 		IContentVisualComponent previousComponent = null;
 		for (ComponentBean bean : beans) {
