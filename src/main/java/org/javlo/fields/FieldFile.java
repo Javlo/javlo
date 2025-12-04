@@ -246,7 +246,6 @@ public class StaticFileBean extends FieldBean {
 				importFolder = importFolder.substring(1);
 			}
 			if (curFolder.contains(importFolder)) {
-				System.out.println("######## > reset import folder : "+getImportFolderPath(ctx));
 				properties.setProperty("field." + getUnicName() + ".value.folder", getImportFolderPath(ctx));
 			}
 		}
