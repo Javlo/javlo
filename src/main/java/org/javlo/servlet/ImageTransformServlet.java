@@ -1498,7 +1498,6 @@ public class ImageTransformServlet extends FileServlet {
 					out.close();
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
 				logger.warning(e.getMessage());
 			}
 			if (tempImageFile != null && tempImageFile.exists()) {
