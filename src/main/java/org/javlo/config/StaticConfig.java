@@ -1925,7 +1925,8 @@ public class StaticConfig extends Observable {
 	}
 
 	public String getSpecialLogFile() {
-		return properties.getString("debug.special-file", "/tmp/javlo.log");
+		String home = System.getProperty("user.home");
+		return properties.getString("debug.special-file", home+"/javlo.log");
 	}
 
 	public Integer getUndoDepth() {
