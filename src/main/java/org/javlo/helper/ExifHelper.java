@@ -63,27 +63,38 @@ public class ExifHelper {
 			logger.warning("file not found : " + file);
 			return null;
 		}
+
 		if (StringHelper.isJpeg(file.getName())) {
 			final ImageMetadata metadata = Imaging.getMetadata(file);
 			if (metadata instanceof JpegImageMetadata) {
 				final JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
-				final TiffField field = jpegMetadata.findExifValueWithExactMatch(ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL);
+				final TiffField field = jpegMetadata.findExifValueWithExactMatch(
+						ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL);
+
 				if (field != null) {
-					try {
-						final String FORMAT = "yyyy:MM:dd HH:mm:ss";
-						SimpleDateFormat format = new SimpleDateFormat(FORMAT);
-						String dateStr = field.getValue().toString().trim();
-						if (dateStr.length() == FORMAT.length()) {
-							return format.parse(dateStr);
+					String dateStr = field.getValue().toString().trim();
+
+					// *** English comment: Try multiple possible formats ***
+					String[] patterns = {
+							"yyyy:MM:dd HH:mm:ss",     // Traditional EXIF
+							"yyyy-MM-dd'T'HH:mm:ss"    // ISO 8601 format from your trace
+					};
+
+					for (String pattern : patterns) {
+						try {
+							SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+							return sdf.parse(dateStr);
+						} catch (ParseException ignore) {
+							// *** English comment: Continue testing other patterns ***
 						}
-					} catch (ParseException e) {
-						e.printStackTrace();
 					}
 				}
 			}
 		}
+
 		return null;
 	}
+
 
 	public static ImageMetadata readMetadata(final File file) throws ImagingException, IOException {
 		return Imaging.getMetadata(file);
