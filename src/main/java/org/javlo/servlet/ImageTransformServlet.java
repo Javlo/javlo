@@ -1420,7 +1420,7 @@ public class ImageTransformServlet extends FileServlet {
 						int i = 0;
 						while (imageTransforming.size() > staticConfig.getTransformingSize() && i < 10) {
 							i++;
-							long waitTime = Math.round(5000+10000+Math.random());
+							long waitTime = Math.round(5000+10000*Math.random());
 							logger.warning("too much images in transformation. Waiting [" + i + "] - [wait:"+waitTime+"]...");
 							Thread.sleep(waitTime);
 						}
