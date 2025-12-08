@@ -570,6 +570,16 @@ public class InfoBean {
 		return ctx.getLocale();
 	}
 
+	public String getCountryEnglishName() {
+		Locale locale = getLocale();
+		String name = locale.getDisplayCountry(Locale.ENGLISH);
+
+		// Remove parentheses content
+		// This regex removes " ( ... )" including the parentheses.
+		name = name.replaceAll("\\s*\\([^)]*\\)", ""); // Remove any content in parentheses
+		return name.trim(); // Clean potential trailing spaces
+	}
+
 	public String getLocaleString() {
 		String locale = ctx.getLocale().toString();
 		if (locale.length() == 2) {
