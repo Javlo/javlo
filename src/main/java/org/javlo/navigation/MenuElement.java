@@ -4397,10 +4397,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 	public boolean isRealContent(ContentContext ctx) throws Exception {
 
-		if (ctx.getCurrentPage() == null) {
-			return false;
-		}
-
 		if (!isInsideTimeRange()) {
 			return false;
 		}
