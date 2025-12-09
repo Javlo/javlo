@@ -4397,8 +4397,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 	public boolean isRealContent(ContentContext ctx) throws Exception {
 
-		if (ctx.getCurrentPage() == null) {
-			return false;
+		if (!ctx.getCurrentPage().getId().equals(getId())) {
+			ctx = new ContentContext(ctx);
+			ctx.setCurrentPageCached(this);
 		}
 
 		if (!isInsideTimeRange()) {
@@ -4423,8 +4424,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		}
 
 		PageDescription desc = getPageDescriptionCached(ctx, lang);
-
-
 
 		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
 
