@@ -200,7 +200,7 @@ public class DataAction implements IAction {
 
 			serverInfo.put("systemUser", System.getProperty("user.name"));
 
-			serverInfo.put("serverCharge", CountService.getInstance(request.getSession().getServletContext()).getCount());
+			serverInfo.put("serverCharge", CountService.getInstance(request.getServletContext()).getCount());
 			serverInfo.put("siteCharge", globalContext.getCount());
 
 			List<String> connectedUsers = new LinkedList<String>();

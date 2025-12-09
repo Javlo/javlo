@@ -34,7 +34,7 @@ public class FakeHttpContext {
 	}
 	
 	public ServletContext getServletContext() {
-		return request.getSession().getServletContext();
+		return request.getServletContext();
 	}
 
 }

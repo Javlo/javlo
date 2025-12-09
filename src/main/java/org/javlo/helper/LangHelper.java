@@ -81,7 +81,7 @@ public class LangHelper {
 		} else if (c.equals(HttpSession.class)) {
 			return request.getSession();
 		} else if (c.equals(ServletContext.class)) {
-			return request.getSession().getServletContext();
+			return request.getServletContext();
 		} else if (c.equals(ContentContext.class)) {
 			return ContentContext.getContentContext(request, response);
 		} else if (c.equals(GlobalContext.class)) {
@@ -113,7 +113,7 @@ public class LangHelper {
 		} else if (c.equals(MessageRepository.class)) {
 			return MessageRepository.getInstance(request);
 		} else if (c.equals(FileCache.class)) {
-			return FileCache.getInstance(request.getSession().getServletContext());
+			return FileCache.getInstance(request.getServletContext());
 		} else if (c.equals(StaticContext.class)) {
 			return StaticContext.getInstance(request.getSession());
 		} else if (c.equals(ClipBoard.class)) {

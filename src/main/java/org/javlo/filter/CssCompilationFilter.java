@@ -44,7 +44,7 @@ public class CssCompilationFilter implements Filter {
 		if (path.startsWith('/' + globalContext.getContextKey())) {
 			path = path.replaceFirst('/' + globalContext.getContextKey(), "");
 		}
-		String realPath = ResourceHelper.getRealPath(httpRequest.getSession().getServletContext(), path);
+		String realPath = ResourceHelper.getRealPath(httpRequest.getServletContext(), path);
 
 		File requestedFile = new File(realPath);
 		logger.info("🔍 Requête pour : " + request);

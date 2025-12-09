@@ -1324,7 +1324,7 @@ public class ContentContext {
 	
 	public ServletContext getServletContext()  {
 		if (servletContext == null) {
-			this.servletContext = request.getSession().getServletContext();
+			this.servletContext = request.getServletContext();
 		}
 		return this.servletContext;
 	}
@@ -1998,7 +1998,7 @@ public class ContentContext {
 			outTemplates = new LinkedList<Template>();
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			Collection<String> templatesNames = globalContext.getTemplatesNames();
-			Collection<Template> templates = TemplateFactory.getAllTemplates(request.getSession().getServletContext());
+			Collection<Template> templates = TemplateFactory.getAllTemplates(request.getServletContext());
 			for (Template template : templates) {
 				if (templatesNames.contains(template.getName())) {
 					outTemplates.add(template);
@@ -2069,7 +2069,7 @@ public class ContentContext {
 	public boolean setCurrentTemplateId(String templateId) {
 		Template template;
 		try {
-			template = TemplateFactory.getDiskTemplates(request.getSession().getServletContext()).get(templateId);
+			template = TemplateFactory.getDiskTemplates(request.getServletContext()).get(templateId);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;

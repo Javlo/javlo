@@ -72,7 +72,7 @@ public class ContentManager {
 			realPath = realPath.substring(1);
 		}
 
-		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession().getServletContext());
+		StaticConfig staticConfig = StaticConfig.getInstance(request.getServletContext());
 		String[] splitedPath = StringHelper.split(realPath, "/");
 
 		if (!staticConfig.isHostDefineSite() && splitedPath.length > 0) {

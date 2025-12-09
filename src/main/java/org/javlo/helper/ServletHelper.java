@@ -174,7 +174,7 @@ public class ServletHelper {
 
 	public static void includeBlocked(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setStatus(503);
-		request.getSession().getServletContext().getRequestDispatcher("/jsp/view/error/blocked.jsp").include(request, response);
+		request.getServletContext().getRequestDispatcher("/jsp/view/error/blocked.jsp").include(request, response);
 		return;
 	}
 

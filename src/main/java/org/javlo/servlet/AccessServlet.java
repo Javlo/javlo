@@ -494,13 +494,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 							if (!globalContext.getSpecialConfig().isTrackingAccess()) {
 								ClearDataAccessCount.clearDataAccess(ctx);
 							}
-							/*
-							 * if (globalContext.getDMZServerIntra() != null) { SynchroThread synchro =
-							 * (SynchroThread) AbstractThread.createInstance(staticConfig.
-							 * getThreadFolder(), SynchroThread.class);
-							 * synchro.initSynchronisationThread(staticConfig, globalContext,
-							 * request.getSession().getServletContext()); synchro.store(); }
-							 */
 
 							CdnService.getInstance(ctx.getGlobalContext()).internalTestCdn();
 							SessionFolder.clearAllSessionFolder(globalContext);
@@ -629,7 +622,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						String jspForLogin = editCtx.getLoginRenderer();
 						getServletContext().getRequestDispatcher(jspForLogin).include(request, response);
 					} else {
-						request.getSession().getServletContext().getRequestDispatcher("/jsp/view/error/blocked.jsp?message=use main context for edit : '" + ctx.getGlobalContext().getMainContext().getContextKey() + "'").include(request, response);
+						request.getServletContext().getRequestDispatcher("/jsp/view/error/blocked.jsp?message=use main context for edit : '" + ctx.getGlobalContext().getMainContext().getContextKey() + "'").include(request, response);
 					}
 					return;
 				}
@@ -864,7 +857,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 						ctx.setForcePathPrefix(request, savePathPrefix);
 					}
 					if (request.getAttribute("specificCSS") == null) {
-						GlobalContext masterContext = GlobalContextFactory.getMasterGlobalContext(request.getSession().getServletContext());
+						GlobalContext masterContext = GlobalContextFactory.getMasterGlobalContext(request.getServletContext());
 						if (masterContext != null) {
 							editCSS = new File(URLHelper.mergePath(masterContext.getStaticFolder(), "/edit/specific.css"));
 							if (editCSS.exists()) {

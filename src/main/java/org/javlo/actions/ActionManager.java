@@ -189,22 +189,6 @@ public class ActionManager {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		logger.fine("perform action : " + actionName);
 
-		/*
-		 * AdminUserSecurity adminUserSecurity =
-		 * AdminUserSecurity.getInstance(request.getSession().getServletContext());
-		 * IUserFactory userFactory =
-		 * AdminUserFactory.createAdminUserFactory(globalContext, request.getSession());
-		 * if
-		 * (!adminUserSecurity.haveRight(userFactory.getCurrentUser(request.getSession()
-		 * ), removeGroup(actionName).toLowerCase() )) { I18nAccess i18nAccess =
-		 * I18nAccess.getInstance(request); ContentContext ctx =
-		 * ContentContext.getContentContext(request, response); MessageRepository
-		 * msgRepo = MessageRepository.getInstance(ctx);
-		 * msgRepo.setGlobalMessageAndNotification(ctx,new
-		 * GenericMessage(i18nAccess.getText("global.message.noright")+
-		 * " ("+actionName+')', GenericMessage.ERROR)); return null; }
-		 */
-
 		String group = getActionGroup(actionName);
 		String message = null;
 		

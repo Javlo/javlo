@@ -1053,7 +1053,7 @@ public class UserAction extends AbstractModuleAction {
 		if (fact.getCurrentUser(globalContext, request.getSession()) == null) {
 			if (login != null || request.getUserPrincipal() != null) {
 				if (request.getParameter("autologin") != null) {
-					DataToIDService service = DataToIDService.getInstance(request.getSession().getServletContext());
+					DataToIDService service = DataToIDService.getInstance(request.getServletContext());
 					String codeId = service.setData(login, IUserFactory.AUTO_LOGIN_AGE_SEC);
 					RequestHelper.setCookieValue(ctx.getResponse(), JAVLO_LOGIN_ID, codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, null);
 				}

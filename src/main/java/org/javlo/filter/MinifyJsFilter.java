@@ -28,7 +28,7 @@ public class MinifyJsFilter implements Filter {
         if (path.startsWith('/' + globalContext.getContextKey())) {
             path = path.replaceFirst('/' + globalContext.getContextKey(), "");
         }
-        String realPath = ResourceHelper.getRealPath(httpRequest.getSession().getServletContext(), path);
+        String realPath = ResourceHelper.getRealPath(httpRequest.getServletContext(), path);
 
         if (realPath == null) {
             chain.doFilter(request, response);

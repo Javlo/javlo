@@ -142,7 +142,7 @@ public class ContentOnlyServlet extends HttpServlet {
 			}
 
 			if (templateID != null) {				
-				template = TemplateFactory.getTemplates(request.getSession().getServletContext()).get(templateID);
+				template = TemplateFactory.getTemplates(request.getServletContext()).get(templateID);
 				ctx.setCurrentTemplate(template);				
 			}	
 			

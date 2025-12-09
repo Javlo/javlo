@@ -1,15 +1,14 @@
 package org.javlo.servlet;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
-
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
 
 public class CssMapServlet extends HttpServlet {
 
@@ -26,7 +25,7 @@ public class CssMapServlet extends HttpServlet {
 		}
 		String cssPath = path;
 		path = path.substring(0, path.length()-".css.map".length())+".less";		
-		File lessFile = new File(ResourceHelper.getRealPath(httpRequest.getSession().getServletContext(),path));		
+		File lessFile = new File(ResourceHelper.getRealPath(httpRequest.getServletContext(),path));
 		if (!lessFile.exists()) {			
 			resp.setStatus(404);
 			return;

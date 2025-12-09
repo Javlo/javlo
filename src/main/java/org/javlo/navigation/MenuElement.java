@@ -2125,7 +2125,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 					return (MetaComponent) comp;
 				}
 			}
-			ctx.getRequest().setAttribute(requestKeyNotFound, true);
+			if (ctx.getCurrentPage() != null) {
+				ctx.getRequest().setAttribute(requestKeyNotFound, true);
+			}
 			return null;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -3994,7 +3996,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		desc.title = getContent(newCtx).getTitle(newCtx);
 
 		if (desc.title != null) {
-			if ((desc.title.trim().length() == 0) && (name != null)) {
+			if ((desc.title.trim().length() == 0) && (name != null) && (ctx.getCurrentPage() != null)) {
 				desc.title = name;
 			}
 		}
@@ -4394,35 +4396,39 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	}
 
 	public boolean isRealContent(ContentContext ctx) throws Exception {
-		// TODO: warning test deadlock on this
+
+		if (ctx.getCurrentPage() == null) {
+			return false;
+		}
+
+		if (!isInsideTimeRange()) {
+			return false;
+		}
+
+		if (!isActive()) {
+			return false;
+		}
+
+		if (isChildrenAssociation()) {
+			return true;
+		}
+
+		String lang = ctx.getRequestContentLanguage();
+		Template template = null;
+		if (ctx.getRequest() != null) {
+			template = TemplateFactory.getTemplate(ctx, this);
+			if (template != null && template.isNavigationArea(ctx.getArea())) {
+				lang = ctx.getLanguage();
+			}
+		}
+
+		PageDescription desc = getPageDescriptionCached(ctx, lang);
+
+		if (!desc.isRealContentNull()) {
+			return desc.isRealContent();
+		}
+
 		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
-
-			if (!isInsideTimeRange()) {
-				return false;
-			}
-
-			if (!isActive()) {
-				return false;
-			}
-
-			if (isChildrenAssociation()) {
-				return true;
-			}
-
-			String lang = ctx.getRequestContentLanguage();
-			Template template = null;
-			if (ctx.getRequest() != null) {
-				template = TemplateFactory.getTemplate(ctx, this);
-				if (template != null && template.isNavigationArea(ctx.getArea())) {
-					lang = ctx.getLanguage();
-				}
-			}
-
-			PageDescription desc = getPageDescriptionCached(ctx, lang);
-
-			if (!desc.isRealContentNull()) {
-				return desc.isRealContent();
-			}
 
 			ContentContext contentAreaCtx = new ContentContext(ctx);
 			contentAreaCtx = contentAreaCtx.getContextWithContentSameLanguage();

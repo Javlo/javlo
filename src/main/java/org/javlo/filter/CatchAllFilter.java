@@ -142,7 +142,7 @@ public class CatchAllFilter implements Filter {
 		httpRequest.setAttribute("mainUri", httpRequest.getRequestURI());
 		
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
-		ServletContext servletContext = httpRequest.getSession().getServletContext();
+		ServletContext servletContext = httpRequest.getServletContext();
 		CountService.getInstance(servletContext).touch();
 
 		// Récupération du chemin de la requête
@@ -708,7 +708,7 @@ public class CatchAllFilter implements Filter {
 			if (request.getParameter("edit-logout") != null) {
 				logoutUser = fact.getCurrentUser(globalContext, httpRequest.getSession());
 				if (logoutUser != null) {
-					DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
+					DataToIDService service = DataToIDService.getInstance(httpRequest.getServletContext());
 					service.clearData(logoutUser.getName());
 					globalContext.logout(logoutUser);
 					if (httpRequest.getUserPrincipal() != null) {
@@ -765,7 +765,7 @@ public class CatchAllFilter implements Filter {
 						if (request.getParameter("j_username") != null || httpRequest.getUserPrincipal() != null) {
 							String login = request.getParameter("j_username");
 							if (request.getParameter("autologin") != null) {
-								DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
+								DataToIDService service = DataToIDService.getInstance(httpRequest.getServletContext());
 								String codeId = service.setData(login, IUserFactory.AUTO_LOGIN_AGE_SEC);
 								RequestHelper.setCookieValue(httpResponse, UserAction.JAVLO_LOGIN_ID, codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, null);
 							}
@@ -827,7 +827,7 @@ public class CatchAllFilter implements Filter {
 				String autoLoginId = RequestHelper.getCookieValue(httpRequest, UserAction.JAVLO_LOGIN_ID);
 				String autoLoginUser = null;
 				if (autoLoginId != null) {
-					DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
+					DataToIDService service = DataToIDService.getInstance(httpRequest.getServletContext());
 					service.clearTimeData();
 					autoLoginUser = service.getData(autoLoginId);
 				}
@@ -871,7 +871,7 @@ public class CatchAllFilter implements Filter {
 				User editUser = adminFact.login(httpRequest, login, request.getParameter("j_password"));
 				if (editUser != null) {
 					if (request.getParameter("autologin") != null) {
-						DataToIDService service = DataToIDService.getInstance(httpRequest.getSession().getServletContext());
+						DataToIDService service = DataToIDService.getInstance(httpRequest.getServletContext());
 						String codeId = service.setData(editUser.getLogin(), ((long) IUserFactory.AUTO_LOGIN_AGE_SEC) * 1000);
 						RequestHelper.setCookieValue(httpResponse, UserAction.JAVLO_LOGIN_ID, codeId, IUserFactory.AUTO_LOGIN_AGE_SEC, null);
 					}
@@ -917,6 +917,6 @@ public class CatchAllFilter implements Filter {
 
 	public void initElements(ServletRequest request, ServletResponse response) {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
-		DebugListening.getInstance().setAppplication(httpRequest.getSession().getServletContext());
+		DebugListening.getInstance().setAppplication(httpRequest.getServletContext());
 	}
 }

@@ -43,7 +43,7 @@ public class ContextAction extends AbstractModuleAction {
 			}
 
 			Collection<GlobalContextBean> ctxAllBean = new LinkedList<GlobalContextBean>();
-			Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(request.getSession().getServletContext());
+			Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(request.getServletContext());
 			Map<String, GlobalContextBeanWithComponents> masterCtx = new HashMap<String, GlobalContextBeanWithComponents>();
 			for (GlobalContext context : allContext) {				
 				if (ctx.getCurrentEditUser() != null) {

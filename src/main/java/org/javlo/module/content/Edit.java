@@ -1605,7 +1605,7 @@ public class Edit extends AbstractModuleAction {
 			navigationService.clearAllViewPage();
 
 			// clean component list when publish
-			ComponentFactory.cleanComponentList(request.getSession().getServletContext(), globalContext);
+			ComponentFactory.cleanComponentList(request.getServletContext(), globalContext);
 
 			ReverseLinkService.getInstance(globalContext).clearCache();
 

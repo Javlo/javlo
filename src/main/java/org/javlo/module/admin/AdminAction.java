@@ -110,7 +110,7 @@ public class AdminAction extends AbstractModuleAction {
 		super.prepare(ctx, moduleContext);
 		
 		HttpServletRequest request = ctx.getRequest();
-		ServletContext application = request.getSession().getServletContext();
+		ServletContext application = request.getServletContext();
 		
 		request.setAttribute("componentErrorMessage", ComponentFactory.loadErrorMessage);
 
@@ -152,7 +152,7 @@ public class AdminAction extends AbstractModuleAction {
 			}
 
 			Collection<GlobalContextBean> ctxAllBean = new LinkedList<GlobalContextBean>();
-			Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(request.getSession().getServletContext());
+			Collection<GlobalContext> allContext = GlobalContextFactory.getAllGlobalContext(request.getServletContext());
 			Map<String, GlobalContextBean> masterCtx = new HashMap<String, GlobalContextBean>();
 			for (GlobalContext context : allContext) {
 				logger.fine("load context : " + context.getContextKey());
@@ -197,10 +197,10 @@ public class AdminAction extends AbstractModuleAction {
 			}
 			request.setAttribute("currentContext", new GlobalContextBean(ctx, currentGlobalContext, request.getSession()));
 			if (currentGlobalContext != null) {
-				List<Template> templates = TemplateFactory.getAllTemplates(request.getSession().getServletContext());
+				List<Template> templates = TemplateFactory.getAllTemplates(request.getServletContext());
 				Collections.sort(templates);
 
-				Template defaultTemplate = TemplateFactory.getTemplates(request.getSession().getServletContext()).get(currentGlobalContext.getDefaultTemplate());
+				Template defaultTemplate = TemplateFactory.getTemplates(request.getServletContext()).get(currentGlobalContext.getDefaultTemplate());
 
 				if (defaultTemplate != null) {
 					try {
@@ -248,7 +248,7 @@ public class AdminAction extends AbstractModuleAction {
 				List<String> templatesName = currentGlobalContext.getTemplatesNames();
 				List<Template.TemplateBean> selectedTemplate = new LinkedList<Template.TemplateBean>();
 				for (String name : templatesName) {
-					Template template = TemplateFactory.getDiskTemplate(request.getSession().getServletContext(), name);
+					Template template = TemplateFactory.getDiskTemplate(request.getServletContext(), name);
 					if (template != null) {
 						if (!template.isTemplateInWebapp(ctx)) {
 							template.importTemplateInWebapp(StaticConfig.getInstance(ctx.getRequest().getSession().getServletContext()), ctx);
@@ -1197,7 +1197,7 @@ public class AdminAction extends AbstractModuleAction {
 				staticConfig.storeAllProperties(newContent);
 				messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("admin.message.static-config-update"), GenericMessage.INFO));
 
-				DebugHelper.updateLoggerLevel(request.getSession().getServletContext());
+				DebugHelper.updateLoggerLevel(request.getServletContext());
 			}
 		}
 		return msg;

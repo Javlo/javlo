@@ -89,7 +89,7 @@ public class ViewActions implements IAction {
 
 	public static String performReloadconfig(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		logger.info("reload config");
-		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession().getServletContext());
+		StaticConfig staticConfig = StaticConfig.getInstance(request.getServletContext());
 		staticConfig.reload();
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		globalContext.reload();

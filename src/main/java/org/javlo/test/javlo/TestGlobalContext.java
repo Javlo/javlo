@@ -23,7 +23,7 @@ public class TestGlobalContext extends GlobalContext {
 	
 	public static GlobalContext getInstance(HttpServletRequest request) {
 		GlobalContext outContext = new TestGlobalContext();
-		outContext.setApplication(request.getSession().getServletContext());
+		outContext.setApplication(request.getServletContext());
 		return outContext;
 	}	
 	

@@ -203,7 +203,7 @@ public class Persistence extends AbstractModuleAction {
 								PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 								NavigationHelper.importPage(ctx, persistenceService, pageNode, currentPage, ctx.getLanguage(), true);
 							} else {
-								ZipManagement.saveFile(request.getSession().getServletContext(), ctx.getGlobalContext().getDataFolder(), entry.getName(), zipIn);
+								ZipManagement.saveFile(request.getServletContext(), ctx.getGlobalContext().getDataFolder(), entry.getName(), zipIn);
 								countResources++;
 							}
 						} catch (Exception e) {

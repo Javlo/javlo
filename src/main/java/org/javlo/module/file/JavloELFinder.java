@@ -1,30 +1,8 @@
 package org.javlo.module.file;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
-
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -40,6 +18,13 @@ import org.javlo.service.PersistenceService;
 import org.javlo.servlet.zip.ZipManagement;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.StaticInfo;
+
+import java.io.*;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 /**
  * 
@@ -177,15 +162,7 @@ public class JavloELFinder extends ELFinder {
 				} catch (Exception e) {					
 					throw new IOException(e);
 				}
-				
-				/*GlobalContext globalContext = GlobalContext.getInstance(request);
-				if (file.isDirectory()) {
-					FileUtils.deleteDirectory(file.getFile());
-					FileCache.getInstance(request.getSession().getServletContext()).clear(globalContext.getContextKey());
-				} else {
-					file.getFile().delete();
-					FileCache.getInstance(request.getSession().getServletContext()).deleteAllFile(globalContext.getContextKey(), file.getFile().getName());
-				}*/
+
 				deletedFiles.add(file);
 			}
 		}
@@ -256,9 +233,9 @@ public class JavloELFinder extends ELFinder {
 				GlobalContext globalContext = GlobalContext.getInstance(request);
 				PersistenceService.getInstance(globalContext).setAskStore(true);
 				if (file.getFile().isDirectory()) {
-					FileCache.getInstance(request.getSession().getServletContext()).clear(globalContext.getContextKey());
+					FileCache.getInstance(request.getServletContext()).clear(globalContext.getContextKey());
 				} else {
-					FileCache.getInstance(request.getSession().getServletContext()).deleteAllFile(globalContext.getContextKey(), file.getFile().getName());
+					FileCache.getInstance(request.getServletContext()).deleteAllFile(globalContext.getContextKey(), file.getFile().getName());
 				}
 				apiResponse.put("removed", printFilesHash(Arrays.asList(new ELFile[] { file })));
 				apiResponse.put("added", printFiles(Arrays.asList(new ELFile[] { new JavloELFile(file.getVolume(), newFile, file.getParentFile()) })));

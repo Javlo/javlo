@@ -81,7 +81,7 @@ public class JSMergeFilter implements Filter {
 			if (path.startsWith('/' + globalContext.getContextKey())) {
 				path = path.replaceFirst('/' + globalContext.getContextKey(), "");
 			}
-			File jsFile = new File(ResourceHelper.getRealPath(httpRequest.getSession().getServletContext(), path));
+			File jsFile = new File(ResourceHelper.getRealPath(httpRequest.getServletContext(), path));
 			if (!jsFile.exists()) {
 				synchronized (this) {
 					if (!jsFile.exists()) {

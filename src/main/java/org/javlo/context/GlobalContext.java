@@ -376,7 +376,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			String contextURI;
 			GlobalContext globalContext = (GlobalContext) request.getAttribute(KEY);
 			if (globalContext == null) {
-				StaticConfig staticConfig = StaticConfig.getInstance(request.getSession().getServletContext());
+				StaticConfig staticConfig = StaticConfig.getInstance(request.getServletContext());
 				if (staticConfig.isHostDefineSite()) {
 					String host = ServletHelper.getSiteKey(request);
 					globalContext = GlobalContext.getInstance(request.getSession(), host);
@@ -806,7 +806,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public static boolean isExist(HttpServletRequest request, String contextKey) throws IOException {
 
-		if (request.getSession().getServletContext().getAttribute(contextKey) != null) {
+		if (request.getServletContext().getAttribute(contextKey) != null) {
 			return true;
 		}
 

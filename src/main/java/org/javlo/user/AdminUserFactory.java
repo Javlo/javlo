@@ -149,26 +149,6 @@ public class AdminUserFactory extends UserFactory {
 		return outUser;
 	}
 
-	/*
-	 * public User googleLogin(HttpServletRequest request, String accessToken) {
-	 * logger.info("google admin login trying : "+accessToken); HttpClient
-	 * httpClient = null; try { httpClient = new URLConnectionClient(); OAuthClient
-	 * oAuthClient = new OAuthClient(httpClient); Google google = new Google();
-	 * StaticConfig staticConfig =
-	 * StaticConfig.getInstance(request.getSession().getServletContext());
-	 * google.setClientId(staticConfig.getOauthGoogleIdClient());
-	 * google.setClientSecret(staticConfig.getOauthGoogleSecret());
-	 * google.prepare(request);
-	 * TransientUserInfo.getInstance(request.getSession()).setToken(accessToken);
-	 * SocialUser user = google.getSocialUser(accessToken, oAuthClient); if (user ==
-	 * null || user.getEmail() == null || user.getEmail().isEmpty()) {
-	 * logger.warning("OAuth admin login failed with google provider"); } else {
-	 * System.out.println("***** AdminUserFactory.googleLogin : name = "+user.
-	 * getEmail()); //TODO: remove debug trace } } catch (Exception e) {
-	 * e.printStackTrace(); } finally { if (httpClient != null) {
-	 * httpClient.shutdown(); } } return null; }
-	 */
-
 	@Override
 	public User autoLogin(HttpServletRequest request, String login) {
 		GlobalContext globalCtx = GlobalContext.getInstance(request);

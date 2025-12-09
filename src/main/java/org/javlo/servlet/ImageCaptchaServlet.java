@@ -64,7 +64,7 @@ public class ImageCaptchaServlet extends HttpServlet {
 		response.setContentType("image/jpeg");
 
 		ServletOutputStream responseOutputStream = response.getOutputStream();
-		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession().getServletContext());
+		StaticConfig staticConfig = StaticConfig.getInstance(request.getServletContext());
 		Cage cage = new JCage(staticConfig.getCaptchaSize());
 		String token = cage.getTokenGenerator().next();
 		CaptchaService.getInstance(request.getSession()).setCurrentCaptchaCode(token);
