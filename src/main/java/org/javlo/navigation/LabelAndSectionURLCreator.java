@@ -48,7 +48,7 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 	protected String createURLWithoutExt(ContentContext ctx, MenuElement currentPage) throws Exception {
 		
 		if (currentPage == null) {
-			logger.war
+			logger.warning("page is null");
 			return "/";
 		}
 
