@@ -7,6 +7,7 @@ import org.javlo.helper.URLHelper;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.logging.Logger;
 
 /**
  * create url based on the title of the page.
@@ -15,6 +16,8 @@ import java.net.URLDecoder;
  * 
  */
 public class LabelAndSectionURLCreator extends AbstractURLFactory {
+
+	public static Logger logger = Logger.getLogger(LabelAndSectionURLCreator.class.getName());
 
 	/**
 	 * return the name of the first level page active. "root" if current page in
@@ -25,6 +28,7 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 	 */
 	protected MenuElement getSectionPage(MenuElement page) {
 		if (page == null) {
+			logger.warning("page is null");
 			return null;
 		}
 		if (page.getParent() == null || page.getParent().getParent() == null) {
@@ -44,6 +48,7 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 	protected String createURLWithoutExt(ContentContext ctx, MenuElement currentPage) throws Exception {
 		
 		if (currentPage == null) {
+			logger.war
 			return "/";
 		}
 

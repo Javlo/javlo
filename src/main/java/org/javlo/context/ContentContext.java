@@ -1110,7 +1110,7 @@ public class ContentContext {
 						setCurrentPageCached(elem);
 						globalContext.storeUrl(this, getPath(), elem.getId());
 					} else if (urlFactory) {
-						globalContext.log(Log.SEVERE, "url", "url not found : " + getPath());
+						globalContext.log(Log.SEVERE, "url", "path not found : " + getPath());
 						elem = globalContext.convertOldURL(this, getPath());
 						if (elem != null) {
 							String newURL = URLHelper.createURL(this, elem);
