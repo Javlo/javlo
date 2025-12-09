@@ -1326,6 +1326,9 @@ public class ContentContext {
 	public ServletContext getServletContext()  {
 		if (servletContext == null) {
 			this.servletContext = request.getServletContext();
+			if (this.servletContext == null) {
+				logger.severe("no servlet context on : "+request.getClass().getName());
+			}
 		}
 		return this.servletContext;
 	}
