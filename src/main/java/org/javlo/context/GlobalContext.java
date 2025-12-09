@@ -2159,10 +2159,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					Collection<String> mainLgs = getLanguages();
 					Collection<String> contentLanguages = getContentLanguages();
 
-					String exportVersion = "1.3";
+					String exportVersion = "1.4";
 					Set<String> lines = new LinkedHashSet<>();
 					lines.add("V"+exportVersion+" - "+StringHelper.renderDateAndTime(LocalDateTime.now()));
-					lines.add("### url creator : "+urlCreator.getClass());
+					lines.add("### url creator : "+(urlCreator!=null?urlCreator.getClass():"url creator is null"));
 					lines.add("### mainLgs : "+StringHelper.collectionToString(mainLgs,","));
 					lines.add("### contentLanguages : "+StringHelper.collectionToString(contentLanguages,","));
 					lines.add("");
