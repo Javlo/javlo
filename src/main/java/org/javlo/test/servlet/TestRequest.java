@@ -333,8 +333,7 @@ public class TestRequest implements HttpServletRequest {
 
 	@Override
 	public ServletContext getServletContext() {
-		// TODO Auto-generated method stub
-		return null;
+		return getSession().getServletContext();
 	}
 
 	@Override
