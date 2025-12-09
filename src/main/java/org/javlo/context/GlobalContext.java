@@ -2485,10 +2485,12 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			}
 		} else {
 			String urlClass = properties.getString("url-factory", null);
+			logger.info("load url factory : "+urlClass);
 			if (urlClass != null && urlClass.trim().length() > 0) {
 				try {
 					urlFactory = ((Class<IURLFactory>) Class.forName(urlClass)).newInstance();
 				} catch (Exception e) {
+					logger.severe("error on load url factory : "+urlClass+" : "+e.getMessage());
 					e.printStackTrace();
 					urlFactory = NO_URL_FACTORY;
 					return null;
