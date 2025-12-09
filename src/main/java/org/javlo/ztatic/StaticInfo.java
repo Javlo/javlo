@@ -546,7 +546,7 @@ public class StaticInfo implements IRestItem {
 	}
 
 	public static StaticInfo getInstance(ContentContext ctx, String inStaticURL) throws Exception {
-		inStaticURL = inStaticURL.replace('\\', '/').replaceAll("//", "/").trim();
+		inStaticURL = StringHelper.cleanPath(inStaticURL);
 		if (!inStaticURL.startsWith("/")) {
 			inStaticURL = '/' + inStaticURL;
 		}

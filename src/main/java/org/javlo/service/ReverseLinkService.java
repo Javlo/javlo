@@ -1,13 +1,6 @@
 package org.javlo.service;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
+import fr.opensagres.xdocreport.core.utils.StringEscapeUtils;
 import org.apache.commons.lang3.CharUtils;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
@@ -15,18 +8,15 @@ import org.javlo.component.core.IReverseLinkComponent;
 import org.javlo.component.meta.DefinitionComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.ComponentHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.StringRemplacementHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.helper.XHTMLHelper;
 import org.javlo.helper.Comparator.StringSizeComparator;
+import org.javlo.helper.*;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.exception.ServiceException;
 import org.owasp.encoder.Encode;
 
-import fr.opensagres.xdocreport.core.utils.StringEscapeUtils;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class ReverseLinkService {
 	
@@ -95,18 +85,16 @@ public class ReverseLinkService {
 
 	private transient Map<String, MenuElement> reversedLinkCache = null;
 
-	private transient Map<String, ComponentPage> reversedLinkComponentCache = null;
+	private transient Map<String, Map<String, ComponentPage>> reversedLinkComponentCacheByLang = new HashMap<>();
 	
 	private transient Map<String, String> definitionCache = null;
-
-	private transient String reversedLinkComponentCacheLang = null;
 
 	private final Object lock = new Object();
 
 	public void clearCache() {
 		synchronized (lock) {
 			reversedLinkCache = null;
-			reversedLinkComponentCache = null;
+			reversedLinkComponentCacheByLang.clear();
 			definitionCache = null;
 		}
 	}
@@ -160,12 +148,13 @@ public class ReverseLinkService {
 
 	/* reverese link component */
 	private Map<String, ComponentPage> getReversedLinkComponentCache(ContentContext ctx, MenuElement elem) throws Exception {
-		if ((reversedLinkComponentCache == null) || (!reversedLinkComponentCacheLang.equals(ctx.getRequestContentLanguage()))) {
+		if (reversedLinkComponentCacheByLang.get(ctx.getRequestContentLanguage()) == null) {
 			synchronized (lock) {
-				if ((reversedLinkComponentCache == null) || (!reversedLinkComponentCacheLang.equals(ctx.getRequestContentLanguage()))) {
+				if (reversedLinkComponentCacheByLang.get(ctx.getRequestContentLanguage()) == null) {
 					ContentContext noAreaCtx = ctx.getContextWithArea(null);
-					reversedLinkComponentCacheLang = ctx.getRequestContentLanguage();
-					reversedLinkComponentCache = new HashMap<String, ComponentPage>();					
+					Map<String, ComponentPage> reversedLinkComponentCache = new HashMap<String, ComponentPage>();
+					reversedLinkComponentCacheByLang.put(ctx.getRequestContentLanguage(), reversedLinkComponentCache);
+
 					for (MenuElement element : elem.getAllChildrenList()) {
 						ContentElementList content = element.getLocalContentCopy(noAreaCtx);
 
@@ -205,7 +194,7 @@ public class ReverseLinkService {
 				}
 			}
 		}
-		return reversedLinkComponentCache;
+		return reversedLinkComponentCacheByLang.get(ctx.getRequestContentLanguage());
 
 	}
 

@@ -3971,15 +3971,53 @@ public class StringHelper {
     public static String cleanPath(String path) {
         if (path == null) {
             return null;
-        } else {
-            path = path.replace('\\', '/');
-            while (path.indexOf("//") >= 0) {
-                path = path.replace("//", "/");
+        }
+
+        int len = path.length();
+        // First pass: detect if cleaning is needed at all
+        boolean needsCleaning = false;
+        char prev = 0;
+        for (int i = 0; i < len; i++) {
+            char c = path.charAt(i);
+            if (c == '\\' || (c == '/' && prev == '/')) {
+                needsCleaning = true;
+                break;
             }
+            if (c == '\\' || c == '/') {
+                prev = '/';
+            } else {
+                prev = c;
+            }
+        }
+
+        // If no '\' and no '//' found, return original String directly
+        if (!needsCleaning) {
             return path;
         }
 
+        // Second pass: normalize
+        StringBuilder sb = new StringBuilder(len);
+        prev = 0;
+        for (int i = 0; i < len; i++) {
+            char c = path.charAt(i);
+
+            // Normalize backslash to slash
+            if (c == '\\') {
+                c = '/';
+            }
+
+            // Skip duplicate '/'
+            if (c == '/' && prev == '/') {
+                continue;
+            }
+
+            sb.append(c);
+            prev = c;
+        }
+
+        return sb.toString();
     }
+
 
     /**
      * check if a text contains uppercase char. test > false, Test > true, TEST >

@@ -80,6 +80,15 @@
 	</servlet-mapping>
 
 	<servlet>
+		<servlet-name>jsp</servlet-name>
+		<servlet-class>org.apache.jasper.servlet.JspServlet</servlet-class>
+		<init-param>
+			<param-name>development</param-name>
+			<param-value>false</param-value>
+		</init-param>
+	</servlet>
+
+	<servlet>
 		<servlet-name>StatusServlet</servlet-name>
 		<servlet-class>org.javlo.servlet.status.StatusServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
