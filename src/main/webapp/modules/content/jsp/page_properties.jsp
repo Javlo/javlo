@@ -189,7 +189,7 @@
 							</div>
 							<div class="col-sm-4">
 								<div class="line">
-									<label>Real Content?</label> <span>${page.realContent} <c:if test="${page.realContent}">(${page.realContentComponent})</c:if> <c:if test="${!page.realContent && not empty page.realContentLanguage}"> [content found : ${page.realContentLanguage}]</c:if></span>
+									<label>Real Content  / empty ?</label> <span>${page.realContent} <c:if test="${page.realContent}">(${page.realContentComponent})</c:if> <c:if test="${!page.realContent && not empty page.realContentLanguage}"> [content found : ${page.realContentLanguage}]</c:if> / ${page.pageLocalEmpty}</span>
 								</div>
 							</div>
 							<div class="col-sm-4">
