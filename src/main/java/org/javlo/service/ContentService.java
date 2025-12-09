@@ -719,6 +719,7 @@ public class ContentService implements IPrintInfo {
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			String traceCode = StringHelper.getRandomId();
 			ctx.getGlobalContext().GLOBAL_ERROR = "[" + traceCode + "] error load mode=" + ctx.getRenderMode() + "(zip:" + ctx.getGlobalContext().getSpecialConfig().isStorageZipped() + ", pwd?:" + !StringHelper.isEmpty(ctx.getGlobalContext().getSpecialConfig().getSecureEncryptPassword()) + ") [" + e.getMessage() + "]";
 			logger.severe(ctx.getGlobalContext().GLOBAL_ERROR);
