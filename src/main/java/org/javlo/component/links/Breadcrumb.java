@@ -1,12 +1,12 @@
 package org.javlo.component.links;
 
-import java.util.LinkedList;
-
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageBean;
 import org.javlo.user.VisitorContext;
+
+import java.util.LinkedList;
 
 public class Breadcrumb extends AbstractVisualComponent {
 
@@ -33,12 +33,12 @@ public class Breadcrumb extends AbstractVisualComponent {
 		LinkedList<PageBean> pages = new LinkedList<PageBean>();
 		MenuElement page = ctx.getCurrentPage();
 		VisitorContext visitorContext = VisitorContext.getInstance(ctx.getRequest().getSession());
-		if (getStyle().equals("visitor") && visitorContext.getPreviousPage() != null) {			
+		if (getStyle().equals("visitor") && visitorContext.getPreviousPage(ctx) != null) {
 			if (page != null) {
 				pages.add(0, page.getPageBean(ctx));
 			}
 			
-			PageBean pageBean = visitorContext.getPreviousPage();
+			PageBean pageBean = visitorContext.getPreviousPage(ctx);
 			pageBean.setContentContext(ctx);			
 			while (pageBean != null) {
 				if (!pageBean.getName().equals(ctx.getCurrentPage().getName())) {
