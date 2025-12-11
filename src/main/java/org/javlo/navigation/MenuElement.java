@@ -92,7 +92,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	public static final int SEO_HEIGHT_NORMAL = 2;
 	public static final int SEO_HEIGHT_HIGHT = 3;
 
-	private class SmartPageDescription extends PageDescription {
+	public class SmartPageDescription extends PageDescription {
 
 		ContentContext ctx;
 		MenuElement page;
