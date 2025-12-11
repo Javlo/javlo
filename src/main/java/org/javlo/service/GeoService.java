@@ -360,6 +360,7 @@ public class GeoService {
 
 		IpApiBean out = ipApiCache.get(ip);
 		if (out == null) {
+			logger.info("ip found in cache : "+ip+" error? : "+(out == ERROR_IPAPIBEAN));
 			return out;
 		}
 
