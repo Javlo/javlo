@@ -74,7 +74,7 @@ import java.util.stream.Collectors;
  */
 public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxonomyContainer {
 
-	public static MenuElement NOT_FOUND_PAGE = new MenuElement();
+	public static final MenuElement NOT_FOUND_PAGE = new MenuElement();
 
 	public static final String NULL_STRING = "NS";
 
