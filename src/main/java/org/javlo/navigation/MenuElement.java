@@ -4396,7 +4396,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	}
 
 	public boolean isRealContent(ContentContext ctx) throws Exception {
-fo
+
 		if (ctx.getCurrentPage() == null || !ctx.getCurrentPage().getId().equals(getId())) {
 			ctx = new ContentContext(ctx);
 			ctx.setCurrentPageCached(this);

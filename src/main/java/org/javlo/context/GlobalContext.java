@@ -2205,8 +2205,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					log(Log.INFO, "url", "url cache initialized with '" + urlCreator.getClass().getName() + "' url created : " + localViewPages.size() + " [lgs=" + contentLanguages + "]");
 					viewPages = localViewPages;
 					urlFromFactoryImported = urlCreator;
-				} else {
-					localViewPages = viewPages;
 				}
 			}
 		}
@@ -2306,8 +2304,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			// "+DebugHelper.getCaller(10)); //TODO: remove debug trace
 			MenuElement page = MenuElement.searchChild(root, ctx, url, pastNode);
 			if (page != null && ctx.getRenderMode() == ContentContext.VIEW_MODE) {
+				logger.info("add found page in cache : "+url);
 				localViewPages.put(url, page);
 			} else if (page == null && ctx.getRenderMode() == ContentContext.VIEW_MODE) {
+				logger.info("add not found page in cache : "+url);
 				localViewPages.put(url, MenuElement.NOT_FOUND_PAGE);
 			}
 
