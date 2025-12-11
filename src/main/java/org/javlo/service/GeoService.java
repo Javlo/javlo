@@ -238,6 +238,8 @@ public class GeoService {
 
 	private static TimeMap<String, IpApiBean> ipApiCache = new TimeMap<>(60*60*24*30, 10000);
 
+	public static final IpApiBean ERROR_IPAPIBEAN = new IpApiBean();
+
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class IpApiBean {
 
@@ -351,31 +353,46 @@ public class GeoService {
 		public void setOrg(String org) { this.org = org; }
 	}
 
-	public static  IpApiBean getIpApiObject(String ip) throws Exception {
-		IpApiBean out = ipApiCache.get(ip);
-		if (out != null) {
-			return out;
-		}
+	public static IpApiBean getIpApiObject(String ip) {
 		String urlStr = "https://ipapi.co/" + ip + "/json/";
-		URL url = new URL(urlStr);
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		conn.setRequestMethod("GET");
+		HttpURLConnection conn = null;
+		try {
+			URL url = new URL(urlStr);
+			conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("GET");
+			conn.setConnectTimeout(2000);
+			conn.setReadTimeout(2000);
 
-		BufferedReader reader = new BufferedReader(
-				new InputStreamReader(conn.getInputStream())
-		);
+			int status = conn.getResponseCode();
 
-		String line;
-		StringBuilder response = new StringBuilder();
-		while ((line = reader.readLine()) != null) {
-			response.append(line);
+			if (status == 429) {
+				return ERROR_IPAPIBEAN;
+			}
+
+			if (status < 200 || status >= 300) {
+				return ERROR_IPAPIBEAN;
+			}
+
+			try (InputStream is = conn.getInputStream();
+				 BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+
+				StringBuilder response = new StringBuilder();
+				String line;
+				while ((line = reader.readLine()) != null) {
+					response.append(line);
+				}
+
+				ObjectMapper mapper = new ObjectMapper();
+				return mapper.readValue(response.toString(), IpApiBean.class);
+			}
+
+		} catch (IOException e) {
+			return null;
+		} finally {
+			if (conn != null) {
+				conn.disconnect();
+			}
 		}
-		reader.close();
-
-		ObjectMapper mapper = new ObjectMapper();
-		out = mapper.readValue(response.toString(), IpApiBean.class);
-		ipApiCache.put(ip, out);
-		return out;
 	}
 
 	public static void main(String[] args) throws Exception {
