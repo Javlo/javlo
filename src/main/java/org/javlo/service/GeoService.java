@@ -17,8 +17,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 public class GeoService {
+
+	protected static Logger logger = Logger.getLogger(GeoService.class.getName());
 
 	private static Long latestCall = System.currentTimeMillis();
 	private static final long WAIT_BETWEENN_CALL = 2 * 1000; // wait 2 sec between 2 call
@@ -354,6 +357,12 @@ public class GeoService {
 	}
 
 	public static IpApiBean getIpApiObject(String ip) {
+
+		IpApiBean out = ipApiCache.get(ip);
+		if (out == null) {
+			return out;
+		}
+
 		String urlStr = "https://ipapi.co/" + ip + "/json/";
 		HttpURLConnection conn = null;
 		try {
@@ -366,10 +375,12 @@ public class GeoService {
 			int status = conn.getResponseCode();
 
 			if (status == 429) {
+				logger.severe("error read https://ipapi.co/ : "+status);
 				return ERROR_IPAPIBEAN;
 			}
 
 			if (status < 200 || status >= 300) {
+				logger.severe("error read https://ipapi.co/ : "+status);
 				return ERROR_IPAPIBEAN;
 			}
 
@@ -383,11 +394,14 @@ public class GeoService {
 				}
 
 				ObjectMapper mapper = new ObjectMapper();
-				return mapper.readValue(response.toString(), IpApiBean.class);
+				out = mapper.readValue(response.toString(), IpApiBean.class);
+				ipApiCache.put(ip, out);
+				return out;
 			}
 
 		} catch (IOException e) {
-			return null;
+			logger.severe("error read https://ipapi.co/ : "+e.getMessage());
+			return ERROR_IPAPIBEAN;
 		} finally {
 			if (conn != null) {
 				conn.disconnect();
