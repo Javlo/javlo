@@ -1880,6 +1880,23 @@ public class NetHelper {
 		return false;
 	}
 
+	public static String getClientIp(HttpServletRequest request) {
+		String ip = request.getHeader("X-Forwarded-For");
+		if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) {
+			if (ip.contains(",")) {
+				ip = ip.split(",")[0].trim();
+			}
+			return ip;
+		}
+
+		ip = request.getHeader("X-Real-IP");
+		if (ip != null && ip.length() != 0 && !"unknown".equalsIgnoreCase(ip)) {
+			return ip;
+		}
+
+		return request.getRemoteAddr();
+	}
+
 	public static String getIp(HttpServletRequest request) {
 		String userIP = request.getHeader("x-real-ip");
 		if (StringHelper.isEmpty(userIP)) {

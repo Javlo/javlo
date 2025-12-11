@@ -545,7 +545,7 @@ public class InfoBean {
 	}
 
 	public GeoService.IpApiBean getIpApiInfo() throws Exception {
-		String ip = NetHelper.getIp(ctx.getRequest());
+		String ip = NetHelper.getClientIp(ctx.getRequest());
 		return GeoService.getIpApiObject(ip);
 	}
 
