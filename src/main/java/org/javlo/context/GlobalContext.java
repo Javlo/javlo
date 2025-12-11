@@ -3732,6 +3732,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		localContext.setRenderMode(ContentContext.PREVIEW_MODE);
 		root = content.getNavigation(ctx);
 		out.println("**** #MenuElement Preview :  " + (root.getAllChildrenList().size()));
+		out.println("**** #MenuElement instance :  " + MenuElement.INSTANCE);
 		out.println("**** #Comp bean Preview   :  " + (ContentHelper.getAllComponentsOfChildren(root).size()));
 		out.println("**** #Comp icv Preview    :  " + content.getAllContent(localContext).size());
 		out.println("****");
