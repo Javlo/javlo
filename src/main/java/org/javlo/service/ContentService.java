@@ -1110,7 +1110,12 @@ public class ContentService implements IPrintInfo {
 		out.println("****");
 		out.println("**** ContentService print info.");
 		out.println("****");
-		out.println("**** #components            = " + components.size());
+        try {
+            out.println("**** #viewNav            = " + viewNav!=null?viewNav.getAllChildrenList().size():"?");
+        } catch (Exception e) {
+			out.println("**** #viewNav  ERR       = " + e.getMessage());
+        }
+        out.println("**** #components            = " + components.size());
 		out.println("**** #viewGlobalMap         = " + viewGlobalMap.size());
 		out.println("**** #previewGlobalMap      = " + previewGlobalMap.size());
 		if (timeTravelerGlobalMap != null) {

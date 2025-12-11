@@ -1144,8 +1144,8 @@ public class ContentContext {
 				logger.info("page not found (" + getGlobalContext().getContextKey() + ") : " + getPath()+" page:"+outPage.getName());
 			}
 			if (!isFree()) {
-				logger.warning("page not free : "+getPath());
-				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+				logger.warning("page not free : "+getPath()+" uri:"+getRequest().getRequestURI());
+				//response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			}
 			return null;
 		} else {

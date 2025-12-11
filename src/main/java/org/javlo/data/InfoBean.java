@@ -32,6 +32,7 @@ import org.javlo.navigation.NavigationMapByName;
 import org.javlo.navigation.PageBean;
 import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
+import org.javlo.service.GeoService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.exception.ServiceException;
@@ -541,6 +542,11 @@ public class InfoBean {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public GeoService.IpApiBean getIpApiInfo() throws Exception {
+		String ip = NetHelper.getIp(ctx.getRequest());
+		return GeoService.getIpApiObject(ip);
 	}
 
 	public String getHomeAbsoluteURL() {

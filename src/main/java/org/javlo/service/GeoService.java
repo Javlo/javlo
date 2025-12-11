@@ -1,27 +1,21 @@
 package org.javlo.service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.util.Iterator;
-import java.util.Properties;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.javlo.context.GlobalContext;
-import org.javlo.helper.ArrayHelper;
-import org.javlo.helper.NetHelper;
-import org.javlo.helper.ResourceHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
+import org.javlo.helper.*;
+import org.javlo.utils.TimeMap;
 import org.javlo.xml.NodeXML;
 import org.javlo.xml.XMLFactory;
 import org.owasp.encoder.Encode;
+
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Iterator;
+import java.util.Properties;
 
 public class GeoService {
 
@@ -116,8 +110,6 @@ public class GeoService {
 		return value;
 	}
 	
-	
-
 	public void setCoordInExcel(File excelFile, String addressCol, String latCol, String lonCol) throws Exception {
 		InputStream in = new FileInputStream(excelFile);
 		OutputStream out = null;
@@ -241,6 +233,70 @@ public class GeoService {
 				return null;
 			}		
 		}
+	}
+
+	private static TimeMap<String, IpApiBean> ipApiCache = new TimeMap<>(60*60*24*30, 10000);
+
+	public static class IpApiBean {
+		private String ip;
+		private String country_name;
+		private String country;
+		private String region;
+		private String city;
+		private String postal;
+		private Double latitude;
+		private Double longitude;
+
+		public String getIp() { return ip; }
+		public void setIp(String ip) { this.ip = ip; }
+
+		public String getCountry_name() { return country_name; }
+		public void setCountry_name(String country_name) { this.country_name = country_name; }
+
+		public String getCountry() { return country; }
+		public void setCountry(String country) { this.country = country; }
+
+		public String getRegion() { return region; }
+		public void setRegion(String region) { this.region = region; }
+
+		public String getCity() { return city; }
+		public void setCity(String city) { this.city = city; }
+
+		public String getPostal() { return postal; }
+		public void setPostal(String postal) { this.postal = postal; }
+
+		public Double getLatitude() { return latitude; }
+		public void setLatitude(Double latitude) { this.latitude = latitude; }
+
+		public Double getLongitude() { return longitude; }
+		public void setLongitude(Double longitude) { this.longitude = longitude; }
+	}
+
+	public static  IpApiBean getIpApiObject(String ip) throws Exception {
+		IpApiBean out = ipApiCache.get(ip);
+		if (out != null) {
+			return out;
+		}
+		String urlStr = "https://ipapi.co/" + ip + "/json/";
+		URL url = new URL(urlStr);
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setRequestMethod("GET");
+
+		BufferedReader reader = new BufferedReader(
+				new InputStreamReader(conn.getInputStream())
+		);
+
+		String line;
+		StringBuilder response = new StringBuilder();
+		while ((line = reader.readLine()) != null) {
+			response.append(line);
+		}
+		reader.close();
+
+		ObjectMapper mapper = new ObjectMapper();
+		out = mapper.readValue(response.toString(), IpApiBean.class);
+		ipApiCache.put(ip, out);
+		return out;
 	}
 
 	public static void main(String[] args) throws Exception {
