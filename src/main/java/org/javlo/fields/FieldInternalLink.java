@@ -24,6 +24,7 @@ public class FieldInternalLink extends Field {
 		private String internalLink = null;
 		private String linkLabel = null;
 		private String param;
+		private String linkOn;
 
 		public String getLink() {
 			return internalLink;
@@ -51,6 +52,14 @@ public class FieldInternalLink extends Field {
 
 		public void setParam(String param) {
 			this.param = param;
+		}
+
+		public String getLinkOn() {
+			return linkOn;
+		}
+
+		public void setLinkOn(String linkOn) {
+			this.linkOn = linkOn;
 		}
 
 	}
@@ -91,7 +100,18 @@ public class FieldInternalLink extends Field {
 		if (!StringHelper.isEmpty(getCurrentLink())) {
 			String url = createLink(ctx);
 			bean.setLink(url);
-		}
+            try {
+                MenuElement page = ctx.getCurrentPage().getRoot().searchChildFromName(getCurrentLink());
+				if (page.isRealContent(ctx)) {
+					bean.setLinkOn(url);
+				} else {
+					bean.setLinkOn(page.getLinkOn(ctx));
+				}
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+        }
 		bean.setParam(getCurrentParam());
 		return bean;
 	}
