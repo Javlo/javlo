@@ -137,7 +137,7 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println(" >>>> StringHelper.removeSpecialChars(label) " + StringHelper.removeSpecialChars("été"));
+		System.out.println(" >>>> StringHelper.createASCIIString(label) " + StringHelper.createASCIIString("été"));
 	}
 
 }
