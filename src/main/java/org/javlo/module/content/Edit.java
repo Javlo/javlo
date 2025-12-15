@@ -350,6 +350,10 @@ public class Edit extends AbstractModuleAction {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		IUserFactory adminUserFactory = AdminUserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 
+		if (!AdminUserSecurity.getInstance().canRole(ctx.getCurrentUser(), AdminUserSecurity.CONTRIBUTOR_ROLE)) {
+			return false;
+		}
+
 		if (currentPage != null && currentPage.isBlocked()) {
 			if (!currentPage.getBlocker().equals(adminUserFactory.getCurrentUser(globalContext, ctx.getRequest().getSession()).getName())) {
 				return false;
@@ -658,6 +662,12 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static final String performInsert(HttpServletRequest request, HttpServletResponse response, RequestService rs, ContentService contentService, GlobalContext globalContext, HttpSession session, EditContext editContext, ContentContext ctx, ContentService content, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
+
+		if (!AdminUserSecurity.getInstance().canRole(ctx.getCurrentUser(), AdminUserSecurity.CONTENT_ROLE)) {
+			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
+			return i18nAccess.getText("action.block");
+		}
+
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
 			return i18nAccess.getText("action.block");
@@ -1773,6 +1783,15 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performMovePage(RequestService rs, ContentContext ctx, GlobalContext globalContext, ContentService content, I18nAccess i18nAccess, MessageRepository messageRepository) throws Exception {
+		
+		if (ctx.getCurrentUser() == null) {
+			throw new SecurityException();
+		}
+
+		if (!AdminUserSecurity.getInstance().canRole(ctx.getCurrentUser(), AdminUserSecurity.NAVIGATION_ROLE)) {
+			return "no suffisant right for move page";
+		}
+		
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
 			return null;
@@ -1828,6 +1847,11 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performCopyPage(RequestService rs, ContentContext ctx, EditContext editCtx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+
+		if (!AdminUserSecurity.getInstance().canRole(ctx.getCurrentUser(), AdminUserSecurity.CONTENT_ROLE)) {
+			return "no suffisant right for copy page";
+		}
+
 		editCtx.setPathForCopy(ctx);
 		messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("edit.message.copy-page", new String[][] { { "name", ctx.getCurrentPage().getName() } }), GenericMessage.INFO), false);
 		prepareUpdateInsertLine(ctx);
@@ -1837,6 +1861,10 @@ public class Edit extends AbstractModuleAction {
 	public static String performDuplicate(RequestService rs, ContentContext ctx, EditContext editCtx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		IContentVisualComponent comp = content.getComponent(ctx, rs.getParameter("id"));
+
+		if (!AdminUserSecurity.getInstance().canRole(ctx.getCurrentUser(), AdminUserSecurity.CONTENT_ROLE)) {
+			return "no suffisant right for duplicate page";
+		}
 
 		MenuElement targetPage = NavigationHelper.searchPage(ctx, rs.getParameter("pageCompID"));
 		if (targetPage == null) {
@@ -1889,6 +1917,11 @@ public class Edit extends AbstractModuleAction {
 
 	public static String performPastePage(RequestService rs, ContentContext ctx, GlobalContext globalContext, EditContext editCtx, ContentService content, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String msg = null;
+
+		if (!AdminUserSecurity.getInstance().canRole(ctx.getCurrentUser(), AdminUserSecurity.CONTENT_ROLE)) {
+			return "no suffisant right for paste page";
+		}
+
 
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
@@ -2003,6 +2036,10 @@ public class Edit extends AbstractModuleAction {
 
 	public static String performPasteComp(RequestService rs, ContentContext ctx, ContentService content, EditContext editContext, ClipBoard clipboard, Module currentModule, PersistenceService persistenceService, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 
+		if (!AdminUserSecurity.getInstance().canRole(ctx.getCurrentUser(), AdminUserSecurity.CONTENT_ROLE)) {
+			return "no suffisant right for paste comp page";
+		}
+
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
 			return null;
@@ -2049,6 +2086,10 @@ public class Edit extends AbstractModuleAction {
 
 	public static String performPasteCompAsPage(RequestService rs, ContentContext ctx, ContentService content, EditContext editContext, ClipBoard clipboard, Module currentModule, PersistenceService persistenceService, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 
+		if (!AdminUserSecurity.getInstance().canRole(ctx.getCurrentUser(), AdminUserSecurity.CONTENT_ROLE)) {
+			return "no suffisant right for paste comp as page";
+		}
+
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
 			return null;
@@ -2090,6 +2131,10 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performMoveComponent(RequestService rs, ContentContext ctx, ContentService content, ClipBoard clipboard, Module currentModule, PersistenceService persistenceService, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+
+		if (!AdminUserSecurity.getInstance().canRole(ctx.getCurrentUser(), AdminUserSecurity.CONTENT_ROLE)) {
+			return "no suffisant right for move component";
+		}
 
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR), false);
@@ -2220,6 +2265,10 @@ public class Edit extends AbstractModuleAction {
 
 	public static String performInsertPage(RequestService rs, ContentContext ctx, MessageRepository messageRepository, ContentService content, EditContext editContext, PersistenceService persistenceService, I18nAccess i18nAccess) throws Exception {
 
+		if (!AdminUserSecurity.getInstance().canRole(ctx.getCurrentUser(), AdminUserSecurity.NAVIGATION_ROLE)) {
+			return "no suffisant right for move component";
+		}
+
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
 			return null;
@@ -2271,6 +2320,10 @@ public class Edit extends AbstractModuleAction {
 	}
 
 	public static String performInsertShared(RequestService rs, ContentContext ctx, GlobalContext globalContext, EditContext editContext, ContentService content, SharedContentService sharedContentService, Module currentModule, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+
+		if (!AdminUserSecurity.getInstance().canRole(ctx.getCurrentUser(), AdminUserSecurity.CONTENT_ROLE)) {
+			return "no suffisant right for insert shared";
+		}
 
 		if (!canModifyCurrentPage(ctx) || !checkPageSecurity(ctx)) {
 			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getText("action.block"), GenericMessage.ERROR));
