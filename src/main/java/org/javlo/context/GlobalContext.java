@@ -2286,15 +2286,19 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				keyURL = urlCreator.createURLKey(urlRef);
 			}
 
-			MenuElement page = localViewPages.get(keyURL);
-			if (page != null) {
-				if (page == MenuElement.NOT_FOUND_PAGE) {
-					logger.fine("page not found : "+keyURL +"  (uri:"+ctx.getRequest().getRequestURI()+")");
-					log(Log.SEVERE, "url", "page not found keyURL='" + keyURL + "' url='" + url + "' #localViewPages=" + localViewPages.size());
-					return null;
-				} else {
-					return page;
+			if (localViewPages != null) {
+				MenuElement page = localViewPages.get(keyURL);
+				if (page != null) {
+					if (page == MenuElement.NOT_FOUND_PAGE) {
+						logger.fine("page not found : " + keyURL + "  (uri:" + ctx.getRequest().getRequestURI() + ")");
+						log(Log.SEVERE, "url", "page not found keyURL='" + keyURL + "' url='" + url + "' #localViewPages=" + localViewPages.size());
+						return null;
+					} else {
+						return page;
+					}
 				}
+			} else {
+				return null;
 			}
 		}
 		MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);
