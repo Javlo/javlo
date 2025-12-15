@@ -105,7 +105,7 @@ public class TitleAndSectionURLCreator extends AbstractURLFactory {
 			}
 		}
 
-		return url;
+		return StringHelper.createASCIIString(url);
 	}
 
 	@Override

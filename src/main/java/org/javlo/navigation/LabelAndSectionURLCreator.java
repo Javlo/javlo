@@ -114,7 +114,7 @@ public class LabelAndSectionURLCreator extends AbstractURLFactory {
 			url = URLHelper.mergePath(url, currentPage.getId());
 		}
 		
-		return StringHelper.createASCIIString(url);
+		return url;
 	}
 	
 	protected String getExtension(ContentContext ctx) {
