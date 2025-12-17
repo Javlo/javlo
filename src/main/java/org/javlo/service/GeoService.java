@@ -499,6 +499,9 @@ public class GeoService {
 				out = (IpInfoBean)ipApiCache.get(ip);
 				if (out == null) {
 					out = fetchIpInfo(ip);
+					if (out != null) {
+						logger.info("add ip in cache : "+ip+" country:"+out.getCountryCode());
+					}
 					ipApiCache.put(ip, out);
 				}
 			}
