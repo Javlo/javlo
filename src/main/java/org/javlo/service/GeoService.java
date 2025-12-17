@@ -360,6 +360,7 @@ public class GeoService {
 			return bean;
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			// In case of error, return null or throw a custom exception
 			return null;
 		}
