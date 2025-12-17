@@ -101,13 +101,18 @@ public class FieldInternalLink extends Field {
 			String url = createLink(ctx);
 			bean.setLink(url);
             try {
-                MenuElement page = ctx.getCurrentPage().getRoot().searchChildFromName(getCurrentLink());
-				if (page.isRealContent(ctx)) {
-					bean.setLinkOn(url);
-				} else {
-					bean.setLinkOn(page.getLinkOn(ctx));
+				if (ctx.getCurrentPage() != null) {
+					MenuElement page = ctx.getCurrentPage().getRoot().searchChildFromName(getCurrentLink());
+					if (page != null) {
+						if (page.isRealContent(ctx)) {
+							bean.setLinkOn(url);
+						} else {
+							bean.setLinkOn(page.getLinkOn(ctx));
+						}
+					}
 				}
             } catch (Exception e) {
+				e.printStackTrace();
                 throw new RuntimeException(e);
             }
 
