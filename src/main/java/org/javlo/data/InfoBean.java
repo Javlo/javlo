@@ -544,9 +544,9 @@ public class InfoBean {
 		}
 	}
 
-	public GeoService.IpApiBean getIpApiInfo() throws Exception {
+	public GeoService.IpInfoBean getIpApiInfo() throws Exception {
 		String ip = NetHelper.getClientIp(ctx.getRequest());
-		return GeoService.getIpApiObject(ip);
+		return GeoService.getIpInfoBean(ip);
 	}
 
 	public String getHomeAbsoluteURL() {

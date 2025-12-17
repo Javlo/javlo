@@ -1,6 +1,7 @@
 package org.javlo.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -14,7 +15,11 @@ import org.owasp.encoder.Encode;
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -239,12 +244,142 @@ public class GeoService {
 		}
 	}
 
-	private static TimeMap<String, IpApiBean> ipApiCache = new TimeMap<>(60*60*24*30, 10000);
+	private static final TimeMap<String, Object> ipApiCache = new TimeMap<>(60*60*24*30, 10000);
 
 	public static final IpApiBean ERROR_IPAPIBEAN = new IpApiBean();
 
+	public static class IpInfoBean {
+		private String ip;
+		private String country;
+		private String region;
+		private String city;
+		private String countryCode;
+		private Double latitude;
+		private Double longitude;
+		private String languages;
+
+		public String getIp() {
+			return ip;
+		}
+
+		public void setIp(String ip) {
+			this.ip = ip;
+		}
+
+		public String getCountry() {
+			return country;
+		}
+
+		public void setCountry(String country) {
+			this.country = country;
+		}
+
+		public String getRegion() {
+			return region;
+		}
+
+		public void setRegion(String region) {
+			this.region = region;
+		}
+
+		public String getCity() {
+			return city;
+		}
+
+		public void setCity(String city) {
+			this.city = city;
+		}
+
+		public String getCountryCode() {
+			return countryCode;
+		}
+
+		public void setCountryCode(String countryCode) {
+			this.countryCode = countryCode;
+		}
+
+		public Double getLatitude() {
+			return latitude;
+		}
+
+		public void setLatitude(Double latitude) {
+			this.latitude = latitude;
+		}
+
+		public Double getLongitude() {
+			return longitude;
+		}
+
+		public void setLongitude(Double longitude) {
+			this.longitude = longitude;
+		}
+
+		public String getLanguages() {
+			return languages;
+		}
+
+		public void setLanguages(String languages) {
+			this.languages = languages;
+		}
+	}
+
+	public static IpInfoBean fetchIpInfo(String ip) {
+		try {
+			String url = (ip == null || ip.isBlank())
+					? "https://ipapi.co/json/"
+					: "https://ipapi.co/" + ip + "/json/";
+
+			HttpClient client = HttpClient.newHttpClient();
+
+			HttpRequest request = HttpRequest.newBuilder()
+					.uri(URI.create(url))
+					.GET()
+					.header("Accept", "application/json")
+					.build();
+
+			HttpResponse<String> response = client.send(
+					request,
+					HttpResponse.BodyHandlers.ofString()
+			);
+
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode json = mapper.readTree(response.body());
+
+			IpInfoBean bean = new IpInfoBean();
+
+			// Map JSON fields to bean
+			bean.setIp(json.path("ip").asText(null));
+			bean.setCountry(json.path("country_name").asText(null));
+			bean.setCountryCode(json.path("country_code").asText(null));
+			bean.setRegion(json.path("region").asText(null));
+			bean.setCity(json.path("city").asText(null));
+			bean.setLatitude(json.path("latitude").asDouble());
+			bean.setLongitude(json.path("longitude").asDouble());
+			bean.setLanguages(json.path("languages").asText(null));
+
+			return bean;
+
+		} catch (Exception e) {
+			// In case of error, return null or throw a custom exception
+			return null;
+		}
+	}
+
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class IpApiBean {
+
+		public IpInfoBean getIpInfoBean() {
+			IpInfoBean out = new IpInfoBean();
+			out.setIp(getIp());
+			out.setCountry(getCountry());
+			out.setRegion(getRegion());
+			out.setCity(getCity());
+			out.setCountryCode(getCountry_code());
+			out.setLatitude(getLatitude());
+			out.setLongitude(getLongitude());
+			out.setLanguages(getLanguages());
+			return out;
+		}
 
 		private String ip;
 		private String network;
@@ -356,9 +491,23 @@ public class GeoService {
 		public void setOrg(String org) { this.org = org; }
 	}
 
-	public static IpApiBean getIpApiObject(String ip) {
+	public static IpInfoBean getIpInfoBean(String ip) {
+		IpInfoBean out = (IpInfoBean)ipApiCache.get(ip);
+		if (out == null) {
+			synchronized (ipApiCache) {
+				out = (IpInfoBean)ipApiCache.get(ip);
+				if (out == null) {
+					out = fetchIpInfo(ip);
+					ipApiCache.put(ip, out);
+				}
+			}
+		}
+		return out;
+	}
 
-		IpApiBean out = ipApiCache.get(ip);
+	private static IpApiBean getIpApiObject(String ip) {
+
+		IpApiBean out = (IpApiBean)ipApiCache.get(ip);
 		if (out == null) {
 			logger.info("ip found in cache : "+ip+" error? : "+(out == ERROR_IPAPIBEAN));
 			return out;
@@ -411,12 +560,7 @@ public class GeoService {
 	}
 
 	public static void main(String[] args) throws Exception {
-		GeoService geoService = GeoService.getInstance(null);
-		//System.out.println(geoService.getCoord("Rue de la cayenne 49 1360 Perwez Belgique"));
-		File excel = new File("C:\\work\\html\\leaflet\\data\\croix_rouge.xlsx");
-		geoService.setCoordInExcel(excel, "Adresse complète", "lat", "lon");
-		
-		
+		System.out.println("GeoService geoService = "+GeoService.getIpInfoBean("216.24.219.190").getCountryCode());
 	}
 
 }
