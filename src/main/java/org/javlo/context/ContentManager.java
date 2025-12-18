@@ -30,6 +30,22 @@ public class ContentManager {
 	public static String getContentLanguage(ContentContext ctx) {
 		String lg = getLanguage(ctx.getRequest(), 1);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+
+		if (globalContext.getSpecialConfig().isSwitchCountry()) {
+			if (!globalContext.getLanguages().contains(lg)) {
+				String lgClient = ctx.getRequest().getLocale().getLanguage();
+				String ip = NetHelper.getClientIp(ctx.getRequest());
+				String country = GeoService.getIpInfoBean(ip).getCountryCode();
+				for (String lgChoice : globalContext.getContentLanguages()) {
+					if (lgChoice.equalsIgnoreCase(lgClient + '-' + country)) {
+						lg = lgChoice;
+						break;
+					}
+				}
+				logger.info("switch content language to : "+lg);
+			}
+		}
+
 		if (!globalContext.getContentLanguages().contains(lg) && lg != null) {
 			lg = globalContext.getDefaultLanguages().iterator().next();
 			if (lg.trim().length() == 0) {
@@ -116,12 +132,12 @@ public class ContentManager {
 		}
 
 		if (!globalContext.getLanguages().contains(lg)) {
-
 			lg = globalContext.getDefaultLanguages().iterator().next();
 			if (lg.trim().length() == 0) {
 				lg = globalContext.getLanguages().iterator().next();
 			}
 		}
+
 		return lg;
 	}
 
