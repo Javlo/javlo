@@ -363,7 +363,7 @@ public class ContentContext {
 		return ctx;
 	}
 
-	private static void init(ContentContext ctx, HttpServletRequest request, HttpServletResponse response) {
+	private static void init(ContentContext ctx, boolean free, HttpServletRequest request, HttpServletResponse response) {
 		try {
 			ctx.ajax = ContentManager.isAjax(request);
 			ctx.setRequest(request);
@@ -395,7 +395,7 @@ public class ContentContext {
 				ctx.setParentURL(requestService.getParameter("parentURL", null));
 			}
 
-			/*if (!ctx.isEdit() && !ctx.isAjax()) {
+			if (!free && !ctx.isEdit() && !ctx.isAjax()) {
 				EditContext editContext = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
 				if (!ctx.isPreview() || !editContext.isPreviewEditionMode()) {
 					try {
@@ -421,7 +421,7 @@ public class ContentContext {
 						e.printStackTrace();
 					}
 				}
-			}*/
+			}
 
 			if (ctx.getDevice() == null) {
 				ctx.setDevice(Device.getDevice(ctx));
