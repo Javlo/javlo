@@ -2,6 +2,7 @@ package org.javlo.context;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.javlo.config.StaticConfig;
+import org.javlo.helper.DebugHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.service.GeoService;
@@ -110,6 +111,11 @@ public class ContentManager {
 
 	public static String getLanguage(ContentContext ctx) {
 		String lg = getLanguage(ctx.getRequest(), 0);
+
+		if (lg.length() > 5) {
+			DebugHelper.getCaller(20);
+		}
+
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 		System.out.println((">>> lg = "+lg));
