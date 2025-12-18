@@ -2001,6 +2001,20 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return getLocalLanguages();
 	}
 
+	public Map<String, List<String>> getLanguagesByCountry() {
+		Map<String, List<String>> out = new HashMap<>();
+		for (String lg : getContentLanguages()) {
+			// Check format like "fr_BE"
+			if (lg != null && lg.length() == 5) {
+				String country = lg.substring(3, 5);
+				out.putIfAbsent(country.toLowerCase(), new LinkedList<>())
+						.add(lg); // Add language to the correct list
+			}
+		}
+		return out;
+	}
+
+
 	public List<Locale> getLanguagesLocal() {
 		List<Locale> out = new LinkedList<>();
 		for (String lg : getLanguages()) {

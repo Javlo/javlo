@@ -2,8 +2,10 @@ package org.javlo.context;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.javlo.config.StaticConfig;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.service.GeoService;
 import org.javlo.service.RequestService;
 
 import java.io.UnsupportedEncodingException;
@@ -97,7 +99,23 @@ public class ContentManager {
 	public static String getLanguage(ContentContext ctx) {
 		String lg = getLanguage(ctx.getRequest(), 0);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+
+		if (globalContext.getSpecialConfig().isSwitchCountry()) {
+			if (!globalContext.getLanguages().contains(lg)) {
+				String lgClient = ctx.getRequest().getLocale().getLanguage();
+				String ip = NetHelper.getClientIp(ctx.getRequest());
+				String country = GeoService.getIpInfoBean(ip).getCountryCode();
+				for (String lgChoice : globalContext.getContentLanguages()) {
+					if (lgChoice.equalsIgnoreCase(lgClient + '-' + country)) {
+						lg = lgChoice;
+						break;
+					}
+				}
+			}
+		}
+
 		if (!globalContext.getLanguages().contains(lg)) {
+
 			lg = globalContext.getDefaultLanguages().iterator().next();
 			if (lg.trim().length() == 0) {
 				lg = globalContext.getLanguages().iterator().next();

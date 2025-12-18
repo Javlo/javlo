@@ -18,6 +18,11 @@ public class SpecialConfigBean {
 
 	private Boolean trackingAccess = null;
 
+	private Boolean switchCountry = null;
+	private Boolean prod = null;
+
+	private Boolean autoImportSameLanguage = null;
+
 	public SpecialConfigBean(Map config, StaticConfig staticConfig) {
 		this.config = config;
 		this.staticConfig = staticConfig;
@@ -32,11 +37,12 @@ public class SpecialConfigBean {
 	}
 
 	public Boolean isProd() {
-		if (config.get("prod") == null) {
-			return null;
-		} else {
-			return StringHelper.isTrue(config.get("prod"));
+
+		if (prod == null) {
+			this.prod = StringHelper.isTrue(config.get("prod"), false);
 		}
+
+		return prod;
 	}
 
 	public boolean isMinify() {
@@ -171,7 +177,10 @@ public class SpecialConfigBean {
 	}
 
 	public boolean isAutoImportSameLanguage() {
-		return StringHelper.isTrue(config.get("i18n.import.same.lang"), true);
+		if (autoImportSameLanguage == null) {
+			autoImportSameLanguage = StringHelper.isTrue(config.get("i18n.import.same.lang"), true);
+		}
+		return autoImportSameLanguage;
 	}
 	
 	public String getGoogleRecaptchaPrivateKey() {
@@ -201,6 +210,13 @@ public class SpecialConfigBean {
 
 	public boolean isMsgOnForward() {
 		return StringHelper.isTrue(config.get("no-content.msg-on-forward"), true);
+	}
+
+	public boolean isSwitchCountry() {
+		if (switchCountry != null) {
+			switchCountry = StringHelper.isTrue(config.get("switch.country"), false);
+		}
+		return switchCountry;
 	}
 	
 }
