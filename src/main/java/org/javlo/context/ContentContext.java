@@ -167,7 +167,7 @@ public class ContentContext {
 		ContentContext ctx = new ContentContext();
 		ctx.pageManagement = pageManagement;
 		ctx.setFree(free);
-		init(ctx, request, response);
+		init(ctx, free, request, response);
 		ctx.storeInRequest(request);
 		// count request by session
 		if (request.getAttribute(COUNT_REQUEST_BY_SESSION_KEY) == null) {
