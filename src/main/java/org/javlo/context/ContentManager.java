@@ -4,15 +4,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.javlo.config.StaticConfig;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
-import org.javlo.i18n.I18nAccess;
 import org.javlo.service.GeoService;
 import org.javlo.service.RequestService;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -116,6 +112,8 @@ public class ContentManager {
 		String lg = getLanguage(ctx.getRequest(), 0);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
+		System.out.println((">>> lg = "+lg));
+
 		if (globalContext.getSpecialConfig().isSwitchCountry()) {
 			if (!globalContext.getLanguages().contains(lg)) {
 				String lgClient = ctx.getRequest().getLocale().getLanguage();
@@ -174,69 +172,6 @@ public class ContentManager {
 		}
 	}
 
-	public static String getLanguageFromRequest(HttpServletRequest request) {
-		String lg = getLanguage(request, 0);
-		GlobalContext globalContext = GlobalContext.getInstance(request);
-		if (!globalContext.getLanguages().contains(lg)) {
-			lg = globalContext.getDefaultLanguages().iterator().next();
-			if (lg.trim().length() == 0) {
-				lg = globalContext.getLanguages().iterator().next();
-			}
-		} else {
-			try {
-				I18nAccess.getInstance(globalContext, request.getSession());
-			} catch (Exception e) {
-				logger.log(Level.INFO, "impossible to change view language in I18NAccess", e);
-			}
-		}
-		return lg;
-	}
-
-	/**
-	 * @deprecated use RequestService
-	 * @param request
-	 * @param paramName
-	 * @param defaultValue
-	 * @return
-	 */
-	@Deprecated
-	public static String getParameterValue(HttpServletRequest request, String paramName, String defaultValue) {
-
-		RequestService service = RequestService.getInstance(request);
-		return service.getParameter(paramName, defaultValue);
-
-	}
-
-	public static String getPathFromUri(ContentContext ctx, String uri) {
-		String contextPath = ctx.getRequest().getContextPath();
-		try {
-			uri = URLDecoder.decode(uri, ContentContext.CHARACTER_ENCODING);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-			uri = URLDecoder.decode(uri);
-		}
-		if (contextPath.length() > 0) {
-			uri = uri.substring(contextPath.length());
-		}
-		String path = null;
-		if (uri != null) {
-			String[] splitedPath = StringHelper.split(uri, "/");
-			int splitedPathMinSize = 3;
-			path = "";
-			for (int i = splitedPathMinSize; i < splitedPath.length; i++) {
-				path = path + '/' + splitedPath[i];
-			}
-		}
-		if (path == null || path.trim().length() == 0) {
-			path = "/";
-		}
-		// remove extension if exist (.html)
-		if (path.indexOf('.') >= 0) {
-			path = path.substring(0, path.lastIndexOf('.'));
-		}
-		return path;
-	}
-
 	public static String getPath(HttpServletRequest request) {
 		String path = null;
 		String realPath = RequestService.getURI(request);
@@ -287,23 +222,6 @@ public class ContentManager {
 			}
 		}
 		return res;
-	}
-
-	public static String getPathElement(String path, int depth) {
-		String res = "";
-		String[] splitPath = splitPath(path);
-		if (depth > splitPath.length) {
-			res = splitPath[depth];
-		}
-		return res;
-	}
-
-	public static boolean getRewrite(HttpServletRequest request) {
-		boolean rewrite = false;
-		/*
-		 * if (URLHelper.getPathPrefix(request).length() == 0) { rewrite = true; }
-		 */
-		return rewrite;
 	}
 
 	public static boolean isAdmin(String path) {
