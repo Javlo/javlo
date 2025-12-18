@@ -111,6 +111,7 @@ public class ContentManager {
 						break;
 					}
 				}
+				logger.info("switch language to : "+lg);
 			}
 		}
 
