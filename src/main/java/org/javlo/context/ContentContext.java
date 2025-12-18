@@ -837,7 +837,7 @@ public class ContentContext {
 			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
 			Collection<String> lgs = globalContext.getDefaultLanguages();
 			for (String lg : lgs) {
-				if (!getLanguage().equals(lg)) {
+				if (getLanguage() != null && !getLanguage().equals(lg)) {
 					ContentContext lgCtx = new ContentContext(this);
 					lgCtx.setAllLanguage(lg);
 					if (lgCtx.getLocale().getLanguage().equals(getLocale().getLanguage())) {
