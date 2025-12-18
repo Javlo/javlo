@@ -32,7 +32,7 @@ public class ContentManager {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
 		if (globalContext.getSpecialConfig().isSwitchCountry()) {
-			if (!globalContext.getLanguages().contains(lg)) {
+			if (!globalContext.getContentLanguages().contains(lg)) {
 				String lgClient = ctx.getRequest().getLocale().getLanguage();
 				String ip = NetHelper.getClientIp(ctx.getRequest());
 				String country = GeoService.getIpInfoBean(ip).getCountryCode();
@@ -121,7 +121,7 @@ public class ContentManager {
 				String lgClient = ctx.getRequest().getLocale().getLanguage();
 				String ip = NetHelper.getClientIp(ctx.getRequest());
 				String country = GeoService.getIpInfoBean(ip).getCountryCode();
-				for (String lgChoice : globalContext.getContentLanguages()) {
+				for (String lgChoice : globalContext.getLanguages()) {
 					if (lgChoice.equalsIgnoreCase(lgClient + '-' + country)) {
 						lg = lgChoice;
 						break;
