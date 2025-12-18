@@ -213,7 +213,7 @@ public class SpecialConfigBean {
 	}
 
 	public boolean isSwitchCountry() {
-		if (switchCountry != null) {
+		if (switchCountry == null) {
 			switchCountry = StringHelper.isTrue(config.get("switch.country"), false);
 		}
 		return switchCountry;
