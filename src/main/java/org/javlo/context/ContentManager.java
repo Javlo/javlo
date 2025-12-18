@@ -113,7 +113,7 @@ public class ContentManager {
 		String lg = getLanguage(ctx.getRequest(), 0);
 
 		if (lg.length() > 5) {
-			DebugHelper.getCaller(20);
+			System.out.println("BAD LG : "+DebugHelper.getCaller(20));
 		}
 
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
