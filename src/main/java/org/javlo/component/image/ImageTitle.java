@@ -3,17 +3,17 @@
  */
 package org.javlo.component.image;
 
+import org.javlo.config.StaticConfig;
+import org.javlo.context.ContentContext;
+import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
+import org.javlo.i18n.I18nAccess;
+import org.javlo.service.RequestService;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringReader;
-
-import org.javlo.config.StaticConfig;
-import org.javlo.context.ContentContext;
-import org.javlo.context.ContentManager;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.URLHelper;
-import org.javlo.i18n.I18nAccess;
 
 
 /**
@@ -145,7 +145,8 @@ public class ImageTitle extends Image {
 
 	@Override
 	public String performEdit(ContentContext ctx) throws Exception {
-		String subTitle = ContentManager.getParameterValue(ctx.getRequest(), getSubTitleXHTMLInputName(), null);
+		RequestService rs = RequestService.getInstance(ctx.getRequest());
+		String subTitle = rs.getParameter(getSubTitleXHTMLInputName(), null);
 		if (subTitle != null) {
 			if ((!subTitle.equals(getSubTitle()))) {
 				setSubTitle(subTitle);
