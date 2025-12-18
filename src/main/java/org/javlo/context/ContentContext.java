@@ -394,33 +394,9 @@ public class ContentContext {
 			if (requestService.getParameter("parentURL", null) != null) {
 				ctx.setParentURL(requestService.getParameter("parentURL", null));
 			}
-			String lg = ContentManager.getLanguage(ctx);
-			ctx.setLanguage(lg);
-			String contentLg = ContentManager.getContentLanguage(ctx);
-			ctx.setCountry(ContentManager.getContentCountry(ctx));
-
-			// TODO : optimise this with option in global context
-
-			GlobalContext globalContext = ctx.getGlobalContext();
-
-			if (contentLg == null) {
-				contentLg = lg;
-				ctx.setContentLanguage(contentLg);
-			} else {
-				if (ctx.renderMode != EDIT_MODE && ctx.renderMode != PREVIEW_MODE) {
-					if (globalContext.isAutoSwitchToDefaultLanguage()) {
-						ctx.setRequestContentLanguage(contentLg);
-						ctx.setContentLanguage(lg);
-					} else {
-						ctx.setContentLanguage(contentLg);
-					}
-				} else {
-					ctx.setContentLanguage(contentLg);
-				}
-			}
 
 			if (!ctx.isEdit() && !ctx.isAjax()) {
-				EditContext editContext = EditContext.getInstance(globalContext, ctx.getRequest().getSession());
+				EditContext editContext = EditContext.getInstance(ctx.getGlobalContext(), ctx.getRequest().getSession());
 				if (!ctx.isPreview() || !editContext.isPreviewEditionMode()) {
 					try {
 						MenuElement page = ctx.getCurrentPage(true);
@@ -453,8 +429,8 @@ public class ContentContext {
 			StaticConfig config = StaticConfig.getInstance(request.getSession());
 			ctx.viewPrefix = config.isViewPrefix();
 
-			ctx.urlFactory = globalContext.getURLFactory();
-			ctx.dmzServerInter = globalContext.getDMZServerInter();
+			ctx.urlFactory = ctx.getGlobalContext().getURLFactory();
+			ctx.dmzServerInter = ctx.getGlobalContext().getDMZServerInter();
 			if (requestService.getParameter(FORCE_ABSOLUTE_URL) != null) {
 				ctx.setAbsoluteURL(StringHelper.isTrue(requestService.getParameter(FORCE_ABSOLUTE_URL)));
 			}
@@ -465,13 +441,39 @@ public class ContentContext {
 				ctx.clearSession = true;
 			}
 			if (requestService.getParameter(FORCE_SPECIAL_RENDERER) != null) {
-				IUserFactory fact = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
-				if (AdminUserSecurity.getInstance().isAdmin(fact.getCurrentUser(globalContext, request.getSession()))) {
+				IUserFactory fact = UserFactory.createUserFactory(ctx.getGlobalContext(), ctx.getRequest().getSession());
+				if (AdminUserSecurity.getInstance().isAdmin(fact.getCurrentUser(ctx.getGlobalContext(), request.getSession()))) {
 					ctx.setSpecialContentRenderer(requestService.getParameter(FORCE_SPECIAL_RENDERER));
 				}
 			}
 		} catch (RuntimeException e) {
 			e.printStackTrace();
+		}
+	}
+
+	private void initLanguage() {
+		String lg = ContentManager.getLanguage(this);
+		this.setLanguage(lg);
+		String contentLg = ContentManager.getContentLanguage(this);
+		this.setCountry(ContentManager.getContentCountry(this));
+
+		// TODO : optimise this with option in global context
+		GlobalContext globalContext = this.getGlobalContext();
+
+		if (contentLg == null) {
+			contentLg = lg;
+			this.setContentLanguage(contentLg);
+		} else {
+			if (this.renderMode != EDIT_MODE && this.renderMode != PREVIEW_MODE) {
+				if (globalContext.isAutoSwitchToDefaultLanguage()) {
+					this.setRequestContentLanguage(contentLg);
+					this.setContentLanguage(lg);
+				} else {
+					this.setContentLanguage(contentLg);
+				}
+			} else {
+				this.setContentLanguage(contentLg);
+			}
 		}
 	}
 
@@ -661,6 +663,9 @@ public class ContentContext {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		if (contentLanguage == null) {
+			initLanguage();
 		}
 		return contentLanguage;
 	}
@@ -1270,6 +1275,9 @@ public class ContentContext {
 	 * @return
 	 */
 	public String getLanguage() {
+		if (language == null) {
+			initLanguage();
+		}
 		return language;
 	}
 
