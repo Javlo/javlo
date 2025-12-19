@@ -1,11 +1,12 @@
 package org.javlo.context;
 
+import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.PageBean;
 import org.javlo.rendering.Device;
+import org.javlo.service.ContentService;
 
 public class ContentContextBean {
 
-	private PageBean currentPage;
 	private String pageId;
 	private String path;
 	private int renderMode;
@@ -15,8 +16,10 @@ public class ContentContextBean {
 	private String contentLanguage;
 	private String contextKey;
 	
-	public ContentContextBean(ContentContext ctx) throws Exception {
-		currentPage=ctx.getCurrentPage().getPageBean(ctx);		
+	public ContentContextBean(ContentContext ctx, boolean page) throws Exception {
+		if (page && ctx.getCurrentPage() != null) {
+			pageId = ctx.getCurrentPage().getId();
+		}
 		path=ctx.getPath();
 		area=ctx.getArea();
 		device=ctx.getDevice();
@@ -38,15 +41,15 @@ public class ContentContextBean {
 		return outCtx;
 	}
 
-	public PageBean getCurrentPage() {
-		return currentPage;
+	public PageBean getCurrentPage(ContentContext ctx) {
+		if (pageId != null) {
+			MenuElement page = ContentService.getInstance(ctx.getGlobalContext()).getNavigation(ctx).searchChildFromId(pageId);
+			if (page != null) {
+				return new PageBean(ctx, page);
+			}
+		}
+		return null;
 	}
-
-	public void setCurrentPage(PageBean currentPage) {
-		this.currentPage = currentPage;
-	}
-
-
 
 	public String getPageId() {
 		return pageId;

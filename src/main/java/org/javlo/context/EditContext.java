@@ -282,7 +282,7 @@ public class EditContext implements Serializable {
 			contextForCopy = null;
 		} else {
 			ClipBoard.getInstance(ctx.getRequest()).clear();
-			contextForCopy = new ContentContextBean(ctx);
+			contextForCopy = new ContentContextBean(ctx, true);
 		}
 	}
 

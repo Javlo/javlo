@@ -2531,7 +2531,16 @@ public class ContentContext {
 
 	public ContentContextBean getBean() {
 		try {
-			return new ContentContextBean(this);
+			return new ContentContextBean(this, false);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public ContentContextBean getFreeBean() {
+		try {
+			return new ContentContextBean(this, false);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

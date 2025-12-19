@@ -121,12 +121,20 @@ public class ContentManager {
 		System.out.println((">>> lg = "+lg));
 
 		if (globalContext.getSpecialConfig().isSwitchCountry()) {
+
+			System.out.println((">>> SWITCH = "+lg));
+
 			if (!globalContext.getLanguages().contains(lg)) {
+
+				System.out.println((">>> NOT FOUND = "+lg));
+
 				String lgClient = ctx.getRequest().getLocale().getLanguage();
 				String ip = NetHelper.getClientIp(ctx.getRequest());
 				String country = GeoService.getIpInfoBean(ip).getCountryCode();
+				String clientCode = lgClient + '-' + country;
+				System.out.println((">>> clientCode = "+clientCode));
 				for (String lgChoice : globalContext.getLanguages()) {
-					if (lgChoice.equalsIgnoreCase(lgClient + '-' + country)) {
+					if (lgChoice.equalsIgnoreCase(clientCode)) {
 						lg = lgChoice;
 						break;
 					}
