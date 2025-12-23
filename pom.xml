@@ -69,7 +69,7 @@
 		<xdocreport.version>2.1.0</xdocreport.version>
 		<poi.version>5.5.0</poi.version>
 		<maven.plugin.version>3.20.0</maven.plugin.version>
-		<langchain.version>0.23.0</langchain.version>
+		<langchain.version>1.9.1</langchain.version>
 	</properties>
 
 	<dependencies>

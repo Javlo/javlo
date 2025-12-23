@@ -927,7 +927,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
     protected List<MenuElement> getSelectedPages(ContentContext ctx, List<MenuElement> children) throws Exception {
         String value = properties.getProperty(PAGE_REF_PROP_KEY, "");
-        if (value.trim().length() == 0 && !isDefaultSelected()) {
+        if (value.trim().isEmpty() && !isDefaultSelected()) {
             return Collections.EMPTY_LIST;
         }
         List<MenuElement> out;
@@ -944,7 +944,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         } else {
             List<MenuElement> selectedPage = new LinkedList<MenuElement>();
             MenuElement parentNode = null;
-            if (children.size() > 0) {
+            if (!children.isEmpty()) {
                 parentNode = children.get(0).getRoot().searchChild(ctx, getParentNode(ctx));
             }
             List<String> selectedId = StringHelper.stringToCollection(value, PAGE_SEPARATOR);
