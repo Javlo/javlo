@@ -525,8 +525,10 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				return;
 			}
 
-			/** CACHE **/
 			ContentService content = ContentService.getInstance(ctx.getRequest());
+
+			/** CACHE **/
+			{
 			MenuElement currentPage = content.getNavigation(ctx).getNoErrorFreeCurrentPage(ctx);
 
 			/** redirect **/
@@ -564,6 +566,12 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			} else {
 				response.setHeader("Cache-Control", "max-age=0,no-cache");
 			}
+			}
+
+			/*if (ctx.isLikeViewRenderMode() && ctx.getCurrentPage().isRoot() && !ctx.getCurrentPage().isRealContent(ctx)) {
+				MenuElement newPage = ctx.getCurrentPage().getChildWithRealContent(ctx);
+				ctx.setCurrentPageCached(newPage);
+			}*/
 
 			ctx.getCurrentTemplate();
 			RequestHelper.initRequestAttributes(ctx);

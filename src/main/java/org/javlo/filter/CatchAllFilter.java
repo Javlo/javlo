@@ -603,6 +603,19 @@ public class CatchAllFilter implements Filter {
 			if (forwardURI != null) {
 				viewURI = forwardURI;
 			}
+
+			if (StringHelper.isEmpty(viewURI) || viewURI.startsWith("/?")) {
+				if (globalContext.getContentLanguages().size() > 1) {
+					String lg = ContentManager.getLanguage(httpRequest);
+					viewURI = "/view/" + lg;
+				} else {
+					viewURI = "/view/" + globalContext.getContentLanguages().iterator().next();
+				}
+				globalContext.log(Log.WARNING, "url", "forward add lang : " + httpRequest.getRequestURI() + " >> " + viewURI);
+				httpRequest.getRequestDispatcher(viewURI).forward(httpRequest, response);
+				return;
+			}
+
 			if (viewURI.length() > 2) {
 				char sep = '/';
 				if (viewURI.length() > 3) {

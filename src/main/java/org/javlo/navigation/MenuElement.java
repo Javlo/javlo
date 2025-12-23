@@ -1675,6 +1675,23 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		return result;
 	}
 
+	public MenuElement getChildWithRealContent(ContentContext ctx) throws Exception {
+		return getChildWithRealContent(ctx, this);
+	}
+
+	private static MenuElement getChildWithRealContent(ContentContext ctx, MenuElement page) throws Exception {
+		if (page.isRealContent(ctx)) {
+			return page;
+		} else {
+			List<MenuElement> children = page.getChildMenuElements();
+			if (children.size() == 0) {
+				return page;
+			} else {
+				return getChildWithRealContent(ctx, children.get(0));
+			}
+		}
+	}
+
 	public String[] getChildList() throws Exception {
 		ArrayList<String> result = getChildListRecursive(this, 0);
 		String[] finalResult = new String[result.size()];

@@ -46,7 +46,9 @@ import java.util.logging.Logger;
  * @author pvanderm
  */
 public class ContentContext {
-	
+
+	public static boolean DEBUG_TRACE = false;
+
 	public static final String COUNT_REQUEST_BY_SESSION_KEY = "__session_request";
 
 	public static final String PREVIEW_ONLY_MODE = "__preview_only_mode";
@@ -135,7 +137,7 @@ public class ContentContext {
 
 	private boolean clearSession = false;
 
-	private boolean forceCorrectPath = false;
+	private boolean forceCorrectPath = true;
 
 	private Boolean contentStatic = null;
 
@@ -248,6 +250,7 @@ public class ContentContext {
 	 * @throws Exception
 	 */
 	public static ContentContext getContentContext(HttpServletRequest request, HttpServletResponse response, boolean correctPath, boolean pageManagement) throws Exception {
+
 		ContentContext ctx = (ContentContext) request.getAttribute(CONTEXT_REQUEST_KEY);
 		try {
 			if (ctx == null) {
@@ -269,7 +272,7 @@ public class ContentContext {
 			e.printStackTrace();
 			throw e;
 		}
-		
+
 		ctx.pageManagement = pageManagement;
 
 		GlobalContext globalContext = ctx.getGlobalContext();
@@ -284,6 +287,7 @@ public class ContentContext {
 		}
 
 		if (ctx.getRenderMode() != ContentContext.EDIT_MODE && !editContext.isPreviewEditionMode() && !ctx.correctPath && correctPath || ctx.getRenderMode() == ContentContext.VIEW_MODE) {
+
 			if (!ctx.isAjax()) {
 				ctx.correctPath = correctPath;
 				ContentService content = ContentService.getInstance(GlobalContext.getInstance(request));
@@ -292,10 +296,10 @@ public class ContentContext {
 						MenuElement menu = content.getNavigation(ctx);
 						if (menu != null) {
 							menu = menu.searchChild(ctx);
-							if ((menu != null) && (menu.getChildMenuElements().size() > 0)) {
+							if ((menu != null) && (!menu.getChildMenuElements().isEmpty())) {
 								ctx.setPath(menu.getChildMenuElements().iterator().next().getPath());
 								if (!content.contentExistForContext(ctx)) {
-									if (menu.getChildMenuElements().iterator().next().getChildMenuElements().size() > 0) {
+									if (!menu.getChildMenuElements().iterator().next().getChildMenuElements().isEmpty()) {
 										ctx.setPath(menu.getChildMenuElements().iterator().next().getChildMenuElements().iterator().next().getPath());
 									}
 								}
@@ -452,22 +456,20 @@ public class ContentContext {
 	}
 
 	private void initLanguage() {
-		String lg = ContentManager.getLanguage(this);
+		String lg = ContentManager.getLanguage(request);
 		this.setLanguage(lg);
 		String contentLg = ContentManager.getContentLanguage(this);
 		this.setCountry(ContentManager.getContentCountry(this));
 
-		// TODO : optimise this with option in global context
 		GlobalContext globalContext = this.getGlobalContext();
-
 		if (contentLg == null) {
 			contentLg = lg;
 			this.setContentLanguage(contentLg);
 		} else {
 			if (this.renderMode != EDIT_MODE && this.renderMode != PREVIEW_MODE) {
 				if (globalContext.isAutoSwitchToDefaultLanguage()) {
-					this.setRequestContentLanguage(contentLg);
-					this.setContentLanguage(lg);
+					//this.setRequestContentLanguage(contentLg);
+					this.setContentLanguage(contentLg);
 				} else {
 					this.setContentLanguage(contentLg);
 				}
@@ -484,6 +486,8 @@ public class ContentContext {
 	private String contentLanguage = null;
 
 	private String country;
+	
+	private String localCountry;
 	
 	private String mainLanguage = null;
 
@@ -1148,10 +1152,10 @@ public class ContentContext {
 			if (outPage.isActive()) {
 				logger.info("page not found (" + getGlobalContext().getContextKey() + ") : " + getPath()+" page:"+outPage.getName());
 			}
-			if (!isFree()) {
+			/*if (!isFree()) {
 				logger.warning("page not free : "+getPath()+" uri:"+getRequest().getRequestURI());
 				//response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			}
+			}*/
 			return null;
 		} else {
 			return outPage;
@@ -1279,6 +1283,13 @@ public class ContentContext {
 			initLanguage();
 		}
 		return language;
+	}
+
+	public String getCountry() {
+		if (localCountry == null) {
+
+		}
+		return localCountry;
 	}
 
 	public String getCountry(String lg) {
@@ -1686,9 +1697,10 @@ public class ContentContext {
 		if (availableLanguages.contains(lg)) {
 			language = lg;
 		} else {
-			logger.fine("language not available : " + lg);
+			logger.warning("language not available : " + lg);
 			language = getGlobalContext().getDefaultLanguage();
 		}
+
 		resetCache();
 	}
 

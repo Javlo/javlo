@@ -2,7 +2,6 @@ package org.javlo.context;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.javlo.config.StaticConfig;
-import org.javlo.helper.DebugHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.service.GeoService;
@@ -25,38 +24,32 @@ public class ContentManager {
 	public static final char MULTI_PARAM_SEP = '?';
 
 	public static String getContentLanguage(ContentContext ctx) {
-		String lg = getLanguage(ctx.getRequest(), 1);
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
-		if (globalContext.getSpecialConfig().isSwitchCountry()) {
-			if (!globalContext.getContentLanguages().contains(lg)) {
-				String lgClient = ctx.getRequest().getLocale().getLanguage();
-				String ip = NetHelper.getClientIp(ctx.getRequest());
-				String country = GeoService.getIpInfoBean(ip).getCountryCode();
-				for (String lgChoice : globalContext.getContentLanguages()) {
-					if (lgChoice.equalsIgnoreCase(lgClient + '-' + country)) {
-						lg = lgChoice;
-						break;
+			String lg = getLanguage(ctx.getRequest(), 0);
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			if (globalContext.getSpecialConfig().isSwitchCountry()) {
+				if (!globalContext.getContentLanguages().contains(lg)) {
+					String lgClient = ctx.getRequest().getLocale().getLanguage();
+					String clientCode = lgClient + '-' + ctx.getCountry();
+					for (String lgChoice : globalContext.getLanguages()) {
+						if (lgChoice.equalsIgnoreCase(clientCode)) {
+							lg = lgChoice;
+							break;
+						}
 					}
+					logger.info("switch content language to : "+lg);
 				}
-				logger.info("switch content language to : "+lg);
 			}
-		}
 
-		if (!globalContext.getContentLanguages().contains(lg) && lg != null) {
-			lg = globalContext.getDefaultLanguages().iterator().next();
-			if (lg.trim().length() == 0) {
-				lg = globalContext.getContentLanguages().iterator().next();
+			if (!globalContext.getContentLanguages().contains(lg)) {
+				lg = globalContext.getDefaultLanguages().iterator().next();
+				if (lg.trim().isEmpty()) {
+					lg = globalContext.getLanguages().iterator().next();
+				}
 			}
-		} /*else {
-			try {
-				I18nAccess i18n = I18nAccess.getInstance(ctx.getRequest());
-				i18n.changeViewLanguage(ctx);
-			} catch (Exception e) {
-				logger.log(Level.INFO, "impossible to change content view language in I18NAccess", e);
-			}
-		}*/
-		return lg;
+
+			return lg;
+
 	}
 
 	public static String getContentCountry(ContentContext ctx) {
@@ -74,7 +67,7 @@ public class ContentManager {
 		if (lgs.length > 1) {
 			ct = lgs[1];
 		} else {
-			ct = ctx.getLocalCountry();
+			ct = ctx.getCountry();
 		}
 		return ct;
 	}
@@ -109,30 +102,26 @@ public class ContentManager {
 		return res;
 	}
 
-	public static String getLanguage(ContentContext ctx) {
-		String lg = getLanguage(ctx.getRequest(), 0);
-
-		if (lg.length() > 5) {
-			System.out.println("BAD LG : "+DebugHelper.getCaller(20));
+	public static String getCountry(HttpServletRequest request) {
+		String localCountry = request.getLocale().getCountry();
+		if (StringHelper.isEmpty(localCountry)) {
+			String ip = NetHelper.getClientIp(request);
+			localCountry = GeoService.getIpInfoBean(ip).getCountryCode();
+			if (StringHelper.isEmpty(localCountry)) {
+				localCountry = StaticConfig.getInstance(request.getSession()).getLocaleCountry();
+			}
 		}
+		return localCountry;
+	}
 
-		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-
-		System.out.println((">>> lg = "+lg));
+	public static String getLanguage(HttpServletRequest request) {
+		String lg = getLanguage(request, 0);
+		GlobalContext globalContext = GlobalContext.getInstance(request);
 
 		if (globalContext.getSpecialConfig().isSwitchCountry()) {
-
-			System.out.println((">>> SWITCH = "+lg));
-
 			if (!globalContext.getLanguages().contains(lg)) {
-
-				System.out.println((">>> NOT FOUND = "+lg));
-
-				String lgClient = ctx.getRequest().getLocale().getLanguage();
-				String ip = NetHelper.getClientIp(ctx.getRequest());
-				String country = GeoService.getIpInfoBean(ip).getCountryCode();
-				String clientCode = lgClient + '-' + country;
-				System.out.println((">>> clientCode = "+clientCode));
+				String lgClient = request.getLocale().getLanguage();
+				String clientCode = lgClient + '-' + getCountry(request);
 				for (String lgChoice : globalContext.getLanguages()) {
 					if (lgChoice.equalsIgnoreCase(clientCode)) {
 						lg = lgChoice;
