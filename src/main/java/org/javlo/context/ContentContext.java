@@ -1144,7 +1144,7 @@ public class ContentContext {
 		}
 
 		if (outPage == null) {
-			logger.fine("page not found : " + getPath());
+			logger.warning("page not found : " + getPath());
 		}
 
 		if (isAsViewMode() && outPage != null && !outPage.isActive(this)) {
@@ -1157,6 +1157,7 @@ public class ContentContext {
 			}*/
 			return null;
 		} else {
+			setPath(outPage.getPath());
 			return outPage;
 		}
 	}
