@@ -640,7 +640,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		List<MenuElement> children = elem.getChildMenuElementsWithVirtualList(ctx, false, false);
 		for (MenuElement menuElement : children) {
 			String pagePath = menuElement.getVirtualPath(ctx);
-			System.out.println(">>>> path="+path+" =? "+pagePath);
+			//System.out.println(">>>> path="+path+" =? "+pagePath);
 			if (pagePath.equals(path)) {
 				return menuElement;
 			} else {
