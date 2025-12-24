@@ -1157,7 +1157,9 @@ public class ContentContext {
 			}*/
 			return null;
 		} else {
-			setPath(outPage.getPath());
+			if (outPage != null) {
+				setPath(outPage.getPath());
+			}
 			return outPage;
 		}
 	}
