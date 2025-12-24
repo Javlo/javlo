@@ -2308,6 +2308,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 						log(Log.SEVERE, "url", "page not found keyURL='" + keyURL + "' url='" + url + "' #localViewPages=" + localViewPages.size());
 						return null;
 					} else {
+						ctx.setPath(page.getPath());
 						return page;
 					}
 				}

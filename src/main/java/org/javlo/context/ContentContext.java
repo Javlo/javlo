@@ -287,7 +287,6 @@ public class ContentContext {
 		}
 
 		if (ctx.getRenderMode() != ContentContext.EDIT_MODE && !editContext.isPreviewEditionMode() && !ctx.correctPath && correctPath || ctx.getRenderMode() == ContentContext.VIEW_MODE) {
-
 			if (!ctx.isAjax()) {
 				ctx.correctPath = correctPath;
 				ContentService content = ContentService.getInstance(GlobalContext.getInstance(request));
