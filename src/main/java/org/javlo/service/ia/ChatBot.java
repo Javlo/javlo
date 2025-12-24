@@ -1,14 +1,6 @@
 package org.javlo.service.ia;
 
-import dev.langchain4j.data.message.AiMessage;
-import dev.langchain4j.memory.ChatMemory;
-import dev.langchain4j.memory.chat.TokenWindowChatMemory;
-import dev.langchain4j.model.chat.ChatLanguageModel;
-import dev.langchain4j.model.openai.OpenAiChatModel;
-import dev.langchain4j.model.openai.OpenAiTokenizer;
 
-import static dev.langchain4j.data.message.UserMessage.userMessage;
-import static dev.langchain4j.model.openai.OpenAiModelName.GPT_3_5_TURBO;
 
 public class ChatBot {
 
@@ -16,7 +8,7 @@ public class ChatBot {
 
     public static void main(String[] args) {
 
-        ChatLanguageModel model = OpenAiChatModel.withApiKey(OPENIA_API_KEY);
+        /*ChatLanguageModel model = OpenAiChatModel.withApiKey(OPENIA_API_KEY);
 
         ChatMemory chatMemory = TokenWindowChatMemory.withMaxTokens(300, new OpenAiTokenizer(GPT_3_5_TURBO));
 
@@ -33,7 +25,7 @@ public class ChatBot {
         chatMemory.add(userMessage("What is my name?"));
         AiMessage answerWithName = model.generate(chatMemory.messages()).content();
         System.out.println(answerWithName.text()); // Your name is Klaus.
-        chatMemory.add(answerWithName);
+        chatMemory.add(answerWithName);*/
     }
 }
 
