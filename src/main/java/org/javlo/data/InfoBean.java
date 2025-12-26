@@ -639,20 +639,13 @@ public class InfoBean {
 		}
 		final String KEY = "_changeLangPopupSessionKey";
 		if (ctx.getSession().getAttribute(KEY) == null) {
-
-			System.out.println("#### POPUP ACTION");
-
 			ctx.getSession().setAttribute(KEY, "true");
 			String vLang = getVisitorLanguage();
 			if (!vLang.equals(getContentLanguage())) {
-				System.out.println("#### vLang="+vLang);
 				if (globalContext.getContentLanguages().contains(vLang)) {
-					System.out.println("#### TRUE");
 					return true;
 				}
 			}
-		} else {
-			System.out.println("#### POPUP DONE");
 		}
 
 		return false;
