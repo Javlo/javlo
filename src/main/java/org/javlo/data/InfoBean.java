@@ -1,5 +1,6 @@
 package org.javlo.data;
 
+import org.apache.logging.log4j.LogManager;
 import org.javlo.bean.DateBean;
 import org.javlo.component.core.ContentElementList;
 import org.javlo.component.core.IContentVisualComponent;
@@ -11,6 +12,7 @@ import org.javlo.component.image.ImageTitleBean;
 import org.javlo.component.links.RSSRegistration;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
+import org.javlo.context.ContentManager;
 import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.*;
@@ -52,8 +54,12 @@ import java.io.File;
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.util.*;
+import java.util.logging.Logger;
 
 public class InfoBean {
+
+	private static final org.apache.logging.log4j.Logger log = LogManager.getLogger(InfoBean.class);
+	protected static Logger logger = Logger.getLogger(InfoBean.class.getName());
 
 	public static final String FAKE_PATH_PARAMETER_NAME = "_fake_path";
 
@@ -602,6 +608,84 @@ public class InfoBean {
 		return ctx.getLanguage();
 	}
 
+	public String getVisitorCountry() {
+		return ctx.getCountry();
+	}
+
+	public String getVisitorLanguage() {
+		String lg = ctx.getRequest().getLocale().getLanguage();
+		String country = ctx.getCountry();
+		String lang = (lg+'-'+country).toLowerCase();
+		if (globalContext.getContentLanguages().contains(lang)) {
+			return lang;
+		} else {
+			return null;
+		}
+	}
+
+	public String getChangeLangMessage() throws Exception {
+		String key = "lang.bad-detection";
+		ContentContext lgCtx = ctx;
+		String vLang = getVisitorLanguage();
+		if (globalContext.getContentLanguages().contains(vLang)) {
+			lgCtx.setAllLanguage(vLang);
+		}
+		return I18nAccess.getInstance(lgCtx).getViewText(key);
+	}
+
+	public boolean isChangeLangPopup() {
+		if (!ctx.isAsViewMode()) {
+			return false;
+		}
+		final String KEY = "_changeLangPopupSessionKey";
+		if (ctx.getSession().getAttribute(KEY) == null) {
+
+			System.out.println("#### POPUP ACTION");
+
+			ctx.getSession().setAttribute(KEY, "true");
+			String vLang = getVisitorLanguage();
+			if (!vLang.equals(getContentLanguage())) {
+				System.out.println("#### vLang="+vLang);
+				if (globalContext.getContentLanguages().contains(vLang)) {
+					System.out.println("#### TRUE");
+					return true;
+				}
+			}
+		} else {
+			System.out.println("#### POPUP DONE");
+		}
+
+		return false;
+	}
+
+	public String getLanguageDisplay() {
+		String lg = getLanguage();
+		if (lg.length() == 2) {
+			Locale displayLocale = new Locale(lg);
+			return displayLocale.getDisplayLanguage(displayLocale);
+		}
+		String country = ctx.getCountry();
+		String lang = (lg+'-'+country).toLowerCase();
+		Locale locale = getLocale();
+		return locale.getDisplayLanguage(locale) + " / " + locale.getDisplayCountry(locale);
+	}
+
+	public String getVisitorLanguageDisplay() {
+		String lg = ctx.getRequest().getLocale().getLanguage();
+		String country = ctx.getCountry();
+		String lang = (lg + '-' + country).toLowerCase();
+		if (globalContext.getContentLanguages().contains(lang)) {
+			Locale displayLocale = new Locale(lg);
+			Locale targetLocale = new Locale(lg, country);
+			String targetDisplayLg = targetLocale.getDisplayLanguage(displayLocale);
+			String targetDisplayCountry = targetLocale.getDisplayCountry(displayLocale);
+			return targetDisplayLg + " / " + targetDisplayCountry;
+		} else {
+			logger.info("visitor lang not found : "+lang);
+			return null;
+		}
+	}
+
 	public List<Locale> getLanguagesLocale() {
 		return ctx.getGlobalContext().getLanguagesLocal();
 	}
@@ -613,10 +697,6 @@ public class InfoBean {
 		} else {
 			return lang;
 		}
-	}
-
-	public String getClientCountry() {
-		return ctx.getCountry();
 	}
 
 	public String getCountry() {

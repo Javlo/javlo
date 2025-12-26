@@ -21,6 +21,7 @@ import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
 import org.javlo.rendering.Device;
 import org.javlo.service.ContentService;
+import org.javlo.service.GeoService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.RequestService;
 import org.javlo.service.log.Log;
@@ -1289,7 +1290,14 @@ public class ContentContext {
 
 	public String getCountry() {
 		if (localCountry == null) {
-
+			localCountry = request.getLocale().getCountry();
+			if (StringHelper.isEmpty(localCountry)) {
+				String ip = NetHelper.getClientIp(request);
+				localCountry = GeoService.getIpInfoBean(ip).getCountryCode();
+				if (StringHelper.isEmpty(localCountry)) {
+					localCountry = getGlobalContext().getStaticConfig().getLocaleCountry();
+				}
+			}
 		}
 		return localCountry;
 	}

@@ -59,7 +59,7 @@ public class I18nResource {
 				i18nProp = new ConfigurationProperties();
 			}
 
-			synchronized (this) {
+			//synchronized (this) {
 
 				logger.fine("init view language : " + lg);
 
@@ -124,7 +124,7 @@ public class I18nResource {
 					viewFiles.put(lg, i18nProp);
 				}
 
-			} // synchronized
+			//} // synchronized
 
 		}
 		return i18nProp;

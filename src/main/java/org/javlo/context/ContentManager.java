@@ -37,7 +37,7 @@ public class ContentManager {
 							break;
 						}
 					}
-					logger.info("switch content language to : "+lg);
+					logger.info("switch content language to : "+lg+" uri: "+ctx.getRequest().getRequestURI());
 				}
 			}
 
