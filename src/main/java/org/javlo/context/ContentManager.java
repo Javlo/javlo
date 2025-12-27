@@ -66,9 +66,9 @@ public class ContentManager {
 		String[] lgs = StringHelper.split(ct, ""+ContentContext.COUNTRY_LG_SEP);
 		if (lgs.length > 1) {
 			ct = lgs[1];
-		} else {
+		} /*else {
 			ct = ctx.getCountry();
-		}
+		}*/
 		return ct;
 	}
 	
