@@ -1324,7 +1324,7 @@ public class ContentContext {
 			if (localeStr.length() > 2) {
 				locale = Locale.forLanguageTag(localeStr);
 			} else {
-				locale = new Locale(getRequestContentLanguage(), getCountry(localeStr));
+				locale = new Locale(getRequestContentLanguage());
 			}
 		}
 		return locale;
