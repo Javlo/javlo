@@ -686,6 +686,9 @@ public class InfoBean {
 
 	public String getLanguageDisplay() {
 		String lg = getLanguage();
+
+		System.out.println("#### getLanguageDisplay - lg = "+lg);
+
 		if (lg.length() == 2) {
 			if (lg.equalsIgnoreCase("en")) {
 				return "English / Europe";
