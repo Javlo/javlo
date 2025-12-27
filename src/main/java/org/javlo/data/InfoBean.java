@@ -623,12 +623,21 @@ public class InfoBean {
 		}
 	}
 
+	public String getVisitorLanguageFree() {
+		String lg = ctx.getRequest().getLocale().getLanguage();
+		String country = ctx.getCountry();
+		return (lg+'-'+country).toLowerCase();
+	}
+
 	public String getChangeLangMessage() throws Exception {
 		String key = "lang.bad-detection";
 		ContentContext lgCtx = ctx;
-		String vLang = getVisitorLanguage();
-		if (globalContext.getContentLanguages().contains(vLang)) {
-			lgCtx.setAllLanguage(vLang);
+		String lg = ctx.getRequest().getLocale().getLanguage();
+		for (String siteLg : globalContext.getContentLanguages()) {
+			if (siteLg.startsWith(lg)) {
+				lgCtx.setAllLanguage(siteLg);
+				return I18nAccess.getInstance(lgCtx).getViewText(key);
+			}
 		}
 		return I18nAccess.getInstance(lgCtx).getViewText(key);
 	}
@@ -641,6 +650,30 @@ public class InfoBean {
 		if (ctx.getSession().getAttribute(KEY) == null) {
 			ctx.getSession().setAttribute(KEY, "true");
 			String vLang = getVisitorLanguage();
+			if (vLang==null) {
+				return false;
+			}
+			if (!vLang.equals(getContentLanguage())) {
+				if (globalContext.getContentLanguages().contains(vLang)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	public boolean isChangeLangPopupFree() {
+		if (!ctx.isAsViewMode()) {
+			return false;
+		}
+		final String KEY = "_changeLangPopupSessionKey";
+		if (ctx.getSession().getAttribute(KEY) == null) {
+			ctx.getSession().setAttribute(KEY, "true");
+			String vLang = getVisitorLanguageFree();
+			if (vLang==null) {
+				return false;
+			}
 			if (!vLang.equals(getContentLanguage())) {
 				if (globalContext.getContentLanguages().contains(vLang)) {
 					return true;
