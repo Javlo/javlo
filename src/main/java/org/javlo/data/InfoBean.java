@@ -687,7 +687,7 @@ public class InfoBean {
 	public String getLanguageDisplay() {
 		String lg = getContentLanguage();
 
-		System.out.println("#### getLanguageDisplay - lg = "+lg);
+		System.out.println("#### getContentLanguage - lg = "+lg);
 
 		if (lg.length() == 2) {
 			if (lg.equalsIgnoreCase("en")) {
