@@ -685,7 +685,7 @@ public class InfoBean {
 	}
 
 	public String getLanguageDisplay() {
-		String lg = getRequestContentLanguage();
+		String lg = getContentLanguage();
 
 		System.out.println("#### getLanguageDisplay - lg = "+lg);
 
