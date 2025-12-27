@@ -12,11 +12,8 @@ import jakarta.servlet.http.HttpSession;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.config.StaticConfig;
+import org.javlo.helper.*;
 import org.javlo.helper.AjaxHelper.ScheduledRender;
-import org.javlo.helper.NetHelper;
-import org.javlo.helper.StringHelper;
-import org.javlo.helper.StringSecurityUtil;
-import org.javlo.helper.URLHelper;
 import org.javlo.navigation.IURLFactory;
 import org.javlo.navigation.MenuElement;
 import org.javlo.rendering.Device;
@@ -457,6 +454,7 @@ public class ContentContext {
 
 	private void initLanguage() {
 		String lg = ContentManager.getLanguage(request);
+
 		this.setLanguage(lg);
 		String contentLg = ContentManager.getContentLanguage(this);
 		this.setCountry(ContentManager.getContentCountry(this));
@@ -1611,6 +1609,7 @@ public class ContentContext {
 	}
 
 	public void setContentLanguage(String lg) {
+
 		if (contentLanguage != null && contentLanguage.equals(lg)) {
 			return;
 		}
