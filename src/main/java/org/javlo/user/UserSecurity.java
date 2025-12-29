@@ -1,5 +1,6 @@
 package org.javlo.user;
 
+import java.io.IOException;
 import java.util.Collections;
 
 import jakarta.servlet.http.HttpSession;
@@ -30,8 +31,8 @@ public class UserSecurity {
 		return true;
 	}
 	
-	public static void storeShadowUser(HttpSession session) {
-		session.setAttribute(SHADOW_USER, session.getAttribute(UserFactory.createUserFactory(GlobalContext.getSessionContext(session), session).getSessionKey()));
+	public static void storeShadowUser(HttpSession session) throws Exception {
+		session.setAttribute(SHADOW_USER, session.getAttribute(UserFactory.createUserFactory(GlobalContext.getSessionInstance(session), session).getSessionKey()));
 	}
 	
 	public static User getShadowUser(HttpSession session) {

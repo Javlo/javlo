@@ -355,8 +355,13 @@ public class JavloELFinder extends ELFinder {
 
 	@Override
 	protected Map<String, Object> printOptions(ELFile file) {
-		GlobalContext globalContext = GlobalContext.getSessionInstance(((JavloELFile) file).getContentContext().getRequest().getSession());
-		Map<String, Object> outOptions = super.printOptions(file);
+        GlobalContext globalContext = null;
+        try {
+            globalContext = GlobalContext.getSessionInstance(((JavloELFile) file).getContentContext().getRequest().getSession());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Map<String, Object> outOptions = super.printOptions(file);
 		if (ResourceHelper.isTemplateFile(globalContext, file.getFile())) {
 			outOptions.remove("url");
 			String templateName = ResourceHelper.extractTemplateName(globalContext, file.getFile());

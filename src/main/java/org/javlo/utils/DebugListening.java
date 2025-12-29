@@ -85,7 +85,7 @@ public class DebugListening {
 				PrintStream out = new PrintStream(arrayOut);
 				out.println("");
 				out.println("CONTEXT INFO : ");
-				globalContext.writeInfo(session, out);
+				globalContext.writeInfo(out);
 				out.println("");
 				out.println("STACK TRACE : ");
 				if (t != null) {

@@ -1223,7 +1223,7 @@ public class ImageTransformServlet extends FileServlet {
 				imageName = URLHelper.mergePath(template.getLocalWorkTemplateFolder(), template.getId(), globalContext.getContextKey(), imageName);
 			} else if (imageName.substring(1).startsWith(staticConfig.getShareDataFolderKey())) {
 				imageName = imageName.substring(staticConfig.getShareDataFolderKey().length() + 2);
-				dataFolder = globalContext.getSharedDataFolder(request.getSession());
+				dataFolder = globalContext.getSharedDataFolder(request.getServletContext());
 				staticInfo = StaticInfo.getShareInstance(ctx, imageName.replaceFirst("/static", ""));
 			} else if (imageName.startsWith("/static")) {
 				staticInfo = StaticInfo.getInstance(ctx, imageName.replaceFirst("/static", ""));

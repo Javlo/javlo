@@ -187,7 +187,7 @@ public class AdminAction extends AbstractModuleAction {
 			GlobalContext currentGlobalContext;
 			if (currentContextValue != null) {
 				request.setAttribute("context", currentContextValue);
-				currentGlobalContext = GlobalContext.getRealInstance(request.getSession(), currentContextValue);
+				currentGlobalContext = GlobalContext.getRealInstance(request.getServletContext(), currentContextValue);
 			} else if (globalContext.isMaster()) {
 				currentGlobalContext = (GlobalContext) request.getAttribute("prepareContext");
 				request.setAttribute("context", currentGlobalContext.getContextKey());
@@ -444,7 +444,7 @@ public class AdminAction extends AbstractModuleAction {
 			if (currentContextKey != null) {
 
 				GlobalContext currentGlobalContext;
-				currentGlobalContext = GlobalContext.getRealInstance(ctx.getRequest().getSession(), currentContextKey);
+				currentGlobalContext = GlobalContext.getRealInstance(ctx.getServletContext(), currentContextKey);
 
 				if (currentGlobalContext != null) {
 					checkRight(ctx, currentGlobalContext);
@@ -862,7 +862,7 @@ public class AdminAction extends AbstractModuleAction {
 		} else {
 			String contextName = requestService.getParameter("context", null);
 			if (contextName != null) {
-				GlobalContext currentGlobalContext = GlobalContext.getRealInstance(request.getSession(), contextName);
+				GlobalContext currentGlobalContext = GlobalContext.getRealInstance(request.getServletContext(), contextName);
 				checkRight(ctx, currentGlobalContext);
 				if (globalContext != null) {
 					ContentService content = ContentService.getInstance(currentGlobalContext);
@@ -896,7 +896,7 @@ public class AdminAction extends AbstractModuleAction {
 		} else {
 			String currentContextKey = requestService.getParameter("context", null);
 			if (currentContextKey != null) {
-				GlobalContext currentGlobalContext = GlobalContext.getRealInstance(request.getSession(), currentContextKey);
+				GlobalContext currentGlobalContext = GlobalContext.getRealInstance(request.getServletContext(), currentContextKey);
 				if (currentGlobalContext != null) {
 					checkRight(ctx, currentGlobalContext);
 					IContentVisualComponent[] componentsType = ComponentFactory.getComponents(ctx, currentGlobalContext);
@@ -931,7 +931,7 @@ public class AdminAction extends AbstractModuleAction {
 		} else {
 			String currentContextKey = requestService.getParameter("context", null);
 			if (currentContextKey != null) {
-				GlobalContext currentGlobalContext = GlobalContext.getRealInstance(request.getSession(), currentContextKey);
+				GlobalContext currentGlobalContext = GlobalContext.getRealInstance(request.getServletContext(), currentContextKey);
 				if (currentGlobalContext != null) {
 					checkRight(ctx, currentGlobalContext);
 					List<String> modules = new LinkedList<String>();
@@ -995,7 +995,7 @@ public class AdminAction extends AbstractModuleAction {
 			}
 			ContentService.clearCache(ctx, globalContext);
 		}
-		Tracker.getTracker(globalContext, session);
+		Tracker.getTracker(globalContext);
 		LogService.getInstance(session).clear();
 		SharedContentService.getInstance(ctx).clearCache(ctx);
 		StaticConfig staticConfig = globalContext.getStaticConfig();
@@ -1064,7 +1064,7 @@ public class AdminAction extends AbstractModuleAction {
 		String msg = null;
 		String currentContextKey = requestService.getParameter("context", null);
 		if (currentContextKey != null) {
-			GlobalContext currentGlobalContext = GlobalContext.getRealInstance(ctx.getRequest().getSession(), currentContextKey);
+			GlobalContext currentGlobalContext = GlobalContext.getRealInstance(ctx.getServletContext(), currentContextKey);
 			if (currentGlobalContext != null) {
 				checkRight(ctx, currentGlobalContext);
 				String templateName = requestService.getParameter("template", null);
@@ -1087,7 +1087,7 @@ public class AdminAction extends AbstractModuleAction {
 		String msg = null;
 		String currentContextKey = requestService.getParameter("context", null);
 		if (currentContextKey != null) {
-			GlobalContext currentGlobalContext = GlobalContext.getRealInstance(ctx.getRequest().getSession(), currentContextKey);
+			GlobalContext currentGlobalContext = GlobalContext.getRealInstance(ctx.getServletContext(), currentContextKey);
 			if (currentGlobalContext != null) {
 				checkRight(ctx, currentGlobalContext);
 				String templateName = requestService.getParameter("template", null);
@@ -1151,7 +1151,7 @@ public class AdminAction extends AbstractModuleAction {
 		if (siteName == null) {
 			return "bad request structure, need 'context' param.";
 		}
-		GlobalContext currentGlobalContext = GlobalContext.getRealInstance(ctx.getRequest().getSession(), siteName);
+		GlobalContext currentGlobalContext = GlobalContext.getRealInstance(ctx.getServletContext(), siteName);
 		if (currentGlobalContext != null) {
 			currentGlobalContext.setView(!currentGlobalContext.isView());
 		} else {
@@ -1165,7 +1165,7 @@ public class AdminAction extends AbstractModuleAction {
 		if (siteName == null) {
 			return "bad request structure, need 'context' param.";
 		}
-		GlobalContext currentGlobalContext = GlobalContext.getRealInstance(ctx.getRequest().getSession(), siteName);
+		GlobalContext currentGlobalContext = GlobalContext.getRealInstance(ctx.getServletContext(), siteName);
 		if (currentGlobalContext != null) {
 			currentGlobalContext.setEditable(!currentGlobalContext.isEditable());
 		} else {
@@ -1204,7 +1204,7 @@ public class AdminAction extends AbstractModuleAction {
 	}
 
 	public static String performComponentsDefault(RequestService rs, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
-		GlobalContext defaultSite = GlobalContext.getDefaultContext(session);
+		GlobalContext defaultSite = GlobalContext.getDefaultContext(ctx.getServletContext());
 		if (defaultSite != null) {
 			GlobalContext currentContext = GlobalContext.getInstance(session, rs.getParameter("context", null));
 			if (currentContext == null) {

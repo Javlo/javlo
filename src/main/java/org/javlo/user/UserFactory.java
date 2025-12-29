@@ -141,8 +141,12 @@ public class UserFactory implements IUserFactory, Serializable {
 		GlobalContext globalContext = GlobalContext.getInstance(request);
 		User user = getUser(login);
 		if (user != null) {
-			UserSecurity.storeShadowUser(request.getSession());
-			user.setContext(globalContext.getContextKey());
+            try {
+                UserSecurity.storeShadowUser(request.getSession());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            user.setContext(globalContext.getContextKey());
 			request.getSession().setAttribute(getSessionKey(), user);
 		}
 		return user;
@@ -485,7 +489,7 @@ public class UserFactory implements IUserFactory, Serializable {
 		if (user == null && !globalContext.isMaster()) {
 			IUserFactory masterUserFactory;
 			try {
-				masterUserFactory = AdminUserFactory.createUserFactory(GlobalContext.getMasterContext(request.getSession()), request.getSession());
+				masterUserFactory = AdminUserFactory.createUserFactory(GlobalContext.getMasterContext(request.getServletContext()), request.getSession());
 				user = masterUserFactory.getUser(login);
 				UserFactory.createUserFactory(globalContext, request.getSession());
 			} catch (Exception e) {

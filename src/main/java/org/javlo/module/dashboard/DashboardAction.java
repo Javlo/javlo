@@ -169,7 +169,7 @@ public class DashboardAction extends AbstractModuleAction {
 
 		if (dashboardContext.getCurrentModule().getRenderer() != null && dashboardContext.getCurrentModule().getRenderer().contains("use.jsp")) {
 			StatContext statCtx = createStatContext(ctx.getRequest());
-			List<DayInfo> dayInfos = Tracker.getTracker(globalContext, ctx.getRequest().getSession()).getDayInfos(statCtx);
+			List<DayInfo> dayInfos = Tracker.getTracker(globalContext).getDayInfos(statCtx);
 			ctx.getRequest().setAttribute("dayInfos", dayInfos);
 			ctx.getRequest().setAttribute("page", "use");
 		} else if (dashboardContext.getCurrentModule().getBoxes().size() > 1) {
@@ -189,7 +189,7 @@ public class DashboardAction extends AbstractModuleAction {
 		if (trackerDate != null) {
 			Date date = StringHelper.smartParseDate(trackerDate);
 			ctx.getRequest().setAttribute("date", StringHelper.renderDate(date));
-			ctx.getRequest().setAttribute("tracks", Tracker.getTracker(globalContext, ctx.getRequest().getSession()).getAllTrack(date));
+			ctx.getRequest().setAttribute("tracks", Tracker.getTracker(globalContext).getAllTrack(date));
 		} else {
 			/* debug notes */
 			ContentService content = ContentService.getInstance(ctx.getRequest());
@@ -270,7 +270,7 @@ public class DashboardAction extends AbstractModuleAction {
 		if (type == null) {
 			return "bad request structure : need 'type' as parameter";
 		}
-		Tracker tracker = Tracker.getTracker(globalContext, session);
+		Tracker tracker = Tracker.getTracker(globalContext);
 		StatContext statCtx = StatContext.getInstance(request);
 		// 30 days is default period
 		Calendar now = Calendar.getInstance();

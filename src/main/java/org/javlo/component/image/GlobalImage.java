@@ -716,7 +716,7 @@ public class GlobalImage extends Image implements IImageFilter {
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 		if (isFromShared(ctx)) {
 			try {
-				folder = URLHelper.mergePath(globalContext.getSharedDataFolder(ctx.getRequest().getSession()), staticConfig.getImageFolderName());
+				folder = URLHelper.mergePath(globalContext.getSharedDataFolder(ctx.getServletContext()), staticConfig.getImageFolderName());
 			} catch (Exception e) {
 				e.printStackTrace();
 				folder = null;

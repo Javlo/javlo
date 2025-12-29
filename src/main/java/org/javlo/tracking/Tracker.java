@@ -61,7 +61,7 @@ public class Tracker {
 
 	private static final String TRACKER_KEY = "tracker_key";
 
-	public static final Tracker getTracker(GlobalContext globalContext, HttpSession session) throws ServiceException {
+	public static final Tracker getTracker(GlobalContext globalContext) throws ServiceException {
 		Tracker tracker = (Tracker) globalContext.getAttribute(TRACKER_KEY);
 		if (tracker == null) {
 			tracker = new Tracker();
@@ -80,7 +80,7 @@ public class Tracker {
 			return;
 		}
 		GlobalContext globalContext = GlobalContext.getInstance(request);
-		Tracker tracker = Tracker.getTracker(globalContext, request.getSession());
+		Tracker tracker = Tracker.getTracker(globalContext);
 		// IUserFactory fact = UserFactory.createUserFactory(globalContext,
 		// request.getSession());
 		// User user = fact.getCurrentUser(globalContext, request.getSession());

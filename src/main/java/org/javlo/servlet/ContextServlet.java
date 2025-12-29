@@ -35,7 +35,7 @@ public class ContextServlet extends HttpServlet {
 			} else {
 				String context = StringHelper.getFileNameWithoutExtension(StringHelper.getFileNameFromPath(request.getRequestURI()));
 				if (GlobalContext.isExist(request, context)) {
-					GlobalContext globalContext = GlobalContext.getRealInstance(request.getSession(), context);
+					GlobalContext globalContext = GlobalContext.getRealInstance(request.getServletContext(), context);
 					StructuredProperties outProp = new StructuredProperties();
 					for (Map.Entry<String, String> entry : globalContext.getConfig().entrySet()) {
 						outProp.put(entry.getKey(), entry.getValue());

@@ -31,7 +31,7 @@ public class GlobalImageSharedContentProvider extends LocalImageSharedContentPro
 		StaticConfig sc = ctx.getGlobalContext().getStaticConfig();
 		File dir;
 		try {
-			dir = new File(URLHelper.mergePath(ctx.getGlobalContext().getSharedDataFolder(ctx.getRequest().getSession()), sc.getShareImageFolder()));
+			dir = new File(URLHelper.mergePath(ctx.getGlobalContext().getSharedDataFolder(ctx.getServletContext()), sc.getShareImageFolder()));
 			return dir;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -64,7 +64,7 @@ public class GlobalImageSharedContentProvider extends LocalImageSharedContentPro
 					out.println("dir=" + category);
 					out.println("file-name=" + URLHelper.mergePath(staticConfig.getShareDataFolderKey(), imageFile.getName()));
 					ContentContext masterContext = new ContentContext(ctx);
-					masterContext.setForceGlobalContext(ctx.getGlobalContext().getMasterContext(ctx.getRequest().getSession()));
+					masterContext.setForceGlobalContext(ctx.getGlobalContext().getMasterContext(ctx.getServletContext()));
 					StaticInfo staticInfo = StaticInfo.getInstance(masterContext, imageFile);
 					String desc = staticInfo.getTitle(masterContext) + ' ' + staticInfo.getDescription(masterContext) + ' ' + StringHelper.collectionToString(staticInfo.getTags(masterContext));
 					out.println("meta=" + desc);

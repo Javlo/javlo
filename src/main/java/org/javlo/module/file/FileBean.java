@@ -503,17 +503,17 @@ public class FileBean implements ILanguage, ITaxonomyContainer {
 	}
 
 	public int getLastDayVisit() throws ServiceException, IOException {
-		Tracker tracker = Tracker.getTracker(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		Tracker tracker = Tracker.getTracker(ctx.getGlobalContext());
 		return tracker.getLastDayPathReading(getURL());
 	}
 
 	public int getLastMountVisit() throws ServiceException, IOException {
-		Tracker tracker = Tracker.getTracker(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		Tracker tracker = Tracker.getTracker(ctx.getGlobalContext());
 		return tracker.getLastMountPathReading(getURL());
 	}
 
 	public int getLastYearVisit() throws ServiceException, IOException {
-		Tracker tracker = Tracker.getTracker(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		Tracker tracker = Tracker.getTracker(ctx.getGlobalContext());
 		return tracker.getLastYearPathReading(getURL());
 	}
 

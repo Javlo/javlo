@@ -237,7 +237,7 @@ public class AdminUserFactory extends UserFactory {
 		if (!master) {
 			IUserFactory masterUserFactory;
 			try {
-				masterUserFactory = AdminUserFactory.createUserFactory(GlobalContext.getMasterContext(request.getSession()), request.getSession());
+				masterUserFactory = AdminUserFactory.createUserFactory(GlobalContext.getMasterContext(request.getServletContext()), request.getSession());
 				outUser = masterUserFactory.login(request, token);
 				UserFactory.createUserFactory(GlobalContext.getInstance(request), request.getSession());
 			} catch (Exception e) {

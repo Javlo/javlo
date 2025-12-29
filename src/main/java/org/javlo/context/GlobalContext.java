@@ -316,20 +316,19 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 	}
 
-	public static GlobalContext getDefaultContext(HttpSession session) throws IOException {
-		return getRealInstance(session, StaticConfig.getInstance(session).getDefaultContext(), false);
+	public static GlobalContext getDefaultContext(ServletContext application) throws IOException {
+		return getRealInstance(application, StaticConfig.getInstance(application).getDefaultContext(), false);
 	}
 
-	public static GlobalContext getMasterContext(HttpSession session) throws IOException {
-		GlobalContext masterContext = getRealInstance(session, StaticConfig.getInstance(session).getMasterContext(), true);
-		return masterContext;
+	public static GlobalContext getMasterContext(ServletContext application) throws IOException {
+		return getRealInstance(application, StaticConfig.getInstance(application).getMasterContext(), true);
 	}
 	
 	public GlobalContext getMasterContext(ContentContext ctx) throws IOException {
 		final String KEY = "_masterGlobalContext";
 		GlobalContext masterContext = (GlobalContext) ctx.getServletContext().getAttribute(KEY);
 		if (masterContext == null) {
-			masterContext = getRealInstance(ctx.getRequest().getSession(), StaticConfig.getInstance(ctx.getRequest().getSession()).getMasterContext(), true);
+			masterContext = getRealInstance(application, StaticConfig.getInstance(ctx.getRequest().getSession()).getMasterContext(), true);
 			PersistenceService persistenceService;
 			try {
 				persistenceService = PersistenceService.getInstance(masterContext);
@@ -347,8 +346,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return masterContext;
 	}
 
-	public static GlobalContext getSessionInstance(HttpSession session) {
-		return (GlobalContext) session.getAttribute(KEY);
+	public static GlobalContext getSessionInstance(HttpSession session) throws IOException {
+		return getInstance(session, (String) session.getAttribute(KEY));
 	}
 
 	public boolean isDefinedByHost() {
@@ -416,11 +415,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 						return null;
 					}
 				}
-				request.getSession().setAttribute(KEY, globalContext); // mark
-																		// global
-																		// context
-																		// in
-																		// session.
+				request.getSession().setAttribute(KEY, globalContext.getContextKey());
 			} else {
 				contextURI = globalContext.getContextKey();
 			}
@@ -433,10 +428,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return null;
 	}
 
-	public static GlobalContext getSessionContext(HttpSession session) {
-		return (GlobalContext) session.getAttribute(KEY);
-	}
-
 	public static String getSessionContextKey(HttpSession session) {
 		return (String) session.getAttribute(KEY);
 	}
@@ -445,28 +436,27 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		if (contextKey == null) {
 			return null;
 		}
-		GlobalContext globalContext = (GlobalContext) session.getAttribute(KEY + "_" + contextKey);
-		if (globalContext == null) {
-			contextKey = contextKey.toLowerCase();
-			GlobalContext newInstance = getRealInstance(session, contextKey);
-			String alias = newInstance.getAliasOf();
-			if (alias.trim().length() > 0) {
-				if (newInstance.isAliasActive()) {
-					newInstance.setMainContext(getRealInstance(session, alias));
-				} else {
-					String newContextKey = StringHelper.stringToFileName(alias);
-					if (!newContextKey.equals(contextKey)) {
-						newInstance = getRealInstance(session, alias);
-						newInstance.setSourceContextKey(contextKey);
-					}
+
+		contextKey = contextKey.toLowerCase();
+		GlobalContext newInstance = getRealInstance(session.getServletContext(), contextKey);
+		String alias = newInstance.getAliasOf();
+		if (alias.trim().length() > 0) {
+			if (newInstance.isAliasActive()) {
+				newInstance.setMainContext(getRealInstance(session.getServletContext(), alias));
+			} else {
+				String newContextKey = StringHelper.stringToFileName(alias);
+				if (!newContextKey.equals(contextKey)) {
+					newInstance = getRealInstance(session.getServletContext(), alias);
+					newInstance.setSourceContextKey(contextKey);
 				}
 			}
-			session.setAttribute(KEY, newInstance);
-			session.setAttribute(KEY + "_" + contextKey, newInstance);
-			globalContext = newInstance;
+
+			session.setAttribute(KEY, newInstance.getContextKey());
+			//session.setAttribute(KEY + "_" + contextKey, newInstance);
+			return newInstance;
 		}
 
-		return globalContext;
+		return newInstance;
 	}
 
 	public static GlobalContext getInstance(ServletContext application, StaticConfig staticConfig, File configFile) throws IOException {
@@ -511,8 +501,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 	}
 
-	public static GlobalContext getRealInstance(HttpSession session, String contextKey) throws IOException {
-		return getRealInstance(session, contextKey, true);
+	public static GlobalContext getRealInstance(ServletContext application, String contextKey) throws IOException {
+		return getRealInstance(application, contextKey, true);
 	}
 
 	private File getRedirectURLListFile() {
@@ -530,154 +520,157 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 	}
 
-	private static GlobalContext getRealInstance(HttpSession session, String contextKey, boolean copyDefaultContext) throws IOException {
+	private static GlobalContext getRealInstance(ServletContext application, String contextKey, boolean copyDefaultContext) throws IOException {
 
 		contextKey = StringHelper.stringToFileName(contextKey);
 
-		StaticConfig staticConfig = StaticConfig.getInstance(session.getServletContext());
+		StaticConfig staticConfig = StaticConfig.getInstance(application);
 
-		synchronized (LOCK_GLOBAL_CONTEXT_LOAD) {
 
-			// ServletContextWeakReference gcc =
-			// ServletContextWeakReference.getInstance(session.getServletContext());
-			GlobalContext newInstance = (GlobalContext) session.getServletContext().getAttribute(contextKey);
+		GlobalContext newInstance = (GlobalContext) application.getAttribute(contextKey);
 
-			if (newInstance == null) {
-				// LocalLogger.log("getRealInstance : "+contextKey+" - CRAETE NEW CONTEXT");
-				newInstance = new GlobalContext(contextKey);
-				newInstance.staticConfig = staticConfig;
-				newInstance.application = session.getServletContext();
-				newInstance.cacheMaps = new TimeMap<String, ICache>(staticConfig.getCacheMaxTime(), staticConfig.getCacheMaxSize());
-				newInstance.siteLog = staticConfig.isSiteLog();
-				newInstance.log(Log.INFO, Log.GROUP_INIT_CONTEXT, "Create context : " + contextKey, false);
-			} else {
-				newInstance.staticConfig = staticConfig;
-				return newInstance;
-			}
+		if (newInstance == null) {
 
-			String fileName = contextKey + ".properties";
-			newInstance.contextFile = new File(ElementaryURLHelper.mergePath(staticConfig.getContextFolder(), fileName));
-			if (!newInstance.contextFile.exists()) {
-				File archiveFile = new File(ElementaryURLHelper.mergePath(staticConfig.getContextArchiveFolder(), fileName));
-				if( archiveFile.exists()) {
-					logger.info(("import archive context from : "+archiveFile));
-					newInstance.contextFile.getParentFile().mkdirs();
-					FileUtils.moveFile(archiveFile, newInstance.contextFile);
+			synchronized (LOCK_GLOBAL_CONTEXT_LOAD) {
+
+				// ServletContextWeakReference gcc =
+				// ServletContextWeakReference.getInstance(session.getServletContext());
+				newInstance = (GlobalContext) application.getAttribute(contextKey);
+
+				if (newInstance == null) {
+					// LocalLogger.log("getRealInstance : "+contextKey+" - CRAETE NEW CONTEXT");
+					newInstance = new GlobalContext(contextKey);
+					newInstance.staticConfig = staticConfig;
+					newInstance.application = application;
+					newInstance.cacheMaps = new TimeMap<String, ICache>(staticConfig.getCacheMaxTime(), staticConfig.getCacheMaxSize());
+					newInstance.siteLog = staticConfig.isSiteLog();
+					newInstance.log(Log.INFO, Log.GROUP_INIT_CONTEXT, "Create context : " + contextKey, false);
+				} else {
+					newInstance.staticConfig = staticConfig;
+					return newInstance;
 				}
-			}
-			if (!newInstance.contextFile.exists()) {
-				if (!newInstance.contextFile.getParentFile().exists()) {
-					newInstance.contextFile.getParentFile().mkdirs();
-					newInstance.creation = true;
+
+				String fileName = contextKey + ".properties";
+				newInstance.contextFile = new File(ElementaryURLHelper.mergePath(staticConfig.getContextFolder(), fileName));
+				if (!newInstance.contextFile.exists()) {
+					File archiveFile = new File(ElementaryURLHelper.mergePath(staticConfig.getContextArchiveFolder(), fileName));
+					if (archiveFile.exists()) {
+						logger.info(("import archive context from : " + archiveFile));
+						newInstance.contextFile.getParentFile().mkdirs();
+						FileUtils.moveFile(archiveFile, newInstance.contextFile);
+					}
 				}
-				logger.info("create new context file : " + newInstance.contextFile);
-				newInstance.log(Log.INFO, Log.GROUP_INIT_CONTEXT, "create new context file : " + newInstance.contextFile, false);
-				newInstance.contextFile.createNewFile();
-				synchronized (newInstance.properties) {
-					newInstance.properties.load(newInstance.contextFile);
-					newInstance.properties.setProperty("creation-date", StringHelper.renderTime(new Date()));
-					if (staticConfig.isRandomDataFoder()) {
-						newInstance.properties.setProperty("folder", "data-" + StringHelper.getRandomId());
-					} else {
-						newInstance.properties.setProperty("folder", "data-" + contextKey);
+				if (!newInstance.contextFile.exists()) {
+					if (!newInstance.contextFile.getParentFile().exists()) {
+						newInstance.contextFile.getParentFile().mkdirs();
+						newInstance.creation = true;
 					}
-					String password = "" + (1000 + Math.round(Math.random() * 8999));
-					newInstance.setPassword(password);
-					newInstance.setFirstPassword(password);
-					if (StringHelper.isEmpty(newInstance.getFolder())) {
-						newInstance.GLOBAL_ERROR = "Error on load : '" + newInstance.contextFile + "' folder in empty.";
-					}
-					if (copyDefaultContext) {
-						GlobalContext defaultContext = getDefaultContext(session);
-						if (defaultContext.isValid()) {
-							newInstance.setAdministrator(defaultContext.getAdministrator());
-							newInstance.setAdminManagement(defaultContext.isAdminManagement());
-							newInstance.setChangeLicence(defaultContext.isChangeLicence());
-							newInstance.setChangeMenu(defaultContext.isChangeMenu());
-							newInstance.setComponents(defaultContext.getComponents());
-							newInstance.setCSSInline(defaultContext.isCSSInline());
-							newInstance.setDefaultLanguages(StringHelper.collectionToString(defaultContext.getDefaultLanguages(), ";"));
-							newInstance.setDefaultTemplate(defaultContext.getDefaultTemplate());
-							newInstance.setDownloadContent(defaultContext.isDownloadContent());
-							newInstance.setEasy(defaultContext.isEasy());
-							newInstance.setExtendMenu(defaultContext.isExtendMenu());
-							newInstance.setGlobalTitle(defaultContext.getGlobalTitle());
-							newInstance.setHelpLink(defaultContext.isHelpLink());
-							newInstance.setHelpURL(defaultContext.getHelpURL());
-							newInstance.setMainHelpURL(defaultContext.getMainHelpURL());
-							newInstance.setLook(defaultContext.getLook());
-							newInstance.setMacros(defaultContext.getMacros());
-							newInstance.setMailing(defaultContext.isMailing());
-							newInstance.setPageStructure(defaultContext.isPageStructure());
-							newInstance.setPortail(defaultContext.isPortail());
-							newInstance.setPrivatePage(defaultContext.isPrivatePage());
-							newInstance.setRAWLanguages(defaultContext.getRAWLanguages());
-							newInstance.setReversedLink(defaultContext.isReversedLink());
-							newInstance.setTemplateFilter(defaultContext.isTemplateFilter());
-							newInstance.setTemplatesNames(defaultContext.getTemplatesNames());
-							newInstance.setUserManagement(defaultContext.isUserManagement());
-							newInstance.setViewBar(defaultContext.isViewBar());
-							newInstance.setVirtualPaternity(defaultContext.isVirtualPaternity());
-							newInstance.setAutoSwitchToDefaultLanguage(defaultContext.isAutoSwitchToDefaultLanguage());
-							newInstance.setOpenFileAsPopup(defaultContext.isOpenExternalLinkAsPopup());
-							newInstance.setNoPopupDomainRAW(defaultContext.getNoPopupDomainRAW());
-							newInstance.setModules(defaultContext.getModules());
-							newInstance.setData("shared-content-active", defaultContext.getData("shared-content-active"));
-							if (defaultContext.getDMZServerInter() != null) {
-								newInstance.setDMZServerInter(defaultContext.getDMZServerInter().toString());
-							}
-							if (defaultContext.getDMZServerIntra() != null) {
-								newInstance.setDMZServerIntra(defaultContext.getDMZServerIntra().toString());
-							}
-							String defaultContentFolder = defaultContext.getDataFolder();
-							String newContentFolder = newInstance.getDataFolder();
-							File defaultDir = new File(defaultContentFolder);
-							if (defaultDir.exists()) {
-								File targetDir = new File(newContentFolder);
-								if (!targetDir.exists()) {
-									FileUtils.copyDirectory(defaultDir, targetDir);
+					logger.info("create new context file : " + newInstance.contextFile);
+					newInstance.log(Log.INFO, Log.GROUP_INIT_CONTEXT, "create new context file : " + newInstance.contextFile, false);
+					newInstance.contextFile.createNewFile();
+					synchronized (newInstance.properties) {
+						newInstance.properties.load(newInstance.contextFile);
+						newInstance.properties.setProperty("creation-date", StringHelper.renderTime(new Date()));
+						if (staticConfig.isRandomDataFoder()) {
+							newInstance.properties.setProperty("folder", "data-" + StringHelper.getRandomId());
+						} else {
+							newInstance.properties.setProperty("folder", "data-" + contextKey);
+						}
+						String password = "" + (1000 + Math.round(Math.random() * 8999));
+						newInstance.setPassword(password);
+						newInstance.setFirstPassword(password);
+						if (StringHelper.isEmpty(newInstance.getFolder())) {
+							newInstance.GLOBAL_ERROR = "Error on load : '" + newInstance.contextFile + "' folder in empty.";
+						}
+						if (copyDefaultContext) {
+							GlobalContext defaultContext = getDefaultContext(application);
+							if (defaultContext.isValid()) {
+								newInstance.setAdministrator(defaultContext.getAdministrator());
+								newInstance.setAdminManagement(defaultContext.isAdminManagement());
+								newInstance.setChangeLicence(defaultContext.isChangeLicence());
+								newInstance.setChangeMenu(defaultContext.isChangeMenu());
+								newInstance.setComponents(defaultContext.getComponents());
+								newInstance.setCSSInline(defaultContext.isCSSInline());
+								newInstance.setDefaultLanguages(StringHelper.collectionToString(defaultContext.getDefaultLanguages(), ";"));
+								newInstance.setDefaultTemplate(defaultContext.getDefaultTemplate());
+								newInstance.setDownloadContent(defaultContext.isDownloadContent());
+								newInstance.setEasy(defaultContext.isEasy());
+								newInstance.setExtendMenu(defaultContext.isExtendMenu());
+								newInstance.setGlobalTitle(defaultContext.getGlobalTitle());
+								newInstance.setHelpLink(defaultContext.isHelpLink());
+								newInstance.setHelpURL(defaultContext.getHelpURL());
+								newInstance.setMainHelpURL(defaultContext.getMainHelpURL());
+								newInstance.setLook(defaultContext.getLook());
+								newInstance.setMacros(defaultContext.getMacros());
+								newInstance.setMailing(defaultContext.isMailing());
+								newInstance.setPageStructure(defaultContext.isPageStructure());
+								newInstance.setPortail(defaultContext.isPortail());
+								newInstance.setPrivatePage(defaultContext.isPrivatePage());
+								newInstance.setRAWLanguages(defaultContext.getRAWLanguages());
+								newInstance.setReversedLink(defaultContext.isReversedLink());
+								newInstance.setTemplateFilter(defaultContext.isTemplateFilter());
+								newInstance.setTemplatesNames(defaultContext.getTemplatesNames());
+								newInstance.setUserManagement(defaultContext.isUserManagement());
+								newInstance.setViewBar(defaultContext.isViewBar());
+								newInstance.setVirtualPaternity(defaultContext.isVirtualPaternity());
+								newInstance.setAutoSwitchToDefaultLanguage(defaultContext.isAutoSwitchToDefaultLanguage());
+								newInstance.setOpenFileAsPopup(defaultContext.isOpenExternalLinkAsPopup());
+								newInstance.setNoPopupDomainRAW(defaultContext.getNoPopupDomainRAW());
+								newInstance.setModules(defaultContext.getModules());
+								newInstance.setData("shared-content-active", defaultContext.getData("shared-content-active"));
+								if (defaultContext.getDMZServerInter() != null) {
+									newInstance.setDMZServerInter(defaultContext.getDMZServerInter().toString());
+								}
+								if (defaultContext.getDMZServerIntra() != null) {
+									newInstance.setDMZServerIntra(defaultContext.getDMZServerIntra().toString());
+								}
+								String defaultContentFolder = defaultContext.getDataFolder();
+								String newContentFolder = newInstance.getDataFolder();
+								File defaultDir = new File(defaultContentFolder);
+								if (defaultDir.exists()) {
+									File targetDir = new File(newContentFolder);
+									if (!targetDir.exists()) {
+										FileUtils.copyDirectory(defaultDir, targetDir);
+									}
 								}
 							}
 						}
 					}
+				} else {
+					newInstance.log(Log.INFO, Log.GROUP_INIT_CONTEXT, "load context file : " + newInstance.contextFile, false);
+					synchronized (newInstance.properties) {
+						newInstance.properties.load(newInstance.contextFile);
+						newInstance.log(Log.INFO, Log.GROUP_INIT_CONTEXT, "folder : " + newInstance.getFolder(), false);
+						File folder = new File(newInstance.getDataFolder());
+						newInstance.log(Log.INFO, Log.GROUP_INIT_CONTEXT, "data file : " + folder + " (exist?" + folder.exists() + ')', false);
+					}
 				}
-			} else {
-				newInstance.log(Log.INFO, Log.GROUP_INIT_CONTEXT, "load context file : " + newInstance.contextFile, false);
+				newInstance.startThread();
+
+				application.setAttribute(contextKey, newInstance);
+				//session.setAttribute(KEY, newInstance);
+
 				synchronized (newInstance.properties) {
-					newInstance.properties.load(newInstance.contextFile);
-					newInstance.log(Log.INFO, Log.GROUP_INIT_CONTEXT, "folder : " + newInstance.getFolder(), false);
-					File folder = new File(newInstance.getDataFolder());
-					newInstance.log(Log.INFO, Log.GROUP_INIT_CONTEXT, "data file : " + folder + " (exist?" + folder.exists() + ')', false);
+					newInstance.properties.setProperty("access-date", StringHelper.renderTime(new Date()));
+				}
+				newInstance.writeInfo(System.out);
+				newInstance.cleanDataAccess();
+				newInstance.loadFiles();
+
+				if (newInstance.getSiteLogFile().exists()) {
+					newInstance.getSiteLogFile().delete();
+				} else {
+					newInstance.getSiteLogFile().getParentFile().mkdir();
+				}
+
+				try {
+					(new TrackerInitThread(Tracker.getTracker(newInstance))).start();
+				} catch (ServiceException e) {
+					e.printStackTrace();
 				}
 			}
-			newInstance.startThread();
-
-			session.getServletContext().setAttribute(contextKey, newInstance);
-			session.setAttribute(KEY, newInstance);
-
-			synchronized (newInstance.properties) {
-				newInstance.properties.setProperty("access-date", StringHelper.renderTime(new Date()));
-			}
-			newInstance.writeInfo(session, System.out);
-			newInstance.cleanDataAccess();
-			newInstance.loadFiles();
-
-			if (newInstance.getSiteLogFile().exists()) {
-				newInstance.getSiteLogFile().delete();
-			} else {
-				newInstance.getSiteLogFile().getParentFile().mkdir();
-			}
-
-			try {
-				(new TrackerInitThread(Tracker.getTracker(newInstance, session))).start();
-			} catch (ServiceException e) {
-				e.printStackTrace();
-			}
-
-			// TODO : init resource Id
-
-			return newInstance;
 		}
+		return newInstance;
 	}
 
 	public void initExternalService(ContentContext ctx) {
@@ -1499,11 +1492,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		return URLHelper.mergePath(getDataFolder(), "_calendar");
 	}
 
-	public String getSharedDataFolder(HttpSession session) throws IOException {
+	public String getSharedDataFolder(ServletContext application) throws IOException {
 		if (sharedDataFolder == null) {
 			sharedDataFolder = staticConfig.getLocalShareDataFolder();
 			if (getFolder() != null) {
-				sharedDataFolder = ElementaryURLHelper.mergePath(getMasterContext(session).getDataFolder(), sharedDataFolder);
+				sharedDataFolder = ElementaryURLHelper.mergePath(getMasterContext(application).getDataFolder(), sharedDataFolder);
 			}
 			try {
 				File folderFile = new File(sharedDataFolder);
@@ -3760,7 +3753,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		content.printInfo(ctx, out);
 	}
 
-	public void writeInfo(HttpSession session, PrintStream out) {
+	public void writeInfo(PrintStream out) {
 		out.println("****************************************************************");
 		out.println("****************************************************************");
 		out.println("****");

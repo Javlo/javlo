@@ -489,8 +489,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 					if (FIRST_REQUEST) {
 						FIRST_REQUEST = false;
 						try {
-							GlobalContext.getDefaultContext(request.getSession());
-							GlobalContext.getMasterContext(request.getSession());
+							GlobalContext.getDefaultContext(request.getServletContext());
+							GlobalContext.getMasterContext(request.getServletContext());
 							if (!globalContext.getSpecialConfig().isTrackingAccess()) {
 								ClearDataAccessCount.clearDataAccess(ctx);
 							}
@@ -513,7 +513,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				out.println("");
 				out.println("User-Agent : " + request.getHeader("User-Agent"));
 				out.println("");
-				globalContext.writeInfo(request.getSession(), out);
+				globalContext.writeInfo(out);
 				out.println("");
 				globalContext.writeInstanceInfo(ctx, out);
 				ContentService content = ContentService.getInstance(globalContext);

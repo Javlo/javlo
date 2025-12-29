@@ -208,7 +208,7 @@ public class ResourceServlet extends HttpServlet {
 			}
 			if (pathInfo.startsWith(staticConfig.getShareDataFolderKey())) {
 				pathInfo = pathInfo.substring(staticConfig.getShareDataFolderKey().length() + 1);
-				dataFolder = globalContext.getSharedDataFolder(request.getSession());
+				dataFolder = globalContext.getSharedDataFolder(request.getServletContext());
 			} else if (pathInfo.startsWith(URLHelper.TEMPLATE_RESOURCE_PREFIX)) {
 				pathInfo = pathInfo.substring(URLHelper.TEMPLATE_RESOURCE_PREFIX.length() + 1);
 				dataFolder = staticConfig.getTemplateFolder();

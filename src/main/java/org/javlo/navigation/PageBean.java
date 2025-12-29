@@ -985,19 +985,19 @@ public class PageBean implements Serializable {
 	}
 	
 	public int getLastDayVisit() throws ServiceException, IOException {
-		Tracker tracker = Tracker.getTracker(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		Tracker tracker = Tracker.getTracker(ctx.getGlobalContext());
 		String path = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), ctx.getPath());
 		return tracker.getLastDayPathReading(path);
 	}
 	
 	public int getLastMountVisit() throws ServiceException, IOException {
-		Tracker tracker = Tracker.getTracker(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		Tracker tracker = Tracker.getTracker(ctx.getGlobalContext());
 		String path = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), ctx.getPath());
 		return tracker.getLastMountPathReading(path);
 	}
 	
 	public int getLastYearVisit() throws ServiceException, IOException {
-		Tracker tracker = Tracker.getTracker(ctx.getGlobalContext(), ctx.getRequest().getSession());
+		Tracker tracker = Tracker.getTracker(ctx.getGlobalContext());
 		String path = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), ctx.getPath());
 		return tracker.getLastYearPathReading(path);
 	}
