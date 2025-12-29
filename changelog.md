@@ -1027,3 +1027,7 @@ Security in case of vulnerabilities.
 - linkLabel
 - auto import other same lang from other country
 ## [2.3.4] - 04/12/2025
+### Added
+- country and language smart forward
+### Modified
+- remove GlobalContext from Session
