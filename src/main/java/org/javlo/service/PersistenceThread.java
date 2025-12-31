@@ -121,6 +121,14 @@ public class PersistenceThread implements Runnable {
 				e1.printStackTrace();
 			}
 		} finally {
+
+			menuElement = null;
+    		globalContentMap.clear();
+			globalContentMap = null;
+			taxonomyRoot = null;
+			folderToSave.clear();
+			persistenceService = null;
+
 			running = false;
 			COUNT_THREAD.decrementAndGet();
 		}
