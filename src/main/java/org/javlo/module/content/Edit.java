@@ -1586,9 +1586,10 @@ public class Edit extends AbstractModuleAction {
 					globalContext.setPublishDate(new Date());
 					globalContext.setLatestPublisher(ctx.getCurrentEditUser().getLogin());
 					globalContext.storeRedirectUrlList();
-					content.releaseViewNav(globalContext);
+					// Do not release and reload viewNav immediately after publishing
+					// The viewNav already contains the published content and will be reloaded
+					// when needed. Releasing and reloading here creates duplicate instances.
 					content.releasePreviewNav(ctx);
-					content.getNavigation(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE));
 					String msg = i18nAccess.getText("content.published-portail")+' '+modif;
 					MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), new GenericMessage(msg, GenericMessage.INFO), false);
 				/*} else {
@@ -1597,12 +1598,9 @@ public class Edit extends AbstractModuleAction {
 				}*/
 			}
 
-			globalContext.setPublishDate(new Date());
-			globalContext.setLatestPublisher(ctx.getCurrentEditUser().getLogin());
-			globalContext.storeRedirectUrlList();
-
+			// Release viewNav only once after all publication operations are complete
+			// This ensures the navigation is reloaded fresh when next accessed
 			content.releaseViewNav(globalContext);
-			content.getNavigation(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE));
 
 			String msg = i18nAccess.getText("content.published");
 			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), new GenericMessage(msg, GenericMessage.INFO), false);

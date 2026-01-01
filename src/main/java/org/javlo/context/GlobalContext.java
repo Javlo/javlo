@@ -218,7 +218,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	private final Map<String, ICache> eternalCacheMaps = new Hashtable<String, ICache>();
 
-	private SpecialConfigBean config = null;
+	private SpecialConfigBean config = null; 
 
 	private IURLFactory urlFactory = null;
 
