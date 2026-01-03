@@ -4443,6 +4443,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		}
 
 		PageDescription desc = getPageDescriptionCached(ctx, lang);
+		if (desc.realContent != null) {
+			return desc.realContent;
+		}
 
 		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
 
