@@ -3258,12 +3258,14 @@ public class Template implements Comparable<Template> {
 	}
 
 	public boolean isTemplateInWebapp(ContentContext ctx) throws IOException {
+
+		GlobalContext globalContext = null;
+		globalContext = GlobalContext.getInstance(ctx.getRequest());
+		if (contextWithTemplateImported.contains(globalContext.getContextKey())) {
+			return true;
+		}
+
 		synchronized (getLockImport(ctx.getGlobalContext())) {
-			GlobalContext globalContext = null;
-			globalContext = GlobalContext.getInstance(ctx.getRequest());
-			if (contextWithTemplateImported.contains(globalContext.getContextKey())) {
-				return true;
-			}
 			File templateTgt = new File(URLHelper.mergePath(getWorkTemplateFolder(), getFolder(globalContext)));
 			if (templateTgt.exists()) {
 				/*
