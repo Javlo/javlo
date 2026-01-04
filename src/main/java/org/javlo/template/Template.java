@@ -2223,7 +2223,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	public synchronized String getRenderer(ContentContext ctx) throws Exception {
-		synchronized (ctx.getGlobalContext().getLockImportTemplate()) {
+		//synchronized (ctx.getGlobalContext().getLockImportTemplate()) {
 			String renderer = getRendererFile(ctx.getDevice());
 			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 			String jspPath = URLHelper.mergePath(getTemplateTargetFolder(globalContext), renderer);
@@ -2250,7 +2250,7 @@ public class Template implements Comparable<Template> {
 				setDepth(depth);
 			}
 			return renderer;
-		}
+		//}
 	}
 
 	private List<String> getAllPluginsName(GlobalContext globalContext) {
