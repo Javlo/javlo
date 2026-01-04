@@ -1031,3 +1031,6 @@ Security in case of vulnerabilities.
 - country and language smart forward
 ### Modified
 - remove GlobalContext from Session
+- ready for tomcat 11
+## [2.3.5] - 04/01/2026
+  
