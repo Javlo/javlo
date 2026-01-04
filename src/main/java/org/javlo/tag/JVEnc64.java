@@ -1,11 +1,9 @@
 package org.javlo.tag;
 
 
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.tagext.TagSupport;
 import org.apache.commons.codec.binary.Base64;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
-
 
 public class JVEnc64 extends TagSupport {
 
