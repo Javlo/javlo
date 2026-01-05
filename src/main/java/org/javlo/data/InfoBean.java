@@ -700,6 +700,20 @@ public class InfoBean {
 		return locale.getDisplayLanguage(locale) + " / " + locale.getDisplayCountry(locale);
 	}
 
+	public String getCountryDisplay() {
+		String lg = ContentManager.getContentLanguage(ctx);
+
+		if (lg.length() == 2) {
+			if (lg.equalsIgnoreCase("en")) {
+				return "Europe";
+			}
+			Locale displayLocale = new Locale(lg);
+			return displayLocale.getDisplayLanguage(displayLocale);
+		}
+		Locale locale = getLocale();
+		return locale.getDisplayCountry(locale);
+	}
+
 	public String getVisitorLanguageDisplay() {
 		String lg = ctx.getRequest().getLocale().getLanguage();
 		String country = ctx.getCountry();
@@ -710,6 +724,20 @@ public class InfoBean {
 			String targetDisplayLg = targetLocale.getDisplayLanguage(displayLocale);
 			String targetDisplayCountry = targetLocale.getDisplayCountry(displayLocale);
 			return targetDisplayLg + " / " + targetDisplayCountry;
+		} else {
+			logger.info("visitor lang not found : "+lang);
+			return null;
+		}
+	}
+
+	public String getVisitorCountryDisplay() {
+		String lg = ctx.getRequest().getLocale().getLanguage();
+		String country = ctx.getCountry();
+		String lang = (lg + '-' + country).toLowerCase();
+		if (globalContext.getContentLanguages().contains(lang)) {
+			Locale displayLocale = new Locale(lg);
+			Locale targetLocale = new Locale(lg, country);
+			return targetLocale.getDisplayCountry(displayLocale);
 		} else {
 			logger.info("visitor lang not found : "+lang);
 			return null;
