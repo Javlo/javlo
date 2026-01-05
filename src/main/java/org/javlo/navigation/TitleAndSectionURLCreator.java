@@ -90,6 +90,8 @@ public class TitleAndSectionURLCreator extends AbstractURLFactory {
 			url = URLHelper.mergePath(subtitle, url);
 		}
 		url = '/' + url;
+
+		System.out.println(">>>> 1.URL = "+url);
 				
 		String baseURL = url;
 		
@@ -105,9 +107,11 @@ public class TitleAndSectionURLCreator extends AbstractURLFactory {
 			}
 		}
 
+		System.out.println(">>>> 2.URL = "+url);
+
 		url = StringHelper.createASCIIString(url);
 
-		System.out.println(">>>> URL = "+url);
+		System.out.println(">>>> 3.URL = "+url);
 
 		return url;
 	}
