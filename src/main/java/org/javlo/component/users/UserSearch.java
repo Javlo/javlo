@@ -42,6 +42,10 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 		return true;
 	}
 
+	private static boolean isAccess(ContentContext ctx) {
+		return ctx.getCurrentUser() != null && ctx.getCurrentUser().getRoles().size() > 0;
+	}
+
 	@Override
 	public void prepareView(ContentContext ctx) throws Exception {
 		super.prepareView(ctx);
@@ -150,7 +154,7 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 		}
 
 		List<UserInfo> users = (List<UserInfo>) ctx.getRequest().getAttribute("users");
-		if (users != null) {
+		if (users != null && isAccess(ctx)) {
 			out.println("<div class=\"result\">");
 			if (users.size() == 0) {
 				out.println("<span class=\"error\">Sorry, no result</span>");
@@ -341,6 +345,11 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 	}
 
 	public static String performSearch(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
+
+		if (!isAccess(ctx)) {
+			throw new SecurityException("You do not have permission to perform this action.");
+		}
+
 		String text = rs.getParameter("text", "").trim();
 		String country = rs.getParameter("country", "").trim();
 		String domain = rs.getParameter("domain", "").trim();
@@ -368,6 +377,11 @@ public class UserSearch extends AbstractVisualComponent implements IAction {
 	}
 
 	public synchronized static String performAjaxsearch(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+
+		if (!isAccess(ctx)) {
+			throw new SecurityException("You do not have permission to perform this action.");
+		}
+
 		String text = rs.getParameter("text", "").trim().toLowerCase();
 		String country = rs.getParameter("country", "").trim();
 		String domain = rs.getParameter("domain", "").trim();
