@@ -104,6 +104,17 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
         }
         ctx.getRequest().setAttribute("groups", groups);
 
+        Collection<Field> fields = getFields(ctx);
+        if (fields != null) {
+            fields.forEach(field -> {
+                try {
+                    field.prepareView(ctx);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+
         super.prepareView(ctx);
     }
 

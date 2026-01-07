@@ -732,6 +732,9 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		}
 		return properties.getProperty(key);
 	}
+
+	public void prepareView(ContentContext ctx) throws Exception {
+	}
 	
 	public String getXHTMLValue() {
 		return XHTMLHelper.textToXHTML(getValue());

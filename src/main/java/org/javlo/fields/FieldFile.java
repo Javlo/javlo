@@ -117,6 +117,12 @@ public class StaticFileBean extends FieldBean {
 		
 	}
 
+	@Override
+	public void prepareView(ContentContext ctx) throws Exception {
+		super.prepareView(ctx);
+		copyFilesInImportFolder(ctx);
+	}
+
 	protected FieldBean newFieldBean(ContentContext ctx) {
 		return new StaticFileBean(ctx);
 	}
@@ -202,11 +208,9 @@ public class StaticFileBean extends FieldBean {
 	}
 
 	protected void copyFilesInImportFolder(ContentContext ctx) throws Exception {
-
 		if (!ctx.isAsViewMode()) {
 			File oldFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), getRelativeFileDirectory(ctx), getCurrentFolder(), getCurrentFile()));
 			String oldPath = StringHelper.cleanPath(oldFile.getAbsolutePath());
-
 			if (oldPath.contains(ctx.getGlobalContext().getStaticConfig().getImportFolder())) {
 				String importFolder = getImportFolderPath(ctx);
 				File newFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(),
@@ -218,8 +222,10 @@ public class StaticFileBean extends FieldBean {
 						if (!newFile.getParentFile().exists()) {
 							newFile.getParentFile().mkdirs();
 						}
-						ResourceHelper.writeFileToFile(oldFile, newFile);
-						ResourceHelper.copyResourceData(ctx, oldFile, newFile);
+						if (!newFile.exists()) {
+							ResourceHelper.writeFileToFile(oldFile, newFile);
+							ResourceHelper.copyResourceData(ctx, oldFile, newFile);
+						}
 						setCurrentFolder(ctx, importFolder);
 						PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 						logger.info("copy imported file : "+oldFile+" -> "+newFile);
