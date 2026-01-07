@@ -218,7 +218,7 @@ public class StaticFileBean extends FieldBean {
 						importFolder,
 						getCurrentFile()));
 				try {
-					if (!oldFile.getAbsolutePath().equals(newFile.getAbsolutePath()) && oldFile.exists()) {
+					if (!oldFile.getAbsolutePath().equals(newFile.getAbsolutePath()) && (oldFile.exists() || newFile.exists())) {
 						if (!newFile.getParentFile().exists()) {
 							newFile.getParentFile().mkdirs();
 						}
