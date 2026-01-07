@@ -342,8 +342,33 @@ public class GeoService {
 					HttpResponse.BodyHandlers.ofString()
 			);
 
+			// Check HTTP status code before parsing JSON
+			int statusCode = response.statusCode();
+			if (statusCode == 429) {
+				logger.severe("error read https://ipapi.co/ : Too many requests (429)");
+				return null;
+			}
+
+			if (statusCode < 200 || statusCode >= 300) {
+				logger.severe("error read https://ipapi.co/ : HTTP " + statusCode + " - " + response.body());
+				return null;
+			}
+
+			String responseBody = response.body();
+			if (responseBody == null || responseBody.trim().isEmpty()) {
+				logger.warning("empty response from https://ipapi.co/");
+				return null;
+			}
+
+			// Check if response body looks like JSON before parsing
+			String trimmedBody = responseBody.trim();
+			if (!trimmedBody.startsWith("{") && !trimmedBody.startsWith("[")) {
+				logger.severe("invalid JSON response from https://ipapi.co/ : " + trimmedBody.substring(0, Math.min(100, trimmedBody.length())));
+				return null;
+			}
+
 			ObjectMapper mapper = new ObjectMapper();
-			JsonNode json = mapper.readTree(response.body());
+			JsonNode json = mapper.readTree(responseBody);
 
 			IpInfoBean bean = new IpInfoBean();
 
@@ -359,7 +384,11 @@ public class GeoService {
 
 			return bean;
 
+		} catch (com.fasterxml.jackson.core.JsonParseException e) {
+			logger.severe("JSON parsing error from https://ipapi.co/ : " + e.getMessage());
+			return null;
 		} catch (Exception e) {
+			logger.severe("error read https://ipapi.co/ : " + e.getMessage());
 			e.printStackTrace();
 			// In case of error, return null or throw a custom exception
 			return null;
