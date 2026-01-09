@@ -15,8 +15,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ProxyService implements IAction {
 
@@ -133,7 +137,13 @@ public class ProxyService implements IAction {
 
                 // Set content type if present
                 if (cached.getContentType() != null) {
-                    ctx.getResponse().setContentType(cached.getContentType());
+                    String cachedContentType = cached.getContentType();
+                    ctx.getResponse().setContentType(cachedContentType);
+                    // Extract and set charset if present in Content-Type
+                    String charset = extractCharset(cachedContentType);
+                    if (charset != null) {
+                        ctx.getResponse().setCharacterEncoding(charset);
+                    }
                 }
 
                 // Inline: apply cached headers to client, skipping hop-by-hop and sensitive ones
@@ -246,6 +256,9 @@ public class ProxyService implements IAction {
         if (contentType == null) {
             contentType = (connection.getContentType() != null) ? connection.getContentType() : "application/octet-stream";
         }
+        
+        // Ensure charset is set for text/XML content types
+        contentType = ensureCharset(contentType, body);
 
         // --- Write to cache ---
         if (cache != null && body.length > 0) {
@@ -255,15 +268,22 @@ public class ProxyService implements IAction {
         // --- Send to client ---
         if (contentType != null) {
             ctx.getResponse().setContentType(contentType);
+            // Extract and set charset if present in Content-Type
+            String charset = extractCharset(contentType);
+            if (charset != null) {
+                ctx.getResponse().setCharacterEncoding(charset);
+            }
         }
 
         // Inline: apply upstream headers to client, skipping hop-by-hop and sensitive ones
+        // Also skip Content-Type as we've already set it with proper charset
         for (Map.Entry<String, List<String>> e : headers.entrySet()) {
             String header = e.getKey();
             if (header == null) continue;
             String lower = header.toLowerCase(Locale.ROOT);
             if ("transfer-encoding".equals(lower)
                     || "content-length".equals(lower)
+                    || "content-type".equals(lower)
                     || "connection".equals(lower)
                     || "keep-alive".equals(lower)
                     || "proxy-authenticate".equals(lower)
@@ -286,6 +306,43 @@ public class ProxyService implements IAction {
         ctx.getResponse().flushBuffer();
         ctx.setStopRendering(true);
         return null;
+    }
+
+    /**
+     * Extracts charset from Content-Type header (e.g., "text/xml; charset=UTF-8" -> "UTF-8").
+     * Returns null if no charset is found.
+     */
+    private static String extractCharset(String contentType) {
+        if (contentType == null) {
+            return null;
+        }
+        
+        String lower = contentType.toLowerCase(Locale.ROOT);
+        int charsetIndex = lower.indexOf("charset=");
+        if (charsetIndex == -1) {
+            return null;
+        }
+        
+        int start = charsetIndex + 8; // length of "charset="
+        int end = contentType.length();
+        
+        // Find the end of the charset value (end of string, semicolon, or space)
+        for (int i = start; i < contentType.length(); i++) {
+            char c = contentType.charAt(i);
+            if (c == ';' || c == ' ' || c == '\t' || c == '\n' || c == '\r') {
+                end = i;
+                break;
+            }
+        }
+        
+        String charset = contentType.substring(start, end).trim();
+        // Remove quotes if present
+        if ((charset.startsWith("\"") && charset.endsWith("\"")) 
+                || (charset.startsWith("'") && charset.endsWith("'"))) {
+            charset = charset.substring(1, charset.length() - 1);
+        }
+        
+        return charset.isEmpty() ? null : charset;
     }
 
     // ---------------------------------------
@@ -352,6 +409,89 @@ public class ProxyService implements IAction {
         if (!hasAE) {
             vary.add("Accept-Encoding");
         }
+    }
+
+    /**
+     * Ensures the Content-Type includes a charset parameter for text/XML content types.
+     * If no charset is present, tries to detect it from XML declaration, otherwise defaults to UTF-8.
+     */
+    private static String ensureCharset(String contentType, byte[] body) {
+        if (contentType == null || body == null || body.length == 0) {
+            return contentType;
+        }
+
+        String lowerContentType = contentType.toLowerCase(Locale.ROOT);
+        
+        // Check if this is a text or XML content type that needs charset
+        boolean isTextOrXml = lowerContentType.contains("text/") 
+                || lowerContentType.contains("xml")
+                || lowerContentType.contains("rss")
+                || lowerContentType.contains("atom")
+                || lowerContentType.contains("json");
+        
+        if (!isTextOrXml) {
+            return contentType;
+        }
+
+        // Check if charset is already present
+        if (contentType.toLowerCase(Locale.ROOT).contains("charset")) {
+            return contentType;
+        }
+
+        // Try to detect encoding from XML declaration (for XML/RSS content)
+        String detectedCharset = detectXmlEncoding(body);
+        
+        // Use detected charset or default to UTF-8
+        String charset = (detectedCharset != null) ? detectedCharset : "UTF-8";
+        
+        // Append charset to Content-Type
+        return contentType + "; charset=" + charset;
+    }
+
+    /**
+     * Detects XML encoding from XML declaration (<?xml version="1.0" encoding="..."?>) 
+     * Returns null if not found or if content doesn't appear to be XML.
+     */
+    private static String detectXmlEncoding(byte[] body) {
+        if (body == null || body.length < 5) {
+            return null;
+        }
+
+        try {
+            // Check if content starts with "<?xml" (ASCII characters, so safe to check as bytes)
+            // <?xml is: '<' (0x3C), '?' (0x3F), 'x' (0x78), 'm' (0x6D), 'l' (0x6C)
+            if (body[0] != 0x3C || body[1] != 0x3F || body[2] != 0x78 || body[3] != 0x6D || body[4] != 0x6C) {
+                return null; // Not an XML file
+            }
+            
+            // Try to read first bytes as UTF-8 to find XML declaration
+            // XML declaration uses ASCII characters, so UTF-8 is safe
+            int lengthToRead = Math.min(500, body.length);
+            String firstBytes = new String(body, 0, lengthToRead, StandardCharsets.UTF_8);
+            
+            // Pattern to match XML declaration with encoding: <?xml ... encoding="..." ... ?>
+            Pattern encodingPattern = Pattern.compile(
+                "<\\?xml\\s+[^>]*encoding\\s*=\\s*[\"']([^\"']+)[\"'][^>]*\\?>",
+                Pattern.CASE_INSENSITIVE | Pattern.DOTALL
+            );
+            
+            Matcher matcher = encodingPattern.matcher(firstBytes);
+            if (matcher.find()) {
+                String encoding = matcher.group(1).trim();
+                // Validate that it's a known charset
+                try {
+                    Charset.forName(encoding);
+                    return encoding;
+                } catch (Exception e) {
+                    logger.warning("Invalid charset detected in XML declaration: " + encoding);
+                    return null;
+                }
+            }
+        } catch (Exception e) {
+            logger.warning("Error detecting XML encoding: " + e.getMessage());
+        }
+
+        return null;
     }
 
     @Override
