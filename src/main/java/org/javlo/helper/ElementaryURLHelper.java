@@ -433,7 +433,6 @@ public abstract class ElementaryURLHelper {
 		if (StringHelper.isEmpty(ext)) {
 			ext = "webp";
 		}
-		
 		String currentExt = StringHelper.getFileExtension(url);
 		if (!currentExt.equalsIgnoreCase(ext)) {
 			if (url.contains("?")) {
@@ -504,7 +503,7 @@ public abstract class ElementaryURLHelper {
 				if (staticInfo != null && !StringHelper.isEmpty(staticInfo.getTitle(ctx))) {
 					fileName = staticInfo.getTitle(ctx);
 				}
-				fileName = StringHelper.toMaxSize(file.getParentFile().getName(), 50,"") + '_' + fileName;
+				fileName = StringHelper.stringToFileName(StringHelper.toMaxSize(file.getParentFile().getName(), 50,"")) + '_' + fileName;
 				url = URLHelper.mergePath(IMG_SERVLET_PATH, ctx.getGlobalContext().setTransformShortURL(url.replace(TRANSFORM + '/', ""), filter, fileName));
 			}
 		}

@@ -40,7 +40,6 @@ public class MultimediaResource {
 				return -out;
 			}
 		}
-
 	}
 
 	public static class SortByName implements Comparator<MultimediaResource> {

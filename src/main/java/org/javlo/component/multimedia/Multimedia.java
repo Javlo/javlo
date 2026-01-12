@@ -977,6 +977,7 @@ public class Multimedia extends AbstractPropertiesComponent implements IImageTit
 
 				String previewURL = multimediaURL;
 				String fileName = ResourceHelper.removeDataFolderDir(globalContext.getMainContextOrContext(), file.getAbsolutePath());
+
 				if (StringHelper.isImage(file.getName()) || StringHelper.isVideo(file.getName())) {
 					if (countAccess) {
 						previewURL = URLHelper.createTransformURL(lgCtx, getPage(), getImageFilePath(ctx, fileName), getPreviewFilter(file));
