@@ -74,7 +74,7 @@ public class ContentService implements IPrintInfo {
 
 	private MenuElement viewNav = null;
 
-	private Map<String, MenuElement> shortURLMap = null;
+	private Map<String, String> shortURLMap = null;
 
 	private MenuElement previewNav = null;
 
@@ -1052,20 +1052,20 @@ public class ContentService implements IPrintInfo {
 		if (ctx.isAsViewMode()) {
 			if (shortURLMap == null) {
 				synchronized (createSortUrl) {
-					Map<String, MenuElement> localShortURLMap = new HashMap<String, MenuElement>();
+					Map<String, String> localShortURLMap = new HashMap<>();
 					MenuElement root = getNavigation(ctx);
 					if (root.isShortURL()) {
-						localShortURLMap.put(root.getShortURL(ctx, false), root);
+						localShortURLMap.put(root.getShortURL(ctx, false), root.getId());
 					}
 					for (MenuElement child : root.getAllChildrenList()) {
 						// if (child.isShortURL()) {
-						localShortURLMap.put(child.getShortURL(ctx, false), child);
+						localShortURLMap.put(child.getShortURL(ctx, false), child.getId());
 						// }
 					}
 					this.shortURLMap = localShortURLMap;
 				}
 			}
-			return shortURLMap.get(shortURL);
+			return getNavigation(ctx).searchChildFromId(shortURLMap.get(shortURL));
 		} else {
 			return null;
 		}
