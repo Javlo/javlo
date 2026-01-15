@@ -3311,13 +3311,11 @@ public class StringHelper {
     }
 
     public static String stringToFileName(String inStr) {
-        String outStr = inStr.replaceAll("[^a-zA-Z0-9_-]", "_");
-        return outStr;
+        return inStr.replaceAll("[^a-zA-Z0-9_-]", "_");
     }
 
     public static String stringWithoutSpecialChar(String inStr) {
-        String outStr = 'a' + inStr.replaceAll("[^a-zA-Z0-9_]", "_");
-        return outStr;
+        return 'a' + inStr.replaceAll("[^a-zA-Z0-9_]", "_");
     }
 
     public static List<String> textToList(String text) {
@@ -4983,8 +4981,7 @@ public class StringHelper {
     }
 
     public static void main(String[] args) throws IOException {
-        System.out.println("-> "+getLatestFolderFromPath("/test/folder/main.jpg"));
-        System.out.println("-> "+getLatestFolderFromPath("main.jpg"));
+        System.out.println("-> "+stringToFileName("/mon tite/main.jpg"));
     }
 
     public static String cleanEmail(String input) {

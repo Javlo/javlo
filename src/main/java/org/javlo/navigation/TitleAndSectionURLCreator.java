@@ -125,4 +125,11 @@ public class TitleAndSectionURLCreator extends AbstractURLFactory {
 		return createURLWithoutExt(ctx, currentPage) + '.' + ctx.getFormat();
 	}
 
+	public static void main(String[] args) {
+		String title = "actualités";
+		String titleTransform = StringEscapeUtils.escapeHtml4(title);
+		titleTransform = StringEscapeUtils.escapeHtml4(title);
+		System.out.println(title+" --> "+titleTransform);
+	}
+
 }

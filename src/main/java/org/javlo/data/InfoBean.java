@@ -582,6 +582,20 @@ public class InfoBean {
 		return ctx.getLocale();
 	}
 
+	public List<LanguageBean> getOtherLocaleForLanguage() {
+		Locale currentLocale = getLocale();
+		List<LanguageBean> outLocale = new LinkedList<>();
+		ContentContext lgCtx = new ContentContext(ctx);
+		for (String lg : globalContext.getContentLanguages()) {
+			Locale locale = Locale.forLanguageTag(lg);
+			if (!locale.equals(currentLocale) && locale.getLanguage().equalsIgnoreCase(ctx.getRequest().getLocale().getLanguage())) {
+				lgCtx.setAllLanguage(lg);
+				outLocale.add(new LanguageBean(locale, URLHelper.createURL(lgCtx)));
+			}
+		}
+		return outLocale;
+	}
+
 	public String getCountryEnglishName() {
 		Locale locale = getLocale();
 		String name = locale.getDisplayCountry(Locale.ENGLISH);
@@ -609,6 +623,10 @@ public class InfoBean {
 	}
 
 	public String getVisitorCountry() {
+		return ctx.getCountry();
+	}
+
+	public String getVisitorLanguageOnly() {
 		return ctx.getCountry();
 	}
 

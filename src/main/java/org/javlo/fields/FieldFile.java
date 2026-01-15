@@ -227,6 +227,7 @@ public class StaticFileBean extends FieldBean {
 							ResourceHelper.copyResourceData(ctx, oldFile, newFile);
 						}
 						setCurrentFolder(ctx, importFolder);
+						getReferenceComponent(ctx).setModify();
 						PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 						logger.info("copy imported file : "+oldFile+" -> "+newFile);
 					}
