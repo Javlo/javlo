@@ -1413,7 +1413,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
             onlyDepth = Integer.parseInt(getOnlyDepth());
         }
 
-        int refDepth = ctx.getCurrentPage().getDepth();
+        //int refDepth = ctx.getCurrentPage().getDepth();
 
         for (MenuElement page : selectedPage) {
             ContentContext lgCtx = ctx;
@@ -1423,7 +1423,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
                 pageRealContent = page.isRealContent(lgCtx);
             }
             if (filterPage(lgCtx, page, selectedPage, Collections.EMPTY_LIST, "", false)) {
+
                 if ((withEmptyPage || page.isRealContentAnyLanguage(lgCtx))) {
+
                     if (firstPage == null) {
                         firstPage = page;
                     }
@@ -1434,11 +1436,15 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
                     if (realContent) {
                         realContentSize++;
                     }
-                    if (onlyDepth == null || onlyDepth == page.getDepth() - refDepth) {
+
+                    if (onlyDepth == null || onlyDepth == page.getDepth()) {
+
                         if (!intranetMode || page.getEditorRoles().size() == 0 || (ctx.getCurrentEditUser() != null && ctx.getCurrentEditUser().validForRoles(page.getEditorRoles()))) {
+
                             if (realContent) {
                                 if (tagFilter == null || tagFilter.trim().length() == 0 || page.getTags(lgCtx).contains(tagFilter)) {
                                     if (catFilter == null || catFilter.trim().length() == 0 || page.getCategory(lgCtx).equals(catFilter)) {
+
                                         Calendar cal = Calendar.getInstance();
                                         cal.setTime(page.getContentDateNeverNull(lgCtx));
                                         cal = TimeHelper.convertRemoveAfterMonth(cal);

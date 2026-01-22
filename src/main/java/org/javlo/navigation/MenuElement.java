@@ -3932,7 +3932,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		if (desc.timeRange != null) {
 			return desc.timeRange;
 		}
-
 		TimeRangeComponent comp = getTimeRangeComponent(ctx);
 		if (comp != null) {
 			Date startDate = comp.getStartDate(ctx);
@@ -3948,7 +3947,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			}
 			desc.timeRange = new TimeRange(startDate, endDate);
 		} else {
-
 			ContentContext ctxNoArea = ctx.getContextWithArea(null);
 			ContentElementList content = getContent(ctxNoArea);
 			while (content.hasNext(ctxNoArea)) {
@@ -3961,7 +3959,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 					}
 				}
 			}
-
 			Date contentDate = getContentDate(ctx);
 			if (contentDate == null) {
 				contentDate = getCreationDate();
