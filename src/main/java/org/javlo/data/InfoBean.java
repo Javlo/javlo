@@ -1967,6 +1967,10 @@ public class InfoBean {
 		return Calendar.getInstance().get(Calendar.YEAR);
 	}
 
+	public int getYear() {
+		return Calendar.getInstance().get(Calendar.YEAR);
+	}
+
 	public int getCurrentDay() {
 		return Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
 	}
