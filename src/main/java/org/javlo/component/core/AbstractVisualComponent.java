@@ -49,6 +49,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.io.*;
+import java.lang.ref.WeakReference;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
@@ -147,7 +148,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	private Properties viewData = null;
 
-	private MenuElement page = null;
+	private WeakReference<MenuElement> pageRef = null;
 
 	protected ComponentConfig config = null;
 
@@ -1724,7 +1725,14 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public MenuElement getPage() {
-		return page;
+		if (pageRef != null) {
+			if (pageRef.get() != null) {
+				return pageRef.get();
+			} else {
+				pageRef = null;
+			}
+		}
+		return null;
 	}
 
 	public void setContainerPage(ContentContext ctx, MenuElement page) {
@@ -3505,7 +3513,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	@Override
 	public void setPage(MenuElement inPage) {
-		page = inPage;
+		pageRef = new WeakReference<>(inPage);
 	}
 
 	@Override
