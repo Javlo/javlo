@@ -570,7 +570,7 @@ public class StaticInfoFile {
 	public MenuElement getLinkedPage(ContentContext ctx) {
 		ContentService contentService = ContentService.getInstance(ctx.getRequest());
 		try {
-			return contentService.getNavigation(ctx).searchChildFromId(getLinkedPageId());
+			return contentService.getPageById(ctx, getLinkedPageId());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

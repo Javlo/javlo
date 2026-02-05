@@ -23,7 +23,10 @@ import org.javlo.template.TemplateFactory;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.javlo.utils.TimeMap;
+
 import java.io.PrintStream;
+import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -90,6 +93,8 @@ public class ContentService implements IPrintInfo {
 
 	private Map<String, String> timeTravelerGlobalMap;
 
+	private Map<String, WeakReference<MenuElement>> pageCache = new TimeMap<>(60*60*24*30);
+
 	private boolean previewMode = true;
 
 	public static ContentService getInstance(HttpServletRequest request) {
@@ -123,6 +128,26 @@ public class ContentService implements IPrintInfo {
 		content.previewMode = globalContext.isPreviewMode();
 		return content;
 	}
+
+	public MenuElement getPageById(ContentContext ctx, String id) {
+		if (id == null || ctx == null) {
+			return null;
+		}
+		WeakReference<MenuElement> ref = pageCache.get(id);
+		if (ref != null) {
+			MenuElement cachedPage = ref.get();
+			if (cachedPage != null) {
+				return cachedPage;
+			}
+			pageCache.remove(id);
+		}
+		MenuElement page = getNavigation(ctx).searchChildFromId(id);
+		if (page != null) {
+			pageCache.put(id, new WeakReference<>(page));
+		}
+		return page;
+	}
+
 
 	private static IContentVisualComponent searchComponent(ContentContext ctx, MenuElement page, String id, boolean noRealContentType) throws Exception {
 		ContentContext noAreaCtx = ctx.getContextWithoutArea();
@@ -825,6 +850,7 @@ public class ContentService implements IPrintInfo {
 	 */
 
 	public void releaseAll(ContentContext ctx, GlobalContext globalContext) throws Exception {
+		pageCache.clear();
 		components.clear();
 		releasePreviewNav(ctx);
 		releaseViewNav(globalContext);
@@ -1065,7 +1091,7 @@ public class ContentService implements IPrintInfo {
 					this.shortURLMap = localShortURLMap;
 				}
 			}
-			return getNavigation(ctx).searchChildFromId(shortURLMap.get(shortURL));
+			return getPageById(ctx, shortURLMap.get(shortURL));
 		} else {
 			return null;
 		}

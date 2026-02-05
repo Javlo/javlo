@@ -43,7 +43,7 @@ public class ContentContextBean {
 
 	public PageBean getCurrentPage(ContentContext ctx) {
 		if (pageId != null) {
-			MenuElement page = ContentService.getInstance(ctx.getGlobalContext()).getNavigation(ctx).searchChildFromId(pageId);
+			MenuElement page = ContentService.getInstance(ctx.getGlobalContext()).getPageById(ctx, pageId);
 			if (page != null) {
 				return new PageBean(ctx, page);
 			}

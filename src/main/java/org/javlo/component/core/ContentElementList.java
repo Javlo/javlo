@@ -13,6 +13,7 @@ import org.javlo.component.title.PageTitle;
 import org.javlo.component.title.SubTitle;
 import org.javlo.context.ContentContext;
 import org.javlo.fields.Field;
+import org.javlo.helper.StringHelper;
 import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 
@@ -455,7 +456,7 @@ public class ContentElementList implements IContentComponentsList {
 						logger.severe("field h1 not found in meta component");
 					} else {
 						System.out.println("####### field.getValue() = " + field.getValue());
-						return field.getValue();
+						return StringHelper.removeCR(field.getValue());
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -543,7 +544,7 @@ public class ContentElementList implements IContentComponentsList {
 						if (res == null) {
 							res = "";
 						}
-						return res;
+						return StringHelper.removeCR(res);
 					}
 				}
 			}
@@ -555,7 +556,7 @@ public class ContentElementList implements IContentComponentsList {
 			}
 		}*/
 
-		return res;
+		return StringHelper.removeCR(res);
 	}
 
 	public String getXHTMLTitle(ContentContext ctx) throws Exception {

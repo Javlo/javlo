@@ -88,31 +88,31 @@ public class NavigationService {
 		} else {
 			cache = previewPageCache;
 		}
-		MenuElement menuElement = (MenuElement) cache.get(pageKey);
-		if (menuElement != null) {
-			return menuElement;
+		String pageId = (String) cache.get(pageKey);
+		if (pageId != null) {
+			return ContentService.getInstance(ctx.getGlobalContext()).getPageById(ctx, pageId);
 		}
 		synchronized (lock) {
 			if (cache.getSize() == 0) { // init cache
 				logger.info("reload page cache. (mode:" + ctx.getRenderMode() + ')');
 				ContentService content = ContentService.getInstance(ctx.getRequest());
 				MenuElement root = content.getNavigation(ctx);
-				cache.put(root.getName(), root);
-				cache.put(root.getId(), root);
-				cache.put(root.getPath(), root);				
+				cache.put(root.getName(), root.getId());
+				cache.put(root.getId(), root.getId());
+				cache.put(root.getPath(), root.getId());
 				for (MenuElement childpage : root.getAllChildrenList()) {
-					cache.put(childpage.getName(), childpage);
-					cache.put(childpage.getId(), childpage);
-					cache.put(childpage.getPath(), childpage);
+					cache.put(childpage.getName(), childpage.getId());
+					cache.put(childpage.getId(), childpage.getId());
+					cache.put(childpage.getPath(), childpage.getId());
 					List<String> vPaths = childpage.getAllVirtualPath();
 					for (String vPath : vPaths) {
 						cache.put(vPath, childpage);
 					}
 				}
 			}
-			menuElement = (MenuElement) cache.get(pageKey);
-			if (menuElement != null) {
-				return menuElement;
+			pageId = (String) cache.get(pageKey);
+			if (pageId != null) {
+				return ContentService.getInstance(ctx.getGlobalContext()).getPageById(ctx, pageId);
 			} else {
 				ContentService content = ContentService.getInstance(ctx.getRequest());
 				MenuElement root = content.getNavigation(ctx);				

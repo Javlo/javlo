@@ -150,7 +150,7 @@ public class ComponentHelper {
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement nav = content.getNavigation(ctx);
 
-		MenuElement child = nav.searchChildFromId(linkId);
+		MenuElement child = content.getPageById(ctx, linkId);
 		String link = child.getPath();
 		if (label.trim().length() == 0) {
 			label = child.getLabel(ctx);

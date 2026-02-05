@@ -2186,9 +2186,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 									lgCtx.setPath(me.getPath());
 									String pageURL = urlCreator.createURL(lgCtx, me);
 									String pageKeyURL = urlCreator.createURLKey(pageURL);
-									if (pageKeyURL.contains(".")) {
+									/*if (pageKeyURL.contains(".")) {
 										pageKeyURL = pageKeyURL.substring(0, pageKeyURL.lastIndexOf("."));
-									}
+									}*/
 									localViewPages.put(pageKeyURL, me);
 									String line = me.getName() + " [" + contentLg + "] [empty:" + me.isEmpty(lgCtx, null, false) + "] [" + me.getTitle(lgCtx) + "] > " + pageURL + " > " + pageKeyURL;
 									lines.add(line);
@@ -2297,8 +2297,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				MenuElement page = localViewPages.get(keyURL);
 				if (page != null) {
 					if (page == MenuElement.NOT_FOUND_PAGE) {
-						logger.fine("page not found : " + keyURL + "  (uri:" + ctx.getRequest().getRequestURI() + ")");
+						logger.info("page not found : " + keyURL + "  (uri:" + ctx.getRequest().getRequestURI() + ")");
 						log(Log.SEVERE, "url", "page not found keyURL='" + keyURL + "' url='" + url + "' #localViewPages=" + localViewPages.size());
+						LocalLogger.log("page not found : " + keyURL + "  (uri:" + ctx.getRequest().getRequestURI() + ")");
+						LocalLogger.log("page not found keyURL='" + keyURL + "' url='" + url + "' #localViewPages=" + localViewPages.size());
 						return null;
 					} else {
 						return page;

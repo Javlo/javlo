@@ -74,9 +74,6 @@ public class TitleAndSectionURLCreator extends AbstractURLFactory {
 			title = title.substring(0, maxSize);			
 		}
 		
-		if (isTransliteration()) {
-			title = StringHelper.removeSpecialChars(title);
-		}
 		title = cleanString(title);
 
 		String path = StringHelper.createI18NURL(title);
@@ -91,8 +88,6 @@ public class TitleAndSectionURLCreator extends AbstractURLFactory {
 		}
 		url = '/' + url;
 
-
-				
 		String baseURL = url;
 		
 		if (this.addAndCheckExistURL(currentPage, url)) {
@@ -107,11 +102,12 @@ public class TitleAndSectionURLCreator extends AbstractURLFactory {
 			}
 		}
 
+		if (isTransliteration()) {
+			url = StringHelper.removeSpecialChars(url.trim());
+		}
 
-
-		//url = StringHelper.createASCIIString(url);
-
-
+		url = StringHelper.trim(url, '-');
+		url = StringHelper.trim(url, '_');
 
 		return url;
 	}
@@ -121,7 +117,6 @@ public class TitleAndSectionURLCreator extends AbstractURLFactory {
 		if (currentPage.isLikeRoot(ctx)) {
 			return "/";
 		}
-		
 		return createURLWithoutExt(ctx, currentPage) + '.' + ctx.getFormat();
 	}
 

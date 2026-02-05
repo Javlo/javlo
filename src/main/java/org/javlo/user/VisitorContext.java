@@ -25,7 +25,7 @@ public class VisitorContext {
 	}
 
 	public PageBean getPreviousPage(ContentContext ctx) {
-		MenuElement page = ContentService.getInstance(ctx.getGlobalContext()).getNavigation(ctx).searchChildFromId(previousPageId);
+		MenuElement page = ContentService.getInstance(ctx.getGlobalContext()).getPageById(ctx, previousPageId);
 		if (page == null) {
 			return null;
 		} else {

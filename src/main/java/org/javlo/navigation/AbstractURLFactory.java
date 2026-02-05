@@ -26,6 +26,7 @@ public abstract class AbstractURLFactory implements IURLFactory {
 
 	@Override
 	public String createURLKey(String url) {
+		url = StringHelper.trim(url, '/');
 		int pointIndex = url.lastIndexOf('.');
 		if (pointIndex >= 0) {
 			url = url.substring(0, pointIndex);

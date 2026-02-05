@@ -516,13 +516,7 @@ public class NavigationHelper {
 	}
 
 	public static MenuElement getPageById(ContentContext ctx, String id) throws Exception {
-		ContentService content = ContentService.getInstance(ctx.getRequest());
-		MenuElement root = content.getNavigation(ctx);
-		if (root.getId().equals(id)) {
-			return root;
-		} else {
-			return root.searchChildFromId(id);
-		}
+		return ContentService.getInstance(ctx.getRequest()).getPageById(ctx, id);
 	}
 
 	public static MenuElement getChildWithContent(ContentContext ctx, MenuElement page) throws Exception {
@@ -556,7 +550,7 @@ public class NavigationHelper {
 			return null;
 		}
 		ContentService content = ContentService.getInstance(ctx.getRequest());
-		MenuElement page = content.getNavigation(ctx).searchChildFromId(idOrNameOrPath);
+		MenuElement page = content.getPageById(ctx, idOrNameOrPath);
 		if (page == null) {
 			page = content.getNavigation(ctx).searchChildFromName(idOrNameOrPath);
 			if (page == null) {

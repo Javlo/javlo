@@ -641,6 +641,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		for (MenuElement menuElement : children) {
 			String pagePath = menuElement.getVirtualPath(ctx);
 			//System.out.println(">>>> path="+path+" =? "+pagePath);
+			//LocalLogger.log(">>>> path="+path+" =? "+pagePath);
 			if (pagePath.equals(path)) {
 				return menuElement;
 			} else {
@@ -5819,7 +5820,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			IContentVisualComponent comp = content.next(ctx);
 			if (comp instanceof InternalLink) {
 				InternalLink linkComp = (InternalLink)comp;
-				MenuElement target = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx).searchChildFromId(linkComp.getLinkId());
+				MenuElement target = ContentService.getInstance(ctx.getRequest()).getPageById(ctx, linkComp.getLinkId());
 				if (target == null) {
 					logger.warning("target page not found  : "+linkComp.getLinkURL(ctx));
 				} else {
