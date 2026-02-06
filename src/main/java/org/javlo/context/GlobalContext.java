@@ -2319,7 +2319,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			// "+DebugHelper.getCaller(10)); //TODO: remove debug trace
 			MenuElement page = MenuElement.searchChild(root, ctx, url, pastNode);
 			if (page != null && ctx.getRenderMode() == ContentContext.VIEW_MODE) {
-				logger.info("add found page in cache : "+url);
+				logger.fine("add found page in cache : "+url);
 				localViewPages.put(url, page);
 			} else if (page == null && ctx.getRenderMode() == ContentContext.VIEW_MODE) {
 				logger.info("add not found page in cache : "+url);
