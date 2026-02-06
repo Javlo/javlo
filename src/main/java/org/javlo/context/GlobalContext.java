@@ -2322,7 +2322,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				logger.fine("add found page in cache : "+url);
 				localViewPages.put(url, page);
 			} else if (page == null && ctx.getRenderMode() == ContentContext.VIEW_MODE) {
-				logger.info("add not found page in cache : "+url);
+				logger.fine("add not found page in cache : "+url);
 				localViewPages.put(url, MenuElement.NOT_FOUND_PAGE);
 			}
 
