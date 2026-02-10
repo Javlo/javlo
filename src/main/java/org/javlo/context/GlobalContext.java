@@ -2186,9 +2186,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 									lgCtx.setPath(me.getPath());
 									String pageURL = urlCreator.createURL(lgCtx, me);
 									String pageKeyURL = urlCreator.createURLKey(pageURL);
-									/*if (pageKeyURL.contains(".")) {
+									if (pageKeyURL.contains(".")) {
 										pageKeyURL = pageKeyURL.substring(0, pageKeyURL.lastIndexOf("."));
-									}*/
+									}
 									localViewPages.put(pageKeyURL, me);
 									String line = me.getName() + " [" + contentLg + "] [empty:" + me.isEmpty(lgCtx, null, false) + "] [" + me.getTitle(lgCtx) + "] > " + pageURL + " > " + pageKeyURL;
 									lines.add(line);
