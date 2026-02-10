@@ -1760,6 +1760,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected boolean isWrapped(ContentContext ctx) {
+		if (isHidden(ctx)) {
+			return true;
+		}
 		if (isList(ctx)) {
 			return StringHelper.isTrue(getConfig(ctx).getProperty("list-wrapped", null), true);
 		} else {
