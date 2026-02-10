@@ -1925,7 +1925,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return "";
 		}
 
-		if (isWrapped(ctx) || isDisplayHidden()) {
+		if (isWrapped(ctx)) {
 			return colPrefix + getForcedPrefixViewXHTMLCode(ctx);
 		} else {
 			return colPrefix;
@@ -1939,7 +1939,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return closeComment;
 		}
 		String colSuffix = getColomnableSuffix(ctx) + closeComment;
-		if (isWrapped(ctx) || isDisplayHidden()) {
+		if (isWrapped(ctx)) {
 			return getForcedSuffixViewXHTMLCode(ctx) + colSuffix;
 		} else {
 			return colSuffix;
