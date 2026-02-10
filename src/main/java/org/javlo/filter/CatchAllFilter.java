@@ -173,7 +173,7 @@ public class CatchAllFilter implements Filter {
 		/** security : block ip attack **/
 		if (AccessSecurity.getInstance(httpRequest).isIpBlock(httpRequest)) {
 			httpResponse.reset();
-			logger.severe("BLOCK IP # = "+BLOCK_IP+" ["+httpRequest.getRequestURI()+"]");
+			logger.severe("BLOCK IP # = "+BLOCK_IP+" ["+NetHelper.getIp(httpRequest)+" > "+httpRequest.getRequestURI()+"]");
 			httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 			BLOCK_IP++;
 			return;
