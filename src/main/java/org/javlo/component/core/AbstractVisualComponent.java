@@ -1760,9 +1760,6 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	}
 
 	protected boolean isWrapped(ContentContext ctx) {
-		if (isHidden(ctx)) {
-			return true;
-		}
 		if (isList(ctx)) {
 			return StringHelper.isTrue(getConfig(ctx).getProperty("list-wrapped", null), true);
 		} else {
@@ -1928,7 +1925,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return "";
 		}
 
-		if (isWrapped(ctx)) {
+		if (isWrapped(ctx) || isDisplayHidden()) {
 			return colPrefix + getForcedPrefixViewXHTMLCode(ctx);
 		} else {
 			return colPrefix;
@@ -1942,7 +1939,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			return closeComment;
 		}
 		String colSuffix = getColomnableSuffix(ctx) + closeComment;
-		if (isWrapped(ctx)) {
+		if (isWrapped(ctx) || isDisplayHidden()) {
 			return getForcedSuffixViewXHTMLCode(ctx) + colSuffix;
 		} else {
 			return colSuffix;
