@@ -2041,9 +2041,10 @@ public class InfoBean {
 	public Map<String, Boolean> getAreaEmpty() {
 		Map<String, Boolean> emptyArea = new HashMap<String, Boolean>();
 		try {
+			//ContentContext refLgCtx = ctx.getContextWithContentSameLanguage(true);
 			for (String area : ctx.getCurrentTemplate().getAreas()) {
 				if (ctx.getCurrentPage().isEmpty(ctx, area, true)) {
-					emptyArea.put(area, new Boolean(true));
+					emptyArea.put(area, Boolean.valueOf(true));
 				}
 			}
 		} catch (Exception e) {

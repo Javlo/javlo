@@ -1921,11 +1921,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public String getPrefixViewXHTMLCode(ContentContext ctx) {
 		String colPrefix = getColomnablePrefix(ctx);
-		if (isDisplayHidden() && ctx.isAsViewMode()) {
+		if (isStyleHidden(ctx) && ctx.isAsViewMode()) {
 			return "";
 		}
 
-		if (isWrapped(ctx)) {
+		if (isWrapped(ctx) || isStyleHidden(ctx)) {
 			return colPrefix + getForcedPrefixViewXHTMLCode(ctx);
 		} else {
 			return colPrefix;
@@ -1935,11 +1935,11 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 	@Override
 	public String getSuffixViewXHTMLCode(ContentContext ctx) {
 		String closeComment = (!ctx.isProd() ? "<!-- /close comp:" + getType() + " -->" : "");
-		if (isDisplayHidden() && ctx.isAsViewMode()) {
+		if (isStyleHidden(ctx) && ctx.isAsViewMode()) {
 			return closeComment;
 		}
 		String colSuffix = getColomnableSuffix(ctx) + closeComment;
-		if (isWrapped(ctx)) {
+		if (isWrapped(ctx) || isStyleHidden(ctx)) {
 			return getForcedSuffixViewXHTMLCode(ctx) + colSuffix;
 		} else {
 			return colSuffix;

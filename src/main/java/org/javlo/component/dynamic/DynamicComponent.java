@@ -187,7 +187,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
     @Override
     public String getPrefixViewXHTMLCode(ContentContext ctx) {
-        if (!isWrapped()) {
+        if (!isWrapped() && !isStyleHidden(ctx)) {
             return getColomnablePrefix(ctx);
         } else {
             return super.getPrefixViewXHTMLCode(ctx);
@@ -196,7 +196,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
     @Override
     public String getSuffixViewXHTMLCode(ContentContext ctx) {
-        if (!isWrapped()) {
+        if (!isWrapped() && !isStyleHidden(ctx)) {
             return getColomnableSuffix(ctx);
         } else {
             return super.getSuffixViewXHTMLCode(ctx);
@@ -397,7 +397,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                 }
                 String prefix = "";
                 String suffix = "";
-                if (isWrapped()) {
+                if (isWrapped() || isDisplayHidden()) {
                     String cssClass = "";
                     if (getCSSClass().trim().length() > 0) {
                         cssClass = ' ' + getCSSClass();
@@ -421,7 +421,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
             cssClass = ' ' + getCSSClass();
         }
         out.println(getPrefix());
-        if (isWrapped()) {
+        if (isWrapped() || isDisplayHidden()) {
             if (allValid) {
                 out.println("<div class=\"in-wrapper valid" + cssClass + "\">");
             } else {
@@ -457,7 +457,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                 }
             }
         }
-        if (isWrapped()) {
+        if (isWrapped()  || isDisplayHidden()) {
             out.println("<div class=\"end\"><span>&nbsp;</span></div>");
             out.println("</div>");
         }
