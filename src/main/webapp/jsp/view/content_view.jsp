@@ -38,6 +38,11 @@
 	ContentContext ctx = baseCtx.getContextWithContentSameLanguage();
 	GlobalContext globalContext = GlobalContext.getInstance(request);
 
+	boolean debugContentInfo = StringHelper.isTrue(request.getParameter("_debugContent"));
+	if (ctx.getCurrentEditUser() == null) {
+		debugContentInfo = false;
+	}
+
 	if (ctx.isAsPreviewMode()) {
 		if (!ctx.getContextWithContentSameLanguage(true).getLocale().equals(baseCtx.getLocale())) {
 %><div class="alert alert-info">content import from : <%=ctx.getContextWithContentSameLanguage(true).getLocale()%></div><%
@@ -124,14 +129,16 @@ if ( ctx.getSpecialContentRenderer() != null && area.equals(ComponentBean.DEFAUL
 	Template template = ctx.getCurrentTemplate();
 	Stack<IContainer> containers = new Stack<IContainer>();
 
-%><%-- <!-- DEBUG INFO -->
-<ul style="padding: 10px; margin: 10px; border: 2px dashed red; list-style: none;">
+if (debugContentInfo) {%>
+<ul style="padding: 10px; margin: 10px; border: 2px dashed red; list-style: none; border-radius: 6px;">
 <li>area = <%=area %></li>
 <li>path = <%=ctx.getPath()%></li>
 <li>currentPage = <%=currentPage.getName()%></li>
+<li>#content = <%=currentPage.getContent(ctx).size(ctx)%></li>
 <li>template = <%=template.getName()%></li>
 <li>area : <%=ctx.getArea()%> - lg:<%=ctx.getRequestContentLanguage()%></li>
-</ul> --%><%
+</ul><%
+}
 
 if ( (ctx.getSpecialContentRenderer() == null || !area.equals(ComponentBean.DEFAULT_AREA) ) || template.getAreasForceDisplay().contains(area)) { // display only if page contains only repeat content (supose it is teaser)
 
