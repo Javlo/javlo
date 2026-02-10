@@ -4331,7 +4331,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	}
 
 	public boolean isNoComponent(ContentContext ctx, String area) throws Exception {
-		return isEmpty(ctx, area);
+		return isEmpty(ctx.getContextWithContentSameLanguage(), area);
 	}
 
 	public boolean isEmpty(ContentContext ctx, String area) throws Exception {
