@@ -61,6 +61,7 @@ import org.javlo.ztatic.IStaticContainer;
 
 import java.awt.*;
 import java.io.*;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.text.ParseException;
@@ -834,7 +835,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 	private Object lock = null;
 
-	private Map<String, MenuElement> pageCache = null;
+	private Map<String, WeakReference<MenuElement>> pageCache = null;
 
 	private boolean useCache = true;
 
@@ -845,7 +846,16 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		if (pageCache == null) {
 			return null;
 		} else {
-			return pageCache.get(key);
+			WeakReference<MenuElement> ref = pageCache.get(key);
+			if (ref != null) {
+				if (ref.get() == null) {
+					pageCache.remove(key);
+					return null;
+				} else {
+					return ref.get();
+				}
+			}
+			return null;
 		}
 	}
 
@@ -854,9 +864,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			return;
 		}
 		if (pageCache == null) {
-			pageCache = new TimeMap<String, MenuElement>(5 * 60, 2048); // cache 5 minutes
+			pageCache = new TimeMap<String, WeakReference<MenuElement>>(5 * 60, 2048); // cache 5 minutes
 		}
-		pageCache.put(key, page);
+		pageCache.put(key, new WeakReference<>(page));
 	}
 
 	protected MenuElement() {
@@ -5029,9 +5039,6 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		}
 	}
 
-	/**
-	 * @param strings
-	 */
 	public void setUserRoles(Set<String> roles) {
 		if (roles != null) {
 			Set<String> lowerRoles = new HashSet<String>();

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collection;
@@ -227,8 +228,6 @@ public class StaticInfoFile {
 	private String linkedLocation;
 
 	private long size = -1;
-
-	private Collection<MenuElement> containers = null;
 
 	ConfigurationProperties properties;
 
@@ -526,14 +525,6 @@ public class StaticInfoFile {
 
 	public String getStaticURL() {
 		return staticURL;
-	}
-
-	public Collection<MenuElement> getContainers() {
-		return containers;
-	}
-
-	public void setContainers(Collection<MenuElement> containers) {
-		this.containers = containers;
 	}
 
 	public int getFocusZoneX() {

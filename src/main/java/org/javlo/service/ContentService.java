@@ -853,6 +853,7 @@ public class ContentService implements IPrintInfo {
 		pageCache.clear();
 		components.clear();
 		releasePreviewNav(ctx);
+		releaseTimeTravelerNav(ctx);
 		releaseViewNav(globalContext);
 		I18nResource.getInstance(globalContext).clearAllCache();
 	}

@@ -455,7 +455,6 @@ public class ContentElementList implements IContentComponentsList {
 					if (field == null) {
 						logger.severe("field h1 not found in meta component");
 					} else {
-						System.out.println("####### field.getValue() = " + field.getValue());
 						return StringHelper.removeCR(field.getValue());
 					}
 				} catch (Exception e) {
