@@ -45,7 +45,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 
 		public FieldBean(ContentContext ctx) {
 			this.ctx = ctx;
-			this.contentLocale = ctx.getLocale();
+			this.contentLocale = ctx != null ? ctx.getLocale() : null;
 		}
 
 		public String getId() {
@@ -178,6 +178,9 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		}
 		
 		public String getAllXHTML() throws Exception {
+			if (ctx == null) {
+				return "";
+			}
 			String cssClass = "";
 			if (getCSSClass() != null && getCSSClass().trim().length() > 0) {
 				cssClass = ' ' + getCSSClass();
@@ -1359,6 +1362,9 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 
 	@Override
 	public Map<String, Object> getContentAsMap(ContentContext ctx) throws Exception {
+		if (ctx == null) {
+			return new HashMap<>();
+		}
 		return BeanHelper.bean2Map(newFieldBean(ctx));
 	}
 	

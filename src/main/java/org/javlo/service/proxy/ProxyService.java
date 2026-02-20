@@ -33,7 +33,6 @@ public class ProxyService implements IAction {
     /** Extracts the logical key from path: /prefix/{key}/... -> key */
     private static String extractKey(ContentContext ctx) {
         String path = ctx.getRequest().getPathInfo();
-        System.out.println("#### path = " + path);
 
         // Check for null or empty path
         if (path == null || path.isEmpty()) {
@@ -44,7 +43,6 @@ public class ProxyService implements IAction {
         path = StringHelper.trim(path, '/');
 
         String[] segments = path.split("/");
-        System.out.println("#### segments = " + StringHelper.arrayToString(segments, ","));
 
         // Expect at least prefix + key -> segments[1]
         if (segments.length > 1 && !segments[1].isEmpty()) {
