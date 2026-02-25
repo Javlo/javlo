@@ -59,7 +59,9 @@ public class StaticConfig extends Observable {
 	public static final String WEBAPP_CONFIG_INSTALL = "/WEB-INF/config/static-config-install.properties";
 
 	static final String EDIT_USERS_KEY = "edit.users";
-	static final String DEFAULT_CREDENTIALS = "admin,0DPiKuNIrrVmD8IUCuw1hQxNqZc="; // admin,admin;
+	//static final String DEFAULT_CREDENTIALS = "admin,0DPiKuNIrrVmD8IUCuw1hQxNqZc="; // admin,admin;
+	static final String DEFAULT_CREDENTIALS = "admin,RxMt2ucRuyB+qDNiBCLHHz4z7qg=";
+
 
 	private static final String FILE_NAME = "static-config.properties";
 	private static final String DEFAULT_CONFIG_DIR = "/WEB-INF/config";
