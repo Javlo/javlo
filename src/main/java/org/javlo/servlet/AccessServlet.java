@@ -1347,6 +1347,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			ctx.release();
 		}
 	}
 
