@@ -12,8 +12,12 @@ import org.json.simple.parser.JSONParser;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -88,24 +92,36 @@ public class DeepLTranslateService implements ITranslator {
 		String translation = cache.get(cacheKey);
 
 		if (translation == null) {
-			String query = "text=" + encode(processedText);
-			query += "&source_lang=" + encode(sourceLang);
-			query += "&target_lang=" + encode(targetLang);
-			query += "&auth_key=" + encode(apiKey);
+			String query = "text=" + encode(processedText) +
+					"&source_lang=" + encode(sourceLang) +
+					"&target_lang=" + encode(targetLang);
 
-			URL deeplURL = new URL(URLHelper.addParams(getGoogleUrl().toString(), query));
-			logger.info("call deepl for : " + targetLang);
-			String json = NetHelper.readPage(deeplURL);
+			try {
+				HttpClient client = HttpClient.newHttpClient();
+				HttpRequest request = HttpRequest.newBuilder()
+						.uri(URI.create(getGoogleUrl().toString()))
+						.header("Authorization", "DeepL-Auth-Key " + apiKey)
+						.header("Content-Type", "application/x-www-form-urlencoded")
+						.POST(HttpRequest.BodyPublishers.ofString(query))
+						.build();
 
-			if (json == null) {
-				Logger.error("error read page : " + deeplURL);
-			} else {
-				JSONParser jsonParser = new JSONParser();
-				JSONObject jsonObject = (JSONObject) jsonParser.parse(json);
-				translation = "" + ((JSONObject) (((JSONArray) jsonObject.get("translations")).get(0))).get("text");
-				cache.put(cacheKey, translation);
+				HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+				if (response.statusCode() == 200) {
+					String json = response.body();
+					JSONParser jsonParser = new JSONParser();
+					JSONObject jsonObject = (JSONObject) jsonParser.parse(json);
+					translation = "" + ((JSONObject) (((JSONArray) jsonObject.get("translations")).get(0))).get("text");
+					cache.put(cacheKey, translation);
+				} else {
+					logger.severe("HTTP error code: " + response.statusCode());
+					logger.severe("Error response: " + response.body());
+				}
+			} catch (Exception e) {
+				logger.severe("Error calling DeepL API : "+e.getMessage());
 			}
-		} else {
+		}
+		else {
 			logger.info("deepl found in cache for : " + targetLang);
 		}
 
