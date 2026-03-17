@@ -168,18 +168,381 @@ body #popup_container {
 }
 
 body.previewEdit {
+	background-color: var(--javlo-ui-bg-secondary) !important;
+	font-family: var(--systemfonts);
+	padding: 0 !important;
+
+	/* ---- Save and close button bar ---- */
 	.insert-line {
 		display: none;
-	} 
+	}
 	.insert-line.action {
-		display: block;
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
 		position: fixed;
 		right: 0;
 		top: 0;
-		padding: 15px;
-		background-color: var(--javlo-ui-bg-primary) !important;
-		button {
-			height: 22px;
+		padding: 8px 16px;
+		background-color: var(--javlo-ui-bg-tertiary) !important;
+		z-index: 100;
+		border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+		#button-content-submit {
+			--btn-height: 32px;
+			background-color: var(--action-color) !important;
+			color: var(--action-text) !important;
+			border: 0 none !important;
+			border-radius: 5px;
+			font-size: 13px;
+			font-weight: 500;
+			padding: 0 20px;
+			cursor: pointer;
+			transition: background-color 0.15s ease;
+			letter-spacing: 0.01em;
+			min-width: 140px;
+			height: var(--btn-height);
+			line-height: var(--btn-height);
+
+			&:hover {
+				background-color: var(--action-color-hover) !important;
+			}
+		}
+	}
+
+	/* ---- Breadcrumbs ---- */
+	.breadcrumbs {
+		padding: 10px 20px;
+		font-size: 13px;
+		color: var(--javlo-ui-text);
+
+		a {
+			color: var(--javlo-ui-text) !important;
+			text-decoration: none;
+			transition: opacity 0.15s ease;
+
+			&:hover {
+				opacity: 1;
+				text-decoration: none;
+			}
+		}
+
+		i {
+			font-size: 14px;
+		}
+
+		span.title:before {
+			opacity: 0.7;
+		}
+	}
+
+	/* ---- Area label ---- */
+	.area-label {
+		display: none;
+	}
+
+	/* ---- Alert messages ---- */
+	.alert {
+		border-radius: 5px;
+		padding: 10px 16px;
+		font-size: 12px;
+		margin: 8px 20px;
+		border: 0 none;
+	}
+
+	.alert-warning {
+		background-color: hsl(45, 80%, 92%);
+		color: hsl(30, 60%, 30%);
+	}
+
+	.alert-danger {
+		background-color: hsl(0, 70%, 94%);
+		color: hsl(0, 50%, 35%);
+	}
+
+	.alert-info {
+		background-color: hsl(209, 70%, 93%);
+		color: hsl(209, 50%, 30%);
+	}
+
+	.alert-success {
+		background-color: hsl(134, 50%, 92%);
+		color: hsl(134, 40%, 28%);
+	}
+
+	/* ---- Main content area ---- */
+	.maincontent {
+		margin: 0 !important;
+		padding: 0 !important;
+		min-width: auto !important;
+	}
+
+	.maincontent_inner {
+		margin: 0 !important;
+	}
+
+	#content-edit {
+		padding: 0 0 60px 0;
+	}
+
+	/* ---- Component wrapper ---- */
+	.component-wrapper {
+		color: var(--javlo-ui-text);
+		margin: 0;
+		padding: 0;
+		border: 1px solid rgba(0, 0, 0, 0.15);
+		border-radius: 5px;
+		overflow: hidden;
+	}
+
+	/* ---- Component title (HEADING label) ---- */
+	.component-title {
+		padding: 4px 12px;
+		background-color: transparent !important;
+		font-size: 10px;
+		font-weight: 500;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		opacity: 0.5;
+		border-bottom: 0 none;
+
+		a {
+			color: var(--javlo-ui-text) !important;
+			text-decoration: none !important;
+			background-color: transparent !important;
+			padding-left: 0 !important;
+			cursor: default;
+		}
+	}
+
+	/* ---- Tabs ---- */
+	.tabs.component {
+		background-color: transparent;
+		border: 0 none;
+
+		.header-tabs {
+			background-color: transparent;
+			border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+			padding: 0;
+
+			ul {
+				display: flex !important;
+				list-style: none;
+				margin: 0;
+				padding: 0;
+				gap: 0;
+				border: 0 none;
+				background: transparent;
+				height: auto;
+
+				li {
+					margin: 0;
+					padding: 0;
+					float: none;
+					display: block;
+
+					a {
+						font-size: 12px;
+						font-weight: 500;
+						text-transform: uppercase;
+						letter-spacing: 0.04em;
+						color: #666;
+						opacity: 1;
+						text-decoration: none !important;
+						border-bottom: 2px solid transparent;
+						transition: opacity 0.15s ease, border-color 0.15s ease;
+						border-radius: 0 !important;
+						background: transparent !important;
+
+						&:hover {
+							opacity: 1;
+							text-decoration: none !important;
+						}
+					}
+
+					&.ui-tabs-active,
+					&.ui-state-active {
+						position: relative;
+						z-index: 1;
+						margin-bottom: -2px;
+						padding-bottom: 2px;
+						background-color: var(--javlo-ui-bg-primary) !important;
+
+						a {
+							opacity: 1;
+							font-weight: 600;
+							border-bottom-color: var(--javlo-ui-primary-accent-color-3);
+							color: var(--javlo-ui-text) !important;
+							background-color: transparent !important;
+						}
+					}
+
+					&.disabled a {
+						opacity: 0.4;
+						cursor: default;
+					}
+				}
+			}
+		}
+
+		.header-action {
+			display: none;
+		}
+
+		.header-info {
+			display: none;
+		}
+
+		/* Tab panels */
+		> div[id^="tab"] {
+			padding: 20px;
+			background-color: var(--javlo-ui-bg-primary);
+		}
+
+		.ui-tabs-panel {
+			padding: 20px;
+			background-color: var(--javlo-ui-bg-primary);
+			border: 0 none;
+		}
+	}
+
+	/* ---- Form elements inside component edit ---- */
+	.component-wrapper {
+
+		label, .label {
+			color: var(--javlo-ui-text);
+			font-size: 12px;
+			font-weight: 600;
+			margin-bottom: 4px;
+		}
+
+		input[type="text"],
+		input[type="number"],
+		input[type="url"],
+		input[type="email"],
+		textarea,
+		select {
+			background-color: rgba(0, 0, 0, 0.04) !important;
+			border: 1px solid rgba(0, 0, 0, 0.2) !important;
+			color: var(--javlo-ui-text) !important;
+			border-radius: 4px;
+			padding: 6px 10px;
+			font-size: 13px;
+			transition: border-color 0.15s ease;
+
+			&:focus, &:hover {
+				border-color: var(--javlo-ui-primary-accent-color-3) !important;
+				background-color: rgba(0, 0, 0, 0.06) !important;
+				outline: none;
+			}
+		}
+
+		select {
+			cursor: pointer;
+		}
+
+		.form-control {
+			width: 100%;
+			box-sizing: border-box;
+		}
+
+		/* Column/layout selector */
+		fieldset {
+			background-color: rgba(0, 0, 0, 0.05);
+			border: 1px solid rgba(0, 0, 0, 0.1);
+			border-radius: 5px;
+			margin: 10px 0;
+			padding: 8px 12px;
+
+			legend {
+				font-size: 11px;
+				padding: 2px 8px;
+				border-radius: 3px;
+				background-color: var(--javlo-ui-bg-tertiary);
+				border-color: rgba(0, 0, 0, 0.1);
+				color: var(--javlo-ui-text);
+			}
+		}
+
+		/* Buttons inside form */
+		.btn {
+			border-radius: 4px;
+			font-size: 12px;
+			transition: background-color 0.15s ease, opacity 0.15s ease;
+		}
+
+		.btn-primary {
+			background-color: var(--action-color) !important;
+			color: var(--action-text) !important;
+			border-color: var(--action-color) !important;
+
+			&:hover {
+				background-color: var(--action-color-hover) !important;
+			}
+		}
+
+		/* Button check groups (Level Size 1-6) */
+		._jv_btn-check {
+			label {
+				color: #333 !important;
+				background-color: #ddd !important;
+			}
+			input:checked + label {
+				background-color: var(--javlo-ui-btn-toggle-bg-active) !important;
+				color: #fff !important;
+			}
+			&:hover label {
+				background-color: #ccc !important;
+				color: #222 !important;
+			}
+			.btn {
+				border-radius: 0;
+				&:first-of-type {
+					border-radius: 4px 0 0 4px;
+				}
+				&:last-of-type {
+					border-radius: 0 4px 4px 0;
+				}
+			}
+		}
+
+		/* Column selection alignment */
+		.column-selection .column-align {
+			flex-direction: column;
+			flex-wrap: nowrap;
+			padding: 2px;
+			gap: 0;
+			align-items: center;
+			.align-label {
+				font-size: 10px;
+				line-height: 1;
+				margin-bottom: 2px;
+			}
+			.btn-group {
+				gap: 0;
+			}
+		}
+	}
+
+	/* ---- ID display at bottom ---- */
+	.component-wrapper .id-display,
+	.component-wrapper span[title*="Id:"] {
+		font-size: 11px;
+		opacity: 0.5;
+		padding: 4px 20px;
+	}
+
+	/* ---- Scrollbar styling ---- */
+	#content-edit {
+		&::-webkit-scrollbar {
+			width: 6px;
+		}
+		&::-webkit-scrollbar-track {
+			background: transparent;
+		}
+		&::-webkit-scrollbar-thumb {
+			background-color: rgba(0, 0, 0, 0.15);
+			border-radius: 3px;
 		}
 	}
 }

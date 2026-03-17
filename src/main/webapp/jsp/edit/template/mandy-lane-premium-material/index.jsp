@@ -117,7 +117,7 @@
 	<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/bootstrap/bootstrap.css?ts=${info.ts}" />
 	<link rel="stylesheet" href="${info.editTemplateURL}/css/style.css?ts=${info.ts}" />
 	<link rel="stylesheet" media="screen" href="${info.editTemplateURL}/css/javlo.css?ts=${info.ts}" />
-	<link rel="stylesheet" media="screen" type="text/css" href="<jv:url value='/css/edit/global.css' />" />
+	<link rel="stylesheet" media="screen" type="text/css" href="<jv:url value='/css/edit/global.css' />?ts=${info.ts}" />
 
 	<style type="text/css">
 @font-face {
