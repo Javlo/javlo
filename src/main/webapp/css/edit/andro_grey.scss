@@ -413,7 +413,6 @@ body.previewEdit {
 			color: var(--javlo-ui-text);
 			font-size: 12px;
 			font-weight: 600;
-			margin-bottom: 4px;
 		}
 
 		input[type="text"],
@@ -487,9 +486,11 @@ body.previewEdit {
 				color: #333 !important;
 				background-color: #ddd !important;
 			}
-			input:checked + label {
-				background-color: var(--javlo-ui-btn-toggle-bg-active) !important;
+			input:checked + label,
+			label.active {
+				background-color: #2196F3 !important;
 				color: #fff !important;
+				border-color: #1976D2 !important;
 			}
 			&:hover label {
 				background-color: #ccc !important;
@@ -508,18 +509,49 @@ body.previewEdit {
 
 		/* Column selection alignment */
 		.column-selection .column-align {
-			flex-direction: column;
+			flex-direction: row;
 			flex-wrap: nowrap;
-			padding: 2px;
-			gap: 0;
+			padding: 0 6px;
+			gap: 4px;
 			align-items: center;
+			justify-content: center;
+			background-color: #ddd !important;
+			border: 0 none !important;
+			opacity: 0.7;
 			.align-label {
-				font-size: 10px;
-				line-height: 1;
-				margin-bottom: 2px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				i {
+					font-size: 15px;
+					color: #333;
+				}
+				select {
+					display: none;
+				}
 			}
 			.btn-group {
-				gap: 0;
+				display: flex;
+				flex-direction: row;
+				gap: 2px;
+			}
+			._jv_btn-check {
+				display: flex;
+				width: auto !important;
+				margin: 0 !important;
+				label {
+					padding: 2px 4px !important;
+					font-size: 15px !important;
+					background-color: transparent !important;
+					color: #333 !important;
+					width: auto !important;
+					display: flex;
+					align-items: center;
+				}
+				input:checked + label {
+					background-color: #2196F3 !important;
+					color: #fff !important;
+				}
 			}
 		}
 	}
