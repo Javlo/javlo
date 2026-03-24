@@ -21,6 +21,9 @@ import org.javlo.module.core.ModulesContext;
 import org.javlo.security.annotation.HasAllRole;
 import org.javlo.security.annotation.HasAnyRole;
 import org.javlo.service.RequestService;
+import org.javlo.remote.ContentAction;
+import org.javlo.remote.NavAction;
+import org.javlo.remote.TemplateAction;
 import org.javlo.service.proxy.ProxyService;
 import org.javlo.service.proxy.RemoteCacheService;
 import org.javlo.user.AdminUserFactory;
@@ -171,7 +174,7 @@ public class ActionManager {
 	 */
 	private static IAction[] getSpecialActionGroup() {
 		if (actionGroup == null) {
-			IAction[] outActionGroup = new IAction[8];
+			IAction[] outActionGroup = new IAction[11];
 			outActionGroup[0] = new SearchActions();
 			outActionGroup[1] = new ViewActions();
 			outActionGroup[2] = new TimeTravelerActions();
@@ -180,6 +183,9 @@ public class ActionManager {
 			outActionGroup[5] = new GoogleSheetAction();
 			outActionGroup[6] = new ProxyService();
 			outActionGroup[7] = new RemoteCacheService();
+			outActionGroup[8] = new NavAction();
+			outActionGroup[9] = new ContentAction();
+			outActionGroup[10] = new TemplateAction();
 			actionGroup = outActionGroup;
 		}
 		return actionGroup;

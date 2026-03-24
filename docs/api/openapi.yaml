@@ -1,0 +1,1544 @@
+openapi: 3.0.3
+info:
+  title: Javlo2 REST API
+  description: |
+    Documentation de toutes les APIs REST exposées par le projet Javlo2.
+
+    Javlo2 utilise une architecture basée sur des Servlets Java (pas JAX-RS ni Spring MVC).
+    Les endpoints sont déclarés dans `WEB-INF/web.xml` et gérés par des Servlets custom.
+
+    Le endpoint principal REST (`/rest/*`) utilise un système de factories enregistrées
+    dans `RestContainerFactory`.
+  version: "1.0"
+  contact:
+    name: Javlo2 Project
+
+servers:
+  - url: http://localhost/javlo2
+    description: Serveur de développement local
+
+tags:
+  - name: nav-api
+    description: API REST de gestion de la navigation (pages) — authentification via Bearer token
+  - name: content
+    description: Accès et rendu du contenu des pages
+  - name: rest-api
+    description: API REST de données (via /rest/*)
+  - name: media
+    description: Fichiers, images et ressources statiques
+  - name: sitemap
+    description: Sitemaps XML et JSON
+  - name: user
+    description: Gestion des utilisateurs
+  - name: utility
+    description: Utilitaires (QR code, avatar, i18n, captcha...)
+  - name: admin
+    description: Endpoints réservés aux administrateurs
+  - name: feed
+    description: Flux RSS/Atom/XML
+  - name: ajax
+    description: Requêtes AJAX (actions de modules)
+
+paths:
+
+  # ─────────────────────────────────────────────
+  # NAV API  (NavAction — via WebAction servlet)
+  # Classe : org.javlo.remote.NavAction
+  # Authentification : session Javlo ou paramètre j_token
+  # ─────────────────────────────────────────────
+
+  /webaction/nav.add:
+    post:
+      tags: [nav-api]
+      summary: Ajoute une nouvelle page dans la navigation
+      description: |
+        Appel via WebAction servlet. Peut aussi être invoqué via AjaxServlet avec
+        le paramètre `webaction=nav.add`.
+      operationId: navAdd
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: j_token
+          in: query
+          description: Token utilisateur Javlo (alternative à la session)
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                  description: Nom (slug) de la nouvelle page
+                  example: ma-nouvelle-page
+                parent:
+                  type: string
+                  description: ID, nom ou chemin de la page parente (optionnel — défaut = racine)
+                  example: /fr/accueil
+                top:
+                  type: boolean
+                  description: Insérer en tête de liste (true) ou en fin (false)
+                  default: false
+      responses:
+        '200':
+          description: Réponse JSON (via AjaxServlet) avec les données de la page créée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NavAjaxResponse'
+              example:
+                data:
+                  page:
+                    id: "abc123"
+                    name: "ma-nouvelle-page"
+                    path: "/fr/accueil/ma-nouvelle-page"
+                    parentId: "xyz789"
+                    parentPath: "/fr/accueil"
+
+  /webaction/nav.remove:
+    post:
+      tags: [nav-api]
+      summary: Supprime une page et tous ses enfants
+      description: |
+        Suppression récursive : tous les composants de la page et de ses sous-pages sont supprimés.
+        L'opération est irréversible.
+      operationId: navRemove
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: j_token
+          in: query
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [path]
+              properties:
+                path:
+                  type: string
+                  description: ID, nom ou chemin de la page à supprimer
+                  example: /fr/accueil/ma-page
+      responses:
+        '200':
+          description: Réponse JSON avec le chemin supprimé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NavAjaxResponse'
+              example:
+                data:
+                  removed: "/fr/accueil/ma-page"
+
+  /webaction/nav.move:
+    post:
+      tags: [nav-api]
+      summary: Déplace une page vers un autre parent
+      description: |
+        Déplace la page dans l'arborescence. Le paramètre `previousSibling` permet de
+        contrôler l'ordre d'insertion parmi les enfants du nouveau parent.
+      operationId: navMove
+      security:
+        - sessionCookie: []
+      parameters:
+        - name: j_token
+          in: query
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [path, parent]
+              properties:
+                path:
+                  type: string
+                  description: ID, nom ou chemin de la page à déplacer
+                  example: /fr/accueil/ma-page
+                parent:
+                  type: string
+                  description: ID, nom ou chemin du nouveau parent
+                  example: /fr/autre-section
+                previousSibling:
+                  type: string
+                  description: Page après laquelle insérer (optionnel — null = insérer en premier)
+                  example: /fr/autre-section/page-precedente
+      responses:
+        '200':
+          description: Réponse JSON avec les données de la page déplacée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NavAjaxResponse'
+              example:
+                data:
+                  page:
+                    id: "abc123"
+                    name: "ma-page"
+                    path: "/fr/autre-section/ma-page"
+                    parentId: "def456"
+                    parentPath: "/fr/autre-section"
+
+  # ─────────────────────────────────────────────
+  # CONTENT ACCESS
+  # ─────────────────────────────────────────────
+
+  /view/{lang}/{pagePath}:
+    get:
+      tags: [content]
+      summary: Affiche une page en mode "view"
+      operationId: viewPage
+      parameters:
+        - $ref: '#/components/parameters/LangPath'
+        - $ref: '#/components/parameters/PagePath'
+        - $ref: '#/components/parameters/Template'
+      responses:
+        '200':
+          description: Contenu HTML de la page
+          content:
+            text/html:
+              schema:
+                type: string
+    post:
+      tags: [content]
+      summary: Soumet un formulaire sur une page (mode view)
+      operationId: viewPagePost
+      parameters:
+        - $ref: '#/components/parameters/LangPath'
+        - $ref: '#/components/parameters/PagePath'
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Résultat HTML
+
+  /preview/{lang}/{pagePath}:
+    get:
+      tags: [content]
+      summary: Affiche une page en mode "preview" (back-office)
+      operationId: previewPage
+      parameters:
+        - $ref: '#/components/parameters/LangPath'
+        - $ref: '#/components/parameters/PagePath'
+      responses:
+        '200':
+          description: Contenu HTML de la page (mode preview)
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /edit/{lang}/{pagePath}:
+    get:
+      tags: [content]
+      summary: Affiche une page en mode "edit"
+      operationId: editPage
+      parameters:
+        - $ref: '#/components/parameters/LangPath'
+        - $ref: '#/components/parameters/PagePath'
+      responses:
+        '200':
+          description: Page en mode édition
+
+  /page/{lang}/{pagePath}:
+    get:
+      tags: [content]
+      summary: Rendu du contenu de page uniquement (sans layout complet)
+      description: Supporte le paramètre `mailing` pour le rendu email.
+      operationId: pageContentOnly
+      parameters:
+        - $ref: '#/components/parameters/LangPath'
+        - $ref: '#/components/parameters/PagePath'
+        - $ref: '#/components/parameters/Template'
+        - name: mailing
+          in: query
+          description: Active le mode rendu mailing (email)
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Contenu HTML
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /module/{moduleName}/{path}:
+    get:
+      tags: [content]
+      summary: Rendu d'un module spécifique
+      operationId: renderModule
+      parameters:
+        - name: moduleName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: path
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: HTML rendu par le module
+          content:
+            text/html:
+              schema:
+                type: string
+    post:
+      tags: [content]
+      summary: Action POST sur un module
+      operationId: renderModulePost
+      parameters:
+        - name: moduleName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: path
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Résultat HTML
+
+  # ─────────────────────────────────────────────
+  # REST DATA API
+  # ─────────────────────────────────────────────
+
+  /rest/test/{path}:
+    get:
+      tags: [rest-api]
+      summary: Endpoint de test REST
+      operationId: restTest
+      parameters:
+        - name: path
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Réponse JSON simple
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  path:
+                    type: string
+
+  /rest/content/{path}:
+    get:
+      tags: [rest-api]
+      summary: Retourne le contenu d'un nœud
+      operationId: restContent
+      parameters:
+        - name: path
+          in: path
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Max'
+        - $ref: '#/components/parameters/Mode'
+        - $ref: '#/components/parameters/LangQuery'
+      responses:
+        '200':
+          description: Nœud de contenu avec métadonnées
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContentNode'
+
+  /rest/content-children/{path}:
+    get:
+      tags: [rest-api]
+      summary: Retourne le contenu d'un nœud avec ses enfants
+      operationId: restContentChildren
+      parameters:
+        - name: path
+          in: path
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Max'
+        - $ref: '#/components/parameters/LangQuery'
+      responses:
+        '200':
+          description: Nœud de contenu avec enfants
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContentNodeWithChildren'
+
+  /rest/content-page/{path}:
+    get:
+      tags: [rest-api]
+      summary: Retourne le contenu d'une page (sans includes)
+      operationId: restContentPage
+      parameters:
+        - name: path
+          in: path
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Max'
+        - $ref: '#/components/parameters/LangQuery'
+      responses:
+        '200':
+          description: Contenu de page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContentNode'
+
+  /rest/content-children-page/{path}:
+    get:
+      tags: [rest-api]
+      summary: Retourne la page avec ses enfants
+      operationId: restContentChildrenPage
+      parameters:
+        - name: path
+          in: path
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Max'
+        - $ref: '#/components/parameters/LangQuery'
+      responses:
+        '200':
+          description: Page avec enfants
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContentNodeWithChildren'
+
+  /rest/component/{typeOrId}:
+    get:
+      tags: [rest-api]
+      summary: Retourne un ou plusieurs composants par type ou ID
+      operationId: restComponent
+      parameters:
+        - name: typeOrId
+          in: path
+          required: true
+          description: Type de composant ou identifiant unique
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Max'
+        - $ref: '#/components/parameters/LangQuery'
+      responses:
+        '200':
+          description: Composant(s) correspondant(s)
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/Component'
+                  - type: array
+                    items:
+                      $ref: '#/components/schemas/Component'
+
+  /rest/thread/{query}:
+    get:
+      tags: [rest-api]
+      summary: Vérifie si un thread est en cours d'exécution
+      operationId: restThread
+      parameters:
+        - name: query
+          in: path
+          required: true
+          description: Nom du thread
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Statut du thread
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  running:
+                    type: string
+                    enum: ["true", "false"]
+
+  /rest/file/{path}:
+    get:
+      tags: [rest-api]
+      summary: Métadonnées ou contenu d'un fichier
+      operationId: restFile
+      parameters:
+        - name: path
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: rstk
+          in: query
+          description: Token de ressource (optionnel, pour accès sécurisé)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Métadonnées du fichier
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileInfo'
+
+  /rest/pagehistory/{pageId}:
+    get:
+      tags: [rest-api]
+      summary: Historique des éditions d'une page
+      operationId: restPageHistory
+      parameters:
+        - name: pageId
+          in: path
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Max'
+      responses:
+        '200':
+          description: Liste des versions de la page
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PageHistoryEntry'
+
+  # ─────────────────────────────────────────────
+  # MEDIA & FILES
+  # ─────────────────────────────────────────────
+
+  /media/{filePath}:
+    get:
+      tags: [media]
+      summary: Sert un fichier média (images, documents, etc.)
+      description: Supporte les requêtes partielles (Range), le cache HTTP (ETag, Last-Modified).
+      operationId: serveMedia
+      parameters:
+        - name: filePath
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Contenu du fichier
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+        '206':
+          description: Contenu partiel (Range request)
+        '304':
+          description: Non modifié (cache)
+        '404':
+          description: Fichier non trouvé
+    head:
+      tags: [media]
+      summary: En-têtes du fichier média (sans contenu)
+      operationId: headMedia
+      parameters:
+        - name: filePath
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: En-têtes HTTP du fichier
+
+  /file/{filePath}:
+    get:
+      tags: [media]
+      summary: Sert un fichier (alias de /media/)
+      operationId: serveFile
+      parameters:
+        - name: filePath
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Contenu du fichier
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+
+  /img/{transform}/{template}/{area}/{path}:
+    get:
+      tags: [media]
+      summary: Transformation d'image avec filtres
+      operationId: transformImage
+      parameters:
+        - name: transform
+          in: path
+          required: true
+          description: Nom du filtre/transformation
+          schema:
+            type: string
+        - name: template
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: area
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: path
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Image transformée
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+
+  /vfs/{zipFile}/{innerPath}:
+    get:
+      tags: [media]
+      summary: Accès virtuel à un fichier à l'intérieur d'un ZIP
+      operationId: vfsAccess
+      parameters:
+        - name: zipFile
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: innerPath
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Contenu du fichier interne au ZIP
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+
+  /datadoc/{category}/{id}:
+    get:
+      tags: [media]
+      summary: Sert un document de données par catégorie et ID
+      operationId: dataDoc
+      parameters:
+        - name: category
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: token
+          in: query
+          description: Token d'accès optionnel
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Document de données
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+
+  # ─────────────────────────────────────────────
+  # SITEMAP
+  # ─────────────────────────────────────────────
+
+  /sitemap.json:
+    get:
+      tags: [sitemap]
+      summary: Sitemap au format JSON
+      operationId: sitemapJson
+      responses:
+        '200':
+          description: Sitemap JSON
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /sitemap.xml:
+    get:
+      tags: [sitemap]
+      summary: Sitemap au format XML (standard)
+      operationId: sitemapXml
+      responses:
+        '200':
+          description: Sitemap XML
+          content:
+            application/xml:
+              schema:
+                type: string
+
+  /images-sitemap.xml:
+    get:
+      tags: [sitemap]
+      summary: Sitemap des images au format XML
+      operationId: imagesSitemapXml
+      responses:
+        '200':
+          description: Images sitemap XML
+          content:
+            application/xml:
+              schema:
+                type: string
+
+  /news-sitemap.xml:
+    get:
+      tags: [sitemap]
+      summary: Sitemap des actualités (Google News) au format XML
+      operationId: newsSitemapXml
+      responses:
+        '200':
+          description: News sitemap XML
+          content:
+            application/xml:
+              schema:
+                type: string
+
+  # ─────────────────────────────────────────────
+  # FEEDS
+  # ─────────────────────────────────────────────
+
+  /xml/{lang}/{format}/{channel}:
+    get:
+      tags: [feed]
+      summary: Flux RSS/Atom/XML
+      operationId: xmlFeed
+      parameters:
+        - $ref: '#/components/parameters/LangPath'
+        - name: format
+          in: path
+          required: true
+          description: Format du flux (rss, atom, etc.)
+          schema:
+            type: string
+            enum: [rss, atom, rss2, json]
+        - name: channel
+          in: path
+          required: true
+          description: Canal/catégorie du flux
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Flux XML/JSON
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: object
+
+  # ─────────────────────────────────────────────
+  # UTILITY
+  # ─────────────────────────────────────────────
+
+  /status.html:
+    get:
+      tags: [utility]
+      summary: Statut du système Javlo
+      description: Retourne la version, la mémoire, la connectivité et le nombre de pages.
+      operationId: systemStatus
+      responses:
+        '200':
+          description: Statut système
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /avatar.svg:
+    get:
+      tags: [utility]
+      summary: Génère un avatar SVG avec initiales
+      operationId: generateAvatar
+      parameters:
+        - name: text
+          in: query
+          required: true
+          description: Texte dont les initiales seront affichées
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Avatar SVG
+          content:
+            image/svg+xml:
+              schema:
+                type: string
+
+  /logo.svg:
+    get:
+      tags: [utility]
+      summary: Génère un logo SVG dynamique
+      operationId: generateLogo
+      parameters:
+        - name: color
+          in: query
+          description: Couleur hexadécimale (ex: FF0000)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Logo SVG
+          content:
+            image/svg+xml:
+              schema:
+                type: string
+
+  /captcha.jpg:
+    get:
+      tags: [utility]
+      summary: Génère une image CAPTCHA JPEG
+      operationId: generateCaptcha
+      responses:
+        '200':
+          description: Image CAPTCHA
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+
+  /qrcode/{category}/{id}.{format}:
+    get:
+      tags: [utility]
+      summary: Génère un QR code pour un composant ou une page
+      operationId: qrCodeComponent
+      parameters:
+        - name: category
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: format
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [png, svg]
+        - name: remove-border
+          in: query
+          description: Supprimer la bordure du QR code
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Image QR code
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+            image/svg+xml:
+              schema:
+                type: string
+
+  /qrcode/{path}:
+    get:
+      tags: [utility]
+      summary: Génère un QR code à partir d'un lien libre
+      operationId: qrCodeFree
+      parameters:
+        - name: path
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: link
+          in: query
+          description: URL à encoder dans le QR code
+          schema:
+            type: string
+        - name: remove-border
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Image QR code
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+
+  /i18n/{key}:
+    get:
+      tags: [utility]
+      summary: Retourne une traduction i18n
+      operationId: i18nLookup
+      parameters:
+        - name: key
+          in: path
+          required: true
+          description: Clé de traduction (fallback si viewKey/editKey non trouvés)
+          schema:
+            type: string
+        - name: viewKey
+          in: query
+          schema:
+            type: string
+        - name: editKey
+          in: query
+          schema:
+            type: string
+        - name: default
+          in: query
+          description: Valeur par défaut si la clé n'existe pas
+          schema:
+            type: string
+        - $ref: '#/components/parameters/LangQuery'
+      responses:
+        '200':
+          description: Texte traduit
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /mimetype/{filePath}:
+    get:
+      tags: [utility]
+      summary: Retourne l'icône SVG correspondant au type MIME d'un fichier
+      operationId: mimeTypeIcon
+      parameters:
+        - name: filePath
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Icône SVG du type MIME
+          content:
+            image/svg+xml:
+              schema:
+                type: string
+
+  /color/{type}_{size}_{color}_{bgcolor}.{ext}:
+    get:
+      tags: [utility]
+      summary: Génère une image de coin ou boîte colorée dynamiquement
+      operationId: generateColor
+      parameters:
+        - name: type
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: size
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: color
+          in: path
+          required: true
+          description: Couleur principale (hex)
+          schema:
+            type: string
+        - name: bgcolor
+          in: path
+          required: true
+          description: Couleur de fond (hex)
+          schema:
+            type: string
+        - name: ext
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [png, gif]
+      responses:
+        '200':
+          description: Image PNG/GIF générée
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+
+  /proxy/{code}:
+    get:
+      tags: [utility]
+      summary: Proxy d'URL avec cache (code mappé vers une URL externe)
+      operationId: urlProxy
+      parameters:
+        - name: code
+          in: path
+          required: true
+          description: Code court mappé à une URL externe
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Contenu proxifié
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+        '302':
+          description: Redirection
+
+  /service-proxy/{path}:
+    get:
+      tags: [utility]
+      summary: Proxy de service HTTP avec cache
+      operationId: serviceProxy
+      parameters:
+        - name: path
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Réponse du service externe
+
+  /feedback/{trackingId}:
+    get:
+      tags: [utility]
+      summary: Tracking d'ouverture de mailing (pixel de tracking 1x1)
+      operationId: mailingFeedback
+      parameters:
+        - name: trackingId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Image GIF 1x1 pixel transparente
+          content:
+            image/gif:
+              schema:
+                type: string
+                format: binary
+
+  /mfb/{trackingId}:
+    get:
+      tags: [utility]
+      summary: Tracking mailing (alias de /feedback/)
+      operationId: mailingFeedbackAlt
+      parameters:
+        - name: trackingId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Image GIF 1x1 pixel transparente
+          content:
+            image/gif:
+              schema:
+                type: string
+                format: binary
+
+  # ─────────────────────────────────────────────
+  # AJAX
+  # ─────────────────────────────────────────────
+
+  /ajax/{action}:
+    get:
+      tags: [ajax]
+      summary: Exécute une action de module via AJAX (GET)
+      description: Retourne du JSON ou du HTML selon l'action.
+      operationId: ajaxGet
+      parameters:
+        - name: action
+          in: path
+          required: true
+          description: Nom de l'action à exécuter
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Résultat JSON ou HTML
+          content:
+            application/json:
+              schema:
+                type: object
+            text/html:
+              schema:
+                type: string
+    post:
+      tags: [ajax]
+      summary: Exécute une action de module via AJAX (POST)
+      operationId: ajaxPost
+      parameters:
+        - name: action
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              additionalProperties: true
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Résultat JSON ou HTML
+
+  /webaction/{action}:
+    get:
+      tags: [ajax]
+      summary: Exécute une action standalone (WebAction)
+      operationId: webActionGet
+      parameters:
+        - name: action
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Résultat de l'action
+    post:
+      tags: [ajax]
+      summary: Exécute une action standalone (WebAction) via POST
+      operationId: webActionPost
+      parameters:
+        - name: action
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: Résultat de l'action
+
+  # ─────────────────────────────────────────────
+  # EXPORT / ADMIN
+  # ─────────────────────────────────────────────
+
+  /expcomp/{path}:
+    get:
+      tags: [admin]
+      summary: Export de composants (JSON, CSV, XLS)
+      operationId: exportComponents
+      parameters:
+        - name: path
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [json, csv, xls]
+      responses:
+        '200':
+          description: Fichier d'export
+          content:
+            application/json:
+              schema:
+                type: object
+            text/csv:
+              schema:
+                type: string
+            application/vnd.ms-excel:
+              schema:
+                type: string
+                format: binary
+
+  /users-list/{path}:
+    get:
+      tags: [user]
+      summary: Export de liste d'utilisateurs (CSV/XLS)
+      description: Nécessite un rôle d'administration ou de gestionnaire.
+      operationId: usersList
+      parameters:
+        - name: path
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: admin
+          in: query
+          description: Exporte les utilisateurs admin
+          schema:
+            type: boolean
+        - name: event
+          in: query
+          description: ID du composant événement (participants)
+          schema:
+            type: string
+        - name: filtered
+          in: query
+          description: Retourne uniquement les utilisateurs filtrés
+          schema:
+            type: boolean
+        - name: format
+          in: query
+          schema:
+            type: string
+            enum: [csv, xls]
+      responses:
+        '200':
+          description: Liste d'utilisateurs
+          content:
+            text/csv:
+              schema:
+                type: string
+            application/vnd.ms-excel:
+              schema:
+                type: string
+                format: binary
+        '403':
+          description: Accès refusé
+
+  /zip/{path}:
+    get:
+      tags: [admin]
+      summary: Export du contenu en ZIP (admin uniquement)
+      operationId: exportZip
+      parameters:
+        - name: path
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Archive ZIP du contenu
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+        '403':
+          description: Accès refusé (admin requis)
+
+  /context/{contextName}:
+    get:
+      tags: [admin]
+      summary: Export de la configuration d'un contexte (admin uniquement)
+      operationId: exportContext
+      parameters:
+        - name: contextName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Propriétés du contexte
+          content:
+            text/plain:
+              schema:
+                type: string
+        '403':
+          description: Accès refusé
+
+  /synchro/{path}:
+    get:
+      tags: [admin]
+      summary: Synchronisation de la structure de fichiers
+      operationId: synchronise
+      parameters:
+        - name: path
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Résultat de la synchronisation
+    post:
+      tags: [admin]
+      summary: Synchronisation de la structure de fichiers (POST)
+      operationId: synchronisePost
+      parameters:
+        - name: path
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Résultat de la synchronisation
+
+  /class/{classPath}:
+    get:
+      tags: [admin]
+      summary: Téléchargement d'un fichier .class ou .jar compilé
+      description: |
+        Restreint aux classes du package `org.javlo`.
+        Utilisé pour la distribution des classes compilées.
+      operationId: serveClass
+      parameters:
+        - name: classPath
+          in: path
+          required: true
+          description: Chemin de la classe (ex: org/javlo/utils/MyClass.class)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Fichier binaire .class ou .jar
+          content:
+            application/java-vm:
+              schema:
+                type: string
+                format: binary
+        '403':
+          description: Accès refusé (hors package org.javlo)
+
+  /folder/{path}:
+    get:
+      tags: [admin]
+      summary: Export d'un dossier (template ou mailing-template) en ZIP
+      operationId: exportFolder
+      parameters:
+        - name: path
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Archive ZIP du dossier
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+
+# ─────────────────────────────────────────────
+# COMPONENTS & SCHEMAS
+# ─────────────────────────────────────────────
+
+components:
+  parameters:
+    LangPath:
+      name: lang
+      in: path
+      required: true
+      description: Code langue (ex: fr, en, nl)
+      schema:
+        type: string
+        example: fr
+
+    LangQuery:
+      name: lang
+      in: query
+      description: Code langue (ex: fr, en, nl)
+      schema:
+        type: string
+
+    PagePath:
+      name: pagePath
+      in: path
+      required: true
+      description: Chemin de la page dans l'arborescence du site
+      schema:
+        type: string
+        example: accueil/a-propos
+
+    Template:
+      name: template
+      in: query
+      description: Nom du template à utiliser
+      schema:
+        type: string
+
+    Max:
+      name: max
+      in: query
+      description: Nombre maximum de résultats (défaut: 10)
+      schema:
+        type: integer
+        default: 10
+
+    Mode:
+      name: mode
+      in: query
+      description: "Mode de rendu: 0=preview, 1=view"
+      schema:
+        type: integer
+        enum: [0, 1]
+        default: 1
+
+  schemas:
+    ContentNode:
+      type: object
+      properties:
+        id:
+          type: string
+        path:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        url:
+          type: string
+        lang:
+          type: string
+        lastModified:
+          type: string
+          format: date-time
+        metadata:
+          type: object
+          additionalProperties: true
+
+    ContentNodeWithChildren:
+      allOf:
+        - $ref: '#/components/schemas/ContentNode'
+        - type: object
+          properties:
+            children:
+              type: array
+              items:
+                $ref: '#/components/schemas/ContentNode'
+
+    Component:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        path:
+          type: string
+        data:
+          type: object
+          additionalProperties: true
+
+    FileInfo:
+      type: object
+      properties:
+        name:
+          type: string
+        path:
+          type: string
+        size:
+          type: integer
+        mimeType:
+          type: string
+        lastModified:
+          type: string
+          format: date-time
+        url:
+          type: string
+
+    PageHistoryEntry:
+      type: object
+      properties:
+        version:
+          type: string
+        author:
+          type: string
+        date:
+          type: string
+          format: date-time
+        comment:
+          type: string
+
+    NavAjaxResponse:
+      type: object
+      description: Réponse standard AjaxServlet — les données métier sont dans la clé "data"
+      properties:
+        data:
+          type: object
+          properties:
+            page:
+              $ref: '#/components/schemas/NavPage'
+            removed:
+              type: string
+              description: Chemin de la page supprimée (nav.remove uniquement)
+        messageText:
+          type: string
+          description: Message d'erreur en cas d'échec
+        messageType:
+          type: string
+          enum: [error, info, success]
+
+    NavPage:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        path:
+          type: string
+        parentId:
+          type: string
+        parentPath:
+          type: string
+
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: JSESSIONID
+      description: |
+        Authentification via session HTTP (Servlet standard).
+        Certains endpoints nécessitent un rôle `admin` ou `manager`.

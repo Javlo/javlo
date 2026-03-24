@@ -1033,4 +1033,9 @@ Security in case of vulnerabilities.
 - remove GlobalContext from Session
 - ready for tomcat 11
 ## [2.3.5] - 04/01/2026
-  
+### Modified
+- design popup
+- memory optimisation
+## [2.3.6] - 24/03/2026
+### Added
+- MCP + IA API  

@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "javlo2": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["c:/kdrive/work/javlo2/mcp/build/index.js"],
+      "env": {
+        "JAVLO_BASE_URL": "http://localhost/javlo2/claude/",
+        "JAVLO_TOKEN": "9j11NQsXpT4-xfVO4IMSZPqO",
+        "JAVLO_LANG": "fr"
+      }
+    }
+  }
+}

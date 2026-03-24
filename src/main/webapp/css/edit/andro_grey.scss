@@ -80,18 +80,18 @@ select {
 	line-height: calc(var(--btn-height) - var(--btn-vertical-padding) * 2);
 
 	height: auto;
-	background-color: #ddd;
+	background-color: var(--javlo-ui-bg-secondary);
 	background-image: none;
 	text-shadow: none;
-	border: 1px #ddd solid;
-	color: #555;
+	border: 1px var(--javlo-ui-border) solid;
+	color: var(--javlo-ui-text);
 	border-radius: 3px;
 	font-weight: normal;
 
 	&:hover {
-		background-color: var(--javlo-ui-bg-secondary);
+		background-color: var(--javlo-ui-bg-tertiary);
 		color: var(--javlo-ui-text);
-		border-color: #fff;
+		border-color: var(--javlo-ui-color-6);
 		text-decoration: none !important;
 	}
 	span {
@@ -123,15 +123,14 @@ select.form-control {
 }
 
 .form-control, input[type="text"], #tools input[type="text"] {
-	color: #000;
-	border: 1px #999 solid;
-	background-color: #eee;
+	color: var(--javlo-ui-text);
+	border: 1px var(--javlo-ui-border) solid;
+	background-color: var(--javlo-ui-bg-secondary);
 	box-shadow: none;
 	&:hover, &:focus {
-		color: #000;
-		background-color: #eee;
-		border: 1px #333 solid;
-		background-color: #ddd !important;
+		color: var(--javlo-ui-text);
+		background-color: var(--javlo-ui-bg-tertiary) !important;
+		border: 1px var(--javlo-ui-color-6) solid;
 	}
 }
 
@@ -421,8 +420,8 @@ body.previewEdit {
 		input[type="email"],
 		textarea,
 		select {
-			background-color: rgba(0, 0, 0, 0.04) !important;
-			border: 1px solid rgba(0, 0, 0, 0.2) !important;
+			background-color: var(--javlo-ui-bg-secondary) !important;
+			border: 1px solid var(--javlo-ui-border) !important;
 			color: var(--javlo-ui-text) !important;
 			border-radius: 4px;
 			padding: 6px 10px;
@@ -430,8 +429,8 @@ body.previewEdit {
 			transition: border-color 0.15s ease;
 
 			&:focus, &:hover {
-				border-color: var(--javlo-ui-primary-accent-color-3) !important;
-				background-color: rgba(0, 0, 0, 0.06) !important;
+				border-color: var(--javlo-ui-color-6) !important;
+				background-color: var(--javlo-ui-bg-tertiary) !important;
 				outline: none;
 			}
 		}
@@ -591,7 +590,7 @@ body.previewEdit {
 
 
 .component-wrapper {
-	color: #333;
+	color: var(--javlo-ui-text);
 }
 
 #button-content-submit {
@@ -661,7 +660,30 @@ body fieldset {
 
 .dyntable {
 	a {
-		color: #000;
+		color: var(--javlo-ui-text);
+	}
+	table {
+		width: 100%;
+		border-collapse: collapse;
+	}
+	th {
+		background-color: var(--javlo-ui-bg-tertiary);
+		color: var(--javlo-ui-text);
+		border-bottom: 2px solid var(--javlo-ui-border);
+		padding: 6px 8px;
+		font-size: 11px;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+	td {
+		background-color: var(--javlo-ui-bg-secondary);
+		color: var(--javlo-ui-text);
+		border-bottom: 1px solid var(--javlo-ui-border);
+		padding: 4px 8px;
+		vertical-align: middle;
+	}
+	tr:hover td {
+		background-color: var(--javlo-ui-bg-tertiary);
 	}
 }
 

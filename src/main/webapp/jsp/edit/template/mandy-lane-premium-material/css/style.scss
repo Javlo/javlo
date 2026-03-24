@@ -1795,34 +1795,37 @@ input[type=radio],input[type=checkbox] {
 /***(tables.html)***/
 .sTable2 {
 	border-collapse: collapse;
-	border: 1px solid #ccc;
+	border: 1px solid var(--javlo-ui-border, #ccc);
 }
 
 .sTable2 thead td {
 	padding: 5px 10px;
-	background: #eee url(../images/thead.png) repeat-x top left;
-	border: 1px solid #ccc;
+	background: var(--javlo-ui-bg-tertiary, #eee);
+	border: 1px solid var(--javlo-ui-border, #ccc);
+	color: var(--javlo-ui-text, #000);
 }
 
 .sTable2 thead th {
 	padding: 5px 10px;
-	background: #eee url(../images/thead.png) repeat-x top left;
-	border: 1px solid #ccc;
+	background: var(--javlo-ui-bg-tertiary, #eee);
+	border: 1px solid var(--javlo-ui-border, #ccc);
+	color: var(--javlo-ui-text, #000);
 }
 
 .sTable2 tbody tr td {
 	padding: 10px;
-	background: #fff;
-	border-top: 1px solid #eee;
-	border-left: 1px solid #eee;
+	background: var(--javlo-ui-bg-secondary, #fff);
+	border-top: 1px solid var(--javlo-ui-border, #eee);
+	border-left: 1px solid var(--javlo-ui-border, #eee);
+	color: var(--javlo-ui-text, #000);
 }
 
 .sTable2 tbody tr td:first-child {
-	border-left: 1px solid #ccc;
+	border-left: 1px solid var(--javlo-ui-border, #ccc);
 }
 
 .sTable2 tbody tr.even td {
-	background: #fcfcfc;
+	background: var(--javlo-ui-bg-primary, #fcfcfc);
 }
 
 .sTable3 {

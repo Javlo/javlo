@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Javlo2 Remote API — Developer Documentation</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+<style>
+  /* ── Javlo UI variables (dark / preview style) ── */
+  :root {
+    --action-color:          #17A;
+    --action-color-darken:   #058;
+    --action-color-hover:    #058;
+    --action-text:           #fff;
+    --javlo-ui-bg:           #1e2228;
+    --javlo-ui-bg-card:      #252b33;
+    --javlo-ui-bg-sidebar:   #1a1f26;
+    --javlo-ui-bg-hover:     #2a3040;
+    --javlo-ui-border:       #31384a;
+    --javlo-ui-text:         #dde2ea;
+    --javlo-ui-text-muted:   #7a8599;
+    --javlo-ui-text-heading: #eef1f7;
+    --javlo-ui-accent:       #17a0bb;
+    --javlo-ui-accent2:      #3ec;
+    --javlo-ui-danger:       #c44;
+    --javlo-ui-warning:      #ca6;
+    --javlo-ui-success:      #4a9;
+    --javlo-ui-code-bg:      #13171e;
+    --javlo-ui-tag-bg:       #1a3a4a;
+    --javlo-ui-tag-text:     #4dc;
+    --sidebar-width:         260px;
+    --font-mono:             "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
+    --font-sans:             -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.65;
+    background: var(--javlo-ui-bg);
+    color: var(--javlo-ui-text);
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ── Top bar ── */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; height: 48px; z-index: 100;
+    background: var(--javlo-ui-bg-sidebar);
+    border-bottom: 2px solid var(--action-color-darken);
+    display: flex; align-items: center; gap: 12px; padding: 0 20px;
+  }
+  .topbar .logo {
+    font-size: 18px; font-weight: 700; color: var(--javlo-ui-accent2);
+    letter-spacing: -.5px; display: flex; align-items: center; gap: 8px;
+    text-decoration: none;
+  }
+  .topbar .logo svg { width: 26px; height: 26px; fill: var(--javlo-ui-accent2); }
+  .topbar .badge-version {
+    font-size: 11px; background: var(--javlo-ui-tag-bg); color: var(--javlo-ui-tag-text);
+    padding: 2px 8px; border-radius: 12px; font-family: var(--font-mono);
+  }
+  .topbar .spacer { flex: 1; }
+  .topbar a.github-link {
+    color: var(--javlo-ui-text-muted); text-decoration: none; font-size: 20px;
+    transition: color .2s;
+  }
+  .topbar a.github-link:hover { color: var(--javlo-ui-accent2); }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    position: fixed; top: 48px; left: 0; bottom: 0; width: var(--sidebar-width);
+    background: var(--javlo-ui-bg-sidebar);
+    border-right: 1px solid var(--javlo-ui-border);
+    overflow-y: auto; padding: 20px 0 40px;
+  }
+  .sidebar-section-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--javlo-ui-text-muted); padding: 16px 20px 6px;
+  }
+  .sidebar nav a {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 20px; color: var(--javlo-ui-text-muted);
+    text-decoration: none; font-size: 13px; border-left: 3px solid transparent;
+    transition: all .15s;
+  }
+  .sidebar nav a:hover,
+  .sidebar nav a.active {
+    color: var(--javlo-ui-text); background: var(--javlo-ui-bg-hover);
+    border-left-color: var(--javlo-ui-accent);
+  }
+  .sidebar nav a i { font-size: 14px; width: 18px; text-align: center; flex-shrink: 0; }
+  .sidebar nav a .type-badge {
+    margin-left: auto; font-size: 10px; font-family: var(--font-mono);
+    background: var(--javlo-ui-tag-bg); color: var(--javlo-ui-tag-text);
+    padding: 1px 6px; border-radius: 8px; white-space: nowrap;
+  }
+
+  /* ── Main content ── */
+  .main {
+    margin-left: var(--sidebar-width); margin-top: 48px;
+    flex: 1; padding: 40px 48px 80px; max-width: 960px;
+  }
+
+  /* ── Section headings ── */
+  .main h1 {
+    font-size: 28px; font-weight: 700; color: var(--javlo-ui-text-heading);
+    margin-bottom: 8px;
+  }
+  .main .subtitle {
+    color: var(--javlo-ui-text-muted); font-size: 15px; margin-bottom: 48px;
+    border-bottom: 1px solid var(--javlo-ui-border); padding-bottom: 24px;
+  }
+  .main h2 {
+    font-size: 20px; font-weight: 700; color: var(--javlo-ui-text-heading);
+    margin: 60px 0 20px; padding-top: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .main h2 .anchor { color: var(--javlo-ui-text-muted); font-size: 14px; text-decoration: none; }
+  .main h2 .anchor:hover { color: var(--javlo-ui-accent); }
+  .main h3 {
+    font-size: 15px; font-weight: 600; color: var(--javlo-ui-accent);
+    margin: 28px 0 10px; text-transform: uppercase; letter-spacing: .6px; font-size: 12px;
+  }
+  .main p { margin-bottom: 12px; color: var(--javlo-ui-text); }
+
+  /* ── Component card ── */
+  .comp-card {
+    background: var(--javlo-ui-bg-card);
+    border: 1px solid var(--javlo-ui-border);
+    border-radius: 8px; padding: 24px 28px; margin-bottom: 32px;
+    position: relative;
+  }
+  .comp-card::before {
+    content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 3px;
+    background: var(--javlo-ui-accent); border-radius: 8px 0 0 8px;
+  }
+  .comp-header {
+    display: flex; align-items: flex-start; gap: 14px; margin-bottom: 16px;
+  }
+  .comp-icon {
+    width: 40px; height: 40px; background: var(--javlo-ui-tag-bg);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: var(--javlo-ui-accent2); flex-shrink: 0;
+  }
+  .comp-title-block { flex: 1; }
+  .comp-title {
+    font-size: 17px; font-weight: 700; color: var(--javlo-ui-text-heading);
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  .comp-title .type-chip {
+    font-family: var(--font-mono); font-size: 12px; font-weight: 500;
+    background: var(--action-color-darken); color: var(--action-text);
+    padding: 2px 10px; border-radius: 4px;
+  }
+  .comp-class {
+    font-family: var(--font-mono); font-size: 11px; color: var(--javlo-ui-text-muted);
+    margin-top: 3px;
+  }
+  .comp-class a {
+    color: var(--javlo-ui-text-muted); text-decoration: none;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .comp-class a:hover { color: var(--javlo-ui-accent2); text-decoration: underline; }
+  .comp-desc { color: var(--javlo-ui-text); margin-bottom: 14px; font-size: 13.5px; }
+
+  /* ── Field table ── */
+  .field-table {
+    width: 100%; border-collapse: collapse; font-size: 12.5px;
+    margin-top: 8px; margin-bottom: 4px;
+  }
+  .field-table thead th {
+    background: var(--javlo-ui-code-bg); color: var(--javlo-ui-text-muted);
+    padding: 7px 12px; text-align: left; font-weight: 600; font-size: 11px;
+    text-transform: uppercase; letter-spacing: .7px;
+    border-bottom: 1px solid var(--javlo-ui-border);
+  }
+  .field-table tbody td {
+    padding: 7px 12px; border-bottom: 1px solid var(--javlo-ui-border);
+    vertical-align: top;
+  }
+  .field-table tbody tr:last-child td { border-bottom: none; }
+  .field-table tbody tr:hover td { background: var(--javlo-ui-bg-hover); }
+  .field-table .fn {
+    font-family: var(--font-mono); color: var(--javlo-ui-accent2); font-weight: 600;
+  }
+  .field-table .ft { color: var(--javlo-ui-warning); font-family: var(--font-mono); }
+  .field-table .req { color: var(--javlo-ui-danger); font-weight: 700; }
+  .field-table .opt { color: var(--javlo-ui-text-muted); }
+  .field-table .fd { color: var(--javlo-ui-text); }
+
+  /* ── Code block ── */
+  .code-block {
+    background: var(--javlo-ui-code-bg); border: 1px solid var(--javlo-ui-border);
+    border-radius: 6px; padding: 14px 16px; margin: 10px 0 6px;
+    font-family: var(--font-mono); font-size: 12px; color: var(--javlo-ui-accent2);
+    overflow-x: auto; white-space: pre;
+  }
+
+  /* ── Note/callout ── */
+  .callout {
+    border-left: 3px solid var(--javlo-ui-warning);
+    background: rgba(200,160,80,.08);
+    border-radius: 0 6px 6px 0;
+    padding: 10px 14px; margin: 12px 0;
+    font-size: 13px; color: var(--javlo-ui-text);
+  }
+  .callout.info { border-left-color: var(--javlo-ui-accent); background: rgba(23,160,187,.08); }
+  .callout.danger { border-left-color: var(--javlo-ui-danger); background: rgba(200,60,60,.08); }
+
+  /* ── Storage badge ── */
+  .storage-badge {
+    display: inline-flex; align-items: center; gap: 5px; font-size: 11px;
+    background: var(--javlo-ui-bg-hover); border: 1px solid var(--javlo-ui-border);
+    color: var(--javlo-ui-text-muted); padding: 3px 10px; border-radius: 12px;
+    margin-bottom: 12px; font-family: var(--font-mono);
+  }
+  .storage-badge i { color: var(--javlo-ui-accent); }
+
+  /* ── ContentAction section ── */
+  .api-endpoint {
+    background: var(--javlo-ui-code-bg); border: 1px solid var(--javlo-ui-border);
+    border-radius: 6px; padding: 16px 20px; margin-bottom: 14px;
+  }
+  .api-method {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    background: var(--action-color-darken); color: #fff;
+    padding: 2px 8px; border-radius: 3px; margin-right: 8px; font-family: var(--font-mono);
+  }
+  .api-path { font-family: var(--font-mono); font-size: 13px; color: var(--javlo-ui-accent2); }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--javlo-ui-border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--javlo-ui-text-muted); }
+
+  /* ── Active nav highlight via IntersectionObserver ── */
+  .section-anchor { display: block; position: relative; top: -70px; }
+</style>
+</head>
+<body>
+
+<!-- Top bar -->
+<header class="topbar">
+  <a href="#" class="logo">
+    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+      <rect width="32" height="32" rx="6"/>
+      <text x="4" y="24" font-size="22" font-family="sans-serif" font-weight="900" fill="#3ec">J</text>
+    </svg>
+    Javlo2
+  </a>
+  <span class="badge-version">Remote API</span>
+  <div class="spacer"></div>
+  <a href="https://github.com/Javlo/javlo" target="_blank" class="github-link" title="GitHub repository">
+    <i class="bi bi-github"></i>
+  </a>
+</header>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-section-label">Components</div>
+  <nav id="sidebar-nav">
+    <a href="#heading"><i class="bi bi-type-h1"></i> Heading <span class="type-badge">heading</span></a>
+    <a href="#wysiwyg-paragraph"><i class="bi bi-file-richtext"></i> Wysiwyg Paragraph <span class="type-badge">wysiwyg-paragraph</span></a>
+    <a href="#paragraph"><i class="bi bi-paragraph"></i> Paragraph <span class="type-badge">paragraph</span></a>
+    <a href="#internal-link"><i class="bi bi-link-45deg"></i> Internal Link <span class="type-badge">internal-link</span></a>
+    <a href="#external-link"><i class="bi bi-box-arrow-up-right"></i> External Link <span class="type-badge">external-link</span></a>
+    <a href="#global-image"><i class="bi bi-image"></i> Global Image <span class="type-badge">global-image</span></a>
+    <a href="#page-reference"><i class="bi bi-collection"></i> Page Reference <span class="type-badge">page-reference</span></a>
+    <a href="#date"><i class="bi bi-calendar3"></i> Date <span class="type-badge">date</span></a>
+    <a href="#debug-note"><i class="bi bi-sticky"></i> Debug Note <span class="type-badge">debug-note</span></a>
+    <a href="#extended-widget"><i class="bi bi-braces"></i> Extended Widget <span class="type-badge">extendedWidget</span></a>
+    <a href="#smart-generic-form"><i class="bi bi-ui-checks"></i> Smart Generic Form <span class="type-badge">smart-generic-form</span></a>
+  </nav>
+  <div class="sidebar-section-label" style="margin-top:16px;">API Reference</div>
+  <nav>
+    <a href="#content-action"><i class="bi bi-gear-fill"></i> ContentAction</a>
+    <a href="#nav-action"><i class="bi bi-diagram-3"></i> NavAction</a>
+    <a href="#template-action"><i class="bi bi-palette"></i> TemplateAction</a>
+    <a href="#authentication"><i class="bi bi-shield-lock"></i> Authentication</a>
+    <a href="#response-format"><i class="bi bi-braces-asterisk"></i> Response Format</a>
+  </nav>
+</aside>
+
+<!-- Main -->
+<main class="main">
+
+  <h1><i class="bi bi-journal-code" style="color:var(--javlo-ui-accent2)"></i> Javlo2 Remote API</h1>
+  <p class="subtitle">
+    Developer reference for the <strong>ContentAction</strong>, <strong>NavAction</strong> and <strong>TemplateAction</strong> remote APIs, with full component data-structure documentation.
+    All actions are invoked via <code style="font-family:var(--font-mono);color:var(--javlo-ui-accent2)">/ajax/{lang}/</code> using <code style="font-family:var(--font-mono);color:var(--javlo-ui-accent2)">POST</code> with a <code style="font-family:var(--font-mono);color:var(--javlo-ui-accent2)">webaction</code> parameter.
+  </p>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 1 – Components                                            -->
+  <!-- ================================================================ -->
+
+  <span class="section-anchor" id="components"></span>
+  <h2><i class="bi bi-puzzle" style="color:var(--javlo-ui-accent2)"></i> Component Reference
+    <a class="anchor" href="#components">#</a>
+  </h2>
+  <p>The table below describes every component type recommended for use with the Remote API. For each component the <strong>type</strong> string matches the <code style="font-family:var(--font-mono);color:var(--javlo-ui-accent2)">type</code> parameter sent to <code style="font-family:var(--font-mono);color:var(--javlo-ui-accent2)">content.add</code>. The <em>value</em> column describes what must be passed to <code style="font-family:var(--font-mono);color:var(--javlo-ui-accent2)">content.add</code> (value param) and what is stored by <code style="font-family:var(--font-mono);color:var(--javlo-ui-accent2)">content.edit</code>.</p>
+
+  <!-- ── 1. Heading ── -->
+  <span class="section-anchor" id="heading"></span>
+  <h2><i class="bi bi-type-h1" style="color:var(--javlo-ui-accent)"></i> Heading
+    <a class="anchor" href="#heading">#</a>
+  </h2>
+
+  <div class="comp-card">
+    <div class="comp-header">
+      <div class="comp-icon"><i class="bi bi-type-h1"></i></div>
+      <div class="comp-title-block">
+        <div class="comp-title">
+          Heading
+          <span class="type-chip">heading</span>
+        </div>
+        <div class="comp-class">
+          <a href="https://github.com/Javlo/javlo/blob/master/src/main/java/org/javlo/component/title/Heading.java" target="_blank">
+            <i class="bi bi-github"></i>
+            org.javlo.component.title.Heading
+          </a>
+        </div>
+      </div>
+    </div>
+    <p class="comp-desc">
+      Renders a semantic heading tag (<code style="font-family:var(--font-mono)">&lt;h1&gt;</code>–<code style="font-family:var(--font-mono)">&lt;h6&gt;</code>).
+      Supports an optional sub-text and an optional hyperlink on the heading text.
+    </p>
+    <span class="storage-badge"><i class="bi bi-database"></i> Java Properties format (key=value pairs)</span>
+    <h3>Fields (passed as Java <code style="font-family:var(--font-mono)">Properties</code> in value)</h3>
+    <table class="field-table">
+      <thead><tr><th>Key</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">depth</td><td class="ft">int (1–6)</td><td class="req">✓</td><td class="fd">Heading level: 1 = &lt;h1&gt;, 6 = &lt;h6&gt;. Defaults to 1.</td></tr>
+        <tr><td class="fn">text</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Main heading text. Auto-links are applied.</td></tr>
+        <tr><td class="fn">smtext</td><td class="ft">String</td><td class="opt">–</td><td class="fd">Small secondary text rendered below or beside the heading.</td></tr>
+        <tr><td class="fn">link</td><td class="ft">URL / path</td><td class="opt">–</td><td class="fd">Makes the heading a hyperlink pointing to this URL.</td></tr>
+      </tbody>
+    </table>
+    <h3>Example value</h3>
+    <div class="code-block">#Javlo heading
+depth=2
+text=Our Mission
+smtext=since 2010
+link=/about</div>
+    <div class="callout info"><i class="bi bi-info-circle"></i> When creating via <code style="font-family:var(--font-mono)">content.add</code> you may pass the heading text directly as <code style="font-family:var(--font-mono)">value</code> — Javlo stores it in the <code style="font-family:var(--font-mono)">text</code> property automatically.</div>
+  </div>
+
+  <!-- ── 2. Wysiwyg Paragraph ── -->
+  <span class="section-anchor" id="wysiwyg-paragraph"></span>
+  <h2><i class="bi bi-file-richtext" style="color:var(--javlo-ui-accent)"></i> Wysiwyg Paragraph
+    <a class="anchor" href="#wysiwyg-paragraph">#</a>
+  </h2>
+
+  <div class="comp-card">
+    <div class="comp-header">
+      <div class="comp-icon"><i class="bi bi-file-richtext"></i></div>
+      <div class="comp-title-block">
+        <div class="comp-title">
+          WysiwygParagraph
+          <span class="type-chip">wysiwyg-paragraph</span>
+        </div>
+        <div class="comp-class">
+          <a href="https://github.com/Javlo/javlo/blob/master/src/main/java/org/javlo/component/text/WysiwygParagraph.java" target="_blank">
+            <i class="bi bi-github"></i>
+            org.javlo.component.text.WysiwygParagraph
+          </a>
+        </div>
+      </div>
+    </div>
+    <p class="comp-desc">
+      Rich-text HTML block edited with TinyMCE (light mode). The raw value is HTML/XHTML.
+      Javlo parses the HTML to extract a <em>title</em> (first &lt;h1&gt;) and a <em>description</em> (first &lt;img&gt; alt) for SEO metadata.
+    </p>
+    <span class="storage-badge"><i class="bi bi-code-slash"></i> Raw HTML string in getValue()</span>
+    <h3>Value format</h3>
+    <table class="field-table">
+      <thead><tr><th>Field</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">value</td><td class="ft">HTML</td><td class="req">✓</td><td class="fd">Full HTML fragment. May include any block/inline elements. Javlo post-processes auto-links.</td></tr>
+      </tbody>
+    </table>
+    <h3>Example value</h3>
+    <div class="code-block">&lt;h1&gt;Welcome&lt;/h1&gt;
+&lt;p&gt;A paragraph with &lt;strong&gt;bold&lt;/strong&gt; and a
+&lt;a href="/about"&gt;link&lt;/a&gt;.&lt;/p&gt;
+&lt;img src="/files/hero.jpg" alt="Hero image"&gt;</div>
+    <div class="callout info"><i class="bi bi-info-circle"></i> <strong>FullWysiwygParagraph</strong> (type <code style="font-family:var(--font-mono)">full-wysiwyg-paragraph</code>) uses the same format but opens the full TinyMCE toolbar in the editor.</div>
+  </div>
+
+  <!-- ── 3. Paragraph ── -->
+  <span class="section-anchor" id="paragraph"></span>
+  <h2><i class="bi bi-paragraph" style="color:var(--javlo-ui-accent)"></i> Paragraph
+    <a class="anchor" href="#paragraph">#</a>
+  </h2>
+
+  <div class="comp-card">
+    <div class="comp-header">
+      <div class="comp-icon"><i class="bi bi-paragraph"></i></div>
+      <div class="comp-title-block">
+        <div class="comp-title">
+          Paragraph
+          <span class="type-chip">paragraph</span>
+        </div>
+        <div class="comp-class">
+          <a href="https://github.com/Javlo/javlo/blob/master/src/main/java/org/javlo/component/text/Paragraph.java" target="_blank">
+            <i class="bi bi-github"></i>
+            org.javlo.component.text.Paragraph
+          </a>
+        </div>
+      </div>
+    </div>
+    <p class="comp-desc">
+      Plain-text paragraph. The text is wrapped in a <code style="font-family:var(--font-mono)">&lt;p&gt;</code> tag on render.
+      Basic markers (<code style="font-family:var(--font-mono)">*bold*</code>, <code style="font-family:var(--font-mono)">_italic_</code>) and auto-links are applied.
+    </p>
+    <span class="storage-badge"><i class="bi bi-fonts"></i> Plain text string in getValue()</span>
+    <h3>Value format</h3>
+    <table class="field-table">
+      <thead><tr><th>Field</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">value</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Plain text. Newlines become &lt;br&gt;. Supports *bold* and _italic_ markers.</td></tr>
+      </tbody>
+    </table>
+    <h3>Example value</h3>
+    <div class="code-block">This is a *simple* paragraph with an auto-linked URL: https://example.com</div>
+  </div>
+
+  <!-- ── 4. Internal Link ── -->
+  <span class="section-anchor" id="internal-link"></span>
+  <h2><i class="bi bi-link-45deg" style="color:var(--javlo-ui-accent)"></i> Internal Link
+    <a class="anchor" href="#internal-link">#</a>
+  </h2>
+
+  <div class="comp-card">
+    <div class="comp-header">
+      <div class="comp-icon"><i class="bi bi-link-45deg"></i></div>
+      <div class="comp-title-block">
+        <div class="comp-title">
+          InternalLink
+          <span class="type-chip">internal-link</span>
+        </div>
+        <div class="comp-class">
+          <a href="https://github.com/Javlo/javlo/blob/master/src/main/java/org/javlo/component/links/InternalLink.java" target="_blank">
+            <i class="bi bi-github"></i>
+            org.javlo.component.links.InternalLink
+          </a>
+        </div>
+      </div>
+    </div>
+    <p class="comp-desc">
+      A link pointing to another page in the same Javlo site.
+      The target is identified by its page <strong>ID</strong> (not path, which may change).
+      Supports various display styles and an optional image/description block.
+    </p>
+    <span class="storage-badge"><i class="bi bi-database"></i> Java Properties format — header: <code style="font-family:var(--font-mono)">link storage V.1.0</code></span>
+    <h3>Properties</h3>
+    <table class="field-table">
+      <thead><tr><th>Key</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">link</td><td class="ft">page ID</td><td class="req">✓</td><td class="fd">Target page ID (numeric string, e.g. <code style="font-family:var(--font-mono)">177434753288331935111</code>).</td></tr>
+        <tr><td class="fn">label</td><td class="ft">String</td><td class="opt">–</td><td class="fd">Display text. Falls back to the target page's title.</td></tr>
+        <tr><td class="fn">title</td><td class="ft">String</td><td class="opt">–</td><td class="fd">HTML title attribute of the &lt;a&gt; tag.</td></tr>
+        <tr><td class="fn">image</td><td class="ft">path</td><td class="opt">–</td><td class="fd">Path to an image file for the title+image display styles.</td></tr>
+        <tr><td class="fn">description</td><td class="ft">String</td><td class="opt">–</td><td class="fd">Short description shown below the label in rich styles.</td></tr>
+        <tr><td class="fn">reverse-link</td><td class="ft">enum</td><td class="opt">–</td><td class="fd">Reverse-link mode: <code style="font-family:var(--font-mono)">none</code> | <code style="font-family:var(--font-mono)">first</code> | <code style="font-family:var(--font-mono)">this-page</code> | <code style="font-family:var(--font-mono)">previous-component</code>.</td></tr>
+      </tbody>
+    </table>
+    <h3>Style values</h3>
+    <p>Pass one of these strings as the <code style="font-family:var(--font-mono)">style</code> parameter to <code style="font-family:var(--font-mono)">content.add</code> / <code style="font-family:var(--font-mono)">content.edit</code>:</p>
+    <div class="code-block">title | title+image | title+description | title+image+description | image | hidden</div>
+    <h3>Example value</h3>
+    <div class="code-block">#link storage V.1.0
+link=177434753288331935111
+label=Read our presentation
+reverse-link=none</div>
+  </div>
+
+  <!-- ── 5. External Link ── -->
+  <span class="section-anchor" id="external-link"></span>
+  <h2><i class="bi bi-box-arrow-up-right" style="color:var(--javlo-ui-accent)"></i> External Link
+    <a class="anchor" href="#external-link">#</a>
+  </h2>
+
+  <div class="comp-card">
+    <div class="comp-header">
+      <div class="comp-icon"><i class="bi bi-box-arrow-up-right"></i></div>
+      <div class="comp-title-block">
+        <div class="comp-title">
+          ExternalLink
+          <span class="type-chip">external-link</span>
+        </div>
+        <div class="comp-class">
+          <a href="https://github.com/Javlo/javlo/blob/master/src/main/java/org/javlo/component/links/ExternalLink.java" target="_blank">
+            <i class="bi bi-github"></i>
+            org.javlo.component.links.ExternalLink
+          </a>
+        </div>
+      </div>
+    </div>
+    <p class="comp-desc">
+      A hyperlink pointing to an external URL or an email address.
+      Email addresses are automatically prefixed with <code style="font-family:var(--font-mono)">mailto:</code>.
+      Javlo can optionally validate that the URL is reachable.
+    </p>
+    <span class="storage-badge"><i class="bi bi-database"></i> Java Properties format — header: <code style="font-family:var(--font-mono)">link storage V.1.0</code></span>
+    <h3>Properties</h3>
+    <table class="field-table">
+      <thead><tr><th>Key</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">link</td><td class="ft">URL / email</td><td class="req">✓</td><td class="fd">External URL (https://…) or email address. Emails auto-get <code style="font-family:var(--font-mono)">mailto:</code>.</td></tr>
+        <tr><td class="fn">label</td><td class="ft">String</td><td class="opt">–</td><td class="fd">Anchor text. Falls back to the URL if omitted.</td></tr>
+        <tr><td class="fn">reverse-link</td><td class="ft">enum</td><td class="opt">–</td><td class="fd">Same reverse-link options as internal-link.</td></tr>
+      </tbody>
+    </table>
+    <h3>Example value</h3>
+    <div class="code-block">#link storage V.1.0
+link=https://www.example.org/resources
+label=External resources</div>
+  </div>
+
+  <!-- ── 6. Global Image ── -->
+  <span class="section-anchor" id="global-image"></span>
+  <h2><i class="bi bi-image" style="color:var(--javlo-ui-accent)"></i> Global Image
+    <a class="anchor" href="#global-image">#</a>
+  </h2>
+
+  <div class="comp-card">
+    <div class="comp-header">
+      <div class="comp-icon"><i class="bi bi-image"></i></div>
+      <div class="comp-title-block">
+        <div class="comp-title">
+          GlobalImage
+          <span class="type-chip">global-image</span>
+        </div>
+        <div class="comp-class">
+          <a href="https://github.com/Javlo/javlo/blob/master/src/main/java/org/javlo/component/image/GlobalImage.java" target="_blank">
+            <i class="bi bi-github"></i>
+            org.javlo.component.image.GlobalImage
+          </a>
+        </div>
+      </div>
+    </div>
+    <p class="comp-desc">
+      Displays an image from the Javlo media library. The image path is stored as a relative
+      reference within the site's data folder. Supports filters (crop, resize), an optional link,
+      and EXIF-style metadata.
+    </p>
+    <span class="storage-badge"><i class="bi bi-database"></i> Java Properties format</span>
+    <h3>Properties</h3>
+    <table class="field-table">
+      <thead><tr><th>Key</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">file-name</td><td class="ft">path</td><td class="req">✓</td><td class="fd">Relative path to the image in the Javlo media library, e.g. <code style="font-family:var(--font-mono)">/files/hero.jpg</code>.</td></tr>
+        <tr><td class="fn">file-name-over</td><td class="ft">path</td><td class="opt">–</td><td class="fd">Override image path. When set, replaces file-name during rendering.</td></tr>
+        <tr><td class="fn">title</td><td class="ft">String</td><td class="opt">–</td><td class="fd">Caption / alt text for the image.</td></tr>
+        <tr><td class="fn">link</td><td class="ft">URL</td><td class="opt">–</td><td class="fd">Wraps the image in a hyperlink pointing to this URL.</td></tr>
+        <tr><td class="fn">image-filter</td><td class="ft">enum</td><td class="opt">–</td><td class="fd">Filter type: <code style="font-family:var(--font-mono)">raw</code> (no processing) or a custom filter class name.</td></tr>
+        <tr><td class="fn">location</td><td class="ft">String</td><td class="opt">–</td><td class="fd">Textual location metadata (e.g. "Paris, France").</td></tr>
+        <tr><td class="fn">date</td><td class="ft">date string</td><td class="opt">–</td><td class="fd">Date the photo was taken (displayed as metadata).</td></tr>
+      </tbody>
+    </table>
+    <div class="callout"><i class="bi bi-exclamation-triangle"></i> The image file must already be uploaded to the Javlo media library before referencing it here. Use the file manager module or the media upload endpoint.</div>
+  </div>
+
+  <!-- ── 7. Page Reference ── -->
+  <span class="section-anchor" id="page-reference"></span>
+  <h2><i class="bi bi-collection" style="color:var(--javlo-ui-accent)"></i> Page Reference
+    <a class="anchor" href="#page-reference">#</a>
+  </h2>
+
+  <div class="comp-card">
+    <div class="comp-header">
+      <div class="comp-icon"><i class="bi bi-collection"></i></div>
+      <div class="comp-title-block">
+        <div class="comp-title">
+          PageReferenceComponent
+          <span class="type-chip">page-reference</span>
+        </div>
+        <div class="comp-class">
+          <a href="https://github.com/Javlo/javlo/blob/master/src/main/java/org/javlo/component/links/PageReferenceComponent.java" target="_blank">
+            <i class="bi bi-github"></i>
+            org.javlo.component.links.PageReferenceComponent
+          </a>
+        </div>
+      </div>
+    </div>
+    <p class="comp-desc">
+      Renders a list of references to other pages in the site.
+      The list can be statically defined (explicit page IDs) or dynamically filtered and sorted.
+      Supports date ranges, taxonomy filters, and multiple display templates.
+    </p>
+    <span class="storage-badge"><i class="bi bi-database"></i> Java Properties format</span>
+    <h3>Key Properties</h3>
+    <table class="field-table">
+      <thead><tr><th>Key</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">page-ref</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Semicolon-separated list of target page IDs, e.g. <code style="font-family:var(--font-mono)">111;222;333</code>. Leave empty for dynamic mode.</td></tr>
+        <tr><td class="fn">order</td><td class="ft">enum</td><td class="opt">–</td><td class="fd">Static sort order: <code style="font-family:var(--font-mono)">priority</code> | <code style="font-family:var(--font-mono)">creation-date</code> | <code style="font-family:var(--font-mono)">modification-date</code> | <code style="font-family:var(--font-mono)">name</code>.</td></tr>
+        <tr><td class="fn">dynamic-order</td><td class="ft">boolean</td><td class="opt">–</td><td class="fd">When <code style="font-family:var(--font-mono)">true</code>, applies dynamic order based on page date components.</td></tr>
+        <tr><td class="fn">page-start</td><td class="ft">date</td><td class="opt">–</td><td class="fd">Include only pages with a date component &gt;= this value (ISO-like).</td></tr>
+        <tr><td class="fn">page-end</td><td class="ft">date</td><td class="opt">–</td><td class="fd">Include only pages with a date component &lt;= this value.</td></tr>
+        <tr><td class="fn">display-first-page</td><td class="ft">boolean</td><td class="opt">–</td><td class="fd">When <code style="font-family:var(--font-mono)">true</code>, shows the first (current) page in the list.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── 8. Date ── -->
+  <span class="section-anchor" id="date"></span>
+  <h2><i class="bi bi-calendar3" style="color:var(--javlo-ui-accent)"></i> Date
+    <a class="anchor" href="#date">#</a>
+  </h2>
+
+  <div class="comp-card">
+    <div class="comp-header">
+      <div class="comp-icon"><i class="bi bi-calendar3"></i></div>
+      <div class="comp-title-block">
+        <div class="comp-title">
+          DateComponent
+          <span class="type-chip">date</span>
+        </div>
+        <div class="comp-class">
+          <a href="https://github.com/Javlo/javlo/blob/master/src/main/java/org/javlo/component/meta/DateComponent.java" target="_blank">
+            <i class="bi bi-github"></i>
+            org.javlo.component.meta.DateComponent
+          </a>
+        </div>
+      </div>
+    </div>
+    <p class="comp-desc">
+      Stores a date value associated with a page.
+      The display format is controlled by the component's <em>style</em>.
+      Also used by <code style="font-family:var(--font-mono)">page-reference</code> for chronological filtering.
+    </p>
+    <span class="storage-badge"><i class="bi bi-clock"></i> Date string in getValue()</span>
+    <h3>Value format</h3>
+    <table class="field-table">
+      <thead><tr><th>Field</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">value</td><td class="ft">date string</td><td class="req">✓</td><td class="fd">Date in the format stored by Javlo, typically <code style="font-family:var(--font-mono)">dd/MM/yyyy HH:mm</code> or <code style="font-family:var(--font-mono)">dd/MM/yyyy</code>.</td></tr>
+      </tbody>
+    </table>
+    <h3>Style values (display format)</h3>
+    <div class="code-block">date                  → context default format
+userfriendly-date     → "yesterday", "3 days ago" …
+medium-date           → 24 Mar 2026
+short-date            → 24/03/2026
+short-date-width-day  → Mon 24/03/2026
+visible-date          → visible in reader mode
+visible-month         → month + year only
+visible-time          → time only (HH:mm)
+date-taxonomy         → used as taxonomy axis
+not-visible           → hidden (metadata only)</div>
+    <h3>Example value</h3>
+    <div class="code-block">24/03/2026</div>
+  </div>
+
+  <!-- ── 9. Debug Note ── -->
+  <span class="section-anchor" id="debug-note"></span>
+  <h2><i class="bi bi-sticky" style="color:var(--javlo-ui-accent)"></i> Debug Note
+    <a class="anchor" href="#debug-note">#</a>
+  </h2>
+
+  <div class="comp-card">
+    <div class="comp-header">
+      <div class="comp-icon"><i class="bi bi-sticky"></i></div>
+      <div class="comp-title-block">
+        <div class="comp-title">
+          DebugNote
+          <span class="type-chip">debug-note</span>
+        </div>
+        <div class="comp-class">
+          <a href="https://github.com/Javlo/javlo/blob/master/src/main/java/org/javlo/component/core/DebugNote.java" target="_blank">
+            <i class="bi bi-github"></i>
+            org.javlo.component.core.DebugNote
+          </a>
+        </div>
+      </div>
+    </div>
+    <p class="comp-desc">
+      An internal annotation visible only in <strong>preview mode</strong> (never rendered to end users).
+      Useful for editorial notes, TODO items, or ticket references attached to a specific page location.
+    </p>
+    <span class="storage-badge"><i class="bi bi-database"></i> Java Properties format</span>
+    <h3>Properties</h3>
+    <table class="field-table">
+      <thead><tr><th>Key</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">text</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Note content (plain text or simple HTML).</td></tr>
+        <tr><td class="fn">status</td><td class="ft">enum</td><td class="opt">–</td><td class="fd">Ticket-style status: <code style="font-family:var(--font-mono)">open</code> | <code style="font-family:var(--font-mono)">in-progress</code> | <code style="font-family:var(--font-mono)">done</code> | <code style="font-family:var(--font-mono)">rejected</code>.</td></tr>
+        <tr><td class="fn">user</td><td class="ft">CSV string</td><td class="opt">–</td><td class="fd">Comma-separated list of assigned Javlo usernames.</td></tr>
+        <tr><td class="fn">priority</td><td class="ft">int (0–3)</td><td class="opt">–</td><td class="fd">0 = none, 1 = low, 2 = medium, 3 = high.</td></tr>
+        <tr><td class="fn">modif_date</td><td class="ft">timestamp</td><td class="opt">–</td><td class="fd">Last modification timestamp (set automatically on save).</td></tr>
+      </tbody>
+    </table>
+    <div class="callout danger"><i class="bi bi-eye-slash"></i> This component is never rendered in view mode. It is only visible to logged-in editors in preview mode.</div>
+  </div>
+
+  <!-- ── 10. Extended Widget ── -->
+  <span class="section-anchor" id="extended-widget"></span>
+  <h2><i class="bi bi-braces" style="color:var(--javlo-ui-accent)"></i> Extended Widget (JSP)
+    <a class="anchor" href="#extended-widget">#</a>
+  </h2>
+
+  <div class="comp-card">
+    <div class="comp-header">
+      <div class="comp-icon"><i class="bi bi-braces"></i></div>
+      <div class="comp-title-block">
+        <div class="comp-title">
+          ExtendedWidget
+          <span class="type-chip">extendedWidget</span>
+        </div>
+        <div class="comp-class">
+          <a href="https://github.com/Javlo/javlo/blob/master/src/main/java/org/javlo/component/text/ExtendedWidget.java" target="_blank">
+            <i class="bi bi-github"></i>
+            org.javlo.component.text.ExtendedWidget
+          </a>
+        </div>
+      </div>
+    </div>
+    <p class="comp-desc">
+      A custom HTML + CSS widget whose XHTML and stylesheet are stored in the component value.
+      At render time Javlo generates a JSP file from the content and executes it server-side.
+      JSP scriptlets (<code style="font-family:var(--font-mono)">&lt;% %&gt;</code>) are blocked for security.
+    </p>
+    <span class="storage-badge"><i class="bi bi-database"></i> Java Properties format (multi-line values)</span>
+    <h3>Properties</h3>
+    <table class="field-table">
+      <thead><tr><th>Key</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">xhtml</td><td class="ft">HTML</td><td class="req">✓</td><td class="fd">HTML fragment rendered by the generated JSP. May use Javlo EL expressions.</td></tr>
+        <tr><td class="fn">css</td><td class="ft">CSS</td><td class="opt">–</td><td class="fd">Scoped CSS injected into a &lt;style&gt; block above the xhtml.</td></tr>
+        <tr><td class="fn">file</td><td class="ft">path</td><td class="opt">–</td><td class="fd">Path to an external XHTML resource file (overrides inline xhtml).</td></tr>
+      </tbody>
+    </table>
+    <h3>Render pipeline</h3>
+    <p>On first render Javlo calls <code style="font-family:var(--font-mono)">createRenderer(ctx)</code> which writes the JSP to:<br>
+    <code style="font-family:var(--font-mono)">/jsp/view/component/extendedWidget/view_[componentId].jsp</code></p>
+    <div class="callout"><i class="bi bi-shield-check"></i> Scriptlets are stripped. Use JSTL / EL only. The generated JSP is cached and regenerated when the value changes.</div>
+  </div>
+
+  <!-- ── 11. Smart Generic Form ── -->
+  <span class="section-anchor" id="smart-generic-form"></span>
+  <h2><i class="bi bi-ui-checks" style="color:var(--javlo-ui-accent)"></i> Smart Generic Form
+    <a class="anchor" href="#smart-generic-form">#</a>
+  </h2>
+
+  <div class="comp-card">
+    <div class="comp-header">
+      <div class="comp-icon"><i class="bi bi-ui-checks"></i></div>
+      <div class="comp-title-block">
+        <div class="comp-title">
+          SmartGenericForm
+          <span class="type-chip">smart-generic-form</span>
+        </div>
+        <div class="comp-class">
+          <a href="https://github.com/Javlo/javlo/blob/master/src/main/java/org/javlo/component/form/SmartGenericForm.java" target="_blank">
+            <i class="bi bi-github"></i>
+            org.javlo.component.form.SmartGenericForm
+          </a>
+        </div>
+      </div>
+    </div>
+    <p class="comp-desc">
+      A configurable web form that stores submissions as CSV data files in the Javlo data folder.
+      Supports file uploads, event registrations, reCAPTCHA, email notifications, and database storage.
+      Fields are defined in a Java Properties value; the rendering JSP is
+      <a href="https://github.com/Javlo/javlo/blob/master/src/main/webapp/WEB-INF/template/default/components-config/smart-generic-form.properties" target="_blank" style="color:var(--javlo-ui-accent2)">smart-generic-form.properties</a>.
+      The <code style="font-family:var(--font-mono)">Field</code> helper class that serialises each field is
+      <a href="https://github.com/Javlo/javlo/blob/master/src/main/java/org/javlo/component/form/Field.java" target="_blank" style="color:var(--javlo-ui-accent2)">org.javlo.component.form.Field</a>.
+    </p>
+    <span class="storage-badge"><i class="bi bi-table"></i> Java Properties in getValue() · field rows keyed <code style="font-family:var(--font-mono)">field.{name}</code> · submissions in CSV files</span>
+
+    <h3>Global configuration keys</h3>
+    <table class="field-table">
+      <thead><tr><th>Key</th><th>Type</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">title</td><td class="ft">String</td><td class="fd">Form heading displayed above the fields.</td></tr>
+        <tr><td class="fn">filename</td><td class="ft">String</td><td class="fd">Base name of the CSV data file (without extension). Defaults to the component ID.</td></tr>
+        <tr><td class="fn">captcha</td><td class="ft">boolean</td><td class="fd">Enable simple captcha (<code style="font-family:var(--font-mono)">true</code> / <code style="font-family:var(--font-mono)">false</code>).</td></tr>
+        <tr><td class="fn">recaptchakey</td><td class="ft">String</td><td class="fd">Google reCAPTCHA v2 site key.</td></tr>
+        <tr><td class="fn">recaptchasecretkey</td><td class="ft">String</td><td class="fd">Google reCAPTCHA v2 secret key.</td></tr>
+        <tr><td class="fn">mail.to</td><td class="ft">email</td><td class="fd">Recipient address for the submission notification email.</td></tr>
+        <tr><td class="fn">mail.cc / mail.bcc</td><td class="ft">email</td><td class="fd">CC / BCC recipients.</td></tr>
+        <tr><td class="fn">mail.subject</td><td class="ft">String</td><td class="fd">Fixed email subject line.</td></tr>
+        <tr><td class="fn">mail.subject.field</td><td class="ft">field name</td><td class="fd">Use the value of this field as the email subject.</td></tr>
+        <tr><td class="fn">mail.from</td><td class="ft">email</td><td class="fd">Fixed sender address.</td></tr>
+        <tr><td class="fn">mail.from.field</td><td class="ft">field name</td><td class="fd">Use the value of this field as the sender address.</td></tr>
+        <tr><td class="fn">message.thanks</td><td class="ft">String</td><td class="fd">Confirmation message shown after submission.</td></tr>
+        <tr><td class="fn">message.required</td><td class="ft">String</td><td class="fd">Label shown next to required field indicator (*).</td></tr>
+        <tr><td class="fn">error.generic / error.required</td><td class="ft">String</td><td class="fd">Generic / required-field validation error messages.</td></tr>
+        <tr><td class="fn">file.max-size</td><td class="ft">int (bytes)</td><td class="fd">Maximum allowed upload size for <code style="font-family:var(--font-mono)">file</code> fields.</td></tr>
+        <tr><td class="fn">event.limit</td><td class="ft">int</td><td class="fd">Maximum number of event registrations (0 = unlimited).</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Field definition format — <code style="font-family:var(--font-mono)">field.{name}</code></h3>
+    <p>Each field is a Properties entry whose key is <code style="font-family:var(--font-mono)">field.{fieldName}</code> and whose value is a pipe-separated (<code style="font-family:var(--font-mono)">|</code>) string with 11 columns, matching <code style="font-family:var(--font-mono)">Field.toString()</code>:</p>
+    <div class="code-block">field.{name} = label|type|defaultValue|rawList|order|registeredList|order|width|condition|role|autocomplete</div>
+    <div class="callout info" style="margin-bottom:12px"><i class="bi bi-shield-exclamation"></i> <strong>Required flag</strong>: a field is marked required when its <em>name starts with an uppercase letter</em> — e.g. <code style="font-family:var(--font-mono)">Email</code> is required, <code style="font-family:var(--font-mono)">phone</code> is optional.</div>
+    <table class="field-table">
+      <thead><tr><th>Column index</th><th>Attribute</th><th>Type</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">0</td><td class="fn">label</td><td class="ft">String</td><td class="fd">Human-readable label shown in the form.</td></tr>
+        <tr><td class="fn">1</td><td class="fn">type</td><td class="ft">enum</td><td class="fd">Field type (see table below).</td></tr>
+        <tr><td class="fn">2</td><td class="fn">defaultValue</td><td class="ft">String</td><td class="fd">Pre-filled value. Usually empty.</td></tr>
+        <tr><td class="fn">3</td><td class="fn">rawList</td><td class="ft">String</td><td class="fd">Newline-separated options for <code style="font-family:var(--font-mono)">list</code>, <code style="font-family:var(--font-mono)">list-multi</code>, <code style="font-family:var(--font-mono)">radio</code>. Prefix item with <code style="font-family:var(--font-mono)">.</code> to make it a non-selectable title. Use <code style="font-family:var(--font-mono)">&gt;listName</code> to pull from a registered ListService list.</td></tr>
+        <tr><td class="fn">4</td><td class="fn">order (unused)</td><td class="ft">int</td><td class="fd">Legacy slot — set to <code style="font-family:var(--font-mono)">0</code>.</td></tr>
+        <tr><td class="fn">5</td><td class="fn">registeredList</td><td class="ft">String</td><td class="fd">Name of a ListService list (for <code style="font-family:var(--font-mono)">registered-list</code> type).</td></tr>
+        <tr><td class="fn">6</td><td class="fn">order</td><td class="ft">int</td><td class="fd">Display order (ascending). Fields with order 0 fall back to alphabetical sorting.</td></tr>
+        <tr><td class="fn">7</td><td class="fn">width</td><td class="ft">int (1–12)</td><td class="fd">Bootstrap grid column width. Fields accumulate left-to-right; a new row starts when the total exceeds 12. Default: <code style="font-family:var(--font-mono)">12</code>.</td></tr>
+        <tr><td class="fn">8</td><td class="fn">condition</td><td class="ft">String</td><td class="fd">Conditional display rule: <code style="font-family:var(--font-mono)">otherField==value</code>. Operators: <code style="font-family:var(--font-mono)">===</code>, <code style="font-family:var(--font-mono)">==</code>, <code style="font-family:var(--font-mono)">=</code>, <code style="font-family:var(--font-mono)">&gt;</code>, <code style="font-family:var(--font-mono)">&lt;</code>, <code style="font-family:var(--font-mono)"> in </code>.</td></tr>
+        <tr><td class="fn">9</td><td class="fn">role</td><td class="ft">enum</td><td class="fd">Auto-fill role: <code style="font-family:var(--font-mono)">user_firstName</code>, <code style="font-family:var(--font-mono)">user_lastName</code>, <code style="font-family:var(--font-mono)">user_email</code>, <code style="font-family:var(--font-mono)">user_phone</code>, <code style="font-family:var(--font-mono)">user_organization</code>, <code style="font-family:var(--font-mono)">count-participants</code>, etc.</td></tr>
+        <tr><td class="fn">10</td><td class="fn">autocomplete</td><td class="ft">String</td><td class="fd">HTML <code style="font-family:var(--font-mono)">autocomplete</code> attribute value (e.g. <code style="font-family:var(--font-mono)">email</code>, <code style="font-family:var(--font-mono)">name</code>).</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Field types</h3>
+    <table class="field-table">
+      <thead><tr><th>type value</th><th>Rendered as</th><th>Needs rawList?</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">text</td><td class="fd"><code style="font-family:var(--font-mono)">&lt;input type="text"&gt;</code></td><td class="opt">–</td></tr>
+        <tr><td class="fn">email</td><td class="fd"><code style="font-family:var(--font-mono)">&lt;input type="text"&gt;</code> + email validation</td><td class="opt">–</td></tr>
+        <tr><td class="fn">vat</td><td class="fd"><code style="font-family:var(--font-mono)">&lt;input type="text"&gt;</code> + VAT validation</td><td class="opt">–</td></tr>
+        <tr><td class="fn">read-only</td><td class="fd"><code style="font-family:var(--font-mono)">&lt;input type="text" readonly&gt;</code></td><td class="opt">–</td></tr>
+        <tr><td class="fn">number</td><td class="fd"><code style="font-family:var(--font-mono)">&lt;input type="number"&gt;</code></td><td class="opt">–</td></tr>
+        <tr><td class="fn">date</td><td class="fd"><code style="font-family:var(--font-mono)">&lt;input type="date"&gt;</code></td><td class="opt">–</td></tr>
+        <tr><td class="fn">large-text</td><td class="fd"><code style="font-family:var(--font-mono)">&lt;textarea&gt;</code></td><td class="opt">–</td></tr>
+        <tr><td class="fn">yes-no</td><td class="fd">Radio pair: Yes / No</td><td class="opt">–</td></tr>
+        <tr><td class="fn">true-false</td><td class="fd">Radio pair: True / False</td><td class="opt">–</td></tr>
+        <tr><td class="fn">radio</td><td class="fd">Inline radio buttons from list</td><td class="req">✓</td></tr>
+        <tr><td class="fn">list</td><td class="fd"><code style="font-family:var(--font-mono)">&lt;select&gt;</code> dropdown from list</td><td class="req">✓</td></tr>
+        <tr><td class="fn">list-multi</td><td class="fd"><code style="font-family:var(--font-mono)">&lt;select multiple&gt;</code> with SlimSelect. <code style="font-family:var(--font-mono)">condition</code> column sets the selection limit.</td><td class="req">✓</td></tr>
+        <tr><td class="fn">registered-list</td><td class="fd"><code style="font-family:var(--font-mono)">&lt;select&gt;</code> populated from a ListService list; set <code style="font-family:var(--font-mono)">registeredList</code> column.</td><td class="opt">–</td></tr>
+        <tr><td class="fn">file</td><td class="fd"><code style="font-family:var(--font-mono)">&lt;input type="file"&gt;</code> with existing-file display</td><td class="opt">–</td></tr>
+        <tr><td class="fn">validation</td><td class="fd"><code style="font-family:var(--font-mono)">&lt;input type="checkbox"&gt;</code> (e.g. GDPR consent)</td><td class="opt">–</td></tr>
+        <tr><td class="fn">static-title</td><td class="fd"><code style="font-family:var(--font-mono)">&lt;h3&gt;</code> section divider — label is the heading text</td><td class="opt">–</td></tr>
+        <tr><td class="fn">static-text</td><td class="fd"><code style="font-family:var(--font-mono)">&lt;p&gt;</code> informational paragraph — label is the text</td><td class="opt">–</td></tr>
+        <tr><td class="fn">bloc</td><td class="fd">Bootstrap collapse toggle — label is the toggle text</td><td class="opt">–</td></tr>
+        <tr><td class="fn">hidden</td><td class="fd"><code style="font-family:var(--font-mono)">&lt;input type="hidden"&gt;</code> — excluded from grid width calculation</td><td class="opt">–</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Complete example</h3>
+    <div class="code-block">#comp:&lt;componentId&gt;
+title=Contact us
+filename=contact-form
+mail.to=info@example.org
+mail.subject=New contact message
+message.thanks=Thank you\! We will get back to you soon.
+captcha=false
+
+# field.{name} = label|type|defaultValue|rawList|order|registeredList|order|width|condition|role|autocomplete
+field.Name=Your name|text|||0||1|6|||name
+field.Email=Your email|email|||0||2|6|||email
+field.Subject=Subject|list|||0||3|12|Option A\nOption B\nOption C||
+field.Message=Message|large-text|||0||4|12|||
+field.privacy=I accept the privacy policy|validation|||0||5|12|||</div>
+
+    <div class="callout info"><i class="bi bi-info-circle"></i> In a Java Properties file, literal newlines inside a value must be escaped as <code style="font-family:var(--font-mono)">\n</code>. The <code style="font-family:var(--font-mono)">rawList</code> column uses <code style="font-family:var(--font-mono)">\n</code> as the item separator when stored.</div>
+
+    <h3>Submission storage</h3>
+    <p>Form submissions are stored in:<br>
+    <code style="font-family:var(--font-mono)">{data-folder}/dynamic-form-result/{componentId}/data.csv</code></p>
+    <p>Accessible programmatically via <code style="font-family:var(--font-mono)">getData(ctx)</code> → <code style="font-family:var(--font-mono)">List&lt;Map&lt;String,String&gt;&gt;</code>.</p>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 2 – ContentAction API                                     -->
+  <!-- ================================================================ -->
+
+  <span class="section-anchor" id="content-action"></span>
+  <h2><i class="bi bi-gear-fill" style="color:var(--javlo-ui-accent2)"></i> ContentAction API
+    <a class="anchor" href="#content-action">#</a>
+  </h2>
+  <p>Source: <a href="https://github.com/Javlo/javlo/blob/master/src/main/java/org/javlo/remote/ContentAction.java" target="_blank" style="color:var(--javlo-ui-accent2);font-family:var(--font-mono)"><i class="bi bi-github"></i> org.javlo.remote.ContentAction</a></p>
+
+  <div class="api-endpoint">
+    <span class="api-method">POST</span>
+    <span class="api-path">/ajax/{lang}/?webaction=content.add</span>
+    <p style="margin-top:10px;color:var(--javlo-ui-text)">Create a new component on a page.</p>
+    <table class="field-table" style="margin-top:10px">
+      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">page</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Target page — ID, name, or path.</td></tr>
+        <tr><td class="fn">type</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Component type string (e.g. <code style="font-family:var(--font-mono)">wysiwyg-paragraph</code>).</td></tr>
+        <tr><td class="fn">area</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Template area key (e.g. <code style="font-family:var(--font-mono)">content</code>, <code style="font-family:var(--font-mono)">hero</code>, <code style="font-family:var(--font-mono)">footer</code>).</td></tr>
+        <tr><td class="fn">previous</td><td class="ft">String</td><td class="opt">–</td><td class="fd">Component ID after which to insert. <code style="font-family:var(--font-mono)">0</code> = prepend. Default: <code style="font-family:var(--font-mono)">0</code>.</td></tr>
+        <tr><td class="fn">value</td><td class="ft">String</td><td class="opt">–</td><td class="fd">Initial value (see component data-structure above).</td></tr>
+        <tr><td class="fn">style</td><td class="ft">String</td><td class="opt">–</td><td class="fd">CSS style class for the component.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="api-endpoint">
+    <span class="api-method">POST</span>
+    <span class="api-path">/ajax/{lang}/?webaction=content.edit</span>
+    <p style="margin-top:10px;color:var(--javlo-ui-text)">Update value and/or style of an existing component.</p>
+    <table class="field-table" style="margin-top:10px">
+      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">id</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Component ID (returned by content.add).</td></tr>
+        <tr><td class="fn">value</td><td class="ft">String</td><td class="opt">–</td><td class="fd">New value (replaces existing).</td></tr>
+        <tr><td class="fn">style</td><td class="ft">String</td><td class="opt">–</td><td class="fd">New style class.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="api-endpoint">
+    <span class="api-method">POST</span>
+    <span class="api-path">/ajax/{lang}/?webaction=content.remove</span>
+    <p style="margin-top:10px;color:var(--javlo-ui-text)">Delete a component from its page.</p>
+    <table class="field-table" style="margin-top:10px">
+      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">id</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Component ID to delete.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="api-endpoint">
+    <span class="api-method">POST</span>
+    <span class="api-path">/ajax/{lang}/?webaction=content.move</span>
+    <p style="margin-top:10px;color:var(--javlo-ui-text)">Move a component to a different position, area, or page.</p>
+    <table class="field-table" style="margin-top:10px">
+      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">id</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Component ID to move.</td></tr>
+        <tr><td class="fn">previous</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Component ID after which to insert. <code style="font-family:var(--font-mono)">0</code> = move to first position.</td></tr>
+        <tr><td class="fn">area</td><td class="ft">String</td><td class="opt">–</td><td class="fd">Target area key. Defaults to current area.</td></tr>
+        <tr><td class="fn">page</td><td class="ft">String</td><td class="opt">–</td><td class="fd">Target page. Defaults to current page.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="api-endpoint">
+    <span class="api-method">POST</span>
+    <span class="api-path">/ajax/{lang}/?webaction=content.publish</span>
+    <p style="margin-top:10px;color:var(--javlo-ui-text)">Publish the site: synchronises the <strong>preview</strong> navigation tree to the <strong>view</strong> tree and copies content files. Must be called after any content or navigation change to make it visible to visitors.</p>
+    <p style="margin-top:6px;color:var(--javlo-ui-text-muted)">No parameters required.</p>
+  </div>
+
+  <div class="api-endpoint">
+    <span class="api-method">POST</span>
+    <span class="api-path">/ajax/{lang}/?webaction=content.clearPage</span>
+    <p style="margin-top:10px;color:var(--javlo-ui-text)">Remove <strong>all components</strong> from a page. Returns the page ID and the list of deleted component IDs.</p>
+    <table class="field-table" style="margin-top:10px">
+      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">page</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Page to clear — ID, name, or path.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 3 – NavAction API                                         -->
+  <!-- ================================================================ -->
+
+  <span class="section-anchor" id="nav-action"></span>
+  <h2><i class="bi bi-diagram-3" style="color:var(--javlo-ui-accent2)"></i> NavAction API
+    <a class="anchor" href="#nav-action">#</a>
+  </h2>
+  <p>Source: <a href="https://github.com/Javlo/javlo/blob/master/src/main/java/org/javlo/remote/NavAction.java" target="_blank" style="color:var(--javlo-ui-accent2);font-family:var(--font-mono)"><i class="bi bi-github"></i> org.javlo.remote.NavAction</a></p>
+
+  <div class="api-endpoint">
+    <span class="api-method">POST</span>
+    <span class="api-path">/ajax/{lang}/?webaction=nav.add</span>
+    <p style="margin-top:10px;color:var(--javlo-ui-text)">Add a new page to the navigation tree.</p>
+    <table class="field-table" style="margin-top:10px">
+      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">name</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Slug of the new page (URL-safe, e.g. <code style="font-family:var(--font-mono)">my-page</code>).</td></tr>
+        <tr><td class="fn">parent</td><td class="ft">String</td><td class="opt">–</td><td class="fd">Parent page — ID, name, or path. Default: root.</td></tr>
+        <tr><td class="fn">top</td><td class="ft">boolean</td><td class="opt">–</td><td class="fd">Insert at the top of sibling list. Default: <code style="font-family:var(--font-mono)">false</code>.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="api-endpoint">
+    <span class="api-method">POST</span>
+    <span class="api-path">/ajax/{lang}/?webaction=nav.remove</span>
+    <p style="margin-top:10px;color:var(--javlo-ui-text)">Remove a page and all its sub-pages from the navigation tree.</p>
+    <table class="field-table" style="margin-top:10px">
+      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">page</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Page to remove — ID, name, or path.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="api-endpoint">
+    <span class="api-method">POST</span>
+    <span class="api-path">/ajax/{lang}/?webaction=nav.move</span>
+    <p style="margin-top:10px;color:var(--javlo-ui-text)">Move a page to a different parent in the navigation tree.</p>
+    <table class="field-table" style="margin-top:10px">
+      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">page</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Page to move — ID, name, or path.</td></tr>
+        <tr><td class="fn">parent</td><td class="ft">String</td><td class="req">✓</td><td class="fd">New parent page — ID, name, or path.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 4 – TemplateAction API                                    -->
+  <!-- ================================================================ -->
+
+  <span class="section-anchor" id="template-action"></span>
+  <h2><i class="bi bi-palette" style="color:var(--javlo-ui-accent2)"></i> TemplateAction API
+    <a class="anchor" href="#template-action">#</a>
+  </h2>
+  <p>Source: <a href="https://github.com/Javlo/javlo/blob/master/src/main/java/org/javlo/remote/TemplateAction.java" target="_blank" style="color:var(--javlo-ui-accent2);font-family:var(--font-mono)"><i class="bi bi-github"></i> org.javlo.remote.TemplateAction</a></p>
+  <p>Requires <strong>global admin</strong> role. All actions use <code style="font-family:var(--font-mono)">webaction=template.{action}</code>.</p>
+
+  <div class="api-endpoint">
+    <span class="api-method">POST</span>
+    <span class="api-path">/ajax/{lang}/?webaction=template.upload</span>
+    <p style="margin-top:10px;color:var(--javlo-ui-text)">
+      Upload a template from a <strong>zip file</strong> (URL or multipart). Creates the template folder if absent, overwrites files if it already exists.
+      Call <code style="font-family:var(--font-mono)">template.commit</code> afterwards to deploy the new files into the webapp.
+    </p>
+    <table class="field-table" style="margin-top:10px">
+      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">name</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Target template ID / folder name.</td></tr>
+        <tr><td class="fn">url</td><td class="ft">String</td><td class="opt">–</td><td class="fd">URL of a <code style="font-family:var(--font-mono)">.zip</code> file to download. Ignored when a multipart <code style="font-family:var(--font-mono)">file</code> field is present.</td></tr>
+        <tr><td class="fn">file</td><td class="ft">File (multipart)</td><td class="opt">–</td><td class="fd">Zip file uploaded as <code style="font-family:var(--font-mono)">multipart/form-data</code> field named <code style="font-family:var(--font-mono)">file</code>. Takes priority over <code style="font-family:var(--font-mono)">url</code>.</td></tr>
+      </tbody>
+    </table>
+    <div class="code-block" style="margin-top:10px"># URL-based upload
+curl -X POST http://localhost/javlo2/claude/ajax/fr/ \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d "webaction=template.upload&name=my-theme&url=https://example.com/my-theme.zip"
+
+# Multipart file upload
+curl -X POST http://localhost/javlo2/claude/ajax/fr/ \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -F "webaction=template.upload" \
+  -F "name=my-theme" \
+  -F "file=@/path/to/my-theme.zip"</div>
+  </div>
+
+  <div class="api-endpoint">
+    <span class="api-method">POST</span>
+    <span class="api-path">/ajax/{lang}/?webaction=template.commit</span>
+    <p style="margin-top:10px;color:var(--javlo-ui-text)">
+      Clears the renderer cache and re-imports the template from its source folder into the webapp.
+      Equivalent to the <code style="font-family:var(--font-mono)">commit-template</code> macro. Use after editing template files on disk.
+    </p>
+    <table class="field-table" style="margin-top:10px">
+      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">name</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Template name or ID.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="api-endpoint">
+    <span class="api-method">POST</span>
+    <span class="api-path">/ajax/{lang}/?webaction=template.commitAll</span>
+    <p style="margin-top:10px;color:var(--javlo-ui-text)">
+      Commits a template <strong>and all its child templates</strong> (full descendant tree). Useful when a parent template change must propagate to all derived themes.
+    </p>
+    <table class="field-table" style="margin-top:10px">
+      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">name</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Parent template name or ID.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 5 – Authentication                                        -->
+  <!-- ================================================================ -->
+
+  <span class="section-anchor" id="authentication"></span>
+  <h2><i class="bi bi-shield-lock" style="color:var(--javlo-ui-accent2)"></i> Authentication
+    <a class="anchor" href="#authentication">#</a>
+  </h2>
+
+  <p>All Remote API actions require an authenticated session. Three authentication modes are supported (evaluated in priority order):</p>
+
+  <h3>1. Authorization: Bearer header <span style="background:var(--javlo-ui-tag-bg);color:var(--javlo-ui-accent2);font-size:11px;padding:2px 7px;border-radius:4px;font-weight:600;font-family:var(--font-mono)">recommended</span></h3>
+  <p>Send the token in the standard <code style="font-family:var(--font-mono)">Authorization</code> HTTP header. This is the preferred approach for API clients and the MCP server.</p>
+  <div class="code-block">POST /ajax/fr/
+Authorization: Bearer YOUR_TOKEN
+Content-Type: application/x-www-form-urlencoded
+
+webaction=content.add&page=presentation&type=wysiwyg-paragraph&area=content&value=&lt;p&gt;Hello&lt;/p&gt;</div>
+
+  <h3>2. X-Javlo-Token header</h3>
+  <p>Alternative header for environments where <code style="font-family:var(--font-mono)">Authorization</code> is reserved.</p>
+  <div class="code-block">POST /ajax/fr/
+X-Javlo-Token: YOUR_TOKEN
+Content-Type: application/x-www-form-urlencoded
+
+webaction=content.add&page=presentation&type=wysiwyg-paragraph&area=content</div>
+
+  <h3>3. Token parameter (<code style="font-family:var(--font-mono)">j_token</code>) — legacy</h3>
+  <p>Pass the token as a POST body parameter. Supported for backwards compatibility but the header approach is preferred.</p>
+  <div class="code-block">POST /ajax/fr/
+Content-Type: application/x-www-form-urlencoded
+
+webaction=content.add&j_token=YOUR_TOKEN&page=presentation&type=wysiwyg-paragraph&area=content&value=&lt;p&gt;Hello&lt;/p&gt;</div>
+
+  <h3>4. Session cookie</h3>
+  <p>Perform a standard form-login first, then reuse the <code style="font-family:var(--font-mono)">JSESSIONID</code> cookie in subsequent API calls.</p>
+
+  <p style="margin-top:12px">The token is generated in the Javlo admin under <strong>Users → API token</strong>. The <code style="font-family:var(--font-mono)">loginWithToken</code> option must be enabled in the global static config.</p>
+
+  <h3>Required permissions</h3>
+  <table class="field-table">
+    <thead><tr><th>Action group</th><th>Required role</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">content.*</td><td class="fd">Global admin <em>or</em> <code style="font-family:var(--font-mono)">content</code> role</td></tr>
+      <tr><td class="fn">nav.*</td><td class="fd">Global admin <em>or</em> <code style="font-family:var(--font-mono)">content</code> role</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 5 – Response Format                                       -->
+  <!-- ================================================================ -->
+
+  <span class="section-anchor" id="response-format"></span>
+  <h2><i class="bi bi-braces-asterisk" style="color:var(--javlo-ui-accent2)"></i> Response Format
+    <a class="anchor" href="#response-format">#</a>
+  </h2>
+
+  <p>All actions return a JSON envelope from the AjaxServlet:</p>
+  <div class="code-block">{
+  "messageType": "info" | "error" | "warning",
+  "messageText": "human-readable message or null",
+  "data": {
+    // action-specific result object
+  },
+  "insideZone": "...",
+  "zone": "..."
+}</div>
+
+  <h3>content.add / content.edit / content.move → <code style="font-family:var(--font-mono)">data.component</code></h3>
+  <div class="code-block">{
+  "id":       "177435215683329856118",
+  "type":     "wysiwyg-paragraph",
+  "area":     "content",
+  "style":    null,
+  "pageId":   "177434753288331935111",
+  "pagePath": "/presentation",
+  "value":    "&lt;p&gt;Hello&lt;/p&gt;"
+}</div>
+
+  <h3>content.remove → <code style="font-family:var(--font-mono)">data</code></h3>
+  <div class="code-block">{
+  "removed": "177435215683329856118",
+  "type":    "wysiwyg-paragraph"
+}</div>
+
+  <h3>content.publish → <code style="font-family:var(--font-mono)">data</code></h3>
+  <div class="code-block">{
+  "published":  true,
+  "publisher":  "admin",
+  "date":       "Tue Mar 24 17:00:00 CET 2026"
+}</div>
+
+  <h3>content.clearPage → <code style="font-family:var(--font-mono)">data</code></h3>
+  <div class="code-block">{
+  "pageId":  "177434753288331935111",
+  "removed": ["177435215683329856118", "177435587252612684640", "177436146640444725247"],
+  "count":   3
+}</div>
+
+  <h3>nav.add → <code style="font-family:var(--font-mono)">data</code></h3>
+  <div class="code-block">{
+  "pageId":   "177434753288331935111",
+  "pagePath": "/my-new-page",
+  "pageName": "my-new-page"
+}</div>
+
+  <h3>template.upload / template.commit → <code style="font-family:var(--font-mono)">data</code></h3>
+  <div class="code-block">{
+  "template": {
+    "id":     "my-theme",
+    "name":   "my-theme",
+    "parent": "base-bootstrap"
+  }
+}</div>
+
+  <h3>template.commitAll → <code style="font-family:var(--font-mono)">data</code></h3>
+  <div class="code-block">{
+  "committed": ["base-bootstrap", "my-theme", "my-theme-dark"],
+  "count": 3
+}</div>
+
+  <div class="callout danger" style="margin-top:20px"><i class="bi bi-exclamation-triangle"></i> When <code style="font-family:var(--font-mono)">messageType</code> is <code style="font-family:var(--font-mono)">"error"</code> the <code style="font-family:var(--font-mono)">data</code> key is absent. Always check <code style="font-family:var(--font-mono)">messageType</code> before reading <code style="font-family:var(--font-mono)">data</code>.</div>
+
+</main>
+
+<script>
+// Highlight active sidebar link based on scroll position
+(function () {
+  const nav  = document.getElementById('sidebar-nav');
+  const links = nav ? Array.from(nav.querySelectorAll('a[href^="#"]')) : [];
+  const anchors = links.map(l => document.querySelector(l.getAttribute('href')));
+
+  function onScroll() {
+    const scrollY = window.scrollY + 80;
+    let active = null;
+    anchors.forEach((a, i) => {
+      if (a && a.getBoundingClientRect().top + window.scrollY <= scrollY) active = i;
+    });
+    links.forEach((l, i) => l.classList.toggle('active', i === active));
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+</body>
+</html>

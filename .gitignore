@@ -15,3 +15,6 @@ src/main/webapp/.vscode/sftp.json
 /dependancy.txt
 *.gitignore
 /javlo.git/
+/mcp/node_modules/
+/mcp/dist/
+/mcp/.env

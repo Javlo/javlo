@@ -752,6 +752,15 @@ public class CatchAllFilter implements Filter {
 			}
 
 			String token = request.getParameter(IUserFactory.TOKEN_PARAM);
+			if (token == null) {
+				String authHeader = httpRequest.getHeader("Authorization");
+				if (authHeader != null && authHeader.startsWith("Bearer ")) {
+					token = authHeader.substring(7).trim();
+				}
+			}
+			if (token == null) {
+				token = httpRequest.getHeader("X-Javlo-Token");
+			}
 			if (token != null) {
 				String realToken = globalContext.convertOneTimeToken(token);
 				if (realToken != null) {

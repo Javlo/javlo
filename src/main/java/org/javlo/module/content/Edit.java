@@ -1575,7 +1575,7 @@ public class Edit extends AbstractModuleAction {
 				MenuElement viewNav = content.getNavigation(viewCtx);
 				MenuElement previewNav = content.getNavigation(ctx);
 
-				// PULISH STATIC INFO
+				// PUBLISH STATIC INFO
 				content.publishAttributeMap(ctx);
 
 				int modif = NavigationHelper.publishNavigation(ctx, previewNav, viewNav);

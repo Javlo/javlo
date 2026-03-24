@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -n \"TOKEN_PARAM\\\\|getTokenCreateIfNotExist\\\\|verifyToken\" /c/kdrive/work/javlo2/src/main/java/org/javlo/user/*.java)",
+      "Read(//c/opt/tomcat10/webapps/javlo2/WEB-INF/data/**)",
+      "Read(//e/opt/tomcat10/**)"
+    ]
+  },
+  "enabledMcpjsonServers": [
+    "javlo2"
+  ]
+}

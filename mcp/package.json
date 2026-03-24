@@ -1,0 +1,25 @@
+{
+  "name": "javlo2-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for Javlo2 navigation and content management",
+  "type": "module",
+  "bin": {
+    "javlo2-mcp": "./build/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node build/index.js"
+  },
+  "files": [
+    "build"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.5.0"
+  }
+}

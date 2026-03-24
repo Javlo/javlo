@@ -1,0 +1,1323 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "CheckServer",
+            "request": "launch",
+            "mainClass": "CheckServer",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "TestMain",
+            "request": "launch",
+            "mainClass": "TestMain",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ViewActions",
+            "request": "launch",
+            "mainClass": "org.javlo.actions.ViewActions",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "Company",
+            "request": "launch",
+            "mainClass": "org.javlo.bean.Company",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ComponentBean",
+            "request": "launch",
+            "mainClass": "org.javlo.component.core.ComponentBean",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ComponentFactory",
+            "request": "launch",
+            "mainClass": "org.javlo.component.core.ComponentFactory",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "DynamicComponent",
+            "request": "launch",
+            "mainClass": "org.javlo.component.dynamic.DynamicComponent",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "Fetcher",
+            "request": "launch",
+            "mainClass": "org.javlo.component.dynamic.Fetcher",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "AbstractOrderComponent",
+            "request": "launch",
+            "mainClass": "org.javlo.component.ecom.AbstractOrderComponent",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ProductComponent",
+            "request": "launch",
+            "mainClass": "org.javlo.component.ecom.ProductComponent",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ArrayFileComponent",
+            "request": "launch",
+            "mainClass": "org.javlo.component.files.ArrayFileComponent",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "CSVArrayComponent",
+            "request": "launch",
+            "mainClass": "org.javlo.component.files.CSVArrayComponent",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "DisplayExcel",
+            "request": "launch",
+            "mainClass": "org.javlo.component.files.DisplayExcel",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "LottieAnimationComponent",
+            "request": "launch",
+            "mainClass": "org.javlo.component.image.LottieAnimationComponent",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ExternalLink",
+            "request": "launch",
+            "mainClass": "org.javlo.component.links.ExternalLink",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "PageReferenceComponent",
+            "request": "launch",
+            "mainClass": "org.javlo.component.links.PageReferenceComponent",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "SmartLink",
+            "request": "launch",
+            "mainClass": "org.javlo.component.links.SmartLink",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "AbstractPropertiesComponent",
+            "request": "launch",
+            "mainClass": "org.javlo.component.properties.AbstractPropertiesComponent",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "Heading",
+            "request": "launch",
+            "mainClass": "org.javlo.component.title.Heading",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "EpubConverterComponent",
+            "request": "launch",
+            "mainClass": "org.javlo.component.web2.EpubConverterComponent",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ReactionComponent",
+            "request": "launch",
+            "mainClass": "org.javlo.component.web2.ReactionComponent",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "AbstractSurvey",
+            "request": "launch",
+            "mainClass": "org.javlo.component.web2.survey.AbstractSurvey",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "DisplayResult",
+            "request": "launch",
+            "mainClass": "org.javlo.component.web2.survey.DisplayResult",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "SurveyAverage",
+            "request": "launch",
+            "mainClass": "org.javlo.component.web2.survey.SurveyAverage",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ContentContext",
+            "request": "launch",
+            "mainClass": "org.javlo.context.ContentContext",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ContentManager",
+            "request": "launch",
+            "mainClass": "org.javlo.context.ContentManager",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "GlobalContext",
+            "request": "launch",
+            "mainClass": "org.javlo.context.GlobalContext",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "InfoBean",
+            "request": "launch",
+            "mainClass": "org.javlo.data.InfoBean",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "TaxonomyService",
+            "request": "launch",
+            "mainClass": "org.javlo.data.taxonomy.TaxonomyService",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "Basket",
+            "request": "launch",
+            "mainClass": "org.javlo.ecom.Basket",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "PaypalConnector",
+            "request": "launch",
+            "mainClass": "org.javlo.ecom.PaypalConnector",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "Product",
+            "request": "launch",
+            "mainClass": "org.javlo.ecom.Product",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "Field",
+            "request": "launch",
+            "mainClass": "org.javlo.fields.Field",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "FieldFont",
+            "request": "launch",
+            "mainClass": "org.javlo.fields.FieldFont",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "SortContainer",
+            "request": "launch",
+            "mainClass": "org.javlo.fields.SortContainer",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "JSMergeFilter",
+            "request": "launch",
+            "mainClass": "org.javlo.filter.JSMergeFilter",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ScssCssCleaner",
+            "request": "launch",
+            "mainClass": "org.javlo.filter.ScssCssCleaner",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "BeanHelper",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.BeanHelper",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "BusinessHelper",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.BusinessHelper",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "CSSParser",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.CSSParser",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ContentHelper",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.ContentHelper",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "DebugHelper",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.DebugHelper",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ElementaryURLHelper",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.ElementaryURLHelper",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "EmailValidator",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.EmailValidator",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ExifHelper",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.ExifHelper",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "FileCleanTools",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.FileCleanTools",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "FontHelper",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.FontHelper",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "JsonHelper",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.JsonHelper",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "LangHelper",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.LangHelper",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "LoremIpsumGenerator",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.LoremIpsumGenerator",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "MacroHelper",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.MacroHelper",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "MapGeoHelper",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.MapGeoHelper",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "MapHelper",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.MapHelper",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "PDFHelper",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.PDFHelper",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "PatternHelper",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.PatternHelper",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "QRCodeHelper",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.QRCodeHelper",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ResourceHelper",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.ResourceHelper",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "SVGHelper",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.SVGHelper",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ServletHelper",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.ServletHelper",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "StringHelper",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.StringHelper",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "StringRemplacementHelper",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.StringRemplacementHelper",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "StringSecurityUtil",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.StringSecurityUtil",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "Test",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.Test",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "TimeHelper",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.TimeHelper",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "URLHelper",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.URLHelper",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "XHTMLHelper",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.XHTMLHelper",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "XMLHelper",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.XMLHelper",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "XMLManipulationHelper",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.XMLManipulationHelper",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "BeanTools",
+            "request": "launch",
+            "mainClass": "org.javlo.helper.converter.BeanTools",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "Countries",
+            "request": "launch",
+            "mainClass": "org.javlo.i18n.Countries",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ExcelPropertiesConverter",
+            "request": "launch",
+            "mainClass": "org.javlo.i18n.ExcelPropertiesConverter",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "I18nAccess",
+            "request": "launch",
+            "mainClass": "org.javlo.i18n.I18nAccess",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ColorImageEngine",
+            "request": "launch",
+            "mainClass": "org.javlo.image.ColorImageEngine",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ExtendedColor",
+            "request": "launch",
+            "mainClass": "org.javlo.image.ExtendedColor",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ImageConfig",
+            "request": "launch",
+            "mainClass": "org.javlo.image.ImageConfig",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ImageEngine",
+            "request": "launch",
+            "mainClass": "org.javlo.image.ImageEngine",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ImageHelper",
+            "request": "launch",
+            "mainClass": "org.javlo.image.ImageHelper",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "AppendableTextFile",
+            "request": "launch",
+            "mainClass": "org.javlo.io.AppendableTextFile",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "EpubConverter",
+            "request": "launch",
+            "mainClass": "org.javlo.io.EpubConverter",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "SecureFile",
+            "request": "launch",
+            "mainClass": "org.javlo.io.SecureFile",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "TransactionFile",
+            "request": "launch",
+            "mainClass": "org.javlo.io.TransactionFile",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "CleanStaticInfoPersistence",
+            "request": "launch",
+            "mainClass": "org.javlo.macro.CleanStaticInfoPersistence",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "CreateWeekHereMacro",
+            "request": "launch",
+            "mainClass": "org.javlo.macro.CreateWeekHereMacro",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ImportDataBase",
+            "request": "launch",
+            "mainClass": "org.javlo.macro.ImportDataBase",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ImportContent",
+            "request": "launch",
+            "mainClass": "org.javlo.macro.interactive.ImportContent",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ImportExternalPage",
+            "request": "launch",
+            "mainClass": "org.javlo.macro.interactive.ImportExternalPage",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ImportJCRPageMacro",
+            "request": "launch",
+            "mainClass": "org.javlo.macro.interactive.ImportJCRPageMacro",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "TransfertStaticToFtp",
+            "request": "launch",
+            "mainClass": "org.javlo.macro.interactive.TransfertStaticToFtp",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "MailClient",
+            "request": "launch",
+            "mainClass": "org.javlo.mailing.MailClient",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "MailService",
+            "request": "launch",
+            "mainClass": "org.javlo.mailing.MailService",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "MailTest",
+            "request": "launch",
+            "mainClass": "org.javlo.mailing.MailTest",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "GlobalContextBean",
+            "request": "launch",
+            "mainClass": "org.javlo.module.admin.GlobalContextBean",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "Module",
+            "request": "launch",
+            "mainClass": "org.javlo.module.core.Module",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "DashboardAction",
+            "request": "launch",
+            "mainClass": "org.javlo.module.dashboard.DashboardAction",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ReportFactory",
+            "request": "launch",
+            "mainClass": "org.javlo.module.dashboard.ReportFactory",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "Action",
+            "request": "launch",
+            "mainClass": "org.javlo.module.demo.Action",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "DeliveryPrice",
+            "request": "launch",
+            "mainClass": "org.javlo.module.ecom.DeliveryPrice",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "FileBean",
+            "request": "launch",
+            "mainClass": "org.javlo.module.file.FileBean",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "Persistence",
+            "request": "launch",
+            "mainClass": "org.javlo.module.persistence.Persistence",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "SearchModuleAction",
+            "request": "launch",
+            "mainClass": "org.javlo.module.search.SearchModuleAction",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "TaxonomyAction",
+            "request": "launch",
+            "mainClass": "org.javlo.module.taxonomy.TaxonomyAction",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "FreeCSSTemplateFactory",
+            "request": "launch",
+            "mainClass": "org.javlo.module.template.remote.freecsstemplates.FreeCSSTemplateFactory",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "LabelAndSectionURLCreator",
+            "request": "launch",
+            "mainClass": "org.javlo.navigation.LabelAndSectionURLCreator",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "NoExtURLCreator",
+            "request": "launch",
+            "mainClass": "org.javlo.navigation.NoExtURLCreator",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "TitleURLCreator",
+            "request": "launch",
+            "mainClass": "org.javlo.navigation.TitleURLCreator",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "RemoteResourceList",
+            "request": "launch",
+            "mainClass": "org.javlo.remote.RemoteResourceList",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "Device",
+            "request": "launch",
+            "mainClass": "org.javlo.rendering.Device",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ContentService",
+            "request": "launch",
+            "mainClass": "org.javlo.service.ContentService",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "CountService",
+            "request": "launch",
+            "mainClass": "org.javlo.service.CountService",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "DataToIDService",
+            "request": "launch",
+            "mainClass": "org.javlo.service.DataToIDService",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "GeoService",
+            "request": "launch",
+            "mainClass": "org.javlo.service.GeoService",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "GitService",
+            "request": "launch",
+            "mainClass": "org.javlo.service.GitService",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "PersistenceService",
+            "request": "launch",
+            "mainClass": "org.javlo.service.PersistenceService",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ReverseLinkService",
+            "request": "launch",
+            "mainClass": "org.javlo.service.ReverseLinkService",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "CalendarBean",
+            "request": "launch",
+            "mainClass": "org.javlo.service.calendar.CalendarBean",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "Day",
+            "request": "launch",
+            "mainClass": "org.javlo.service.calendar.Day",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "RemoteICalProvider",
+            "request": "launch",
+            "mainClass": "org.javlo.service.calendar.RemoteICalProvider",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "DataBaseService",
+            "request": "launch",
+            "mainClass": "org.javlo.service.database.DataBaseService",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "BillingServiceTest",
+            "request": "launch",
+            "mainClass": "org.javlo.service.erp.billing.BillingServiceTest",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "FtpService",
+            "request": "launch",
+            "mainClass": "org.javlo.service.ftp.FtpService",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "GitService(1)",
+            "request": "launch",
+            "mainClass": "org.javlo.service.git.GitService",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "DeepLTranslateService",
+            "request": "launch",
+            "mainClass": "org.javlo.service.google.translation.DeepLTranslateService",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "GoogleSheetService",
+            "request": "launch",
+            "mainClass": "org.javlo.service.google.translation.GoogleSheetService",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ChatBot",
+            "request": "launch",
+            "mainClass": "org.javlo.service.ia.ChatBot",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "LocationService",
+            "request": "launch",
+            "mainClass": "org.javlo.service.location.LocationService",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "MapDBService",
+            "request": "launch",
+            "mainClass": "org.javlo.service.mapdb.MapDBService",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "NameGenerator",
+            "request": "launch",
+            "mainClass": "org.javlo.service.name.NameGenerator",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "PDFConvertion",
+            "request": "launch",
+            "mainClass": "org.javlo.service.pdf.PDFConvertion",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "RemoveBgService",
+            "request": "launch",
+            "mainClass": "org.javlo.service.remote.RemoveBgService",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ImaggaService",
+            "request": "launch",
+            "mainClass": "org.javlo.service.remote.imagga.ImaggaService",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "FreepikSharedContentProvider",
+            "request": "launch",
+            "mainClass": "org.javlo.service.shared.freepik.FreepikSharedContentProvider",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "PixabaySharedContentProvider",
+            "request": "launch",
+            "mainClass": "org.javlo.service.shared.pixabay.PixabaySharedContentProvider",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "StockvaultSharedContentProvider",
+            "request": "launch",
+            "mainClass": "org.javlo.service.shared.stockvault.StockvaultSharedContentProvider",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "FileStructureFactory",
+            "request": "launch",
+            "mainClass": "org.javlo.service.syncro.FileStructureFactory",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "WebImportService",
+            "request": "launch",
+            "mainClass": "org.javlo.service.webImport.WebImportService",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "DataDocServlet",
+            "request": "launch",
+            "mainClass": "org.javlo.servlet.DataDocServlet",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "QRCodeServlet",
+            "request": "launch",
+            "mainClass": "org.javlo.servlet.QRCodeServlet",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "SynchronisationServlet",
+            "request": "launch",
+            "mainClass": "org.javlo.servlet.SynchronisationServlet",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "VFSServlet",
+            "request": "launch",
+            "mainClass": "org.javlo.servlet.VFSServlet",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ZIPServlet",
+            "request": "launch",
+            "mainClass": "org.javlo.servlet.ZIPServlet",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ZipManagement",
+            "request": "launch",
+            "mainClass": "org.javlo.servlet.zip.ZipManagement",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "SocialLocalService",
+            "request": "launch",
+            "mainClass": "org.javlo.social.SocialLocalService",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "Template",
+            "request": "launch",
+            "mainClass": "org.javlo.template.Template",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "TemplatePart",
+            "request": "launch",
+            "mainClass": "org.javlo.template.TemplatePart",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "FlyingSaucerTest",
+            "request": "launch",
+            "mainClass": "org.javlo.test.FlyingSaucerTest",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "HelloWorld",
+            "request": "launch",
+            "mainClass": "org.javlo.test.HelloWorld",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ImageTest",
+            "request": "launch",
+            "mainClass": "org.javlo.test.ImageTest",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "LuceneExperiments",
+            "request": "launch",
+            "mainClass": "org.javlo.test.LuceneExperiments",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ReadJpeg",
+            "request": "launch",
+            "mainClass": "org.javlo.test.ReadJpeg",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "TextFileManip",
+            "request": "launch",
+            "mainClass": "org.javlo.test.main.TextFileManip",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "DayInfo",
+            "request": "launch",
+            "mainClass": "org.javlo.tracking.DayInfo",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "Tracker",
+            "request": "launch",
+            "mainClass": "org.javlo.tracking.Tracker",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "AnalyseContentXML",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.AnalyseContentXML",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "CSVFactory",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.CSVFactory",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ContentManipulation",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.ContentManipulation",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "CssInliner",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.CssInliner",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "CsvConvertion",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.CsvConvertion",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "DebugListening",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.DebugListening",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "DocxUtils",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.DocxUtils",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "FooterGenerator",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.FooterGenerator",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "HTMLExtract",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.HTMLExtract",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "HtmlExtractLink",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.HtmlExtractLink",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "HtmlToImageConverter",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.HtmlToImageConverter",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ImageIOLeakTest",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.ImageIOLeakTest",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "JavaCodeManipulation",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.JavaCodeManipulation",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ListMapValueValue",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.ListMapValueValue",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "MapCollectionWrapper",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.MapCollectionWrapper",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "MepExport",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.MepExport",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "MergeProperties",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.MergeProperties",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "NeverEmptyMap",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.NeverEmptyMap",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ReadLog",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.ReadLog",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "StressTest",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.StressTest",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "StressTools",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.StressTools",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "StructuredProperties",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.StructuredProperties",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "TimeMap",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.TimeMap",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "TimeRange",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.TimeRange",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "WeakupServer",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.WeakupServer",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "XLSTools",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.XLSTools",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "BackupThread",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.backup.BackupThread",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "Html2Directory",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.downloader.Html2Directory",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "ChargeTest",
+            "request": "launch",
+            "mainClass": "org.javlo.utils.test.ChargeTest",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "NodeXML",
+            "request": "launch",
+            "mainClass": "org.javlo.xml.NodeXML",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "XMLFactory",
+            "request": "launch",
+            "mainClass": "org.javlo.xml.XMLFactory",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "FileCache",
+            "request": "launch",
+            "mainClass": "org.javlo.ztatic.FileCache",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "StaticInfo",
+            "request": "launch",
+            "mainClass": "org.javlo.ztatic.StaticInfo",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "StaticInfoContent",
+            "request": "launch",
+            "mainClass": "org.javlo.ztatic.StaticInfoContent",
+            "projectName": "javlo2"
+        },
+        {
+            "type": "java",
+            "name": "StaticInfoFile",
+            "request": "launch",
+            "mainClass": "org.javlo.ztatic.StaticInfoFile",
+            "projectName": "javlo2"
+        }
+    ]
+}

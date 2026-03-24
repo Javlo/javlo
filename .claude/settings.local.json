@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -E \"\\\\.jsp$\")",
+      "Bash(xargs grep:*)",
+      "Bash(grep -r \"getXHTMLConfig\\\\|getXHTMLCode\" /c/kdrive/work/javlo2/src/main/java/org/javlo/component/core/*.java)",
+      "Bash(cp \"C:/kdrive/work/javlo2/src/main/webapp/jsp/preview/css/bootstrap/modal.scss\" \"C:/opt/tomcat10/webapps/javlo2/jsp/preview/css/bootstrap/modal.scss\")",
+      "Bash(cp \"C:/kdrive/work/javlo2/src/main/webapp/css/edit/andro_grey.scss\" \"C:/opt/tomcat10/webapps/javlo2/css/edit/andro_grey.scss\")",
+      "Bash(rm -f \"C:/opt/tomcat10/webapps/javlo2/jsp/preview/css/bootstrap/main_sass.css\" \"C:/opt/tomcat10/webapps/javlo2/css/edit/global.css\")",
+      "Read(//e/opt/tomcat10/webapps/javlo2/jsp/preview/css/bootstrap/**)",
+      "Read(//e/opt/tomcat10/webapps/javlo2/css/edit/**)",
+      "Read(//e/opt/tomcat10/webapps/javlo2/**)",
+      "Bash(rm -f \"C:/opt/tomcat10/webapps/javlo2/css/main_edit_and_preview.css\")",
+      "Bash(cp \"C:/kdrive/work/javlo2/src/main/webapp/css/main_edit_and_preview.scss\" \"C:/opt/tomcat10/webapps/javlo2/css/main_edit_and_preview.scss\")",
+      "WebFetch(domain:localhost)",
+      "Bash(curl -s http://localhost/javlo2/css/edit/global.css)",
+      "Bash(curl -s \"http://localhost/javlo2/jsp/edit/template/mandy-lane-premium-material/css/edit_dark.css\")",
+      "Bash(rm -f \"C:/opt/tomcat10/webapps/javlo2/css/edit/global.css\")",
+      "Bash(ls \"C:/opt/tomcat10/webapps/javlo2/css/edit/\"*.scss \"C:/opt/tomcat10/webapps/javlo2/css/edit/\"*.css)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" \"http://localhost/javlo2/css/edit/global.css\")",
+      "Bash(curl -s -o /dev/null \"http://localhost/javlo2/css/edit/global.css\")",
+      "Bash(find C:/opt/tomcat10/work/Catalina/localhost/javlo2/ -name *content* -type f)",
+      "Bash(curl -s -b JSESSIONID=dummy http://localhost/javlo2/sexy/edit-content/fr/?previewEdit=true)",
+      "Bash(find C:/opt/tomcat10/webapps/javlo2/WEB-INF/lib/ -name *.jar -exec sh -c \"jar tf \"\"$1\"\" 2>/dev/null | grep -l \"\"content.jsp\"\" && echo \"\"$1\"\"\" _ {})",
+      "Bash(2)",
+      "Bash(ls C:/opt/tomcat10/webapps/javlo2/css/edit/*.scss)",
+      "Bash(xargs -I{} ls {})"
+    ]
+  }
+}
