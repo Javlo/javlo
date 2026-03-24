@@ -1,28 +1,24 @@
 package org.javlo.helper.json;
 
-import com.fasterxml.jackson.core.util.JacksonFeatureSet;
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.DeserializationConfig;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.deser.ValueInstantiator;
-import com.fasterxml.jackson.databind.deser.ValueInstantiators;
-import com.fasterxml.jackson.databind.deser.std.StdValueInstantiator;
-import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
-import com.fasterxml.jackson.databind.introspect.AnnotatedClassResolver;
-import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
-import com.fasterxml.jackson.databind.module.SimpleDeserializers;
-import com.fasterxml.jackson.databind.module.SimpleKeyDeserializers;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.module.SimpleSerializers;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeFeature;
-import com.fasterxml.jackson.datatype.jsr310.PackageVersion;
-import com.fasterxml.jackson.datatype.jsr310.deser.*;
-import com.fasterxml.jackson.datatype.jsr310.deser.key.*;
-import com.fasterxml.jackson.datatype.jsr310.ser.*;
-import com.fasterxml.jackson.datatype.jsr310.ser.key.ZonedDateTimeKeySerializer;
-
+import tools.jackson.databind.BeanDescription;
+import tools.jackson.databind.DeserializationConfig;
+import tools.jackson.databind.JacksonModule;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.deser.ValueInstantiator;
+import tools.jackson.databind.deser.ValueInstantiators;
+import tools.jackson.databind.deser.std.StdValueInstantiator;
+import tools.jackson.databind.ext.javatime.deser.*;
+import tools.jackson.databind.ext.javatime.deser.key.*;
+import tools.jackson.databind.ext.javatime.ser.*;
+import tools.jackson.databind.ext.javatime.ser.key.ZonedDateTimeKeySerializer;
+import tools.jackson.databind.introspect.AnnotatedClass;
+import tools.jackson.databind.introspect.AnnotatedClassResolver;
+import tools.jackson.databind.introspect.AnnotatedMethod;
+import tools.jackson.databind.module.SimpleDeserializers;
+import tools.jackson.databind.module.SimpleKeyDeserializers;
+import tools.jackson.databind.module.SimpleModule;
+import tools.jackson.databind.module.SimpleSerializers;
+import tools.jackson.databind.ser.std.ToStringSerializer;
 
 import java.time.*;
 import java.util.Iterator;
@@ -30,28 +26,17 @@ import java.util.Iterator;
 public class JavaTimeModule extends SimpleModule {
 
     private static final long serialVersionUID = 1L;
-    private JacksonFeatureSet<JavaTimeFeature> _features = JacksonFeatureSet.fromDefaults(JavaTimeFeature.values());
 
     public JavaTimeModule() {
-        super(PackageVersion.VERSION);
+        super();
     }
 
-    public JavaTimeModule enable(JavaTimeFeature f) {
-        this._features = this._features.with(f);
-        return this;
-    }
-
-    public JavaTimeModule disable(JavaTimeFeature f) {
-        this._features = this._features.without(f);
-        return this;
-    }
-
-    public void setupModule(Module.SetupContext context) {
+    public void setupModule(JacksonModule.SetupContext context) {
         super.setupModule(context);
         SimpleDeserializers desers = new SimpleDeserializers();
-        desers.addDeserializer(Instant.class, InstantDeserializer.INSTANT.withFeatures(this._features));
-        desers.addDeserializer(OffsetDateTime.class, InstantDeserializer.OFFSET_DATE_TIME.withFeatures(this._features));
-        desers.addDeserializer(ZonedDateTime.class, InstantDeserializer.ZONED_DATE_TIME.withFeatures(this._features));
+        desers.addDeserializer(Instant.class, InstantDeserializer.INSTANT);
+        desers.addDeserializer(OffsetDateTime.class, InstantDeserializer.OFFSET_DATE_TIME);
+        desers.addDeserializer(ZonedDateTime.class, InstantDeserializer.ZONED_DATE_TIME);
         desers.addDeserializer(Duration.class, DurationDeserializer.INSTANCE);
         desers.addDeserializer(LocalDateTime.class, LocalDateTimeDeserializer.INSTANCE);
         desers.addDeserializer(LocalDate.class, LocalDateDeserializer.INSTANCE);

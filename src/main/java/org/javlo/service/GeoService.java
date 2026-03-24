@@ -1,8 +1,8 @@
 package org.javlo.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -384,7 +384,7 @@ public class GeoService {
 
 			return bean;
 
-		} catch (com.fasterxml.jackson.core.JsonParseException e) {
+		} catch (tools.jackson.core.JacksonException e) {
 			logger.severe("JSON parsing error from https://ipapi.co/ : " + e.getMessage());
 			return null;
 		} catch (Exception e) {

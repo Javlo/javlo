@@ -62,7 +62,7 @@
 
 		<maven.compiler.release>17</maven.compiler.release>
 
-		<jackson.version>2.20.1</jackson.version>
+		<jackson.version>3.1.0</jackson.version>
 		<lucene.version>9.12.3</lucene.version>
 		<elasticsearch.version>7.17.29</elasticsearch.version>
 		<tika.version>1.28.5</tika.version>
@@ -75,12 +75,12 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
+			<groupId>tools.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
+			<groupId>tools.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
@@ -90,12 +90,6 @@
 			<groupId>jakarta.servlet.jsp.jstl</groupId>
 			<artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
 			<version>3.0.2</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<artifactId>jackson-datatype-jsr310</artifactId>
-			<version>${jackson.version}</version>
 		</dependency>
 
 		<dependency>
@@ -340,19 +334,19 @@
 			<version>${tika.version}</version>
 			<exclusions>
 				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
+					<groupId>tools.jackson.core</groupId>
 					<artifactId>jackson-core</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
+					<groupId>tools.jackson.core</groupId>
 					<artifactId>jackson-databind</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
+					<groupId>tools.jackson.core</groupId>
 					<artifactId>jackson-annotations</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>com.fasterxml.jackson.datatype</groupId>
+					<groupId>tools.jackson.datatype</groupId>
 					<artifactId>jackson-datatype-jsr310</artifactId>
 				</exclusion>
 				<exclusion>
@@ -373,19 +367,19 @@
 			<version>${tika.version}</version>
 			<exclusions>
 				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
+					<groupId>tools.jackson.core</groupId>
 					<artifactId>jackson-core</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
+					<groupId>tools.jackson.core</groupId>
 					<artifactId>jackson-databind</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
+					<groupId>tools.jackson.core</groupId>
 					<artifactId>jackson-annotations</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>com.fasterxml.jackson.datatype</groupId>
+					<groupId>tools.jackson.datatype</groupId>
 					<artifactId>jackson-datatype-jsr310</artifactId>
 				</exclusion>
 				<exclusion>
@@ -544,19 +538,19 @@
 			<version>7.0.0</version>
 			<exclusions>
 				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
+					<groupId>tools.jackson.core</groupId>
 					<artifactId>jackson-core</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
+					<groupId>tools.jackson.core</groupId>
 					<artifactId>jackson-databind</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
+					<groupId>tools.jackson.core</groupId>
 					<artifactId>jackson-annotations</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>com.fasterxml.jackson.datatype</groupId>
+					<groupId>tools.jackson.datatype</groupId>
 					<artifactId>jackson-datatype-jsr310</artifactId>
 				</exclusion>
 			</exclusions>
