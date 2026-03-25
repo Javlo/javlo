@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Javlo2 — Documentation Hub</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+<style>
+  :root {
+    --action-color:          #17A;
+    --action-color-darken:   #058;
+    --javlo-ui-bg:           #1e2228;
+    --javlo-ui-bg-card:      #252b33;
+    --javlo-ui-bg-sidebar:   #1a1f26;
+    --javlo-ui-bg-hover:     #2a3040;
+    --javlo-ui-border:       #31384a;
+    --javlo-ui-text:         #dde2ea;
+    --javlo-ui-text-muted:   #7a8599;
+    --javlo-ui-text-heading: #eef1f7;
+    --javlo-ui-accent:       #17a0bb;
+    --javlo-ui-accent2:      #3ec;
+    --javlo-ui-tag-bg:       #1a3a4a;
+    --javlo-ui-tag-text:     #4dc;
+    --javlo-ui-success:      #4a9;
+    --javlo-ui-warning:      #ca6;
+    --javlo-ui-code-bg:      #13171e;
+    --font-mono: "JetBrains Mono","Fira Code","Cascadia Code",Consolas,monospace;
+    --font-sans: -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.65;
+    background: var(--javlo-ui-bg);
+    color: var(--javlo-ui-text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Top bar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--javlo-ui-bg-sidebar);
+    border-bottom: 2px solid var(--action-color-darken);
+    display: flex; align-items: center; gap: 12px; padding: 0 28px; height: 48px;
+  }
+  .topbar .logo {
+    font-size: 18px; font-weight: 700; color: var(--javlo-ui-accent2);
+    letter-spacing: -.5px; display: flex; align-items: center; gap: 8px;
+    text-decoration: none;
+  }
+  .topbar .logo svg { width: 26px; height: 26px; fill: var(--javlo-ui-accent2); }
+  .topbar .badge-version {
+    font-size: 11px; background: var(--javlo-ui-tag-bg); color: var(--javlo-ui-tag-text);
+    padding: 2px 8px; border-radius: 12px; font-family: var(--font-mono);
+  }
+  .topbar .spacer { flex: 1; }
+  .topbar a.github-link {
+    color: var(--javlo-ui-text-muted); text-decoration: none; font-size: 20px;
+    transition: color .2s;
+  }
+  .topbar a.github-link:hover { color: var(--javlo-ui-accent2); }
+
+  /* ── Hero ── */
+  .hero {
+    padding: 72px 28px 48px;
+    max-width: 860px; margin: 0 auto; width: 100%;
+    text-align: center;
+  }
+  .hero h1 {
+    font-size: 36px; font-weight: 800; color: var(--javlo-ui-text-heading);
+    margin-bottom: 12px; letter-spacing: -.5px;
+  }
+  .hero h1 span { color: var(--javlo-ui-accent2); }
+  .hero p {
+    font-size: 16px; color: var(--javlo-ui-text-muted); max-width: 500px;
+    margin: 0 auto 40px;
+  }
+  .version-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--javlo-ui-bg-card); border: 1px solid var(--javlo-ui-border);
+    padding: 8px 18px; border-radius: 24px;
+    font-family: var(--font-mono); font-size: 13px; color: var(--javlo-ui-text-muted);
+  }
+  .version-pill .ver { color: var(--javlo-ui-accent2); font-weight: 700; font-size: 15px; }
+  .version-pill i { color: var(--javlo-ui-accent); }
+
+  /* ── Doc grid ── */
+  .doc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    max-width: 860px; margin: 0 auto 80px; padding: 0 28px; width: 100%;
+  }
+
+  .doc-card {
+    background: var(--javlo-ui-bg-card);
+    border: 1px solid var(--javlo-ui-border);
+    border-radius: 10px;
+    padding: 28px 28px 24px;
+    text-decoration: none;
+    color: inherit;
+    display: flex; flex-direction: column; gap: 12px;
+    transition: border-color .15s, background .15s, transform .15s;
+    position: relative; overflow: hidden;
+  }
+  .doc-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  .doc-card.api::before    { background: var(--javlo-ui-accent); }
+  .doc-card.tpl::before    { background: var(--javlo-ui-accent2); }
+
+  .doc-card:hover {
+    border-color: var(--javlo-ui-accent);
+    background: var(--javlo-ui-bg-hover);
+    transform: translateY(-2px);
+  }
+  .doc-card.tpl:hover { border-color: var(--javlo-ui-accent2); }
+
+  .card-icon {
+    width: 44px; height: 44px;
+    background: var(--javlo-ui-tag-bg);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .doc-card.api  .card-icon { color: var(--javlo-ui-accent); }
+  .doc-card.tpl  .card-icon { color: var(--javlo-ui-accent2); }
+
+  .card-title {
+    font-size: 17px; font-weight: 700; color: var(--javlo-ui-text-heading);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-badge {
+    font-size: 10px; font-family: var(--font-mono);
+    background: var(--javlo-ui-tag-bg); color: var(--javlo-ui-tag-text);
+    padding: 2px 8px; border-radius: 8px;
+  }
+  .card-desc { font-size: 13px; color: var(--javlo-ui-text-muted); flex: 1; }
+
+  .card-topics {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;
+  }
+  .topic {
+    font-size: 11px; font-family: var(--font-mono);
+    background: rgba(255,255,255,.04); border: 1px solid var(--javlo-ui-border);
+    color: var(--javlo-ui-text-muted); padding: 2px 8px; border-radius: 6px;
+  }
+
+  .card-cta {
+    margin-top: 6px; font-size: 12px; font-weight: 600;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .doc-card.api  .card-cta { color: var(--javlo-ui-accent); }
+  .doc-card.tpl  .card-cta { color: var(--javlo-ui-accent2); }
+
+  /* ── Footer ── */
+  footer {
+    margin-top: auto;
+    border-top: 1px solid var(--javlo-ui-border);
+    padding: 18px 28px;
+    text-align: center;
+    font-size: 12px; color: var(--javlo-ui-text-muted);
+  }
+  footer a { color: var(--javlo-ui-text-muted); text-decoration: none; }
+  footer a:hover { color: var(--javlo-ui-accent2); }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--javlo-ui-border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="#" class="logo">
+    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+      <rect width="32" height="32" rx="6"/>
+      <text x="4" y="24" font-size="22" font-family="sans-serif" font-weight="900" fill="#3ec">J</text>
+    </svg>
+    Javlo2
+  </a>
+  <span class="badge-version">Documentation</span>
+  <div class="spacer"></div>
+  <a href="https://github.com/Javlo/javlo" target="_blank" class="github-link" title="GitHub repository">
+    <i class="bi bi-github"></i>
+  </a>
+</header>
+
+<section class="hero">
+  <h1>Javlo2 <span>Developer Docs</span></h1>
+  <p>All technical references for building with and on top of Javlo2.</p>
+  <div class="version-pill">
+    <i class="bi bi-tag-fill"></i>
+    Version <span class="ver">2.3</span>
+  </div>
+</section>
+
+<div class="doc-grid">
+
+  <a class="doc-card api" href="../doc-api/">
+    <div class="card-icon"><i class="bi bi-cloud-arrow-up-fill"></i></div>
+    <div>
+      <div class="card-title">Remote API <span class="card-badge">REST</span></div>
+      <div class="card-desc">
+        Complete reference for all remotely callable actions — content, navigation,
+        template management, and publishing — over HTTP with Bearer token authentication.
+      </div>
+    </div>
+    <div class="card-topics">
+      <span class="topic">content.*</span>
+      <span class="topic">nav.*</span>
+      <span class="topic">template.*</span>
+      <span class="topic">Bearer auth</span>
+      <span class="topic">MCP tools</span>
+    </div>
+    <div class="card-cta"><i class="bi bi-arrow-right"></i> Open API docs</div>
+  </a>
+
+  <a class="doc-card tpl" href="../doc-template/">
+    <div class="card-icon"><i class="bi bi-layout-wtf"></i></div>
+    <div>
+      <div class="card-title">Template System <span class="card-badge">HTML/JSP</span></div>
+      <div class="card-desc">
+        Full guide to creating Javlo2 templates: folder structure, config properties,
+        the HTML→JSP pipeline, areas, dynamic components, image transformation, and deployment.
+      </div>
+    </div>
+    <div class="card-topics">
+      <span class="topic">config.properties</span>
+      <span class="topic">DynamicComponent</span>
+      <span class="topic">JSTL vars</span>
+      <span class="topic">image filters</span>
+      <span class="topic">SCSS</span>
+    </div>
+    <div class="card-cta"><i class="bi bi-arrow-right"></i> Open template docs</div>
+  </a>
+
+</div>
+
+<footer>
+  Javlo2 v2.3 &mdash;
+  <a href="https://github.com/Javlo/javlo" target="_blank">GitHub</a> &mdash;
+  <a href="https://doc.javlo.org" target="_blank">doc.javlo.org</a>
+</footer>
+
+</body>
+</html>

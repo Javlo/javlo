@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Javlo2 Template System — Developer Documentation</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+<style>
+  /* ── Javlo UI variables (dark / preview style) ── */
+  :root {
+    --action-color:          #17A;
+    --action-color-darken:   #058;
+    --action-color-hover:    #058;
+    --action-text:           #fff;
+    --javlo-ui-bg:           #1e2228;
+    --javlo-ui-bg-card:      #252b33;
+    --javlo-ui-bg-sidebar:   #1a1f26;
+    --javlo-ui-bg-hover:     #2a3040;
+    --javlo-ui-border:       #31384a;
+    --javlo-ui-text:         #dde2ea;
+    --javlo-ui-text-muted:   #7a8599;
+    --javlo-ui-text-heading: #eef1f7;
+    --javlo-ui-accent:       #17a0bb;
+    --javlo-ui-accent2:      #3ec;
+    --javlo-ui-danger:       #c44;
+    --javlo-ui-warning:      #ca6;
+    --javlo-ui-success:      #4a9;
+    --javlo-ui-code-bg:      #13171e;
+    --javlo-ui-tag-bg:       #1a3a4a;
+    --javlo-ui-tag-text:     #4dc;
+    --sidebar-width:         260px;
+    --font-mono:             "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
+    --font-sans:             -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-sans); font-size: 14px; line-height: 1.65;
+    background: var(--javlo-ui-bg); color: var(--javlo-ui-text);
+    display: flex; min-height: 100vh;
+  }
+
+  /* ── Top bar ── */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; height: 48px; z-index: 100;
+    background: var(--javlo-ui-bg-sidebar);
+    border-bottom: 2px solid var(--action-color-darken);
+    display: flex; align-items: center; gap: 12px; padding: 0 20px;
+  }
+  .topbar .logo {
+    font-size: 18px; font-weight: 700; color: var(--javlo-ui-accent2);
+    letter-spacing: -.5px; display: flex; align-items: center; gap: 8px;
+    text-decoration: none;
+  }
+  .topbar .logo svg { width: 26px; height: 26px; fill: var(--javlo-ui-accent2); }
+  .topbar .badge-version {
+    font-size: 11px; background: var(--javlo-ui-tag-bg); color: var(--javlo-ui-tag-text);
+    padding: 2px 8px; border-radius: 12px; font-family: var(--font-mono);
+  }
+  .topbar .spacer { flex: 1; }
+  .topbar a.back-link {
+    color: var(--javlo-ui-text-muted); text-decoration: none; font-size: 13px;
+    display: flex; align-items: center; gap: 5px; transition: color .2s;
+  }
+  .topbar a.back-link:hover { color: var(--javlo-ui-accent2); }
+  .topbar a.github-link {
+    color: var(--javlo-ui-text-muted); text-decoration: none; font-size: 20px;
+    transition: color .2s;
+  }
+  .topbar a.github-link:hover { color: var(--javlo-ui-accent2); }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    position: fixed; top: 48px; left: 0; bottom: 0; width: var(--sidebar-width);
+    background: var(--javlo-ui-bg-sidebar);
+    border-right: 1px solid var(--javlo-ui-border);
+    overflow-y: auto; padding: 20px 0 40px;
+  }
+  .sidebar-section-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--javlo-ui-text-muted); padding: 16px 20px 6px;
+  }
+  .sidebar nav a {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 20px; color: var(--javlo-ui-text-muted);
+    text-decoration: none; font-size: 13px; border-left: 3px solid transparent;
+    transition: all .15s;
+  }
+  .sidebar nav a:hover,
+  .sidebar nav a.active {
+    color: var(--javlo-ui-text); background: var(--javlo-ui-bg-hover);
+    border-left-color: var(--javlo-ui-accent);
+  }
+  .sidebar nav a i { font-size: 14px; width: 18px; text-align: center; flex-shrink: 0; }
+  .sidebar nav a .type-badge {
+    margin-left: auto; font-size: 10px; font-family: var(--font-mono);
+    background: var(--javlo-ui-tag-bg); color: var(--javlo-ui-tag-text);
+    padding: 1px 6px; border-radius: 8px; white-space: nowrap;
+  }
+
+  /* ── Main content ── */
+  .main {
+    margin-left: var(--sidebar-width); margin-top: 48px;
+    flex: 1; padding: 40px 48px 80px; max-width: 960px;
+  }
+  .main h1 {
+    font-size: 28px; font-weight: 700; color: var(--javlo-ui-text-heading);
+    margin-bottom: 8px;
+  }
+  .main .subtitle {
+    color: var(--javlo-ui-text-muted); font-size: 15px; margin-bottom: 48px;
+    border-bottom: 1px solid var(--javlo-ui-border); padding-bottom: 24px;
+  }
+  .main h2 {
+    font-size: 20px; font-weight: 700; color: var(--javlo-ui-text-heading);
+    margin: 60px 0 20px; padding-top: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .main h2 .anchor { color: var(--javlo-ui-text-muted); font-size: 14px; text-decoration: none; }
+  .main h2 .anchor:hover { color: var(--javlo-ui-accent); }
+  .main h3 {
+    font-size: 12px; font-weight: 600; color: var(--javlo-ui-accent);
+    margin: 28px 0 10px; text-transform: uppercase; letter-spacing: .6px;
+  }
+  .main p { margin-bottom: 12px; color: var(--javlo-ui-text); }
+  .main ul { margin: 10px 0 14px 20px; color: var(--javlo-ui-text); }
+  .main ul li { margin-bottom: 5px; }
+
+  /* ── Component card ── */
+  .comp-card {
+    background: var(--javlo-ui-bg-card);
+    border: 1px solid var(--javlo-ui-border);
+    border-radius: 8px; padding: 24px 28px; margin-bottom: 32px;
+    position: relative;
+  }
+  .comp-card::before {
+    content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 3px;
+    background: var(--javlo-ui-accent); border-radius: 8px 0 0 8px;
+  }
+  .comp-card.accent-green::before { background: var(--javlo-ui-accent2); }
+  .comp-card.accent-warn::before { background: var(--javlo-ui-warning); }
+  .comp-header {
+    display: flex; align-items: flex-start; gap: 14px; margin-bottom: 16px;
+  }
+  .comp-icon {
+    width: 40px; height: 40px; background: var(--javlo-ui-tag-bg);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: var(--javlo-ui-accent2); flex-shrink: 0;
+  }
+  .comp-title-block { flex: 1; }
+  .comp-title {
+    font-size: 17px; font-weight: 700; color: var(--javlo-ui-text-heading);
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  .comp-title .type-chip {
+    font-family: var(--font-mono); font-size: 12px; font-weight: 500;
+    background: var(--action-color-darken); color: var(--action-text);
+    padding: 2px 10px; border-radius: 4px;
+  }
+  .comp-class {
+    font-family: var(--font-mono); font-size: 11px; color: var(--javlo-ui-text-muted);
+    margin-top: 3px;
+  }
+  .comp-desc { color: var(--javlo-ui-text); margin-bottom: 14px; font-size: 13.5px; }
+
+  /* ── Field table ── */
+  .field-table {
+    width: 100%; border-collapse: collapse; font-size: 12.5px;
+    margin-top: 8px; margin-bottom: 4px;
+  }
+  .field-table thead th {
+    background: var(--javlo-ui-code-bg); color: var(--javlo-ui-text-muted);
+    padding: 7px 12px; text-align: left; font-weight: 600; font-size: 11px;
+    text-transform: uppercase; letter-spacing: .7px;
+    border-bottom: 1px solid var(--javlo-ui-border);
+  }
+  .field-table tbody td {
+    padding: 7px 12px; border-bottom: 1px solid var(--javlo-ui-border);
+    vertical-align: top;
+  }
+  .field-table tbody tr:last-child td { border-bottom: none; }
+  .field-table tbody tr:hover td { background: var(--javlo-ui-bg-hover); }
+  .field-table .fn { font-family: var(--font-mono); color: var(--javlo-ui-accent2); font-weight: 600; }
+  .field-table .ft { color: var(--javlo-ui-warning); font-family: var(--font-mono); }
+  .field-table .req { color: var(--javlo-ui-danger); font-weight: 700; }
+  .field-table .opt { color: var(--javlo-ui-text-muted); }
+  .field-table .fd { color: var(--javlo-ui-text); }
+
+  /* ── Code block ── */
+  .code-block {
+    background: var(--javlo-ui-code-bg); border: 1px solid var(--javlo-ui-border);
+    border-radius: 6px; padding: 14px 16px; margin: 10px 0 6px;
+    font-family: var(--font-mono); font-size: 12px; color: var(--javlo-ui-accent2);
+    overflow-x: auto; white-space: pre;
+  }
+  .code-block .cm { color: var(--javlo-ui-text-muted); }
+  .code-block .ck { color: #f8c555; }
+  .code-block .cv { color: #9cdcfe; }
+  .code-block .cs { color: #ce9178; }
+
+  /* ── Note/callout ── */
+  .callout {
+    border-left: 3px solid var(--javlo-ui-warning);
+    background: rgba(200,160,80,.08);
+    border-radius: 0 6px 6px 0;
+    padding: 10px 14px; margin: 12px 0;
+    font-size: 13px; color: var(--javlo-ui-text);
+  }
+  .callout.info { border-left-color: var(--javlo-ui-accent); background: rgba(23,160,187,.08); }
+  .callout.success { border-left-color: var(--javlo-ui-success); background: rgba(70,160,120,.08); }
+  .callout.danger { border-left-color: var(--javlo-ui-danger); background: rgba(200,60,60,.08); }
+
+  /* ── Storage badge ── */
+  .storage-badge {
+    display: inline-flex; align-items: center; gap: 5px; font-size: 11px;
+    background: var(--javlo-ui-bg-hover); border: 1px solid var(--javlo-ui-border);
+    color: var(--javlo-ui-text-muted); padding: 3px 10px; border-radius: 12px;
+    margin-bottom: 12px; font-family: var(--font-mono);
+  }
+  .storage-badge i { color: var(--javlo-ui-accent); }
+
+  /* ── File tree ── */
+  .file-tree {
+    background: var(--javlo-ui-code-bg); border: 1px solid var(--javlo-ui-border);
+    border-radius: 6px; padding: 14px 16px; margin: 10px 0 6px;
+    font-family: var(--font-mono); font-size: 12px; color: var(--javlo-ui-text);
+    white-space: pre; overflow-x: auto;
+  }
+  .file-tree .dir { color: var(--javlo-ui-accent2); font-weight: 600; }
+  .file-tree .file { color: var(--javlo-ui-text-muted); }
+  .file-tree .comment { color: #555f73; }
+
+  /* ── Two-column property grid ── */
+  .prop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+  @media (max-width: 720px) { .prop-grid { grid-template-columns: 1fr; } }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--javlo-ui-border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--javlo-ui-text-muted); }
+
+  .section-anchor { display: block; position: relative; top: -70px; }
+</style>
+</head>
+<body>
+
+<!-- Top bar -->
+<header class="topbar">
+  <a href="#" class="logo">
+    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+      <rect width="32" height="32" rx="6"/>
+      <text x="4" y="24" font-size="22" font-family="sans-serif" font-weight="900" fill="#3ec">J</text>
+    </svg>
+    Javlo2
+  </a>
+  <span class="badge-version">Template System</span>
+  <div class="spacer"></div>
+  <a href="../doc-all/" class="back-link" title="All documentation">
+    <i class="bi bi-grid-1x2"></i> All docs
+  </a>
+  <a href="https://github.com/Javlo/javlo" target="_blank" class="github-link" title="GitHub repository">
+    <i class="bi bi-github"></i>
+  </a>
+</header>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-section-label">Overview</div>
+  <nav>
+    <a href="#overview"><i class="bi bi-grid-1x2"></i> Introduction</a>
+    <a href="#folder-structure"><i class="bi bi-folder2-open"></i> Folder Structure</a>
+    <a href="#config"><i class="bi bi-gear"></i> config.properties</a>
+    <a href="#inheritance"><i class="bi bi-diagram-2"></i> Template Inheritance</a>
+  </nav>
+  <div class="sidebar-section-label">Rendering</div>
+  <nav>
+    <a href="#html-to-jsp"><i class="bi bi-filetype-html"></i> HTML → JSP Pipeline</a>
+    <a href="#areas"><i class="bi bi-layout-split"></i> Areas</a>
+    <a href="#renderers"><i class="bi bi-code-square"></i> Component Renderers</a>
+    <a href="#jstl-variables"><i class="bi bi-braces"></i> JSTL Variables</a>
+  </nav>
+  <div class="sidebar-section-label">Components</div>
+  <nav>
+    <a href="#dynamic-component"><i class="bi bi-puzzle"></i> Dynamic Components</a>
+    <a href="#dc-fields"><i class="bi bi-list-check"></i> Field Types</a>
+    <a href="#dc-groups"><i class="bi bi-collection"></i> Groups &amp; Repetition</a>
+    <a href="#comp-config"><i class="bi bi-sliders"></i> Component Config</a>
+    <a href="#page-reference"><i class="bi bi-link"></i> Page Reference</a>
+  </nav>
+  <div class="sidebar-section-label">Assets &amp; Images</div>
+  <nav>
+    <a href="#images"><i class="bi bi-image"></i> Image Configuration</a>
+    <a href="#scss"><i class="bi bi-palette"></i> SCSS / CSS</a>
+    <a href="#i18n"><i class="bi bi-translate"></i> Internationalisation</a>
+  </nav>
+  <div class="sidebar-section-label">Deployment</div>
+  <nav>
+    <a href="#commit"><i class="bi bi-arrow-repeat"></i> Committing a Template</a>
+    <a href="#api"><i class="bi bi-cloud-upload"></i> Template API</a>
+  </nav>
+</aside>
+
+<!-- Main content -->
+<div class="main">
+
+  <!-- ─────────── OVERVIEW ─────────── -->
+  <span class="section-anchor" id="overview"></span>
+  <h1>Javlo2 — Template System</h1>
+  <p class="subtitle">
+    Complete reference for building, configuring, and deploying Javlo2 templates.
+    Covers folder structure, configuration, the HTML→JSP rendering pipeline,
+    dynamic components, image transformation, and the deployment API.
+  </p>
+
+  <div class="callout info">
+    <strong>How it works:</strong>
+    A Javlo template is a folder containing HTML layouts, SCSS stylesheets, and
+    <code>.properties</code> configuration files. Javlo converts these HTML files into JSP
+    at request time and caches them in a <em>work folder</em> inside the webapp. Committing a
+    template clears that cache and forces a fresh render.
+  </div>
+
+  <!-- ─────────── FOLDER STRUCTURE ─────────── -->
+  <span class="section-anchor" id="folder-structure"></span>
+  <h2><i class="bi bi-folder2-open" style="color:var(--javlo-ui-accent2)"></i> Folder Structure <a class="anchor" href="#folder-structure">#</a></h2>
+
+  <p>Templates live inside the <strong>templates</strong> directory of a Javlo site context. The minimal required file is <code>config.properties</code>. All other folders are optional but follow a strict naming convention.</p>
+
+  <div class="file-tree"><span class="dir">my-template/</span>
+├── <span class="ck">config.properties</span>        <span class="comment"># mandatory — template metadata &amp; layout</span>
+├── private-config.properties  <span class="comment"># optional — settings hidden from the editor</span>
+├── image-config-base.properties <span class="comment"># image transformation rules</span>
+├── fonts_reference.properties <span class="comment"># web-font declarations</span>
+│
+├── <span class="dir">index.html</span>               <span class="comment"># default layout (converted to JSP at runtime)</span>
+├── home.html                  <span class="comment"># optional homepage-specific layout</span>
+├── 404.html                   <span class="comment"># error page layout</span>
+│
+├── <span class="dir">scss/</span>                    <span class="comment"># stylesheets (SCSS compiled automatically)</span>
+│   └── main.scss
+├── <span class="dir">js/</span>                      <span class="comment"># JavaScript resources</span>
+├── <span class="dir">img/</span>                     <span class="comment"># static images bundled with the template</span>
+│
+├── <span class="dir">components/</span>              <span class="comment"># DynamicComponent definitions (.properties + .html/.jsp)</span>
+│   ├── article.properties
+│   ├── article.html
+│   └── card.properties
+│
+├── <span class="dir">components-config/</span>       <span class="comment"># standard component renderer overrides</span>
+│   └── page-reference.properties
+│
+├── <span class="dir">macro/</span>                   <span class="comment"># macros / sub-templates (child templates)</span>
+├── <span class="dir">mail/</span>                    <span class="comment"># e-mail templates</span>
+├── <span class="dir">list/</span>                    <span class="comment"># static list data files (.properties)</span>
+├── <span class="dir">resources/</span>               <span class="comment"># extra static resources exposed to pages</span>
+└── <span class="dir">i18n/</span>                    <span class="comment"># translation files (messages_fr.properties, …)</span></div>
+
+  <div class="callout info">
+    <strong>Work folder:</strong> At render time Javlo copies the template to
+    <code>/work/&lt;template-name&gt;/&lt;context-key&gt;/</code> inside the webapp and generates
+    <code>.jsp</code> files from every <code>.html</code> file. Never edit files there directly —
+    they are overwritten on the next commit.
+  </div>
+
+  <!-- ─────────── CONFIG.PROPERTIES ─────────── -->
+  <span class="section-anchor" id="config"></span>
+  <h2><i class="bi bi-gear" style="color:var(--javlo-ui-accent2)"></i> config.properties <a class="anchor" href="#config">#</a></h2>
+
+  <p>The central configuration file for a template. Every key/value pair controls layout, inheritance, branding, and available features.</p>
+
+  <div class="storage-badge"><i class="bi bi-file-earmark-text"></i> my-template/config.properties</div>
+
+  <h3>Core layout</h3>
+  <table class="field-table">
+    <thead><tr><th>Key</th><th>Example</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">html</td><td class="ft">index.html</td><td class="fd">Main HTML layout file (default: <code>index.html</code>).</td></tr>
+      <tr><td class="fn">html.home</td><td class="ft">home.html</td><td class="fd">Alternative layout used only for the homepage.</td></tr>
+      <tr><td class="fn">renderer</td><td class="ft">index.jsp</td><td class="fd">Generated JSP file name (usually auto-derived from <code>html</code>).</td></tr>
+      <tr><td class="fn">area.&lt;name&gt;</td><td class="ft">area.main=main-content</td><td class="fd">Declares a content area; value is the HTML <code>id</code> of the target element.</td></tr>
+      <tr><td class="fn">parent</td><td class="ft">base-template</td><td class="fd">Name of the parent template to inherit from.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Branding &amp; theming</h3>
+  <table class="field-table">
+    <thead><tr><th>Key</th><th>Example</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">data.color.primary</td><td class="ft">#1a73e8</td><td class="fd">Brand primary color — substituted as <code>@@color.primary@@</code> in HTML/SCSS at deploy time.</td></tr>
+      <tr><td class="fn">data.color.secondary</td><td class="ft">#fbbc04</td><td class="fd">Secondary brand color.</td></tr>
+      <tr><td class="fn">data.font.main</td><td class="ft">Roboto</td><td class="fd">Main font family token.</td></tr>
+      <tr><td class="fn">data.font.heading</td><td class="ft">Montserrat</td><td class="fd">Heading font family token.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Column layout (<code>columnable</code>)</h3>
+  <table class="field-table">
+    <thead><tr><th>Key</th><th>Example</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">columnable.&lt;area&gt;</td><td class="ft">columnable.main=true</td><td class="fd">Allows multi-column layout in the given area.</td></tr>
+      <tr><td class="fn">columnable.&lt;area&gt;.default</td><td class="ft">columnable.main.default=2</td><td class="fd">Default number of columns.</td></tr>
+      <tr><td class="fn">columnable.&lt;area&gt;.max</td><td class="ft">columnable.main.max=4</td><td class="fd">Maximum column count.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Device-specific layouts</h3>
+  <table class="field-table">
+    <thead><tr><th>Key</th><th>Example</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">html.mobile</td><td class="ft">mobile.html</td><td class="fd">Layout file used when device is detected as mobile.</td></tr>
+      <tr><td class="fn">html.tablet</td><td class="ft">tablet.html</td><td class="fd">Layout file for tablets.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ─────────── INHERITANCE ─────────── -->
+  <span class="section-anchor" id="inheritance"></span>
+  <h2><i class="bi bi-diagram-2" style="color:var(--javlo-ui-accent2)"></i> Template Inheritance <a class="anchor" href="#inheritance">#</a></h2>
+
+  <p>A template can extend another template via the <code>parent</code> key. The child inherits all layout files, SCSS, component definitions, and image configurations from the parent. Child files with the same name override the parent's.</p>
+
+  <div class="code-block"><span class="cm"># child-template/config.properties</span>
+<span class="ck">parent</span>=<span class="cs">base-template</span>
+
+<span class="cm"># Override only the primary color</span>
+<span class="ck">data.color.primary</span>=<span class="cs">#e53935</span></div>
+
+  <p>The inheritance chain can be arbitrarily deep. <code>TemplateFactory.getTemplateAllChildren()</code> recursively lists all descendant templates — used by the <code>template.commitAll</code> API action.</p>
+
+  <div class="callout">
+    <strong>Macro templates</strong> are lightweight child templates stored in the
+    <code>macro/</code> sub-folder of their parent. They inherit everything from the parent
+    and are typically used to provide page-type-specific layouts.
+  </div>
+
+  <!-- ─────────── HTML → JSP PIPELINE ─────────── -->
+  <span class="section-anchor" id="html-to-jsp"></span>
+  <h2><i class="bi bi-filetype-html" style="color:var(--javlo-ui-accent2)"></i> HTML → JSP Pipeline <a class="anchor" href="#html-to-jsp">#</a></h2>
+
+  <p>Javlo never serves raw HTML from a template. On first request (or after a commit), each <code>.html</code> file is processed by <code>XMLManipulationHelper</code> and converted to a <code>.jsp</code> file in the work folder. This conversion:</p>
+  <ul>
+    <li>Injects JSP page directives at the top.</li>
+    <li>Generates unique HTML <code>id</code> attributes and depth markers.</li>
+    <li>Replaces <code>@@token@@</code> placeholders with values from <code>config.properties</code> (e.g. <code>@@color.primary@@</code>).</li>
+    <li>Escapes content for safe JSP inclusion.</li>
+    <li>Minifies the output in production mode.</li>
+  </ul>
+
+  <div class="callout info">
+    <strong>HTML authoring tip:</strong> write plain HTML with Javlo-specific comments and
+    <code>@@token@@</code> placeholders. Do <em>not</em> include JSP directives yourself —
+    they are added automatically.
+  </div>
+
+  <h3>Area injection points</h3>
+  <p>Areas are identified by the HTML <code>id</code> attribute declared in <code>config.properties</code>:</p>
+
+  <div class="code-block"><span class="cm">&lt;!-- config.properties --&gt;</span>
+<span class="ck">area.main</span>=<span class="cs">main-content</span>
+<span class="ck">area.sidebar</span>=<span class="cs">sidebar</span>
+
+<span class="cm">&lt;!-- index.html --&gt;</span>
+&lt;main <span class="ck">id</span>=<span class="cs">"main-content"</span>&gt;
+  <span class="cm">&lt;!-- Javlo injects components here --&gt;</span>
+&lt;/main&gt;
+&lt;aside <span class="ck">id</span>=<span class="cs">"sidebar"</span>&gt;&lt;/aside&gt;</div>
+
+  <!-- ─────────── AREAS ─────────── -->
+  <span class="section-anchor" id="areas"></span>
+  <h2><i class="bi bi-layout-split" style="color:var(--javlo-ui-accent2)"></i> Areas <a class="anchor" href="#areas">#</a></h2>
+
+  <p>An <strong>area</strong> is a named zone inside a layout where editors can place components. Each area corresponds to an HTML element identified by its <code>id</code>.</p>
+
+  <div class="comp-card">
+    <div class="comp-header">
+      <div class="comp-icon"><i class="bi bi-layout-split"></i></div>
+      <div class="comp-title-block">
+        <div class="comp-title">Declaring areas</div>
+        <div class="comp-class">config.properties · area.* keys</div>
+      </div>
+    </div>
+    <div class="comp-desc">Each area key maps a logical name (used in the editor) to an HTML element id.</div>
+    <div class="code-block"><span class="ck">area.header</span>=<span class="cs">page-header</span>
+<span class="ck">area.main</span>=<span class="cs">main-content</span>
+<span class="ck">area.footer</span>=<span class="cs">page-footer</span></div>
+    <p style="margin-top:10px; font-size:13px; color:var(--javlo-ui-text-muted)">
+      The left side of each <code>area.*</code> key is the area name shown in the editor. The right side is the HTML <code>id</code> of the injection point in the layout.
+    </p>
+  </div>
+
+  <!-- ─────────── COMPONENT RENDERERS ─────────── -->
+  <span class="section-anchor" id="renderers"></span>
+  <h2><i class="bi bi-code-square" style="color:var(--javlo-ui-accent2)"></i> Component Renderers <a class="anchor" href="#renderers">#</a></h2>
+
+  <p>A <strong>renderer</strong> is a JSP file that controls how a component is displayed on the front end. Renderers can be defined per component type in <code>components-config/</code>, per area, or per device.</p>
+
+  <div class="storage-badge"><i class="bi bi-folder"></i> components-config/&lt;comp-type&gt;.properties</div>
+
+  <div class="comp-card">
+    <div class="comp-header">
+      <div class="comp-icon"><i class="bi bi-file-earmark-code"></i></div>
+      <div class="comp-title-block">
+        <div class="comp-title">Renderer configuration</div>
+        <div class="comp-class">components-config/page-reference.properties</div>
+      </div>
+    </div>
+    <div class="code-block"><span class="cm"># Named renderers (key starts with "renderer.")</span>
+<span class="ck">renderer.list</span>=<span class="cs">/jsp/components/page-reference/list.jsp</span>
+<span class="ck">renderer.cards</span>=<span class="cs">/jsp/components/page-reference/cards.jsp</span>
+<span class="ck">renderer.carousel</span>=<span class="cs">/jsp/components/page-reference/carousel.jsp</span>
+
+<span class="cm"># Area-specific override (renderer.name.#areaId#)</span>
+<span class="ck">renderer.cards.sidebar</span>=<span class="cs">/jsp/components/page-reference/sidebar_cards.jsp</span>
+
+<span class="cm"># Default renderer loaded when none is selected</span>
+<span class="ck">default-renderer</span>=<span class="cs">list</span>
+
+<span class="cm"># Available style tokens shown to editors (semicolon-separated)</span>
+<span class="ck">style-list</span>=<span class="cs">primary;secondary;light;dark</span>
+
+<span class="cm"># Do not wrap component in an auto-generated div</span>
+<span class="ck">wrapped</span>=<span class="cs">false</span>
+
+<span class="cm"># Extra JS/CSS loaded when component is on the page</span>
+<span class="ck">resources</span>=<span class="cs">/lib/swiper/swiper.min.js,/lib/swiper/swiper.min.css</span></div>
+  </div>
+
+  <div class="callout">
+    When <code>wrapped=false</code>, Javlo does not generate a wrapper <code>&lt;div&gt;</code> around the component. You must include the <code>${previewAttributes}</code>, <code>${previewCSS}</code>, and <code>${previewID}</code> variables directly in the root element of your renderer.
+  </div>
+
+  <!-- ─────────── JSTL VARIABLES ─────────── -->
+  <span class="section-anchor" id="jstl-variables"></span>
+  <h2><i class="bi bi-braces" style="color:var(--javlo-ui-accent2)"></i> JSTL Variables <a class="anchor" href="#jstl-variables">#</a></h2>
+
+  <p>The following variables are available in every component renderer JSP:</p>
+
+  <h3>Generic (all components)</h3>
+  <table class="field-table">
+    <thead><tr><th>Variable</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">comp</td><td class="ft">IContentVisualComponent</td><td class="fd">The component instance.</td></tr>
+      <tr><td class="fn">compPage</td><td class="ft">PageBean</td><td class="fd">The page the component belongs to.</td></tr>
+      <tr><td class="fn">style</td><td class="ft">String</td><td class="fd">Style selected by the editor.</td></tr>
+      <tr><td class="fn">compid</td><td class="ft">String</td><td class="fd">Component unique ID.</td></tr>
+      <tr><td class="fn">value</td><td class="ft">String</td><td class="fd">Raw component value.</td></tr>
+      <tr><td class="fn">renderer</td><td class="ft">String</td><td class="fd">Active renderer name.</td></tr>
+      <tr><td class="fn">previewAttributes</td><td class="ft">String</td><td class="fd">Full <code>id="…" class="…"</code> attributes for inline editing (use in root element).</td></tr>
+      <tr><td class="fn">previewCSS</td><td class="ft">String</td><td class="fd">CSS classes combining edit hook and component class.</td></tr>
+      <tr><td class="fn">previewClass</td><td class="ft">String</td><td class="fd">Edit-mode CSS class only (no component class).</td></tr>
+      <tr><td class="fn">previewID</td><td class="ft">String</td><td class="fd">HTML id for inline editing.</td></tr>
+      <tr><td class="fn">cssStyle</td><td class="ft">String</td><td class="fd">Inline CSS style set by the editor.</td></tr>
+      <tr><td class="fn">cssClass</td><td class="ft">String</td><td class="fd">CSS class set by the editor.</td></tr>
+      <tr><td class="fn">manualCssClass</td><td class="ft">String</td><td class="fd">Manual CSS class added by the editor.</td></tr>
+      <tr><td class="fn">previousSame</td><td class="ft">boolean</td><td class="fd"><code>true</code> when the previous component has the same type.</td></tr>
+      <tr><td class="fn">nextSame</td><td class="ft">boolean</td><td class="fd"><code>true</code> when the next component has the same type.</td></tr>
+      <tr><td class="fn">editPreview</td><td class="ft">boolean</td><td class="fd"><code>true</code> when in page-preview edit mode.</td></tr>
+      <tr><td class="fn">info</td><td class="ft">InfoBean</td><td class="fd">Global site info (accessible everywhere). Key property: <code>info.rootTemplateURL</code> — absolute URL of the template folder.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Heading component</h3>
+  <table class="field-table">
+    <thead><tr><th>Variable</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">title</td><td class="fd">Heading text.</td></tr>
+      <tr><td class="fn">depth</td><td class="fd">Heading level (1–6).</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Wysiwyg / Paragraph component</h3>
+  <table class="field-table">
+    <thead><tr><th>Variable</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">text</td><td class="fd">HTML content with resolved links.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Minimal renderer example</h3>
+  <div class="code-block">&lt;%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+
+&lt;!-- wrapped=true (default): Javlo adds the outer div with previewAttributes --&gt;
+&lt;c:if test="${not empty title}"&gt;
+  &lt;h${depth} class="${cssClass}"&gt;${title}&lt;/h${depth}&gt;
+&lt;/c:if&gt;</div>
+
+  <div class="code-block">&lt;!-- wrapped=false: you control the root element --&gt;
+&lt;article id="${previewID}" class="${previewCSS} my-card ${manualCssClass}"&gt;
+  &lt;h2&gt;${title}&lt;/h2&gt;
+  &lt;div class="body"&gt;${text}&lt;/div&gt;
+&lt;/article&gt;</div>
+
+  <h3>Referencing template static files</h3>
+  <div class="code-block">&lt;img src="${info.rootTemplateURL}/img/logo.png" alt="Logo"&gt;
+&lt;link rel="stylesheet" href="${info.rootTemplateURL}/scss/main.css"&gt;</div>
+
+  <!-- ─────────── DYNAMIC COMPONENT ─────────── -->
+  <span class="section-anchor" id="dynamic-component"></span>
+  <h2><i class="bi bi-puzzle" style="color:var(--javlo-ui-accent2)"></i> Dynamic Components <a class="anchor" href="#dynamic-component">#</a></h2>
+
+  <p>A <strong>DynamicComponent</strong> is a structured data container defined entirely by a <code>.properties</code> file in the <code>components/</code> folder, paired with an optional HTML or JSP renderer. This is the primary mechanism for custom content types (articles, cards, products, events, …).</p>
+
+  <div class="storage-badge"><i class="bi bi-folder"></i> components/&lt;type&gt;.properties &nbsp;&nbsp; + &nbsp;&nbsp; components/&lt;type&gt;.html</div>
+
+  <div class="comp-card accent-green">
+    <div class="comp-header">
+      <div class="comp-icon"><i class="bi bi-puzzle"></i></div>
+      <div class="comp-title-block">
+        <div class="comp-title">Minimal DynamicComponent definition</div>
+        <div class="comp-class">components/article.properties</div>
+      </div>
+    </div>
+    <div class="code-block"><span class="ck">component.type</span>=<span class="cs">article</span>
+<span class="ck">component.label</span>=<span class="cs">Article</span>
+<span class="ck">component.renderer</span>=<span class="cs">components/article.html</span>
+
+<span class="ck">field.title.type</span>=<span class="cs">text</span>
+<span class="ck">field.title.label</span>=<span class="cs">Title</span>
+<span class="ck">field.title.order</span>=<span class="cs">100</span>
+
+<span class="ck">field.body.type</span>=<span class="cs">wysiwyg-text</span>
+<span class="ck">field.body.label</span>=<span class="cs">Content</span>
+<span class="ck">field.body.order</span>=<span class="cs">200</span>
+
+<span class="ck">field.image.type</span>=<span class="cs">image</span>
+<span class="ck">field.image.label</span>=<span class="cs">Illustration</span>
+<span class="ck">field.image.order</span>=<span class="cs">300</span></div>
+  </div>
+
+  <h3>Component-level properties</h3>
+  <table class="field-table">
+    <thead><tr><th>Key</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">component.type</td><td class="req">required</td><td class="fd">Unique identifier matching the file name (e.g. <code>article</code> → <code>components/article.properties</code>).</td></tr>
+      <tr><td class="fn">component.label</td><td class="ft">type</td><td class="fd">Human-readable name shown in the editor. Add <code>.fr</code>, <code>.de</code>, … variants for multilingual labels.</td></tr>
+      <tr><td class="fn">component.renderer</td><td class="opt">—</td><td class="fd">Path to the HTML or JSP renderer, relative to the template root. Can also be <code>component.renderer.mobile</code> for device-specific renderers.</td></tr>
+      <tr><td class="fn">component.wrapped</td><td class="ft">true</td><td class="fd">Whether Javlo wraps the rendered output in a <code>&lt;div&gt;</code>.</td></tr>
+      <tr><td class="fn">component.css-class</td><td class="opt">—</td><td class="fd">CSS classes added to the wrapper div.</td></tr>
+      <tr><td class="fn">component.prefix / .suffix</td><td class="opt">—</td><td class="fd">Raw HTML prepended/appended to the rendered output.</td></tr>
+      <tr><td class="fn">component.column.size</td><td class="opt">—</td><td class="fd">Default Bootstrap column width (1, 2, 3, 4, 6, or 12).</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ─────────── FIELD TYPES ─────────── -->
+  <span class="section-anchor" id="dc-fields"></span>
+  <h2><i class="bi bi-list-check" style="color:var(--javlo-ui-accent2)"></i> Field Types <a class="anchor" href="#dc-fields">#</a></h2>
+
+  <div class="comp-card">
+    <div class="comp-header">
+      <div class="comp-icon"><i class="bi bi-input-cursor-text"></i></div>
+      <div class="comp-title-block">
+        <div class="comp-title">Field definition syntax</div>
+      </div>
+    </div>
+    <div class="code-block"><span class="ck">field.&lt;name&gt;.type</span>=<span class="cs">&lt;type&gt;</span>
+<span class="ck">field.&lt;name&gt;.label</span>=<span class="cs">Display Label</span>
+<span class="ck">field.&lt;name&gt;.order</span>=<span class="cs">100</span>          <span class="cm"># sort order (100, 200, …)</span>
+<span class="ck">field.&lt;name&gt;.needed</span>=<span class="cs">true</span>        <span class="cm"># required field</span>
+<span class="ck">field.&lt;name&gt;.i18n</span>=<span class="cs">true</span>          <span class="cm"># translatable per language</span>
+<span class="ck">field.&lt;name&gt;.group</span>=<span class="cs">item</span>         <span class="cm"># grouped for repetition</span>
+<span class="ck">field.&lt;name&gt;.width-edit</span>=<span class="cs">6</span>       <span class="cm"># editor column width (1-12)</span></div>
+  </div>
+
+  <h3>Available field types</h3>
+  <table class="field-table">
+    <thead><tr><th>Type</th><th>Description &amp; notes</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">h1 … h6</td><td class="fd">Heading text at the specified level.</td></tr>
+      <tr><td class="fn">text</td><td class="fd">Single-line plain text.</td></tr>
+      <tr><td class="fn">large-text</td><td class="fd">Multi-line plain text.</td></tr>
+      <tr><td class="fn">wysiwyg-text</td><td class="fd">Rich-text editor. Level sub-types: <code>soft</code>, <code>normal</code>, <code>middle</code>, <code>high</code>. Add <code>.innerHtml=true</code> to allow raw HTML.</td></tr>
+      <tr><td class="fn">date</td><td class="fd">Date picker. Format options: <code>sortableDate</code>, <code>shortDate</code>, <code>mediumDate</code>, <code>fullDate</code>, <code>formatedDate</code>, <code>past</code>, <code>age</code>. Custom pattern: <code>"dd MMMM yyyy"</code>.</td></tr>
+      <tr><td class="fn">image</td><td class="fd">Image upload with optional filter name. Exposes <code>.url</code>, <code>.alt</code>, <code>.viewURL</code> sub-properties.</td></tr>
+      <tr><td class="fn">file</td><td class="fd">Static file upload. Exposes <code>.resourceUrl</code>, <code>.previewUrl</code>, <code>.alt</code>, <code>.link</code>.</td></tr>
+      <tr><td class="fn">boolean</td><td class="fd">Checkbox (true/false).</td></tr>
+      <tr><td class="fn">number</td><td class="fd">Numeric input. Add <code>.min</code> / <code>.max</code> for range constraints; supports range-based search.</td></tr>
+      <tr><td class="fn">color</td><td class="fd">Color picker. Define palette via <code>list.&lt;name&gt;</code>.</td></tr>
+      <tr><td class="fn">list-one</td><td class="fd">Single-value dropdown from a <code>list.*</code> definition.</td></tr>
+      <tr><td class="fn">open-list</td><td class="fd">Dropdown combining site content + custom values.</td></tr>
+      <tr><td class="fn">open-multi-list</td><td class="fd">Multi-select open list.</td></tr>
+      <tr><td class="fn">external-link</td><td class="fd">External URL + link title.</td></tr>
+      <tr><td class="fn">internal-link</td><td class="fd">Link to a page within the site.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Additional field properties</h3>
+  <table class="field-table">
+    <thead><tr><th>Key</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">field.&lt;name&gt;.prefix</td><td class="fd">HTML inserted before the field value.</td></tr>
+      <tr><td class="fn">field.&lt;name&gt;.suffix</td><td class="fd">HTML inserted after the field value.</td></tr>
+      <tr><td class="fn">field.&lt;name&gt;.init-value</td><td class="fd">Default value when the component is first created.</td></tr>
+      <tr><td class="fn">field.&lt;name&gt;.min-size / max-size</td><td class="fd">Minimum / maximum character count (text fields).</td></tr>
+      <tr><td class="fn">field.&lt;name&gt;.css-class</td><td class="fd">CSS class on the rendered field element.</td></tr>
+      <tr><td class="fn">field.&lt;name&gt;.tag</td><td class="fd">HTML wrapper tag (e.g. <code>p</code>, <code>span</code>).</td></tr>
+      <tr><td class="fn">field.&lt;name&gt;.visible</td><td class="fd">Set <code>false</code> to hide from the editor UI.</td></tr>
+      <tr><td class="fn">field.&lt;name&gt;.unit</td><td class="fd">Unit label shown next to number fields (e.g. <code>€</code>, <code>km</code>).</td></tr>
+      <tr><td class="fn">field.&lt;name&gt;.reference</td><td class="fd">Show the default-language value as a reference when editing other languages.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Defining static lists</h3>
+  <div class="code-block"><span class="cm"># Static list (key=value pairs)</span>
+<span class="ck">list.category.1</span>=<span class="cs">news</span>
+<span class="ck">list.category.1.key</span>=<span class="cs">news</span>
+<span class="ck">list.category.2</span>=<span class="cs">Blog</span>
+<span class="ck">list.category.2.key</span>=<span class="cs">blog</span>
+
+<span class="cm"># Link a field to the list</span>
+<span class="ck">field.category.type</span>=<span class="cs">list-one</span>
+<span class="ck">field.category.list</span>=<span class="cs">category</span>
+
+<span class="cm"># List from a site page path (name=key, title=value)</span>
+<span class="ck">list.topic.path</span>=<span class="cs">topics/all</span></div>
+
+  <h3>Renderer — HTML syntax for field access</h3>
+  <p>In a <code>.html</code> renderer, access fields using the template expression syntax:</p>
+  <div class="code-block">&lt;div class="card"&gt;
+  &lt;h2&gt;${field.<span class="ck">text</span>.<span class="cv">title</span>.<span class="cs">XHTMLValue</span>}&lt;/h2&gt;
+  &lt;p class="price"&gt;€ ${field.<span class="ck">number</span>.<span class="cv">price</span>.<span class="cs">XHTMLValue</span>}&lt;/p&gt;
+  ${field.<span class="ck">wysiwyg-text</span>.<span class="cv">body</span>.<span class="cs">XHTMLValue</span>}
+  &lt;img src="${field.<span class="ck">image</span>.<span class="cv">photo</span>.<span class="cs">url</span>}" alt="${field.<span class="ck">image</span>.<span class="cv">photo</span>.<span class="cs">alt</span>}"&gt;
+&lt;/div&gt;</div>
+
+  <h3>Field accessors (JSTL / HTML renderer)</h3>
+  <table class="field-table">
+    <thead><tr><th>Accessor</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">[field].XHTMLValue</td><td class="fd">Fully rendered XHTML output (use in HTML renderers).</td></tr>
+      <tr><td class="fn">[field].viewXHTMLCode</td><td class="fd">Rendered XHTML (use in JSP renderers).</td></tr>
+      <tr><td class="fn">[field].text</td><td class="fd">Plain text value, no HTML tags.</td></tr>
+      <tr><td class="fn">[field].html</td><td class="fd">HTML output.</td></tr>
+      <tr><td class="fn">[field].displayValue</td><td class="fd">Formatted value ready for display.</td></tr>
+      <tr><td class="fn">[field].value</td><td class="fd">Raw stored value.</td></tr>
+      <tr><td class="fn">[field].url</td><td class="fd">URL (for image/file/link fields).</td></tr>
+      <tr><td class="fn">[field].alt</td><td class="fd">Alt text (for image fields).</td></tr>
+      <tr><td class="fn">containerId</td><td class="fd">ID of the component container element.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Embedding config inside the HTML renderer</h3>
+  <div class="code-block"><span class="cm">&lt;!-- Embed list or field config directly in the .html file --&gt;</span>
+&lt;!--config
+<span class="ck">list.style.1</span>=<span class="cs">default</span>
+<span class="ck">list.style.2</span>=<span class="cs">featured</span>
+<span class="ck">field.style.list</span>=<span class="cs">style</span>
+--&gt;</div>
+
+  <!-- ─────────── GROUPS ─────────── -->
+  <span class="section-anchor" id="dc-groups"></span>
+  <h2><i class="bi bi-collection" style="color:var(--javlo-ui-accent2)"></i> Groups &amp; Repetition <a class="anchor" href="#dc-groups">#</a></h2>
+
+  <p>Fields sharing the same <code>group</code> value are repeated together. Editors can add or remove group instances. In the renderer, use start/end comment markers to delimit the repeating block.</p>
+
+  <div class="comp-card accent-green">
+    <div class="comp-header">
+      <div class="comp-icon"><i class="bi bi-collection"></i></div>
+      <div class="comp-title-block">
+        <div class="comp-title">Repeating group example — team member list</div>
+      </div>
+    </div>
+    <div class="code-block"><span class="cm"># components/team.properties</span>
+<span class="ck">component.type</span>=<span class="cs">team</span>
+<span class="ck">component.renderer</span>=<span class="cs">components/team.html</span>
+
+<span class="ck">field.name.type</span>=<span class="cs">text</span>
+<span class="ck">field.name.order</span>=<span class="cs">100</span>
+<span class="ck">field.name.group</span>=<span class="cs">member</span>
+
+<span class="ck">field.role.type</span>=<span class="cs">text</span>
+<span class="ck">field.role.order</span>=<span class="cs">110</span>
+<span class="ck">field.role.group</span>=<span class="cs">member</span>
+
+<span class="ck">field.photo.type</span>=<span class="cs">image</span>
+<span class="ck">field.photo.order</span>=<span class="cs">120</span>
+<span class="ck">field.photo.group</span>=<span class="cs">member</span></div>
+
+    <div class="code-block"><span class="cm">&lt;!-- components/team.html --&gt;</span>
+&lt;ul class="team-list"&gt;
+  &lt;!-- start-member --&gt;
+  &lt;li&gt;
+    &lt;img src="${field.image.photo.url}" alt="${field.image.photo.alt}"&gt;
+    &lt;strong&gt;${field.text.name.XHTMLValue}&lt;/strong&gt;
+    &lt;span&gt;${field.text.role.XHTMLValue}&lt;/span&gt;
+  &lt;/li&gt;
+  &lt;!-- end-member --&gt;
+&lt;/ul&gt;</div>
+  </div>
+
+  <h3>Accessing DynamicComponent data from another page</h3>
+  <p>From a page-reference renderer you can reach a page's DynamicComponent data via:</p>
+  <div class="code-block"><span class="cm">&lt;!-- Generic access --&gt;</span>
+${page.contentAsMap.dynamicComponent.<span class="ck">&lt;type&gt;</span>.<span class="cv">&lt;field&gt;</span>.<span class="cs">&lt;property&gt;</span>}
+
+<span class="cm">&lt;!-- Example: price prefix from a "destination" component --&gt;</span>
+${page.contentAsMap.dynamicComponent.<span class="ck">destination</span>.<span class="cv">pricePrefix</span>.<span class="cs">value</span>}
+
+<span class="cm">&lt;!-- Access from InfoBean (current page) --&gt;</span>
+${info.page.contentAsMap.dynamicComponent.<span class="ck">article</span>.<span class="cv">body</span>.<span class="cs">html</span>}</div>
+
+  <!-- ─────────── COMPONENT CONFIG ─────────── -->
+  <span class="section-anchor" id="comp-config"></span>
+  <h2><i class="bi bi-sliders" style="color:var(--javlo-ui-accent2)"></i> Component Config Files <a class="anchor" href="#comp-config">#</a></h2>
+
+  <p>Standard (non-dynamic) component types can be configured through <code>components-config/&lt;comp-type&gt;.properties</code>. This overrides the component's global defaults at the template level.</p>
+
+  <div class="storage-badge"><i class="bi bi-folder"></i> components-config/&lt;comp-type&gt;.properties</div>
+
+  <table class="field-table">
+    <thead><tr><th>Key</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">renderer.&lt;name&gt;</td><td class="req">—</td><td class="fd">Named renderer JSP path. The editor selects among declared renderers. Optionally append <code>.&lt;areaId&gt;</code> for area-specific override.</td></tr>
+      <tr><td class="fn">default-renderer</td><td class="ft">first declared</td><td class="fd">Renderer loaded when no explicit choice has been made.</td></tr>
+      <tr><td class="fn">style-list</td><td class="opt">—</td><td class="fd">Semicolon-separated style names shown to editors (e.g. <code>primary;dark;light</code>).</td></tr>
+      <tr><td class="fn">wrapped</td><td class="ft">true</td><td class="fd"><code>false</code> — component output is rendered as-is; you manage wrapper markup in the JSP.</td></tr>
+      <tr><td class="fn">resources</td><td class="opt">—</td><td class="fd">Comma-separated JS/CSS paths loaded when the component is present on the page.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ─────────── PAGE REFERENCE ─────────── -->
+  <span class="section-anchor" id="page-reference"></span>
+  <h2><i class="bi bi-link" style="color:var(--javlo-ui-accent2)"></i> Page Reference Component <a class="anchor" href="#page-reference">#</a></h2>
+
+  <p>The <code>page-reference</code> component is the standard way to display lists of pages (news, articles, products, …). Its renderer receives rich JSTL variables for iteration, filtering, and pagination.</p>
+
+  <h3>JSTL context variables</h3>
+  <table class="field-table">
+    <thead><tr><th>Variable</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">pages</td><td class="ft">Collection&lt;SmartPageBean&gt;</td><td class="fd">Pages selected for display.</td></tr>
+      <tr><td class="fn">title</td><td class="ft">String</td><td class="fd">Configurable title of the component.</td></tr>
+      <tr><td class="fn">linkTitle</td><td class="ft">String</td><td class="fd">Label for the "see all" link.</td></tr>
+      <tr><td class="fn">comp</td><td class="ft">PageReferenceComponent</td><td class="fd">Component instance.</td></tr>
+      <tr><td class="fn">pagination</td><td class="ft">PaginationContext</td><td class="fd">Pagination state.</td></tr>
+      <tr><td class="fn">tags</td><td class="ft">Collection&lt;String&gt;</td><td class="fd">Available tags for filtering.</td></tr>
+      <tr><td class="fn">months</td><td class="ft">List&lt;String&gt;</td><td class="fd">Available months for filtering.</td></tr>
+      <tr><td class="fn">interactive</td><td class="ft">boolean</td><td class="fd">AJAX-mode: pages loaded dynamically via <code>jsonUrl</code>.</td></tr>
+      <tr><td class="fn">jsonUrl</td><td class="ft">String</td><td class="fd">JSON endpoint for interactive mode.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>SmartPageBean properties</h3>
+  <table class="field-table">
+    <thead><tr><th>Property</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">title / htmlTitle</td><td class="fd">Page title (plain / HTML).</td></tr>
+      <tr><td class="fn">description</td><td class="fd">Page meta-description.</td></tr>
+      <tr><td class="fn">url</td><td class="fd">Full URL of the page.</td></tr>
+      <tr><td class="fn">date / contentDate</td><td class="fd">DateBean — publication / content modification date.</td></tr>
+      <tr><td class="fn">images</td><td class="fd">Collection of <code>Image</code> objects (<code>.url</code>, <code>.description</code>, <code>.cssClass</code>).</td></tr>
+      <tr><td class="fn">imagePath</td><td class="fd">Path to the main image.</td></tr>
+      <tr><td class="fn">tags / firstTag / firstTagLabel</td><td class="fd">Tag data.</td></tr>
+      <tr><td class="fn">category</td><td class="fd">Page category.</td></tr>
+      <tr><td class="fn">authors / creator</td><td class="fd">Author information.</td></tr>
+      <tr><td class="fn">children</td><td class="fd">List of child <code>SmartPageBean</code> objects.</td></tr>
+      <tr><td class="fn">realContent</td><td class="fd"><code>true</code> when the page has actual content.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>PaginationContext properties</h3>
+  <table class="field-table">
+    <thead><tr><th>Property</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">currentPage / totalPages</td><td class="fd">Current page index and total count.</td></tr>
+      <tr><td class="fn">totalItems / itemsPerPage</td><td class="fd">Total item count and page size.</td></tr>
+      <tr><td class="fn">hasPrevious / hasNext</td><td class="fd">Navigation flags.</td></tr>
+      <tr><td class="fn">previousUrl / nextUrl</td><td class="fd">URLs for previous/next page.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Example: card list renderer</h3>
+  <div class="code-block">&lt;%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %&gt;
+&lt;%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %&gt;
+
+&lt;section class="cards-grid ${style} ${manualCssClass}"&gt;
+  &lt;c:if test="${not empty title}"&gt;
+    &lt;h2 class="section-title"&gt;${title}&lt;/h2&gt;
+  &lt;/c:if&gt;
+  &lt;div class="row"&gt;
+    &lt;c:forEach var="page" items="${pages}"&gt;
+      &lt;div class="col"&gt;
+        &lt;a href="${page.url}" class="card"&gt;
+          &lt;c:if test="${fn:length(page.images) > 0}"&gt;
+            &lt;img src="${page.images[0].url}" alt="${page.images[0].description}"&gt;
+          &lt;/c:if&gt;
+          &lt;div class="card-body"&gt;
+            &lt;h3&gt;${page.title}&lt;/h3&gt;
+            &lt;p&gt;${page.description}&lt;/p&gt;
+          &lt;/div&gt;
+        &lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/c:forEach&gt;
+  &lt;/div&gt;
+  &lt;!-- Pagination --&gt;
+  &lt;c:if test="${pagination.totalPages > 1}"&gt;
+    &lt;nav class="pagination"&gt;
+      &lt;c:if test="${pagination.hasPrevious}"&gt;
+        &lt;a href="${pagination.previousUrl}"&gt;&amp;larr; Previous&lt;/a&gt;
+      &lt;/c:if&gt;
+      &lt;span&gt;${pagination.currentPage} / ${pagination.totalPages}&lt;/span&gt;
+      &lt;c:if test="${pagination.hasNext}"&gt;
+        &lt;a href="${pagination.nextUrl}"&gt;Next &amp;rarr;&lt;/a&gt;
+      &lt;/c:if&gt;
+    &lt;/nav&gt;
+  &lt;/c:if&gt;
+&lt;/section&gt;</div>
+
+  <!-- ─────────── IMAGE CONFIGURATION ─────────── -->
+  <span class="section-anchor" id="images"></span>
+  <h2><i class="bi bi-image" style="color:var(--javlo-ui-accent2)"></i> Image Configuration <a class="anchor" href="#images">#</a></h2>
+
+  <p>Image transformation rules are declared in <code>image-config-base.properties</code> (or overridden in <code>config.properties</code>). Each rule is prefixed by a <strong>filter name</strong>.</p>
+
+  <div class="storage-badge"><i class="bi bi-file-earmark-text"></i> my-template/image-config-base.properties</div>
+
+  <div class="comp-card accent-warn">
+    <div class="comp-header">
+      <div class="comp-icon"><i class="bi bi-image"></i></div>
+      <div class="comp-title-block">
+        <div class="comp-title">Filter syntax</div>
+      </div>
+    </div>
+    <div class="code-block"><span class="cm"># Format: [filter].[device].[param]  or  [filter].[area].[param]</span>
+
+<span class="cm"># "thumbnail" filter — resize to 300×200 and crop</span>
+<span class="ck">thumbnail.width</span>=<span class="cs">300</span>
+<span class="ck">thumbnail.height</span>=<span class="cs">200</span>
+<span class="ck">thumbnail.crop-resize</span>=<span class="cs">true</span>
+
+<span class="cm"># "hero" filter — full-width, grayscale on mobile</span>
+<span class="ck">hero.width</span>=<span class="cs">1920</span>
+<span class="ck">hero.height</span>=<span class="cs">600</span>
+<span class="ck">hero.mobile.width</span>=<span class="cs">768</span>
+<span class="ck">hero.mobile.grayscale</span>=<span class="cs">true</span></div>
+  </div>
+
+  <h3>Dimensions</h3>
+  <table class="field-table">
+    <thead><tr><th>Parameter</th><th>Value</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">width / height</td><td class="ft">px or -1</td><td class="fd">Target dimensions. <code>-1</code> = auto (maintain aspect ratio).</td></tr>
+      <tr><td class="fn">max-width / max-height</td><td class="ft">px or -1</td><td class="fd">Maximum dimensions; image is never scaled up.</td></tr>
+      <tr><td class="fn">crop-resize</td><td class="ft">true/false</td><td class="fd">Crop image when aspect ratio differs from target.</td></tr>
+      <tr><td class="fn">add-border</td><td class="ft">true/false</td><td class="fd">Add letterbox/pillarbox border instead of cropping.</td></tr>
+      <tr><td class="fn">grid-width / grid-height</td><td class="ft">px</td><td class="fd">Snap output size to a grid alignment.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Color effects</h3>
+  <table class="field-table">
+    <thead><tr><th>Parameter</th><th>Value</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">grayscale</td><td class="ft">true/false</td><td class="fd">Convert to grayscale (average method).</td></tr>
+      <tr><td class="fn">grayscale-luminosity</td><td class="ft">true/false</td><td class="fd">Grayscale using luminosity method.</td></tr>
+      <tr><td class="fn">sepia</td><td class="ft">0–10</td><td class="fd">Sepia toning intensity.</td></tr>
+      <tr><td class="fn">contrast</td><td class="ft">0–1</td><td class="fd">Contrast adjustment (0.5 = no change).</td></tr>
+      <tr><td class="fn">brightness</td><td class="ft">0–1</td><td class="fd">Brightness adjustment.</td></tr>
+      <tr><td class="fn">background-color</td><td class="ft">#rrggbb</td><td class="fd">Fill color for transparent areas or borders.</td></tr>
+      <tr><td class="fn">trim-color</td><td class="ft">#rrggbb</td><td class="fd">Color to auto-trim from image edges.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Transform effects</h3>
+  <table class="field-table">
+    <thead><tr><th>Parameter</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">round-corner</td><td class="fd"><code>true</code> — rounded corners (requires <code>background-color</code>).</td></tr>
+      <tr><td class="fn">horizontal-flip / vertical-flip</td><td class="fd">Mirror the image.</td></tr>
+      <tr><td class="fn">web2</td><td class="fd">Reflection effect. Sub-keys: <code>.height</code> (px), <code>.separation</code> (px).</td></tr>
+      <tr><td class="fn">crystallize / glow / emboss / edge</td><td class="fd">Artistic effects.</td></tr>
+      <tr><td class="fn">bluring-border</td><td class="fd">Blur the image edges.</td></tr>
+      <tr><td class="fn">layer</td><td class="fd">Overlay another image file on top.</td></tr>
+      <tr><td class="fn">logo-bottom-right</td><td class="fd">Watermark file placed at the bottom-right corner.</td></tr>
+      <tr><td class="fn">file-extension</td><td class="fd">Force output format (<code>jpg</code>, <code>png</code>, <code>webp</code>).</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Priority resolution order</h3>
+  <p>When a parameter is requested, Javlo resolves it through a cascade:</p>
+  <div class="code-block">1. <span class="ck">[filter].[area].[device].[param]</span>   <span class="cm"># most specific</span>
+2. <span class="ck">[filter].[device].[param]</span>
+3. <span class="ck">[filter].[area].[param]</span>
+4. <span class="ck">[filter].[param]</span>               <span class="cm"># most generic</span></div>
+
+  <!-- ─────────── SCSS ─────────── -->
+  <span class="section-anchor" id="scss"></span>
+  <h2><i class="bi bi-palette" style="color:var(--javlo-ui-accent2)"></i> SCSS / CSS <a class="anchor" href="#scss">#</a></h2>
+
+  <p>Javlo compiles SCSS files automatically. If a <code>.css</code> file is requested but does not exist, Javlo looks for a <code>.scss</code> file with the same base name and compiles it on demand.</p>
+
+  <div class="callout">
+    <strong>After deploying a modified <code>.scss</code> file:</strong> delete the corresponding <code>.css</code> file in the work folder to force recompilation. Also delete any <code>.css</code> files that <code>@import</code> the modified file.
+  </div>
+
+  <h3>Using template tokens in SCSS</h3>
+  <div class="code-block"><span class="cm">/* config.properties declares: data.color.primary=#1a73e8 */</span>
+:root {
+  --color-primary: <span class="ck">@@color.primary@@</span>;
+  --font-main:     <span class="ck">@@font.main@@</span>;
+}</div>
+
+  <h3>Merging DynamicComponent SCSS</h3>
+  <p>Javlo automatically merges the SCSS of all <code>components/*.scss</code> files into the template's main stylesheet during the import step. Name your SCSS file identically to the <code>.properties</code> file (e.g. <code>components/article.scss</code>).</p>
+
+  <!-- ─────────── I18N ─────────── -->
+  <span class="section-anchor" id="i18n"></span>
+  <h2><i class="bi bi-translate" style="color:var(--javlo-ui-accent2)"></i> Internationalisation <a class="anchor" href="#i18n">#</a></h2>
+
+  <p>Translation files live in the <code>i18n/</code> folder and follow the standard Java <code>ResourceBundle</code> naming:</p>
+
+  <div class="code-block"><span class="dir">i18n/</span>
+├── messages.properties         <span class="comment"># default (fallback)</span>
+├── messages_fr.properties      <span class="comment"># French</span>
+├── messages_de.properties      <span class="comment"># German</span>
+└── messages_nl.properties      <span class="comment"># Dutch</span></div>
+
+  <p>Access translations in a renderer via JSTL:</p>
+  <div class="code-block">&lt;%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %&gt;
+&lt;fmt:message key="nav.readmore" /&gt;</div>
+
+  <p>To make a DynamicComponent field translatable, add <code>.i18n=true</code>:</p>
+  <div class="code-block"><span class="ck">field.title.i18n</span>=<span class="cs">true</span>   <span class="cm"># each language stores its own value</span></div>
+
+  <!-- ─────────── COMMIT ─────────── -->
+  <span class="section-anchor" id="commit"></span>
+  <h2><i class="bi bi-arrow-repeat" style="color:var(--javlo-ui-accent2)"></i> Committing a Template <a class="anchor" href="#commit">#</a></h2>
+
+  <p>Committing a template (calling <code>Template.clearRenderer()</code>) clears the work-folder cache and forces Javlo to re-import the template from source on the next request. This is required after any change to HTML, SCSS, properties, or component files.</p>
+
+  <h3>What happens during a commit</h3>
+  <ul>
+    <li>The work-folder source files for the template are deleted.</li>
+    <li>The template is re-imported into the webapp (<code>importTemplateInWebapp</code>).</li>
+    <li>Language-file caches are invalidated.</li>
+    <li>DynamicComponent caches are cleared.</li>
+    <li>All sub-contexts (preview / view) are re-initialised.</li>
+  </ul>
+
+  <div class="callout info">
+    Use <strong><code>template.commitAll</code></strong> to commit a parent template and all its descendants in one operation — useful when a base template change must propagate to child templates.
+  </div>
+
+  <!-- ─────────── TEMPLATE API ─────────── -->
+  <span class="section-anchor" id="api"></span>
+  <h2><i class="bi bi-cloud-upload" style="color:var(--javlo-ui-accent2)"></i> Template API <a class="anchor" href="#api">#</a></h2>
+
+  <p>The Remote API exposes three actions for template management. All calls require admin authentication (Bearer token or <code>X-Javlo-Token</code> header).</p>
+
+  <div class="comp-card">
+    <div class="comp-header">
+      <div class="comp-icon"><i class="bi bi-upload"></i></div>
+      <div class="comp-title-block">
+        <div class="comp-title">template.upload <span class="type-chip">POST</span></div>
+        <div class="comp-class">Upload a new or updated template as a ZIP archive</div>
+      </div>
+    </div>
+    <div class="comp-desc">Extracts the ZIP into the template folder, then clears the template factory cache. Accepts either a multipart file upload or a URL pointing to a ZIP.</div>
+    <h3>Parameters</h3>
+    <table class="field-table">
+      <thead><tr><th>Parameter</th><th>Required</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">action</td><td class="req">required</td><td class="fd">Must be <code>template.upload</code>.</td></tr>
+        <tr><td class="fn">name</td><td class="req">required</td><td class="fd">Target template name (destination folder).</td></tr>
+        <tr><td class="fn">file</td><td class="opt">multipart</td><td class="fd">ZIP archive uploaded as a multipart form field. Takes priority over <code>url</code>.</td></tr>
+        <tr><td class="fn">url</td><td class="opt">fallback</td><td class="fd">URL of a ZIP archive to download and extract.</td></tr>
+      </tbody>
+    </table>
+    <h3>Response</h3>
+    <div class="code-block">{
+  "status": "ok",
+  "data": {
+    "template": "my-template",
+    "uploaded": true
+  }
+}</div>
+  </div>
+
+  <div class="comp-card">
+    <div class="comp-header">
+      <div class="comp-icon"><i class="bi bi-arrow-repeat"></i></div>
+      <div class="comp-title-block">
+        <div class="comp-title">template.commit <span class="type-chip">POST</span></div>
+        <div class="comp-class">Clear the render cache of a single template</div>
+      </div>
+    </div>
+    <div class="comp-desc">Forces Javlo to re-import the template from source on the next page request.</div>
+    <h3>Parameters</h3>
+    <table class="field-table">
+      <thead><tr><th>Parameter</th><th>Required</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">action</td><td class="req">required</td><td class="fd">Must be <code>template.commit</code>.</td></tr>
+        <tr><td class="fn">name</td><td class="req">required</td><td class="fd">Template name to commit.</td></tr>
+      </tbody>
+    </table>
+    <h3>Response</h3>
+    <div class="code-block">{
+  "status": "ok",
+  "data": {
+    "template": "my-template",
+    "committed": true
+  }
+}</div>
+  </div>
+
+  <div class="comp-card">
+    <div class="comp-header">
+      <div class="comp-icon"><i class="bi bi-diagram-3"></i></div>
+      <div class="comp-title-block">
+        <div class="comp-title">template.commitAll <span class="type-chip">POST</span></div>
+        <div class="comp-class">Commit a parent template and all its descendants</div>
+      </div>
+    </div>
+    <div class="comp-desc">Recursively commits the named template and every child template that inherits from it.</div>
+    <h3>Parameters</h3>
+    <table class="field-table">
+      <thead><tr><th>Parameter</th><th>Required</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">action</td><td class="req">required</td><td class="fd">Must be <code>template.commitAll</code>.</td></tr>
+        <tr><td class="fn">name</td><td class="req">required</td><td class="fd">Root template name.</td></tr>
+      </tbody>
+    </table>
+    <h3>Response</h3>
+    <div class="code-block">{
+  "status": "ok",
+  "data": {
+    "committed": ["my-template", "my-template/child1", "my-template/child2"],
+    "count": 3
+  }
+}</div>
+  </div>
+
+  <h3>MCP tool names</h3>
+  <table class="field-table">
+    <thead><tr><th>MCP tool</th><th>API action</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">template_upload</td><td class="ft">template.upload</td><td class="fd">Upload a ZIP template.</td></tr>
+      <tr><td class="fn">template_commit</td><td class="ft">template.commit</td><td class="fd">Commit a single template.</td></tr>
+      <tr><td class="fn">template_commitAll</td><td class="ft">template.commitAll</td><td class="fd">Commit a template tree.</td></tr>
+    </tbody>
+  </table>
+
+</div><!-- /.main -->
+
+<script>
+  // Active sidebar link via IntersectionObserver
+  const sections = document.querySelectorAll('.section-anchor');
+  const links    = document.querySelectorAll('.sidebar nav a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        links.forEach(l => {
+          l.classList.toggle('active', l.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { rootMargin: '-48px 0px -80% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

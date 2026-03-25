@@ -65,6 +65,11 @@
     padding: 2px 8px; border-radius: 12px; font-family: var(--font-mono);
   }
   .topbar .spacer { flex: 1; }
+  .topbar a.back-link {
+    color: var(--javlo-ui-text-muted); text-decoration: none; font-size: 13px;
+    display: flex; align-items: center; gap: 5px; transition: color .2s;
+  }
+  .topbar a.back-link:hover { color: var(--javlo-ui-accent2); }
   .topbar a.github-link {
     color: var(--javlo-ui-text-muted); text-decoration: none; font-size: 20px;
     transition: color .2s;
@@ -256,6 +261,9 @@
   </a>
   <span class="badge-version">Remote API</span>
   <div class="spacer"></div>
+  <a href="../doc-all/" class="back-link" title="All documentation">
+    <i class="bi bi-grid-1x2"></i> All docs
+  </a>
   <a href="https://github.com/Javlo/javlo" target="_blank" class="github-link" title="GitHub repository">
     <i class="bi bi-github"></i>
   </a>
