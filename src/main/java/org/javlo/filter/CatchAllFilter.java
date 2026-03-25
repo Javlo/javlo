@@ -165,6 +165,13 @@ public class CatchAllFilter implements Filter {
 			}
 		}
 
+		// Bypass CMS processing for static documentation paths
+		String servletPath = httpRequest.getServletPath();
+		if (servletPath.startsWith("/doc-")) {
+			chain.doFilter(request, response);
+			return;
+		}
+
 		if (ALL_COUNT%1000 == 0 && ALL_COUNT > 0) {
 			logger.info("IP Blocking status : VALID_IP:"+VALID_IP+"  BLOCK_IP="+BLOCK_IP+ "  [%BLK:"+StringHelper.renderDoubleAsPercentage((double)BLOCK_IP/(double)ALL_COUNT)+"]");
 		}
