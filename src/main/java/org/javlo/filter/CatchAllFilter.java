@@ -168,7 +168,21 @@ public class CatchAllFilter implements Filter {
 		// Bypass CMS processing for static documentation paths
 		String servletPath = httpRequest.getServletPath();
 		if (servletPath.startsWith("/doc-")) {
-			next.doFilter(request, response);
+			ServletContext sc = httpRequest.getServletContext();
+			String filePath = servletPath.endsWith("/") ? servletPath + "index.html" : servletPath;
+			if (!filePath.contains(".")) {
+				filePath = filePath + "/index.html";
+			}
+			String realPath = sc.getRealPath(filePath);
+			File docFile = realPath != null ? new File(realPath) : null;
+			if (docFile != null && docFile.exists() && docFile.isFile()) {
+				String mimeType = sc.getMimeType(filePath);
+				if (mimeType == null) mimeType = "text/html;charset=UTF-8";
+				httpResponse.setContentType(mimeType);
+				java.nio.file.Files.copy(docFile.toPath(), httpResponse.getOutputStream());
+			} else {
+				httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
+			}
 			return;
 		}
 
