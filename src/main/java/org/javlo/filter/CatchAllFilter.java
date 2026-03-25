@@ -168,7 +168,7 @@ public class CatchAllFilter implements Filter {
 		// Bypass CMS processing for static documentation paths
 		String servletPath = httpRequest.getServletPath();
 		if (servletPath.startsWith("/doc-")) {
-			chain.doFilter(request, response);
+			next.doFilter(request, response);
 			return;
 		}
 
