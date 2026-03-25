@@ -1,6 +1,7 @@
-console.log(">>> taxonomy.js V2.0.2");
+console.log(">>> taxonomy.js V2.1.0");
 
 var actionItemOpen = [];
+var dragSrcEl = null;
 
 function isOpen(item) {
 	if (item.id.endsWith("-0")) {
@@ -18,7 +19,7 @@ function close(item) {
 		actionItemOpen[item.id] = false;
 		item.classList.remove("open");
 		item.classList.add("close");
-		children = item.parentElement.parentElement.getElementsByTagName("ul");
+		var children = item.parentElement.parentElement.getElementsByTagName("ul");
 		for (var i = 0; i < children.length; i++) {
 			if (children[i].parentElement == item.parentElement.parentElement) {
 				children[i].classList.add("hidden");
@@ -32,7 +33,7 @@ function open(item) {
 		actionItemOpen[item.id] = true;
 		item.classList.remove("close");
 		item.classList.add("open");
-		children = item.parentElement.parentElement.getElementsByTagName("ul");
+		var children = item.parentElement.parentElement.getElementsByTagName("ul");
 		for (var i = 0; i < children.length; i++) {
 			if (children[i].parentElement == item.parentElement.parentElement) {
 				children[i].classList.remove("hidden");
@@ -42,7 +43,7 @@ function open(item) {
 }
 
 function changeAllStatus(status) {
-	document.querySelectorAll(".action-list").forEach(i =>  {
+	document.querySelectorAll(".action-list").forEach(function(i) {
 		if (!i.id.endsWith("-0") || status) {
 			if (status) {
 				open(i);
@@ -54,7 +55,7 @@ function changeAllStatus(status) {
 }
 
 function refreshAllStatus() {
-	document.querySelectorAll(".action-list").forEach(i =>  {
+	document.querySelectorAll(".action-list").forEach(function(i) {
 		if (isOpen(i)) {
 			open(i);
 		} else {
@@ -63,121 +64,118 @@ function refreshAllStatus() {
 	});
 }
 
-jQuery(document).ready(function(){
-	jQuery('.action-list').live("click", function(e) {
-		if (e.preventDefault) {
-			e.preventDefault(); // Necessary. Allows us to drop.
-		}
-		action = jQuery(this);
-		if (action.hasClass('open')) {
+jQuery(document).ready(function() {
+
+	/* ── Expand / collapse tree nodes ── */
+	jQuery(document).on('click', '.action-list', function(e) {
+		e.preventDefault();
+		if (jQuery(this).hasClass('open')) {
 			close(this);
 		} else {
 			open(this);
 		}
 		return false;
-	});	
+	});
+
+	/* ── Toggle translation detail panel ── */
+	jQuery(document).on('click', '.collapse .action', function(e) {
+		e.preventDefault();
+		var $action = jQuery(this);
+		var $panel  = $action.closest('.collapse').find('.translation.bloc');
+		if ($action.hasClass('close')) {
+			$action.removeClass('close').addClass('open');
+			$panel.removeClass('hidden');
+		} else {
+			$action.removeClass('open').addClass('close');
+			$panel.addClass('hidden');
+		}
+		return false;
+	});
+
+	/* ── AJAX update callback ── */
 	jQuery('#taxonomy-form').on('ajaxUpdate', function() {
-		console.log("- ",jQuery(this).find(".needfocus"));
-		jQuery(this).find(".needfocus").focus();		
+		jQuery(this).find(".needfocus").focus();
 		jQuery(this).find(".needfocus").removeClass('needfocus');
-		document.getElementById("moveto").value="";
-		document.getElementById("moved").value="";
+		document.getElementById("moveto").value = "";
+		document.getElementById("moved").value  = "";
 		addTaxoDragEvents();
 		refreshAllStatus();
 		return true;
 	});
 
-	function handleDragStart(e) {	
+	/* ── Drag & drop ── */
+	function handleDragStart(e) {
 		dragSrcEl = this;
 		this.style.opacity = '0.4';
 	}
-	
-	function handleDragEnd(e) {	
-		if (e.preventDefault) {
-		    e.preventDefault(); // Necessary. Allows us to drop.
-		}
+
+	function handleDragEnd(e) {
+		e.preventDefault();
 		this.style.opacity = '1';
 		return false;
 	}
-	
+
 	function submitForm(e) {
 		if (e != null && e.preventDefault) {
-			e.preventDefault(); // Necessary. Allows us to drop.
+			e.preventDefault();
 		}
-		var	form = jQuery("#taxonomy-form");
+		var form = jQuery("#taxonomy-form");
 		var ajaxSubmit = true;
 		if (form.data("ajaxSubmit") != null) {
 			ajaxSubmit = form.data("ajaxSubmit");
 		}
-		if (ajaxSubmit) {			
-//			event.preventDefault();
+		if (ajaxSubmit) {
 			jQuery("#ajax-loader").addClass("active");
 			jQuery(".ajax-loader").addClass("active");
-			var queryString = form.attr("action"); 
+			var queryString = form.attr("action");
 			ajaxRequest(queryString, form[0], addTaxoDragEvents);
 			return false;
 		} else {
 			return true;
 		}
 	}
-	
+	window.submitTaxonomyForm = submitForm;
+
 	function handleDrop(e) {
-	    if (e.preventDefault) {
-		    e.preventDefault(); // Necessary. Allows us to drop.
-		}
-		if (dragSrcEl != this) {
-			moveto = document.getElementById("moveto");
-			moveto.value = this.dataset.id;
-			moved = document.getElementById("moved");
-			moved.value = dragSrcEl.dataset.id;
-			aschild = document.getElementById("aschild");
-			aschild.value = this.dataset.aschild;
-
-			console.log("moveto   = "+this.dataset.id);
-			console.log("moved    = "+dragSrcEl.dataset.id);
-			console.log("aschild  = "+this.dataset.aschild);
-
-			//document.getElementById("taxonomy-form").submit();
+		e.preventDefault();
+		if (dragSrcEl != null && dragSrcEl != this) {
+			document.getElementById("moveto").value  = this.dataset.id;
+			document.getElementById("moved").value   = dragSrcEl.dataset.id;
+			document.getElementById("aschild").value = this.dataset.aschild;
 			submitForm();
 		}
 		return false;
 	}
-	
+
 	function handleDragOver(e) {
-	  if (e.preventDefault) {
-	    e.preventDefault(); // Necessary. Allows us to drop.
-	  }
-	  e.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
-	  return false;
+		e.preventDefault();
+		e.dataTransfer.dropEffect = 'move';
+		return false;
 	}
-	
+
 	function handleDragEnter(e) {
-	  // this / e.target is the current hover target.
-	  this.classList.add('over');
-	  return false;
+		this.classList.add('over');
+		return false;
 	}
 
 	function handleDragLeave(e) {
-	  this.classList.remove('over');  // this / e.target is previous target element.
-	  return false;
+		this.classList.remove('over');
+		return false;
 	}
-	
+
 	function addTaxoDragEvents() {
-		console.log("...addTaxoDragEvents...");
-		/** drag&drop **/	
-		var dragSrcEl = null;
 		var cols = document.querySelectorAll('.item-wrapper');
 		[].forEach.call(cols, function(col) {
-		  col.addEventListener('dragstart', handleDragStart, false);
-		  col.addEventListener('dragend', handleDragEnd, false);
-		  col.addEventListener('drop', handleDrop, false);
-		  col.addEventListener('dragenter', handleDragEnter, false);
-		  col.addEventListener('dragover', handleDragOver, false);
-		  col.addEventListener('dragleave', handleDragLeave, false);
+			col.addEventListener('dragstart',  handleDragStart, false);
+			col.addEventListener('dragend',    handleDragEnd,   false);
+			col.addEventListener('drop',       handleDrop,      false);
+			col.addEventListener('dragenter',  handleDragEnter, false);
+			col.addEventListener('dragover',   handleDragOver,  false);
+			col.addEventListener('dragleave',  handleDragLeave, false);
 		});
 	}
-	addTaxoDragEvents();
+	window.addTaxoDragEvents = addTaxoDragEvents;
 
+	addTaxoDragEvents();
 	refreshAllStatus();
-	
 });

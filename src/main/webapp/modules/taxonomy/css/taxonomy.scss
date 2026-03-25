@@ -1,10 +1,10 @@
-.taxonomy-list {	
+.taxonomy-list {
 	ul {
 		margin-left: 75px;
 	}
-	.hidden-input {	
+	.hidden-input {
 		border: 1px white solid;
-	}	
+	}
     .item-wrapper.over {
     	border-bottom: 15px #cccccc solid;
     }
@@ -13,23 +13,24 @@
 		margin-right: 5px;
 		display: none;
 		float: left;
-		vertical-align: middle;		
+		vertical-align: middle;
 	}
 	.item-wrapper:hover .command {
 		display: inline-block;
 	}
-	.action-list.open .glyphicon-menu-right {
+	/* Expand / collapse chevron visibility */
+	.action-list.open .bi-chevron-right {
 		display: none;
 	}
-	.action-list.close .glyphicon-menu-down {
+	.action-list.close .bi-chevron-down {
 		display: none;
-	}	
+	}
 	.item {
 		margin-left: 60px;
 		padding: 5px;
 		border-left: #cccccc 1px solid;
-		margin-bottom: 5px;	
-		overflow: hidden;	
+		margin-bottom: 5px;
+		overflow: hidden;
 		.translation {
 			margin-top: 12px;
 		}
@@ -54,17 +55,16 @@
 		.name {
 			display: block;
 			font-weight: bold;
-			float:left;
-			
-		}	
+			float: left;
+		}
 		.new-name input {
 			color: #777777;
-		}	
+		}
 		.translation {
 		    .lang {
 		    	display: inline-block;
-		    	width: 18px;    	
-		    	height: 18px;	    	
+		    	width: 18px;
+		    	height: 18px;
 		    	margin-right: 5px;
 		    	vertical-align: middle;
 		    	font-size: 0.8em;
@@ -82,16 +82,15 @@
 		    input {
 		    	width: 300px;
 		    }
-		    
-	    }     
+		}
 	}
 }
 
-.collapse .open .glyphicon-plus-sign {
+/* Translation detail toggle +/- visibility */
+.collapse .action.open .bi-plus-circle {
 	display: none;
 }
-
-.collapse .close .glyphicon-minus-sign {
+.collapse .action.close .bi-dash-circle {
 	display: none;
 }
 
