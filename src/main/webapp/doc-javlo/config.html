@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Javlo2 Configuration — Developer Documentation</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+<style>
+  :root {
+    --action-color:          #17A;
+    --action-color-darken:   #058;
+    --javlo-ui-bg:           #1e2228;
+    --javlo-ui-bg-card:      #252b33;
+    --javlo-ui-bg-sidebar:   #1a1f26;
+    --javlo-ui-bg-hover:     #2a3040;
+    --javlo-ui-border:       #31384a;
+    --javlo-ui-text:         #dde2ea;
+    --javlo-ui-text-muted:   #7a8599;
+    --javlo-ui-text-heading: #eef1f7;
+    --javlo-ui-accent:       #17a0bb;
+    --javlo-ui-accent2:      #3ec;
+    --javlo-ui-danger:       #c44;
+    --javlo-ui-warning:      #ca6;
+    --javlo-ui-success:      #4a9;
+    --javlo-ui-code-bg:      #13171e;
+    --javlo-ui-tag-bg:       #1a3a4a;
+    --javlo-ui-tag-text:     #4dc;
+    --sidebar-width:         260px;
+    --font-mono: "JetBrains Mono","Fira Code","Cascadia Code",Consolas,monospace;
+    --font-sans: -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-sans); font-size: 14px; line-height: 1.65;
+    background: var(--javlo-ui-bg); color: var(--javlo-ui-text);
+    display: flex; min-height: 100vh;
+  }
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; height: 48px; z-index: 100;
+    background: var(--javlo-ui-bg-sidebar);
+    border-bottom: 2px solid var(--action-color-darken);
+    display: flex; align-items: center; gap: 12px; padding: 0 20px;
+  }
+  .topbar .logo {
+    font-size: 18px; font-weight: 700; color: var(--javlo-ui-accent2);
+    letter-spacing: -.5px; display: flex; align-items: center; gap: 8px;
+    text-decoration: none;
+  }
+  .topbar .logo svg { width: 26px; height: 26px; fill: var(--javlo-ui-accent2); }
+  .topbar .badge-version {
+    font-size: 11px; background: var(--javlo-ui-tag-bg); color: var(--javlo-ui-tag-text);
+    padding: 2px 8px; border-radius: 12px; font-family: var(--font-mono);
+  }
+  .topbar .spacer { flex: 1; }
+  .topbar a.back-link {
+    color: var(--javlo-ui-text-muted); text-decoration: none; font-size: 13px;
+    display: flex; align-items: center; gap: 5px; transition: color .2s;
+  }
+  .topbar a.back-link:hover { color: var(--javlo-ui-accent2); }
+  .topbar a.github-link {
+    color: var(--javlo-ui-text-muted); text-decoration: none; font-size: 20px;
+    transition: color .2s;
+  }
+  .topbar a.github-link:hover { color: var(--javlo-ui-accent2); }
+  .sidebar {
+    position: fixed; top: 48px; left: 0; bottom: 0; width: var(--sidebar-width);
+    background: var(--javlo-ui-bg-sidebar); border-right: 1px solid var(--javlo-ui-border);
+    overflow-y: auto; padding: 20px 0 40px;
+  }
+  .sidebar-section-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--javlo-ui-text-muted); padding: 16px 20px 6px;
+  }
+  .sidebar nav a {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 20px; color: var(--javlo-ui-text-muted);
+    text-decoration: none; font-size: 13px; border-left: 3px solid transparent;
+    transition: all .15s;
+  }
+  .sidebar nav a:hover, .sidebar nav a.active {
+    color: var(--javlo-ui-text); background: var(--javlo-ui-bg-hover);
+    border-left-color: var(--javlo-ui-accent);
+  }
+  .sidebar nav a i { font-size: 14px; width: 18px; text-align: center; flex-shrink: 0; }
+  .main {
+    margin-left: var(--sidebar-width); margin-top: 48px;
+    flex: 1; padding: 40px 48px 80px; max-width: 960px;
+  }
+  .main h1 { font-size: 28px; font-weight: 700; color: var(--javlo-ui-text-heading); margin-bottom: 8px; }
+  .main .subtitle {
+    color: var(--javlo-ui-text-muted); font-size: 15px; margin-bottom: 48px;
+    border-bottom: 1px solid var(--javlo-ui-border); padding-bottom: 24px;
+  }
+  .main h2 {
+    font-size: 20px; font-weight: 700; color: var(--javlo-ui-text-heading);
+    margin: 60px 0 20px; padding-top: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .main h2 .anchor { color: var(--javlo-ui-text-muted); font-size: 14px; text-decoration: none; }
+  .main h2 .anchor:hover { color: var(--javlo-ui-accent); }
+  .main h3 {
+    font-size: 12px; font-weight: 600; color: var(--javlo-ui-accent);
+    margin: 28px 0 10px; text-transform: uppercase; letter-spacing: .6px;
+  }
+  .main p { margin-bottom: 12px; }
+  .main ul { margin: 10px 0 14px 20px; }
+  .main ul li { margin-bottom: 5px; }
+  .comp-card {
+    background: var(--javlo-ui-bg-card); border: 1px solid var(--javlo-ui-border);
+    border-radius: 8px; padding: 24px 28px; margin-bottom: 32px; position: relative;
+  }
+  .comp-card::before {
+    content: ''; position: absolute; top: 0; left: 0; bottom: 0; width: 3px;
+    background: var(--javlo-ui-accent); border-radius: 8px 0 0 8px;
+  }
+  .comp-card.accent-green::before { background: var(--javlo-ui-accent2); }
+  .comp-card.accent-warn::before  { background: var(--javlo-ui-warning); }
+  .comp-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 16px; }
+  .comp-icon {
+    width: 40px; height: 40px; background: var(--javlo-ui-tag-bg);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: var(--javlo-ui-accent2); flex-shrink: 0;
+  }
+  .comp-title-block { flex: 1; }
+  .comp-title {
+    font-size: 17px; font-weight: 700; color: var(--javlo-ui-text-heading);
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  .comp-title .type-chip {
+    font-family: var(--font-mono); font-size: 12px; font-weight: 500;
+    background: var(--action-color-darken); color: #fff;
+    padding: 2px 10px; border-radius: 4px;
+  }
+  .comp-class { font-family: var(--font-mono); font-size: 11px; color: var(--javlo-ui-text-muted); margin-top: 3px; }
+  .comp-desc { color: var(--javlo-ui-text); margin-bottom: 14px; font-size: 13.5px; }
+  .field-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-top: 8px; margin-bottom: 4px; }
+  .field-table thead th {
+    background: var(--javlo-ui-code-bg); color: var(--javlo-ui-text-muted);
+    padding: 7px 12px; text-align: left; font-weight: 600; font-size: 11px;
+    text-transform: uppercase; letter-spacing: .7px; border-bottom: 1px solid var(--javlo-ui-border);
+  }
+  .field-table tbody td { padding: 7px 12px; border-bottom: 1px solid var(--javlo-ui-border); vertical-align: top; }
+  .field-table tbody tr:last-child td { border-bottom: none; }
+  .field-table tbody tr:hover td { background: var(--javlo-ui-bg-hover); }
+  .field-table .fn { font-family: var(--font-mono); color: var(--javlo-ui-accent2); font-weight: 600; }
+  .field-table .ft { color: var(--javlo-ui-warning); font-family: var(--font-mono); }
+  .field-table .req { color: var(--javlo-ui-danger); font-weight: 700; }
+  .field-table .opt { color: var(--javlo-ui-text-muted); }
+  .field-table .fd { color: var(--javlo-ui-text); }
+  .code-block {
+    background: var(--javlo-ui-code-bg); border: 1px solid var(--javlo-ui-border);
+    border-radius: 6px; padding: 14px 16px; margin: 10px 0 6px;
+    font-family: var(--font-mono); font-size: 12px; color: var(--javlo-ui-accent2);
+    overflow-x: auto; white-space: pre;
+  }
+  .code-block .cm { color: var(--javlo-ui-text-muted); }
+  .code-block .ck { color: #f8c555; }
+  .code-block .cv { color: #9cdcfe; }
+  .callout {
+    border-left: 3px solid var(--javlo-ui-warning); background: rgba(200,160,80,.08);
+    border-radius: 0 6px 6px 0; padding: 10px 14px; margin: 12px 0;
+    font-size: 13px;
+  }
+  .callout.info { border-left-color: var(--javlo-ui-accent); background: rgba(23,160,187,.08); }
+  .callout.success { border-left-color: var(--javlo-ui-success); background: rgba(70,160,120,.08); }
+  .callout.danger { border-left-color: var(--javlo-ui-danger); background: rgba(200,60,60,.08); }
+  .storage-badge {
+    display: inline-flex; align-items: center; gap: 5px; font-size: 11px;
+    background: var(--javlo-ui-bg-hover); border: 1px solid var(--javlo-ui-border);
+    color: var(--javlo-ui-text-muted); padding: 3px 10px; border-radius: 12px;
+    margin-bottom: 12px; font-family: var(--font-mono);
+  }
+  .storage-badge i { color: var(--javlo-ui-accent); }
+  .section-anchor { display: block; position: relative; top: -70px; }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--javlo-ui-border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="#" class="logo">
+    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+      <rect width="32" height="32" rx="6"/>
+      <text x="4" y="24" font-size="22" font-family="sans-serif" font-weight="900" fill="#3ec">J</text>
+    </svg>
+    Javlo2
+  </a>
+  <span class="badge-version">Configuration</span>
+  <div class="spacer"></div>
+  <a href="index.html" class="back-link" title="All documentation">
+    <i class="bi bi-grid-1x2"></i> All docs
+  </a>
+  <a href="https://github.com/Javlo/javlo" target="_blank" class="github-link" title="GitHub repository">
+    <i class="bi bi-github"></i>
+  </a>
+</header>
+
+<aside class="sidebar">
+  <div class="sidebar-section-label">Overview</div>
+  <nav>
+    <a href="#overview"><i class="bi bi-layers"></i> Configuration layers</a>
+    <a href="#folder-variables"><i class="bi bi-folder-symlink"></i> Folder variables</a>
+  </nav>
+  <div class="sidebar-section-label">Maven build</div>
+  <nav>
+    <a href="#maven-build"><i class="bi bi-box-seam"></i> Build &amp; WAR packaging</a>
+    <a href="#webapp-config"><i class="bi bi-filetype-java"></i> webapp_config.properties</a>
+  </nav>
+  <div class="sidebar-section-label">static-config.properties</div>
+  <nav>
+    <a href="#sc-location"><i class="bi bi-geo"></i> File location &amp; loading</a>
+    <a href="#sc-primary"><i class="bi bi-star"></i> Primary settings</a>
+    <a href="#sc-folders"><i class="bi bi-folder2-open"></i> Folder paths</a>
+    <a href="#sc-security"><i class="bi bi-shield-lock"></i> Security &amp; users</a>
+    <a href="#sc-mail"><i class="bi bi-envelope"></i> Mail / SMTP</a>
+    <a href="#sc-cache"><i class="bi bi-lightning"></i> Cache &amp; backup</a>
+    <a href="#sc-url"><i class="bi bi-link-45deg"></i> URL &amp; navigation</a>
+    <a href="#sc-deploy"><i class="bi bi-cloud-upload"></i> Deploy &amp; logging</a>
+    <a href="#sc-advanced"><i class="bi bi-toggles"></i> Advanced</a>
+  </nav>
+  <div class="sidebar-section-label">Tomcat</div>
+  <nav>
+    <a href="#tomcat"><i class="bi bi-server"></i> Tomcat deployment</a>
+  </nav>
+</aside>
+
+<div class="main">
+
+  <!-- OVERVIEW -->
+  <span class="section-anchor" id="overview"></span>
+  <h1>Javlo2 — Configuration</h1>
+  <p class="subtitle">
+    Complete reference for the three configuration layers: Maven build properties,
+    the <code>webapp_config.properties</code> bridge file, and the
+    <code>static-config.properties</code> runtime configuration.
+  </p>
+
+  <p>Javlo2 uses three configuration layers that are applied at different stages:</p>
+
+  <div class="comp-card">
+    <div class="comp-header">
+      <div class="comp-icon"><i class="bi bi-layers"></i></div>
+      <div class="comp-title-block">
+        <div class="comp-title">Configuration layers</div>
+      </div>
+    </div>
+    <table class="field-table">
+      <thead><tr><th>Layer</th><th>File</th><th>When applied</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="fn">1 — Maven</td>
+          <td class="ft">pom.xml / CLI <code>-D</code></td>
+          <td class="fd">Build time</td>
+          <td class="fd">Embeds build metadata and deployment-environment paths into the WAR.</td>
+        </tr>
+        <tr>
+          <td class="fn">2 — Bridge</td>
+          <td class="ft">src/main/config/webapp_config.properties</td>
+          <td class="fd">Build time (filtered)</td>
+          <td class="fd">Maven placeholders resolved and written to <code>WEB-INF/config/webapp_config.properties</code> inside the WAR.</td>
+        </tr>
+        <tr>
+          <td class="fn">3 — Runtime</td>
+          <td class="ft">static-config.properties</td>
+          <td class="fd">Server startup</td>
+          <td class="fd">All operational settings: folders, security, mail, cache, URLs. Lives outside the WAR on the server.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- FOLDER VARIABLES -->
+  <span class="section-anchor" id="folder-variables"></span>
+  <h2><i class="bi bi-folder-symlink" style="color:var(--javlo-ui-accent2)"></i> Folder variables <a class="anchor" href="#folder-variables">#</a></h2>
+  <p>Path values in <code>static-config.properties</code> support the following token substitutions:</p>
+  <table class="field-table">
+    <thead><tr><th>Token</th><th>Resolved to</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">$HOME / ~</td><td class="fd">Home directory of the OS user running Tomcat.</td></tr>
+      <tr><td class="fn">$JAVLO_HOME</td><td class="fd">Value of the <code>JAVLO_HOME</code> environment variable.</td></tr>
+      <tr><td class="fn">$CATALINA_HOME</td><td class="fd">Value of the <code>CATALINA_HOME</code> environment variable.</td></tr>
+    </tbody>
+  </table>
+  <p>Paths that do not start with <code>/</code> or a token are treated as relative to the webapp root when <code>data-folder-relative=true</code> (the default).</p>
+
+  <!-- MAVEN BUILD -->
+  <span class="section-anchor" id="maven-build"></span>
+  <h2><i class="bi bi-box-seam" style="color:var(--javlo-ui-accent2)"></i> Maven build &amp; WAR packaging <a class="anchor" href="#maven-build">#</a></h2>
+
+  <p>The default active profile is <code>webapp</code>, which packages a <code>javlo.war</code> file. During the <code>process-resources</code> phase, Maven:</p>
+  <ul>
+    <li>Filters <code>src/main/config/</code> → <code>WEB-INF/config/</code> (with token substitution).</li>
+    <li>Filters <code>src/main/webapp/WEB-INF/*.xml</code> → <code>WEB-INF/</code>.</li>
+    <li>Copies <code>src/main/lib/</code> JARs → <code>WEB-INF/lib/</code> (no filtering).</li>
+  </ul>
+
+  <h3>Profiles</h3>
+  <table class="field-table">
+    <thead><tr><th>Profile</th><th>Default</th><th>Output</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">webapp</td><td class="ft">yes</td><td class="fd">javlo.war</td><td class="fd">Standard web application. Activates resource filtering and WAR packaging.</td></tr>
+      <tr><td class="fn">core</td><td class="opt">no</td><td class="fd">javlo-core.jar</td><td class="fd">Produces a plain JAR for embedding Javlo as a library.</td></tr>
+      <tr><td class="fn">securitycheck</td><td class="opt">no</td><td class="fd">—</td><td class="fd">Runs OWASP dependency-check during <code>verify</code>.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Build commands</h3>
+  <div class="code-block"><span class="cm"># Standard WAR build</span>
+mvn package
+
+<span class="cm"># Pass deployment properties on the CLI</span>
+mvn package \
+  -Dconfig.relative=false \
+  -Dconfig.dir=/opt/javlo/config \
+  -Djavlo.god=admin,<span class="ck">&lt;SHA1-password&gt;</span>
+
+<span class="cm"># Security audit</span>
+mvn verify -P securitycheck</div>
+
+  <h3>buildnumber-maven-plugin</h3>
+  <p>The <code>buildnumber-maven-plugin</code> generates <code>${buildNumber}</code> from the Git SCM during the <code>validate</code> phase. The resulting string is written into <code>webapp_config.properties</code> as <code>product.version</code>.</p>
+  <div class="code-block"><span class="cm"># Format: Rev={7-char-git-hash} BuildTime={yyyy-MM-dd--HH-mm-ss}</span>
+product.version=<span class="ck">Rev=c1e1d99 BuildTime=2026-03-25--08-44-09</span>
+
+<span class="cm"># Falls back to "NO-GIT" when git is not available</span></div>
+
+  <!-- WEBAPP_CONFIG -->
+  <span class="section-anchor" id="webapp-config"></span>
+  <h2><i class="bi bi-filetype-java" style="color:var(--javlo-ui-accent2)"></i> webapp_config.properties <a class="anchor" href="#webapp-config">#</a></h2>
+
+  <div class="storage-badge"><i class="bi bi-file-earmark-text"></i> src/main/config/webapp_config.properties → WEB-INF/config/webapp_config.properties (in WAR)</div>
+
+  <p>This file is the bridge between the Maven build and the running webapp. It is processed by Maven resource filtering — every <code>${token}</code> is replaced at build time.</p>
+
+  <div class="code-block"><span class="cm"># Source file — tokens replaced by Maven at build time</span>
+<span class="ck">product.version</span>=${buildNumber}
+<span class="ck">static-config.relative</span>=${config.relative}
+<span class="ck">static-config.directory</span>=${config.dir}
+<span class="ck">edit.users</span>=${javlo.god}</div>
+
+  <table class="field-table">
+    <thead><tr><th>Key (in WAR)</th><th>Maven property</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="fn">product.version</td>
+        <td class="ft">${buildNumber}</td>
+        <td class="opt">NO-GIT …</td>
+        <td class="fd">Build identifier generated by <code>buildnumber-maven-plugin</code>. Read-only — shows in the admin interface.</td>
+      </tr>
+      <tr>
+        <td class="fn">static-config.relative</td>
+        <td class="ft">${config.relative}</td>
+        <td class="opt">true</td>
+        <td class="fd"><code>true</code> = the path in <code>static-config.directory</code> is relative to the webapp root. <code>false</code> = absolute OS path.</td>
+      </tr>
+      <tr>
+        <td class="fn">static-config.directory</td>
+        <td class="ft">${config.dir}</td>
+        <td class="opt">/WEB-INF/config</td>
+        <td class="fd">Directory where <code>static-config.properties</code> is stored. Can also be set via the <code>JAVLO_HOME</code> environment variable (takes priority).</td>
+      </tr>
+      <tr>
+        <td class="fn">edit.users</td>
+        <td class="ft">${javlo.god}</td>
+        <td class="opt">admin / admin</td>
+        <td class="fd">Bootstrap admin credentials in the format <code>login,SHA1password;login2,SHA1password2</code>. Used only if not overridden in <code>static-config.properties</code>. If the placeholder <code>${…}</code> is not replaced, defaults to <code>admin/admin</code>.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>SHA-1 password encoding:</strong> Use <code>echo -n "mypassword" | sha1sum | awk '{print $1}' | xxd -r -p | base64</code> or any SHA-1 + Base64 tool.
+    The default hash for <code>admin</code> is <code>0DPiKuNIrrVmD8IUCuw1hQxNqZc=</code>.
+  </div>
+
+  <!-- SC LOCATION -->
+  <span class="section-anchor" id="sc-location"></span>
+  <h2><i class="bi bi-geo" style="color:var(--javlo-ui-accent2)"></i> static-config.properties — location &amp; loading <a class="anchor" href="#sc-location">#</a></h2>
+
+  <p><code>StaticConfig</code> is a singleton stored in the <code>ServletContext</code>. It is loaded once at startup via <code>StaticConfig.getInstance(ServletContext)</code>. The file is resolved in priority order:</p>
+
+  <div class="comp-card">
+    <div class="comp-header">
+      <div class="comp-icon"><i class="bi bi-search"></i></div>
+      <div class="comp-title-block">
+        <div class="comp-title">Resolution order</div>
+      </div>
+    </div>
+    <table class="field-table">
+      <thead><tr><th>Priority</th><th>Source</th><th>Path</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">1 (highest)</td><td class="fd">Environment variable</td><td class="ft">$JAVLO_HOME/static-config.properties</td></tr>
+        <tr><td class="fn">2</td><td class="fd">webapp_config.properties key</td><td class="ft">{static-config.directory}/static-config.properties</td></tr>
+        <tr><td class="fn">3 (default)</td><td class="fd">Built-in fallback</td><td class="ft">WEB-INF/config/static-config.properties</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:10px;font-size:13px;color:var(--javlo-ui-text-muted)">
+      A sample file is provided at <code>src/main/webapp/WEB-INF/config/static-config__SAMPLE__.properties</code>.
+      If no file is found, all settings fall back to their hardcoded defaults.
+    </p>
+  </div>
+
+  <!-- SC PRIMARY -->
+  <span class="section-anchor" id="sc-primary"></span>
+  <h2><i class="bi bi-star" style="color:var(--javlo-ui-accent2)"></i> Primary settings <a class="anchor" href="#sc-primary">#</a></h2>
+
+  <div class="storage-badge"><i class="bi bi-file-earmark-text"></i> static-config.properties</div>
+
+  <table class="field-table">
+    <thead><tr><th>Key</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">default-cms-name</td><td class="ft">javlo</td><td class="fd">Name of the CMS instance shown in the admin interface.</td></tr>
+      <tr><td class="fn">default-context</td><td class="ft">default.javlo.org</td><td class="fd">Context used to initialise a new host that has no existing context.</td></tr>
+      <tr><td class="fn">master-context</td><td class="ft">admin</td><td class="fd">Context with super-admin privileges (can manage other contexts).</td></tr>
+      <tr><td class="fn">deploy.env</td><td class="ft">dev</td><td class="fd">Deployment environment: <code>local</code>, <code>dev</code>, <code>pprod</code>, or <code>prod</code>. Affects caching and compression.</td></tr>
+      <tr><td class="fn">deploy.infra</td><td class="ft">back</td><td class="fd"><code>back</code> (editing + serving) or <code>front</code> (serving only, DMZ).</td></tr>
+      <tr><td class="fn">deploy.compress-jsp</td><td class="ft">false</td><td class="fd">Minify generated JSP in production mode.</td></tr>
+      <tr><td class="fn">edit.users</td><td class="ft">admin / admin</td><td class="fd">Bootstrap admin accounts. Format: <code>login,SHA1pwd;login2,SHA1pwd2</code>. Overrides <code>webapp_config.properties</code> value if set here.</td></tr>
+      <tr><td class="fn">site.email</td><td class="ft">webmaster@javlo.org</td><td class="fd">Default site contact email (used in alerts and automated messages).</td></tr>
+      <tr><td class="fn">site.help-url</td><td class="ft">http://help.javlo.org</td><td class="fd">Base URL for contextual help links in the admin.</td></tr>
+      <tr><td class="fn">default-date-format</td><td class="ft">dd/MM/yyyy</td><td class="fd">Default date format used in admin and as fallback for contexts.</td></tr>
+      <tr><td class="fn">calendar.zone</td><td class="ft">Europe/Brussels</td><td class="fd">Default timezone for date/time operations.</td></tr>
+      <tr><td class="fn">locale.country</td><td class="ft">be</td><td class="fd">Default locale country code.</td></tr>
+      <tr><td class="fn">instance-name</td><td class="ft">OS username</td><td class="fd">Human-readable name for this server instance (shown in error mails).</td></tr>
+      <tr><td class="fn">synchro-code</td><td class="opt">—</td><td class="fd">Shared secret for DMZ ↔ back synchronisation and remote status checks.</td></tr>
+      <tr><td class="fn">auto-creation</td><td class="ft">false</td><td class="fd">Automatically create a context when an unlisted domain hits the server.</td></tr>
+      <tr><td class="fn">image.max-width</td><td class="ft">0</td><td class="fd">Maximum width (px) for uploaded images. <code>0</code> = no reduction.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- SC FOLDERS -->
+  <span class="section-anchor" id="sc-folders"></span>
+  <h2><i class="bi bi-folder2-open" style="color:var(--javlo-ui-accent2)"></i> Folder paths <a class="anchor" href="#sc-folders">#</a></h2>
+
+  <p>All paths are relative to the webapp root when <code>data-folder-relative=true</code>. Use <code>$HOME</code>, <code>$JAVLO_HOME</code>, or <code>$CATALINA_HOME</code> for absolute paths outside the webapp.</p>
+
+  <div class="callout info">
+    In most single-server deployments the defaults work without change. The most important
+    folder to customise is <strong><code>data-folder</code></strong> — point it outside the
+    webapp so data survives WAR redeployments.
+  </div>
+
+  <table class="field-table">
+    <thead><tr><th>Key</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">data-folder</td><td class="ft">/WEB-INF/data-ctx</td><td class="fd">Root of all site data: content, files, users, tracking. <strong>Persist this folder.</strong></td></tr>
+      <tr><td class="fn">data-folder-relative</td><td class="ft">true</td><td class="fd"><code>true</code> = relative to webapp root. <code>false</code> = absolute OS path.</td></tr>
+      <tr><td class="fn">data-folder-random</td><td class="ft">false</td><td class="fd">Append a random ID to each site's data folder (extra isolation).</td></tr>
+      <tr><td class="fn">context-folder</td><td class="ft">/WEB-INF/context</td><td class="fd">Global context metadata (languages, aliases, mailing settings).</td></tr>
+      <tr><td class="fn">template-folder</td><td class="ft">/WEB-INF/template</td><td class="fd">Website templates root. See <a href="template.html" style="color:var(--javlo-ui-accent)">Template docs</a>.</td></tr>
+      <tr><td class="fn">mailing-template-folder</td><td class="ft">/WEB-INF/mailing/todo</td><td class="fd">Mailing queue folder.</td></tr>
+      <tr><td class="fn">mailing-history.folder</td><td class="ft">/WEB-INF/mailing/history</td><td class="fd">Completed mailings archive.</td></tr>
+      <tr><td class="fn">thread-folder</td><td class="ft">/WEB-INF/thread</td><td class="fd">Internal background-job state.</td></tr>
+      <tr><td class="fn">trash-folder</td><td class="ft">/WEB-INF/.trash</td><td class="fd">Global trash (used when a context ZIP is uploaded with <code>download.clean-data-folder=true</code>).</td></tr>
+      <tr><td class="fn">share-folder</td><td class="ft">/WEB-INF/share-folder</td><td class="fd">Files shared across all sites on this instance.</td></tr>
+      <tr><td class="fn">external-components-folder</td><td class="ft">external-components</td><td class="fd">Dynamic components installed outside the template.</td></tr>
+      <tr><td class="fn">backup-folder</td><td class="ft">backup</td><td class="fd">Subfolder name inside each site's data folder for backups.</td></tr>
+      <tr><td class="fn">temp-web-folder</td><td class="ft">/web-tmp</td><td class="fd">Temporary web-accessible folder.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- SC SECURITY -->
+  <span class="section-anchor" id="sc-security"></span>
+  <h2><i class="bi bi-shield-lock" style="color:var(--javlo-ui-accent2)"></i> Security &amp; users <a class="anchor" href="#sc-security">#</a></h2>
+
+  <table class="field-table">
+    <thead><tr><th>Key</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">security.encrypt-password</td><td class="ft">true</td><td class="fd">Store user passwords as SHA-1 hashes.</td></tr>
+      <tr><td class="fn">security.high</td><td class="ft">false</td><td class="fd">Enables high-security mode: stricter limits, disables some features.</td></tr>
+      <tr><td class="fn">security.use-https</td><td class="ft">false</td><td class="fd">Force HTTPS redirect for all requests.</td></tr>
+      <tr><td class="fn">security.secret-key</td><td class="ft">???</td><td class="fd">Secret key for symmetric encryption. Change this in production.</td></tr>
+      <tr><td class="fn">security.default-password</td><td class="ft">changeme</td><td class="fd">Default password assigned to newly created users.</td></tr>
+      <tr><td class="fn">security.change-password</td><td class="ft">true</td><td class="fd">Force users to change their password on first login.</td></tr>
+      <tr><td class="fn">security.login.max-error-hour</td><td class="ft">100</td><td class="fd">Maximum failed login attempts per IP per hour before blocking. <code>10</code> in high-security mode.</td></tr>
+      <tr><td class="fn">security.remote-login</td><td class="ft">false</td><td class="fd">Allow login from remote applications via token.</td></tr>
+      <tr><td class="fn">security.login.token</td><td class="ft">false</td><td class="fd">Enable token-based login (API / MCP).</td></tr>
+      <tr><td class="fn">security.rest-servlet</td><td class="ft">true</td><td class="fd">Enable the REST/remote API servlet. Automatically <code>false</code> in high-security mode.</td></tr>
+      <tr><td class="fn">security.header.xss</td><td class="ft">true</td><td class="fd">Emit <code>X-XSS-Protection: 1; mode=block</code> header.</td></tr>
+      <tr><td class="fn">security.oauth.view</td><td class="ft">false</td><td class="fd">Enable Google OAuth login on the public site.</td></tr>
+      <tr><td class="fn">security.oauth.google-id-client</td><td class="opt">—</td><td class="fd">Google OAuth client ID.</td></tr>
+      <tr><td class="fn">security.oauth.google-secret</td><td class="opt">—</td><td class="fd">Google OAuth client secret.</td></tr>
+      <tr><td class="fn">security.application-login</td><td class="opt">—</td><td class="fd">Application-level login for inter-service authentication.</td></tr>
+      <tr><td class="fn">security.application-password</td><td class="opt">—</td><td class="fd">Application-level password.</td></tr>
+      <tr><td class="fn">security.password.regular-expression</td><td class="ft">.+</td><td class="fd">Password validation regex shown to users.</td></tr>
+      <tr><td class="fn">user_roles</td><td class="ft">guest;member;mailing</td><td class="fd">Available user roles, semicolon-separated.</td></tr>
+      <tr><td class="fn">adminuserfactory.class</td><td class="ft">org.javlo.user.AdminUserFactory</td><td class="fd">Class responsible for admin user management. Override for LDAP.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>LDAP</h3>
+  <table class="field-table">
+    <thead><tr><th>Key</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">ldap.provider-url</td><td class="opt">—</td><td class="fd">LDAP server URL (e.g. <code>ldap://ldap.example.com:389/</code>).</td></tr>
+      <tr><td class="fn">ldap.security.principal</td><td class="opt">—</td><td class="fd">Bind DN for LDAP authentication.</td></tr>
+      <tr><td class="fn">ldap.security.credentials</td><td class="opt">—</td><td class="fd">Bind password.</td></tr>
+      <tr><td class="fn">ldap.security.login</td><td class="opt">—</td><td class="fd">Login DN template. Use <code>#login#</code> as placeholder for the username.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- SC MAIL -->
+  <span class="section-anchor" id="sc-mail"></span>
+  <h2><i class="bi bi-envelope" style="color:var(--javlo-ui-accent2)"></i> Mail / SMTP <a class="anchor" href="#sc-mail">#</a></h2>
+
+  <table class="field-table">
+    <thead><tr><th>Key</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">mail.smtp.host</td><td class="req">required</td><td class="fd">SMTP server hostname.</td></tr>
+      <tr><td class="fn">mail.smtp.port</td><td class="opt">25</td><td class="fd">SMTP port (use <code>587</code> for STARTTLS, <code>465</code> for SSL).</td></tr>
+      <tr><td class="fn">mail.smtp.user</td><td class="opt">—</td><td class="fd">SMTP authentication username.</td></tr>
+      <tr><td class="fn">mail.smtp.password</td><td class="opt">—</td><td class="fd">SMTP authentication password.</td></tr>
+      <tr><td class="fn">mail.default.sender</td><td class="opt">—</td><td class="fd">Default From address for all outgoing mail.</td></tr>
+      <tr><td class="fn">mail.default.report</td><td class="opt">—</td><td class="fd">Address for error/exception reports.</td></tr>
+      <tr><td class="fn">mail.default.subject</td><td class="opt">—</td><td class="fd">Default subject prefix for system mails.</td></tr>
+      <tr><td class="fn">mailing.thread</td><td class="ft">true</td><td class="fd"><code>false</code> if a DMZ front-end handles the mailing queue instead.</td></tr>
+      <tr><td class="fn">mailing.tracking</td><td class="ft">true</td><td class="fd">Track mailing open/click events.</td></tr>
+      <tr><td class="fn">mailing.time-between-two-mailing.second</td><td class="ft">360</td><td class="fd">Minimum seconds between two separate mailing batches.</td></tr>
+      <tr><td class="fn">mailing.time-between-two-send.second</td><td class="ft">70</td><td class="fd">Delay in seconds between individual email sends within a batch.</td></tr>
+      <tr><td class="fn">mailing.feedback.class</td><td class="ft">DefaultMailingFeedback</td><td class="fd">Feedback handler class (comma-separated list for multiple handlers).</td></tr>
+    </tbody>
+  </table>
+
+  <!-- SC CACHE -->
+  <span class="section-anchor" id="sc-cache"></span>
+  <h2><i class="bi bi-lightning" style="color:var(--javlo-ui-accent2)"></i> Cache &amp; backup <a class="anchor" href="#sc-cache">#</a></h2>
+
+  <h3>Page &amp; resource cache</h3>
+  <table class="field-table">
+    <thead><tr><th>Key</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">cache.max-size</td><td class="ft">10 000</td><td class="fd">Maximum number of entries in the page cache.</td></tr>
+      <tr><td class="fn">cache.max-time</td><td class="ft">86 400 s</td><td class="fd">Page cache TTL (1 day).</td></tr>
+      <tr><td class="fn">cache.linked-page</td><td class="ft">30 s</td><td class="fd">Cache TTL for inter-page link resolution.</td></tr>
+      <tr><td class="fn">resources.cache-time</td><td class="ft">86 400 s</td><td class="fd"><code>Cache-Control max-age</code> sent for static resources.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Backup threads</h3>
+  <table class="field-table">
+    <thead><tr><th>Key</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">backup.interval</td><td class="ft">86 400 s</td><td class="fd">Full site backup interval. <code>0</code> = disabled.</td></tr>
+      <tr><td class="fn">backup.count.db</td><td class="ft">7</td><td class="fd">Number of database backup copies to keep.</td></tr>
+      <tr><td class="fn">backup.interval.db</td><td class="ft">86 400 s</td><td class="fd">Database backup interval.</td></tr>
+      <tr><td class="fn">backup.count.users</td><td class="ft">120</td><td class="fd">Number of user-file backup copies to keep.</td></tr>
+      <tr><td class="fn">backup.interval.users</td><td class="ft">7 200 s</td><td class="fd">User-file backup interval.</td></tr>
+      <tr><td class="fn">backup.exclude-patterns</td><td class="ft">/backup;/static;…</td><td class="fd">Semicolon-separated path patterns excluded from the backup archive.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- SC URL -->
+  <span class="section-anchor" id="sc-url"></span>
+  <h2><i class="bi bi-link-45deg" style="color:var(--javlo-ui-accent2)"></i> URL &amp; navigation <a class="anchor" href="#sc-url">#</a></h2>
+
+  <table class="field-table">
+    <thead><tr><th>Key</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">url.host-define-site</td><td class="ft">true</td><td class="fd"><code>true</code> = hostname determines the site context. <code>false</code> = first URL segment determines the context.</td></tr>
+      <tr><td class="fn">url.view</td><td class="ft">false</td><td class="fd">Prefix public URLs with <code>/view</code>.</td></tr>
+      <tr><td class="fn">url.context</td><td class="ft">true</td><td class="fd">Include the context name in the URL.</td></tr>
+      <tr><td class="fn">url.redirect-secondary-url</td><td class="ft">true</td><td class="fd">301-redirect non-canonical URLs to the canonical URL.</td></tr>
+      <tr><td class="fn">url.jsessionid</td><td class="ft">false</td><td class="fd">Append jsessionid to URLs (disable for SEO).</td></tr>
+      <tr><td class="fn">url.short.size</td><td class="ft">3</td><td class="fd">Number of characters for short-URL codes.</td></tr>
+      <tr><td class="fn">url.domain-no-context</td><td class="opt">—</td><td class="fd">Comma-separated domains that bypass context-path detection.</td></tr>
+      <tr><td class="fn">navigation.url.max-size</td><td class="ft">140</td><td class="fd">Maximum character length for generated page slugs.</td></tr>
+      <tr><td class="fn">sitemap.maxsite</td><td class="ft">12 582 912 B</td><td class="fd">Maximum sitemap.xml file size (12 MB).</td></tr>
+      <tr><td class="fn">sitemap.news-days</td><td class="ft">2</td><td class="fd">Number of past days included in the Google News sitemap.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- SC DEPLOY / LOG -->
+  <span class="section-anchor" id="sc-deploy"></span>
+  <h2><i class="bi bi-cloud-upload" style="color:var(--javlo-ui-accent2)"></i> Deploy &amp; logging <a class="anchor" href="#sc-deploy">#</a></h2>
+
+  <h3>Logging</h3>
+  <table class="field-table">
+    <thead><tr><th>Key</th><th>Default</th><th>Levels</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">log.all.level</td><td class="ft">INFO</td><td class="fd">Global log level override for all Javlo loggers.</td></tr>
+      <tr><td class="fn">log.access.level</td><td class="ft">INFO</td><td class="fd">AccessServlet log level.</td></tr>
+      <tr><td class="fn">log.navigation.level</td><td class="ft">INFO</td><td class="fd">Navigation / MenuElement log level.</td></tr>
+      <tr><td class="fn">log.login.level</td><td class="ft">INFO</td><td class="fd">Login log level.</td></tr>
+      <tr><td class="fn">log.component.all.level</td><td class="ft">INFO</td><td class="fd">All component classes.</td></tr>
+      <tr><td class="fn">log.synchro</td><td class="ft">INFO</td><td class="fd">Synchronisation process.</td></tr>
+      <tr><td class="fn">log.file</td><td class="ft">../../logs/catalina.out</td><td class="fd">Path to the Tomcat log file read by the LogService module.</td></tr>
+      <tr><td class="fn">log.dir</td><td class="ft">/../../logs/</td><td class="fd">Log directory for access-log rotation.</td></tr>
+      <tr><td class="fn">debug.id</td><td class="opt">—</td><td class="fd">Instance identifier in debug emails.</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:12px;color:var(--javlo-ui-text-muted)">Available levels: <code>SEVERE</code>, <code>WARNING</code>, <code>INFO</code>, <code>CONFIG</code>, <code>FINE</code>, <code>FINER</code>, <code>FINEST</code></p>
+
+  <!-- SC ADVANCED -->
+  <span class="section-anchor" id="sc-advanced"></span>
+  <h2><i class="bi bi-toggles" style="color:var(--javlo-ui-accent2)"></i> Advanced <a class="anchor" href="#sc-advanced">#</a></h2>
+
+  <h3>Image</h3>
+  <table class="field-table">
+    <thead><tr><th>Key</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">image.max-width</td><td class="ft">0</td><td class="fd">Resize uploaded images to this max width (px). <code>0</code> = no resize.</td></tr>
+      <tr><td class="fn">image.short-url</td><td class="ft">false</td><td class="fd">Use short URL codes for image requests.</td></tr>
+      <tr><td class="fn">image.webp.encoder</td><td class="opt">—</td><td class="fd">Path to an external WebP encoder binary.</td></tr>
+      <tr><td class="fn">image.auto-focus</td><td class="ft">true</td><td class="fd">Auto-detect focal point for smart cropping.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Search engine</h3>
+  <table class="field-table">
+    <thead><tr><th>Key</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">searchengine.class</td><td class="ft">LuceneSearchEngine</td><td class="fd">Full class name of the search engine implementation.</td></tr>
+      <tr><td class="fn">searchengine.lucene.pattern</td><td class="ft">level3:{Q}^3 …</td><td class="fd">Lucene query boosting pattern (<code>{QUERY}</code> placeholder).</td></tr>
+    </tbody>
+  </table>
+
+  <h3>External services</h3>
+  <table class="field-table">
+    <thead><tr><th>Key</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">shared.pixabay.key</td><td class="fd">Pixabay API key for stock image search in the media library.</td></tr>
+      <tr><td class="fn">shared.freepik.key</td><td class="fd">Freepik API key.</td></tr>
+      <tr><td class="fn">dropbox.app-key / .app-secret</td><td class="fd">Dropbox integration credentials.</td></tr>
+      <tr><td class="fn">proxy.host / proxy.port</td><td class="fd">HTTP proxy for outgoing requests (defaults to JVM system proxy).</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Content</h3>
+  <table class="field-table">
+    <thead><tr><th>Key</th><th>Default</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">content.edit-repeat</td><td class="ft">true</td><td class="fd">Allow editing of inherited repeated components on child pages.</td></tr>
+      <tr><td class="fn">content.integrity-checker</td><td class="ft">true</td><td class="fd">Run link integrity checks in preview mode.</td></tr>
+      <tr><td class="fn">content.extension</td><td class="ft">html,pdf,png,…</td><td class="fd">Comma-separated list of valid page content extensions.</td></tr>
+      <tr><td class="fn">content.undo-depth</td><td class="opt">—</td><td class="fd">Number of undo steps. <code>null</code> = unlimited.</td></tr>
+      <tr><td class="fn">function.undo</td><td class="ft">false</td><td class="fd">Enable the undo function in the editor.</td></tr>
+    </tbody>
+  </table>
+
+  <!-- TOMCAT -->
+  <span class="section-anchor" id="tomcat"></span>
+  <h2><i class="bi bi-server" style="color:var(--javlo-ui-accent2)"></i> Tomcat deployment <a class="anchor" href="#tomcat">#</a></h2>
+
+  <div class="callout info">
+    The recommended production layout keeps all mutable data (<code>data-folder</code>,
+    <code>context-folder</code>, <code>template-folder</code>) outside the Tomcat
+    <code>webapps/</code> directory so they are not overwritten on WAR redeployment.
+  </div>
+
+  <h3>Recommended directory layout</h3>
+  <div class="code-block"><span class="cm"># Tomcat root</span>
+$CATALINA_HOME/
+├── webapps/
+│   └── ROOT/             <span class="cm"># or javlo.war expanded here</span>
+│       └── WEB-INF/
+│           └── config/
+│               └── webapp_config.properties  <span class="cm"># generated by Maven</span>
+│
+└── javlo-data/           <span class="cm"># outside webapps — survives redeploys</span>
+    ├── config/
+    │   └── static-config.properties
+    ├── data-ctx/         <span class="cm"># data-folder</span>
+    ├── context/          <span class="cm"># context-folder</span>
+    └── template/         <span class="cm"># template-folder</span></div>
+
+  <h3>Corresponding static-config.properties</h3>
+  <div class="code-block"><span class="ck">data-folder-relative</span>=false
+<span class="ck">data-folder</span>=$CATALINA_HOME/javlo-data/data-ctx
+<span class="ck">context-folder</span>=$CATALINA_HOME/javlo-data/context
+<span class="ck">template-folder</span>=$CATALINA_HOME/javlo-data/template</div>
+
+  <h3>Pointing the webapp to an external config directory</h3>
+  <p>Set the Maven property at build time (or in the WAR's <code>webapp_config.properties</code>):</p>
+  <div class="code-block">mvn package \
+  -Dconfig.relative=false \
+  -Dconfig.dir=$CATALINA_HOME/javlo-data/config</div>
+
+  <p>Or set the environment variable before starting Tomcat:</p>
+  <div class="code-block"><span class="cm"># setenv.sh (Linux) or setenv.bat (Windows)</span>
+export JAVLO_HOME=/opt/javlo-data/config</div>
+
+  <h3>Minimum production checklist</h3>
+  <table class="field-table">
+    <thead><tr><th>Setting</th><th>Recommended value</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">deploy.env</td><td class="fd"><code>prod</code></td></tr>
+      <tr><td class="fn">security.secret-key</td><td class="fd">Random 32+ char string</td></tr>
+      <tr><td class="fn">security.default-password</td><td class="fd">Strong random value</td></tr>
+      <tr><td class="fn">security.use-https</td><td class="fd"><code>true</code></td></tr>
+      <tr><td class="fn">data-folder</td><td class="fd">Absolute path outside <code>webapps/</code></td></tr>
+      <tr><td class="fn">edit.users</td><td class="fd">Change default admin credentials</td></tr>
+      <tr><td class="fn">mail.smtp.host</td><td class="fd">Your SMTP relay</td></tr>
+      <tr><td class="fn">synchro-code</td><td class="fd">Random secret if using DMZ</td></tr>
+    </tbody>
+  </table>
+
+</div>
+
+<script>
+  const sections = document.querySelectorAll('.section-anchor');
+  const links    = document.querySelectorAll('.sidebar nav a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + id));
+      }
+    });
+  }, { rootMargin: '-48px 0px -80% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

@@ -114,6 +114,7 @@
   }
   .doc-card.api::before    { background: var(--javlo-ui-accent); }
   .doc-card.tpl::before    { background: var(--javlo-ui-accent2); }
+  .doc-card.cfg::before    { background: var(--javlo-ui-warning); }
 
   .doc-card:hover {
     border-color: var(--javlo-ui-accent);
@@ -121,6 +122,7 @@
     transform: translateY(-2px);
   }
   .doc-card.tpl:hover { border-color: var(--javlo-ui-accent2); }
+  .doc-card.cfg:hover { border-color: var(--javlo-ui-warning); }
 
   .card-icon {
     width: 44px; height: 44px;
@@ -131,6 +133,7 @@
   }
   .doc-card.api  .card-icon { color: var(--javlo-ui-accent); }
   .doc-card.tpl  .card-icon { color: var(--javlo-ui-accent2); }
+  .doc-card.cfg  .card-icon { color: var(--javlo-ui-warning); }
 
   .card-title {
     font-size: 17px; font-weight: 700; color: var(--javlo-ui-text-heading);
@@ -158,6 +161,7 @@
   }
   .doc-card.api  .card-cta { color: var(--javlo-ui-accent); }
   .doc-card.tpl  .card-cta { color: var(--javlo-ui-accent2); }
+  .doc-card.cfg  .card-cta { color: var(--javlo-ui-warning); }
 
   /* ── Footer ── */
   footer {
@@ -239,6 +243,26 @@
       <span class="topic">SCSS</span>
     </div>
     <div class="card-cta"><i class="bi bi-arrow-right"></i> Open template docs</div>
+  </a>
+
+  <a class="doc-card cfg" href="config.html">
+    <div class="card-icon"><i class="bi bi-gear-fill"></i></div>
+    <div>
+      <div class="card-title">Configuration <span class="card-badge">PROPS</span></div>
+      <div class="card-desc">
+        Complete reference for all configuration layers: Maven build profiles,
+        <code style="font-size:11px;color:inherit">webapp_config.properties</code> tokens,
+        <code style="font-size:11px;color:inherit">static-config.properties</code> keys,
+        and Tomcat deployment layout.
+      </div>
+    </div>
+    <div class="card-topics">
+      <span class="topic">static-config.properties</span>
+      <span class="topic">webapp_config</span>
+      <span class="topic">Maven profiles</span>
+      <span class="topic">Tomcat</span>
+    </div>
+    <div class="card-cta"><i class="bi bi-arrow-right"></i> Open config docs</div>
   </a>
 
 </div>
