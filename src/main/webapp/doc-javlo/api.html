@@ -271,8 +271,16 @@
 
 <!-- Sidebar -->
 <aside class="sidebar">
-  <div class="sidebar-section-label">Components</div>
+  <div class="sidebar-section-label">API Reference</div>
   <nav id="sidebar-nav">
+    <a href="#content-action"><i class="bi bi-gear-fill"></i> ContentAction</a>
+    <a href="#nav-action"><i class="bi bi-diagram-3"></i> NavAction</a>
+    <a href="#template-action"><i class="bi bi-palette"></i> TemplateAction</a>
+    <a href="#authentication"><i class="bi bi-shield-lock"></i> Authentication</a>
+    <a href="#response-format"><i class="bi bi-braces-asterisk"></i> Response Format</a>
+  </nav>
+  <div class="sidebar-section-label" style="margin-top:16px;">Components</div>
+  <nav>
     <a href="#heading"><i class="bi bi-type-h1"></i> Heading <span class="type-badge">heading</span></a>
     <a href="#wysiwyg-paragraph"><i class="bi bi-file-richtext"></i> Wysiwyg Paragraph <span class="type-badge">wysiwyg-paragraph</span></a>
     <a href="#paragraph"><i class="bi bi-paragraph"></i> Paragraph <span class="type-badge">paragraph</span></a>
@@ -284,14 +292,6 @@
     <a href="#debug-note"><i class="bi bi-sticky"></i> Debug Note <span class="type-badge">debug-note</span></a>
     <a href="#extended-widget"><i class="bi bi-braces"></i> Extended Widget <span class="type-badge">extendedWidget</span></a>
     <a href="#smart-generic-form"><i class="bi bi-ui-checks"></i> Smart Generic Form <span class="type-badge">smart-generic-form</span></a>
-  </nav>
-  <div class="sidebar-section-label" style="margin-top:16px;">API Reference</div>
-  <nav>
-    <a href="#content-action"><i class="bi bi-gear-fill"></i> ContentAction</a>
-    <a href="#nav-action"><i class="bi bi-diagram-3"></i> NavAction</a>
-    <a href="#template-action"><i class="bi bi-palette"></i> TemplateAction</a>
-    <a href="#authentication"><i class="bi bi-shield-lock"></i> Authentication</a>
-    <a href="#response-format"><i class="bi bi-braces-asterisk"></i> Response Format</a>
   </nav>
 </aside>
 
@@ -305,7 +305,335 @@
   </p>
 
   <!-- ================================================================ -->
-  <!-- SECTION 1 – Components                                            -->
+  <!-- SECTION 1 – ContentAction API                                     -->
+  <!-- ================================================================ -->
+
+  <span class="section-anchor" id="content-action"></span>
+  <h2><i class="bi bi-gear-fill" style="color:var(--javlo-ui-accent2)"></i> ContentAction API
+    <a class="anchor" href="#content-action">#</a>
+  </h2>
+  <p>Source: <a href="https://github.com/Javlo/javlo/blob/master/src/main/java/org/javlo/remote/ContentAction.java" target="_blank" style="color:var(--javlo-ui-accent2);font-family:var(--font-mono)"><i class="bi bi-github"></i> org.javlo.remote.ContentAction</a></p>
+
+  <div class="api-endpoint">
+    <span class="api-method">POST</span>
+    <span class="api-path">/ajax/{lang}/?webaction=content.add</span>
+    <p style="margin-top:10px;color:var(--javlo-ui-text)">Create a new component on a page.</p>
+    <table class="field-table" style="margin-top:10px">
+      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">page</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Target page — ID, name, or path.</td></tr>
+        <tr><td class="fn">type</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Component type string (e.g. <code style="font-family:var(--font-mono)">wysiwyg-paragraph</code>).</td></tr>
+        <tr><td class="fn">area</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Template area key (e.g. <code style="font-family:var(--font-mono)">content</code>, <code style="font-family:var(--font-mono)">hero</code>, <code style="font-family:var(--font-mono)">footer</code>).</td></tr>
+        <tr><td class="fn">previous</td><td class="ft">String</td><td class="opt">–</td><td class="fd">Component ID after which to insert. <code style="font-family:var(--font-mono)">0</code> = prepend. Default: <code style="font-family:var(--font-mono)">0</code>.</td></tr>
+        <tr><td class="fn">value</td><td class="ft">String</td><td class="opt">–</td><td class="fd">Initial value (see component data-structure above).</td></tr>
+        <tr><td class="fn">style</td><td class="ft">String</td><td class="opt">–</td><td class="fd">CSS style class for the component.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="api-endpoint">
+    <span class="api-method">POST</span>
+    <span class="api-path">/ajax/{lang}/?webaction=content.edit</span>
+    <p style="margin-top:10px;color:var(--javlo-ui-text)">Update value and/or style of an existing component.</p>
+    <table class="field-table" style="margin-top:10px">
+      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">id</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Component ID (returned by content.add).</td></tr>
+        <tr><td class="fn">value</td><td class="ft">String</td><td class="opt">–</td><td class="fd">New value (replaces existing).</td></tr>
+        <tr><td class="fn">style</td><td class="ft">String</td><td class="opt">–</td><td class="fd">New style class.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="api-endpoint">
+    <span class="api-method">POST</span>
+    <span class="api-path">/ajax/{lang}/?webaction=content.remove</span>
+    <p style="margin-top:10px;color:var(--javlo-ui-text)">Delete a component from its page.</p>
+    <table class="field-table" style="margin-top:10px">
+      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">id</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Component ID to delete.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="api-endpoint">
+    <span class="api-method">POST</span>
+    <span class="api-path">/ajax/{lang}/?webaction=content.move</span>
+    <p style="margin-top:10px;color:var(--javlo-ui-text)">Move a component to a different position, area, or page.</p>
+    <table class="field-table" style="margin-top:10px">
+      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">id</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Component ID to move.</td></tr>
+        <tr><td class="fn">previous</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Component ID after which to insert. <code style="font-family:var(--font-mono)">0</code> = move to first position.</td></tr>
+        <tr><td class="fn">area</td><td class="ft">String</td><td class="opt">–</td><td class="fd">Target area key. Defaults to current area.</td></tr>
+        <tr><td class="fn">page</td><td class="ft">String</td><td class="opt">–</td><td class="fd">Target page. Defaults to current page.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="api-endpoint">
+    <span class="api-method">POST</span>
+    <span class="api-path">/ajax/{lang}/?webaction=content.publish</span>
+    <p style="margin-top:10px;color:var(--javlo-ui-text)">Publish the site: synchronises the <strong>preview</strong> navigation tree to the <strong>view</strong> tree and copies content files. Must be called after any content or navigation change to make it visible to visitors.</p>
+    <p style="margin-top:6px;color:var(--javlo-ui-text-muted)">No parameters required.</p>
+  </div>
+
+  <div class="api-endpoint">
+    <span class="api-method">POST</span>
+    <span class="api-path">/ajax/{lang}/?webaction=content.clearPage</span>
+    <p style="margin-top:10px;color:var(--javlo-ui-text)">Remove <strong>all components</strong> from a page. Returns the page ID and the list of deleted component IDs.</p>
+    <table class="field-table" style="margin-top:10px">
+      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">page</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Page to clear — ID, name, or path.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 2 – NavAction API                                         -->
+  <!-- ================================================================ -->
+
+  <span class="section-anchor" id="nav-action"></span>
+  <h2><i class="bi bi-diagram-3" style="color:var(--javlo-ui-accent2)"></i> NavAction API
+    <a class="anchor" href="#nav-action">#</a>
+  </h2>
+  <p>Source: <a href="https://github.com/Javlo/javlo/blob/master/src/main/java/org/javlo/remote/NavAction.java" target="_blank" style="color:var(--javlo-ui-accent2);font-family:var(--font-mono)"><i class="bi bi-github"></i> org.javlo.remote.NavAction</a></p>
+
+  <div class="api-endpoint">
+    <span class="api-method">POST</span>
+    <span class="api-path">/ajax/{lang}/?webaction=nav.add</span>
+    <p style="margin-top:10px;color:var(--javlo-ui-text)">Add a new page to the navigation tree.</p>
+    <table class="field-table" style="margin-top:10px">
+      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">name</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Slug of the new page (URL-safe, e.g. <code style="font-family:var(--font-mono)">my-page</code>).</td></tr>
+        <tr><td class="fn">parent</td><td class="ft">String</td><td class="opt">–</td><td class="fd">Parent page — ID, name, or path. Default: root.</td></tr>
+        <tr><td class="fn">top</td><td class="ft">boolean</td><td class="opt">–</td><td class="fd">Insert at the top of sibling list. Default: <code style="font-family:var(--font-mono)">false</code>.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="api-endpoint">
+    <span class="api-method">POST</span>
+    <span class="api-path">/ajax/{lang}/?webaction=nav.remove</span>
+    <p style="margin-top:10px;color:var(--javlo-ui-text)">Remove a page and all its sub-pages from the navigation tree.</p>
+    <table class="field-table" style="margin-top:10px">
+      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">page</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Page to remove — ID, name, or path.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="api-endpoint">
+    <span class="api-method">POST</span>
+    <span class="api-path">/ajax/{lang}/?webaction=nav.move</span>
+    <p style="margin-top:10px;color:var(--javlo-ui-text)">Move a page to a different parent in the navigation tree.</p>
+    <table class="field-table" style="margin-top:10px">
+      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">page</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Page to move — ID, name, or path.</td></tr>
+        <tr><td class="fn">parent</td><td class="ft">String</td><td class="req">✓</td><td class="fd">New parent page — ID, name, or path.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 3 – TemplateAction API                                    -->
+  <!-- ================================================================ -->
+
+  <span class="section-anchor" id="template-action"></span>
+  <h2><i class="bi bi-palette" style="color:var(--javlo-ui-accent2)"></i> TemplateAction API
+    <a class="anchor" href="#template-action">#</a>
+  </h2>
+  <p>Source: <a href="https://github.com/Javlo/javlo/blob/master/src/main/java/org/javlo/remote/TemplateAction.java" target="_blank" style="color:var(--javlo-ui-accent2);font-family:var(--font-mono)"><i class="bi bi-github"></i> org.javlo.remote.TemplateAction</a></p>
+  <p>Requires <strong>global admin</strong> role. All actions use <code style="font-family:var(--font-mono)">webaction=template.{action}</code>.</p>
+
+  <div class="api-endpoint">
+    <span class="api-method">POST</span>
+    <span class="api-path">/ajax/{lang}/?webaction=template.upload</span>
+    <p style="margin-top:10px;color:var(--javlo-ui-text)">
+      Upload a template from a <strong>zip file</strong> (URL or multipart). Creates the template folder if absent, overwrites files if it already exists.
+      Call <code style="font-family:var(--font-mono)">template.commit</code> afterwards to deploy the new files into the webapp.
+    </p>
+    <table class="field-table" style="margin-top:10px">
+      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">name</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Target template ID / folder name.</td></tr>
+        <tr><td class="fn">url</td><td class="ft">String</td><td class="opt">–</td><td class="fd">URL of a <code style="font-family:var(--font-mono)">.zip</code> file to download. Ignored when a multipart <code style="font-family:var(--font-mono)">file</code> field is present.</td></tr>
+        <tr><td class="fn">file</td><td class="ft">File (multipart)</td><td class="opt">–</td><td class="fd">Zip file uploaded as <code style="font-family:var(--font-mono)">multipart/form-data</code> field named <code style="font-family:var(--font-mono)">file</code>. Takes priority over <code style="font-family:var(--font-mono)">url</code>.</td></tr>
+      </tbody>
+    </table>
+    <div class="code-block" style="margin-top:10px"># URL-based upload
+curl -X POST http://localhost/javlo2/claude/ajax/fr/ \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d "webaction=template.upload&name=my-theme&url=https://example.com/my-theme.zip"
+
+# Multipart file upload
+curl -X POST http://localhost/javlo2/claude/ajax/fr/ \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -F "webaction=template.upload" \
+  -F "name=my-theme" \
+  -F "file=@/path/to/my-theme.zip"</div>
+  </div>
+
+  <div class="api-endpoint">
+    <span class="api-method">POST</span>
+    <span class="api-path">/ajax/{lang}/?webaction=template.commit</span>
+    <p style="margin-top:10px;color:var(--javlo-ui-text)">
+      Clears the renderer cache and re-imports the template from its source folder into the webapp.
+      Equivalent to the <code style="font-family:var(--font-mono)">commit-template</code> macro. Use after editing template files on disk.
+    </p>
+    <table class="field-table" style="margin-top:10px">
+      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">name</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Template name or ID.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="api-endpoint">
+    <span class="api-method">POST</span>
+    <span class="api-path">/ajax/{lang}/?webaction=template.commitAll</span>
+    <p style="margin-top:10px;color:var(--javlo-ui-text)">
+      Commits a template <strong>and all its child templates</strong> (full descendant tree). Useful when a parent template change must propagate to all derived themes.
+    </p>
+    <table class="field-table" style="margin-top:10px">
+      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">name</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Parent template name or ID.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 4 – Authentication                                        -->
+  <!-- ================================================================ -->
+
+  <span class="section-anchor" id="authentication"></span>
+  <h2><i class="bi bi-shield-lock" style="color:var(--javlo-ui-accent2)"></i> Authentication
+    <a class="anchor" href="#authentication">#</a>
+  </h2>
+
+  <p>All Remote API actions require an authenticated session. Three authentication modes are supported (evaluated in priority order):</p>
+
+  <h3>1. Authorization: Bearer header <span style="background:var(--javlo-ui-tag-bg);color:var(--javlo-ui-accent2);font-size:11px;padding:2px 7px;border-radius:4px;font-weight:600;font-family:var(--font-mono)">recommended</span></h3>
+  <p>Send the token in the standard <code style="font-family:var(--font-mono)">Authorization</code> HTTP header. This is the preferred approach for API clients and the MCP server.</p>
+  <div class="code-block">POST /ajax/fr/
+Authorization: Bearer YOUR_TOKEN
+Content-Type: application/x-www-form-urlencoded
+
+webaction=content.add&page=presentation&type=wysiwyg-paragraph&area=content&value=&lt;p&gt;Hello&lt;/p&gt;</div>
+
+  <h3>2. X-Javlo-Token header</h3>
+  <p>Alternative header for environments where <code style="font-family:var(--font-mono)">Authorization</code> is reserved.</p>
+  <div class="code-block">POST /ajax/fr/
+X-Javlo-Token: YOUR_TOKEN
+Content-Type: application/x-www-form-urlencoded
+
+webaction=content.add&page=presentation&type=wysiwyg-paragraph&area=content</div>
+
+  <h3>3. Token parameter (<code style="font-family:var(--font-mono)">j_token</code>) — legacy</h3>
+  <p>Pass the token as a POST body parameter. Supported for backwards compatibility but the header approach is preferred.</p>
+  <div class="code-block">POST /ajax/fr/
+Content-Type: application/x-www-form-urlencoded
+
+webaction=content.add&j_token=YOUR_TOKEN&page=presentation&type=wysiwyg-paragraph&area=content&value=&lt;p&gt;Hello&lt;/p&gt;</div>
+
+  <h3>4. Session cookie</h3>
+  <p>Perform a standard form-login first, then reuse the <code style="font-family:var(--font-mono)">JSESSIONID</code> cookie in subsequent API calls.</p>
+
+  <p style="margin-top:12px">The token is generated in the Javlo admin under <strong>Users → API token</strong>. The <code style="font-family:var(--font-mono)">loginWithToken</code> option must be enabled in the global static config.</p>
+
+  <h3>Required permissions</h3>
+  <table class="field-table">
+    <thead><tr><th>Action group</th><th>Required role</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">content.*</td><td class="fd">Global admin <em>or</em> <code style="font-family:var(--font-mono)">content</code> role</td></tr>
+      <tr><td class="fn">nav.*</td><td class="fd">Global admin <em>or</em> <code style="font-family:var(--font-mono)">content</code> role</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 5 – Response Format                                       -->
+  <!-- ================================================================ -->
+
+  <span class="section-anchor" id="response-format"></span>
+  <h2><i class="bi bi-braces-asterisk" style="color:var(--javlo-ui-accent2)"></i> Response Format
+    <a class="anchor" href="#response-format">#</a>
+  </h2>
+
+  <p>All actions return a JSON envelope from the AjaxServlet:</p>
+  <div class="code-block">{
+  "messageType": "info" | "error" | "warning",
+  "messageText": "human-readable message or null",
+  "data": {
+    // action-specific result object
+  },
+  "insideZone": "...",
+  "zone": "..."
+}</div>
+
+  <h3>content.add / content.edit / content.move → <code style="font-family:var(--font-mono)">data.component</code></h3>
+  <div class="code-block">{
+  "id":       "177435215683329856118",
+  "type":     "wysiwyg-paragraph",
+  "area":     "content",
+  "style":    null,
+  "pageId":   "177434753288331935111",
+  "pagePath": "/presentation",
+  "value":    "&lt;p&gt;Hello&lt;/p&gt;"
+}</div>
+
+  <h3>content.remove → <code style="font-family:var(--font-mono)">data</code></h3>
+  <div class="code-block">{
+  "removed": "177435215683329856118",
+  "type":    "wysiwyg-paragraph"
+}</div>
+
+  <h3>content.publish → <code style="font-family:var(--font-mono)">data</code></h3>
+  <div class="code-block">{
+  "published":  true,
+  "publisher":  "admin",
+  "date":       "Tue Mar 24 17:00:00 CET 2026"
+}</div>
+
+  <h3>content.clearPage → <code style="font-family:var(--font-mono)">data</code></h3>
+  <div class="code-block">{
+  "pageId":  "177434753288331935111",
+  "removed": ["177435215683329856118", "177435587252612684640", "177436146640444725247"],
+  "count":   3
+}</div>
+
+  <h3>nav.add → <code style="font-family:var(--font-mono)">data</code></h3>
+  <div class="code-block">{
+  "pageId":   "177434753288331935111",
+  "pagePath": "/my-new-page",
+  "pageName": "my-new-page"
+}</div>
+
+  <h3>template.upload / template.commit → <code style="font-family:var(--font-mono)">data</code></h3>
+  <div class="code-block">{
+  "template": {
+    "id":     "my-theme",
+    "name":   "my-theme",
+    "parent": "base-bootstrap"
+  }
+}</div>
+
+  <h3>template.commitAll → <code style="font-family:var(--font-mono)">data</code></h3>
+  <div class="code-block">{
+  "committed": ["base-bootstrap", "my-theme", "my-theme-dark"],
+  "count": 3
+}</div>
+
+  <div class="callout danger" style="margin-top:20px"><i class="bi bi-exclamation-triangle"></i> When <code style="font-family:var(--font-mono)">messageType</code> is <code style="font-family:var(--font-mono)">"error"</code> the <code style="font-family:var(--font-mono)">data</code> key is absent. Always check <code style="font-family:var(--font-mono)">messageType</code> before reading <code style="font-family:var(--font-mono)">data</code>.</div>
+
+
+  <!-- ================================================================ -->
+  <!-- SECTION 6 – Components                                            -->
   <!-- ================================================================ -->
 
   <span class="section-anchor" id="components"></span>
@@ -878,333 +1206,6 @@ field.privacy=I accept the privacy policy|validation|||0||5|12|||</div>
     <code style="font-family:var(--font-mono)">{data-folder}/dynamic-form-result/{componentId}/data.csv</code></p>
     <p>Accessible programmatically via <code style="font-family:var(--font-mono)">getData(ctx)</code> → <code style="font-family:var(--font-mono)">List&lt;Map&lt;String,String&gt;&gt;</code>.</p>
   </div>
-
-  <!-- ================================================================ -->
-  <!-- SECTION 2 – ContentAction API                                     -->
-  <!-- ================================================================ -->
-
-  <span class="section-anchor" id="content-action"></span>
-  <h2><i class="bi bi-gear-fill" style="color:var(--javlo-ui-accent2)"></i> ContentAction API
-    <a class="anchor" href="#content-action">#</a>
-  </h2>
-  <p>Source: <a href="https://github.com/Javlo/javlo/blob/master/src/main/java/org/javlo/remote/ContentAction.java" target="_blank" style="color:var(--javlo-ui-accent2);font-family:var(--font-mono)"><i class="bi bi-github"></i> org.javlo.remote.ContentAction</a></p>
-
-  <div class="api-endpoint">
-    <span class="api-method">POST</span>
-    <span class="api-path">/ajax/{lang}/?webaction=content.add</span>
-    <p style="margin-top:10px;color:var(--javlo-ui-text)">Create a new component on a page.</p>
-    <table class="field-table" style="margin-top:10px">
-      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
-      <tbody>
-        <tr><td class="fn">page</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Target page — ID, name, or path.</td></tr>
-        <tr><td class="fn">type</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Component type string (e.g. <code style="font-family:var(--font-mono)">wysiwyg-paragraph</code>).</td></tr>
-        <tr><td class="fn">area</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Template area key (e.g. <code style="font-family:var(--font-mono)">content</code>, <code style="font-family:var(--font-mono)">hero</code>, <code style="font-family:var(--font-mono)">footer</code>).</td></tr>
-        <tr><td class="fn">previous</td><td class="ft">String</td><td class="opt">–</td><td class="fd">Component ID after which to insert. <code style="font-family:var(--font-mono)">0</code> = prepend. Default: <code style="font-family:var(--font-mono)">0</code>.</td></tr>
-        <tr><td class="fn">value</td><td class="ft">String</td><td class="opt">–</td><td class="fd">Initial value (see component data-structure above).</td></tr>
-        <tr><td class="fn">style</td><td class="ft">String</td><td class="opt">–</td><td class="fd">CSS style class for the component.</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="api-endpoint">
-    <span class="api-method">POST</span>
-    <span class="api-path">/ajax/{lang}/?webaction=content.edit</span>
-    <p style="margin-top:10px;color:var(--javlo-ui-text)">Update value and/or style of an existing component.</p>
-    <table class="field-table" style="margin-top:10px">
-      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
-      <tbody>
-        <tr><td class="fn">id</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Component ID (returned by content.add).</td></tr>
-        <tr><td class="fn">value</td><td class="ft">String</td><td class="opt">–</td><td class="fd">New value (replaces existing).</td></tr>
-        <tr><td class="fn">style</td><td class="ft">String</td><td class="opt">–</td><td class="fd">New style class.</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="api-endpoint">
-    <span class="api-method">POST</span>
-    <span class="api-path">/ajax/{lang}/?webaction=content.remove</span>
-    <p style="margin-top:10px;color:var(--javlo-ui-text)">Delete a component from its page.</p>
-    <table class="field-table" style="margin-top:10px">
-      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
-      <tbody>
-        <tr><td class="fn">id</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Component ID to delete.</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="api-endpoint">
-    <span class="api-method">POST</span>
-    <span class="api-path">/ajax/{lang}/?webaction=content.move</span>
-    <p style="margin-top:10px;color:var(--javlo-ui-text)">Move a component to a different position, area, or page.</p>
-    <table class="field-table" style="margin-top:10px">
-      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
-      <tbody>
-        <tr><td class="fn">id</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Component ID to move.</td></tr>
-        <tr><td class="fn">previous</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Component ID after which to insert. <code style="font-family:var(--font-mono)">0</code> = move to first position.</td></tr>
-        <tr><td class="fn">area</td><td class="ft">String</td><td class="opt">–</td><td class="fd">Target area key. Defaults to current area.</td></tr>
-        <tr><td class="fn">page</td><td class="ft">String</td><td class="opt">–</td><td class="fd">Target page. Defaults to current page.</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="api-endpoint">
-    <span class="api-method">POST</span>
-    <span class="api-path">/ajax/{lang}/?webaction=content.publish</span>
-    <p style="margin-top:10px;color:var(--javlo-ui-text)">Publish the site: synchronises the <strong>preview</strong> navigation tree to the <strong>view</strong> tree and copies content files. Must be called after any content or navigation change to make it visible to visitors.</p>
-    <p style="margin-top:6px;color:var(--javlo-ui-text-muted)">No parameters required.</p>
-  </div>
-
-  <div class="api-endpoint">
-    <span class="api-method">POST</span>
-    <span class="api-path">/ajax/{lang}/?webaction=content.clearPage</span>
-    <p style="margin-top:10px;color:var(--javlo-ui-text)">Remove <strong>all components</strong> from a page. Returns the page ID and the list of deleted component IDs.</p>
-    <table class="field-table" style="margin-top:10px">
-      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
-      <tbody>
-        <tr><td class="fn">page</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Page to clear — ID, name, or path.</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- ================================================================ -->
-  <!-- SECTION 3 – NavAction API                                         -->
-  <!-- ================================================================ -->
-
-  <span class="section-anchor" id="nav-action"></span>
-  <h2><i class="bi bi-diagram-3" style="color:var(--javlo-ui-accent2)"></i> NavAction API
-    <a class="anchor" href="#nav-action">#</a>
-  </h2>
-  <p>Source: <a href="https://github.com/Javlo/javlo/blob/master/src/main/java/org/javlo/remote/NavAction.java" target="_blank" style="color:var(--javlo-ui-accent2);font-family:var(--font-mono)"><i class="bi bi-github"></i> org.javlo.remote.NavAction</a></p>
-
-  <div class="api-endpoint">
-    <span class="api-method">POST</span>
-    <span class="api-path">/ajax/{lang}/?webaction=nav.add</span>
-    <p style="margin-top:10px;color:var(--javlo-ui-text)">Add a new page to the navigation tree.</p>
-    <table class="field-table" style="margin-top:10px">
-      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
-      <tbody>
-        <tr><td class="fn">name</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Slug of the new page (URL-safe, e.g. <code style="font-family:var(--font-mono)">my-page</code>).</td></tr>
-        <tr><td class="fn">parent</td><td class="ft">String</td><td class="opt">–</td><td class="fd">Parent page — ID, name, or path. Default: root.</td></tr>
-        <tr><td class="fn">top</td><td class="ft">boolean</td><td class="opt">–</td><td class="fd">Insert at the top of sibling list. Default: <code style="font-family:var(--font-mono)">false</code>.</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="api-endpoint">
-    <span class="api-method">POST</span>
-    <span class="api-path">/ajax/{lang}/?webaction=nav.remove</span>
-    <p style="margin-top:10px;color:var(--javlo-ui-text)">Remove a page and all its sub-pages from the navigation tree.</p>
-    <table class="field-table" style="margin-top:10px">
-      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
-      <tbody>
-        <tr><td class="fn">page</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Page to remove — ID, name, or path.</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="api-endpoint">
-    <span class="api-method">POST</span>
-    <span class="api-path">/ajax/{lang}/?webaction=nav.move</span>
-    <p style="margin-top:10px;color:var(--javlo-ui-text)">Move a page to a different parent in the navigation tree.</p>
-    <table class="field-table" style="margin-top:10px">
-      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
-      <tbody>
-        <tr><td class="fn">page</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Page to move — ID, name, or path.</td></tr>
-        <tr><td class="fn">parent</td><td class="ft">String</td><td class="req">✓</td><td class="fd">New parent page — ID, name, or path.</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- ================================================================ -->
-  <!-- SECTION 4 – TemplateAction API                                    -->
-  <!-- ================================================================ -->
-
-  <span class="section-anchor" id="template-action"></span>
-  <h2><i class="bi bi-palette" style="color:var(--javlo-ui-accent2)"></i> TemplateAction API
-    <a class="anchor" href="#template-action">#</a>
-  </h2>
-  <p>Source: <a href="https://github.com/Javlo/javlo/blob/master/src/main/java/org/javlo/remote/TemplateAction.java" target="_blank" style="color:var(--javlo-ui-accent2);font-family:var(--font-mono)"><i class="bi bi-github"></i> org.javlo.remote.TemplateAction</a></p>
-  <p>Requires <strong>global admin</strong> role. All actions use <code style="font-family:var(--font-mono)">webaction=template.{action}</code>.</p>
-
-  <div class="api-endpoint">
-    <span class="api-method">POST</span>
-    <span class="api-path">/ajax/{lang}/?webaction=template.upload</span>
-    <p style="margin-top:10px;color:var(--javlo-ui-text)">
-      Upload a template from a <strong>zip file</strong> (URL or multipart). Creates the template folder if absent, overwrites files if it already exists.
-      Call <code style="font-family:var(--font-mono)">template.commit</code> afterwards to deploy the new files into the webapp.
-    </p>
-    <table class="field-table" style="margin-top:10px">
-      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
-      <tbody>
-        <tr><td class="fn">name</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Target template ID / folder name.</td></tr>
-        <tr><td class="fn">url</td><td class="ft">String</td><td class="opt">–</td><td class="fd">URL of a <code style="font-family:var(--font-mono)">.zip</code> file to download. Ignored when a multipart <code style="font-family:var(--font-mono)">file</code> field is present.</td></tr>
-        <tr><td class="fn">file</td><td class="ft">File (multipart)</td><td class="opt">–</td><td class="fd">Zip file uploaded as <code style="font-family:var(--font-mono)">multipart/form-data</code> field named <code style="font-family:var(--font-mono)">file</code>. Takes priority over <code style="font-family:var(--font-mono)">url</code>.</td></tr>
-      </tbody>
-    </table>
-    <div class="code-block" style="margin-top:10px"># URL-based upload
-curl -X POST http://localhost/javlo2/claude/ajax/fr/ \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -d "webaction=template.upload&name=my-theme&url=https://example.com/my-theme.zip"
-
-# Multipart file upload
-curl -X POST http://localhost/javlo2/claude/ajax/fr/ \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -F "webaction=template.upload" \
-  -F "name=my-theme" \
-  -F "file=@/path/to/my-theme.zip"</div>
-  </div>
-
-  <div class="api-endpoint">
-    <span class="api-method">POST</span>
-    <span class="api-path">/ajax/{lang}/?webaction=template.commit</span>
-    <p style="margin-top:10px;color:var(--javlo-ui-text)">
-      Clears the renderer cache and re-imports the template from its source folder into the webapp.
-      Equivalent to the <code style="font-family:var(--font-mono)">commit-template</code> macro. Use after editing template files on disk.
-    </p>
-    <table class="field-table" style="margin-top:10px">
-      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
-      <tbody>
-        <tr><td class="fn">name</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Template name or ID.</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="api-endpoint">
-    <span class="api-method">POST</span>
-    <span class="api-path">/ajax/{lang}/?webaction=template.commitAll</span>
-    <p style="margin-top:10px;color:var(--javlo-ui-text)">
-      Commits a template <strong>and all its child templates</strong> (full descendant tree). Useful when a parent template change must propagate to all derived themes.
-    </p>
-    <table class="field-table" style="margin-top:10px">
-      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
-      <tbody>
-        <tr><td class="fn">name</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Parent template name or ID.</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- ================================================================ -->
-  <!-- SECTION 5 – Authentication                                        -->
-  <!-- ================================================================ -->
-
-  <span class="section-anchor" id="authentication"></span>
-  <h2><i class="bi bi-shield-lock" style="color:var(--javlo-ui-accent2)"></i> Authentication
-    <a class="anchor" href="#authentication">#</a>
-  </h2>
-
-  <p>All Remote API actions require an authenticated session. Three authentication modes are supported (evaluated in priority order):</p>
-
-  <h3>1. Authorization: Bearer header <span style="background:var(--javlo-ui-tag-bg);color:var(--javlo-ui-accent2);font-size:11px;padding:2px 7px;border-radius:4px;font-weight:600;font-family:var(--font-mono)">recommended</span></h3>
-  <p>Send the token in the standard <code style="font-family:var(--font-mono)">Authorization</code> HTTP header. This is the preferred approach for API clients and the MCP server.</p>
-  <div class="code-block">POST /ajax/fr/
-Authorization: Bearer YOUR_TOKEN
-Content-Type: application/x-www-form-urlencoded
-
-webaction=content.add&page=presentation&type=wysiwyg-paragraph&area=content&value=&lt;p&gt;Hello&lt;/p&gt;</div>
-
-  <h3>2. X-Javlo-Token header</h3>
-  <p>Alternative header for environments where <code style="font-family:var(--font-mono)">Authorization</code> is reserved.</p>
-  <div class="code-block">POST /ajax/fr/
-X-Javlo-Token: YOUR_TOKEN
-Content-Type: application/x-www-form-urlencoded
-
-webaction=content.add&page=presentation&type=wysiwyg-paragraph&area=content</div>
-
-  <h3>3. Token parameter (<code style="font-family:var(--font-mono)">j_token</code>) — legacy</h3>
-  <p>Pass the token as a POST body parameter. Supported for backwards compatibility but the header approach is preferred.</p>
-  <div class="code-block">POST /ajax/fr/
-Content-Type: application/x-www-form-urlencoded
-
-webaction=content.add&j_token=YOUR_TOKEN&page=presentation&type=wysiwyg-paragraph&area=content&value=&lt;p&gt;Hello&lt;/p&gt;</div>
-
-  <h3>4. Session cookie</h3>
-  <p>Perform a standard form-login first, then reuse the <code style="font-family:var(--font-mono)">JSESSIONID</code> cookie in subsequent API calls.</p>
-
-  <p style="margin-top:12px">The token is generated in the Javlo admin under <strong>Users → API token</strong>. The <code style="font-family:var(--font-mono)">loginWithToken</code> option must be enabled in the global static config.</p>
-
-  <h3>Required permissions</h3>
-  <table class="field-table">
-    <thead><tr><th>Action group</th><th>Required role</th></tr></thead>
-    <tbody>
-      <tr><td class="fn">content.*</td><td class="fd">Global admin <em>or</em> <code style="font-family:var(--font-mono)">content</code> role</td></tr>
-      <tr><td class="fn">nav.*</td><td class="fd">Global admin <em>or</em> <code style="font-family:var(--font-mono)">content</code> role</td></tr>
-    </tbody>
-  </table>
-
-  <!-- ================================================================ -->
-  <!-- SECTION 5 – Response Format                                       -->
-  <!-- ================================================================ -->
-
-  <span class="section-anchor" id="response-format"></span>
-  <h2><i class="bi bi-braces-asterisk" style="color:var(--javlo-ui-accent2)"></i> Response Format
-    <a class="anchor" href="#response-format">#</a>
-  </h2>
-
-  <p>All actions return a JSON envelope from the AjaxServlet:</p>
-  <div class="code-block">{
-  "messageType": "info" | "error" | "warning",
-  "messageText": "human-readable message or null",
-  "data": {
-    // action-specific result object
-  },
-  "insideZone": "...",
-  "zone": "..."
-}</div>
-
-  <h3>content.add / content.edit / content.move → <code style="font-family:var(--font-mono)">data.component</code></h3>
-  <div class="code-block">{
-  "id":       "177435215683329856118",
-  "type":     "wysiwyg-paragraph",
-  "area":     "content",
-  "style":    null,
-  "pageId":   "177434753288331935111",
-  "pagePath": "/presentation",
-  "value":    "&lt;p&gt;Hello&lt;/p&gt;"
-}</div>
-
-  <h3>content.remove → <code style="font-family:var(--font-mono)">data</code></h3>
-  <div class="code-block">{
-  "removed": "177435215683329856118",
-  "type":    "wysiwyg-paragraph"
-}</div>
-
-  <h3>content.publish → <code style="font-family:var(--font-mono)">data</code></h3>
-  <div class="code-block">{
-  "published":  true,
-  "publisher":  "admin",
-  "date":       "Tue Mar 24 17:00:00 CET 2026"
-}</div>
-
-  <h3>content.clearPage → <code style="font-family:var(--font-mono)">data</code></h3>
-  <div class="code-block">{
-  "pageId":  "177434753288331935111",
-  "removed": ["177435215683329856118", "177435587252612684640", "177436146640444725247"],
-  "count":   3
-}</div>
-
-  <h3>nav.add → <code style="font-family:var(--font-mono)">data</code></h3>
-  <div class="code-block">{
-  "pageId":   "177434753288331935111",
-  "pagePath": "/my-new-page",
-  "pageName": "my-new-page"
-}</div>
-
-  <h3>template.upload / template.commit → <code style="font-family:var(--font-mono)">data</code></h3>
-  <div class="code-block">{
-  "template": {
-    "id":     "my-theme",
-    "name":   "my-theme",
-    "parent": "base-bootstrap"
-  }
-}</div>
-
-  <h3>template.commitAll → <code style="font-family:var(--font-mono)">data</code></h3>
-  <div class="code-block">{
-  "committed": ["base-bootstrap", "my-theme", "my-theme-dark"],
-  "count": 3
-}</div>
-
-  <div class="callout danger" style="margin-top:20px"><i class="bi bi-exclamation-triangle"></i> When <code style="font-family:var(--font-mono)">messageType</code> is <code style="font-family:var(--font-mono)">"error"</code> the <code style="font-family:var(--font-mono)">data</code> key is absent. Always check <code style="font-family:var(--font-mono)">messageType</code> before reading <code style="font-family:var(--font-mono)">data</code>.</div>
 
 </main>
 

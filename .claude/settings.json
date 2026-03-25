@@ -3,7 +3,11 @@
     "allow": [
       "Bash(grep -n \"TOKEN_PARAM\\\\|getTokenCreateIfNotExist\\\\|verifyToken\" /c/kdrive/work/javlo2/src/main/java/org/javlo/user/*.java)",
       "Read(//c/opt/tomcat10/webapps/javlo2/WEB-INF/data/**)",
-      "Read(//e/opt/tomcat10/**)"
+      "Read(//e/opt/tomcat10/**)",
+      "Bash(python3:*)"
+    ],
+    "additionalDirectories": [
+      "c:\\kdrive\\work\\javlo2\\src\\main\\webapp\\doc-javlo"
     ]
   },
   "enabledMcpjsonServers": [
