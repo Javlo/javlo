@@ -7,7 +7,7 @@
 	<a href="#" class="command move" title="move"><i class="bi bi-grip-vertical"></i></a>
 	<div class="item">
 		<span class="name"><input type="text" name="name-${param.id}" class="hidden-input form-control" value="${node.name}" /></span>
-		<div class="collapse">
+		<div class="taxo-detail">
 		<a href="#" class="action close ${node.labelsSize == 0?'empty':node.labelsSize<fn:length(info.contentLanguages)?'incomplete':'complete'}">
 			<i class="bi bi-plus-circle"></i>
 			<i class="bi bi-dash-circle"></i>
@@ -35,3 +35,4 @@
 		</div>
 	</div>
 </div>
+

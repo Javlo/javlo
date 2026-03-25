@@ -78,10 +78,10 @@ jQuery(document).ready(function() {
 	});
 
 	/* ── Toggle translation detail panel ── */
-	jQuery(document).on('click', '.collapse .action', function(e) {
+	jQuery(document).on('click', '.taxo-detail .action', function(e) {
 		e.preventDefault();
 		var $action = jQuery(this);
-		var $panel  = $action.closest('.collapse').find('.translation.bloc');
+		var $panel  = $action.closest('.taxo-detail').find('.translation.bloc');
 		if ($action.hasClass('close')) {
 			$action.removeClass('close').addClass('open');
 			$panel.removeClass('hidden');
