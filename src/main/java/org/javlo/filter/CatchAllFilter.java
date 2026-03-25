@@ -173,15 +173,19 @@ public class CatchAllFilter implements Filter {
 			if (!filePath.contains(".")) {
 				filePath = filePath + "/index.html";
 			}
-			String realPath = sc.getRealPath(filePath);
-			File docFile = realPath != null ? new File(realPath) : null;
-			if (docFile != null && docFile.exists() && docFile.isFile()) {
-				String mimeType = sc.getMimeType(filePath);
-				if (mimeType == null) mimeType = "text/html;charset=UTF-8";
-				httpResponse.setContentType(mimeType);
-				java.nio.file.Files.copy(docFile.toPath(), httpResponse.getOutputStream());
-			} else {
-				httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
+			try (java.io.InputStream docStream = sc.getResourceAsStream(filePath)) {
+				if (docStream != null) {
+					String mimeType = sc.getMimeType(filePath);
+					if (mimeType == null) mimeType = "text/html;charset=UTF-8";
+					httpResponse.setContentType(mimeType);
+					byte[] buf = new byte[8192];
+					int n;
+					while ((n = docStream.read(buf)) != -1) {
+						httpResponse.getOutputStream().write(buf, 0, n);
+					}
+				} else {
+					httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
+				}
 			}
 			return;
 		}
