@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 /**
  * Template management actions — callable via WebAction or AjaxServlet.
  *
@@ -42,6 +44,11 @@ import java.util.logging.Logger;
  *     name  (required) — template name / ID
  *     Commits the template AND all its child templates (descendants).
  *     Returns the list of committed template names.
+ *
+ *   template.download:
+ *     name  (required) — template name / ID
+ *     Returns a zip file containing the entire template source folder.
+ *     Response: application/zip (binary) — NOT a JSON envelope.
  *
  * JSON response (via AjaxServlet): data is placed in ctx.getAjaxData().
  */
@@ -165,6 +172,40 @@ public class TemplateAction implements IAction {
 		ctx.getAjaxData().put("committed", committed);
 		ctx.getAjaxData().put("count", committed.size());
 		logger.info("template.commitAll: committed " + committed.size() + " template(s): " + committed);
+		return null;
+	}
+
+	// -------------------------------------------------------------------------
+	// template.download
+	// Params: name (required)
+	// Writes the template source folder as a zip directly to the HTTP response.
+	// Returns null on success; the response is committed and AjaxServlet skips JSON.
+	// -------------------------------------------------------------------------
+	public static String performDownload(RequestService rs, ContentContext ctx) throws Exception {
+		String name = rs.getParameter("name", null);
+		if (name == null || name.trim().isEmpty()) {
+			return "template.download: missing required parameter 'name'";
+		}
+		name = name.trim();
+
+		Template template = findTemplate(ctx, name);
+		if (template == null) {
+			return "template.download: template not found: " + name;
+		}
+
+		java.io.File folder = template.getFolder();
+		if (!folder.exists() || !folder.isDirectory()) {
+			return "template.download: template folder not found: " + folder.getAbsolutePath();
+		}
+
+		HttpServletResponse response = ctx.getResponse();
+		response.setContentType("application/zip");
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + name + ".zip\"");
+
+		ZipManagement.zipDirectory(response.getOutputStream(), folder.getAbsolutePath(), ctx.getRequest());
+		response.flushBuffer();
+
+		logger.info("template.download: zipped template '" + name + "' from " + folder.getAbsolutePath());
 		return null;
 	}
 

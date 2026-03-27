@@ -140,6 +140,10 @@ public class AjaxServlet extends HttpServlet {
 					strWriter.flush();
 				}
 
+				if (response.isCommitted()) {
+					return; // binary response already written by action (e.g. template.download)
+				}
+
 				response.setContentType("application/json");
 				String jsonResult = strWriter.toString();
 			

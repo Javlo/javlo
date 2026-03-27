@@ -275,7 +275,7 @@
   <nav id="sidebar-nav">
     <a href="#content-action"><i class="bi bi-gear-fill"></i> ContentAction</a>
     <a href="#nav-action"><i class="bi bi-diagram-3"></i> NavAction</a>
-    <a href="#template-action"><i class="bi bi-palette"></i> TemplateAction</a>
+    <a href="#template-action"><i class="bi bi-palette"></i> TemplateAction <span class="type-badge">upload · commit · download</span></a>
     <a href="#authentication"><i class="bi bi-shield-lock"></i> Authentication</a>
     <a href="#response-format"><i class="bi bi-braces-asterisk"></i> Response Format</a>
   </nav>
@@ -508,6 +508,23 @@ curl -X POST http://localhost/javlo2/claude/ajax/fr/ \
     </table>
   </div>
 
+  <div class="api-endpoint">
+    <span class="api-method">GET</span>
+    <span class="api-path">/ajax/{lang}/?webaction=template.download</span>
+    <p style="margin-top:10px;color:var(--javlo-ui-text)">
+      Download the entire source folder of a template as a <strong>zip file</strong>. Unlike the other actions this endpoint returns a binary <code style="font-family:var(--font-mono)">application/zip</code> response, not a JSON envelope.
+    </p>
+    <table class="field-table" style="margin-top:10px">
+      <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td class="fn">name</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Template name or ID to download.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout info" style="margin-top:10px"><i class="bi bi-info-circle"></i> The response <code style="font-family:var(--font-mono)">Content-Disposition</code> header is set to <code style="font-family:var(--font-mono)">attachment; filename="{name}.zip"</code>. On error Javlo falls back to the standard JSON error envelope.</div>
+    <div class="code-block" style="margin-top:10px">curl -OJ "http://localhost/javlo2/claude/ajax/fr/?webaction=template.download&name=my-theme" \
+  -H "Authorization: Bearer YOUR_TOKEN"</div>
+  </div>
+
   <!-- ================================================================ -->
   <!-- SECTION 4 – Authentication                                        -->
   <!-- ================================================================ -->
@@ -628,6 +645,13 @@ webaction=content.add&j_token=YOUR_TOKEN&page=presentation&type=wysiwyg-paragrap
   "committed": ["base-bootstrap", "my-theme", "my-theme-dark"],
   "count": 3
 }</div>
+
+  <h3>template.download → binary</h3>
+  <div class="callout" style="margin-bottom:8px"><i class="bi bi-file-zip"></i> This action returns a raw <code style="font-family:var(--font-mono)">application/zip</code> binary stream, not a JSON envelope. On error it falls back to the standard JSON error response.</div>
+  <div class="code-block">Content-Type: application/zip
+Content-Disposition: attachment; filename="my-theme.zip"
+
+&lt;binary zip data&gt;</div>
 
   <div class="callout danger" style="margin-top:20px"><i class="bi bi-exclamation-triangle"></i> When <code style="font-family:var(--font-mono)">messageType</code> is <code style="font-family:var(--font-mono)">"error"</code> the <code style="font-family:var(--font-mono)">data</code> key is absent. Always check <code style="font-family:var(--font-mono)">messageType</code> before reading <code style="font-family:var(--font-mono)">data</code>.</div>
 
