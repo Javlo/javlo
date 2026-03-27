@@ -791,7 +791,7 @@ public class CatchAllFilter implements Filter {
 				if (realToken != null) {
 					token = realToken;
 				} else {
-					logger.warning("bad one time token : " + token);
+					logger.warning("bad one time token : " + token.length()+ "#");
 				}
 				logger.info("try log with token #="+token.length());
 			}

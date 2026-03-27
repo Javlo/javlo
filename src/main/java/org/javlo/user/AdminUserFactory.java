@@ -231,7 +231,7 @@ public class AdminUserFactory extends UserFactory {
 
 	@Override
 	public User login(HttpServletRequest request, String token) {
-		logger.info("try admin login with token : " + token);
+		logger.info("try admin login with token : " + token.length() + "#");
 		// User outUser = super.login(request, token);
 		User outUser = null;
 		if (!master) {

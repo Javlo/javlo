@@ -4,10 +4,13 @@
       "Bash(grep -n \"TOKEN_PARAM\\\\|getTokenCreateIfNotExist\\\\|verifyToken\" /c/kdrive/work/javlo2/src/main/java/org/javlo/user/*.java)",
       "Read(//c/opt/tomcat10/webapps/javlo2/WEB-INF/data/**)",
       "Read(//e/opt/tomcat10/**)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(\"C:/Users/pvand/AppData/Local/Temp/taxo_output.txt\")"
     ],
     "additionalDirectories": [
-      "c:\\kdrive\\work\\javlo2\\src\\main\\webapp\\doc-javlo"
+      "c:\\kdrive\\work\\javlo2\\src\\main\\webapp\\doc-javlo",
+      "C:\\Users\\pvand\\AppData\\Local\\Temp",
+      "e:\\opt\\tomcat10\\webapps\\javlo2\\WEB-INF\\classes\\org\\javlo\\servlet"
     ]
   },
   "enabledMcpjsonServers": [
