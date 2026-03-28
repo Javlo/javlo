@@ -5,10 +5,18 @@
  * Exposes navigation and content management tools via the Model Context Protocol.
  * Calls the Javlo2 AjaxServlet (/ajax/*) which returns JSON responses.
  *
- * Configuration (environment variables):
+ * Configuration — priority order (highest first):
+ *   1. javlo_connect tool  — set at runtime by a skill or prompt
+ *   2. javlo2.config.json  — file next to this script (gitignored), re-read on every call
+ *   3. Environment variables (lowest priority / fallback)
+ *
+ * Environment variables:
  *   JAVLO_BASE_URL  — base URL of the Javlo2 instance (default: http://localhost/javlo2)
  *   JAVLO_TOKEN     — user token for authentication (sent as Authorization: Bearer header)
  *   JAVLO_LANG      — content language (default: fr)
+ *
+ * javlo2.config.json format (all fields optional):
+ *   { "baseUrl": "https://mysite.com/javlo2", "token": "xxx", "lang": "fr" }
  *
  * Authentication priority (server-side):
  *   1. Authorization: Bearer <token>  (preferred)
@@ -23,15 +31,42 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
+import { readFileSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 
 // ─── Configuration ────────────────────────────────────────────────────────────
 
-const BASE_URL = (process.env.JAVLO_BASE_URL ?? "http://localhost/javlo2").replace(/\/$/, "");
-const TOKEN    = process.env.JAVLO_TOKEN ?? "";
-const LANG     = process.env.JAVLO_LANG  ?? "fr";
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const CONFIG_FILE = join(__dirname, "..", "javlo2.config.json");
 
-// AjaxServlet endpoint — supplies a valid language prefix for ContentContext
-const AJAX_URL = `${BASE_URL}/ajax/${LANG}/`;
+interface JavloConfig {
+  baseUrl?: string;
+  token?:   string;
+  lang?:    string;
+}
+
+/** Read javlo2.config.json next to package.json (silently ignored if absent). */
+function readConfigFile(): JavloConfig {
+  try {
+    return JSON.parse(readFileSync(CONFIG_FILE, "utf8")) as JavloConfig;
+  } catch {
+    return {};
+  }
+}
+
+/** Session override set by the javlo_connect tool (highest priority). */
+let sessionConfig: JavloConfig = {};
+
+/** Resolve active config: session > file > env > defaults. */
+function getConfig(): Required<JavloConfig> {
+  const file = readConfigFile();
+  return {
+    baseUrl: (sessionConfig.baseUrl ?? file.baseUrl ?? process.env.JAVLO_BASE_URL ?? "http://localhost/javlo2").replace(/\/$/, ""),
+    token:   sessionConfig.token   ?? file.token   ?? process.env.JAVLO_TOKEN ?? "",
+    lang:    sessionConfig.lang    ?? file.lang    ?? process.env.JAVLO_LANG  ?? "fr",
+  };
+}
 
 // ─── HTTP helper ──────────────────────────────────────────────────────────────
 
@@ -45,16 +80,18 @@ async function callAction(
   webaction: string,
   params: Record<string, string>
 ): Promise<Record<string, unknown>> {
+  const { baseUrl, token, lang } = getConfig();
+  const ajaxUrl = `${baseUrl}/ajax/${lang}/`;
   const body = new URLSearchParams({ webaction, ...params });
 
   const headers: Record<string, string> = {
     "Content-Type": "application/x-www-form-urlencoded",
   };
-  if (TOKEN) {
-    headers["Authorization"] = `Bearer ${TOKEN}`;
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const res = await fetch(AJAX_URL, {
+  const res = await fetch(ajaxUrl, {
     method:  "POST",
     headers,
     body:    body.toString(),
@@ -83,6 +120,29 @@ const server = new McpServer({
   name:    "javlo2",
   version: "2.3.6.1",
 });
+
+// ── Connection tool ───────────────────────────────────────────────────────────
+
+server.registerTool(
+  "javlo_connect",
+  {
+    description: "Définit le serveur Javlo2 et le token d'authentification pour toutes les requêtes suivantes de cette session. Surcharge les variables d'environnement et le fichier javlo2.config.json. Appeler en début de session quand le serveur cible n'est pas localhost.",
+    inputSchema: {
+      baseUrl: z.string().optional().describe("URL de base du serveur Javlo2, ex: 'https://monsite.com/javlo2'. Laisser vide pour réinitialiser."),
+      token:   z.string().optional().describe("Token d'authentification Bearer. Laisser vide pour réinitialiser."),
+      lang:    z.string().optional().describe("Langue du contexte de contenu (défaut: 'fr')."),
+    },
+  },
+  async ({ baseUrl, token, lang }) => {
+    sessionConfig = {
+      ...(baseUrl !== undefined ? { baseUrl } : {}),
+      ...(token   !== undefined ? { token   } : {}),
+      ...(lang    !== undefined ? { lang    } : {}),
+    };
+    const active = getConfig();
+    return ok({ connected: true, baseUrl: active.baseUrl, lang: active.lang, tokenSet: !!active.token });
+  }
+);
 
 // ── Navigation tools ──────────────────────────────────────────────────────────
 
