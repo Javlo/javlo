@@ -911,7 +911,7 @@ public interface IContentVisualComponent extends Comparable<IContentVisualCompon
 	/**
 	 * contributor can select size of column to wrap component
 	 * @param ctx
-	 * @return 0:auto -1:undefined
+		* @return 0:auto -1:undefined
 	 */
 	public boolean isColumnable(ContentContext ctx);
 

@@ -144,19 +144,27 @@ server.registerTool(
   {
     description: "Ajoute un composant sur une page Javlo2.",
     inputSchema: {
-      page:     z.string().describe("ID, nom ou chemin de la page cible"),
-      type:     z.string().describe("Type du composant, ex: 'text', 'title', 'image'"),
-      area:     z.string().describe("Clé de la zone du template, ex: 'main', 'header'"),
-      previous: z.string().optional().describe("ID du composant après lequel insérer ('0' = début, défaut: '0')"),
-      value:    z.string().optional().describe("Valeur initiale du composant (texte brut)"),
-      style:    z.string().optional().describe("Classe CSS de style"),
+      page:        z.string().describe("ID, nom ou chemin de la page cible"),
+      type:        z.string().describe("Type du composant, ex: 'text', 'title', 'image'"),
+      area:        z.string().describe("Clé de la zone du template, ex: 'main', 'header'"),
+      previous:    z.string().optional().describe("ID du composant après lequel insérer ('0' = début, défaut: '0')"),
+      value:       z.string().optional().describe("Valeur initiale du composant (texte brut)"),
+      style:       z.string().optional().describe("Classe CSS de style"),
+      layout:      z.string().optional().describe("Flags de mise en page : l=gauche r=droite c=centre j=justifié b=gras i=italique u=souligné t=barré ; ajouter #font pour la police (ex: 'lcb#Arial')"),
+      renderer:    z.string().optional().describe("Clé du renderer défini dans la config du composant"),
+      columnSize:  z.number().int().optional().describe("Largeur en colonnes de grille (ex: 6 pour demi-largeur sur 12 colonnes)"),
+      columnStyle: z.string().optional().describe("Classe CSS appliquée au wrapper de colonne"),
     },
   },
-  async ({ page, type, area, previous, value, style }) => {
+  async ({ page, type, area, previous, value, style, layout, renderer, columnSize, columnStyle }) => {
     const params: Record<string, string> = { page, type, area };
-    if (previous) params.previous = previous;
-    if (value)    params.value    = value;
-    if (style)    params.style    = style;
+    if (previous    !== undefined) params.previous    = previous;
+    if (value       !== undefined) params.value       = value;
+    if (style       !== undefined) params.style       = style;
+    if (layout      !== undefined) params.layout      = layout;
+    if (renderer    !== undefined) params.renderer    = renderer;
+    if (columnSize  !== undefined) params.columnSize  = String(columnSize);
+    if (columnStyle !== undefined) params.columnStyle = columnStyle;
     const data = await callAction("content.add", params);
     return ok(data);
   }
@@ -165,17 +173,25 @@ server.registerTool(
 server.registerTool(
   "content_edit",
   {
-    description: "Modifie la valeur ou le style d'un composant existant.",
+    description: "Modifie la valeur, le style, le layout, le renderer ou le colonnage d'un composant existant.",
     inputSchema: {
-      id:    z.string().describe("ID du composant à modifier"),
-      value: z.string().optional().describe("Nouvelle valeur brute du composant"),
-      style: z.string().optional().describe("Nouvelle classe CSS de style"),
+      id:          z.string().describe("ID du composant à modifier"),
+      value:       z.string().optional().describe("Nouvelle valeur brute du composant"),
+      style:       z.string().optional().describe("Nouvelle classe CSS de style"),
+      layout:      z.string().optional().describe("Flags de mise en page (voir content_add). Chaîne vide pour effacer."),
+      renderer:    z.string().optional().describe("Clé du renderer. Chaîne vide pour réinitialiser."),
+      columnSize:  z.number().int().optional().describe("Largeur en colonnes de grille (ex: 6 pour demi-largeur sur 12 colonnes)"),
+      columnStyle: z.string().optional().describe("Classe CSS du wrapper de colonne. Chaîne vide pour effacer."),
     },
   },
-  async ({ id, value, style }) => {
+  async ({ id, value, style, layout, renderer, columnSize, columnStyle }) => {
     const params: Record<string, string> = { id };
-    if (value !== undefined) params.value = value;
-    if (style !== undefined) params.style = style;
+    if (value       !== undefined) params.value       = value;
+    if (style       !== undefined) params.style       = style;
+    if (layout      !== undefined) params.layout      = layout;
+    if (renderer    !== undefined) params.renderer    = renderer;
+    if (columnSize  !== undefined) params.columnSize  = String(columnSize);
+    if (columnStyle !== undefined) params.columnStyle = columnStyle;
     const data = await callAction("content.edit", params);
     return ok(data);
   }

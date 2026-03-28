@@ -327,6 +327,10 @@
         <tr><td class="fn">previous</td><td class="ft">String</td><td class="opt">–</td><td class="fd">Component ID after which to insert. <code style="font-family:var(--font-mono)">0</code> = prepend. Default: <code style="font-family:var(--font-mono)">0</code>.</td></tr>
         <tr><td class="fn">value</td><td class="ft">String</td><td class="opt">–</td><td class="fd">Initial value (see component data-structure above).</td></tr>
         <tr><td class="fn">style</td><td class="ft">String</td><td class="opt">–</td><td class="fd">CSS style class for the component.</td></tr>
+        <tr><td class="fn">layout</td><td class="ft">String</td><td class="opt">–</td><td class="fd">Layout flags — combination of: <code style="font-family:var(--font-mono)">l</code>=left <code style="font-family:var(--font-mono)">r</code>=right <code style="font-family:var(--font-mono)">c</code>=center <code style="font-family:var(--font-mono)">j</code>=justify <code style="font-family:var(--font-mono)">b</code>=bold <code style="font-family:var(--font-mono)">i</code>=italic <code style="font-family:var(--font-mono)">u</code>=underline <code style="font-family:var(--font-mono)">t</code>=line-through; append <code style="font-family:var(--font-mono)">#font-family</code> for custom font (e.g. <code style="font-family:var(--font-mono)">lcb#Arial</code>).</td></tr>
+        <tr><td class="fn">renderer</td><td class="ft">String</td><td class="opt">–</td><td class="fd">Renderer key as defined in the component's config file.</td></tr>
+        <tr><td class="fn">columnSize</td><td class="ft">Integer</td><td class="opt">–</td><td class="fd">Grid column width (e.g. <code style="font-family:var(--font-mono)">6</code> for half-width in a 12-column grid).</td></tr>
+        <tr><td class="fn">columnStyle</td><td class="ft">String</td><td class="opt">–</td><td class="fd">CSS class applied to the column wrapper element.</td></tr>
       </tbody>
     </table>
   </div>
@@ -334,13 +338,17 @@
   <div class="api-endpoint">
     <span class="api-method">POST</span>
     <span class="api-path">/ajax/{lang}/?webaction=content.edit</span>
-    <p style="margin-top:10px;color:var(--javlo-ui-text)">Update value and/or style of an existing component.</p>
+    <p style="margin-top:10px;color:var(--javlo-ui-text)">Update value, style, layout, renderer, or column settings of an existing component.</p>
     <table class="field-table" style="margin-top:10px">
       <thead><tr><th>Parameter</th><th>Type</th><th>Req</th><th>Description</th></tr></thead>
       <tbody>
         <tr><td class="fn">id</td><td class="ft">String</td><td class="req">✓</td><td class="fd">Component ID (returned by content.add).</td></tr>
         <tr><td class="fn">value</td><td class="ft">String</td><td class="opt">–</td><td class="fd">New value (replaces existing).</td></tr>
         <tr><td class="fn">style</td><td class="ft">String</td><td class="opt">–</td><td class="fd">New style class.</td></tr>
+        <tr><td class="fn">layout</td><td class="ft">String</td><td class="opt">–</td><td class="fd">New layout flags (same format as content.add). Empty string clears the layout.</td></tr>
+        <tr><td class="fn">renderer</td><td class="ft">String</td><td class="opt">–</td><td class="fd">New renderer key. Empty string resets to default.</td></tr>
+        <tr><td class="fn">columnSize</td><td class="ft">Integer</td><td class="opt">–</td><td class="fd">New grid column width.</td></tr>
+        <tr><td class="fn">columnStyle</td><td class="ft">String</td><td class="opt">–</td><td class="fd">New CSS class for the column wrapper. Empty string clears it.</td></tr>
       </tbody>
     </table>
   </div>
@@ -595,13 +603,17 @@ webaction=content.add&j_token=YOUR_TOKEN&page=presentation&type=wysiwyg-paragrap
 
   <h3>content.add / content.edit / content.move → <code style="font-family:var(--font-mono)">data.component</code></h3>
   <div class="code-block">{
-  "id":       "177435215683329856118",
-  "type":     "wysiwyg-paragraph",
-  "area":     "content",
-  "style":    null,
-  "pageId":   "177434753288331935111",
-  "pagePath": "/presentation",
-  "value":    "&lt;p&gt;Hello&lt;/p&gt;"
+  "id":          "177435215683329856118",
+  "type":        "wysiwyg-paragraph",
+  "area":        "content",
+  "style":       null,
+  "layout":      "lcb#Arial",
+  "renderer":    "default",
+  "columnSize":  "6",
+  "columnStyle": "col-highlight",
+  "pageId":      "177434753288331935111",
+  "pagePath":    "/presentation",
+  "value":       "&lt;p&gt;Hello&lt;/p&gt;"
 }</div>
 
   <h3>content.remove → <code style="font-family:var(--font-mono)">data</code></h3>

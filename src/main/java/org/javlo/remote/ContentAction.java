@@ -3,7 +3,9 @@ package org.javlo.remote;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
 import org.javlo.actions.IAction;
+import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
+import org.javlo.component.core.ComponentLayout;
 import org.javlo.component.core.IContentVisualComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -40,17 +42,25 @@ import java.util.logging.Logger;
  * Parameters per action:
  *
  *   content.add:
- *     page     (required) — id, name or path of the target page
- *     type     (required) — component type (e.g. "text", "title", "image")
- *     area     (required) — template area key
- *     previous (opt)      — id of component after which to insert ("0" = first position)
- *     value    (opt)      — initial raw value
- *     style    (opt)      — CSS style class
+ *     page        (required) — id, name or path of the target page
+ *     type        (required) — component type (e.g. "text", "title", "image")
+ *     area        (required) — template area key
+ *     previous    (opt)      — id of component after which to insert ("0" = first position)
+ *     value       (opt)      — initial raw value
+ *     style       (opt)      — CSS style class
+ *     layout      (opt)      — layout flags: l=left r=right c=center j=justify b=bold i=italic u=underline t=line-through; append #font-family for font (e.g. "lcb#Arial")
+ *     renderer    (opt)      — renderer key (as defined in the component config)
+ *     columnSize  (opt)      — grid column width (integer, e.g. 6 for half-width in a 12-col grid)
+ *     columnStyle (opt)      — CSS class applied to the column wrapper
  *
  *   content.edit:
- *     id       (required) — component id
- *     value    (opt)      — new raw value
- *     style    (opt)      — new style class
+ *     id          (required) — component id
+ *     value       (opt)      — new raw value
+ *     style       (opt)      — new style class
+ *     layout      (opt)      — layout flags (see content.add)
+ *     renderer    (opt)      — renderer key
+ *     columnSize  (opt)      — grid column width (integer)
+ *     columnStyle (opt)      — CSS class for the column wrapper
  *
  *   content.remove:
  *     id       (required) — component id
@@ -91,7 +101,8 @@ public class ContentAction implements IAction {
 	// -------------------------------------------------------------------------
 	// content.add
 	// Params: page (required), type (required), area (required),
-	//         previous (opt, default "0"), value (opt), style (opt)
+	//         previous (opt, default "0"), value (opt), style (opt),
+	//         layout (opt), renderer (opt), columnSize (opt), columnStyle (opt)
 	// -------------------------------------------------------------------------
 	public static String performAdd(RequestService rs, ContentContext ctx, ContentService contentService, PersistenceService persistenceService) throws Exception {
 		String pageRef = rs.getParameter("page", null);
@@ -113,16 +124,36 @@ public class ContentAction implements IAction {
 			return "content.add: page not found: " + pageRef;
 		}
 
-		String previous = rs.getParameter("previous", "0");
-		String value    = rs.getParameter("value", "");
-		String style    = rs.getParameter("style", null);
+		String previous    = rs.getParameter("previous", "0");
+		String value       = rs.getParameter("value", "");
+		String style       = rs.getParameter("style", null);
+		String layout      = rs.getParameter("layout", null);
+		String renderer    = rs.getParameter("renderer", null);
+		String columnSize  = rs.getParameter("columnSize", null);
+		String columnStyle = rs.getParameter("columnStyle", null);
 
 		String newId = contentService.createContent(ctx, page, area, previous, type, value, true);
 
-		if (style != null && !style.trim().isEmpty()) {
-			IContentVisualComponent comp = contentService.getComponent(ctx, newId);
-			if (comp != null) {
+		IContentVisualComponent comp = contentService.getComponent(ctx, newId);
+		if (comp != null) {
+			if (style != null && !style.trim().isEmpty()) {
 				comp.setStyle(ctx, style);
+			}
+			if (layout != null && !layout.trim().isEmpty()) {
+				comp.getComponentBean().setLayout(new ComponentLayout(layout));
+			}
+			if (renderer != null && !renderer.trim().isEmpty()) {
+				comp.setRenderer(ctx, renderer);
+			}
+			if (columnSize != null && !columnSize.trim().isEmpty()) {
+				try {
+					comp.setColumnSize(Integer.parseInt(columnSize.trim()));
+				} catch (NumberFormatException e) {
+					logger.warning("content.add: invalid columnSize value '" + columnSize + "' — ignored");
+				}
+			}
+			if (columnStyle != null) {
+				comp.getComponentBean().setColumnStyle(columnStyle);
 			}
 		}
 
@@ -135,7 +166,8 @@ public class ContentAction implements IAction {
 
 	// -------------------------------------------------------------------------
 	// content.edit
-	// Params: id (required), value (opt), style (opt)
+	// Params: id (required), value (opt), style (opt),
+	//         layout (opt), renderer (opt), columnSize (opt), columnStyle (opt)
 	// -------------------------------------------------------------------------
 	public static String performEdit(RequestService rs, ContentContext ctx, ContentService contentService, PersistenceService persistenceService) throws Exception {
 		String id = rs.getParameter("id", null);
@@ -152,18 +184,50 @@ public class ContentAction implements IAction {
 			return "content.edit: access denied for component: " + id;
 		}
 
+		boolean modified = false;
+
 		String value = rs.getParameter("value", null);
 		if (value != null && !value.equals(comp.getValue(ctx))) {
 			comp.setValue(value);
 			comp.setNeedRefresh(true);
+			modified = true;
 		}
 
 		String style = rs.getParameter("style", null);
 		if (style != null) {
 			comp.setStyle(ctx, style);
+			modified = true;
 		}
 
-		if (comp.isModify()) {
+		String layout = rs.getParameter("layout", null);
+		if (layout != null) {
+			comp.getComponentBean().setLayout(layout.trim().isEmpty() ? null : new ComponentLayout(layout));
+			modified = true;
+		}
+
+		String renderer = rs.getParameter("renderer", null);
+		if (renderer != null) {
+			comp.setRenderer(ctx, renderer.trim().isEmpty() ? null : renderer);
+			modified = true;
+		}
+
+		String columnSize = rs.getParameter("columnSize", null);
+		if (columnSize != null && !columnSize.trim().isEmpty()) {
+			try {
+				comp.setColumnSize(Integer.parseInt(columnSize.trim()));
+				modified = true;
+			} catch (NumberFormatException e) {
+				logger.warning("content.edit: invalid columnSize value '" + columnSize + "' — ignored");
+			}
+		}
+
+		String columnStyle = rs.getParameter("columnStyle", null);
+		if (columnStyle != null) {
+			comp.getComponentBean().setColumnStyle(columnStyle);
+			modified = true;
+		}
+
+		if (modified || comp.isModify()) {
 			comp.stored();
 		}
 
@@ -332,6 +396,10 @@ public class ContentAction implements IAction {
 		map.put("type", comp.getType());
 		map.put("area", comp.getArea());
 		map.put("style", comp.getStyle());
+		map.put("layout",      comp.getLayout() != null ? comp.getLayout().getLayout() : null);
+		map.put("renderer",    comp.getCurrentRenderer(ctx));
+		map.put("columnSize",  String.valueOf(comp.getColumnSize(ctx)));
+		map.put("columnStyle", comp.getColumnStyle(ctx));
 		if (comp.getPage() != null) {
 			map.put("pageId",   comp.getPage().getId());
 			map.put("pagePath", comp.getPage().getPath());
