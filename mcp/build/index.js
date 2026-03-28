@@ -56,7 +56,7 @@ function ok(data) {
 // ─── MCP Server ───────────────────────────────────────────────────────────────
 const server = new McpServer({
     name: "javlo2",
-    version: "1.0.0",
+    version: "2.3.6.1",
 });
 // ── Navigation tools ──────────────────────────────────────────────────────────
 server.registerTool("nav_add", {
@@ -108,31 +108,55 @@ server.registerTool("content_add", {
         previous: z.string().optional().describe("ID du composant après lequel insérer ('0' = début, défaut: '0')"),
         value: z.string().optional().describe("Valeur initiale du composant (texte brut)"),
         style: z.string().optional().describe("Classe CSS de style"),
+        layout: z.string().optional().describe("Flags de mise en page : l=gauche r=droite c=centre j=justifié b=gras i=italique u=souligné t=barré ; ajouter #font pour la police (ex: 'lcb#Arial')"),
+        renderer: z.string().optional().describe("Clé du renderer défini dans la config du composant"),
+        columnSize: z.number().int().optional().describe("Largeur en colonnes de grille (ex: 6 pour demi-largeur sur 12 colonnes)"),
+        columnStyle: z.string().optional().describe("Classe CSS appliquée au wrapper de colonne"),
     },
-}, async ({ page, type, area, previous, value, style }) => {
+}, async ({ page, type, area, previous, value, style, layout, renderer, columnSize, columnStyle }) => {
     const params = { page, type, area };
-    if (previous)
+    if (previous !== undefined)
         params.previous = previous;
-    if (value)
+    if (value !== undefined)
         params.value = value;
-    if (style)
+    if (style !== undefined)
         params.style = style;
+    if (layout !== undefined)
+        params.layout = layout;
+    if (renderer !== undefined)
+        params.renderer = renderer;
+    if (columnSize !== undefined)
+        params.columnSize = String(columnSize);
+    if (columnStyle !== undefined)
+        params.columnStyle = columnStyle;
     const data = await callAction("content.add", params);
     return ok(data);
 });
 server.registerTool("content_edit", {
-    description: "Modifie la valeur ou le style d'un composant existant.",
+    description: "Modifie la valeur, le style, le layout, le renderer ou le colonnage d'un composant existant.",
     inputSchema: {
         id: z.string().describe("ID du composant à modifier"),
         value: z.string().optional().describe("Nouvelle valeur brute du composant"),
         style: z.string().optional().describe("Nouvelle classe CSS de style"),
+        layout: z.string().optional().describe("Flags de mise en page (voir content_add). Chaîne vide pour effacer."),
+        renderer: z.string().optional().describe("Clé du renderer. Chaîne vide pour réinitialiser."),
+        columnSize: z.number().int().optional().describe("Largeur en colonnes de grille (ex: 6 pour demi-largeur sur 12 colonnes)"),
+        columnStyle: z.string().optional().describe("Classe CSS du wrapper de colonne. Chaîne vide pour effacer."),
     },
-}, async ({ id, value, style }) => {
+}, async ({ id, value, style, layout, renderer, columnSize, columnStyle }) => {
     const params = { id };
     if (value !== undefined)
         params.value = value;
     if (style !== undefined)
         params.style = style;
+    if (layout !== undefined)
+        params.layout = layout;
+    if (renderer !== undefined)
+        params.renderer = renderer;
+    if (columnSize !== undefined)
+        params.columnSize = String(columnSize);
+    if (columnStyle !== undefined)
+        params.columnStyle = columnStyle;
     const data = await callAction("content.edit", params);
     return ok(data);
 });
