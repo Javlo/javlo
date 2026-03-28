@@ -1,6 +1,6 @@
 {
   "name": "javlo2-mcp",
-  "version": "1.0.0",
+  "version": "2.3.6.1",
   "description": "MCP server for Javlo2 navigation and content management",
   "type": "module",
   "bin": {

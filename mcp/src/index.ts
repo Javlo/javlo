@@ -81,7 +81,7 @@ function ok(data: unknown): { content: [{ type: "text"; text: string }] } {
 
 const server = new McpServer({
   name:    "javlo2",
-  version: "1.0.0",
+  version: "2.3.6.1",
 });
 
 // ── Navigation tools ──────────────────────────────────────────────────────────
