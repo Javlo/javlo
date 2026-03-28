@@ -5,10 +5,18 @@
  * Exposes navigation and content management tools via the Model Context Protocol.
  * Calls the Javlo2 AjaxServlet (/ajax/*) which returns JSON responses.
  *
- * Configuration (environment variables):
+ * Configuration — priority order (highest first):
+ *   1. javlo_connect tool  — set at runtime by a skill or prompt
+ *   2. javlo2.config.json  — file next to this script (gitignored), re-read on every call
+ *   3. Environment variables (lowest priority / fallback)
+ *
+ * Environment variables:
  *   JAVLO_BASE_URL  — base URL of the Javlo2 instance (default: http://localhost/javlo2)
  *   JAVLO_TOKEN     — user token for authentication (sent as Authorization: Bearer header)
  *   JAVLO_LANG      — content language (default: fr)
+ *
+ * javlo2.config.json format (all fields optional):
+ *   { "baseUrl": "https://mysite.com/javlo2", "token": "xxx", "lang": "fr" }
  *
  * Authentication priority (server-side):
  *   1. Authorization: Bearer <token>  (preferred)
@@ -22,21 +30,43 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
+import { readFileSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 // ─── Configuration ────────────────────────────────────────────────────────────
-const BASE_URL = (process.env.JAVLO_BASE_URL ?? "http://localhost/javlo2").replace(/\/$/, "");
-const TOKEN = process.env.JAVLO_TOKEN ?? "";
-const LANG = process.env.JAVLO_LANG ?? "fr";
-// AjaxServlet endpoint — supplies a valid language prefix for ContentContext
-const AJAX_URL = `${BASE_URL}/ajax/${LANG}/`;
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const CONFIG_FILE = join(__dirname, "..", "javlo2.config.json");
+/** Read javlo2.config.json next to package.json (silently ignored if absent). */
+function readConfigFile() {
+    try {
+        return JSON.parse(readFileSync(CONFIG_FILE, "utf8"));
+    }
+    catch {
+        return {};
+    }
+}
+/** Session override set by the javlo_connect tool (highest priority). */
+let sessionConfig = {};
+/** Resolve active config: session > file > env > defaults. */
+function getConfig() {
+    const file = readConfigFile();
+    return {
+        baseUrl: (sessionConfig.baseUrl ?? file.baseUrl ?? process.env.JAVLO_BASE_URL ?? "http://localhost/javlo2").replace(/\/$/, ""),
+        token: sessionConfig.token ?? file.token ?? process.env.JAVLO_TOKEN ?? "",
+        lang: sessionConfig.lang ?? file.lang ?? process.env.JAVLO_LANG ?? "fr",
+    };
+}
 async function callAction(webaction, params) {
+    const { baseUrl, token, lang } = getConfig();
+    const ajaxUrl = `${baseUrl}/ajax/${lang}/`;
     const body = new URLSearchParams({ webaction, ...params });
     const headers = {
         "Content-Type": "application/x-www-form-urlencoded",
     };
-    if (TOKEN) {
-        headers["Authorization"] = `Bearer ${TOKEN}`;
+    if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
     }
-    const res = await fetch(AJAX_URL, {
+    const res = await fetch(ajaxUrl, {
         method: "POST",
         headers,
         body: body.toString(),
@@ -57,6 +87,23 @@ function ok(data) {
 const server = new McpServer({
     name: "javlo2",
     version: "2.3.6.1",
+});
+// ── Connection tool ───────────────────────────────────────────────────────────
+server.registerTool("javlo_connect", {
+    description: "Définit le serveur Javlo2 et le token d'authentification pour toutes les requêtes suivantes de cette session. Surcharge les variables d'environnement et le fichier javlo2.config.json. Appeler en début de session quand le serveur cible n'est pas localhost.",
+    inputSchema: {
+        baseUrl: z.string().optional().describe("URL de base du serveur Javlo2, ex: 'https://monsite.com/javlo2'. Laisser vide pour réinitialiser."),
+        token: z.string().optional().describe("Token d'authentification Bearer. Laisser vide pour réinitialiser."),
+        lang: z.string().optional().describe("Langue du contexte de contenu (défaut: 'fr')."),
+    },
+}, async ({ baseUrl, token, lang }) => {
+    sessionConfig = {
+        ...(baseUrl !== undefined ? { baseUrl } : {}),
+        ...(token !== undefined ? { token } : {}),
+        ...(lang !== undefined ? { lang } : {}),
+    };
+    const active = getConfig();
+    return ok({ connected: true, baseUrl: active.baseUrl, lang: active.lang, tokenSet: !!active.token });
 });
 // ── Navigation tools ──────────────────────────────────────────────────────────
 server.registerTool("nav_add", {
@@ -106,7 +153,7 @@ server.registerTool("content_add", {
         type: z.string().describe("Type du composant, ex: 'text', 'title', 'image'"),
         area: z.string().describe("Clé de la zone du template, ex: 'main', 'header'"),
         previous: z.string().optional().describe("ID du composant après lequel insérer ('0' = début, défaut: '0')"),
-        value: z.string().optional().describe("Valeur initiale du composant (texte brut)"),
+        value: z.string().optional().describe("Valeur initiale du composant. Pour les composants dynamiques (DynamicComponent) : format YAML, une entrée par ligne — 'field-name: valeur'. Exemple: 'layout: main\\ntitle_step1: Mon titre\\npunchline: Description'. Les champs disponibles sont définis par 'field.<name>.type' dans le fichier components/<type>.properties du template."),
         style: z.string().optional().describe("Classe CSS de style"),
         layout: z.string().optional().describe("Flags de mise en page : l=gauche r=droite c=centre j=justifié b=gras i=italique u=souligné t=barré ; ajouter #font pour la police (ex: 'lcb#Arial')"),
         renderer: z.string().optional().describe("Clé du renderer défini dans la config du composant"),
@@ -136,7 +183,7 @@ server.registerTool("content_edit", {
     description: "Modifie la valeur, le style, le layout, le renderer ou le colonnage d'un composant existant.",
     inputSchema: {
         id: z.string().describe("ID du composant à modifier"),
-        value: z.string().optional().describe("Nouvelle valeur brute du composant"),
+        value: z.string().optional().describe("Nouvelle valeur du composant. Pour les composants dynamiques : format YAML ('field-name: valeur' par ligne). Voir description de content_add pour le détail."),
         style: z.string().optional().describe("Nouvelle classe CSS de style"),
         layout: z.string().optional().describe("Flags de mise en page (voir content_add). Chaîne vide pour effacer."),
         renderer: z.string().optional().describe("Clé du renderer. Chaîne vide pour réinitialiser."),
@@ -233,13 +280,14 @@ server.registerTool("template_commitAll", {
 });
 // ─── Start ────────────────────────────────────────────────────────────────────
 async function main() {
-    if (!TOKEN) {
+    const { baseUrl, token, lang } = getConfig();
+    if (!token) {
         console.error("[javlo2-mcp] WARNING: JAVLO_TOKEN is not set — requests will likely fail.");
     }
     else {
         console.error("[javlo2-mcp] Auth: Authorization: Bearer header");
     }
-    console.error(`[javlo2-mcp] Connecting to ${BASE_URL} (lang: ${LANG})`);
+    console.error(`[javlo2-mcp] Connecting to ${baseUrl} (lang: ${lang})`);
     const transport = new StdioServerTransport();
     await server.connect(transport);
     console.error("[javlo2-mcp] Server ready.");

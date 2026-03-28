@@ -717,27 +717,35 @@
 <span class="ck">list.topic.path</span>=<span class="cs">topics/all</span></div>
 
   <h3>Renderer — HTML syntax for field access</h3>
-  <p>In a <code>.html</code> renderer, access fields using the template expression syntax:</p>
-  <div class="code-block">&lt;div class="card"&gt;
+  <p>In a <code>.html</code> renderer, access fields using the following expression syntax:</p>
+  <div class="code-block">${field.<span class="ck">&lt;field-type&gt;</span>.<span class="cv">&lt;field-name&gt;</span>.<span class="cs">&lt;accessor&gt;</span>}</div>
+  <ul>
+    <li><strong><code>&lt;field-type&gt;</code></strong> — the value of <code>field.&lt;name&gt;.type</code> in the <code>.properties</code> file (e.g. <code>text</code>, <code>image</code>, <code>wysiwyg-text</code>).</li>
+    <li><strong><code>&lt;field-name&gt;</code></strong> — the field name as defined in <code>field.<em>&lt;name&gt;</em>.type</code> (e.g. <code>title</code>, <code>photo</code>, <code>price</code>).</li>
+    <li><strong><code>&lt;accessor&gt;</code></strong> — what to retrieve from the field (see table below).</li>
+  </ul>
+  <div class="code-block"><span class="cm">&lt;!-- field.title.type=text  →  ${field.text.title.&lt;accessor&gt;} --&gt;</span>
+&lt;div class="card"&gt;
   &lt;h2&gt;${field.<span class="ck">text</span>.<span class="cv">title</span>.<span class="cs">XHTMLValue</span>}&lt;/h2&gt;
   &lt;p class="price"&gt;€ ${field.<span class="ck">number</span>.<span class="cv">price</span>.<span class="cs">XHTMLValue</span>}&lt;/p&gt;
   ${field.<span class="ck">wysiwyg-text</span>.<span class="cv">body</span>.<span class="cs">XHTMLValue</span>}
   &lt;img src="${field.<span class="ck">image</span>.<span class="cv">photo</span>.<span class="cs">url</span>}" alt="${field.<span class="ck">image</span>.<span class="cv">photo</span>.<span class="cs">alt</span>}"&gt;
+  &lt;span&gt;${field.<span class="ck">text</span>.<span class="cv">title</span>.<span class="cs">value</span>}&lt;/span&gt;  <span class="cm">&lt;!-- raw stored value --&gt;</span>
 &lt;/div&gt;</div>
 
   <h3>Field accessors (JSTL / HTML renderer)</h3>
   <table class="field-table">
     <thead><tr><th>Accessor</th><th>Description</th></tr></thead>
     <tbody>
-      <tr><td class="fn">[field].XHTMLValue</td><td class="fd">Fully rendered XHTML output (use in HTML renderers).</td></tr>
-      <tr><td class="fn">[field].viewXHTMLCode</td><td class="fd">Rendered XHTML (use in JSP renderers).</td></tr>
-      <tr><td class="fn">[field].text</td><td class="fd">Plain text value, no HTML tags.</td></tr>
-      <tr><td class="fn">[field].html</td><td class="fd">HTML output.</td></tr>
-      <tr><td class="fn">[field].displayValue</td><td class="fd">Formatted value ready for display.</td></tr>
-      <tr><td class="fn">[field].value</td><td class="fd">Raw stored value.</td></tr>
-      <tr><td class="fn">[field].url</td><td class="fd">URL (for image/file/link fields).</td></tr>
-      <tr><td class="fn">[field].alt</td><td class="fd">Alt text (for image fields).</td></tr>
-      <tr><td class="fn">containerId</td><td class="fd">ID of the component container element.</td></tr>
+      <tr><td class="fn">.value</td><td class="fd">Raw stored value — the exact string saved in the component data. Use when you need the unprocessed value (e.g. a date string, a key from a list, or a URL).</td></tr>
+      <tr><td class="fn">.XHTMLValue</td><td class="fd">Fully rendered XHTML output (use in HTML renderers). Wraps text in the configured tag, applies prefix/suffix, escapes HTML.</td></tr>
+      <tr><td class="fn">.viewXHTMLCode</td><td class="fd">Rendered XHTML (use in JSP renderers).</td></tr>
+      <tr><td class="fn">.text</td><td class="fd">Plain text value, HTML tags stripped.</td></tr>
+      <tr><td class="fn">.html</td><td class="fd">HTML output.</td></tr>
+      <tr><td class="fn">.displayValue</td><td class="fd">Formatted value ready for display (applies date formatting, list label lookup, etc.).</td></tr>
+      <tr><td class="fn">.url</td><td class="fd">URL (for <code>image</code>, <code>file</code>, <code>external-link</code> fields).</td></tr>
+      <tr><td class="fn">.alt</td><td class="fd">Alt text (for <code>image</code> fields).</td></tr>
+      <tr><td class="fn">containerId</td><td class="fd">ID of the component container element (not a field accessor — available directly in the renderer scope).</td></tr>
     </tbody>
   </table>
 

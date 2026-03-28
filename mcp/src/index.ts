@@ -208,7 +208,7 @@ server.registerTool(
       type:        z.string().describe("Type du composant, ex: 'text', 'title', 'image'"),
       area:        z.string().describe("Clé de la zone du template, ex: 'main', 'header'"),
       previous:    z.string().optional().describe("ID du composant après lequel insérer ('0' = début, défaut: '0')"),
-      value:       z.string().optional().describe("Valeur initiale du composant (texte brut)"),
+      value:       z.string().optional().describe("Valeur initiale du composant. Pour les composants dynamiques (DynamicComponent) : format YAML, une entrée par ligne — 'field-name: valeur'. Exemple: 'layout: main\\ntitle_step1: Mon titre\\npunchline: Description'. Les champs disponibles sont définis par 'field.<name>.type' dans le fichier components/<type>.properties du template."),
       style:       z.string().optional().describe("Classe CSS de style"),
       layout:      z.string().optional().describe("Flags de mise en page : l=gauche r=droite c=centre j=justifié b=gras i=italique u=souligné t=barré ; ajouter #font pour la police (ex: 'lcb#Arial')"),
       renderer:    z.string().optional().describe("Clé du renderer défini dans la config du composant"),
@@ -236,7 +236,7 @@ server.registerTool(
     description: "Modifie la valeur, le style, le layout, le renderer ou le colonnage d'un composant existant.",
     inputSchema: {
       id:          z.string().describe("ID du composant à modifier"),
-      value:       z.string().optional().describe("Nouvelle valeur brute du composant"),
+      value:       z.string().optional().describe("Nouvelle valeur du composant. Pour les composants dynamiques : format YAML ('field-name: valeur' par ligne). Voir description de content_add pour le détail."),
       style:       z.string().optional().describe("Nouvelle classe CSS de style"),
       layout:      z.string().optional().describe("Flags de mise en page (voir content_add). Chaîne vide pour effacer."),
       renderer:    z.string().optional().describe("Clé du renderer. Chaîne vide pour réinitialiser."),
@@ -365,12 +365,13 @@ server.registerTool(
 // ─── Start ────────────────────────────────────────────────────────────────────
 
 async function main() {
-  if (!TOKEN) {
+  const { baseUrl, token, lang } = getConfig();
+  if (!token) {
     console.error("[javlo2-mcp] WARNING: JAVLO_TOKEN is not set — requests will likely fail.");
   } else {
     console.error("[javlo2-mcp] Auth: Authorization: Bearer header");
   }
-  console.error(`[javlo2-mcp] Connecting to ${BASE_URL} (lang: ${LANG})`);
+  console.error(`[javlo2-mcp] Connecting to ${baseUrl} (lang: ${lang})`);
 
   const transport = new StdioServerTransport();
   await server.connect(transport);
