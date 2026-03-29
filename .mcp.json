@@ -3,10 +3,10 @@
     "javlo2": {
       "type": "stdio",
       "command": "node",
-      "args": ["c:/kdrive/work/javlo2/mcp/build/index.js"],
+      "args": ["--dns-result-order=ipv4first", "c:/kdrive/work/javlo2/mcp/build/index.js"],
       "env": {
-        "JAVLO_BASE_URL": "http://localhost/javlo2/claude/",
-        "JAVLO_TOKEN": "9j11NQsXpT4-xfVO4IMSZPqO",
+        "JAVLO_BASE_URL": "https://staging.andromede.digital/andromede_claude",
+        "JAVLO_TOKEN": "9kdlWjgFINg-zAdFEniQG6dy",
         "JAVLO_LANG": "fr"
       }
     }

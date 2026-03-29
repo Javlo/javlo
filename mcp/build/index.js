@@ -150,10 +150,10 @@ server.registerTool("content_add", {
     description: "Ajoute un composant sur une page Javlo2.",
     inputSchema: {
         page: z.string().describe("ID, nom ou chemin de la page cible"),
-        type: z.string().describe("Type du composant, ex: 'text', 'title', 'image'"),
+        type: z.string().describe("Type du composant. Types standards : 'heading', 'wysiwyg-paragraph', 'global-image', 'internal-link', 'external-link', 'page-reference'. Types dynamiques définis dans components/<type>.properties du template (ex: 'large-title')."),
         area: z.string().describe("Clé de la zone du template, ex: 'main', 'header'"),
         previous: z.string().optional().describe("ID du composant après lequel insérer ('0' = début, défaut: '0')"),
-        value: z.string().optional().describe("Valeur initiale du composant. Pour les composants dynamiques (DynamicComponent) : format YAML, une entrée par ligne — 'field-name: valeur'. Exemple: 'layout: main\\ntitle_step1: Mon titre\\npunchline: Description'. Les champs disponibles sont définis par 'field.<name>.type' dans le fichier components/<type>.properties du template."),
+        value: z.string().optional().describe("Valeur initiale du composant. Pour les composants dynamiques (DynamicComponent) : format Java Properties, une entrée par ligne — 'field.<name>.value=valeur'. Exemple: 'field.layout.value=main\\nfield.title_step1.value=Mon titre\\nfield.punchline.value=Description'. Pour les champs external-link : 'field.<name>.value.link=https://...' et 'field.<name>.value.label=Texte'. Pour un lien vers une page interne du site : 'field.<name>.value.link=page:#nom-de-la-page#' (jamais une URL /chemin). Les champs disponibles sont définis par 'field.<name>.type' dans le fichier components/<type>.properties du template."),
         style: z.string().optional().describe("Classe CSS de style"),
         layout: z.string().optional().describe("Flags de mise en page : l=gauche r=droite c=centre j=justifié b=gras i=italique u=souligné t=barré ; ajouter #font pour la police (ex: 'lcb#Arial')"),
         renderer: z.string().optional().describe("Clé du renderer défini dans la config du composant"),
@@ -183,7 +183,7 @@ server.registerTool("content_edit", {
     description: "Modifie la valeur, le style, le layout, le renderer ou le colonnage d'un composant existant.",
     inputSchema: {
         id: z.string().describe("ID du composant à modifier"),
-        value: z.string().optional().describe("Nouvelle valeur du composant. Pour les composants dynamiques : format YAML ('field-name: valeur' par ligne). Voir description de content_add pour le détail."),
+        value: z.string().optional().describe("Nouvelle valeur du composant. Pour les composants dynamiques : format Java Properties — 'field.<name>.value=valeur' par ligne. Voir description de content_add pour le détail."),
         style: z.string().optional().describe("Nouvelle classe CSS de style"),
         layout: z.string().optional().describe("Flags de mise en page (voir content_add). Chaîne vide pour effacer."),
         renderer: z.string().optional().describe("Clé du renderer. Chaîne vide pour réinitialiser."),
