@@ -2921,7 +2921,7 @@ public class XHTMLHelper {
 	}
 
 	/**
-	 * replace absolute url by local url (page:#page_name#) if page found.
+	 * replace absolute url by local url (page:page_name) if page found.
 	 *
 	 * @param ctx
 	 * @param html

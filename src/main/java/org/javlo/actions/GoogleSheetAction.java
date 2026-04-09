@@ -1,4 +1,4 @@
-/** 
+/**
  * Created on Aug 13, 2003
  */
 package org.javlo.actions;
@@ -15,6 +15,7 @@ import org.javlo.user.User;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -24,11 +25,7 @@ import java.util.logging.Logger;
  */
 public class GoogleSheetAction implements IAction {
 
-	/**
-	 * create a static logger.
-	 */
 	protected static Logger logger = Logger.getLogger(GoogleSheetAction.class.getName());
-
 
 	@Override
 	public String getActionGroupName() {
@@ -40,26 +37,35 @@ public class GoogleSheetAction implements IAction {
 		return true;
 	}
 
+	/**
+	 * Resolves and validates the credential path for the given project.
+	 * Returns null and logs a warning if the project is not found.
+	 */
+	private static String resolveCredentialPath(ContentContext ctx, String project) {
+		String credentialPath = ctx.getGlobalContext().getCredentialPath(project);
+		if (credentialPath == null) {
+			logger.warning("project not found : " + project);
+		} else {
+			logger.info("project found : " + credentialPath);
+		}
+		return credentialPath;
+	}
+
 	public static String performHtml(RequestService rs, ContentContext ctx, GlobalContext globalContext, NotificationService notif, User user, HttpSession session) throws ParseException, GeneralSecurityException, IOException {
 		String project = rs.getParameter("project");
 		String sheet = rs.getParameter("sheet");
 		String googleId = rs.getParameter("spreadsheetId");
 		String cssClass = rs.getParameter("cssClass");
 
-		logger.info("project : " + project);
-		logger.info("sheet : " + sheet);
-		logger.info("googleId : " + googleId);
+		logger.info("project : " + project + ", sheet : " + sheet + ", googleId : " + googleId);
 
 		if (cssClass == null || cssClass.isEmpty()) {
-			cssClass = "spreadsheet-table"; // valeur par défaut
+			cssClass = "spreadsheet-table";
 		}
 
-		String credentialPath = ctx.getGlobalContext().getCredentialPath(project);
+		String credentialPath = resolveCredentialPath(ctx, project);
 		if (credentialPath == null) {
-			logger.warning("project not found : " + project);
 			return "project not found : " + project;
-		} else {
-			logger.info("project found : " + credentialPath);
 		}
 
 		GoogleSheetService service = new GoogleSheetService(credentialPath, googleId);
@@ -67,8 +73,7 @@ public class GoogleSheetAction implements IAction {
 		HttpServletResponse response = ctx.getResponse();
 		response.setContentType("text/html");
 		response.setCharacterEncoding("UTF-8");
-		String htmlContent = service.readAllAsHTML(sheet, cssClass, ctx.getGlobalContext().getSpecialConfig().isGsheetSecured());
-		response.getWriter().write(htmlContent);
+		response.getWriter().write(service.readAllAsHTML(sheet, cssClass, ctx.getGlobalContext().getSpecialConfig().isGsheetSecured()));
 		response.getWriter().flush();
 		response.getWriter().close();
 		ctx.setStopRendering(true);
@@ -81,16 +86,11 @@ public class GoogleSheetAction implements IAction {
 		String sheet = rs.getParameter("sheet");
 		String googleId = rs.getParameter("spreadsheetId");
 
-		logger.info("project : " + project);
-		logger.info("sheet : " + sheet);
-		logger.info("googleId : " + googleId);
+		logger.info("project : " + project + ", sheet : " + sheet + ", googleId : " + googleId);
 
-		String credentialPath = ctx.getGlobalContext().getCredentialPath(project);
+		String credentialPath = resolveCredentialPath(ctx, project);
 		if (credentialPath == null) {
-			logger.warning("project not found : " + project);
 			return "project not found : " + project;
-		} else {
-			logger.info("project found : " + credentialPath);
 		}
 
 		GoogleSheetService service;
@@ -115,7 +115,6 @@ public class GoogleSheetAction implements IAction {
 		}
 
 		ctx.setStopRendering(true);
-
 		return null;
 	}
 
@@ -126,19 +125,74 @@ public class GoogleSheetAction implements IAction {
 		String cell = rs.getParameter("cell");
 		String value = rs.getParameter("value");
 
-		logger.info("project : "+project);
-		logger.info("sheet : "+sheet);
-		logger.info("googleId : "+googleId);
-		logger.info("cell : "+cell);
-		logger.info("value : "+value);
+		logger.info("project : " + project + ", sheet : " + sheet + ", cell : " + cell + ", value : " + value);
 
-		GoogleSheetService service = new GoogleSheetService(ctx.getGlobalContext().getCredentialPath(project), googleId);
-		
+		String credentialPath = resolveCredentialPath(ctx, project);
+		if (credentialPath == null) {
+			return "project not found : " + project;
+		}
+
+		GoogleSheetService service = new GoogleSheetService(credentialPath, googleId);
+
 		List<List<Object>> values = new LinkedList<>();
 		List<Object> list = new LinkedList<>();
 		list.add(value);
 		values.add(list);
 		service.writeRange(cell, values);
+
+		return null;
+	}
+
+	/**
+	 * Updates a full row in a Google Sheet.
+	 *
+	 * Parameters:
+	 *   project       - credential project name
+	 *   spreadsheetId - Google spreadsheet ID
+	 *   sheet         - sheet tab name
+	 *   row           - 1-based row number to update
+	 *   startColumn   - (optional) starting column letter, default "A"
+	 *   values        - comma-separated list of cell values for the row
+	 *
+	 * Example: sheet=Sheet1, row=3, values=Alice,30,Paris
+	 */
+	public static String performUpdateRow(RequestService rs, ContentContext ctx) throws ParseException, GeneralSecurityException, IOException {
+		String project = rs.getParameter("project");
+		String sheet = rs.getParameter("sheet");
+		String googleId = rs.getParameter("spreadsheetId");
+		String rowParam = rs.getParameter("row");
+		String startColumn = rs.getParameter("startColumn");
+		String valuesParam = rs.getParameter("values");
+
+		logger.info("project : " + project + ", sheet : " + sheet + ", row : " + rowParam + ", values : " + valuesParam);
+
+		if (rowParam == null || rowParam.isEmpty()) {
+			return "missing parameter: row";
+		}
+		if (valuesParam == null || valuesParam.isEmpty()) {
+			return "missing parameter: values";
+		}
+
+		int rowNumber;
+		try {
+			rowNumber = Integer.parseInt(rowParam.trim());
+		} catch (NumberFormatException e) {
+			return "invalid row number: " + rowParam;
+		}
+
+		if (startColumn == null || startColumn.isEmpty()) {
+			startColumn = "A";
+		}
+
+		String credentialPath = resolveCredentialPath(ctx, project);
+		if (credentialPath == null) {
+			return "project not found : " + project;
+		}
+
+		List<Object> rowValues = Arrays.asList((Object[]) valuesParam.split(",", -1));
+
+		GoogleSheetService service = new GoogleSheetService(credentialPath, googleId);
+		service.writeRow(sheet, rowNumber, startColumn, rowValues);
 
 		return null;
 	}

@@ -172,6 +172,19 @@ public class GoogleSheetService {
     }
 
     /**
+     * Write a full row starting at the given column (default "A") on the specified row number (1-based).
+     *
+     * @param sheetName   name of the sheet tab
+     * @param rowNumber   1-based row index
+     * @param startColumn column letter to start from (e.g. "A")
+     * @param values      ordered list of cell values for the row
+     */
+    public void writeRow(String sheetName, int rowNumber, String startColumn, List<Object> values) throws IOException {
+        String range = sheetName + "!" + startColumn + rowNumber;
+        writeRange(range, Collections.singletonList(values));
+    }
+
+    /**
      * Liste toutes les feuilles disponibles dans le spreadsheet
      */
     public List<String> getSheetNames() throws IOException {
