@@ -265,7 +265,7 @@ public class MailingModuleContext extends AbstractModuleContext {
 	}
 
 	public void sendMailing(ContentContext ctx) throws Exception {
-		logger.info("sendMailing - subject: " + subject + " | sender: " + sender + " | groups: " + groups + " | pageId: " + ctx.getCurrentPage().getId() + " | recipients count: " + allRecipients.size() + " | testMailing: " + isTestMailing);
+		logger.info("sendMailing - subject: " + subject + " | sender: " + sender + " | groups: " + groups + " | pageId: " + ctx.getCurrentPage().getId() + " | recipients count: " + allRecipients.size() + " | testMailing: " + isTestMailing + " | currentUser: " + (ctx.getCurrentEditUser() != null ? ctx.getCurrentEditUser().getLogin() : "anonymous"));
 		ContentContext pageCtx = ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE);
 		pageCtx.setAbsoluteURL(true);
 		pageCtx.resetDMZServerInter();
