@@ -6,7 +6,8 @@
       "Read(//e/opt/tomcat10/**)",
       "Bash(python3:*)",
       "Bash(\"C:/Users/pvand/AppData/Local/Temp/taxo_output.txt\")",
-      "Bash(find c:kdriveworkjavlo2mcp -type f -name *.ts -o -name *.js -o -name *.json)"
+      "Bash(find c:kdriveworkjavlo2mcp -type f -name *.ts -o -name *.js -o -name *.json)",
+      "Bash(grep -v \"^$\")"
     ],
     "additionalDirectories": [
       "c:\\kdrive\\work\\javlo2\\src\\main\\webapp\\doc-javlo",

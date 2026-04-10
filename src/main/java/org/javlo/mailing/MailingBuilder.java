@@ -171,6 +171,7 @@ public class MailingBuilder {
 	}
 
 	public void sendMailing(ContentContext ctx) throws Exception {
+		logger.info("sendMailing - subject: " + subject + " | sender: " + sender + " | editorGroups: " + editorGroups + " | visitorGroups: " + visitorGroups + " | recipients count: " + allRecipients.size());
 		ContentContext pageCtx = ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE);
 		pageCtx.setAbsoluteURL(true);
 		Map<String, String> params = new HashMap<String, String>();
@@ -189,6 +190,7 @@ public class MailingBuilder {
 		if (allRecipients.size() == 0) {
 			logger.warning("no recipients for mailing : "+getSubject());
 		} else for (Entry<InternetAddress, String> receiver : allRecipients.entrySet()) {
+			logger.fine("sendMailing - sending to: " + receiver.getKey().getAddress() + " (login: " + receiver.getValue() + ") | pageId: " + pageCtx.getCurrentPage().getId());
 			Mailing m = new Mailing();
 			m.setFrom(new InternetAddress(sender));
 			m.setReceivers(Collections.singleton(receiver.getKey()));
