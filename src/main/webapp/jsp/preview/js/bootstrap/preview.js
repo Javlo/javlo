@@ -1,4 +1,4 @@
-/* preview.js V 2.0.0.8 */
+/* preview.js V 2.0.0.11 */
 
 var PREVIEWLOG = false;
 
@@ -15,13 +15,6 @@ var editPreview = editPreview || {};
 var countDrop = 0;
 
 var EP_NEW_COMPONENT = '<div class="_ep_new-component-zone"><span></span></div>';
-
-if (!String.prototype.startsWith) {
-	String.prototype.startsWith = function(searchString, position) {
-		position = position || 0;
-		return this.indexOf(searchString, position) === position;
-	};
-}
 
 +function($, jQuery, pjq) {
 	editPreview.uploadScreenshot = function(canvas) {
@@ -130,7 +123,6 @@ if (!String.prototype.startsWith) {
 			var comp = pjq(item);
 			if (comp.hasClass("repeated")) {
 				layer.addClass("repeated");
-				console.log("repeated");
 				layer.find(".btn-delete").addClass("hidden");
 			}
 			if (comp.hasClass("mirror-wrapped")) {
@@ -155,12 +147,23 @@ if (!String.prototype.startsWith) {
 			if (drop) {
 				comp.after(EP_NEW_COMPONENT);
 			} else {
-				if (item.getAttribute("data-name") != null && item.getAttribute("data-name").length > 0) {
-					pjq("#preview-layer h4").html(item.getAttribute("data-name"));
-					pjq("#preview-layer").removeClass("nocommand");
-				} else {
+				if (item.classList.contains("free-edit-zone")) {
 					pjq("#preview-layer h4").html(i18n_first_component);
 					pjq("#preview-layer").addClass("nocommand");
+				} else {
+					var compName = item.getAttribute("data-name");
+					if (compName != null && compName.length > 0) {
+						pjq("#preview-layer h4").html(compName);
+						pjq("#preview-layer").removeClass("nocommand");
+					} else {
+						var compType = item.getAttribute("data-type");
+						if (compType != null && compType.length > 0) {
+							pjq("#preview-layer h4").text(compType);
+						} else {
+							pjq("#preview-layer h4").text("");
+						}
+						pjq("#preview-layer").addClass("nocommand");
+					}
 				}
 				layer.css("z-index", 10010);
 				layer.show();
@@ -355,7 +358,6 @@ if (!String.prototype.startsWith) {
 		} else {
 			return null;
 		}
-		return null;
 	}
 
 	editPreview.heightToBottom = function(inItem) {
@@ -417,7 +419,7 @@ if (!String.prototype.startsWith) {
 	function handleDragLeave(e) {
 		dragOverBody = false;
 		var globalItem = this;
-		setInterval(function() { globalItem.classList.remove('_dragover'); }, 4000);
+		setTimeout(function() { globalItem.classList.remove('_dragover'); }, 4000);
 	}
 
 	editPreview.initPreview = function() {
@@ -437,10 +439,6 @@ if (!String.prototype.startsWith) {
 			}
 			editPreview.openModal(text, $(this).attr('href'));
 			return false;
-		});
-
-		pjq('.slow-hide').on('662', function() {
-			pjq(this).delay(5000).fadeOut(500);
 		});
 
 		pjq('.slow-hide').delay(5000).fadeOut(500);
@@ -469,7 +467,6 @@ if (!String.prototype.startsWith) {
 				while (layer.id != 'preview-layer') {
 					layer = layer.parentElement;
 				}
-				console.log(layer);
 				var compId = pjq(layer).data("comp").attr("id").substring(3);
 				var editURL = editPreviewURL + "&comp_id=" + compId;
 				var url = location.href, idx = url.indexOf("#")
@@ -649,8 +646,8 @@ if (!String.prototype.startsWith) {
 					if (area === null) {
 						if (PREVIEWLOG) {
 							console.log("break drop because area null.");
-							return;
 						}
+						return false;
 					}
 
 					event.preventDefault();
@@ -908,9 +905,10 @@ if (!String.prototype.startsWith) {
 						var fd = new FormData();
 						var fieldName = pjq(this).data("fieldname");
 						if (fieldName == null) {
-							filedName = "files";
+							fieldName = "files";
 						}
 						var sameName = false;
+						var i = 0;
 						pjq.each(event.dataTransfer.files, function(index, file) {
 							if (i == 0) {
 								fd.append(fieldName, file);
@@ -1091,9 +1089,10 @@ if (!String.prototype.startsWith) {
 					var fd = new FormData();
 					var fieldName = pjq(this).data("fieldname");
 					if (fieldName == null) {
-						filedName = "files";
+						fieldName = "files";
 					}
 					var sameName = false;
+					var i = 0;
 					pjq.each(event.dataTransfer.files, function(index, file) {
 						if (i == 0) {
 							fd.append(fieldName, file);
@@ -1162,7 +1161,7 @@ if (!String.prototype.startsWith) {
 		var firstText = text.substring(0, pos);
 		var secondText = text.substring(pos, text.length);
 
-		for (i = stackTags.length - 1; i >= 0; i--) {
+		for (var i = stackTags.length - 1; i >= 0; i--) {
 			firstText = firstText + "</" + stackTags[i] + ">";
 			secondText = "<" + stackTags[i] + ">" + secondText;
 		}
@@ -1340,7 +1339,7 @@ if (!String.prototype.startsWith) {
 		}).always(function() {
 			editPreview.stopAjax();
 		});
-		setInterval(function() { editPreview.updateImg() }, 300);
+		setTimeout(function() { editPreview.updateImg() }, 300);
 	}
 	function scrollToMe() {
 		editPreview.scrollToItem(pjq(".scroll-to-me"));
@@ -1450,10 +1449,6 @@ if (!String.prototype.startsWith) {
 	editPreview.onReadyFunction = function() {
 
 		editPreview.startAjax();
-
-		pjq(document).on("change", ".js-change-submit select", function() {
-			pjq(this.form).trigger("submit");
-		});
 
 		pjq(document).on("change", ".js-change-submit select", function() {
 			pjq(this.form).trigger("submit");
@@ -2689,6 +2684,7 @@ function initJvCollapse() {
 		let targetItem = document.querySelector(i.getAttribute("data-jv-target"));
 		if (targetItem == null) {
 			console.log("initJvCollapse target not found : " + i.getAttribute("data-jv-target"));
+			return;
 		}
 		targetItem.classList.add("_jv_hidden");
 		i.onclick = function(e) {

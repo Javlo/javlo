@@ -12,7 +12,8 @@
     "additionalDirectories": [
       "c:\\kdrive\\work\\javlo2\\src\\main\\webapp\\doc-javlo",
       "C:\\Users\\pvand\\AppData\\Local\\Temp",
-      "e:\\opt\\tomcat10\\webapps\\javlo2\\WEB-INF\\classes\\org\\javlo\\servlet"
+      "e:\\opt\\tomcat10\\webapps\\javlo2\\WEB-INF\\classes\\org\\javlo\\servlet",
+      "e:\\opt\\tomcat10\\webapps\\javlo2\\jsp\\preview\\js\\bootstrap"
     ]
   },
   "enabledMcpjsonServers": [
