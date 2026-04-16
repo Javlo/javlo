@@ -71,6 +71,8 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
     private static final Object LOCK_SUBMIT = new Object();
 
+    private static final char EXCEL_LIST_SEPARATOR = ',';
+
     private Properties bundle;
 
     private Integer countCache = null;
@@ -893,7 +895,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
                             String label = StringHelper.neverEmpty(cells[i][1].getValue(), "");
                             String type = StringHelper.neverEmpty(cells[i][2].getValue(), "");
                             String cond = StringHelper.neverEmpty(cells[i][3].getValue(), "");
-                            String list = StringHelper.neverEmpty(cells[i][4].getValue(), "").replace(',', '\n');
+                            String list = StringHelper.neverEmpty(cells[i][4].getValue(), "").replace(EXCEL_LIST_SEPARATOR, '\n');
                             String regList = StringHelper.neverEmpty(cells[i][5].getValue(), "");
                             // public Field(String name, String label, String type, String role, String
                             // condition, String value, String list, String registeredList, int order, int
@@ -2058,7 +2060,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
             y++;
             cells[x][y] = new Cell(field.getCondition(), null, cells, x, y);
             y++;
-            cells[x][y] = new Cell(StringHelper.collectionToString(field.getList(), ","), null, cells, x, y);
+            cells[x][y] = new Cell(StringHelper.collectionToString(field.getList(), ""+EXCEL_LIST_SEPARATOR), null, cells, x, y);
             y++;
             cells[x][y] = new Cell(field.getRegisteredList(), null, cells, x, y);
             y++;
