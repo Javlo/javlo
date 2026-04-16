@@ -71,7 +71,7 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
 
     private static final Object LOCK_SUBMIT = new Object();
 
-    private static final char EXCEL_LIST_SEPARATOR = ',';
+    private static final char EXCEL_LIST_SEPARATOR = '|';
 
     private Properties bundle;
 
