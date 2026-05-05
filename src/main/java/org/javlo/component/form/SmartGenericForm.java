@@ -1354,7 +1354,6 @@ public class SmartGenericForm extends AbstractVisualComponent implements IAction
         Map<String, String> result = new LinkedHashMap<String, String>();
         List<String> errorFields = new LinkedList<String>();
 
-
         Map<String, String> adminMailData = new LinkedHashMap<String, String>();
         Map<String, String> userMailData = new LinkedHashMap<String, String>();
         String errorFieldList = " (";

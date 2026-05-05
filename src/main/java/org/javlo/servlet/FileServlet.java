@@ -9,6 +9,7 @@ import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.JsonHelper;
+import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.io.SessionFolder;
 import org.javlo.user.AdminUserSecurity;
@@ -149,27 +150,28 @@ public class FileServlet extends HttpServlet {
 			return;
 		}
 
-		/* security */
+		/* security: enforce StaticInfo read roles when resources are secured */
 		if (StaticConfig.getInstance(request.getSession()).isResourcesSecured() && !(this instanceof ImageTransformServlet)) {
 			try {
 				ContentContext ctx = ContentContext.getContentContext(request, response);
 				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
 				List<String> roles = staticInfo.getReadRoles(ctx);
-				if (roles.size() > 0) {
+				if (roles != null && roles.size() > 0) {
 					User user = UserFactory.createUserFactory(request).getCurrentUser(globalContext, request.getSession());
-					if (user == null) {
-						logger.warning("no access to : " + file + "  (roles:" + StringHelper.collectionToString(roles, ",") + ')');
-						response.sendError(HttpServletResponse.SC_FORBIDDEN);
-						return;
-					} else {
-						if (!AdminUserSecurity.getInstance().canRole(user, AdminUserSecurity.CONTENT_ROLE)) {
-							Set<String> userRoles = user.getRoles();
-							userRoles.retainAll(roles);
-							if (userRoles.size() == 0) {
-								logger.warning("user:" + user.getLogin() + " have no access to : " + file);
-								response.sendError(HttpServletResponse.SC_FORBIDDEN);
-								return;
-							}
+					String accessToken = request.getParameter(ImageTransformServlet.RESOURCE_TOKEN_KEY);
+					boolean bypass = user != null && AdminUserSecurity.getInstance().canRole(user, AdminUserSecurity.CONTENT_ROLE);
+
+					if (!bypass && !Boolean.TRUE.equals(staticInfo.canRead(ctx, user, accessToken))) {
+
+						logger.warning("access denied to : " + file + " (roles:" + StringHelper.collectionToString(roles, ",") + ", user:" + (user != null ? user.getLogin() : "anonymous") + ")");
+						
+						if (StaticConfig.getInstance(getServletContext()).getResourceForwardLoginURL() != null) {
+							NetHelper.setAfterLoginRedirect(request.getSession(), request.getRequestURI());						
+							response.sendRedirect(StaticConfig.getInstance(getServletContext()).getResourceForwardLoginURL() + "?redirect=" + request.getRequestURI());
+							return;
+						} else {						
+							response.sendError(HttpServletResponse.SC_FORBIDDEN);
+							return;
 						}
 					}
 				}

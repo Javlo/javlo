@@ -1214,6 +1214,10 @@ public class StaticConfig extends Observable {
 	public String getSMTPUser() {
 		return properties.getString(SMTP_USER_PARAM, null);
 	}
+
+	public String getResourceForwardLoginURL() {
+		return properties.getString("security.forward-login-url", null);
+	}
 	
 	public List<IMacro> getSpecialMacros() {
 		List<IMacro> specialMacro = new LinkedList<IMacro>();

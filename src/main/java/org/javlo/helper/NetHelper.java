@@ -7,6 +7,7 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import net.sf.uadetector.ReadableUserAgent;
 import net.sf.uadetector.UserAgentStringParser;
 import net.sf.uadetector.UserAgentType;
@@ -1980,6 +1981,20 @@ public class NetHelper {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return true;
+		}
+	}
+
+	public static void setAfterLoginRedirect(HttpSession session, String url) {
+		session.setAttribute("afterLoginRedirect", url);
+	}
+
+	public static String getAfterLoginRedirect(HttpSession session) {
+		Object obj = session.getAttribute("afterLoginRedirect");
+		if (obj != null) {
+			session.removeAttribute("afterLoginRedirect");
+			return obj.toString();
+		} else {
+			return null;
 		}
 	}
 
