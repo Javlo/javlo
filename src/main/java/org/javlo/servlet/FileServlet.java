@@ -11,6 +11,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.JsonHelper;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.io.SessionFolder;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
@@ -169,9 +170,11 @@ public class FileServlet extends HttpServlet {
 						
 						if (globalContext.getSpecialConfig().getResourceForwardLoginURL() != null) {
 							logger.info("request.getRequestURI() = "+request.getRequestURI());
-							logger.info("globalContext.getSpecialConfig().getResourceForwardLoginURL() = "+globalContext.getSpecialConfig().getResourceForwardLoginURL());
+							String url = globalContext.getSpecialConfig().getResourceForwardLoginURL();
+							url = URLHelper.addParam(url, NetHelper.FORWARD_URL_AFTER_LOGIN_PARAM, request.getRequestURI());
+							logger.info("forward url after login = "+url);
 							NetHelper.setAfterLoginRedirect(request.getSession(), request.getRequestURI());
-							System.out.println("######### FileServlet NetHelper.getAfterLoginRedirect(httpRequest.getSession()) = "+NetHelper.getAfterLoginRedirect(request.getSession()));
+							System.out.println("######### FileServlet NetHelper.getAfterLoginRedirect(httpRequest.getSession()) = "+NetHelper.getAfterLoginRedirect(request));
 							response.sendRedirect(globalContext.getSpecialConfig().getResourceForwardLoginURL());
 							return;
 						} else {						

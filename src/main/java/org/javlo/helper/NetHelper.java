@@ -55,6 +55,8 @@ import java.util.zip.CRC32;
 
 public class NetHelper {
 
+	public static final String FORWARD_URL_AFTER_LOGIN_PARAM = "_fwd_url_aft_log";
+
 	public static final String JAVLO_USER_AGENT = "Mozilla/5.0 bot Javlo/" + IVersion.VERSION;
 
 	public static final String MOZILLA_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:63.0) Gecko/20100101 Firefox/63.0";
@@ -1988,10 +1990,15 @@ public class NetHelper {
 		session.setAttribute("afterLoginRedirect", url);
 	}
 
-	public static String getAfterLoginRedirect(HttpSession session) {
-		Object obj = session.getAttribute("afterLoginRedirect");
+	public static String getAfterLoginRedirect(HttpServletRequest request) {
+
+		if (request.getParameter(FORWARD_URL_AFTER_LOGIN_PARAM) != null) {
+			return request.getParameter(FORWARD_URL_AFTER_LOGIN_PARAM);
+		}
+
+		Object obj = request.getSession().getAttribute("afterLoginRedirect");
 		if (obj != null) {
-			session.removeAttribute("afterLoginRedirect");
+			request.getSession().removeAttribute("afterLoginRedirect");
 			return obj.toString();
 		} else {
 			return null;
