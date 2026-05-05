@@ -826,7 +826,7 @@ public class CatchAllFilter implements Filter {
 							} else {
 								if (NetHelper.getAfterLoginRedirect(httpRequest.getSession()) != null) {
 									try {
-										httpResponse.sendRedirect(NetHelper.getAfterLoginRedirect(httpRequest.getSession()));
+										NetHelper.sendRedirectTemporarily(httpResponse, NetHelper.getAfterLoginRedirect(httpRequest.getSession()));
 										return false;
 									} catch (Exception e) {
 										e.printStackTrace();
