@@ -218,5 +218,9 @@ public class SpecialConfigBean {
 		}
 		return switchCountry;
 	}
+
+	public String getResourceForwardLoginURL() {
+		return (String)config.get("security.forward-login-url");
+	}
 	
 }
