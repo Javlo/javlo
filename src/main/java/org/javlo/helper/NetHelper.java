@@ -1992,8 +1992,9 @@ public class NetHelper {
 
 	public static String getAfterLoginRedirect(HttpServletRequest request) {
 
-		if (request.getParameter(FORWARD_URL_AFTER_LOGIN_PARAM) != null) {
-			return request.getParameter(FORWARD_URL_AFTER_LOGIN_PARAM);
+		String url = request.getParameter(FORWARD_URL_AFTER_LOGIN_PARAM);
+		if (url != null) {
+			return url;
 		}
 
 		Object obj = request.getSession().getAttribute("afterLoginRedirect");

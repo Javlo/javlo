@@ -825,12 +825,14 @@ public class CatchAllFilter implements Filter {
 								messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
 							} else {
 
-								System.out.println("######### NetHelper.getAfterLoginRedirect(httpRequest) = "+NetHelper.getAfterLoginRedirect(httpRequest));
+								String url = NetHelper.getAfterLoginRedirect(httpRequest);
 
-								if (NetHelper.getAfterLoginRedirect(httpRequest) != null) {
-									logger.info("NetHelper.getAfterLoginRedirect(httpRequest.getSession()) = "+NetHelper.getAfterLoginRedirect(httpRequest));
+								System.out.println("######### url (getAfterLoginRedirect) = "+url);
+
+								if (url != null) {
+									logger.info("NetHelper.getAfterLoginRedirect(httpRequest.getSession()) = "+url);
 									try {
-										NetHelper.sendRedirectTemporarily(httpResponse, NetHelper.getAfterLoginRedirect(httpRequest));
+										NetHelper.sendRedirectTemporarily(httpResponse, url);
 										return false;
 									} catch (Exception e) {
 										e.printStackTrace();
