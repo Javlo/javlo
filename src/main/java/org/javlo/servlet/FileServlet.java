@@ -170,10 +170,8 @@ public class FileServlet extends HttpServlet {
 						if (globalContext.getSpecialConfig().getResourceForwardLoginURL() != null) {
 							logger.info("request.getRequestURI() = "+request.getRequestURI());
 							logger.info("globalContext.getSpecialConfig().getResourceForwardLoginURL() = "+globalContext.getSpecialConfig().getResourceForwardLoginURL());
-
+							NetHelper.setAfterLoginRedirect(request.getSession(), request.getRequestURI());
 							System.out.println("######### FileServlet NetHelper.getAfterLoginRedirect(httpRequest.getSession()) = "+NetHelper.getAfterLoginRedirect(request.getSession()));
-
-							NetHelper.setAfterLoginRedirect(request.getSession(), request.getRequestURI());						
 							response.sendRedirect(globalContext.getSpecialConfig().getResourceForwardLoginURL());
 							return;
 						} else {						
