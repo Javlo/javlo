@@ -173,7 +173,7 @@ public class FileServlet extends HttpServlet {
 							String url = globalContext.getSpecialConfig().getResourceForwardLoginURL();
 							url = URLHelper.addParam(url, NetHelper.FORWARD_URL_AFTER_LOGIN_PARAM, request.getRequestURI());
 							logger.info("forward url after login = "+url);
-							NetHelper.setAfterLoginRedirect(request.getSession(), request.getRequestURI());
+							NetHelper.setAfterLoginRedirect(request.getSession(), url);
 							System.out.println("######### FileServlet NetHelper.getAfterLoginRedirect(httpRequest.getSession()) = "+NetHelper.getAfterLoginRedirect(request));
 							response.sendRedirect(globalContext.getSpecialConfig().getResourceForwardLoginURL());
 							return;

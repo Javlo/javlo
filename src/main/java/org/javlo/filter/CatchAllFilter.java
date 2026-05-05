@@ -842,7 +842,7 @@ public class CatchAllFilter implements Filter {
 							// (HttpServletResponse) response);
 							// User loggedUser = fact.getCurrentUser(globalContext, ((HttpServletRequest)
 							// request).getSession());
-							// if (ctx.isAjax() && loggedUser != null) {
+							// if (ctx. isAjax() && loggedUser != null) {
 							// ctx.getAjaxData().put("login", login);
 							// ctx.getAjaxData().put("firstname", loggedUser.getUserInfo().getFirstName());
 							// ctx.getAjaxData().put("lastname", loggedUser.getUserInfo().getLastName());
