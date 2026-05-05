@@ -164,10 +164,15 @@ public class FileServlet extends HttpServlet {
 					if (!bypass && !Boolean.TRUE.equals(staticInfo.canRead(ctx, user, accessToken))) {
 
 						logger.warning("access denied to : " + file + " (roles:" + StringHelper.collectionToString(roles, ",") + ", user:" + (user != null ? user.getLogin() : "anonymous") + ")");
+
+						System.out.println("######### globalContext.getSpecialConfig().getResourceForwardLoginURL() = "+globalContext.getSpecialConfig().getResourceForwardLoginURL());
 						
 						if (globalContext.getSpecialConfig().getResourceForwardLoginURL() != null) {
 							logger.info("request.getRequestURI() = "+request.getRequestURI());
 							logger.info("globalContext.getSpecialConfig().getResourceForwardLoginURL() = "+globalContext.getSpecialConfig().getResourceForwardLoginURL());
+
+							System.out.println("######### FileServlet NetHelper.getAfterLoginRedirect(httpRequest.getSession()) = "+NetHelper.getAfterLoginRedirect(request.getSession()));
+
 							NetHelper.setAfterLoginRedirect(request.getSession(), request.getRequestURI());						
 							response.sendRedirect(globalContext.getSpecialConfig().getResourceForwardLoginURL());
 							return;
