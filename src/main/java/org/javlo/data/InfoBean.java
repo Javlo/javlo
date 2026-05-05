@@ -177,16 +177,16 @@ public class InfoBean {
 		if (getFakeCurrentURL() != null) {
 			return getFakeCurrentURL();
 		} else {
-			return URLHelper.createURL(ctx);
+			String url = URLHelper.createURL(ctx);
+			if (ctx.getRequest().getParameter(NetHelper.FORWARD_URL_AFTER_LOGIN_PARAM) != null) {
+				url = URLHelper.addParam(url, NetHelper.FORWARD_URL_AFTER_LOGIN_PARAM, ctx.getRequest().getParameter(NetHelper.FORWARD_URL_AFTER_LOGIN_PARAM));
+			}
+			return url;
 		}
 	}
 	
 	public String getCurrentUrl() throws Exception {
-		if (getFakeCurrentURL() != null) {
-			return getFakeCurrentURL();
-		} else {
-			return URLHelper.createURL(ctx);
-		}
+		return getCurrentURL();
 	}
 
 	public String getVirtualCurrentURL() throws Exception {

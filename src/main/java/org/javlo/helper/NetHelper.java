@@ -1991,12 +1991,13 @@ public class NetHelper {
 	}
 
 	public static String getAfterLoginRedirect(HttpServletRequest request) {
-
 		String url = request.getParameter(FORWARD_URL_AFTER_LOGIN_PARAM);
 		if (url != null) {
+			if (url.contains("//")) {
+				throw new SecurityException("forward is not local url");
+			}
 			return url;
 		}
-
 		Object obj = request.getSession().getAttribute("afterLoginRedirect");
 		if (obj != null) {
 			request.getSession().removeAttribute("afterLoginRedirect");

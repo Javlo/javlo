@@ -824,11 +824,7 @@ public class CatchAllFilter implements Filter {
 								MessageRepository messageRepository = MessageRepository.getInstance(((HttpServletRequest) request));
 								messageRepository.setGlobalMessage(new GenericMessage(msg, GenericMessage.ERROR));
 							} else {
-
 								String url = NetHelper.getAfterLoginRedirect(httpRequest);
-
-								System.out.println("######### url (getAfterLoginRedirect) = "+url);
-
 								if (url != null) {
 									logger.info("NetHelper.getAfterLoginRedirect(httpRequest.getSession()) = "+url);
 									try {
