@@ -613,6 +613,11 @@ public abstract class ElementaryURLHelper {
 		if (ctx.isPreviewOnly()) {
 			url = addParam(url, ContentContext.PREVIEW_ONLY_MODE, "true");
 		}
+
+		if (ctx.getRequest().getParameter(NetHelper.FORWARD_URL_AFTER_LOGIN_PARAM) != null) {
+			url = URLHelper.addParam(url, NetHelper.FORWARD_URL_AFTER_LOGIN_PARAM, ctx.getRequest().getParameter(NetHelper.FORWARD_URL_AFTER_LOGIN_PARAM));
+		}
+
 		return url;
 	}
 
