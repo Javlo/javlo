@@ -831,6 +831,7 @@ public class CatchAllFilter implements Filter {
 									} catch (Exception e) {
 										e.printStackTrace();
 									}
+								}
 							}
 							ModulesContext.getInstance(httpRequest.getSession(), globalContext).loadModule(httpRequest.getSession(), globalContext);
 							// ContentContext ctx = ContentContext.getContentContext(httpRequest,
