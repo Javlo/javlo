@@ -166,8 +166,10 @@ public class FileServlet extends HttpServlet {
 						logger.warning("access denied to : " + file + " (roles:" + StringHelper.collectionToString(roles, ",") + ", user:" + (user != null ? user.getLogin() : "anonymous") + ")");
 						
 						if (globalContext.getSpecialConfig().getResourceForwardLoginURL() != null) {
+							logger.info("request.getRequestURI() = "+request.getRequestURI());
+							logger.info("globalContext.getSpecialConfig().getResourceForwardLoginURL() = "+globalContext.getSpecialConfig().getResourceForwardLoginURL());
 							NetHelper.setAfterLoginRedirect(request.getSession(), request.getRequestURI());						
-							response.sendRedirect(globalContext.getSpecialConfig().getResourceForwardLoginURL() + "?redirect=" + request.getRequestURI());
+							response.sendRedirect(globalContext.getSpecialConfig().getResourceForwardLoginURL());
 							return;
 						} else {						
 							response.sendError(HttpServletResponse.SC_FORBIDDEN);
