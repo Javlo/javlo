@@ -1,6 +1,7 @@
 package org.javlo.component.users;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.ComponentBean;
@@ -23,6 +24,8 @@ import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 
 import jakarta.mail.internet.InternetAddress;
+import org.javlo.utils.captcha.CloudflareTurnstileVerifier;
+
 import java.io.File;
 import java.util.*;
 
@@ -142,7 +145,27 @@ public class UserLogin extends AbstractPropertiesComponent implements IAction {
 		return null;
 	}
 
-	public static String performRegister(RequestService rs, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+	public static String performRegister(RequestService rs, GlobalContext globalContext, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+
+		if (!StringHelper.isEmpty(globalContext.getSpecialConfig().getCloudflareTurnstileSiteKey())) {
+			String captchaResponse = rs.getParameter("cf-turnstile-response");
+			String username = rs.getParameter("username");
+
+			if (captchaResponse == null || captchaResponse.isEmpty()) {
+				logger.warning("captcha no param response from : "+NetHelper.getIp(ctx.getRequest()));
+				ctx.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST, "add in form: <div class=\"cf-turnstile\" data-sitekey=\"VOTRE_SITE_KEY\"></div>");
+				return "add in form: <div class=\"cf-turnstile\" data-sitekey=\"VOTRE_SITE_KEY\"></div>";
+			}
+
+			if (!CloudflareTurnstileVerifier.verify(globalContext, captchaResponse)) {
+				logger.warning("bad captcha response from : "+NetHelper.getIp(ctx.getRequest()));
+				ctx.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST, "bad captcha");
+				return "bad captcha";
+			}
+
+			logger.info("captcha verified");
+		}
+
 		String login;
 		String email;
 		UserLogin comp = (UserLogin) ComponentHelper.getComponentFromRequest(ctx);
