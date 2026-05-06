@@ -2452,6 +2452,8 @@ public class InfoBean {
 		return new ComponentTypeMap(ctx);
 	}
 
-
+	public String getCloudflareTurnstileSiteKey() {
+		return globalContext.getSpecialConfig().getCloudflareTurnstileSiteKey();
+	}
 
 }

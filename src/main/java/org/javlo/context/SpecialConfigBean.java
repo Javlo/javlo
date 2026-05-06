@@ -222,5 +222,13 @@ public class SpecialConfigBean {
 	public String getResourceForwardLoginURL() {
 		return (String)config.get("security.forward-login-url");
 	}
+
+	public String getCloudflareTurnstileSecretKey() {
+		return (String)config.get("cloudflare.turnstile.secreat-key");
+	}
+
+	public String getCloudflareTurnstileSiteKey() {
+		return (String)config.get("cloudflare.turnstile.site-key");
+	}
 	
 }
