@@ -33,6 +33,38 @@ import java.util.zip.ZipOutputStream;
  */
 public class JavloELFinder extends ELFinder {
 
+	private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(JavloELFinder.class.getName());
+
+	/**
+	 * Server-executable / dangerous extensions refused on upload and zip extraction
+	 * to prevent webshell deployment (.jsp, .war, ...). Compared case-insensitively
+	 * on the raw entry name (handles double-extensions like "shell.jsp.png" too).
+	 */
+	private static final Set<String> FORBIDDEN_EXTENSIONS = new HashSet<>(Arrays.asList(
+			"jsp", "jspx", "jspf", "jsv", "jsw", "jhtml", "jar", "war", "ear",
+			"class", "exe", "sh", "bat", "cmd", "phtml", "php", "php3", "php4",
+			"php5", "phps", "asp", "aspx", "cgi", "pl", "py", "rb"));
+
+	private static boolean hasForbiddenExtension(String name) {
+		if (name == null) {
+			return false;
+		}
+		String lower = name.toLowerCase();
+		// strip trailing slashes (directory entries)
+		while (lower.endsWith("/") || lower.endsWith("\\")) {
+			lower = lower.substring(0, lower.length() - 1);
+		}
+		int slash = Math.max(lower.lastIndexOf('/'), lower.lastIndexOf('\\'));
+		String base = slash >= 0 ? lower.substring(slash + 1) : lower;
+		// check every dot-segment so "shell.jsp.png" or "shell.jsp;.png" is rejected
+		for (String token : base.split("[.;]")) {
+			if (FORBIDDEN_EXTENSIONS.contains(token)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private Map<String, String> MIME_TYPES;
 
 	private final List<ELVolume> volumes;
@@ -257,7 +289,20 @@ public class JavloELFinder extends ELFinder {
 				ZipInputStream zipIn = new ZipInputStream(in);
 				ZipEntry entry = zipIn.getNextEntry();
 				while (entry != null) {
-					File zipFile = ZipManagement.saveFile(application, file.getParentFile().getFile().getAbsolutePath(), entry.getName(), zipIn);
+					if (hasForbiddenExtension(entry.getName())) {
+						logger.warning("zip entry refused (forbidden extension): " + entry.getName());
+						entry = zipIn.getNextEntry();
+						continue;
+					}
+					File zipFile;
+					try {
+						zipFile = ZipManagement.saveFile(application, file.getParentFile().getFile().getAbsolutePath(), entry.getName(), zipIn);
+					} catch (IOException ioe) {
+						// ZipSlip or IO error — skip this entry and keep extracting the rest
+						logger.warning("skipped zip entry: " + entry.getName() + " (" + ioe.getMessage() + ')');
+						entry = zipIn.getNextEntry();
+						continue;
+					}
 					entry = zipIn.getNextEntry();
 					if (zipFile.getParentFile().getAbsolutePath().equals(file.getParentFile().getFile().getAbsolutePath())) { // list only file inside current folder
 						addedFiles.add(new JavloELFile(file.getParentFile().getVolume(), zipFile, file.getParentFile()));
@@ -327,6 +372,10 @@ public class JavloELFinder extends ELFinder {
 			for (FileItem fileItem : filesItem) {
 				File tempFile = new File(fileItem.getName());
 				String newFileName = StringHelper.createFileName(tempFile.getName());
+				if (hasForbiddenExtension(newFileName)) {
+					logger.warning("upload refused (forbidden extension): " + newFileName);
+					continue;
+				}
 				File newFile = new File(URLHelper.mergePath(folder.getFile().getAbsolutePath(), newFileName));
 				InputStream in = fileItem.getInputStream();
 				try {

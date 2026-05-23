@@ -246,8 +246,7 @@ public class ZipManagement {
 	}
 
 	public static File saveFile(ServletContext serveltContext, String dir, String fileName, InputStream in) throws IOException {
-		String fullPath = dir + '/' + fileName;
-		File file = new File(fullPath);
+		File file = resolveSafeZipEntry(dir, fileName);
 		if (fileName.endsWith("/") || fileName.endsWith("\\")) {
 			file.mkdirs();
 		} else {
@@ -262,6 +261,27 @@ public class ZipManagement {
 			} finally {
 				ResourceHelper.closeResource(out);
 			}
+		}
+		return file;
+	}
+
+	/**
+	 * Resolve a zip entry name against a destination directory while guarding against
+	 * path traversal ("ZipSlip"). The canonical path of the resolved file must stay under
+	 * the canonical path of the destination directory; otherwise an IOException is thrown.
+	 */
+	static File resolveSafeZipEntry(String dir, String fileName) throws IOException {
+		if (fileName == null) {
+			throw new IOException("zip entry name is null");
+		}
+		File targetDir = new File(dir).getCanonicalFile();
+		File file = new File(targetDir, fileName).getCanonicalFile();
+		String targetPath = targetDir.getPath();
+		String filePath = file.getPath();
+		if (!filePath.equals(targetPath)
+				&& !filePath.startsWith(targetPath + File.separator)) {
+			logger.warning("zip entry refused (path traversal): " + fileName + " -> " + filePath);
+			throw new IOException("zip entry escapes target directory: " + fileName);
 		}
 		return file;
 	}
@@ -295,7 +315,14 @@ public class ZipManagement {
 		templateFolder = URLHelper.mergePath(templateFolder, templateId);
 
 		while (entry != null) {
-			File file = new File(URLHelper.mergePath(templateFolder, entry.getName()));
+			File file;
+			try {
+				file = resolveSafeZipEntry(templateFolder, entry.getName());
+			} catch (IOException ioe) {
+				// skip malicious entries instead of aborting the whole upload
+				entry = zipIn.getNextEntry();
+				continue;
+			}
 			if ((!file.getAbsolutePath().contains("/CVS")) && (!file.getAbsolutePath().contains("\\CVS"))) {
 				if (!entry.isDirectory()) {
 					file.getParentFile().mkdirs();

@@ -155,12 +155,19 @@ if (!String.prototype.startsWith) {
 			if (drop) {
 				comp.after(EP_NEW_COMPONENT);
 			} else {
-				if (item.getAttribute("data-name") != null && item.getAttribute("data-name").length > 0) {
-					pjq("#preview-layer h4").html(item.getAttribute("data-name"));
-					pjq("#preview-layer").removeClass("nocommand");
-				} else {
+				if (item.classList.contains("free-edit-zone")) {
 					pjq("#preview-layer h4").html(i18n_first_component);
 					pjq("#preview-layer").addClass("nocommand");
+				} else {
+					var dataName = item.getAttribute("data-name");
+					if ((dataName == null || dataName.length === 0)) {
+						var fallback = pjq(item).closest("[data-name]").get(0);
+						if (fallback) {
+							dataName = fallback.getAttribute("data-name");
+						}
+					}
+					pjq("#preview-layer h4").html(dataName != null && dataName.length > 0 ? dataName : "");
+					pjq("#preview-layer").removeClass("nocommand");
 				}
 				layer.css("z-index", 10010);
 				layer.show();

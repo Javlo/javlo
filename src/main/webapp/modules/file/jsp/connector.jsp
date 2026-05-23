@@ -29,6 +29,14 @@ private synchronized JavloELFinder getELFinder(HttpSession session, String root)
 %><%
 ContentContext ctx = ContentContext.getContentContext(request, response);
 GlobalContext globalContext = GlobalContext.getSessionInstance(ctx.getRequest().getSession());
+
+// SECURITY : the file manager exposes upload + zip extraction; deny anonymous access.
+if (ctx.getCurrentEditUser() == null
+		|| !AdminUserSecurity.getInstance().canRole(ctx.getCurrentEditUser(), AdminUserSecurity.CONTENT_ROLE)) {
+	response.sendError(HttpServletResponse.SC_FORBIDDEN);
+	return;
+}
+
 String root;
 if (request.getParameter("changeRoot") == null) {
 	root = FileAction.getContextROOTFolder(ctx);

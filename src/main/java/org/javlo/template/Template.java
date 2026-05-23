@@ -2944,20 +2944,36 @@ public class Template implements Comparable<Template> {
 				logger.warning("no template data for : " + this);
 			}
 
+			final String srcAbs = templateSrc.getAbsolutePath();
+			final Path srcPath = templateSrc.toPath();
+			final Path tgtPath = templateTarget.toPath();
+			final String dynCompPathPrefix = "/" + DYNAMIC_COMPONENTS_PROPERTIES_FOLDER + "/";
+			final boolean compressJsp;
+			final boolean highSecure;
+			if (ctx != null) {
+				StaticConfig ctxStaticConfig = ctx.getGlobalContext().getStaticConfig();
+				compressJsp = ctxStaticConfig.isCompressJsp();
+				highSecure = ctxStaticConfig.isHighSecure();
+			} else {
+				compressJsp = false;
+				highSecure = false;
+			}
+
 			Iterator<File> files = allFiles.iterator();
 			Set<File> createdFolder = new HashSet<File>();
 			while (files.hasNext()) {
 				File file = files.next();
-				File targetFile = new File(file.getAbsolutePath().replace(templateSrc.getAbsolutePath(), templateTarget.getAbsolutePath()));
+				String fileAbs = file.getAbsolutePath();
+				File targetFile = tgtPath.resolve(srcPath.relativize(file.toPath())).toFile();
 
 				if (clear || file.lastModified() > targetFile.lastModified()) {
 					if (!clear) {
 						logger.info("update file " + targetFile);
 						targetFile.delete();
 					}
-					String path = ResourceHelper.removePath(file.getAbsolutePath(), templateSrc.getAbsolutePath());
-					if (!file.getAbsolutePath().contains("/.") && !file.getAbsolutePath().contains("\\.")) { // no copy hidden file and folder
-						if (!parent || importComponents || !path.startsWith('/' + DYNAMIC_COMPONENTS_PROPERTIES_FOLDER + '/')) {
+					String path = ResourceHelper.removePath(fileAbs, srcAbs);
+					if (!fileAbs.contains("/.") && !fileAbs.contains("\\.")) { // no copy hidden file and folder
+						if (!parent || importComponents || !path.startsWith(dynCompPathPrefix)) {
 							File folder = targetFile.getParentFile();
 							if (!createdFolder.contains(folder)) {
 								if (!folder.exists()) {
@@ -2969,13 +2985,8 @@ public class Template implements Comparable<Template> {
 								try {
 									String fileExt = FilenameUtils.getExtension(file.getName());
 									if (FILTER_FILE_EXTENSION.contains(fileExt)) {
-										// if (fileExt.equalsIgnoreCase("css") || fileExt.equalsIgnoreCase("scss") ||
-										// fileExt.equalsIgnoreCase("less") || fileExt.equalsIgnoreCase("sass")) {
-										// appendRawCssFile(globalContext, ResourceHelper.loadStringFromFile(file),
-										// inRawCssFile);
-										// }
 										if (fileExt.equalsIgnoreCase("jsp") || fileExt.equalsIgnoreCase("html")) {
-											ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map, ctx.getGlobalContext().getStaticConfig().isCompressJsp(), ctx.getGlobalContext().getStaticConfig().isHighSecure(), soft);
+											ResourceHelper.filteredFileCopyEscapeScriplet(file, targetFile, map, compressJsp, highSecure, soft);
 											if (fileExt.equalsIgnoreCase("jsp")) {
 												minifyJSP(globalContext, targetFile);
 											}
