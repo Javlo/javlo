@@ -843,7 +843,11 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                 size.incrementAndGet();
             }
         });
-        return size.get() / getGroupSize(ctx, group);
+        int groupSize = getGroupSize(ctx, group);
+        if (groupSize == 0) {
+            return 0;
+        }
+        return size.get() / groupSize;
     }
 
     private int getGroupNumberMaxOrder(ContentContext ctx, String group) throws Exception {
