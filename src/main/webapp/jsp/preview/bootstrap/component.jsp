@@ -74,8 +74,8 @@ function filter(text) {
 <c:set var="cat" value="${i18n.edit[comp.value]}" />
 </c:if><c:if test="${!comp.metaTitle}"
 ><c:set var="toolTipKey" value="content.${comp.type}.description" /><c:set var="toolTip" value="data-toggle=\"tooltip\" data-placement=\"right\" title=\"${i18n.edit[toolTipKey]}\"" />
-<div ${i18n.edit[toolTipKey] != toolTipKey?toolTip:''} class="component${comp.selected?' selected':''} component-${comp.type} complexity-${comp.complexityLevel} business-${comp.dynamicComponent}" data-type="${comp.type}" title="${i18n.edit[cat]} : ${comp.label}">
-<div class="wrapper-in">
+<div ${i18n.edit[toolTipKey] != toolTipKey?toolTip:''} class="component${comp.selected?' selected':''} component-${comp.type} complexity-${comp.complexityLevel} business-${comp.dynamicComponent}${empty comp.visualPreviewURL?'':' has-visual'}" data-type="${comp.type}" title="${i18n.edit[cat]} : ${comp.label}">
+<div class="wrapper-in"<c:if test="${!empty comp.visualPreviewURL}"> style="background-image:url('${comp.visualPreviewURL}');"</c:if>>
 <div class="figure"><i class="${comp.icon}" aria-hidden="true"></i></div>
 <div class="text">
 <span>${comp.label}</span>

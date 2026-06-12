@@ -349,12 +349,30 @@
 							</fieldset>
 						</c:if>
 						<fieldset class="flex-grid">
-							<legend>${i18n.edit['item.title.view-roles']} <label> [ <input type="checkbox" name="userRolesInherited" ${page.userRolesInherited?'checked="checked"':''}  /> inherited ]</label></legend>
-							<c:forEach var="role" items="${info.roles}">
-								<label class="checkbox-inline"> <input type="checkbox" name="user-${role}" id="user-${role}" ${not empty page.roles[role]?'checked="checked"':''} /> ${role}
-								</label>
-							</c:forEach>
+							<legend>${i18n.edit['item.title.view-roles']} <label> [ <input type="checkbox" name="userRolesInherited" id="userRolesInherited" ${page.userRolesInherited?'checked="checked"':''}  /> inherited ]</label></legend>
+							<div class="view-roles-list">
+								<c:forEach var="role" items="${info.roles}">
+									<label class="checkbox-inline"> <input type="checkbox" name="user-${role}" id="user-${role}" ${not empty page.roles[role]?'checked="checked"':''} /> ${role}
+									</label>
+								</c:forEach>
+							</div>
 						</fieldset>
+						<script>
+							(function() {
+								var inheritedCheckbox = document.getElementById("userRolesInherited");
+								var rolesList = document.querySelector(".view-roles-list");
+								function updateViewRolesState() {
+									var disabled = inheritedCheckbox.checked;
+									rolesList.style.opacity = disabled ? "0.4" : "";
+									rolesList.style.pointerEvents = disabled ? "none" : "";
+									rolesList.querySelectorAll("input[type=checkbox]").forEach(function(cb) {
+										cb.disabled = disabled;
+									});
+								}
+								inheritedCheckbox.addEventListener("change", updateViewRolesState);
+								updateViewRolesState();
+							})();
+						</script>
 
 					</c:if>
 
