@@ -334,11 +334,11 @@ public class MailService {
 				try {
 					dkimSigner = new DKIMSigner(dkim.getSigningdomain(), dkim.getSelector(), dkim.getPrivatekey());
 					dkimSigner.setIdentity(sender.getAddress());
-					dkimSigner.setHeaderCanonicalization(Canonicalization.SIMPLE);
+					dkimSigner.setHeaderCanonicalization(Canonicalization.RELAXED);
 					dkimSigner.setBodyCanonicalization(Canonicalization.RELAXED);
-					dkimSigner.setLengthParam(true);
+					dkimSigner.setLengthParam(false);
 					dkimSigner.setSigningAlgorithm(DKIMFactory.getSigningAlgorithm(dkim.getPrivatekey()));
-					dkimSigner.setZParam(true);
+					dkimSigner.setZParam(false);
 					msg = new SMTPDKIMMessage(mailSession, dkimSigner);
 					logger.info("create DKIM message");
 				} catch (Exception e) {
