@@ -502,7 +502,7 @@ public class MailService {
 				ResourceHelper.safeClose(out);
 			}
 		}
-		logger.info("Mail sent to: " + recipientsStr);
+		logger.info("Mail sent to: " + recipientsStr+ " - subject: " + subject+ " - smtp:"+ mailConfig.getSMTPHost());
 		return warningMessage;
 	}
 
