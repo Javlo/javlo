@@ -23,6 +23,7 @@ import com.sun.mail.util.CRLFOutputStream;
 import jakarta.mail.MessagingException;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -338,15 +339,19 @@ public class DKIMSigner {
 		}
 
 		// process body
-		String body = message.getEncodedBody(); 
-		ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
-		CRLFOutputStream crlfos = new CRLFOutputStream(baos); 
-		try { 
-			crlfos.write(body.getBytes()); 
-		} catch (IOException e) { 
-			throw new DKIMSignerException("The body conversion to MIME canonical CRLF line terminator failed", e); 
-		} 
-		body = baos.toString(); 
+		// Use ISO-8859-1 (Latin-1) for all byte<->String conversions so that the
+		// signed body is byte-identical to the transmitted body. The platform
+		// default charset (UTF-8 on recent JVMs) is lossy for raw 8-bit bytes and
+		// produces a body hash that does not match the sent message.
+		String body = message.getEncodedBody();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		CRLFOutputStream crlfos = new CRLFOutputStream(baos);
+		try {
+			crlfos.write(body.getBytes(StandardCharsets.ISO_8859_1));
+		} catch (IOException e) {
+			throw new DKIMSignerException("The body conversion to MIME canonical CRLF line terminator failed", e);
+		}
+		body = new String(baos.toByteArray(), StandardCharsets.ISO_8859_1);
 		
 		try {
 			body = this.bodyCanonicalization.canonicalizeBody(body);
@@ -359,14 +364,14 @@ public class DKIMSigner {
 		}
 
 		// calculate and encode body hash
-		dkimSignature.put("bh", DKIMUtil.base64Encode(this.messageDigest.digest(body.getBytes())));
+		dkimSignature.put("bh", DKIMUtil.base64Encode(this.messageDigest.digest(body.getBytes(StandardCharsets.ISO_8859_1))));
 
 		// create signature
 		String serializedSignature = serializeDKIMSignature(dkimSignature);
 
 		byte[] signedSignature;
 		try {
-			signatureService.update(headerContent.append(this.headerCanonicalization.canonicalizeHeader(DKIMSIGNATUREHEADER, " "+serializedSignature)).toString().getBytes());
+			signatureService.update(headerContent.append(this.headerCanonicalization.canonicalizeHeader(DKIMSIGNATUREHEADER, " "+serializedSignature)).toString().getBytes(StandardCharsets.ISO_8859_1));
 			signedSignature = signatureService.sign();
 		} catch (SignatureException se) {
 			throw new DKIMSignerException("The signing operation by Java security failed", se);

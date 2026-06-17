@@ -129,7 +129,10 @@ public class SMTPDKIMMessage extends SMTPMessage {
 			}
 			osBody.flush();
 		}
-		encodedBody = osBody.toString();
+		// Keep the body byte-for-byte: ISO-8859-1 maps every byte 0x00-0xFF to a
+		// char and back without loss, unlike the platform default charset. This is
+		// required so the signed body hash matches the transmitted body.
+		encodedBody = new String(osBody.toByteArray(), java.nio.charset.StandardCharsets.ISO_8859_1);
 
 		// Second, sign the message
 		String signatureHeaderLine;
