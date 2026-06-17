@@ -17,7 +17,6 @@ import org.javlo.context.GlobalContext;
 import org.javlo.external.agitos.dkim.Canonicalization;
 import org.javlo.external.agitos.dkim.DKIMSigner;
 import org.javlo.external.agitos.dkim.SMTPDKIMMessage;
-import org.javlo.external.agitos.dkim.SigningAlgorithm;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.navigation.MenuElement;
@@ -338,7 +337,7 @@ public class MailService {
 					dkimSigner.setHeaderCanonicalization(Canonicalization.SIMPLE);
 					dkimSigner.setBodyCanonicalization(Canonicalization.RELAXED);
 					dkimSigner.setLengthParam(true);
-					dkimSigner.setSigningAlgorithm(SigningAlgorithm.SHA1withRSA);
+					dkimSigner.setSigningAlgorithm(DKIMFactory.getSigningAlgorithm(dkim.getPrivatekey()));
 					dkimSigner.setZParam(true);
 					msg = new SMTPDKIMMessage(mailSession, dkimSigner);
 					logger.info("create DKIM message");

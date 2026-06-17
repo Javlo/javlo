@@ -649,7 +649,7 @@
 						</div>
 					</div>
 					<label for="mailing-dkimkey">DKIM DNS entry</label>
-					<input class="form-control" type="text" id="mailing-dkimkey" value='${currentContext.dkimSelector}._domainkey           IN TXT    ( "k=rsa; t=s; p=${dkimpublickey}" )' />
+					<input class="form-control" type="text" id="mailing-dkimkey" value='${currentContext.dkimSelector}._domainkey           IN TXT    ( "v=DKIM1; k=rsa; h=${dkimhash}; t=s; p=${dkimpublickey}" )' />
 				</div>
 			</div>
 		</div>

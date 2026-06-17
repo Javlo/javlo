@@ -178,6 +178,7 @@ public class AdminAction extends AbstractModuleAction {
 		}
 
 		request.setAttribute("dkimpublickey", DKIMFactory.getDKIMPublicKey(globalContext));
+		request.setAttribute("dkimhash", DKIMFactory.getDKIMHashAlgorithm(globalContext));
 
 		String currentContextValue = null;
 		if (globalContext.isMaster()) {
