@@ -899,6 +899,132 @@ public class PersistenceService {
 	private static final int MAX_QUOTE_RUN = 40;
 
 	/**
+	 * Streaming filter that collapses any run of more than {@code maxRun} consecutive single-quotes
+	 * down to two ({@code ''}). Used to disarm content corrupted by the StructuredProperties YAML
+	 * quote-doubling bug before the XML parser materialises a hundreds-of-MB text node and OOMs.
+	 * Runs of {@code maxRun} or fewer quotes pass through untouched (legitimate escaped values).
+	 * O(1) memory even for a multi-hundred-MB quote run.
+	 */
+	private static final class QuoteRunCollapsingInputStream extends FilterInputStream {
+		private final int maxRun;
+		private int pendingQuotes = 0;
+		private boolean hasHeld = false;
+		private int heldByte = 0;
+
+		QuoteRunCollapsingInputStream(InputStream in, int maxRun) {
+			super(in);
+			this.maxRun = maxRun;
+		}
+
+		@Override
+		public int read() throws IOException {
+			if (pendingQuotes > 0) {
+				pendingQuotes--;
+				return '\'';
+			}
+			if (hasHeld) {
+				hasHeld = false;
+				return heldByte; // may be -1 (EOF)
+			}
+			int c = in.read();
+			if (c != '\'') {
+				return c;
+			}
+			long run = 1;
+			int term;
+			while ((term = in.read()) == '\'') {
+				run++;
+			}
+			pendingQuotes = (run <= maxRun) ? (int) run : 2;
+			hasHeld = true;
+			heldByte = term;
+			pendingQuotes--; // emit the first quote now
+			return '\'';
+		}
+
+		@Override
+		public int read(byte[] b, int off, int len) throws IOException {
+			if (len == 0) {
+				return 0;
+			}
+			int c = read();
+			if (c == -1) {
+				return -1;
+			}
+			b[off] = (byte) c;
+			int i = 1;
+			for (; i < len; i++) {
+				c = read();
+				if (c == -1) {
+					break;
+				}
+				b[off + i] = (byte) c;
+			}
+			return i;
+		}
+	}
+
+	/** Character-stream counterpart of {@link QuoteRunCollapsingInputStream}. */
+	private static final class QuoteRunCollapsingReader extends FilterReader {
+		private final int maxRun;
+		private int pendingQuotes = 0;
+		private boolean hasHeld = false;
+		private int heldChar = 0;
+
+		QuoteRunCollapsingReader(Reader in, int maxRun) {
+			super(in);
+			this.maxRun = maxRun;
+		}
+
+		@Override
+		public int read() throws IOException {
+			if (pendingQuotes > 0) {
+				pendingQuotes--;
+				return '\'';
+			}
+			if (hasHeld) {
+				hasHeld = false;
+				return heldChar; // may be -1 (EOF)
+			}
+			int c = in.read();
+			if (c != '\'') {
+				return c;
+			}
+			long run = 1;
+			int term;
+			while ((term = in.read()) == '\'') {
+				run++;
+			}
+			pendingQuotes = (run <= maxRun) ? (int) run : 2;
+			hasHeld = true;
+			heldChar = term;
+			pendingQuotes--;
+			return '\'';
+		}
+
+		@Override
+		public int read(char[] b, int off, int len) throws IOException {
+			if (len == 0) {
+				return 0;
+			}
+			int c = read();
+			if (c == -1) {
+				return -1;
+			}
+			b[off] = (char) c;
+			int i = 1;
+			for (; i < len; i++) {
+				c = read();
+				if (c == -1) {
+					break;
+				}
+				b[off + i] = (char) c;
+			}
+			return i;
+		}
+	}
+
+	/**
 	 * Collapse any runaway run of consecutive single-quotes ({@code '}) down to the YAML empty-string
 	 * marker {@code ''}. Such runs are the fingerprint of the historical StructuredProperties YAML
 	 * quote-doubling bug: an affected value could double its single-quotes on every save/render cycle,
@@ -1176,10 +1302,14 @@ public class PersistenceService {
 
 		try {
 			NodeXML firstNode;
+			// Collapse runaway single-quote runs BEFORE parsing: a value corrupted by the historical
+			// StructuredProperties YAML quote-doubling bug can carry hundreds of MB of '' in a single
+			// text node, which would OOM the JVM while the XML parser builds that node. Streaming the
+			// collapse here keeps the parsed node tiny (the repaired value is persisted on next save).
 			if (in instanceof InputStream) {
-				firstNode = XMLFactory.getFirstNode((InputStream) in);
+				firstNode = XMLFactory.getFirstNode(new QuoteRunCollapsingInputStream(new BufferedInputStream((InputStream) in, 1 << 16), MAX_QUOTE_RUN));
 			} else {
-				firstNode = XMLFactory.getFirstNode((Reader) in);
+				firstNode = XMLFactory.getFirstNode(new QuoteRunCollapsingReader(new BufferedReader((Reader) in, 1 << 16), MAX_QUOTE_RUN));
 			}
 
 			NodeXML page = firstNode.getChild("page");
