@@ -1937,6 +1937,66 @@ public class StringHelper {
         return neverNull(inStr, "");
     }
 
+    /** au-delà de ce nombre d'apostrophes consécutives, on considère qu'il s'agit d'une corruption. */
+    public static final int MAX_QUOTE_RUN = 40;
+
+    /**
+     * Effondre toute suite de plus de {@link #MAX_QUOTE_RUN} apostrophes consécutives en {@code ''}.
+     * De telles suites sont la signature du bug historique de doublement des apostrophes dans la
+     * sérialisation YAML de StructuredProperties : une valeur pouvait doubler ses apostrophes à
+     * chaque cycle enregistrement/rendu, atteindre des centaines de Mo et saturer le tas (OOM).
+     * Une valeur correcte ne contient jamais autant d'apostrophes consécutives, donc c'est sans
+     * risque. Ne fait rien (et n'alloue rien) pour un contenu normal.
+     */
+    public static String collapseQuoteRuns(String content) {
+        if (content == null || content.length() <= MAX_QUOTE_RUN) {
+            return content;
+        }
+        // scan rapide : on ne reconstruit la chaîne que si une suite anormale existe réellement
+        int run = 0;
+        boolean corrupted = false;
+        for (int i = 0, n = content.length(); i < n; i++) {
+            if (content.charAt(i) == '\'') {
+                if (++run > MAX_QUOTE_RUN) {
+                    corrupted = true;
+                    break;
+                }
+            } else {
+                run = 0;
+            }
+        }
+        if (!corrupted) {
+            return content;
+        }
+        int n = content.length();
+        // on démarre petit : une valeur corrompue s'effondre en une chaîne minuscule, inutile de
+        // pré-allouer n (ce qui allouerait des centaines de Mo pour le cas même qu'on répare).
+        StringBuilder sb = new StringBuilder(Math.min(n, 1 << 16));
+        int i = 0;
+        while (i < n) {
+            char c = content.charAt(i);
+            if (c == '\'') {
+                int j = i;
+                while (j < n && content.charAt(j) == '\'') {
+                    j++;
+                }
+                int len = j - i;
+                if (len > MAX_QUOTE_RUN) {
+                    sb.append("''");
+                } else {
+                    for (int k = 0; k < len; k++) {
+                        sb.append('\'');
+                    }
+                }
+                i = j;
+            } else {
+                sb.append(c);
+                i++;
+            }
+        }
+        return sb.toString();
+    }
+
     /**
      * transform a string null in a empty String.
      *

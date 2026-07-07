@@ -169,7 +169,11 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
     public void reloadProperties() {
         try {
             if (properties != null) {
-                properties.load(stringToStream(getValue()));
+                // Auto-réparation : effondre une éventuelle suite d'apostrophes emballée (corruption
+                // historique du bug de doublement YAML de StructuredProperties). Sans ça, une valeur
+                // de plusieurs centaines de Mo sature le tas ici même (getValue -> flux -> chaîne).
+                // La valeur assainie sera repersistée au prochain storeProperties().
+                properties.load(stringToStream(StringHelper.collapseQuoteRuns(getValue())));
             }
         } catch (IOException e) {
             e.printStackTrace();
