@@ -50,16 +50,20 @@ public class DebugListening {
 	private ServletContext application;
 
 	public void sendError(ContentContext ctx, StaticConfig staticConfig, Throwable t, String info) {
+		try {
 		HttpServletRequest request = ctx.getRequest();
-		HttpSession session = request.getSession(true);		
+		// never force session creation here : this method can be called while rendering,
+		// after the response has already been committed (out.flush), and getSession(true)
+		// would throw IllegalStateException, masking the real error and crashing the page.
+		HttpSession session = request.getSession(false);
 		if (System.currentTimeMillis() - DELTA_SEND > latestSend) {
 			latestSend = System.currentTimeMillis();
 			GlobalContext globalContext = GlobalContext.getInstance(request);
 			String userName = "undefined";
 			if (session != null) {
 				IUserFactory fact = AdminUserFactory.createUserFactory(globalContext, session);
-				if (fact.getCurrentUser(globalContext, request.getSession()) != null) {
-					userName = fact.getCurrentUser(globalContext, request.getSession()).getName();
+				if (fact.getCurrentUser(globalContext, session) != null) {
+					userName = fact.getCurrentUser(globalContext, session).getName();
 				}
 			}
 			try {
@@ -101,7 +105,7 @@ public class DebugListening {
 
 				if (SEND_ERROR_MAIL) {
 					if (staticConfig.getErrorMailReport() != null) {
-						MailService mailService = MailService.getInstance(new MailConfig(globalContext, StaticConfig.getInstance(request.getSession()), null));
+						MailService mailService = MailService.getInstance(new MailConfig(globalContext, staticConfig, null));
 						mailService.sendMail(new InternetAddress(globalContext.getAdministratorEmail()), new InternetAddress(staticConfig.getErrorMailReport()), subject, adminEmail, true, globalContext.getDKIMBean());
 						logger.warning("SEND ERROR TO ADMINISTRATOR");
 					} else {
@@ -114,8 +118,12 @@ public class DebugListening {
 				//e.printStackTrace();
 			}
 		}
+		} catch (Throwable e) {
+			// an error reporter must never crash its caller : just log and give up.
+			logger.warning("error while sending error report : " + e);
+		}
 	}
-	
+
 	public static void main(String[] args) {
 		Throwable t = new Exception();
 		
@@ -136,7 +144,9 @@ public class DebugListening {
 
 	public void sendError(ContentContext ctx, Throwable t, String info) {
 		if (staticConfig == null) {
-			staticConfig = StaticConfig.getInstance(ctx.getRequest().getSession(true).getServletContext());
+			// use the servlet context directly, not getSession(true), to avoid
+			// IllegalStateException when the response is already committed.
+			staticConfig = StaticConfig.getInstance(ctx.getRequest().getServletContext());
 		}
 		sendError(ctx, staticConfig, t, info);
 	}
