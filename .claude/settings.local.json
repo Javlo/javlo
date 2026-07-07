@@ -24,7 +24,12 @@
       "Bash(find C:/opt/tomcat10/webapps/javlo2/WEB-INF/lib/ -name *.jar -exec sh -c \"jar tf \"\"$1\"\" 2>/dev/null | grep -l \"\"content.jsp\"\" && echo \"\"$1\"\"\" _ {})",
       "Bash(2)",
       "Bash(ls C:/opt/tomcat10/webapps/javlo2/css/edit/*.scss)",
-      "Bash(xargs -I{} ls {})"
+      "Bash(xargs -I{} ls {})",
+      "Bash(time python histo.py)",
+      "Bash(python histo.py)"
+    ],
+    "additionalDirectories": [
+      "c:\\trans\\javlo_dump"
     ]
   }
 }

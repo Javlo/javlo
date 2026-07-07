@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.ResourceHelper;
 import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
@@ -138,7 +139,16 @@ public class StructuredProperties extends Properties {
 			// load string in string
 			String content = ResourceHelper.loadStringFromStream(inStream, Charset.forName(getInternalEncoding()));
 			if (isYAML(content)) {
-				Yaml yaml = new Yaml();
+				// SnakeYAML 2.x enforces a 3MB codepoint limit by default. Javlo content files
+				// can legitimately exceed it; when load() throws for that reason the code used to
+				// fall back to super.load() (java.util.Properties), which parses YAML single-quoted
+				// scalars *literally* (keeping the quotes). On the next storeYaml() SnakeYAML then
+				// re-escapes and DOUBLES every single quote, so each save cycle doubled the quote
+				// run of affected values, exploding them to hundreds of MB and OOMing the JVM.
+				// Raising the limit keeps large files on the correct (symmetric) SnakeYAML path.
+				LoaderOptions loaderOptions = new LoaderOptions();
+				loaderOptions.setCodePointLimit(Integer.MAX_VALUE);
+				Yaml yaml = new Yaml(loaderOptions);
 				try {
 					Map<String, Object> map = yaml.load(content);
 					convertMapToProps("", map, this);
