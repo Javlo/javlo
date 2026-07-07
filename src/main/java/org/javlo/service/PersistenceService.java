@@ -827,6 +827,11 @@ public class PersistenceService {
 			if (content == null) {
 				content = "";
 			}
+			// Self-heal content corrupted by the historical StructuredProperties YAML
+			// quote-doubling bug: a value could accumulate a runaway run of single-quotes
+			// (growing to hundreds of MB and OOMing the JVM on render). Collapse it on load
+			// so the page becomes renderable again; the repaired value is persisted on next save.
+			content = repairQuoteRuns(content, id, type);
 
 			ComponentBean bean = new ComponentBean(type, content, lg);
 
@@ -888,6 +893,67 @@ public class PersistenceService {
 		ComponentBean[] elemContent = new ComponentBean[contentList.size()];
 		contentList.toArray(elemContent);
 		elem.setContent(elemContent);
+	}
+
+	/** any run of single-quotes longer than this is treated as corruption (a valid value never has that many). */
+	private static final int MAX_QUOTE_RUN = 40;
+
+	/**
+	 * Collapse any runaway run of consecutive single-quotes ({@code '}) down to the YAML empty-string
+	 * marker {@code ''}. Such runs are the fingerprint of the historical StructuredProperties YAML
+	 * quote-doubling bug: an affected value could double its single-quotes on every save/render cycle,
+	 * growing to hundreds of MB and exhausting the heap when the page is loaded or rendered.
+	 * A well-formed value never contains dozens of consecutive quotes, so this is safe. Does nothing
+	 * (and allocates nothing) for normal content.
+	 */
+	private static String repairQuoteRuns(String content, String id, String type) {
+		if (content == null || content.length() <= MAX_QUOTE_RUN) {
+			return content;
+		}
+		// fast scan: only rebuild the string if a runaway run actually exists
+		int run = 0;
+		boolean corrupted = false;
+		for (int i = 0, n = content.length(); i < n; i++) {
+			if (content.charAt(i) == '\'') {
+				if (++run > MAX_QUOTE_RUN) {
+					corrupted = true;
+					break;
+				}
+			} else {
+				run = 0;
+			}
+		}
+		if (!corrupted) {
+			return content;
+		}
+		int n = content.length();
+		// start modest: a corrupted value collapses to a tiny result, so pre-sizing to n
+		// would needlessly allocate hundreds of MB for the very case we are repairing.
+		StringBuilder sb = new StringBuilder(Math.min(n, 1 << 16));
+		int i = 0;
+		while (i < n) {
+			char c = content.charAt(i);
+			if (c == '\'') {
+				int j = i;
+				while (j < n && content.charAt(j) == '\'') {
+					j++;
+				}
+				int len = j - i;
+				if (len > MAX_QUOTE_RUN) {
+					sb.append("''");
+				} else {
+					for (int k = 0; k < len; k++) {
+						sb.append('\'');
+					}
+				}
+				i = j;
+			} else {
+				sb.append(c);
+				i++;
+			}
+		}
+		logger.warning("repaired corrupted quote-run in component id=" + id + " type=" + type + " : " + n + " -> " + sb.length() + " chars");
+		return sb.toString();
 	}
 
 	public MenuElement insertPage(ContentContext ctx, NodeXML pageXML, MenuElement parent, Map<MenuElement, String[]> vparentPreparation, String defaultLg, boolean checkName, boolean updateIfExist) throws StructureException, IOException {
