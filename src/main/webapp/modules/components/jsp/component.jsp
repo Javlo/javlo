@@ -49,6 +49,54 @@
 </div>
 </form>
 </div>
+<script type="text/javascript">
+jQuery(function() {
+	var $tabs = jQuery('.tabs.component');
+	if (!$tabs.length) { return; }
+	var $links = $tabs.find('.header-tabs .link');
+	var $panels = $tabs.find('.ui-tabs-panel');
+
+	function activate($link) {
+		var href = $link.attr('href');
+		if (!href || href.charAt(0) !== '#') { return; }
+		var $panel = jQuery(href);
+		if (!$panel.length) { return; }
+		$link.closest('ul').find('li')
+			.removeClass('ui-tabs-selected ui-state-active ui-tabs-active');
+		$link.closest('li').addClass('ui-tabs-selected ui-state-active ui-tabs-active');
+		$panels.hide().addClass('ui-tabs-hide');
+		$panel.show().removeClass('ui-tabs-hide');
+		/* CodeMirror renders with wrong size inside a hidden panel; refresh once visible */
+		$panel.find('.CodeMirror').each(function() {
+			if (this.CodeMirror) { this.CodeMirror.refresh(); }
+		});
+		/* keep the active tab selected after the form is submitted */
+		var form = jQuery('#tabs-form');
+		var action = form.attr('action') || '';
+		if (action.indexOf('#') >= 0) { action = action.substring(0, action.indexOf('#')); }
+		form.attr('action', action + href);
+	}
+
+	$links.on('click', function(e) {
+		e.preventDefault();
+		activate(jQuery(this));
+	});
+
+	/* drop the loading state (originally removed by components_codemirror.js) */
+	$tabs.removeClass('tabloading');
+
+	/* initial tab: url hash, then the pre-selected tab, then the first one */
+	var $initial = jQuery();
+	if (window.location.hash && $panels.filter(window.location.hash).length) {
+		$initial = $links.filter('[href="' + window.location.hash + '"]').first();
+	}
+	if (!$initial.length) {
+		$initial = $tabs.find('li.ui-tabs-selected .link, li.ui-state-active .link').first();
+	}
+	if (!$initial.length) { $initial = $links.first(); }
+	activate($initial);
+});
+</script>
 </div>
 <div class="help-wrapper">
 
