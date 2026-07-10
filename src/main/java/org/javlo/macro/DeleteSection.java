@@ -13,7 +13,7 @@ public class DeleteSection extends AbstractMacro {
 
 	@Override
 	public String getName() {
-		return "delete-same-component";
+		return "delete-section";
 	}
 
 	protected int deleteSection(ContentContext ctx, MenuElement page) throws Exception {
