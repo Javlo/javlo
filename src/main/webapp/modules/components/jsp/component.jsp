@@ -49,27 +49,38 @@
 </div>
 </form>
 </div>
+<style type="text/css">
+	/* Own the panel visibility with !important so jQuery UI's inline display can't override it */
+	.tabs.component .ui-tabs-panel.jv-tab-hidden { display: none !important; }
+	.tabs.component .ui-tabs-panel.jv-tab-shown { display: block !important; }
+</style>
 <script type="text/javascript">
 jQuery(function() {
 	var $tabs = jQuery('.tabs.component');
 	if (!$tabs.length) { return; }
 	var $links = $tabs.find('.header-tabs .link');
 	var $panels = $tabs.find('.ui-tabs-panel');
+	var currentHref = null;
 
-	function activate($link) {
-		var href = $link.attr('href');
-		if (!href || href.charAt(0) !== '#') { return; }
-		var $panel = jQuery(href);
-		if (!$panel.length) { return; }
-		$link.closest('ul').find('li')
-			.removeClass('ui-tabs-selected ui-state-active ui-tabs-active');
-		$link.closest('li').addClass('ui-tabs-selected ui-state-active ui-tabs-active');
-		$panels.hide().addClass('ui-tabs-hide');
-		$panel.show().removeClass('ui-tabs-hide');
+	function apply() {
+		if (!currentHref) { return; }
+		var $panel = jQuery(currentHref);
+		$panels.removeClass('jv-tab-shown').addClass('jv-tab-hidden');
+		$panel.removeClass('jv-tab-hidden').addClass('jv-tab-shown');
 		/* CodeMirror renders with wrong size inside a hidden panel; refresh once visible */
 		$panel.find('.CodeMirror').each(function() {
 			if (this.CodeMirror) { this.CodeMirror.refresh(); }
 		});
+	}
+
+	function activate($link) {
+		var href = $link.attr('href');
+		if (!href || href.charAt(0) !== '#' || !jQuery(href).length) { return; }
+		currentHref = href;
+		$link.closest('ul').find('li')
+			.removeClass('ui-tabs-selected ui-state-active ui-tabs-active');
+		$link.closest('li').addClass('ui-tabs-selected ui-state-active ui-tabs-active');
+		apply();
 		/* keep the active tab selected after the form is submitted */
 		var form = jQuery('#tabs-form');
 		var action = form.attr('action') || '';
@@ -79,6 +90,7 @@ jQuery(function() {
 
 	$links.on('click', function(e) {
 		e.preventDefault();
+		e.stopImmediatePropagation();
 		activate(jQuery(this));
 	});
 
@@ -95,6 +107,11 @@ jQuery(function() {
 	}
 	if (!$initial.length) { $initial = $links.first(); }
 	activate($initial);
+
+	/* jQuery UI .tabs() may init later (on ajaxUpdate) and reset panel display;
+	   re-assert our state after it runs so the class rules stay in control */
+	setTimeout(apply, 100);
+	setTimeout(apply, 500);
 });
 </script>
 </div>
