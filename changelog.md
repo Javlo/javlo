@@ -1039,3 +1039,6 @@ Security in case of vulnerabilities.
 ## [2.3.6] - 24/03/2026
 ### Added
 - MCP + IA API  
+### Modified
+- Security update
+## [2.3.8] - 29/07/2026
