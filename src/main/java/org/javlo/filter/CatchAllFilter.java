@@ -135,6 +135,50 @@ public class CatchAllFilter implements Filter {
 		return builder.toString();
 	}
 
+	/** the only segment starting with a dot that stays reachable */
+	private static final String WELL_KNOWN_SEGMENT = ".well-known";
+
+	/**
+	 * decode a request path up to <code>maxRounds</code> times, stopping as soon
+	 * as it stops changing.
+	 * <p>
+	 * A segment can hide behind several layers of url encoding : %2e is a dot,
+	 * and %252e only becomes %2e once the container has decoded the uri a first
+	 * time. Checking the raw uri alone inspects a representation that nothing
+	 * downstream ever uses.
+	 */
+	private static String decodePath(String path, int maxRounds) {
+		String decoded = path;
+		for (int i = 0; i < maxRounds; i++) {
+			String nextDecoded;
+			try {
+				nextDecoded = URLDecoder.decode(decoded, ContentContext.CHARACTER_ENCODING);
+			} catch (Exception e) {
+				/* malformed escape sequence : keep what could be decoded */
+				break;
+			}
+			if (nextDecoded.equals(decoded)) {
+				break;
+			}
+			decoded = nextDecoded;
+		}
+		return decoded;
+	}
+
+	/**
+	 * true when the path holds a hidden file or directory segment. The
+	 * back-slash is a separator too, java.io.File accepts it on a windows
+	 * server.
+	 */
+	private static boolean containsHiddenSegment(String path) {
+		for (String segment : path.split("[/\\\\]")) {
+			if (segment.startsWith(".") && !segment.equals(WELL_KNOWN_SEGMENT)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain next) throws IOException, ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -145,24 +189,23 @@ public class CatchAllFilter implements Filter {
 		ServletContext servletContext = httpRequest.getServletContext();
 		CountService.getInstance(servletContext).touch();
 
-		// Récupération du chemin de la requête
+		/*
+		 * getRequestURI returns the uri as sent by the client, still encoded :
+		 * the check runs on the raw form and on the fully decoded one, so an
+		 * encoded dot cannot slip through.
+		 */
 		String path = httpRequest.getRequestURI();
+		String decodedPath = decodePath(path, 3);
 
-		// Découpage du chemin en segments
-		String[] pathSegments = path.split("/");
+		/* one round is normal (accented page names), more never is */
+		if (!decodedPath.equals(decodePath(path, 1))) {
+			logger.warning("multi layer encoded path : " + path + " -> " + decodedPath);
+		}
 
-		// Vérification de chaque segment
-		for (String segment : pathSegments) {
-			if (segment.startsWith(".")) {
-				if (!segment.equals(".well-known")) {
-					// Log de l'erreur de sécurité
-					logger.severe("Security error: Attempt to access hidden file or directory.");
-
-					// Renvoi d'une réponse 404
-					httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
-					return; // Arrête le traitement de la requête
-				}
-			}
+		if (containsHiddenSegment(path) || containsHiddenSegment(decodedPath)) {
+			logger.severe("Security error: Attempt to access hidden file or directory : " + path);
+			httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return; // Arrête le traitement de la requête
 		}
 
 		// Bypass CMS processing for static documentation paths

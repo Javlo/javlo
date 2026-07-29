@@ -10,6 +10,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.service.RequestService;
 import org.javlo.service.google.translation.GoogleSheetService;
 import org.javlo.service.notification.NotificationService;
+import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 
 import java.io.IOException;
@@ -118,7 +119,21 @@ public class GoogleSheetAction implements IAction {
 		return null;
 	}
 
+	/**
+	 * the write actions make the server modify a spreadsheet with its own
+	 * service account credentials, on a spreadsheet id chosen by the caller :
+	 * they are reserved to a logged edit user holding the content role. The read
+	 * actions stay open, they are called from public pages.
+	 */
+	private static boolean canWrite(ContentContext ctx) {
+		return ctx.getCurrentEditUser() != null && AdminUserSecurity.getInstance().canRole(ctx.getCurrentEditUser(), AdminUserSecurity.CONTENT_ROLE);
+	}
+
 	public static String performUpdateCell(RequestService rs, ContentContext ctx) throws ParseException, GeneralSecurityException, IOException {
+		if (!canWrite(ctx)) {
+			logger.warning("access refused to gsheet.updateCell : " + ctx.getRequest().getRequestURI());
+			return "security error.";
+		}
 		String project = rs.getParameter("project");
 		String sheet = rs.getParameter("sheet");
 		String googleId = rs.getParameter("spreadsheetId");
@@ -157,6 +172,10 @@ public class GoogleSheetAction implements IAction {
 	 * Example: sheet=Sheet1, row=3, values=Alice,30,Paris
 	 */
 	public static String performUpdateRow(RequestService rs, ContentContext ctx) throws ParseException, GeneralSecurityException, IOException {
+		if (!canWrite(ctx)) {
+			logger.warning("access refused to gsheet.updateRow : " + ctx.getRequest().getRequestURI());
+			return "security error.";
+		}
 		String project = rs.getParameter("project");
 		String sheet = rs.getParameter("sheet");
 		String googleId = rs.getParameter("spreadsheetId");

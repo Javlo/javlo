@@ -438,6 +438,17 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				if (ctx.getCurrentEditUser() == null || !userSec.canRole(ctx.getCurrentEditUser(), "content") && !ctx.getCurrentPage().isPublic(ctx)) {
 					logger.warning("unauthorized access : " + request.getRequestURL());
 					response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+					/*
+					 * the /edit, /preview and /time mounts render their own
+					 * login form further down, so they must keep going. But
+					 * when the mode has been raised by the render-mode
+					 * parameter there is no login form coming : stop here,
+					 * otherwise the preview content is written in the body of
+					 * the 401 and served to an anonymous visitor.
+					 */
+					if (requestService.getParameter(ContentContext.FORCE_MODE_PARAMETER_NAME, null) != null) {
+						return;
+					}
 				}
 			}
 
