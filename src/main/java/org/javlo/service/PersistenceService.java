@@ -193,11 +193,12 @@ public class PersistenceService {
 
 	private static String KEY = PersistenceService.class.getName();
 
-	private static final String _DIRECTORY = "/persitence";
+	/** folder of the content persistence, relative to the data folder (sic, the typo is historical) */
+	public static final String _DIRECTORY = "/persitence";
 
 	private static final String stateFile = "persistence_state.properties";
 
-	private static final String _TRACKING_DIRECTORY = "/persitence/tracking";
+	private static final String _TRACKING_DIRECTORY = _DIRECTORY + "/tracking";
 
 	public static final String GLOBAL_MAP_NAME = "global";
 

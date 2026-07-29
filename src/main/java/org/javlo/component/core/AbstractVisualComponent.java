@@ -116,6 +116,9 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	public static final String HIDDEN = "hidden";
 
+	/** folder of the components view data, relative to the data folder */
+	public static final String VIEW_DATA_FOLDER = "components_view_data";
+
 	public static final String MOBILE_TYPE = "mobile-only";
 
 	public static final int MAX_COL_VALUE = 1000;
@@ -2690,7 +2693,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 
 	private File getViewDataFile(ContentContext ctx, boolean createFile) throws IOException {
 		GlobalContext globalContext = ctx.getGlobalContext();
-		String folder = URLHelper.mergePath(globalContext.getDataFolder(), "components_view_data");
+		String folder = URLHelper.mergePath(globalContext.getDataFolder(), VIEW_DATA_FOLDER);
 		File viewDataFile = new File(URLHelper.mergePath(folder, getId() + ".properties"));
 		if (!viewDataFile.exists() && createFile) {
 			viewDataFile.getParentFile().mkdirs();

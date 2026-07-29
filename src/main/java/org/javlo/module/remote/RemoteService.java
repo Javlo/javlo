@@ -31,6 +31,9 @@ public class RemoteService {
 
 	public static final String MODULE_NAME = "remote";
 
+	/** folder of the remotes, relative to the data folder */
+	public static final String FOLDER = "remotes";
+
 	private File folder;
 	
 	private RemoteThread remoteThread;
@@ -52,7 +55,7 @@ public class RemoteService {
 		RemoteService service = (RemoteService) globalContext.getAttribute(KEY);
 		if (service == null) {
 			service = new RemoteService();
-			service.folder = new File(URLHelper.mergePath(globalContext.getDataFolder(), "remotes"));
+			service.folder = new File(URLHelper.mergePath(globalContext.getDataFolder(), FOLDER));
 			service.loadRemote();
 			service.globalContext = globalContext;
 			globalContext.setAttribute(KEY, service);

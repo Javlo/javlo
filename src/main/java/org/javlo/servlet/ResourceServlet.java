@@ -9,12 +9,15 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.NetHelper;
 import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.ResourcePathSecurity;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.module.admin.AdminAction;
 import org.javlo.navigation.RobotsTxt;
 import org.javlo.service.syncro.FileStructureFactory;
 import org.javlo.user.AdminUserFactory;
+import org.javlo.user.AdminUserSecurity;
+import org.javlo.user.User;
 import org.javlo.user.UserFactory;
 import org.javlo.utils.CSVFactory;
 import org.javlo.utils.JSONMap;
@@ -206,14 +209,34 @@ public class ResourceServlet extends HttpServlet {
 					pathInfo = URLHelper.cleanPath(newPath, false);
 				}
 			}
+			boolean contextDataFolder = true;
 			if (pathInfo.startsWith(staticConfig.getShareDataFolderKey())) {
 				pathInfo = pathInfo.substring(staticConfig.getShareDataFolderKey().length() + 1);
 				dataFolder = globalContext.getSharedDataFolder(request.getServletContext());
+				contextDataFolder = false;
 			} else if (pathInfo.startsWith(URLHelper.TEMPLATE_RESOURCE_PREFIX)) {
 				pathInfo = pathInfo.substring(URLHelper.TEMPLATE_RESOURCE_PREFIX.length() + 1);
 				dataFolder = staticConfig.getTemplateFolder();
+				contextDataFolder = false;
 			}
 			pathInfo = pathInfo.replace('\\', '/'); // for windows server
+
+			/*
+			 * the whole tree of the data folder : reserved to the synchro
+			 * clients, as the /synchro/ servlet which serves the same file.
+			 */
+			if (pathInfo.equals(FILE_INFO)) {
+				User synchroUser = AdminUserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getCurrentUser(request.getSession());
+				if (synchroUser == null || !AdminUserSecurity.getInstance().haveRight(synchroUser, AdminUserSecurity.SYNCHRO_CLIENT)) {
+					logger.warning("unauthorized access to file structure : " + request.getRequestURL());
+					response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+					return;
+				}
+				String fileTreeProperties = FileStructureFactory.getInstance(new File(dataFolder)).fileTreeToProperties();
+				out = response.getOutputStream();
+				out.write(fileTreeProperties.getBytes());
+				return;
+			}
 			String resourceURI = pathInfo;
 			resourceURI = resourceURI.replace('\\', '/');
 			logger.fine("load static resource : " + resourceURI);
@@ -254,8 +277,25 @@ public class ResourceServlet extends HttpServlet {
 				}
 				return;
 			}
-			if (!pathInfo.equals(FILE_INFO)) {
-				File file = new File(URLHelper.mergePath(dataFolder, resourceURI));
+			/*
+			 * single resolution point : nothing may leave the base folder, and
+			 * when the base is the context data folder nothing may reach a
+			 * private folder (persitence, users, _private, ...).
+			 */
+			File resolvedFile;
+			if (contextDataFolder) {
+				resolvedFile = ResourcePathSecurity.resolvePublicFile(staticConfig, dataFolder, resourceURI);
+			} else {
+				resolvedFile = ResourcePathSecurity.resolveInside(new File(dataFolder), resourceURI);
+			}
+			if (resolvedFile == null) {
+				logger.warning("access refused : " + request.getRequestURI());
+				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+				return;
+			}
+
+			{
+				File file = resolvedFile;
 				StaticInfo info = StaticInfo.getInstance(ctx, file);
 				if (AdminUserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getCurrentUser(request.getSession()) == null) {
 					if (!info.canRead(ctx, UserFactory.createUserFactory(ctx.getGlobalContext(), request.getSession()).getCurrentUser(globalContext, request.getSession()), request.getParameter(ImageTransformServlet.RESOURCE_TOKEN_KEY))) {
@@ -280,13 +320,13 @@ public class ResourceServlet extends HttpServlet {
 					} else {
 						if (StringHelper.isExcelFile(file.getName())) {
 							File csvFile = new File(ResourceHelper.changeExtention(file.getAbsolutePath(), "csv"));
-							File excelFile = new File(URLHelper.mergePath(dataFolder, resourceURI));
+							File excelFile = file;
 							if (!excelFile.exists()) {
-								csvFile = new File(URLHelper.mergePath(dataFolder, ResourceHelper.changeExtention(resourceURI, "csv")));
-								if (!csvFile.exists()) {
-									csvFile = new File(URLHelper.mergePath(dataFolder, FilenameUtils.removeExtension(resourceURI)));
+								csvFile = ResourcePathSecurity.resolveInside(new File(dataFolder), ResourceHelper.changeExtention(resourceURI, "csv"));
+								if (csvFile == null || !csvFile.exists()) {
+									csvFile = ResourcePathSecurity.resolveInside(new File(dataFolder), FilenameUtils.removeExtension(resourceURI));
 								}
-								if (!csvFile.exists()) {
+								if (csvFile == null || !csvFile.exists()) {
 									logger.warning("csv not found : "+csvFile);
 									response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 									return;
@@ -317,17 +357,12 @@ public class ResourceServlet extends HttpServlet {
 			}
 
 			if (resourceURI != null) {
-				if (pathInfo.equals(FILE_INFO)) {
-					String fileTreeProperties = FileStructureFactory.getInstance(new File(dataFolder)).fileTreeToProperties();
-					out = response.getOutputStream();
-					out.write(fileTreeProperties.getBytes());
-				} else {
-					if (resourceURI.startsWith(ResourceHelper.PRIVATE_DIR)) {
-						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-						return;
-					}
-					String finalName = URLHelper.mergePath(dataFolder, resourceURI);
-					File file = new File(finalName);
+				if (resourceURI.startsWith(ResourceHelper.PRIVATE_DIR)) {
+					response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+					return;
+				}
+				{
+					File file = resolvedFile;
 					if (!json) {
 						response.setContentType(ResourceHelper.getFileExtensionToMineType(fileExt));
 						response.setHeader("Cache-Control", "no-cache");

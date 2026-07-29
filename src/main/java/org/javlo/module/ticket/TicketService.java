@@ -38,6 +38,9 @@ public class TicketService {
 
 	private static final String KEY = TicketService.class.getName();
 
+	/** folder of the tickets, relative to the data folder */
+	public static final String FOLDER = "tickets";
+
 	private File folder;
 
 	private Map<String, TicketBean> tickets;
@@ -46,7 +49,7 @@ public class TicketService {
 		TicketService service = (TicketService) globalContext.getAttribute(KEY);
 		if (service == null) {
 			service = new TicketService();
-			service.folder = new File(URLHelper.mergePath(globalContext.getDataFolder(), "tickets"));
+			service.folder = new File(URLHelper.mergePath(globalContext.getDataFolder(), FOLDER));
 			service.loadTickets();
 			globalContext.setAttribute(KEY, service);
 		}

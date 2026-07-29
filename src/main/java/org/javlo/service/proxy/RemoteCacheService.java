@@ -16,8 +16,11 @@ public class RemoteCacheService implements IAction {
 
     protected static Logger logger = Logger.getLogger(RemoteCacheService.class.getName());
 
+    /** folder of the remote proxy cache, relative to the data folder */
+    public static final String FOLDER = "_remote_cache";
+
     public File getCacheFolder(ContentContext ctx) {
-        return new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), "_remote_cache"));
+        return new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), FOLDER));
     }
 
     /**

@@ -25,6 +25,9 @@ public class I18nResource {
 
 	private static final String KEY = I18nResource.class.getName();
 
+	/** folder of the context i18n files, relative to the data folder */
+	public static final String FOLDER = "i18n";
+
 	private static File contextI18nFolder = null;
 
 	public static I18nResource getInstance(GlobalContext globalContext) {
@@ -34,7 +37,7 @@ public class I18nResource {
 			out.staticConfig = globalContext.getStaticConfig();
 			globalContext.setAttribute(KEY, out);
 		}
-		contextI18nFolder = new File(URLHelper.mergePath(globalContext.getDataFolder(), "i18n"));
+		contextI18nFolder = new File(URLHelper.mergePath(globalContext.getDataFolder(), FOLDER));
 		return out;
 	}
 

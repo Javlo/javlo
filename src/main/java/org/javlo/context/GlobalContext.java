@@ -258,9 +258,21 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	 */
 	protected static Logger logger = Logger.getLogger(GlobalContext.class.getName());
 
-	private static final String REDIRECT_URL_LIST = "redirect_url_list.properties";
+	/* internal files and folders of the data folder, never served to a web client */
 
-	private static final String URL_404_LIST = "404_url_list.properties";
+	public static final String REDIRECT_URL_LIST = "redirect_url_list.properties";
+
+	public static final String URL_404_LIST = "404_url_list.properties";
+
+	public static final String DATA_FILE = "context_data.properties";
+
+	public static final String DATA_BACKUP_FILE = "context_data_backup.properties";
+
+	public static final String NAVIGATION_FILE = "navigation.txt";
+
+	public static final String CALENDAR_FOLDER = "_calendar";
+
+	public static final String DATABASE_FOLDER = "db";
 
 	private static final String KEY = "globalContext";
 
@@ -1419,7 +1431,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	private File getDataFile() throws IOException {
-		File file = new File(ElementaryURLHelper.mergePath(getDataFolder(), "context_data.properties"));
+		File file = new File(ElementaryURLHelper.mergePath(getDataFolder(), DATA_FILE));
 		if (!file.exists()) {
 			file.createNewFile();
 		}
@@ -1427,7 +1439,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	private File getDataBackupFile() throws IOException {
-		File file = new File(ElementaryURLHelper.mergePath(getDataFolder(), "context_data_backup.properties"));
+		File file = new File(ElementaryURLHelper.mergePath(getDataFolder(), DATA_BACKUP_FILE));
 		if (!file.exists()) {
 			file.createNewFile();
 		}
@@ -1489,7 +1501,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public String getCalendarFolder() {
-		return URLHelper.mergePath(getDataFolder(), "_calendar");
+		return URLHelper.mergePath(getDataFolder(), CALENDAR_FOLDER);
 	}
 
 	public String getSharedDataFolder(ServletContext application) throws IOException {
@@ -1512,7 +1524,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public File getDataBaseFolder() {
-		File dataBaseFolder = new File(getDataFolder(), "db");
+		File dataBaseFolder = new File(getDataFolder(), DATABASE_FOLDER);
 		return dataBaseFolder;
 	}
 
@@ -2196,7 +2208,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 							}
 						}
 
-						File navigationFile = new File(URLHelper.mergePath(getDataFolder(), "navigation.txt"));
+						File navigationFile = new File(URLHelper.mergePath(getDataFolder(), NAVIGATION_FILE));
 						try (BufferedWriter writer = new BufferedWriter(
 								new OutputStreamWriter(new FileOutputStream(navigationFile, false), StandardCharsets.UTF_8))) {
 							for (String line : lines) {
@@ -2258,7 +2270,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 							}
 						}
 
-						File navigationFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), "navigation.txt"));
+						File navigationFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), NAVIGATION_FILE));
 						try (BufferedWriter writer = new BufferedWriter(
 								new OutputStreamWriter(new FileOutputStream(navigationFile, false), StandardCharsets.UTF_8))) {
 							for (String line : lines) {

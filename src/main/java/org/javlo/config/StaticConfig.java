@@ -1152,6 +1152,34 @@ public class StaticConfig extends Observable {
 		return properties.getBoolean("security.resources", true);
 	}
 
+	/**
+	 * if true, only the public roots of the data folder (the static folder, the
+	 * session folder and {@link #getExtraPublicResourcePaths()}) can be served
+	 * by the file servlets. Set it to false on an installation publishing files
+	 * stored outside those roots : the deny-list and the traversal check still
+	 * apply, only the allow-list is dropped.
+	 *
+	 * @see org.javlo.helper.ResourcePathSecurity
+	 */
+	public boolean isResourcePathStrict() {
+		return properties.getBoolean("security.resource-path-strict", true);
+	}
+
+	/**
+	 * additional data folder roots the file servlets may serve, ';' separated.
+	 */
+	public Set<String> getExtraPublicResourcePaths() {
+		return ResourcePathSecurity.parsePathList(properties.getString("security.public-paths", ""));
+	}
+
+	/**
+	 * additional data folder paths the file servlets must never serve, ';'
+	 * separated. Applied even inside a public root.
+	 */
+	public Set<String> getExtraPrivateResourcePaths() {
+		return ResourcePathSecurity.parsePathList(properties.getString("security.private-paths", ""));
+	}
+
 	public boolean isLoginWithToken() {
 		return properties.getBoolean("security.login.token", false);
 	}

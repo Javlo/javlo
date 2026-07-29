@@ -82,6 +82,9 @@ public class GeoService {
 
 	private static final String KEY = "geoService";
 	private File cacheFile = new File("/tmp/geoService_cache.properties");
+	/** cache of the geo service, relative to the data folder */
+	public static final String CACHE_FILE = "geoService_cache.properties";
+
 	private Properties cache = null;
 
 	public static GeoService getInstance(GlobalContext globalContext) {
@@ -91,8 +94,7 @@ public class GeoService {
 		GeoService geoService = (GeoService) globalContext.getAttribute(KEY);
 		if (geoService == null) {
 			geoService = new GeoService();
-			geoService.cacheFile = new File(
-					URLHelper.mergePath(globalContext.getDataFolder(), "geoService_cache.properties"));
+			geoService.cacheFile = new File(URLHelper.mergePath(globalContext.getDataFolder(), CACHE_FILE));
 			globalContext.setAttribute(KEY, geoService);
 		}
 		return geoService;

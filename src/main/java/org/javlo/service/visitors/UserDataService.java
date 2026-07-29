@@ -18,6 +18,9 @@ public class UserDataService {
 	private static final String KEY = UserDataService.class.getCanonicalName();
 	private static final String KEY_COKKIES = "jvl_usr_data";
 
+	/** storage of the visitor data, relative to the data folder */
+	public static final String FILE = "user_data.properties";
+
 	private static final int TIME_IN_MAP = 60 * 60 * 24 * 60; // 60 days
 	private TimeMap<String, String> data = new TimeMap<String, String>(TIME_IN_MAP);
 	private File storageFile;
@@ -26,7 +29,7 @@ public class UserDataService {
 		UserDataService userDataService = (UserDataService) ctx.getGlobalContext().getAttribute(KEY);
 		if (userDataService == null) {
 			userDataService = new UserDataService();
-			userDataService.storageFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), "user_data.properties"));
+			userDataService.storageFile = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), FILE));
 			userDataService.load();
 		}
 		return userDataService;

@@ -45,6 +45,9 @@ public class LdapDirectUserFactory extends AdminUserFactory {
 
 	public static Logger logger = Logger.getLogger(LdapDirectUserFactory.class.getName());
 
+	/** LDAP roles mapping, relative to the data folder */
+	public static final String QUERIES_FILE = "ldap_queries.properties";
+
 	User currentUser;
 
 	TimeMap<String, List<IUserInfo>> userInfoListCache = new TimeMap<String, List<IUserInfo>>(60*60);
@@ -104,7 +107,7 @@ public class LdapDirectUserFactory extends AdminUserFactory {
 	private Map<String, Set<String>> getUserByGroups(GlobalContext globalContext) throws Exception {
 		Map<String, Set<String>> outGroup = new HashMap<String, Set<String>>();
 		StaticConfig staticConfig = globalContext.getStaticConfig();
-		File queriesFile = new File(URLHelper.mergePath(globalContext.getDataFolder(), "ldap_queries.properties"));
+		File queriesFile = new File(URLHelper.mergePath(globalContext.getDataFolder(), QUERIES_FILE));
 		if (!queriesFile.exists()) {
 			logger.severe("roles maping for LDAP file not found : " + queriesFile);
 			return null;
@@ -161,7 +164,7 @@ public class LdapDirectUserFactory extends AdminUserFactory {
 		try {
 			Map<String, Set<String>> rolesMap = getUserByGroups(globalContext);
 			StaticConfig staticConfig = globalContext.getStaticConfig();
-			File queriesFile = new File(URLHelper.mergePath(globalContext.getDataFolder(), "ldap_queries.properties"));
+			File queriesFile = new File(URLHelper.mergePath(globalContext.getDataFolder(), QUERIES_FILE));
 			if (!queriesFile.exists()) {
 				logger.severe("roles maping for LDAP file not found : " + queriesFile);
 				return null;
@@ -228,7 +231,7 @@ public class LdapDirectUserFactory extends AdminUserFactory {
 		try {
 			Map<String, Set<String>> rolesMap = getUserByGroups(globalContext);
 			StaticConfig staticConfig = globalContext.getStaticConfig();
-			File queriesFile = new File(URLHelper.mergePath(globalContext.getDataFolder(), "ldap_queries.properties"));
+			File queriesFile = new File(URLHelper.mergePath(globalContext.getDataFolder(), QUERIES_FILE));
 			if (!queriesFile.exists()) {
 				logger.severe("roles maping for LDAP file not found : " + queriesFile);
 				return null;
@@ -295,7 +298,7 @@ public class LdapDirectUserFactory extends AdminUserFactory {
 			Map<String, Set<String>> rolesMap = getUserByGroups(globalContext);
 			StaticConfig staticConfig = StaticConfig.getInstance(session.getServletContext());
 			Properties props = (Properties) session.getServletContext().getAttribute("ldap_queries");
-			File queriesFile = new File(URLHelper.mergePath(globalContext.getDataFolder(), "ldap_queries.properties"));
+			File queriesFile = new File(URLHelper.mergePath(globalContext.getDataFolder(), QUERIES_FILE));
 			if (!queriesFile.exists()) {
 				logger.severe("roles maping for LDAP file not found : " + queriesFile);
 				return null;

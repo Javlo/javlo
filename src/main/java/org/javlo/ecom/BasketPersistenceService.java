@@ -34,8 +34,11 @@ public class BasketPersistenceService {
 		return instance;
 	}
 
+	/** folder of the baskets, relative to the static folder */
+	public static final String FOLDER = "ecom/basket";
+
 	public static File getFolder(GlobalContext globalContext) {
-		return new File(URLHelper.mergePath(globalContext.getDataFolder(), "static/ecom/basket"));
+		return new File(URLHelper.mergePath(globalContext.getDataFolder(), globalContext.getStaticConfig().getStaticFolder(), FOLDER));
 	}
 
 	private Basket loadBasket(File file) throws FileNotFoundException {

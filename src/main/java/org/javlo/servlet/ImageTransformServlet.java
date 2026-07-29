@@ -1046,6 +1046,21 @@ public class ImageTransformServlet extends FileServlet {
 		return PDFHelper.getPDFImage(imageFile, page);
 	}
 
+	/**
+	 * resolve a request provided image path inside its base folder. When the
+	 * base folder is a context data folder the full path policy applies,
+	 * otherwise (template folder, webapp folder) only the containment check
+	 * applies.
+	 *
+	 * @return the image file, or null when access must be refused.
+	 */
+	private static File resolveImageFile(StaticConfig staticConfig, String baseFolder, String dataFolder, String imageName) {
+		if (baseFolder != null && baseFolder.equals(dataFolder)) {
+			return ResourcePathSecurity.resolvePublicFile(staticConfig, dataFolder, imageName);
+		}
+		return ResourcePathSecurity.resolveInside(new File(baseFolder), imageName);
+	}
+
 	private File loadFileFromDisk(ContentContext ctx, String name, String filter, String area, Device device, Template template, IImageFilter comp, long lastModificationDate, ImageConfig.ImageParameters imageParam) throws IOException {
 		String deviceCode = "no-device";
 		if (device != null) {
@@ -1289,11 +1304,25 @@ public class ImageTransformServlet extends FileServlet {
 				/** image image data uploaded ; image as a service **/
 				String baseExtension;
 				if (imageFile == null) {
-					imageFile = new File(URLHelper.mergePath(baseFolder, imageName));
+					/*
+					 * the image name comes from the request : it must not leave
+					 * the base folder, nor reach a private folder of the context
+					 * data folder.
+					 */
+					imageFile = resolveImageFile(staticConfig, baseFolder, dataFolder, imageName);
+					if (imageFile == null) {
+						logger.warning("access refused : " + request.getRequestURI());
+						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+						TimeTracker.end(globalContext.getContextKey(), ImageTransformServlet.class.getName(), trackerNumber);
+						return;
+					}
 					baseExtension = StringHelper.getFileExtension(imageFile.getName());
 					if (!imageFile.exists()) {
-						imageFile = new File(URLHelper.mergePath(baseFolder, StringHelper.getFileNameWithoutExtension(imageName)));
-						baseExtension = StringHelper.getFileExtension(imageFile.getName());
+						File shortNameFile = resolveImageFile(staticConfig, baseFolder, dataFolder, StringHelper.getFileNameWithoutExtension(imageName));
+						if (shortNameFile != null) {
+							imageFile = shortNameFile;
+							baseExtension = StringHelper.getFileExtension(imageFile.getName());
+						}
 					}
 					if (!imageFile.exists()) {
 						logger.warning("image not found : " + imageFile);

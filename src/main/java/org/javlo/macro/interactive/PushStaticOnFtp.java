@@ -28,6 +28,9 @@ public class PushStaticOnFtp implements IInteractiveMacro, IAction {
 
 	private static final String NAME = "push-static-on-ftp";
 
+	/** temporary export of the whole static site, relative to the data folder */
+	public static final String TEMP_FOLDER = "_static_temp";
+
 	private static Thread thread = null;
 
 	@Override
@@ -97,7 +100,7 @@ public class PushStaticOnFtp implements IInteractiveMacro, IAction {
 			mailService = MailService.getInstance(new MailConfig(ctx.getGlobalContext(), ctx.getGlobalContext().getStaticConfig(), null));
 		}
 
-		File folder = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), "_static_temp"));
+		File folder = new File(URLHelper.mergePath(ctx.getGlobalContext().getDataFolder(), TEMP_FOLDER));
 		String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getContextForAbsoluteURL(), "/");
 		if (here) {
 			url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE).getContextForAbsoluteURL(), ctx.getCurrentPage());

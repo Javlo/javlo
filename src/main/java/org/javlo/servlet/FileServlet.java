@@ -10,6 +10,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.helper.JsonHelper;
 import org.javlo.helper.NetHelper;
+import org.javlo.helper.ResourcePathSecurity;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.io.SessionFolder;
@@ -19,7 +20,6 @@ import org.javlo.user.UserFactory;
 import org.javlo.ztatic.StaticInfo;
 
 import java.io.*;
-import java.net.URLDecoder;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.zip.GZIPOutputStream;
@@ -108,12 +108,27 @@ public class FileServlet extends HttpServlet {
 		}
 
 		GlobalContext globalContext = GlobalContext.getMainInstance(request);
+		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
 		requestedFile = SessionFolder.getInstance(request.getSession(), globalContext).correctAndcheckUrl(requestedFile);
 
-		// URL-decode the file name (might contain spaces and on) and prepare file
-		// object.
+		/*
+		 * the path info is already decoded by the container, decoding it a
+		 * second time would turn a %252e%252e%252f back into a ../ : the path is
+		 * used as is and resolved by ResourcePathSecurity, which refuses
+		 * anything leaving the data folder or reaching a private folder.
+		 */
 		if (file == null) {
-			file = new File(globalContext.getDataFolder(), URLDecoder.decode(requestedFile, "UTF-8"));
+			if (globalContext.getDataFolder() == null) {
+				logger.severe("data folder null" + request.getRequestURI());
+				response.sendError(HttpServletResponse.SC_NOT_FOUND);
+				return;
+			}
+			file = ResourcePathSecurity.resolvePublicFile(staticConfig, globalContext.getDataFolder(), requestedFile);
+			if (file == null) {
+				logger.warning("access refused : " + request.getRequestURI());
+				response.sendError(HttpServletResponse.SC_FORBIDDEN);
+				return;
+			}
 		}
 
 		boolean jsonInfo = false;
@@ -137,7 +152,13 @@ public class FileServlet extends HttpServlet {
 					response.sendError(HttpServletResponse.SC_NOT_FOUND);
 					return;
 				}
-				file = new File(globalContext.getDataFolder(), finalFile);
+				/* the short url is user provided too, it gets the same check */
+				file = ResourcePathSecurity.resolvePublicFile(staticConfig, globalContext.getDataFolder(), finalFile);
+				if (file == null) {
+					logger.warning("access refused : " + request.getRequestURI());
+					response.sendError(HttpServletResponse.SC_FORBIDDEN);
+					return;
+				}
 			}
 		}
 
@@ -152,7 +173,7 @@ public class FileServlet extends HttpServlet {
 		}
 
 		/* security: enforce StaticInfo read roles when resources are secured */
-		if (StaticConfig.getInstance(request.getSession()).isResourcesSecured() && !(this instanceof ImageTransformServlet)) {
+		if (staticConfig.isResourcesSecured() && !(this instanceof ImageTransformServlet)) {
 			try {
 				ContentContext ctx = ContentContext.getContentContext(request, response);
 				StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);

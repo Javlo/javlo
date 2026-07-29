@@ -33,8 +33,11 @@ public class Role {
 		}
 	}
 	
+	/** folder of the roles, relative to the data folder */
+	public static final String FOLDER = "roles";
+
 	public static File getFolder(GlobalContext globalContext) {
-		return new File(URLHelper.mergePath(globalContext.getDataFolder(), "roles"));
+		return new File(URLHelper.mergePath(globalContext.getDataFolder(), FOLDER));
 	}
 	
 	protected static File getFile(GlobalContext globalContext, String name) {
