@@ -11,6 +11,8 @@ import org.javlo.helper.*;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.template.TemplateFactory;
+import org.javlo.user.AdminUserSecurity;
+import org.javlo.user.User;
 import org.javlo.utils.CSVFactory;
 import org.javlo.utils.Cell;
 import org.javlo.utils.XLSTools;
@@ -44,6 +46,20 @@ public class ExportComponents extends HttpServlet {
 		process(request, response);
 	}
 	
+	/**
+	 * the .csv and .xlsx exports walk the whole site and return every component
+	 * of a given type, whatever the reader roles of the pages carrying them :
+	 * they are reserved to a logged edit user holding the content role.
+	 * <p>
+	 * The .html and .js branches stay reachable anonymously on purpose : they
+	 * render a single component (the page-reference filter calls them from
+	 * public pages) and they check the read access of its page themselves.
+	 */
+	private static boolean canExportAllContent(ContentContext ctx) {
+		User editUser = ctx.getCurrentEditUser();
+		return editUser != null && AdminUserSecurity.getInstance().canRole(editUser, AdminUserSecurity.CONTENT_ROLE);
+	}
+
 	private void renderDynamicComponent(String type, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ContentContext ctx = ContentContext.getContentContext(request, response, false);		
 		File compFile=null;
@@ -133,7 +149,13 @@ public class ExportComponents extends HttpServlet {
 							ResourceHelper.writeStringToStream(xhtml, response.getOutputStream(), ContentContext.CHARACTER_ENCODING);
 						}
 					}
+					return;
 				} else if (componentType.toLowerCase().endsWith(".xlsx")) {
+					if (!canExportAllContent(ctx)) {
+						logger.warning("access refused to the xlsx export : " + request.getRequestURI());
+						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+						return;
+					}
 					response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 					String[] splittedPath = StringUtils.split(request.getPathInfo(), '/');
 					GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -156,11 +178,19 @@ public class ExportComponents extends HttpServlet {
 					ContentService content = ContentService.getInstance(request);
 					Cell[][] cells = ComponentHelper.componentsToArray(ctx, content.getAllContent(ctx), componentType);
 					XLSTools.writeXLSX(cells, response.getOutputStream());
+					return;
 				} else {
 					logger.warning("bad format : " + componentType);
 					response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 					return;
 				}
+			}
+
+			/* from here the request is a .csv export : same right as the .xlsx one */
+			if (!canExportAllContent(ctx)) {
+				logger.warning("access refused to the csv export : " + request.getRequestURI());
+				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+				return;
 			}
 
 			response.setContentType("text/csv");

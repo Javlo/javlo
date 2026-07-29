@@ -10,6 +10,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.module.mailing.MailingModuleContext;
+import org.javlo.navigation.MenuElement;
 import org.javlo.service.RequestService;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
@@ -146,6 +147,20 @@ public class ContentOnlyServlet extends HttpServlet {
 				ctx.setCurrentTemplate(template);				
 			}	
 			
+			/*
+			 * same reader role check as the normal view path (see
+			 * AccessServlet) : without it any login protected page is readable
+			 * by anybody simply by prefixing its address with /page/.
+			 * isReadAccess follows the role inheritance, so a protected section
+			 * covers its sub pages.
+			 */
+			MenuElement currentPage = ctx.getCurrentPage();
+			if (currentPage != null && !currentPage.isReadAccess(ctx, ctx.getCurrentUser())) {
+				logger.warning("access refused to page : " + path + " (" + (ctx.getCurrentUser() == null ? "anonymous" : ctx.getCurrentUser().getLogin()) + ')');
+				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+				return;
+			}
+
 			if (ctx.getGlobalContext().isCollaborativeMode()) {
 				Set<String> pageRoles = ctx.getCurrentPage().getEditorRolesAndParent();
 				if ((pageRoles.size() > 0 || ctx.getCurrentEditUser() == null)) { 

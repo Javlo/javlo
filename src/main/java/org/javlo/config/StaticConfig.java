@@ -1280,6 +1280,17 @@ public class StaticConfig extends Observable {
 		return properties.getString("synchro-code", null);
 	}
 
+	/**
+	 * the synchronisation servlet (/synchro/*) writes, reads and deletes files
+	 * inside the data folder, guarded only by the synchro-code shared secret. It
+	 * is disabled unless an installation explicitly needs it.
+	 *
+	 * @see org.javlo.servlet.SynchronisationServlet
+	 */
+	public boolean isSynchronisationServlet() {
+		return properties.getBoolean("synchronisationServlet", false);
+	}
+
 	public int getSynchroTokenValidityMinutes() {
 		return properties.getInt("synchro-token.validity-minutes", 5);
 	}

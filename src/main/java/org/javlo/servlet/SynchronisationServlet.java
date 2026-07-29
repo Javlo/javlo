@@ -86,6 +86,12 @@ public class SynchronisationServlet extends HttpServlet {
 
 	private void process(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		StaticConfig staticConfig = StaticConfig.getInstance(getServletContext());
+		/* disabled by default : answer as if the servlet was not mapped at all */
+		if (!staticConfig.isSynchronisationServlet()) {
+			logger.warning("synchro request but the synchronisation servlet is disabled : " + request.getRequestURI());
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
+		}
 		if (staticConfig.getSynchroCode() == null) {
 			logger.warning("synchro request but no syncho code define.");
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);				
