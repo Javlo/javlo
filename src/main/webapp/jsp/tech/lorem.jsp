@@ -12,7 +12,7 @@
 <legend>config lorem ipsum generator</legend>
 	<div class="line">
 		<label for="words">word count</label>
-		<input type="text" id="words" name="words" value="${param.words}" />
+		<input type="text" id="words" name="words" value="<c:out value="${param.words}" />" />
 	</div>
 	<div class="line">
 		<input type="checkbox" id="start" name="start" ${not empty param.start?'checked="checked"':''} />

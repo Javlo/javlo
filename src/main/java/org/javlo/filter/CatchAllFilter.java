@@ -166,6 +166,23 @@ public class CatchAllFilter implements Filter {
 	}
 
 	/**
+	 * characters able to break out of an html attribute or of a tag. A page
+	 * path never holds them, but it is reflected in the rendered page (form
+	 * actions, canonical links, the login form), so a path carrying them is a
+	 * reflected xss attempt.
+	 */
+	private static final String HTML_META_CHARACTERS = "<>\"'";
+
+	private static boolean containsHtmlMetaCharacter(String path) {
+		for (int i = 0; i < path.length(); i++) {
+			if (HTML_META_CHARACTERS.indexOf(path.charAt(i)) >= 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * true when the path holds a hidden file or directory segment. The
 	 * back-slash is a separator too, java.io.File accepts it on a windows
 	 * server.
@@ -206,6 +223,12 @@ public class CatchAllFilter implements Filter {
 			logger.severe("Security error: Attempt to access hidden file or directory : " + path);
 			httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return; // Arrête le traitement de la requête
+		}
+
+		if (containsHtmlMetaCharacter(path) || containsHtmlMetaCharacter(decodedPath)) {
+			logger.severe("Security error: html meta character in path : " + path);
+			httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return;
 		}
 
 		// Bypass CMS processing for static documentation paths

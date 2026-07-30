@@ -1,27 +1,39 @@
 <%@ taglib uri="jakarta.tags.core" prefix="c"
 %><%@ taglib uri="jakarta.tags.functions" prefix="fn"
+%><%
+/*
+ * This page is included inside the inline style block of index.html, not served
+ * as a standalone css file, and the first include carries no prefix of its own
+ * so the parameter comes straight from the visitor request. Anything but a
+ * plain css selector prefix could close the style element and inject markup.
+ */
+String cssPrefixParam = request.getParameter("prefix");
+if (cssPrefixParam == null || !cssPrefixParam.matches("[A-Za-z0-9_.#\\- ]{0,64}")) {
+	cssPrefixParam = "";
+}
+request.setAttribute("safeCssPrefix", cssPrefixParam);
 %><c:if test="${empty rows}"><c:set var="rows" value="${info.template.rows}" scope="request" /></c:if><c:forEach var="row" items="${rows}"><c:forEach var="area" items="${row.areas}">
-<c:forEach var = "i" begin = "1" end = "6" varStatus="status">${param.prefix}#${area.name} h${i}, ${param.prefix}#${area.name} h${i} div, ${param.prefix}#${area.name} h${i} a${status.last?'':','}</c:forEach> {	
+<c:forEach var = "i" begin = "1" end = "6" varStatus="status">${safeCssPrefix}#${area.name} h${i}, ${safeCssPrefix}#${area.name} h${i} div, ${safeCssPrefix}#${area.name} h${i} a${status.last?'':','}</c:forEach> {	
 	<c:if test="${not empty area.finalTitleColor}">color: ${area.finalTitleColor};</c:if>
 	text-decoration: none;
 	<c:if test="${not empty area.finalFont}">font-family: ${area.finalFont};</c:if>
 }</c:forEach></c:forEach>
 
-<c:if test="${not empty currentPage}">${param.prefix} {
+<c:if test="${not empty currentPage}">${safeCssPrefix} {
 	<c:if test="${not empty currentPage.color}">background-color: ${currentPage.color};</c:if>
 }</c:if>
 
-<c:if test="${not empty currentPage}">.pdf ${param.prefix} {
+<c:if test="${not empty currentPage}">.pdf ${safeCssPrefix} {
 	<c:if test="${not empty currentPage.imageBackground}">background-image: url('${currentPage.imageBackground.previewURL}'); background-position:left top; background-size: 100%;</c:if>
 }</c:if>
 
-${param.prefix}p,${param.prefix}ul,${param.prefix}ol,${param.prefix}.table-li td.internal-link,${param.prefix}.unsubscribe-link,${param.prefix}.date,.external-link,${param.prefix}.pdf-link,${param.prefix}.text,${param.prefix}.file,${param.prefix}.simple-internal-link,${param.prefix}.global-image,${param.prefix}.gs,${param.prefix}.qrcode td,${param.prefix}.pdf-head td, ${param.prefix}.table th, ${param.prefix}.table td {
+${safeCssPrefix}p,${safeCssPrefix}ul,${safeCssPrefix}ol,${safeCssPrefix}.table-li td.internal-link,${safeCssPrefix}.unsubscribe-link,${safeCssPrefix}.date,.external-link,${safeCssPrefix}.pdf-link,${safeCssPrefix}.text,${safeCssPrefix}.file,${safeCssPrefix}.simple-internal-link,${safeCssPrefix}.global-image,${safeCssPrefix}.gs,${safeCssPrefix}.qrcode td,${safeCssPrefix}.pdf-head td, ${safeCssPrefix}.table th, ${safeCssPrefix}.table td {
 	<c:if test="${not empty dynamicCSSTemplate.style.finalTextColor}">color: ${dynamicCSSTemplate.style.finalTextColor};</c:if>
 	<c:if test="${not empty dynamicCSSTemplate.style.finalTextSize}">font-size: ${dynamicCSSTemplate.style.finalTextSize};</c:if>	
 	<c:if test="${not empty dynamicCSSTemplate.style.finalFont}">font-family: ${dynamicCSSTemplate.style.finalFont};</c:if>
 }
 
-${param.prefix}.visible-separation {	
+${safeCssPrefix}.visible-separation {	
 	margin: 10px 0;
 	padding: 0;
 	font-size: 0;
@@ -33,7 +45,7 @@ ${param.prefix}.visible-separation {
 	<c:if test="${empty dynamicCSSTemplate.style.finalTextColor}">border-color: #000000;</c:if>
 }
 
-${param.prefix}.visible-large {	
+${safeCssPrefix}.visible-large {	
 	margin: 10px 0;
 	padding: 0;
 	font-size: 0;
@@ -46,51 +58,51 @@ ${param.prefix}.visible-large {
 }
 
 <c:forEach var="row" items="${dynamicCSSTemplate.rows}"><c:forEach var="area" items="${row.areas}">
-${param.prefix}#${area.name} p, ${param.prefix}#${area.name} ul, ${param.prefix}#${area.name} ol, ${param.prefix}#${area.name} .table-li td,${param.prefix}#${area.name} .internal-link, ${param.prefix}#${area.name} .unsubscribe-link, ${param.prefix}#${area.name} .date, ${param.prefix}#${area.name} .external-link,${param.prefix}#${area.name} .pdf-link,${param.prefix}#${area.name} .file, ${param.prefix}#${area.name} .text,${param.prefix}#${area.name} .simple-internal-link, ${param.prefix}#${area.name} .image-left,${param.prefix}#${area.name}  .image-right, ${param.prefix}#${area.name} .global-image,${param.prefix}#${area.name} .global-image,${param.prefix}#${area.name} .gs,${param.prefix}#${area.name} .qrcode td,${param.prefix}#${area.name} .pdf-head td,  ${param.prefix}#${area.name} .float-image .text,  ${param.prefix}#${area.name} .float-image .zone1,${param.prefix}#${area.name} .float-image .zone2, ${param.prefix}#${area.name} .table td, ${param.prefix}#${area.name} .table th {	
+${safeCssPrefix}#${area.name} p, ${safeCssPrefix}#${area.name} ul, ${safeCssPrefix}#${area.name} ol, ${safeCssPrefix}#${area.name} .table-li td,${safeCssPrefix}#${area.name} .internal-link, ${safeCssPrefix}#${area.name} .unsubscribe-link, ${safeCssPrefix}#${area.name} .date, ${safeCssPrefix}#${area.name} .external-link,${safeCssPrefix}#${area.name} .pdf-link,${safeCssPrefix}#${area.name} .file, ${safeCssPrefix}#${area.name} .text,${safeCssPrefix}#${area.name} .simple-internal-link, ${safeCssPrefix}#${area.name} .image-left,${safeCssPrefix}#${area.name}  .image-right, ${safeCssPrefix}#${area.name} .global-image,${safeCssPrefix}#${area.name} .global-image,${safeCssPrefix}#${area.name} .gs,${safeCssPrefix}#${area.name} .qrcode td,${safeCssPrefix}#${area.name} .pdf-head td,  ${safeCssPrefix}#${area.name} .float-image .text,  ${safeCssPrefix}#${area.name} .float-image .zone1,${safeCssPrefix}#${area.name} .float-image .zone2, ${safeCssPrefix}#${area.name} .table td, ${safeCssPrefix}#${area.name} .table th {	
 	<c:if test="${not empty area.finalTextColor}">color: ${area.finalTextColor};</c:if>
 	<c:if test="${not empty area.finalTextSize}">font-size: ${area.finalTextSize};</c:if>
 	<c:if test="${not empty area.finalFont}">font-family: ${area.finalFont};</c:if>
 }
 
 <c:if test="${not empty area.finalLinkColor}">
-	${param.prefix}#${area.name} a {	
+	${safeCssPrefix}#${area.name} a {	
 		color: ${area.finalLinkColor};	
 	}
 </c:if>
 
-${param.prefix}#${area.name} h1 {	
+${safeCssPrefix}#${area.name} h1 {	
 	font-size: ${area.finalH1Size};	
 }
 
-${param.prefix}#${area.name} h2 {	
+${safeCssPrefix}#${area.name} h2 {	
 	font-size: ${area.finalH2Size};	
 }
 
-${param.prefix}#${area.name} h3 {	
+${safeCssPrefix}#${area.name} h3 {	
 	font-size: ${area.finalH3Size};	
 }
 
-${param.prefix}#${area.name} h4 {	
+${safeCssPrefix}#${area.name} h4 {	
 	font-size: ${area.finalH4Size};	
 }
 
-${param.prefix}#${area.name} h5 {	
+${safeCssPrefix}#${area.name} h5 {	
 	font-size: ${area.finalH5Size};	
 }
 
-${param.prefix}#${area.name} h6 {	
+${safeCssPrefix}#${area.name} h6 {	
 	font-size: ${area.finalH6Size};	
 }
 
 </c:forEach></c:forEach>
 
 <c:forEach var="row" items="${dynamicCSSTemplate.rows}"><c:forEach var="area" items="${row.areas}">
-${param.prefix}#${area.name} {	<c:set var="template" value="${area}" scope="request" />
+${safeCssPrefix}#${area.name} {	<c:set var="template" value="${area}" scope="request" />
 <jsp:include page="styles.jsp" />
 }</c:forEach></c:forEach>
 
 <c:forEach var="row" items="${dynamicCSSTemplate.rows}">	
-${param.prefix}#${row.name} {	<c:set var="template" value="${row}" scope="request" />
+${safeCssPrefix}#${row.name} {	<c:set var="template" value="${row}" scope="request" />
 <jsp:include page="styles.jsp" />
 }</c:forEach>
 

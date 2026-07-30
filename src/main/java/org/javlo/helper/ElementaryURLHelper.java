@@ -614,7 +614,33 @@ public abstract class ElementaryURLHelper {
 			url = addParam(url, ContentContext.PREVIEW_ONLY_MODE, "true");
 		}
 
-		return url;
+		return encodeUnsafeCharacters(url);
+	}
+
+	/**
+	 * percent encode the characters able to break out of the context the url is
+	 * written into.
+	 * <p>
+	 * Every url of the site is built here and most of them are reflected in the
+	 * rendered page : form actions, canonical links, the login form, and the
+	 * shortkey script where the url sits inside a javascript string. A path
+	 * carrying a quote or an angle bracket would escape from those contexts.
+	 * <p>
+	 * Percent encoding is used rather than html escaping on purpose : it is the
+	 * correct representation for a url, it stays valid for a redirect or a
+	 * comparison, and it is inert in html as well as in javascript. Html
+	 * escaping would turn the ampersand separating the parameters into &amp;
+	 * which javascript does not decode, breaking every multi parameter url.
+	 */
+	protected static String encodeUnsafeCharacters(String url) {
+		if (url == null) {
+			return null;
+		}
+		if (url.indexOf('"') < 0 && url.indexOf('\'') < 0 && url.indexOf('<') < 0 && url.indexOf('>') < 0) {
+			return url;
+		}
+		/* the percent sign is left alone : re-encoding it would break the already encoded accented paths */
+		return url.replace("\"", "%22").replace("'", "%27").replace("<", "%3C").replace(">", "%3E");
 	}
 
 	protected static String addHost(ContentContext ctx, String url) {

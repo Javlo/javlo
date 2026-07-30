@@ -13,7 +13,7 @@
 		</div>
 		<div class="line form-group">
 			<label for="name">nom du site : </label>
-			<input class="form-control" type="text" id="name" name="name" value="${param.name}" />
+			<input class="form-control" type="text" id="name" name="name" value="<c:out value="${param.name}" />" />
 		</div>
 		<div class="line form-group">
 			<label for="url">URL : </label>
@@ -24,7 +24,7 @@
 		</div>
 		<div class="line form-group">
 			<label for="email">email de contact : </label>
-			<input class="form-control" type="text" id="email" name="email" value="${param.email}" />
+			<input class="form-control" type="text" id="email" name="email" value="<c:out value="${param.email}" />" />
 		</div>
 		<div class="line form-group">
 			<label for="pwd">mot de passe : </label>

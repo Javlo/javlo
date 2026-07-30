@@ -196,7 +196,7 @@ document.getElementById('forget-password-id').style.display="block";
 </div>
 </c:if>
 <c:if test="${not empty param.pwkey}">
-	<input type="hidden" id="pwkey" name="pwkey" value="${param.pwkey}" />
+	<input type="hidden" id="pwkey" name="pwkey" value="<c:out value="${param.pwkey}" />" />
 </c:if>
 <div class="one_half">
 <div class="line">

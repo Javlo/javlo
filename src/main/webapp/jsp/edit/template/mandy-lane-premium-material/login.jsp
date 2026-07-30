@@ -72,9 +72,9 @@ h1 .logo svg {
 
 		<c:if test="${empty param.pwtoken}">
 
-			<form id="flogin" action="${empty param.backPreview?info.currentEditURL:info.currentPreviewURL}" method="post" role="form">
+			<form id="flogin" action="<c:out value="${empty param.backPreview?info.currentEditURL:info.currentPreviewURL}" />" method="post" role="form">
 				<c:if test="${not empty param.previewEdit}">
-					<input type="hidden" name="previewEdit" value="${param.previewEdit}" />
+					<input type="hidden" name="previewEdit" value="<c:out value="${param.previewEdit}" />" />
 				</c:if>
 				<input type="hidden" value="adminlogin" name="login-type" />
 				<input type="hidden" value="edit-login" name="edit-login" />
@@ -111,7 +111,7 @@ h1 .logo svg {
 				</script>
 			</div>
 			<div id="resetpwd" class="hidden">
-				<form id="fresetpwd" action="${info.currentEditURL}" method="post" role="form">
+				<form id="fresetpwd" action="<c:out value="${info.currentEditURL}" />" method="post" role="form">
 					<input type="hidden" name="webaction" value="unsecure.askChangePassword" />
 					<div class="form-group">
 						<i class="bi bi-person-fill"></i>
@@ -123,9 +123,9 @@ h1 .logo svg {
 
 		</c:if>
 		<c:if test="${not empty param.pwtoken}">
-			<form name="change_password" method="post" action="${info.currentURL}">
+			<form name="change_password" method="post" action="<c:out value="${info.currentURL}" />">
 				<input type="hidden" name="webaction" value="unsecure.changePasswordWithToken" />
-				<input type="hidden" name="token" value="${param.pwtoken}" />
+				<input type="hidden" name="token" value="<c:out value="${param.pwtoken}" />" />
 				<div class="form-group">
 					<div class="input">
 						<input class="form-control" id="password" type="password" name="password" value="" placeholder="${i18n.edit['admin.form.password']}" />
@@ -137,7 +137,7 @@ h1 .logo svg {
 					</div>
 				</div>
 				<div class="pull-right">
-					<a class="btn btn-default" href="${info.currentURL}">${i18n.edit["global.cancel"]}</a>
+					<a class="btn btn-default" href="<c:out value="${info.currentURL}" />">${i18n.edit["global.cancel"]}</a>
 					<input class="btn btn-primary" type="submit" value="${i18n.edit['global.submit']}" />
 				</div>
 			</form>

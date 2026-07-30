@@ -103,7 +103,7 @@ svg {
 				%>
 			</c:if>
 			<c:if test="${not empty param.message}">
-				<div class="alert alert-danger">${param.message}</div>
+				<div class="alert alert-danger"><c:out value="${param.message}" /></div>
 			</c:if>
 			<p>
 				<a href="http://www.javlo.org">javlo.org</a>
