@@ -81,7 +81,7 @@ public class MetaComponent extends DynamicComponent implements IAction {
 			}
 
 			if (!getValue().contains("icon")) {
-				properties.put("field.icon.type", "text");
+				properties.put("field.icon.type", "image");
 				properties.put("field.icon.order", "" + 65);
 				properties.put("field.icon.value", "");
 				updateOrder();
