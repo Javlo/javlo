@@ -257,6 +257,39 @@ public class DataAction implements IAction {
 		}
 	}
 
+	/**
+	 * only a logged editor may be served the working copy of the content.
+	 */
+	private static boolean canRenderUnpublishedContent(ContentContext ctx) {
+		User editUser = ctx.getCurrentEditUser();
+		return editUser != null && AdminUserSecurity.getInstance().canRole(editUser, AdminUserSecurity.CONTENT_ROLE);
+	}
+
+	/**
+	 * The render mode drives which content is rendered : the working copy in
+	 * edit, preview and time mode, the published one otherwise. It can be
+	 * raised with the render-mode parameter, and the /webaction mount even
+	 * defaults to preview, so an anonymous caller would be served unpublished
+	 * content. The mode is therefore brought back to view unless the caller may
+	 * edit, whichever way it was raised.
+	 */
+	private static void secureRenderMode(RequestService rs, ContentContext ctx) {
+		String mode = rs.getParameter("render-mode", null);
+		if (mode != null) {
+			try {
+				ctx.setRenderMode(Integer.parseInt(mode));
+			} catch (NumberFormatException e) {
+				logger.warning("bad render-mode parameter : " + mode);
+			}
+		}
+		int renderMode = ctx.getRenderMode();
+		boolean unpublishedContent = renderMode == ContentContext.EDIT_MODE || renderMode == ContentContext.PREVIEW_MODE || renderMode == ContentContext.TIME_MODE;
+		if (unpublishedContent && !canRenderUnpublishedContent(ctx)) {
+			logger.warning("render mode elevation refused on : " + ctx.getRequest().getRequestURI());
+			ctx.setRenderMode(ContentContext.VIEW_MODE);
+		}
+	}
+
 	public static String performUpdateArea(RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 
 		String area = rs.getParameter("area", null);
@@ -269,11 +302,7 @@ public class DataAction implements IAction {
 			}
 		}
 
-		String mode = rs.getParameter("render-mode", null);
-
-		if (mode != null) {
-			ctx.setRenderMode(Integer.parseInt(mode));
-		}
+		secureRenderMode(rs, ctx);
 
 		ctx.getRequest().removeAttribute("specific-comp");
 
@@ -292,11 +321,7 @@ public class DataAction implements IAction {
 			areas.add(areaId.getKey());
 		}
 
-		String mode = rs.getParameter("render-mode", null);
-
-		if (mode != null) {
-			ctx.setRenderMode(Integer.parseInt(mode));
-		}
+		secureRenderMode(rs, ctx);
 
 		ctx.getRequest().removeAttribute("specific-comp");
 

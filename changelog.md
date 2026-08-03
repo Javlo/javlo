@@ -1042,3 +1042,5 @@ Security in case of vulnerabilities.
 ### Modified
 - Security update
 ## [2.3.8] - 29/07/2026
+### Added
+- MetaComponent icon

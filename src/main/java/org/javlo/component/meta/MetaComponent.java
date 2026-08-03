@@ -64,6 +64,11 @@ public class MetaComponent extends DynamicComponent implements IAction {
 			properties.put("field.linkLabel.value", "");
 			order+=10;
 
+			properties.put("field.icon.type", "text");
+			properties.put("field.icon.order", "" + order);
+			properties.put("field.icon.value", "");
+			order+=10;
+
 			storeProperties();
 		} else {
 			reloadProperties();

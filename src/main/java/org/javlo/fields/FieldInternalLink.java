@@ -104,7 +104,7 @@ public class FieldInternalLink extends Field {
 				if (ctx.getCurrentPage() != null) {
 					MenuElement page = ctx.getCurrentPage().getRoot().searchChildFromName(getCurrentLink());
 					if (page != null) {
-						if (page.isRealContent(ctx)) {
+						if (page.isRealContentAuto(ctx)) {
 							bean.setLinkOn(url);
 						} else {
 							bean.setLinkOn(page.getLinkOn(ctx));
