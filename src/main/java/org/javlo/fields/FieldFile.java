@@ -6,6 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.javlo.actions.DataAction;
 import org.javlo.bean.Link;
 import org.javlo.component.core.AbstractVisualComponent;
+import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
@@ -227,7 +229,11 @@ public class StaticFileBean extends FieldBean {
 							ResourceHelper.copyResourceData(ctx, oldFile, newFile);
 						}
 						setCurrentFolder(ctx, importFolder);
-						getReferenceComponent(ctx).setModify();
+						DynamicComponent refComp = getReferenceComponent(ctx);
+						if (refComp != null) {
+							refComp.setModify();
+						}
+
 						PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
 						logger.info("copy imported file : "+oldFile+" -> "+newFile);
 					}
