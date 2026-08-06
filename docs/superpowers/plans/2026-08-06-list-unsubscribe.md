@@ -161,7 +161,11 @@ git commit -m "fix: do not fail AccessServlet class loading when bot log is unav
 
 Deux défauts indépendants, corrigés avant de construire dessus.
 
-La Task 0 a mesuré ce que le harnais permet : `GlobalContext.getInstance(fakeRequest)` fonctionne via `FakeHttpContext`, mais `TestServletContext.getRealPath` est un simple echo, donc le dossier de données ne correspond à aucun répertoire réel. **Conséquence pour cette tâche** : le comportement en mémoire est testable, la persistance sur disque ne l'est pas. Cette dernière est couverte par la Task 10.
+La Task 0 a mesuré ce que le harnais permet : `GlobalContext.getInstance(fakeRequest)` fonctionne via `FakeHttpContext`. `TestServletContext.getRealPath` est un simple echo, donc le **dossier de données** ne correspond à aucun répertoire réel — ce qui limitera les tests de la Task 3 sur le fichier de suppression.
+
+En revanche, le **fichier de propriétés du site** ne passe pas par `getRealPath` : sa position vient de `staticConfig.getContextFolder()` (`GlobalContext:566`). La persistance de `setUnsubscribeLink` est donc bel et bien observable depuis le harnais, un second `GlobalContext` relisant le fichier sur disque. Les tests de cette tâche doivent en tirer parti.
+
+Effet de bord connu et accepté : ces tests écrivent hors du dépôt, sous `C:\WEB-INF\context\`. C'est un comportement préexistant du harnais, hors périmètre de ce plan.
 
 **Files:**
 - Modify: `src/main/java/org/javlo/context/GlobalContext.java:4342-4344`
@@ -208,16 +212,28 @@ public class GlobalContextUnsubscribeTest extends TestCase {
 		ctx.setUnsubscribeLink("");
 		assertTrue(StringHelper.isEmpty(ctx.getUnsubscribeLink()));
 	}
+
+	/**
+	 * Le test qui épingle réellement le défaut : sans le save() manquant, un
+	 * second contexte relisant le fichier de propriétés ne verra pas la valeur.
+	 */
+	public void testUnsubscribeLinkIsPersisted() throws Exception {
+		String value = "https://site.be/unsub?run=" + System.currentTimeMillis();
+		getContext().setUnsubscribeLink(value);
+		assertEquals(value, getContext().getUnsubscribeLink());
+	}
 }
 ```
 
-- [ ] **Step 2 : Lancer le test**
+La valeur est rendue unique par run pour qu'un fichier laissé par une exécution précédente ne puisse pas produire un faux positif.
+
+- [ ] **Step 2 : Lancer les tests et prouver le rouge**
 
 Run: `mvn -q test -Dtest=GlobalContextUnsubscribeTest`
 
-Ces deux tests peuvent passer avant la correction, puisqu'ils portent sur le comportement en mémoire, que le `save()` manquant n'affecte pas. C'est attendu : ils constituent le filet de non-régression du contrat `setUnsubscribeLink`/`getUnsubscribeLink`, pas la démonstration du défaut. Le défaut lui-même — l'absence de persistance — n'est pas observable depuis ce harnais et se vérifie à la Task 10.
+Les deux premiers tests passent avant correction : ils portent sur le comportement en mémoire, que le `save()` manquant n'affecte pas. C'est attendu, ce sont des tests de contrat.
 
-Noter dans le rapport si les tests passent avant correction, et le signaler honnêtement plutôt que de forcer un rouge artificiel.
+`testUnsubscribeLinkIsPersisted` doit en revanche **échouer** avant la correction du Step 3. Consigner cette sortie rouge dans le rapport : c'est elle qui démontre le défaut.
 
 - [ ] **Step 3 : Ajouter le `save()` manquant**
 
@@ -1031,7 +1047,16 @@ Ajouter à `GlobalContextUnsubscribeTest` (créé à la Task 1, qui fournit déj
 
 Lancer `mvn -q test -Dtest=GlobalContextUnsubscribeTest` et vérifier l'échec de compilation : `getUnsubscribeSecret` n'existe pas encore.
 
-La stabilité entre deux instances distinctes du même site n'est pas testable ici — elle dépend de la persistance disque, hors de portée du harnais. Elle est vérifiée à la Task 10, Step 10.
+Ajouter aussi le test de persistance, sur le mécanisme établi à la Task 1 : un second appel à `getContext()` construit un `TestServletContext` neuf, donc un `GlobalContext` neuf qui relit le fichier de propriétés du site sur disque.
+
+```java
+	public void testUnsubscribeSecretIsPersisted() throws Exception {
+		String secret = getContext().getUnsubscribeSecret();
+		assertEquals(secret, getContext().getUnsubscribeSecret());
+	}
+```
+
+Ce test est essentiel : un secret régénéré à chaque démarrage invaliderait tous les tokens déjà envoyés. Il doit échouer si l'appel à `save()` est retiré de `getUnsubscribeSecret`. Le vérifier en retirant temporairement le `save()`, puis le rétablir, et consigner les deux sorties dans le rapport.
 
 - [ ] **Step 1 : Ajouter le secret par site**
 
