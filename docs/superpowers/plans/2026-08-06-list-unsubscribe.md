@@ -159,17 +159,67 @@ git commit -m "fix: do not fail AccessServlet class loading when bot log is unav
 
 ### Task 1 : Correctifs préalables
 
-Deux défauts indépendants, corrigés avant de construire dessus. Aucun test unitaire possible : `GlobalContext` exige un `ServletContext`, et le dépôt n'a pas d'infrastructure de test pour ça. Vérification par compilation et lecture.
+Deux défauts indépendants, corrigés avant de construire dessus.
+
+La Task 0 a mesuré ce que le harnais permet : `GlobalContext.getInstance(fakeRequest)` fonctionne via `FakeHttpContext`, mais `TestServletContext.getRealPath` est un simple echo, donc le dossier de données ne correspond à aucun répertoire réel. **Conséquence pour cette tâche** : le comportement en mémoire est testable, la persistance sur disque ne l'est pas. Cette dernière est couverte par la Task 10.
 
 **Files:**
 - Modify: `src/main/java/org/javlo/context/GlobalContext.java:4342-4344`
 - Modify: `src/main/java/org/javlo/mailing/Mailing.java:137-140`
+- Test: `src/test/java/org/javlo/context/GlobalContextUnsubscribeTest.java`
 
 **Interfaces:**
-- Consumes: rien
-- Produces: rien (nettoyage)
+- Consumes: le harnais `org.javlo.test.servlet.FakeHttpContext` réparé par la Task 0
+- Produces: `GlobalContextUnsubscribeTest.getContext()` — motif d'obtention d'un `GlobalContext` en test, réutilisé par la Task 4
 
-- [ ] **Step 1 : Ajouter le `save()` manquant**
+- [ ] **Step 1 : Écrire le test qui échoue**
+
+Créer `src/test/java/org/javlo/context/GlobalContextUnsubscribeTest.java` :
+
+```java
+package org.javlo.context;
+
+import org.javlo.helper.StringHelper;
+import org.javlo.test.servlet.FakeHttpContext;
+
+import junit.framework.TestCase;
+
+public class GlobalContextUnsubscribeTest extends TestCase {
+
+	static GlobalContext getContext() throws Exception {
+		FakeHttpContext httpContext = new FakeHttpContext("http://demo.javlo.org/view/en/index.html");
+		return GlobalContext.getInstance(httpContext.getRequest());
+	}
+
+	public void testUnsubscribeLinkRoundTrip() throws Exception {
+		GlobalContext ctx = getContext();
+		ctx.setUnsubscribeLink("https://site.be/unsub?email=${email}");
+		assertEquals("https://site.be/unsub?email=${email}", ctx.getUnsubscribeLink());
+	}
+
+	/**
+	 * Vider le champ doit réellement le vider : c'est le comportement dont
+	 * dépend l'override manuel de l'en-tête List-Unsubscribe.
+	 */
+	public void testUnsubscribeLinkCanBeCleared() throws Exception {
+		GlobalContext ctx = getContext();
+		ctx.setUnsubscribeLink("https://site.be/unsub");
+		assertFalse(StringHelper.isEmpty(ctx.getUnsubscribeLink()));
+		ctx.setUnsubscribeLink("");
+		assertTrue(StringHelper.isEmpty(ctx.getUnsubscribeLink()));
+	}
+}
+```
+
+- [ ] **Step 2 : Lancer le test**
+
+Run: `mvn -q test -Dtest=GlobalContextUnsubscribeTest`
+
+Ces deux tests peuvent passer avant la correction, puisqu'ils portent sur le comportement en mémoire, que le `save()` manquant n'affecte pas. C'est attendu : ils constituent le filet de non-régression du contrat `setUnsubscribeLink`/`getUnsubscribeLink`, pas la démonstration du défaut. Le défaut lui-même — l'absence de persistance — n'est pas observable depuis ce harnais et se vérifie à la Task 10.
+
+Noter dans le rapport si les tests passent avant correction, et le signaler honnêtement plutôt que de forcer un rouge artificiel.
+
+- [ ] **Step 3 : Ajouter le `save()` manquant**
 
 Dans `GlobalContext.java`, remplacer :
 
@@ -192,7 +242,7 @@ par :
 
 Le bloc `synchronized (properties)` et l'appel à `save()` reproduisent le motif de `setMailingSenders:3367-3372` et `setMailingSubject:3374-3379`. Sans lui, la valeur n'est persistée que par effet de bord du `setDKIMDomain()` appelé ensuite dans `AdminAction:535`.
 
-- [ ] **Step 2 : Supprimer le code mort**
+- [ ] **Step 4 : Supprimer le code mort**
 
 Dans `Mailing.java`, supprimer entièrement la méthode :
 
@@ -205,15 +255,21 @@ Dans `Mailing.java`, supprimer entièrement la méthode :
 
 Ne pas toucher à `getUnsubscribeURL()` sans argument (ligne 623), ni au champ `unsubscribeURL` : ils sont réutilisés à la Task 6.
 
-- [ ] **Step 3 : Vérifier la compilation**
+- [ ] **Step 5 : Vérifier la compilation et les tests**
 
 Run: `mvn -q -DskipTests compile`
 Expected: succès. Si une erreur signale un appel à `getUnsubscribeURL(String)`, c'est que la méthode n'était pas morte — arrêter et signaler.
 
-- [ ] **Step 4 : Commit**
+Run: `mvn -q test -Dtest=GlobalContextUnsubscribeTest`
+Expected: PASS, 2 tests.
+
+Run: `mvn test`
+Expected: pas plus de 8 échecs et 11 erreurs — la référence après Task 0. Aucun test qui passait ne doit échouer.
+
+- [ ] **Step 6 : Commit**
 
 ```bash
-git add src/main/java/org/javlo/context/GlobalContext.java src/main/java/org/javlo/mailing/Mailing.java
+git add src/main/java/org/javlo/context/GlobalContext.java src/main/java/org/javlo/mailing/Mailing.java src/test/java/org/javlo/context/GlobalContextUnsubscribeTest.java
 git commit -m "fix: persist unsubscribeLink and drop dead getUnsubscribeURL(String)"
 ```
 
@@ -944,12 +1000,38 @@ Le secret par site et la fabrique du service de suppression.
 **Files:**
 - Modify: `src/main/java/org/javlo/context/GlobalContext.java` (juste après `setUnsubscribeLink`, vers la ligne 4345)
 - Modify: `src/main/java/org/javlo/service/UnsubscribeService.java`
+- Test: `src/test/java/org/javlo/context/GlobalContextUnsubscribeTest.java` (compléter le fichier créé à la Task 1)
 
 **Interfaces:**
-- Consumes: `UnsubscribeService(File)` de la Task 3
+- Consumes: `UnsubscribeService(File)` de la Task 3, `GlobalContextUnsubscribeTest.getContext()` de la Task 1
 - Produces:
   - `String GlobalContext.getUnsubscribeSecret()` — génère et persiste à la première demande
   - `static UnsubscribeService UnsubscribeService.getInstance(GlobalContext globalContext)`
+
+- [ ] **Step 0 : Écrire les tests du secret**
+
+Ajouter à `GlobalContextUnsubscribeTest` (créé à la Task 1, qui fournit déjà la méthode `getContext()`) :
+
+```java
+	public void testUnsubscribeSecretIsGenerated() throws Exception {
+		String secret = getContext().getUnsubscribeSecret();
+		assertNotNull(secret);
+		assertTrue("secret trop court : " + secret.length(), secret.length() >= 32);
+	}
+
+	public void testUnsubscribeSecretIsStable() throws Exception {
+		GlobalContext ctx = getContext();
+		assertEquals(ctx.getUnsubscribeSecret(), ctx.getUnsubscribeSecret());
+	}
+
+	public void testUnsubscribeSecretIsUrlSafe() throws Exception {
+		assertTrue(getContext().getUnsubscribeSecret().matches("[A-Za-z0-9_-]+"));
+	}
+```
+
+Lancer `mvn -q test -Dtest=GlobalContextUnsubscribeTest` et vérifier l'échec de compilation : `getUnsubscribeSecret` n'existe pas encore.
+
+La stabilité entre deux instances distinctes du même site n'est pas testable ici — elle dépend de la persistance disque, hors de portée du harnais. Elle est vérifiée à la Task 10, Step 10.
 
 - [ ] **Step 1 : Ajouter le secret par site**
 
@@ -1015,10 +1097,13 @@ Expected: succès.
 Run: `mvn -q test -Dtest=UnsubscribeServiceTest`
 Expected: PASS, 10 tests — la fabrique n'a pas cassé le constructeur utilisé par les tests.
 
+Run: `mvn -q test -Dtest=GlobalContextUnsubscribeTest`
+Expected: PASS, 5 tests (2 de la Task 1, 3 ajoutés au Step 0).
+
 - [ ] **Step 4 : Commit**
 
 ```bash
-git add src/main/java/org/javlo/context/GlobalContext.java src/main/java/org/javlo/service/UnsubscribeService.java
+git add src/main/java/org/javlo/context/GlobalContext.java src/main/java/org/javlo/service/UnsubscribeService.java src/test/java/org/javlo/context/GlobalContextUnsubscribeTest.java
 git commit -m "feat: wire per-site unsubscribe secret and suppression list"
 ```
 
