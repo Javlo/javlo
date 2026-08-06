@@ -86,21 +86,6 @@ public class AccessServlet extends HttpServlet implements IVersion {
 
 	private static final boolean DEBUG_BOT_AGENT = false;
 
-	static {
-		try {
-			String catalinaBase = System.getProperty("catalina.base");
-			File logsDir = new File(catalinaBase, "logs");
-			File botLogFile = new File(logsDir, "bot.log");
-			FileHandler handler = new FileHandler(botLogFile.getAbsolutePath(), true);
-			handler.setFormatter(new SimpleFormatter());
-			botLogger.addHandler(handler);
-			botLogger.setUseParentHandlers(false); // Avoids logging to console
-			botLogger.setLevel(Level.INFO);
-		} catch (IOException e) {
-			throw new RuntimeException("Cannot initialize bot logger", e);
-		}
-	}
-
 	public static final String PERSISTENCE_PARAM = "persistence";
 
 	private static final long serialVersionUID = 1L;
@@ -129,6 +114,29 @@ public class AccessServlet extends HttpServlet implements IVersion {
 	// Logger.getLogger(AccessServlet.class.getName());
 
 	protected static Logger logger = Logger.getLogger(ContentContext.class.getName());
+
+	static {
+		try {
+			String catalinaBase = System.getProperty("catalina.base");
+			if (catalinaBase == null) {
+				botLogger.setLevel(Level.INFO);
+			} else {
+				File logsDir = new File(catalinaBase, "logs");
+				if (!logsDir.exists()) {
+					logsDir.mkdirs();
+				}
+				File botLogFile = new File(logsDir, "bot.log");
+				FileHandler handler = new FileHandler(botLogFile.getAbsolutePath(), true);
+				handler.setFormatter(new SimpleFormatter());
+				botLogger.addHandler(handler);
+				botLogger.setUseParentHandlers(false); // Avoids logging to console
+				botLogger.setLevel(Level.INFO);
+			}
+		} catch (Exception e) {
+			// un journal indisponible ne doit pas empêcher le chargement du servlet
+			logger.warning("can not initialize bot logger : " + e.getMessage());
+		}
+	}
 
 	@Override
 	public void destroy() {
