@@ -21,13 +21,13 @@
 			</colgroup>
 			<tbody>
 				<c:forEach var="entry" items="${unsubscribeList}">
-				<c:url var="resubscribeURL" value="${info.currentURL}">
+				<c:url var="resubscribeURL" value="${info.currentURL}" context="/">
 					<c:param name="webaction" value="mailing.resubscribe" />
 					<c:param name="email" value="${entry.email}" />
 				</c:url>
 				<tr>
-					<td class="con1">${entry.email}</td>
-					<td class="con0"><c:forEach var="role" items="${entry.roles}" varStatus="s">${role}<c:if test="${!s.last}">, </c:if></c:forEach></td>
+					<td class="con1"><c:out value="${entry.email}" escapeXml="true" /></td>
+					<td class="con0"><c:forEach var="role" items="${entry.roles}" varStatus="s"><c:out value="${role}" escapeXml="true" /><c:if test="${!s.last}">, </c:if></c:forEach></td>
 					<td class="con1">${entry.date}</td>
 					<td class="con0"><a href="${resubscribeURL}">${i18n.edit['mailing.action.resubscribe']}</a></td>
 				</tr>
