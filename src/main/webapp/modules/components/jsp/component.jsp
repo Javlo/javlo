@@ -9,7 +9,7 @@
 <div class="tabs tabloading component ui-tabs ui-widget ui-widget-content ui-corner-all">
 <form id="tabs-form" action="${info.currentURL}" method="post">
 <input type="hidden" name="webaction" value="components.update" />
-<input type="hidden" name="component" value="${param.component}" />
+<input type="hidden" name="component" value="<c:out value="${param.component}" />" />
 	<div class="header-tabs">
 		<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
 			<c:if test="${xhtmlExist}">

@@ -8,7 +8,7 @@
 <div>
 	<input type="hidden" name="webaction" value="update" />
 	<input type="hidden" name="user" value="${user.name}" />
-	<input type="hidden" name="previewEdit" value="${param.previewEdit}" />
+	<input type="hidden" name="previewEdit" value="<c:out value="${param.previewEdit}" />" />
 </div>
 
 <fieldset>

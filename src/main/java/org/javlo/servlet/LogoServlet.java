@@ -48,12 +48,23 @@ public class LogoServlet extends HttpServlet {
 
 	}
 
+	private static final String DEFAULT_COLOR = "cccccc";
+
+	/**
+	 * the value is written into the fill attributes of the svg, which is served
+	 * same origin and can carry script : only a hexadecimal color is accepted,
+	 * anything else falls back on the default.
+	 */
+	private static final String cleanColor(String color) {
+		if (color == null || !color.matches("[0-9a-fA-F]{3,8}")) {
+			return DEFAULT_COLOR;
+		}
+		return color;
+	}
+
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
-		String color = request.getParameter("color");
-		if (color == null) {
-			color = "cccccc";
-		}
+		String color = cleanColor(request.getParameter("color"));
 		PrintStream out;
 		try {
 			response.setContentType("image/svg+xml;charset=UTF-8");

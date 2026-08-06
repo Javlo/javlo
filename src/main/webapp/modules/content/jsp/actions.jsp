@@ -7,7 +7,7 @@
 <input type="hidden" name="webaction" value="changeComponent" />
 <c:if test="${not empty param.previewEdit}"> 
 <input type="hidden" name="previewEdit" value="true" />
-<input type="hidden" name="comp_id" value="${param.comp_id}" />
+<input type="hidden" name="comp_id" value="<c:out value="${param.comp_id}" />" />
 </c:if>
 <select name="type" class="with-title">
 <c:forEach var="comp" items="${components}">

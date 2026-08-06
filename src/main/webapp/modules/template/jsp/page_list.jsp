@@ -19,9 +19,9 @@ request.setAttribute("pages", pages);
 }
 </style>
 <div class="body">
-<h2>Usage of ${param.name}</h2>
+<h2>Usage of <c:out value="${param.name}" /></h2>
 <c:if test="${fn:length(pages) == 0}">
-<p>template '${param.name}' never used.</p>
+<p>template '<c:out value="${param.name}" />' never used.</p>
 </c:if><c:if test="${fn:length(pages) > 0}">
 <div class="pages-container">
 <table class="pages table">

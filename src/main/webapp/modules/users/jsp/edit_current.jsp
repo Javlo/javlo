@@ -9,7 +9,7 @@
 <div>
 	<input type="hidden" name="webaction" value="changePassword" />
 	<input type="hidden" name="user" value="${user.name}" />
-	<input type="hidden" name="previewEdit" value="${param.previewEdit}" />
+	<input type="hidden" name="previewEdit" value="<c:out value="${param.previewEdit}" />" />
 </div>
 <div class="col-sm-6">
 <div class="form-group">
@@ -188,7 +188,7 @@
 <c:if test="${not empty webaction}">
 	<div class="form-group">
 		<label for="message">you message to the administrator of the site :
-		<textarea class="form-control" id="message" name="message">${param.message}</textarea></label>
+		<textarea class="form-control" id="message" name="message"><c:out value="${param.message}" /></textarea></label>
 	</div>
 </c:if>
 

@@ -38,7 +38,7 @@
 		<c:if test="${param.backDirect && not empty param[BACK_PARAM_NAME]}">
 			<c:url var="backURL" value="${param[BACK_PARAM_NAME]}" context="/" />
 		</c:if>
-		<form action="${backURL}" method="post">
+		<form action="<c:out value="${backURL}" />" method="post">
 				<input type="hidden" name="webaction" value="file.editimage" />
 				<input type="hidden" name="webaction" value="file.changeRenderer" />
 				<input type="hidden" name="page" value="meta" />

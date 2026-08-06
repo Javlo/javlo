@@ -1,9 +1,9 @@
-
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <div class="popup upload">
 <c:url var="backURL" value="${param.currentURL}">
 	<c:param name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}" />
 </c:url>
-<form action="${backURL}" method="post" enctype="multipart/form-data">
+<form action="<c:out value="${backURL}" />" method="post" enctype="multipart/form-data">
 
 	<fieldset style="margin: 10px;">
 		<legend>update from url</legend>

@@ -28,7 +28,7 @@
        onclick=""><span>${i18n.edit['action.notuse']}</span></a>
 </c:if>
 <c:if test="${not empty param[BACK_PARAM_NAME]}"><a class="action-button back"
-                                                    href="${param[BACK_PARAM_NAME]}&path=${param.path}&backreturn=true"><span>${i18n.edit['action.back']}</span></a></c:if>
+                                                    href="<c:out value="${param[BACK_PARAM_NAME]}" />&path=<c:out value="${param.path}" />&backreturn=true"><span>${i18n.edit['action.back']}</span></a></c:if>
 <c:if test="${empty param.templateid && empty param.select}"><a class="action-button save" href="#save"
                                                                 onclick="jQuery('#form-meta').submit(); return false;"><span>${i18n.edit['action.update']}</span></a></c:if>
 <c:if test="${not empty globalContext.DMZServerInter}">
@@ -46,12 +46,12 @@
 <a href="${uploadJSPURL}" class="popup cboxElement action-button"><span>${i18n.edit['action.add-files']}</span></a>
 <c:if test="${not empty param.templateid}">
     <a class="action-button ajax"
-       href="${info.currentURL}?webaction=template.commit&webaction=file.browse&templateid=${param.templateid}&from-module=template"><span>${i18n.edit['template.action.commit']}</span></a>
+       href="${info.currentURL}?webaction=template.commit&webaction=file.browse&templateid=<c:out value="${param.templateid}" />&from-module=template"><span>${i18n.edit['template.action.commit']}</span></a>
     <a class="action-button ajax"
-       href="${info.currentURL}?webaction=template.commitChildren&webaction=file.browse&templateid=${param.templateid}&from-module=template"><span>${i18n.edit['template.action.commit-children']}</span></a>
+       href="${info.currentURL}?webaction=template.commitChildren&webaction=file.browse&templateid=<c:out value="${param.templateid}" />&from-module=template"><span>${i18n.edit['template.action.commit-children']}</span></a>
 
     <a class="action-button"
-       href="${info.currentURL}?webaction=template.goEditTemplate&templateid=${param.templateid}&module=template">back
+       href="${info.currentURL}?webaction=template.goEditTemplate&templateid=<c:out value="${param.templateid}" />&module=template">back
         edit template</a>
 
 </c:if>

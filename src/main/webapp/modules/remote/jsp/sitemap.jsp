@@ -7,7 +7,7 @@
 	<div class="row">
 	<div class="col-sm-11">
 	<div class="form-group">
-		<input class="form-control" name="sitemap" type="text" value="${param.sitemap}" placeholder="sitemap.xml" />
+		<input class="form-control" name="sitemap" type="text" value="<c:out value="${param.sitemap}" />" placeholder="sitemap.xml" />
 	</div>
 	</div><div class="col-sm-1">
 	<button type="submit" class="btn btn-standard btn-xs pull-right">&raquo;</button>

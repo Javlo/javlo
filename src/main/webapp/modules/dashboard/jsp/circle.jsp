@@ -24,10 +24,10 @@
 		stroke-dasharray="${360*(param.value/100)}, 20000"
 		transform="rotate(-90,100,100)"></circle>
 	<text class="timer" text-anchor="middle" x="100" y="110"
-		style="font-size: 22px;" fill="#aaa">${param.value}%</text>
+		style="font-size: 22px;" fill="#aaa"><c:out value="${param.value}" />%</text>
 	<c:if test="${not empty param.label}">	
 		<g stroke="#ccc">
-		<text class="timer" text-anchor="middle" x="175" y="35" style="font-size: 14px;" fill="#ccc">${param.label}</text>
+		<text class="timer" text-anchor="middle" x="175" y="35" style="font-size: 14px;" fill="#ccc"><c:out value="${param.label}" /></text>
 		<g stroke="#ccc">		
 		<polyline fill="none" stroke="black" style="fill:none;stroke:#ccc;stroke-width:1" points="133,50 140, 40 200,40" />		
 	</c:if>	

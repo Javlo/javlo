@@ -2,7 +2,7 @@
 %><%@ taglib prefix="fn" uri="jakarta.tags.functions"
 %>
 <div class="content">
-<c:if test="${not empty param.templateh}"><h2>${param.templateh}</h2></c:if>
+<c:if test="${not empty param.templateh}"><h2><c:out value="${param.templateh}" /></h2></c:if>
 <div class="tree">
 <ul class="tree">
 <li>

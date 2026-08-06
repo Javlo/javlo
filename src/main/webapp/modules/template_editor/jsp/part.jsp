@@ -9,7 +9,7 @@
 			${part.name}
 		</c:if>
 		</legend>
-		<input type="hidden" name="webaction" value="${param.webaction}" />
+		<input type="hidden" name="webaction" value="<c:out value="${param.webaction}" />" />
 		<c:if test="${param.parent}">
 		<div class="line">
 			<label for="parent-${part.name}">parent :</label>

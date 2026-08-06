@@ -1,7 +1,14 @@
 <%@ taglib uri="jakarta.tags.core" prefix="c"
 %><%@ taglib prefix="fn" uri="jakarta.tags.functions"
 %><c:set var="actionBar" value="true" /><c:if test="${!forceActionBar && not empty param.previewEdit}"><c:set var="actionBar" value="false" /></c:if>
-<c:set var="templateid" value="${param.templateid}" /><c:if test="${not empty currentTemplate}"><c:set var="templateid" value="${currentTemplate.name}" /></c:if>
+<%
+/* a template name is an identifier, it is rendered into links below */
+String templateIdParam = request.getParameter("templateid");
+if (templateIdParam == null || !templateIdParam.matches("[A-Za-z0-9_.\\-]{0,64}")) {
+	templateIdParam = "";
+}
+request.setAttribute("safeTemplateId", templateIdParam);
+%><c:set var="templateid" value="${safeTemplateId}" /><c:if test="${not empty currentTemplate}"><c:set var="templateid" value="${currentTemplate.name}" /></c:if>
 <c:if test="${empty templateFactory && empty templateid && actionBar}"><a class="action-button valid-all" href="${info.currentURL}?webaction=template.validate"><span>${i18n.edit['command.admin.template.all']}</span></a></c:if>
 <c:url var="inheritedURL" value="${info.currentURL}" context="/">
 	<c:param name="webaction" value="template.selectTemplate"></c:param>

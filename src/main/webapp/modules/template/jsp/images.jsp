@@ -19,9 +19,21 @@
 			</select>
 		</div>
 
-		<script type="text/javascript">	
+		<%
+		/*
+		 * the filter name is written inside a javascript string below, where an
+		 * html escaping would be meaningless : an image filter is an
+		 * identifier, so an unexpected value is dropped.
+		 */
+		String imageFilterParam = request.getParameter("filter");
+		if (imageFilterParam == null || !imageFilterParam.matches("[A-Za-z0-9_\\-]{0,64}")) {
+			imageFilterParam = "";
+		}
+		request.setAttribute("safeImageFilter", imageFilterParam);
+		%>
+		<script type="text/javascript">
 		function imagePreview(area) {
-			jQuery("#image-preview img").attr("src", "${info.staticRootURL}transform/${param.filter}/${currentTemplate.name}/"+area+"/local/images/demo.jpg?ts="+Math.floor(Date.now() / 1000));
+			jQuery("#image-preview img").attr("src", "${info.staticRootURL}transform/${safeImageFilter}/${currentTemplate.name}/"+area+"/local/images/demo.jpg?ts="+Math.floor(Date.now() / 1000));
 			jQuery("#image-preview legend").html("preview : "+area);
 		}
 	</script>
@@ -44,10 +56,10 @@
 					<c:forEach var="prop" items="${textProperties}">
 						<tr>
 							<th>${prop}</th>
-							<c:set var="key" value="${param.filter}.${prop}" />
+							<c:set var="key" value="${safeImageFilter}.${prop}" />
 							<td><input type="text" name="${key}" value="${values[key]}" placeholder="${allValues[key]}" /></td>
 							<c:forEach var="area" items="${areas}">
-								<c:set var="key" value="${param.filter}.${area}.${prop}" />
+								<c:set var="key" value="${safeImageFilter}.${area}.${prop}" />
 								<td><input type="text" name="${key}" value="${values[key]}" placeholder="${allValues[key]}" /></td>
 							</c:forEach>
 						</tr>
@@ -55,7 +67,7 @@
 					<c:forEach var="prop" items="${booleanProperties}">
 						<tr>
 							<th>${prop}</th>
-							<c:set var="key" value="${param.filter}.${prop}" />
+							<c:set var="key" value="${safeImageFilter}.${prop}" />
 							<td>
 								<div class="_jv_flex-line">
 									<select name="${key}">
@@ -71,7 +83,7 @@
 								</div>
 							</td>
 							<c:forEach var="area" items="${areas}">
-								<c:set var="key" value="${param.filter}.${area}.${prop}" />
+								<c:set var="key" value="${safeImageFilter}.${area}.${prop}" />
 								<td>
 									<div class="_jv_flex-line">
 										<select name="${key}" onchange="jQuery(this).parent().append('<input type=\'hidden\' name=\'_CK_${key}\' value=\'true\' />');">

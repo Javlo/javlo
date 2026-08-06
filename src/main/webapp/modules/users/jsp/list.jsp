@@ -4,7 +4,7 @@
 	<form id="form-select-user" action="${info.currentURL}" method="post">
 		<div>
 			<input type="hidden" name="webaction" value="deleteUser" />
-			<input type="hidden" name="previewEdit" value="${param.previewEdit}" />
+			<input type="hidden" name="previewEdit" value="<c:out value="${param.previewEdit}" />" />
 		</div>
 		<table cellpadding="0" cellspacing="0" border="0" class="dyntable cell-border compact stripe display" id="sitelist">
 			<thead>
@@ -65,7 +65,7 @@
 
 				setTimeout(function() {
 					document.querySelectorAll(".edit-user-link").forEach( i => {
-						i.href=i.href+'&previewEdit=${param.previewEdit}'
+						i.href=i.href+'&previewEdit=${param.previewEdit eq "true"}'
 					});
 				}, 1000);
 

@@ -56,6 +56,15 @@
 	} else {
 		request.removeAttribute(ContentContext.CHANGE_AREA_ATTRIBUTE_NAME);
 	}
+	/*
+	 * The area name is rendered below into html attributes and into inline
+	 * javascript selectors, three contexts needing three different escapings.
+	 * A template area is an identifier, so an unexpected value is dropped
+	 * rather than escaped : that closes every sink at once.
+	 */
+	if (area != null && !area.matches("[A-Za-z0-9_\\-]{1,64}")) {
+		area = null;
+	}
 	MenuElement currentPage = ctx.getCurrentPage();
 	if (areaWrapper && area != null) {
 		List<String> layouts = currentPage.getLayouts(ctx);

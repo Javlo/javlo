@@ -44,7 +44,7 @@ params:
 			</c:if>
 
 			<c:if test="${not empty param.select}">
-				<input type="hidden" name="select" value="${param.select}" />
+				<input type="hidden" name="select" value="<c:out value="${param.select}" />" />
 			</c:if>
 			<c:if test="${not empty param.close || not empty param.one && empty param.formAction}">
 				<input type="hidden" name="close" value="${empty param.one?param.close:'true'}" />

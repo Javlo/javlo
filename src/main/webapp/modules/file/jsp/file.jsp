@@ -15,13 +15,22 @@
 <div class="content nopadding">
 <div id="fileManager" class="elfinder"></div>
 </div>
-<c:set var="params" value="" />
-<c:if test="${not empty param.templateid}">
-<c:set var="params" value="&templateid=${param.templateid}" />
-</c:if>
-<c:if test="${not empty param.previewEdit}">
-<c:set var="params" value="${params}&previewEdit=${param.previewEdit}" />
-</c:if>
+<%
+/*
+ * params is concatenated into javascript strings below, where an html escaping
+ * would be meaningless : both values are identifiers, so an unexpected one is
+ * dropped.
+ */
+StringBuilder safeParamsBuilder = new StringBuilder();
+String fileTemplateId = request.getParameter("templateid");
+if (fileTemplateId != null && fileTemplateId.matches("[A-Za-z0-9_.\\-]{1,64}")) {
+	safeParamsBuilder.append("&templateid=").append(fileTemplateId);
+}
+if ("true".equals(request.getParameter("previewEdit"))) {
+	safeParamsBuilder.append("&previewEdit=true");
+}
+request.setAttribute("safeParams", safeParamsBuilder.toString());
+%><c:set var="params" value="${safeParams}" />
 <script type="text/javascript">
 jQuery(document).ready(function() {
 	var language = "${info.editLanguage}";

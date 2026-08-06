@@ -25,7 +25,7 @@
                 </p>
                 <p class="menu">
                     <a href="${template.URL}" class="preview" title="${template.name}" target="_blank"></a>
-                    <a href="${info.currentURL}?webaction=import&name=${template.name}&list=${param.list}" class="import" title="import ${template.name}"></a>
+                    <a href="${info.currentURL}?webaction=import&name=${template.name}&list=<c:out value="${param.list}" />" class="import" title="import ${template.name}"></a>
                 </p>
             </div><!--info-->
         </div><!--thumb-->

@@ -124,8 +124,17 @@ components = allComponents;
 
 if (components.size() > 60 && request.getParameter("display-all") == null) {
 	  %><div class="insert-line">
-	  	<c:set var="pushParam" value="&pushcomp=${param.pushcomp}" />
-		<a class="btn btn-default btn-xs warning" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}display-all=true${!empty param.pushcomp?pushParam:''}">${i18n.edit["edit.message.display-all-components"]}</a>
+	  	<%
+		/* pushcomp is a component id, rendered into the link below */
+		String pushCompParam = request.getParameter("pushcomp");
+		if (pushCompParam == null || !pushCompParam.matches("[A-Za-z0-9_\\-]{1,64}")) {
+			pushCompParam = "";
+		} else {
+			pushCompParam = "&pushcomp=" + pushCompParam;
+		}
+		request.setAttribute("safePushParam", pushCompParam);
+		%>
+		<a class="btn btn-default btn-xs warning" href="${info.currentURL}?${info.editPreview?'previewEdit=true&':''}display-all=true${safePushParam}">${i18n.edit["edit.message.display-all-components"]}</a>
 	  </div><%
 } else {
 

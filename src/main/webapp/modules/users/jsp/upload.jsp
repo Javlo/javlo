@@ -1,10 +1,10 @@
 <%@ taglib uri="jakarta.tags.core" prefix="c"
 %><div class="popup">
-<form action="${param.currentURL}" method="post" enctype="multipart/form-data">
+<form action="<c:out value="${param.currentURL}" />" method="post" enctype="multipart/form-data">
 	<input type="hidden" name="webaction" value="upload" />
-	<input type="hidden" name="admin" value="${param.admin}" />
+	<input type="hidden" name="admin" value="<c:out value="${param.admin}" />" />
 	<c:if test="${not empty param.role}">
-	<input type="hidden" name="role" value="${param.role}" />
+	<input type="hidden" name="role" value="<c:out value="${param.role}" />" />
 	</c:if>
 	
 	<label for="upload_vrac">${i18n.edit['user.upload.vrac']}${not empty param.role?" - ":""}${not empty param.role?param.role:""}</label>

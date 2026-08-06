@@ -1,5 +1,12 @@
 <%@ taglib uri="jakarta.tags.core" prefix="c"%><%@ taglib prefix="fn" uri="jakarta.tags.functions"
-%><c:set var="templateid" value="${param.templateid}" /><c:if test="${not empty currentTemplate && empty templateid}"><c:set var="templateid" value="${currentTemplate.name}" /></c:if>
+%><%
+/* a template name is an identifier, it is rendered into attributes and links below */
+String templateIdParam = request.getParameter("templateid");
+if (templateIdParam == null || !templateIdParam.matches("[A-Za-z0-9_.\\-]{0,64}")) {
+	templateIdParam = "";
+}
+request.setAttribute("safeTemplateId", templateIdParam);
+%><c:set var="templateid" value="${safeTemplateId}" /><c:if test="${not empty currentTemplate && empty templateid}"><c:set var="templateid" value="${currentTemplate.name}" /></c:if>
 
 <script>
 	function startLoading() {
@@ -25,9 +32,9 @@
 		<form id="form-css-template" action="${info.currentURL}" method="get" onsubmit="startLoading();">
 		<div class="form-group _jv_flex-line">
 		<input type="hidden" name="templateid" value="${templateid}" />
-		<input type="hidden" name="css" value="${param.css}" />
+		<input type="hidden" name="css" value="<c:out value="${param.css}" />" />
 		<input type="hidden" name="webaction" value="template.editCSS" />
-		<input type="text" name="search" value="${param.search}" placeholder="search..." id="input-filter" class="form-control" />
+		<input type="text" name="search" value="<c:out value="${param.search}" />" placeholder="search..." id="input-filter" class="form-control" />
 		<button type="button" class="btn btn-default btn-xs ms-1" onclick="startLoading(); document.getElementById('input-filter').value='';document.getElementById('form-css-template').submit();"><i class="bi bi-x-lg"></i></button>
 		</div>
 		</form>
@@ -117,11 +124,11 @@
 			<input type="hidden" name="webaction" value="template.editCSS" /> <input type="hidden" name="templateid" value="${templateid}" />
 		</div>
 		<div class="widgetbox2">
-		<h3>${param.css}</h3>
+		<h3><c:out value="${param.css}" /></h3>
 		<div class="content nopadding">
 		<c:if test="${not empty param.css}">
-			<input type="hidden" name="file" value="${param.css}" />
-			<input type="hidden" name="css" value="${param.css}" />
+			<input type="hidden" name="file" value="<c:out value="${param.css}" />" />
+			<input type="hidden" name="css" value="<c:out value="${param.css}" />" />
 			<textarea name="text" class="text-editor" id="text-editor" rows="10" cols="10" data-ext="css" data-mode="text/x-scss">${text}</textarea>
 		</c:if>
 		</div></div>

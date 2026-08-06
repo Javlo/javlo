@@ -1,6 +1,6 @@
 <%@ taglib uri="jakarta.tags.core" prefix="c"
 %><%@ taglib prefix="fn" uri="jakarta.tags.functions"
-%><c:set var="currentNode" value="${taxonomy.taxonomyBeanMap[param.id]}" /><c:if test="${empty currentNode}">CURRENT NODE NOT FOUND : ${param.id} on ${fn:length(taxonomy.taxonomyBeanMap)} nodes. (taxonomy? ${not empty taxonomy})
+%><c:set var="currentNode" value="${taxonomy.taxonomyBeanMap[param.id]}" /><c:if test="${empty currentNode}">CURRENT NODE NOT FOUND : <c:out value="${param.id}" /> on ${fn:length(taxonomy.taxonomyBeanMap)} nodes. (taxonomy? ${not empty taxonomy})
 </c:if><div id="item-${currentNode.id}">
 <jsp:include page="item.jsp?id=${currentNode.id}" />
 <ul${fn:length(currentNode.children)==0?' class="hidden"':''}>
