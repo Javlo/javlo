@@ -294,6 +294,8 @@ public class MailingModuleContext extends AbstractModuleContext {
 				link = URLHelper.replacePageReference(ctx.getContextForAbsoluteURL().getContextWithOtherRenderMode(ContentContext.VIEW_MODE), link);
 			}
 			m.setManualUnsubscribeLink(link);
+		} else {
+			m.setUnsubscribeURL(url.toString());
 		}
 		m.setTest(isTestMailing());
 

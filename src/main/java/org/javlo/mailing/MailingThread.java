@@ -3,11 +3,14 @@ package org.javlo.mailing;
 import jakarta.servlet.ServletContext;
 import org.javlo.config.MailingStaticConfig;
 import org.javlo.config.StaticConfig;
+import org.javlo.context.GlobalContext;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.module.mailing.MailingAction;
 import org.javlo.service.DataToIDService;
+import org.javlo.service.UnsubscribeTokenService;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.Transport;
@@ -31,7 +34,7 @@ public class MailingThread extends Thread {
 	
 	public static long SLEEP_BETWEEN_MAIL_SEC = 20;
 
-	//ServletContext application;
+	private ServletContext application;
 	
 	MailingFactory mailingFactory;
 	
@@ -44,7 +47,7 @@ public class MailingThread extends Thread {
 	public Boolean stop = false;
 
 	public MailingThread(ServletContext inApplication) {
-//		application = inApplication;
+		application = inApplication;
 		mailingStaticConfig = StaticConfig.getInstance(inApplication).getMailingStaticConfig();
 		mailingFactory = MailingFactory.getInstance(inApplication);
 		mailConfig = new MailConfig(null, StaticConfig.getInstance(inApplication), null);
@@ -130,7 +133,43 @@ public class MailingThread extends Thread {
 		return content;
 	}
 
-	public void sendMailing(Mailing mailing) throws IOException, InterruptedException, MessagingException {		
+	/**
+	 * Contexte du site auquel appartient le mailing. Le thread s'exécutant hors
+	 * requête HTTP, on le résout depuis la clé de contexte portée par le
+	 * mailing.
+	 */
+	private GlobalContext getSiteContext(Mailing mailing) {
+		if (StringHelper.isEmpty(mailing.getContextKey())) {
+			return null;
+		}
+		try {
+			return GlobalContext.getRealInstance(application, mailing.getContextKey());
+		} catch (Exception e) {
+			logger.warning("can not load context '" + mailing.getContextKey() + "' : " + e.getMessage());
+			return null;
+		}
+	}
+
+	/**
+	 * Construit l'en-tête List-Unsubscribe du destinataire. Le lien saisi à la
+	 * main dans les propriétés du site est prioritaire et n'est jamais
+	 * one-click ; sinon Javlo génère un lien signé propre au destinataire.
+	 */
+	private static UnsubscribeInfo buildUnsubscribeInfo(Mailing mailing, InternetAddress to, GlobalContext siteContext) {
+		String manualLink = mailing.getManualUnsubscribeLink();
+		if (!StringHelper.isEmpty(manualLink)) {
+			return UnsubscribeInfo.manual(manualLink.replace("${email}", to.getAddress()));
+		}
+		if (siteContext == null || StringHelper.isEmpty(mailing.getUnsubscribeURL())) {
+			return UnsubscribeInfo.manual(null);
+		}
+		UnsubscribeTokenService tokenService = new UnsubscribeTokenService(siteContext.getUnsubscribeSecret());
+		String token = tokenService.create(new UnsubscribeTokenService.TokenData(mailing.getContextKey(), mailing.getId(), to.getAddress(), mailing.getRoles(), System.currentTimeMillis()));
+		String url = URLHelper.addParam(URLHelper.addParam(mailing.getUnsubscribeURL(), "webaction", "unsecure.unsubscribe"), "lut", token);
+		return UnsubscribeInfo.oneClick(url);
+	}
+
+	public void sendMailing(Mailing mailing) throws IOException, InterruptedException, MessagingException {
 		Transport transport = null;
 		try {
 			DKIMBean dkimBean = null;
@@ -143,7 +182,8 @@ public class MailingThread extends Thread {
 			InternetAddress to = mailing.getNextReceiver();
 			
 			MailService mailingManager = MailService.getInstance(mailConfig);
-			
+			GlobalContext siteContext = getSiteContext(mailing);
+
 			logger.info("send mailling '" + mailing.getSubject() + "' config:" + mailConfig+ " DKIM ? "+(dkimBean != null)+ " (Time between 2 mails : "+SLEEP_BETWEEN_MAIL_SEC+")");
 			int countSending = 0;
 			while (to != null) {				
@@ -170,11 +210,8 @@ public class MailingThread extends Thread {
 
 				String error = null;
 				try {
-					String unsubsribeLink = mailing.getManualUnsubscribeLink();
-					if (!StringHelper.isEmpty(unsubsribeLink)) {
-						unsubsribeLink = unsubsribeLink.replace("${email}", to.getAddress());
-					}					
-					mailing.setWarningMessage(mailingManager.sendMail(transport, mailing.getFrom(), to, mailing.getSubject(), content.replace("##MAILING-ID##", mailing.getId()), true, unsubsribeLink, dkimBean, mailing.getId()));
+					UnsubscribeInfo unsubscribe = buildUnsubscribeInfo(mailing, to, siteContext);
+					mailing.setWarningMessage(mailingManager.sendMail(transport, mailing.getFrom(), to, mailing.getSubject(), content.replace("##MAILING-ID##", mailing.getId()), true, unsubscribe, dkimBean, mailing.getId()));
 				} catch (Exception ex) {
 					error=ex.getMessage();
 					ex.printStackTrace();
