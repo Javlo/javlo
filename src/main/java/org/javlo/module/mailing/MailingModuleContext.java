@@ -77,6 +77,7 @@ public class MailingModuleContext extends AbstractModuleContext {
 			outContext.navigation.add(defaultNav);
 			outContext.navigation.add(new LinkToRenderer(I18nAccess.getInstance(request).getText("mailing.title.history"), "history", "jsp/history.jsp"));
 			outContext.navigation.add(new LinkToRenderer(I18nAccess.getInstance(request).getText("mailing.title.queue"), "queue", "jsp/queue.jsp"));
+			outContext.navigation.add(new LinkToRenderer(I18nAccess.getInstance(request).getText("mailing.title.unsubscribe"), "unsubscribe", "jsp/unsubscribe.jsp"));
 			outContext.setCurrentLink(defaultNav.getName());
 		}
 

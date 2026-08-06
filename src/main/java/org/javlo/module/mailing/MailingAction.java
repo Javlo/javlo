@@ -149,7 +149,9 @@ public class MailingAction extends AbstractModuleAction {
 				currentModule.setSidebar(false);
 				currentModule.setBreadcrumb(false);
 				MailingFactory mailingFactory = MailingFactory.getInstance(session.getServletContext());
-				if (currentModule.getRenderer().contains("history")) {
+				if (currentModule.getRenderer().contains("unsubscribe")) {
+					request.setAttribute("unsubscribeList", UnsubscribeService.getInstance(globalContext).getAll());
+				} else if (currentModule.getRenderer().contains("history")) {
 				if (!globalContext.isMaster()) {
 					request.setAttribute("allMailing", mailingFactory.getOldMailingListByContext(globalContext.getContextKey()));
 				} else {
@@ -423,6 +425,16 @@ public class MailingAction extends AbstractModuleAction {
 	public Boolean haveRight(HttpSession session, User user) throws ModuleException {
 		return Boolean.TRUE;
 	}
+
+	public static String performResubscribe(ContentContext ctx, RequestService rs) throws Exception {
+		String email = rs.getParameter("email", null);
+		if (StringHelper.isEmpty(email)) {
+			return "need 'email' as parameter.";
+		}
+		UnsubscribeService.getInstance(ctx.getGlobalContext()).resubscribe(email);
+		return null;
+	}
+
 		public static String performDeletemailing(RequestService rs, ServletContext application, ContentContext ctx, HttpSession session, MessageRepository messageRepository, I18nAccess i18nAccess) throws IOException {
 		String id = rs.getParameter("id", null);
 		if (id == null) {
