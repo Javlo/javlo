@@ -5,6 +5,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
@@ -17,6 +18,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+
+import org.javlo.io.TransactionFile;
 
 /**
  * Liste des adresses désabonnées d'un site.
@@ -195,18 +198,28 @@ public class UnsubscribeService {
 	}
 
 	private void storeAll() {
+		TransactionFile tf = null;
 		try {
 			if (file.getParentFile() != null) {
 				file.getParentFile().mkdirs();
 			}
-			try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8, false))) {
+			tf = new TransactionFile(file);
+			try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(tf.getOutputStream(), StandardCharsets.UTF_8))) {
 				for (UnsubscribeEntry entry : getEntries().values()) {
 					writer.write(render(entry));
 					writer.newLine();
 				}
 			}
+			tf.commit();
 		} catch (IOException e) {
 			logger.warning("can not write unsubscribe file " + file + " : " + e.getMessage());
+			try {
+				if (tf != null) {
+					tf.rollback();
+				}
+			} catch (IOException e1) {
+				logger.warning("can not rollback unsubscribe file " + file + " : " + e1.getMessage());
+			}
 		}
 	}
 
