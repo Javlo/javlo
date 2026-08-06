@@ -426,7 +426,22 @@ public class MailingAction extends AbstractModuleAction {
 		return Boolean.TRUE;
 	}
 
+	/**
+	 * Réinscription d'une adresse : écriture sur la liste de suppression,
+	 * réservée aux administrateurs du site.
+	 *
+	 * Le contrôle est explicite et ne peut pas s'appuyer sur le
+	 * 'security.roles=mailing' du module : ActionManager:220-232 délègue à
+	 * Module.haveRight, qui court-circuite sur MailingAction.haveRight(session,
+	 * user) — lequel renvoie TRUE sans condition. Sans cette garde, un GET
+	 * anonyme sur mailing.resubscribe suffirait à désuspendre n'importe quelle
+	 * adresse.
+	 */
 	public static String performResubscribe(ContentContext ctx, RequestService rs) throws Exception {
+		if (!AdminUserSecurity.getInstance().canRole(ctx.getCurrentEditUser(), AdminUserSecurity.MAILING_ROLE)) {
+			logger.warning("access refused to mailing.resubscribe : " + ctx.getRequest().getRequestURI() + " user:" + ctx.getCurrentUserId());
+			return "security error.";
+		}
 		String email = rs.getParameter("email", null);
 		if (StringHelper.isEmpty(email)) {
 			return "need 'email' as parameter.";
