@@ -9,6 +9,7 @@ import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.i18n.I18nAccess;
+import org.javlo.mailing.FeedBackMailingBean;
 import org.javlo.mailing.Mailing;
 import org.javlo.mailing.MailingFactory;
 import org.javlo.message.GenericMessage;
@@ -21,6 +22,8 @@ import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
 import org.javlo.service.DataToIDService;
 import org.javlo.service.RequestService;
+import org.javlo.service.UnsubscribeService;
+import org.javlo.service.UnsubscribeTokenService;
 import org.javlo.service.syncro.SynchroHelper;
 import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
@@ -315,43 +318,104 @@ public class MailingAction extends AbstractModuleAction {
 		return null;
 	}
 
+	public static final String UNSUBSCRIBE_TOKEN_PARAM_NAME = "lut";
+
+	/**
+	 * Désabonne un destinataire. Deux jetons possibles : 'lut', signé, porté par
+	 * l'en-tête List-Unsubscribe ; ou '_mfb', porté par le lien présent dans le
+	 * corps du mail.
+	 *
+	 * Renvoie toujours null : un jeton invalide ne doit pas être distingué d'un
+	 * jeton valide, sous peine de renseigner un attaquant.
+	 */
 	public static String performUnsubscribe(ServletContext application, HttpServletRequest request, RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
-		String mfb = rs.getParameter(MailingAction.MAILING_FEEDBACK_PARAM_NAME, null);
-		if (mfb != null) {
-			DataToIDService serv = DataToIDService.getInstance(application);
-			Map<String, String> params = StringHelper.uriParamToMap(serv.getData(mfb));
-			String to = params.get("to");
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			logger.info("mailing unsubscribe : " + to + " site:" + globalContext.getContextKey());
-			InternetAddress add;
-			try {
-				add = new InternetAddress(to);
-				IUserFactory userFactory = UserFactory.createUserFactory(request);
-				User user = userFactory.getUser(add.getAddress());
-				if (user != null) {
-					Set<String> roles = new HashSet<String>(StringHelper.stringToCollection(rs.getParameter("roles", ""), ";"));
-					user.getUserInfo().removeRoles(roles);
-					userFactory.store();
-				} else {
-					ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-					PrintStream out = new PrintStream(outStream);
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
 
-					out.println("Site title : " + globalContext.getGlobalTitle());
-					out.println("E-Mail     : " + to);
-					out.println("");
-					out.println("--");
-					out.println("Direct Link : " + URLHelper.createAbsoluteViewURL(ctx, "/"));
-					out.close();
-					String mailContent = new String(outStream.toByteArray());
+		String email = null;
+		String mailingId = null;
+		Collection<String> roles = new LinkedList<String>();
 
-					NetHelper.sendMailToAdministrator(ctx.getGlobalContext(), new InternetAddress(to), "Mailing unsubscribe : " + globalContext.getContextKey(), mailContent);
-				}
-			} catch (AddressException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		String signedToken = rs.getParameter(UNSUBSCRIBE_TOKEN_PARAM_NAME, null);
+		if (signedToken != null) {
+			UnsubscribeTokenService tokenService = new UnsubscribeTokenService(globalContext.getUnsubscribeSecret());
+			UnsubscribeTokenService.TokenData data = tokenService.read(signedToken, globalContext.getContextKey());
+			if (data == null) {
+				logger.warning("invalid unsubscribe token on site : " + globalContext.getContextKey());
+				return null;
 			}
-
+			email = data.getEmail();
+			mailingId = data.getMailingId();
+			roles.addAll(data.getRoles());
+		} else {
+			String mfb = rs.getParameter(MailingAction.MAILING_FEEDBACK_PARAM_NAME, null);
+			if (mfb == null) {
+				return null;
+			}
+			DataToIDService serv = DataToIDService.getInstance(application);
+			String rawData = serv.getData(mfb);
+			if (rawData == null) {
+				return null;
+			}
+			Map<String, String> params = StringHelper.uriParamToMap(rawData);
+			if (params == null) {
+				return null;
+			}
+			email = params.get("to");
+			mailingId = params.get("mailing");
+			roles.addAll(StringHelper.stringToCollection(rs.getParameter("roles", ""), ";"));
 		}
+
+		if (StringHelper.isEmpty(email)) {
+			return null;
+		}
+
+		logger.info("mailing unsubscribe : " + email + " site:" + globalContext.getContextKey() + " roles:" + roles);
+
+		/** liste de suppression : couvre toutes les origines de destinataires **/
+		UnsubscribeService.getInstance(globalContext).unsubscribe(email, roles);
+
+		/** retrait des rôles du compte utilisateur, s'il existe **/
+		try {
+			InternetAddress add = new InternetAddress(email);
+			IUserFactory userFactory = UserFactory.createUserFactory(request);
+			User user = userFactory.getUser(add.getAddress());
+			if (user != null) {
+				user.getUserInfo().removeRoles(new HashSet<String>(roles));
+				userFactory.store();
+			} else {
+				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+				PrintStream out = new PrintStream(outStream);
+				out.println("Site title : " + globalContext.getGlobalTitle());
+				out.println("E-Mail     : " + email);
+				out.println("");
+				out.println("--");
+				out.println("Direct Link : " + URLHelper.createAbsoluteViewURL(ctx, "/"));
+				out.close();
+				NetHelper.sendMailToAdministrator(globalContext, new InternetAddress(email), "Mailing unsubscribe : " + globalContext.getContextKey(), new String(outStream.toByteArray()));
+			}
+		} catch (AddressException e) {
+			logger.warning("bad email on unsubscribe : " + email);
+		}
+
+		/** trace pour la statistique du module mailing **/
+		if (mailingId != null) {
+			try {
+				Mailing mailing = new Mailing();
+				if (mailing.isExist(application, mailingId)) {
+					mailing.setId(StaticConfig.getInstance(application).getMailingStaticConfig(), mailingId);
+					FeedBackMailingBean bean = new FeedBackMailingBean();
+					bean.setEmail(email);
+					bean.setDate(new Date());
+					bean.setUrl(ctx.getRequest().getPathInfo());
+					bean.setWebaction("unsecure.unsubscribe");
+					bean.setIp(ctx.getRequest().getRemoteHost());
+					mailing.addFeedBack(bean);
+				}
+			} catch (Exception e) {
+				logger.warning("can not store unsubscribe feedback : " + e.getMessage());
+			}
+		}
+
 		return null;
 	}
 

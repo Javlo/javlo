@@ -32,7 +32,7 @@ public class UnsubsribeLink extends InternalLink {
 	
 	@Override
 	protected String getParam() throws Exception {
-		return "?webaction=mailing.unsubscribe&roles="+MailingAction.DATA_MAIL_PREFIX+"roles"+MailingAction.DATA_MAIL_SUFFIX;
+		return "?webaction=unsecure.unsubscribe&roles="+MailingAction.DATA_MAIL_PREFIX+"roles"+MailingAction.DATA_MAIL_SUFFIX;
 	}
 	
 	@Override

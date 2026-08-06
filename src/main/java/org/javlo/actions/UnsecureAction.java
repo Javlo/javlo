@@ -1,5 +1,7 @@
 package org.javlo.actions;
 
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 import org.javlo.config.StaticConfig;
@@ -8,6 +10,7 @@ import org.javlo.context.EditContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.MessageRepository;
+import org.javlo.module.mailing.MailingAction;
 import org.javlo.module.user.UserAction;
 import org.javlo.service.RequestService;
 
@@ -31,6 +34,10 @@ public class UnsecureAction implements IAction {
 
 	public static String performChangePasswordWithToken(RequestService rs, ContentContext ctx, EditContext editContext, GlobalContext globalContext, HttpSession session, StaticConfig staticConfig, MessageRepository messageRepository, I18nAccess i18nAccess) {
 		return UserAction.performChangePasswordWithToken(rs, ctx, editContext, globalContext, session, staticConfig, messageRepository, i18nAccess);
+	}
+
+	public static String performUnsubscribe(ServletContext application, HttpServletRequest request, RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
+		return MailingAction.performUnsubscribe(application, request, rs, ctx, messageRepository, i18nAccess);
 	}
 
 }
