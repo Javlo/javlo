@@ -134,11 +134,6 @@ public class Mailing {
 
 	//public static final Object SYNCRO_LOCK = new Object();
 
-	String getUnsubscribeURL(String mail) {
-		String params = "?webaction=mailing.Unsubscriberole&mail=" + mail + "&roles=" + StringHelper.collectionToString(roles);
-		return getUnsubscribeURL() + params;
-	}
-	
 	public Mailing() {
 		
 	}

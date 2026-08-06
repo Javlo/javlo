@@ -4340,7 +4340,10 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	}
 
 	public void setUnsubscribeLink(String link) {
-		properties.setProperty("unsubscribeLink", link);
+		synchronized (properties) {
+			properties.setProperty("unsubscribeLink", link);
+			save();
+		}
 	}
 
 	public String getPOPHost() {
