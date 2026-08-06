@@ -155,8 +155,10 @@ public class MailingThread extends Thread {
 	 * Construit l'en-tête List-Unsubscribe du destinataire. Le lien saisi à la
 	 * main dans les propriétés du site est prioritaire et n'est jamais
 	 * one-click ; sinon Javlo génère un lien signé propre au destinataire.
+	 *
+	 * Visible dans le package pour être testée sans session SMTP.
 	 */
-	private static UnsubscribeInfo buildUnsubscribeInfo(Mailing mailing, InternetAddress to, GlobalContext siteContext) {
+	static UnsubscribeInfo buildUnsubscribeInfo(Mailing mailing, InternetAddress to, GlobalContext siteContext) {
 		String manualLink = mailing.getManualUnsubscribeLink();
 		if (!StringHelper.isEmpty(manualLink)) {
 			return UnsubscribeInfo.manual(manualLink.replace("${email}", to.getAddress()));
