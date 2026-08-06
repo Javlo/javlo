@@ -308,7 +308,19 @@ public class MailingModuleContext extends AbstractModuleContext {
 			}
 			m.setManualUnsubscribeLink(link);
 		} else {
-			m.setUnsubscribeURL(url.toString());
+			/**
+			 * L'URL de l'en-tête List-Unsubscribe doit être en VIEW_MODE, pas en
+			 * PAGE_MODE. web.xml mappe '/page/*' sur ContentOnlyServlet, qui
+			 * n'appelle jamais ServletHelper.execAction : le paramètre webaction
+			 * y serait ignoré et le désabonnement ne se produirait pas. Seul
+			 * '/view/*' (AccessServlet) exécute les actions. On repart de pageCtx
+			 * qui porte déjà setAbsoluteURL(true) et resetDMZServerInter() : le
+			 * lien doit être absolu (une URL relative est inutilisable dans un
+			 * en-tête de mail, et UnsubscribeInfo.oneClick exige 'https://') et
+			 * doit porter l'hôte public, jamais l'hôte interne du serveur DMZ.
+			 */
+			ContentContext viewCtx = pageCtx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE);
+			m.setUnsubscribeURL(URLHelper.createURL(viewCtx));
 		}
 		m.setTest(isTestMailing());
 
