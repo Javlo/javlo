@@ -400,6 +400,17 @@ public class MailingAction extends AbstractModuleAction {
 			if (user != null) {
 				user.getUserInfo().removeRoles(new HashSet<String>(roles));
 				userFactory.store();
+			} else if (signedToken != null) {
+				/**
+				 * Chemin one-click RFC 8058 : pas de mail à l'administrateur.
+				 * Une poignée de main SMTP sur le thread de la requête ferait
+				 * expirer le POST que le client mail attend court, et une vague
+				 * de désabonnements inonderait la boîte de l'administrateur. La
+				 * notification était un palliatif à l'absence d'écran ; la liste
+				 * de suppression enregistre l'adresse et l'écran du module
+				 * mailing l'affiche.
+				 */
+				logger.info("unsubscribe without account, no admin mail on one-click path : " + email);
 			} else {
 				ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 				PrintStream out = new PrintStream(outStream);
@@ -432,6 +443,16 @@ public class MailingAction extends AbstractModuleAction {
 			} catch (Exception e) {
 				logger.warning("can not store unsubscribe feedback : " + e.getMessage());
 			}
+		}
+
+		/**
+		 * Accusé de réception, uniquement ici. Aucun chemin d'échec ne parle :
+		 * un jeton invalide doit rester indiscernable d'un jeton valide. Le
+		 * client one-click ignore le corps de la réponse ; c'est le
+		 * destinataire arrivant en GET depuis le lien du mail qui le lit.
+		 */
+		if (messageRepository != null && i18nAccess != null) {
+			messageRepository.setGlobalMessage(new GenericMessage(i18nAccess.getViewText("mailing.unsubscribe.confirmation"), GenericMessage.INFO));
 		}
 
 		return null;
