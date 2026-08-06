@@ -35,6 +35,128 @@
 
 ---
 
+### Task 0 : Réparer le harnais de test servlet
+
+Le dépôt contient déjà un harnais complet dans `src/main/java/org/javlo/test/servlet/` : `FakeHttpContext`, `TestRequest`, `TestResponse`, `TestServletContext` (qui implémente `ServletContext`) et `TestSession`. Il est utilisé par `ComponentHelperTest:15-17`. Il est cassé par un seul point de défaillance, à corriger pour rendre testable le code couplé aux servlets dans les tâches suivantes.
+
+**Files:**
+- Modify: `src/main/java/org/javlo/servlet/AccessServlet.java:89-101`
+- Test: `src/test/java/org/javlo/servlet/AccessServletInitTest.java`
+
+**Interfaces:**
+- Consumes: rien
+- Produces: `AccessServlet` chargeable hors conteneur ; le harnais `org.javlo.test.servlet.FakeHttpContext` redevient utilisable
+
+- [ ] **Step 1 : Reproduire la panne**
+
+Run: `mvn -q test -Dtest=ComponentHelperTest`
+Expected: FAIL avec `java.lang.ExceptionInInitializerError`, causé par `RuntimeException: Cannot initialize bot logger`, lui-même causé par `NoSuchFileException: <repo>/logs/bot.log.lck`.
+
+Ce diagnostic est déjà établi ; cette étape sert à confirmer qu'il se reproduit avant correction.
+
+- [ ] **Step 2 : Écrire le test qui échoue**
+
+Créer `src/test/java/org/javlo/servlet/AccessServletInitTest.java` :
+
+```java
+package org.javlo.servlet;
+
+import junit.framework.TestCase;
+
+/**
+ * L'initialisation statique d'AccessServlet ne doit jamais empêcher le
+ * chargement de la classe : hors conteneur, ou sur une instance dont le
+ * dossier de logs a disparu, le servlet doit rester chargeable.
+ */
+public class AccessServletInitTest extends TestCase {
+
+	public void testClassLoadsWithoutCatalinaBase() throws Exception {
+		String previous = System.getProperty("catalina.base");
+		System.clearProperty("catalina.base");
+		try {
+			Class.forName("org.javlo.servlet.AccessServlet");
+		} finally {
+			if (previous != null) {
+				System.setProperty("catalina.base", previous);
+			}
+		}
+	}
+}
+```
+
+- [ ] **Step 3 : Lancer le test pour vérifier qu'il échoue**
+
+Run: `mvn -q test -Dtest=AccessServletInitTest`
+Expected: FAIL avec `ExceptionInInitializerError`.
+
+- [ ] **Step 4 : Rendre l'initialisation tolérante**
+
+Dans `AccessServlet.java`, remplacer le bloc statique des lignes 89-101 par :
+
+```java
+	static {
+		try {
+			String catalinaBase = System.getProperty("catalina.base");
+			if (catalinaBase == null) {
+				botLogger.setLevel(Level.INFO);
+			} else {
+				File logsDir = new File(catalinaBase, "logs");
+				if (!logsDir.exists()) {
+					logsDir.mkdirs();
+				}
+				File botLogFile = new File(logsDir, "bot.log");
+				FileHandler handler = new FileHandler(botLogFile.getAbsolutePath(), true);
+				handler.setFormatter(new SimpleFormatter());
+				botLogger.addHandler(handler);
+				botLogger.setUseParentHandlers(false); // Avoids logging to console
+				botLogger.setLevel(Level.INFO);
+			}
+		} catch (Exception e) {
+			// un journal indisponible ne doit pas empêcher le chargement du servlet
+			logger.warning("can not initialize bot logger : " + e.getMessage());
+		}
+	}
+```
+
+Trois changements, chacun avec sa raison. L'absence de `catalina.base` est traitée explicitement plutôt que de produire un chemin relatif accidentel. Le dossier de logs est créé s'il manque. Et l'échec ne relance plus d'exception : un journal secondaire indisponible ne doit pas rendre le servlet principal inchargeable.
+
+Vérifier que `logger` (le logger de classe) est déclaré avant ce bloc statique ; si sa déclaration vient après, déplacer le bloc statique en dessous, sans quoi `logger` sera `null` à l'exécution du bloc.
+
+- [ ] **Step 5 : Lancer les tests**
+
+Run: `mvn -q test -Dtest=AccessServletInitTest`
+Expected: PASS.
+
+Run: `mvn -q test -Dtest=ComponentHelperTest+NavigationTest+ResourceHelperTest+URLHelperTest+TestMenuElement`
+Expected: les erreurs `ExceptionInInitializerError` et `NoClassDefFound Could not initialize class org.javlo.servlet.AccessServlet` ont disparu. Certains de ces tests peuvent encore échouer pour d'autres raisons préexistantes — c'est acceptable, seule la disparition de l'erreur d'initialisation est exigée ici.
+
+- [ ] **Step 6 : Établir jusqu'où porte le harnais**
+
+Écrire un test exploratoire temporaire qui tente d'obtenir un `GlobalContext` via le harnais :
+
+```java
+FakeHttpContext httpContext = new FakeHttpContext("http://demo.javlo.org/view/en/index.html");
+GlobalContext globalContext = GlobalContext.getInstance(httpContext.getRequest());
+```
+
+Rapporter dans le rapport de tâche, précisément : est-ce que cela fonctionne ? Si non, quelle est l'exception et à quelle ligne ? Quel dossier de données `TestServletContext.getRealPath` renvoie-t-il ?
+
+**Ne pas chercher à réparer ce qui bloquerait à ce stade** — le but est de mesurer, pas d'étendre le chantier. Supprimer le test exploratoire avant de commiter. Cette mesure décidera des tests ajoutés aux Tasks 1, 4, 6, 8 et 9.
+
+- [ ] **Step 7 : Vérifier l'absence de régression**
+
+Run: `mvn test`
+Expected: le nombre total d'échecs et d'erreurs a diminué par rapport à la référence de 6 échecs et 16 erreurs sur 134 tests. Aucun test qui passait ne doit échouer.
+
+- [ ] **Step 8 : Commit**
+
+```bash
+git add src/main/java/org/javlo/servlet/AccessServlet.java src/test/java/org/javlo/servlet/AccessServletInitTest.java
+git commit -m "fix: do not fail AccessServlet class loading when bot log is unavailable"
+```
+
+---
+
 ### Task 1 : Correctifs préalables
 
 Deux défauts indépendants, corrigés avant de construire dessus. Aucun test unitaire possible : `GlobalContext` exige un `ServletContext`, et le dépôt n'a pas d'infrastructure de test pour ça. Vérification par compilation et lecture.
@@ -1078,17 +1200,9 @@ et remplacer les accesseurs des lignes 169-175 par :
 	public void setUnsubscribeInfo(UnsubscribeInfo unsubscribeInfo) {
 		this.unsubscribeInfo = unsubscribeInfo;
 	}
-
-	public String getUnsubscribeLink() {
-		return unsubscribeInfo == null ? null : unsubscribeInfo.getUrl();
-	}
-
-	public void setUnsubscribeLink(String unsubscribeLink) {
-		this.unsubscribeInfo = UnsubscribeInfo.manual(unsubscribeLink);
-	}
 ```
 
-Les deux dernières méthodes préservent les appelants existants de `EMail`.
+Ne **pas** conserver de méthodes `getUnsubscribeLink()` / `setUnsubscribeLink(String)` sur `EMail`. Vérification faite avant rédaction : leurs seuls appelants sont `MailService:237` et `:286`, que cette même tâche bascule sur `getUnsubscribeInfo()`. Les garder produirait du code mort. Attention à ne pas confondre avec `GlobalContext.getUnsubscribeLink()` et `GlobalContextBean.getUnsubscribeLink()`, qui portent le même nom, sont bien utilisés, et ne doivent pas être touchés.
 
 - [ ] **Step 6 : Porter `MailService` sur le nouvel objet**
 
