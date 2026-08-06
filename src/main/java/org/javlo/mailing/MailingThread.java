@@ -10,6 +10,7 @@ import org.javlo.helper.URLHelper;
 import org.javlo.helper.XHTMLHelper;
 import org.javlo.module.mailing.MailingAction;
 import org.javlo.service.DataToIDService;
+import org.javlo.service.UnsubscribeService;
 import org.javlo.service.UnsubscribeTokenService;
 
 import jakarta.mail.MessagingException;
@@ -186,7 +187,13 @@ public class MailingThread extends Thread {
 
 			logger.info("send mailling '" + mailing.getSubject() + "' config:" + mailConfig+ " DKIM ? "+(dkimBean != null)+ " (Time between 2 mails : "+SLEEP_BETWEEN_MAIL_SEC+")");
 			int countSending = 0;
-			while (to != null) {				
+			while (to != null) {
+				if (siteContext != null && UnsubscribeService.getInstance(siteContext).isUnsubscribed(to.getAddress(), mailing.getRoles())) {
+					logger.info("skip unsubscribed receiver : " + to);
+					mailing.onMailSent(to, "unsubscribe");
+					to = mailing.getNextReceiver();
+					continue;
+				}
 				String data = "mailing=" + mailing.getId() + "&to=" + to;
 				mailing.addData("data", dataToIDService.setData(data));
 				mailing.addData("roles", StringHelper.collectionToString(mailing.getRoles(), ";"));

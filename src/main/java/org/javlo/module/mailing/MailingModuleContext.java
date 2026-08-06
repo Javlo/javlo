@@ -4,9 +4,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,6 +39,7 @@ import org.javlo.module.core.IMainModuleName;
 import org.javlo.module.core.Module;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.service.UnsubscribeService;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.IUserFactory;
 import org.javlo.user.IUserInfo;
@@ -242,6 +245,15 @@ public class MailingModuleContext extends AbstractModuleContext {
 					if (!allRecipients.contains(email)) {
 						allRecipients.add(email);
 					}
+				}
+			}
+			/** retirer les adresses désabonnées, quelle que soit leur origine **/
+			UnsubscribeService unsubscribeService = UnsubscribeService.getInstance(ctx.getGlobalContext());
+			Collection<String> targetedRoles = groups == null ? new LinkedList<String>() : new LinkedList<String>(groups);
+			Iterator<InternetAddress> recipientIterator = allRecipients.iterator();
+			while (recipientIterator.hasNext()) {
+				if (unsubscribeService.isUnsubscribed(recipientIterator.next().getAddress(), targetedRoles)) {
+					recipientIterator.remove();
 				}
 			}
 			return true;
