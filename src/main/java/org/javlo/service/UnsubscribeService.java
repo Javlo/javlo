@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -113,7 +114,7 @@ public class UnsubscribeService {
 		Date date = null;
 		if (parts.length > 2) {
 			try {
-				date = new SimpleDateFormat(DATE_PATTERN).parse(parts[2]);
+				date = new SimpleDateFormat(DATE_PATTERN, Locale.ROOT).parse(parts[2]);
 			} catch (Exception e) {
 				date = null;
 			}
@@ -130,7 +131,7 @@ public class UnsubscribeService {
 			roles.append(role);
 		}
 		Date date = entry.getDate() == null ? new Date() : entry.getDate();
-		return entry.getEmail() + SEPARATOR + roles + SEPARATOR + new SimpleDateFormat(DATE_PATTERN).format(date);
+		return entry.getEmail() + SEPARATOR + roles + SEPARATOR + new SimpleDateFormat(DATE_PATTERN, Locale.ROOT).format(date);
 	}
 
 	public synchronized boolean isUnsubscribed(String email, Collection<String> roles) {

@@ -15,6 +15,19 @@ public class UnsubscribeInfoTest extends TestCase {
 		assertFalse(UnsubscribeInfo.manual("https://site.be/unsub").isOneClick());
 	}
 
+	/** M3 : le RFC 2369 impose les chevrons, même sur un lien saisi à la main. */
+	public void testManualBareUrlIsWrapped() throws Exception {
+		UnsubscribeInfo info = UnsubscribeInfo.manual("https://site.be/unsub?email=x@y.be");
+		assertEquals("<https://site.be/unsub?email=x@y.be>", info.getHeaderValue());
+		assertFalse(info.isOneClick());
+	}
+
+	/** M3 : un lien manuel déjà encadré n'est pas encadré deux fois. */
+	public void testManualAlreadyBracketedIsNotWrappedTwice() throws Exception {
+		assertEquals("<https://site.be/unsub>", UnsubscribeInfo.manual("<https://site.be/unsub>").getHeaderValue());
+		assertEquals("<mailto:unsub@site.be>", UnsubscribeInfo.manual("  <mailto:unsub@site.be>  ").getHeaderValue());
+	}
+
 	public void testOneClickWrapsUrlInBrackets() throws Exception {
 		UnsubscribeInfo info = UnsubscribeInfo.oneClick("https://site.be/fr/page?webaction=unsecure.unsubscribe&lut=ABC");
 		assertEquals("<https://site.be/fr/page?webaction=unsecure.unsubscribe&lut=ABC>", info.getHeaderValue());

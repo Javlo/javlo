@@ -15,12 +15,9 @@ public class UnsubscribeInfo {
 
 	private final boolean oneClick;
 
-	private final boolean generated;
-
-	private UnsubscribeInfo(String url, boolean oneClick, boolean generated) {
+	private UnsubscribeInfo(String url, boolean oneClick) {
 		this.url = url;
 		this.oneClick = oneClick;
-		this.generated = generated;
 	}
 
 	/**
@@ -28,7 +25,7 @@ public class UnsubscribeInfo {
 	 * peut pas garantir qu'une URL externe respecte le protocole one-click.
 	 */
 	public static UnsubscribeInfo manual(String url) {
-		return new UnsubscribeInfo(url, false, false);
+		return new UnsubscribeInfo(url, false);
 	}
 
 	/**
@@ -37,7 +34,7 @@ public class UnsubscribeInfo {
 	 */
 	public static UnsubscribeInfo oneClick(String url) {
 		boolean https = !StringHelper.isEmpty(url) && url.trim().toLowerCase().startsWith("https://");
-		return new UnsubscribeInfo(url, https, true);
+		return new UnsubscribeInfo(url, https);
 	}
 
 	public boolean isEmpty() {
@@ -53,17 +50,19 @@ public class UnsubscribeInfo {
 	}
 
 	/**
-	 * @return la valeur exacte à poser dans l'en-tête. Un lien généré est
-	 *         encadré par des chevrons ; un lien manuel est laissé tel quel,
-	 *         l'auteur les ayant déjà écrits s'il le fallait.
+	 * @return la valeur exacte à poser dans l'en-tête. Le RFC 2369 impose les
+	 *         chevrons ; on les pose donc toujours, sauf si l'auteur du lien
+	 *         manuel les a déjà écrits — un administrateur qui a saisi une URL
+	 *         nue obtiendrait sinon un en-tête malformé.
 	 */
 	public String getHeaderValue() {
 		if (isEmpty()) {
 			return null;
 		}
-		if (generated) {
-			return '<' + url.trim() + '>';
+		String value = url.trim();
+		if (value.startsWith("<")) {
+			return value;
 		}
-		return url;
+		return '<' + value + '>';
 	}
 }
