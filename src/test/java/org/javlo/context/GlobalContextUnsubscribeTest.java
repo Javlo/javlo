@@ -29,4 +29,24 @@ public class GlobalContextUnsubscribeTest extends TestCase {
 		ctx.setUnsubscribeLink("");
 		assertTrue(StringHelper.isEmpty(ctx.getUnsubscribeLink()));
 	}
+
+	/**
+	 * La valeur doit être persistée sur disque. Sans le save() dans setUnsubscribeLink,
+	 * une deuxième instance de GlobalContext (qui recharge depuis le fichier properties)
+	 * ne verrait pas la valeur écrite par la première instance.
+	 */
+	public void testUnsubscribeLinkIsPersisted() throws Exception {
+		// Derive unique value from current time to avoid false passes from stale files
+		String uniqueValue = "https://site.be/unsub?ts=" + System.currentTimeMillis();
+
+		// First context: write the value
+		GlobalContext ctx1 = getContext();
+		ctx1.setUnsubscribeLink(uniqueValue);
+		assertEquals(uniqueValue, ctx1.getUnsubscribeLink());
+
+		// Second, independent context: should reload from disk and see the value
+		GlobalContext ctx2 = getContext();
+		assertEquals("Value should be persisted to disk and reloaded in second context",
+			uniqueValue, ctx2.getUnsubscribeLink());
+	}
 }
