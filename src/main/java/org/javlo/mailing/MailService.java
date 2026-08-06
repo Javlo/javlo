@@ -234,7 +234,7 @@ public class MailService {
 	}
 
 	public String sendMail(EMail email) throws MessagingException {
-		return sendMail(null, email.getSender(), email.getRecipients(), email.getCcRecipients(), email.getBccRecipients(), email.getSubject(), email.getContent(), email.getTxtContent(), email.isHtml(), email.getAttachments(), email.getUnsubscribeLink(), email.getDkim(), null);
+		return sendMail(null, email.getSender(), email.getRecipients(), email.getCcRecipients(), email.getBccRecipients(), email.getSubject(), email.getContent(), email.getTxtContent(), email.isHtml(), email.getAttachments(), email.getUnsubscribeInfo(), email.getDkim(), null);
 	}
 
 	private static final class MailThread extends Thread {
@@ -283,7 +283,7 @@ public class MailService {
 	}
 
 	public String sendMail(Transport transport, EMail email) throws MessagingException {
-		return sendMail(transport, email.getSender(), email.getRecipients(), email.getCcRecipients(), email.getBccRecipients(), email.getSubject(), email.getContent(), email.getTxtContent(), email.isHtml(), email.getAttachments(), email.getUnsubscribeLink(), email.getDkim(), null);
+		return sendMail(transport, email.getSender(), email.getRecipients(), email.getCcRecipients(), email.getBccRecipients(), email.getSubject(), email.getContent(), email.getTxtContent(), email.isHtml(), email.getAttachments(), email.getUnsubscribeInfo(), email.getDkim(), null);
 	}
 
 	/**
@@ -312,7 +312,7 @@ public class MailService {
 	 *             if no recipient provided or no sender
 	 * @return return a warning message if needed.
 	 */
-	private String sendMail(Transport transport, InternetAddress sender, List<InternetAddress> recipients, List<InternetAddress> ccRecipients, List<InternetAddress> bccRecipients, String subject, String content, String txtContent, boolean isHTML, Collection<Attachment> attachments, String unsubscribeLink, DKIMBean dkim, String mailId) throws MessagingException {
+	private String sendMail(Transport transport, InternetAddress sender, List<InternetAddress> recipients, List<InternetAddress> ccRecipients, List<InternetAddress> bccRecipients, String subject, String content, String txtContent, boolean isHTML, Collection<Attachment> attachments, UnsubscribeInfo unsubscribe, DKIMBean dkim, String mailId) throws MessagingException {
 
 		String recipientsStr = new LinkedList<InternetAddress>(recipients).toString();
 		String warningMessage = null;
@@ -352,8 +352,11 @@ public class MailService {
 			if (msg == null) {
 				msg = new MimeMessage(mailSession);
 			}
-			if (!StringHelper.isEmpty(unsubscribeLink)) {
-				msg.setHeader("List-Unsubscribe", unsubscribeLink);
+			if (unsubscribe != null && !unsubscribe.isEmpty()) {
+				msg.setHeader("List-Unsubscribe", unsubscribe.getHeaderValue());
+				if (unsubscribe.isOneClick()) {
+					msg.setHeader("List-Unsubscribe-Post", "List-Unsubscribe=One-Click");
+				}
 			}
 			if (mailId != null) {
 				msg.setHeader(MAILING_ID_MAIL_KEY, mailId);
@@ -535,11 +538,11 @@ public class MailService {
 		if (recipient != null) {
 			recipients = Arrays.asList(recipient);
 		}
-		return sendMail(transport, sender, recipients, ccRecipients, bccRecipients, subject, content, null, isHTML, null, unsubribeLink, dkinBean, null);
+		return sendMail(transport, sender, recipients, ccRecipients, bccRecipients, subject, content, null, isHTML, null, UnsubscribeInfo.manual(unsubribeLink), dkinBean, null);
 	}
 
 	public String sendMail(Transport transport, InternetAddress sender, List<InternetAddress> recipients , List<InternetAddress> ccRecipients, List<InternetAddress> bccRecipients, String subject, String content, boolean isHTML, String unsubribeLink, DKIMBean dkinBean) throws MessagingException {
-		return sendMail(transport, sender, recipients, ccRecipients, bccRecipients, subject, content, null, isHTML, null, unsubribeLink, dkinBean, null);
+		return sendMail(transport, sender, recipients, ccRecipients, bccRecipients, subject, content, null, isHTML, null, UnsubscribeInfo.manual(unsubribeLink), dkinBean, null);
 	}
 
 	public void sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, InternetAddress ccRecipient, InternetAddress bccRecipient, String subject, String content, boolean isHTML) throws MessagingException {
@@ -603,7 +606,15 @@ public class MailService {
 		if (recipient != null) {
 			recipients = Arrays.asList(recipient);
 		}
-		return sendMail(transport, sender, recipients, null, null, subject, content, null, isHTML, null, unsubribeLink, dkinBean, mailId);
+		return sendMail(transport, sender, recipients, null, null, subject, content, null, isHTML, null, UnsubscribeInfo.manual(unsubribeLink), dkinBean, mailId);
+	}
+
+	public String sendMail(Transport transport, InternetAddress sender, InternetAddress recipient, String subject, String content, boolean isHTML, UnsubscribeInfo unsubscribe, DKIMBean dkinBean, String mailId) throws MessagingException {
+		List<InternetAddress> recipients = null;
+		if (recipient != null) {
+			recipients = Arrays.asList(recipient);
+		}
+		return sendMail(transport, sender, recipients, null, null, subject, content, null, isHTML, null, unsubscribe, dkinBean, mailId);
 	}
 
 	public void sendMail(InternetAddress sender, InternetAddress recipient, String subject, String content, boolean isHTML) throws MessagingException {

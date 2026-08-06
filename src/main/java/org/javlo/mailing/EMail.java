@@ -22,7 +22,7 @@ public class EMail extends Mail {
 	private List<InternetAddress> bccRecipients;
 	private String txtContent;
 	private Collection<Attachment> attachments;
-	private String unsubscribeLink;
+	private UnsubscribeInfo unsubscribeInfo;
 	private DKIMBean dkim;
 	
 	public EMail() {
@@ -166,12 +166,12 @@ public class EMail extends Mail {
 	}
 
 
-	public String getUnsubscribeLink() {
-		return unsubscribeLink;
+	public UnsubscribeInfo getUnsubscribeInfo() {
+		return unsubscribeInfo;
 	}
 
-	public void setUnsubscribeLink(String unsubscribeLink) {
-		this.unsubscribeLink = unsubscribeLink;
+	public void setUnsubscribeInfo(UnsubscribeInfo unsubscribeInfo) {
+		this.unsubscribeInfo = unsubscribeInfo;
 	}
 
 	public DKIMBean getDkim() {

@@ -52,7 +52,7 @@ public class DKIMSigner {
 	private String[] defaultHeadersToSign = new String[]{
 			"Content-Description","Content-ID","Content-Type","Content-Transfer-Encoding","Cc",
 			"Date","From","In-Reply-To","List-Subscribe","List-Post","List-Owner","List-Id",
-			"List-Archive","List-Help","List-Unsubscribe","MIME-Version","Message-ID","Resent-Sender",
+			"List-Archive","List-Help","List-Unsubscribe","List-Unsubscribe-Post","MIME-Version","Message-ID","Resent-Sender",
 			"Resent-Cc","Resent-Date","Resent-To","Reply-To","References","Resent-Message-ID",
 			"Resent-From","Sender","Subject","To"};
 
