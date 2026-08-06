@@ -336,6 +336,11 @@ public class MailingAction extends AbstractModuleAction {
 		String email = null;
 		String mailingId = null;
 		Collection<String> roles = new LinkedList<String>();
+		/**
+		 * Rôles écrits sur la liste de suppression. Ils ne suivent 'roles' que
+		 * sur le chemin signé : voir plus bas pour le chemin '_mfb'.
+		 */
+		Collection<String> suppressionRoles = roles;
 
 		String signedToken = rs.getParameter(UNSUBSCRIBE_TOKEN_PARAM_NAME, null);
 		if (signedToken != null) {
@@ -365,16 +370,27 @@ public class MailingAction extends AbstractModuleAction {
 			email = params.get("to");
 			mailingId = params.get("mailing");
 			roles.addAll(StringHelper.stringToCollection(rs.getParameter("roles", ""), ";"));
+			/**
+			 * Sur ce chemin les rôles viennent d'un paramètre de requête non
+			 * signé, et l'identifiant '_mfb' est un StringHelper.getRandomId()
+			 * prédictible. Un appelant pourrait donc choisir les rôles écrits
+			 * sur la liste de suppression d'une adresse qui n'est pas la
+			 * sienne. On ignore ce paramètre pour l'écriture et on enregistre
+			 * ALL_ROLES : se désabonner de tout est la direction prudente, et
+			 * c'est déjà ce que fait le service quand la collection est vide.
+			 * La granularité par rôle reste sur le jeton signé 'lut'.
+			 */
+			suppressionRoles = Collections.singletonList(UnsubscribeService.ALL_ROLES);
 		}
 
 		if (StringHelper.isEmpty(email)) {
 			return null;
 		}
 
-		logger.info("mailing unsubscribe : " + email + " site:" + globalContext.getContextKey() + " roles:" + roles);
+		logger.info("mailing unsubscribe : " + email + " site:" + globalContext.getContextKey() + " roles:" + roles + " suppression:" + suppressionRoles);
 
 		/** liste de suppression : couvre toutes les origines de destinataires **/
-		UnsubscribeService.getInstance(globalContext).unsubscribe(email, roles);
+		UnsubscribeService.getInstance(globalContext).unsubscribe(email, suppressionRoles);
 
 		/** retrait des rôles du compte utilisateur, s'il existe **/
 		try {
