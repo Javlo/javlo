@@ -6,12 +6,27 @@ import jakarta.servlet.descriptor.JspConfigDescriptor;
 import org.javlo.utils.IteratorAsEnumeration;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.*;
 
 public class TestServletContext implements ServletContext {
+
+	private static final File TEMP_ROOT = createTempRoot();
+
+	private static File createTempRoot() {
+		try {
+			File dir = Files.createTempDirectory("javlo-test-").toFile();
+			dir.deleteOnExit();
+			return dir;
+		} catch (IOException e) {
+			throw new IllegalStateException("can not create test root folder", e);
+		}
+	}
 
 	private Map<String, Object> attributes = new HashMap<String, Object>();
 
@@ -68,7 +83,14 @@ public class TestServletContext implements ServletContext {
 
 	@Override
 	public String getRealPath(String path) {
-		return path;
+		if (path == null) {
+			return null;
+		}
+		String relative = path.replace('\\', '/');
+		while (relative.startsWith("/")) {
+			relative = relative.substring(1);
+		}
+		return new File(TEMP_ROOT, relative).getAbsolutePath();
 	}
 
 	@Override
