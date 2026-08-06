@@ -49,4 +49,24 @@ public class GlobalContextUnsubscribeTest extends TestCase {
 		assertEquals("Value should be persisted to disk and reloaded in second context",
 			uniqueValue, ctx2.getUnsubscribeLink());
 	}
+
+	public void testUnsubscribeSecretIsGenerated() throws Exception {
+		String secret = getContext().getUnsubscribeSecret();
+		assertNotNull(secret);
+		assertTrue("secret trop court : " + secret.length(), secret.length() >= 32);
+	}
+
+	public void testUnsubscribeSecretIsStable() throws Exception {
+		GlobalContext ctx = getContext();
+		assertEquals(ctx.getUnsubscribeSecret(), ctx.getUnsubscribeSecret());
+	}
+
+	public void testUnsubscribeSecretIsUrlSafe() throws Exception {
+		assertTrue(getContext().getUnsubscribeSecret().matches("[A-Za-z0-9_-]+"));
+	}
+
+	public void testUnsubscribeSecretIsPersisted() throws Exception {
+		String secret = getContext().getUnsubscribeSecret();
+		assertEquals(secret, getContext().getUnsubscribeSecret());
+	}
 }

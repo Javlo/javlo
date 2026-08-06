@@ -4346,6 +4346,24 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 	}
 
+	/**
+	 * secret propre au site, utilisé pour signer les tokens de désabonnement.
+	 * Généré à la première demande avec un CSPRNG.
+	 */
+	public String getUnsubscribeSecret() {
+		synchronized (properties) {
+			String secret = properties.getString("mailing.unsubscribe-secret", null);
+			if (StringHelper.isEmpty(secret)) {
+				byte[] raw = new byte[32];
+				new java.security.SecureRandom().nextBytes(raw);
+				secret = java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(raw);
+				properties.setProperty("mailing.unsubscribe-secret", secret);
+				save();
+			}
+			return secret;
+		}
+	}
+
 	public String getPOPHost() {
 		return properties.getString(POP_HOST_PARAM, null);
 	}

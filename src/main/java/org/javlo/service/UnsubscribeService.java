@@ -19,6 +19,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.javlo.context.GlobalContext;
+import org.javlo.helper.ResourceHelper;
+import org.javlo.helper.URLHelper;
 import org.javlo.io.TransactionFile;
 
 /**
@@ -47,6 +50,20 @@ public class UnsubscribeService {
 
 	public UnsubscribeService(File file) {
 		this.file = file;
+	}
+
+	private static final String KEY = UnsubscribeService.class.getName();
+
+	private static final String FILE_NAME = "unsubscribe.csv";
+
+	public static UnsubscribeService getInstance(GlobalContext globalContext) {
+		UnsubscribeService instance = (UnsubscribeService) globalContext.getAttribute(KEY);
+		if (instance == null) {
+			File file = new File(URLHelper.mergePath(globalContext.getDataFolder(), ResourceHelper.PRIVATE_DIR, FILE_NAME));
+			instance = new UnsubscribeService(file);
+			globalContext.setAttribute(KEY, instance);
+		}
+		return instance;
 	}
 
 	static String normalize(String email) {
