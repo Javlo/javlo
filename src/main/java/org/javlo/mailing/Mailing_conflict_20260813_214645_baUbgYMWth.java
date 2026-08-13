@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.javlo.config.MailingStaticConfig;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
+import org.javlo.external.agitos.dkim.SigningAlgorithm;
 import org.javlo.helper.EmailValidator;
 import org.javlo.helper.PatternHelper;
 import org.javlo.helper.ResourceHelper;
@@ -42,7 +43,17 @@ public class Mailing {
 	
 	private static final String ERROR_RECEIVERS_FILE = "errors_receivers.properties";
 	
+	/**
+	 * Clé privée DKIM historique (RSA 1024 / SHA-1). Le nom du fichier porte
+	 * l'algorithme de signature, voir
+	 * {@link DKIMFactory#getSigningAlgorithm(String)} : la copie locale doit
+	 * conserver le nom de la clé du site, sinon le mailing signe en rsa-sha1 une
+	 * clé publiée en h=sha256.
+	 */
 	private static final String PRIVATE_KEY_FILE = "privatekey.bin";
+
+	/** Clé privée DKIM courante (RSA 2048 / SHA-256). */
+	private static final String PRIVATE_KEY_FILE_256 = "privatekey_256.bin";
 
 	private static final String CONFIG_FILE = "mailing.properties";
 
@@ -930,21 +941,44 @@ public class Mailing {
 		this.dkimSelector = dkimSelector;
 	}
 
+	/**
+	 * Copie la clé privée DKIM du site dans le dossier du mailing en conservant
+	 * l'algorithme porté par le nom du fichier source.
+	 */
 	public void storePrivateKeyFile(File privateKey) {
-		File localePrivateKeyFile = getDkimPrivateKeyFile();
+		boolean sha256 = DKIMFactory.getSigningAlgorithm(privateKey.getAbsolutePath()) == SigningAlgorithm.SHA256withRSA;
+		File localePrivateKeyFile = new File(dir.getAbsolutePath() + '/' + (sha256 ? PRIVATE_KEY_FILE_256 : PRIVATE_KEY_FILE));
 		try {
 			ResourceHelper.writeFileToFile(privateKey, localePrivateKeyFile);
+			/** une clé de l'autre algorithme rendrait le choix ambigu à l'envoi **/
+			new File(dir.getAbsolutePath() + '/' + (sha256 ? PRIVATE_KEY_FILE : PRIVATE_KEY_FILE_256)).delete();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}		
+		}
 	}
-	
+
 	public void setDirectory(StaticConfig staticConfig) {
 		dir = new File(staticConfig.getMailingFolder() + '/' + id + '/');
 	}
 
-	public File getDkimPrivateKeyFile() {		
-		return new File(dir.getAbsolutePath() + '/' + PRIVATE_KEY_FILE);
+	void setDirectory(File directory) {
+		dir = directory;
+	}
+
+	/**
+	 * SHA-256 est prioritaire, on retombe sur la clé SHA-1 des mailings créés
+	 * avant la migration et, à défaut, sur le nom par défaut.
+	 */
+	public File getDkimPrivateKeyFile() {
+		File key256 = new File(dir.getAbsolutePath() + '/' + PRIVATE_KEY_FILE_256);
+		if (key256.exists()) {
+			return key256;
+		}
+		File legacyKey = new File(dir.getAbsolutePath() + '/' + PRIVATE_KEY_FILE);
+		if (legacyKey.exists()) {
+			return legacyKey;
+		}
+		return key256;
 	}
 
 	public String getErrorMessage() {

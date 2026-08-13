@@ -26,7 +26,10 @@
       "Bash(ls C:/opt/tomcat10/webapps/javlo2/css/edit/*.scss)",
       "Bash(xargs -I{} ls {})",
       "Bash(time python histo.py)",
-      "Bash(python histo.py)"
+      "Bash(python histo.py)",
+      "Bash(git rev-list *)",
+      "Bash(git checkout *)",
+      "Bash(rtk grep *)"
     ],
     "additionalDirectories": [
       "c:\\trans\\javlo_dump"
