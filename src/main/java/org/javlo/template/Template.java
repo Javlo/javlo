@@ -4073,7 +4073,26 @@ public class Template implements Comparable<Template> {
 		jsMatcher.appendTail(cleanedScripts);
 		content = cleanedScripts.toString();
 
-		// Step 2: Remove HTML comments (except <!--config ... -->)
+		// Step 1b: Protect the <!--config ... --> blocks. They hold the definition of a
+		// dynamic component, in properties format : one key=value declaration per line.
+		// Steps 5 and 6 below would collapse the blank lines and delete every line break,
+		// gluing the declarations to each other (see DynamicComponent.parseConfigComment).
+		Map<String, String> protectedConfigs = new LinkedHashMap<String, String>();
+		Matcher configMatcher = Pattern.compile("(?s)<!--config.*?-->").matcher(content);
+		StringBuilder protectedConfigContent = new StringBuilder();
+		int configLast = 0;
+		while (configMatcher.find()) {
+			String token = "__JVL_CONFIG_" + protectedConfigs.size() + "__";
+			protectedConfigs.put(token, configMatcher.group());
+			protectedConfigContent.append(content, configLast, configMatcher.start()).append(token);
+			configLast = configMatcher.end();
+		}
+		if (!protectedConfigs.isEmpty()) {
+			protectedConfigContent.append(content, configLast, content.length());
+			content = protectedConfigContent.toString();
+		}
+
+		// Step 2: Remove HTML comments (the config blocks are already protected)
 		content = content.replaceAll("(?s)<!--(?!config).*?-->", "");
 
 		// Step 3: Preserve spaces around JSP tags
@@ -4091,6 +4110,11 @@ public class Template implements Comparable<Template> {
 
 		// Step 7: Restore protected JSP attributes
 		for (Map.Entry<String, String> entry : protectedAttributes.entrySet()) {
+			content = content.replace(entry.getKey(), entry.getValue());
+		}
+
+		// Step 7b: Restore the <!--config ... --> blocks, line breaks included
+		for (Map.Entry<String, String> entry : protectedConfigs.entrySet()) {
 			content = content.replace(entry.getKey(), entry.getValue());
 		}
 

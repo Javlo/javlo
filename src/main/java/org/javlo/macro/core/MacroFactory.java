@@ -71,6 +71,7 @@ public class MacroFactory {
 		macros.add(new CreateChildrenStructureMacro());
 		macros.add(new DeletePageFromSpecificUser());
 		macros.add(new MergeDynamicComponent());
+		macros.add(new RepairDynamicComponentConfig());
 		macros.add(new DetectAllComponentsType());
 		macros.add(new ReduceSubtitleLevelMacro());
 		macros.add(new IncreaseSubtitleLevelMacro());

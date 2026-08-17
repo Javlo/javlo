@@ -48,6 +48,12 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
     public static final String JSP_HEADER = "<%@ page contentType=\"text/html; charset=UTF-8\" %><%@ taglib uri=\"jakarta.tags.core\" prefix=\"c\"%><%@ taglib prefix=\"fn\" uri=\"http://java.sun.com/jsp/jstl/functions\"%><%@ taglib prefix=\"fmt\" uri=\"jakarta.tags.fmt\"%><%@ taglib uri=\"/WEB-INF/javlo.tld\" prefix=\"jv\"%>";
 
+    /**
+     * marker written in the JSP generated from a .html renderer. Bump the number when the
+     * generation changes : every JSP without the current marker is rebuilt on next render.
+     */
+    public static final String GENERATOR_STAMP = "<%-- javlo:dyn-comp-gen=2 --%>";
+
     public static final String HIDDEN = "hidden";
 
     private static final String DYNAMIC_ID_KEY = "_dynamic_id";
@@ -291,14 +297,19 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
             // Extract the content inside the comment
             String configContent = matcher.group(1).trim();
 
-            // Split the content into key-value pairs and populate the map
+            // Split the content into key-value pairs and populate the map. The format is the
+            // one of a properties file : one declaration per line, and the value may contain
+            // spaces (a label is a sentence). Splitting on whitespace glued the declarations
+            // to each other and truncated every value on its first space.
             Map<String, String> configMap = new HashMap<>();
-            String[] keyValuePairs = configContent.split("\\s+"); // Split by whitespace
-
-            for (String pair : keyValuePairs) {
-                String[] keyValue = pair.split("=", 2); // Split into key and value
-                if (keyValue.length == 2) {
-                    configMap.put(keyValue[0], keyValue[1]);
+            for (String line : configContent.split("\\R")) {
+                line = line.trim();
+                if (line.isEmpty() || line.startsWith("#")) {
+                    continue;
+                }
+                int sep = line.indexOf('=');
+                if (sep > 0) {
+                    configMap.put(line.substring(0, sep).trim(), line.substring(sep + 1).trim());
                 }
             }
             return configMap;
@@ -359,8 +370,13 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                 if (StringHelper.isHTMLStatic(linkToJSP)) {
                     File htmlFile = new File(ctx.getRequest().getSession().getServletContext().getRealPath(linkToJSP));
                     File jspFile = new File(StringHelper.getFileNameWithoutExtension(htmlFile.getAbsolutePath()) + ".jsp");
-                    if (!jspFile.exists()) {
-                        String html = JSP_HEADER + ResourceHelper.loadStringFromFile(htmlFile);
+                    String jspContent = jspFile.exists() ? ResourceHelper.loadStringFromFile(jspFile) : null;
+                    /* the generated JSP carries the version of the generator : a JSP produced by an
+                     * older version is rebuilt. Before GENERATOR_STAMP 2 the minification deleted the
+                     * line breaks of the <!--config --> block, so the definition read back from the JSP
+                     * was a pile of glued key=value and polluted the properties of the component. */
+                    if (jspContent == null || !jspContent.contains(GENERATOR_STAMP)) {
+                        String html = JSP_HEADER + GENERATOR_STAMP + ResourceHelper.loadStringFromFile(htmlFile);
                         html = replaceGroupTags(html);
                         for (Field field : getFields(ctx)) {
                             if (!StringHelper.isEmpty(field.getGroup())) {
@@ -388,9 +404,10 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                         if (ctx.getGlobalContext().isProd()) {
                             Template.minifyJSP(ctx.getGlobalContext(), jspFile);
                         }
+                        jspContent = ResourceHelper.loadStringFromFile(jspFile);
                     }
                     linkToJSP = StringHelper.getFileNameWithoutExtension(linkToJSP) + ".jsp";
-                    Map<String, String> htmlConfig = parseConfigComment(ResourceHelper.loadStringFromFile(jspFile));
+                    Map<String, String> htmlConfig = parseConfigComment(jspContent);
 
                     if (htmlConfig != null && !htmlConfig.isEmpty()) {
                         for (Map.Entry<String, String> entry : htmlConfig.entrySet()) {
