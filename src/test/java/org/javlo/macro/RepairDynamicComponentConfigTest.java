@@ -1,6 +1,11 @@
 package org.javlo.macro;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
+
+import org.javlo.component.core.ComponentBean;
 
 import junit.framework.TestCase;
 
@@ -72,5 +77,68 @@ public class RepairDynamicComponentConfigTest extends TestCase {
 		Properties props = corrupted();
 		RepairDynamicComponentConfig.removeDefinitionKeys(props);
 		assertFalse(RepairDynamicComponentConfig.isCorrupted(props));
+	}
+
+	private static Set<String> knownTypes() {
+		return new HashSet<String>(Arrays.asList("header_slide", "header", "separation_title", "intro", "page-reference", "wysiwyg-paragraph"));
+	}
+
+	/**
+	 * import-default-language recopie <code>comp.getType()</code> dans le type du
+	 * nouveau composant : quand component.type était abîmé, le type persisté l'est
+	 * aussi et le composant s'affiche en « unknow component ».
+	 */
+	public void testGluedTypeIsRepaired() {
+		assertEquals("header_slide", RepairDynamicComponentConfig.repairType("header_slidecomponent.label=Hero", knownTypes()));
+		assertEquals("separation_title", RepairDynamicComponentConfig.repairType("separation_titlecomponent.label=Titre", knownTypes()));
+	}
+
+	public void testLongestKnownTypeWins() {
+		// "header" préfixe aussi la chaîne, c'est "header_slide" qui doit gagner
+		assertEquals("header_slide", RepairDynamicComponentConfig.repairType("header_slidecomponent.type=x", knownTypes()));
+	}
+
+	public void testValidTypeIsLeftAlone() {
+		assertNull(RepairDynamicComponentConfig.repairType("header_slide", knownTypes()));
+		assertNull(RepairDynamicComponentConfig.repairType("page-reference", knownTypes()));
+		assertNull(RepairDynamicComponentConfig.repairType(null, knownTypes()));
+	}
+
+	/** un type inconnu sans trace de collage n'est pas deviné. */
+	public void testUnknownTypeIsNotGuessed() {
+		assertNull(RepairDynamicComponentConfig.repairType("un_composant_supprime", knownTypes()));
+		assertNull(RepairDynamicComponentConfig.repairType("header_slide_v2", knownTypes()));
+	}
+
+	/**
+	 * Un composant au type abîmé est chargé comme Unknown : ses propriétés ne sont
+	 * pas montées, il faut nettoyer la valeur persistée directement.
+	 */
+	public void testRawValueIsRepaired() throws Exception {
+		String yaml = "component:\n" //
+				+ "      label: Hero\n" //
+				+ "      type: header_slidecomponent.label=Hero\n" //
+				+ "field:\n" //
+				+ "      title:\n" //
+				+ "            value: La précision en standard.\n" //
+				+ "            type: h2\n" //
+				+ "fondimage:\n" //
+				+ "      reference:\n" //
+				+ "            order: '100'\n";
+		ComponentBean bean = new ComponentBean("header_slidecomponent.label=Hero", yaml, "fr");
+
+		int removed = RepairDynamicComponentConfig.repairRawValue(bean);
+
+		assertEquals(3, removed);
+		assertTrue("le contenu doit survivre : " + bean.getValue(), bean.getValue().contains("La précision en standard."));
+		assertFalse(bean.getValue().contains("fondimage"));
+		assertFalse(bean.getValue().contains("header_slidecomponent"));
+	}
+
+	public void testHealthyRawValueIsLeftAlone() throws Exception {
+		String yaml = "component:\n      type: header_slide\n      label: Hero\nfield:\n      title:\n            value: Un titre\n";
+		ComponentBean bean = new ComponentBean("header_slide", yaml, "fr");
+		assertEquals(0, RepairDynamicComponentConfig.repairRawValue(bean));
+		assertEquals(yaml, bean.getValue());
 	}
 }

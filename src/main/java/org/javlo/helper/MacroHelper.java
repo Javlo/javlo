@@ -484,7 +484,10 @@ public class MacroHelper {
 						if (withContent) {
 							content = comp.getValue(ctxNoArea);
 						}
-						parentId = addContent(lgCtx.getRequestContentLanguage(), currentPage, parentId, comp.getType(), comp.getComponentCssClass(ctxNoArea), comp.getArea(), comp.getCurrentRenderer(ctx), content, ctx.getCurrentEditUser());
+						/* le type du bean, pas comp.getType() : pour un composant dynamique ce dernier est
+						 * lu dans les propriétés du contenu, et une propriété abîmée créerait ici un
+						 * composant au type inexistant ("unknow component"). */
+						parentId = addContent(lgCtx.getRequestContentLanguage(), currentPage, parentId, comp.getComponentBean().getType(), comp.getComponentCssClass(ctxNoArea), comp.getArea(), comp.getCurrentRenderer(ctx), content, ctx.getCurrentEditUser());
 						ContentService contentService = ContentService.getInstance(ctx.getRequest());
 						IContentVisualComponent newComp = contentService.getComponent(lgCtx, parentId);
 						if (newComp != null) {
@@ -526,7 +529,7 @@ public class MacroHelper {
 		ContentElementList sourceContent = fromPage.getLocalContentCopy(fromCtx);
 		String parentCompId = "0";
 		for (IContentVisualComponent component : sourceContent.asIterable(fromCtx)) {
-			parentCompId = MacroHelper.addContent(toCtx.getRequestContentLanguage(), toPage, parentCompId, component.getType(), 
+			parentCompId = MacroHelper.addContent(toCtx.getRequestContentLanguage(), toPage, parentCompId, component.getComponentBean().getType(),
 					component.getComponentCssClass(fromCtx), component.getArea(), component.getValue(fromCtx), fromCtx.getCurrentEditUser()
 					,component.getCurrentRenderer(fromCtx), component.getColumnStyle(fromCtx), component.getColumnSize(fromCtx));
 		}
