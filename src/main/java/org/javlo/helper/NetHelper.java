@@ -1826,10 +1826,25 @@ public class NetHelper {
 		if (page == null) {
 			return false;
 		}
-		// Prepare some variables. The ETag is an unique identifier of the file.
-		String pageName = page.getName();
-		long lastModified = ctx.getGlobalContext().getPublishDate().getTime();
-		String eTag = pageName + "_" + lastModified + "_" + page.hashCode();
+		Date publishDate = ctx.getGlobalContext().getPublishDate();
+		if (publishDate == null) { /* no publication : nothing stable to validate against */
+			return false;
+		}
+		/*
+		 * The etag must stay identical across restarts and between the nodes of a
+		 * cluster, otherwise no client ever gets a 304. MenuElement does not override
+		 * hashCode(), so the previous page.hashCode() was the jvm identity hash : it
+		 * changed on every navigation reload. It is built from the page id (stable and
+		 * persisted), the publish date (changes on each publication, so it carries the
+		 * content version) and the device (the same url is rendered with the mobile
+		 * template on a mobile device).
+		 */
+		long lastModified = publishDate.getTime();
+		String device = "";
+		if (ctx.getDevice() != null) {
+			device = StringHelper.neverNull(ctx.getDevice().getCode());
+		}
+		String eTag = page.getId() + "_" + lastModified + "_" + device;
 		eTag = '"' + eTag + '"';
 		if (!page.isCacheable(ctx) || !ctx.getGlobalContext().isPreviewMode()) {
 			eTag = "W/" + eTag;

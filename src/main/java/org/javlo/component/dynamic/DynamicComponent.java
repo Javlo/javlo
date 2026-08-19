@@ -1110,9 +1110,35 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
         return false;
     }
 
+    /**
+     * true if this component is defined by a html file, and not by a
+     * properties + jsp pair.
+     */
+    public boolean isHTMLComponent() {
+        return StringHelper.isHTMLStatic(properties.getProperty("component.renderer", null));
+    }
+
+    /**
+     * A component defined by a html file renders only its stored fields : it is
+     * cachable by default, otherwise it is re-rendered by a jsp include on every
+     * page view and, worse, it makes the whole page uncachable (see
+     * MenuElement.isCacheable, which requires every component of the page to be
+     * cachable before a 304 can be sent).
+     * <p>
+     * Declare <code>component.cachable=false</code> in the &lt;!--config--&gt;
+     * block of the html to opt out. That is needed when the renderer has a side
+     * effect on the request scope (a counter set with
+     * <code>&lt;c:set scope="request"&gt;</code> for instance) : the cache skips
+     * the jsp execution, so the side effect would not happen any more.
+     */
     @Override
     public boolean isContentCachable(ContentContext ctx) {
-        if (!StringHelper.isTrue(properties.getProperty("component.cachable"))) {
+        String cachable = properties.getProperty("component.cachable");
+        if (cachable == null) {
+            if (!isHTMLComponent()) {
+                return false;
+            }
+        } else if (!StringHelper.isTrue(cachable)) {
             return false;
         }
         try {
@@ -1592,7 +1618,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
     @Override
     public String getIcon() {
         String defaultFont = "bi bi-postcard";
-        if (StringHelper.isHTMLStatic(properties.getProperty("component.renderer", null))) {
+        if (isHTMLComponent()) {
             defaultFont = "bi bi-code-slash";
         }
         return properties.getProperty("icon", defaultFont);

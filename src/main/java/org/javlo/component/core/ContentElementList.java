@@ -77,9 +77,14 @@ public class ContentElementList implements IContentComponentsList {
 
 	private Set<String> repeatAddedElementId = null;
 
-	private LinkedList<IContentVisualComponent> contentElements = new LinkedList<IContentVisualComponent>();
+	/*
+	 * ArrayList and not LinkedList : getElement(int) is called on each
+	 * hasNext(ctx)/next(ctx), so an indexed access in O(1) is needed. With a linked
+	 * list the whole iteration was quadratic in the number of components.
+	 */
+	private List<IContentVisualComponent> contentElements = new ArrayList<IContentVisualComponent>();
 
-	private LinkedList<IContentVisualComponent> repeatContentElements = null;
+	private List<IContentVisualComponent> repeatContentElements = null;
 
 	private int pos = 0;
 
@@ -146,7 +151,7 @@ public class ContentElementList implements IContentComponentsList {
 			addedElementId = new HashSet<String>();
 		}
 		if (!addedElementId.contains(elem.getId())) {
-			contentElements.addFirst(elem);
+			contentElements.add(0, elem);
 			addedElementId.add(elem.getId());
 		}
 	}
@@ -157,7 +162,7 @@ public class ContentElementList implements IContentComponentsList {
 		}
 		if (!repeatAddedElementId.contains(elem.getId())) {
 			if (repeatContentElements == null) {
-				repeatContentElements = new LinkedList<IContentVisualComponent>();
+				repeatContentElements = new ArrayList<IContentVisualComponent>();
 			}
 			repeatContentElements.add(elem);
 			repeatAddedElementId.add(elem.getId());
@@ -585,7 +590,7 @@ public class ContentElementList implements IContentComponentsList {
 
 		if (!ctx.isPreviewEditionMode() && repeatContentElements != null && repeatContentElements.size() > 0) {
 
-			LinkedList<IContentVisualComponent> newContentElements = new LinkedList<IContentVisualComponent>();
+			List<IContentVisualComponent> newContentElements = new ArrayList<IContentVisualComponent>();
 
 			boolean repeatComponentFound = false;
 			for (IContentVisualComponent comp : contentElements) {
@@ -706,7 +711,7 @@ public class ContentElementList implements IContentComponentsList {
 		return new ContentElementListIterable(ctx, this);
 	}
 
-	public LinkedList<IContentVisualComponent> getContentElements() {
+	public List<IContentVisualComponent> getContentElements() {
 		return contentElements;
 	}
 
