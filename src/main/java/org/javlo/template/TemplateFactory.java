@@ -11,7 +11,6 @@ import org.javlo.filter.VisibleDirectoryFilter;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
 import org.javlo.helper.URLHelper;
-import org.javlo.navigation.DefaultTemplate;
 import org.javlo.navigation.MenuElement;
 import org.javlo.navigation.NavigationWithContent;
 import org.javlo.service.ContentService;
@@ -30,6 +29,9 @@ public class TemplateFactory {
 	protected static Logger logger = Logger.getLogger(TemplateFactory.class.getName());
 
 	private static final String TEMPLATE_KEY = "wcms-templates";
+
+	/** dedicated lock : never synchronize on the interned TEMPLATE_KEY literal. **/
+	private static final Object TEMPLATE_LOCK = new Object();
 
 	public static List<String> TEMPLATE_COLOR_AMBIANCE = Arrays.asList(new String[] { "none", "black", "white", "gray", "red", "green", "blue", "orange", "yellow", "purple", "pink", "brun" });
 
@@ -117,9 +119,6 @@ public class TemplateFactory {
 	}
 
 	private static void getTemplateChildren(List<Template> outList, ServletContext application, Template template) throws Exception {
-		if (template != DefaultTemplate.INSTANCE) {
-			return;
-		}
 		List<Template> templates = getAllTemplates(application);
 		for (Template tpl : templates) {
 			if (tpl.getParent() != null && tpl.getParent().getId() != null && tpl.getParent().getId().equals(template.getId())) {
@@ -241,6 +240,9 @@ public class TemplateFactory {
 		for (File element : allTemplateFile) {
 			try {
 				Template template = Template.getInstance(staticConfig, null, element.getName());
+				if (template == null) { /* invalid folder name */
+					continue;
+				}
 				outTemplates.put(template.getId(), template);
 				logger.fine("load template : " + template.getId());
 			} catch (IOException e) {
@@ -324,7 +326,7 @@ public class TemplateFactory {
 		Map<String, Template> outTemplate = null;
 		outTemplate = (Map<String, Template>) application.getAttribute(TEMPLATE_KEY);
 		if (outTemplate == null) {
-			synchronized (TEMPLATE_KEY) {
+			synchronized (TEMPLATE_LOCK) {
 				outTemplate = (Map<String, Template>) application.getAttribute(TEMPLATE_KEY);
 				if (outTemplate == null) {
 					outTemplate = Collections.unmodifiableMap(getDiskTemplates(application));

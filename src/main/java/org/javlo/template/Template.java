@@ -50,6 +50,7 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -507,7 +508,11 @@ public class Template implements Comparable<Template> {
 
 	private final Set<String> contextWithTemplateImported = new HashSet<String>();
 
-	private final Map<String, Map> i18n = new HashMap<String, Map>();
+	private final Map<String, Map> i18n = new ConcurrentHashMap<String, Map>();
+
+	private final Map<String, Map<String, List<IListItem>>> listCache = new ConcurrentHashMap<String, Map<String, List<IListItem>>>();
+
+	private final Map<String, Map<String, String>> mimeTypeImageCache = new ConcurrentHashMap<String, Map<String, String>>();
 
 	private Map<String, String> freeData = null;
 
@@ -525,7 +530,13 @@ public class Template implements Comparable<Template> {
 
 	private List<String> hosts = null;
 
-	public Map<String, List<String>> componentClass;
+	private volatile Map<String, List<String>> componentClass;
+
+	private final Object componentClassLock = new Object();
+
+	private final Object rendererLock = new Object();
+
+	private volatile Map<String, String> mapCache = null;
 
 	private String languagesChoiceFile = null;
 
@@ -566,6 +577,29 @@ public class Template implements Comparable<Template> {
 		return outTemplate;
 	}
 
+	/**
+	 * a template name is always a single folder name directly inside the template
+	 * folder. Refuse any path separator, drive letter or parent reference : the name
+	 * can come from a request parameter (see FORCE_TEMPLATE_PARAM_NAME) and must
+	 * never be able to escape the template folder.
+	 * 
+	 * @param templateName the raw name to check
+	 * @return true if the name can safely be merged with the template folder.
+	 */
+	public static boolean isValidTemplateName(String templateName) {
+		if (templateName == null) {
+			return false;
+		}
+		String name = templateName.trim();
+		if (name.length() == 0 || name.startsWith(".")) {
+			return false;
+		}
+		if (name.indexOf('/') >= 0 || name.indexOf('\\') >= 0 || name.indexOf(':') >= 0 || name.indexOf('\0') >= 0) {
+			return false;
+		}
+		return !name.contains("..");
+	}
+
 	public static Template getInstance(StaticConfig config, ContentContext ctx, String templateDir) throws Exception {
 		return getInstance(config, ctx, templateDir, true, null);
 	}
@@ -578,6 +612,10 @@ public class Template implements Comparable<Template> {
 
 		if ((templateDir == null) || templateDir.trim().length() == 0) {
 			return DefaultTemplate.INSTANCE;
+		}
+		if (!isValidTemplateName(templateDir)) {
+			logger.warning("invalid template name (path traversal ?) : " + templateDir);
+			return null;
 		}
 		Template template = new Template();
 		String templateFolder = URLHelper.mergePath(config.getTemplateFolder(), templateDir);
@@ -687,6 +725,9 @@ public class Template implements Comparable<Template> {
 			dynamicsComponents = null;
 			contextWithTemplateImported.clear();
 			i18n.clear();
+			listCache.clear();
+			mimeTypeImageCache.clear();
+			resetComponentClass();
 		}
 		for (GlobalContext subContext : ctx.getGlobalContext().getSubContexts()) {
 			ContentContext subCtx = new ContentContext(ctx);
@@ -716,6 +757,9 @@ public class Template implements Comparable<Template> {
 			dynamicsComponents = null;
 			contextWithTemplateImported.clear();
 			i18n.clear();
+			listCache.clear();
+			mimeTypeImageCache.clear();
+			resetComponentClass();
 		}
 		for (GlobalContext subContext : ctx.getGlobalContext().getSubContexts()) {
 			ContentContext subCtx = new ContentContext(ctx);
@@ -738,6 +782,9 @@ public class Template implements Comparable<Template> {
 				dynamicsComponents = null;
 				contextWithTemplateImported.clear();
 				i18n.clear();
+				listCache.clear();
+				mimeTypeImageCache.clear();
+				resetComponentClass();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -783,7 +830,10 @@ public class Template implements Comparable<Template> {
 		Template aTemplate = this;
 		String alternativeTemplate = getAlternativeTemplateName();
 		if (alternativeTemplate != null) {
-			aTemplate = Template.getInstance(config, ctx, alternativeTemplate, false, null);
+			Template instance = Template.getInstance(config, ctx, alternativeTemplate, false, null);
+			if (instance != null) { /* invalid name : keep the current template */
+				aTemplate = instance;
+			}
 		}
 		return aTemplate;
 	}
@@ -796,7 +846,10 @@ public class Template implements Comparable<Template> {
 		Template aTemplate = this;
 		String alternativeTemplate = getMobileTemplate();
 		if (alternativeTemplate != null) {
-			aTemplate = Template.getInstance(config, ctx, alternativeTemplate, false, null);
+			Template instance = Template.getInstance(config, ctx, alternativeTemplate, false, null);
+			if (instance != null) { /* invalid name : keep the current template */
+				aTemplate = instance;
+			}
 		}
 		return aTemplate;
 	}
@@ -921,7 +974,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	public Set<String> getComponentsExcludeForArea(String area) {
-		String key = XMLManipulationHelper.AREA_PREFIX + '.' + "components.exclude";
+		String key = XMLManipulationHelper.AREA_PREFIX + area + ".components.exclude";
 		String typeRAW = properties.getString(key);
 		if (typeRAW == null) {
 			return null;
@@ -965,6 +1018,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	private void storeProperties() {
+		resetMap();
 		try {
 			properties.save();
 		} catch (IOException e) {
@@ -1110,12 +1164,32 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
+	/**
+	 * search a text inside a file without loading the whole content in memory.
+	 * 
+	 * @param file   the file to read
+	 * @param filter the searched text, case insensitive
+	 * @return true if the file contains the text.
+	 */
+	private static boolean contains(File file, String filter) throws IOException {
+		String lowerFilter = filter.toLowerCase();
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), ContentContext.CHARSET_DEFAULT))) {
+			String line = reader.readLine();
+			while (line != null) {
+				if (line.toLowerCase().contains(lowerFilter)) {
+					return true;
+				}
+				line = reader.readLine();
+			}
+		}
+		return false;
+	}
+
 	public Map<String, List<String>> getCSSByFolder(String filter) throws IOException {
 		if (dir == null) {
 			return Collections.EMPTY_MAP;
 		}
 		Map<String, List<String>> outCSS = new LinkedHashMap<String, List<String>>();
-		config.getTemplateFolder();
 		Collection<File> file = ResourceHelper.getAllFiles(dir, null);
 		for (File cssFile : file) {
 			if (cssFile.isFile()) {
@@ -1124,10 +1198,7 @@ public class Template implements Comparable<Template> {
 					String cssFileName = cssFile.getAbsolutePath().replace(cssFile.getParentFile().getAbsolutePath(), "");
 					boolean add = true;
 					if (!StringHelper.isEmpty(filter)) {
-						String content = ResourceHelper.loadStringFromFile(cssFile);
-						if (!content.toLowerCase().contains(filter.toLowerCase())) {
-							add = false;
-						}
+						add = contains(cssFile, filter);
 					}
 					if (add) {
 						String cssFolder = cssFile.getParentFile().getAbsolutePath().replace(dir.getAbsolutePath(), "");
@@ -1156,18 +1227,14 @@ public class Template implements Comparable<Template> {
 			return Collections.EMPTY_MAP;
 		}
 		Map<String, List<String>> outHtml = new LinkedHashMap<String, List<String>>();
-		config.getTemplateFolder();
 		Collection<File> file = ResourceHelper.getAllFiles(dir, null);
 		for (File cssFile : file) {
 			String ext = StringHelper.neverNull(StringHelper.getFileExtension(cssFile.getName())).toLowerCase();
-			if (ext.equals("html")) {
+			if (cssFile.isFile() && ext.equals("html")) {
 				String cssFileName = cssFile.getAbsolutePath().replace(cssFile.getParentFile().getAbsolutePath(), "");
 				boolean add = true;
 				if (!StringHelper.isEmpty(filter)) {
-					String content = ResourceHelper.loadStringFromFile(cssFile);
-					if (!content.toLowerCase().contains(filter.toLowerCase())) {
-						add = false;
-					}
+					add = contains(cssFile, filter);
 				}
 				if (add) {
 					String cssFolder = cssFile.getParentFile().getAbsolutePath().replace(dir.getAbsolutePath(), "");
@@ -1198,7 +1265,6 @@ public class Template implements Comparable<Template> {
 		if (dir == null) {
 			return Collections.EMPTY_LIST;
 		}
-		config.getTemplateFolder();
 		Collection<File> file = ResourceHelper.getAllFiles(dir, null);
 		List<String> css = new LinkedList<String>();
 		for (File cssFile : file) {
@@ -1514,7 +1580,7 @@ public class Template implements Comparable<Template> {
 	}
 
 	public Integer getBootstrapVersion() {
-		Integer version = properties.getInteger("bootstrap.verion", null);
+		Integer version = properties.getInteger("bootstrap.version", properties.getInteger("bootstrap.verion", null));
 		if (version == null) {
 			return getParent().getBootstrapVersion();
 		} else {
@@ -1811,7 +1877,7 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
-	public synchronized Map getI18nProperties(GlobalContext globalContext, Locale locale, int mode) throws IOException {
+	public Map getI18nProperties(GlobalContext globalContext, Locale locale, int mode) throws IOException {
 
 		String filePrefix = I18N_VIEW_FILE;
 		if (mode == ContentContext.EDIT_MODE) {
@@ -1837,16 +1903,16 @@ public class Template implements Comparable<Template> {
 					}
 					if (i18nFile.exists()) {
 						propI18n = new Properties();
-						Reader reader = new FileReader(i18nFile);
-						((Properties) propI18n).load(reader);
-						reader.close();
+						try (Reader reader = new FileReader(i18nFile)) {
+							((Properties) propI18n).load(reader);
+						}
 					} else {
 						i18nFile = new File(URLHelper.mergePath(URLHelper.mergePath(getWorkTemplateRealPath(globalContext), "i18n", filePrefix + locale.getLanguage() + ".properties")));
 						if (i18nFile.exists()) {
 							propI18n = new Properties();
-							Reader reader = new FileReader(i18nFile);
-							((Properties) propI18n).load(reader);
-							reader.close();
+							try (Reader reader = new FileReader(i18nFile)) {
+								((Properties) propI18n).load(reader);
+							}
 						} else {
 							propI18n = Collections.EMPTY_MAP;
 						}
@@ -1863,11 +1929,36 @@ public class Template implements Comparable<Template> {
 		return propI18n;
 	}
 
-	public synchronized Map<String, List<IListItem>> getAllList(GlobalContext globalContext, Locale locale) throws IOException {
+	/**
+	 * lists defined in the "list" folder of the template. Parsed once per language :
+	 * this method is called for each list lookup of each request.
+	 */
+	public Map<String, List<IListItem>> getAllList(GlobalContext globalContext, Locale locale) throws IOException {
 		if (locale == null) {
 			return null;
 		}
-		File listFolder = new File(URLHelper.mergePath(URLHelper.mergePath(getFolder().getAbsolutePath(), LIST_FOLDER)));
+		Map<String, List<IListItem>> cached = listCache.get(locale.getLanguage());
+		if (cached == null) {
+			cached = loadAllList(locale);
+			listCache.put(locale.getLanguage(), cached);
+		}
+		/*
+		 * the caller may sort the returned lists in place (see ListService.getList) :
+		 * only the parsing is cached, never the returned instances.
+		 */
+		Map<String, List<IListItem>> outList = new HashMap<String, List<IListItem>>();
+		for (Map.Entry<String, List<IListItem>> entry : cached.entrySet()) {
+			outList.put(entry.getKey(), new LinkedList<IListItem>(entry.getValue()));
+		}
+		return outList;
+	}
+
+	private Map<String, List<IListItem>> loadAllList(Locale locale) throws IOException {
+		File sourceFolder = getSourceFolder();
+		if (sourceFolder == null) {
+			return Collections.EMPTY_MAP;
+		}
+		File listFolder = new File(URLHelper.mergePath(sourceFolder.getAbsolutePath(), LIST_FOLDER));
 		if (!listFolder.isDirectory()) {
 			return Collections.EMPTY_MAP;
 		} else {
@@ -1877,9 +1968,9 @@ public class Template implements Comparable<Template> {
 				if (list.isFile() && (lg == null || lg.equals(locale.getLanguage()))) {
 					if (locale.getLanguage().equals(lg) || linkedMap.get(StringHelper.getFileNameWithoutExtension(list.getName())) == null) {
 						Properties listProp = new Properties();
-						Reader reader = new FileReader(list);
-						listProp.load(reader);
-						reader.close();
+						try (Reader reader = new FileReader(list)) {
+							listProp.load(reader);
+						}
 						List<IListItem> serviceList = new LinkedList<IListItem>();
 
 						for (Map.Entry entry : listProp.entrySet()) {
@@ -1898,7 +1989,7 @@ public class Template implements Comparable<Template> {
 					}
 				}
 			}
-			return linkedMap;
+			return Collections.unmodifiableMap(linkedMap);
 		}
 	}
 
@@ -2013,6 +2104,7 @@ public class Template implements Comparable<Template> {
 
 	public void setImageFiltersRAW(String imageFilterRAW) {
 		properties.setProperty("images-filter", imageFilterRAW);
+		resetMap();
 	}
 
 	public String getLastSelectedClass() {
@@ -2123,8 +2215,17 @@ public class Template implements Comparable<Template> {
 		return properties.getString("mail.subject." + lg, "");
 	}
 
+	/**
+	 * all the properties of the template, parent properties included. The result is
+	 * read only and cached : it is rebuilt as soon as a property is stored, on
+	 * reload and before each import (see resetMap).
+	 */
 	@SuppressWarnings("unchecked")
 	private Map<String, String> getMap() {
+		Map<String, String> cached = mapCache;
+		if (cached != null) {
+			return cached;
+		}
 		Map<String, String> out = new HashMap<String, String>();
 		Iterator<String> keys = properties.getKeys();
 		while (keys.hasNext()) {
@@ -2140,7 +2241,13 @@ public class Template implements Comparable<Template> {
 			}
 		}
 
-		return out;
+		cached = Collections.unmodifiableMap(out);
+		mapCache = cached;
+		return cached;
+	}
+
+	protected void resetMap() {
+		mapCache = null;
 	}
 
 	public String getName() {
@@ -2222,13 +2329,21 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
-	public synchronized String getRenderer(ContentContext ctx) throws Exception {
-		//synchronized (ctx.getGlobalContext().getLockImportTemplate()) {
-			String renderer = getRendererFile(ctx.getDevice());
-			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-			String jspPath = URLHelper.mergePath(getTemplateTargetFolder(globalContext), renderer);
-			File jspFile = new File(jspPath);
-			if (!jspFile.exists()) {
+	/**
+	 * the renderer (jsp) is generated only once from the html file : the common case
+	 * is a simple existence test, so it must not be serialized on the template
+	 * instance. Only the generation itself is guarded by a dedicated lock.
+	 */
+	public String getRenderer(ContentContext ctx) throws Exception {
+		String renderer = getRendererFile(ctx.getDevice());
+		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+		String jspPath = URLHelper.mergePath(getTemplateTargetFolder(globalContext), renderer);
+		File jspFile = new File(jspPath);
+		if (jspFile.exists()) {
+			return renderer;
+		}
+		synchronized (rendererLock) {
+			if (!jspFile.exists()) { /* another thread may have generated it in the meantime */
 				importTemplateInWebapp(globalContext.getStaticConfig(), ctx);
 				File HTMLFile = new File(URLHelper.mergePath(getTemplateTargetFolder(globalContext), getHTMLFile(ctx.getDevice())));
 				logger.info(jspFile + " not found, try to generate from " + HTMLFile);
@@ -2249,8 +2364,8 @@ public class Template implements Comparable<Template> {
 				setHTMLIDS(ids);
 				setDepth(depth);
 			}
-			return renderer;
-		//}
+		}
+		return renderer;
 	}
 
 	private List<String> getAllPluginsName(GlobalContext globalContext) {
@@ -2852,7 +2967,8 @@ public class Template implements Comparable<Template> {
 		}
 		synchronized (getLockImport(globalContext)) {
 			if (!isTemplateInWebapp(ctx) || !clear) {
-				componentClass = null;
+				resetComponentClass();
+				resetMap();
 				String templateFolder = config.getTemplateFolder();
 				File templateSrc = new File(URLHelper.mergePath(templateFolder, getSourceFolderName()));
 				if (templateSrc.exists()) {
@@ -3220,7 +3336,7 @@ public class Template implements Comparable<Template> {
 				return true;
 			} else {
 				parents.add(parent.getName());
-				parent = getParent();
+				parent = parent.getParent();
 			}
 		}
 		return false;
@@ -3316,6 +3432,11 @@ public class Template implements Comparable<Template> {
 		dynamicsComponents = null;
 		contextWithTemplateImported.clear();
 		freeData = null;
+		i18n.clear();
+		listCache.clear();
+		mimeTypeImageCache.clear();
+		resetComponentClass();
+		resetMap();
 		resetRows();
 	}
 
@@ -3428,7 +3549,7 @@ public class Template implements Comparable<Template> {
 
 	public void setHTMLIDS(Collection<String> ids) {
 		privateProperties.setProperty("html.ids", StringHelper.collectionToString(ids, ","));
-		storeProperties();
+		storePrivateProperties();
 	}
 
 	public List<String> getHTMLIDS() {
@@ -3589,8 +3710,8 @@ public class Template implements Comparable<Template> {
 
 	public void storeStyle(TemplateStyle style) {
 		saveTemplatePart(style, "style");
-		style = null;
 		storeProperties();
+		this.style = null;
 	}
 
 	public synchronized List<Row> getRows() {
@@ -3714,7 +3835,7 @@ public class Template implements Comparable<Template> {
 
 	public boolean isCleanHtml() {
 		if (properties.getProperty("html.clean") == null) {
-			return getParent().isBootstrap();
+			return getParent().isCleanHtml();
 		} else {
 			return StringHelper.isTrue(properties.getProperty("html.clean"));
 		}
@@ -3811,44 +3932,64 @@ public class Template implements Comparable<Template> {
 		return properties.getString("mimetypes.folder", "mimetypes");
 	}
 
+	private static final Pattern VALUE_SPLITTER = Pattern.compile("\\s*,\\s*");
+
+	/** key used in the mime type mapping for the fallback image. **/
+	private static final String MIME_TYPE_DEFAULT_KEY = "*";
+
+	/**
+	 * mapping.properties is parsed once per site : this method is called for every
+	 * transformed file of every page.
+	 */
 	public String getMimeTypeImage(GlobalContext globalContext, String fileExtension) {
-		Pattern VALUE_SPLITTER = Pattern.compile("\\s*,\\s*");
-		File mappingFile = new File(URLHelper.mergePath(getWorkTemplateRealPath(globalContext), getMimeTypesFolder(), "mapping.properties"));
-		if (!mappingFile.exists()) {
+		if (globalContext == null) {
 			return null;
 		}
-		FileInputStream in = null;
+		Map<String, String> mapping = mimeTypeImageCache.get(globalContext.getContextKey());
+		if (mapping == null) {
+			mapping = loadMimeTypeMapping(globalContext);
+			mimeTypeImageCache.put(globalContext.getContextKey(), mapping);
+		}
+		if (mapping.isEmpty()) {
+			return null;
+		}
 		String out = null;
-		String defaultImage = null;
-		try {
-			in = new FileInputStream(mappingFile);
+		if (fileExtension != null) {
+			out = mapping.get(fileExtension.toLowerCase());
+		}
+		if (out == null) {
+			out = mapping.get(MIME_TYPE_DEFAULT_KEY);
+		}
+		if (out != null) {
+			out = URLHelper.mergePath(getMimeTypesFolder(), out);
+		}
+		return out;
+	}
+
+	private Map<String, String> loadMimeTypeMapping(GlobalContext globalContext) {
+		File mappingFile = new File(URLHelper.mergePath(getWorkTemplateRealPath(globalContext), getMimeTypesFolder(), "mapping.properties"));
+		if (!mappingFile.exists()) {
+			return Collections.emptyMap();
+		}
+		Map<String, String> outMapping = new HashMap<String, String>();
+		try (InputStream in = new FileInputStream(mappingFile)) {
 			Properties p = new Properties();
 			p.load(in);
 			for (Entry<Object, Object> prop : p.entrySet()) {
 				String value = (String) prop.getValue();
 				if (value != null) {
-					String[] extensions = VALUE_SPLITTER.split(value);
-					for (String extention : extensions) {
-						if (extention.equalsIgnoreCase(fileExtension)) {
-							out = (String) prop.getKey();
-						} else if (extention.equals("*")) {
-							defaultImage = (String) prop.getKey();
+					for (String extension : VALUE_SPLITTER.split(value)) {
+						extension = extension.trim();
+						if (extension.length() > 0) {
+							outMapping.put(extension.toLowerCase(), (String) prop.getKey());
 						}
 					}
 				}
 			}
 		} catch (IOException e) {
 			logger.log(Level.WARNING, "Exception when parsing mapping.properties of template " + getName(), e);
-		} finally {
-			ResourceHelper.safeClose(in);
 		}
-		if (out == null) {
-			out = defaultImage;
-		}
-		if (out != null) {
-			out = URLHelper.mergePath(getMimeTypesFolder(), out);
-		}
-		return out;
+		return Collections.unmodifiableMap(outMapping);
 	}
 
 	public boolean isLanguageLinkKeepGetParams() {
@@ -3936,25 +4077,47 @@ public class Template implements Comparable<Template> {
 		}
 	}
 
+	/**
+	 * css classes declared in the template style sheets, by component type. The
+	 * whole template folder is scanned only once : the result is cached until the
+	 * template is imported again or reloaded (see resetComponentClass).
+	 */
 	public List<String> getComponentClass(String compName) {
-		if (componentClass == null) {
-			componentClass = new HashMap<>();
+		Map<String, List<String>> classes = componentClass;
+		if (classes == null) {
+			synchronized (componentClassLock) {
+				classes = componentClass;
+				if (classes == null) {
+					classes = loadComponentClass(getSourceFolder());
+					componentClass = classes;
+				}
+			}
 		}
-		return getComponentClass(compName, getFolder(), componentClass);
+		return classes.get(compName);
 	}
 
-	private static List<String> getComponentClass(String compName, File folder, Map<String, List<String>> componentClass) {
-		FilenameFilter filter = (dir, name) -> name.endsWith(".css") || name.endsWith(".scss") || name.endsWith(".less");
-				Path startPath = Paths.get(folder.getAbsolutePath());
-				try (Stream<Path> stream = Files.walk(startPath, FileVisitOption.FOLLOW_LINKS)) {
-					stream.filter(Files::isRegularFile)
-							.filter(path -> path.toString().endsWith(".css") || path.toString().endsWith(".scss") || path.toString().endsWith(".less"))
-							.forEach(path -> processFile(path, componentClass));
-				} catch (Exception e) {
-					logger.severe("error on folder : "+folder+" : "+e.getMessage());
-					e.printStackTrace();
-				}
-		return componentClass.get(compName);
+	public void resetComponentClass() {
+		componentClass = null;
+	}
+
+	private static Map<String, List<String>> loadComponentClass(File folder) {
+		Map<String, List<String>> outClasses = new HashMap<String, List<String>>();
+		if (folder == null || !folder.exists()) {
+			return Collections.unmodifiableMap(outClasses);
+		}
+		Path startPath = Paths.get(folder.getAbsolutePath());
+		try (Stream<Path> stream = Files.walk(startPath, FileVisitOption.FOLLOW_LINKS)) {
+			stream.filter(Files::isRegularFile)
+					.filter(path -> isStyleSheet(path.toString()))
+					.forEach(path -> processFile(path, outClasses));
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, "error on folder : " + folder + " : " + e.getMessage(), e);
+		}
+		return Collections.unmodifiableMap(outClasses);
+	}
+
+	private static boolean isStyleSheet(String fileName) {
+		return fileName.endsWith(".css") || fileName.endsWith(".scss") || fileName.endsWith(".less");
 	}
 
 	public static final String COMP_CSS_CLASS_PREFIX = "__";
