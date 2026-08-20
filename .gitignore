@@ -6,6 +6,7 @@
 /.project
 /tools/visual-testing/workdir
 /tools/visual-testing/output
+/tools/face-detect/target/
 /.idea/
 *.bat
 /snapshot/
