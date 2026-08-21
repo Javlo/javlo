@@ -19,6 +19,7 @@ import org.javlo.image.ImageSize;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.exception.ServiceException;
+import org.javlo.service.face.FaceFocusService;
 import org.javlo.service.location.LocationService;
 import org.javlo.service.remote.imagga.ImaggaConfig;
 import org.javlo.service.remote.imagga.ImaggaService;
@@ -607,6 +608,23 @@ public class StaticInfo implements IRestItem {
 	private void autoFill(ContentContext ctx) throws IOException {
 		if (ctx.isAsModifyMode()) {
 			logger.info("auto fill : " + getFile());
+
+			/** local face detection : centre the crop on the people of the picture **/
+
+			if (ctx.getGlobalContext().getStaticConfig().isAutoFocus() && StringHelper.isImage(getFile().getName())) {
+				try {
+					if (getFocusZoneX(ctx) == DEFAULT_FOCUS_X && getFocusZoneY(ctx) == DEFAULT_FOCUS_Y) {
+						Point focus = FaceFocusService.getInstance().getFocusPoint(getFile());
+						if (focus != null) {
+							logger.info("focus on faces of " + getFile() + " : " + focus.x + "," + focus.y);
+							setFocusZoneX(ctx, focus.x);
+							setFocusZoneY(ctx, focus.y);
+						}
+					}
+				} catch (Throwable t) {
+					logger.severe("error on face detection on : " + getFile() + " -> " + t.getMessage());
+				}
+			}
 
 			/** Imagga service **/
 

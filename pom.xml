@@ -315,6 +315,18 @@
 			<version>1.0.0-alpha6</version>
 		</dependency>
 
+		<!-- local, CPU only face detection : its own repository, at
+		     https://github.com/Javlo/javlo-face. Run ./get_javlo_face.sh once to clone and
+		     install it.
+		     onnxruntime comes with it and weights ~90 Mo because it embeds the native
+		     libraries of the three OS. FaceFocusService keeps working without it :
+		     the missing jar only switches face detection off. -->
+		<dependency>
+			<groupId>org.javlo.face</groupId>
+			<artifactId>javlo-face</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/com.drewnoakes/metadata-extractor -->
 		<dependency>
 			<groupId>com.drewnoakes</groupId>
