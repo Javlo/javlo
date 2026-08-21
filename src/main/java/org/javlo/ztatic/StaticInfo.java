@@ -417,6 +417,8 @@ public class StaticInfo implements IRestItem {
 
 	private Boolean autoFill = null;
 
+	private Boolean faceFocusDone = null;
+
 	private Set<String> taxonomy = null;
 
 	private List<String> readRoles = null;
@@ -598,33 +600,28 @@ public class StaticInfo implements IRestItem {
 			globalContext.setTimeAttribute(KEY, outStaticInfo);
 		}
 
-		if (!outStaticInfo.isAutoFill(ctx)) {
-			outStaticInfo.autoFill(ctx);
-		}
+		// autoFill is called in every render mode : each of its blocks carries its own guard,
+		// because face detection must also happen on a site browsed in view mode only.
+		outStaticInfo.autoFill(ctx);
 
 		return outStaticInfo;
 	}
 
 	private void autoFill(ContentContext ctx) throws IOException {
+
+		/** local face detection : centre the crop on the people of the picture **/
+
+		// unlike the services below, this one runs in every render mode : a site browsed only by
+		// visitors must get its focus points too. It has its own marker, so the model runs at most
+		// once per file.
+		autoFocusOnFaces(ctx);
+
+		if (isAutoFill(ctx)) {
+			return;
+		}
+
 		if (ctx.isAsModifyMode()) {
 			logger.info("auto fill : " + getFile());
-
-			/** local face detection : centre the crop on the people of the picture **/
-
-			if (ctx.getGlobalContext().getStaticConfig().isAutoFocus() && StringHelper.isImage(getFile().getName())) {
-				try {
-					if (getFocusZoneX(ctx) == DEFAULT_FOCUS_X && getFocusZoneY(ctx) == DEFAULT_FOCUS_Y) {
-						Point focus = FaceFocusService.getInstance().getFocusPoint(getFile());
-						if (focus != null) {
-							logger.info("focus on faces of " + getFile() + " : " + focus.x + "," + focus.y);
-							setFocusZoneX(ctx, focus.x);
-							setFocusZoneY(ctx, focus.y);
-						}
-					}
-				} catch (Throwable t) {
-					logger.severe("error on face detection on : " + getFile() + " -> " + t.getMessage());
-				}
-			}
 
 			/** Imagga service **/
 
@@ -666,6 +663,69 @@ public class StaticInfo implements IRestItem {
 			}
 			setAutoFill(ctx, true);
 		}
+	}
+
+	/**
+	 * Puts the focus point of a picture on the faces it contains, so a cropped thumbnail keeps the
+	 * people in the frame. The detection is local and costs about 35 ms, plus a second the very first
+	 * time to load the model.
+	 *
+	 * It runs in every render mode, contrary to the other services of {@link #autoFill(ContentContext)} :
+	 * a site nobody edits any more must get its focus points too. The marker below makes sure the model
+	 * runs at most once per file, whatever the mode and across restarts.
+	 */
+	private void autoFocusOnFaces(ContentContext ctx) {
+		if (isFaceFocusDone(ctx) || getFile() == null || !StringHelper.isImage(getFile().getName())) {
+			return;
+		}
+		if (!ctx.getGlobalContext().getStaticConfig().isAutoFocus()) {
+			return;
+		}
+		try {
+			// a focus placed by hand, or by another service, is never overwritten
+			if (getFocusZoneX(ctx) != DEFAULT_FOCUS_X || getFocusZoneY(ctx) != DEFAULT_FOCUS_Y) {
+				setFaceFocusDone(ctx);
+				return;
+			}
+			Point focus = FaceFocusService.getInstance().getFocusPoint(getFile());
+			// the marker is stored even without a face : otherwise a picture of a landscape would run
+			// the model again on every request
+			setFaceFocusDone(ctx);
+			if (focus == null) {
+				return;
+			}
+			logger.info("focus on faces of " + getFile() + " : " + focus.x + "," + focus.y);
+			setFocusZoneX(ctx, focus.x);
+			setFocusZoneY(ctx, focus.y);
+			if (ctx.isAsViewMode()) {
+				// getFocusZoneX and getFocusZoneY always read the edit context, and publishing copies the
+				// preview map over the view one : written only on the view context the focus would be lost
+				ContentContext editCtx = ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE);
+				setFocusZoneX(editCtx, focus.x);
+				setFocusZoneY(editCtx, focus.y);
+			}
+			PersistenceService.getInstance(ctx.getGlobalContext()).setAskStore(true);
+			// a thumbnail may already have been cached with the default focus
+			FileCache.getInstance(ctx.getServletContext()).delete(ctx, getFile().getName());
+		} catch (Throwable t) {
+			logger.severe("error on face detection on : " + getFile() + " -> " + t.getMessage());
+		}
+	}
+
+	/** True once the face detection has been run on this file, whether it found a face or not. */
+	private boolean isFaceFocusDone(ContentContext ctx) {
+		if (faceFocusDone == null) {
+			GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+			faceFocusDone = StringHelper.isTrue(globalContext.getData(getKey(ctx, "face-focus")), false);
+		}
+		return faceFocusDone;
+	}
+
+	private void setFaceFocusDone(ContentContext ctx) {
+		faceFocusDone = true;
+		// stored on the global context and not on the content : it must not depend on the render mode,
+		// and it is persisted at once, so a restart does not run the model again
+		GlobalContext.getInstance(ctx.getRequest()).setData(getKey(ctx, "face-focus"), "true");
 	}
 
 	private void init(ContentContext ctx) throws IOException, SAXException, TikaException {
