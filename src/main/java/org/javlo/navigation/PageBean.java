@@ -1,6 +1,5 @@
 package org.javlo.navigation;
 
-import com.beust.jcommander.ParameterException;
 import org.javlo.component.container.ISection;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.IContentVisualComponent;
@@ -57,7 +56,7 @@ public class PageBean implements Serializable {
 	
 	public PageBean(ContentContext ctx, MenuElement page) {
 		if (page == null) {
-			throw new ParameterException("page can not be null");
+			throw new IllegalArgumentException("page can not be null");
 		}
 		this.ctx = ctx;
 		this.page = page;
