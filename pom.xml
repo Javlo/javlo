@@ -835,12 +835,6 @@
 
 	<repositories>
 		<repository>
-			<id>com.springsource.repository.bundles.external</id>
-			<name>SpringSource Enterprise Bundle Repository - External Bundle
-				Releases</name>
-			<url>https://repository.springsource.com/maven/bundles/external</url>
-		</repository>
-		<repository>
 			<id>sonatype</id>
 			<snapshots>
 				<enabled>true</enabled>
