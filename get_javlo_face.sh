@@ -7,6 +7,10 @@
 # jar it pulls weights about 90 Mo, and Javlo works without it (detection is simply switched off
 # when the jar is missing).
 #
+# It is not a dependency of the default build : FaceFocusService reaches it by reflection, so
+# Javlo compiles and runs without it. Once this script has installed it, build with -Dface to put
+# it in the war, for instance "mvn -Dface clean package".
+#
 # Usage : ./get_javlo_face.sh
 
 set -e
@@ -37,4 +41,5 @@ cd "$TARGET"
 mvn install
 
 echo
-echo "org.javlo.face:javlo-face:1.0.0 is installed, the Javlo build can now use it."
+echo "org.javlo.face:javlo-face:1.0.0 is installed."
+echo "Build Javlo with -Dface to put it in the war, for instance : mvn -Dface clean package"

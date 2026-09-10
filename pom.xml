@@ -315,18 +315,6 @@
 			<version>1.0.0-alpha6</version>
 		</dependency>
 
-		<!-- local, CPU only face detection : its own repository, at
-		     https://github.com/Javlo/javlo-face. Run ./get_javlo_face.sh once to clone and
-		     install it.
-		     onnxruntime comes with it and weights ~90 Mo because it embeds the native
-		     libraries of the three OS. FaceFocusService keeps working without it :
-		     the missing jar only switches face detection off. -->
-		<dependency>
-			<groupId>org.javlo.face</groupId>
-			<artifactId>javlo-face</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/com.drewnoakes/metadata-extractor -->
 		<dependency>
 			<groupId>com.drewnoakes</groupId>
@@ -1023,6 +1011,30 @@
 
 	<profiles>
 
+		<!-- local, CPU only face detection : its own repository, at
+		     https://github.com/Javlo/javlo-face. It is NOT part of the default build, because
+		     onnxruntime comes with it and weights ~90 Mo (it embeds the native libraries of the
+		     three OS).
+		     FaceFocusService reaches it by reflection, so Javlo compiles and runs without it and
+		     detection is simply switched off.
+		     To put it in the war : run ./get_javlo_face.sh once, then build with -Dface, for
+		     instance "mvn -Dface clean package". -->
+		<profile>
+			<id>face</id>
+			<activation>
+				<property>
+					<name>face</name>
+				</property>
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>org.javlo.face</groupId>
+					<artifactId>javlo-face</artifactId>
+					<version>1.0.0</version>
+				</dependency>
+			</dependencies>
+		</profile>
+
 		<profile>
 			<id>securitycheck</id>
 			<build>
@@ -1045,8 +1057,13 @@
 
 		<profile>
 			<id>webapp</id>
+			<!-- active unless -Dnowebapp is given. Not activeByDefault : that flag is dropped as soon
+			     as any other profile of this POM is activated, which used to silently break the war
+			     of "mvn -P securitycheck" or "mvn -Dface". -->
 			<activation>
-				<activeByDefault>true</activeByDefault>
+				<property>
+					<name>!nowebapp</name>
+				</property>
 			</activation>
 			<properties>
 				<packaging.type>war</packaging.type>

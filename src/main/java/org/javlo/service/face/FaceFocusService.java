@@ -4,12 +4,12 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.javlo.face.Face;
-import org.javlo.face.FaceDetector;
 import org.javlo.helper.StringHelper;
 import org.javlo.image.ImageEngine;
 
@@ -22,12 +22,21 @@ import org.javlo.image.ImageEngine;
  * 35 ms per picture once the model is loaded. The model is loaded once and the detector is shared,
  * as it is thread safe.
  *
+ * <code>javlo-face</code> is reached by reflection and is not a dependency of the default build :
+ * Javlo compiles and runs without it, detection is then simply switched off. Build with
+ * <code>mvn -Dface ...</code> to add the module to the war, once ./get_javlo_face.sh has installed
+ * it in the local repository.
+ *
  * The focus point is returned the way Javlo stores it, in per mille of the picture, ready for
  * {@link org.javlo.ztatic.StaticInfo#setFocusZoneX(org.javlo.context.ContentContext, int)}.
  */
 public class FaceFocusService {
 
 	private static Logger logger = Logger.getLogger(FaceFocusService.class.getName());
+
+	private static final String DETECTOR_CLASS = "org.javlo.face.FaceDetector";
+
+	private static final String FACE_CLASS = "org.javlo.face.Face";
 
 	/**
 	 * A face smaller than this share of the biggest one is a passer-by, not a subject : it must not
@@ -37,7 +46,14 @@ public class FaceFocusService {
 
 	private static FaceFocusService instance = null;
 
-	private FaceDetector detector = null;
+	/** org.javlo.face.FaceDetector, held as an Object because the class is optional. */
+	private Object detector = null;
+
+	/** org.javlo.face.FaceDetector.detect(BufferedImage) */
+	private Method detectMethod = null;
+
+	/** org.javlo.face.Face.getBounds() */
+	private Method boundsMethod = null;
 
 	/** Set once the detector could not be created : we then stop trying on every picture. */
 	private boolean unavailable = false;
@@ -53,8 +69,9 @@ public class FaceFocusService {
 	}
 
 	/**
-	 * The detector is optional : the onnxruntime jar weights 90 Mo and can be left out of the war. When
-	 * it is missing, face detection is simply switched off and Javlo keeps working.
+	 * The detector is optional : the onnxruntime jar weights 90 Mo and is left out of the war unless the
+	 * build asks for it. When the classes are missing, face detection is simply switched off and Javlo
+	 * keeps working.
 	 */
 	public synchronized boolean isActive() {
 		if (unavailable) {
@@ -63,12 +80,19 @@ public class FaceFocusService {
 		if (detector == null) {
 			try {
 				long time = System.currentTimeMillis();
-				detector = new FaceDetector();
+				Class<?> detectorClass = Class.forName(DETECTOR_CLASS);
+				Class<?> faceClass = Class.forName(FACE_CLASS);
+				detectMethod = detectorClass.getMethod("detect", BufferedImage.class);
+				boundsMethod = faceClass.getMethod("getBounds");
+				detector = detectorClass.getConstructor().newInstance();
 				logger.info("face detection model loaded in " + (System.currentTimeMillis() - time) + " ms");
 			} catch (Throwable t) {
-				// NoClassDefFoundError when the jar is not deployed, IOException when the model fails
+				// ClassNotFoundException when the module is not deployed, IOException wrapped in an
+				// InvocationTargetException when the model fails to load
 				unavailable = true;
-				logger.warning("face detection not available : " + t.getMessage());
+				detectMethod = null;
+				boundsMethod = null;
+				logger.warning("face detection not available : " + describe(t));
 				return false;
 			}
 		}
@@ -98,19 +122,37 @@ public class FaceFocusService {
 				return null;
 			}
 			long time = System.currentTimeMillis();
-			List<Face> faces = detector.detect(image);
-			List<Rectangle> boxes = new ArrayList<Rectangle>(faces.size());
-			for (Face face : faces) {
-				boxes.add(face.getBounds());
-			}
+			List<Rectangle> boxes = detect(image);
 			Point focus = focusPoint(boxes, image.getWidth(), image.getHeight());
-			logger.info("face detection on " + file.getName() + " : " + faces.size() + " face(s) in "
+			logger.info("face detection on " + file.getName() + " : " + boxes.size() + " face(s) in "
 					+ (System.currentTimeMillis() - time) + " ms, focus " + focus);
 			return focus;
 		} catch (Throwable t) {
-			logger.warning("error on face detection on " + file + " : " + t.getMessage());
+			logger.warning("error on face detection on " + file + " : " + describe(t));
 			return null;
 		}
+	}
+
+	/**
+	 * Calls the optional module and turns its faces into plain rectangles, so nothing outside this
+	 * method needs the classes of <code>javlo-face</code>.
+	 */
+	private List<Rectangle> detect(BufferedImage image) throws Exception {
+		List<?> faces = (List<?>) detectMethod.invoke(detector, image);
+		List<Rectangle> boxes = new ArrayList<Rectangle>(faces.size());
+		for (Object face : faces) {
+			boxes.add((Rectangle) boundsMethod.invoke(face));
+		}
+		return boxes;
+	}
+
+	/** The message of an InvocationTargetException is null, the interesting one is on its cause. */
+	private static String describe(Throwable t) {
+		Throwable cause = t instanceof InvocationTargetException ? t.getCause() : t;
+		if (cause == null) {
+			cause = t;
+		}
+		return cause.getClass().getSimpleName() + " : " + cause.getMessage();
 	}
 
 	/**

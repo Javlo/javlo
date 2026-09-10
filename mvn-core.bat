@@ -1,1 +1,1 @@
-@mvn -P core %*
+@mvn -P core -Dnowebapp %*
