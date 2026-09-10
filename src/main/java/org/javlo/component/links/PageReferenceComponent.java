@@ -741,16 +741,29 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         out.println("<input type=\"submit\" value=\"" + i18nAccess.getText("global.ok") + "\" />");
         out.println("</div></div></div>");
 
+        String basePagePath = getParentNode(ctx);
         MenuElement basePage = null;
-        if (getParentNode(ctx).length() > 1) { // if parent node is not root
+        if (basePagePath.length() > 1) { // if parent node is not root
             // node
-            basePage = menu.searchChild(ctx, getParentNode(ctx));
+            basePage = menu.searchChild(ctx, basePagePath);
         }
         if (basePage != null) {
             menu = basePage;
         }
 
         List<MenuElement> allChildren = menu.getAllChildrenList();
+        if (basePage == null && basePagePath.length() > 1) {
+            // the reference page could not be resolved : list the pages of that path
+            // instead of falling back on the whole site (which shows "too many pages").
+            logger.warning("reference page not found in navigation : " + basePagePath + ", filter the page list on the path.");
+            List<MenuElement> onPath = new LinkedList<MenuElement>();
+            for (MenuElement child : allChildren) {
+                if (child.isChildOf(basePagePath)) {
+                    onPath.add(child);
+                }
+            }
+            allChildren = onPath;
+        }
         Collections.sort(allChildren, new MenuElementModificationDateComparator(true));
         Collection<MenuElement> currentSelection = getSelectedPages(ctx, allChildren);
 
@@ -943,15 +956,19 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
             }
         } else {
             List<MenuElement> selectedPage = new LinkedList<MenuElement>();
+            String parentNodePath = getParentNode(ctx);
             MenuElement parentNode = null;
             if (!children.isEmpty()) {
-                parentNode = children.get(0).getRoot().searchChild(ctx, getParentNode(ctx));
+                parentNode = children.get(0).getRoot().searchChild(ctx, parentNodePath);
+                if (parentNode == null && parentNodePath.length() > 1) {
+                    logger.warning("reference page not found in navigation : " + parentNodePath + " (comp " + getId() + ", mode " + ctx.getRenderMode() + "), fall back on path comparison.");
+                }
             }
             List<String> selectedId = StringHelper.stringToCollection(value, PAGE_SEPARATOR);
             for (MenuElement page : children) {
                 if (page.isActive(ctx)) {
                     if (!selectedId.contains(page.getId())) {
-                        if ((parentNode == null || page.isChildOf(parentNode)) && !page.isChildrenOfAssociation()) {
+                        if (isInsideParentNode(page, parentNode, parentNodePath) && !page.isChildrenOfAssociation()) {
                             selectedPage.add(page);
                         }
                     }
@@ -960,6 +977,22 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
             out = selectedPage;
         }
         return out;
+    }
+
+    /**
+     * check that a page belongs to the reference page subtree. When the reference
+     * page could not be resolved in the navigation we must NOT fall back on "the
+     * whole site" : the component would silently reference every page of the site.
+     * In that case we compare on the stored path instead.
+     */
+    private static boolean isInsideParentNode(MenuElement page, MenuElement parentNode, String parentNodePath) {
+        if (parentNode != null) {
+            return page.isChildOf(parentNode);
+        }
+        if (StringHelper.isEmpty(parentNodePath) || parentNodePath.equals("/")) {
+            return true;
+        }
+        return page.isChildOf(parentNodePath);
     }
 
     protected String getParentNode(ContentContext ctx) {
@@ -1646,7 +1679,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
             MenuElement menu = content.getNavigation(ctx);
             List<MenuElement> allChildren = menu.getAllChildrenList();
             List<String> currentPageSelected = getPageSelected();
-            Collection<String> pagesSelected = new HashSet<String>();
+            Collection<String> pagesSelected = new LinkedHashSet<String>();
             List<String> pagesNotSelected = new LinkedList<String>();
             Collection<MenuElement> currentSelection = getSelectedPages(ctx, allChildren);
             for (MenuElement element : allChildren) {
@@ -1682,10 +1715,21 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
                 }
             }
 
-            pagesSelected.addAll(currentPageSelected);
-            pagesSelected.removeAll(pagesNotSelected);
-            if (!currentPageSelected.equals(pagesSelected)) {
-                setPageSelected(StringHelper.collectionToString(pagesSelected, PAGE_SEPARATOR));
+            /*
+             * keep the stored order : the selection is rendered in the order of the
+             * page-ref property. Starting from a HashSet here reshuffled the whole
+             * selection on every save, and comparing a List with a Set is always false
+             * so the component was rewritten and marked modified at each edition.
+             */
+            List<String> newPagesSelected = new ArrayList<String>(new LinkedHashSet<String>(currentPageSelected));
+            for (String id : pagesSelected) {
+                if (!newPagesSelected.contains(id)) {
+                    newPagesSelected.add(id);
+                }
+            }
+            newPagesSelected.removeAll(pagesNotSelected);
+            if (!currentPageSelected.equals(newPagesSelected)) {
+                setPageSelected(StringHelper.collectionToString(newPagesSelected, PAGE_SEPARATOR));
                 setModify();
             }
 

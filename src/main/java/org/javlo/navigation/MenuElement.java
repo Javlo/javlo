@@ -624,7 +624,16 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		return outMenuElement;
 	}
 
-	public static MenuElement searchChild(MenuElement elem, ContentContext ctx, String path, Collection<MenuElement> pastNode) throws Exception {
+	/**
+	 * pastNode is the cycle guard of the tree walk : it must identify pages, not
+	 * compare them. MenuElement.equals is a deep metadata/content comparison which
+	 * ignores the page id (two distinct empty pages with the same name are equals),
+	 * so contains()/remove() could match a page other than the one being walked -
+	 * remove() in particular could drop another entry and leave a live page flagged
+	 * as already visited, pruning it from the search. Keying on the id removes that
+	 * hazard, and avoids a deep subtree comparison at every visited node.
+	 */
+	public static MenuElement searchChild(MenuElement elem, ContentContext ctx, String path, Set<String> pastNode) throws Exception {
 		if (elem == null) {
 			return null;
 		}
@@ -632,10 +641,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		if (elem.getParent() == null && ('/' + elem.getName()).equals(path)) {
 			return elem;
 		}
-		if (pastNode.contains(elem)) {
+		if (!pastNode.add(elem.getId())) {
 			return null;
-		} else {
-			pastNode.add(elem);
 		}
 		MenuElement res = null;
 		List<MenuElement> children = elem.getChildMenuElementsWithVirtualList(ctx, false, false);
@@ -647,7 +654,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 				return menuElement;
 			} else {
 				res = searchChild(menuElement, ctx, path, pastNode);
-				pastNode.remove(menuElement);
+				pastNode.remove(menuElement.getId());
 				if (res != null) {
 					return res;
 				}
@@ -672,11 +679,12 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		return null;
 	}
 
-	static MenuElement searchRealChild(MenuElement elem, ContentContext ctx, String path, Collection<MenuElement> pastNode) throws Exception {
-		if (pastNode.contains(elem)) {
+	static MenuElement searchRealChild(MenuElement elem, ContentContext ctx, String path, Set<String> pastNode) throws Exception {
+		if (elem == null) {
 			return null;
-		} else {
-			pastNode.add(elem);
+		}
+		if (!pastNode.add(elem.getId())) {
+			return null;
 		}
 		MenuElement res = null;
 		List<MenuElement> children = elem.getChildMenuElementsList();
@@ -685,7 +693,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 				return menuElement;
 			} else {
 				res = searchRealChild(menuElement, ctx, path, pastNode);
-				pastNode.remove(menuElement);
+				pastNode.remove(menuElement.getId());
 				if (res != null) {
 					return res;
 				}
@@ -3307,7 +3315,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		if (ctx.getPath().equals("/")) {
 			return this;
 		} else {
-			Collection<MenuElement> pastNode = new LinkedList<MenuElement>();
+			Set<String> pastNode = new HashSet<String>();
 			MenuElement elem = searchChild(this, ctx, ctx.getPath(), pastNode);
 			if (elem == null) {
 				logger.warning("page not found on path : "+ctx.getPath());
@@ -4897,7 +4905,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		if (path.equals("/")) {
 			return this;
 		} else {
-			Collection<MenuElement> pastNode = new LinkedList<MenuElement>();
+			Set<String> pastNode = new HashSet<String>();
 			return searchRealChild(this, ctx, path, pastNode);
 		}
 	}

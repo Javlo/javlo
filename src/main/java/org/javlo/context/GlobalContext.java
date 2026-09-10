@@ -2326,7 +2326,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		if (url.equals("/")) {
 			return root;
 		} else {
-			Collection<MenuElement> pastNode = new LinkedList<MenuElement>();
+			Set<String> pastNode = new HashSet<String>();
 			// System.out.println("##### GlobalContext.getPageIfExist :
 			// "+DebugHelper.getCaller(10)); //TODO: remove debug trace
 			MenuElement page = MenuElement.searchChild(root, ctx, url, pastNode);
