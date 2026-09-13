@@ -755,6 +755,32 @@ public class StaticFileBean extends FieldBean {
 		properties.setProperty("field." + getUnicName() + ".value.label", label);
 	}
 
+	/**
+	 * Write a file in the storage folder of this field and select it as the field value.
+	 * An existing file with the same name is never overwritten : a free name is chosen.
+	 * @param folder folder relative to the field type folder (images, files...)
+	 * @param label optional label (alt text for images), ignored when null
+	 * @return the stored file name
+	 */
+	public String storeFile(ContentContext ctx, String folder, String fileName, InputStream in, String label) throws IOException {
+		String cleanFileName = StringHelper.createFileName(fileName);
+		if (!StringHelper.isEmpty(getFileType())) {
+			List<String> types = StringHelper.stringToCollection(getFileType(), ",");
+			if (!types.contains(StringHelper.getFileExtension(cleanFileName).toLowerCase())) {
+				throw new IOException("bad file type, accepted : " + getFileType());
+			}
+		}
+		setCurrentFolder(ctx, folder);
+		File file = ResourceHelper.getFreeFileName(new File(URLHelper.mergePath(getFileDirectory(), getCurrentFolder(), cleanFileName)));
+		file.getParentFile().mkdirs();
+		ResourceHelper.writeStreamToFile(in, file);
+		setCurrentFile(file.getName());
+		if (label != null) {
+			setCurrentLabel(label);
+		}
+		return file.getName();
+	}
+
 	protected String getFileURL(ContentContext ctx, String fileLink) {
 		return URLHelper.mergePath(getFileTypeFolder(), getCurrentFolder(), fileLink);
 	}

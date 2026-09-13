@@ -2,14 +2,18 @@ package org.javlo.remote;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.commons.fileupload2.core.FileItem;
 import org.javlo.actions.IAction;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.component.core.ComponentBean;
 import org.javlo.component.core.ComponentLayout;
 import org.javlo.component.core.IContentVisualComponent;
+import org.javlo.component.dynamic.DynamicComponent;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
+import org.javlo.fields.Field;
+import org.javlo.fields.FieldFile;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.i18n.I18nAccess;
@@ -22,6 +26,8 @@ import org.javlo.user.AdminUserFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -70,6 +76,12 @@ import java.util.logging.Logger;
  *     previous (required) — id of component after which to insert ("0" = first position)
  *     area     (opt)      — target area key (default = component's current area)
  *     page     (opt)      — target page id/name/path (default = component's current page)
+ *
+ *   content.uploadFile (multipart):
+ *     id       (required) — id of a dynamic component
+ *     field    (required) — name of a file/image field of this component (e.g. "image")
+ *     file     (required) — multipart file, stored in the import folder of the component page
+ *     label    (opt)      — label / alt text of the file
  *
  *   content.clearPage:
  *     page     (required) — id, name or path of the page to clear
@@ -360,6 +372,65 @@ public class ContentAction implements IAction {
 		ctx.getAjaxData().put("removed", removedIds);
 		ctx.getAjaxData().put("count", removedIds.size());
 		logger.info("content.clearPage: removed " + removedIds.size() + " component(s) from page '" + page.getPath() + "'");
+		return null;
+	}
+
+	// -------------------------------------------------------------------------
+	// content.uploadFile
+	// Params: id (required), field (required), multipart "file" (required), label (opt)
+	// Stores the file in the import folder of the component page and selects it
+	// in the file/image field of the dynamic component.
+	// -------------------------------------------------------------------------
+	public static String performUploadFile(RequestService rs, ContentContext ctx, ContentService contentService, PersistenceService persistenceService) throws Exception {
+		String id        = rs.getParameter("id", null);
+		String fieldName = rs.getParameter("field", null);
+
+		if (id == null || id.trim().isEmpty()) {
+			return "content.uploadFile: missing required parameter 'id'";
+		}
+		if (fieldName == null || fieldName.trim().isEmpty()) {
+			return "content.uploadFile: missing required parameter 'field'";
+		}
+
+		IContentVisualComponent comp = contentService.getComponent(ctx, id);
+		if (comp == null) {
+			return "content.uploadFile: component not found: " + id;
+		}
+		if (!AdminUserSecurity.getInstance().canModifyConponent(ctx, id)) {
+			return "content.uploadFile: access denied for component: " + id;
+		}
+		if (!(comp instanceof DynamicComponent)) {
+			return "content.uploadFile: component '" + id + "' is not a dynamic component (type: " + comp.getType() + ")";
+		}
+
+		DynamicComponent dynamicComponent = (DynamicComponent) comp;
+		Field field = dynamicComponent.getField(ctx, fieldName.trim());
+		if (!(field instanceof FieldFile)) {
+			return "content.uploadFile: field '" + fieldName + "' not found or not a file/image field in component '" + id + "'";
+		}
+
+		FileItem fileItem = rs.getFileItem("file");
+		if (fileItem == null || fileItem.getSize() == 0) {
+			return "content.uploadFile: missing multipart 'file' field";
+		}
+
+		String folder = AbstractVisualComponent.getImportFolderPath(ctx, comp.getPage());
+		String fileName;
+		try (InputStream in = fileItem.getInputStream()) {
+			fileName = ((FieldFile) field).storeFile(ctx, folder, fileItem.getName(), in, rs.getParameter("label", null));
+		} catch (IOException e) {
+			return "content.uploadFile: " + e.getMessage();
+		}
+
+		dynamicComponent.storeProperties();
+		dynamicComponent.setModify();
+		dynamicComponent.setNeedRefresh(true);
+		persistenceService.setAskStore(true);
+
+		ctx.getAjaxData().put("component", componentToMap(comp, ctx));
+		ctx.getAjaxData().put("folder", folder);
+		ctx.getAjaxData().put("file", fileName);
+		logger.info("content.uploadFile: stored '" + fileName + "' in field '" + fieldName + "' of component '" + id + "'");
 		return null;
 	}
 

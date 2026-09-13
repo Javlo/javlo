@@ -33,7 +33,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
-import { dirname, join } from "path";
+import { basename, dirname, join } from "path";
 
 // ─── Configuration ────────────────────────────────────────────────────────────
 
@@ -78,23 +78,36 @@ interface JavloResponse {
 
 async function callAction(
   webaction: string,
-  params: Record<string, string>
+  params: Record<string, string>,
+  file?: { field: string; path: string }
 ): Promise<Record<string, unknown>> {
   const { baseUrl, token, lang } = getConfig();
   const ajaxUrl = `${baseUrl}/ajax/${lang}/`;
-  const body = new URLSearchParams({ webaction, ...params });
 
-  const headers: Record<string, string> = {
-    "Content-Type": "application/x-www-form-urlencoded",
-  };
+  const headers: Record<string, string> = {};
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  let body: string | FormData;
+  if (file) {
+    // Multipart : le Content-Type (avec boundary) est posé par fetch.
+    const form = new FormData();
+    form.append("webaction", webaction);
+    for (const [key, value] of Object.entries(params)) {
+      form.append(key, value);
+    }
+    form.append(file.field, new Blob([readFileSync(file.path)]), basename(file.path));
+    body = form;
+  } else {
+    headers["Content-Type"] = "application/x-www-form-urlencoded";
+    body = new URLSearchParams({ webaction, ...params }).toString();
   }
 
   const res = await fetch(ajaxUrl, {
     method:  "POST",
     headers,
-    body:    body.toString(),
+    body,
   });
 
   if (!res.ok) {
@@ -304,6 +317,25 @@ server.registerTool(
 );
 
 server.registerTool(
+  "content_uploadFile",
+  {
+    description: "Envoie un fichier local (image, PDF…) dans un champ image/fichier d'un composant dynamique existant. Le fichier est stocké dans le dossier d'import de la page du composant et sélectionné dans le champ. Créer d'abord le composant avec content_add, puis appeler cet outil avec son ID.",
+    inputSchema: {
+      id:    z.string().describe("ID du composant dynamique (retourné par content_add)"),
+      field: z.string().describe("Nom du champ image/fichier : le <nom> de field.image.<nom> dans le HTML du composant, ex: 'image'"),
+      file:  z.string().describe("Chemin local du fichier à envoyer"),
+      label: z.string().optional().describe("Libellé du fichier (texte alternatif pour une image)"),
+    },
+  },
+  async ({ id, field, file, label }) => {
+    const params: Record<string, string> = { id, field };
+    if (label !== undefined) params.label = label;
+    const data = await callAction("content.uploadFile", params, { field: "file", path: file });
+    return ok(data);
+  }
+);
+
+server.registerTool(
   "content_clearPage",
   {
     description: "Supprime tous les composants d'une page. Utile avant de reconstruire entièrement le contenu d'une page.",
@@ -322,13 +354,21 @@ server.registerTool(
 server.registerTool(
   "template_upload",
   {
-    description: "Installe un template Javlo2 depuis une URL zip. Crée le dossier template si absent, écrase les fichiers existants. Appeler template_commit ensuite pour déployer.",
+    description: "Installe un template Javlo2 depuis un zip (fichier local envoyé en multipart, ou URL publique). Crée le dossier template si absent, écrase les fichiers existants. Appeler template_commit ensuite pour déployer.",
     inputSchema: {
       name: z.string().describe("Nom / ID cible du template (= nom du dossier)"),
-      url:  z.string().describe("URL publique d'un fichier .zip contenant le template"),
+      file: z.string().optional().describe("Chemin local d'un fichier .zip contenant le template (prioritaire sur url)"),
+      url:  z.string().optional().describe("URL publique d'un fichier .zip contenant le template"),
     },
   },
-  async ({ name, url }) => {
+  async ({ name, file, url }) => {
+    if (file) {
+      const data = await callAction("template.upload", { name }, { field: "file", path: file });
+      return ok(data);
+    }
+    if (!url) {
+      throw new Error("template_upload: fournir 'file' ou 'url'");
+    }
     const data = await callAction("template.upload", { name, url });
     return ok(data);
   }
