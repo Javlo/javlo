@@ -54,6 +54,24 @@ public class FieldExternalLink extends MetaField implements ILink {
 			}
 		}
 
+		/* aliases for harmonisation with InternalLinkBean */
+
+		public String getLink() {
+			return getUrl();
+		}
+
+		public String getLinkLabel() {
+			return getCurrentLabel();
+		}
+
+		public String getParam() {
+			return "";
+		}
+
+		public String getLinkOn() {
+			return getUrl();
+		}
+
 	}
 
 	private Date latestValidDate = null;

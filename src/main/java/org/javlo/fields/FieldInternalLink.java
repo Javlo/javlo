@@ -62,6 +62,16 @@ public class FieldInternalLink extends Field {
 			this.linkOn = linkOn;
 		}
 
+		/* aliases for harmonisation with ExternalLinkBean */
+
+		public String getTitle() {
+			return linkLabel;
+		}
+
+		public String getLinkAttribute() {
+			return "";
+		}
+
 	}
 
 	@Override

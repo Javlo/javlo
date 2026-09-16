@@ -182,6 +182,39 @@ public class CatchAllFilter implements Filter {
 		return false;
 	}
 
+	private static final String WORK_TEMPLATE_SEGMENT = Template.DEFAULT_TEMPLATE_NAME;
+
+	private static final String PROPERTIES_EXTENSION = ".properties";
+
+	/**
+	 * true when the path reaches a .properties file inside the work template
+	 * folder. The template is copied there with its config.properties,
+	 * private-config.properties, staging.properties (which holds the remote
+	 * token)... none of them has to be served.
+	 * <p>
+	 * The segment is normalized the way the container and the file system
+	 * would : path parameter (;jsessionid) removed, case ignored and trailing
+	 * dots or spaces removed (a windows server opens "config.properties." as
+	 * "config.properties").
+	 */
+	static boolean isWorkTemplateProperties(String path) {
+		boolean inWorkTemplate = false;
+		for (String segment : path.split("[/\\\\]")) {
+			int paramIndex = segment.indexOf(';');
+			if (paramIndex >= 0) {
+				segment = segment.substring(0, paramIndex);
+			}
+			segment = segment.toLowerCase().replaceAll("[.\\s]+$", "");
+			if (inWorkTemplate && segment.endsWith(PROPERTIES_EXTENSION)) {
+				return true;
+			}
+			if (segment.equals(WORK_TEMPLATE_SEGMENT)) {
+				inWorkTemplate = true;
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * true when the path holds a hidden file or directory segment. The
 	 * back-slash is a separator too, java.io.File accepts it on a windows
@@ -227,6 +260,12 @@ public class CatchAllFilter implements Filter {
 
 		if (containsHtmlMetaCharacter(path) || containsHtmlMetaCharacter(decodedPath)) {
 			logger.severe("Security error: html meta character in path : " + path);
+			httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return;
+		}
+
+		if (isWorkTemplateProperties(path) || isWorkTemplateProperties(decodedPath)) {
+			logger.warning("Security error: template properties file requested : " + path);
 			httpResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return;
 		}
