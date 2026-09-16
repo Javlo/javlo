@@ -62,8 +62,6 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
 
     private Date latestValidDate = null;
 
-    private Map<String, Group> groups = null;
-
     private static final List<Integer> DEFAULT_COLUMN_SIZE = new LinkedList<Integer>(Arrays.asList(new Integer[]{1, 2, 3, 4, 6, 12}));
 
     private java.util.List<Field> fields = null;
@@ -85,29 +83,27 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
         }
         ctx.getRequest().setAttribute("colWidth", getColumnSize(ctx));
 
-        /** group **/
-        if (groups == null) {
-            groups = new HashMap<>();
-            getGroups().forEach(group -> {
-                try {
-                    Group newGroup = new Group(group, getGroupSize(ctx, group), getGroupNumber(ctx, group));
-                    groups.put(group, newGroup);
+        /** group : built for each request, the beans hold the ContentContext of the request **/
+        Map<String, Group> groups = new HashMap<>();
+        getGroups().forEach(group -> {
+            try {
+                Group newGroup = new Group(group, getGroupSize(ctx, group), getGroupNumber(ctx, group));
+                groups.put(group, newGroup);
 
-                    getFields(ctx).forEach(field -> {
-                        if (field.getGroup() != null && field.getGroup().equals(group)) {
-                            if (!newGroup.getGroupNumberList().contains(field.getGroupNumber())) {
-                                newGroup.getGroupNumberList().add(field.getGroupNumber());
-                            }
-                            newGroup.getFields().put(field.getGroupLabel(), field);
-                            newGroup.getFieldsForDisplay().put(field.getGroupLabel()+"-"+field.getReferenceName(), field);
+                getFields(ctx).forEach(field -> {
+                    if (field.getGroup() != null && field.getGroup().equals(group)) {
+                        if (!newGroup.getGroupNumberList().contains(field.getGroupNumber())) {
+                            newGroup.getGroupNumberList().add(field.getGroupNumber());
                         }
-                    });
+                        newGroup.getFields().put(field.getGroupLabel(), field);
+                        newGroup.getFieldsForDisplay().put(field.getGroupLabel()+"-"+field.getReferenceName(), field.getBean(ctx));
+                    }
+                });
 
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            });
-        }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
         ctx.getRequest().setAttribute("groups", groups);
 
         Collection<Field> fields = getFields(ctx);
@@ -1019,8 +1015,6 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
             I18nAccess i18nAccess = I18nAccess.getInstance(ctx.getRequest());
             return i18nAccess.getText("content.dynamic-component.error.global") + " (" + StringHelper.collectionToString(errorField, ",") + ')';
         }
-
-        groups = null;
 
         return null;
     }

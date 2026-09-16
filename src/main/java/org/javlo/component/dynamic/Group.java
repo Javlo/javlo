@@ -16,7 +16,9 @@ public class Group {
     private List<Integer> groupNumberList = new ArrayList<>();
 
     private Map<String, Field> fields = new HashMap<>();
-    private Map<String, Field> fieldsForDisplay = new HashMap<>();
+    /* the beans, not the fields : the view properties (resourceUrl, previewUrl, alt, displayValue...)
+     * are defined on the bean, as for a field outside a group. */
+    private Map<String, Field.FieldBean> fieldsForDisplay = new HashMap<>();
 
     public Group(String name, int groupSize, int groupNumber) {
         this.name = name;
@@ -41,7 +43,7 @@ public class Group {
         return fields;
     }
 
-    public Map<String, Field> getFieldsForDisplay() {
+    public Map<String, Field.FieldBean> getFieldsForDisplay() {
         return fieldsForDisplay;
     }
 
