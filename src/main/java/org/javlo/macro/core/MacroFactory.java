@@ -103,6 +103,7 @@ public class MacroFactory {
 		macros.add(new DeleteChildrenAndContent());
 		macros.add(new DeleteSameComponent());
 		macros.add(new DeleteComponentBadArea());
+		macros.add(new DeleteUnknownComponent());
 		macros.add(new TransfertComponentBadAreaToContent());
 		macros.add(new UploadGallery());
 		macros.add(new CreateBusinessComponent());
