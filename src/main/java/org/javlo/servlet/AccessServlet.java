@@ -569,7 +569,15 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				}
 			}
 
-			if (ctx.isAsViewMode() && currentPage != null && currentPage.isCacheable(ctx) && globalContext.isPreviewMode() && globalContext.getPublishDate() != null && request.getMethod().equalsIgnoreCase("get") && request.getParameter("webaction") == null) {
+			/*
+			 * a page with reader roles is never cached : the 304 answers below are
+			 * sent before the role check, and a shared proxy would serve the page
+			 * to anybody.
+			 */
+			boolean protectedPage = currentPage != null && !currentPage.getUserRoles().isEmpty();
+			if (protectedPage) {
+				response.setHeader("Cache-Control", "private,no-store,max-age=0");
+			} else if (ctx.isAsViewMode() && currentPage != null && currentPage.isCacheable(ctx) && globalContext.isPreviewMode() && globalContext.getPublishDate() != null && request.getMethod().equalsIgnoreCase("get") && request.getParameter("webaction") == null) {
 				long lastModified = globalContext.getPublishDate().getTime();
 				response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);
 				response.setHeader("Cache-Control", "max-age=60,must-revalidate");
@@ -935,6 +943,17 @@ public class AccessServlet extends HttpServlet implements IVersion {
 				}
 
 				String path = ctx.getPath();
+				/*
+				 * the html rendering checks the reader roles further down, the
+				 * other formats (pdf, eml, ics, zip, xml, image...) write the page
+				 * straight away : they must be refused here.
+				 */
+				boolean htmlFormat = ctx.getFormat().equalsIgnoreCase("html") || ctx.getFormat().equalsIgnoreCase("htm");
+				if (!htmlFormat && ctx.getCurrentPage() != null && !ctx.getCurrentPage().isReadAccess(ctx, ctx.getCurrentUser())) {
+					logger.warning("access refused to page : " + path + " format:" + ctx.getFormat() + " (" + (ctx.getCurrentUser() == null ? "anonymous" : ctx.getCurrentUser().getLogin()) + ')');
+					response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+					return;
+				}
 				if (ctx.getFormat().equalsIgnoreCase("zip")) {
 					response.setContentType("application/zip; charset=" + ContentContext.CHARACTER_ENCODING);
 					ZipOutputStream outZip = new ZipOutputStream(response.getOutputStream());
@@ -1234,6 +1253,7 @@ public class AccessServlet extends HttpServlet implements IVersion {
 												String loginPage = ctx.getCurrentTemplate().getLoginFile(ctx);
 												RequestDispatcher view = request.getRequestDispatcher(loginPage);
 												view.forward(request, response);
+												return;
 											} else {
 												ctx.setSpecialContentRenderer("/jsp/view/login.jsp");
 											}
