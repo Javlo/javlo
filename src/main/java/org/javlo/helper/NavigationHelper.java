@@ -119,7 +119,13 @@ public class NavigationHelper {
 		target.setStartPublishDate(src.getStartPublishDate());
 		target.setEndPublishDate(src.getEndPublishDate());
 		target.setActive(src.isActive());
+		/*
+		 * the inherited flag must be copied with the roles : without it the
+		 * published page falls back to the inherited roles of its parent and a
+		 * page protected by its own roles becomes readable.
+		 */
 		target.setUserRoles(src.getUserRoles());
+		target.setUserRolesInherited(src.isUserRolesInherited());
 		target.setEditRoles(src);
 		if (src.getTaxonomy() != null) {
 			target.setTaxonomy(new LinkedHashSet<>(src.getTaxonomy()));
