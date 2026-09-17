@@ -1153,6 +1153,7 @@ public class AbstractFileComponent extends AbstractVisualComponent implements IS
 			}
 
 			StaticInfo staticInfo = StaticInfo.getInstance(ctx, file);
+			StaticInfo.inheritImportPageRoles(ctx, file);
 			// MenuElement currentPage = ctx.getCurrentPage();
 
 			// staticInfo.setLinkedPageId(ctx, currentPage.getId());

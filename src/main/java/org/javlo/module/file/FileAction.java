@@ -568,6 +568,7 @@ public class FileAction extends AbstractModuleAction {
 				} finally {
 					ResourceHelper.closeResource(in);
 				}
+				StaticInfo.inheritImportPageRoles(ctx, newFile);
 				fileModuleContext.setSort(4);
 				ctx.setNeedRefresh(true);
 			}

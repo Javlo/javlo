@@ -385,6 +385,7 @@ public class JavloELFinder extends ELFinder {
 					}
 					ResourceHelper.writeStreamToFile(in, newFile);
 					ResourceHelper.closeResource(in);
+					StaticInfo.inheritImportPageRoles(folder.getContentContext(), newFile);
 					addedFiles.add(new JavloELFile(folder.getVolume(), newFile, folder));
 					/*
 					 * } else { ZipInputStream zipIn = new ZipInputStream(in); ZipEntry entry = zipIn.getNextEntry(); while (entry != null) { File file = ZipManagement.saveFile(application, folder.getFile().getAbsolutePath(), entry.getName(), zipIn); entry = zipIn.getNextEntry(); if (file.getParentFile().getAbsolutePath().equals(folder.getFile().getAbsolutePath())) { // list only file inside current folder addedFiles.add(new JavloELFile(folder.getVolume(), file, folder)); } } zipIn.close(); }

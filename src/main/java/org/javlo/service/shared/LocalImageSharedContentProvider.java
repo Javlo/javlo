@@ -193,6 +193,7 @@ public class LocalImageSharedContentProvider extends AbstractSharedContentProvid
 			newFile = ResourceHelper.getFreeFileName(newFile);
 		}
 		ResourceHelper.writeStreamToFile(in, newFile);
+		StaticInfo.inheritImportPageRoles(ctx, newFile);
 		logger.info("imported file : " + newFile);
 	}
 }

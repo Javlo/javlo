@@ -1,5 +1,6 @@
 package org.javlo.service.shared;
 
+import org.javlo.ztatic.StaticInfo;
 import org.javlo.actions.DataAction;
 import org.javlo.context.ContentContext;
 import org.javlo.helper.ResourceHelper;
@@ -98,6 +99,7 @@ public class ImportedFileSharedContentProvider extends LocalFileSharedContentPro
 			newFile = ResourceHelper.getFreeFileName(newFile);
 		}
 		ResourceHelper.writeStreamToFile(in, newFile);
+		StaticInfo.inheritImportPageRoles(ctx, newFile);
 		logger.info("imported file : "+newFile);
 	}
 	

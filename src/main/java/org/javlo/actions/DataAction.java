@@ -388,6 +388,7 @@ public class DataAction implements IAction {
 		}
 		File newFile = ResourceHelper.writeFileItemToFolder(imageItem, targetFolder, true, rename);
 		if (newFile != null && newFile.exists()) {
+			StaticInfo.inheritImportPageRoles(ctx, newFile);
 			ContentService cs = ContentService.getInstance(gc);
 			String dir = imageRelativeFolder.replaceFirst(gc.getStaticConfig().getImageFolder(), "");
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream();
@@ -506,8 +507,11 @@ public class DataAction implements IAction {
 		}
 		for (FileItem item : imageItem) {
 			if (StringHelper.isImage(item.getName())) {
-				if (ResourceHelper.writeFileItemToFolder(item, targetFolder, false, true) == null) {
+				File newFile = ResourceHelper.writeFileItemToFolder(item, targetFolder, false, true);
+				if (newFile == null) {
 					logger.warning("Could'nt upload : " + item.getName());
+				} else {
+					StaticInfo.inheritImportPageRoles(ctx, newFile);
 				}
 			}
 		}
@@ -691,6 +695,7 @@ public class DataAction implements IAction {
 						}
 						File newFile = ResourceHelper.writeFileItemToFolder(item, targetFolder, true, rename);
 						if (newFile != null && newFile.exists()) {
+							StaticInfo.inheritImportPageRoles(ctx, newFile);
 
 							SharedContentContext sharedContentContext = SharedContentContext.getInstance(ctx);
 							SharedContentService sharedContentService = SharedContentService.getInstance(ctx);

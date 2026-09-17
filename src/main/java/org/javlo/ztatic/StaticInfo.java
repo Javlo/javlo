@@ -8,6 +8,7 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.parser.mp3.Mp3Parser;
+import org.javlo.actions.DataAction;
 import org.javlo.cache.ICache;
 import org.javlo.config.StaticConfig;
 import org.javlo.context.ContentContext;
@@ -16,6 +17,7 @@ import org.javlo.data.rest.IRestItem;
 import org.javlo.helper.*;
 import org.javlo.image.ImageHelper;
 import org.javlo.image.ImageSize;
+import org.javlo.navigation.MenuElement;
 import org.javlo.service.ContentService;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.exception.ServiceException;
@@ -1693,6 +1695,85 @@ public class StaticInfo implements IRestItem {
 		} else {
 			return !Collections.disjoint(roles, user.getUserInfo().getRoles());
 		}
+	}
+
+	/**
+	 * a file uploaded in an import folder of a page (…/import/[page]/…) inherit the
+	 * reader roles of this page.
+	 *
+	 * @param ctx
+	 * @param file
+	 *            the uploaded file (or a folder, all the files are processed)
+	 */
+	public static void inheritImportPageRoles(ContentContext ctx, File file) {
+		if (ctx == null || file == null || !file.exists()) {
+			return;
+		}
+		try {
+			MenuElement page = getImportPage(ctx, file);
+			if (page == null) {
+				return;
+			}
+			Set<String> roles = page.getUserRoles();
+			if (roles == null || roles.isEmpty()) {
+				return;
+			}
+			if (file.isDirectory()) {
+				for (File child : FileUtils.listFiles(file, null, true)) {
+					getInstance(ctx, child).addReadRole(ctx, roles);
+				}
+			} else {
+				getInstance(ctx, file).addReadRole(ctx, roles);
+			}
+			logger.info("roles of page '" + page.getName() + "' " + roles + " set on : " + file);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * @return the page associated to the import folder containing the file, null
+	 *         if the file is not in an import folder.
+	 */
+	public static MenuElement getImportPage(ContentContext ctx, File file) throws Exception {
+		String relURL = ResourceHelper.getRelativeStaticURL(ctx, file);
+		if (relURL == null) {
+			return null;
+		}
+		String importFolder = StringHelper.cleanPath(ctx.getGlobalContext().getStaticConfig().getImportFolder());
+		importFolder = importFolder.replace("/", "");
+		if (importFolder.length() == 0) {
+			return null;
+		}
+		String[] segments = relURL.replace('\\', '/').split("/");
+		String pageFolder = null;
+		/* the last segment is the file itself, the page folder can't be it */
+		for (int i = 0; i < segments.length - 2; i++) {
+			if (segments[i].equals(importFolder)) {
+				pageFolder = segments[i + 1];
+				break;
+			}
+		}
+		if (pageFolder == null) {
+			return null;
+		}
+		MenuElement currentPage = ctx.getCurrentPage();
+		if (currentPage != null && pageFolder.equals(DataAction.createImportFolder(currentPage))) {
+			return currentPage;
+		}
+		MenuElement root = ContentService.getInstance(ctx.getGlobalContext()).getNavigation(ctx);
+		if (root == null) {
+			return null;
+		}
+		if (pageFolder.equals(DataAction.createImportFolder(root))) {
+			return root;
+		}
+		for (MenuElement page : root.getAllChildrenList()) {
+			if (pageFolder.equals(DataAction.createImportFolder(page))) {
+				return page;
+			}
+		}
+		return null;
 	}
 
 	public void setAccessToken(ContentContext ctx, String token) {

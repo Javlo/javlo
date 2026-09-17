@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.logging.Logger;
 
+import org.javlo.ztatic.StaticInfo;
 import org.javlo.actions.DataAction;
 import org.javlo.component.core.AbstractVisualComponent;
 import org.javlo.context.ContentContext;
@@ -77,6 +78,7 @@ public class ImportedImageSharedContentProvider extends LocalImageSharedContentP
 			newFile = ResourceHelper.getFreeFileName(newFile);
 		}
 		ResourceHelper.writeStreamToFile(in, newFile);
+		StaticInfo.inheritImportPageRoles(ctx, newFile);
 		logger.info("imported file : "+newFile);
 	}
 	

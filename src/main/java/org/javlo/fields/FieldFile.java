@@ -689,6 +689,7 @@ public class StaticFileBean extends FieldBean {
 							} finally {
 								ResourceHelper.closeResource(in);
 							}
+							StaticInfo.inheritImportPageRoles(ctx, file);
 						}
 						modify = true;
 					}
@@ -774,6 +775,7 @@ public class StaticFileBean extends FieldBean {
 		File file = ResourceHelper.getFreeFileName(new File(URLHelper.mergePath(getFileDirectory(), getCurrentFolder(), cleanFileName)));
 		file.getParentFile().mkdirs();
 		ResourceHelper.writeStreamToFile(in, file);
+		StaticInfo.inheritImportPageRoles(ctx, file);
 		setCurrentFile(file.getName());
 		if (label != null) {
 			setCurrentLabel(label);
