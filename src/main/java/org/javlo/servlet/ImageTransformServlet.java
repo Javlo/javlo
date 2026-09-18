@@ -34,6 +34,7 @@ import org.javlo.utils.TimeTracker;
 import org.javlo.ztatic.FileCache;
 import org.javlo.ztatic.StaticInfo;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
@@ -501,13 +502,17 @@ public class ImageTransformServlet extends FileServlet {
 					img = ImageEngine.removeAlpha(img);
 				}
 				if (config.isHighQuality(ctx.getDevice(), filter, area) && fileExtension.equals("jpg")) {
-					ImageOutputStream ios = ImageIO.createImageOutputStream(outImage);
 					ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
-					ImageWriteParam param = writer.getDefaultWriteParam();
-					param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-					param.setCompressionQuality(0.99F);
-					writer.setOutput(ios);
-					writer.write(img);
+					try (ImageOutputStream ios = ImageIO.createImageOutputStream(outImage)) {
+						ImageWriteParam param = writer.getDefaultWriteParam();
+						param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+						param.setCompressionQuality(0.99F);
+						writer.setOutput(ios);
+						writer.write(null, new IIOImage(img, null, null), param);
+						ios.flush();
+					} finally {
+						writer.dispose();
+					}
 				} else {
 					// ImageIO.write(img, fileExtension, outImage);
 					ImageEngine.storeImage(img, fileExtension, outImage);

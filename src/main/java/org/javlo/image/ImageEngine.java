@@ -41,6 +41,12 @@ public class ImageEngine {
 
 	public static String WEBP_CONVERTER = null;
 
+	/** lossy webp quality (0-100) */
+	public static int WEBP_QUALITY = 85;
+
+	/** jpeg quality (0-100) */
+	public static int JPEG_QUALITY = 90;
+
 	public static boolean DISPLAY_FOCUS = false;
 
 	private static Logger logger = Logger.getLogger(ImageEngine.class.getName());
@@ -200,13 +206,16 @@ public class ImageEngine {
 	}
 
 	public static void storeImage(BufferedImage img, String ext, OutputStream outImage) throws IOException {
-		if (ext.equalsIgnoreCase("jpg") || ext.equalsIgnoreCase("jpeg")) {
+		boolean jpeg = ext.equalsIgnoreCase("jpg") || ext.equalsIgnoreCase("jpeg");
+		if (jpeg) {
 			if (img.getType() != BufferedImage.TYPE_3BYTE_BGR) {
 				img = removeAlpha(img);
-			} else if (isAlphaImageType(ext)) {
-				img = autoReduceColor(img);
 			}
 			// writeJPEG2000(img, outImage);
+		}
+		if (ext.equalsIgnoreCase("webp") && img.getColorModel().hasAlpha() && isOpaque(img)) {
+			// no transparency : encode without alpha channel (smaller file)
+			img = removeAlpha(img);
 		}
 		if (ext.equalsIgnoreCase("webp") && WEBP_CONVERTER != null) {
 			String randomSuffix = StringHelper.getRandomId();
@@ -215,7 +224,7 @@ public class ImageEngine {
 			try {
 				ImageIO.write(img, "png", tempImageSource);
 				ImageWebpLibraryWrapper webp = new ImageWebpLibraryWrapper(WEBP_CONVERTER);
-				webp.convertToWebP(tempImageSource, tempImageTarget, 75);
+				webp.convertToWebP(tempImageSource, tempImageTarget, WEBP_QUALITY);
 				ResourceHelper.writeFileToStream(tempImageTarget, outImage);
 			} finally {
 				if (tempImageSource.exists()) {
@@ -225,10 +234,54 @@ public class ImageEngine {
 					tempImageTarget.delete();
 				}
 			}
+		} else if (jpeg || ext.equalsIgnoreCase("webp")) {
+			writeLossy(img, jpeg ? "jpeg" : "webp", jpeg ? JPEG_QUALITY : WEBP_QUALITY, outImage);
 		} else {
 			ImageIO.write(img, ext, outImage);
 		}
 		return;
+	}
+
+	private static boolean isOpaque(BufferedImage img) {
+		for (int y = 0; y < img.getHeight(); y++) {
+			for (int x = 0; x < img.getWidth(); x++) {
+				if ((img.getRGB(x, y) >>> 24) != 0xFF) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * write image with explicit lossy compression quality (default ImageIO quality is 75).
+	 *
+	 * @param quality
+	 *            0-100
+	 */
+	private static void writeLossy(BufferedImage img, String format, int quality, OutputStream out) throws IOException {
+		Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName(format);
+		if (!writers.hasNext()) {
+			ImageIO.write(img, format, out);
+			return;
+		}
+		ImageWriter writer = writers.next();
+		try (javax.imageio.stream.ImageOutputStream ios = ImageIO.createImageOutputStream(out)) {
+			ImageWriteParam param = writer.getDefaultWriteParam();
+			if (param.canWriteCompressed()) {
+				param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+				String[] types = param.getCompressionTypes();
+				if (types != null && types.length > 0) {
+					param.setCompressionType(types[0]); // "Lossy" for webp, "JPEG" for jpeg
+				}
+				param.setCompressionQuality(Math.max(0, Math.min(100, quality)) / 100f);
+			}
+			writer.setOutput(ios);
+			writer.write(null, new IIOImage(img, null, null), param);
+			ios.flush();
+		} finally {
+			writer.dispose();
+		}
 	}
 
 	public static BufferedImage blurring(BufferedImage img) {
@@ -476,7 +529,21 @@ public class ImageEngine {
 	}
 
 	public static BufferedImage resize(BufferedImage bi, Integer width, Integer height, Color backgroundColor, boolean hq) {
-		return toBufferedImage(scale(bi, width, height, hq), backgroundColor);
+		if (hq && width <= bi.getWidth() && height <= bi.getHeight()) {
+			// area averaging : best quality for reduction
+			return toBufferedImage(scale(bi, width, height, hq), backgroundColor);
+		}
+		// enlargement (or fast mode) : interpolate instead of replicating pixels
+		BufferedImage outImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		if (backgroundColor != null) {
+			fillImage(outImage, backgroundColor);
+		}
+		Graphics2D g = outImage.createGraphics();
+		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, hq ? RenderingHints.VALUE_INTERPOLATION_BICUBIC : RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		g.setRenderingHint(RenderingHints.KEY_RENDERING, hq ? RenderingHints.VALUE_RENDER_QUALITY : RenderingHints.VALUE_RENDER_SPEED);
+		g.drawImage(bi, 0, 0, width, height, null);
+		g.dispose();
+		return outImage;
 	}
 
 	public static BufferedImage zoom(BufferedImage img, double zoom, int interestX, int interestY) {

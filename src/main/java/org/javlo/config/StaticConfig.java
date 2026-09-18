@@ -2392,6 +2392,20 @@ public class StaticConfig extends Observable {
 	public String getWebpEncoder() {
 		return properties.getString("image.webp.encoder", null);
 	}
+
+	/**
+	 * lossy compression quality for generated webp images (0-100)
+	 */
+	public int getWebpQuality() {
+		return properties.getInt("image.webp.quality", 85);
+	}
+
+	/**
+	 * compression quality for generated jpeg images (0-100)
+	 */
+	public int getJpegQuality() {
+		return properties.getInt("image.jpeg.quality", 90);
+	}
 	
 	public String getZoneDateTime() {
 		return properties.getString("calendar.zone", null);

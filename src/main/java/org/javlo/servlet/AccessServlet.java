@@ -224,6 +224,8 @@ public class AccessServlet extends HttpServlet implements IVersion {
 		MailingThread.SLEEP_BETWEEN_MAIL_SEC = staticConfig.getMailingTimebetweenTwoSend();
 
 		ImageEngine.WEBP_CONVERTER = staticConfig.getWebpEncoder();
+		ImageEngine.WEBP_QUALITY = staticConfig.getWebpQuality();
+		ImageEngine.JPEG_QUALITY = staticConfig.getJpegQuality();
 
 		// LoggerHelper.changeLogLevel(staticConfig.getAllLogLevel().getName());
 
