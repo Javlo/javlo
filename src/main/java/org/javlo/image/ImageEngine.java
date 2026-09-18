@@ -42,7 +42,7 @@ public class ImageEngine {
 	public static String WEBP_CONVERTER = null;
 
 	/** lossy webp quality (0-100) */
-	public static int WEBP_QUALITY = 85;
+	public static int WEBP_QUALITY = 90;
 
 	/** jpeg quality (0-100) */
 	public static int JPEG_QUALITY = 90;

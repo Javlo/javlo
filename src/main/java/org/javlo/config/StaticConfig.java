@@ -2397,7 +2397,7 @@ public class StaticConfig extends Observable {
 	 * lossy compression quality for generated webp images (0-100)
 	 */
 	public int getWebpQuality() {
-		return properties.getInt("image.webp.quality", 85);
+		return properties.getInt("image.webp.quality", 90);
 	}
 
 	/**
