@@ -2170,9 +2170,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		IURLFactory urlCreator = getURLFactory();
 		Map<String, MenuElement> localViewPages = viewPages;
 		if (urlCreator != null) {
-			if (urlFromFactoryImported != urlCreator) {
+			if (urlFromFactoryImported != urlCreator || viewPages == null) {
 				synchronized (this.getLockLoadContent()) {
-					if (urlFromFactoryImported != urlCreator) {
+					if (urlFromFactoryImported != urlCreator || viewPages == null) {
 
 						localViewPages = new Hashtable<String, MenuElement>();
 						ContentContext lgCtx = ContentContext.getFakeContentContext(this);
@@ -2235,6 +2235,11 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		IURLFactory urlCreator = getURLFactory();
 		Map<String, MenuElement> localViewPages = viewPages;
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE && urlCreator != null && useURLCreator) {
+			// url cache can be released (releaseAllCache) without reload of view nav -> rebuild it
+			if (urlFromFactoryImported != urlCreator || localViewPages == null) {
+				loadNavigationUrls(ContentService.getInstance(ctx.getRequest()).getNavigation(ctx));
+				localViewPages = viewPages;
+			}
 			/*if (urlFromFactoryImported != urlCreator) {
 				synchronized (this.getLockLoadContent()) {
 					if (urlFromFactoryImported != urlCreator) {
