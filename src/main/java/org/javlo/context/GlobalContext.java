@@ -229,6 +229,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	private IURLFactory urlFromFactoryImported = NO_URL_FACTORY;
 
+	private volatile boolean loadingNavigationUrls = false;
+
 	private Boolean externalServiceInitalized = false;
 
 	private ServletContext application;
@@ -2172,7 +2174,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		if (urlCreator != null) {
 			if (urlFromFactoryImported != urlCreator || viewPages == null) {
 				synchronized (this.getLockLoadContent()) {
-					if (urlFromFactoryImported != urlCreator || viewPages == null) {
+					if (!loadingNavigationUrls && (urlFromFactoryImported != urlCreator || viewPages == null)) {
+					loadingNavigationUrls = true;
+					try {
 
 						localViewPages = new Hashtable<String, MenuElement>();
 						ContentContext lgCtx = ContentContext.getFakeContentContext(this);
@@ -2225,6 +2229,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 						log(Log.INFO, "url", "url cache initialized with '" + urlCreator.getClass().getName() + "' url created : " + localViewPages.size() + " [lgs=" + contentLanguages + "]");
 						viewPages = localViewPages;
 						urlFromFactoryImported = urlCreator;
+					} finally {
+						loadingNavigationUrls = false;
+					}
 					}
 				}
 			}
@@ -2236,7 +2243,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		Map<String, MenuElement> localViewPages = viewPages;
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE && urlCreator != null && useURLCreator) {
 			// url cache can be released (releaseAllCache) without reload of view nav -> rebuild it
-			if (urlFromFactoryImported != urlCreator || localViewPages == null) {
+			if (!loadingNavigationUrls && (urlFromFactoryImported != urlCreator || localViewPages == null)) {
 				loadNavigationUrls(ContentService.getInstance(ctx.getRequest()).getNavigation(ctx));
 				localViewPages = viewPages;
 			}
@@ -2323,9 +2330,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 						return page;
 					}
 				}
-			} else {
-				return null;
 			}
+			// no url cache (ex: during loadNavigationUrls) -> search in the navigation tree
 		}
 		MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);
 		if (url.equals("/")) {
@@ -2335,6 +2341,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			// System.out.println("##### GlobalContext.getPageIfExist :
 			// "+DebugHelper.getCaller(10)); //TODO: remove debug trace
 			MenuElement page = MenuElement.searchChild(root, ctx, url, pastNode);
+			if (localViewPages == null) {
+				return page;
+			}
 			if (page != null && ctx.getRenderMode() == ContentContext.VIEW_MODE) {
 				logger.fine("add found page in cache : "+url);
 				localViewPages.put(url, page);
