@@ -694,7 +694,10 @@ public class ContentContext {
         try {
 			TestSession session = new TestSession();
 			session.setServletContext(globalContext.getServletContext());
-            newCtx.setRequest(new TestRequest(session, "https://www.javlo.org/"));
+            TestRequest request = new TestRequest(session, "https://www.javlo.org/");
+            // without this, GlobalContext.getInstance(request) resolve the site from the fake host (-> other site)
+            globalContext.attachToRequest(request);
+            newCtx.setRequest(request);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }

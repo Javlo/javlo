@@ -384,6 +384,14 @@ public class GlobalContext implements Serializable, IPrintInfo {
 		}
 	}
 
+	/**
+	 * attach this context to a request (used for fake request, GlobalContext.getInstance(request) must return this context)
+	 */
+	public void attachToRequest(HttpServletRequest request) {
+		request.setAttribute(KEY, this);
+		request.getSession().setAttribute(KEY, getContextKey());
+	}
+
 	public static GlobalContext getInstance(HttpServletRequest request) {
 		try {
 			String contextURI;
