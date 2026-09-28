@@ -597,10 +597,18 @@ public class AccessServlet extends HttpServlet implements IVersion {
 			}
 			}
 
-			/*if (ctx.isLikeViewRenderMode() && ctx.getCurrentPage().isRoot() && !ctx.getCurrentPage().isRealContent(ctx)) {
-				MenuElement newPage = ctx.getCurrentPage().getChildWithRealContent(ctx);
-				ctx.setCurrentPageCached(newPage);
-			}*/
+			/* root without real content is displayed with the first child with real content (see MenuElement.isLikeRoot) */
+			if (ctx.isLikeViewRenderMode() && ctx.getPath().equals("/")) {
+				MenuElement rootPage = ctx.getCurrentPage();
+				if (rootPage != null && rootPage.isRoot() && !rootPage.isRealContent(ctx)) {
+					MenuElement newPage = rootPage.getChildWithRealContent(ctx);
+					if (newPage != null && newPage != rootPage && newPage.isRealContent(ctx)) {
+						// change the path too : context copies (language change) reset the page cache and resolve the page from the path
+						ctx.setPath(newPage.getPath());
+						ctx.setCurrentPageCached(newPage);
+					}
+				}
+			}
 
 			ctx.getCurrentTemplate();
 			RequestHelper.initRequestAttributes(ctx);
