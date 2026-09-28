@@ -125,6 +125,8 @@ public class ContentContext {
 
 	public WeakReference<MenuElement> currentPageCached = null;
 
+	private static final ThreadLocal<Boolean> RESOLVING_ROOT_CHILD = ThreadLocal.withInitial(() -> false);
+
 	private WeakReference<MenuElement> virtualCurrentPage = null;
 
 	private boolean pageAssociation = false;
@@ -1101,15 +1103,21 @@ public class ContentContext {
 			if (getPath().equals("/")) {
 				outPage = root;
 				// root without real content is displayed with the first child with real content (see MenuElement.isLikeRoot)
-				if (root != null && isLikeViewRenderMode()) {
-					ContentContext rootCtx = new ContentContext(this);
-					rootCtx.setCurrentPageCached(root);
-					if (!root.isRealContent(rootCtx)) {
-						MenuElement child = root.getChildWithRealContent(rootCtx);
-						if (child != null && child != root && child.isRealContent(rootCtx)) {
-							outPage = child;
-							setCurrentPageCached(outPage);
+				// isRealContent create context copies without page cache -> guard against reentrance
+				if (root != null && isLikeViewRenderMode() && !RESOLVING_ROOT_CHILD.get()) {
+					RESOLVING_ROOT_CHILD.set(true);
+					try {
+						ContentContext rootCtx = new ContentContext(this);
+						rootCtx.setCurrentPageCached(root);
+						if (!root.isRealContent(rootCtx)) {
+							MenuElement child = root.getChildWithRealContent(rootCtx);
+							if (child != null && child != root && child.isRealContent(rootCtx)) {
+								outPage = child;
+								setCurrentPageCached(outPage);
+							}
 						}
+					} finally {
+						RESOLVING_ROOT_CHILD.set(false);
 					}
 				}
 			} else {
