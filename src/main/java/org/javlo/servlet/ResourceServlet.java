@@ -155,7 +155,7 @@ public class ResourceServlet extends HttpServlet {
 		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
 		ContentContext ctx;
 		try {
-			ctx = ContentContext.getFreeContentContext(request, response);
+			ctx = ContentContext.getFileContentContext(request, response);
 			// RequestHelper.traceMailingFeedBack(ctx);
 		} catch (Exception e1) {
 			e1.printStackTrace();

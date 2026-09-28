@@ -206,6 +206,22 @@ public class ContentContext {
 		return freeCtx;
 	}
 
+	/**
+	 * return free content ctx for servlet serving files (image, resource...) :
+	 * the request path is a file path and never a page path, no page must be
+	 * searched.
+	 *
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
+	public static ContentContext getFileContentContext(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ContentContext fileCtx = createContentContext(request, response, true, false);
+		fileCtx.setPath("/");
+		return fileCtx;
+	}
+
 	public static ContentContext getContentContext(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		return getContentContext(request, response, true, true);
 	}

@@ -1101,7 +1101,7 @@ public class ImageTransformServlet extends FileServlet {
 		StaticConfig staticConfig = StaticConfig.getInstance(request.getSession());
 		ContentContext ctx = null;
 		try {
-			ctx = ContentContext.getFreeContentContext(request, response);
+			ctx = ContentContext.getFileContentContext(request, response);
 		} catch (Exception e2) {
 			e2.printStackTrace();
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
