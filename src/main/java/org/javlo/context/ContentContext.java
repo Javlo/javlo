@@ -1100,6 +1100,18 @@ public class ContentContext {
 
 			if (getPath().equals("/")) {
 				outPage = root;
+				// root without real content is displayed with the first child with real content (see MenuElement.isLikeRoot)
+				if (root != null && isLikeViewRenderMode()) {
+					ContentContext rootCtx = new ContentContext(this);
+					rootCtx.setCurrentPageCached(root);
+					if (!root.isRealContent(rootCtx)) {
+						MenuElement child = root.getChildWithRealContent(rootCtx);
+						if (child != null && child != root && child.isRealContent(rootCtx)) {
+							outPage = child;
+							setCurrentPageCached(outPage);
+						}
+					}
+				}
 			} else {
 				if (getPath().trim().length() > 0) {
 					MenuElement elem = globalContext.getPageIfExist(this, getPath(), urlFactory);
