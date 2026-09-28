@@ -16,6 +16,7 @@ import org.javlo.fields.Field;
 import org.javlo.fields.FieldFile;
 import org.javlo.helper.ComponentHelper;
 import org.javlo.helper.NavigationHelper;
+import org.javlo.helper.StringHelper;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.module.content.Edit;
 import org.javlo.navigation.MenuElement;
@@ -67,6 +68,7 @@ import java.util.logging.Logger;
  *     renderer    (opt)      — renderer key
  *     columnSize  (opt)      — grid column width (integer)
  *     columnStyle (opt)      — CSS class for the column wrapper
+ *     repeat      (opt)      — "true"/"false": repeat the component on all child pages
  *
  *   content.remove:
  *     id       (required) — component id
@@ -179,7 +181,8 @@ public class ContentAction implements IAction {
 	// -------------------------------------------------------------------------
 	// content.edit
 	// Params: id (required), value (opt), style (opt),
-	//         layout (opt), renderer (opt), columnSize (opt), columnStyle (opt)
+	//         layout (opt), renderer (opt), columnSize (opt), columnStyle (opt),
+	//         repeat (opt)
 	// -------------------------------------------------------------------------
 	public static String performEdit(RequestService rs, ContentContext ctx, ContentService contentService, PersistenceService persistenceService) throws Exception {
 		String id = rs.getParameter("id", null);
@@ -237,6 +240,18 @@ public class ContentAction implements IAction {
 		if (columnStyle != null) {
 			comp.getComponentBean().setColumnStyle(columnStyle);
 			modified = true;
+		}
+
+		String repeat = rs.getParameter("repeat", null);
+		if (repeat != null && !repeat.trim().isEmpty()) {
+			boolean newRepeat = StringHelper.isTrue(repeat.trim());
+			if (newRepeat && !comp.isRepeatable()) {
+				return "content.edit: component type '" + comp.getType() + "' cannot be repeated";
+			}
+			if (newRepeat != comp.isRepeat()) {
+				comp.setRepeat(newRepeat);
+				modified = true;
+			}
 		}
 
 		if (modified || comp.isModify()) {
@@ -471,6 +486,7 @@ public class ContentAction implements IAction {
 		map.put("renderer",    comp.getCurrentRenderer(ctx));
 		map.put("columnSize",  String.valueOf(comp.getColumnSize(ctx)));
 		map.put("columnStyle", comp.getColumnStyle(ctx));
+		map.put("repeat",      String.valueOf(comp.isRepeat()));
 		if (comp.getPage() != null) {
 			map.put("pageId",   comp.getPage().getId());
 			map.put("pagePath", comp.getPage().getPath());

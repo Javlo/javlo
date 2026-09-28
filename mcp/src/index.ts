@@ -255,9 +255,10 @@ server.registerTool(
       renderer:    z.string().optional().describe("Clé du renderer. Chaîne vide pour réinitialiser."),
       columnSize:  z.number().int().optional().describe("Largeur en colonnes de grille (ex: 6 pour demi-largeur sur 12 colonnes)"),
       columnStyle: z.string().optional().describe("Classe CSS du wrapper de colonne. Chaîne vide pour effacer."),
+      repeat:      z.boolean().optional().describe("Répéter le composant sur toutes les pages enfants"),
     },
   },
-  async ({ id, value, style, layout, renderer, columnSize, columnStyle }) => {
+  async ({ id, value, style, layout, renderer, columnSize, columnStyle, repeat }) => {
     const params: Record<string, string> = { id };
     if (value       !== undefined) params.value       = value;
     if (style       !== undefined) params.style       = style;
@@ -265,6 +266,7 @@ server.registerTool(
     if (renderer    !== undefined) params.renderer    = renderer;
     if (columnSize  !== undefined) params.columnSize  = String(columnSize);
     if (columnStyle !== undefined) params.columnStyle = columnStyle;
+    if (repeat      !== undefined) params.repeat      = String(repeat);
     const data = await callAction("content.edit", params);
     return ok(data);
   }
