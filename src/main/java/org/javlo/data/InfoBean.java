@@ -274,13 +274,27 @@ public class InfoBean {
 		return lgAbsURLs;
 	}
 
+	/**
+	 * true if the page has real content, a page without real content (like root)
+	 * is displayed with his first child, so check the first child in this case.
+	 */
+	private static boolean isRealContentOrFirstChild(ContentContext lgCtx, MenuElement page) throws Exception {
+		while (page != null) {
+			if (page.isRealContent(lgCtx)) {
+				return true;
+			}
+			page = page.getFirstChild();
+		}
+		return false;
+	}
+
 	public Map<String, String> getLanguageRealContentURLs() throws Exception {
 		if (lgRealContentURLs == null) {
 			lgRealContentURLs = new HashMap<String, String>();
 			ContentContext lgCtx = new ContentContext(ctx);
 			for (String lg : ctx.getGlobalContext().getContentLanguages()) {
 				lgCtx.setAllLanguage(lg);
-				if (getCurrentPage().isRealContent(lgCtx)) {
+				if (isRealContentOrFirstChild(lgCtx, getCurrentPage())) {
 					lgRealContentURLs.put(lg, URLHelper.createURL(lgCtx));
 				}
 			}
@@ -295,7 +309,7 @@ public class InfoBean {
 			lgCtx.setAbsoluteURL(true);
 			for (String lg : ctx.getGlobalContext().getContentLanguages()) {
 				lgCtx.setAllLanguage(lg);
-				if (getCurrentPage().isRealContent(lgCtx)) {
+				if (isRealContentOrFirstChild(lgCtx, getCurrentPage())) {
 					lgRealContentAbsoluteURLs.put(lg, URLHelper.createURL(lgCtx));
 				}
 			}
