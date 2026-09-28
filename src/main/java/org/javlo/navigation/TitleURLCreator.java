@@ -33,6 +33,24 @@ public class TitleURLCreator extends AbstractURLFactory {
 		return true;
 	}
 
+	/**
+	 * text used to build the url, shortest between forced page title and label.
+	 */
+	protected String getURLTitle(ContentContext ctx, MenuElement currentPage) throws Exception {
+		ContentContext freeCtx = ctx.getFreeContentContext();
+		String title = StringHelper.removeCR(currentPage.getForcedPageTitle(ctx));
+		String newTitle = StringHelper.removeCR(currentPage.getFullLabel(freeCtx));
+		if (title.length() < 2 && newTitle.length() > 2) {
+			title = newTitle;
+		} else if (newTitle.length() < title.length()) {
+			title = newTitle;
+		}
+		if (title.isEmpty()) {
+			title = StringHelper.removeCR(currentPage.getPageTitle(freeCtx));
+		}
+		return title;
+	}
+
 	protected String createURLWithoutExt(ContentContext ctx, MenuElement currentPage) throws Exception {
 
 		if (currentPage == null) {
@@ -46,16 +64,7 @@ public class TitleURLCreator extends AbstractURLFactory {
 			return ((PageURL) comps.iterator().next()).getValue();
 		}
 
-		String title = StringHelper.removeCR(currentPage.getForcedPageTitle(ctx));
-		String newTitle = StringHelper.removeCR(currentPage.getFullLabel(freeCtx));
-		if (title.length() < 2 && newTitle.length() > 2) {
-			title = newTitle;
-		} else if (newTitle.length() < title.length()) {
-			title = newTitle;
-		}
-		if (title.isEmpty()) {
-			title = StringHelper.removeCR(currentPage.getPageTitle(freeCtx));
-		}
+		String title = getURLTitle(ctx, currentPage);
 
 		title = title.trim();
 		title =  StringEscapeUtils.unescapeHtml4(title);
