@@ -82,6 +82,9 @@ public class TitleURLCreator extends AbstractURLFactory {
 		title = title.trim().replace(' ', '-');
 		
 		String path = URLEncoder.encode(StringHelper.createI18NURL(StringHelper.removeSpecialChars(title, "-")), ContentContext.CHARACTER_ENCODING);
+		if (StringHelper.trim(StringHelper.trim(path, '-'), '_').isEmpty()) {
+			path = URLEncoder.encode(StringHelper.createI18NURL(StringHelper.removeSpecialChars(currentPage.getName(), "-")), ContentContext.CHARACTER_ENCODING);
+		}
 		String url = path;
 		if (isWithParent()) {
 			url = ElementaryURLHelper.mergePath(createURLWithoutExt(ctx, currentPage.getParent()), path);
