@@ -169,6 +169,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
     }
 
     public void reloadProperties() {
+        textTitle = null;
         try {
             if (properties != null) {
                 // Auto-réparation : effondre une éventuelle suite d'apostrophes emballée (corruption
@@ -1008,6 +1009,7 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
         if (isModify()) {
             storeProperties();
             reset();
+            textTitle = null;
         }
 
         if (!valid) {

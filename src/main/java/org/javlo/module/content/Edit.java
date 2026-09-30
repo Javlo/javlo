@@ -1081,9 +1081,6 @@ public class Edit extends AbstractModuleAction {
 		}
 
 		if (requestService.getParameter("save", null) != null && editContext.isPreviewEditionMode() && !ResourceStatus.isResource(ctx.getRequest().getSession()) && requestService.getParameter("upload", null) == null) {
-			// save and close : release the cache of all pages, labels and titles of the menu are cached on each page
-			content.getNavigation(ctx).releaseCache();
-			NavigationService.getInstance(globalContext).clearPage(ctx);
 			String url = URLHelper.createURL(ctx.getContextWithOtherRenderMode(ContentContext.PREVIEW_MODE));
 			if (!StringHelper.isEmpty(requestService.getParameter("forward_anchor")) && !url.contains("#")) {
 				url = url + '#' + requestService.getParameter("forward_anchor");
