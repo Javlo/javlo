@@ -2367,7 +2367,7 @@ public class StringHelper {
     }
 
     public static Date parseSortableTime(String date) throws ParseException {
-        if (date == null) {
+        if (date == null || date.trim().length() == 0) {
             return null;
         }
         return parseDate(date, "yyyy-MM-dd HH:mm:ss");
