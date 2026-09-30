@@ -628,6 +628,22 @@ public class FileAction extends AbstractModuleAction {
 		return null;
 	}
 
+	public static String performDeleteAllImages(ContentContext ctx, RequestService rs) throws Exception {
+		File folder = getFolder(ctx);
+		File[] files = folder.listFiles((FileFilter) FileFileFilter.FILE);
+		if (files != null) {
+			for (File file : files) {
+				if (StringHelper.isImage(file.getName()) && canModifyFile(ctx, file)) {
+					ResourceHelper.deleteResource(ctx, file);
+				}
+			}
+		}
+		if (StringHelper.isTrue(rs.getParameter("close", null))) {
+			ctx.setClosePopup(true);
+		}
+		return null;
+	}
+
 	public static String performJpeg(GlobalContext globalContext, RequestService rs, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess) throws Exception {
 		String filePath = rs.getParameter("file", null);
 		if (filePath == null) {

@@ -44,6 +44,14 @@
     <c:if test="${not empty param['select']}"><c:param name="select" value="true"/></c:if>
 </c:url>
 <a href="${uploadJSPURL}" class="popup cboxElement action-button"><span>${i18n.edit['action.add-files']}</span></a>
+<c:if test="${not empty param[BACK_PARAM_NAME] && empty param.select && !metaReadOnly}">
+    <c:url var="deleteAllImagesURL" value="${info.currentURL}" context="/">
+        <c:param name="webaction" value="file.deleteAllImages"/>
+        <c:param name="${BACK_PARAM_NAME}" value="${param[BACK_PARAM_NAME]}"/>
+    </c:url>
+    <a class="action-button delete-all-images" href="${deleteAllImagesURL}"
+       onclick="return confirm('${i18n.edit['action.delete-all-images.confirm']}');"><span>${i18n.edit['action.delete-all-images']}</span></a>
+</c:if>
 <c:if test="${not empty param.templateid}">
     <a class="action-button ajax"
        href="${info.currentURL}?webaction=template.commit&webaction=file.browse&templateid=<c:out value="${param.templateid}" />&from-module=template"><span>${i18n.edit['template.action.commit']}</span></a>
@@ -72,7 +80,7 @@
 
 </div>
 
-<c:if test="${empty param.templateid}">
+<c:if test="${empty param.templateid && empty param[BACK_PARAM_NAME]}">
     <input class="action-field filter-field" type="text" name="filter" placeholder="${i18n.edit['global.filter']}"
            onkeyup="filter(this.value, '#form-meta li');"/>
     <c:if test="${empty param.select}">
