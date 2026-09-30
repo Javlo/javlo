@@ -3,6 +3,7 @@ package org.javlo.macro;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Properties;
 
@@ -47,6 +48,9 @@ public class DuplicatePage extends AbstractMacro {
 		
 		MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, parent, newPageName, false, false);
 		newPage.setTemplateId(page.getTemplateId());
+		if (page.getTaxonomy() != null) {
+			newPage.setTaxonomy(new LinkedHashSet<>(page.getTaxonomy()));
+		}
 		ContentContext noAreaCtx = ctx.getContextWithoutArea();
 		Map<String,String> compTranslation = new HashMap<>();
 		Map<String, Collection<MirrorComponent>> outTranslation = new HashMap<>();

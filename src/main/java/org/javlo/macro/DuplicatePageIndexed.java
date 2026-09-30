@@ -21,6 +21,7 @@ import org.javlo.service.RequestService;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 
 public class DuplicatePageIndexed extends AbstractMacro implements IInteractiveMacro, IAction {
@@ -54,6 +55,9 @@ public class DuplicatePageIndexed extends AbstractMacro implements IInteractiveM
 
 		MenuElement newPage = MacroHelper.addPageIfNotExist(ctx, parent, newPageName, false, false);
 		newPage.setTemplateId(page.getTemplateId());
+		if (page.getTaxonomy() != null) {
+			newPage.setTaxonomy(new LinkedHashSet<>(page.getTaxonomy()));
+		}
 		ContentContext noAreaCtx = ctx.getContextWithoutArea();
 		Map<String, String> compTranslation = new HashMap<>();
 		Map<String, Collection<MirrorComponent>> outTranslation = new HashMap<>();
