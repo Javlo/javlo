@@ -73,6 +73,11 @@ public class GoogleTranslateService implements ITranslator {
 	}
 
 	@Override
+	public String getName() {
+		return "Google";
+	}
+
+	@Override
 	public String translate(ContentContext ctx, String text, String sourceLang, String targetLang) {
 		if (StringHelper.isEmpty(text) || StringHelper.isDigit(text)) {
 			return text;

@@ -13,4 +13,6 @@ public interface ITranslator {
 	
 	public String translate (ContentContext ctx, String text, String sourceLang, String targetLang);
 
+	public String getName();
+
 }
