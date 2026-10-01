@@ -1,5 +1,6 @@
 package org.javlo.macro;
 
+import org.javlo.component.core.DebugNote;
 import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.data.taxonomy.TaxonomyBean;
@@ -10,8 +11,10 @@ import org.javlo.navigation.MenuElement;
 import org.javlo.service.PersistenceService;
 import org.javlo.service.google.translation.ITranslator;
 import org.javlo.service.google.translation.TranslatorFactory;
+import org.javlo.user.User;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -33,13 +36,19 @@ public class ImportAndTranslateDefaultLanguageMacro extends AbstractMacro {
 		deftLanguageCtx.setLanguage(globalContext.getDefaultLanguages().iterator().next());
 		deftLanguageCtx.setRequestContentLanguage(globalContext.getDefaultLanguages().iterator().next());
 		MenuElement currentPage = ctx.getCurrentPage();
+
+        ITranslator translator = TranslatorFactory.getTranslator(ctx.getGlobalContext());
+
 		if (currentPage.isRealContent(ctx)) {
 			logger.info(currentPage.getPath() + " have already content.");
 		} else {
 			MacroHelper.copyLanguageStructure(currentPage, deftLanguageCtx, Arrays.asList(new ContentContext[]{ctx}), true, true);
+			User user = ctx.getCurrentEditUser();
+			String note = "Translated with ["+translator.getName()+"] on : " + StringHelper.renderTime(new Date()) + " by " + (user != null ? user.getLogin() : "?");
+			MacroHelper.addContent(ctx.getRequestContentLanguage(), currentPage, "0", DebugNote.TYPE, note, user);
 		}
 
-		ITranslator translator = TranslatorFactory.getTranslator(ctx.getGlobalContext());
+		
 		TaxonomyService taxonomyService = TaxonomyService.getInstance(ctx);
 		for (TaxonomyBean tb : taxonomyService.getAllBeans()) {
 			Map<String,String> labels = tb.getLabels();
