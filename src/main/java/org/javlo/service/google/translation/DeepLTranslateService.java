@@ -70,6 +70,9 @@ public class DeepLTranslateService implements ITranslator {
 			targetLang = targetLang.substring(0,2);
 		}
 
+		sourceLang = getDeepLLanguage(sourceLang);
+		targetLang = getDeepLLanguage(targetLang);
+
 		// Extraction des SVG
 		Map<String, String> svgMap = new LinkedHashMap<>();
 		Pattern svgPattern = Pattern.compile("<svg[^>]*>.*?</svg>", Pattern.DOTALL);
@@ -139,6 +142,22 @@ public class DeepLTranslateService implements ITranslator {
 		return translation;
 	}
 	
+	/**
+	 * convert javlo language code to DeepL language code (exceptions).
+	 * ex: no (norwegian) -> nb (norwegian bokmål)
+	 */
+	private static String getDeepLLanguage(String lang) {
+		if (lang == null) {
+			return null;
+		}
+		switch (lang.toLowerCase()) {
+		case "no":
+			return "nb";
+		default:
+			return lang;
+		}
+	}
+
 	/**
 	 * extract error message from DeepL response (json : {"message":"..."}).
 	 */
