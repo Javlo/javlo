@@ -387,3 +387,13 @@ content_clearPage(page="home")
 | `content_move` | id, previous, area?, page? | Reordering components |
 | `content_clearPage` | page | Wiping a page before rebuild |
 | `content_publish` | — | Making changes live |
+| `taxonomy_get` | id? | Reading the taxonomy tree (node ids) |
+| `taxonomy_add` | name, parent?, labels?, previous? | Creating a category / tag |
+| `taxonomy_edit` | id, name?, labels?, decoration?, newId? | Renaming / relabeling a node |
+| `taxonomy_remove` | id | Deleting a node and its children |
+| `taxonomy_move` | id, parent?, previous? | Reorganizing the taxonomy |
+| `taxonomy_export` / `taxonomy_import` | text | Bulk read / replace of the whole tree (text format) |
+| `nav_get` | path | Reading page properties (incl. taxonomy) |
+| `nav_edit` | path, visible?, type?, template?, startPublish?, taxonomy[]?, taxonomyMode?… | Page properties & tagging pages (filtered by `page-reference`) |
+
+Taxonomy node references accept the id, the path (`categories > food`) or a unique name. Root id is `0`.

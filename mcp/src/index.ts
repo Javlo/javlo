@@ -116,7 +116,8 @@ async function callAction(
 
   const json = (await res.json()) as JavloResponse;
 
-  if (json.messageType === "error") {
+  // Les erreurs d'action (GenericMessage.ERROR) sont sérialisées en "danger".
+  if (json.messageType === "error" || json.messageType === "danger") {
     throw new Error(json.messageText ?? "Javlo returned an error");
   }
 
@@ -206,6 +207,59 @@ server.registerTool(
     const params: Record<string, string> = { path, parent };
     if (previousSibling) params.previousSibling = previousSibling;
     const data = await callAction("nav.move", params);
+    return ok(data);
+  }
+);
+
+server.registerTool(
+  "nav_get",
+  {
+    description: "Retourne les propriétés d'une page (visibilité, type, template, dates de publication, rôles, taxonomie…).",
+    inputSchema: {
+      path: z.string().describe("ID, nom ou chemin de la page"),
+    },
+  },
+  async ({ path }) => {
+    const data = await callAction("nav.get", { path });
+    return ok(data);
+  }
+);
+
+server.registerTool(
+  "nav_edit",
+  {
+    description: "Modifie les propriétés d'une page (équivalent du panneau 'page properties'). Seuls les paramètres fournis sont modifiés. Retourne les propriétés mises à jour.",
+    inputSchema: {
+      path:                z.string().describe("ID, nom ou chemin de la page"),
+      name:                z.string().optional().describe("Nouveau nom (slug) de la page, sans espace ni '.'"),
+      visible:             z.boolean().optional().describe("Visible dans la navigation"),
+      active:              z.boolean().optional().describe("Page active (une page inactive n'est pas affichée). Dans la réponse, 'active' est l'état effectif (dates de publication et parents compris)."),
+      model:               z.boolean().optional().describe("Page modèle"),
+      admin:               z.boolean().optional().describe("Page d'administration"),
+      breakRepeat:         z.boolean().optional().describe("Bloque les composants répétés des pages parentes"),
+      childrenAssociation: z.boolean().optional().describe("Les enfants forment une seule page (association)"),
+      type:                z.string().optional().describe("Type de page (ex: 'default', 'article'…)"),
+      seoWeight:           z.number().int().min(-1).max(3).optional().describe("Poids SEO : -1 hérité, 0 noindex, 1 faible, 2 normal, 3 élevé"),
+      sharedName:          z.string().optional().describe("Nom de partage de la page comme contenu partagé. Chaîne vide pour retirer."),
+      template:            z.string().optional().describe("ID du template. Chaîne vide = hérité du parent."),
+      startPublish:        z.string().optional().describe("Date de début de publication (ex: '2026-10-01' ou '01/10/2026 08:00'). Chaîne vide pour effacer."),
+      endPublish:          z.string().optional().describe("Date de fin de publication. Chaîne vide pour effacer."),
+      ipSecurity:          z.string().optional().describe("Nom de la page d'erreur de sécurité IP. Chaîne vide pour effacer."),
+      userRoles:           z.array(z.string()).optional().describe("Rôles visiteurs requis pour voir la page (liste vide = page publique). Désactive l'héritage des rôles du parent sauf si userRolesInherited est fourni."),
+      userRolesInherited:  z.boolean().optional().describe("true = la page reprend les rôles visiteurs de sa page parente"),
+      noValidation:        z.boolean().optional().describe("Pas de validation requise (admin uniquement)"),
+      taxonomy:            z.array(z.string()).optional().describe("Nœuds de taxonomie (ID, chemin 'categories > food' ou nom unique). Liste vide + mode 'replace' = aucune."),
+      taxonomyMode:        z.enum(["replace", "add", "remove"]).optional().describe("Mode pour 'taxonomy' : replace (défaut), add, remove"),
+    },
+  },
+  async ({ path, userRoles, taxonomy, ...props }) => {
+    const params: Record<string, string> = { path };
+    for (const [key, value] of Object.entries(props)) {
+      if (value !== undefined) params[key] = String(value);
+    }
+    if (userRoles !== undefined) params.userRoles = userRoles.join(",");
+    if (taxonomy  !== undefined) params.taxonomy  = taxonomy.join(",");
+    const data = await callAction("nav.edit", params);
     return ok(data);
   }
 );
@@ -347,6 +401,136 @@ server.registerTool(
   },
   async ({ page }) => {
     const data = await callAction("content.clearPage", { page });
+    return ok(data);
+  }
+);
+
+// ── Taxonomy tools ────────────────────────────────────────────────────────────
+// Une référence de nœud peut être son ID, son chemin ('geo > be' ou 'geo/be') ou son nom s'il est unique.
+// L'ID du nœud racine est '0'.
+
+const labelsSchema = z.record(z.string(), z.string()).optional()
+  .describe("Libellés par langue, ex: {\"fr\":\"Belgique\",\"en\":\"Belgium\"}");
+
+server.registerTool(
+  "taxonomy_get",
+  {
+    description: "Retourne l'arbre de taxonomie (id, name, path, labels, decoration, children). Utiliser avant toute modification pour connaître les IDs.",
+    inputSchema: {
+      id: z.string().optional().describe("Référence du nœud racine du sous-arbre (défaut: arbre complet)"),
+    },
+  },
+  async ({ id }) => {
+    const params: Record<string, string> = {};
+    if (id) params.id = id;
+    const data = await callAction("taxo.get", params);
+    return ok(data);
+  }
+);
+
+server.registerTool(
+  "taxonomy_add",
+  {
+    description: "Ajoute un nœud dans la taxonomie. Le nom est normalisé (minuscules, '_' au lieu de '-'). Un nom préfixé '#' définit une source réutilisable, '>' un lien vers une source.",
+    inputSchema: {
+      name:       z.string().describe("Nom technique du nœud, ex: 'belgique'"),
+      parent:     z.string().optional().describe("Référence du nœud parent (défaut: racine)"),
+      id:         z.string().optional().describe("ID imposé (défaut: aléatoire)"),
+      labels:     labelsSchema,
+      decoration: z.string().optional().describe("Décoration (classe CSS / couleur) héritée par les enfants"),
+      previous:   z.string().optional().describe("Insérer après ce frère ('0' = en premier, défaut: en dernier)"),
+    },
+  },
+  async ({ name, parent, id, labels, decoration, previous }) => {
+    const params: Record<string, string> = { name };
+    if (parent)                   params.parent     = parent;
+    if (id)                       params.id         = id;
+    if (labels)                   params.labels     = JSON.stringify(labels);
+    if (decoration !== undefined) params.decoration = decoration;
+    if (previous)                 params.previous   = previous;
+    const data = await callAction("taxo.add", params);
+    return ok(data);
+  }
+);
+
+server.registerTool(
+  "taxonomy_edit",
+  {
+    description: "Modifie un nœud de taxonomie : nom, ID, libellés (fusionnés, valeur vide = suppression) ou décoration.",
+    inputSchema: {
+      id:         z.string().describe("Référence du nœud à modifier"),
+      name:       z.string().optional().describe("Nouveau nom technique"),
+      newId:      z.string().optional().describe("Nouvel ID (attention : les pages référencent les nœuds par ID)"),
+      labels:     labelsSchema,
+      decoration: z.string().optional().describe("Nouvelle décoration. Chaîne vide pour effacer."),
+    },
+  },
+  async ({ id, name, newId, labels, decoration }) => {
+    const params: Record<string, string> = { id };
+    if (name)                     params.name       = name;
+    if (newId)                    params.newId      = newId;
+    if (labels)                   params.labels     = JSON.stringify(labels);
+    if (decoration !== undefined) params.decoration = decoration;
+    const data = await callAction("taxo.edit", params);
+    return ok(data);
+  }
+);
+
+server.registerTool(
+  "taxonomy_remove",
+  {
+    description: "Supprime un nœud de taxonomie et tous ses enfants (opération irréversible).",
+    inputSchema: {
+      id: z.string().describe("Référence du nœud à supprimer"),
+    },
+  },
+  async ({ id }) => {
+    const data = await callAction("taxo.remove", { id });
+    return ok(data);
+  }
+);
+
+server.registerTool(
+  "taxonomy_move",
+  {
+    description: "Déplace un nœud de taxonomie. Avec 'parent' seul : devient premier enfant. Avec 'previous' : inséré après ce frère.",
+    inputSchema: {
+      id:       z.string().describe("Référence du nœud à déplacer"),
+      parent:   z.string().optional().describe("Référence du nouveau parent"),
+      previous: z.string().optional().describe("Insérer après ce nœud ('0' = en premier sous 'parent')"),
+    },
+  },
+  async ({ id, parent, previous }) => {
+    const params: Record<string, string> = { id };
+    if (parent)   params.parent   = parent;
+    if (previous) params.previous = previous;
+    const data = await callAction("taxo.move", params);
+    return ok(data);
+  }
+);
+
+server.registerTool(
+  "taxonomy_export",
+  {
+    description: "Exporte toute la taxonomie au format texte (une ligne par nœud : '>' répété selon la profondeur, puis 'id|name[lang=libellé,...]'). La première ligne est la racine '0|root'.",
+    inputSchema: {},
+  },
+  async () => {
+    const data = await callAction("taxo.export", {});
+    return ok(data);
+  }
+);
+
+server.registerTool(
+  "taxonomy_import",
+  {
+    description: "Remplace TOUTE la taxonomie par un texte au format de taxonomy_export. Utiliser '?' comme ID pour en générer un aléatoire. Exemple:\n0|root\n>geo|geo[fr=Géographie,en=Geography]\n>>?|be[fr=Belgique]\n>>?|fr[fr=France]",
+    inputSchema: {
+      text: z.string().describe("Arbre complet au format texte"),
+    },
+  },
+  async ({ text }) => {
+    const data = await callAction("taxo.import", { text });
     return ok(data);
   }
 );

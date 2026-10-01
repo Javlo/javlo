@@ -23,6 +23,7 @@ import org.javlo.security.annotation.HasAnyRole;
 import org.javlo.service.RequestService;
 import org.javlo.remote.ContentAction;
 import org.javlo.remote.NavAction;
+import org.javlo.remote.TaxonomyRemoteAction;
 import org.javlo.remote.TemplateAction;
 import org.javlo.service.proxy.ProxyService;
 import org.javlo.service.proxy.RemoteCacheService;
@@ -174,7 +175,7 @@ public class ActionManager {
 	 */
 	private static IAction[] getSpecialActionGroup() {
 		if (actionGroup == null) {
-			IAction[] outActionGroup = new IAction[11];
+			IAction[] outActionGroup = new IAction[12];
 			outActionGroup[0] = new SearchActions();
 			outActionGroup[1] = new ViewActions();
 			outActionGroup[2] = new TimeTravelerActions();
@@ -186,6 +187,7 @@ public class ActionManager {
 			outActionGroup[8] = new NavAction();
 			outActionGroup[9] = new ContentAction();
 			outActionGroup[10] = new TemplateAction();
+			outActionGroup[11] = new TaxonomyRemoteAction();
 			actionGroup = outActionGroup;
 		}
 		return actionGroup;
