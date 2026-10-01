@@ -1044,6 +1044,7 @@ Security in case of vulnerabilities.
 ## [2.3.8] - 29/07/2026
 ### Added
 - MetaComponent icon
+- MCP taxonomy
 ### Modified
 - Security update
 - Template : Security update + optimisation (2.3.8.1)
