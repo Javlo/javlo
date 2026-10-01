@@ -925,7 +925,7 @@ public class StaticFileBean extends FieldBean {
 			String newValue = translator.translate(ctx, getLabel(), lang, ctx.getRequestContentLanguage());
 			if (newValue == null) {
 				translated = false;
-				newValue = ITranslator.ERROR_PREFIX + getValue();
+				newValue = translator.getErrorPrefix() + getValue();
 			}
 			setLabel(newValue);
 			return translated;

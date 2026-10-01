@@ -149,7 +149,7 @@ public abstract class ComplexPropertiesLink extends AbstractVisualComponent {
 					if (newValue == null) {
 						logger.warning("error translate : value="+value+" | lang="+lang+" > targetLang="+targetLang);
 						translated = false;
-						newValue = ITranslator.ERROR_PREFIX + getValue();
+						newValue = translator.getErrorPrefix() + getValue();
 					}
 				}
 			}

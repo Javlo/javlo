@@ -3980,7 +3980,7 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			String newValue = translator.translate(ctx, getValue(), lang, ctx.getRequestContentLanguage());
 			if (newValue == null) {
 				translated = false;
-				newValue = ITranslator.ERROR_PREFIX + getValue();
+				newValue = translator.getErrorPrefix() + getValue();
 			}
 			setValue(newValue);
 			return translated;

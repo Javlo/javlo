@@ -82,10 +82,12 @@ public class GoogleTranslateService implements ITranslator {
 		if (StringHelper.isEmpty(text) || StringHelper.isDigit(text)) {
 			return text;
 		}
+		ITranslator.clearLastError();
 		try {
 			return translate(text, sourceLang, targetLang, ctx.getGlobalContext().getSpecialConfig().getTranslatorGoogleApiKey());
 		} catch (Exception e) {
 			e.printStackTrace();
+			ITranslator.setLastError(sourceLang, targetLang, e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
 			return null;
 		}
 	}

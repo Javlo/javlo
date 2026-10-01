@@ -116,13 +116,19 @@ public class DeepLTranslateService implements ITranslator {
 				} else {
 					logger.severe("HTTP error code: " + response.statusCode());
 					logger.severe("Error response: " + response.body());
+					ITranslator.setLastError(sourceLang, targetLang, getErrorMessage(response));
 				}
 			} catch (Exception e) {
 				logger.severe("Error calling DeepL API : "+e.getMessage());
+				ITranslator.setLastError(sourceLang, targetLang, e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
 			}
 		}
 		else {
 			logger.info("deepl found in cache for : " + targetLang);
+		}
+
+		if (translation == null) {
+			return null;
 		}
 
 		// Remplacement des tokens par les SVG
@@ -133,6 +139,27 @@ public class DeepLTranslateService implements ITranslator {
 		return translation;
 	}
 	
+	/**
+	 * extract error message from DeepL response (json : {"message":"..."}).
+	 */
+	private static String getErrorMessage(HttpResponse<String> response) {
+		String body = response.body();
+		if (!StringHelper.isEmpty(body)) {
+			try {
+				JSONObject jsonObject = (JSONObject) new JSONParser().parse(body);
+				Object message = jsonObject.get("message");
+				if (message != null) {
+					Object detail = jsonObject.get("detail");
+					return detail != null ? message + " (" + detail + ")" : "" + message;
+				}
+			} catch (Exception e) {
+				// not json, use raw body
+			}
+			return "HTTP " + response.statusCode() + " " + body.trim();
+		}
+		return "HTTP " + response.statusCode();
+	}
+
 	public static final ITranslator getTranslator() {
 		return INSTANCE;
 	}
@@ -147,10 +174,12 @@ public class DeepLTranslateService implements ITranslator {
 		if (StringHelper.isEmpty(text) || StringHelper.isDigit(text)) {
 			return text;
 		}
+		ITranslator.clearLastError();
 		try {
 			return translate(text, sourceLang, targetLang, ctx.getGlobalContext().getSpecialConfig().getTranslatorDeepLApiKey());
 		} catch (Exception e) {
 			e.printStackTrace();
+			ITranslator.setLastError(sourceLang, targetLang, e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
 			return null;
 		}
 	}

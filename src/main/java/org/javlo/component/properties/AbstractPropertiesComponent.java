@@ -432,7 +432,7 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 					String newValue = translator.translate(ctx, value, lang, ctx.getRequestContentLanguage());
 					if (newValue == null) {
 						translated = false;
-						newValue = ITranslator.ERROR_PREFIX + value;
+						newValue = translator.getErrorPrefix() + value;
 					}
 					setFieldValue(field, newValue);
 				}

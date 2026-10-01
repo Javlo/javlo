@@ -90,7 +90,7 @@ public class FieldInternalLink extends Field {
 				newValue = translator.translate(ctx, getCurrentLabel(), lang, ctx.getRequestContentLanguage());
 				if (newValue == null) {
 					translated=false;
-					newValue = ITranslator.ERROR_PREFIX+getCurrentLabel();
+					newValue = translator.getErrorPrefix()+getCurrentLabel();
 				}
 				setCurrentLabel(newValue);
 				try {

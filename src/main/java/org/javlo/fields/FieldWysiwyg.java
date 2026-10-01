@@ -181,7 +181,7 @@ public class FieldWysiwyg extends Field {
 			String newValue = translator.translate(ctx, value, lang, ctx.getRequestContentLanguage());
 			if (newValue == null) {
 				translated=false;
-				newValue = ITranslator.ERROR_PREFIX+getValue();
+				newValue = translator.getErrorPrefix()+getValue();
 			}
 			setValue(ctx, XHTMLHelper.removeEscapeTag(newValue));
 			return translated;

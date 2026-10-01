@@ -1433,7 +1433,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 				newValue = translator.translate(ctx, getValue(), lang, ctx.getRequestContentLanguage());
 				if (newValue == null) {
 					translated=false;
-					newValue = ITranslator.ERROR_PREFIX+getValue();
+					newValue = translator.getErrorPrefix()+getValue();
 				}
 			}
 			setValue(ctx, newValue);

@@ -271,7 +271,7 @@ public class WysiwygParagraph extends AbstractVisualComponent implements IImageT
 			String newValue = translator.translate(ctx, value, lang, ctx.getRequestContentLanguage());
 			if (newValue == null) {
 				translated = false;
-				newValue = ITranslator.ERROR_PREFIX + getValue();
+				newValue = translator.getErrorPrefix() + getValue();
 			}
 			setValue(XHTMLHelper.removeEscapeTag(newValue));
 			return translated;

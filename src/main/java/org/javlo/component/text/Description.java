@@ -195,7 +195,7 @@ public class Description extends AbstractVisualComponent {
 			String newValue = translator.translate(ctx, value, lang, ctx.getRequestContentLanguage());
 			if (newValue == null) {
 				translated=false;
-				newValue = ITranslator.ERROR_PREFIX+getValue();
+				newValue = translator.getErrorPrefix()+getValue();
 			}
 			setValue(XHTMLHelper.removeEscapeTag(newValue));
 			return translated;
