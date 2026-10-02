@@ -3725,14 +3725,14 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 	public String getSubTitle(ContentContext ctx) throws Exception {
 
-		ContentContext newCtx = new ContentContext(ctx);
-
-		PageDescription desc = getPageDescriptionCached(ctx, newCtx.getRequestContentLanguage());
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
 
 		if (desc.subTitle != null) {
 			return desc.subTitle;
 		}
 
+		/** content can be imported from an other country with the same language **/
+		ContentContext newCtx = new ContentContext(ctx).getContextWithContentSameLanguage(this);
 		newCtx.setArea(null);
 		desc.subTitle = getLocalContent(newCtx).getSubTitle(newCtx);
 		if (desc.subTitle == null) {
@@ -4009,9 +4009,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			return desc.contentTitle;
 		}
 
-		ContentContext newCtx = new ContentContext(ctx);
+		/** content can be imported from an other country with the same language **/
+		ContentContext newCtx = new ContentContext(ctx).getContextWithContentSameLanguage(this);
 		newCtx.setArea(null);
-		desc.contentTitle = getContent(newCtx).getTitle(ctx);
+		desc.contentTitle = getContent(newCtx).getTitle(newCtx);
 
 		return desc.contentTitle;
 	}

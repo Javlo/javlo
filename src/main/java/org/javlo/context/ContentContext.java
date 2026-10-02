@@ -877,7 +877,9 @@ public class ContentContext {
 		} else {
 			boolean currentEmpty = page.isEmpty(this, null, false);
 			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
-			Collection<String> lgs = globalContext.getDefaultLanguages();
+			/* default languages first, after all content languages : the other countries with the same language are not always in the default languages */
+			Collection<String> lgs = new LinkedHashSet<String>(globalContext.getDefaultLanguages());
+			lgs.addAll(globalContext.getContentLanguages());
 			for (String lg : lgs) {
 				if (getLanguage() != null && !getLanguage().equals(lg)) {
 					ContentContext lgCtx = new ContentContext(this);
