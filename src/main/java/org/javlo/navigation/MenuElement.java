@@ -2154,7 +2154,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			if (ctx.getRequest().getAttribute(requestKey) != null) {
 				return (MetaComponent) ctx.getRequest().getAttribute(requestKey);
 			}
-			ContentContext noAreaCtx = ctx.getContextWithoutArea().getContextWithContentSameLanguage();
+			ContentContext noAreaCtx = ctx.getContextWithoutArea().getContextWithContentSameLanguage(this);
 			Iterator<IContentVisualComponent> elems = getContent(noAreaCtx).getIterable(noAreaCtx).iterator();
 			while (elems.hasNext()) {
 				IContentVisualComponent comp = (IContentVisualComponent) elems.next();
@@ -2854,7 +2854,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		}
 
 		/** content can be imported from an other language (same language or default languages) **/
-		ContentContext lgCtx = getContentContextWithContent(ctx.getContextOnPage(this).getContextWithContentSameLanguage());
+		ContentContext lgCtx = getContentContextWithContent(ctx.getContextOnPage(this).getContextWithContentSameLanguage(this));
 
 		ContentContext specialCtx = lgCtx.getContextWithArea(defaultArea);
 		IContentComponentsList contentList = getAllContent(specialCtx);
@@ -2911,6 +2911,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 	public List<IImageTitle> getImages(ContentContext ctx) throws Exception {
 		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+		/** content can be imported from an other country with the same language **/
+		ContentContext lgCtx = ctx.getContextOnPage(this).getContextWithContentSameLanguage(this);
 		List<IImageTitle> res = null;
 		if (desc.images != null) {
 			res = desc.images;
@@ -2926,12 +2928,12 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		}
 
 		res = new LinkedList<IImageTitle>();
-		IContentComponentsList contentList = getAllContent(ctx);
-		while (contentList.hasNext(ctx)) {
-			IContentVisualComponent elem = contentList.next(ctx);
+		IContentComponentsList contentList = getAllContent(lgCtx);
+		while (contentList.hasNext(lgCtx)) {
+			IContentVisualComponent elem = contentList.next(lgCtx);
 			if ((elem instanceof IImageTitle)) {
 				IImageTitle imageComp = (IImageTitle) elem;
-				if (imageComp.isImageValid(ctx)) {
+				if (imageComp.isImageValid(lgCtx)) {
 					int w = 0;
 					if (!elem.isRepeat()) {
 						if (elem.getArea().equals(defaultArea)) {
@@ -2949,20 +2951,20 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 						}
 					}
 					if (w > 0) {
-						res.add(new ImageTitleBean(imageComp.getImageDescription(ctx), imageComp.getResourceURL(ctx), imageComp.getImageLinkURL(ctx), w, imageComp.isMobileOnly(ctx)));
+						res.add(new ImageTitleBean(imageComp.getImageDescription(lgCtx), imageComp.getResourceURL(lgCtx), imageComp.getImageLinkURL(lgCtx), w, imageComp.isMobileOnly(lgCtx)));
 					}
 				}
 			}
 		}
 		if (res.size() == 0 && isChildrenAssociation()) {
 			for (MenuElement child : getAllChildrenList()) {
-				contentList = child.getAllContent(ctx);
-				while (contentList.hasNext(ctx)) {
-					IContentVisualComponent elem = contentList.next(ctx);
+				contentList = child.getAllContent(lgCtx);
+				while (contentList.hasNext(lgCtx)) {
+					IContentVisualComponent elem = contentList.next(lgCtx);
 					if ((elem instanceof IImageTitle) && (!elem.isRepeat())) {
 						IImageTitle imageComp = (IImageTitle) elem;
-						if (imageComp.isImageValid(ctx)) {
-							res.add(new ImageTitleBean(imageComp.getImageDescription(ctx), imageComp.getResourceURL(ctx), imageComp.getImageLinkURL(ctx), imageComp.isMobileOnly(ctx)));
+						if (imageComp.isImageValid(lgCtx)) {
+							res.add(new ImageTitleBean(imageComp.getImageDescription(lgCtx), imageComp.getResourceURL(lgCtx), imageComp.getImageLinkURL(lgCtx), imageComp.isMobileOnly(lgCtx)));
 						}
 					}
 				}
@@ -4028,7 +4030,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			return desc.title;
 		}
 
-		ContentContext newCtx = new ContentContext(ctx).getContextWithContentSameLanguage();
+		ContentContext newCtx = new ContentContext(ctx).getContextWithContentSameLanguage(this);
 
 		newCtx.setArea(null);
 		desc.title = getContent(newCtx).getTitle(newCtx);
@@ -4348,11 +4350,11 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 	}
 
 	public boolean isNoComponent(ContentContext ctx) throws Exception {
-		return isEmpty(ctx.getContextWithContentSameLanguage());
+		return isEmpty(ctx.getContextWithContentSameLanguage(this));
 	}
 
 	public boolean isNoComponent(ContentContext ctx, String area) throws Exception {
-		return isEmpty(ctx.getContextWithContentSameLanguage(), area);
+		return isEmpty(ctx.getContextWithContentSameLanguage(this), area);
 	}
 
 	public boolean isEmpty(ContentContext ctx, String area) throws Exception {
@@ -4468,7 +4470,7 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		synchronized (ctx.getGlobalContext().getLockLoadContent()) {
 
 			ContentContext contentAreaCtx = new ContentContext(ctx);
-			contentAreaCtx = contentAreaCtx.getContextWithContentSameLanguage();
+			contentAreaCtx = contentAreaCtx.getContextWithContentSameLanguage(this);
 
 			if (isEmpty(contentAreaCtx)) {
 				desc.realContent = false;

@@ -848,11 +848,25 @@ public class ContentContext {
 	}
 
 	public ContentContext getContextWithContentSameLanguage(boolean check) throws Exception {
+		if (!check || !getGlobalContext().getSpecialConfig().isAutoImportSameLanguage()) {
+			return this;
+		}
+		return getContextWithContentSameLanguage(getCurrentPage(), check);
+	}
+
+	/**
+	 * return a context with content of the page in the same language (other country), if the page is empty in the current language.
+	 * @param page the page to check (can be different from current page, ex: page-reference)
+	 */
+	public ContentContext getContextWithContentSameLanguage(MenuElement page) throws Exception {
+		return getContextWithContentSameLanguage(page, isAsViewMode());
+	}
+
+	public ContentContext getContextWithContentSameLanguage(MenuElement page, boolean check) throws Exception {
 
 		if (!check || !getGlobalContext().getSpecialConfig().isAutoImportSameLanguage()) {
 			return this;
 		}
-		MenuElement page = getCurrentPage();
 		if (page == null) {
 			return this;
 		}
