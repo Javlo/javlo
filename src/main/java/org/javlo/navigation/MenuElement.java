@@ -4438,23 +4438,15 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		if (desc.localRealContent != null) {
 			return desc.localRealContent;
 		}
-		ContentContext noAreaCtx = ctx.getContextOnPage(this);
-		noAreaCtx.setArea(null);
-		boolean realContent = false;
-		ContentElementList comps = getLocalContent(noAreaCtx);
-		while (comps.hasNext(noAreaCtx)) {
-			IContentVisualComponent comp = comps.next(noAreaCtx);
-			if (comp instanceof ForceRealContent) {
-				realContent = !StringHelper.isTrue(comp.getValue(noAreaCtx));
-				break;
-			}
-			if (!comp.isRepeat() && comp.isRealContent(noAreaCtx)) {
-				realContent = true;
-				break;
-			}
+		ContentContext pageCtx = ctx.getContextOnPage(this);
+		pageCtx.setCurrentPageCached(this);
+		Template template = null;
+		if (pageCtx.getRequest() != null) {
+			template = TemplateFactory.getTemplate(pageCtx, this);
 		}
-		desc.localRealContent = realContent;
-		return realContent;
+		/* same rules than isRealContent (area, force real content), without import from other language */
+		desc.localRealContent = isRealContentInContext(pageCtx, template);
+		return desc.localRealContent;
 	}
 
 	public boolean isRealContentAuto(ContentContext ctx) throws Exception {
@@ -4508,53 +4500,50 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 				return false;
 			}
 
-			if (template == null || !template.isRealContentFromAnyArea()) {
-				contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
-			} else {
-				contentAreaCtx.setArea(null);
-			}
+			desc.realContent = isRealContentInContext(contentAreaCtx, template);
+			return desc.realContent;
+		}
+	}
 
-			if (template == null || !template.isRealContentFromAnyArea()) {
-				contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
-			} else {
-				contentAreaCtx.setArea(null);
-			}
+	/**
+	 * check real content with the language of the context (no import from other language).
+	 */
+	private boolean isRealContentInContext(ContentContext contentAreaCtx, Template template) throws Exception {
+		contentAreaCtx = new ContentContext(contentAreaCtx);
+		if (template == null || !template.isRealContentFromAnyArea()) {
+			contentAreaCtx.setArea(ComponentBean.DEFAULT_AREA);
+		} else {
+			contentAreaCtx.setArea(null);
+		}
 
-			ContentElementList comps = getContent(contentAreaCtx);
+		ContentElementList comps = getContent(contentAreaCtx);
+		while (comps.hasNext(contentAreaCtx)) {
+			IContentVisualComponent comp = comps.next(contentAreaCtx);
+			if (comp instanceof ForceRealContent) {
+				return !StringHelper.isTrue(comp.getValue(contentAreaCtx));
+			}
+			if (comp.isRealContent(contentAreaCtx) && !comp.isRepeat()) {
+				return true;
+			}
+		}
+
+		// search force real content
+		if (template != null && !template.isRealContentFromAnyArea()) {
+			contentAreaCtx.setArea(null);
+			comps = getContent(contentAreaCtx);
 			while (comps.hasNext(contentAreaCtx)) {
 				IContentVisualComponent comp = comps.next(contentAreaCtx);
 				if (comp instanceof ForceRealContent) {
-					desc.realContent = !StringHelper.isTrue(comp.getValue(contentAreaCtx));
-					return desc.realContent;
-				}
-				if (comp.isRealContent(contentAreaCtx) && !comp.isRepeat()) {
-					desc.realContent = true;
-					return true;
+					return !StringHelper.isTrue(comp.getValue(contentAreaCtx));
 				}
 			}
-
-			// search force real content
-			if (template != null && !template.isRealContentFromAnyArea()) {
-				contentAreaCtx.setArea(null);
-				comps = getContent(contentAreaCtx);
-				while (comps.hasNext(contentAreaCtx)) {
-					IContentVisualComponent comp = comps.next(contentAreaCtx);
-					if (comp instanceof ForceRealContent) {
-						desc.realContent = !StringHelper.isTrue(comp.getValue(contentAreaCtx));
-						return desc.realContent;
-					}
-				}
-			}
-
-			if (isChildrenAssociation()) {
-				desc.realContent = true; // added: 12/01/2017
-				return true;
-			}
-
-			desc.realContent = false;
-
-			return false;
 		}
+
+		if (isChildrenAssociation()) {
+			return true; // added: 12/01/2017
+		}
+
+		return false;
 	}
 
 	public boolean isRealContentAnyLanguage(ContentContext ctx) throws Exception {
