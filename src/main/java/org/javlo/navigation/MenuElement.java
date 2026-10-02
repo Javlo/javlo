@@ -2853,7 +2853,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			mobileDevice = ctx.getDevice().isMobileDevice();
 		}
 
-		ContentContext specialCtx = ctx.getContextWithArea(defaultArea);
+		/** content can be imported from an other language (same language or default languages) **/
+		ContentContext lgCtx = getContentContextWithContent(ctx.getContextOnPage(this).getContextWithContentSameLanguage());
+
+		ContentContext specialCtx = lgCtx.getContextWithArea(defaultArea);
 		IContentComponentsList contentList = getAllContent(specialCtx);
 		contentList.setAllArea(false);
 		IImageTitle bestImageTitle = null;
@@ -2880,10 +2883,10 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 
 		//if (bestImageTitle == null) {
 			/** search on all area **/
-			specialCtx = ctx.getContextWithArea(null);
+			specialCtx = lgCtx.getContextWithArea(null);
 			contentList = getAllContent(specialCtx);
 			bestPriority = Integer.MIN_VALUE;
-			while (contentList.hasNext(ctx)) {
+			while (contentList.hasNext(specialCtx)) {
 				IContentVisualComponent elem = contentList.next(specialCtx);
 				if ((elem instanceof IImageTitle) && (!elem.isRepeat())) {
 					IImageTitle imageComp = (IImageTitle) elem;
