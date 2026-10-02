@@ -44,6 +44,7 @@ public class PageDescription implements Serializable {
 	Integer toTheTop = null;
 	Boolean empty = null;
 	Boolean realContent = null;
+	Boolean localRealContent = null;
 	String label = null;
 	String location = null;
 	String category = null;

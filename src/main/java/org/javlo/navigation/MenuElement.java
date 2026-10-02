@@ -4426,6 +4426,37 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		return getName().equals(elem.getName()) && visible == elem.visible && userRoles.equals(elem.userRoles) && priority == elem.priority;
 	}
 
+	/**
+	 * check if the page contains real content in the language of the context, without repeat content and without
+	 * import from other language (used to decide if content must be imported from an other country).
+	 */
+	public boolean isLocalRealContent(ContentContext ctx) throws Exception {
+		if (ctx.getRequestContentLanguage() == null) {
+			return false;
+		}
+		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
+		if (desc.localRealContent != null) {
+			return desc.localRealContent;
+		}
+		ContentContext noAreaCtx = ctx.getContextOnPage(this);
+		noAreaCtx.setArea(null);
+		boolean realContent = false;
+		ContentElementList comps = getLocalContent(noAreaCtx);
+		while (comps.hasNext(noAreaCtx)) {
+			IContentVisualComponent comp = comps.next(noAreaCtx);
+			if (comp instanceof ForceRealContent) {
+				realContent = !StringHelper.isTrue(comp.getValue(noAreaCtx));
+				break;
+			}
+			if (!comp.isRepeat() && comp.isRealContent(noAreaCtx)) {
+				realContent = true;
+				break;
+			}
+		}
+		desc.localRealContent = realContent;
+		return realContent;
+	}
+
 	public boolean isRealContentAuto(ContentContext ctx) throws Exception {
 		if (ctx.getGlobalContext().isAutoSwitchToDefaultLanguage()) {
 			return isRealContentAnyLanguage(ctx);

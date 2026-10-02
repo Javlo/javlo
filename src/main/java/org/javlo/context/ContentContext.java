@@ -871,9 +871,11 @@ public class ContentContext {
 			return this;
 		}
 
-		if (!page.isEmpty(this, null, false)) {
+		/* a page with only technical components (ex: empty heading) has no real content : content can be imported */
+		if (page.isLocalRealContent(this)) {
 			return this;
 		} else {
+			boolean currentEmpty = page.isEmpty(this, null, false);
 			GlobalContext globalContext = GlobalContext.getInstance(getRequest());
 			Collection<String> lgs = globalContext.getDefaultLanguages();
 			for (String lg : lgs) {
@@ -881,7 +883,7 @@ public class ContentContext {
 					ContentContext lgCtx = new ContentContext(this);
 					lgCtx.setAllLanguage(lg);
 					if (lgCtx.getLocale().getLanguage().equals(getLocale().getLanguage())) {
-						if (!page.isEmpty(lgCtx, null, false)) {
+						if (currentEmpty ? !page.isEmpty(lgCtx, null, false) : page.isLocalRealContent(lgCtx)) {
 							lgCtx.mainCountryLg = this.getRequestContentLanguage();
 							return lgCtx;
 						}
