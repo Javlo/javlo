@@ -4502,6 +4502,9 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			}
 
 			desc.realContent = isRealContentInContext(contentAreaCtx, template);
+			if (ctx.isAsViewMode() && !desc.realContent) {
+				desc.realContent = isRealContentInContext(contentAreaCtx.getContextWithContentSameLanguage(), template);
+			}
 			return desc.realContent;
 		}
 	}
