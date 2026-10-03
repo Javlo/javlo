@@ -881,9 +881,18 @@ public class ContentContext {
 			Collection<String> lgs = new LinkedHashSet<String>(globalContext.getDefaultLanguages());
 			lgs.addAll(globalContext.getContentLanguages());
 			for (String lg : lgs) {
-				if (getLanguage() != null && !getLanguage().equals(lg)) {
+				/* compare with the content language : the main language can be an other country (ex: url creation for all languages) */
+				if (getRequestContentLanguage() != null && !getRequestContentLanguage().equals(lg)) {
 					ContentContext lgCtx = new ContentContext(this);
+					MenuElement currentPage = getCurrentPageCached();
 					lgCtx.setAllLanguage(lg);
+					/*
+					 * the language change reset the current page, it must not be resolved again from the path : with an url
+					 * creator (ex: PageTitleURLCreator) the path ("/home") is searched as an url key and can return an other page.
+					 */
+					if (currentPage != null) {
+						lgCtx.setCurrentPageCached(currentPage);
+					}
 					if (lgCtx.getLocale().getLanguage().equals(getLocale().getLanguage())) {
 						if (currentEmpty ? !page.isEmpty(lgCtx, null, false) : page.isLocalRealContent(lgCtx)) {
 							lgCtx.mainCountryLg = this.getRequestContentLanguage();

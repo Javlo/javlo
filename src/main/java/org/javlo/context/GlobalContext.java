@@ -272,6 +272,8 @@ public class GlobalContext implements Serializable, IPrintInfo {
 
 	public static final String NAVIGATION_FILE = "navigation.txt";
 
+	public static final String NAVIGATION_HTML_FILE = "navigation.html";
+
 	public static final String CALENDAR_FOLDER = "_calendar";
 
 	public static final String DATABASE_FOLDER = "db";
@@ -2199,12 +2201,17 @@ public class GlobalContext implements Serializable, IPrintInfo {
 						lines.add("### contentLanguages : " + StringHelper.collectionToString(contentLanguages, ","));
 						lines.add("");
 
+						/* one html row by page and content language (the main language is the content language when possible) */
+						List<String> htmlRows = new LinkedList<>();
+						String firstMainLg = mainLgs.isEmpty() ? null : mainLgs.iterator().next();
+
 						for (String mainLg : mainLgs) {
 							for (String contentLg : contentLanguages) {
 								lgCtx.setLanguage(mainLg);
 								lgCtx.setContentLanguage(contentLg);
 								lgCtx.setRequestContentLanguage(contentLg);
 								lgCtx.setFormat(null);
+								boolean htmlLg = mainLg.equals(contentLg) || (!mainLgs.contains(contentLg) && mainLg.equals(firstMainLg));
 								for (MenuElement me : root.getAllChildrenList()) {
 									lgCtx.setCurrentPageCached(me);
 									lgCtx.setPath(me.getPath());
@@ -2216,8 +2223,17 @@ public class GlobalContext implements Serializable, IPrintInfo {
 									localViewPages.put(pageKeyURL, me);
 									String line = me.getName() + " [" + contentLg + "] [empty:" + me.isEmpty(lgCtx, null, false) + "] [" + me.getTitle(lgCtx) + "] > " + pageURL + " > " + pageKeyURL;
 									lines.add(line);
+									if (htmlLg) {
+										htmlRows.add(getNavigationHtmlRow(new ContentContext(lgCtx), me, contentLg, pageURL, pageKeyURL));
+									}
 								}
 							}
+						}
+
+						try {
+							writeNavigationHtml(lgCtx, root, urlCreator, mainLgs, contentLanguages, htmlRows, exportVersion);
+						} catch (Exception e) {
+							logger.warning("[site:" + getContextKey() + "] - error on navigation html export : " + e.getMessage());
 						}
 
 						File navigationFile = new File(URLHelper.mergePath(getDataFolder(), NAVIGATION_FILE));
@@ -2243,6 +2259,154 @@ public class GlobalContext implements Serializable, IPrintInfo {
 					}
 				}
 			}
+		}
+	}
+
+	/**
+	 * call a method for the navigation export, an error is displayed in place of the value (the export must never stop the url loading).
+	 */
+	private static String navInfo(java.util.concurrent.Callable<Object> info) {
+		try {
+			return String.valueOf(info.call());
+		} catch (Throwable e) {
+			return "ERROR: " + e.getClass().getSimpleName() + " " + e.getMessage();
+		}
+	}
+
+	private static String navBoolCell(String value) {
+		String css = "true".equals(value) ? "yes" : "false".equals(value) ? "no" : "err";
+		return "<td class=\"b " + css + "\">" + XHTMLHelper.escapeXHTML(value) + "</td>";
+	}
+
+	/**
+	 * date and size of the deployed class file, used to check the version of the code on a server.
+	 */
+	private static String getClassFileInfo(Class<?> clazz) {
+		try {
+			java.net.URL url = clazz.getResource(clazz.getSimpleName() + ".class");
+			if (url == null) {
+				return "?";
+			}
+			java.text.SimpleDateFormat format = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			if ("file".equals(url.getProtocol())) {
+				File file = new File(url.toURI());
+				return format.format(new Date(file.lastModified())) + " (" + file.length() + " bytes)";
+			} else {
+				return format.format(new Date(url.openConnection().getLastModified())) + " (" + url.getProtocol() + ")";
+			}
+		} catch (Exception e) {
+			return "ERROR: " + e.getMessage();
+		}
+	}
+
+	private String getNavigationHtmlRow(ContentContext ctx, MenuElement page, String lg, String pageURL, String pageKeyURL) {
+		String localEmpty = navInfo(() -> page.isEmpty(ctx, null, false));
+		String localReal = navInfo(() -> page.isLocalRealContent(ctx));
+		String importLg = navInfo(() -> {
+			String contentLg = ctx.getContextWithContentSameLanguage(page).getRequestContentLanguage();
+			return lg.equals(contentLg) ? "" : contentLg;
+		});
+		String real = navInfo(() -> page.isRealContent(ctx));
+		String title = navInfo(() -> page.getTitle(ctx));
+
+		String rowClass = "true".equals(real) ? (importLg.isEmpty() ? "" : "imported") : "noreal";
+		StringBuilder row = new StringBuilder();
+		row.append("<tr class=\"" + rowClass + "\" data-lg=\"" + XHTMLHelper.escapeXHTML(lg) + "\">");
+		row.append("<td class=\"page\" style=\"padding-left:" + (8 + page.getDepth() * 16) + "px\">" + XHTMLHelper.escapeXHTML(page.getName()) + "</td>");
+		row.append("<td class=\"lg\">" + XHTMLHelper.escapeXHTML(lg) + "</td>");
+		row.append("<td class=\"small\">" + XHTMLHelper.escapeXHTML(page.getId()) + "</td>");
+		row.append(navBoolCell(navInfo(() -> page.isActive())));
+		row.append(navBoolCell(navInfo(() -> page.isVisible())));
+		row.append(navBoolCell(navInfo(() -> page.isChildrenAssociation())));
+		row.append(navBoolCell(localEmpty));
+		row.append(navBoolCell(localReal));
+		row.append("<td class=\"lg import\">" + XHTMLHelper.escapeXHTML(importLg) + "</td>");
+		row.append(navBoolCell(real));
+		row.append("<td>" + XHTMLHelper.escapeXHTML(title) + "</td>");
+		row.append("<td class=\"url\">" + XHTMLHelper.escapeXHTML(pageURL) + "</td>");
+		row.append("<td class=\"url\">" + XHTMLHelper.escapeXHTML(pageKeyURL) + "</td>");
+		row.append("</tr>");
+		return row.toString();
+	}
+
+	/**
+	 * write navigation.html (same folder than navigation.txt) : the navigation with all the information about the content
+	 * of the pages by language, used to understand the url and the content displayed on a server.
+	 */
+	private void writeNavigationHtml(ContentContext lgCtx, MenuElement root, IURLFactory urlCreator, Collection<String> mainLgs, Collection<String> contentLanguages, List<String> rows, String exportVersion) throws Exception {
+		StringBuilder html = new StringBuilder();
+		html.append("<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><title>navigation - " + XHTMLHelper.escapeXHTML(getContextKey()) + "</title><style>");
+		html.append("body{font-family:Arial,sans-serif;font-size:13px;margin:16px;color:#222;background:#fff}");
+		html.append("h1{font-size:20px;margin:0 0 12px}h2{font-size:15px;margin:20px 0 8px}");
+		html.append("table{border-collapse:collapse;width:100%}th,td{border:1px solid #ddd;padding:4px 8px;text-align:left;vertical-align:top}");
+		html.append("th{background:#2f5230;color:#fff;position:sticky;top:0;z-index:1}");
+		html.append(".info td:first-child{font-weight:bold;width:240px;background:#f5f5f5}.info{width:auto;min-width:50%}");
+		html.append("td.b{text-align:center;font-weight:bold;width:60px}td.yes{color:#1a7f37}td.no{color:#b42318}td.err{color:#fff;background:#b42318}");
+		html.append("tr.noreal td{background:#fff4f2}tr.imported td{background:#eef5ff}td.import{font-weight:bold;color:#1d4ed8}");
+		html.append("td.page{font-weight:bold;white-space:nowrap}td.lg{white-space:nowrap}td.url{font-family:monospace;font-size:12px}td.small{font-size:11px;color:#777}");
+		html.append(".filters{margin:8px 0;display:flex;gap:12px;flex-wrap:wrap;align-items:center}.filters input[type=text]{padding:4px 8px;width:260px}");
+		html.append(".legend span{display:inline-block;padding:2px 8px;margin-right:8px;border:1px solid #ddd}");
+		html.append("</style></head><body>");
+		html.append("<h1>Navigation : " + XHTMLHelper.escapeXHTML(getContextKey()) + "</h1>");
+
+		html.append("<table class=\"info\">");
+		html.append("<tr><td>export version</td><td>" + exportVersion + " - " + XHTMLHelper.escapeXHTML(StringHelper.renderDateAndTime(LocalDateTime.now())) + "</td></tr>");
+		html.append("<tr><td>url creator</td><td>" + XHTMLHelper.escapeXHTML(urlCreator.getClass().getName()) + "</td></tr>");
+		html.append("<tr><td>languages</td><td>" + XHTMLHelper.escapeXHTML(StringHelper.collectionToString(mainLgs, ", ")) + "</td></tr>");
+		html.append("<tr><td>content languages</td><td>" + XHTMLHelper.escapeXHTML(StringHelper.collectionToString(contentLanguages, ", ")) + "</td></tr>");
+		html.append("<tr><td>default languages</td><td>" + XHTMLHelper.escapeXHTML(StringHelper.collectionToString(getDefaultLanguages(), ", ")) + "</td></tr>");
+		html.append("<tr><td>auto import same language</td><td>" + XHTMLHelper.escapeXHTML(navInfo(() -> getSpecialConfig().isAutoImportSameLanguage())) + "</td></tr>");
+		html.append("<tr><td>auto switch to default language</td><td>" + isAutoSwitchToDefaultLanguage() + "</td></tr>");
+		html.append("<tr><td>#pages</td><td>" + root.getAllChildrenList().size() + "</td></tr>");
+		html.append("<tr><td>ContentContext.class</td><td>" + XHTMLHelper.escapeXHTML(getClassFileInfo(ContentContext.class)) + "</td></tr>");
+		html.append("<tr><td>MenuElement.class</td><td>" + XHTMLHelper.escapeXHTML(getClassFileInfo(MenuElement.class)) + "</td></tr>");
+		html.append("<tr><td>GlobalContext.class</td><td>" + XHTMLHelper.escapeXHTML(getClassFileInfo(GlobalContext.class)) + "</td></tr>");
+		html.append("</table>");
+
+		/* page displayed for the root url ("/"), see AccessServlet : root without real content display the first child with real content */
+		html.append("<h2>Home page by language (url \"/\")</h2><table><tr><th>language</th><th>root real content</th><th>root import from</th><th>page displayed</th></tr>");
+		for (String lg : contentLanguages) {
+			ContentContext rootCtx = new ContentContext(lgCtx);
+			rootCtx.setAllLanguage(lg);
+			rootCtx.setCurrentPageCached(root);
+			rootCtx.setPath(root.getPath());
+			String rootReal = navInfo(() -> root.isRealContent(rootCtx));
+			String rootImport = navInfo(() -> {
+				String contentLg = rootCtx.getContextWithContentSameLanguage(root).getRequestContentLanguage();
+				return lg.equals(contentLg) ? "" : contentLg;
+			});
+			String displayed = navInfo(() -> {
+				if (root.isRealContent(rootCtx)) {
+					return root.getName();
+				}
+				MenuElement child = root.getChildWithRealContent(rootCtx);
+				return child == null ? "null" : child.getName() + (child.isRealContent(rootCtx) ? "" : " (no real content : root displayed)");
+			});
+			html.append("<tr data-lg=\"" + XHTMLHelper.escapeXHTML(lg) + "\"><td class=\"lg\">" + XHTMLHelper.escapeXHTML(lg) + "</td>" + navBoolCell(rootReal) + "<td class=\"lg import\">" + XHTMLHelper.escapeXHTML(rootImport) + "</td><td class=\"page\">" + XHTMLHelper.escapeXHTML(displayed) + "</td></tr>");
+		}
+		html.append("</table>");
+
+		html.append("<h2>Pages</h2>");
+		html.append("<div class=\"legend\"><span style=\"background:#fff4f2\">no real content</span><span style=\"background:#eef5ff\">content imported from an other country</span></div>");
+		html.append("<div class=\"filters\"><input type=\"text\" id=\"q\" placeholder=\"filter (page, title, url...)\"><select id=\"lg\"><option value=\"\">all languages</option>");
+		for (String lg : contentLanguages) {
+			html.append("<option>" + XHTMLHelper.escapeXHTML(lg) + "</option>");
+		}
+		html.append("</select><label><input type=\"checkbox\" id=\"noreal\"> only without real content</label><span id=\"count\"></span></div>");
+		html.append("<table id=\"pages\"><thead><tr><th>page</th><th>language</th><th>id</th><th>active</th><th>visible</th><th>children assoc.</th><th>local empty</th><th>local real content</th><th>import from</th><th>real content</th><th>title</th><th>url</th><th>url key</th></tr></thead><tbody>");
+		for (String row : rows) {
+			html.append(row);
+		}
+		html.append("</tbody></table>");
+		html.append("<script>(function(){var q=document.getElementById('q'),lg=document.getElementById('lg'),nr=document.getElementById('noreal'),count=document.getElementById('count');");
+		html.append("function filter(){var t=q.value.toLowerCase(),l=lg.value,n=0;document.querySelectorAll('#pages tbody tr').forEach(function(tr){");
+		html.append("var ok=(!t||tr.textContent.toLowerCase().indexOf(t)>=0)&&(!l||tr.getAttribute('data-lg')===l)&&(!nr.checked||tr.classList.contains('noreal'));tr.style.display=ok?'':'none';if(ok){n++;}});count.textContent=n+' rows';}");
+		html.append("q.addEventListener('input',filter);lg.addEventListener('change',filter);nr.addEventListener('change',filter);filter();})();</script>");
+		html.append("</body></html>");
+
+		File navigationHtmlFile = new File(URLHelper.mergePath(getDataFolder(), NAVIGATION_HTML_FILE));
+		try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(navigationHtmlFile, false), StandardCharsets.UTF_8))) {
+			writer.write(html.toString());
 		}
 	}
 

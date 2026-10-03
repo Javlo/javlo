@@ -72,7 +72,7 @@ public class ResourcePathSecurity {
 			/* context internals */
 			Role.FOLDER, RemoteService.FOLDER, TicketService.FOLDER, I18nResource.FOLDER, MAILING_FOLDER, MAILING_TEMPLATE_FOLDER, GlobalContext.CALENDAR_FOLDER, RemoteCacheService.FOLDER, PushStaticOnFtp.TEMP_FOLDER, AbstractVisualComponent.VIEW_DATA_FOLDER,
 			/* context files */
-			GlobalContext.DATA_FILE, GlobalContext.DATA_BACKUP_FILE, GlobalContext.NAVIGATION_FILE, GlobalContext.REDIRECT_URL_LIST, GlobalContext.URL_404_LIST, UserDataService.FILE, LdapDirectUserFactory.QUERIES_FILE, GeoService.CACHE_FILE, SynchronisationServlet.FILE_INFO };
+			GlobalContext.DATA_FILE, GlobalContext.DATA_BACKUP_FILE, GlobalContext.NAVIGATION_FILE, GlobalContext.NAVIGATION_HTML_FILE, GlobalContext.REDIRECT_URL_LIST, GlobalContext.URL_404_LIST, UserDataService.FILE, LdapDirectUserFactory.QUERIES_FILE, GeoService.CACHE_FILE, SynchronisationServlet.FILE_INFO };
 
 	/**
 	 * only segment starting with a dot which stays reachable, the others are

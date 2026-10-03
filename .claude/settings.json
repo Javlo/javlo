@@ -12,7 +12,8 @@
       "Bash(mvn -o compile -DskipTests)",
       "Bash(cp \"c:/kdrive/work/javlo2/src/main/webapp/jsp/preview/js/bootstrap/preview.js\" \"C:/opt/tomcat10/webapps/javlo2/jsp/preview/js/bootstrap/preview.js\")",
       "Bash(mvn -q -pl . -Dtest=ZipManagementTest -DfailIfNoTests=false test)",
-      "Bash(mvn -Dtest=ZipManagementTest -DfailIfNoTests=false test)"
+      "Bash(mvn -Dtest=ZipManagementTest -DfailIfNoTests=false test)",
+      "ClaudeInChromeDomain(127.0.0.1:8765)"
     ],
     "additionalDirectories": [
       "c:\\kdrive\\work\\javlo2\\src\\main\\webapp\\doc-javlo",
