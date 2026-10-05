@@ -1920,6 +1920,7 @@ public class Template implements Comparable<Template> {
 							fileFound = false;
 							// no i18n file for this language : fallback to the default language of the site
 							String defaultLg = globalContext.getDefaultLanguage();
+							logger.warning("template i18n file not found [" + getName() + "] lg=" + locale.getLanguage() + " file=" + i18nFile + " -> fallback " + defaultLg);
 							if (defaultLg != null && defaultLg.length() >= 2 && !defaultLg.substring(0, 2).equalsIgnoreCase(lang.substring(0, Math.min(2, lang.length())))) {
 								propI18n = getI18nProperties(globalContext, new Locale(defaultLg), mode);
 							}
