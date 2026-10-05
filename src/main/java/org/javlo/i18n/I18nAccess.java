@@ -118,6 +118,11 @@ public class I18nAccess implements Serializable {
 
 	private String latestEditTemplateLang = "";
 
+	/** i18n map of the template used for the last load, used to detect a reload of the template (cache cleared) **/
+	private Map latestViewTemplateI18n = null;
+
+	private Map latestEditTemplateI18n = null;
+
 	private final Properties templateView = new Properties();
 
 	private final Properties templateEdit = new Properties();
@@ -817,9 +822,11 @@ public class I18nAccess implements Serializable {
 
 		String latestTemplateId = latestViewTemplateId;
 		String latestTemplateLang = latestViewTemplateLang;
+		Map latestTemplateI18n = latestViewTemplateI18n;
 		if (mode == ContentContext.EDIT_MODE) {
 			latestTemplateId = latestEditTemplateId;
 			latestTemplateLang = latestEditTemplateLang;
+			latestTemplateI18n = latestEditTemplateI18n;
 		}
 
 		if (ctx.getLanguage() != null) {
@@ -832,7 +839,13 @@ public class I18nAccess implements Serializable {
 					lg = globalContext.getEditLanguage(ctx.getRequest().getSession());
 				}
 
-				if (template != null && template.getId() != null && (!latestTemplateId.equals(template.getId()) || !latestTemplateLang.equals(lg))) {
+				boolean reload = template != null && template.getId() != null && (!latestTemplateId.equals(template.getId()) || !latestTemplateLang.equals(lg));
+				if (!reload && template != null && template.getId() != null) {
+					// i18n cache of the template is cleared when the template is reloaded (ex: commit), the session copy must be refreshed
+					Template finalTemplate = template.getFinalTemplate(ctx);
+					reload = !finalTemplate.isTemplateInWebapp(ctx) || finalTemplate.getI18nProperties(globalContext, new Locale(lg), mode) != latestTemplateI18n;
+				}
+				if (reload) {
 					propViewMap = null;
 					latestTemplateId = template.getId();
 					latestTemplateLang = lg;
@@ -841,7 +854,8 @@ public class I18nAccess implements Serializable {
 						template.importTemplateInWebapp(globalContext.getStaticConfig(), ctx);
 					}
 					Stack<Map> stack = new Stack<Map>();
-					stack.push(template.getI18nProperties(globalContext, new Locale(lg), mode));
+					latestTemplateI18n = template.getI18nProperties(globalContext, new Locale(lg), mode);
+					stack.push(latestTemplateI18n);
 					Template parent = template.getParent();
 					while (parent != null) {
 						if (!parent.isTemplateInWebapp(ctx)) {
@@ -873,9 +887,11 @@ public class I18nAccess implements Serializable {
 		if (mode == ContentContext.EDIT_MODE) {
 			latestEditTemplateId = latestTemplateId;
 			latestEditTemplateLang = latestTemplateLang;
+			latestEditTemplateI18n = latestTemplateI18n;
 		} else {
 			latestViewTemplateId = latestTemplateId;
 			latestViewTemplateLang = latestTemplateLang;
+			latestViewTemplateI18n = latestTemplateI18n;
 		}
 	}
 
