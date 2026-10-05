@@ -1895,6 +1895,8 @@ public class Template implements Comparable<Template> {
 		if (propI18n == null) {
 			synchronized (globalContext.getLockImportTemplate()) {
 				if (config != null) {
+					// file not found is never cached : the file can be missing during the import of the template in the webapp
+					boolean fileFound = true;
 					String lang = locale.getLanguage();
 					File i18nFile = new File(URLHelper.mergePath(getWorkTemplateRealPath(globalContext), filePrefix + lang + ".properties"));
 					if (lang.length() > 2 && !i18nFile.exists()) {
@@ -1915,6 +1917,7 @@ public class Template implements Comparable<Template> {
 							}
 						} else {
 							propI18n = null;
+							fileFound = false;
 							// no i18n file for this language : fallback to the default language of the site
 							String defaultLg = globalContext.getDefaultLanguage();
 							if (defaultLg != null && defaultLg.length() >= 2 && !defaultLg.substring(0, 2).equalsIgnoreCase(lang.substring(0, Math.min(2, lang.length())))) {
@@ -1930,7 +1933,9 @@ public class Template implements Comparable<Template> {
 					 * if (parentI18n != null) { if (propI18n != null) {
 					 * propI18n.putAll(parentI18n); } else { propI18n = parentI18n; } }
 					 */
-					i18n.put(KEY, propI18n);
+					if (fileFound) {
+						i18n.put(KEY, propI18n);
+					}
 				}
 			}
 		}
