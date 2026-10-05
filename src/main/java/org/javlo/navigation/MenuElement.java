@@ -5963,6 +5963,8 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		if (this.restWidthContent) {
 			List<Map<String, Object>> contentArray = new LinkedList<Map<String, Object>>();
 			Map<String, Object> dynamicComponent = new HashMap<String, Object>();
+			/* types already set from the current language : keep the first component of each type, as the reference field (Field.getReferenceComponent) is resolved by position */
+			Set<String> currentLgTypes = new HashSet<String>();
 			for (String lg : langs) {
 				ContentContext langCtx = ctx.getContextWidthOtherRequestLanguage(lg);
 				langCtx.setArea(null);
@@ -5970,9 +5972,13 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 				while (content.hasNext(langCtx)) {
 					IContentVisualComponent comp = content.next(langCtx);
 					if (comp instanceof DynamicComponent) {
-						if (dynamicComponent.get(comp.getType()) == null || lg.equals(ctx.getRequestContentLanguage())) {
+						boolean currentLg = lg.equals(ctx.getRequestContentLanguage());
+						if (!currentLgTypes.contains(comp.getType()) && (dynamicComponent.get(comp.getType()) == null || currentLg)) {
 							DynamicComponent dynComp = (DynamicComponent) comp;
 							dynamicComponent.put(dynComp.getType(), dynComp.getContentAsMap(ctx));
+							if (currentLg) {
+								currentLgTypes.add(comp.getType());
+							}
 						}
 					}
 					contentArray.add(comp.getContentAsMap(langCtx));

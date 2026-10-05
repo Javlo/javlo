@@ -1907,14 +1907,22 @@ public class Template implements Comparable<Template> {
 							((Properties) propI18n).load(reader);
 						}
 					} else {
-						i18nFile = new File(URLHelper.mergePath(URLHelper.mergePath(getWorkTemplateRealPath(globalContext), "i18n", filePrefix + locale.getLanguage() + ".properties")));
+						i18nFile = new File(URLHelper.mergePath(URLHelper.mergePath(getWorkTemplateRealPath(globalContext), "i18n", filePrefix + lang + ".properties")));
 						if (i18nFile.exists()) {
 							propI18n = new Properties();
 							try (Reader reader = new FileReader(i18nFile)) {
 								((Properties) propI18n).load(reader);
 							}
 						} else {
-							propI18n = Collections.EMPTY_MAP;
+							propI18n = null;
+							// no i18n file for this language : fallback to the default language of the site
+							String defaultLg = globalContext.getDefaultLanguage();
+							if (defaultLg != null && defaultLg.length() >= 2 && !defaultLg.substring(0, 2).equalsIgnoreCase(lang.substring(0, Math.min(2, lang.length())))) {
+								propI18n = getI18nProperties(globalContext, new Locale(defaultLg), mode);
+							}
+							if (propI18n == null) {
+								propI18n = Collections.EMPTY_MAP;
+							}
 						}
 					}
 					/*
