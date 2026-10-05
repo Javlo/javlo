@@ -1367,12 +1367,13 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         Calendar todayCal = Calendar.getInstance();
         Calendar pageCal = Calendar.getInstance();
 
-        List<MenuElement> selectedPage = getRefComponent(ctx).getSelectedPages(ctx, allChildren);
+        PageReferenceComponent refComp = getRefComponent(ctx);
+        List<MenuElement> selectedPage = refComp.getSelectedPages(ctx, allChildren);
 
         LocalLogger.stepCount("pageref", "step 3");
 
-        int firstPageNumber = getFirstPageNumber();
-        int lastPageNumber = getLastPageNumber();
+        int firstPageNumber = refComp.getFirstPageNumber();
+        int lastPageNumber = refComp.getLastPageNumber();
         GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
         LocalLogger.stepCount("pageref", "step 4");
         // Set<String> currentSelection = getPagesId(ctx, allChildren);
@@ -1397,11 +1398,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
         LocalLogger.stepCount("pageref", "step 5");
 
-        if (isReverseOrder(ctx)) {
+        if (refComp.isReverseOrder(ctx)) {
             ascending = !ascending;
         }
 
-        sort(ctx, selectedPage, ascending);
+        refComp.sort(ctx, selectedPage, ascending);
 
         LocalLogger.stepCount("pageref", "step 6");
 
@@ -1442,8 +1443,8 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         boolean intranetMode = getRefComponent(ctx).isIntranetMode();
 
         Integer onlyDepth = null;
-        if (StringHelper.isDigit(getOnlyDepth())) {
-            onlyDepth = Integer.parseInt(getOnlyDepth());
+        if (StringHelper.isDigit(refComp.getOnlyDepth())) {
+            onlyDepth = Integer.parseInt(refComp.getOnlyDepth());
         }
 
         //int refDepth = ctx.getCurrentPage().getDepth();
