@@ -4439,21 +4439,28 @@ public class Template implements Comparable<Template> {
 				}
 
 				// --- COPY CONTENTS OF tempDir TO templateDir (excluding .git) ---
-				File[] files = tempDir.listFiles();
-				if (files != null) {
-					for (File file : files) {
-						if (".git".equals(file.getName())) {
+				// file by file : an error on one file must not stop the copy of the others
+				final Path srcRoot = tempDir.toPath();
+				final Path gitFolder = srcRoot.resolve(".git");
+				List<String> copyErrors = new LinkedList<>();
+				try (java.util.stream.Stream<Path> paths = Files.walk(srcRoot)) {
+					for (Path src : (Iterable<Path>) paths::iterator) {
+						if (src.startsWith(gitFolder) || Files.isDirectory(src)) {
 							continue;
 						}
-						if (file.isDirectory()) {
-							FileUtils.copyDirectoryToDirectory(file, templateDirFile);
-						} else {
-							FileUtils.copyFileToDirectory(file, templateDirFile);
+						File target = new File(templateDirFile, srcRoot.relativize(src).toString());
+						try {
+							FileUtils.copyFile(src.toFile(), target);
+						} catch (IOException e) {
+							copyErrors.add(target + " : " + e.getMessage());
 						}
 					}
 				}
+				for (String error : copyErrors) {
+					logger.severe("git import, file not copied : " + error);
+				}
 
-				logger.info("git import done.");
+				logger.info("git import done. (errors=" + copyErrors.size() + ")");
 
 			} catch (GitAPIException e) {
 				e.printStackTrace();
