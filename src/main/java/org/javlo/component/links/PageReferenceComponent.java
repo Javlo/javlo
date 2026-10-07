@@ -1482,7 +1482,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
                 lgCtx = page.getContentContextWithContent(ctx);
                 pageRealContent = page.isRealContent(lgCtx);
             }
-            if (filterPage(lgCtx, page, selectedPage, Collections.EMPTY_LIST, "", false)) {
+            if (refComp.filterPage(lgCtx, page, selectedPage, Collections.EMPTY_LIST, "", false)) {
 
                 if ((withEmptyPage || page.isRealContentAnyLanguage(lgCtx))) {
 
@@ -1554,7 +1554,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
         LocalLogger.stepCount("pageref", "step 8");
 
-        MenuElement parentNode = ctx.getCurrentPage().getRoot().searchChild(ctx, getParentNode(ctx));
+        MenuElement parentNode = ctx.getCurrentPage().getRoot().searchChild(ctx, refComp.getParentNode(ctx));
         if (parentNode != null && !parentNode.isRoot()) {
             ctx.getRequest().setAttribute("referenceLink", URLHelper.createURL(ctx, parentNode));
         }
