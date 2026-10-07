@@ -299,9 +299,11 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         }
 
         // filter = removeCommandFromFilter(filter);
-        String pageData = page.getName() + ' ' + page.getTitle(ctx) + ' ' + ' ' + page.getLabel(ctx);
-        if (filter != null && !(pageData).toLowerCase().contains(filter.toLowerCase())) {
-            return false;
+        if (!StringHelper.isEmpty(filter)) {
+            String pageData = page.getName() + ' ' + page.getTitle(ctx) + ' ' + ' ' + page.getLabel(ctx);
+            if (!(pageData).toLowerCase().contains(filter.toLowerCase())) {
+                return false;
+            }
         }
         if (!page.isChildOf(getParentNode(ctx))) {
             return false;
@@ -346,19 +348,22 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
         boolean out = false;
 
-        if (getSelectedTag(ctx).size() == 0) {
+        Collection<String> selectedTags = getSelectedTag(ctx);
+        if (selectedTags.size() == 0) {
             out = true;
-        }
-        ContentContext lgDefaultCtx = new ContentContext(ctx);
-        GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-        Iterator<String> contentLg = globalContext.getContentLanguages().iterator();
-        while (page.getContentByType(lgDefaultCtx, Tags.TYPE).size() == 0 && contentLg.hasNext()) {
-            String lg = contentLg.next();
-            lgDefaultCtx.setContentLanguage(lg);
-            lgDefaultCtx.setRequestContentLanguage(lg);
-        }
-        if (!Collections.disjoint(page.getTags(lgDefaultCtx), getSelectedTag(ctx))) {
-            out = true;
+        } else {
+            // scan of the content in each language : only when a tag filter is defined
+            ContentContext lgDefaultCtx = new ContentContext(ctx);
+            GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
+            Iterator<String> contentLg = globalContext.getContentLanguages().iterator();
+            while (page.getContentByType(lgDefaultCtx, Tags.TYPE).size() == 0 && contentLg.hasNext()) {
+                String lg = contentLg.next();
+                lgDefaultCtx.setContentLanguage(lg);
+                lgDefaultCtx.setRequestContentLanguage(lg);
+            }
+            if (!Collections.disjoint(page.getTags(lgDefaultCtx), selectedTags)) {
+                out = true;
+            }
         }
 
         /** interactive **/
@@ -1000,6 +1005,19 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         if (StringHelper.isEmpty(parentNodePath)) {
             parentNodePath = "/";
         }
+        /*
+         * called for each page by filterPage : outside view mode the page lookup is
+         * not cached and walks the whole navigation tree, keep the result for the
+         * request.
+         */
+        String requestKey = null;
+        if (ctx.getRequest() != null) {
+            requestKey = "_pageref_parent_" + getId() + '_' + ctx.getRenderMode() + '_' + parentNodePath;
+            String cached = (String) ctx.getRequest().getAttribute(requestKey);
+            if (cached != null) {
+                return cached;
+            }
+        }
         ContentService contentService = ContentService.getInstance(ctx.getRequest());
         MenuElement page;
         try {
@@ -1012,6 +1030,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        if (requestKey != null) {
+            ctx.getRequest().setAttribute(requestKey, parentNodePath);
         }
         return parentNodePath;
     }
@@ -1379,16 +1400,19 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         // Set<String> currentSelection = getPagesId(ctx, allChildren);
 
         for (MenuElement page : selectedPage) {
+            if (ascending) {
+                // ascending can only switch to true : no need to check the other pages
+                break;
+            }
             ContentContext lgCtx = page.getContentContextWithContent(ctx);
             Date pageDate = page.getModificationDate(ctx);
-            Date contentDate;
-            contentDate = page.getContentDate(lgCtx);
+            Date contentDate = page.getContentDate(lgCtx);
             if (contentDate != null) {
-                boolean futurPage = page.getCreationDate().getTime() - page.getContentDate(lgCtx).getTime() < 0;
+                boolean futurPage = page.getCreationDate().getTime() - contentDate.getTime() < 0;
                 if (!futurPage) {
                     ascending = true;
                 }
-                pageDate = page.getContentDate(lgCtx);
+                pageDate = contentDate;
             }
             pageCal.setTime(pageDate);
             if (todayCal.after(pageCal)) {
@@ -1439,8 +1463,10 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         Collection<Calendar> allMonths = new LinkedList<Calendar>();
         Collection<String> allMonthsKeys = new HashSet<String>();
 
-        boolean withEmptyPage = getRefComponent(ctx).isWidthEmptyPage();
-        boolean intranetMode = getRefComponent(ctx).isIntranetMode();
+        boolean withEmptyPage = refComp.isWidthEmptyPage();
+        boolean intranetMode = refComp.isIntranetMode();
+        boolean isRedisplay = refComp.isRedisplay(ctx);
+        boolean autoSwitchToDefaultLanguage = globalContext.isAutoSwitchToDefaultLanguage();
 
         Integer onlyDepth = null;
         if (StringHelper.isDigit(refComp.getOnlyDepth())) {
@@ -1452,7 +1478,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         for (MenuElement page : selectedPage) {
             ContentContext lgCtx = ctx;
             boolean pageRealContent = page.isRealContent(lgCtx);
-            if (!pageRealContent && GlobalContext.getInstance(ctx.getRequest()).isAutoSwitchToDefaultLanguage()) {
+            if (!pageRealContent && autoSwitchToDefaultLanguage) {
                 lgCtx = page.getContentContextWithContent(ctx);
                 pageRealContent = page.isRealContent(lgCtx);
             }
@@ -1489,7 +1515,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
                                         }
                                         if (monthFilter == null || TimeHelper.betweenInDay(page.getContentDateNeverNull(lgCtx), startDate.getTime(), endDate.getTime())) {
                                             SmartPageBean pageBean = SmartPageBean.getInstance(ctx, lgCtx, page, this);
-                                            boolean isRedisplay = getRefComponent(ctx).isRedisplay(ctx);
                                             boolean isAlreadyDisplayed = pageBean.isAlreadyDisplayed();
                                             if (isRedisplay || !isAlreadyDisplayed) {
                                                 countPage++;

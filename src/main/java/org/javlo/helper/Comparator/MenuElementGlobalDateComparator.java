@@ -7,9 +7,10 @@ import org.javlo.context.ContentContext;
 import org.javlo.context.GlobalContext;
 import org.javlo.navigation.MenuElement;
 
-import java.util.Calendar;
 import java.util.Comparator;
-import java.util.GregorianCalendar;
+import java.util.Date;
+import java.util.IdentityHashMap;
+import java.util.Map;
 
 /**
  * compare two element of the menu in Content Date if exist and on modification date else.
@@ -36,6 +37,51 @@ public class MenuElementGlobalDateComparator implements Comparator<MenuElement> 
 	}
 
 	/**
+	 * sort keys of a page, computed once per page for the duration of the sort
+	 * (compare is called n.log(n) times and the keys need content scan).
+	 */
+	private static final class SortKey {
+		int toTheTop = 0;
+		long date = 0;
+		double pageRank = 0;
+	}
+
+	private final Map<MenuElement, SortKey> keys = new IdentityHashMap<MenuElement, SortKey>();
+
+	private SortKey getKey(MenuElement elem) {
+		SortKey key = keys.get(elem);
+		if (key != null) {
+			return key;
+		}
+		key = new SortKey();
+		try {
+			key.toTheTop = elem.getToTheTopLevel(ctx);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		ContentContext ctxPage = ctx;
+		try {
+			if (autoSwitchToDefaultLanguage && !elem.isRealContent(ctx)) {
+				ctxPage = ctx.getContextWithContentNeverNull(elem);
+			}
+			Date date = elem.getContentDate(ctxPage);
+			if (date == null) {
+				date = elem.getModificationDate();
+			}
+			key.date = date.getTime();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			key.pageRank = elem.getPageRank(ctxPage);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		keys.put(elem, key);
+		return key;
+	}
+
+	/**
 	 * compare two array of Comparable
 	 */
 	@Override
@@ -44,66 +90,21 @@ public class MenuElementGlobalDateComparator implements Comparator<MenuElement> 
 		if (seoOrder && elem1.getSeoWeight() != elem2.getSeoWeight()) {
 			return elem2.getSeoWeight() - elem1.getSeoWeight();
 		}
-		
-		try {
-			if (elem1.getToTheTopLevel(ctx) != elem2.getToTheTopLevel(ctx)) {				
-				return elem2.getToTheTopLevel(ctx)-elem1.getToTheTopLevel(ctx);
-			}
-		} catch (Exception e1) {
-			e1.printStackTrace();
+
+		SortKey key1 = getKey(elem1);
+		SortKey key2 = getKey(elem2);
+
+		if (key1.toTheTop != key2.toTheTop) {
+			return key2.toTheTop - key1.toTheTop;
 		}
 
-		Calendar cal1 = GregorianCalendar.getInstance();
-		Calendar cal2 = GregorianCalendar.getInstance();
-		ContentContext ctxPage1 = ctx;
-		ContentContext ctxPage2 = ctx;
-		if (autoSwitchToDefaultLanguage) {
-			try {				
-				if (!elem1.isRealContent(ctx)) {
-					ctxPage1 = ctx.getContextWithContentNeverNull(elem1);
-				}				
-				if (!elem2.isRealContent(ctx)) {
-					ctxPage2 = ctx.getContextWithContentNeverNull(elem2);
-				}
-			} catch (Exception e1) {
-				e1.printStackTrace();
-				return 0;
-			}
+		if (key1.pageRank == key2.pageRank) {
+			return Long.compare(key2.date, key1.date) * multiply;
 		}
-		try {
-			if (elem1.getContentDate(ctxPage1) == null) {
-				cal1.setTime(elem1.getModificationDate());
-			} else {
-				cal1.setTime(elem1.getContentDate(ctxPage1));
-			}
-
-			if (elem2.getContentDate(ctxPage2) == null) {
-				cal2.setTime(elem2.getModificationDate());
-			} else {
-				cal2.setTime(elem2.getContentDate(ctxPage2));
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (key1.pageRank > key2.pageRank) {
+			return -1;
+		} else {
+			return 1;
 		}
-
-		try {
-			if (elem1.getPageRank(ctxPage1) == elem2.getPageRank(ctxPage2)) {
-				return cal2.compareTo(cal1) * multiply;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		try {
-			if (elem1.getPageRank(ctxPage1) > elem2.getPageRank(ctxPage2)) {
-				return -1;
-			} else {
-				return 1;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return 0;
 	}
 }
-
