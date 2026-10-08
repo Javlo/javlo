@@ -14,7 +14,8 @@
       "Bash(mvn -q -pl . -Dtest=ZipManagementTest -DfailIfNoTests=false test)",
       "Bash(mvn -Dtest=ZipManagementTest -DfailIfNoTests=false test)",
       "ClaudeInChromeDomain(127.0.0.1:8765)",
-      "mcp__claude-in-chrome__tabs_context_mcp"
+      "mcp__claude-in-chrome__tabs_context_mcp",
+      "ClaudeInChromeDomain(localhost)"
     ],
     "additionalDirectories": [
       "c:\\kdrive\\work\\javlo2\\src\\main\\webapp\\doc-javlo",

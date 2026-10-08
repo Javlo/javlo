@@ -17,7 +17,7 @@ import org.javlo.helper.*;
 import org.javlo.i18n.I18nAccess;
 import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
-import org.javlo.module.admin.AdminAction;
+import org.javlo.ztatic.ResourceFactory;
 import org.javlo.module.core.AbstractModuleContext;
 import org.javlo.module.core.IMainModuleName;
 import org.javlo.module.core.Module;
@@ -1555,10 +1555,6 @@ public class Edit extends AbstractModuleAction {
 
 		synchronized (globalContext.getLockLoadContent()) {
 
-			DebugHelper.writeInfo(null, System.out);
-
-			String message = null;
-
 			PersistenceService persistenceService = PersistenceService.getInstance(globalContext);
 
 			if (!globalContext.isPortail()) {
@@ -1566,9 +1562,6 @@ public class Edit extends AbstractModuleAction {
 				globalContext.setPublishDate(new Date());
 				globalContext.setLatestPublisher(ctx.getCurrentEditUser().getLogin());
 				globalContext.storeRedirectUrlList();
-				content.releaseViewNav(globalContext);
-				String msg = i18nAccess.getText("content.published");
-				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), new GenericMessage(msg, GenericMessage.INFO), false);
 			} else {
 				ContentContext viewCtx = new ContentContext(ctx);
 				viewCtx.setRenderMode(ContentContext.VIEW_MODE);
@@ -1602,12 +1595,15 @@ public class Edit extends AbstractModuleAction {
 			// This ensures the navigation is reloaded fresh when next accessed
 			content.releaseViewNav(globalContext);
 
-			String msg = i18nAccess.getText("content.published");
-			MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), new GenericMessage(msg, GenericMessage.INFO), false);
-			// MessageRepository.getInstance(ctx).setGlobalMessage(new
-			// GenericMessage(msg, GenericMessage.INFO));
+			if (!globalContext.isPortail()) {
+				String msg = i18nAccess.getText("content.published");
+				MessageRepository.getInstance(ctx).setGlobalMessageAndNotification(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE), new GenericMessage(msg, GenericMessage.INFO), false);
+			}
 
-			SynchroHelper.performSynchro(ctx);
+			// performSynchro stores the whole preview content (new version) : only needed when a DMZ server must be synchronised
+			if (globalContext.getDMZServerIntra() != null) {
+				SynchroHelper.performSynchro(ctx);
+			}
 
 			NavigationService navigationService = NavigationService.getInstance(globalContext);
 			navigationService.clearAllViewPage();
@@ -1617,28 +1613,32 @@ public class Edit extends AbstractModuleAction {
 
 			ReverseLinkService.getInstance(globalContext).clearCache();
 
+			// clear only caches impacted by the publication of the current context
+			// (AdminAction.clearCache reload all contexts and reimport all templates)
+			globalContext.clearTransformShortURL();
 			globalContext.resetURLFactory();
-
-			FileCache.getInstance(application).clearPDF(ctx);
-
-			AdminAction.clearCache(ctx);
-
-			TimeTracker.end(globalContext.getContextKey(), "publish", trackerNumber);
+			globalContext.resetRedirectUrlMap();
+			globalContext.reset404UrlMap();
+			SharedContentService.getInstance(ctx).clearCache(ctx);
+			i18nAccess.resetViewLanguage(ctx);
+			ResourceFactory.getInstance(ctx.getContextWithOtherRenderMode(ContentContext.VIEW_MODE)).clearCache();
+			ResourceFactory.getInstance(ctx.getContextWithOtherRenderMode(ContentContext.EDIT_MODE)).clearCache();
+			ResourceFactory.getInstance(ctx.getContextWithOtherRenderMode(ContentContext.PAGE_MODE)).clearCache();
 
 			if (SearchEngineFactory.getEngine(ctx) != null) {
 				SearchEngineFactory.getEngine(ctx).updateData(ctx);
 			} else {
 				logger.severe("no search engine.");
 			}
-
-			String eventMessage = staticConfig.getGeneralLister().onPublish(ctx);
-			if (eventMessage != null) {
-				message = eventMessage;
-			}
-
-			return message;
 		}
 
+		FileCache.getInstance(application).clearPDF(ctx);
+
+		String message = staticConfig.getGeneralLister().onPublish(ctx);
+
+		TimeTracker.end(globalContext.getContextKey(), "publish", trackerNumber);
+
+		return message;
 	}
 
 	public static String performDeletePage(GlobalContext globalContext, ContentService content, ContentContext ctx, I18nAccess i18nAccess) throws Exception {
