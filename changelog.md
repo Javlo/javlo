@@ -1048,3 +1048,5 @@ Security in case of vulnerabilities.
 ### Modified
 - Security update
 - Template : Security update + optimisation (2.3.8.1)
+### Fixed
+- copy/paste component : keep repeat value
