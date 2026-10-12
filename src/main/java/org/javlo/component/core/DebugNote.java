@@ -260,5 +260,8 @@ public class DebugNote extends AbstractPropertiesComponent {
 		return "bi bi-bug";
 	}
 
-
+	@Override
+	public boolean isRealContent(ContentContext ctx) {
+		return false;
+	}
 }
