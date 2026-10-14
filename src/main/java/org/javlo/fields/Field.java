@@ -259,6 +259,12 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 
 	}
 
+	/**
+	 * getters not called in getContentAsMap : they render the html of the field and are very slow
+	 * (MenuElement.getContentAsMap convert all the fields of all the languages of the page).
+	 */
+	private static final Collection<String> CONTENT_MAP_EXCLUDED = new HashSet<String>(Arrays.asList("viewXHTMLCode", "allXHTML"));
+
 	protected static final int MESSAGE_ERROR = 1;
 	protected static final int MESSAGE_INFO = 2;
 
@@ -1365,7 +1371,7 @@ public class Field implements Cloneable, IRestItem, Comparable<Field> {
 		if (ctx == null) {
 			return new HashMap<>();
 		}
-		return BeanHelper.bean2Map(newFieldBean(ctx));
+		return BeanHelper.bean2Map(newFieldBean(ctx), CONTENT_MAP_EXCLUDED);
 	}
 	
 	public boolean search(ContentContext ctx, String query) {

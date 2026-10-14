@@ -143,6 +143,13 @@ public class BeanHelper {
 	}
 
 	public static Map bean2Map(Object bean) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+		return bean2Map(bean, null);
+	}
+
+	/**
+	 * @param excludedNames name of the properties not called (ex: getter with a heavy rendering)
+	 */
+	public static Map bean2Map(Object bean, Collection<String> excludedNames) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		Map res = new Hashtable();
 		Method[] methods = bean.getClass().getMethods();
 		for (Method method : methods) {
@@ -150,7 +157,7 @@ public class BeanHelper {
 				if (method.getReturnType().equals(String.class)) {
 					String name = method.getName().substring(3);
 					name = StringHelper.firstLetterLower(name);
-					if (method.getParameterTypes().length == 0) {
+					if (method.getParameterTypes().length == 0 && (excludedNames == null || !excludedNames.contains(name))) {
 						try {
 							String value = (String) method.invoke(bean, (Object[]) null);
 							if (value == null) {
