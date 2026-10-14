@@ -268,6 +268,7 @@ public class SmartPageBean {
 	}
 
 	public Collection<Image> getImages() {
+		long t = System.nanoTime();
 		try {
 			Collection<IImageTitle> images = page.getImages(lgCtx);
 			Collection<Image> imagesBean = new LinkedList<SmartPageBean.Image>();
@@ -293,6 +294,8 @@ public class SmartPageBean {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+		} finally {
+			PageReferenceTimer.get(ctx, comp).add("jsp: page.images", t);
 		}
 	}
 
@@ -1156,6 +1159,11 @@ public class SmartPageBean {
 	}
 
 	public Map<String, Object> getContentAsMap() throws Exception {
-		return page.getContentAsMap(ctx);
+		long t = System.nanoTime();
+		try {
+			return page.getContentAsMap(ctx);
+		} finally {
+			PageReferenceTimer.get(ctx, comp).add("jsp: page.contentAsMap", t);
+		}
 	}
 }

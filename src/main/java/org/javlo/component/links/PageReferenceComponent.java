@@ -1365,13 +1365,13 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
     @Override
     public void prepareView(ContentContext ctx) throws Exception {
 
-        // LocalLogger.PRINT_TIME = true;
-
-        LocalLogger.startCount("pageref");
+        PageReferenceTimer timer = PageReferenceTimer.create(ctx, this);
+        long t = System.nanoTime();
 
         super.prepareView(ctx);
 
-        LocalLogger.stepCount("pageref", "step 1");
+        timer.add("super.prepareView", t);
+        t = System.nanoTime();
 
         SimpleDateFormat format = new SimpleDateFormat(MOUNT_FORMAT, ctx.getLocale());
 
@@ -1379,7 +1379,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         MenuElement menu = content.getNavigation(ctx);
         List<MenuElement> allChildren = menu.getAllChildrenList();
 
-        LocalLogger.stepCount("pageref", "step 2");
+        timer.add("navigation", t);
 
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         new PrintStream(outStream);
@@ -1388,17 +1388,20 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         Calendar todayCal = Calendar.getInstance();
         Calendar pageCal = Calendar.getInstance();
 
+        t = System.nanoTime();
         PageReferenceComponent refComp = getRefComponent(ctx);
         List<MenuElement> selectedPage = refComp.getSelectedPages(ctx, allChildren);
 
-        LocalLogger.stepCount("pageref", "step 3");
+        timer.add("getSelectedPages", t);
+        timer.info("allChildren", allChildren.size());
+        timer.info("selected", selectedPage.size());
 
         int firstPageNumber = refComp.getFirstPageNumber();
         int lastPageNumber = refComp.getLastPageNumber();
         GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
-        LocalLogger.stepCount("pageref", "step 4");
         // Set<String> currentSelection = getPagesId(ctx, allChildren);
 
+        t = System.nanoTime();
         for (MenuElement page : selectedPage) {
             if (ascending) {
                 // ascending can only switch to true : no need to check the other pages
@@ -1420,15 +1423,15 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
             }
         }
 
-        LocalLogger.stepCount("pageref", "step 5");
+        timer.add("detect order (content date)", t);
 
         if (refComp.isReverseOrder(ctx)) {
             ascending = !ascending;
         }
 
+        t = System.nanoTime();
         refComp.sort(ctx, selectedPage, ascending);
-
-        LocalLogger.stepCount("pageref", "step 6");
+        timer.add("sort", t);
 
         int countPage = 0;
         int realContentSize = 0;
@@ -1475,16 +1478,26 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
 
         //int refDepth = ctx.getCurrentPage().getDepth();
 
+        long loopStart = System.nanoTime();
         for (MenuElement page : selectedPage) {
+            long pageStart = System.nanoTime();
+            t = pageStart;
             ContentContext lgCtx = ctx;
             boolean pageRealContent = page.isRealContent(lgCtx);
             if (!pageRealContent && autoSwitchToDefaultLanguage) {
                 lgCtx = page.getContentContextWithContent(ctx);
                 pageRealContent = page.isRealContent(lgCtx);
             }
-            if (refComp.filterPage(lgCtx, page, selectedPage, Collections.EMPTY_LIST, "", false)) {
+            timer.add("loop: isRealContent", t);
+            t = System.nanoTime();
+            boolean accepted = refComp.filterPage(lgCtx, page, selectedPage, Collections.EMPTY_LIST, "", false);
+            timer.add("loop: filterPage", t);
+            if (accepted) {
 
-                if ((withEmptyPage || page.isRealContentAnyLanguage(lgCtx))) {
+                t = System.nanoTime();
+                boolean anyLanguage = withEmptyPage || page.isRealContentAnyLanguage(lgCtx);
+                timer.add("loop: isRealContentAnyLanguage", t);
+                if (anyLanguage) {
 
                     if (firstPage == null) {
                         firstPage = page;
@@ -1505,6 +1518,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
                                 if (tagFilter == null || tagFilter.trim().length() == 0 || page.getTags(lgCtx).contains(tagFilter)) {
                                     if (catFilter == null || catFilter.trim().length() == 0 || page.getCategory(lgCtx).equals(catFilter)) {
 
+                                        t = System.nanoTime();
                                         Calendar cal = Calendar.getInstance();
                                         cal.setTime(page.getContentDateNeverNull(lgCtx));
                                         cal = TimeHelper.convertRemoveAfterMonth(cal);
@@ -1525,6 +1539,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
                                                 }
                                             }
                                         }
+                                        timer.add("loop: content date + bean", t);
                                     }
                                 }
                             }
@@ -1532,9 +1547,12 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
                     }
                 }
             }
+            timer.page(page.getPath(), pageStart);
         }
+        timer.add("loop total", loopStart);
+        timer.info("beans", pageBeans.size());
 
-        LocalLogger.stepCount("pageref", "step 7");
+        t = System.nanoTime();
 
         if (getRefComponent(ctx).isDisplayFirstPage() && firstPage != null && ctx.getRequest().getParameter("_wcms_content_path") == null) {
             String path = firstPage.getPath();
@@ -1544,6 +1562,9 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
             ctx.getRequest().removeAttribute("firstPage");
         }
 
+        timer.add("display first page", t);
+        t = System.nanoTime();
+
         PagesStatus pagesStatus = new PagesStatus(countPage, realContentSize);
         PaginationContext pagination = PaginationContext.getInstance(ctx.getRequest(), getId(), pageBeans.size(), getPageSize(ctx));
 
@@ -1552,7 +1573,6 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
             months.add(format.format(calendar.getTime()));
         }
 
-        LocalLogger.stepCount("pageref", "step 8");
 
         MenuElement parentNode = ctx.getCurrentPage().getRoot().searchChild(ctx, refComp.getParentNode(ctx));
         if (parentNode != null && !parentNode.isRoot()) {
@@ -1602,8 +1622,19 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
             }
             ctx.getRequest().setAttribute("taxonomySelected", taxonomySelected);
         }
+        timer.add("request attributes", t);
+    }
 
-        LocalLogger.PRINT_TIME = false;
+    @Override
+    protected String renderViewXHTMLCode(ContentContext ctx) throws Exception {
+        PageReferenceTimer timer = PageReferenceTimer.get(ctx, this);
+        long t = System.nanoTime();
+        try {
+            return super.renderViewXHTMLCode(ctx);
+        } finally {
+            timer.add("render jsp", t);
+            timer.log(ctx, this);
+        }
     }
 
     @Override
@@ -1684,6 +1715,7 @@ public class PageReferenceComponent extends ComplexPropertiesLink implements IAc
         }
         viewFormat.setFormat("html");
         comp.prepareView(viewFormat);
+        PageReferenceTimer.get(viewFormat, comp).log(viewFormat, comp);
         Collection<SmartPageBean> pages = (Collection<SmartPageBean>)ctx.getRequest().getAttribute("pages");
         List<JsonPageBean> outPages = new LinkedList<>();
         for (SmartPageBean p : pages) {
