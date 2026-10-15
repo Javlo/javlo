@@ -53,7 +53,7 @@ if (chooseLang) {
 } else {
 
 	if (lg.trim().length() == 0 || !(globalContext.getLanguages().contains(lg) || globalContext.getLanguages().contains(lgOnly))) {
-		if (ctx.getCurrentTemplate().getLanguagesChoiceFile(ctx) != null && ctx.getGlobalContext().getContentLanguages().size() > 1) {
+		if (ctx.getCurrentTemplate() != null && ctx.getCurrentTemplate().getLanguagesChoiceFile(ctx) != null && ctx.getGlobalContext().getContentLanguages().size() > 1) {
 			%><jsp:include page="<%= ctx.getCurrentTemplate().getLanguagesChoiceFile(ctx) %>" flush="true" /><%
 			return;
 		}

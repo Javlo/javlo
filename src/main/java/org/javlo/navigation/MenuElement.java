@@ -51,6 +51,7 @@ import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserSecurity;
 import org.javlo.user.User;
+import org.javlo.utils.LazyMap;
 import org.javlo.utils.HtmlPart;
 import org.javlo.utils.NeverEmptyMap;
 import org.javlo.utils.TimeMap;
@@ -5903,28 +5904,32 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 			return map;
 		}
 
-		PageDescription desc = getPageDescriptionCached(ctx, ctx.getRequestContentLanguage());
-
-		if (desc.contentAsMap != null) {
-			return desc.contentAsMap;
-		}
-
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		String lgParam = rs.getParameter("lg", null);
-		Collection<String> langs = ctx.getGlobalContext().getContentLanguages();
-		if (lgParam != null) {
-			ctx.setAllLanguage(lgParam);
-			langs = new LinkedList<String>(Arrays.asList(new String[] { lgParam }));
+
+		/* lazy map : values are computed only when they are read. Keep it only in the request, the loaders use the context of the request */
+		String requestKey = "_contentAsMap_" + getCacheKey(ctx, ctx.getRequestContentLanguage() + '_' + ctx.getLanguage() + '_' + ctx.getRenderMode() + '_' + lgParam);
+		LazyMap map = (LazyMap) ctx.getRequest().getAttribute(requestKey);
+		if (map != null) {
+			return map;
 		}
 
-		Map<String, Object> map = new HashMap<String, Object>();
+		Collection<String> contentLangs = ctx.getGlobalContext().getContentLanguages();
+		if (lgParam != null) {
+			ctx.setAllLanguage(lgParam);
+			contentLangs = new LinkedList<String>(Arrays.asList(new String[] { lgParam }));
+		}
+		final Collection<String> langs = contentLangs;
+		final ContentContext mapCtx = new ContentContext(ctx);
+
+		map = new LazyMap();
 		map.put("id", getId());
 		if (lgParam != null) {
 			map.putAll(BeanHelper.bean2Map(getPageDescription(ctx)));
-			map.put("realContent", isRealContent(ctx));
+			map.putLazy("realContent", () -> isRealContent(mapCtx));
 		} else {
 			map.put("type", getType());
-			map.put("realContentAnyLanguage", isRealContentAnyLanguage(ctx));
+			map.putLazy("realContentAnyLanguage", () -> isRealContentAnyLanguage(mapCtx));
 		}
 		map.put("path", getPath());
 		map.put("visible", isVisible());
@@ -5942,61 +5947,71 @@ public class MenuElement implements Serializable, IPrintInfo, IRestItem, ITaxono
 		map.put("creator", getCreator());
 		map.put("latestEditor", getLatestEditor());
 
-		if (getImage(ctx) != null) {
-			map.put("imageUrl", getImage(ctx).getResourceURL(ctx));
-			map.put("imageAlt", getImage(ctx).getImageDescription(ctx));
-		}
+		map.putLazy("imageUrl", () -> getImage(mapCtx) == null ? null : getImage(mapCtx).getResourceURL(mapCtx));
+		map.putLazy("imageAlt", () -> getImage(mapCtx) == null ? null : getImage(mapCtx).getImageDescription(mapCtx));
+		map.putLazy("font", () -> getFont(mapCtx));
 
-		if (getFont(ctx) != null) {
-			map.put("font", getFont(ctx));
-		}
-
-		List<MenuElement> links = getInternalLinks(ctx);
-		if (links.size() > 0) {
+		map.putLazy("ilinks", () -> {
+			List<MenuElement> links = getInternalLinks(mapCtx);
+			if (links.size() == 0) {
+				return null;
+			}
 			List<String> paths = new LinkedList<>();
 			for (MenuElement page : links) {
 				paths.add(page.getPath());
 			}
-			map.put("ilinks", paths);
-		}
+			return paths;
+		});
 
 		if (this.restWidthContent) {
-			List<Map<String, Object>> contentArray = new LinkedList<Map<String, Object>>();
-			Map<String, Object> dynamicComponent = new HashMap<String, Object>();
-			/* types already set from the current language : keep the first component of each type, as the reference field (Field.getReferenceComponent) is resolved by position */
-			Set<String> currentLgTypes = new HashSet<String>();
-			for (String lg : langs) {
-				ContentContext langCtx = ctx.getContextWidthOtherRequestLanguage(lg);
-				langCtx.setArea(null);
-				ContentElementList content = getLocalContent(langCtx);
-				while (content.hasNext(langCtx)) {
-					IContentVisualComponent comp = content.next(langCtx);
-					if (comp instanceof DynamicComponent) {
-						boolean currentLg = lg.equals(ctx.getRequestContentLanguage());
-						if (!currentLgTypes.contains(comp.getType()) && (dynamicComponent.get(comp.getType()) == null || currentLg)) {
-							DynamicComponent dynComp = (DynamicComponent) comp;
-							dynamicComponent.put(dynComp.getType(), dynComp.getContentAsMap(ctx));
-							if (currentLg) {
-								currentLgTypes.add(comp.getType());
+			map.putLazy("content", () -> {
+				List<Map<String, Object>> contentArray = new LinkedList<Map<String, Object>>();
+				for (String lg : langs) {
+					ContentContext langCtx = mapCtx.getContextWidthOtherRequestLanguage(lg);
+					langCtx.setArea(null);
+					ContentElementList content = getLocalContent(langCtx);
+					while (content.hasNext(langCtx)) {
+						contentArray.add(content.next(langCtx).getContentAsMap(langCtx));
+					}
+				}
+				return contentArray;
+			});
+			// shortcut to access directly to data of a dynamicComponent
+			map.putLazy("dynamicComponent", () -> {
+				Map<String, Object> dynamicComponent = new HashMap<String, Object>();
+				/* types already set from the current language : keep the first component of each type, as the reference field (Field.getReferenceComponent) is resolved by position */
+				Set<String> currentLgTypes = new HashSet<String>();
+				for (String lg : langs) {
+					ContentContext langCtx = mapCtx.getContextWidthOtherRequestLanguage(lg);
+					langCtx.setArea(null);
+					ContentElementList content = getLocalContent(langCtx);
+					while (content.hasNext(langCtx)) {
+						IContentVisualComponent comp = content.next(langCtx);
+						if (comp instanceof DynamicComponent) {
+							boolean currentLg = lg.equals(mapCtx.getRequestContentLanguage());
+							if (!currentLgTypes.contains(comp.getType()) && (dynamicComponent.get(comp.getType()) == null || currentLg)) {
+								dynamicComponent.put(comp.getType(), comp.getContentAsMap(mapCtx));
+								if (currentLg) {
+									currentLgTypes.add(comp.getType());
+								}
 							}
 						}
 					}
-					contentArray.add(comp.getContentAsMap(langCtx));
 				}
-			}
-			map.put("content", contentArray);
-			map.put("dynamicComponent", dynamicComponent); // shortcut to access directly to data of a dynamicComponent
+				return dynamicComponent;
+			});
 		}
 
 		if (isRestWidthChildren()) {
-			Collection<MenuElement> childrenMenuElement = getChildMenuElements();
-			List<Map<String, Object>> childrenArray = new LinkedList<Map<String, Object>>();
-			for (MenuElement child : childrenMenuElement) {
-				childrenArray.add(child.getContentAsMap(ctx));
-			}
-			map.put("children", childrenArray);
+			map.putLazy("children", () -> {
+				List<Map<String, Object>> childrenArray = new LinkedList<Map<String, Object>>();
+				for (MenuElement child : getChildMenuElements()) {
+					childrenArray.add(child.getContentAsMap(mapCtx));
+				}
+				return childrenArray;
+			});
 		}
-		desc.contentAsMap = map;
+		ctx.getRequest().setAttribute(requestKey, map);
 		return map;
 	}
 
