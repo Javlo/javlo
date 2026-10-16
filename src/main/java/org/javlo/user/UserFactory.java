@@ -786,7 +786,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	public String getTokenCreateIfNotExist(User user) throws IOException {
 		String token = user.getUserInfo().getToken();
 		if (StringHelper.isEmpty(token)) {
-			user.userInfo.getTokenCreateIfNotExist();
+			token = user.userInfo.getTokenCreateIfNotExist();
 			updateUserInfo(user.getUserInfo());
 			store();
 		}

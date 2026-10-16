@@ -14,6 +14,7 @@ import org.javlo.helper.*;
 import org.javlo.macro.core.IMacro;
 import org.javlo.mailing.feedback.DefaultMailingFeedback;
 import org.javlo.module.mailing.MailingAction;
+import org.javlo.security.TokenEncryption;
 import org.javlo.service.ContentService;
 import org.javlo.service.pdf.PDFLayout;
 import org.javlo.servlet.AccessServlet;
@@ -311,6 +312,8 @@ public class StaticConfig extends Observable {
 				}
 
 			}
+			initTokenEncryption();
+
 			if (application != null) {
 				application.setAttribute(KEY, this);
 			}
@@ -1190,6 +1193,17 @@ public class StaticConfig extends Observable {
 
 	public String getRealPath(String path) {
 		return ResourceHelper.getRealPath(application, path);
+	}
+
+	/**
+	 * init the key used to encrypt user token at rest, key from 'security.token-key' or file 'token.key' in the static config folder.
+	 */
+	private void initTokenEncryption() {
+		File configFolder = null;
+		if (staticConfigLocalisation != null) {
+			configFolder = new File(staticConfigLocalisation).getParentFile();
+		}
+		TokenEncryption.init(properties.getString("security.token-key", null), configFolder);
 	}
 
 	public String getSecretKey() {

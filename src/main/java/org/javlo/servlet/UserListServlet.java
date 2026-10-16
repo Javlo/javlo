@@ -15,6 +15,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.security.TokenEncryption;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
@@ -114,6 +115,11 @@ public class UserListServlet extends HttpServlet {
 					csvFact.appendRow(labels);
 					for (IUserInfo localUserInfo : users) {
 						String[] values = (String[]) BeanHelper.getAllValues(localUserInfo);
+						for (int j = 0; j < labels.length && j < values.length; j++) {
+							if (labels[j].equals("token")) {
+								values[j] = TokenEncryption.encrypt(values[j]);
+							}
+						}
 						boolean printRow = true;
 						if (filtered) {
 							labels = BeanHelper.getAllLabels(localUserInfo);

@@ -8,6 +8,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.helper.LocalLogger;
 import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.security.TokenEncryption;
 
 import jakarta.mail.internet.InternetAddress;
 import java.io.Serializable;
@@ -333,6 +334,9 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 				Method method = this.getClass().getMethod(methodName, (Class[]) null);
 				if (method.getReturnType().equals(String.class)) {
 					String value = (String) method.invoke(this, (Object[]) null);
+					if (fields[i].equals("token")) {
+						value = TokenEncryption.encrypt(value);
+					}
 					res[i] = value;
 				} else if (method.getReturnType().equals(Date.class)) {
 					String value = StringHelper.renderTime((Date) method.invoke(this, (Object[]) null));
@@ -557,16 +561,15 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 
 	@Override
 	public void setToken(String token) {
-		this.token = token;
+		this.token = TokenEncryption.decrypt(token);
 	}
 	
 	@Override
 	public String getTokenCreateIfNotExist() {
-		String token = getToken();
-		if (StringHelper.isEmpty(token)) {
+		if (StringHelper.isEmpty(getToken())) {
 			resetToken();
 		}
-		return token;
+		return getToken();
 	}
 	
 	@Override
