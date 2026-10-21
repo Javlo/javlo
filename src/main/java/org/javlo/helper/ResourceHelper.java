@@ -16,6 +16,7 @@ import org.apache.commons.io.FileExistsException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.hwpf.extractor.WordExtractor;
@@ -722,7 +723,7 @@ public class ResourceHelper {
 				WordExtractor we = new WordExtractor(new FileInputStream(file));
 				outContent = we.getText();
 			} else if (ext.toLowerCase().equals("pdf")) {
-				PDDocument doc = PDDocument.load(file);
+				PDDocument doc = Loader.loadPDF(file);
 
 				PDFTextStripper text = new PDFTextStripper();
 				outContent = text.getText(doc);

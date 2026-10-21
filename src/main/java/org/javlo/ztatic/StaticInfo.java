@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.tika.exception.TikaException;
+import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
@@ -742,7 +743,7 @@ public class StaticInfo implements IRestItem {
 				ContentHandler handler = new DefaultHandler();
 				Parser parser = new Mp3Parser();
 				ParseContext parseCtx = new ParseContext();
-				parser.parse(input, handler, metadata, parseCtx);
+				parser.parse(TikaInputStream.get(input), handler, metadata, parseCtx);
 			} finally {
 				ResourceHelper.closeResource(input);
 			}

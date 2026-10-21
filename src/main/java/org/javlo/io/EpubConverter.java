@@ -11,6 +11,8 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPageTree;
 import org.apache.pdfbox.rendering.ImageType;
@@ -38,7 +40,7 @@ public class EpubConverter {
 		book.setAutoToc(false);
 		PDDocument doc = null;
 		try {
-			doc = PDDocument.load(in);
+			doc = Loader.loadPDF(new RandomAccessReadBuffer(in));
 			PDFRenderer pdfRenderer = new PDFRenderer(doc);
 			PDPageTree pages = doc.getDocumentCatalog().getPages();
 			int pageCount = pages.getCount();

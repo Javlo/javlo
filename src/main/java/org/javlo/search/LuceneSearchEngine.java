@@ -21,7 +21,7 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopScoreDocCollector;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.store.Directory;
 import org.javlo.component.core.ContentElementList;
@@ -95,12 +95,11 @@ public class LuceneSearchEngine implements ISearchEngine {
 
 		Query q = new QueryParser("level3", langIndex.analyzer).parse(queryStr);
 
-		//TODO Is there a better way than TopScoreDocCollector to return all result?
+		//TODO Is there a better way than a fixed MAX_RESULTS to return all result?
 		IndexReader reader = DirectoryReader.open(langIndex.index);
 		IndexSearcher searcher = new IndexSearcher(reader);
-		TopScoreDocCollector collector = TopScoreDocCollector.create(MAX_RESULTS, Integer.MAX_VALUE);
-		searcher.search(q, collector);
-		ScoreDoc[] hits = collector.topDocs().scoreDocs;
+		TopDocs topDocs = searcher.search(q, MAX_RESULTS);
+		ScoreDoc[] hits = topDocs.scoreDocs;
 
 		ContentService content = ContentService.getInstance(ctx.getRequest());
 		MenuElement nav = content.getNavigation(ctx);
@@ -112,9 +111,12 @@ public class LuceneSearchEngine implements ISearchEngine {
 		groupId = StringHelper.trimAndNullify(groupId);
 
 		for (ScoreDoc scoreDoc : hits) {
-			Document doc = searcher.doc(scoreDoc.doc);
+			Document doc = searcher.storedFields().document(scoreDoc.doc);
 			String pageId = doc.get(ID_FIELD);
 			MenuElement page = nav.searchChildFromId(pageId);
+			if (page == null) {
+				continue;
+			}
 			if (groupId == null || page.getGroupID(ctx).contains(groupId)) {
 				addResult(result, ctx, page, searchStr, page.getName(), page.getFullLabel(ctxWithContent), URLHelper.createURL(ctxWithContent, page.getPath()), page.getDescriptionAsText(ctxWithContent), 1);
 			}

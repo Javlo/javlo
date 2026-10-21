@@ -60,17 +60,30 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<maven.compiler.release>17</maven.compiler.release>
+		<maven.compiler.release>21</maven.compiler.release>
 
-		<jackson.version>3.1.0</jackson.version>
-		<lucene.version>9.12.3</lucene.version>
+		<jackson.version>3.2.4</jackson.version>
+		<lucene.version>10.5.2</lucene.version>
 		<elasticsearch.version>7.17.29</elasticsearch.version>
-		<tika.version>3.3.2</tika.version>
-		<xdocreport.version>2.1.0</xdocreport.version>
-		<poi.version>5.5.0</poi.version>
-		<maven.plugin.version>3.20.0</maven.plugin.version>
-		<langchain.version>1.9.1</langchain.version>
+		<tika.version>4.1.0</tika.version>
+		<xdocreport.version>2.2.0</xdocreport.version>
+		<poi.version>5.5.1</poi.version>
+		<maven.plugin.version>3.28.0</maven.plugin.version>
 	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<!-- Jackson 2 (com.fasterxml) still comes in through dropbox and google-http-client,
+			     each with its own version (2.15 and 2.18) : keep the family aligned. -->
+			<dependency>
+				<groupId>com.fasterxml.jackson</groupId>
+				<artifactId>jackson-bom</artifactId>
+				<version>2.22.1</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<dependencies>
 
@@ -109,19 +122,19 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>2.21.0</version>
+			<version>2.22.0</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.apache.pdfbox</groupId>
 			<artifactId>pdfbox</artifactId>
-			<version>2.0.35</version>
+			<version>3.0.8</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.zeroturnaround</groupId>
 			<artifactId>zt-zip</artifactId>
-			<version>1.17</version>
+			<version>1.18.3</version>
 			<type>jar</type>
 		</dependency>
 
@@ -177,12 +190,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>jakarta.servlet.jsp.jstl</groupId>
-			<artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
-			<version>3.0.2</version>
-		</dependency>
-
-		<dependency>
 			<groupId>org.glassfish.web</groupId>
 			<artifactId>jakarta.servlet.jsp.jstl</artifactId>
 			<version>3.0.1</version>
@@ -198,7 +205,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.20.0</version>
+			<version>3.21.0</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/jakarta.mail/jakarta.mail-api -->
@@ -225,7 +232,7 @@
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>1.20.0</version>
+			<version>1.23.0</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-fileupload2-jakarta-servlet6 -->
@@ -264,7 +271,7 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents.core5</groupId>
 			<artifactId>httpcore5</artifactId>
-			<version>5.3.6</version>
+			<version>5.4.4</version>
 		</dependency>
 
 		<!--
@@ -272,7 +279,7 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents.client5</groupId>
 			<artifactId>httpclient5</artifactId>
-			<version>5.5.1</version>
+			<version>5.6.5</version>
 		</dependency>
 
 		<dependency>
@@ -319,7 +326,7 @@
 		<dependency>
 			<groupId>com.drewnoakes</groupId>
 			<artifactId>metadata-extractor</artifactId>
-			<version>2.19.0</version>
+			<version>2.22.0</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.apache.tika/tika-core -->
@@ -412,7 +419,7 @@
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
-			<version>2.14.3</version>
+			<version>2.15.0</version>
 		</dependency>
 
 		<!-- DKIMUtil needs Base64Encoder. It used to arrive through tika-parsers 1.3 as
@@ -420,7 +427,7 @@
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk18on</artifactId>
-			<version>1.85.2</version>
+			<version>1.86</version>
 		</dependency>
 
 		<!-- HttpClientService, BaseSynchroService and StressTools use HttpClient 4 but never
@@ -442,7 +449,7 @@
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
-			<version>1.21.1</version>
+			<version>1.23.2</version>
 		</dependency>
 
 		<dependency>
@@ -581,7 +588,7 @@
 		<dependency>
 			<groupId>com.dropbox.core</groupId>
 			<artifactId>dropbox-core-sdk</artifactId>
-			<version>7.0.0</version>
+			<version>8.0.2</version>
 			<exclusions>
 				<exclusion>
 					<groupId>tools.jackson.core</groupId>
@@ -617,7 +624,7 @@
 		<dependency>
 			<groupId>org.owasp.encoder</groupId>
 			<artifactId>encoder</artifactId>
-			<version>1.3.1</version>
+			<version>1.6.0</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.jcodec/jcodec -->
@@ -658,7 +665,7 @@
 		<dependency>
 			<groupId>commons-net</groupId>
 			<artifactId>commons-net</artifactId>
-			<version>3.10.0</version>
+			<version>3.13.0</version>
 		</dependency>
 
 		<dependency>
@@ -691,7 +698,7 @@
 		 <dependency>
 		 <groupId>ch.qos.logback</groupId>
 		 <artifactId>logback-classic</artifactId>
-		 <version>1.5.38</version>
+		 <version>1.6.5</version>
 		 </dependency>
 
 		<!--
@@ -714,7 +721,7 @@
 		<dependency>
 			<groupId>net.lingala.zip4j</groupId>
 			<artifactId>zip4j</artifactId>
-			<version>2.11.5</version>
+			<version>2.11.6</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-web -->
@@ -727,7 +734,7 @@
 		<dependency>
 			<groupId>com.stripe</groupId>
 			<artifactId>stripe-java</artifactId>
-			<version>20.44.0</version>
+			<version>20.136.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.thymeleaf</groupId>
@@ -771,70 +778,52 @@
 		<dependency>
 			<groupId>org.zwobble.mammoth</groupId>
 			<artifactId>mammoth</artifactId>
-			<version>1.12.1</version>
+			<version>1.13.0</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.7.11</version>
+			<version>42.7.14</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-dbcp2 -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-dbcp2</artifactId>
-			<version>2.12.0</version>
+			<version>2.14.0</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/dev.langchain4j/langchain4j-core -->
-		<dependency>
-			<groupId>dev.langchain4j</groupId>
-			<artifactId>langchain4j-core</artifactId>
-			<version>${langchain.version}</version>
-		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/dev.langchain4j/langchain4j-open-ai -->
-		<dependency>
-			<groupId>dev.langchain4j</groupId>
-			<artifactId>langchain4j-open-ai</artifactId>
-			<version>${langchain.version}</version>
-		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/dev.langchain4j/langchain4j -->
-		<dependency>
-			<groupId>dev.langchain4j</groupId>
-			<artifactId>langchain4j</artifactId>
-			<version>${langchain.version}</version>
-		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.apache.ftpserver/ftpserver-core -->
 		<dependency>
 			<groupId>org.apache.ftpserver</groupId>
 			<artifactId>ftpserver-core</artifactId>
-			<version>1.2.0</version>
+			<version>1.2.1</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-beans -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-beans</artifactId>
-			<version>6.2.18</version>
+			<version>7.0.9</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.yaml/snakeyaml -->
 		<dependency>
 			<groupId>org.yaml</groupId>
 			<artifactId>snakeyaml</artifactId>
-			<version>2.6</version>
+			<version>2.7</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.google.javascript/closure-compiler -->
 		<dependency>
 			<groupId>com.google.javascript</groupId>
 			<artifactId>closure-compiler</artifactId>
-			<version>v20240317</version>
+			<version>v20261019</version>
 		</dependency>
 
 		<dependency>
@@ -846,19 +835,19 @@
 		<dependency>
 			<groupId>com.google.api-client</groupId>
 			<artifactId>google-api-client</artifactId>
-			<version>1.35.2</version>
+			<version>2.9.1</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.google.http-client</groupId>
 			<artifactId>google-http-client-jackson2</artifactId>
-			<version>1.47.0</version>
+			<version>2.2.0</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.google.apis</groupId>
 			<artifactId>google-api-services-sheets</artifactId>
-			<version>v4-rev612-1.25.0</version>
+			<version>v4-rev20260930-2.0.0</version>
 		</dependency>
 
 		<dependency>
@@ -870,14 +859,14 @@
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<version>2.13.1</version>
+			<version>2.14.0</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit -->
 		<dependency>
 			<groupId>org.eclipse.jgit</groupId>
 			<artifactId>org.eclipse.jgit</artifactId>
-			<version>7.5.0.202512021534-r</version>
+			<version>7.8.0.202609011348-r</version>
 		</dependency>
 
 	</dependencies>
@@ -917,19 +906,19 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.11.0</version>
+				<version>3.16.0</version>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
-				<version>3.3.2</version>
+				<version>3.5.1</version>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.5.0</version>
+				<version>3.12.0</version>
 				<configuration>
 					<aggregate>true</aggregate>
 				</configuration>
@@ -939,19 +928,19 @@
 				<artifactId>maven-pmd-plugin</artifactId>
 				<version>${maven.plugin.version}</version>
 				<configuration>
-					<targetJdk>1.11</targetJdk>
+					<targetJdk>21</targetJdk>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>3.2.2</version>
+				<version>3.6.0</version>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
-				<version>3.12.1</version>
+				<version>3.22.0</version>
 				<configuration>
 					<dependencyLocationsEnabled>false</dependencyLocationsEnabled>
 				</configuration>
@@ -960,7 +949,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
-				<version>1.4</version>
+				<version>3.3.1</version>
 				<executions>
 					<execution>
 						<phase>validate</phase>
@@ -1003,7 +992,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-site-plugin</artifactId>
-					<version>3.3.1</version>
+					<version>3.22.0</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -1042,7 +1031,7 @@
 					<plugin>
 						<groupId>org.owasp</groupId>
 						<artifactId>dependency-check-maven</artifactId>
-						<version>12.2.2</version>
+						<version>13.0.0</version>
 						<executions>
 							<execution>
 								<goals>
@@ -1075,7 +1064,7 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-resources-plugin</artifactId>
-						<version>2.4</version>
+						<version>3.5.0</version>
 						<executions>
 							<execution>
 								<id>filter-resources</id>

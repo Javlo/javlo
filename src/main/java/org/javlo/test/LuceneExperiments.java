@@ -23,7 +23,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.search.TopScoreDocCollector;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.store.Directory;
@@ -103,9 +103,7 @@ public class LuceneExperiments {
 		int hitsPerPage = 10;
 		IndexReader reader = DirectoryReader.open(index);
 		IndexSearcher searcher = new IndexSearcher(reader);
-		TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage, Integer.MAX_VALUE);
-		searcher.search(q, collector);
-		TopDocs td = collector.topDocs();
+		TopDocs td = searcher.search(q, hitsPerPage);
 
 		System.out.println("=================================");
 		System.out.println("Found: " + td.totalHits);
@@ -117,7 +115,7 @@ public class LuceneExperiments {
 		for (ScoreDoc scoreDoc : td.scoreDocs) {
 			System.out.println("-----------");
 			System.out.println("Result " + i + ": " + scoreDoc.score);
-			Document doc = searcher.doc(scoreDoc.doc);
+			Document doc = searcher.storedFields().document(scoreDoc.doc);
 			for (String field : fields) {
 				System.out.println("Field " + field + ": " + new LinkedList<String>(Arrays.asList(doc.getValues(field))));
 			}
@@ -141,8 +139,8 @@ public class LuceneExperiments {
 			BooleanQuery qq = (BooleanQuery) q;
 			System.out.println(indent + "Boolean" + " (Boost: " + qq + ")");
 			for (BooleanClause cl : qq) {
-				System.out.println(indent + "  " + /*"isProhibited=" + cl.isProhibited() + " isRequired=" + cl.isRequired() +*/" occur=" + cl.getOccur().name());
-				printQuery(cl.getQuery(), indent + "\t");
+				System.out.println(indent + "  " + /*"isProhibited=" + cl.isProhibited() + " isRequired=" + cl.isRequired() +*/" occur=" + cl.occur().name());
+				printQuery(cl.query(), indent + "\t");
 			}
 		} else if (q instanceof FuzzyQuery) {
 			FuzzyQuery qq = (FuzzyQuery) q;

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPageTree;
@@ -22,7 +23,7 @@ public class PDFHelper {
 		BufferedImage out = null;
 		PDDocument doc = null;
 		try {
-			doc = PDDocument.load(pdfFile);
+			doc = Loader.loadPDF(pdfFile);
 			PDFRenderer pdfRenderer = new PDFRenderer(doc);			
 			PDPageTree pages = doc.getDocumentCatalog().getPages();			
 			if (pages.getCount() > 0) {
@@ -40,7 +41,7 @@ public class PDFHelper {
 		List<BufferedImage> out = new LinkedList<BufferedImage>();
 		PDDocument doc = null;
 		try {
-			doc = PDDocument.load(pdfFile);
+			doc = Loader.loadPDF(pdfFile);
 			PDFRenderer pdfRenderer = new PDFRenderer(doc);			
 			PDPageTree pages = doc.getDocumentCatalog().getPages();
 			for (int p=0; p<pages.getCount(); p++) {
@@ -62,7 +63,7 @@ public class PDFHelper {
 		}
 		PDDocument doc = null;
 		try {
-			doc = PDDocument.load(pdfFile);
+			doc = Loader.loadPDF(pdfFile);
 			
 			return doc.getDocumentCatalog().getPages().getCount();			
 		} catch (Exception e) {
@@ -74,7 +75,7 @@ public class PDFHelper {
 	}
 	
 	public static PDDocumentInformation getPdfMeta(File pdfFile) throws IOException {
-		PDDocument doc = PDDocument.load(pdfFile);
+		PDDocument doc = Loader.loadPDF(pdfFile);
 		if (doc == null) {
 			return null;
 		} else {
