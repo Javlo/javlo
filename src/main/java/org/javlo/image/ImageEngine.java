@@ -3,6 +3,7 @@ package org.javlo.image;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifIFD0Directory;
+import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.jhlabs.image.RGBAdjustFilter;
 import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.apache.batik.transcoder.TranscoderException;
@@ -13,8 +14,11 @@ import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.batik.util.SVGConstants;
 import org.apache.commons.io.FileUtils;
 import org.javlo.context.GlobalContext;
+import org.apache.commons.imaging.common.ImageMetadata;
+import org.javlo.helper.ExifHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.io.TransactionFile;
 import org.javlo.service.remote.RemoveBgService;
 import org.jcodec.codecs.vpx.VP8Decoder;
 import org.jcodec.common.model.Picture;
@@ -23,7 +27,9 @@ import org.jcodec.scale.AWTUtil;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageInputStream;
 import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.font.TextAttribute;
@@ -32,9 +38,12 @@ import java.awt.image.*;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 public class ImageEngine {
@@ -97,9 +106,16 @@ public class ImageEngine {
 
 	public static BufferedImage loadImage(File file) throws IOException {
 		BufferedImage outImage = ImageIO.read(file);
+		if (outImage == null || StringHelper.isPDF(file.getName())) {
+			return outImage;
+		}
 		try {
-			if (!StringHelper.isPDF(file.getName())) {
-				outImage = rotateImageBasedOnOrientation(outImage, getOrientation(file));
+			Metadata metadata = ImageMetadataReader.readMetadata(file);
+			int orientation = getOrientation(metadata);
+			if (orientation != 1 && isAlreadyRotated(metadata, outImage)) {
+				logger.warning("pixels already rotated, exif orientation (" + orientation + ") ignored : " + file);
+			} else {
+				outImage = rotateImageBasedOnOrientation(outImage, orientation);
 			}
 		} catch (Exception e) {
 			logger.severe(e.getMessage());
@@ -111,14 +127,122 @@ public class ImageEngine {
 		return ImageIO.read(in);
 	}
 
-	private static int getOrientation(File imageFile) throws Exception {
-		Metadata metadata = ImageMetadataReader.readMetadata(imageFile);
+	private static int getOrientation(Metadata metadata) throws Exception {
 		ExifIFD0Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
 
 		if (directory != null && directory.containsTag(ExifIFD0Directory.TAG_ORIENTATION)) {
 			return directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
 		} else {
 			return 1; // Assume no rotation if there's no orientation tag
+		}
+	}
+
+	/**
+	 * the exif image size describe the stored pixels. If the stored pixels have
+	 * not the same orientation (portrait/landscape), the pixels are already
+	 * rotated (old source resize kept the original orientation tag).
+	 */
+	private static boolean isAlreadyRotated(Metadata metadata, BufferedImage image) {
+		ExifSubIFDDirectory directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
+		if (directory == null) {
+			return false;
+		}
+		Integer exifWidth = directory.getInteger(ExifSubIFDDirectory.TAG_EXIF_IMAGE_WIDTH);
+		Integer exifHeight = directory.getInteger(ExifSubIFDDirectory.TAG_EXIF_IMAGE_HEIGHT);
+		if (exifWidth == null || exifHeight == null || exifWidth.equals(exifHeight) || image.getWidth() == image.getHeight()) {
+			return false;
+		}
+		return (exifWidth > exifHeight) != (image.getWidth() > image.getHeight());
+	}
+
+	/** one lock by file (by hash) : bounded memory, no global lock */
+	private static final Object[] SOURCE_LOCKS = new Object[64];
+	static {
+		for (int i = 0; i < SOURCE_LOCKS.length; i++) {
+			SOURCE_LOCKS[i] = new Object();
+		}
+	}
+
+	private static final Set<String> SOURCE_RESIZE_EXT = new HashSet<>(Arrays.asList("jpg", "jpeg", "png", "gif", "webp"));
+
+	/**
+	 * read the size in the image header, without decoding the pixels.
+	 *
+	 * @return {width, height} or null if no reader found.
+	 */
+	private static int[] readImageSize(File file) throws IOException {
+		try (ImageInputStream in = ImageIO.createImageInputStream(file)) {
+			if (in == null) {
+				return null;
+			}
+			Iterator<ImageReader> readers = ImageIO.getImageReaders(in);
+			if (!readers.hasNext()) {
+				return null;
+			}
+			ImageReader reader = readers.next();
+			try {
+				reader.setInput(in, true, true);
+				return new int[] { reader.getWidth(0), reader.getHeight(0) };
+			} finally {
+				reader.dispose();
+			}
+		}
+	}
+
+	/**
+	 * reduce the source image file if it is wider than maxWidth. The file is
+	 * replaced only when the new image is completely written, the exif data are
+	 * kept with a normal orientation (the pixels are stored rotated).
+	 *
+	 * @return false if the resize failed and must be done again later.
+	 */
+	public static boolean limitSourceWidth(File file, int maxWidth) {
+		String ext = StringHelper.neverNull(StringHelper.getFileExtension(file.getName())).toLowerCase();
+		if (maxWidth <= 0 || !file.isFile() || !SOURCE_RESIZE_EXT.contains(ext)) {
+			return true;
+		}
+		Object lock = SOURCE_LOCKS[Math.floorMod(file.getAbsolutePath().hashCode(), SOURCE_LOCKS.length)];
+		synchronized (lock) {
+			try {
+				int[] size = readImageSize(file);
+				// width and height checked : with exif rotation the width can be the stored height
+				if (size != null && size[0] <= maxWidth && size[1] <= maxWidth) {
+					return true;
+				}
+				BufferedImage image = loadImage(file);
+				if (image == null) {
+					logger.warning("could'nt read image : " + file);
+					return true;
+				}
+				if (image.getWidth() <= maxWidth) {
+					return true;
+				}
+				logger.info("source image to large resize to " + maxWidth + " : " + file);
+				// exif rewrite is only supported for jpeg
+				ImageMetadata metadata = StringHelper.isJpeg(file.getName()) ? ExifHelper.readMetadata(file) : null;
+				BufferedImage resized = resizeWidth(image, maxWidth, true);
+				image.flush();
+				TransactionFile transFile = new TransactionFile(file);
+				try {
+					try (OutputStream out = transFile.getOutputStream()) {
+						storeImage(resized, ext, out);
+					}
+					if (transFile.getTempFile().length() == 0) {
+						throw new IOException("empty image after resize : " + file);
+					}
+				} catch (Exception e) {
+					transFile.rollback();
+					throw e;
+				} finally {
+					resized.flush();
+				}
+				transFile.commit();
+				ExifHelper.writeMetadata(metadata, file, true);
+				return true;
+			} catch (Exception e) {
+				logger.warning("error on resize source image : " + file + " (" + e.getMessage() + ')');
+				return false;
+			}
 		}
 	}
 
@@ -373,10 +497,11 @@ public class ImageEngine {
 			for (int j = 0; j < original.getHeight(); j++) {
 
 				// Get pixels by R, G, B
-				alpha = new Color(original.getRGB(i, j)).getAlpha();
-				red = new Color(original.getRGB(i, j)).getRed();
-				green = new Color(original.getRGB(i, j)).getGreen();
-				blue = new Color(original.getRGB(i, j)).getBlue();
+				int argb = original.getRGB(i, j);
+				alpha = (argb >>> 24) & 0xff;
+				red = (argb >> 16) & 0xff;
+				green = (argb >> 8) & 0xff;
+				blue = argb & 0xff;
 
 				red = (int) (0.21 * red + 0.71 * green + 0.07 * blue);
 				// Return back to original format
@@ -407,10 +532,11 @@ public class ImageEngine {
 			for (int j = 0; j < original.getHeight(); j++) {
 
 				// Get pixels by R, G, B
-				alpha = new Color(original.getRGB(i, j)).getAlpha();
-				red = new Color(original.getRGB(i, j)).getRed();
-				green = new Color(original.getRGB(i, j)).getGreen();
-				blue = new Color(original.getRGB(i, j)).getBlue();
+				int argb = original.getRGB(i, j);
+				alpha = (argb >>> 24) & 0xff;
+				red = (argb >> 16) & 0xff;
+				green = (argb >> 8) & 0xff;
+				blue = argb & 0xff;
 
 				newPixel = red + green + blue;
 				newPixel = avgLUT[newPixel];
@@ -444,10 +570,11 @@ public class ImageEngine {
 			for (int j = 0; j < original.getHeight(); j++) {
 
 				// Get pixels by R, G, B
-				alpha = new Color(original.getRGB(i, j)).getAlpha();
-				red = new Color(original.getRGB(i, j)).getRed();
-				green = new Color(original.getRGB(i, j)).getGreen();
-				blue = new Color(original.getRGB(i, j)).getBlue();
+				int argb = original.getRGB(i, j);
+				alpha = (argb >>> 24) & 0xff;
+				red = (argb >> 16) & 0xff;
+				green = (argb >> 8) & 0xff;
+				blue = argb & 0xff;
 
 				pixel[0] = red;
 				pixel[1] = green;
@@ -788,7 +915,6 @@ public class ImageEngine {
 
 	public static BufferedImage resizeHeight(BufferedImage bi, int height, Color bgColor, boolean hq) {
 		int width = Math.round(bi.getWidth() * ((float) height / (float) bi.getHeight()));
-		height = Math.round(bi.getHeight() * ((float) width / (float) bi.getWidth()));
 		BufferedImage image = resize(bi, width, height, bgColor, hq);
 
 		if (bgColor != null && image.getColorModel().hasAlpha()) {
@@ -819,7 +945,6 @@ public class ImageEngine {
 
 	public static BufferedImage resizeWidth(BufferedImage bi, int width, int mt, int mr, int ml, int mb, Color bgColor, boolean hq) {
 		int height = Math.round(bi.getHeight() * ((float) width / (float) bi.getWidth()));
-		width = Math.round(bi.getWidth() * ((float) height / (float) bi.getHeight()));
 		BufferedImage image = resize(bi, width, height, bgColor, hq);
 
 		if (bgColor != null && image.getColorModel().hasAlpha() && (mt > 0 || ml > 0 || mr > 0 || mb > 0)) {
@@ -844,7 +969,6 @@ public class ImageEngine {
 
 	public static BufferedImage resizeHeight(BufferedImage bi, int height, int mt, int mr, int ml, int mb, Color bgColor, boolean hq) {
 		int width = Math.round(bi.getWidth() * ((float) height / (float) bi.getHeight()));
-		height = Math.round(bi.getHeight() * ((float) width / (float) bi.getWidth()));
 		BufferedImage image = resize(bi, width, height, bgColor, hq);
 
 		if (bgColor != null && image.getColorModel().hasAlpha() && (mt > 0 || ml > 0 || mr > 0 || mb > 0)) {
@@ -998,11 +1122,14 @@ public class ImageEngine {
 
 	public static BufferedImage removeAlpha(BufferedImage image) {
 		BufferedImage imgNew = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
-		for (int x = 0; x < image.getWidth(); x++) {
-			for (int y = 0; y < image.getHeight(); y++) {
-				int rgb = image.getRGB(x, y);
-				imgNew.setRGB(x, y, rgb);
-			}
+		Graphics2D g = imgNew.createGraphics();
+		try {
+			// transparent pixels on white (and not on black)
+			g.setColor(Color.WHITE);
+			g.fillRect(0, 0, imgNew.getWidth(), imgNew.getHeight());
+			g.drawImage(image, 0, 0, null);
+		} finally {
+			g.dispose();
 		}
 		return imgNew;
 	}
@@ -1286,9 +1413,9 @@ public class ImageEngine {
 		} else {
 			fillImage(outImage, TRANSPARENT_COLOR);
 		}
-		for (int x = deltaX + ml; x < inWidth + mr + deltaX; x++) {
+		for (int x = deltaX + ml; x < inWidth + ml + deltaX; x++) {
 			int targetX = x - deltaX;
-			for (int y = deltaY + mt; y < inHeight + mb + deltaY; y++) {
+			for (int y = deltaY + mt; y < inHeight + mt + deltaY; y++) {
 				int targetY = y - deltaY;
 				Integer imageColor = null;
 				if (bgColor != null) {
@@ -1303,7 +1430,7 @@ public class ImageEngine {
 					Integer mixedColor = imageColor;
 
 					if (bgColor != null && imageColor != null) {
-						mixedColor = replaceAlpha(new Color(imageColor), bgColor).getRGB();
+						mixedColor = replaceAlpha(new Color(imageColor, true), bgColor).getRGB();
 					}
 					if (imageColor != null) {
 						outImage.setRGB(targetX, targetY, mixedColor);
@@ -1599,13 +1726,16 @@ public class ImageEngine {
 
 		WritableRaster raster = img.getRaster();
 
-		// We need 3 integers (for R,G,B color values) per pixel.
-		int[] pixels = new int[w * h * 3];
+		// 3 bands (RGB) or 4 bands (RGB + alpha, alpha is not modified)
+		int bands = raster.getNumBands();
+		if (bands < 3 || img.getColorModel() instanceof IndexColorModel) {
+			logger.warning("sepia filter not supported on this image type : " + img.getType());
+			return;
+		}
+		int[] pixels = new int[w * h * bands];
 		raster.getPixels(0, 0, w, h, pixels);
 
-		// Process 3 ints at a time for each pixel.
-		// Each pixel has 3 RGB colors in array
-		for (int i = 0; i < pixels.length; i += 3) {
+		for (int i = 0; i < pixels.length; i += bands) {
 			int r = pixels[i];
 			int g = pixels[i + 1];
 			int b = pixels[i + 2];
@@ -1674,11 +1804,14 @@ public class ImageEngine {
 		}
 		boolean trim = true;
 		int decaly = 0;
-		for (; decaly < image.getHeight() && trim; decaly += 1) {
+		for (int y = 0; y < image.getHeight() && trim; y += 1) {
 			for (int x = 0; x < image.getWidth(); x += 1) {
-				if (equalColor(new Color(image.getRGB(x, decaly)), color, tolerance)) {
+				if (equalColor(new Color(image.getRGB(x, y)), color, tolerance)) {
 					trim = false;
 				}
+			}
+			if (trim) {
+				decaly++;
 			}
 		}
 		if (trim) {
@@ -1699,11 +1832,14 @@ public class ImageEngine {
 		}
 		boolean trim = true;
 		int decalx = 0;
-		for (; decalx < image.getWidth() && trim; decalx += 1) {
+		for (int x = 0; x < image.getWidth() && trim; x += 1) {
 			for (int y = 0; y < image.getHeight(); y += 1) {
-				if (equalColor(new Color(image.getRGB(decalx, y)), color, tolerance)) {
+				if (equalColor(new Color(image.getRGB(x, y)), color, tolerance)) {
 					trim = false;
 				}
+			}
+			if (trim) {
+				decalx++;
 			}
 		}
 		if (trim) {
@@ -1792,7 +1928,7 @@ public class ImageEngine {
 			for (int x = 0; x < image.getWidth(); x += delta) {
 				int rgb = image.getRGB(x, y);
 				Color c = new Color(rgb);
-				if (c.getRed() + c.getGreen() + c.getRed() > 128 * 3) {
+				if (c.getRed() + c.getGreen() + c.getBlue() > 128 * 3) {
 					rgb = Color.LIGHT_GRAY.getRGB();
 				} else {
 					rgb = Color.DARK_GRAY.getRGB();

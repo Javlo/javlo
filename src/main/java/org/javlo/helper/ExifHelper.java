@@ -14,6 +14,7 @@ import org.apache.commons.imaging.formats.jpeg.exif.ExifRewriter;
 import org.apache.commons.imaging.formats.tiff.TiffField;
 import org.apache.commons.imaging.formats.tiff.TiffImageMetadata;
 import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants;
+import org.apache.commons.imaging.formats.tiff.constants.TiffTagConstants;
 import org.apache.commons.imaging.formats.tiff.write.TiffOutputDirectory;
 import org.apache.commons.imaging.formats.tiff.write.TiffOutputSet;
 import org.apache.commons.io.FileUtils;
@@ -249,6 +250,15 @@ public class ExifHelper {
 	}
 
 	public static void writeMetadata(ImageMetadata metadata, final File file) throws ImagingException, IOException {
+		writeMetadata(metadata, file, false);
+	}
+
+	/**
+	 * @param resetOrientation
+	 *            true if the pixels of file are already rotated : the orientation
+	 *            tag is set to 1 (normal) for not rotate the image a second time.
+	 */
+	public static void writeMetadata(ImageMetadata metadata, final File file, boolean resetOrientation) throws ImagingException, IOException {
 		if (metadata == null) {
 			return;
 		}
@@ -273,6 +283,11 @@ public class ExifHelper {
 				}
 				if (null == outputSet) {
 					outputSet = new TiffOutputSet();
+				}
+				if (resetOrientation) {
+					TiffOutputDirectory rootDirectory = outputSet.getOrCreateRootDirectory();
+					rootDirectory.removeField(TiffTagConstants.TIFF_TAG_ORIENTATION);
+					rootDirectory.add(TiffTagConstants.TIFF_TAG_ORIENTATION, (short) TiffTagConstants.ORIENTATION_VALUE_HORIZONTAL_NORMAL);
 				}
 				tFile = new TransactionFile(file, true);
 				os = new BufferedOutputStream(tFile.getOutputStream());
