@@ -657,8 +657,22 @@ public class ImageEngine {
 
 	public static BufferedImage resize(BufferedImage bi, Integer width, Integer height, Color backgroundColor, boolean hq) {
 		if (hq && width <= bi.getWidth() && height <= bi.getHeight()) {
-			// area averaging : best quality for reduction
-			return toBufferedImage(scale(bi, width, height, hq), backgroundColor);
+			BufferedImage reduced = progressiveDownscale(bi, width, height);
+			BufferedImage outImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g = outImage.createGraphics();
+			try {
+				if (backgroundColor != null) {
+					g.setPaint(backgroundColor);
+					g.fillRect(0, 0, width, height);
+				} else {
+					g.setComposite(AlphaComposite.Src);
+				}
+				g.drawImage(reduced, 0, 0, null);
+			} finally {
+				g.dispose();
+			}
+			reduced.flush();
+			return outImage;
 		}
 		// enlargement (or fast mode) : interpolate instead of replicating pixels
 		BufferedImage outImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -671,6 +685,38 @@ public class ImageEngine {
 		g.drawImage(bi, 0, 0, width, height, null);
 		g.dispose();
 		return outImage;
+	}
+
+	/**
+	 * high quality reduction : successive bilinear halvings (each step at most
+	 * 2:1, every source pixel is used) on premultiplied alpha (no dark border on
+	 * transparent edges). Similar quality as area averaging (getScaledInstance
+	 * SCALE_SMOOTH) and many times faster.
+	 */
+	private static BufferedImage progressiveDownscale(BufferedImage source, int targetWidth, int targetHeight) {
+		source = toSRGB(source);
+		BufferedImage current = source;
+		int w = source.getWidth();
+		int h = source.getHeight();
+		do {
+			w = Math.max(targetWidth, w / 2);
+			h = Math.max(targetHeight, h / 2);
+			BufferedImage step = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB_PRE);
+			Graphics2D g = step.createGraphics();
+			try {
+				g.setComposite(AlphaComposite.Src);
+				g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+				g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+				g.drawImage(current, 0, 0, w, h, null);
+			} finally {
+				g.dispose();
+			}
+			if (current != source) {
+				current.flush();
+			}
+			current = step;
+		} while (w != targetWidth || h != targetHeight);
+		return current;
 	}
 
 	public static BufferedImage zoom(BufferedImage img, double zoom, int interestX, int interestY) {
@@ -918,21 +964,68 @@ public class ImageEngine {
 		BufferedImage image = resize(bi, width, height, bgColor, hq);
 
 		if (bgColor != null && image.getColorModel().hasAlpha()) {
-			BufferedImage imgNew;
-			if (image.getColorModel().hasAlpha()) {
-				imgNew = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-			} else {
-				imgNew = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
-			}
-			for (int x = 0; x < image.getWidth(); x++) {
-				for (int y = 0; y < image.getHeight(); y++) {
-					int rgb = image.getRGB(x, y);
-					imgNew.setRGB(x, y, replaceAlpha(new Color(rgb, true), bgColor).getRGB());
-				}
-			}
-			image = imgNew;
+			image = flattenOnColor(image, bgColor, BufferedImage.TYPE_INT_ARGB, image.getWidth(), image.getHeight(), 0, 0);
 		}
 		return image;
+	}
+
+	/**
+	 * draw image on a opaque background color (alpha of bgColor ignored) : same
+	 * result as replaceAlpha(Color, Color) on each pixel.
+	 *
+	 * @param x
+	 *            position of the image in the new image (left margin)
+	 * @param y
+	 *            position of the image in the new image (top margin)
+	 */
+	private static BufferedImage flattenOnColor(BufferedImage image, Color bgColor, int type, int width, int height, int x, int y) {
+		BufferedImage outImage = new BufferedImage(width, height, type);
+		Graphics2D g = outImage.createGraphics();
+		try {
+			g.setColor(new Color(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue()));
+			g.fillRect(0, 0, width, height);
+			g.drawImage(toSRGB(image), x, y, null);
+		} finally {
+			g.dispose();
+		}
+		return outImage;
+	}
+
+	/**
+	 * drawImage copy the values of a gray (or other color space) image without
+	 * the conversion done by getRGB (gray image become darker) : convert in sRGB
+	 * with getRGB (by line, much faster than by pixel) before drawing.
+	 */
+	public static BufferedImage toSRGB(BufferedImage image) {
+		if (image.getColorModel().getColorSpace().isCS_sRGB()) {
+			return image;
+		}
+		int w = image.getWidth();
+		BufferedImage outImage = new BufferedImage(w, image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		int[] line = new int[w];
+		for (int y = 0; y < image.getHeight(); y++) {
+			image.getRGB(0, y, w, 1, line, 0, w);
+			outImage.setRGB(0, y, w, 1, line, 0, w);
+		}
+		return outImage;
+	}
+
+	/**
+	 * copy pixels (alpha included, without blending) of source in target at
+	 * position x, y.
+	 */
+	private static void copyPixels(BufferedImage source, BufferedImage target, int x, int y) {
+		Graphics2D g = target.createGraphics();
+		try {
+			g.setComposite(AlphaComposite.Src);
+			if (source.getColorModel().getColorSpace().equals(target.getColorModel().getColorSpace())) {
+				g.drawImage(source, x, y, null);
+			} else {
+				g.drawImage(toSRGB(source), x, y, null);
+			}
+		} finally {
+			g.dispose();
+		}
 	}
 
 	public static BufferedImage resizeWidth(BufferedImage bi, int width, boolean hq) {
@@ -950,19 +1043,7 @@ public class ImageEngine {
 		if (bgColor != null && image.getColorModel().hasAlpha() && (mt > 0 || ml > 0 || mr > 0 || mb > 0)) {
 			int inWidth = image.getWidth() + ml + mr;
 			int inHeight = image.getHeight() + mt + mb;
-
-			BufferedImage outImage = new BufferedImage(inWidth, inHeight, BufferedImage.TYPE_INT_ARGB);
-			for (int x = 0; x < inWidth; x++) {
-				for (int y = 0; y < inHeight; y++) {
-					Color imageColor = bgColor;
-					if ((x >= ml) && (x < image.getWidth() + ml) && (y >= mt) && (y < image.getHeight() + mt)) {
-						imageColor = new Color(image.getRGB(x - ml, y - mt), true);
-					}
-					Color mixedColor = replaceAlpha(imageColor, bgColor);
-					outImage.setRGB(x, y, mixedColor.getRGB());
-				}
-			}
-			image = outImage;
+			image = flattenOnColor(image, bgColor, BufferedImage.TYPE_INT_ARGB, inWidth, inHeight, ml, mt);
 		}
 		return image;
 	}
@@ -974,19 +1055,7 @@ public class ImageEngine {
 		if (bgColor != null && image.getColorModel().hasAlpha() && (mt > 0 || ml > 0 || mr > 0 || mb > 0)) {
 			int inWidth = image.getWidth() + ml + mr;
 			int inHeight = image.getHeight() + mt + mb;
-
-			BufferedImage outImage = new BufferedImage(inWidth, inHeight, BufferedImage.TYPE_INT_ARGB);
-			for (int x = 0; x < inWidth; x++) {
-				for (int y = 0; y < inHeight; y++) {
-					Color imageColor = bgColor;
-					if ((x >= ml) && (x < image.getWidth() + ml) && (y >= mt) && (y < image.getHeight() + mt)) {
-						imageColor = new Color(image.getRGB(x - ml, y - mt), true);
-					}
-					Color mixedColor = replaceAlpha(imageColor, bgColor);
-					outImage.setRGB(x, y, mixedColor.getRGB());
-				}
-			}
-			image = outImage;
+			image = flattenOnColor(image, bgColor, BufferedImage.TYPE_INT_ARGB, inWidth, inHeight, ml, mt);
 		}
 		return image;
 	}
@@ -1347,12 +1416,7 @@ public class ImageEngine {
 				fillImage(outImage, TRANSPARENT_COLOR);
 			}
 
-			for (int x = 0; x < source.getWidth(); x++) {
-				for (int y = 0; y < source.getHeight(); y++) {
-					int color = source.getRGB(x, y);
-					outImage.setRGB(x + borderWidth, y + borderHeight, color);
-				}
-			}
+			copyPixels(source, outImage, borderWidth, borderHeight);
 			source = outImage;
 		} else if (focusZone) {
 			// source = centerInterest(source, interestX, interestY, inWidth, inHeight);
@@ -1413,61 +1477,35 @@ public class ImageEngine {
 		} else {
 			fillImage(outImage, TRANSPARENT_COLOR);
 		}
-		for (int x = deltaX + ml; x < inWidth + ml + deltaX; x++) {
-			int targetX = x - deltaX;
-			for (int y = deltaY + mt; y < inHeight + mt + deltaY; y++) {
-				int targetY = y - deltaY;
-				Integer imageColor = null;
-				if (bgColor != null) {
-					imageColor = bgColor.getRGB();
-				}
-
-				// if ((targetX >= ml) && (targetX < workWith + ml) && (targetY
-				// >= mt) && (targetY < workHeight + mt)) {
-				imageColor = getColor(workImage, x - ml, y - mt, null);
-				// }
-				if (imageColor != null) {
-					Integer mixedColor = imageColor;
-
-					if (bgColor != null && imageColor != null) {
-						mixedColor = replaceAlpha(new Color(imageColor, true), bgColor).getRGB();
-					}
-					if (imageColor != null) {
-						outImage.setRGB(targetX, targetY, mixedColor);
-					}
-
-				} else {
-					outImage.setRGB(targetX, targetY, bgColor.getRGB());
-				}
-
+		Graphics2D g = outImage.createGraphics();
+		try {
+			// the image zone (between margins), visible part of workImage placed with deltaX/deltaY
+			g.setClip(ml, mt, inWidth, inHeight);
+			if (bgColor != null) {
+				// pixels with alpha mixed with the opaque background color
+				g.setColor(new Color(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue()));
+				g.fillRect(ml, mt, inWidth, inHeight);
+			} else {
+				g.setComposite(AlphaComposite.Src);
 			}
+			g.drawImage(workImage, ml - deltaX, mt - deltaY, null);
+		} finally {
+			g.dispose();
 		}
 		workImage.flush();
 		return outImage;
 	}
 
 	public static void insertImage(BufferedImage source, BufferedImage target, int posx, int posy) {
-		for (int x = 0; x < source.getWidth(); x++) {
-			for (int y = 0; y < source.getHeight(); y++) {
-				int rgb = source.getRGB(x, y);
-				target.setRGB(posx + x, posy + y, rgb);
-			}
-		}
+		copyPixels(source, target, posx, posy);
 	}
 
 	public static BufferedImage applyBgColor(BufferedImage image, Color bgColor) {
-		org.javlo.helper.LocalLogger.stepCount("transform", "start - transformation - 2.0.1");
-		BufferedImage outImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-		org.javlo.helper.LocalLogger.stepCount("transform", "start - transformation - 2.0.2");
-		for (int x = 0; x < image.getWidth(); x++) {
-			for (int y = 0; y < image.getHeight(); y++) {
-				Color filterColor = new Color(image.getRGB(x, y), true);
-				if (filterColor.getAlpha() < 255) {
-					filterColor = replaceAlpha(filterColor, bgColor);
-				}
-				outImage.setRGB(x, y, filterColor.getRGB());
-			}
+		if (bgColor == null) {
+			return image;
 		}
+		org.javlo.helper.LocalLogger.stepCount("transform", "start - transformation - 2.0.1");
+		BufferedImage outImage = flattenOnColor(image, bgColor, BufferedImage.TYPE_4BYTE_ABGR, image.getWidth(), image.getHeight(), 0, 0);
 		org.javlo.helper.LocalLogger.stepCount("transform", "start - transformation - 2.0.3");
 		return outImage;
 	}
@@ -1484,19 +1522,15 @@ public class ImageEngine {
 		}
 
 		BufferedImage outImage = new BufferedImage(image.getWidth(), image.getHeight() + height + separation, BufferedImage.TYPE_4BYTE_ABGR);
-		for (int x = 0; x < image.getWidth(); x++) {
-			for (int y = 0; y < image.getHeight(); y++) {
-				Color filterColor = new Color(image.getRGB(x, y), true);
-				outImage.setRGB(x, y, filterColor.getRGB());
-			}
-		}
-		for (int x = 0; x < image.getWidth(); x++) {
-			for (int y = image.getHeight(); y < image.getHeight() + separation; y++) {
-				if (bgColor != null) {
-					outImage.setRGB(x, y, bgColor.getRGB());
-				} else {
-					outImage.setRGB(x, y, colorToRGB(0, 0, 0, 0));
-				}
+		copyPixels(image, outImage, 0, 0);
+		if (bgColor != null && separation > 0) {
+			Graphics2D g = outImage.createGraphics();
+			try {
+				g.setComposite(AlphaComposite.Src);
+				g.setColor(bgColor);
+				g.fillRect(0, image.getHeight(), image.getWidth(), separation);
+			} finally {
+				g.dispose();
 			}
 		}
 		float alpha;
@@ -1519,15 +1553,7 @@ public class ImageEngine {
 
 	public static BufferedImage cropImage(BufferedImage image, int width, int height, int inX, int inY) {
 		BufferedImage outImage = new BufferedImage(width, height, getSafeImageType(image));
-		for (int x = 0; x < image.getWidth(); x++) {
-			for (int y = 0; y < image.getHeight(); y++) {
-				if (x >= inX && x < inX + width) {
-					if (y >= inY && y < inY + height) {
-						outImage.setRGB(x - inX, y - inY, image.getRGB(x, y));
-					}
-				}
-			}
-		}
+		copyPixels(image, outImage, -inX, -inY);
 		return outImage;
 	}
 
@@ -1769,15 +1795,19 @@ public class ImageEngine {
 	}
 
 	public static BufferedImage flip(BufferedImage image, boolean verticaly) {
-		BufferedImage outImage = new BufferedImage(image.getWidth(), image.getHeight(), getSafeImageType(image));
-		for (int x = 0; x < image.getWidth(); x += 1) {
-			for (int y = 0; y < image.getHeight(); y += 1) {
-				if (verticaly) {
-					outImage.setRGB(x, image.getHeight() - y - 1, image.getRGB(x, y));
-				} else {
-					outImage.setRGB(image.getWidth() - x - 1, y, image.getRGB(x, y));
-				}
+		int w = image.getWidth();
+		int h = image.getHeight();
+		BufferedImage outImage = new BufferedImage(w, h, getSafeImageType(image));
+		Graphics2D g = outImage.createGraphics();
+		try {
+			g.setComposite(AlphaComposite.Src);
+			if (verticaly) {
+				g.drawImage(image, 0, h, w, 0, 0, 0, w, h, null);
+			} else {
+				g.drawImage(image, w, 0, 0, h, 0, 0, w, h, null);
 			}
+		} finally {
+			g.dispose();
 		}
 		return outImage;
 	}

@@ -79,8 +79,24 @@ public class FileServlet extends HttpServlet {
 	}
 
 	/**
+	 * content type of the served file, by default from the file name.
+	 *
+	 * @return the content type or null if unknown.
+	 */
+	protected String getContentType(File file) {
+		return getServletContext().getMimeType(file.getName());
+	}
+
+	/**
+	 * headers added to the response after the reset, before the content. Can be
+	 * overridden to add cache or link headers.
+	 */
+	protected void addResponseHeaders(HttpServletRequest request, HttpServletResponse response, File file) {
+	}
+
+	/**
 	 * Process the actual request.
-	 * 
+	 *
 	 * @param request
 	 *            The request to be processed.
 	 * @param response
@@ -90,15 +106,6 @@ public class FileServlet extends HttpServlet {
 	 * @throws IOException
 	 *             If something fails at I/O level.
 	 */
-	/**
-	 * content type of the served file, by default from the file name.
-	 *
-	 * @return the content type or null if unknown.
-	 */
-	protected String getContentType(File file) {
-		return getServletContext().getMimeType(file.getName());
-	}
-
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response, File file, boolean content) throws IOException {
 
 		// Validate the requested file
@@ -228,6 +235,7 @@ public class FileServlet extends HttpServlet {
 			response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
 			response.setHeader("ETag", eTag); // Required in 304.
 			response.setDateHeader("Expires", expires); // Postpone cache with 1 week.
+			addResponseHeaders(request, response, file);
 			return;
 		}
 
@@ -239,6 +247,7 @@ public class FileServlet extends HttpServlet {
 			response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
 			response.setHeader("ETag", eTag); // Required in 304.
 			response.setDateHeader("Expires", expires); // Postpone cache with 1 week.
+			addResponseHeaders(request, response, file);
 			return;
 		}
 
@@ -372,6 +381,7 @@ public class FileServlet extends HttpServlet {
 		response.setHeader("ETag", eTag);
 		response.setDateHeader("Last-Modified", lastModified);
 		response.setDateHeader("Expires", expires);
+		addResponseHeaders(request, response, file);
 
 		// Send requested file (part(s)) to client
 		// ------------------------------------------------

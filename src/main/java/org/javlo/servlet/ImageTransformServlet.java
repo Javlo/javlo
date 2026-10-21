@@ -78,6 +78,10 @@ public class ImageTransformServlet extends FileServlet {
 
 	public static final String HASH_PREFIX = "/h";
 
+	private static final String CANONICAL_LINK_ATTRIBUTE = ImageTransformServlet.class.getName() + ".canonicalLink";
+
+	private static final long VERSIONED_EXPIRE_TIME = 365L * 24 * 60 * 60 * 1000; // 1 year
+
 	private static TimeMap<String, BufferedImage> layerCache; // A month cache
 
 	private static BufferedImage imageCache = null;
@@ -800,11 +804,7 @@ public class ImageTransformServlet extends FileServlet {
 
 		if (img.getType() == BufferedImage.TYPE_CUSTOM) {
 			BufferedImage newImg = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-			for (int x = 0; x < img.getWidth(); x++) {
-				for (int y = 0; y < img.getHeight(); y++) {
-					newImg.setRGB(x, y, img.getRGB(x, y));
-				}
-			}
+			ImageEngine.insertImage(img, newImg, 0, 0);
 			img = newImg;
 		}
 
@@ -1078,6 +1078,35 @@ public class ImageTransformServlet extends FileServlet {
 		return super.getContentType(file);
 	}
 
+	/**
+	 * the "hash" parameter is the version of the file (crc and focus point) : a
+	 * modified image has a new url, the browser can keep it without
+	 * revalidation. Without version, the url stay the same when the image is
+	 * replaced.
+	 */
+	private static void setCacheHeaders(HttpServletRequest request, HttpServletResponse response) {
+		if (request.getParameter("hash") != null) {
+			response.setHeader("Cache-Control", "public, max-age=" + VERSIONED_EXPIRE_TIME / 1000 + ", immutable");
+			response.setDateHeader("Expires", System.currentTimeMillis() + VERSIONED_EXPIRE_TIME);
+		} else {
+			response.setHeader("Cache-Control", "public, max-age=" + DEFAULT_EXPIRE_TIME / 1000);
+			response.setDateHeader("Expires", System.currentTimeMillis() + DEFAULT_EXPIRE_TIME);
+		}
+	}
+
+	/**
+	 * FileServlet reset the response before sending the file : cache and
+	 * canonical headers are set again.
+	 */
+	@Override
+	protected void addResponseHeaders(HttpServletRequest request, HttpServletResponse response, File file) {
+		setCacheHeaders(request, response);
+		Object canonicalLink = request.getAttribute(CANONICAL_LINK_ATTRIBUTE);
+		if (canonicalLink != null) {
+			response.setHeader("link", canonicalLink.toString());
+		}
+	}
+
 	private static BufferedImage getPDFImage(GlobalContext globalContext, File imageFile, int page) {
 		return PDFHelper.getPDFImage(imageFile, page);
 	}
@@ -1316,7 +1345,9 @@ public class ImageTransformServlet extends FileServlet {
 			/** * CHECK CACHE ** */
 			if (imageName != null) {
 
-				response.setHeader("link", "<" + URLHelper.createResourceURL(ctx.getContextForAbsoluteURL(), imageName) + ">; rel=\"canonical\"");
+				String canonicalLink = "<" + URLHelper.createResourceURL(ctx.getContextForAbsoluteURL(), imageName) + ">; rel=\"canonical\"";
+				response.setHeader("link", canonicalLink);
+				request.setAttribute(CANONICAL_LINK_ATTRIBUTE, canonicalLink);
 
 				boolean returnImageDescription = false;
 
@@ -1393,15 +1424,12 @@ public class ImageTransformServlet extends FileServlet {
 
 				/* last modified management */
 				long lastModified = getLastModified(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageParam);
-				response.setHeader("Cache-Control", "public,max-age=600");
+				setCacheHeaders(request, response);
 				if (NetHelper.insertEtag(ctx, imageFile, "" + lastModified)) {
 					return;
 				}
 				// response.setHeader("Accept-Ranges", "bytes");
 				// response.setHeader("Transfer-Encoding", null);
-				Calendar cal = Calendar.getInstance();
-				cal.add(Calendar.MINUTE, 10);
-				response.setDateHeader("Expires", cal.getTimeInMillis());
 				if (lastModified > 0) {
 					response.setDateHeader(NetHelper.HEADER_LAST_MODIFIED, lastModified);
 				}
