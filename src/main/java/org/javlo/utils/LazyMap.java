@@ -35,7 +35,7 @@ public class LazyMap extends AbstractMap<String, Object> {
 	public synchronized Object put(String key, Object value) {
 		return data.put(key, value);
 	}
-
+	
 	@Override
 	public synchronized Object get(Object key) {
 		Object value = data.get(key);

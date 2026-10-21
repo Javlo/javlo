@@ -90,6 +90,15 @@ public class FileServlet extends HttpServlet {
 	 * @throws IOException
 	 *             If something fails at I/O level.
 	 */
+	/**
+	 * content type of the served file, by default from the file name.
+	 *
+	 * @return the content type or null if unknown.
+	 */
+	protected String getContentType(File file) {
+		return getServletContext().getMimeType(file.getName());
+	}
+
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response, File file, boolean content) throws IOException {
 
 		// Validate the requested file
@@ -319,7 +328,7 @@ public class FileServlet extends HttpServlet {
 
 		// Get content type by file name and set default GZIP support and content
 		// disposition.
-		String contentType = getServletContext().getMimeType(fileName);
+		String contentType = getContentType(file);
 
 		boolean acceptsGzip = false;
 		String disposition = "inline";

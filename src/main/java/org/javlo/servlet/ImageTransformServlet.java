@@ -387,6 +387,10 @@ public class ImageTransformServlet extends FileServlet {
 				}
 			}
 		}
+		if (children.isEmpty()) {
+			logger.warning("no shared image found for render folder image : " + folderFile);
+			return;
+		}
 		int thumbWidth = config.getFolderThumbWidth(ctx.getDevice(), filter, area);
 		int thumbHeight = config.getFolderThumbHeight(ctx.getDevice(), filter, area);
 
@@ -579,7 +583,6 @@ public class ImageTransformServlet extends FileServlet {
 		if (filter.endsWith(PRELOAD_IMAGE_SUFFIX)) {
 			filter = filter.substring(0, filter.lastIndexOf(PRELOAD_IMAGE_SUFFIX));
 			preloadImage = true;
-			inFileExtention = "png";
 		}
 
 		boolean largeImage = false;
@@ -680,6 +683,10 @@ public class ImageTransformServlet extends FileServlet {
 			logger.warning("could'nt read : " + imageFile);
 			// ctx.getResponse().setStatus(404);
 			return;
+		}
+		if (preloadImage) {
+			/* forced after the source detection : the source can be a pdf, video or svg */
+			imageType = "png";
 		}
 
 		if (config.isBlackAndWhite(device, filter, area)) {			
@@ -1037,6 +1044,38 @@ public class ImageTransformServlet extends FileServlet {
 			}
 		}
 
+	}
+
+	/**
+	 * the cached file keep the name of the source (photo.jpg, doc.pdf...) but the
+	 * content can be in a other format (webp...) : content type detected from the
+	 * first bytes of the file.
+	 */
+	@Override
+	protected String getContentType(File file) {
+		byte[] header = new byte[12];
+		int read = 0;
+		try (InputStream in = new FileInputStream(file)) {
+			int r;
+			while (read < header.length && (r = in.read(header, read, header.length - read)) > 0) {
+				read += r;
+			}
+		} catch (IOException e) {
+			logger.warning("error on read : " + file + " (" + e.getMessage() + ')');
+		}
+		if (read >= 3 && (header[0] & 0xff) == 0xFF && (header[1] & 0xff) == 0xD8 && (header[2] & 0xff) == 0xFF) {
+			return "image/jpeg";
+		}
+		if (read >= 4 && (header[0] & 0xff) == 0x89 && header[1] == 'P' && header[2] == 'N' && header[3] == 'G') {
+			return "image/png";
+		}
+		if (read >= 4 && header[0] == 'G' && header[1] == 'I' && header[2] == 'F' && header[3] == '8') {
+			return "image/gif";
+		}
+		if (read >= 12 && header[0] == 'R' && header[1] == 'I' && header[2] == 'F' && header[3] == 'F' && header[8] == 'W' && header[9] == 'E' && header[10] == 'B' && header[11] == 'P') {
+			return "image/webp";
+		}
+		return super.getContentType(file);
 	}
 
 	private static BufferedImage getPDFImage(GlobalContext globalContext, File imageFile, int page) {
