@@ -27,7 +27,6 @@ import org.javlo.template.Template;
 import org.javlo.template.TemplateFactory;
 import org.javlo.user.AdminUserFactory;
 import org.javlo.user.UserFactory;
-import org.javlo.utils.NamedThreadFactory;
 import org.javlo.utils.TimeMap;
 import org.javlo.utils.TimeTracker;
 import org.javlo.ztatic.FileCache;
@@ -42,10 +41,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -89,74 +87,6 @@ public class ImageTransformServlet extends FileServlet {
 	private static String imageCacheKey = null;
 
 	private static Object imageCacheLock = new Object();
-
-	private static final class ImageTransformThread implements Callable<Void> {
-
-		HttpSession session;
-		Device device;
-		ContentContextBean ctxb;
-		GlobalContext globalContext;
-		ImageConfig config;
-		StaticInfo staticInfo;
-		String filter;
-		String area;
-		Template template;
-		IImageFilter comp;
-		File imageFile;
-		String imageName;
-		String inFileExtention;
-		int focusX;
-		int focusY;
-		ImageConfig.ImageParameters imageParam;
-
-		/*
-		 * public ImageTransformThread(ContentContext ctx, ImageConfig config,
-		 * StaticInfo staticInfo, String filter, String area, Template template,
-		 * IImageFilter comp, File imageFile, String imageName, String inFileExtention,
-		 * ImageConfig.ImageParameters imageParam) { super(); if (DEBUG) {
-		 * System.out.println(""); System.out.
-		 * println("---------------------------  IMAGE FOLDER  -----------------------------"
-		 * ); System.out.println("filter     : " + filter);
-		 * System.out.println("area       : " + area);
-		 * System.out.println("template   : " + (template != null ? template.getName() :
-		 * "no template")); System.out.println("imageName  : " + imageName);
-		 * System.out.println("device     : " + ctx.getDevice());
-		 * System.out.println("cfg.width  : " + config.getWidth(ctx.getDevice(), filter,
-		 * area)); System.out.println("cfg.height : " +
-		 * config.getHeight(ctx.getDevice(), filter, area));
-		 * System.out.println("imageName  : " + imageName); System.out.
-		 * println("------------------------------- IMAGE CONFIG -------------------------------"
-		 * ); System.out.println(config.printConfig(ctx.getDevice(), filter, area));
-		 * System.out.println(
-		 * "----------------------------------------------------------------------------"
-		 * );
-		 * 
-		 * System.out.println(""); } this.session = ctx.getRequest().getSession();
-		 * this.config = config; this.staticInfo = staticInfo; this.filter = filter;
-		 * this.area = area; this.template = template; this.comp = comp; this.imageFile
-		 * = imageFile; this.imageName = imageName; this.inFileExtention =
-		 * inFileExtention; this.device = ctx.getDevice(); try { this.ctxb =
-		 * ctx.getBean(); } catch (Exception e) { e.printStackTrace(); }
-		 * this.globalContext = GlobalContext.getMainInstance(ctx.getRequest());
-		 * this.imageParam = imageParam;
-		 * 
-		 * focusX = StaticInfo.DEFAULT_FOCUS_X; focusY = StaticInfo.DEFAULT_FOCUS_Y; if
-		 * (staticInfo != null) { focusX = staticInfo.getFocusZoneX(ctx); focusY =
-		 * staticInfo.getFocusZoneY(ctx); } }
-		 */
-
-		@Override
-		public Void call() throws Exception {
-			try {
-				ImageTransformServlet.imageTransformForThread(session, ctxb, globalContext, device, config, staticInfo, filter, area, template, comp, imageFile, imageName, inFileExtention, focusX, focusY, imageParam, null);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				throw ex;
-			}
-			return null;
-		}
-
-	}
 
 	public static final class ImageTransforming {
 		private final File file;
@@ -248,7 +178,11 @@ public class ImageTransformServlet extends FileServlet {
 
 	private static final boolean DEBUG = false;
 
-	private ExecutorService executor;
+	/** max time waiting a free transformation slot before a 503 */
+	private static final long TRANSFORM_WAIT_SECONDS = 60;
+
+	/** limit the number of images transformed at the same time (cpu and memory) */
+	private static Semaphore transformSlots;
 
 	@Override
 	public void init() throws ServletException {
@@ -256,15 +190,7 @@ public class ImageTransformServlet extends FileServlet {
 		getServletContext().setAttribute("imagesTransforming", imageTransforming);
 		StaticConfig staticConfig = StaticConfig.getInstance(getServletContext());
 		layerCache = new TimeMap<>(60 * 60 * 24 * 30, staticConfig.getLayerCacheMaxSize());
-		int tc = (int) staticConfig.getTransformingSize();
-		NamedThreadFactory tf = new NamedThreadFactory(ImageTransformServlet.class.getSimpleName() + "-executor");
-		executor = Executors.newFixedThreadPool(tc, tf);
-	}
-
-	@Override
-	public void destroy() {
-		executor.shutdownNow();
-		super.destroy();
+		transformSlots = new Semaphore((int) Math.max(1, staticConfig.getTransformingSize()), true);
 	}
 
 	protected static BufferedImage loadLayer(File file) throws IOException {
@@ -541,15 +467,6 @@ public class ImageTransformServlet extends FileServlet {
 	}
 
 	private void imageTransform(ContentContext ctx, ImageConfig config, StaticInfo staticInfo, String filter, String area, Template template, IImageFilter comp, File imageFile, String imageName, String inFileExtention, ImageConfig.ImageParameters imageParam, File resultFile) throws Exception {
-		/*
-		 * ImageTransformThread imageThread = new ImageTransformThread(ctx, config,
-		 * staticInfo, filter, area, template, comp, imageFile, imageName,
-		 * inFileExtention, imageParam); Future<Void> future =
-		 * executor.submit(imageThread); try { future.get(30, TimeUnit.SECONDS); } catch
-		 * (TimeoutException ex) { future.cancel(true); throw ex; } catch
-		 * (InterruptedException e) { e.printStackTrace(); }
-		 */
-
 		if (ctx != null && staticInfo != null) {
 			imageTransformForThread(ctx.getSession(), ctx.getBean(), GlobalContext.getMainInstance(ctx.getRequest()), ctx.getDevice(), config, staticInfo, filter, area, template, comp, imageFile, imageName, inFileExtention, staticInfo.getFocusZoneX(ctx), staticInfo.getFocusZoneY(ctx), imageParam, resultFile);
 		} else {
@@ -1483,46 +1400,43 @@ public class ImageTransformServlet extends FileServlet {
 
 					Object running = imageTransforming.get(imageKey);
 					if (running == null) {
-						int i = 0;
-						while (imageTransforming.size() > staticConfig.getTransformingSize() && i < 10) {
-							i++;
-							long waitTime = Math.round(5000+10000*Math.random());
-							logger.warning("too much images in transformation. Waiting [" + i + "] - [wait:"+waitTime+"]...");
-							Thread.sleep(waitTime);
-						}
-						if (imageTransforming.size() > staticConfig.getTransformingSize()) {
-							logger.severe("too much images in transformation eject image transform : " + imageKey);
+						if (!transformSlots.tryAcquire(TRANSFORM_WAIT_SECONDS, TimeUnit.SECONDS)) {
+							logger.severe("too much images in transformation (" + imageTransforming.size() + ") eject image transform : " + imageKey);
 							response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 							return;
 						}
-						ImageTransforming transforming = new ImageTransforming(ctx, imageFile);
-						/*
-						 * the lock is taken before publishing the marker : a concurrent request
-						 * finding it in the map always waits for the end of the transformation.
-						 */
-						synchronized (transforming) {
-							running = imageTransforming.putIfAbsent(imageKey, transforming);
-							if (running == null) {
-								try {
-									file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified(), imageParam);
-									if (file == null) {
-										long currentTime = System.currentTimeMillis();
-										if (imageFile.isFile()) {
-											imageTransform(ctx, ImageConfig.getNewInstance(globalContext, request.getSession(), template), staticInfo, filter, area, template, comp, imageFile, imageName, baseExtension, imageParam, tempImageFile);
-										} else {
-											folderTransform(ctx, ImageConfig.getNewInstance(globalContext, request.getSession(), template), staticInfo, filter, area, template, comp, imageFile, imageName, baseExtension, imageParam);
+						try {
+							ImageTransforming transforming = new ImageTransforming(ctx, imageFile);
+							/*
+							 * the lock is taken before publishing the marker : a concurrent request
+							 * finding it in the map always waits for the end of the transformation.
+							 */
+							synchronized (transforming) {
+								running = imageTransforming.putIfAbsent(imageKey, transforming);
+								if (running == null) {
+									try {
+										file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified(), imageParam);
+										if (file == null) {
+											long currentTime = System.currentTimeMillis();
+											if (imageFile.isFile()) {
+												imageTransform(ctx, ImageConfig.getNewInstance(globalContext, request.getSession(), template), staticInfo, filter, area, template, comp, imageFile, imageName, baseExtension, imageParam, tempImageFile);
+											} else {
+												folderTransform(ctx, ImageConfig.getNewInstance(globalContext, request.getSession(), template), staticInfo, filter, area, template, comp, imageFile, imageName, baseExtension, imageParam);
+											}
+											logger.info("transform image (" + StringHelper.renderSize(size) + ") : '" + imageName + "' in site '" + globalContext.getContextKey() + "' page : " + ctx.getRequestContentLanguage() + ctx.getPath() + " time : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - currentTime) + " sec.  #transformation:" + imageTransforming.size());
+											if (tempImageFile == null) {
+												file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified(), imageParam);
+											} else {
+												file = tempImageFile;
+											}
 										}
-										logger.info("transform image (" + StringHelper.renderSize(size) + ") : '" + imageName + "' in site '" + globalContext.getContextKey() + "' page : " + ctx.getRequestContentLanguage() + ctx.getPath() + " time : " + StringHelper.renderTimeInSecond(System.currentTimeMillis() - currentTime) + " sec.  #transformation:" + imageTransforming.size());
-										if (tempImageFile == null) {
-											file = loadFileFromDisk(ctx, imageName, filter, area, ctx.getDevice(), template, comp, imageFile.lastModified(), imageParam);
-										} else {
-											file = tempImageFile;
-										}
+									} finally {
+										imageTransforming.remove(imageKey);
 									}
-								} finally {
-									imageTransforming.remove(imageKey);
 								}
 							}
+						} finally {
+							transformSlots.release();
 						}
 					}
 					if (running != null) {

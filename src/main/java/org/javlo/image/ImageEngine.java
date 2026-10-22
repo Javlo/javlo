@@ -112,7 +112,8 @@ public class ImageEngine {
 		try {
 			Metadata metadata = ImageMetadataReader.readMetadata(file);
 			int orientation = getOrientation(metadata);
-			if (orientation != 1 && isAlreadyRotated(metadata, outImage)) {
+			// only orientations 5 to 8 swap width and height (detection possible)
+			if (orientation >= 5 && isAlreadyRotated(metadata, outImage)) {
 				logger.warning("pixels already rotated, exif orientation (" + orientation + ") ignored : " + file);
 			} else {
 				outImage = rotateImageBasedOnOrientation(outImage, orientation);
@@ -246,22 +247,60 @@ public class ImageEngine {
 		}
 	}
 
+	/**
+	 * apply the exif orientation : rotation by quarter turn and/or mirror, exact
+	 * pixel copy (no interpolation).
+	 *
+	 * @param orientation
+	 *            exif value : 1 normal, 2 mirror horizontal, 3 rotate 180, 4
+	 *            mirror vertical, 5 transpose, 6 rotate 90 CW, 7 transverse, 8
+	 *            rotate 90 CCW.
+	 */
 	private static BufferedImage rotateImageBasedOnOrientation(BufferedImage originalImage, int orientation) {
-		int width = originalImage.getWidth();
-		int height = originalImage.getHeight();
-
-		BufferedImage rotatedImage = null;
-		Graphics2D graphics = null;
-
-		// Handle rotation based on orientation
+		int w = originalImage.getWidth();
+		int h = originalImage.getHeight();
+		// AffineTransform(m00, m10, m01, m11, m02, m12) : x' = m00*x + m01*y + m02 ; y' = m10*x + m11*y + m12
+		AffineTransform transform;
 		switch (orientation) {
-			case 6: // 90 CW
-				return rotate(originalImage, 90, null);
-			// Add cases for other orientations if necessary
-			default:
-				// No rotation needed
-				return originalImage;
+		case 2:
+			transform = new AffineTransform(-1, 0, 0, 1, w, 0);
+			break;
+		case 3:
+			transform = new AffineTransform(-1, 0, 0, -1, w, h);
+			break;
+		case 4:
+			transform = new AffineTransform(1, 0, 0, -1, 0, h);
+			break;
+		case 5:
+			transform = new AffineTransform(0, 1, 1, 0, 0, 0);
+			break;
+		case 6:
+			transform = new AffineTransform(0, 1, -1, 0, h, 0);
+			break;
+		case 7:
+			transform = new AffineTransform(0, -1, -1, 0, h, w);
+			break;
+		case 8:
+			transform = new AffineTransform(0, -1, 1, 0, 0, w);
+			break;
+		default:
+			return originalImage;
 		}
+		boolean swap = orientation >= 5;
+		int type = originalImage.getColorModel() instanceof IndexColorModel ? BufferedImage.TYPE_INT_ARGB : getSafeImageType(originalImage);
+		BufferedImage outImage = new BufferedImage(swap ? h : w, swap ? w : h, type);
+		Graphics2D g = outImage.createGraphics();
+		try {
+			g.setComposite(AlphaComposite.Src);
+			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+			if (type == BufferedImage.TYPE_INT_ARGB && !originalImage.getColorModel().getColorSpace().isCS_sRGB()) {
+				originalImage = toSRGB(originalImage);
+			}
+			g.drawImage(originalImage, transform, null);
+		} finally {
+			g.dispose();
+		}
+		return outImage;
 	}
 
 
