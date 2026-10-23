@@ -385,6 +385,21 @@ public class DynamicComponent extends AbstractVisualComponent implements IStatic
                                 html = html.replace("field." + field.getType() + "." + field.getName() + '.', field.getName() + (field.isI18n()?".reference.":"."));
                             }
                         }
+                        /* field still referenced in the HTML but unknown from the definition (definition cached
+                         * before the HTML was changed) : rewrite it like a known field, otherwise the JSP keeps
+                         * field.<type>.<name>. and Jasper fails to compile it (e.g. "boolean" is a Java keyword). */
+                        Map<String, String> unknownFields = Template.extractPropertiesFromHtml(html);
+                        for (Map.Entry<String, String> entry : unknownFields.entrySet()) {
+                            String key = entry.getKey();
+                            if (key.endsWith(".type")) {
+                                String name = key.substring("field.".length(), key.length() - ".type".length());
+                                if (unknownFields.get("field." + name + ".group") == null) {
+                                    logger.warning("field not found in definition of '" + getType() + "', rewrite from html : " + name);
+                                    boolean i18n = StringHelper.isTrue(unknownFields.getOrDefault("field." + name + ".i18n", "true"));
+                                    html = html.replace("field." + entry.getValue() + "." + name + '.', name + (i18n ? ".reference." : "."));
+                                }
+                            }
+                        }
                         if (!isWrapped()) {
                             html = html.replace(Template.PREVIEW_EDIT_CODE, "${"+AbstractVisualComponent.PREVIEW_ATTRIBUTES+"}");
                         }
