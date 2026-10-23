@@ -13,8 +13,7 @@ public class CommitAndGitTemplate extends AbstractMacro {
 
     @Override
     public String perform(ContentContext ctx, Map<String, Object> params) throws Exception {
-        ctx.getCurrentTemplate().clearRendererAndGit(ctx);
-        return null;
+        return ctx.getCurrentTemplate().clearRendererAndGit(ctx);
     }
 
     @Override
