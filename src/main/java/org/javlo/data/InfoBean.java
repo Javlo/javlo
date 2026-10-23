@@ -916,6 +916,21 @@ public class InfoBean {
 		return Encode.forHtmlAttribute(getPageTitle());
 	}
 
+	/**
+	 * page title without html tag, tags are replaced by a space : "titre<br/>sous titre" > "titre sous titre"
+	 */
+	public String getPageTitleNoTag() {
+		String title = getPageTitle();
+		if (title == null) {
+			return "";
+		}
+		return title.replaceAll("<[^>]*>", " ").replaceAll("\\s+", " ").trim();
+	}
+
+	public String getPageTitleForAttributeNoTag() {
+		return Encode.forHtmlAttribute(getPageTitleNoTag());
+	}
+
 	public String getTitle() {
 		try {
 			MenuElement popupPage = NavigationHelper.getPopupPage(ctx);
