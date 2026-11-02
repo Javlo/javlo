@@ -610,6 +610,22 @@ public class InfoBean {
 		return outLocale;
 	}
 
+	/**
+	 * other content languages with the same language as the current page (ex. de-ch -> de, de-be, de-at...) and real content.
+	 */
+	public List<LanguageBean> getOtherLocaleForPageLanguage() throws Exception {
+		Locale currentLocale = Locale.forLanguageTag(ctx.getRequestContentLanguage());
+		Map<String, String> urls = getLanguageRealContentURLs();
+		List<LanguageBean> outLocale = new LinkedList<>();
+		for (String lg : globalContext.getContentLanguages()) {
+			Locale locale = Locale.forLanguageTag(lg);
+			if (!locale.equals(currentLocale) && locale.getLanguage().equalsIgnoreCase(currentLocale.getLanguage()) && urls.get(lg) != null) {
+				outLocale.add(new LanguageBean(locale, urls.get(lg)));
+			}
+		}
+		return outLocale;
+	}
+
 	public String getCountryEnglishName() {
 		Locale locale = getLocale();
 		String name = locale.getDisplayCountry(Locale.ENGLISH);

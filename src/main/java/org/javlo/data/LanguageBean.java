@@ -33,6 +33,11 @@ public class LanguageBean {
     public String getDisplayCountry() {
         if (locale.getLanguage().contentEquals("en") && StringHelper.isEmpty(locale.getCountry())) {
             return "international";
+        } else if (StringHelper.isEmpty(locale.getCountry())) {
+            // language-only locale (ex. "de") : try the country with the same code (DE -> Deutschland)
+            String code = locale.getLanguage().toUpperCase();
+            String country = new Locale(locale.getLanguage(), code).getDisplayCountry(locale);
+            return country.equals(code) ? locale.getDisplayLanguage(locale) : country;
         } else {
             return locale.getDisplayCountry(locale);
         }
