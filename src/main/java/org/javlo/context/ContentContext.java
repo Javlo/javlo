@@ -659,6 +659,9 @@ public class ContentContext {
 		forceGlobalContext = ctx.forceGlobalContext;
 		
 		forcePageTitle = ctx.forcePageTitle;
+
+		/* keep the country of the request when the content is imported from an other country (same language) */
+		mainCountryLg = ctx.mainCountryLg;
 	}
 
 	public String getArea() {
@@ -838,7 +841,16 @@ public class ContentContext {
 			return this;
 		} else {
 			ContentContext mainCtx = new ContentContext(this);
+			MenuElement currentPage = currentPageCached != null ? currentPageCached.get() : null;
 			mainCtx.setAllLanguage(mainCountryLg);
+			/* the language change reset the current page, it must not be resolved again from the path */
+			if (currentPage != null) {
+				try {
+					mainCtx.setCurrentPageCached(currentPage);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 			return mainCtx;
 		}
 	}
@@ -895,7 +907,7 @@ public class ContentContext {
 					}
 					if (lgCtx.getLocale().getLanguage().equals(getLocale().getLanguage())) {
 						if (currentEmpty ? !page.isEmpty(lgCtx, null, false) : page.isLocalRealContent(lgCtx)) {
-							lgCtx.mainCountryLg = this.getRequestContentLanguage();
+							lgCtx.mainCountryLg = this.mainCountryLg != null ? this.mainCountryLg : this.getRequestContentLanguage();
 							return lgCtx;
 						}
 					}
@@ -1637,6 +1649,8 @@ public class ContentContext {
 	 * @param lg
 	 */
 	public void setAllLanguage(String lg) {
+		/* an explicit language change cancels the import from an other country */
+		mainCountryLg = null;
 		setLanguage(lg);
 		setContentLanguage(lg);
 		setRequestContentLanguage(lg);

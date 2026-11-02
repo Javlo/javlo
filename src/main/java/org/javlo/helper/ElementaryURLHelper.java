@@ -202,7 +202,10 @@ public abstract class ElementaryURLHelper {
 	}
 
 	protected static final String createNoProtocolURL(ContentContext ctx, GlobalContext globalContext, String servletPath, String uri, boolean ajax, boolean withPathPrefix, boolean widthEncodeURL) {
-		
+
+		/* content imported from an other country (ex: de-be rendered on de-ch) : the links must stay in the requested country */
+		ctx = ctx.getMainCountryContext();
+
 		String newUri;
 
 		if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
