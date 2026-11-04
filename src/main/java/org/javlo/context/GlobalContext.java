@@ -61,6 +61,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 public class GlobalContext implements Serializable, IPrintInfo {
@@ -226,6 +227,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 	 * public for urls.jsp
 	 */
 	private Map<String, MenuElement> viewPages = null;
+
+	/** cache of the view pages by page path (separated from viewPages, which is keyed by the urls of the url factory) */
+	private Map<String, MenuElement> viewPathPages = null;
 
 	private IURLFactory urlFromFactoryImported = NO_URL_FACTORY;
 
@@ -2479,7 +2483,9 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				viewPages = localViewPages;
 			}
 		}
-		if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
+		/* the url cache is keyed by the urls of the url factory : a page path (useURLCreator=false) must not be searched in it,
+		 * otherwise a page path can match the url of an other page (ex: page path '/accueil' and url '/accueil' of an other page labeled 'Accueil') */
+		if (ctx.getRenderMode() == ContentContext.VIEW_MODE && useURLCreator) {
 			String keyURL = url;
 			if (urlCreator != null) {
 				String urlRef = url;
@@ -2504,6 +2510,14 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				}
 			}
 			// no url cache (ex: during loadNavigationUrls) -> search in the navigation tree
+		} else if (ctx.getRenderMode() == ContentContext.VIEW_MODE && !useURLCreator && localViewPages != null) {
+			Map<String, MenuElement> pathPages = viewPathPages;
+			if (pathPages != null) {
+				MenuElement page = pathPages.get(url);
+				if (page != null) {
+					return page == MenuElement.NOT_FOUND_PAGE ? null : page;
+				}
+			}
 		}
 		MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);
 		if (url.equals("/")) {
@@ -2514,6 +2528,18 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			// "+DebugHelper.getCaller(10)); //TODO: remove debug trace
 			MenuElement page = MenuElement.searchChild(root, ctx, url, pastNode);
 			if (localViewPages == null) {
+				return page;
+			}
+			if (!useURLCreator) {
+				/* page path : cached in his own map, never in the url cache */
+				if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
+					Map<String, MenuElement> pathPages = viewPathPages;
+					if (pathPages == null) {
+						pathPages = new ConcurrentHashMap<String, MenuElement>();
+						viewPathPages = pathPages;
+					}
+					pathPages.put(url, page != null ? page : MenuElement.NOT_FOUND_PAGE);
+				}
 				return page;
 			}
 			if (page != null && ctx.getRenderMode() == ContentContext.VIEW_MODE) {
@@ -3012,6 +3038,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 			cacheMaps.clear();
 			quietArea = null;
 			viewPages = null;
+			viewPathPages = null;
 			urlFromFactoryImported = NO_URL_FACTORY;
 			try {
 				ReverseLinkService.getInstance(this).clearCache();

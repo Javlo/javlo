@@ -38,7 +38,8 @@ request.setAttribute("safeTaxonomyId", taxonomyIdParam);
 		</li>
 		<c:forEach var="lang" items="${info.contentLanguages}">
 			<li class="label">
-				<label class="lang" for="label-${lang}-${safeTaxonomyId}">${lang}</label>
+				<c:set var="langSep" value="${fn:contains(lang, '-') ? '-' : (fn:contains(lang, '_') ? '_' : '')}" />
+				<label class="lang${empty langSep ? '' : ' with-country'}" for="label-${lang}-${safeTaxonomyId}" title="${lang}"><c:choose><c:when test="${empty langSep}">${lang}</c:when><c:otherwise><span class="lg">${fn:substringBefore(lang, langSep)}</span><span class="country">${fn:toUpperCase(fn:substringAfter(lang, langSep))}</span></c:otherwise></c:choose></label>
 				<span class="text"><input type="text" name="label-${lang}-${safeTaxonomyId}" id="label-${lang}-${safeTaxonomyId}" class="hidden-input form-control" value="${node.labels[lang]}" placeholder="..." /></span>
 			</li>
 		</c:forEach>
