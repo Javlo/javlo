@@ -162,6 +162,31 @@ public class TaxonomyBean {
 		return fallback;
 	}
 
+	/**
+	 * read only view of the labels with fallback on the same language for another
+	 * country and on the name, for templates : ${cat.displayLabels[info.language]}.
+	 * (getLabels() stays the raw map, used by the editor)
+	 */
+	public Map<String, String> getDisplayLabels() {
+		return new AbstractMap<String, String>() {
+			@Override
+			public String get(Object key) {
+				String label = getLabel(key == null ? null : key.toString());
+				return StringHelper.isEmpty(label) ? getName() : label;
+			}
+
+			@Override
+			public boolean containsKey(Object key) {
+				return true;
+			}
+
+			@Override
+			public Set<Map.Entry<String, String>> entrySet() {
+				return Collections.unmodifiableMap(labels).entrySet();
+			}
+		};
+	}
+
 	public boolean updateLabel(String lang, String label) {
 		pathLabels = null;
 		if (StringHelper.isEmpty(label)) {
