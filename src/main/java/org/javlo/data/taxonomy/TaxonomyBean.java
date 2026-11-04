@@ -102,7 +102,7 @@ public class TaxonomyBean {
 				TaxonomyBean parent = getParent();
 				if (parent != null) {
 					while (parent.getParent() != null) {
-						String l = parent.getLabels().get(lg);
+						String l = parent.getLabel(lg);
 						if (l == null) {
 							l = parent.getName();
 						}
@@ -127,14 +127,46 @@ public class TaxonomyBean {
 		this.labels = labels;
 	}
 
+	/**
+	 * label for a language, with fallback on the same language for another country.
+	 * order : exact match ("fr-be"), base language ("fr"), same language with another
+	 * country ("fr-fr", "fr-lu"... in alphabetical order).
+	 * @return the label or null if no label found for this language.
+	 */
+	public String getLabel(String lang) {
+		if (lang == null) {
+			return null;
+		}
+		String label = labels.get(lang);
+		if (!StringHelper.isEmpty(label)) {
+			return label;
+		}
+		String lg = lang.toLowerCase();
+		int sep = lg.indexOf('-') >= 0 ? lg.indexOf('-') : lg.indexOf('_');
+		String base = sep > 0 ? lg.substring(0, sep) : lg;
+		String fallback = null;
+		String fallbackKey = null;
+		for (Map.Entry<String, String> e : labels.entrySet()) {
+			if (e.getKey() == null || StringHelper.isEmpty(e.getValue())) {
+				continue;
+			}
+			String key = e.getKey().toLowerCase();
+			if (key.equals(lg) || key.equals(base)) {
+				return e.getValue();
+			}
+			if ((key.startsWith(base + "-") || key.startsWith(base + "_")) && (fallbackKey == null || key.compareTo(fallbackKey) < 0)) {
+				fallbackKey = key;
+				fallback = e.getValue();
+			}
+		}
+		return fallback;
+	}
+
 	public boolean updateLabel(String lang, String label) {
 		pathLabels = null;
 		if (StringHelper.isEmpty(label)) {
-			if (labels.get(lang) == null) {
-				return false;
-			} else {
-				labels.remove(lang);
-			}
+			/* an empty label means "no translation" : never store null or "" */
+			return labels.remove(lang) != null;
 		}
 		if (labels.get(lang) == null || !labels.get(lang).equals(label)) {
 			labels.put(lang, label);

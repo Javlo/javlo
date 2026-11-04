@@ -623,6 +623,10 @@ public class XMLHelper {
 		}
 		out.println("<taxo name=\"" + Encode.forXmlAttribute(node.getName()) + "\" id=\"" + Encode.forXmlAttribute(node.getId()) + "\"" + deco + ">");
 		for (Map.Entry<String, String> label : node.getLabels().entrySet()) {
+			/* Encode.forXmlContent(null) returns the text "null" : skip empty labels */
+			if (StringHelper.isEmpty(label.getValue())) {
+				continue;
+			}
 			out.println("<label lang=\"" + Encode.forXmlAttribute(label.getKey()) + "\">" + Encode.forXmlContent(label.getValue()) + "</label>");
 		}
 		for (TaxonomyBean child : node.getChildren()) {

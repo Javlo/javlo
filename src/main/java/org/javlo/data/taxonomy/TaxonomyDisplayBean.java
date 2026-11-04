@@ -96,7 +96,7 @@ public class TaxonomyDisplayBean {
 				parentLabel = getParent().getPathLabel()+" > ";
 			}
 		}
-		String label = bean.getLabels().get(ctx.getRequestContentLanguage());
+		String label = bean.getLabel(ctx.getRequestContentLanguage());
 		if (StringHelper.isEmpty(label)) {
 			return parentLabel+getName();
 		} else {
@@ -109,7 +109,7 @@ public class TaxonomyDisplayBean {
 		if (displayParentLabel) {
 			parentLabel = getParent().getLabel()+" > ";
 		}
-		String label = bean.getLabels().get(ctx.getRequestContentLanguage());
+		String label = bean.getLabel(ctx.getRequestContentLanguage());
 		if (StringHelper.isEmpty(label)) {
 			return parentLabel+getName();
 		} else {
@@ -118,7 +118,7 @@ public class TaxonomyDisplayBean {
 	}
 	
 	public String getLocalLabel() {		
-		String label = bean.getLabels().get(ctx.getRequestContentLanguage());
+		String label = bean.getLabel(ctx.getRequestContentLanguage());
 		if (StringHelper.isEmpty(label)) {
 			return getName();
 		} else {

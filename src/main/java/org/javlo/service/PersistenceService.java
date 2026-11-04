@@ -1488,7 +1488,12 @@ public class PersistenceService {
 			taxonomyBean.setDecoration(node.getAttributeValue("deco", ""));
 			for (NodeXML child : node.getChildren()) {
 				if (child.getName().equals("label")) {
-					taxonomyBean.updateLabel(child.getAttributeValue("lang"), child.getContent());
+					String labelContent = child.getContent();
+					/* "null" was written by an old bug when a label was emptied : treat it as no label */
+					if ("null".equals(labelContent)) {
+						labelContent = null;
+					}
+					taxonomyBean.updateLabel(child.getAttributeValue("lang"), labelContent);
 				} else if (child.getName().equals("taxo")) {
 					TaxonomyBean bean = new TaxonomyBean();
 					taxonomyBean.addChildAsLast(bean);

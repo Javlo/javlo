@@ -103,7 +103,7 @@ public class TaxonomySessionComponent extends AbstractPropertiesComponent implem
 		}
 		List<Map.Entry<String,String>> values = new LinkedList<Map.Entry<String,String>>();
 		for (TaxonomyBean bean : taxoBean.getAllChildren()) {
-			values.add(new AbstractMap.SimpleEntry(bean.getId(), bean.getLabels().get(ctx.getRequestContentLanguage())));
+			values.add(new AbstractMap.SimpleEntry(bean.getId(), bean.getLabel(ctx.getRequestContentLanguage())));
 		}
 		Collections.sort(values, new Comparator<Map.Entry<String,String>>() {
 			@Override
