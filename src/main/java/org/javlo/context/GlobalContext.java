@@ -2483,9 +2483,25 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				viewPages = localViewPages;
 			}
 		}
-		/* the url cache is keyed by the urls of the url factory : a page path (useURLCreator=false) must not be searched in it,
-		 * otherwise a page path can match the url of an other page (ex: page path '/accueil' and url '/accueil' of an other page labeled 'Accueil') */
-		if (ctx.getRenderMode() == ContentContext.VIEW_MODE && useURLCreator) {
+		/* useURLCreator=false : the argument is a page path OR an url (many callers, ex: ContentContext.getCurrentPage(), pass the request path).
+		 * the page path is searched first : otherwise a page path can match the url of an other page in the url cache
+		 * (ex: page path '/accueil' and url '/accueil' of an other page labeled 'Accueil'), then the url cache. */
+		if (ctx.getRenderMode() == ContentContext.VIEW_MODE && !useURLCreator && localViewPages != null && !url.equals("/")) {
+			Map<String, MenuElement> pathPages = viewPathPages;
+			if (pathPages == null) {
+				pathPages = new ConcurrentHashMap<String, MenuElement>();
+				viewPathPages = pathPages;
+			}
+			MenuElement page = pathPages.get(url);
+			if (page == null) {
+				page = MenuElement.searchChild(ContentService.getInstance(ctx.getRequest()).getNavigation(ctx), ctx, url, new HashSet<String>());
+				pathPages.put(url, page != null ? page : MenuElement.NOT_FOUND_PAGE);
+			}
+			if (page != MenuElement.NOT_FOUND_PAGE) {
+				return page;
+			}
+		}
+		if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
 			String keyURL = url;
 			if (urlCreator != null) {
 				String urlRef = url;
@@ -2510,14 +2526,6 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				}
 			}
 			// no url cache (ex: during loadNavigationUrls) -> search in the navigation tree
-		} else if (ctx.getRenderMode() == ContentContext.VIEW_MODE && !useURLCreator && localViewPages != null) {
-			Map<String, MenuElement> pathPages = viewPathPages;
-			if (pathPages != null) {
-				MenuElement page = pathPages.get(url);
-				if (page != null) {
-					return page == MenuElement.NOT_FOUND_PAGE ? null : page;
-				}
-			}
 		}
 		MenuElement root = ContentService.getInstance(ctx.getRequest()).getNavigation(ctx);
 		if (url.equals("/")) {
@@ -2531,15 +2539,7 @@ public class GlobalContext implements Serializable, IPrintInfo {
 				return page;
 			}
 			if (!useURLCreator) {
-				/* page path : cached in his own map, never in the url cache */
-				if (ctx.getRenderMode() == ContentContext.VIEW_MODE) {
-					Map<String, MenuElement> pathPages = viewPathPages;
-					if (pathPages == null) {
-						pathPages = new ConcurrentHashMap<String, MenuElement>();
-						viewPathPages = pathPages;
-					}
-					pathPages.put(url, page != null ? page : MenuElement.NOT_FOUND_PAGE);
-				}
+				/* page path : already cached in viewPathPages, never in the url cache */
 				return page;
 			}
 			if (page != null && ctx.getRenderMode() == ContentContext.VIEW_MODE) {
