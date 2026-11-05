@@ -502,7 +502,8 @@ public abstract class AbstractVisualComponent implements IContentVisualComponent
 			mobile = 1;
 		}
 
-		String keySuffix = contextKey + '-' + ctx.getLanguage() + '-' + ctx.getRequestContentLanguage() + '-' + ctx.getRenderMode() + '-' + templateId + '-' + pageId + '-' + mobile;
+		/* mainCountryLg : content imported from an other country (ex: de-at displayed on de-ch), the links of the html point to the main country -> one cache by main country */
+		String keySuffix = contextKey + '-' + ctx.getLanguage() + '-' + ctx.getRequestContentLanguage() + '-' + StringHelper.neverNull(ctx.mainCountryLg) + '-' + ctx.getRenderMode() + '-' + templateId + '-' + pageId + '-' + mobile;
 		RequestService requestService = RequestService.getInstance(ctx.getRequest());
 		if (requestService.getParameter(CACHE_KEY_SUFFIX_PARAM_NAME, null) != null) {
 			keySuffix = keySuffix + '-' + requestService.getParameter(CACHE_KEY_SUFFIX_PARAM_NAME, null);
