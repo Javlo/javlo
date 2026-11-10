@@ -470,7 +470,7 @@ public class ImageTransformServlet extends FileServlet {
 		if (ctx != null && staticInfo != null) {
 			imageTransformForThread(ctx.getSession(), ctx.getBean(), GlobalContext.getMainInstance(ctx.getRequest()), ctx.getDevice(), config, staticInfo, filter, area, template, comp, imageFile, imageName, inFileExtention, staticInfo.getFocusZoneX(ctx), staticInfo.getFocusZoneY(ctx), imageParam, resultFile);
 		} else {
-			logger.severe("ctx | staticInfo null.");
+			logger.severe("[image-error] ctx | staticInfo null, image not transformed : " + imageFile + " imageName=" + imageName + " (ctx null:" + (ctx == null) + ", staticInfo null:" + (staticInfo == null) + ")");
 		}
 	}
 
@@ -601,7 +601,7 @@ public class ImageTransformServlet extends FileServlet {
 			}
 		}
 		if (img == null || imageType == null) {
-			logger.warning("could'nt read : " + imageFile);
+			logger.warning("[image-error] could'nt read : " + imageFile + " (img null:" + (img == null) + ", imageType:" + imageType + ", extension:" + inFileExtention + ", isImage:" + StringHelper.isImage(imageFile.getName()) + ", size:" + imageFile.length() + ")");
 			// ctx.getResponse().setStatus(404);
 			return;
 		}
@@ -1080,7 +1080,7 @@ public class ImageTransformServlet extends FileServlet {
 		try {
 			ctx = ContentContext.getFileContentContext(request, response);
 		} catch (Exception e2) {
-			e2.printStackTrace();
+			logger.log(Level.SEVERE, "[image-error] unable to create ContentContext for url : " + request.getRequestURI(), e2);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			return;
 		}
@@ -1132,7 +1132,13 @@ public class ImageTransformServlet extends FileServlet {
 
 		// org.javlo.helper.Logger.stepCount("transform", "end tracking");
 
+		if (request.getPathInfo() == null || request.getPathInfo().length() < 2) {
+			logger.warning("[image-error] empty path info on url : " + request.getRequestURI());
+			response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			return;
+		}
 		String pathInfo = request.getPathInfo().substring(1);
+		final String originalPathInfo = pathInfo;
 
 		pathInfo = SessionFolder.getInstance(request.getSession(), globalContext).correctAndcheckUrl(pathInfo);
 
@@ -1140,7 +1146,10 @@ public class ImageTransformServlet extends FileServlet {
 		String realURL = globalContext.getTransformShortURL(pathInfo);
 		if (realURL != null) {
 			realURL = URLHelper.cleanPath(realURL, false);
+			logger.fine("short url resolved : " + pathInfo + " -> " + realURL);
 			pathInfo = realURL;
+		} else {
+			logger.fine("no short url found for : " + pathInfo + " (context:" + globalContext.getContextKey() + ")");
 		}
 
 		String imageName = pathInfo;
@@ -1170,6 +1179,7 @@ public class ImageTransformServlet extends FileServlet {
 						pathInfo = pathInfo.substring(slachIndex + 1);
 						slachIndex = pathInfo.indexOf('/');
 						if (slachIndex < 0) {
+							logger.warning("[image-error] bad image url structure (no area found, expected filter/template/area/path) url=" + request.getRequestURI() + " pathInfo=" + originalPathInfo + " shortUrlResolved=" + (realURL != null) + " filter=" + filter + " remaining=" + pathInfo + " context=" + globalContext.getContextKey());
 							response.sendError(HttpServletResponse.SC_NOT_FOUND);
 							return;
 						}
@@ -1203,14 +1213,16 @@ public class ImageTransformServlet extends FileServlet {
 						}
 						if (!Template.EDIT_TEMPLATE_CODE.equals(templateId)) {
 							template = TemplateFactory.getTemplates(getServletContext()).get(templateId);
+							if (template == null) {
+								logger.warning("[image-error] template not found : '" + templateId + "' url=" + request.getRequestURI());
+							}
 						}
 					} catch (Exception e) {
-						e.printStackTrace();
+						logger.log(Level.SEVERE, "[image-error] error loading template '" + templateId + "' url=" + request.getRequestURI(), e);
 					}
 					imageName = pathInfo;
 				} catch (NumberFormatException e1) {
-					logger.warning("parsing path error on : " + request.getRequestURI());
-					e1.printStackTrace();
+					logger.log(Level.WARNING, "[image-error] parsing path error on : " + request.getRequestURI() + " pathInfo=" + originalPathInfo, e1);
 				}
 			}
 
@@ -1244,6 +1256,7 @@ public class ImageTransformServlet extends FileServlet {
 			if (staticInfo != null) {
 				if (AdminUserFactory.createUserFactory(GlobalContext.getMainInstance(ctx.getRequest()), request.getSession()).getCurrentUser(request.getSession()) == null) {
 					if (!staticInfo.canRead(ctx, UserFactory.createUserFactory(globalContext, request.getSession()).getCurrentUser(globalContext, request.getSession()), request.getParameter(RESOURCE_TOKEN_KEY))) {
+						logger.warning("[image-error] read access refused (staticInfo.canRead=false) url=" + request.getRequestURI() + " file=" + staticInfo.getFile());
 						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 						return;
 					}
@@ -1295,8 +1308,9 @@ public class ImageTransformServlet extends FileServlet {
 					 * data folder.
 					 */
 					imageFile = resolveImageFile(staticConfig, baseFolder, dataFolder, imageName);
+					logger.fine("image resolution : url=" + request.getRequestURI() + " filter=" + filter + " area=" + area + " template=" + (template != null ? template.getId() : null) + " imageName=" + imageName + " baseFolder=" + baseFolder + " dataFolder=" + dataFolder + " localFile=" + localFile);
 					if (imageFile == null) {
-						logger.warning("access refused : " + request.getRequestURI());
+						logger.warning("[image-error] access refused (path outside base folder or private folder) url=" + request.getRequestURI() + " imageName=" + imageName + " baseFolder=" + baseFolder);
 						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 						return;
 					}
@@ -1309,7 +1323,7 @@ public class ImageTransformServlet extends FileServlet {
 						}
 					}
 					if (!imageFile.exists()) {
-						logger.warning("image not found : " + imageFile);
+						logger.warning("[image-error] image not found : " + imageFile + " url=" + request.getRequestURI() + " imageName=" + imageName + " baseFolder=" + baseFolder + " filter=" + filter + " area=" + area);
 						imageName = NO_IMAGE_FILE;
 						imageFile = new File(ResourceHelper.getRealPath(ctx.getRequest().getSession().getServletContext(), imageName));
 					}
@@ -1317,7 +1331,7 @@ public class ImageTransformServlet extends FileServlet {
 					if (!imageFile.exists() || imageFile.isDirectory()) {
 						File dirFile = new File(StringHelper.getFileNameWithoutExtension(imageFile.getAbsolutePath()));
 						if (!dirFile.exists()) {
-							logger.warning("file not found : " + imageFile);
+							logger.warning("[image-error] file not found (even no-image fallback) : " + imageFile + " url=" + request.getRequestURI());
 							response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 							return;
 						} else {
@@ -1448,7 +1462,7 @@ public class ImageTransformServlet extends FileServlet {
 					if (file != null) {
 						super.processRequest(request, response, file, content);
 					} else {
-						logger.warning("image not transformed : " + imageFile);
+						logger.warning("[image-error] image not transformed (no file in cache after transform) : " + imageFile + " url=" + request.getRequestURI() + " imageName=" + imageName + " filter=" + filter + " area=" + area + " template=" + (template != null ? template.getId() : null) + " staticInfo=" + (staticInfo != null) + " imageKey=" + imageKey);
 						response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 					}
 
@@ -1468,13 +1482,10 @@ public class ImageTransformServlet extends FileServlet {
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
-			logger.warning("problem with : " + imageName + " (" + e.getMessage() + ')');
+			logger.log(Level.WARNING, "[image-error] IO problem with : " + imageName + " url=" + request.getRequestURI() + " (" + e.getMessage() + ')', e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
-			e.printStackTrace();
-			logger.warning("image problem on url : " + request.getRequestURI());
-			logger.warning(e.getMessage());
+			logger.log(Level.SEVERE, "[image-error] image problem on url : " + request.getRequestURI() + " imageName=" + imageName + " (" + e.getClass().getName() + " : " + e.getMessage() + ')', e);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		} finally {
 			try {
