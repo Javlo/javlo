@@ -1343,6 +1343,10 @@ public class ImageTransformServlet extends FileServlet {
 					baseExtension = StringHelper.getFileExtension(imageFile.getName());
 				}
 
+				if (imageFile.isFile() && imageFile.length() == 0) {
+					logger.warning("[image-error] source image file is empty (0 byte) : " + imageFile + " url=" + request.getRequestURI());
+				}
+
 				if (returnImageDescription) {
 					StaticInfo info = StaticInfo.getInstance(ctx, imageFile);
 					response.setContentType("text/html");
@@ -1377,6 +1381,9 @@ public class ImageTransformServlet extends FileServlet {
 				}
 
 				if ((file != null)) {
+					if (file.length() == 0) {
+						logger.warning("[image-error] cached image file is empty (0 byte) : " + file + " source=" + imageFile + " (source size:" + imageFile.length() + ") url=" + request.getRequestURI());
+					}
 					super.processRequest(request, response, file, content);
 					// if (file.length() > 0) {
 					// response.setContentLength((int) file.length());
@@ -1460,6 +1467,9 @@ public class ImageTransformServlet extends FileServlet {
 						}
 					}
 					if (file != null) {
+						if (file.length() == 0) {
+							logger.warning("[image-error] transformed image file is empty (0 byte) : " + file + " source=" + imageFile + " (source size:" + imageFile.length() + ") url=" + request.getRequestURI());
+						}
 						super.processRequest(request, response, file, content);
 					} else {
 						logger.warning("[image-error] image not transformed (no file in cache after transform) : " + imageFile + " url=" + request.getRequestURI() + " imageName=" + imageName + " filter=" + filter + " area=" + area + " template=" + (template != null ? template.getId() : null) + " staticInfo=" + (staticInfo != null) + " imageKey=" + imageKey);

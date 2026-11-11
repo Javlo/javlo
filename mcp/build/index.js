@@ -167,6 +167,22 @@ server.registerTool("nav_get", {
     const data = await callAction("nav.get", { path });
     return ok(data);
 });
+server.registerTool("nav_xml", {
+    description: "Retourne l'export XML d'une page : propriétés + composants (id, type, zone, style, colonnes, valeur) dans l'ordre d'affichage. Utiliser les id pour content_edit / content_move / content_remove, ou comme 'previous' dans content_add.",
+    inputSchema: {
+        path: z.string().describe("ID, nom ou chemin de la page"),
+        lang: z.string().optional().describe("Langue du contenu (ex: 'fr'). Par défaut : toutes les langues."),
+        recursive: z.boolean().optional().describe("Inclure les pages enfants (défaut: false)"),
+    },
+}, async ({ path, lang, recursive }) => {
+    const params = { path };
+    if (lang !== undefined)
+        params.lang = lang;
+    if (recursive !== undefined)
+        params.recursive = String(recursive);
+    const data = await callAction("nav.xml", params);
+    return ok(data);
+});
 server.registerTool("nav_edit", {
     description: "Modifie les propriétés d'une page (équivalent du panneau 'page properties'). Seuls les paramètres fournis sont modifiés. Retourne les propriétés mises à jour.",
     inputSchema: {

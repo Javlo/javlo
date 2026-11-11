@@ -9,6 +9,7 @@ import org.javlo.data.taxonomy.TaxonomyBean;
 import org.javlo.data.taxonomy.TaxonomyService;
 import org.javlo.helper.MacroHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.helper.XMLHelper;
 import org.javlo.module.content.Edit;
 import org.javlo.helper.NavigationHelper;
 import org.javlo.navigation.MenuElement;
@@ -50,6 +51,7 @@ import java.util.logging.Logger;
  *   nav.remove : path (required — id/name/path)
  *   nav.move   : path (required), parent (required), previousSibling (opt — insert after this sibling)
  *   nav.get    : path (required) — returns the page properties (incl. taxonomy)
+ *   nav.xml    : path (required), lang (opt), recursive (opt bool, default false) — XML export of the page (components with id, type, area, value)
  *   nav.edit   : path (required) + any page property to change (partial update, see performEdit),
  *                incl. taxonomy (comma separated node references) and taxonomyMode (replace|add|remove)
  *
@@ -192,6 +194,31 @@ public class NavAction implements IAction {
 			return "nav.get: page not found: " + pageRef;
 		}
 		ctx.getAjaxData().put("page", propertiesToMap(ctx, page));
+		return null;
+	}
+
+	// -------------------------------------------------------------------------
+	// nav.xml — XML export of a page : properties + components (id, type, area, value…)
+	// Params: path (required — id/name/path),
+	//         lang (opt — content language, default = all languages),
+	//         recursive (opt bool, default false — include the children pages)
+	// -------------------------------------------------------------------------
+	public static String performXml(RequestService rs, ContentContext ctx) throws Exception {
+		String pageRef = rs.getParameter("path", null);
+		if (pageRef == null || pageRef.trim().isEmpty()) {
+			return "nav.xml: missing required parameter 'path'";
+		}
+		MenuElement page = NavigationHelper.searchPage(ctx, pageRef);
+		if (page == null) {
+			return "nav.xml: page not found: " + pageRef;
+		}
+		String lang = rs.getParameter("lang", null);
+		if (lang != null && lang.trim().isEmpty()) {
+			lang = null;
+		}
+		boolean recursive = StringHelper.isTrue(rs.getParameter("recursive", "false"));
+		ctx.getAjaxData().put("page", pageToMap(page));
+		ctx.getAjaxData().put("xml", XMLHelper.getPageXML(ctx, page, lang, recursive));
 		return null;
 	}
 

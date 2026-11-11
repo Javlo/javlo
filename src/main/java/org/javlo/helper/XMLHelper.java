@@ -31,6 +31,16 @@ import java.util.*;
 public class XMLHelper {
 
 	public static String getPageXML(ContentContext ctx, MenuElement page, String lang) throws Exception {
+		return getPageXML(ctx, page, lang, true);
+	}
+
+	/**
+	 * XML export of a page (properties, components and resources).
+	 *
+	 * @param recursive
+	 *            true = include all the children pages, false = only the given page.
+	 */
+	public static String getPageXML(ContentContext ctx, MenuElement page, String lang, boolean recursive) throws Exception {
 		StringWriter writer = new StringWriter();
 		PrintWriter out = new PrintWriter(writer);
 		GlobalContext globalContext = GlobalContext.getInstance(ctx.getRequest());
@@ -38,7 +48,7 @@ public class XMLHelper {
 		out.println("<?xml version=\"1.0\" encoding=\"" + ContentContext.CHARACTER_ENCODING + "\"?>");
 		out.println("<export key=\"" + globalContext.getContextKey() + "\" path=\"" + page.getPath() + "\" version=\"" + IVersion.VERSION + "\">");
 		Collection<MenuElement> allCreatePage = new LinkedList<MenuElement>();
-		insertXMLPage(out, allCreatePage, Arrays.asList(new MenuElement[] { page }), true, lang);
+		insertXMLPage(out, allCreatePage, Arrays.asList(new MenuElement[] { page }), recursive, lang);
 		ContentContext absoluteURLCtx = new ContentContext(ctx);
 		absoluteURLCtx.setAbsoluteURL(true);
 		out.println("<resources url=\"" + URLHelper.createResourceURL(absoluteURLCtx, page, "/") + "\">");
