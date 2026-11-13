@@ -90,7 +90,14 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 	@Override
 	public void delete(ContentContext ctx) {
 		super.delete(ctx);
-		getRendererFile(ctx).delete();
+		// remove every renderer generated for this component (one per value)
+		File folder = new File(ctx.getRequest().getSession().getServletContext().getRealPath("/jsp/view/component/" + TYPE));
+		File[] renderers = folder.listFiles((dir, name) -> name.startsWith("view_" + getId() + ".") || name.startsWith("view_" + getId() + "_"));
+		if (renderers != null) {
+			for (File f : renderers) {
+				f.delete();
+			}
+		}
 	}
 
 	/**
@@ -113,15 +120,9 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
-			// remove the previous renderers of this component
-			File[] old = file.getParentFile().listFiles((dir, name) -> name.startsWith("view_" + getId() + ".") || name.startsWith("view_" + getId() + "_"));
-			if (old != null) {
-				for (File f : old) {
-					if (!f.getName().equals(file.getName())) {
-						f.delete();
-					}
-				}
-			}
+			// The other renderers of this component are NOT removed here: until publication the preview
+			// and the view instances of a same component have different values, so each one would delete
+			// the jsp of the other while it is being included ("JSP file not found").
 		}
 		rendererFile = file;
 		return rendererFile;
