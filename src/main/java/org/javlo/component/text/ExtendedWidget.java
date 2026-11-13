@@ -81,6 +81,19 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 		super.prepareView(ctx);
 	}
 	
+	/**
+	 * value replaced outside performEdit (remote content.edit...) : drop the generated jsp,
+	 * it is recreated from the new value by getRenderer.
+	 */
+	@Override
+	public void setValue(String inContent) {
+		super.setValue(inContent);
+		cachable = null;
+		if (rendererFile != null && rendererFile.exists()) {
+			rendererFile.delete();
+		}
+	}
+
 	@Override
 	public void delete(ContentContext ctx) {
 		super.delete(ctx);

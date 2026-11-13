@@ -292,7 +292,22 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 		super.init(bean, newContext);
 		properties.load(stringToStream(getValue()));
 	}
-	
+
+	/**
+	 * reload the in-memory properties when the raw value is replaced (remote content.edit, import...),
+	 * otherwise getFieldValue and storeProperties keep working on the old value.
+	 */
+	@Override
+	public void setValue(String inContent) {
+		super.setValue(inContent);
+		properties.clear();
+		try {
+			properties.load(stringToStream(getValue()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 //	@Override
 //	public void setModify() {
 //		super.setModify();
