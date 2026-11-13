@@ -300,6 +300,10 @@ public abstract class AbstractPropertiesComponent extends AbstractVisualComponen
 	@Override
 	public void setValue(String inContent) {
 		super.setValue(inContent);
+		reloadProperties();
+	}
+
+	protected void reloadProperties() {
 		properties.clear();
 		try {
 			properties.load(stringToStream(getValue()));

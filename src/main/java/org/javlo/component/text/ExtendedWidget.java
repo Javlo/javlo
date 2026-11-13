@@ -81,17 +81,10 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 		super.prepareView(ctx);
 	}
 	
-	/**
-	 * value replaced outside performEdit (remote content.edit...) : drop the generated jsp,
-	 * it is recreated from the new value by getRenderer.
-	 */
 	@Override
 	public void setValue(String inContent) {
 		super.setValue(inContent);
 		cachable = null;
-		if (rendererFile != null && rendererFile.exists()) {
-			rendererFile.delete();
-		}
 	}
 
 	@Override
@@ -99,18 +92,38 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 		super.delete(ctx);
 		getRendererFile(ctx).delete();
 	}
-	
+
+	/**
+	 * the generated jsp name contains a hash of the value : any change of the value (performEdit,
+	 * remote content.edit, import, other component instance, restart...) produces a new jsp,
+	 * a stale renderer can never be served.
+	 */
+	private String getRendererPath() {
+		return "/jsp/view/component/" + TYPE + "/view_" + getId() + "_" + Integer.toHexString(getValue().hashCode()) + ".jsp";
+	}
+
 	private File getRendererFile(ContentContext ctx) {
-		if (rendererFile == null) {
-			rendererFile = new File(ctx.getRequest().getSession().getServletContext().getRealPath(getRenderer(ctx)));
-			if (!rendererFile.exists()) {
-				try {
-					createRenderer(ctx, rendererFile);
-				} catch (Exception e) {
-					throw new RuntimeException(e);
+		String path = getRendererPath();
+		File file = new File(ctx.getRequest().getSession().getServletContext().getRealPath(path));
+		if (!file.exists()) {
+			file.getParentFile().mkdirs();
+			try {
+				reloadProperties();
+				createRenderer(ctx, file);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+			// remove the previous renderers of this component
+			File[] old = file.getParentFile().listFiles((dir, name) -> name.startsWith("view_" + getId() + ".") || name.startsWith("view_" + getId() + "_"));
+			if (old != null) {
+				for (File f : old) {
+					if (!f.getName().equals(file.getName())) {
+						f.delete();
+					}
 				}
 			}
 		}
+		rendererFile = file;
 		return rendererFile;
 	}
 	
@@ -126,18 +139,8 @@ public class ExtendedWidget extends AbstractPropertiesComponent {
 	
 	@Override
 	public String getRenderer(ContentContext ctx) {
-		String renderer = "/jsp/view/component/"+TYPE+"/view_"+getId()+".jsp";
-		if (rendererFile == null) {
-			rendererFile = new File(ctx.getRequest().getSession().getServletContext().getRealPath(renderer));
-		}
-		if (!rendererFile.exists()) {
-			try {
-				createRenderer(ctx, rendererFile);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		}
-		return renderer;
+		getRendererFile(ctx);
+		return getRendererPath();
 	}
 
 	@Override
