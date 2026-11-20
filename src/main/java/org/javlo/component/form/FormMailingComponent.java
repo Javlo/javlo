@@ -80,7 +80,7 @@ public class FormMailingComponent extends AbstractVisualComponent implements IAc
 		IUserFactory fact = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 		if (fact.getCurrentUser(globalContext, ctx.getRequest().getSession()) != null) {
 			IUserInfo userInfo = fact.getCurrentUser(globalContext, ctx.getRequest().getSession()).getUserInfo();
-			form.setValues(BeanHelper.bean2Map(userInfo));
+			form.setValues(IUserInfo.toPublicMap(userInfo));
 			form.setValue("password2", userInfo.getPassword());
 		}
 	}

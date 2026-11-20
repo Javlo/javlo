@@ -145,7 +145,7 @@ public class UserRegistration extends MapComponent implements IAction {
 			userFactory = UserFactory.createUserFactory(globalContext, ctx.getRequest().getSession());
 		}
 		IUserInfo userInfo = userFactory.getCurrentUser(globalContext, session).getUserInfo();
-		BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo, StringHelper.isTrue(rs.getParameter("reset-boolean"), true));
+		BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo, StringHelper.isTrue(rs.getParameter("reset-boolean"), true), IUserInfo.SECRET_FIELDS);
 		userFactory.updateUserInfo(userInfo);
 		userFactory.store();
 
@@ -316,7 +316,7 @@ public class UserRegistration extends MapComponent implements IAction {
 			((AdminUserInfo) userInfo).setFunction(StringHelper.collectionToString(functions, ";"));
 		}
 		try {
-			BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo, StringHelper.isTrue(rs.getParameter("reset-boolean"), true));
+			BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo, StringHelper.isTrue(rs.getParameter("reset-boolean"), true), IUserInfo.SECRET_FIELDS);
 			if (emailLogin != null) {
 				if (StringHelper.isEmpty(userInfo.getLogin())) {
 					userInfo.setLogin(emailLogin);

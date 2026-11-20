@@ -8,6 +8,7 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.URLHelper;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.security.AccessToken;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -244,7 +245,6 @@ public class AdminUserFactory extends UserFactory {
 				e.printStackTrace();
 			}
 		}
-		GlobalContext globalContext = GlobalContext.getInstance(request);
 		if (outUser == null) {
 			List<IUserInfo> users = getUserInfoList();
 			for (IUserInfo user : users) {
@@ -257,6 +257,43 @@ public class AdminUserFactory extends UserFactory {
 			outUser = EditContext.getInstance(GlobalContext.getInstance(request), request.getSession()).hardLoginByToken(token);
 		}
 
+		return registerTokenLogin(request, outUser, "token");
+	}
+
+	@Override
+	public User loginWithAccessToken(HttpServletRequest request, String accessToken) {
+		if (!AccessToken.isAccessToken(accessToken)) {
+			return null;
+		}
+		GlobalContext globalContext = GlobalContext.getInstance(request);
+		if (!globalContext.getStaticConfig().isLoginWithToken()) {
+			return null;
+		}
+		logger.info("try admin login with access token " + AccessToken.toLog(accessToken));
+		User outUser = null;
+		if (!master) {
+			try {
+				IUserFactory masterUserFactory = AdminUserFactory.createUserFactory(GlobalContext.getMasterContext(request.getServletContext()), request.getSession());
+				outUser = masterUserFactory.loginWithAccessToken(request, accessToken);
+				UserFactory.createUserFactory(globalContext, request.getSession());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		if (outUser == null) {
+			IUserInfo userInfo = findUserInfoByAccessToken(globalContext, accessToken);
+			if (userInfo != null) {
+				outUser = new User(userInfo);
+			}
+		}
+		return registerTokenLogin(request, outUser, "access token");
+	}
+
+	/**
+	 * register the user logged with a token as edit user of the session.
+	 */
+	private User registerTokenLogin(HttpServletRequest request, User outUser, String tokenType) {
+		GlobalContext globalContext = GlobalContext.getInstance(request);
 		if (outUser != null) {
 			outUser.setContext(globalContext.getContextKey());
 			request.getSession().setAttribute(getSessionKey(), outUser);
@@ -273,9 +310,9 @@ public class AdminUserFactory extends UserFactory {
 		}
 		if (outUser != null) {
 			outUser.setEditor(true);
-			logger.info("user logged with token : " + outUser.getLogin());
+			logger.info("user logged with " + tokenType + " : " + outUser.getLogin());
 		} else {
-			logger.info("fail login with token.");
+			logger.info("fail login with " + tokenType + ".");
 		}
 		
 		try {

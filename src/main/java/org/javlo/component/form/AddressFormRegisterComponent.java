@@ -58,7 +58,7 @@ public class AddressFormRegisterComponent extends FormComponent {
 
 		if (fact.getCurrentUser(globalContext, ctx.getRequest().getSession()) != null) {
 			IUserInfo userInfo = fact.getCurrentUser(globalContext, ctx.getRequest().getSession()).getUserInfo();
-			getForm(ctx).setValues(BeanHelper.bean2Map(userInfo));
+			getForm(ctx).setValues(IUserInfo.toPublicMap(userInfo));
 			getForm(ctx).setValue("password2", userInfo.getPassword());
 		}
 

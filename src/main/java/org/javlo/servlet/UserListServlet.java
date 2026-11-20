@@ -1,5 +1,6 @@
 package org.javlo.servlet;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -15,7 +16,6 @@ import org.javlo.context.GlobalContext;
 import org.javlo.helper.BeanHelper;
 import org.javlo.helper.ResourceHelper;
 import org.javlo.helper.StringHelper;
-import org.javlo.security.TokenEncryption;
 import org.javlo.service.ContentService;
 import org.javlo.service.RequestService;
 import org.javlo.user.AdminUserFactory;
@@ -101,7 +101,18 @@ public class UserListServlet extends HttpServlet {
 
 					List<IUserInfo> users = userFact.getUserInfoList();
 					IUserInfo userInfo = userFact.createUserInfos();
-					String[] labels = BeanHelper.getAllLabels(userInfo);
+					String[] allLabels = BeanHelper.getAllLabels(userInfo);
+					/* secret fields (token, access token) are never exported */
+					List<Integer> exportedIndexes = new ArrayList<Integer>();
+					for (int j = 0; j < allLabels.length; j++) {
+						if (!IUserInfo.SECRET_FIELDS.contains(allLabels[j])) {
+							exportedIndexes.add(j);
+						}
+					}
+					String[] labels = new String[exportedIndexes.size()];
+					for (int j = 0; j < labels.length; j++) {
+						labels[j] = allLabels[exportedIndexes.get(j)];
+					}
 					String[][] usersArray = new String[users.size() + 1][labels.length];
 					usersArray[0] = labels;
 					String separtor = ",";
@@ -114,27 +125,27 @@ public class UserListServlet extends HttpServlet {
 
 					csvFact.appendRow(labels);
 					for (IUserInfo localUserInfo : users) {
-						String[] values = (String[]) BeanHelper.getAllValues(localUserInfo);
-						for (int j = 0; j < labels.length && j < values.length; j++) {
-							if (labels[j].equals("token")) {
-								values[j] = TokenEncryption.encrypt(values[j]);
-							}
+						String[] allValues = (String[]) BeanHelper.getAllValues(localUserInfo);
+						String[] values = new String[labels.length];
+						for (int j = 0; j < labels.length; j++) {
+							int index = exportedIndexes.get(j);
+							values[j] = index < allValues.length ? allValues[index] : null;
 						}
 						boolean printRow = true;
 						if (filtered) {
-							labels = BeanHelper.getAllLabels(localUserInfo);
 							for (int j = 0; j < labels.length; j++) {
-								if (labels[j].equals("rolesRaw")) {
-									labels[j] = "roles";
+								String label = labels[j];
+								if (label.equals("rolesRaw")) {
+									label = "roles";
 								}
-								if (userFilter.getFieldContain(labels[j]).trim().length() > 0) {
-									if (labels[j].equals("roles")) {
+								if (userFilter.getFieldContain(label).trim().length() > 0) {
+									if (label.equals("roles")) {
 										String rolesRow = StringHelper.collectionToString(localUserInfo.getRoles(), "" + IUserInfo.ROLES_SEPARATOR);
-										if (rolesRow.toLowerCase().indexOf(userFilter.getFieldContain(labels[j]).toLowerCase()) < 0) {
+										if (rolesRow.toLowerCase().indexOf(userFilter.getFieldContain(label).toLowerCase()) < 0) {
 											printRow = false;
 										}
 									} else {
-										if (values[j].toLowerCase().indexOf(userFilter.getFieldContain(labels[j]).toLowerCase()) < 0) {
+										if (StringHelper.neverNull(values[j]).toLowerCase().indexOf(userFilter.getFieldContain(label).toLowerCase()) < 0) {
 											printRow = false;
 										}
 									}

@@ -24,6 +24,7 @@ import org.javlo.servlet.FileServlet;
 import org.javlo.servlet.security.AccessSecurity;
 import org.javlo.template.Template;
 import org.javlo.tracking.Tracker;
+import org.javlo.security.AccessToken;
 import org.javlo.user.*;
 import org.javlo.utils.DebugListening;
 import org.javlo.utils.TimeMap;
@@ -881,7 +882,14 @@ public class CatchAllFilter implements Filter {
 				}
 			}
 
+			/*
+			 * token login :
+			 * - access token (bearer) : header 'Authorization: Bearer' or 'X-Javlo-Token' (api, files...).
+			 * - one time token (created by the server for pdf, eml, download...) : header or 'j_token' parameter.
+			 * - internal user token in clear : only with the 'j_token' parameter (legacy mailing link).
+			 */
 			String token = request.getParameter(IUserFactory.TOKEN_PARAM);
+			boolean tokenFromParam = token != null;
 			if (token == null) {
 				String authHeader = httpRequest.getHeader("Authorization");
 				if (authHeader != null && authHeader.startsWith("Bearer ")) {
@@ -891,21 +899,44 @@ public class CatchAllFilter implements Filter {
 			if (token == null) {
 				token = httpRequest.getHeader("X-Javlo-Token");
 			}
+			String accessToken = null;
 			if (token != null) {
-				String realToken = globalContext.convertOneTimeToken(token);
-				if (realToken != null) {
-					token = realToken;
+				if (AccessToken.isAccessToken(token)) {
+					if (tokenFromParam) {
+						logger.warning("access token refused in url parameter, use the 'Authorization: Bearer' header.");
+					} else {
+						accessToken = token;
+					}
+					token = null;
 				} else {
-					logger.warning("bad one time token : " + token.length()+ "#");
+					String realToken = globalContext.convertOneTimeToken(token);
+					if (realToken != null) {
+						token = realToken;
+					} else if (!tokenFromParam) {
+						logger.warning("bearer token refused (not an access token, nor a one time token) : " + token.length() + "#");
+						token = null;
+					}
 				}
-				logger.info("try log with token #="+token.length());
+				if (token != null) {
+					logger.info("try log with token #=" + token.length());
+				}
 			}
 
 			if (fact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null && adminFact.getCurrentUser(globalContext, ((HttpServletRequest) request).getSession()) == null) {
 				String loginType = requestService.getParameter("login-type", null);
 
 				if ((loginType == null || !loginType.equals("adminlogin")) && logoutUser == null) {
-					if (globalContext.getStaticConfig().isLoginWithToken() && !StringHelper.isEmpty(token)) {
+					if (globalContext.getStaticConfig().isLoginWithToken() && !StringHelper.isEmpty(accessToken)) {
+						user = fact.loginWithAccessToken(httpRequest, accessToken);
+						if (user == null) {
+							user = adminFact.loginWithAccessToken(httpRequest, accessToken);
+						}
+						if (user == null) {
+							logger.warning("fail to log with access token (unknown or expired) IP:" + logIP);
+						} else {
+							httpRequest.getSession().setAttribute(UserAction.LOGGED_WITH_ACCESS_TOKEN_SESSION_KEY, true);
+						}
+					} else if (globalContext.getStaticConfig().isLoginWithToken() && !StringHelper.isEmpty(token)) {
 						user = fact.login(httpRequest, token);
 						if (user == null) {
 							logger.info("fail to log with token on : "+fact.getClass().getName());

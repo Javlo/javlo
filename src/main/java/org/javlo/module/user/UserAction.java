@@ -142,7 +142,19 @@ public class UserAction extends AbstractModuleAction {
 				ctx.getRequest().setAttribute("taxonomySelect", globalContext.getAllTaxonomy(ctx).getSelectHtml(taxo, ctx.getGlobalContext().getSpecialConfig().isTaxonomyUnderlineActive()));
 			}
 
-			Map<String, String> userInfoMap = BeanHelper.bean2Map(user.getUserInfo());
+			/* secret fields are never displayed (internal token, access token hash) */
+			Map<String, String> userInfoMap = IUserInfo.toPublicMap(user.getUserInfo());
+			int accessTokenLifeTime = globalContext.getStaticConfig().getAccessTokenLifeTimeDays();
+			boolean accessTokenActive = !StringHelper.isEmpty(user.getUserInfo().getAccessToken());
+			ctx.getRequest().setAttribute("accessTokenActive", accessTokenActive);
+			if (accessTokenActive) {
+				Date expiration = user.getUserInfo().accessTokenExpirationDate(accessTokenLifeTime);
+				ctx.getRequest().setAttribute("accessTokenCreation", user.getUserInfo().getAccessTokenDate());
+				if (expiration != null) {
+					ctx.getRequest().setAttribute("accessTokenExpiration", StringHelper.renderTime(expiration));
+					ctx.getRequest().setAttribute("accessTokenExpired", expiration.getTime() < System.currentTimeMillis());
+				}
+			}
 			ctx.getRequest().setAttribute("functions", LangHelper.collectionToMap(StringHelper.stringToCollection(userInfoMap.get("function"), ";")));
 
 			ctx.getRequest().setAttribute("user", user);
@@ -215,7 +227,7 @@ public class UserAction extends AbstractModuleAction {
 	}
 
 	public String performUpdateCurrent(ContentContext ctx, GlobalContext globalContext, EditContext editContext, RequestService requestService, StaticConfig staticConfig, AdminUserSecurity adminUserSecurity, AdminUserFactory adminUserFactory, HttpSession session, Module currentModule, I18nAccess i18nAccess, MessageRepository messageRepository) {
-		if (requestService.getParameter("ok", null) != null || requestService.getParameter("token", null) != null || requestService.getParameter("notoken", null) != null) {
+		if (requestService.getParameter("ok", null) != null || requestService.getParameter(GENERATE_ACCESS_TOKEN_PARAM, null) != null || requestService.getParameter(REVOKE_ACCESS_TOKEN_PARAM, null) != null || requestService.getParameter(RESET_INTERNAL_TOKEN_PARAM, null) != null) {
 			UserModuleContext userContext = UserModuleContext.getInstance(ctx.getRequest());
 			IUserFactory userFactory = userContext.getUserFactory(ctx);
 			if (requestService.getParameter("type", "").equals("visitors")) {
@@ -228,20 +240,16 @@ public class UserAction extends AbstractModuleAction {
 			IUserInfo userInfo = user.getUserInfo();
 			try {
 
-				BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo, StringHelper.isTrue(ctx.getRequestService().getParameter("reset-boolean"), true));
+				BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo, StringHelper.isTrue(ctx.getRequestService().getParameter("reset-boolean"), true), IUserInfo.SECRET_FIELDS);
 
 				List<String> functions = requestService.getParameterListValues("function", Collections.EMPTY_LIST);
 				if (functions.size() > 0 && userInfo instanceof AdminUserInfo) {
 					((AdminUserInfo) userInfo).setFunction(StringHelper.collectionToString(functions, ";"));
 				}
 
-				if (requestService.getParameter("token", null) != null) {
-					logger.info("token reset for : " + userInfo.getLogin());
-					userInfo.setToken(StringHelper.getNewToken());
-				}
-				if (requestService.getParameter("notoken", null) != null) {
-					logger.info("remove token for : " + userInfo.getLogin());
-					userInfo.setToken("");
+				String tokenError = performTokenOperations(ctx, requestService, adminUserSecurity, user, userInfo);
+				if (tokenError != null) {
+					return tokenError;
 				}
 
 				FileItem userFile = requestService.getFileItem("userFile");
@@ -285,7 +293,8 @@ public class UserAction extends AbstractModuleAction {
 			messageRepository.setGlobalMessageAndNotification(ctx, new GenericMessage(i18nAccess.getText("user.message.updated", new String[][] { { "user", user.getLogin() } }), GenericMessage.INFO));
 		}
 
-		if (editContext.isPreviewEditionMode()) {
+		/* keep the popup open when a new access token must be displayed (only one time) */
+		if (editContext.isPreviewEditionMode() && ctx.getRequest().getAttribute("newAccessToken") == null) {
 			ctx.setClosePopup(true);
 		}
 
@@ -304,9 +313,13 @@ public class UserAction extends AbstractModuleAction {
 			IUserInfo userInfo = user.getUserInfo();
 			String pwd = user.getPassword();
 			try {
-				BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo, StringHelper.isTrue(ctx.getRequestService().getParameter("reset-boolean"), true));
+				BeanHelper.copy(new RequestParameterMap(ctx.getRequest()), userInfo, StringHelper.isTrue(ctx.getRequestService().getParameter("reset-boolean"), true), IUserInfo.SECRET_FIELDS);
 				if (!userInfo.getPassword().equals(pwd)) {
 					userInfo.setPassword(SecurityHelper.encryptPassword(userInfo.getPassword()));
+				}
+				String tokenError = performTokenOperations(ctx, requestService, adminUserSecurity, user, userInfo);
+				if (tokenError != null) {
+					return tokenError;
 				}
 
 				userInfo.setTaxonomy(StringHelper.toArrayString(requestService.getParameterListValues("taxonomy").toArray()));
@@ -663,16 +676,125 @@ public class UserAction extends AbstractModuleAction {
 		return null;
 	}
 
-	public static String performToken(HttpServletRequest request, ContentContext ctx, GlobalContext globalContext, HttpSession session) {
+	public static final String GENERATE_ACCESS_TOKEN_PARAM = "generateAccessToken";
+
+	public static final String REVOKE_ACCESS_TOKEN_PARAM = "revokeAccessToken";
+
+	/** regenerate the internal user token (invalidate the auto-login links of the mailings already sent) **/
+	public static final String RESET_INTERNAL_TOKEN_PARAM = "resetInternalToken";
+
+	/**
+	 * token operations of the user edition forms (generate / revoke the access token, reset the internal token).
+	 * @return error message, null if ok.
+	 */
+	private static String performTokenOperations(ContentContext ctx, RequestService requestService, AdminUserSecurity adminUserSecurity, User user, IUserInfo userInfo) {
+		boolean generate = requestService.getParameter(GENERATE_ACCESS_TOKEN_PARAM, null) != null;
+		boolean revoke = requestService.getParameter(REVOKE_ACCESS_TOKEN_PARAM, null) != null;
+		boolean resetInternal = requestService.getParameter(RESET_INTERNAL_TOKEN_PARAM, null) != null;
+		if (!generate && !revoke && !resetInternal) {
+			return null;
+		}
+		if (isLoggedWithAccessToken(ctx.getRequest().getSession())) {
+			return "token can not be managed from a session opened with an access token.";
+		}
+		if (!canManageAccessToken(ctx, adminUserSecurity, user)) {
+			return "no access : you can not manage the tokens of : " + user.getLogin();
+		}
+		if (generate) {
+			logger.info("access token created for : " + userInfo.getLogin());
+			/* clear token displayed only one time */
+			ctx.getRequest().setAttribute("newAccessToken", userInfo.createAccessToken());
+		}
+		if (revoke) {
+			logger.info("access token removed for : " + userInfo.getLogin());
+			userInfo.removeAccessToken();
+		}
+		if (resetInternal) {
+			logger.info("internal token reset for : " + userInfo.getLogin());
+			userInfo.resetToken();
+			ctx.getRequest().setAttribute("internalTokenReset", true);
+		}
+		return null;
+	}
+
+	/** session attribute : the session was opened with an access token **/
+	public static final String LOGGED_WITH_ACCESS_TOKEN_SESSION_KEY = "_logged_with_access_token";
+
+	public static boolean isLoggedWithAccessToken(HttpSession session) {
+		return session != null && session.getAttribute(LOGGED_WITH_ACCESS_TOKEN_SESSION_KEY) != null;
+	}
+
+	/**
+	 * a user can manage his own access token, a user admin can manage the access token of all users.
+	 */
+	private static boolean canManageAccessToken(ContentContext ctx, AdminUserSecurity adminUserSecurity, User target) {
+		User currentUser = ctx.getCurrentEditUser();
+		if (currentUser == null) {
+			currentUser = ctx.getCurrentUser();
+		}
+		if (currentUser == null || target == null) {
+			return false;
+		}
+		if (currentUser.getLogin().equals(target.getLogin())) {
+			return true;
+		}
+		return adminUserSecurity.haveRight(currentUser, AdminUserSecurity.ADMIN_USER_ROLE, AdminUserSecurity.GENERAL_ADMIN);
+	}
+
+	/**
+	 * return a one time token of the current admin user (the internal user token is never returned).
+	 */
+	public static String performToken(HttpServletRequest request, ContentContext ctx, GlobalContext globalContext, HttpSession session) throws IOException {
 		UserFactory factory = AdminUserFactory.createAdminUserFactory(globalContext, session);
 		User user = factory.getCurrentUser(globalContext, session);
 		if (user == null) {
 			return "user not found.";
 		} else {
-			if (user.getUserInfo().getToken() == null || user.getUserInfo().getToken().trim().length() == 0) {
-				user.getUserInfo().setToken(StringHelper.getRandomIdBase64());
+			String userToken = factory.getTokenCreateIfNotExist(user);
+			ctx.addAjaxData("token", globalContext.createOneTimeToken(userToken));
+		}
+		return null;
+	}
+
+	/**
+	 * remote action (user.accessToken) : create a new access token for the current user and return it.
+	 * The previous access token is revoked. Refused if the session was opened with an access token
+	 * (a stolen token must not be able to extend itself).
+	 * Parameter 'revoke=true' : remove the access token.
+	 */
+	public static String performAccessToken(RequestService rs, ContentContext ctx, GlobalContext globalContext, HttpSession session) throws IOException {
+		UserFactory factory = AdminUserFactory.createAdminUserFactory(globalContext, session);
+		User user = factory.getCurrentUser(globalContext, session);
+		if (user == null) {
+			factory = (UserFactory) UserFactory.createUserFactory(globalContext, session);
+			user = factory.getCurrentUser(globalContext, session);
+		}
+		if (user == null) {
+			return "user not found.";
+		}
+		if (isLoggedWithAccessToken(session)) {
+			return "an access token can not be managed from a session opened with an access token.";
+		}
+		if (!factory.isStoredUser(user) && !globalContext.isMaster()) {
+			/* admin user of the master context */
+			UserFactory masterFactory = AdminUserFactory.createUserFactory(GlobalContext.getMasterContext(ctx.getRequest().getServletContext()), session);
+			if (masterFactory.isStoredUser(user)) {
+				factory = masterFactory;
 			}
-			ctx.addAjaxData("token", user.getUserInfo().getToken());
+		}
+		if (!factory.isStoredUser(user)) {
+			return "no access token available for '" + user.getLogin() + "' : user not stored (defined in the static config ?).";
+		}
+		if (StringHelper.isTrue(rs.getParameter("revoke", null))) {
+			factory.removeAccessToken(user);
+			ctx.addAjaxData("revoked", "true");
+			return null;
+		}
+		String clearToken = factory.createAccessToken(user);
+		ctx.addAjaxData("accessToken", clearToken);
+		Date expiration = user.getUserInfo().accessTokenExpirationDate(globalContext.getStaticConfig().getAccessTokenLifeTimeDays());
+		if (expiration != null) {
+			ctx.addAjaxData("expiration", StringHelper.renderTime(expiration));
 		}
 		return null;
 	}
@@ -814,7 +936,7 @@ public class UserAction extends AbstractModuleAction {
 						IUserInfo userInfo = userFact.createUserInfos();
 						String[] labels = usersArrays[0];
 						try {
-							BeanHelper.copy(JavaHelper.createMap(labels, usersArrays[i]), userInfo, false);
+							BeanHelper.copy(JavaHelper.createMap(labels, usersArrays[i]), userInfo, false, IUserInfo.SECRET_FIELDS);
 							userInfoList.add(userInfo);
 						} catch (Exception e) {
 							logger.warning("error on : " + userInfo.getLogin() + " : " + e.getMessage());

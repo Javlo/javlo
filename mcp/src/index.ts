@@ -12,19 +12,21 @@
  *
  * Environment variables:
  *   JAVLO_BASE_URL  — base URL of the Javlo2 instance (default: http://localhost/javlo2)
- *   JAVLO_TOKEN     — user token for authentication (sent as Authorization: Bearer header)
+ *   JAVLO_TOKEN     — user access token "jat_..." (sent as Authorization: Bearer header)
  *   JAVLO_LANG      — content language (default: fr)
  *
  * javlo2.config.json format (all fields optional):
  *   { "baseUrl": "https://mysite.com/javlo2", "token": "xxx", "lang": "fr" }
  *
- * Authentication priority (server-side):
- *   1. Authorization: Bearer <token>  (preferred)
- *   2. X-Javlo-Token: <token>
- *   3. j_token POST body parameter     (legacy fallback)
+ * Authentication (server-side):
+ *   1. Authorization: Bearer <access token>  (preferred)
+ *   2. X-Javlo-Token: <access token>
+ *   The access token is generated in Javlo (Users > my data > Access token, or webaction=user.accessToken),
+ *   it is displayed only once and expires after security.access-token.days (default 30).
+ *   The old internal user token is no longer accepted in these headers.
  *
  * Prerequisites in Javlo2:
- *   - loginWithToken must be enabled in static config
+ *   - security.login.token must be enabled in static config
  *   - The token must belong to a user with the "content" role
  */
 

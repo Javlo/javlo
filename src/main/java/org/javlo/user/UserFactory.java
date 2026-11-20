@@ -18,6 +18,7 @@ import org.javlo.message.GenericMessage;
 import org.javlo.message.MessageRepository;
 import org.javlo.module.core.ModuleException;
 import org.javlo.module.core.ModulesContext;
+import org.javlo.security.AccessToken;
 import org.javlo.user.exception.UserAllreadyExistException;
 import org.javlo.utils.CSVFactory;
 import org.javlo.utils.TimeMap;
@@ -339,6 +340,85 @@ public class UserFactory implements IUserFactory, Serializable {
 			logger.info("fail login with token.");
 		}
 		return outUser;
+	}
+
+	/**
+	 * search the user corresponding to a clear access token.
+	 * @return the user info, null if not found or expired.
+	 */
+	protected IUserInfo findUserInfoByAccessToken(GlobalContext globalContext, String accessToken) {
+		if (!AccessToken.isAccessToken(accessToken)) {
+			return null;
+		}
+		int lifeTime = globalContext.getStaticConfig().getAccessTokenLifeTimeDays();
+		for (IUserInfo user : getUserInfoList()) {
+			if (user.checkAccessToken(accessToken, lifeTime)) {
+				return user;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public User loginWithAccessToken(HttpServletRequest request, String accessToken) {
+		if (!AccessToken.isAccessToken(accessToken)) {
+			return null;
+		}
+		GlobalContext globalContext = GlobalContext.getInstance(request);
+		if (!globalContext.getStaticConfig().isLoginWithToken()) {
+			return null;
+		}
+		IUserInfo userInfo = findUserInfoByAccessToken(globalContext, accessToken);
+		if (userInfo == null) {
+			logger.info("fail login with access token " + AccessToken.toLog(accessToken));
+			return null;
+		}
+		User outUser = new User(userInfo);
+		outUser.setContext(globalContext.getContextKey());
+		request.getSession().setAttribute(getSessionKey(), outUser);
+		logger.info("user logged with access token : " + outUser.getLogin());
+		return outUser;
+	}
+
+	/**
+	 * create a new access token for the user and store it.
+	 * @return the clear token (only available now).
+	 */
+	public String createAccessToken(User user) throws IOException {
+		IUserInfo userInfo = getUserInfos(user.getLogin());
+		if (userInfo == null) {
+			/* user not stored in this factory (ex: edit user defined in the static config) */
+			return null;
+		}
+		String clearToken = userInfo.createAccessToken();
+		if (userInfo != user.getUserInfo()) {
+			/* keep the session user in sync */
+			user.getUserInfo().setAccessToken(userInfo.getAccessToken());
+			user.getUserInfo().setAccessTokenDate(userInfo.getAccessTokenDate());
+		}
+		updateUserInfo(userInfo);
+		store();
+		logger.info("access token created for : " + user.getLogin());
+		return clearToken;
+	}
+
+	/**
+	 * @return true if the user is stored in this factory (an access token can be stored).
+	 */
+	public boolean isStoredUser(User user) {
+		return user != null && getUserInfos(user.getLogin()) != null;
+	}
+
+	public void removeAccessToken(User user) throws IOException {
+		IUserInfo userInfo = getUserInfos(user.getLogin());
+		if (userInfo == null) {
+			return;
+		}
+		userInfo.removeAccessToken();
+		user.getUserInfo().removeAccessToken();
+		updateUserInfo(userInfo);
+		store();
+		logger.info("access token removed for : " + user.getLogin());
 	}
 
 	/*
@@ -786,7 +866,7 @@ public class UserFactory implements IUserFactory, Serializable {
 	public String getTokenCreateIfNotExist(User user) throws IOException {
 		String token = user.getUserInfo().getToken();
 		if (StringHelper.isEmpty(token)) {
-			token = user.userInfo.getTokenCreateIfNotExist();
+			token = user.userInfo.tokenCreateIfNotExist();
 			updateUserInfo(user.getUserInfo());
 			store();
 		}

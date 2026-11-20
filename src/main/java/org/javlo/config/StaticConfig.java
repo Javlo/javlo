@@ -1187,6 +1187,13 @@ public class StaticConfig extends Observable {
 		return properties.getBoolean("security.login.token", false);
 	}
 
+	/**
+	 * life time of the user access token (bearer), 0 or less for no expiration.
+	 */
+	public int getAccessTokenLifeTimeDays() {
+		return properties.getInt("security.access-token.days", 30);
+	}
+
 	public int getMaxErrorLoginByHour() {
 		return properties.getInt("security.login.max-error-hour", isHighSecure() ? 10 : 100);
 	}

@@ -140,9 +140,12 @@ public class DataAction implements IAction {
 		return null;
 	}
 
+	/**
+	 * return a one time token (the internal user token is never returned).
+	 */
 	public static String performToken(ContentContext ctx, User user) {
-		if (user != null) {
-			ctx.getAjaxData().put("token", user.getUserInfo().getToken());
+		if (user != null && !StringHelper.isEmpty(user.getUserInfo().getToken())) {
+			ctx.getAjaxData().put("token", ctx.getGlobalContext().createOneTimeToken(user.getUserInfo().getToken()));
 		} else {
 			return "no access";
 		}

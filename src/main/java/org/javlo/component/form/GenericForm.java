@@ -54,6 +54,7 @@ import org.javlo.service.ListService;
 import org.javlo.service.RequestService;
 import org.javlo.service.participation.ParticipationListService;
 import org.javlo.user.IUserFactory;
+import org.javlo.user.IUserInfo;
 import org.javlo.user.UserFactory;
 import org.javlo.utils.CSVFactory;
 import org.javlo.utils.CollectionAsMap;
@@ -185,7 +186,7 @@ public class GenericForm extends AbstractVisualComponent implements IAction {
 		RequestService rs = RequestService.getInstance(ctx.getRequest());
 		IUserFactory userFactory = UserFactory.createUserFactory(ctx.getRequest());
 		if (userFactory.getCurrentUser(ctx.getGlobalContext(), ctx.getRequest().getSession()) != null) {
-			Map<String, String> userInfo = BeanHelper.bean2Map(userFactory.getCurrentUser(ctx.getGlobalContext(), ctx.getRequest().getSession()).getUserInfo());
+			Map<String, String> userInfo = IUserInfo.toPublicMap(userFactory.getCurrentUser(ctx.getGlobalContext(), ctx.getRequest().getSession()).getUserInfo());
 			for (String key : userInfo.keySet()) {
 				if (!StringHelper.isEmpty(userInfo.get(key)) && StringHelper.isEmpty(rs.getParameter(key, null))) {
 					rs.setParameter(key, userInfo.get(key));

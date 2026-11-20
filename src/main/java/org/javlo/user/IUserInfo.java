@@ -3,12 +3,31 @@ package org.javlo.user;
 import jakarta.mail.internet.InternetAddress;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 
 public interface IUserInfo {
 
 	public static final char ROLES_SEPARATOR = ';';
 	public static final String PREFERRED_LANGUAGE_SEPARATOR = ",";
+
+	/**
+	 * secret fields : never set from a request (form, import) and never exported.
+	 * 'token' : internal token (pdf rendering, mailing link), 'accessToken' : hash of the bearer access token.
+	 */
+	public static final Set<String> SECRET_FIELDS = Set.of("token", "accessToken", "accessTokenDate");
+
+	/**
+	 * @return all the fields of the user info without the secret fields (for display, form prefill...).
+	 */
+	@SuppressWarnings("unchecked")
+	public static Map<String, String> toPublicMap(IUserInfo userInfo) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Map<String, String> map = org.javlo.helper.BeanHelper.bean2Map(userInfo);
+		for (String secretField : SECRET_FIELDS) {
+			map.remove(secretField);
+		}
+		return map;
+	}
 
 	public String getLogin();
 	
@@ -45,10 +64,49 @@ public interface IUserInfo {
 
 	public String getToken();
 	
-	public String getTokenCreateIfNotExist();
+	/**
+	 * internal token, created if not exist (not a getter : must never be listed as a field, exported or stored in clear).
+	 */
+	public String tokenCreateIfNotExist();
 	
 	public void resetToken();
-	
+
+	/**
+	 * @return the hash of the access token (never the clear token).
+	 */
+	public String getAccessToken();
+
+	/**
+	 * set the stored hash of the access token (used by the persistence), a clear value is refused.
+	 */
+	public void setAccessToken(String accessTokenHash);
+
+	/**
+	 * @return creation date of the access token (rendered with StringHelper.renderTime).
+	 */
+	public String getAccessTokenDate();
+
+	public void setAccessTokenDate(String date);
+
+	/**
+	 * create a new access token (the previous one is revoked).
+	 * @return the clear token, it is not stored and can not be retrieved later.
+	 */
+	public String createAccessToken();
+
+	public void removeAccessToken();
+
+	/**
+	 * @param lifeTimeDays life time of the token (days), &lt;= 0 for no expiration.
+	 * @return true if the clear token match the stored access token and is not expired.
+	 */
+	public boolean checkAccessToken(String clearToken, int lifeTimeDays);
+
+	/**
+	 * @return expiration date of the access token, null if no access token or no expiration.
+	 */
+	public Date accessTokenExpirationDate(int lifeTimeDays);
+
 	public String getBirthdate();
 	
 	public String[] getPreferredLanguage();

@@ -128,7 +128,8 @@ public class AdminAction extends AbstractModuleAction {
 			User user = ctx.getCurrentEditUser();
 			if (user.getUserInfo().getToken() != null && user.getUserInfo().getToken().length() > 1) {
 				Map<String, String> params = new HashMap<String, String>();
-				params.put("j_token", user.getUserInfo().getToken());
+				/* one time token : the internal user token is never displayed */
+				params.put("j_token", globalContext.createOneTimeToken(user.getUserInfo().getToken()));
 				params.put("webaction", "mobile.init");
 				ContentContext absCtx = ctx.getContextForAbsoluteURL();
 				absCtx.setRenderMode(ContentContext.VIEW_MODE);

@@ -25,7 +25,18 @@ public interface IUserFactory {
 
 	public abstract User login(HttpServletRequest request, String login, String password);
 
+	/**
+	 * login with the internal user token (pdf rendering through a one time token, legacy mailing link).
+	 */
 	public abstract User login(HttpServletRequest request, String token);
+
+	/**
+	 * login with a bearer access token (see IUserInfo#createAccessToken).
+	 * @return the logged user, null if the token is not valid or expired.
+	 */
+	public default User loginWithAccessToken(HttpServletRequest request, String accessToken) {
+		return null;
+	}
 
 	public abstract void logout(HttpSession session);
 

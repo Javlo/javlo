@@ -41,6 +41,8 @@
 </div>
 </fieldset>
 
+<%@ include file="token_box.jsp" %>
+
 <c:if test="${taxonomy.active}">
 	<fieldset>
 		<legend>${i18n.edit ['taxonomy']}</legend>

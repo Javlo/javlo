@@ -479,6 +479,7 @@ product.version=<span class="ck">Rev=c1e1d99 BuildTime=2026-03-25--08-44-09</spa
       <tr><td class="fn">security.login.max-error-hour</td><td class="ft">100</td><td class="fd">Maximum failed login attempts per IP per hour before blocking. <code>10</code> in high-security mode.</td></tr>
       <tr><td class="fn">security.remote-login</td><td class="ft">false</td><td class="fd">Allow login from remote applications via token.</td></tr>
       <tr><td class="fn">security.login.token</td><td class="ft">false</td><td class="fd">Enable token-based login (API / MCP).</td></tr>
+      <tr><td class="fn">security.access-token.days</td><td class="ft">30</td><td class="fd">Life time (days) of the user access token used with <code>Authorization: Bearer</code>. <code>0</code> = no expiration.</td></tr>
       <tr><td class="fn">security.rest-servlet</td><td class="ft">true</td><td class="fd">Enable the REST/remote API servlet. Automatically <code>false</code> in high-security mode.</td></tr>
       <tr><td class="fn">security.header.xss</td><td class="ft">true</td><td class="fd">Emit <code>X-XSS-Protection: 1; mode=block</code> header.</td></tr>
       <tr><td class="fn">security.oauth.view</td><td class="ft">false</td><td class="fd">Enable Google OAuth login on the public site.</td></tr>

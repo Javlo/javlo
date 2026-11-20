@@ -139,17 +139,18 @@
 		<label for="preferredLanguageRaw">preferred Language
 		<input type="text" id="preferredLanguageRaw" class="form-control" name="preferredLanguageRaw" value="${userInfoMap['preferredLanguageRaw']}" /></label>
 	</div>
-	<c:if test="${empty webaction}">
-	<div class="form-group token">
-		<label for="token">token
-		<c:if test="${fn:length(userInfoMap['token']) > 0}">
-			<a href="${info.homeAbsoluteURL}?j_token=${userInfoMap['token']}">
-			<span id="token" class="value">${userInfoMap['token']}</span>
-			</a>
-		</c:if>
-		<input class="action-button" class="form-control" type="submit" name="token" value="${i18n.edit['global.reset']}" /></label>
-		<c:if test="${fn:length(userInfoMap['token']) > 0}">
-			<input class="btn btn-default" type="submit" name="notoken" value="${i18n.edit['global.delete']}" />
+		<c:choose>
+			<c:when test="${accessTokenActive}">
+				<p class="access-token-info">
+					${i18n.edit['user.access-token.created']} <c:out value="${accessTokenCreation}" />
+					<c:if test="${not empty accessTokenExpiration}"> - ${accessTokenExpired ? i18n.edit['user.access-token.expired'] : i18n.edit['user.access-token.expire']} <c:out value="${accessTokenExpiration}" /></c:if>
+				</p>
+			</c:when>
+			<c:otherwise><p class="access-token-info">${i18n.edit['user.access-token.none']}</p></c:otherwise>
+		</c:choose>
+		<input class="btn btn-default" type="submit" name="generateAccessToken" value="${i18n.edit['user.access-token.generate']}" />
+		<c:if test="${accessTokenActive}">
+			<input class="btn btn-default" type="submit" name="revokeAccessToken" value="${i18n.edit['user.access-token.revoke']}" />
 		</c:if>
 	</div>
 	</c:if>
@@ -170,6 +171,9 @@
 </div>
 </div>
 </fieldset>
+
+<c:if test="${empty webaction}"><%@ include file="token_box.jsp" %></c:if>
+
 
 <div class="form-group function">
 		<label for="function">area of specialisation</label>

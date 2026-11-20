@@ -8,6 +8,7 @@ import org.javlo.context.ContentContext;
 import org.javlo.helper.LocalLogger;
 import org.javlo.helper.SecurityHelper;
 import org.javlo.helper.StringHelper;
+import org.javlo.security.AccessToken;
 import org.javlo.security.TokenEncryption;
 
 import jakarta.mail.internet.InternetAddress;
@@ -25,6 +26,8 @@ import java.util.*;
 public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable {
 
 	private static final long serialVersionUID = 1L;
+
+	private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(UserInfo.class.getName());
 	
 	private static final String EXTERNAL_LOGIN = "__EXLOGIN__";
 
@@ -62,6 +65,8 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	protected String mobile = "";
 	protected String info = "";
 	protected String token = "";
+	protected String accessToken = "";
+	protected String accessTokenDate = "";
 	protected String accountType = "default";
 	protected String avatarURL = null;
 	protected String birthdate = null;
@@ -279,6 +284,10 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	
 	@Override
 	public void setValue(String field, String value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		if (field != null && SECRET_FIELDS.contains(StringHelper.firstLetterLower(field))) {
+			logger.warning("refused to set secret field : " + field);
+			return;
+		}
 		Method[] methods = this.getClass().getMethods();
 		for (Method method : methods) {
 			if (method.getName().equals("set"+StringUtils.capitalize(field))) {
@@ -565,7 +574,7 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 	}
 	
 	@Override
-	public String getTokenCreateIfNotExist() {
+	public String tokenCreateIfNotExist() {
 		if (StringHelper.isEmpty(getToken())) {
 			resetToken();
 		}
@@ -582,8 +591,80 @@ public class UserInfo implements Comparable<IUserInfo>, IUserInfo, Serializable 
 		}
 	}
 
+	@Override
+	public String getAccessToken() {
+		return accessToken;
+	}
+
+	@Override
+	public void setAccessToken(String accessTokenHash) {
+		if (StringHelper.isEmpty(accessTokenHash)) {
+			this.accessToken = "";
+		} else if (AccessToken.isHash(accessTokenHash)) {
+			this.accessToken = accessTokenHash;
+		} else {
+			/* never store a clear token */
+			logger.warning("refused access token value (not a hash) for : " + getLogin());
+		}
+	}
+
+	@Override
+	public String getAccessTokenDate() {
+		return accessTokenDate;
+	}
+
+	@Override
+	public void setAccessTokenDate(String accessTokenDate) {
+		this.accessTokenDate = StringHelper.neverNull(accessTokenDate);
+	}
+
+	private Date getAccessTokenCreationDate() {
+		if (StringHelper.isEmpty(accessTokenDate)) {
+			return null;
+		}
+		try {
+			return StringHelper.parseTime(accessTokenDate);
+		} catch (ParseException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public String createAccessToken() {
+		String clearToken = AccessToken.generate();
+		accessToken = AccessToken.hash(clearToken);
+		accessTokenDate = StringHelper.renderTime(new Date());
+		return clearToken;
+	}
+
+	@Override
+	public void removeAccessToken() {
+		accessToken = "";
+		accessTokenDate = "";
+	}
+
+	@Override
+	public boolean checkAccessToken(String clearToken, int lifeTimeDays) {
+		if (!AccessToken.matches(accessToken, clearToken)) {
+			return false;
+		}
+		if (AccessToken.isExpired(getAccessTokenCreationDate(), lifeTimeDays)) {
+			logger.info("access token expired for : " + getLogin());
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public Date accessTokenExpirationDate(int lifeTimeDays) {
+		if (StringHelper.isEmpty(accessToken)) {
+			return null;
+		}
+		return AccessToken.getExpirationDate(getAccessTokenCreationDate(), lifeTimeDays);
+	}
+
 	/**
-	 * return the encrypt login the encrypt login can change when we restart. 
+	 * return the encrypt login the encrypt login can change when we restart.
 	 */
 	@Override
 	public String getEncryptLogin() {

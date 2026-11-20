@@ -44,10 +44,12 @@ public class MobileAction implements IAction {
 	
 	public static String performInit(RequestService rs, HttpSession session, ContentContext ctx, MessageRepository messageRepository, I18nAccess i18nAccess, HttpServletRequest request) throws ModuleException {
 		ctx.getAjaxData().put("title", ctx.getGlobalContext().getGlobalTitle());
-		ctx.getAjaxData().put("token", ctx.getCurrentEditUser().getUserInfo().getToken());
+		/* the internal user token is never returned, only a one time token */
+		String userToken = ctx.getCurrentEditUser().getUserInfo().tokenCreateIfNotExist();
+		ctx.getAjaxData().put("token", ctx.getGlobalContext().createOneTimeToken(userToken));
 		ContentContext ajaxAbsCtx = ctx.getContextForAbsoluteURL();
 		Map<String,String> params = new HashMap<String, String>();
-		params.put("j_token", ctx.getCurrentEditUser().getUserInfo().getToken());
+		params.put("j_token", ctx.getGlobalContext().createOneTimeToken(userToken));
 		String ajaxURL = URLHelper.createAjaxURL(ajaxAbsCtx, params);
 		ctx.getAjaxData().put("url", ajaxURL);
 		return null;

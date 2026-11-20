@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -353,6 +354,22 @@ public class BeanHelper {
 	 * @return the number of key found in bean without set equivalent method in
 	 *         bean.
 	 */
+	/**
+	 * copy map in bean, the excluded keys are ignored (ex: secret fields that must never come from a request).
+	 */
+	public static int copy(Map map, Object bean, boolean resetBoolean, Collection<String> excludedKeys) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+		if (excludedKeys == null || excludedKeys.isEmpty()) {
+			return copy(map, bean, resetBoolean);
+		}
+		Map filtered = new HashMap();
+		for (Object key : map.keySet()) {
+			if (key == null || !excludedKeys.contains(StringHelper.firstLetterLower(key.toString()))) {
+				filtered.put(key, map.get(key));
+			}
+		}
+		return copy(filtered, bean, resetBoolean);
+	}
+
 	public static int copy(Map map, Object bean, boolean resetBoolean) throws SecurityException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		Iterator keys = map.keySet().iterator();
 		int notFound = 0;
